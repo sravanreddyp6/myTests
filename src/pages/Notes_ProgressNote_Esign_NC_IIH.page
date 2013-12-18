@@ -1,0 +1,359 @@
+<apex:page standardController="Progress_Note__c" showHeader="false" sidebar="false" extensions="Notes_ProgressNote_View_Plan_Chlrn">
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!$Resource.eSignature_js}" />
+<apex:outputLabel rendered="false" id="numsigs" value="{!Progress_Note__c.Number_of_Required_Signatures__c}" />
+<apex:outputLabel rendered="false" id="late" value="{!Progress_Note__c.Is_Note_Late__c}" />
+<head>
+<script>
+   $j = jQuery.noConflict();
+    var numsigs = 0;
+
+   $j(document).ready(function() {
+    {!IF($ObjectType.Progress_Note__c.updateable,"", "alert('Insufficient privilege to e-sign document.'); window.close();")}
+
+    var numsigstr =  '{!Progress_Note__c.Number_of_Required_Signatures__c};'
+    if (numsigstr != '')
+        numsigs = parseInt( numsigstr );
+        
+    // dynamically append required number of signature lines
+    var newdiv;
+    for (i=0; i<numsigs;i++) {
+        newdiv = '<div id="divusername' + i + '" style="padding-left:20px;" align="left">Name (Print): &nbsp;<input id="UserNme" type="text" onchange="drawSignerNames(\'EsignInfo\',numsigs )" style="width:50%" /></div>';
+        $j(newdiv).appendTo('#signatureblock');
+    }
+    });
+   
+   
+   function saveSignature( note_id ){
+        var sigcanvas = $j('#EsignInfo');
+        var image_data = sigcanvas[0].toDataURL("image/png");
+        var htmlsource = document.documentElement.outerHTML;
+        var newstr = "";
+        var indexOfBase64String = -1;
+        var lengthOfBase64String = 0;
+        if (image_data.indexOf("data:")== 0 )
+         {
+            //remove unwanted header
+            indexOfBase64String = image_data.indexOf(",") + 1;
+            lengthOfBase64String = image_data.length - indexOfBase64String;
+            newstr  = image_data.substring(indexOfBase64String, lengthOfBase64String);
+        }
+    $j.ajax({
+        type: 'POST',
+        timeout: 20000,
+         url: '/apex/Notes_ProgressNote_ajaxpostback',
+         data: {
+            id : note_id,
+            img : newstr
+        },
+         success: function (msg) {
+             alert("Your signed form has been attached to the progress note.  Please refresh the note to see the attachment. ");
+         },
+         error: function (xhr, status) {
+              switch (status) {
+                 case 404:
+                     alert('File not found');
+                     break;
+                 case 500:
+                     alert('Server error');
+                     break;
+                 case 0:
+                     alert('Request aborted');
+                     break;
+                 default:
+                     alert('Unknown error: ' + xhr.status);
+             } 
+         }
+     });
+      return false;
+      }
+var drawingMade = false;
+function updateDrawingMade() {
+    drawingMade = true;
+    return true;
+}
+function validate() {
+    if (!drawingMade || $j("input#UserNme").val()=="") {
+        alert('Please Sign the Note and Enter your information on the Print Name line before selecting Electronically Sign.');
+        return false;
+    }
+    return true;
+}
+</script>
+</head>
+<body>
+<table style="width:100%; text-align:left">
+ <tr>
+   <td align="left">
+   <canvas id="EsignInfo" onfocus='init("EsignInfo", "EsignImg")' onmousedown='updateDrawingMade(); startDrawing("EsignInfo")'
+   onmouseup='stopDrawing("EsignInfo")' onmouseout='stopDrawing("EsignInfo")' height="1500" width="890" style="border:1px solid #d3d3d3;display:block;">
+   <p>At this time this browser is unsupported</p>
+   </canvas>
+   <img src="" id="EsignImg" style="border:1px solid #d3d3d3;display:none;"/>
+  </td>
+ </tr>
+</table>
+<div id="signatureblock" />
+<apex:form />
+    <div style="padding-left:20px;" align="left">
+        <input type="button" id="btnSign" value="Electronically Sign" onclick="if(!validate()) return false; printCanvas('EsignInfo','EsignImg',numsigs, this.id); return saveSignature( '{!Progress_Note__c.id}'); " />
+            &nbsp;
+        <input type="button" value="Re-sign Document" onclick="drawingMade=false;clearCanvas('EsignInfo', 'EsignImg',numsigs, btnSign);return false;" />
+
+    </div>
+
+</body>
+<script type="text/javascript">
+
+
+    window.onload = function () {
+       if (initdata == false) {
+            init("EsignInfo", "EsignImg");
+            initdata = true;
+        } 
+    }
+    
+function drawData() {
+        var canvas = document.getElementById("EsignInfo");
+        var context = canvas.getContext('2d');
+        var height = canvas.attributes.height.value;
+        var width = canvas.attributes.width.value;
+        var metrics;
+        var fontsize = 18;
+        line = 0;
+        
+        var col1 = 2;
+        var col2 = col1 + (width* .40); // 40%
+        var col3 = col2 + (width *.30); // 30%
+        var col1indent = col1 + 20;
+        var col1indent2 = col1 + 40;
+        
+        var col2a = col2;
+        var col3a = col2a + (width * .20);
+        var col4a = col3a + (width * .20);
+
+
+        // Fill Text 
+        context.lineWidth = 1;
+        context.fillStyle = "#000000";
+        context.strokeStyle = "#000000";
+        
+        context.font = "18px sans-serif";
+        fontsize = 18;
+        line += 20;
+        
+        var text = "NC MENTOR";
+        context.textAlign="center";
+        context.fillText( text, width/2 , line, width );
+        line += fontsize;        
+        context.font = "12px sans-serif";
+        text = "{!Progress_Note__c.Service_Assignment__r.Service_Line__c}";
+        context.fillText( text, width/2 , line, width );
+        fontsize = 12;
+        line += fontsize;        
+        
+        context.font = "bold 12px sans-serif";
+        line += 22;
+
+        context.textAlign="left";
+        text = "Client: {!JSENCODE(Progress_Note__c.Person_Being_Served__r.Name)} " ; 
+        metrics = context.measureText( text );
+        context.fillText(text, col1, line );
+        context.strokeRect( col1 - 1, line - fontsize - 2, col2-col1 - 4, fontsize + 6 );
+        
+        text = "Record Number: {!Progress_Note__c.Person_Being_Served__r.Other_ID__c}"; 
+        metrics = context.measureText ( text  );
+        context.fillText(text, col2, line );
+        context.strokeRect( col2 - 1, line - fontsize - 2, col3-col2 - 4, fontsize + 6 );
+
+        text = "Medicaid Number: {!Progress_Note__c.Person_Being_Served__r.Medicaid_ID__c}";
+        metrics = context.measureText(text);
+        context.fillText(text, col3, line );
+        context.strokeRect( col3 - 1, line - fontsize - 2, width-col3, fontsize + 6 );
+
+        line += (fontsize*2) - 2 ;
+
+        var newdate = new Date( '{!Progress_Note__c.Start_Time__c}');
+        text = "Date: " + (newdate.getMonth()+1) + "/" + newdate.getDate() + "/" + newdate.getFullYear() + " " + formatTime( newdate );
+        metrics = context.measureText( text );
+        context.fillText(text, col1, line);
+        context.strokeRect( col1 - 1, line - fontsize - 2, col2-col1 - 4, fontsize + 6 );
+
+        text = "Location: {!Progress_Note__c.Service_Location__c}"; 
+        context.fillText( text, col2a, line );
+        context.strokeRect( col2a - 1, line - fontsize - 2, col3a-col2a - 4, fontsize + 6 );
+    
+        text = "Type of Contact: {!Progress_Note__c.Type_of_Contact__c}"; 
+        context.fillText(text, col3a, line );
+        context.strokeRect( col3a - 1, line - fontsize - 2, col4a-col3a - 4, fontsize + 6 );
+
+        text = "Total Time: {!Progress_Note__c.Total_Time__c}";
+        context.fillText(text, col4a, line);
+        context.strokeRect( col4a - 1, line - fontsize - 2, width-col4a, fontsize + 6 );
+
+        line += 22;
+        
+        context.font = "14px sans-serif";
+        fontsize = 14;
+        line += fontsize*2;
+        text = "Purpose of Contact/Goals" ;
+        metrics = context.measureText( text );
+        context.fillText(text, 2, line );
+        
+        context.font = "italic 14px sans-serif";
+        text = " (Enter exact words from PCP):" ;
+        context.fillText(text, metrics.width + 2, line);
+        line += fontsize;
+
+   //anu_Plug-in start
+<apex:repeat value="{!MyGoals}" var="STG">
+        // repeat for each goal 
+        context.font = "bold 14px sans-serif";
+        line += fontsize*2;    
+        text = "Goal Description";
+        context.fillText( text, 2, line );
+        
+        text = "Frequency and Duration";
+        context.fillText( text, col2+50, line );
+        
+        text = "Status";
+        context.fillText ( text, col3+140, line );
+        
+        line += fontsize * 2;
+
+            context.font = "12px sans-serif";
+            line = Math.max(
+                wrapText(context, "{!JSENCODE(STG.Frequency_and_Duration__c)}", col2+50, line, col2-10, fontsize),
+                wrapText(context, "{!JSENCODE(STG.Status__c)}", col3+140, line, col3-col1indent, fontsize),
+                wrapText(context, "{!JSENCODE(STG.Short_Term_Goal_Description__c)}", col1indent, line, col2+10-col1indent, fontsize)
+            );
+
+            <apex:repeat value="{!STG.Objectives__r}" var="OBJ" >
+            // for each objective
+            line += fontsize * 2 ;
+            context.font = "bold italic 14px sans-serif";
+            text = "Plan Objective(s)";
+            metrics = context.measureText(text);
+            context.fillText(text, col1indent2, line += (fontsize));
+            line += fontsize;
+                context.font = "12px sans-serif";
+                line = Math.max(
+                    wrapText(context, "{!JSENCODE(OBJ.Frequency_and_Duration__c)}", col2+50, line, col2-10, fontsize),
+                    wrapText(context, "{!JSENCODE(OBJ.Status__c)}", col3+140, line, col3-col1indent, fontsize),
+                    wrapText(context, "{!JSENCODE(OBJ.Objective_Description__c)}", col1indent2, line, col2+10-col1indent, fontsize)
+                );
+                line += fontsize;
+                
+                context.font = " bold italic 14px sans-serif";
+                text = "Interventions";
+                metrics = context.measureText(text);
+                context.fillText(text, col1indent2, line += (fontsize));
+                line += fontsize;
+
+                <apex:repeat value="{!MapOBJ[OBJ.id].Interventions__r}" var="INT">
+                // for each intervention
+                    context.font = "12px sans-serif";
+                    text = "{!JSENCODE(INT.Intervention_Description__c)}";
+                    line = wrapText(context, text, col1indent2, line, col2-col1indent2, fontsize);
+                    line += fontsize;
+                    
+                </apex:repeat>  
+                                             
+            </apex:repeat>
+        line += fontsize*2;
+        context.moveTo(0, line+10);
+        context.lineTo(width, line+10);
+        context.stroke();
+        line += fontsize * 2;
+        </apex:repeat>
+
+//anu_Plug-in end
+
+        context.font = "bold 14px sans-serif";
+        text = "Description of Intervention/Skill building Activity: ";
+        context.fillText(text, 2, line);
+        fontsize = 14;
+        line += fontsize;
+
+        context.font = "12px sans-serif";
+        text = "{!JSENCODE(Progress_Note__c.Interventions__c)}";
+        line = wrapText(context, text, col1, line, width- col1, fontsize);
+        line += fontsize*2;
+
+        context.font = "bold 14px sans-serif";
+        text = "Progress Towards Goals/Effectiveness of Interventions:";
+        context.fillText(text, 2, line);
+        line += fontsize;
+
+        context.font = "12px sans-serif";
+        text = "{!JSENCODE(Progress_Note__c.Progress__c)}";
+        line = wrapText(context, text, col1, line, width- col1, fontsize);
+        line += fontsize;
+
+        line += 22;
+        context.moveTo(0, line);
+        context.lineTo(width, line);
+        context.stroke();
+        line += 22;
+        
+        context.font = "10px sans-serif";
+        var date = new Date();
+        
+        var i= 0;
+        
+        for (i = 0 ; i< numsigs; i++ ) {
+            line += 100;
+            text = "Signature:________________________________________________________________________________ " + date.toString();
+            elesign[i] = line;
+            if ( i == 0 )
+                minsign = line;
+                
+            context.fillText(text, 10,line);
+        }
+        minsign = elesign[0];
+        maxsign = elesign[i-1];
+        
+        line += 50;  
+        
+        
+        context.font = "12px underline sans-serif";
+        fontsize = 12;
+        text="***For professionals, signature and credentials, degree or licensure required." 
+        context.fillText( text, 10, line);
+        line += fontsize;
+        text="***For paraprofessions, signature and position required.***";
+        context.fillText( text, 10, line);
+        
+        line += 50;
+        
+        context.font="10px sans-serif";
+        context.textAlign="center";
+        fontsize=10;
+        context.fillStyle = "rgb(128,128,128)";
+        text = "Created By: {!JSENCODE(Progress_Note__c.CreatedBy.Name)} {!JSENCODE(Progress_Note__c.CreatedBy.Title)}"
+        context.fillText( text, width/2, line );
+        line += fontsize;
+        
+        var isnotelate = "{!Progress_Note__c.Is_Note_Late__c}";
+        var lateentry = " "; 
+        if (isnotelate ==  "Yes")
+            lateentry = " - LATE ENTRY";
+
+        
+        
+        text = "Created Date: " + newdate.toString('MM/dd/yyyy hh:mm:ss a z') + lateentry;
+        context.fillText( text, width/2, line );
+        line += fontsize;
+        text = "Latest Release of Form: 08/13/2012";
+        context.fillText( text, width/2, line );
+        line += 25;
+        
+        context.textAlign="left";
+        context.fillStyle = "rgb(0,0,0)";
+        return( line );
+        
+     }   
+     
+
+</script>
+</apex:page>

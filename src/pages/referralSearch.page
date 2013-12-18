@@ -1,0 +1,90 @@
+<apex:page controller="referralResults_Controller" >
+
+  <apex:messages />
+
+  <apex:form id="referralForm">
+    <apex:actionFunction name="searchRefs" action="{!searchRefs}" rerender="refResultsBlock" />
+ 
+    <apex:pageBlock mode="edit">
+
+      <apex:facet name="header">
+        <table cellspacing="0" cellpadding="0" border="0">
+          <tr>
+            <td class="pbTitle">
+              <h2 class="mainTitle">Referral Search</h2>
+            </td>
+            <td>&nbsp;</td>
+          </tr>
+        </table>
+      </apex:facet>
+
+      <apex:pageblockButtons location="bottom">
+        <apex:commandButton value="Back" id="cancelButton"/>
+      </apex:pageblockButtons>
+
+      <apex:outputPanel layout="block">
+      <apex:pageBlockSection title="Person Being Referred"
+                             showHeader="true"
+                             columns="1"
+                             collapsible="false"
+                             id="PBRSection">
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Referral Number</apex:outputLabel>
+            <apex:inputText value="{!referralNumber}" onblur="searchRefs();"/>
+        </apex:pageBlockSectionItem>
+        <apex:inputField value="{!referralRecord.First_Name__c}" onblur="searchRefs();"/>
+        <apex:inputField value="{!referralRecord.Last_Name__c}" onblur="searchRefs();"/>
+       <apex:inputField value="{!referralRecord.Date_of_Birth__c}" onblur="searchRefs();"/>
+       <apex:inputField value="{!referralRecord.Age__c}" onblur="searchRefs();"/>
+       <apex:inputField value="{!referralRecord.Gender__c}" onblur="searchRefs();"/>
+      </apex:pageBlockSection>
+      </apex:outputPanel>
+
+      <apex:outputPanel id="refResultsBlock"
+                        layout="block"
+                        title="Search Results">
+        <apex:pageBlockSection title="Search Results"
+             showHeader="true"
+             columns="1"
+             collapsible="false"
+             id="ResultsSection">
+          <apex:pageBlockTable value="{!refResults}" var="r">
+            <apex:column headerValue="Action">
+              <apex:outputPanel rendered="{!IF(referralId == null, 'true', 'false')}">
+                 <a href="/apex/referral?pbrID={!r.Id}">New Referral</a>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!IF(AND(referralId != null, pbrId != r.ID), 'true', 'false')}">
+                 <a href="/apex/referral?pbrID={!r.Id}&Id={!referralId}">Link Referral</a> 
+              </apex:outputPanel>
+            </apex:column>
+            <apex:column headerValue="Name">{!r.LastName}, {!r.FirstName}</apex:column>
+            <apex:column headerValue="DOB">
+              <apex:outputText value="{0, date, MM/dd/yyyy}">
+                <apex:param value="{!r.DateOfBirth}"/>
+              </apex:outputText>
+            </apex:column>
+            <apex:column headerValue="Age">
+              <apex:outputText value="{0, number, 0}">
+                <apex:param value="{!r.Age}"/>
+              </apex:outputText>
+            </apex:column>
+            <apex:column headerValue="Gender">{!r.gender}</apex:column>
+            <apex:column headerValue="Address">
+              <c:AddressDisplay Street1="{!r.Street1}"
+                                Street2="{!r.Street2}"
+                                City="{!r.City}"
+                                State="{!r.State}"
+                                Zip="{!r.ZipCode}"/>
+            </apex:column>
+            <apex:column headerValue="Referrals">
+               <apex:repeat value="{!r.Referrals}" var="ref">
+                  <a href="/{!ref.id}">{!ref.Name}</a><br/>
+               </apex:repeat>     
+            </apex:column>
+            <apex:column headerValue="Type">{!r.Type}</apex:column>
+        </apex:pageBlockTable>
+        </apex:pageBlockSection>
+      </apex:outputPanel>
+    </apex:pageBlock>
+  </apex:form>
+</apex:page>

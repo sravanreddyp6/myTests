@@ -1,0 +1,153 @@
+<apex:page title="Admission: {!admission.Name}" standardController="Admission__c" extensions="AdmissionViewExtension"  standardStylesheets="true" sidebar="false"  tabStyle="Persons_Being_Served_New__tab">
+<apex:stylesheet value="{!$Resource.mentoresdcss}" />
+
+    <c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" parentPage="Admission" admId="{!admission.Id}"/>
+    <br />
+    <apex:form >
+    <!--  -->
+    <apex:pageBlock title="Admission Detail">
+    <div class="pbHeaderButton">
+    <apex:commandButton onclick="window.open('/apex/AdmissionEdit?pbsId={!admission.Person_Being_Served__c}', '_self'); return false;" value="New Admission" rendered="{!canCreateAdm}"/>&nbsp;&nbsp;
+    <apex:commandButton onclick="window.open('/apex/AdmissionEdit?id={!admission.ID}', '_self'); return false;" value="Edit Admission" rendered="{!isEditor}"/>&nbsp;&nbsp;
+    </div>
+        
+        <apex:pageBlockSection title="Information" columns="2" collapsible="false">
+                <apex:outputField value="{!admission.name}"/>
+                <apex:outputField value="{!admission.Status__c}" />
+                <apex:outputField value="{!admission.Network_Offering__c}" />
+                
+                <apex:outputText label="Effective Date" value="{0, date, MM/dd/yyyy}" >
+                    <apex:param value="{!admission.Effective_Date__c}" />
+                </apex:outputText>
+                <apex:outputField value="{!admission.State__c}" />
+                
+                <apex:outputText label="Discharged Date" value="{0, date, MM/dd/yyyy}">
+                    <apex:param value="{!admission.Discharged_Date__c}" />
+                </apex:outputText>
+                <apex:pageBlockSectionItem /> <!--  empty field -->
+                <apex:outputField value="{!admission.Discharged_Status__c}" />
+                <apex:pageBlockSectionItem /> <!--  empty field -->
+                <apex:outputField value="{!admission.Reason_for_Discharge__c}" />
+                
+    </apex:pageBlockSection>
+    
+        <br />
+        <apex:pageBlockSection title="Referred-Out Details" collapsible="false">
+        <apex:outputText label="Referred-Out Date" value="{0, date, MM/dd/yyyy}">
+            <apex:param value="{!admission.Referred_Out_Date__c}" />
+        </apex:outputText>
+        <apex:pageBlockSectionItem />
+        <apex:outputField value="{!admission.Referred_Out_Agency_Name__c}" />
+        <apex:pageBlockSectionItem />
+        <apex:outputField value="{!admission.Referred_Out_Reason__c}" />
+        </apex:pageBlockSection>
+
+        <apex:pageBlockSection title="System Information" collapsible="false">
+        
+        <apex:outputField label="Created By" value="{!admission.CreatedById}" />
+        <apex:outputField label="Last Modified By" value="{!admission.LastModifiedById}" />
+        <apex:outputField value="{!admission.CreatedDate}" />    
+        <apex:outputField value="{!admission.LastModifiedDate}" />
+        
+    </apex:pageBlockSection>
+    </apex:pageBlock>
+
+    <br />
+    <apex:pageBlock title="Authorizations" >
+        <apex:pageBlockTable styleclass="pbBody-list"  value="{!admission.Authorized_Services__r}" var="item" rendered="{!(admission.Authorized_Services__r!=null && admission.Authorized_Services__r.size>0)}">
+            <apex:column value="{!item.name}"/>
+            <apex:column value="{!item.Authorization_Status__c}"/>
+            <apex:column value="{!item.Payer_Authorization_Date__c}"/>
+            <apex:column value="{!item.Payer_Effective_Date__c}"/>
+            <apex:column value="{!item.Payer_Authorization_ID__c}"/>
+            <apex:column value="{!item.Number_Of_Authorized_Units__c}"/>
+            <apex:column value="{!item.Remaining_Units__c}"/>
+        </apex:pageBlockTable>
+        <apex:outputText value="No records to display" rendered="{!(admission.Authorized_Services__r==null || admission.Authorized_Services__r.size=0)}" />
+        </apex:pageBlock>
+    
+<apex:pageBlock title="Assessments">
+        <div class="pbHeaderButton">
+            <apex:commandButton onclick="window.open('/a0d/e?CF00NU00000036vU3={!JSENCODE(admission.Name)}&CF00NU00000036vU3_lkid={!admission.ID}&CF00NU00000036vU2={!JSENCODE(admission.Person_Being_Served__r.Name)}&CF00NU00000036vU2_lkid={!admission.Person_Being_Served__r.AccountID}&Name=TBD (DO NOT CHANGE)&CF00NU00000036vU7=CANS&CF00NU00000036vU7_lkid=a0cU0000002RG3nIAG', '_self'); return false;" value="New Assessment" rendered="{!canCreateAsmt}"/>&nbsp;&nbsp;
+        </div>
+        <apex:outputPanel rendered="{!(cansAssessments.size>0)}">
+            <h1 style="display: block; margin-bottom: 30px;">CANS Assessments</h1>
+            <apex:pageBlockTable styleclass="pbBody-list"  value="{!cansAssessments}" var="item">
+                <apex:column headerValue="Name">
+                    <apex:outputLink value="/{!item.ID}">{!item.Name}</apex:outputLink>
+                </apex:column>
+                <apex:column value="{!item.Assessment_Date__c}" />
+                <apex:column value="{!item.Score__c}" />
+                <apex:column headerValue="Owner">
+                    <apex:outputLink value="/{!item.Owner.ID}">{!item.Owner.Name}</apex:outputLink>
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:outputPanel>
+        <apex:outputText value="No records to display" rendered="{!(admission.Assessments__r == null || admission.Assessments__r.size=0)}" />
+        </apex:pageBlock>
+ <apex:pageBlock title="Service Assignments" >
+        <div class="pbHeaderButton">
+<!--            <apex:commandButton onclick="window.open('/a0M/e?CF00NU00000036mLo={!JSENCODE(admission.Name)}&CF00NU00000036mLo_lkid={!admission.ID}&RecordType=012U0000000Dbhm&CF00NU00000036mQa={!JSENCODE(admission.Person_Being_Served__r.Name)}&CF00NU00000036mQa_lkid={!admission.Person_Being_Served__c}&Name=TBD - Autofilled', '_self'); return false;" value="New Standard Service" rendered="{!canCreateSvc}"/>&nbsp;&nbsp;-->
+<!--            <apex:commandButton onclick="window.open('/a0M/e?CF00NU00000036mLo={!JSENCODE(admission.Name)}&CF00NU00000036mLo_lkid={!admission.ID}&RecordType=012U0000000Dbhl&CF00NU00000036mQa={!JSENCODE(admission.Person_Being_Served__r.Name)}&CF00NU00000036mQa_lkid={!Admission__c.Person_Being_Served__c}&Name=TBD - Autofilled', '_self'); return false;" value="New Assessment Only"  rendered="{!canCreateSvc}" />-->
+            <apex:commandButton action="{!newServiceAssignment}" value="New Standard Service" rendered="{!canCreateSvc}"/>&nbsp;&nbsp;
+            <apex:commandButton action="{!newAssmtOnlyServiceAssignment}" value="New Assessment Only" rendered="{!canCreateSvc}"/>
+        </div>
+        
+        <apex:pageBlockTable styleclass="pbBody-list" value="{!admission.Service_Agreements__r}" var="item" rendered="{!(admission.Service_Agreements__r!= null && admission.Service_Agreements__r.size>0)}">
+            <apex:column headerValue="Action"><apex:outputLink value="/{!item.ID}/e?retURL={!$CurrentPage.Url}">Edit</apex:outputLink></apex:column>
+            <apex:column headervalue="Name"><apex:outputLink value="/{!item.ID}">{!item.name}</apex:outputLink></apex:column>
+            <apex:column value="{!item.Status__c}"/>
+            <apex:column headerValue="Start Date">
+                <apex:outputText value="{0, date, MM/dd/yyyy}">
+                    <apex:param value="{!item.Start_Date__c}" />
+                </apex:outputText>
+            </apex:column>
+            <apex:column headerValue="End Date">
+                <apex:outputText value="{0, date, MM/dd/yyyy}">
+                    <apex:param value="{!item.End_Date__c}" />
+                </apex:outputText>
+            </apex:column>
+        </apex:pageBlockTable>
+        <apex:outputText value="No records to display" rendered="{!(admission.Service_Agreements__r == null || admission.Service_Agreements__r.size=0)}" />
+</apex:pageBlock>
+ <apex:pageBlock title="Plans" >
+        <div class="pbHeaderButton">
+            <apex:commandButton onclick="window.open('/a0J/e?CF00NU00000036mMv={!JSENCODE(admission.Name)}&CF00NU00000036mMv_lkid={!admission.ID}&CF00NU00000036mNF_lkid={!admission.Person_Being_Served__c}&CF00NU00000036mNF={!JSENCODE(admission.Person_Being_Served__r.Name)}&Name=TBD+(Autofilled)', '_self'); return false;" value="New Plan" rendered="{!canCreatePlan}"/>
+        </div>
+        
+        <apex:pageBlockTable styleclass="pbBody-list"  value="{!admission.Plans__r}" var="item" rendered="{!(admission.Plans__r != null && admission.Plans__r.size>0)}">
+            <apex:column headervalue="Name"><apex:outputLink value="/{!item.ID}">{!item.name}</apex:outputLink></apex:column>
+            <apex:column value="{!item.Status__c}"/>
+            <apex:column headerValue="Effective Date">
+                <apex:outputText value="{0, date, MM/dd/yyyy}">
+                    <apex:param value="{!item.Effective_Date__c}" />
+                </apex:outputText>
+            </apex:column>
+            <apex:column headerValue="Plan Expiration Date">
+                <apex:outputText value="{0, date, MM/dd/yyyy}">
+                    <apex:param value="{!item.Plan_Expiration_Date__c}" />
+                </apex:outputText>
+            </apex:column>
+            <apex:column value="{!item.Long_term_Goal_1__c}"/>
+        </apex:pageBlockTable>
+        <apex:outputText value="No records to display" rendered="{!(admission.Plans__r == null || admission.Plans__r.size=0)}" />
+</apex:pageBlock>
+ <apex:pageBlock title="Progress Notes" >
+        <apex:pageBlockTable styleclass="pbBody-list"  value="{!admission.Progress_Notes__r}" var="item" rendered="{!(admission.Progress_Notes__r != null && admission.Progress_Notes__r.size>0)}">
+            <apex:column headervalue="Name"><apex:outputLink value="/{!item.ID}">{!item.name}</apex:outputLink></apex:column>
+            <apex:column value="{!item.Plan__r.Name}"/>
+            <apex:column value="{!item.First_Name__c}"/>
+            <apex:column value="{!item.Last_Name__c}"/>
+            <apex:column value="{!item.Start_Time__c}"/>
+            <apex:column value="{!item.End_Time__c}"/>
+            <apex:column value="{!item.Type_of_Contact__c}"/>
+            <apex:column value="{!item.Purpose_Nature_of_Service__c}"/>
+        </apex:pageBlockTable>
+        <apex:outputText value="No records to display" rendered="{!(admission.Progress_Notes__r == null || admission.Progress_Notes__r.size=0)}" />
+</apex:pageBlock>
+
+<c:SObjectHistories object="{!admission}" title="Admission History" />
+  
+    
+    </apex:form>
+</apex:page>

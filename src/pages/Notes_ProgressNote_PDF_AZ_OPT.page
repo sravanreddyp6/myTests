@@ -1,0 +1,96 @@
+<apex:page standardController="Progress_Note__c" renderAs="pdf">
+<head>
+<style type="text/css">
+.myTB{
+    width: 100%;
+    text-align: left;
+    }
+.borderTable{
+    border-style: solid;
+    border-width: .5px;
+    padding:2px;
+    width:100%;
+    }
+.sm{
+    font-size: 10pt;
+    }
+.med{
+    font-size: 12pt;
+    }
+.medBold{
+    font-size: 14px;
+    font-weight: bold;
+    }
+.smBold{
+    font-size: 10pt;
+    font-weight: bold;
+    }
+.medBoldBrdr{
+    font-size: 13px;
+    font-weight: bold;
+    border-style: solid;
+    border-width: .5px;
+    padding:2px;
+    }
+</style>
+</head>
+<body>
+<table class="myTB" width="100%">
+  <tr><td align="center" style="font-size:15pt">AZ MENTOR</td></tr>
+  <tr><td align="center">Outpatient</td></tr>
+</table>
+
+
+<apex:panelGrid columns="4" width="100%" >
+    Client:
+    <apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Name}"/>
+    
+    Start Date/Time:
+    <apex:outputField value="{!Progress_Note__c.Start_Time__c}"/>   
+    
+    Medicaid Number:&nbsp;
+    <apex:outputLabel value="{!Progress_Note__c.Person_Being_Served__r.Medicaid_ID__c}"/>
+    
+    End Date/Time:
+    <apex:outputField value="{!Progress_Note__c.End_Time__c}"/> 
+        
+    Record Number:
+    <apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Other_ID__c}"/>
+    
+    Total Time:
+    <apex:outputField value="{!Progress_Note__c.Total_Time__c}"/>
+    
+    Location:
+    <apex:outputField value="{!Progress_Note__c.Service_Location__c}"/>   
+     
+    Type of Contact:
+    <apex:outputField value="{!Progress_Note__c.Type_of_Contact__c}"/>
+    
+    People Present:
+    <apex:outputField value="{!Progress_Note__c.People_Present__c}"/>    
+    
+    Service Code:    
+    <apex:outputField value="{!Progress_Note__c.Service_Code__r.Service_Code__c}"/>
+
+    Is Note Late:    
+    <apex:outputField value="{!Progress_Note__c.Is_Note_Late__c}"/>
+
+</apex:panelGrid>
+<div class="med"><apex:include pageName="V2SA_ProgressNotesEmbed_PDFInclude"/></div>
+<div class="medBold"><b>Interventions</b></div>
+<div class="med"><apex:outputField value="{!Progress_Note__c.Interventions__c}"/><br/></div>
+<div class="medBold"><b>Progress</b></div>
+<div class="med"><apex:outputField value="{!Progress_Note__c.Progress__c}"/><br/>
+<div class="medBold"><b>Notes For Next Visit</b></div>
+<div class="med"><apex:outputField value="{!Progress_Note__c.Notes_For_Next_Visit__c}"/><br/></div>
+
+
+<hr/><br/></div>
+<!--
+<div class="medBold">Signature  Credentials, Degree/Licensure of Staff:_________________________________________</div><br/>
+-->
+<div class="sm" align="center" style="color:rgb(128,128,128)">Created By:&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedBy.Name}"/>,&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedBy.Title}"/></div>
+<div class="sm" align="center" style="color:rgb(128,128,128)">Created Date:&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedDate}"/><apex:outputLabel rendered="{!Progress_Note__c.Is_Note_Late__c == 'Yes'}"  > - LATE ENTRY</apex:outputLabel></div>
+<div class="sm" align="center" style="color:rgb(128,128,128)">Latest release of form: 7/17/2013</div>
+</body>
+</apex:page>

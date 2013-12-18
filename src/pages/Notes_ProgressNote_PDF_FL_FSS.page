@@ -1,0 +1,28 @@
+<apex:page standardController="Progress_Note__c" extensions="ProgressNotePDFController" renderAs="pdf">
+<head>
+<apex:stylesheet value="{!$Resource.ProgressNotePDFHeaderFooter_CSS}"/>
+<apex:stylesheet value="{!$Resource.ProgressNotePDF_CSS}"/>
+</head>
+<!-- First Page Header -->
+	<c:PDFHeaderFooter type="header" position="left">{!FirstHeaderLeft}</c:PDFHeaderFooter>
+	<c:PDFHeaderFooter type="header" position="center">{!FirstHeaderCenter}</c:PDFHeaderFooter>
+	<c:PDFHeaderFooter type="header" position="right">{!FirstHeaderRight}</c:PDFHeaderFooter>
+
+<!-- All Pages Header -->
+	<c:PDFHeaderFooter type="header" position="left">{!AllHeaderLeft}</c:PDFHeaderFooter>
+	<c:PDFHeaderFooter type="header" position="center">{!AllHeaderCenter}</c:PDFHeaderFooter>
+	<c:PDFHeaderFooter type="header" position="right">{!AllHeaderRight}</c:PDFHeaderFooter>
+
+<!-- All Pages Footer -->
+	<c:PDFHeaderFooter type="footer" position="left">{!AllFooterLeft}</c:PDFHeaderFooter>
+	<c:PDFHeaderFooter type="footer" position="center">{!AllFooterCenter}</c:PDFHeaderFooter>
+	<c:PDFHeaderFooter type="footer" position="right" showPageNumbers="{!showPageNumbers}"/>
+	
+<!--  Body Contents Go Here -->
+	<apex:outputtext escape="false" value="{!html}"></apex:outputtext>
+
+<!-- Last Page Footer -->
+	<c:PDFHeaderFooter type="footer" position="left">{!LastFooterLeft}</c:PDFHeaderFooter>
+	<c:PDFHeaderFooter type="footer" position="center">{!LastFooterCenter}</c:PDFHeaderFooter>
+	<c:PDFHeaderFooter type="footer" position="right" showPageNumbers="{!showLastPageNumbers}"/>
+</apex:page>

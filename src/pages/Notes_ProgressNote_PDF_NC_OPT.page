@@ -1,0 +1,120 @@
+<apex:page standardController="Progress_Note__c" extensions="TMN_DecryptMedicaidID" renderAs="pdf">
+<head>
+<style type="text/css">
+.BoldLabelLg {
+    font-size: 13pt;
+    font-weight: bold;
+}
+.Header{
+    border-top: 2px solid black;
+    border-bottom: 1px solid black;
+}
+.Lg {
+    font-size: 20px;
+    font-weight: bold;
+}
+.alightRight2{
+    text-align: right;
+}
+.alignTop{
+    vertical-align: top;
+}
+.inTbTdWidth {
+    width: 100px;
+    padding-right: 5px;
+}
+.sm{
+    font-size: 12pt;
+}
+.med{
+    font-size: 16pt;
+    }
+.myTB{
+    width: 100%;
+    }
+.myTBLarge{
+    width: 100%;
+    border-style:solid;
+    border-width:1px;
+}  
+.myTB1{
+    margin-top:4px;
+    width: 100%;
+    border-style:solid;
+    border-width:1px;
+    background-color:#ebebeb;
+}  
+.innerTb{
+    padding-left: 3px;
+    padding-top: 4px;
+    vertical-align:top;
+    margin-left:10px;
+    margin-top: 15px;
+    margin-right: 30px;
+    width: 90%;
+}
+.innerTb2{
+    padding-left: 3px;
+    padding-top: 4px;
+    vertical-align:top;
+    margin-left:10px;
+    margin-top: 15px;
+    margin-right: 30px;
+    width: 290px;      
+}
+.shaded{
+    background-color:#ebebeb;
+    } 
+.dataTable{
+    border: 1px solid black;
+    }    
+</style>
+</head>
+<body>
+<table class="myTB">
+    <tr><td class="med" align="center">NC MENTOR</td></tr>
+    <tr><td class="sm" align="right" >NC Division of MH, DD, SA Services</td></tr>
+</table>
+
+<table class="myTBLarge">
+<tr>
+<td>
+<table class="myTB">
+    <tr>
+        <td>Client:&nbsp;<apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Name}" /></td>  
+        <td align="right">Record Number:&nbsp;<apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Other_ID__c}"/></td>
+    </tr>
+    <tr>
+        <td>Primary Care Provider Name:&nbsp;<apex:outputField value="{!Progress_Note__c.Primary_Care_Provider_Name__c}"/></td>
+        <td align="right">DOB:<apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Birthdate}"/></td>
+    </tr>
+    <tr><td>Primary Care Provider NPI Number:&nbsp;<apex:outputField value="{!Progress_Note__c.Primary_Care_Provider_NPI_Number__c}"/></td></tr>
+</table>
+<table class="myTB1">
+    <tr>
+    <td class="medTxt">DATE:&nbsp;<apex:outputField value="{!Progress_Note__c.Start_Time__c}"/></td>
+    <td align="right">Shift/Duration of Service:&nbsp;<apex:outputField value="{!Progress_Note__c.Total_Time__c}"/></td>
+    </tr>
+</table>
+<br/>
+<table width="100%">
+<tr><td>Purpose of Contact (exact wording from PCP):</td></tr>
+<tr><td><apex:include pageName="V2SA_ProgressNotesEmbed_PDFInclude"/><hr/><br/></td></tr>
+<tr><td>Intervention/Activity (What you did):<br/></td></tr>
+<tr><td><apex:outputField value="{!Progress_Note__c.Interventions__c}"/><hr/><br/></td></tr>
+<tr><td>Assessment of Clients Progress Towards Goals:<br/></td></tr>
+<tr><td><apex:outputField value="{!Progress_Note__c.Progress__c}"/><hr/><br/></td></tr>
+</table>
+<table class="myTB">
+<tr><td>*SIGNATURE REQUIRED</td><td>_________________________________________________________</td></tr><br/>
+<div class="sm" align="center">Created By:&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedBy.Name}"/>,&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedBy.Title}"/></div>
+<div class="sm" align="center">Created Date:&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedDate}"/><apex:outputLabel rendered="{!Progress_Note__c.Is_Note_Late__c == 'Yes'}"  > - LATE ENTRY</apex:outputLabel></div>
+<div class="sm" align="center">Latest release of form: 8/13/12</div>
+</table>
+<tr><td style="font-size: 10pt;">*For <u>professionals</u>, signature and credentials, degree or licensure. For <u>paraprofessionals</u>, signature and position</td></tr>
+</td>
+</tr>
+</table>
+
+</body>
+</apex:page>
