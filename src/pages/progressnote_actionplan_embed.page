@@ -1,0 +1,85 @@
+<apex:page standardController="Progress_Note__c" extensions="progressnote_actionplan_embed_ex" >
+<style>
+    .goal{padding-left: 20px;}
+    .obj{padding-left: 60px;}
+    .act{padding-left: 100px;}
+.thinking{
+    opacity:0.8;
+    background-color:#ccc;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}
+.btnhover{
+    z-index:1001;
+
+}
+.thinkingwheel{
+    position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+}
+</style>
+<apex:outputPanel style="display: none">
+<apex:outputField value="{!Progress_Note__c.Service_Assignment__c}"/>
+<apex:outputField value="{!Progress_Note__c.Admission__c}"/>
+<apex:outputField value="{!Progress_Note__c.Action_Plan__c}"/>
+</apex:outputPanel>
+<apex:form id="myFrm" >
+<apex:outputPanel id="messeges" layout="block"><apex:pageMessages /> </apex:outputPanel>
+    <apex:pageBlock mode="mainDetail">
+        <apex:repeat value="{!allGoals}" var="g">
+                <b>Goal Description</b><br/>
+                <apex:outputPanel layout="block" styleClass="goal">
+                    <apex:inputCheckbox value="{!MapItemInNote[g.id]}" id="goal" disabled="{!Progress_Note__c.Locked__c}">
+                        <apex:actionSupport event="onclick" action="{!myUpdate}" status="myStatus" reRender="myFrm">
+                            <apex:param assignTo="{!updatingID}" value="{!g.id}" name="updatingID"  /> 
+                            <apex:param assignTo="{!isGoal}" value="true" name="isGoal"  />
+                        </apex:actionSupport>
+                    </apex:inputCheckbox>
+                    <apex:outputLabel for="goal">
+                        {!g.Description__c}
+                    </apex:outputLabel>
+                </apex:outputPanel> 
+                    <apex:outputPanel layout="block" styleClass="obj" rendered="{!g.action_plan_objectives__r.size>0}">
+                        <b>Objectives</b>  
+                    </apex:outputPanel>
+                              
+                    <apex:repeat value="{!g.action_plan_objectives__r }" var="o">
+                        <apex:outputPanel layout="block" styleClass="obj">
+                            <apex:inputCheckbox value="{!MapItemInNote[o.id]}" id="obj" disabled="{!Progress_Note__c.Locked__c}">
+                                <apex:actionSupport event="onclick" action="{!myUpdate}" status="myStatus" reRender="myFrm">
+                                    <apex:param assignTo="{!updatingID}" value="{!o.id}" name="updatingID"  /> 
+                                    <apex:param assignTo="{!isGoal}" value="false" name="isGoal"  />
+                                </apex:actionSupport>
+                            </apex:inputCheckbox>                        
+                            <apex:outputLabel for="obj">
+                                {!o.Description__c}
+                            </apex:outputLabel>                            
+                        </apex:outputPanel> 
+                        
+                        <apex:outputPanel layout="block" styleClass="act">
+                            <b>Actions</b> <br/>
+                        </apex:outputPanel>
+                              
+                            <apex:repeat value="{!mapActions[o.id]}" var="a">
+                                <apex:outputPanel layout="block" styleClass="act">
+                                    {!a.description__c}                                
+                                </apex:outputPanel>  
+                            </apex:repeat>                            
+                    </apex:repeat>
+        </apex:repeat>    
+    </apex:pageBlock>
+</apex:form>
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <div  class="thinking">
+            <div class="thinkingwheel">    
+                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+            </div>
+        </div>   
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus> 
+</apex:page>

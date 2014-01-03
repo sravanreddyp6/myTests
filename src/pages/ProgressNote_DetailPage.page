@@ -1,0 +1,12 @@
+<apex:page standardController="Progress_Note__c" extensions="ProgressNotes_Detail_Ex" action="{!checkType}" sidebar="false"  >
+<apex:outputPanel style="display: none;">
+    <apex:outputField value="{!Progress_Note__c.recordtype.DeveloperName}" />
+</apex:outputPanel>
+<!--
+apId="{!plan.Id}" servAssignId="{!plan.Service_Assignment__c}" admId="{!plan.Service_Assignment__r.Admission__c}" 
+-->
+
+
+
+    <apex:detail subject="{!Progress_Note__c.id}"  relatedListHover="false" />
+</apex:page>
