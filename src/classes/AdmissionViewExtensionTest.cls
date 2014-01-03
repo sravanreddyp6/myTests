@@ -31,5 +31,31 @@ private class AdmissionViewExtensionTest {
 		// The controller really doesn't do anything other than fetching the
 		// record, so we just check to make sure the record is fetch correctly
 		System.assertEquals(admission.ID, controller.admission.ID);
+		
+		Assessment_Type__c newtype = new Assessment_Type__c( name='Risk');
+		insert newtype;
+		
+		newtype = new Assessment_Type__c( name='risk');
+		insert newtype;
+		
+		newtype = new Assessment_Type__c( name='CANS');
+		insert newtype;
+		
+		// fetch assessments
+		Assessment__c[] assess = controller.riskAssessments;
+		System.assertEquals( 0, assess.size());
+		
+		assess = controller.CANSAssessments;
+		System.assertEquals( 0, assess.size());
+		
+		ID cansID = controller.getCANsID();
+		
+		// create risk assessment
+		if ( controller.createRiskAssess() != null )
+		{
+			assess = controller.riskAssessments;
+			//System.assertEquals( 1, assess.size());
+		}
+		
 	}
 }

@@ -1,8 +1,13 @@
-<apex:page standardController="Progress_Note__c" showHeader="false" sidebar="false" extensions="Notes_ProgressNote_View_Plan_Chlrn">
+<apex:page standardController="Progress_Note__c" showHeader="false" sidebar="false" extensions="Notes_ProgressNote_View_Plan_Chlrn,ProgressNote_Esign">
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 <apex:includeScript value="{!$Resource.eSignature_js}" />
 <apex:outputLabel rendered="false" id="numsigs" value="{!Progress_Note__c.Number_of_Required_Signatures__c}" />
 <apex:outputLabel rendered="false" id="late" value="{!Progress_Note__c.Is_Note_Late__c}" />
+<apex:outputPanel style="display: none">
+    <apex:outputField value="{!Progress_Note__c.Service_Assignment__c}"/>
+    <apex:outputField value="{!Progress_Note__c.Admission__c}"/>
+    <apex:outputField value="{!Progress_Note__c.Action_Plan__c}"/>
+</apex:outputPanel>
 <head>
 <script>
    $j = jQuery.noConflict();
@@ -127,6 +132,7 @@ function drawData() {
         var col3 = col2 + (width *.30); // 30%
         var col1indent = col1 + 20;
         var col1indent2 = col1 + 40;
+        var col1indent3 = col1 + 80;
         
         var col2a = col2;
         var col3a = col2a + (width * .20);
@@ -205,69 +211,41 @@ function drawData() {
         context.fillText(text, metrics.width + 2, line);
         line += fontsize;
 
-   //anu_Plug-in start
-<apex:repeat value="{!MyGoals}" var="STG">
-        // repeat for each goal 
+
+<apex:repeat value="{!apg}" var="g">
         context.font = "bold 14px sans-serif";
         line += fontsize*2;    
         text = "Goal Description";
         context.fillText( text, 2, line );
         
-        text = "Frequency and Duration";
-        context.fillText( text, col2+50, line );
-        
-        text = "Status";
-        context.fillText ( text, col3+140, line );
-        
         line += fontsize * 2;
-
-            context.font = "12px sans-serif";
-            line = Math.max(
-                wrapText(context, "{!JSENCODE(STG.Frequency_and_Duration__c)}", col2+50, line, col2-10, fontsize),
-                wrapText(context, "{!JSENCODE(STG.Status__c)}", col3+140, line, col3-col1indent, fontsize),
-                wrapText(context, "{!JSENCODE(STG.Short_Term_Goal_Description__c)}", col1indent, line, col2+10-col1indent, fontsize)
-            );
-
-            <apex:repeat value="{!STG.Objectives__r}" var="OBJ" >
-            // for each objective
+        context.font = "12px sans-serif";
+        numlines = wrapText(context, "{!JSENCODE(g.Description__c)}", col1indent, line, col3, fontsize );
+        line = numlines;
+                    
+    <apex:repeat value="{!g.Action_plan_objectives__r}" var="o">
             line += fontsize * 2 ;
             context.font = "bold italic 14px sans-serif";
-            text = "Plan Objective(s)";
+            text = "Plan Objective";
             metrics = context.measureText(text);
             context.fillText(text, col1indent2, line += (fontsize));
             line += fontsize;
                 context.font = "12px sans-serif";
-                line = Math.max(
-                    wrapText(context, "{!JSENCODE(OBJ.Frequency_and_Duration__c)}", col2+50, line, col2-10, fontsize),
-                    wrapText(context, "{!JSENCODE(OBJ.Status__c)}", col3+140, line, col3-col1indent, fontsize),
-                    wrapText(context, "{!JSENCODE(OBJ.Objective_Description__c)}", col1indent2, line, col2+10-col1indent, fontsize)
-                );
-                line += fontsize;
                 
-                context.font = " bold italic 14px sans-serif";
-                text = "Interventions";
-                metrics = context.measureText(text);
-                context.fillText(text, col1indent2, line += (fontsize));
-                line += fontsize;
+                text = "{!JSENCODE(o.Description__c)}";
+                line = wrapText(context, text, col1indent2, line, col3, fontsize);
+                line += fontsize;    
+                
+    
+    </apex:repeat>
+</apex:repeat>        
 
-                <apex:repeat value="{!MapOBJ[OBJ.id].Interventions__r}" var="INT">
-                // for each intervention
-                    context.font = "12px sans-serif";
-                    text = "{!JSENCODE(INT.Intervention_Description__c)}";
-                    line = wrapText(context, text, col1indent2, line, col2-col1indent2, fontsize);
-                    line += fontsize;
-                    
-                </apex:repeat>  
-                                             
-            </apex:repeat>
-        line += fontsize*2;
-        context.moveTo(0, line+10);
-        context.lineTo(width, line+10);
+        line += 22;
+        context.moveTo(0, line);
+        context.lineTo(width, line);
         context.stroke();
-        line += fontsize * 2;
-        </apex:repeat>
+        line += 22; 
 
-//anu_Plug-in end
 
         context.font = "bold 14px sans-serif";
         text = "Description of Intervention/Skill building Activity: ";
@@ -344,7 +322,7 @@ function drawData() {
         text = "Created Date: " + newdate.toString('MM/dd/yyyy hh:mm:ss a z') + lateentry;
         context.fillText( text, width/2, line );
         line += fontsize;
-        text = "Latest Release of Form: 08/13/2012";
+        text = "Latest Release of Form: 12/17/2013";
         context.fillText( text, width/2, line );
         line += 25;
         

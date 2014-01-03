@@ -7,7 +7,7 @@ public with sharing class ComplianceSurveyPreviewWizard {
     }
     
     public PageReference InsertSurvey() {
-        Survey__c TestSurvey = new Survey__c(Name = '2014 Annual Compliance Survey');
+        Survey__c TestSurvey = new Survey__c(Name = '2013 Annual Compliance Certification');
         insert TestSurvey;
         
         Question__c Question10 = new Question__c(Title__c = '10', Type__c = 'Final Question', Survey__c = TestSurvey.Id,

@@ -1,28 +1,114 @@
-<apex:page standardController="Progress_Note__c" extensions="ProgressNotePDFController" renderAs="pdf">
-<head>
+<apex:page standardController="Progress_Note__c" renderAs="pdf" applyBodyTag="false" >
 <apex:stylesheet value="{!$Resource.ProgressNotePDFHeaderFooter_CSS}"/>
 <apex:stylesheet value="{!$Resource.ProgressNotePDF_CSS}"/>
+<head>
+<style>
+table{width: 100%;}
+</style>
 </head>
-<!-- First Page Header -->
-	<c:PDFHeaderFooter type="header" position="left">{!FirstHeaderLeft}</c:PDFHeaderFooter>
-	<c:PDFHeaderFooter type="header" position="center">{!FirstHeaderCenter}</c:PDFHeaderFooter>
-	<c:PDFHeaderFooter type="header" position="right">{!FirstHeaderRight}</c:PDFHeaderFooter>
+<table class="myTB">
+  <tbody><tr><td align="center" style="font-size:15pt"><img src="{!URLFOR($Resource.ESD_Images,'FLESDLogo.png')}" alt="FL Logo"/></td></tr>
+  <tr><td align="center">{!Progress_note__c.Program__c} - {!Progress_note__c.Service_Assignment__r.Location_Region__c}</td></tr>
+</tbody></table>
+<div class="section-divider"></div>
+<table class="general-table">
+    <tbody><tr>
+        <td width="50%">Client:&nbsp;{!Progress_note__c.Name}</td>
+    </tr>
+    <tr>
+        <td width="40%">Medicaid #:&nbsp;{!Progress_note__c.Person_being_served__r.Medicaid_ID__c}</td>
+        <td width="50%"></td>
+    </tr>
+    <tr>
+        <td width="25%">Start Time:&nbsp;{!Progress_note__c.Start_Time__c}</td>
+        <td width="25%">End Time:&nbsp;{!Progress_note__c.End_Time__c}</td>
+    </tr>   
+</tbody></table>
+<div>
+    <table border="1" class="general-table">
+        <tbody><tr><th>Progress Notes</th>
+        <th>Collateral Contact</th>
+        </tr><tr>
+            <td>
+                <table>
+                    <tbody><tr><td>Type of Service: {!Progress_note__c.Service_Assignment__r.Service_Line__c}</td></tr>
+                    <tr><td>Service Code: {!Progress_note__c.Auth_Service_Code__c}</td></tr>
+                    <tr><td>TX Setting: {!Progress_note__c.Service_Location__c}</td></tr>
+                    <tr><td>Type of Contact: {!Progress_note__c.Type_of_Contact__c}</td></tr>
+                </tbody></table>
+            </td>
+            <td>
+                <table>
+                    <tbody><tr><td>Contact: {!Progress_note__c.Collateral_Contact__c}</td></tr>
+                    <tr><td><!-- Empty row so that both tables have the same number of rows and align properly. --></td></tr>
+                    <tr><td>Funding Source: {!Progress_note__c.Funding_Source__c}</td></tr>
+                    <tr><td>Billing ID: {!Progress_note__c.Person_being_served__r.Avatar_ID__c}</td></tr>
+                </tbody></table>
+            </td>
+        </tr>
+    </tbody></table>
+</div>
 
-<!-- All Pages Header -->
-	<c:PDFHeaderFooter type="header" position="left">{!AllHeaderLeft}</c:PDFHeaderFooter>
-	<c:PDFHeaderFooter type="header" position="center">{!AllHeaderCenter}</c:PDFHeaderFooter>
-	<c:PDFHeaderFooter type="header" position="right">{!AllHeaderRight}</c:PDFHeaderFooter>
+<!-- Goals Block <div class="med">{!Progress_note__c.ShortTermGoals}</div>-->
+    <div class="medBold">Purpose of Contact/Goals (<i>Enter exact wording from PCP</i>):</div>
+    <apex:include pageName="progressnote_actionplan_embed_include"/>
+    <div class="section-divider"></div>
+    <hr/>
+<!-- End Block -->
 
-<!-- All Pages Footer -->
-	<c:PDFHeaderFooter type="footer" position="left">{!AllFooterLeft}</c:PDFHeaderFooter>
-	<c:PDFHeaderFooter type="footer" position="center">{!AllFooterCenter}</c:PDFHeaderFooter>
-	<c:PDFHeaderFooter type="footer" position="right" showPageNumbers="{!showPageNumbers}"/>
-	
-<!--  Body Contents Go Here -->
-	<apex:outputtext escape="false" value="{!html}"></apex:outputtext>
+<!-- Intervention -->
+    <div class="standard-block">
+        <div class="medBold">Intervention:</div>
+        <div class="med">{!Progress_note__c.Interventions__c}</div>
+    </div>
+<!-- End Block -->
 
-<!-- Last Page Footer -->
-	<c:PDFHeaderFooter type="footer" position="left">{!LastFooterLeft}</c:PDFHeaderFooter>
-	<c:PDFHeaderFooter type="footer" position="center">{!LastFooterCenter}</c:PDFHeaderFooter>
-	<c:PDFHeaderFooter type="footer" position="right" showPageNumbers="{!showLastPageNumbers}"/>
+<!-- Client Response -->
+    <div class="standard-block">
+        <div class="medBold">Client Response:</div>
+        <div class="med">{!Progress_note__c.Persons_Response_to_Interventions__c}</div>
+    </div>
+<!-- End Block -->
+
+<!-- Progress Block -->
+    <div class="standard-block">
+        <div class="medBold">Progress:</div>
+        <div class="med">{!Progress_note__c.Progress__c}</div>
+    </div>
+    <div class="section-divider"></div>
+<!-- End Block -->
+
+<!-- Notes for Next Visit -->
+    <div class="standard-block">
+        <div class="medBold">Notes for Next Visit:</div>
+        <div class="med">{!Progress_note__c.Notes_For_Next_Visit__c}</div>
+    </div>
+    <hr/>
+    <div class="section-divider"></div>
+<!-- End Block -->
+
+<!-- Therapist and Client Signatures -->
+    <!-- Using tables for these signature areas so that the Underline is handled with bottom border -->
+    <div>
+    <table>
+    <tbody><tr class="signatureRow"><td class="signatureLabel">Therapist Signature:</td><td class="underline"></td><td class="dateLabel">Date:</td><td class="underline"></td></tr>
+    <tr class="signatureRow"><td class="signatureLabel">Client Signature:</td><td class="underline"></td><td class="dateLabel">Date:</td><td class="underline"></td></tr>
+    </tbody></table>
+    </div>
+<!-- End Block -->
+
+<!-- This block is always here -->
+    <div class="bottom-block">
+    <div class="large-section-divider"></div>
+    <div class="sm" align="center" style="color:rgb(128,128,128)">Created By:&nbsp;{!Progress_note__c.CreatedBy.Name},&nbsp;{!Progress_note__c.CreatedBy.Title}</div>
+        <div class="sm" align="center" style="color:rgb(128,128,128)">Created Date:&nbsp;
+            <apex:outputText value="{0,date}">
+                <apex:param value="{!NOW()}" />
+            </apex:outputText>
+        </div>
+    <div class="sm" align="center" style="color:rgb(128,128,128)">Latest release of form:&nbsp;12/17/13</div>
+    </div>
+<!-- End Block -->
+
+
 </apex:page>

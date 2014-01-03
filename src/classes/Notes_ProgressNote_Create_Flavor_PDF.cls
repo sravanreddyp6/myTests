@@ -13,6 +13,9 @@ public with sharing class Notes_ProgressNote_Create_Flavor_PDF {
             else if(thePN.RecordType.Name=='IFCS-MA - Progress Note'){
                 pageRef = new PageReference('/apex/Notes_ProgressNote_PDF_MA_IFCS');
             }
+            else if(thePN.RecordType.Name=='Shift Note'){
+                pageRef = new PageReference('/apex/Notes_ShiftNote_Pdf');
+            }            
             else if(thePN.RecordType.Name=='AZ - OPT'){
                 pageRef = new PageReference('/apex/Notes_ProgressNote_PDF_AZ_OPT');
             }            

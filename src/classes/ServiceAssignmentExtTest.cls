@@ -1,66 +1,15 @@
 @isTest
 private class ServiceAssignmentExtTest {
-
+	static Service_Assignment__c ServAssign;
+	static User usr;
+    static Admission__c Adm;
+    private static Action_Plan__c testplan;
+    private static Action_Plan_Goal__c testGoal;
+    public static Action_Plan_Objective__c testObjective;
+    
     static testMethod void myUnitTest() {
 
-		// Get System Admin profile ID.
-		String ProfileId = [select ProfileId from User where (Profile.Name='System Administrator') LIMIT 1].ProfileId;
-
-		User usr = new User(USERNAME='test@thementornetwork.com',
-	           LASTNAME = 'TestLastName',
-	           FIRSTNAME = 'TestFirstName',
-	           EMAIL = 'test@thementornetwork.com',
-	           ALIAS = 'ttest',
-	           COMMUNITYNICKNAME = 'test.test',
-	           TIMEZONESIDKEY = 'America/New_York',
-	           LOCALESIDKEY = 'en_US', 
-	           EMAILENCODINGKEY = 'ISO-8859-1',
-	           PROFILEID = ProfileId,
-	           LANGUAGELOCALEKEY = 'en_US',                                
-	           ISACTIVE = true,
-	           legal_custodian__c=true);    
-        
-        String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
-        
-        Account Accnt = new Account(
-            RecordTypeID=RecTypeId,
-            FirstName= 'Test FName',
-            LastName='Test LName',
-            PersonMailingStreet='test@yahoo.com',
-            PersonMailingPostalCode='12345',
-            PersonMailingCity='SFO',
-            PersonMailingStateCode='NC',
-            PersonEmail='test@yahoo.com',
-            PersonHomePhone='1234567',
-            PersonMobilePhone='12345678'
-        );
-        insert Accnt;
-        
-        List<Account> testAcct = [Select Id, PersonContactId From Account a WHERE a.Id = :Accnt.Id];
-        System.Debug('What is in testAcct: ' + testAcct);
-        Id aContactId = testAcct[0].PersonContactId;
-        Id aAccountId = testAcct[0].Id;
-
-        Admission__c Adm = new Admission__c(
-            Name = 'TEST ADM',
-            Person_Being_Served__c = aContactId,
-            Effective_Date__c = date.newInstance(2013, 1, 1),
-            Status__c = 'Active',
-            State__c = 'NC'
-        );
-        insert Adm;
-
-       
-        Service_Assignment__c ServAssign = new Service_Assignment__c(
-        	Name = 'TEST SERV ASSIGN',
-        	Admission__c = Adm.Id,
-        	Person_Being_Served__c = aContactId,
-        	Start_Date__c = date.newInstance(2013, 1, 1),
-        	Status__c = 'Active',
-        	Program__c = 'IFCS',
-        	Service_Line__c = 'Intensive In Home - FCT'
-        );
-        insert ServAssign;
+		CreateObjects();
 
 		TMN_Contract__c testContract = new TMN_Contract__c(
 			Name = 'Test Contract',
@@ -229,6 +178,8 @@ private class ServiceAssignmentExtTest {
 		controller.theServAssign = ServAssign;
 		controller.saveServiceCodeSelections();
 		controller.loadProgramDocXrefs();
+        
+        system.assert(!controller.showWorksheetBlocks);
 
 		System.currentPageReference().getParameters().put('save_new', '');
 		sc = new ApexPages.StandardController( ServAssign );
@@ -236,4 +187,167 @@ private class ServiceAssignmentExtTest {
 
     }
     
+    public testmethod static void saveEdit(){
+        CreateObjects();
+        ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
+        ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
+        
+        ServAssign.Program__c = 'test program';
+        controller.SaveServAssign();
+        
+        
+    }
+    
+    public testmethod static void showWorksheetBlocks(){
+        User tester = Referral_createTestData.createTestUser('astest', 'astest@test.com',  'Action', 'Summary', 'Redwood');
+        System.runAs(tester){ 
+            CreateObjects();
+            CreateActionObjects();
+            
+            ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
+            ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
+            
+            List<Action_Plan__c> plans = controller.getplans();
+            system.assertequals(testplan.id, plans[0].id, 'expected plan not found');
+            
+            system.assert(controller.showWorksheetBlocks);
+            
+            List<ServiceAssignmentExt.myDate> skilldates = controller.getuncheckedWeeks();
+            
+            system.assertNotEquals(null, skilldates, 'Skilldates is null');
+            system.assert(0 < skilldates.size(), 'skilldates has no dates');
+            controller.worksheetStartDate = skilldates[0].ParsableDate;
+            system.assertnotequals(null,controller.newSkillWorksheet(), 'new skillworksheet failed');
+            Action_Plan_Worksheet__c wksh = [select id
+                                               from Action_Plan_Worksheet__c
+                                              where Start_date__c = :Date.Parse(skilldates[0].parsableDate)
+                                                and Action_plan__c = :testplan.id
+                                                and RecordType.Name = 'Weekly Skill Result'];
+            system.assertnotequals(null, wksh, 'skill worksheet not created');
+            
+            
+            List<ServiceAssignmentExt.myDate> behaviordates = controller.getBehaviorMonthsAvailable();
+            
+            system.assertNotEquals(null, behaviordates, 'behaviordates is null');
+            system.assert(0 < behaviordates.size(), 'behaviordates has no dates');
+
+            controller.worksheetStartDate = behaviordates[0].ParsableDate;
+            system.assertnotequals(null,controller.newBehaviorWorksheet(), 'new behavior worksheet failed');
+            Action_Plan_Worksheet__c wksh2 = [select id
+                                               from Action_Plan_Worksheet__c
+                                              where Start_date__c = :Date.Parse(behaviordates[0].parsableDate)
+                                                and Action_plan__c = :testplan.id
+                                                and RecordType.Name = 'Monthly Behavior Result'];
+            system.assertnotequals(null, wksh2, 'behavior worksheet not created');
+        }
+    }
+    
+    public testmethod static void showdiagnosis(){
+        User tester = Referral_createTestData.createTestUser('astest', 'astest@test.com',  'Action', 'Summary', 'Redwood');
+        System.runAs(tester){ 
+            CreateObjects();
+            
+            ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
+            ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
+
+			System.assert(controller.showDiagnosis);
+            controller.showAddDiagnosis();
+            controller.diag.Effective_Date__c = date.newInstance(2013, 1, 1);
+            controller.saveDiagnosis();
+            controller.createDiagnoses();
+            controller.showEditDiagnosis();
+            controller.diag.Id = controller.diagnoses[0].Id;
+            controller.diag.Effective_Date__c = date.newInstance(2013, 1, 2);
+            controller.saveDiagnosis();
+            controller.createDiagnoses();
+            Diagnosis__c diag = [select Effective_Date__c from Diagnosis__c where id = :controller.diagnoses[0].Id];
+            
+            system.assertEquals(date.newInstance(2013, 1, 2), diag.Effective_Date__c, 'EffectiveDate not updated');
+        }
+    }
+    
+    private static void CreateObjects(){
+		// Get System Admin profile ID.
+		String ProfileId = [select ProfileId from User where (Profile.Name='System Administrator') LIMIT 1].ProfileId;
+
+		usr = new User(USERNAME='test@thementornetwork.com',
+	           LASTNAME = 'TestLastName',
+	           FIRSTNAME = 'TestFirstName',
+	           EMAIL = 'test@thementornetwork.com',
+	           ALIAS = 'ttest',
+	           COMMUNITYNICKNAME = 'test.test',
+	           TIMEZONESIDKEY = 'America/New_York',
+	           LOCALESIDKEY = 'en_US', 
+	           EMAILENCODINGKEY = 'ISO-8859-1',
+	           PROFILEID = ProfileId,
+	           LANGUAGELOCALEKEY = 'en_US',                                
+	           ISACTIVE = true,
+	           legal_custodian__c=true);    
+        
+        String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
+        
+        Account Accnt = new Account(
+            RecordTypeID=RecTypeId,
+            FirstName= 'Test FName',
+            LastName='Test LName',
+            PersonMailingStreet='test@yahoo.com',
+            PersonMailingPostalCode='12345',
+            PersonMailingCity='SFO',
+            PersonMailingStateCode='NC',
+            PersonEmail='test@yahoo.com',
+            PersonHomePhone='1234567',
+            PersonMobilePhone='12345678'
+        );
+        insert Accnt;
+        
+        List<Account> testAcct = [Select Id, PersonContactId From Account a WHERE a.Id = :Accnt.Id];
+        System.Debug('What is in testAcct: ' + testAcct);
+        Id aContactId = testAcct[0].PersonContactId;
+        Id aAccountId = testAcct[0].Id;
+
+        Adm = new Admission__c(
+            Name = 'TEST ADM',
+            Person_Being_Served__c = aContactId,
+            Effective_Date__c = date.newInstance(2013, 1, 1),
+            Status__c = 'Active',
+            State__c = 'NC'
+        );
+        insert Adm;
+
+       
+        ServAssign = new Service_Assignment__c(
+        	Name = 'TEST SERV ASSIGN',
+        	Admission__c = Adm.Id,
+        	Person_Being_Served__c = aContactId,
+        	Start_Date__c = date.newInstance(2013, 1, 1),
+        	Status__c = 'Active',
+        	Program__c = 'IFCS',
+        	Service_Line__c = 'Intensive In Home - FCT'
+        );
+        insert ServAssign;
+        
+    }
+    private static void CreateActionObjects(){
+        testplan = new Action_Plan__c();
+        testplan.Service_Assignment__c = ServAssign.id;
+        testplan.effective_date__c = date.newInstance(2013, 1, 1);
+        testplan.target_date__c = testplan.effective_date__c.addmonths(3);
+        testplan.Status__c = 'Active Final';
+        insert testPlan;
+       
+        testGoal = new Action_Plan_Goal__c();
+        testGoal.Action_Plan__c = testPlan.Id;
+        testGoal.Description__c = 'Just a testobject';
+        insert testGoal;
+       
+        testObjective = new Action_Plan_Objective__c();
+        testObjective.Action_Plan_Goal__c = testGoal.Id;
+        testObjective.Description__c = 'Just a testobject';
+        testObjective.Status__c = 'In Progress';
+        testObjective.Type__c = 'Skill';
+        testObjective.Effective_date__c = date.newInstance(2013, 1, 1);
+        testObjective.Target_end_date__c = date.newInstance(2013, 2, 1);       
+        insert testObjective;
+        
+    }
 }

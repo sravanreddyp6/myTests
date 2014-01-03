@@ -28,5 +28,19 @@ public with sharing class PBS_controller_helper {
       return party;
    }
     
+     // calculation of whether user is allowed to make this change
+	public static Boolean isUserLevel1or2() {
+		
+		List<PermissionSetAssignment> userperms = [ select id, permissionset.name, assigneeid from PermissionSetAssignment where assigneeid = :UserInfo.getUserId()]; 
+		for ( PermissionSetAssignment p : userperms ) {
+			
+			// user can only update if in one of these three permission sets
+			if ( p.PermissionSet.Name.Contains('Level_1') || p.PermissionSet.Name.Contains('Level_2') ) {
+				System.Debug('User is level1 or level2.');
+				return true;	
+			}
+		}
+		return false;
+	}
     
 }

@@ -1,24 +1,3 @@
-/**
- * This class contains unit tests for validating the behavior of Apex classes
- * and triggers.
- *
- * Unit tests are class methods that verify whether a particular piece
- * of code is working properly. Unit test methods take no arguments,
- * commit no data to the database, and are flagged with the testMethod
- * keyword in the method definition.
- *
- * All test methods in an organization are executed whenever Apex code is deployed
- * to a production organization to confirm correctness, ensure code
- * coverage, and prevent regressions. All Apex classes are
- * required to have at least 75% code coverage in order to be deployed
- * to a production organization. In addition, all triggers must have some code coverage.
- * 
- * The @isTest class annotation indicates this class only contains test
- * methods. Classes defined with the @isTest annotation do not count against
- * the organization size limit for all Apex scripts.
- *
- * See the Apex Language Reference for more information about Testing and Code Coverage.
- */
 @isTest
 private class DocumentMethodsTEST {
 
@@ -767,7 +746,18 @@ private class DocumentMethodsTEST {
 			Document__c = caseDoc22.Id
 		);
 		insert myProgramDocXref22;
-                       
+		
+		Service_Code__c servCode = new Service_Code__c(
+			Program__c = 'IFCS',
+			Location__c = 'Raleigh',
+			Service_Line__c = 'Intensive In Home - FCT',
+			Start_Date__c = date.newInstance(2013,1,1),
+			Service_Value__c = 'H1234',
+			Assessment_Only__c = false,
+			State__c = 'NC'
+		);
+		insert servCode;
+            
              
         DocumentMethods.ChangeDueFrom(ServAssign, usr2.Id);
 		
@@ -789,6 +779,60 @@ private class DocumentMethodsTEST {
 		listOfSas.add(ServAssign);
 
 		DocumentMethods.docPop(listOfSas);
-
+		
+		// TEST METHODS for DocumentDetailsExt
+		ApexPages.StandardController sc = new ApexPages.StandardController( mySadjo );
+        PageReference docpr  = Page.DocumentDetails;
+        Test.setCurrentPageReference(docpr);
+        ApexPages.currentPage().getParameters().put('id', mySadjo.Id  );
+        DocumentDetailsExt docdetails = new DocumentDetailsExt( sc );
+		docdetails.ClearRelativeDueDateFields();
+		docdetails.ClearFixedDueDateField();
+		docdetails.rddunits = '1';
+		docdetails.rdduom = '';
+		docdetails.saveUpdateXrefs();
+		
+		docdetails.resetToDefaults();
+		
+		
+		// TEST METHODS for DocumentController2
+		// existing doc
+		sc = new ApexPages.StandardController( caseDoc );
+        PageReference doceditpr  = Page.Document_Edit;
+        Test.setCurrentPageReference(doceditpr);
+        ApexPages.currentPage().getParameters().put('id', caseDoc.Id );
+        DocumentController2 doceditctrl = new DocumentController2( sc );
+		doceditctrl.updateLocations();
+		doceditctrl.updateProgramsAndContracts();
+		doceditctrl.updateServiceLines();
+		doceditctrl.getContractsAndXrefs();
+		
+		caseDoc.Type__c = 'Fidelity Document';
+		update caseDoc;
+		sc = new ApexPages.StandardController( caseDoc );
+        doceditpr  = Page.Document_Edit;
+        Test.setCurrentPageReference(doceditpr);
+        ApexPages.currentPage().getParameters().put('id', caseDoc.Id );
+        doceditctrl = new DocumentController2( sc );
+		
+		// new doc
+		Document__c newdoc = new Document__c(
+        	Active__c = true,
+			Auto_Include__c = true,
+			Relative_Due_Date_Event__c = 'Client Tx Start',
+			Relative_Due_Date_UOM__c = 'Day(s)',
+			Relative_Due_Date_Units__c = 1,
+			Required_From_Date__c = date.newInstance(2013, 1, 1),
+			Required_To_Date__c = date.newInstance(2013, 12, 31),
+			State__c = 'NC',
+			Type__c = 'Case Document');
+		
+		sc = new ApexPages.StandardController( newdoc);
+        ApexPages.currentPage().getParameters().put('save_new', '1' );
+        doceditctrl = new DocumentController2( sc );
+        doceditctrl.currentState = 'FL';
+        doceditctrl.saveDocInfo();
+        
+        
     }
 }

@@ -41,6 +41,14 @@ private class PBS_ControllerTest {
 		}
 		controller.relParty = relParty;
 		ref2 = controller.savePBS();
+
+		
+		Related_Party__c rp = PBS_controller_helper.loadRelatedParty(relParty.Id);
+		System.assertEquals( relParty.name, rp.name);
+		
+		rp = PBS_controller_helper.saveRelatedParty(rp.Id, 'rp new name', rp.type__c, '', '', '', '', '', '', '', controller.pBSId);
+		Related_Party__c rp2 = PBS_controller_helper.saveRelatedParty(null, 'another rp', rp.type__c, '', '', '', '', '', '', '', controller.pBSId);
+		System.assertEquals( rp.type__c, rp2.type__c);
 		
 		
 		Account Accnt2 = new Account(
@@ -68,13 +76,13 @@ private class PBS_ControllerTest {
 				system.debug( msg.getSummary());
     			System.Assert(msg.getSummary().contains ('already exists') || msg.getSummary().contains('guardian'));
     			System.assertEquals(ApexPages.Severity.ERROR, msg.getSeverity()); 
-			}			
-		
+			}
 		} catch (Exception e) {
 			// person is duplicate; should throw error
 			System.Assert( e.getMessage().contains('already exists'), e.getMessage() );
 		}
 		
+		System.assertEquals( false, PBS_controller_helper.isUserLevel1or2());
 		
     }
 }

@@ -269,4 +269,14 @@ public without sharing class Utility {
     public static Id getEvaluationResponseRecordType(String recordTypeName) {
         return Schema.SObjectType.Evaluation_Response__c.getRecordTypeInfosByName().get(recordTypeName).recordTypeId;
     }
+    
+    public static string getStateCodeFromName ( String statename ) {
+    	System.Debug(' getting state code for: ' + statename );
+    	if (String.IsEmpty( statename ) )
+    		return statename;
+    	else {
+    		return STATE_MAP.get(statename);
+    	}
+    }
+    
 }

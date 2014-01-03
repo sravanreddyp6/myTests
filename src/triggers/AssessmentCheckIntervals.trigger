@@ -1,3 +1,13 @@
 trigger AssessmentCheckIntervals on Assessment__c (before insert) {
-	AssessmentSetup.checkIntervals(trigger.new);
+   
+   /*
+   Assessment__c[] assessments;
+    for(Assessment__c item : trigger.new){
+        if(item.Assessment_Type_Name__c =='CANS'){
+            assessments.add(item);
+        }
+    }
+    */
+    
+    AssessmentSetup.checkIntervals(trigger.new);
 }

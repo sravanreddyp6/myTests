@@ -30,6 +30,7 @@ public with sharing class referrals_Controller{
   public Referral__c referralRecord { get; set; }
   public Person_Being_Referred__c personBeingRefRecord { get; set; }
   public List<Person_Being_Referred__c> refResults { get; set; }
+  public Contact personBeingServedRecord { get; set; }
   public Task activity { get; set; }
   public List<Task> activities { get; set; }
   public Agency_Involved_With_Individual__c agency { get; set; }
@@ -70,6 +71,12 @@ public with sharing class referrals_Controller{
   }
   private Id personBeingRefId {get; set;}
   public Id pBRId { get; set; }
+  
+    
+  private Id personBeingServedId {get; set;}
+  public Id pBSId { get; set; }
+  
+
 
   public static final String REFERRAL_EDIT_URL = '/apex/referral';
   private static final String REFERRAL_RESULTS_URL = '/apex/referralResults';
@@ -158,6 +165,19 @@ public with sharing class referrals_Controller{
           update this.referralRecord;
 
           this.personBeingRefRecord = getPBRRec();
+          populateRelParties();
+      }
+  }
+  
+   public void unlinkPBS()
+  {
+      if (this.referralRecord.oldPBS__c != null) {
+          this.referralRecord.Person_Being_Served__c = this.referralRecord.oldPBS__c;
+          this.pbsID = this.referralRecord.oldPBS__c;
+          this.referralRecord.oldPBS__c = null;
+          update this.referralRecord;
+          
+          this.personBeingServedRecord = getPBSRec();
           populateRelParties();
       }
   }
@@ -500,6 +520,7 @@ public with sharing class referrals_Controller{
 this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = UserInfo.getUserId(), RecordTypeId = Utility.getRecordTypeForTask('Referral Tasks'));
 
     getPBRId();
+    getPBSId();
     if (pBRId != null) {
       this.personBeingRefRecord = getPBRRec();
       if(this.referralRecord.id ==null && this.referralRecord.state_for_preferred_service__c == null){
@@ -509,11 +530,21 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     } else {
       this.personBeingRefRecord = new Person_Being_Referred__c();
     }
+    
+    if (pBSId != null) {
+      this.personBeingServedRecord = getPBSRec();
+      populateRelParties();
+    } else {
+      this.personBeingServedRecord = new Contact();
+    }
 
     if (this.referralRecord.Person_Being_Referred__c == null) {
       this.referralRecord.Person_Being_Referred__c = pBRId;
     }
-
+    if (this.referralRecord.Person_Being_Served__c == null) {
+      this.referralRecord.Person_Being_Served__c = pBSId;
+    }
+    
     if (this.referralRecord.Id != null) {
       populateRefRelLists();
     }
@@ -525,17 +556,25 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
 
   }
 
-  private void populateRelParties() {
-    if (this.personBeingRefRecord.Id == null) {
+   private void populateRelParties() {
+    if (this.personBeingRefRecord.Id == null && this.personBeingServedRecord.Id == null) {
       return;
     }
 
     try {
+      if(this.personBeingRefRecord.Id != null){
       this.relParties = [select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c,
-                                Person_Being_Referred__c
+                                Person_Being_Referred__c, Person_Being_Served__c
                          from Related_Party__c
                          where Person_Being_Referred__c = :this.personBeingRefRecord.Id order by Type__c, Name
                          limit 150];
+      }else if(this.personBeingServedRecord.Id != null){
+        this.relParties = [select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c,
+                                Person_Being_Referred__c, Person_Being_Served__c
+                         from Related_Party__c
+                         where Person_Being_Served__c = :this.personBeingServedRecord.Id order by Type__c, Name
+                         limit 150];
+      }
     } catch (Exception e) {
       ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
         'An error occurred retrieving Related Parties. ' + e.getMessage()));
@@ -661,7 +700,41 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     }
     return pBRRec;
   }
+  private void getPBSId() {
+    Id pBSIdParam;
 
+    try {
+      pBSIdParam = ApexPages.currentPage().getParameters().get('pBSId');
+    } catch (Exception e) {
+      ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+        'The Person Being Served record id specified is invalid. getPBSId()' + e.getMessage()));
+    }
+
+      if (this.referralRecord.Person_Being_Served__c != null && pBSIdParam!=null && pBSIdParam != this.referralRecord.Person_Being_Served__c) {
+          this.referralRecord.oldPBS__c = this.referralRecord.Person_Being_Served__c;
+          this.referralRecord.Person_Being_Served__c = pBSIdParam;
+      }
+    pBSId = (this.referralRecord.Person_Being_Served__c != null) ? this.referralRecord.Person_Being_Served__c : pBSIdParam;
+  }
+  
+  private Contact getPBSRec() {
+    Contact pBSRec;
+    try {
+      pBSRec = [select Age__c, MailingCity, BirthDate, Email,
+                       Fax, FirstName, Gender__c,
+                       LastName, Ethnicity_Picklist__c,
+                       Middle_Name__c, Phone, Primary_Language__c, SSN__c,
+                       MailingState, MailingStreet, OtherStreet, MailingPostalCode, Legal_Guardianship_Status__c, Sign_Language__c, Non_Verbal__c
+                from Contact
+                where Id = :pBSId
+                limit 1];
+    } catch (Exception e) {
+      ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+        'The Person Being Served record id specified is invalid. getpbsrec()' + e.getMessage()));
+    }
+    return pBSRec;
+  }
+    
   public void showAddActivity() {
    System.debug('showAddActivity activity: ' + this.activity);
     this.activity = new Task(Priority = 'Normal', Status='Not Started', OwnerId = UserInfo.getUserId(), RecordTypeId = Utility.getRecordTypeForTask('Referral Tasks'));
@@ -728,7 +801,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     Id refId;
 
     try {
-      if (this.personBeingRefRecord != null) {
+      if (this.personBeingRefRecord != null && this.personBeingRefRecord.Id != null) {
         update this.personBeingRefRecord;
       }
 
@@ -931,9 +1004,9 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     // This should be separate from setReferralRecordType because we don't want
     // the Record Type to be changed when the user first opens up a referral
     // record.
-    if (this.referralRecord == null || this.referralRecord.RecordTypeId == null) {
+    //if (this.referralRecord == null || this.referralRecord.RecordTypeId == null) {
         setReferralRecordType();
-    }
+    //}
     if (Utility.getRecordTypeNameForReferralObject(this.referralRecord).startsWith('Cambridge')) {
         isCambridge = true;
     }

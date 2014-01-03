@@ -39,20 +39,20 @@ public class ReferralSearchResults implements Comparable {
       
   }
   
-  public ReferralSearchResults(Account pbs, Integer matchedNum) {
+  public ReferralSearchResults(Contact pbs, Integer matchedNum) {
       this.Name = pbs.Name;
       this.FirstName = pbs.FirstName;
       this.LastName = pbs.LastName;
-      this.DateofBirth = pbs.PersonBirthDate;
-      this.Gender = pbs.Gender__pc;
-      this.Street1 = pbs.PersonMailingStreet;
-      this.City = pbs.PersonMailingCity;
-      this.State = pbs.PersonMailingState;
-      this.ZipCode = pbs.PersonMailingPostalCode;
+      this.DateofBirth = pbs.BirthDate;
+      this.Gender = pbs.Gender__c;
+      this.Street1 = pbs.MailingStreet;
+      this.City = pbs.MailingCity;
+      this.State = pbs.MailingStateCode;
+      this.ZipCode = pbs.MailingPostalCode;
       this.id = pbs.Id;
       this.Type = 'Person Being Served';
       this.matchedItems = matchedNum;
-      this.age = pbs.Age__pc;
+      this.age = pbs.Age__c;
   }
   
   // Implement the compareTo() method
@@ -71,6 +71,11 @@ public class ReferralSearchResults implements Comparable {
     }
     
     private void loadReferrals() {
-    	Referrals = Database.query('select id,Name from Referral__c where Person_Being_Referred__c = :id');
+    	if (Type == 'Person Being Referred') {
+    		Referrals = Database.query('select id,Name from Referral__c where Person_Being_Referred__c = :id');
+    	}
+    	if (Type == 'Person Being Served' ) {
+    		Referrals = Database.query('select id,Name from Referral__c where Person_Being_Served__c = :id');
+    	}
     }
 }

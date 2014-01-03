@@ -377,21 +377,26 @@ function stopRKey(evt) {
     <apex:pageMessages id="msgs"/>
 
     <apex:inputhidden value="{!Referral__c.Person_Being_Referred__c}" />
+    <apex:inputhidden value="{!Referral__c.Person_Being_Served__c}" />
+    <apex:inputhidden value="{!Referral__c.Service_Location_Program__c}" />
     <!--<apex:outputpanel style="display:none">
         <apex:inputField value="{!Referral__c.RecordType.Name}" />
     </apex:outputpanel>-->
 
     <apex:pageBlock mode="view">
       <apex:pageblockButtons location="Top" rendered="{!isEditor}">
-          <apex:commandButton value="Edit" action="{!redirectToEdit}"/>
+          <apex:commandButton value="Edit" action="{!redirectToEdit}" rendered="{!Referral__c.Referral_Status__c != 'Closed'}"/>
         <apex:commandButton value="Search for Duplicates" action="{!redirectToSearch}"/>
           <apex:commandButton value="Unlink Referral" action="{!unlinkPBR}" rendered="{!Referral__c.OldPBR__c != null}"/>
+          <apex:commandButton value="Unlink Referral" action="{!unlinkPBS}" rendered="{!Referral__c.OldPBS__c != null}"/>
+          <apex:commandButton value="Convert" action="{!redirectToConversion}"  rendered="{!Referral__c.Referral_Status__c != 'Closed'}"/>
       </apex:pageblockButtons>
 
       <apex:pageBlockSection title="Person Being Referred"
                              showHeader="true"
                              columns="2"
                              collapsible="false"
+                             rendered="{!AND(!ISNULL(personBeingRefRecord.Id), ISNULL(personBeingServedRecord.Id))}"
                              id="PBRSection">
         <apex:pageBlockSectionItem >
           <apex:outputText value="Name"/>
@@ -427,7 +432,8 @@ function stopRKey(evt) {
       </apex:pageBlockSection>
       <apex:pageBlockSection showHeader="false"
                              columns="1"
-                             collapsible="false">
+                             collapsible="false"
+                             rendered="{!AND(!ISNULL(personBeingRefRecord.Id), ISNULL(personBeingServedRecord.Id))}">
         <apex:outputField value="{!personBeingRefRecord.Additional_Information_Comments__c}" style="width: 90%;" />
       </apex:pageBlockSection>
 
@@ -435,7 +441,8 @@ function stopRKey(evt) {
                              showHeader="true"
                              columns="2"
                              collapsible="false"
-                             id="ContactSection">
+                             id="ContactSection"
+                             rendered="{!AND(!ISNULL(personBeingRefRecord.Id), ISNULL(personBeingServedRecord.Id))}">
         <apex:outputField value="{!personBeingRefRecord.Street_1__c}"/>
         <apex:outputField value="{!personBeingRefRecord.Phone__c}"/>
         <apex:outputField value="{!personBeingRefRecord.Street_2__c}"/>
@@ -452,6 +459,53 @@ function stopRKey(evt) {
         </apex:pageBlockSectionItem>
         <apex:outputField value="{!personBeingRefRecord.Fax__c}"/>
         <apex:outputField value="{!personBeingRefRecord.Home_County__c}"/>
+      </apex:pageBlockSection>
+      <apex:pageBlockSection title="Person Being Served"
+                             showHeader="true"
+                             columns="2"
+                             collapsible="false"
+                             id="PBSSection"
+                             rendered="{!!ISNULL(personBeingServedRecord.id)}">
+          <apex:pageBlockSectionItem >
+          <apex:outputText value="Name"/>
+          <apex:outputPanel styleClass="nowrap">
+            <apex:outputText label="" value="{!personBeingServedRecord.FirstName}" />&nbsp;&nbsp;
+            <apex:outputText label="" value="{!personBeingServedRecord.Middle_Name__c}" />&nbsp;&nbsp;
+            <apex:outputText label="" value="{!personBeingServedRecord.LastName}" />
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:outputField value="{!personBeingServedRecord.Ethnicity_Picklist__c}"/>
+
+        <apex:outputField value="{!personBeingServedRecord.BirthDate}"/>
+
+        <apex:outputField value="{!personBeingServedRecord.Age__c}"/>
+        <apex:outputField value="{!personBeingServedRecord.Primary_Language__c}" />&nbsp;
+        <apex:outputField value="{!personBeingServedRecord.Gender__c}"/>
+        <apex:outputField value="{!personBeingServedRecord.SSN__c}"/>
+
+      </apex:pageBlockSection>
+
+      <apex:pageBlockSection title="Contact Information"
+                             showHeader="true"
+                             columns="2"
+                             collapsible="false"
+                             id="readContactSection"
+                             rendered="{!!ISNULL(personBeingServedRecord.id)}">
+          <apex:outputField value="{!personBeingServedRecord.MailingStreet}" id="PermStreet1"/>
+        <apex:outputField value="{!personBeingServedRecord.Phone}" id="PermPhone"/>
+        <apex:outputField value="{!personBeingServedRecord.OtherStreet}" id="PermStreet2"/>
+        <apex:outputField value="{!personBeingServedRecord.Email}" id="PermEmail"/>
+        <apex:pageBlockSectionItem >
+          <apex:outputText value="City"/>
+          <apex:outputPanel styleClass="nowrap">
+            <apex:outputText value="{!personBeingServedRecord.MailingCity}"  id="PermCity"/>&nbsp;
+            <apex:outputLabel value="State" />&nbsp;
+            <apex:outputField value="{!personBeingServedRecord.MailingState}"  id="PermState"/>&nbsp;
+            <apex:outputLabel value="Zip" />&nbsp;
+            <apex:outputText value="{!personBeingServedRecord.MailingPostalCode}" style="width: 42px;"  id="PermZip"/>
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:outputField value="{!personBeingServedRecord.Fax}" id="PermFax"/>
       </apex:pageBlockSection>
 
       <apex:pageBlockSection columns="1"

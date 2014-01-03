@@ -11,6 +11,19 @@ public class ServiceAssignmentExt {
     public Id recordTypeId { get; set; }
     public RecordType theRecordType { get; set; }
     
+    public string worksheetStartDate{get;set;}
+    public Referral__c referral { get; set; }
+    public List<Action_Plan__c> plans = new List<Action_Plan__c>();
+    public List<Action_Plan__c> getplans() {return plans;}
+    public List<Progress_Note__c> notes;
+    public List<Progress_Note__c> getNotes() {return notes;}
+    public Boolean canCreatePlan { get; set; }
+    public Boolean canCreateSummary { get; set; }
+    public Boolean canEditSA { get; set; }
+    public static Boolean showdiagModal { get; set; }
+    public string diagEditId {get; set; }
+    public Service_Location__c serviceLocation { get; set; }
+    
     // Get/set info for contracts
     public List<TMN_Contract__c> contractsForThisServAssignsState { get; set; }
     public List<ContractWrapper> contractRows { get; set; }
@@ -45,6 +58,7 @@ public class ServiceAssignmentExt {
     //boolean for filtering on assessment only service codes
     public boolean AssessmentOnly {get; set;} 
     public String pageHeader { get; set; }
+    private ID pbsOwner;   
     
     // Program Xref / Event Properties
     public List<Program_Document_Xref__c> pdxs { get; set; }
@@ -60,6 +74,117 @@ public class ServiceAssignmentExt {
     public Boolean hasFidDocs { get; set; }
     public List<ProgramAssociationTableWrapper> programRows { get; set; }
     
+        private void setcanEditSA() {
+        List<UserRecordAccess> acls = [SELECT RecordId, HasEditAccess
+                FROM UserRecordAccess WHERE UserId = :UserInfo.getUserId() AND RecordId = :this.theServAssign.Id ];
+
+        if (acls.size() > 0) {
+            canEditSA = acls[0].HasEditAccess;
+        } else { canEditSA = false;}
+
+//        Schema.DescribeSObjectResult oSchema = Service_Assignment__c.sObjectType.getDescribe();
+//        canEditSA = oSchema.IsUpdateable();
+        
+    }
+    
+    private void setcanCreatePlan() {
+        Schema.DescribeSObjectResult oSchema = Action_Plan__c.sObjectType.getDescribe();
+        canCreatePlan = oSchema.IsCreateable();
+    }
+    private void setcanCreateSummary() {
+        Schema.DescribeSObjectResult oSchema = Action_Summary__c.sObjectType.getDescribe();
+        canCreateSummary = oSchema.IsCreateable();
+    }
+    
+        public Boolean showDiagnosis { get {
+        System.Debug('getting showDiagnosis with SF account = ' + pbsOwner);
+        TMN_User__c[] tmnUsers = [
+            SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:pbsOwner LIMIT 1
+        ];
+        if (tmnUsers.size() == 0) {
+            return false;
+        }
+        return tmnUsers[0].Operating_Group__c=='Redwood';
+    }}
+  
+  
+    public void showAddLocation() {
+        // empty for action support
+    }
+    
+    public list<Diagnosis__c> diagnoses{get; set;}
+    
+    public Diagnosis__c diag {
+    get {
+      if (diag == null)
+        diag = new Diagnosis__c();
+      return diag;
+    }
+    set;
+  }
+  
+  public Boolean newDiagnosis{ get; set;}
+  public void showAddDiagnosis() {
+    newDiagnosis = true;
+    showdiagModal = true;
+    diag = new Diagnosis__c();
+    System.Debug('showdiagModal='+ showdiagModal);
+  }
+
+  public void showEditDiagnosis() {
+    showdiagModal = true;
+    System.Debug('showdiagModal=' + showdiagModal);
+  }
+  
+  public void saveDiagnosis() {
+    
+    Boolean foundDiag = false;
+    Diagnosis__c dgnew = this.diag;
+    
+    // if this diagnosis contains an ID, look for it to update
+    if ( diagnoses != null ) {
+    for ( Diagnosis__c dg : diagnoses ) {
+        if ( dg.Id == dgnew.Id ) {
+           
+            // update in place
+            dg.Effective_Date__c = dgnew.Effective_Date__c;
+            dg.Axis_I__c = dgnew.Axis_I__c;
+            dg.Axis_II__c = dgnew.Axis_II__c;
+            dg.Axis_III__c = dgnew.Axis_III__c;
+            dg.Axis_IV__c = dgnew.Axis_IV__c;
+            dg.Axis_V__c = dgnew.Axis_V__c;
+            dg.Primary_Diagnosis__c = dgnew.Primary_Diagnosis__c;
+            dg.Secondary_Diagnosis__c = dgnew.Secondary_Diagnosis__c;
+            dg.Level_of_Disability__c = dgnew.Level_of_Disability__c;
+            dg.Comments__c = dgnew.Comments__c;
+            
+            foundDiag = true;
+            break;
+        
+        }
+    }
+    }
+    if ( !foundDiag )
+            this.diagnoses.add(dgnew);
+            
+    this.diag= new Diagnosis__c();
+    newDiagnosis = false;
+  }
+  
+  
+  public void createDiagnoses() {
+    if (diagnoses != null && this.theServAssign.Id != null) {
+      for (Diagnosis__c dg : diagnoses ) {
+        dg.Service_Assignment__c = this.theServAssign.Id;
+      }
+    System.Debug('DIAG LIST = ' + diagnoses);
+      upsert diagnoses;
+    }
+    
+  }
+    
+   public list<Funding_Source__c> fundingsource {get { return [select id, name, funding_source__c, payor__c, recordtype.name, service_being_funded__c, status__c from funding_source__C where service_Assignment__C = :theServAssign.id];} set;}
+    
 // END:  Parent level properties with get/set methods.
 
 
@@ -72,12 +197,13 @@ public class ServiceAssignmentExt {
                 editSA = true;
                 theServAssign = new Service_Assignment__c();
                 initialRecord = new Service_Assignment__c();
-                admission = [ SELECT Id, Name, State__c, Person_Being_Served__c FROM Admission__c WHERE Id = :ApexPages.currentPage().getParameters().get('admissionID') ];
+                admission = [ SELECT Id, Name, State__c, Person_Being_Served__c, person_being_served__r.ownerid FROM Admission__c WHERE Id = :ApexPages.currentPage().getParameters().get('admissionID') ];
                 admissionId = admission.Id;
                 theServAssign.Admission__c = admission.Id;
                 theServAssign.Name = 'TBD - Autofilled';
                 theServAssign.Person_Being_Served__c = admission.Person_Being_Served__c;
                 theServAssign.Phase__c = 0;
+                diagnoses = new List<Diagnosis__c>();
                 recordType = ApexPages.currentPage().getParameters().get('recordType');
                 theRecordType = new RecordType();
                 theRecordType = [ SELECT Id, Name, DeveloperName FROM RecordType WHERE Name = :recordType LIMIT 1 ];
@@ -86,7 +212,9 @@ public class ServiceAssignmentExt {
                 initialRecord.Admission__c = admission.Id;
                 initialRecord.Name = 'TBD - Autofilled';
                 initialRecord.Person_Being_Served__c = admission.Person_Being_Served__c;
-                initialRecord.RecordTypeId = theRecordType.Id;                
+                initialRecord.RecordTypeId = theRecordType.Id;    
+                pbsOwner = admission.Person_Being_Served__r.OwnerId;
+                            
         }
         else {
                 pageHeader = 'Service Assignment Detail';
@@ -96,21 +224,23 @@ public class ServiceAssignmentExt {
                             Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
                             Start_Date__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
                             Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c,
-                            Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name
+                            Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, referral__c, service_location__c
                                 FROM Service_Assignment__c 
-                                WHERE Id = :ApexPages.currentPage().getParameters().get('id')];             
+                                WHERE Id = :controller.getid()];             
                 initialRecord = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
                             End_Date__c, External_ID__c, Location_Region__c, Outcomes__c, Person_Being_Served__c, Phase__c, Phase_of_Treatment__c, Program__c,
                             Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
                             Start_Date__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
                             Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c,
-                            Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name
+                            Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, referral__c, service_location__c
                                 FROM Service_Assignment__c 
-                                WHERE Id = :ApexPages.currentPage().getParameters().get('id')];
+                                WHERE Id = :controller.getid()];
                 admission = [ SELECT Id, Name, State__c, Person_Being_Served__c FROM Admission__c WHERE Id = :theServAssign.Admission__c ];
                 admissionId = admission.Id;
                 recordType = theServAssign.RecordType.Name;
                 recordTypeId = theServAssign.RecordTypeId;
+                pbsOwner = theServAssign.Person_Being_Served__r.OwnerId;
+                
         }
     
         System.debug('recordType BEFORE LoadData: ' + recordType);
@@ -121,6 +251,9 @@ public class ServiceAssignmentExt {
         
         System.debug('recordType AFTER LoadData: ' + recordType);
         System.debug('AssessmentOnly AFTER LoadData: ' + AssessmentOnly);       
+        setcanEditSA();
+        setcanCreatePlan();
+        setcanCreateSummary();
         
         
         getContractsAndXrefs();
@@ -281,6 +414,123 @@ public class ServiceAssignmentExt {
     }
 // END:  Method for displaying error / message text in the message take on VF page.
 
+// START: Objective Worksheet Lists
+// There is some duplication here but this is getting very close to release so I don't want to 
+// break anything 
+	public boolean showWorksheetBlocks {
+		get {
+			return activePlan != null && isRedwood();
+		}
+	} 
+	
+    private boolean isRedwood(){
+        TMN_User__c[] tmnUsers = [
+            SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:pbsOwner LIMIT 1
+        ];
+        if (tmnUsers.size() == 0) {
+            return false;
+        }
+        return tmnUsers[0].Operating_Group__c=='Redwood';
+    }
+
+    public boolean canCreateWorksheet {
+		get {
+			return true;
+		}
+	} 
+	
+    public Action_Plan__c activePlan;
+    private List<Action_Plan_Worksheet__c> skillws;
+    private List<Action_Plan_Worksheet__c> behaviorws;
+
+    public List<Action_Plan_Worksheet__c> SkillWorksheets {
+		get {
+            return skillws;
+		}
+	}
+    
+//    public PageReference NewSkillWorksheet(){
+//        return null;
+//    } 
+	
+	public List<Action_Plan_Worksheet__c> BehaviorWorksheets {
+		get {
+			return behaviorws;
+		}
+	}
+    
+    public List<myDate> getuncheckedWeeks(){
+        if (activePlan == null) { return null; }
+        Date firstMonday = (activePlan.Effective_Date__c - 1).toStartOfWeek() +1;
+        Date lastMonday = (activePlan.Target_Date__c != null ? activePlan.Target_Date__c : Date.Today() - 1).toStartOfWeek() +1;
+        List<myDate> dates = new List<myDate>();
+        Set<Date> existing = new Set<Date>();
+        for(Action_Plan_Worksheet__c iter: skillws){
+            existing.Add(iter.Start_Date__c);
+        }
+        for(Date monday=firstMonday;monday <= lastMonday; monday = monday + 7){
+            if (!existing.Contains(monday)){
+                dates.Add(new myDate(monday));
+            }
+        }
+        return dates;
+    }    
+
+    public List<myDate> getBehaviorMonthsAvailable(){
+        if (activePlan == null) { return null; }
+        Date first1day = activePlan.Effective_Date__c.toStartOfMonth();
+        Date lastday = activePlan.Target_Date__c != null ? activePlan.Target_Date__c : Date.Today() ;
+        List<myDate> dates = new List<myDate>();
+        Set<Date> existing = new Set<Date>();
+        for(Action_Plan_Worksheet__c iter: Behaviorws){
+            existing.Add(iter.Start_Date__c);
+        }
+        for(Date monday=first1day;monday <= lastday; monday = monday.addmonths(1)){
+            if (!existing.Contains(monday)){
+                dates.Add(new myDate(monday));
+            }
+        }
+        return dates;
+    }
+    
+    public class myDate{
+        private Date internaldate;
+        
+        public myDate(Date initdate){
+            internaldate = initdate;
+        }
+        
+        public string UserDate{
+            get { return internaldate.format();}
+        }
+        public string ParsableDate{
+            get { return internaldate.month() + '/' + internaldate.day() + '/' + internaldate.year();}
+        }
+    }
+       
+    public PageReference newSkillWorksheet(){
+        if (activePlan == null) { return null; }
+        // any preconditions??
+        Action_Plan_Worksheet__c newWorksheet = new Action_Plan_Worksheet__c();
+        newWorksheet.Action_Plan__c = activePlan.Id;
+        newWorksheet.Start_Date__c = Date.Parse(worksheetStartDate);
+        newWorksheet.RecordTypeid = [select id from recordtype where name = 'Weekly Skill Result' and SobjectType = 'Action_plan_worksheet__c' limit 1].id;
+        insert newWorksheet;
+        return new PageReference('/apex/WeeklySkillTracking?id=' + newworksheet.Id);
+    } 
+
+    public PageReference newBehaviorWorksheet(){
+        if (activePlan == null) { return null; }
+        // any preconditions??
+        Action_Plan_Worksheet__c newWorksheet = new Action_Plan_Worksheet__c();
+        newWorksheet.Action_Plan__c = activePlan.Id;
+        newWorksheet.Start_Date__c = Date.Parse(worksheetStartDate);
+        newWorksheet.RecordTypeid = [select id from recordtype where name = 'Monthly Behavior Result' and SobjectType = 'Action_plan_worksheet__c' limit 1].id;
+        insert newWorksheet;
+        return new PageReference('/apex/BehaviorTracking?id=' + newworksheet.Id);
+    } 
+    
+// END: Objective Worksheet Lists 
 
 // START:  Contract / Service Assignment Cross-Reference Methods    
     public PageReference getContractsAndXrefs() {
@@ -392,7 +642,7 @@ public class ServiceAssignmentExt {
     public void LoadData(Service_Assignment__c localRecord){
        currentID = localRecord.Id;
        if(newSA==false) {
-            currentRecord = [Select Program__c, RecordType.Name, Service_Line__c, Admission__r.State__c, Location_Region__c From Service_Assignment__c Where Id = :currentID Limit 1];
+            currentRecord = [Select Program__c, RecordType.Name, Service_Line__c, Admission__r.State__c, Location_Region__c, service_location__c  From Service_Assignment__c Where Id = :currentID Limit 1];
             currentState = currentRecord.Admission__r.State__c;
        }
        else {
@@ -438,7 +688,38 @@ public class ServiceAssignmentExt {
                 SelectOption SO = new SelectOption(local, local);
                 MyPrograms.Add(SO);
             }
+
+		if ( theservassign.referral__c != null)                
+            referral = [ select id, name, referral_date__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from referral__c where id= :theservassign.referral__c ];
+        else
+            referral = null;
+            
+         if (!newSA) {                    
+        admission = [ SELECT Id, Name, State__c, Person_Being_Served__c FROM Admission__c WHERE Id = :theServAssign.Admission__c ];
+        plans = [select name, id, createddate, status__c, effective_date__c, target_date__c from Action_Plan__c where Service_Assignment__c = :currentID Order by CreatedDate DESC];
+        for(Action_Plan__c aplan: plans){
+        	if (aplan.Status__c == 'Active Final'){
+        		activePlan = aplan;
+        		break;
+        	}
+        }
+             if (null != activePlan){
+                 skillws = [select Action_Plan__r.Name, Start_Date__c
+                            from Action_Plan_Worksheet__c
+                            where RecordType.Name = 'Weekly Skill Result'
+                            and Action_Plan__c = :activePlan.id];
+                 behaviorws = [select Action_Plan__r.Name, Start_Date__c
+                               from Action_Plan_Worksheet__c
+                               where RecordType.Name = 'Monthly Behavior Result'
+                               and Action_Plan__c = :activePlan.id];     
+             }
+        notes = [select name, id, createddate, createdby.name, action_plan__r.Name from Progress_Note__c where Service_Assignment__c = :currentID Order by CreatedDate DESC];
+        diagnoses = [select id, Service_Assignment__r.Name, Service_Assignment__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__c = :currentID];
+        }
+        if ( currentrecord.Service_Location__c != null)
+            serviceLocation = [ select ID, Name, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c from Service_Location__c where ID = :currentrecord.Service_Location__c];
                     
+                                
     } 
 
     public void loadAvailableCodes () {
@@ -613,6 +894,26 @@ public class ServiceAssignmentExt {
            editSA = true;
     } 
 
+//    public PageReference CreateSummary() {
+//        Action_Summary__c report = new Action_Summary__c();
+//        report.Service_Assignment__c = theServAssign.id;
+//        report.Start_Date__c = Date.today().toStartofMonth();
+//        report.End_Date__c = report.Start_Date__c.Addmonths(1);
+//        insert report;
+//        return new PageReference('/apex/ActionSummaryReport?id=' + report.id);
+//    }
+    
+//    public PageReference newActionSummary() {
+//        return new PageReference('/apex/ActionSummaryCreate');
+//    }
+    
+//    public List<Action_Summary__c> getSummaries(){
+//        return [select status__c, name
+//                  from Action_Summary__c
+//                 where Service_Assignment__c = :currentrecord.id];
+//    }
+
+
     public PageReference ResetPage() {
 
 //      ServAssignController.reset();
@@ -669,12 +970,50 @@ public class ServiceAssignmentExt {
             else {
                 system.debug('What is s.RecordType.Name before the upsert?: ' + s.RecordType.Name);
                 system.debug('What is s.RecordType before the upsert?: ' + s.RecordType);
+                
+                 if ( showDiagnosis ){
+
+                       // update program string from service location   
+                       // System.Debug('Service location is: ' + theservassign.service_location__c);              
+                        if ( theServAssign.Service_Location__c != null && String.valueOf(theServAssign.Service_Location__c) != '') {
+        
+                                Service_Location__c sl = [select id, alias__c, city__c, program__c, service_value__c from service_location__c where id = :theServAssign.Service_Location__c];
+                                if (sl != null ) {
+                                        s.Program_Detail__c = sl.program__c;
+                                        s.Program__c = sl.Alias__c;
+                                        s.Location_Region__c = sl.City__c;
+                                        s.Service_Line__c = sl.Service_Value__c;
+                                }
+                        } 
+                } else {
+                        s.Program__c = currentProgram;
+                        s.Location_Region__c = currentLocation;
+                        s.Service_Line__c = currentServiceLine;
+                }
+                
+                
+                
                 upsert s;
                 
-                saveContractSelections();
-                saveServiceCodeSelections();
+                if ( showDiagnosis )
+                    createDiagnoses();
+                else {
+                    saveServiceCodeSelections();
+                    saveContractSelections();
+                }
+                        
                 editSA = false;
-                theServAssign = s;
+                theServAssign = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
+                            End_Date__c, External_ID__c, Location_Region__c, Outcomes__c, Person_Being_Served__c, Phase__c, Phase_of_Treatment__c, Program__c,
+                            Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
+                            Start_Date__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
+                            Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c,
+                            Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, referral__c, service_location__c
+                                FROM Service_Assignment__c 
+                                WHERE Id = :s.id]; 
+                                
+                LoadData(theServAssign);
+
                 if(theServAssign.RecordType.Name=='Assessment Only') {
                         AssessmentOnly = true;
                 }
@@ -709,5 +1048,48 @@ public class ServiceAssignmentExt {
     
     } 
 // END: Methods added by J. Gilliam in August '13 update for page state and saving.   
+    public id getAck_Overview(){
+        id theId;
+        theID = [select id, developername from report where developername = 'Action_Plan_Acknowledgment_Overview_Repo' limit 1].id;
+        
+        return theId;
+    
+    
+    }
 
+    public pagereference NewPlan(){
+        action_plan__c AP = new Action_plan__c();
+        AP.Service_Assignment__c = this.currentRecord.Id;
+        
+        insert AP;
+        
+        PageReference ref =  new ApexPages.StandardController(AP).view() ;
+        ref.getparameters().put('retURL','/apex/ServiceAssignmentEditNew?id='+this.currentRecord.Id);
+        return ref; 
+    
+    }
+    
+       
+    @RemoteAction
+    public static Diagnosis__c loadDiagnosis(string diagnosisId) {
+            Diagnosis__c dg = 
+                [select Id, Effective_Date__c, Axis_I__c, Axis_II__c, Axis_III__c, Axis_IV__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Level_of_Disability__c, Comments__c, Service_Assignment__c
+                 from Diagnosis__c where id = :diagnosisId];
+            return dg;
+     }
+    
+ @RemoteAction
+    public static Service_Location__c loadServiceLocation(string locationId) {
+        Service_Location__c loc = [ select ID, Name, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c from Service_Location__c where ID = :locationId];
+        return loc;
+    }
+    
+    @RemoteAction
+    public static boolean saveServiceLocation(string saID, string locID) {
+        Service_Assignment__c sa = [ select id, service_location__c from Service_Assignment__c where id = :saID];
+        sa.Service_Location__c = locID;
+        upsert sa;
+        return true;
+   }
+    
 }

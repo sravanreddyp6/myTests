@@ -29,7 +29,7 @@ public with sharing class PersonsBeingServedListControllerTest {
     }
     static testmethod void getPlan() {
         beforeRun(1);
-        Plan__c plan = [SELECT ID FROM Plan__c LIMIT 1];
+        Action_Plan__c plan = [SELECT ID FROM Action_Plan__c LIMIT 1];
         System.assertEquals(plan.ID, PersonsBeingServedListController.getPlan(plan.ID).ID);
     }
 
@@ -57,8 +57,8 @@ public with sharing class PersonsBeingServedListControllerTest {
             Person_Being_Served__c=accts[0].PersonContactId
         );
         insert sa;
-        Plan__c plan = new Plan__c(
-            Admission__c=admission.ID
+        Action_Plan__c plan = new Action_Plan__c(
+            Service_Assignment__c=sa.ID
         );
         insert plan;
         return accts;

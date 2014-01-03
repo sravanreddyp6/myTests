@@ -46,6 +46,8 @@ public with sharing class CareMeridianEvaluationViewController {
 
     public CareMeridianEvaluationViewController(ApexPages.standardController stdController) {
         this.stdController = stdController;
+        // Put all the fields in context
+        Map<String, Schema.SObjectField> fieldMap = Schema.SObjectType.Evaluation__c.fields.getMap();
         evaluation = (Evaluation__c) stdController.getRecord();
         serializedAnnotations = JSON.serialize(annotations);
         currentRelatedParty = new Related_Party__c();
