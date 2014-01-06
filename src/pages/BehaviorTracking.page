@@ -70,14 +70,19 @@
     <apex:pageBlock >
         <apex:pageBlockSection columns="1">
             <apex:repeat var="otherobjectives" value="{!objectives}">
-                <apex:pageBlockSectionItem rendered="{!editable}">
+                <apex:pageBlock rendered="{!editable}">
+                    <apex:commandButton action="{!PrintOtherObjective}"
+                        value="Print:"
+                        rerender="wholeform" status="waitStatus">
+                        <apex:param name="objectiveIdparam" assignTo="{!objectiveIdChosen}" value="{!otherobjectives.id}"/>
+                    </apex:commandButton>
                     <apex:commandButton action="{!saveAndSwitchObjective}"
                         value="Save & Go To:"
                         rerender="wholeform" status="waitStatus">
                         <apex:param name="objectiveIdparam" assignTo="{!objectiveIdChosen}" value="{!otherobjectives.id}"/>
                     </apex:commandButton>
                     <apex:outputText >{!otherobjectives.Description__c}</apex:outputText>
-                </apex:pageBlockSectionItem>
+                </apex:pageBlock>
                 <apex:pageBlockSectionItem rendered="{!!editable}">
                     <apex:commandButton action="{!switchObjective}"
                         value="Go To:"
@@ -93,7 +98,7 @@
     <div class="pbHeaderButton">
       <apex:outputpanel id="xmlGenerate">
           <apex:commandButton id="xmlGenerateCmd" action="{!anotoGenerate}" value="Print Form" rerender="xmlGenerate" status="waitStatus" rendered="{!editable}"/>
-<!--          <apex:outputLink value="{!URLFOR($Action.Attachment.Download, anotoXml.id)}" target="_blank" rendered="{!!isnull(anotoXml)}">{!anotoXml.name}</apex:outputLink> -->
+<!--           <apex:outputLink value="{!URLFOR($Action.Attachment.Download, anotoXml.id)}" target="_blank" rendered="{!!isnull(anotoXml)}">{!anotoXml.name}</apex:outputLink>--> 
           <apex:outputPanel rendered="{!!isblank(pdfExistenceUrl)}">
               <script type="text/javascript">
                downloadPdf("{!pdfExistenceUrl}", 2000, 5);
@@ -136,19 +141,19 @@
                <apex:repeat value="{!table.PartOneSecondKeys}" var="day">
                     <td style="text-align:center" class="{!table.rows[time].Items[day].DayofWeek + ' ' + IF(table.rows[time].Items[day].Active,'active', 'inactive')}">
                         <apex:inputField value="{!table.rows[time].Items[day].DataObject.Occurrences__c}"
-                                rendered="{!editable && table.rows[time].Items[day].Active && !ObjectiveIsTimeBased}"
+                                rendered="{!editable && table.rows[time].Items[day].Active && !table.IsTimeBased}"
                                 styleClass="occurrencesInput"
                                 />
                         <apex:inputField value="{!table.rows[time].Items[day].DataObject.Occurred__c}"
-                                rendered="{!editable && table.rows[time].Items[day].Active && ObjectiveIsTimeBased}"
+                                rendered="{!editable && table.rows[time].Items[day].Active && table.IsTimeBased}"
                                 styleClass="occurredInput"
                                 />
                         <apex:outputField value="{!table.rows[time].Items[day].DataObject.Occurrences__c}"
-                                rendered="{!!editable && table.rows[time].Items[day].Active && !ObjectiveIsTimeBased}"
+                                rendered="{!!editable && table.rows[time].Items[day].Active && !table.IsTimeBased}"
                                 styleClass="occurrencesOutput"
                                 />
                         <apex:OutputField value="{!table.rows[time].Items[day].DataObject.Occurred__c}"
-                                rendered="{!!editable && table.rows[time].Items[day].Active && ObjectiveIsTimeBased}"
+                                rendered="{!!editable && table.rows[time].Items[day].Active && table.IsTimeBased}"
                                 styleClass="occurredOutput"
                                 />
                    </td>
@@ -182,19 +187,19 @@
                <apex:repeat value="{!table.PartTwoSecondKeys}" var="day">
                     <td style="text-align:center" class="{!table.rows[time].Items[day].DayofWeek + ' ' + IF(table.rows[time].Items[day].Active,'active', 'inactive')}">
                         <apex:inputField value="{!table.rows[time].Items[day].DataObject.Occurrences__c}"
-                                rendered="{!editable && table.rows[time].Items[day].Active && !ObjectiveIsTimeBased}"
+                                rendered="{!editable && table.rows[time].Items[day].Active && !table.IsTimeBased}"
                                 styleClass="occurrencesInput"
                                 />
                         <apex:inputField value="{!table.rows[time].Items[day].DataObject.Occurred__c}"
-                                rendered="{!editable && table.rows[time].Items[day].Active && ObjectiveIsTimeBased}"
+                                rendered="{!editable && table.rows[time].Items[day].Active && table.IsTimeBased}"
                                 styleClass="occurredInput"
                                 />
                         <apex:outputField value="{!table.rows[time].Items[day].DataObject.Occurrences__c}"
-                                rendered="{!!editable && table.rows[time].Items[day].Active && !ObjectiveIsTimeBased}"
+                                rendered="{!!editable && table.rows[time].Items[day].Active && !table.IsTimeBased}"
                                 styleClass="occurrencesOutput"
                                 />
                         <apex:OutputField value="{!table.rows[time].Items[day].DataObject.Occurred__c}"
-                                rendered="{!!editable && table.rows[time].Items[day].Active && ObjectiveIsTimeBased}"
+                                rendered="{!!editable && table.rows[time].Items[day].Active && table.IsTimeBased}"
                                 styleClass="occurredOutput"
                                 />
                    </td>
