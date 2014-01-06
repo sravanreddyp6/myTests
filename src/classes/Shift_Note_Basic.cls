@@ -179,6 +179,10 @@ public with sharing class Shift_Note_Basic {
         PageReference pageRef = new PageReference('/apex/Notes_ProgressNote_Create_Flavor_PDF');
         PageReference pageRefFlavor = ApexPages.currentPage();
         pageRef .getParameters().put('id', note.id);
+        if(note.Number_of_Required_Signatures__c == 0 && note.RecordType.Name == 'FL-FSS Progress Note' ){
+            PageRefFlavor = new PageReference('/apex/Notes_ProgressNote_FL_FFS');
+            pageRefFlavor .getParameters().put('id', note.id);
+        }
         
         try{
 
@@ -202,10 +206,8 @@ public with sharing class Shift_Note_Basic {
             Attachment attachmentPDF = new Attachment();
             attachmentPDF.parentId = note.id;
             attachmentPDF.Name = note.Person_Being_Served__r.Name + ' - ' + note.RecordType.Name +' - (' + date.today().month() + '-' + date.today().day() + '-' + date.today().year() + ').pdf';
-            if (!Test.isRunningTest()) {
-            	attachmentPDF.body = Note_Pdf_ref.getContent();
-            	insert attachmentPDF;
-            }
+            attachmentPDF.body = Note_Pdf_ref.getContent();
+            insert attachmentPDF;
             /**/
             if(!note.No_approval_Needed__c){
                 return new PageReference('/p/process/Submit?retURL=%2F'+note.id+'&id='+note.id);

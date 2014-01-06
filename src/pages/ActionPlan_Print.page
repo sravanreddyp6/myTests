@@ -127,7 +127,10 @@ td{
                 {!$ObjectType.Action_Plan__c.fields.Status__c.Label}
             </apex:outputPanel>         
         <apex:outputField value="{!Action_Plan__c.Status__c}"/> 
-                
+            <apex:outputPanel >
+                {!$ObjectType.Action_Plan__c.fields.Baseline__c.Label}
+            </apex:outputPanel>         
+        <apex:outputField value="{!Action_Plan__c.Baseline__c}"/>                         
         </apex:panelGrid>    
         
         <br/>
@@ -208,31 +211,7 @@ td{
 
 </div> 
 
-<!--
-<apex:pageBlock title="Skills Worksheets" rendered="{!showWorksheets}"> 
-    <apex:pageBlockSection columns="1" collapsible="false" >
-        <apex:dataList value="{!WeekResults}" var="resultset">
-            <apex:commandLink action="{!GotoSkillWorksheet}">
-                <apex:param assignTo="{!skillWorksheet}" name="skillWorksheet" value="{!resultset.Name}"/>
-                    <apex:outputText value="{0, date, E - MM/dd/yyyy}">
-                        <apex:param value="{!resultset.Start_Date__c}" />
-                    </apex:outputText> 
-            </apex:commandLink>
-        </apex:dataList>
-    </apex:pageBlockSection>
-    </apex:pageBLock>
-    rendered="{!AllAcks.size > 0}">
-    -->
-    <h1>
-    Acknowledgments
-    </h1>
- 
- <apex:dataTable value="{!AllAcks}" var="a">
-            <apex:column style="width: 150px;" value="{!a.User__c}" headerValue="Staff Name "/>
-            <apex:column style="width: 150px;" value="{!a.Initials__c}" />
-            <apex:column value="{!a.Date_Acknowledged__c }"/> 
- 
- </apex:dataTable>
+
 
     
 

@@ -325,8 +325,9 @@ table#persons_table.dataTable {
                                                 name="State" />
                                         </apex:outputLink>&nbsp;
                                         <apex:outputLink styleClass="servicelink" value="/{!jo.Id}#worksheets"
-                                            rendered="{! jo.Status__c='Active Final' && seeWorksheets }">
+                                            rendered="{! jo.Status__c='Active Final' && seeWorksheets && jo.Service_Assignment__r.Admission__r.State__c != 'AZ'}">
                                             View Current Worksheets
+                                            
                                         </apex:outputLink></td>
                                     <td style="display:none;">{!jo.Service_Assignment__r.Admission__r.Status__c}</td>
                                 </tr>

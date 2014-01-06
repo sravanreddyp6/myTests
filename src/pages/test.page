@@ -1,5 +1,35 @@
-<apex:page >
-    <chatter:follow entityId="0F9U0000000POjc"/>
-    <chatter:feed entityId="0F9U0000000POjc"/>
-    
+<apex:page standardController="Admission__c" extensions="testdeleteaccess" >
+{!Admission__c.name}
+<apex:form >
+    <apex:commandButton value="delete" action="{!delete}"/>
+    <apex:commandButton value="my delete" action="{!mydelete}"/>
+</apex:form>
+accessible    {!$ObjectType.Admission__c.accessible}
+<br/>
+update {!$ObjectType.Admission__c.updateable}
+<br/>
+delete {!$ObjectType.Admission__c.Deletable}
+<br/>
+create {!$ObjectType.Admission__c.Createable}
+<br/><br/>
+Contact -
+<br/>
+accessible    {!$ObjectType.contact.accessible}
+<br/>
+update {!$ObjectType.contact.updateable}
+<br/>
+delete {!$ObjectType.contact.Deletable}
+<br/>
+create {!$ObjectType.contact.Createable}
+
+<br/><br/>
+Account -
+<br/>
+accessible    {!$ObjectType.account.accessible}
+<br/>
+update {!$ObjectType.account.updateable}
+<br/>
+delete {!$ObjectType.account.Deletable}
+<br/>
+create {!$ObjectType.account.Createable}
 </apex:page>

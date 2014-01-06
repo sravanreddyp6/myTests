@@ -1,6 +1,5 @@
 <apex:page standardController="Action_Plan_Worksheet__c" extensions="WeeklySkillTracking_Form" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab">
 <apex:stylesheet value="{!$Resource.mentoresdcss}" />
-<apex:includeScript value="{!$Resource.jquery}"/>
 <apex:includeScript value="{!$Resource.AnotoJS}"/>
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 
@@ -14,22 +13,22 @@
     function unloadMessage() {
         return 'Your changes will be lost if you leave without pressing the Save button.  Do you wish to continue?';
     }
-    
+
     j$(document).ready(function() {
         j$(':input').bind("change", function() { setConfirmUnload(true); }); // Prevent accidental navigation away
         j$('[id *=formSave]').bind("click", function() { setConfirmUnload(false); }); // Ok to save
         j$('[id *=formSave2]').bind("click", function() { setConfirmUnload(false); }); // Ok to save
     });
 
-// salesforce ids have lots of colons    
+// salesforce ids have lots of colons
     function idSelector(rawid){
         return "#" + escapeSelector(rawid);
     }
-    
+
     function escapeSelector(raw){
         return raw.replace(/([\/\:])/g, "\\\\$1")
     }
-    
+
     function skillStatusChanged() {
             var escapeddayclass = escapeSelector(dayclass(j$(this)));
             if (StatusDisablesAttemptsAndMetObjective(j$(this).val())){
@@ -38,19 +37,22 @@
             } else {
                 j$('.metobjectiveinput.' + escapeddayclass , j$(this).parent().parent()).prop('disabled', false);
                 j$('.attemptinput.' + escapeddayclass , j$(this).parent().parent()).prop('disabled', false);
-            }            
+            }
     }
-    j$().ready(function() {
-        j$('.statusinput').bind("change", skillStatusChanged).each(skillStatusChanged)        
-    });
-    
+    j$().ready(preparePage);
+
+    function preparePage() {
+        j$('body').on("change", ".statusinput", skillStatusChanged);
+        j$('.statusinput').each(skillStatusChanged)
+    }
+
     function StatusDisablesAttemptsAndMetObjective(value) {
         var statechar = value.substring(0,1);
         return statechar == "L" ||
             statechar == "S" ||
             statechar == "H"; // covers HL too
     }
-    
+
     function dayclass(jobj){
         var classes = jobj.attr('class').split(' ');
         for(var ii=0;ii< classes.length;ii++){
@@ -64,19 +66,19 @@
 <style>
 .attemptinput {
     width:20px;
-    
+
 }
 .statusinput {
     width:75px;
-    
+
 }
 .metobjectiveinput {
     width:40px;
-    
+
 }
 .initialsinput {
     width:35px;
-    
+
 }
 .lastfieldofday {
     border-right:1px solid black;
@@ -98,8 +100,8 @@
 
 
 
-   <c:PersonalRecord pbsId="{!personId}" parentPage="SkillsTracking" apId="{!Action_Plan_Worksheet__c.Action_Plan__c}" 
-                    servAssignId="{!Action_Plan_Worksheet__c.Action_Plan__r.Service_Assignment__c}" 
+   <c:PersonalRecord pbsId="{!personId}" parentPage="SkillsTracking" apId="{!Action_Plan_Worksheet__c.Action_Plan__c}"
+                    servAssignId="{!Action_Plan_Worksheet__c.Action_Plan__r.Service_Assignment__c}"
                     admId="{!Action_Plan_Worksheet__c.Action_Plan__r.Service_Assignment__r.Admission__c}"/>
   <br />
   <apex:pageMessages ></apex:pageMessages>
@@ -110,12 +112,12 @@
           <apex:commandButton id="xmlGenerateCmd" action="{!anotoGenerate}" value="Print Form" rerender="xmlGenerate" status="waitStatus"/>
 <!--           <apex:outputLink value="{!URLFOR($Action.Attachment.Download, anotoXml.id)}" target="_blank" rendered="{!!isnull(anotoXml)}">{!anotoXml.name}</apex:outputLink>-->
           <apex:outputPanel rendered="{!!isblank(pdfExistenceUrl)}">
-          	<script type="text/javascript">
+              <script type="text/javascript">
                downloadPdf("{!pdfExistenceUrl}", 2000, 10);
-          	</script>
+              </script>
           </apex:outputPanel>
       </apex:outputpanel>
-      <apex:commandButton id="formSave" action="{!mySave}" value="Save " status="waitStatus" rendered="{!editable}" rerender="theForm"/>
+      <apex:commandButton id="formSave" action="{!mySave}" oncomplete="preparePage();" value="Save " status="waitStatus" rendered="{!editable}" rerender="theForm"/>
     </div>
         <div class="checksheetdate">
             Week of <apex:outputText value="{0, date, MMM dd yyyy}">
@@ -144,7 +146,7 @@
                    <td>Y = Yes<br />
                    N = No</td>
                    </tr>
-                   </table>    
+                   </table>
         </div>
         <div class="prompts" style="margin:0 auto; width:30%">
         <table style="padding:10px"><tr><td rowspan="2" style="vertical-align:top"><b>Statuses</b></td>
@@ -154,12 +156,12 @@
                    HL = Holiday (Day Treatment only)<br />
                    </td></tr>
                    </table>
-        </div>     
+        </div>
         <div style="clear:both;"></div>
         </div>
         <br />
-        
-      
+
+
       <apex:repeat value="{!objectivesMap}" var="objectivewrp">
       <div class="objective"> <!--  sfid="{!objectivewrp.Objective.id}"-->
       <table style="padding-top 10px; padding-bottom: 10px">
@@ -182,19 +184,19 @@
       </tr>
       <tr>
           <apex:repeat value="{!DaysOfWeek}" var="day">
-              <td style="text-align:center"> 
+              <td style="text-align:center">
                   <apex:inputField value="{!objectivewrp.ResultsMap[day].Attempts__c}" rendered="{!editable && objectivewrp.ResultsMap[day].Day__c = day}" styleClass="attemptinput day{!day}"/>
                   <apex:outputField value="{!objectivewrp.ResultsMap[day].Attempts__c}" rendered="{!!editable && objectivewrp.ResultsMap[day].Day__c = day}" styleClass="attemptoutput day{!day}"/>
               </td>
-              <td style="text-align:center"> 
+              <td style="text-align:center">
                   <apex:inputField value="{!objectivewrp.ResultsMap[day].Status__c}" rendered="{!editable && objectivewrp.ResultsMap[day].Day__c = day}" styleClass="statusinput day{!day}"/>
                   <apex:outputField value="{!objectivewrp.ResultsMap[day].Status__c}" rendered="{!!editable && objectivewrp.ResultsMap[day].Day__c = day}" styleClass="statusoutput day{!day}"/>
               </td>
-              <td style="text-align:center"> 
+              <td style="text-align:center">
                   <apex:inputField value="{!objectivewrp.ResultsMap[day].Met_Objective__c}" rendered="{!editable && objectivewrp.ResultsMap[day].Day__c = day}" styleClass="metobjectiveinput day{!day}"/>
                   <apex:outputField value="{!objectivewrp.ResultsMap[day].Met_Objective__c}" rendered="{!!editable && objectivewrp.ResultsMap[day].Day__c = day}" styleClass="metobjectiveoutput day{!day}"/>
               </td>
-              <td style="text-align:center" class="lastfieldofday"> 
+              <td style="text-align:center" class="lastfieldofday">
                   <apex:inputField value="{!objectivewrp.ResultsMap[day].Initials__c}" rendered="{!editable && objectivewrp.ResultsMap[day].Day__c = day}" styleClass="initialsinput day{!day}"/>
                   <apex:outputField value="{!objectivewrp.ResultsMap[day].Initials__c}" rendered="{!!editable && objectivewrp.ResultsMap[day].Day__c = day}" styleClass="initialsoutput day{!day}"/>
               </td>
@@ -203,18 +205,18 @@
       </table>
       <br />
       </apex:repeat>
-      
+
       <div style="float:right"><apex:commandButton id="formSave2" action="{!mySave}" value="Save " status="waitStatus" rendered="{!editable}" rerender="theForm"/></div>
       </apex:pageBlock>
   </apex:form>
-	<apex:actionStatus id="waitStatus" >
-	    <apex:facet name="start">
-	        <div  class="thinking">
-	            <div class="thinkingwheel">    
-	                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
-	            </div>
-	        </div>   
-	    </apex:facet>  
-	    <apex:facet name="stop"> </apex:facet>         
-	</apex:actionStatus>
+    <apex:actionStatus id="waitStatus" >
+        <apex:facet name="start">
+            <div  class="thinking">
+                <div class="thinkingwheel">
+                    <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+                </div>
+            </div>
+        </apex:facet>
+        <apex:facet name="stop"> </apex:facet>
+    </apex:actionStatus>
 </apex:page>

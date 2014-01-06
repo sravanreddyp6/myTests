@@ -2,6 +2,7 @@
   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
   <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+  
 <apex:stylesheet value="{!$Resource.mentoresdcss}" />
    <style type="text/css">
     .nowrap {
@@ -139,34 +140,34 @@ function stopRKey(evt) {
                              id="pbsOutPutsectionId" >
 
     <apex:repeat value="{!$ObjectType.Contact.FieldSets.PBS_Basic}" var="f">
-    	
-	        <apex:outputField value="{!Contact[f]}"  rendered="{! NOT(pbsEditModeOn) && (f != 'Primary_Language__c')}" />
-	        <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn && (f != 'Primary_Language__c')}" required="{!OR(f.required, f.dbrequired)}"/>
-	        
-	        	        
-	        <apex:pageBlockSectionItem rendered="{!  NOT(pbsEditModeOn) && (f == 'Primary_Language__c')}">
-			<apex:outputText value="Primary Language"/>
-	        <apex:outputPanel styleClass="nowrap">
-	        <apex:outputField value="{!Contact[f]}"  /> &nbsp;&nbsp;
- 	        <apex:outputLabel value="Non-Verbal" />&nbsp;
-	        <apex:outputField value="{!Contact.Non_Verbal__c}"  rendered="{! NOT(pbsEditModeOn) && (f == 'Primary_Language__c')}" />&nbsp;
-	        <apex:outputLabel value="Sign Language" />&nbsp;
-			<apex:outputField value="{!Contact.Sign_Language__c}"  rendered="{! NOT(pbsEditModeOn) && (f == 'Primary_Language__c')}" />
-			</apex:outputPanel>
-			</apex:pageBlockSectionItem>
-			
-			<apex:pageBlockSectionItem rendered="{!  pbsEditModeOn && (f == 'Primary_Language__c')}">
-			<apex:outputText value="Primary Language"/>
-			<apex:outputPanel styleClass="nowrap">
-	        <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn && (f == 'Primary_Language__c')}" required="{!OR(f.required, f.dbrequired)}"/> &nbsp;&nbsp;
-	        <apex:outputLabel value="Non-Verbal" />&nbsp;
-	        <apex:inputField value="{!Contact.Non_Verbal__c}"  rendered="{!pbsEditModeOn && (f == 'Primary_Language__c')}" />&nbsp;
-	        <apex:outputLabel value="Sign Language" />&nbsp;
+        
+            <apex:outputField value="{!Contact[f]}"  rendered="{! NOT(pbsEditModeOn) && (f != 'Primary_Language__c')}" />
+            <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn && (f != 'Primary_Language__c')}" required="{!OR(f.required, f.dbrequired)}"/>
+            
+                        
+            <apex:pageBlockSectionItem rendered="{!  NOT(pbsEditModeOn) && (f == 'Primary_Language__c')}">
+            <apex:outputText value="Primary Language"/>
+            <apex:outputPanel styleClass="nowrap">
+            <apex:outputField value="{!Contact[f]}"  /> &nbsp;&nbsp;
+            <apex:outputLabel value="Non-Verbal" />&nbsp;
+            <apex:outputField value="{!Contact.Non_Verbal__c}"  rendered="{! NOT(pbsEditModeOn) && (f == 'Primary_Language__c')}" />&nbsp;
+            <apex:outputLabel value="Sign Language" />&nbsp;
+            <apex:outputField value="{!Contact.Sign_Language__c}"  rendered="{! NOT(pbsEditModeOn) && (f == 'Primary_Language__c')}" />
+            </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem rendered="{!  pbsEditModeOn && (f == 'Primary_Language__c')}">
+            <apex:outputText value="Primary Language"/>
+            <apex:outputPanel styleClass="nowrap">
+            <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn && (f == 'Primary_Language__c')}" required="{!OR(f.required, f.dbrequired)}"/> &nbsp;&nbsp;
+            <apex:outputLabel value="Non-Verbal" />&nbsp;
+            <apex:inputField value="{!Contact.Non_Verbal__c}"  rendered="{!pbsEditModeOn && (f == 'Primary_Language__c')}" />&nbsp;
+            <apex:outputLabel value="Sign Language" />&nbsp;
             <apex:inputField value="{!Contact.Sign_Language__c}"  rendered="{!pbsEditModeOn && (f == 'Primary_Language__c')}" />
             </apex:outputPanel>
-        	</apex:pageBlockSectionItem>
-        	
-        	
+            </apex:pageBlockSectionItem>
+            
+            
         
         
         
@@ -233,7 +234,7 @@ function stopRKey(evt) {
                              showHeader="true" 
                              collapsible="False"   
                              id="pbsOutputAdditionalInfo"> 
-	<apex:repeat value="{!$ObjectType.Contact.FieldSets.Additional_Information}" var="f">
+    <apex:repeat value="{!$ObjectType.Contact.FieldSets.Additional_Information}" var="f">
         <apex:outputField value="{!Contact[f]}"  rendered="{!NOT(pbsEditModeOn)}" />
         <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn}" required="{!OR(f.required, f.dbrequired)}"/>
     </apex:repeat>
@@ -257,15 +258,15 @@ function stopRKey(evt) {
     </apex:outputPanel>
     </apex:pageBlockSectionItem>
 
-	 <apex:pageBlockSectionItem >
-	 <apex:outputLabel value="Owner" />
+     <apex:pageBlockSectionItem >
+     <apex:outputLabel value="Owner" />
     <apex:outputPanel layout="none">
     <apex:outputField value="{!Contact.OwnerId}" rendered="{!NOT(pbsEditModeOn)}" />
-	<apex:inputField value="{!Contact.OwnerId}"  rendered="{!pbsEditModeOn}" /> 
-	<i>to change, click on Edit Person Being Served</i>
-	</apex:outputPanel>
-	</apex:pageBlockSectionItem>
-	
+    <apex:inputField value="{!Contact.OwnerId}"  rendered="{!pbsEditModeOn}" /> 
+    <i>to change, click on Edit Person Being Served</i>
+    </apex:outputPanel>
+    </apex:pageBlockSectionItem>
+    
          </apex:pageBlockSection> 
     
     </apex:pageBlock>
@@ -274,7 +275,7 @@ function stopRKey(evt) {
 
     <apex:pageBlock id="relatedPartiesListId">
         <div class="pbSubHeadButton">
-         					<apex:commandButton value="Add Related Party"
+                            <apex:commandButton value="Add Related Party"
                               onClick="showAddRelParty();openDialog('relatedPartyModal', 'span', 'Add Related Party'); return false;" rendered="{!AND(isEditor, canEdit)}"/>
                               </div>
       <apex:pageBlockSection columns="1"
@@ -284,7 +285,7 @@ function stopRKey(evt) {
         </apex:pageBlockSectionItem>
 
         <apex:pageBlockTable value="{!relParties}" var="relParty">
-            <apex:column headerValue="Action"><a href="#" onclick="loadRelatedParty('{!relParty.Id}');return false; ">Edit</a></apex:column>
+            <apex:column headerValue="Action"><apex:outputPanel rendered="{!$ObjectType.Related_Party__c.updateable}"> <a href="#" onclick="loadRelatedParty('{!relParty.Id}');return false; ">Edit</a></apex:outputPanel></apex:column>
           <apex:column value="{!relParty.Type__c}"/>
           <apex:column value="{!relParty.Name}"/>
           <apex:column value="{!relParty.Address__c}"/>
@@ -342,7 +343,7 @@ function stopRKey(evt) {
 
     <apex:pageBlock id="relatedAgenciesId" rendered="{!showDiagnosis}">
     <!--     <div class="pbSubHeadButton">
-         					<apex:commandButton value="Add Related Party"
+                            <apex:commandButton value="Add Related Party"
                               onClick="showAddRelParty();openDialog('relatedPartyModal', 'span', 'Add Related Party'); return false;" rendered="{!AND(isEditor, canEdit)}"/>
                               </div> -->
       <apex:pageBlockSection columns="1"
@@ -366,7 +367,7 @@ function stopRKey(evt) {
         
     <!--Diagnosis Section -->
     <a name="Diag" id="Diag" />
-    <apex:pageBlock id="Diagnosis" rendered="{!showDiagnosis}">
+    <apex:pageBlock id="Diagnosis" rendered="{!showDiagnosis && contact.MailingState != 'Arizona'}">
   
     <apex:pageBlockSection title="Diagnosis"
                              showHeader="true"
@@ -402,14 +403,11 @@ function stopRKey(evt) {
    
   <apex:pageblockTable value="{!admissions}" var="admsns" id="adminsId" rendered="{!(admissions.size>0)}" >
     <apex:column headerValue="Action" >
-    <a href="/apex/AdmissionEdit?id={!admsns.ID}">Edit</a>&nbsp;|&nbsp;
-    <apex:commandLink value="Delete" action="{!deleteAdmission}"  >
-        <apex:param name="admissionId" value="{!admsns.id}" />
-    </apex:commandLink>
+    <a href="/apex/AdmissionEdit?id={!admsns.ID}">Edit</a>
      
     </apex:column>
     <apex:column headerValue="Admission Name"><a href="/apex/AdmissionView?id={!admsns.ID}">{!admsns.Name}</a></apex:column>
-	<apex:column value="{!admsns.Effective_Date__c}" headerValue="Effective Date"/>
+    <apex:column value="{!admsns.Effective_Date__c}" headerValue="Effective Date"/>
     <apex:column value="{!admsns.Discharged_Date__c}" headerValue="Discharge Date"/>
     <apex:column value="{!admsns.Status__c}" headerValue="Status"/>
     </apex:pageblockTable>
@@ -487,7 +485,7 @@ function stopRKey(evt) {
       </apex:pageBlockSection>
        </apex:pageBlock>
        <apex:pageBlock >  
-	<!--Notes & Attachments-->
+    <!--Notes & Attachments-->
    <apex:pageBlockSection columns="1" title="Attachments" showHeader="true" collapsible="true">
             <apex:pageBlockSectionItem >
                 <a href="/apex/uploader?parentid={!Contact.id}">Add/Remove</a>
@@ -499,7 +497,7 @@ function stopRKey(evt) {
         </apex:pageBlockSection> 
    </apex:pageBlock>
    <apex:pageBlock >
-   	 <!--PersonBeing Served History Section-->
+     <!--PersonBeing Served History Section-->
         <apex:pageBlockSection title="Person Being Served History"
                              showHeader="true"
                              columns="1"

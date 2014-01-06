@@ -19,7 +19,7 @@ public with sharing class ActionPlan_GoalObjective_rpt {
        for(Action_Plan_Goal__c g: [select id, name, description__c, Sort_Order__c,  
                     (select id, name, description__c, Effective_Date__c, target_end_date__c, status__c, type__c, Sort_Order__c
                      from Action_Plan_Objectives__r Order By Sort_Order__c) 
-                        from Action_Plan_Goal__c where action_plan__c = :selectPlan Order By Sort_Order__c]){
+                        from Action_Plan_Goal__c where action_plan__c = :selectPlan Order By Sort_Order__c limit 1000]){
        
            goals.add(new SelectOption(g.id,g.description__c));
                for(Action_Plan_Objective__c o : g.Action_Plan_Objectives__r){
@@ -88,7 +88,8 @@ public ActionPlan_GoalObjective_rpt(ApexPages.StandardController controller) {
                                         ) 
                                     
                                             AND Progress_Note__r.Service_Assignment__c = :SA.id  
-                                        ORDER BY CreatedDate]){
+                                        ORDER BY CreatedDate
+                                        limit 1000]){
                                   //  
                                   
                                  

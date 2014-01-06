@@ -27,7 +27,7 @@ global class ProgressNoteNotifications implements Database.Batchable<sObject> {
 			}
 		}
 		else {
-			if(date.today()>(pn.CreatedDate + 3).date()) {
+			if(date.today()>(pn.CreatedDate + 1).date()) {
 				noticeEmails.add(sendNotification(pN));
 			}
 		}
@@ -82,7 +82,7 @@ global class ProgressNoteNotifications implements Database.Batchable<sObject> {
                     
                 mail.setPlainTextBody('Hello ' 
                     + pN.Owner.FirstName + ' ' + pN.Owner.LastName 
-                    + ',/r/n/r/nA Progress Note that you own has a non-final status four days or more after creation (Created Date: '
+                    + ',/r/n/r/nA Progress Note that you own has a non-final status one day or more after creation (Created Date: '
                     + pN.CreatedDate.format('M/d/yy')
                     + ').  Please review the note and finalize it ASAP.  Go to the following webpage to access the note:  ' 
                     + System.Url.getSalesforceBaseUrl().toExternalForm()
@@ -92,7 +92,7 @@ global class ProgressNoteNotifications implements Database.Batchable<sObject> {
                 
                 mail.setHtmlBody('Hello ' 
                     + pN.Owner.FirstName + ' ' + pN.Owner.LastName 
-                    + ',<br /><br />A Progress Note that you own has a non-final status four days or more after creation (Created Date: '
+                    + ',<br /><br />A Progress Note that you own has a non-final status one day or more after creation (Created Date: '
                     + pN.CreatedDate.format('M/d/yy')
                     + ').  Please review the note and finalize it ASAP.  '
                     + '<a href="'
@@ -109,7 +109,7 @@ global class ProgressNoteNotifications implements Database.Batchable<sObject> {
 
             
                 // Create a task reminder for the action.
-                Task t = new Task(Subject = 'Progress Note Reminder', Status = 'In Progress', Priority = 'Normal', OwnerId = pN.OwnerId, Description = 'You have a Progress Note that appears to be in a non-final state four days or more after creation (Created Date: ' + pN.CreatedDate.format('M/d/yy') + ').  Please review the note and finalize it ASAP: ' + System.Url.getSalesforceBaseUrl().toExternalForm() + '/' + pN.Id, WhoId = pN.Person_Being_Served__c, WhatId = pN.Person_Being_Served__r.Account.Id, ActivityDate = dueDate);
+                Task t = new Task(Subject = 'Progress Note Reminder', Status = 'In Progress', Priority = 'Normal', OwnerId = pN.OwnerId, Description = 'You have a Progress Note that appears to be in a non-final state one day or more after creation (Created Date: ' + pN.CreatedDate.format('M/d/yy') + ').  Please review the note and finalize it ASAP: ' + System.Url.getSalesforceBaseUrl().toExternalForm() + '/' + pN.Id, WhoId = pN.Person_Being_Served__c, WhatId = pN.Person_Being_Served__r.Account.Id, ActivityDate = dueDate);
                 insert t;
                 
                 return mail;
@@ -163,7 +163,7 @@ global class ProgressNoteNotifications implements Database.Batchable<sObject> {
 	                    + ' failed.  The intended message follows:  /r/n/r/n'
 						+ 'Hello ' 
 	                    + pN.Owner.FirstName + ' ' + pN.Owner.LastName 
-	                    + ',/r/n/r/nA Progress Note that you own has a non-final status four days or more after creation (Created Date: '
+	                    + ',/r/n/r/nA Progress Note that you own has a non-final status one day or more after creation (Created Date: '
                     	+ pN.CreatedDate.format('M/d/yy')
                     	+ ').  Please review the note and finalize it ASAP.  Go to the following webpage to access the note: ' 
 	                    + System.Url.getSalesforceBaseUrl().toExternalForm()
@@ -177,7 +177,7 @@ global class ProgressNoteNotifications implements Database.Batchable<sObject> {
 	                    + ' failed.  The intended message follows:  <br /><br />'
 						+ 'Hello ' 
 	                    + pN.Owner.FirstName + ' ' + pN.Owner.LastName 
-	                    + ',<br /><br />A Progress Note that you own has a non-final status four days or more after creation (Created Date: '
+	                    + ',<br /><br />A Progress Note that you own has a non-final status one day or more after creation (Created Date: '
                     	+ pN.CreatedDate.format('M/d/yy')
                     	+ ').  Please review the note and finalize it ASAP:  '
 	                    + '<a href="'

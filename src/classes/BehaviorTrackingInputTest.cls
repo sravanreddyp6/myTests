@@ -17,7 +17,7 @@ public class BehaviorTrackingInputTest{
                                            where Action_Plan_Objective__c = :testObjective1.Id
                                             // and Day_Time__c = 2013-12-01T00:00:00+05:00 
                                             ];
-        system.assertEquals(Datetime.newinstance(2013,12,1,0,0,0), result1.day_time__c);
+        system.assertEquals(Datetime.newinstanceGMT(2013,12,1,0,0,0), result1.day_time__c);
         System.AssertEquals(4, result1.Occurrences__c);
         
     }
@@ -32,7 +32,7 @@ public class BehaviorTrackingInputTest{
                                            where Action_Plan_Objective__c = :testObjective2.Id
                                             // and Day_Time__c = 2013-12-01T00:00:00+05:00 
                                             ];
-        system.assertEquals(Datetime.newinstance(2013,12,1,0,0,0), result1.day_time__c);
+        system.assertEquals(Datetime.newinstanceGMT(2013,12,1,0,0,0), result1.day_time__c);
         System.AssertEquals(true, result1.Occurred__c);
         
     }
@@ -64,10 +64,10 @@ public class BehaviorTrackingInputTest{
                                              
                                            order by Day_time__c];
         System.assertEquals(2, result.size());
-        System.assertEquals(Datetime.newInstance(2013, 12, 2, 1,0,0),result[0].Day_time__c);
+        System.assertEquals(Datetime.newInstanceGMT(2013, 12, 2, 1,0,0),result[0].Day_time__c);
         System.AssertEquals(9, result[0].occurrences__c);
         
-        System.assertEquals(DateTime.newInstance(2013, 12, 31,23,0,0),result[1].Day_time__c);
+        System.assertEquals(DateTime.newInstanceGMT(2013, 12, 31,23,0,0),result[1].Day_time__c);
         System.AssertEquals(8, result[1].occurrences__c);
     }
     

@@ -20,7 +20,7 @@ public with sharing class PersonsBeingServedListController {
     transient public Map<String, Integer> admissionIdToServiceAssignmentSize { get; set; }
     public boolean canCreateNew { get; set; }
     public boolean seeWorksheets { get {
-    	boolean isRedwood = false;
+        boolean isRedwood = false;
         
         for(TMN_User__c TU: [select Operating_Group__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1]){
             if (TU.Operating_Group__c == 'Redwood'){isRedwood = true;} 
@@ -193,11 +193,11 @@ public with sharing class PersonsBeingServedListController {
             }
             Integer index = 1;
             for (Service_Assignment__c sa: admission.Service_Agreements__r) {
-            	
-            	// EB-116: do not show inactive assessment only
-            	if ( (sa.RecordType.Id == ASSESSMENT_ONLY_REC_TYPE_ID) &&  (sa.Status__c != 'Active') )
-            		continue;
-            	
+                
+                // EB-116: do not show inactive assessment only
+                if ( (sa.RecordType.Id == ASSESSMENT_ONLY_REC_TYPE_ID) &&  (sa.Status__c != 'Active') )
+                    continue;
+                
                 if (!saWithPlans.contains(sa.ID)) { // don't display duplicated stuff
                     if (index == 1) {
                         accountIdToAdmission.get(admission.Person_Being_Served__r.Account.ID).add(admission);

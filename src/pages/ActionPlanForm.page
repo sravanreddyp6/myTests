@@ -6,6 +6,8 @@
 
 <apex:variable value="{!Action_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__r.MailingState = 'Arizona' || $User.Operating_Group__c ='Cambridge'}" var="hideObjType"/>
 
+<apex:variable value="{!$ObjectType.Action_Plan_Worksheet__c.accessible}" var="vfVarCanAccessWS"/>
+
 <script>
 
     function setFocusOnLoad() {}
@@ -86,10 +88,10 @@ function highlightButtons ( btype, sfid, on )
     height:100%;
     top:0px;
     left:0px;
-    z-index:1000;
+    z-index:10000;
 }
 .btnhover{
-    z-index:1001;
+    z-index:10001;
 
 }
 .thinkingwheel{
@@ -137,20 +139,29 @@ function highlightButtons ( btype, sfid, on )
 .innerData{
     width: 250px;
 }
-.popupform{
-    position:absolute; left:35%; top:40%; background-color: white; border: 2px solid gray; padding: 2px;
-    width: 343px;
-    opacity: 1;
 
-}
 .hbbg{
     position:fixed;
     width:100%;
     height:100%;
     top:0px;
     left:0px;
+    background-color: gray;
+    opacity: .6;
     z-index:1000;
 }
+
+.popupform{
+    position: fixed; 
+    left:35%; 
+    top:40%;
+     /*background-color: white; border: 2px solid gray; padding: 7px;*/
+    width: 343px;
+    opacity: 1;
+    z-index:1099;
+
+}
+
 .fixedBtn { width:100px };
 
 </style>
@@ -166,7 +177,8 @@ function highlightButtons ( btype, sfid, on )
 <apex:form >
 <apex:pageMessages />   
 <apex:pageBlock title="Action Plan">
-<div class="pbHeaderButton" >     
+<apex:pageBlockButtons >
+<div class="pbHeaderButton" style="top: 0px;" >     
         
         
         <apex:commandButton value="View Detail" onClick="toggleByClass('action_row','action_row_on' ); return false;" styleClass="action_row_on" style="display: none;" rendered="{! !editMode}" /> 
@@ -177,14 +189,14 @@ function highlightButtons ( btype, sfid, on )
         <apex:commandButton action="{!mySave}" value="Save" reRender="myFrm" status="myStatus" rendered="{!editMode}"/>
         
         <apex:commandButton action="{!editMode}" value="Edit" reRender="myFrm" status="myStatus" rendered="{! !editMode  && canEditPlan && Action_Plan__c.Status__c = 'Inactive Draft'}" />
-        <apex:commandButton action="{!myclone}" value="Revise" rendered="{!Action_Plan__c.Status__c = 'Active Final' && !HasDraft && canEditPlan }"/>  
+        <apex:commandButton onClick="toggleById('reviseform'); return false;" value="Revise" rendered="{!Action_Plan__c.Status__c = 'Active Final' && !HasDraft && canEditPlan }"/>  
         <apex:commandButton value="Acknowledge" styleClass="ackbtn" onClick="toggleById('ackfrom'); return false;" rendered="{! !editMode && !HasAcknowledged  && Action_Plan__c.Status__c = 'Active Final'}" /> 
         <apex:commandButton action="{!myFinal}" value="Finalize" reRender="myFrm" status="myStatus" rendered="{! !editMode && canFinalize && Action_Plan__c.Status__c = 'Inactive Draft'}"/>
         <apex:commandButton onClick="toggleById('printform'); return false;" value="Print" rendered="{! !editMode}"/>
         <apex:commandButton action="{!myCancel}" value="Cancel" reRender="myFrm" status="myStatus" rendered="{!editMode}"/>
         </apex:outputPanel>    
 </div>     
-    
+</apex:pageBlockButtons>   
     
         
              
@@ -198,6 +210,7 @@ function highlightButtons ( btype, sfid, on )
             <apex:outputField value="{!Action_Plan__c.Target_Date__c}"/>
             <apex:outputField value="{!Action_Plan__c.Date_Service_Started__c}"/>
             <apex:outputField value="{!Action_Plan__c.Status__c}"/> 
+            <apex:outputField value="{!Action_Plan__c.Baseline__c}"/>
         </apex:pageBlockSection>
         
         <apex:pageBlockSection title="Plan Detail" collapsible="False" rendered="{!editMode}">
@@ -209,6 +222,7 @@ function highlightButtons ( btype, sfid, on )
             <apex:inputField value="{!Action_Plan__c.Target_Date__c}"/>
             <apex:outputField value="{!Action_Plan__c.Date_Service_Started__c}"/>
             <apex:outputField value="{!Action_Plan__c.Status__c}"/> 
+            <apex:inputField value="{!Action_Plan__c.Baseline__c}"/>
         </apex:pageBlockSection> 
         
         <hr />
@@ -367,7 +381,7 @@ function highlightButtons ( btype, sfid, on )
 </apex:pageBlock>
     <a name="worksheets" />
 <apex:outputPanel layout="block" styleClass="action_row">
-    <apex:pageBlock title="Skills Worksheets" rendered="{!showWorksheets}">
+    <apex:pageBlock title="Skills Worksheets" rendered="{!showWorksheets && vfVarCanAccessWS}">
  
         <div class="pbHeaderButton">
             <apex:outputPanel onclick="j$('[id *=newswsbtn]').toggle();" styleClass="btn" >New Worksheet</apex:outputPanel>
@@ -390,7 +404,7 @@ function highlightButtons ( btype, sfid, on )
             </apex:dataList>
         </apex:pageBlockSection>
     </apex:pageBlock>
-    <apex:pageBlock title="Behavior Worksheets" rendered="{!showWorksheets}"> 
+    <apex:pageBlock title="Behavior Worksheets" rendered="{!showWorksheets && vfVarCanAccessWS}"> 
         <div class="pbHeaderButton">
             <apex:outputPanel onclick="j$('[id *=newbwsbtn]').toggle();" styleClass="btn" >New Worksheet</apex:outputPanel>
         </div>
@@ -437,6 +451,7 @@ function highlightButtons ( btype, sfid, on )
     
     
 </apex:outputPanel>
+<!--
        <div style="width:100%; text-align:right;position:relative; right:20px;">
         <apex:commandButton value="View Detail" onClick="toggleByClass('action_row','action_row_on' ); return false;" styleClass="action_row_on" style="display: none;" rendered="{! !editMode}"/> 
         <apex:outputPanel styleClass="action_row">
@@ -445,22 +460,24 @@ function highlightButtons ( btype, sfid, on )
                 
         <apex:commandButton action="{!mySave}" value="Save" reRender="myFrm" status="myStatus" rendered="{!editMode}"/>
         <apex:commandButton action="{!editMode}" value="Edit" reRender="myFrm" status="myStatus" rendered="{! !editMode && canEditPlan && Action_Plan__c.Status__c = 'Inactive Draft'}" />
-        <apex:commandButton action="{!myclone}" value="Revise" rendered="{!Action_Plan__c.Status__c = 'Active Final'&& !HasDraft}"/>  
+         
         <apex:commandButton value="Acknowledge" styleClass="ackbtn" onClick="toggleById('ackfrom'); return false;" rendered="{! !editMode && !HasAcknowledged  && Action_Plan__c.Status__c = 'Active Final'}" /> 
         <apex:commandButton action="{!myFinal}" value="Finalize" reRender="myFrm" status="myStatus" rendered="{! !editMode && Action_Plan__c.Status__c = 'Inactive Draft'}"/>
         <apex:commandButton onClick="toggleById('printform'); return false;" value="Print" rendered="{! !editMode}"/>
         <apex:commandButton action="{!myCancel}" value="Cancel" reRender="myFrm" status="myStatus" rendered="{!editMode}"/>
         </apex:outputPanel> 
-        </div>  
+        </div> 
+        --> 
     
 </apex:form> 
 <br/>
 
 <c:SObjectNotesAndAttachments parentId="{!Action_Plan__c.id}" showAction="false" rendered="{! !editMode}"></c:SObjectNotesAndAttachments> 
 </apex:outputPanel>
-<apex:form id="myAck">
-<div id="ackfrom" class="hbbg" style="display: none;">
+<div id="ackfrom"  style="display: none;">
+<div class="hbbg">  </div>
 <div id="p" class="popupform" >
+<apex:form id="myAck">
     <apex:pageBlock >
         <apex:pageBlockSection columns="1">
             <apex:outputPanel >
@@ -488,7 +505,7 @@ function highlightButtons ( btype, sfid, on )
             </apex:pageBlockSectionItem>
 
             <apex:outputPanel layout="block" style="width: 100%; text-align: center;" >
-                <apex:commandButton action="{!myAcknowledge}" style=" " value="Acknowledge" reRender="myFrm" status="myStatus"/>
+                <apex:commandButton action="{!myAcknowledge}" style=" " value="Acknowledge" reRender="myAck" status="myStatus"/>
                 &nbsp;
                 <apex:commandButton onclick="toggleById('ackfrom', '500'); return false;"  value="Cancel" />
                 
@@ -498,14 +515,19 @@ function highlightButtons ( btype, sfid, on )
         </apex:pageBlockSection>
         
     </apex:pageBlock>
+ </apex:form>     
 </div>    
 </div>
  
-</apex:form>  
-<div id="printform"  class="hbbg" style="display: none;" >
+<div id="printform"  style="display: none;" >
+<div class="hbbg" > </div>
 <div id="p" class="popupform" >
     <form name="radioExampleForm" method="get" action="" onsubmit="return false;">
     <apex:pageBlock >
+        <apex:pageBlockButtons location="bottom">
+                <input type="button" class="btn" onclick="printpage(document.forms['radioExampleForm'].elements['type']);" value="Create"/>
+                <input type="button" class="btn" onclick="toggleById('printform', '500'); return false;" value="Cancel"/>          
+        </apex:pageBlockButtons>
         <apex:pageBlockSection columns="1">
             <apex:outputPanel >
                 Select the type of file you would like to create
@@ -515,21 +537,33 @@ function highlightButtons ( btype, sfid, on )
                 <br/>
                 <label for="number1"><input type="radio" value="WORD" name="type" id="number1"/> Word Document</label> 
             </apex:outputPanel>
-            <apex:outputPanel >            
-                <input type="button" class="btn" onclick="printpage(document.forms['radioExampleForm'].elements['type']);" value="Create"/>
-                <input type="button" class="btn" onclick="toggleById('printform', '500'); return false;" value="Cancel"/>            
-            </apex:outputPanel>
-            
-            
-            
-            
-            
+
             
         </apex:pageBlockSection>
     </apex:pageBlock>
     
    
     </form>
+</div>
+</div>
+<div id="reviseform"   style="display: none;" >
+<div class="hbbg">  </div>
+<div id="p" class="popupform" >
+<apex:form id="thereviseform" >
+<apex:pageBlock >
+<apex:pageBlockButtons location="bottom" >
+    <apex:commandButton action="{!myclone}" value="Yes" status="myStatus" /> 
+    <apex:commandButton onclick="toggleById('reviseform', '500'); return false;"  value="No" />
+</apex:pageBlockButtons>
+<apex:pageBlockSection columns="1" >
+
+<apex:outputLabel >Are you sure you would like to revise this Action Plan?</apex:outputLabel>
+
+
+</apex:pageBlockSection>
+
+</apex:pageBlock>
+</apex:form>
 </div>
 </div>
 <apex:actionStatus id="myStatus" >

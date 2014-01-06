@@ -14,13 +14,13 @@ public class BehaviorTrackingInput implements AnotoFormHandler{
             return 'FAILED';
         }
     }
-    
+
     public boolean process(string xml){
         Dom.Document reader = new Dom.Document();
         reader.load(xml);
         BehaviorResultManager manager = new BehaviorResultManager();
-        for(Dom.XmlNode child: reader.getRootElement().getChildElements()){ 
-            if (child.getName() != 'field') { 
+        for(Dom.XmlNode child: reader.getRootElement().getChildElements()){
+            if (child.getName() != 'field') {
                 continue;
             }
             BehaviorResultNodeName nodename = new BehaviorResultNodeName(child.getAttributeValue('name', null));
@@ -43,11 +43,11 @@ public class BehaviorTrackingInput implements AnotoFormHandler{
         manager.Finish();
         return true;
     }
-    
+
     public class BehaviorResultManager {
         private Map<id, Map<DateTime, Action_Behavior_Result__c>> allObjects = new Map<id, Map<DateTime, Action_Behavior_Result__c>>();
         private Map<id, Map<DateTime, Action_Behavior_Result__c>> updateObjects = new Map<id, Map<DateTime, Action_Behavior_Result__c>>();
-        
+
         public Action_Behavior_Result__c Get(Id objectId, DateTime daytime){
             if (allobjects == null){
                 PrepopulateObjects(objectId, daytime);
@@ -62,7 +62,7 @@ public class BehaviorTrackingInput implements AnotoFormHandler{
             }
             return result;
         }
-        
+
         private void addToCache(Map<id, Map<DateTime, Action_Behavior_Result__c>> cache, Id objectId, DateTime daytime, Action_Behavior_Result__c result){
             Map<DateTime, Action_Behavior_Result__c> map1 = allobjects.get(objectId);
             if (cache.containsKey(objectId)){
@@ -84,7 +84,7 @@ public class BehaviorTrackingInput implements AnotoFormHandler{
             }
             return resultlist;
         }
-        
+
         private Action_Behavior_Result__c getFromCache(Map<id, Map<DateTime, Action_Behavior_Result__c>> cache, Id objectId, DateTime daytime){
             if (cache.containsKey(objectId)){
                 Map<DateTime, Action_Behavior_Result__c> map1 = cache.get(objectId);
@@ -94,12 +94,12 @@ public class BehaviorTrackingInput implements AnotoFormHandler{
             }
             return null;
         }
-        
+
         public void UpdateObject(Action_Behavior_Result__c obj){
             Action_Behavior_Result__c result;
             AddToCache(updateObjects, obj.Action_plan_Objective__c, obj.Day_time__c, obj);
         }
-        
+
         public void Finish(){
             Database.UpsertResult[] results = Database.upsert(CacheToList(updateObjects), false);
             for (Database.UpsertResult sr : results) {
@@ -108,23 +108,23 @@ public class BehaviorTrackingInput implements AnotoFormHandler{
                     // System.debug('Successfully inserted account. Result ID: ' + sr.getId());
                 }
                 else {
-                    // Operation failed, so get all errors                
+                    // Operation failed, so get all errors
                     for(Database.Error err : sr.getErrors()) {
-                        System.debug('The following error has occurred for result record: ' + sr.getId());                    
+                        System.debug('The following error has occurred for result record: ' + sr.getId());
                         System.debug(err.getStatusCode() + ': ' + err.getMessage());
                         System.debug('Result fields that affected this error: ' + err.getFields());
                     }
                 }
             }
         }
-        
+
         // Assumes that a single file only holds records for a single Action_plan for a single
         // Mon-Sun week
         private void PrepopulateObjects(Id objectId, Datetime daytime){
             Date firstday = daytime.date().toStartOfMonth();
             Date lastdayplus = firstday.addMonths(1);
             System.debug('Input Week:' + firstday.format() + lastdayplus.format());
-            Id planId = [select Action_plan_goal__r.Action_plan__c 
+            Id planId = [select Action_plan_goal__r.Action_plan__c
                          from Action_Plan_Objective__c
                          where id = :objectId][0].Action_plan_goal__r.Action_plan__c;
             List<Action_Behavior_Result__c> objects = [select occurrences__c, day_time__c, Action_plan_Objective__c
@@ -134,16 +134,16 @@ public class BehaviorTrackingInput implements AnotoFormHandler{
             for(Action_Behavior_Result__c result:objects){
                 addToCache(allObjects, result.Id, result.Day_time__c, result);
             }
-        }            
+        }
     }
-        
+
     public class BehaviorResultNodeName {
         public boolean isValid {get; private set;}
         public Id ObjectId {get; private set;}
         public DateTime DayTime {get; private set;}
         public string Property {get; private set;}
         public string NodeName {get; private set;}
-        
+
         public BehaviorResultNodeName(string nodeName){
             if (!nodeName.startsWith('behavior')){
                 isValid = false;
@@ -152,26 +152,26 @@ public class BehaviorTrackingInput implements AnotoFormHandler{
             string[] parts = nodeName.split('_');
             ObjectId = parts[1];
             string[] timeparts = parts[2].split('-');
-            DayTime = DateTime.newInstance(integer.valueof(timeparts[0])
-                                           , integer.valueof(timeparts[1])
-                                           , integer.valueof(timeparts[2])
-                                           , integer.valueof(timeparts[3])
-                                           , 0, 0
-                                          );
+            DayTime = DateTime.newInstanceGMT(integer.valueof(timeparts[0])
+                                              , integer.valueof(timeparts[1])
+                                              , integer.valueof(timeparts[2])
+                                              , integer.valueof(timeparts[3])
+                                              , 0, 0
+                                             );
             if (parts.size() > 3){
                 Property = parts[3];
             }
             isValid = true;
             this.NodeName = nodeName;
         }
-        
+
         public BehaviorResultNodeName(Id objectId, DateTime day, string propertyName){
             this.ObjectId = objectId;
             this.DayTime = day;
             this.Property = propertyName;
             String daystring = day.format('yyyy-MM-dd-HH-mm-ss');
-            NodeName = String.join(propertyName == null 
-                                   ? new List<string>{'behavior', objectId, daystring} 
+            NodeName = String.join(propertyName == null
+                                   ? new List<string>{'behavior', objectId, daystring}
                                    : new List<string>{'behavior', objectId, daystring, propertyName}, '_');
             isValid = true;
         }

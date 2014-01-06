@@ -13,7 +13,7 @@ public with sharing class Notes_ProgressNote_Create {
     public list<SelectOption> rtOptions = new list<SelectOption>();
     public list<SelectOption> getrtOptions(){return rtOptions ;}
 
-	private Final Progress_Note__c pn;
+    private Final Progress_Note__c pn;
 
 
 //contructs
@@ -23,8 +23,8 @@ public with sharing class Notes_ProgressNote_Create {
             if (rt.Name == 'AZ - OPT') {
                 AZ_OPT_ID = rt.Id;
             } 
-			if (rt.Name == 'Shift Note') {
-            	SHIFT_NOTE_ID = rt.Id;
+            if (rt.Name == 'Shift Note') {
+                SHIFT_NOTE_ID = rt.Id;
             }
         }
         
@@ -49,17 +49,17 @@ public with sharing class Notes_ProgressNote_Create {
         User currUser = [ select id, Operating_Group__c from User where id = :UserInfo.getUserId()];
         System.Debug('user op group is: ' + currUser.Operating_Group__c );
         if (currUser != null ) {
-        	if (( myState == 'MN' || myState == 'IN' || myState == 'CA') && currUser.Operating_Group__c == 'Redwood') {
-	        	pn.RecordTypeId = SHIFT_NOTE_ID;
-	        	
-        	}
+            if (( myState == 'MN' || myState == 'IN' || myState == 'CA') && currUser.Operating_Group__c == 'Redwood') {
+                pn.RecordTypeId = SHIFT_NOTE_ID;
+                
+            }
         } else {
-        	// add error to page that shift note cannot be created
+            // add error to page that shift note cannot be created
         }
         loadData();
     }
     public Notes_ProgressNote_Create() {
-    	
+        
         myRTs = [select Name, Id, sObjectType, Description from RecordType where sObjectType = 'Progress_Note__c'];
         loadData();
         System.Debug('in void controller');
@@ -79,9 +79,9 @@ public with sharing class Notes_ProgressNote_Create {
                 rtOptions.Add(SO);
             }
             else if ( myName == 'shift note' && pn.RecordTypeId == SHIFT_NOTE_ID) {
-            	SO = new SelectOption( thisRt.Id, thisRt.Name);
-            	rtOptions.Add(SO);
-            	break;
+                SO = new SelectOption( thisRt.Id, thisRt.Name);
+                rtOptions.Add(SO);
+                break;
             }
             else {
                 if(myName.StartsWith(myState)){
@@ -94,21 +94,21 @@ public with sharing class Notes_ProgressNote_Create {
     }
 
 // redirect if necessary
-	public PageReference redirect(){
-		ID planID = ApexPages.currentPage().getParameters().get('plan');
-		ID admID = ApexPages.currentPage().getParameters().get('admission');
-		ID saID = ApexPages.currentPage().getParameters().get('service_assignment');
-		if ( pn.RecordTypeId == SHIFT_NOTE_ID ) {
-			PageReference prShiftNote = Page.shiftnote_basic_form;
-			prShiftNote.getParameters().put('planID', planId);
-			prShiftNote.getParameters().put('admID', admId);
-			prShiftNote.getParameters().put('saID', saID);
-	        prShiftNote.setRedirect(true);
-	        return prShiftNote;
+    public PageReference redirect(){
+        ID planID = ApexPages.currentPage().getParameters().get('plan');
+        ID admID = ApexPages.currentPage().getParameters().get('admission');
+        ID saID = ApexPages.currentPage().getParameters().get('service_assignment');
+        if ( pn.RecordTypeId == SHIFT_NOTE_ID ) {
+            PageReference prShiftNote = Page.shiftnote_basic_form;
+            prShiftNote.getParameters().put('planID', planId);
+            prShiftNote.getParameters().put('admID', admId);
+            prShiftNote.getParameters().put('saID', saID);
+            prShiftNote.setRedirect(true);
+            return prShiftNote;
         }
         else
-        	return null;
-	        	
-	}
+            return null;
+                
+    }
 
 }

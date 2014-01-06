@@ -46,7 +46,7 @@ public class ActionSummaryCreateTest {
 		extension.Duration = 1;
 		extension.formNew();
 		
-		System.assertequals('Test Contact - ' + datetime.newinstance(date.today(), time.newinstance(0,0,0,0)).Format('MMMYYYY') , actsum.Name );
+		System.assertequals('Test Contact - ' + datetime.newinstance(date.today(), time.newinstance(0,0,0,0)).Format('MMMyyyy') , actsum.Name );
 		
 		System.assertequals(Date.parse('10/10/2013'), extension.GetServiceAssignmentStartDate());
 		System.assertequals(person.id, extension.getPersonId());	
@@ -64,8 +64,8 @@ public class ActionSummaryCreateTest {
 		extension.Duration = 3;
 		extension.formNew();
 		
-		System.assertequals('Test Contact - ' + datetime.newinstance(date.today(), time.newinstance(0,0,0,0)).Format('MMMYYYY') + 
-			' - ' + datetime.newinstance(date.today().addmonths(2), time.newinstance(0,0,0,0)).Format('MMMYYYY'), actsum.Name );
+		System.assertequals('Test Contact - ' + datetime.newinstance(date.today(), time.newinstance(0,0,0,0)).Format('MMMyyyy') + 
+			' - ' + datetime.newinstance(date.today().addmonths(2), time.newinstance(0,0,0,0)).Format('MMMyyyy'), actsum.Name );
 	}
 
     private static void createObjects(){

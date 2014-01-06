@@ -16,8 +16,9 @@
 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+
 <apex:variable var="printmode" value="{!if($CurrentPage.parameters.pdf ='1' ,true,false)}"/>
-<apex:variable var="varCanUpdate" value="{!$ObjectType.Assessment__c.Updateable}"/>
+
 <apex:stylesheet value="{!if ($CurrentPage.parameters.pdf !='1', $Resource.mentoresdcss, $Resource.mentoresdprint)}" />
 
 <head>
@@ -194,7 +195,7 @@ function toggleById(id, ms){
                 &nbsp;
             </apex:commandButton>
             <apex:commandButton action="{!myRevise}" 
-                    value="Revise" status="myStatus"  rendered="{!mode='view' && CanReviseAssess && varCanUpdate}" onclick="if(!confirm('Are you sure you wish to revise the current version of the Risk Assessment?')){return false};">
+                    value="Revise" status="myStatus"  rendered="{!mode='view' && CanReviseAssess && $ObjectType.Assessment__c.createable}" onclick="if(!confirm('Are you sure you wish to revise the current version of the Risk Assessment?')){return false};">
                 &nbsp;
             </apex:commandButton>  
             <apex:commandButton onclick="window.open('/apex/assessment_riskform?id={!Assessment__c.id}&Summary=1', '_self'); return false;" 
@@ -541,7 +542,7 @@ function toggleById(id, ms){
                 &nbsp;
             </apex:commandButton>  
             <apex:commandButton action="{!myRevise}" 
-                    value="Revise" status="myStatus"  rendered="{!mode='view' && CanReviseAssess && varCanUpdate}" onclick="if(!confirm('Are you sure you wish to revise the current version of the Risk Assessment?')){return false};">
+                    value="Revise" status="myStatus"  rendered="{!mode='view' && CanReviseAssess}" onclick="if(!confirm('Are you sure you wish to revise the current version of the Risk Assessment?')){return false};">
                 &nbsp;
             </apex:commandButton>  
             <apex:commandButton onclick="window.open('/apex/assessment_riskform?id={!Assessment__c.id}&Summary=1', '_self'); return false;" 

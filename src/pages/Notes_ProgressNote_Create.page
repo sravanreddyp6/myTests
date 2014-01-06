@@ -48,7 +48,7 @@ function setFocusOnLoad() {};
                 </apex:selectList>            
             </apex:outputPanel>
     <!--end of hidden fields-->
-
+            <apex:outputText value="{!pbsName}" label="Person Being Served" rendered="{!!ISBlANK(pbsName)}" />
             <apex:selectRadio required="true" layout="pageDirection" label="Type of Note" value="{!Progress_Note__c.RecordTypeId}" >
                 <apex:selectOptions value="{!rtOptions}"></apex:selectOptions>
             </apex:selectRadio>  

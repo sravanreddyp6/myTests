@@ -6,7 +6,52 @@ public with sharing class Assessment_RiskForm {
    public list<string> getdisplayLevel_Required_ResidentialServices(){return displayLevel_Required_ResidentialServices ;}
    public list<string> displayLevel_Required_DayServices = new list<string>();
    public list<string> getdisplayLevel_Required_DayServices (){return displayLevel_Required_DayServices  ;}   
-   
+
+    public List<id> DomainsInScopeIDs = new List<id>();
+    public List<id> QuestionsInScopeIDs = new List<id>();
+    public List<id> OptionsInScope = new List<id>();
+    public List<Assessment_Response__c> CurrentResps = new List<Assessment_Response__c>();
+    public List<Assessment_Response__c> getCurrentResps(){ return CurrentResps;}
+    
+    public Map<id, Assessment_Response__c> mapCurrentResps {get;set;}         
+     
+    public Map<id, List<SelectOption>> mapOptions = new Map<id, List<SelectOption>>();
+    public Map<id, List<SelectOption>> getMapOptions(){return mapOptions ;}
+    string assessID = ApexPages.currentPage().getParameters().get('id');
+    public string thetest{get;set;}
+    public map<string, List<string>> mapQuestions = new map<string, List<string>>();
+    public map<string, List<string>> getMapQuestions(){ return mapQuestions ;}
+    
+    public map<id, boolean> mapDomainHasRisk = new map<id, boolean>();
+    public map<id, boolean> getmapDomainHasRisk  (){ return mapDomainHasRisk ;}    
+    
+    Public List<Assessment_Domain__c> DomainsInScope = new List<Assessment_Domain__c>();
+    Public List<Assessment_Domain__c> getDomainsInScope() {return DomainsInScope;}
+
+
+    public Assessment__c assessment { get; set; }
+    //dang page
+    public ApexPages.standardController stdController;
+    public String recommendedDayServicesStaffingRatio { get; set; }
+    public String recommendedDayServicesStaffingRatioOther { get; set; }
+    public String recommendedDayServicesStaffingRatioFull { get; set; }
+    
+    public String levelRequiredDayServices { get; set; }
+    public String levelRequiredDayServicesFull { get; set; }
+    public String levelRequiredDayServicesSupport { get; set; }
+    public String levelRequiredDayServicesSupportOtherInterval { get; set; }
+    public String levelRequiredDayServicesWithoutCaregiverDuration { get; set; }
+    public String levelRequiredDayServicesWithoutCaregiverInterval { get; set; }
+    public String levelRequiredDayServicesSpecificPlan { get; set; }
+    
+    public String levelRequiredResidential { get; set; }
+    public String levelRequiredResidentialFull { get; set; }
+    public String levelRequiredResidentialUnsupervisedHome { get; set; }
+    public String levelRequiredResidentialUnsupervisedHomeInterval { get; set; }
+    public String levelRequiredResidentialUnsupervisedCommunity { get; set; }
+    public String levelRequiredResidentialUnsupervisedCommunityInterval { get; set; }
+    public String levelRequiredResidentialSpecificPlan { get; set; }
+       
     String[] Level_Required_ResidentialServices = new String[]{};
          public String[] getLevel_Required_ResidentialServices  () {
          //string item: Level_Required_ResidentialServices 
@@ -169,26 +214,7 @@ public PageReference testForCans() {
     
     
     
-    public List<id> DomainsInScopeIDs = new List<id>();
-    public List<id> QuestionsInScopeIDs = new List<id>();
-    public List<id> OptionsInScope = new List<id>();
-    public List<Assessment_Response__c> CurrentResps = new List<Assessment_Response__c>();
-    public List<Assessment_Response__c> getCurrentResps(){ return CurrentResps;}
-    
-    public Map<id, Assessment_Response__c> mapCurrentResps {get;set;}         
-     
-    public Map<id, List<SelectOption>> mapOptions = new Map<id, List<SelectOption>>();
-    public Map<id, List<SelectOption>> getMapOptions(){return mapOptions ;}
-    string assessID = ApexPages.currentPage().getParameters().get('id');
-    public string thetest{get;set;}
-    public map<string, List<string>> mapQuestions = new map<string, List<string>>();
-    public map<string, List<string>> getMapQuestions(){ return mapQuestions ;}
-    
-    public map<id, boolean> mapDomainHasRisk = new map<id, boolean>();
-    public map<id, boolean> getmapDomainHasRisk  (){ return mapDomainHasRisk ;}    
-    
-    Public List<Assessment_Domain__c> DomainsInScope = new List<Assessment_Domain__c>();
-    Public List<Assessment_Domain__c> getDomainsInScope() {return DomainsInScope;}
+
     
     public Boolean canEditRisk { get {
         
@@ -208,28 +234,7 @@ public PageReference testForCans() {
         set;
     }
     
-    public Assessment__c assessment { get; set; }
-    //dang page
-    public ApexPages.standardController stdController;
-    public String recommendedDayServicesStaffingRatio { get; set; }
-    public String recommendedDayServicesStaffingRatioOther { get; set; }
-    public String recommendedDayServicesStaffingRatioFull { get; set; }
-    
-    public String levelRequiredDayServices { get; set; }
-    public String levelRequiredDayServicesFull { get; set; }
-    public String levelRequiredDayServicesSupport { get; set; }
-    public String levelRequiredDayServicesSupportOtherInterval { get; set; }
-    public String levelRequiredDayServicesWithoutCaregiverDuration { get; set; }
-    public String levelRequiredDayServicesWithoutCaregiverInterval { get; set; }
-    public String levelRequiredDayServicesSpecificPlan { get; set; }
-    
-    public String levelRequiredResidential { get; set; }
-    public String levelRequiredResidentialFull { get; set; }
-    public String levelRequiredResidentialUnsupervisedHome { get; set; }
-    public String levelRequiredResidentialUnsupervisedHomeInterval { get; set; }
-    public String levelRequiredResidentialUnsupervisedCommunity { get; set; }
-    public String levelRequiredResidentialUnsupervisedCommunityInterval { get; set; }
-    public String levelRequiredResidentialSpecificPlan { get; set; }
+
     
     public Boolean staffingRatioInFlavor {
         get {
@@ -267,15 +272,26 @@ public PageReference testForCans() {
         RecDayServicesStaffingRatio.clear();
         hasErrorOnFinalize = false;
         
-        if(assessment.Recommended_Day_Services_Staffing_Ratio__c !=null){RecDayServicesStaffingRatio =  assessment.Recommended_Day_Services_Staffing_Ratio__c.split(glbListSeperator);}
-        if(assessment.Staffing_Supervision_Needs__c != null){Staffing_Supervision_Needs = assessment.Staffing_Supervision_Needs__c.split(glbListSeperator);}
+        if(assessment.Recommended_Day_Services_Staffing_Ratio__c !=null){
+        	RecDayServicesStaffingRatio =  assessment.Recommended_Day_Services_Staffing_Ratio__c.split(glbListSeperator);
+        	// 01/01/14 - adding this line to support the display of staffing ratio in summary mode
+        	recommendedDayServicesStaffingRatioFull = String.valueOf(RecDayServicesStaffingRatio.size() > 0);
+        	}
+        if(assessment.Staffing_Supervision_Needs__c != null){
+        	Staffing_Supervision_Needs = assessment.Staffing_Supervision_Needs__c.split(glbListSeperator);
+        	}
         if(assessment.Services_Required_Level_Day_Services__c != null){ 
             Level_Required_DayServices = assessment.Services_Required_Level_Day_Services__c.split(glbListSeperator);
             displayLevel_Required_DayServices = assessment.Services_Required_Level_Day_Services__c.split(glbListSeperator);
+            // 01/01/14 - adding this line to support the display of day services in summary mode
+            levelRequiredDayServicesFull = String.valueOf(displayLevel_Required_DayServices.size() > 0);
         }
         if(assessment.Support_Required_Level_Residential__c != null){
             Level_Required_ResidentialServices = assessment.Support_Required_Level_Residential__c.split(glbListSeperator);
             displayLevel_Required_ResidentialServices  = assessment.Support_Required_Level_Residential__c.split(glbListSeperator);
+            // 01/01/14 - adding this line to support the display of residential services in summary mode
+     		levelRequiredResidentialFull = String.valueOf(displayLevel_Required_ResidentialServices.size() > 0);
+            System.Debug('display level required res: ' + displayLevel_Required_ResidentialServices + ', size: ' + String.valueOf(displayLevel_Required_ResidentialServices.size()));
         }
         
         
@@ -732,7 +748,7 @@ public PageReference testForCans() {
                 
                 }                   
             } 
-            this.validateHardcodedQuestions(true);
+           // this.validateHardcodedQuestions(true);
             if(hasDesError ){
                 mode='edit';
                 return null;

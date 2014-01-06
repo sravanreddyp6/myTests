@@ -32,7 +32,7 @@ public with sharing class ActionPlan_form {
     public map<string, clsGoal> planStuff = new map<string, clsGoal> ();
     public map<string, clsGoal> GETplanStuff(){return planStuff;}      
     public list<Progress_Note__c> getNotes(){
-        return [select id, name, Start_Time__c, End_Time__c from Progress_Note__c where Action_plan__c = :actionplan.id];
+        return [select id, name, Start_Time__c, End_Time__c from Progress_Note__c where Action_plan__c = :actionplan.id limit 10];
 
     }      
 
@@ -413,6 +413,7 @@ public pagereference mySave(){
         newAP.Previous_Action_Plan__c = ActionPlan.id;
         newAP.Effective_Date__c = null;
         newAP.Target_Date__c = null;
+        newAP.baseline__c = false;
         insert newAP;
         //ActionPlan.Status__c = 'Inactive Final';
         update ActionPlan;
