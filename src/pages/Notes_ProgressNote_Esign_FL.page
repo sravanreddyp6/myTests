@@ -1,8 +1,13 @@
-<apex:page standardController="Progress_Note__c" extensions="Notes_ProgressNote_View_Plan_Chlrn" showHeader="false" sidebar="false" id="myPage" docType="html-5.0">
+<apex:page standardController="Progress_Note__c" extensions="Notes_ProgressNote_View_Plan_Chlrn,ProgressNote_Esign" showHeader="false" sidebar="false" id="myPage" docType="html-5.0">
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 <apex:includeScript value="{!$Resource.eSignature_js}" />
 <apex:outputLabel rendered="false" id="numsigs" value="{!Progress_Note__c.Number_of_Required_Signatures__c}" />
-
+<apex:outputLabel rendered="false" id="late" value="{!Progress_Note__c.Is_Note_Late__c}" />
+<apex:outputPanel style="display: none">
+<apex:outputField value="{!Progress_Note__c.Service_Assignment__c}"/>
+<apex:outputField value="{!Progress_Note__c.Admission__c}"/>
+<apex:outputField value="{!Progress_Note__c.Action_Plan__c}"/>
+</apex:outputPanel>
 <head>
 
 <script>
@@ -131,6 +136,7 @@ function validate() {
         var col3 = col2 + (width *.40); // 40%
         var col1indent = col1 + 20;
         var col1indent2 = col1 + 40;
+        var col1indent3 = col1 + 80;
         var colmiddle = width/2;
 
         //Fill Image
@@ -151,7 +157,7 @@ function validate() {
         // Fill Text
         line += 20;
 
-		context.font = "14px sans-serif";
+        context.font = "14px sans-serif";
         context.textAlign="left";
         text = "CLIENT: {!JSENCODE(Progress_Note__c.Person_Being_Served__r.Name)} " ; 
         context.fillText(text, 2, line );
@@ -171,72 +177,72 @@ function validate() {
         text = "END TIME: " + (newdate.getMonth()+1) + "/" + newdate.getDate() + "/" + newdate.getFullYear() + ' ' + formatTime( newdate) ;
         context.fillText( text, width - 2, line );
 
-		line += fontsize;
-		
-		var recttop= line;
-		        
         line += fontsize;
-		
-		context.font = "bold " + context.font;
-		text = "PROGRESS NOTES";
-		context.textAlign="center";
-		context.fillText( text, (colmiddle-2)/2, line );
-		
-		text = "COLLATERAL CONTACT";
-		context.fillText( text, colmiddle + (width-colmiddle+2)/2, line);
+        
+        var recttop= line;
+                
+        line += fontsize;
+        
+        context.font = "bold " + context.font;
+        text = "PROGRESS NOTES";
+        context.textAlign="center";
+        context.fillText( text, (colmiddle-2)/2, line );
+        
+        text = "COLLATERAL CONTACT";
+        context.fillText( text, colmiddle + (width-colmiddle+2)/2, line);
 
-		line += fontsize/2;
+        line += fontsize/2;
 
-		context.moveTo( 0, line );
-		context.lineTo( width, line);
-		context.stroke();
+        context.moveTo( 0, line );
+        context.lineTo( width, line);
+        context.stroke();
 
-		line += fontsize *1.5;		
-		context.font = "12px sans-serif";
-		context.textAlign = "left";
-		text = "TYPE OF SERVICE: {!Progress_Note__c.Service_code__r.Service_Line__c}";  
-		context.fillText( text, 2, line );
-		
-		var cc = "{!Progress_Note__c.Collateral_Contact__c}";
+        line += fontsize *1.5;      
+        context.font = "12px sans-serif";
+        context.textAlign = "left";
+        text = "TYPE OF SERVICE: {!Progress_Note__c.Service_code__r.Service_Line__c}";  
+        context.fillText( text, 2, line );
+        
+        var cc = "{!Progress_Note__c.Collateral_Contact__c}";
 
-		if ( cc == "Other" ) 
-			cc += "- {!Progress_Note__c.Other_Collateral_Contact__c}";
-		text = "COLLATERAL CONTACT: " + cc;			
-		context.fillText( text, colmiddle+2, line );
-		line += fontsize;
-		
-		
-		text = "{! Progress_Note__c.Service_Code__r.Service_Value__c }";
-		context.fillText( text, 2, line );
+        if ( cc == "Other" ) 
+            cc += "- {!Progress_Note__c.Other_Collateral_Contact__c}";
+        text = "COLLATERAL CONTACT: " + cc;         
+        context.fillText( text, colmiddle+2, line );
+        line += fontsize;
+        
+        
+        text = "{! Progress_Note__c.Service_Code__r.Service_Value__c }";
+        context.fillText( text, 2, line );
 
-		line += fontsize*2;
-		
-		text="TX SETTING: {! Progress_Note__c.Service_Location__c}";
-		context.fillText(text, 2, line );
-		
-		text = "FUNDING SOURCE: {! Progress_Note__c.Funding_Source__c }";
-		context.fillText( text, colmiddle +2, line );
-			
-		line += fontsize*2;
-		
-		text="TYPE OF CONTACT: {!Progress_Note__c.Type_of_contact__c}";
-		context.fillText(text, 2, line );
+        line += fontsize*2;
+        
+        text="TX SETTING: {! Progress_Note__c.Service_Location__c}";
+        context.fillText(text, 2, line );
+        
+        text = "FUNDING SOURCE: {! Progress_Note__c.Funding_Source__c }";
+        context.fillText( text, colmiddle +2, line );
+            
+        line += fontsize*2;
+        
+        text="TYPE OF CONTACT: {!Progress_Note__c.Type_of_contact__c}";
+        context.fillText(text, 2, line );
 
         text = "RECORD: {!Progress_Note__c.Person_Being_Served__r.Avatar_ID__c}"; 
         context.fillText(text, colmiddle + 2, line);
 
-		line += fontsize*2;
+        line += fontsize*2;
 
-		var rectbottom = line;		
+        var rectbottom = line;      
 
         line += fontsize;
         context.textAlign="left";
                 
         context.strokeStyle = "rgb(0,0,0)";        
-		context.moveTo( colmiddle, recttop);
-		context.lineTo( colmiddle, rectbottom);
-		context.stroke();
-		context.strokeRect( 0, recttop, width, rectbottom - recttop);
+        context.moveTo( colmiddle, recttop);
+        context.lineTo( colmiddle, rectbottom);
+        context.stroke();
+        context.strokeRect( 0, recttop, width, rectbottom - recttop);
 
         
         context.font = "14px sans-serif";
@@ -251,77 +257,35 @@ function validate() {
         context.fillText(text, metrics.width + 2, line);
         line += fontsize;
 
-                        
-     <apex:repeat value="{!MyGoals}" var="STG">
-        // repeat for each goal 
+<apex:repeat value="{!apg}" var="g">
         context.font = "bold 14px sans-serif";
         line += fontsize*2;    
         text = "Goal Description";
         context.fillText( text, 2, line );
         
-        text = "Frequency and Duration";
-        context.fillText( text, col2, line );
-        
-        text = "Status";
-        context.fillText ( text, col3, line );
-        
         line += fontsize * 2;
-
-            context.font = "12px sans-serif";
-
-            text = "{!JSENCODE(STG.Frequency_and_Duration__c)}";
-            numlines = wrapText(context, text, col2, line, col3-col2, fontsize);
-            line = numlines;
-                
-            text = "{!STG.Status__c}";
-            context.fillText(text, col3, line);
-        
-            numlines = wrapText(context, "{!JSENCODE(STG.Short_Term_Goal_Description__c)}", col1indent, line, col2-col1indent, fontsize);
-            line = numlines;
-            
-
-            <apex:repeat value="{!STG.Objectives__r}" var="OBJ" >
-            // for each objective
+        context.font = "12px sans-serif";
+        numlines = wrapText(context, "{!JSENCODE(g.Description__c)}", col1indent, line, col3, fontsize );
+        line = numlines;
+                    
+    <apex:repeat value="{!g.Action_plan_objectives__r}" var="o">
             line += fontsize * 2 ;
             context.font = "bold italic 14px sans-serif";
-            text = "Plan Objective(s)";
+            text = "Plan Objective";
             metrics = context.measureText(text);
             context.fillText(text, col1indent2, line += (fontsize));
             line += fontsize;
                 context.font = "12px sans-serif";
+                
+                text = "{!JSENCODE(o.Description__c)}";
+                line = wrapText(context, text, col1indent2, line, col3, fontsize);
+                line += fontsize;    
+                
+    
+    </apex:repeat>
+</apex:repeat>        
 
-                text = "{!JSENCODE(OBJ.Frequency_and_Duration__c)}";
- 	            numlines = wrapText(context, text, col2, line, col3-col2, fontsize);
-    	        line = numlines;
-                
-                text = "{!OBJ.Status__c}";
-                context.fillText(text, col3, line);
-                
-                text = "{!JSENCODE(OBJ.Objective_Description__c)}";
-                line = wrapText(context, text, col1indent2, line, col2-col1indent2, fontsize);
-                line += fontsize;
-                
-                context.font = " bold italic 14px sans-serif";
-                text = "Interventions";
-                context.fillText(text, col1indent2, line += (fontsize));
-                line += fontsize;
 
-                <apex:repeat value="{!MapOBJ[OBJ.id].Interventions__r}" var="INT">
-                // for each intervention
-                    context.font = "12px sans-serif";
-                    text = "{!JSENCODE(INT.Intervention_Description__c)}";
-                    line = wrapText(context, text, col1indent2, line, col2-col1indent2, fontsize);
-                    line += fontsize;
-                    
-                </apex:repeat>  
-                                             
-            </apex:repeat>
-        line += fontsize*2;
-        context.moveTo(0, line);
-        context.lineTo(width, line);
-        context.stroke();
-        line += fontsize * 2;
-        </apex:repeat>
 
         context.font = "14px sans-serif";
         text = "Intervention/Activity: ";
@@ -415,33 +379,33 @@ function validate() {
         text = "Created Date: " + newdate.toString('MM/dd/yyyy hh:mm:ss a z');
         context.fillText( text, width/2, line );
         line += fontsize;
-        text = "Latest Release of Form: 08/13/2012";
+        text = "Latest Release of Form: 12/17/2013";
         context.fillText( text, width/2, line );
         line += 25;
         
         context.textAlign="left";
         context.fillStyle = "rgb(0,0,0)";
 
-		context.save(); // save off current state
-		
-		
-		context.font = "12px sans-serif"
-		context.rotate( Math.PI/2); 	// rotate 90 degrees
-		var header = "Billing ID: {!Progress_Note__c.Person_Being_Served__r.Avatar_ID__c}";
-		metrics = context.measureText(header);
-		
-		// add header at line 10 and every 1210 lines
-		for (i = 0; i <= line; i += 1210 )
-			context.fillText(header, i, -width );
-		
-		// figure out last ending position
-		var lastpos = metrics.width + i - 1210;
-		
-		// check that we didn't exceed the bottom of the doc
-		if ( line < lastpos )
-			line = lastpos;
-			 			 
-		context.restore();
+        context.save(); // save off current state
+        
+        
+        context.font = "12px sans-serif"
+        context.rotate( Math.PI/2);     // rotate 90 degrees
+        var header = "Billing ID: {!Progress_Note__c.Person_Being_Served__r.Avatar_ID__c}";
+        metrics = context.measureText(header);
+        
+        // add header at line 10 and every 1210 lines
+        for (i = 0; i <= line; i += 1210 )
+            context.fillText(header, i, -width );
+        
+        // figure out last ending position
+        var lastpos = metrics.width + i - 1210;
+        
+        // check that we didn't exceed the bottom of the doc
+        if ( line < lastpos )
+            line = lastpos;
+                         
+        context.restore();
         return( line );
         
      }   

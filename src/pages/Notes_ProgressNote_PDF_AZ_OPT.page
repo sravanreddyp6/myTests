@@ -1,4 +1,4 @@
-<apex:page standardController="Progress_Note__c" renderAs="pdf">
+<apex:page standardController="Progress_Note__c" renderAs="pdf" applyBodyTag="false">
 <head>
 <style type="text/css">
 .myTB{
@@ -32,6 +32,9 @@
     border-width: .5px;
     padding:2px;
     }
+    .goal{padding-left: 20px;}
+    .obj{padding-left: 60px;}
+    .act{padding-left: 100px;}     
 </style>
 </head>
 <body>
@@ -76,7 +79,7 @@
     <apex:outputField value="{!Progress_Note__c.Is_Note_Late__c}"/>
 
 </apex:panelGrid>
-<div class="med"><apex:include pageName="V2SA_ProgressNotesEmbed_PDFInclude"/></div>
+<div class="med"><apex:include pageName="progressnote_actionplan_embed_include"/></div>
 <div class="medBold"><b>Interventions</b></div>
 <div class="med"><apex:outputField value="{!Progress_Note__c.Interventions__c}"/><br/></div>
 <div class="medBold"><b>Progress</b></div>
@@ -91,6 +94,6 @@
 -->
 <div class="sm" align="center" style="color:rgb(128,128,128)">Created By:&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedBy.Name}"/>,&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedBy.Title}"/></div>
 <div class="sm" align="center" style="color:rgb(128,128,128)">Created Date:&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedDate}"/><apex:outputLabel rendered="{!Progress_Note__c.Is_Note_Late__c == 'Yes'}"  > - LATE ENTRY</apex:outputLabel></div>
-<div class="sm" align="center" style="color:rgb(128,128,128)">Latest release of form: 7/17/2013</div>
+<div class="sm" align="center" style="color:rgb(128,128,128)">Latest release of form: 12/17/2013</div>
 </body>
 </apex:page>

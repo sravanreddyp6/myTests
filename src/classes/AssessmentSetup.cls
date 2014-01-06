@@ -10,6 +10,10 @@ public with sharing class AssessmentSetup {
       
       List<Assessment__c> theseAssessments = new List<Assessment__c>();
       theseAssessments = assessments;
+      Map<ID, Assessment__c> assessmentMap = new Map<ID, Assessment__c>();
+      for (Assessment__c assessment: [SELECT ID, Admission__r.State__c FROM Assessment__c WHERE ID IN :assessments]) {
+        assessmentMap.put(assessment.ID, assessment);
+      }
       
       // List to hold the ID and Type of ALL domains, plus
       // child question data
@@ -20,7 +24,7 @@ public with sharing class AssessmentSetup {
       
       allDomainsIdType = 
         [Select ID,  Name, Description__c, Assessment_Type__c, 
-                (Select Name, ID, Question_Description__c, Question_Title__c, Question_Number__c 
+                (Select Name, ID, Question_Description__c, Question_Title__c, Question_Number__c, Excluded_States__c
                   From Question__r 
                   Order By Question_Number__c) 
               From Assessment_Domain__c];
@@ -37,7 +41,7 @@ public with sharing class AssessmentSetup {
             List<Assessment_Question__c> allQuestions = new List<Assessment_Question__c>();
             allQuestions = 
               [SELECT Name, ID, Question_Description__c, Question_Title__c, 
-                Question_Number__c FROM Assessment_Question__c];
+                Question_Number__c, Excluded_States__c FROM Assessment_Question__c];
        
       // Create map of questions from the list immediately above...
       Map<Id, Assessment_Question__c> questionMap = new Map<Id, Assessment_Question__c>();
@@ -45,42 +49,97 @@ public with sharing class AssessmentSetup {
         questionMap.put(aq.ID, aq);
       }  
       
-      
+      List<Assessment_Response__c> currentAr;
       // Now do our matching loop, but use the map instead
       // and insert our Assessment_Domain_Result__c values!
       
       List<Assessment_Response__c> dummyAr = new List<Assessment_Response__c>();
-      
+      Assessment_Response__c tempAr;
+      Assessment_Domain_Result__c dummyAdr;
+      String tempQuery;
+      Schema.FieldSetMember[] customQuestions = SObjectType.Assessment_Response__c.FieldSets.Custom_Questions.getFields();
+
       for (Assessment__c a: theseAssessments){
-        for( ID assmtDomainLoopID : domainMap.keySet() ){        
-            if (a.Assessment_Type__c == domainMap.get(assmtDomainLoopId).Assessment_Type__c){
-                Assessment_Domain_Result__c dummyAdr = new Assessment_Domain_Result__c();
-                dummyAdr.Assessment__c = a.Id; 
-                dummyAdr.Assessment_Domain__c = domainMap.get(assmtDomainLoopId).Id;
+        if (a.Previous__c==null) {
+            for( ID assmtDomainLoopID : domainMap.keySet() ){        
+                if (a.Assessment_Type__c == domainMap.get(assmtDomainLoopId).Assessment_Type__c){
+                    dummyAdr = new Assessment_Domain_Result__c();
+                    dummyAdr.Assessment__c = a.Id; 
+                    dummyAdr.Assessment_Domain__c = domainMap.get(assmtDomainLoopId).Id;
+                    insert dummyAdr;
+                    
+                    // Try question inserts in this loop 11/2/12 11:20 AM     
+                    
+                    
+                    
+                    for(Assessment_Question__c q : domainMap.get(assmtDomainLoopID).Question__r){
+                      // Check if this assessment admission's state is in the
+                      // excluded list for this question
+                      if (q.Excluded_States__c==null || assessmentMap.get(a.ID).Admission__r.State__c==null || q.Excluded_States__c.indexOf(assessmentMap.get(a.ID).Admission__r.State__c)==-1) {
+                        dummyAr.add(new Assessment_Response__c(
+                          Assessment__c = a.Id,
+                          Question__c = q.ID,
+                          Assessment_Domain_Result__c = dummyAdr.Id,
+                          Rating__c = NULL,
+                          Color__c = NULL)
+                        );
+                      }
+                    }
+                }
+            }
+        } else {
+            // Clone stuff now
+            tempQuery = 'SELECT ID, Assessment_Domain_Result__r.Assessment_Domain__c,' +
+               'Question__c, Rating__c, Color__c';
+            for(Schema.FieldSetMember f : customQuestions) {
+                tempQuery += ', ' + f.getFieldPath();
+            }
+            tempQuery += ' FROM Assessment_Response__c WHERE Assessment__c=\'' + a.Previous__c + '\'';
+            currentAr = Database.query(tempQuery);
+            
+            System.debug('Before trigger, currentAr: ' + currentAr);
+            // Clone responses
+            for (Assessment_Response__c ar: currentAr) {
+                dummyAdr = new Assessment_Domain_Result__c(
+                    Assessment__c = a.ID,
+                    Assessment_Domain__c = ar.Assessment_Domain_Result__r.Assessment_Domain__c
+                );
                 insert dummyAdr;
-                
-                // Try question inserts in this loop 11/2/12 11:20 AM     
-                
-                
-                
-                for(Assessment_Question__c q : domainMap.get(assmtDomainLoopID).Question__r){
-                  dummyAr.add(new Assessment_Response__c(
-                    Assessment__c = a.Id,
-                    Question__c = q.ID,
-                    Assessment_Domain_Result__c = dummyAdr.Id,
-                    Rating__c = NULL,
-                    Color__c = NULL));
-              	}
-              
-              
-              
+                tempAr = new Assessment_Response__c(
+                    Assessment__c = a.ID,
+                    Question__c = ar.Question__c,
+                    Assessment_Domain_Result__c = dummyAdr.ID,
+                    Rating__c = ar.Rating__c,
+                    Color__c = ar.Color__c
+                );
+                for(Schema.FieldSetMember f : customQuestions) {
+                    tempAr.put(f.getFieldPath(), ar.get(f.getFieldPath()));
+                }
+                dummyAr.add(tempAr);
             }
         }
-        
         insert dummyAr;
-        
       }       
+    }
     
+    public static void cloneHardcodedAnswers(Assessment__c[] assessments) {
+        // Get the answers for those questions on the old Assessment
+        Schema.FieldSetMember[] hardcodedQuestions = SObjectType.Assessment__c.FieldSets.Hardcoded_Questions.getFields();
+        String query;
+        for (Assessment__c a: assessments) {
+            if (a.Previous__c!=null) {
+                query = 'SELECT ';
+                for(Schema.FieldSetMember f : hardcodedQuestions) {
+                    query += f.getFieldPath() + ', ';
+                }
+                query += 'Id, Name FROM Assessment__c WHERE ID=\'' + a.Previous__c + '\' LIMIT 1';
+                Assessment__c oldAssessment = Database.query(query);
+        
+                for(Schema.FieldSetMember f : hardcodedQuestions) {
+                    a.put(f.getFieldPath(), oldAssessment.get(f.getFieldPath()));
+                }
+            }
+        }
     }
     
     public static void nameAssessment(Assessment__c[] assessments){     
@@ -116,63 +175,66 @@ public with sharing class AssessmentSetup {
         for (Id assmtIdsToLoopThrough : assmtID){
         
             Assessment__c thisAssmt = assmtMap.get(assmtIdsToLoopThrough);
-            String typeOfThisAssmt;
-            Integer numberOfAdmissionForAssmtWeAreCreating;
-            
-            // Get all admissions for this person being served and order by date
-            List<Contact> thisPersonsContactID = [SELECT Id FROM Contact
-                WHERE AccountId = :thisAssmt.AccountPerson__c];
-            List<Admission__c> thisPersonsAdmissions = [SELECT Id, Effective_Date__c FROM Admission__c
-                WHERE Person_Being_Served__c = :thisPersonsContactID.get(0).Id ORDER BY Effective_Date__c];
-            Integer countOfAdmissions = thisPersonsAdmissions.size();
-            Map<Integer,Admission__c> mapOfThisPersonsAdmissions = new Map<Integer,Admission__c>();
-            Integer episodeMapCounter = 1;
-            
-            for (Admission__c e : thisPersonsAdmissions){
-                mapOfThisPersonsAdmissions.put(episodeMapCounter, e);
-                episodeMapCounter++;
-            }
-            
-            for ( Integer numberOfAdmission : mapOfThisPersonsAdmissions.keySet() ){
-                if ( thisAssmt.Admission__c == mapOfThisPersonsAdmissions.get(numberOfAdmission).Id){
-                    numberOfAdmissionForAssmtWeAreCreating = numberOfAdmission;
-                }
-            }
-            
-            
-            // Loop through all Assessment_Type__c IDs, and figure out what
-            // type of assessment this one is.
-            for( ID assmtTypesToLoopThrough : assmtTypeMap.keySet() ){
-                if ( assmtTypesToLoopThrough == thisAssmt.Assessment_Type__c ){
-                    typeOfThisAssmt = assmtTypeMap.get(assmtTypesToLoopThrough).Name;
-                }
-            }
-            
-            // Get the assessments of this type already completed for the user.
-            List<Assessment__c> assmtPreExisting = [SELECT Id, Name, Interval__c FROM Assessment__c 
-                WHERE AccountPerson__c = :thisAssmt.AccountPerson__c
-                AND Admission__c = :thisAssmt.Admission__c];
+            system.debug('ty why - ' + thisAssmt.Assessment_Type_Name__c);
+         //   if(thisAssmt.Assessment_Type_Name__c == 'CANS'){
                 
-            List<Account> thisPerson = [SELECT FirstName, LastName FROM Account WHERE Id = :thisAssmt.AccountPerson__c LIMIT 1];
-            String thisPersonFirstName = thisPerson.get(0).FirstName;
-            String thisPersonLastName = thisPerson.get(0).LastName;
-            
-            Integer countOfAssmts = assmtPreExisting.size();
-            //System.Debug('How many assessments has this person had?' + countOfAssmts);
-            
-            // Loop through the writabe list of assessments and update the Assessment_Custom_Name__c
-            // value.    
-            for (Assessment__c tryChangeCustomName : assmtsSelectedToUpdate){
-                if (tryChangeCustomName.Id == assmtIdsToLoopThrough)
-                    if (tryChangeCustomName.Interval__c == 'Intake' || tryChangeCustomName.Interval__c == 'Discharge'){
-                        tryChangeCustomName.Name = typeOfThisAssmt + '_' + thisPersonFirstName + thisPersonLastName + '_Assmt' + countOfAssmts + '_' + thisAssmt.Interval__c;
+                String typeOfThisAssmt;
+                Integer numberOfAdmissionForAssmtWeAreCreating;
+                
+                // Get all admissions for this person being served and order by date
+                List<Contact> thisPersonsContactID = [SELECT Id FROM Contact
+                    WHERE AccountId = :thisAssmt.AccountId__c];
+                List<Admission__c> thisPersonsAdmissions = [SELECT Id, Effective_Date__c FROM Admission__c
+                    WHERE Person_Being_Served__c = :thisPersonsContactID.get(0).Id ORDER BY Effective_Date__c];
+                Integer countOfAdmissions = thisPersonsAdmissions.size();
+                Map<Integer,Admission__c> mapOfThisPersonsAdmissions = new Map<Integer,Admission__c>();
+                Integer episodeMapCounter = 1;
+                
+                for (Admission__c e : thisPersonsAdmissions){
+                    mapOfThisPersonsAdmissions.put(episodeMapCounter, e);
+                    episodeMapCounter++;
+                }
+                
+                for ( Integer numberOfAdmission : mapOfThisPersonsAdmissions.keySet() ){
+                    if ( thisAssmt.Admission__c == mapOfThisPersonsAdmissions.get(numberOfAdmission).Id){
+                        numberOfAdmissionForAssmtWeAreCreating = numberOfAdmission;
                     }
-                    else{
-                        tryChangeCustomName.Name = typeOfThisAssmt + '_' + thisPersonFirstName + thisPersonLastName + '_Assmt' + countOfAssmts + '_' + thisAssmt.Interval__c + thisAssmt.Quarter__c;
+                }
+                
+                
+                // Loop through all Assessment_Type__c IDs, and figure out what
+                // type of assessment this one is.
+                for( ID assmtTypesToLoopThrough : assmtTypeMap.keySet() ){
+                    if ( assmtTypesToLoopThrough == thisAssmt.Assessment_Type__c ){
+                        typeOfThisAssmt = assmtTypeMap.get(assmtTypesToLoopThrough).Name;
                     }
-                update tryChangeCustomName;
-            }
-        
+                }
+                
+                // Get the assessments of this type already completed for the user.
+                List<Assessment__c> assmtPreExisting = [SELECT Id, Name, Interval__c FROM Assessment__c 
+                    WHERE AccountPerson__c = :thisAssmt.AccountPerson__c
+                    AND Admission__c = :thisAssmt.Admission__c];
+                    
+                List<Account> thisPerson = [SELECT FirstName, LastName FROM Account WHERE Id = :thisAssmt.AccountId__c LIMIT 1];
+                String thisPersonFirstName = thisPerson.get(0).FirstName;
+                String thisPersonLastName = thisPerson.get(0).LastName;
+                
+                Integer countOfAssmts = assmtPreExisting.size();
+                //System.Debug('How many assessments has this person had?' + countOfAssmts);
+                
+                // Loop through the writabe list of assessments and update the Assessment_Custom_Name__c
+                // value.    
+                for (Assessment__c tryChangeCustomName : assmtsSelectedToUpdate){
+                    if (tryChangeCustomName.Id == assmtIdsToLoopThrough)
+                        if (tryChangeCustomName.Interval__c == 'Intake' || tryChangeCustomName.Interval__c == 'Discharge'){
+                            tryChangeCustomName.Name = typeOfThisAssmt + '_' + thisPersonFirstName + thisPersonLastName + '_Assmt' + countOfAssmts + '_' + thisAssmt.Interval__c;
+                        }
+                        else{
+                            tryChangeCustomName.Name = typeOfThisAssmt + '_' + thisPersonFirstName + thisPersonLastName + '_Assmt' + countOfAssmts + '_' + thisAssmt.Interval__c + thisAssmt.Quarter__c;
+                        }
+                    update tryChangeCustomName;
+                }
+         //   }
         }
         
     }

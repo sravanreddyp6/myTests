@@ -167,6 +167,8 @@ private class AdmissionValidationTEST {
         //update ServAssign4;
 
         update Adm2;
+        delete Adm2;
+        undelete Adm2;
 
         //AdmissionValidation.checkForActiveServiceAssignments(myListOfAdms);
         //AdmissionValidation.checkServiceAssignmentEndDates(myListOfAdms);

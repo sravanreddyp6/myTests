@@ -282,29 +282,33 @@ document.onkeypress = stopRKey;
     <apex:pageMessages id="msgs"/>
 
     <apex:inputhidden value="{!Referral__c.Person_Being_Referred__c}" />
+    <apex:inputhidden value="{!Referral__c.Person_Being_Served__c}" />
     <!--apex:inputhidden value="{!Referral__c.RecordType.Name}" /-->
     <!--<apex:outputpanel style="display:none">
         <apex:inputField value="{!Referral__c.RecordType.Name}" />
     </apex:outputpanel>-->
-    <apex:pageBlock mode="edit">
-      <apex:pageblockButtons location="bottom" rendered="{!ISNULL(personBeingRefRecord.Id)}">
+    
+     <apex:pageBlock mode="edit">
+      <apex:pageblockButtons location="bottom" rendered="{!AND(ISNULL(personBeingRefRecord.Id),ISNULL(personBeingServedRecord.Id))}">
         <apex:commandButton value="Create Person Being Referred"
                             id="createPBRButton"
                             action="{!createPBR}"
-                            rendered="{!ISNULL(personBeingRefRecord.Id)}" />
+                            rendered="{!ISNULL(personBeingRefRecord.Id)}"/>
         <apex:commandButton value="Cancel" id="cancelButton" action="{!cancel}"/>
       </apex:pageblockButtons>
 
       <apex:pageblockButtons location="Top">
             <apex:commandButton value="Search for Duplicates" action="{!redirectToSearch}"/>
             <apex:commandButton value="Unlink Referral" action="{!unlinkPBR}" rendered="{!Referral__c.OldPBR__c != null}"/>
+            <apex:commandButton value="Unlink Referral" action="{!unlinkPBS}" rendered="{!Referral__c.OldPBS__c != null}"/>
       </apex:pageblockButtons>
 
       <apex:pageBlockSection title="Person Being Referred"
                              showHeader="true"
                              columns="2"
                              collapsible="false"
-                             id="PBRSection">
+                             id="PBRSection"
+                             rendered="{!ISNULL(personBeingServedRecord.id)}">
         <apex:pageBlockSectionItem >
           <apex:outputText value="Name"/>
           <apex:outputPanel styleClass="nowrap">
@@ -340,7 +344,8 @@ document.onkeypress = stopRKey;
       </apex:pageBlockSection>
       <apex:pageBlockSection showHeader="false"
                              columns="1"
-                             collapsible="false">
+                             collapsible="false"
+                             rendered="{!ISNULL(personBeingServedRecord.id)}">
         <apex:inputField value="{!personBeingRefRecord.Additional_Information_Comments__c}" style="width: 90%;" />
       </apex:pageBlockSection>
 
@@ -348,7 +353,8 @@ document.onkeypress = stopRKey;
                              showHeader="true"
                              columns="2"
                              collapsible="false"
-                             id="ContactSection">
+                             id="ContactSection"
+                             rendered="{!ISNULL(personBeingServedRecord.id)}">
         <apex:inputField value="{!personBeingRefRecord.Street_1__c}" id="Perm_Street1"/>
         <apex:inputField value="{!personBeingRefRecord.Phone__c}" id="Perm_Phone"/>
         <apex:inputField value="{!personBeingRefRecord.Street_2__c}" id="Perm_Street2"/>
@@ -367,9 +373,58 @@ document.onkeypress = stopRKey;
         <apex:inputField value="{!personBeingRefRecord.Home_County__c}"/>
       </apex:pageBlockSection>
 
+      <apex:pageBlockSection title="Person Being Served"
+                             showHeader="true"
+                             columns="2"
+                             collapsible="false"
+                             id="readPBSSection"
+                             rendered="{!!ISNULL(personBeingServedRecord.id)}">
+          <apex:pageBlockSectionItem >
+          <apex:outputText value="Name"/>
+          <apex:outputPanel styleClass="nowrap">
+            <apex:outputText label="" value="{!personBeingServedRecord.FirstName}" />&nbsp;&nbsp;
+            <apex:outputText label="" value="{!personBeingServedRecord.Middle_Name__c}" />&nbsp;&nbsp;
+            <apex:outputText label="" value="{!personBeingServedRecord.LastName}" />
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:outputField value="{!personBeingServedRecord.Ethnicity_Picklist__c}"/>
+
+        <apex:outputField value="{!personBeingServedRecord.BirthDate}"/>
+        <apex:outputField value="{!personBeingServedRecord.Primary_Language__c}" />
+        <apex:outputField value="{!personBeingServedRecord.Age__c}"/>
+
+        
+        <apex:outputField value="{!personBeingServedRecord.Gender__c}"/>
+        <apex:outputField value="{!personBeingServedRecord.SSN__c}"/>
+
+      </apex:pageBlockSection>
+
+      <apex:pageBlockSection title="Contact Information"
+                             showHeader="true"
+                             columns="2"
+                             collapsible="false"
+                             id="readContactSection"
+                             rendered="{!!ISNULL(personBeingServedRecord.id)}">
+          <apex:outputField value="{!personBeingServedRecord.MailingStreet}" id="Perm_Street1"/>
+        <apex:outputField value="{!personBeingServedRecord.Phone}"  id="Perm_Phone"/>
+        <apex:outputField value="{!personBeingServedRecord.OtherStreet}" id="Perm_Street2"/>
+        <apex:outputField value="{!personBeingServedRecord.Email}" id="Perm_Email"/>
+        <apex:pageBlockSectionItem >
+          <apex:outputText value="City"/>
+          <apex:outputPanel styleClass="nowrap">
+            <apex:outputText value="{!personBeingServedRecord.MailingCity}" id="Perm_City"/>&nbsp;
+            <apex:outputLabel value="State" />&nbsp;
+            <apex:outputText value="{!personBeingServedRecord.MailingState}"  id="Perm_State"/>&nbsp;
+            <apex:outputLabel value="Zip" />&nbsp;
+            <apex:outputText value="{!personBeingServedRecord.MailingPostalCode}" style="width: 42px;"  id="PermZip"/>
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:outputField value="{!personBeingServedRecord.Fax}" id="Perm_Fax"/>
+      </apex:pageBlockSection>
+
       <apex:pageblockSection columns="1"
                              title="State For Preferred Service"
-                             id="stateForPreferredService" rendered="{!!ISNULL(personBeingRefRecord.Id)}">
+                             id="stateForPreferredService" rendered="{!OR(!ISNULL(personBeingRefRecord.Id),!ISNULL(personBeingServedRecord.Id))}">
           <apex:inputField value="{!Referral__c.State_for_Preferred_Service__c}" required="{!referralRecordType!='NeuroRestorative'}" id="sfps">
               <apex:actionSupport event="onchange" oncomplete="j$('select[id$=servicesRequested]').val('');setReferralRecordType();" rerender="referralDetailBlock,ReferralDetailHeader,ReferralDetail,ReferralServices,progConsid,ReferralDetail_1"/>
           </apex:inputField>
@@ -378,7 +433,7 @@ document.onkeypress = stopRKey;
       <apex:pageBlockSection columns="1"
                              title="Related Parties"
                              id="relatedParties"
-                             rendered="{!!ISNULL(personBeingRefRecord.Id)}">
+                             rendered="{!OR(!ISNULL(personBeingRefRecord.Id),!ISNULL(personBeingServedRecord.Id))}">
         <apex:pageBlockSectionItem >
           <apex:commandButton value="Add Related Party"
                               id="addRelParty"
@@ -891,12 +946,12 @@ document.onkeypress = stopRKey;
     </apex:outputpanel>
 
     <!-- Referral Detail -->
-    <apex:pageBlock mode="edit" id="referralDetailBlock" rendered="{!!ISNULL(personBeingRefRecord.Id)}">
+    <apex:pageBlock mode="edit" id="referralDetailBlock" rendered="{!OR(!ISNULL(personBeingRefRecord.Id), !ISNULL(personBeingServedRecord.Id))}">
       <apex:pageblockButtons location="bottom">
         <apex:commandButton value="Save Referral"
                             id="saveRefButton"
                             onclick="checkRedFlags();return false;"
-                            rendered="{!!ISNULL(personBeingRefRecord.Id)}" />
+                           rendered="{!OR(!ISNULL(personBeingRefRecord.Id), !ISNULL(personBeingServedRecord.Id))}" />
 
         <apex:commandButton value="Cancel" id="cancelButton" action="{!cancel}"/>
       </apex:pageblockButtons>

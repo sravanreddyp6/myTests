@@ -1,4 +1,4 @@
-<apex:page standardController="Progress_Note__c" extensions="TMN_DecryptMedicaidID" renderAs="pdf">
+<apex:page standardController="Progress_Note__c" extensions="TMN_DecryptMedicaidID" renderAs="pdf" applyBodyTag="false">
 <head>
 <style type="text/css">
 .BoldLabelLg {
@@ -6,8 +6,7 @@
     font-weight: bold;
 }
 .Header{
-    border-top: 2px solid black;
-    border-bottom: 1px solid black;
+
 }
 .Lg {
     font-size: 20px;
@@ -35,14 +34,15 @@
 .myTBLarge{
     width: 100%;
     border-style:solid;
-    border-width:1px;
+    border: none;
+
 }  
 .myTB1{
     margin-top:4px;
     width: 100%;
     border-style:solid;
-    border-width:1px;
     background-color:#ebebeb;
+    border: none;
 }  
 .innerTb{
     padding-left: 3px;
@@ -66,8 +66,11 @@
     background-color:#ebebeb;
     } 
 .dataTable{
-    border: 1px solid black;
-    }    
+   
+    } 
+    .goal{padding-left: 20px;}
+    .obj{padding-left: 60px;}
+    .act{padding-left: 100px;}       
 </style>
 </head>
 <body>
@@ -75,7 +78,7 @@
     <tr><td class="med" align="center">NC MENTOR</td></tr>
     <tr><td class="sm" align="right" >NC Division of MH, DD, SA Services</td></tr>
 </table>
-
+<apex:outputPanel layout="block" style="border: 1px solid black;">
 <table class="myTBLarge">
 <tr>
 <td>
@@ -97,9 +100,11 @@
     </tr>
 </table>
 <br/>
+Purpose of Contact (exact wording from PCP):
+
+
+<apex:outputPanel layout="block" ><apex:include pageName="progressnote_actionplan_embed_include"/><hr/><br/></apex:outputPanel>
 <table width="100%">
-<tr><td>Purpose of Contact (exact wording from PCP):</td></tr>
-<tr><td><apex:include pageName="V2SA_ProgressNotesEmbed_PDFInclude"/><hr/><br/></td></tr>
 <tr><td>Intervention/Activity (What you did):<br/></td></tr>
 <tr><td><apex:outputField value="{!Progress_Note__c.Interventions__c}"/><hr/><br/></td></tr>
 <tr><td>Assessment of Clients Progress Towards Goals:<br/></td></tr>
@@ -109,12 +114,12 @@
 <tr><td>*SIGNATURE REQUIRED</td><td>_________________________________________________________</td></tr><br/>
 <div class="sm" align="center">Created By:&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedBy.Name}"/>,&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedBy.Title}"/></div>
 <div class="sm" align="center">Created Date:&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedDate}"/><apex:outputLabel rendered="{!Progress_Note__c.Is_Note_Late__c == 'Yes'}"  > - LATE ENTRY</apex:outputLabel></div>
-<div class="sm" align="center">Latest release of form: 8/13/12</div>
+<div class="sm" align="center">Latest release of form: 12/17/12</div>
 </table>
 <tr><td style="font-size: 10pt;">*For <u>professionals</u>, signature and credentials, degree or licensure. For <u>paraprofessionals</u>, signature and position</td></tr>
 </td>
 </tr>
 </table>
-
+</apex:outputPanel>
 </body>
 </apex:page>

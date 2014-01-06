@@ -1,13 +1,22 @@
-<apex:page standardController="Evaluation__c" extensions="CareMeridianEvaluationViewController">
+<apex:page standardController="Evaluation__c" extensions="CareMeridianEvaluationViewController,CareMeridianEvaluationCommonController">
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
     <apex:includeScript value="{!$Resource.AnnotoriousDev}"/>
+    <apex:includeScript value="{!$Resource.AnotoJS}"/>
+    <script>
+    function openWin(url){
+        window.open(url);
+    }
+    </script>
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
     <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
     <apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}"/>
     <style>
         [id$=skinBodyFooter] {
+            clear: both;
+        }
+        [id$=bodyMapOtherComments] {
             clear: both;
         }
         hr {
@@ -32,14 +41,31 @@
     <div class="breadcrumb">
         <a href="/">Home</a> > <a href="/{!Evaluation__c.Referral__c}">Referral: {!Evaluation__c.Referral__r.Name}</a> > <a href="/{!Evaluation__c.Id}">Evaluation: {!Evaluation__c.Name}</a>
     </div>
-    <apex:pageMessages id="pageMessages" />
     <apex:form id="wholePage">
+        <apex:outputPanel id="penUploadMessages">
+            <apex:actionRegion >
+                <apex:outputPanel layout="block" styleClass="message errorM3" rendered="{!Evaluation__c.Pen_Upload_Error__c != null}">
+                    <h4 style="display: block; color: rgb(204, 0, 0); margin-bottom: 5px;">Pen Upload Errors:</h4>
+                    <apex:outputField value="{!Evaluation__c.Pen_Upload_Error__c}" /><br />
+                    <h4 style="display: inline-block; margin-top: 5px;"><apex:commandLink value="Clear these messages" action="{!clearPenUploadErrors}" rerender="penUploadMessages" status="clearPenUploadErrorsStatus" /></h4>
+                    <apex:actionStatus id="clearPenUploadErrorsStatus">
+                        <apex:facet name="start">
+                            <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                        </apex:facet>
+                        <apex:facet name="stop" />
+                    </apex:actionStatus>
+                </apex:outputPanel>
+            </apex:actionRegion>
+        </apex:outputPanel>
+        <apex:pageMessages id="pageMessages" />
         <apex:tabPanel id="wholeTabPanel" value="{!selectedTab}" styleClass="evaluationTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
             <apex:tab label="Details" name="detailsTab" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
                     <apex:pageBlockSection columns="2">
                         <apex:outputField value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Full_Name__c}" />
                         <apex:outputField value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Date_of_Birth__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Age__c}" />
                         <apex:outputField value="{!Evaluation__c.Number_of_Children__c}" />
                         <apex:outputField value="{!Evaluation__c.Occupation__c}" />
                         <apex:outputField value="{!Evaluation__c.Number_of_Children_at_Home__c}" />
@@ -300,7 +326,7 @@
                     <apex:repeat value="{!annotations}" var="annotation">
                         anno.addAnnotation({
                             Id: "{!annotation.Id}",
-                            src: "{!annotation.Annotation_Source__c}",
+                            src: $("#bodyMap").prop("src"),
                             text: "{!JSENCODE(annotation.Annotation_Text__c)}",
                             shapes: [{
                                 type: "{!JSENCODE(annotation.Annotation_Shape__c)}",
@@ -365,15 +391,19 @@
                     <hr />
                     <h2 style="display: block; margin: 10px;">Body Map</h2>
                     <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
-                        <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!baseUrl}{!URLFOR($Resource.WholeBodyNoGrid)}" id="bodyMap" />
+                        <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!IF(bodyMapUrl=null, baseUrl + URLFOR($Resource.WholeBodyNoGrid), bodyMapUrl)}" id="bodyMap" />
                     </div>
-                    <div style="margin-left: 420px; height: 298px;">
+                    <div style="margin-left: 420px; height: 298px; overflow: auto;">
                         <table id="annotations">
                             <tbody>
                             </tbody>
                         </table>
                     </div>
+                    <apex:pageBlockSection columns="1" id="bodyMapOtherComments">
+                        <apex:outputField value="{!Evaluation__c.Body_Map_Comments__c}" label="Other Body Map Comments" />
+                    </apex:pageBlockSection>
                     <hr />
+
                     <apex:pageBlockSection columns="1" id="skinBodyFooter">
                         <apex:outputField value="{!Evaluation__c.Skin_Body_Comments__c}" />
                         <apex:outputField value="{!Evaluation__c.Skin_Section_Completed__c}" />
@@ -686,6 +716,13 @@
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem />
                     </apex:pageBlockSection>
+                    <hr />
+                    <apex:pageBlockSection columns="2">
+                        <apex:outputField value="{!Evaluation__c.Endurance__c}" />
+                        <apex:outputField value="{!Evaluation__c.Balance_Sitting__c}" />
+                        <apex:outputField value="{!Evaluation__c.Balance_Standing__c}" />
+                    </apex:pageBlockSection>
+                    <hr />
                     <apex:pageBlockSection columns="1">
                         <apex:outputField value="{!Evaluation__c.Rehab_Comments__c}" />
                         <apex:outputField value="{!Evaluation__c.Rehab_Section_Completed__c}" />
@@ -763,6 +800,9 @@
             <apex:pageBlockButtons location="bottom">
                 <apex:commandButton onclick="window.location='/apex/CareMeridianEvaluationEdit?id={!Evaluation__c.Id}&tab={!selectedTab}'; return false;" value="Edit" />
                 <apex:commandButton onclick="window.location='/apex/CareMeridianEvaluationEsign?id={!Evaluation__c.Id}'; return false;" value="E-Sign" rendered="{!selectedTab == 'dischargePlanTab'}" />
+                <apex:commandButton value="Generate Paper Form" action="{!generatePaperForm}" rerender="pageMessages" onclick="jQuery('[id$=pdfGenerationSpinner]').show();" oncomplete="downloadPaperForm('{!pdfExistenceUrl}');" />
+                <apex:commandButton value="Generate PDF" onclick="openWin('/apex/CareMeridianEvaluationPDF?id={!Evaluation__c.Id}')" />
+                <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" style="display: none;" id="pdfGenerationSpinner" />
             </apex:pageBlockButtons>
         </apex:pageBlock>
         <apex:outputPanel id="relatedPartyDialog" style="display:none">

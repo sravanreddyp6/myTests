@@ -10,7 +10,7 @@ public with sharing class PersonsBeingServedListController {
     transient public List<String> contactIds;
     transient public List<String> accountIds { get; set; }
     transient public Map<String, Account> accountIdMap { get; set; }
-    transient public Map<String, List<Plan_ServiceAssignment_MJO__c>> accountIdToJO { get; set; }
+    transient public Map<String, List<Action_Plan__c>> accountIdToJO { get; set; }
     // Because VF doesn't allow us to check the size of a list in a map
     transient public Map<String, Integer> accountIdToJOSize { get; set; }
     transient public Map<String, List<Admission__c>> accountIdToAdmission { get; set; }
@@ -19,7 +19,14 @@ public with sharing class PersonsBeingServedListController {
     transient public Map<String, List<Service_Assignment__c>> admissionIdToServiceAssignment { get; set; }
     transient public Map<String, Integer> admissionIdToServiceAssignmentSize { get; set; }
     public boolean canCreateNew { get; set; }
-
+    public boolean seeWorksheets { get {
+        boolean isRedwood = false;
+        
+        for(TMN_User__c TU: [select Operating_Group__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1]){
+            if (TU.Operating_Group__c == 'Redwood'){isRedwood = true;} 
+        }
+        return isRedwood;
+    } set; }
 
     private void getcanCreateNew() {
         
@@ -85,7 +92,7 @@ public with sharing class PersonsBeingServedListController {
         contactIds = new List<String>();
         accountIds = new List<String>();
         accountIdMap = new Map<String, Account>();
-        accountIdToJO = new Map<String, List<Plan_ServiceAssignment_MJO__c>>();
+        accountIdToJO = new Map<String, List<Action_Plan__c>>();
         accountIdToJOSize = new Map<String, Integer>();
         // Because we need to display Admission/Service Assignment without any
         // associated plan as well.
@@ -124,7 +131,7 @@ public with sharing class PersonsBeingServedListController {
         }
 
         for (String ID: accountIds) {
-            accountIdToJO.put(ID, new List<Plan_ServiceAssignment_MJO__c>());
+            accountIdToJO.put(ID, new List<Action_Plan__c>());
             accountIdToJOSize.put(ID, 0);
             accountIdToAdmission.put(ID, new List<Admission__c>());
             accountIdToAdmissionSize.put(ID, 0);
@@ -136,33 +143,33 @@ public with sharing class PersonsBeingServedListController {
         // Because we don't want duplicate Service Assignment/Admission
         Set<String> admissionsWithPlans = new Set<String>();
         Set<String> saWithPlans = new Set<String>();
-        for (Plan_ServiceAssignment_MJO__c jo: [
+        for (Action_Plan__c jo: [
                 SELECT ID, Service_Assignment__r.Person_Being_Served__r.Account.ID,
-                    Service_Assignment__r.Person_Being_Served__r.ID,
-                    Service_Assignment__r.Person_Being_Served__r.Account.Name,
-                    Service_Assignment__r.Admission__r.ID,
+                    Service_Assignment__r.Person_Being_Served__c,
+                    Service_Assignment__r.Person_Being_Served__r.Name,
+                    Service_Assignment__r.Admission__c,
                     Service_Assignment__r.Admission__r.Effective_date__c,
                     Service_Assignment__r.Name, Service_Assignment__r.RecordType.ID,
                     Service_Assignment__r.Person_Being_Served__r.Account.Owner.Name,
-                    Plan_Expiration_Date__c, Short_term_Goal__r.Plan__r.Status__c,
-                    Short_term_Goal__r.Plan__r.ID, Service_Assignment__r.ID,
-                    Service_Assignment__r.Person_Being_Served__r.Account.Owner.ID,
+                    Effective_Date__c, Target_Date__c, Status__c,
+                    Service_Assignment__c,
+                    Service_Assignment__r.Person_Being_Served__r.Account.OwnerID,
                     Service_Assignment__r.Admission__r.State__c,
                     Service_Assignment__r.Admission__r.Status__c
-                FROM Plan_ServiceAssignment_MJO__c
+                FROM action_plan__c
                 WHERE Service_Assignment__r.Person_Being_Served__r.ID in :contactIds
+                and     status__c = 'Active Final'
             ]
         ) {
-            if (!distinctPlansAndSAs.contains(String.valueOf(jo.Short_term_Goal__r.Plan__r.ID) + String.valueOf(jo.Service_Assignment__r.ID))) {
+            if (!distinctPlansAndSAs.contains(String.valueOf(jo.ID) + String.valueOf(jo.Service_Assignment__r.ID))) {
                 accountIdToJO.get(jo.Service_Assignment__r.Person_Being_Served__r.Account.ID).add(jo);
                 accountIdToJOSize.put(jo.Service_Assignment__r.Person_Being_Served__r.Account.ID,
                     accountIdToJOSize.get(jo.Service_Assignment__r.Person_Being_Served__r.Account.ID) + 1);
-                distinctPlansAndSAs.add(String.valueOf(jo.Short_term_Goal__r.Plan__r.ID) + String.valueOf(jo.Service_Assignment__r.ID));
-                admissionsWithPlans.add(jo.Service_Assignment__r.Admission__r.ID);
-                saWithPlans.add(jo.Service_Assignment__r.ID);
+                distinctPlansAndSAs.add(String.valueOf(jo.ID) + String.valueOf(jo.Service_Assignment__c));
+                admissionsWithPlans.add(jo.Service_Assignment__r.Admission__c);
+                saWithPlans.add(jo.Service_Assignment__c);
             }
         }
-        
         // EB-116: add status to service assignment subquery for later exclusion 
         for (Admission__c admission : [
                 SELECT ID, Effective_Date__c, Person_Being_Served__r.Account.Name,
@@ -186,11 +193,11 @@ public with sharing class PersonsBeingServedListController {
             }
             Integer index = 1;
             for (Service_Assignment__c sa: admission.Service_Agreements__r) {
-            	
-            	// EB-116: do not show inactive assessment only
-            	if ( (sa.RecordType.Id == ASSESSMENT_ONLY_REC_TYPE_ID) &&  (sa.Status__c != 'Active') )
-            		continue;
-            		
+                
+                // EB-116: do not show inactive assessment only
+                if ( (sa.RecordType.Id == ASSESSMENT_ONLY_REC_TYPE_ID) &&  (sa.Status__c != 'Active') )
+                    continue;
+                
                 if (!saWithPlans.contains(sa.ID)) { // don't display duplicated stuff
                     if (index == 1) {
                         accountIdToAdmission.get(admission.Person_Being_Served__r.Account.ID).add(admission);
@@ -232,10 +239,10 @@ public with sharing class PersonsBeingServedListController {
     }
     
     @RemoteAction
-    public static Plan__c getPlan(String ID) {
+    public static Action_Plan__c getPlan(String ID) {
         return [
-            SELECT Name, Admission__r.Name, Effective_Date__c,  Expiration_Date_Override__c, Status__c
-                   FROM Plan__c WHERE ID=:ID
+            SELECT Name, Service_Assignment__r.Admission__r.Name, Service_Assignment__r.Name, Effective_Date__c,  Target_Date__c, Status__c
+                   FROM Action_Plan__c WHERE ID=:ID
         ];
     }
 }

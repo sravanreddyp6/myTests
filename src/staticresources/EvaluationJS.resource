@@ -1,4 +1,15 @@
 (function ($) {
+    onPdfGenerationComplete = function (fileLocation) {
+        $('[id$=pdfGenerationSpinner]').hide();
+        window.location = fileLocation;
+    }
+    onPdfGenerationError = function () {
+        $('[id$=pdfGenerationSpinner]').hide();
+        alert("The paper form generation is taking too long, please try refreshing the page and generating a new one.");
+    }
+    downloadPaperForm = function (pdfExistenceUrl) {
+        downloadPdf(pdfExistenceUrl, 6000, 20, onPdfGenerationComplete, onPdfGenerationError);
+    }
     openModalDialog = function (dialogId, titleString, formId) {
         var $element = $(document.getElementById(dialogId));
         if ($element.dialog("isOpen")!==true) {

@@ -12,19 +12,19 @@ public with sharing class Notes_ProgressNote_Create_Audit_pdf {
             attachmentPDF.parentId = thePN.id;
             attachmentPDF.Name = thePN.Person_Being_Served__r.Name + ' - ' + thePN.RecordType.Name +' - (' + date.today().month() + '-' + date.today().day() + '-' + date.today().year() + ').pdf';          
             if(Test.isrunningtest()==false){ 
-            	attachmentPDF.body = pageRef.getContent();
+                attachmentPDF.body = pageRef.getContent();
             }
             else{
-            	Blob testBlob = Blob.valueOf('TEST 123');
-            	attachmentPDF.body = testBlob;
+                Blob testBlob = Blob.valueOf('TEST 123');
+                attachmentPDF.body = testBlob;
             }   
        // PageReference gotoPage = new PageReference('/');          
             
                 if(thePN.No_Approval_Needed__c){
-                    insert attachmentPDF;
+                 //   insert attachmentPDF;
                 }
                 else{                    
-                    insert attachmentPDF;
+                 //   insert attachmentPDF;
                     return new PageReference('/p/process/Submit?retURL=%2F'+thePN.id+'&id='+thePN.id);
                 }            
             

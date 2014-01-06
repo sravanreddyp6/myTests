@@ -9,6 +9,8 @@
         type="String" />
     <apex:attribute name="uniqueId" description="Unique ID so we can differentiate JS functions"
         type="String" required="true" />
+    <apex:attribute name="isPdf" description="Boolean describing whether or not this is for a PDF rendering"
+        type="Boolean" required="false" default="false" />
 
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
@@ -32,9 +34,9 @@
             </apex:actionStatus>
         </apex:outputPanel>
         <apex:pageBlockTable value="{!responses}" var="response" id="responseTable">
-            <apex:column headerValue="{!IF(responses.size>0, 'Action', '')}" width="50px">
-                <apex:commandLink onclick="{!onEdit}('{!response.Id}'); return false;" value="Edit" rendered="{!onEdit != null}" />
-                <apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Edit" rendered="{!onEdit == null}" />
+            <apex:column headerValue="{!IF(AND(responses.size>0,isPdf != true), 'Action', '')}" width="50px">
+                <apex:commandLink onclick="{!onEdit}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit != null) && (isPdf != true)}" />
+                <apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit == null) && (isPdf != true)}" />
             </apex:column>
             <apex:repeat value="{!columnsToFetch}" var="column">
                 <apex:column value="{!response[column]}" />
@@ -42,7 +44,7 @@
         </apex:pageBlockTable>
 
         <!-- Dialog Modal -->
-        <apex:outputPanel id="responseDialog" style="display: none;">
+        <apex:outputPanel id="responseDialog" style="display: none;" rendered="{!!isPdf}">
             <span class="ui-helper-hidden-accessible"><input type="text"/></span>  <!-- Just so Jquery UI doesn't auto focus on the 1st field -->
             <apex:pageBlock title="{!type}" id="responseDialogMainBlock">
                 <apex:pageblockButtons location="bottom">

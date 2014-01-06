@@ -1,7 +1,5 @@
 public with sharing class ComplianceSurveyWizard {
 
-    //Shaun Added a comment Dec 18th 2013
-
     public void Back() {
         if(Savepoints.size() >= 1){
             Savepoints.remove(Savepoints.size()-1);
@@ -60,7 +58,8 @@ public with sharing class ComplianceSurveyWizard {
                 for (Integer i=1 ; i < sObjectFields.size() ; i++){
                     Query += ', ' + sObjectFields.get(i);
                 }
-                Query += ' FROM TMN_User__c WHERE Employee_Number__c = \'' + getUserID() + '\'';
+                string useridstr = getUserID();
+                Query += ' FROM TMN_User__c WHERE Employee_Number__c = :useridstr';
                 try{
                     TMN_User = Database.query(Query);
                 } catch (QueryException e){
@@ -132,7 +131,8 @@ public with sharing class ComplianceSurveyWizard {
                 for (Integer i=1 ; i < sObjectFields.size() ; i++){
                     Query += ', ' + sObjectFields.get(i);
                 }
-                Query += ' FROM Response__c WHERE Id = \'' + getResponseID() + '\'';
+                string responseidstr = getResponseID();
+                Query += ' FROM Response__c WHERE Id = :responseidstr';
                 try{
                     Response = Database.query(Query);
                 } catch (QueryException e){}

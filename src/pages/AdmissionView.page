@@ -1,6 +1,6 @@
 <apex:page title="Admission: {!admission.Name}" standardController="Admission__c" extensions="AdmissionViewExtension"  standardStylesheets="true" sidebar="false"  tabStyle="Persons_Being_Served_New__tab">
 <apex:stylesheet value="{!$Resource.mentoresdcss}" />
-
+<apex:variable value="{! $User.Operating_Group__c = 'Cambridge'}" var="showCans"/>
     <c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" parentPage="Admission" admId="{!admission.Id}"/>
     <br />
     <apex:form >
@@ -8,7 +8,7 @@
     <apex:pageBlock title="Admission Detail">
     <div class="pbHeaderButton">
     <apex:commandButton onclick="window.open('/apex/AdmissionEdit?pbsId={!admission.Person_Being_Served__c}', '_self'); return false;" value="New Admission" rendered="{!canCreateAdm}"/>&nbsp;&nbsp;
-    <apex:commandButton onclick="window.open('/apex/AdmissionEdit?id={!admission.ID}', '_self'); return false;" value="Edit Admission" rendered="{!isEditor}"/>&nbsp;&nbsp;
+    <apex:commandButton onclick="window.open('/apex/AdmissionEdit?id={!admission.ID}', '_self'); return false;" value="Edit Admission" rendered="{!isEditor}" />&nbsp;&nbsp;
     </div>
         
         <apex:pageBlockSection title="Information" columns="2" collapsible="false">
@@ -68,7 +68,11 @@
     
 <apex:pageBlock title="Assessments">
         <div class="pbHeaderButton">
-            <apex:commandButton onclick="window.open('/a0d/e?CF00NU00000036vU3={!JSENCODE(admission.Name)}&CF00NU00000036vU3_lkid={!admission.ID}&CF00NU00000036vU2={!JSENCODE(admission.Person_Being_Served__r.Name)}&CF00NU00000036vU2_lkid={!admission.Person_Being_Served__r.AccountID}&Name=TBD (DO NOT CHANGE)&CF00NU00000036vU7=CANS&CF00NU00000036vU7_lkid=a0cU0000002RG3nIAG', '_self'); return false;" value="New Assessment" rendered="{!canCreateAsmt}"/>&nbsp;&nbsp;
+            <!-- <apex:commandButton rendered="{!assessmentTypes['CANS']}" onclick="window.open('/a0d/e?CF00NU00000036vU3={!admission.Name}&CF00NU00000036vU3_lkid={!admission.ID}', '_self'); return false;" value="New CANS Assessment" />&nbsp;&nbsp; -->
+            <apex:commandButton rendered="{!(assessmentTypes['CANS'] &&  canCreateAsmt )&& showCans }" onclick="window.open('/apex/assessment_CANSdetail?admission={!admission.ID}&type={!CANsID}', '_self'); return false;" value="New CANS Assessment" />&nbsp;&nbsp;
+            <apex:commandButton rendered="{!(assessmentTypes['Risk'] && riskAssessments.size=0 && canCreateAsmt ) && !showCans }" action="{!createRiskAssess }" value="New Risk Assessment" />
+            <apex:commandButton onclick="window.open('/{!Risk_Overview}?pv0={!Admission__c.Name}','_self'); return false;" rendered="{!(assessmentTypes['Risk'] && riskAssessments.size!=0 )}" value="Acknowledgment Overview" />
+            
         </div>
         <apex:outputPanel rendered="{!(cansAssessments.size>0)}">
             <h1 style="display: block; margin-bottom: 30px;">CANS Assessments</h1>
@@ -83,14 +87,25 @@
                 </apex:column>
             </apex:pageBlockTable>
         </apex:outputPanel>
+        <apex:outputPanel rendered="{!(riskAssessments.size>0)}">
+            <h1 style="display: block; margin-bottom: 30px;">Risk Assessments</h1>
+            <apex:pageBlockTable styleclass="pbBody-list"  value="{!riskAssessments}" var="item" rendered="{!(riskAssessments.size>0)}">
+                <apex:column headerValue="Name">
+                    <apex:outputLink value="/{!item.ID}">{!item.Name}</apex:outputLink>
+                </apex:column>
+                <apex:column value="{!item.Status__c}" />
+                <apex:column value="{!item.Finalized_Date__c}" />
+                <apex:column headerValue="Owner">
+                    <apex:outputLink value="/{!item.Owner.ID}">{!item.Owner.Name}</apex:outputLink>
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:outputPanel>
         <apex:outputText value="No records to display" rendered="{!(admission.Assessments__r == null || admission.Assessments__r.size=0)}" />
         </apex:pageBlock>
  <apex:pageBlock title="Service Assignments" >
         <div class="pbHeaderButton">
-<!--            <apex:commandButton onclick="window.open('/a0M/e?CF00NU00000036mLo={!JSENCODE(admission.Name)}&CF00NU00000036mLo_lkid={!admission.ID}&RecordType=012U0000000Dbhm&CF00NU00000036mQa={!JSENCODE(admission.Person_Being_Served__r.Name)}&CF00NU00000036mQa_lkid={!admission.Person_Being_Served__c}&Name=TBD - Autofilled', '_self'); return false;" value="New Standard Service" rendered="{!canCreateSvc}"/>&nbsp;&nbsp;-->
-<!--            <apex:commandButton onclick="window.open('/a0M/e?CF00NU00000036mLo={!JSENCODE(admission.Name)}&CF00NU00000036mLo_lkid={!admission.ID}&RecordType=012U0000000Dbhl&CF00NU00000036mQa={!JSENCODE(admission.Person_Being_Served__r.Name)}&CF00NU00000036mQa_lkid={!Admission__c.Person_Being_Served__c}&Name=TBD - Autofilled', '_self'); return false;" value="New Assessment Only"  rendered="{!canCreateSvc}" />-->
-            <apex:commandButton action="{!newServiceAssignment}" value="New Standard Service" rendered="{!canCreateSvc}"/>&nbsp;&nbsp;
-            <apex:commandButton action="{!newAssmtOnlyServiceAssignment}" value="New Assessment Only" rendered="{!canCreateSvc}"/>
+            <apex:commandButton onclick="window.open('/apex/ServiceAssignmentEditNew?save_new=1&admissionID={!admission.ID}&RecordType=Standard Service Assignment', '_self'); return false;" value="New Standard Service" rendered="{!canCreateSvc}"/>&nbsp;&nbsp;
+            <apex:commandButton onclick="window.open('/apex/ServiceAssignmentEditNew?save_new=1&admissionID={!admission.ID}&RecordType=Assessment Only', '_self'); return false;" value="New Assessment Only"   rendered="{!canCreateSvc}"/>
         </div>
         
         <apex:pageBlockTable styleclass="pbBody-list" value="{!admission.Service_Agreements__r}" var="item" rendered="{!(admission.Service_Agreements__r!= null && admission.Service_Agreements__r.size>0)}">
@@ -110,44 +125,11 @@
         </apex:pageBlockTable>
         <apex:outputText value="No records to display" rendered="{!(admission.Service_Agreements__r == null || admission.Service_Agreements__r.size=0)}" />
 </apex:pageBlock>
- <apex:pageBlock title="Plans" >
-        <div class="pbHeaderButton">
-            <apex:commandButton onclick="window.open('/a0J/e?CF00NU00000036mMv={!JSENCODE(admission.Name)}&CF00NU00000036mMv_lkid={!admission.ID}&CF00NU00000036mNF_lkid={!admission.Person_Being_Served__c}&CF00NU00000036mNF={!JSENCODE(admission.Person_Being_Served__r.Name)}&Name=TBD+(Autofilled)', '_self'); return false;" value="New Plan" rendered="{!canCreatePlan}"/>
-        </div>
-        
-        <apex:pageBlockTable styleclass="pbBody-list"  value="{!admission.Plans__r}" var="item" rendered="{!(admission.Plans__r != null && admission.Plans__r.size>0)}">
-            <apex:column headervalue="Name"><apex:outputLink value="/{!item.ID}">{!item.name}</apex:outputLink></apex:column>
-            <apex:column value="{!item.Status__c}"/>
-            <apex:column headerValue="Effective Date">
-                <apex:outputText value="{0, date, MM/dd/yyyy}">
-                    <apex:param value="{!item.Effective_Date__c}" />
-                </apex:outputText>
-            </apex:column>
-            <apex:column headerValue="Plan Expiration Date">
-                <apex:outputText value="{0, date, MM/dd/yyyy}">
-                    <apex:param value="{!item.Plan_Expiration_Date__c}" />
-                </apex:outputText>
-            </apex:column>
-            <apex:column value="{!item.Long_term_Goal_1__c}"/>
-        </apex:pageBlockTable>
-        <apex:outputText value="No records to display" rendered="{!(admission.Plans__r == null || admission.Plans__r.size=0)}" />
-</apex:pageBlock>
- <apex:pageBlock title="Progress Notes" >
-        <apex:pageBlockTable styleclass="pbBody-list"  value="{!admission.Progress_Notes__r}" var="item" rendered="{!(admission.Progress_Notes__r != null && admission.Progress_Notes__r.size>0)}">
-            <apex:column headervalue="Name"><apex:outputLink value="/{!item.ID}">{!item.name}</apex:outputLink></apex:column>
-            <apex:column value="{!item.Plan__r.Name}"/>
-            <apex:column value="{!item.First_Name__c}"/>
-            <apex:column value="{!item.Last_Name__c}"/>
-            <apex:column value="{!item.Start_Time__c}"/>
-            <apex:column value="{!item.End_Time__c}"/>
-            <apex:column value="{!item.Type_of_Contact__c}"/>
-            <apex:column value="{!item.Purpose_Nature_of_Service__c}"/>
-        </apex:pageBlockTable>
-        <apex:outputText value="No records to display" rendered="{!(admission.Progress_Notes__r == null || admission.Progress_Notes__r.size=0)}" />
-</apex:pageBlock>
 
-<c:SObjectHistories object="{!admission}" title="Admission History" />
   
     
     </apex:form>
+ <c:SObjectNotesAndAttachments parentId="{!admission.id}" showAction="false" ></c:SObjectNotesAndAttachments> 
+<c:SObjectHistories object="{!admission}" title="Admission History" />   
+    
 </apex:page>

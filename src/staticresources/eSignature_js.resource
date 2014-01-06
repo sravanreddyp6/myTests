@@ -110,7 +110,7 @@
     }
 
     function onTouchEnd(e) {
-        stopDrawing();
+        stopDrawing( e.target.id);
 //	e.preventDefault();
     }
 
@@ -122,8 +122,8 @@
         context = canvas.getContext("2d");
         context.lineWidth = 2;
         context.lineCap = "round";
-        context.beginPath();
         context.moveTo(x - canvas.offsetParent.offsetLeft - canvas.offsetParent.offsetParent.offsetLeft, y - canvas.offsetParent.offsetTop - canvas.offsetParent.offsetParent.offsetTop);
+        context.beginPath();
 
     }
 
@@ -220,7 +220,7 @@
        }  
       
       document.getElementById(btnsign).style.visibility="visible";
-      stopDrawing();
+      stopDrawing(elemCanvas);
   }
   
   

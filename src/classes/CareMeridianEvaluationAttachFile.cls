@@ -46,6 +46,8 @@ public with sharing class CareMeridianEvaluationAttachFile {
         try {
             System.debug('Attachment to insert: ' + attachment);
             insert attachment;
+            evaluation.Is_Being_Signed__c = true;
+            update evaluation;
             attachID = attachment.Id;
         } catch (DMLException e) {
             System.debug('Error: ' + e);

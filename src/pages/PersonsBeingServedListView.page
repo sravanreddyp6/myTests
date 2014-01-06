@@ -198,7 +198,7 @@ table#persons_table.dataTable {
                         <td style="width: 15%">Persons Being Served</td>
                         <td style="width: 10%">Admission</td>
                         <td style="width: 35%">Service Assignment</td>
-                        <td style="width: 10%">Plan Exp</td>
+                        <td style="width: 10%">Plan</td>
                         <td style="width: 15%">Owner</td>
                         <td style="width: 15%">Action</td>
                         <td style="display:none;">Admission Status</td>
@@ -249,7 +249,7 @@ table#persons_table.dataTable {
                                                 {!admission.Person_Being_Served__r.Account.Owner.Name} </a></td>
                                         <td><apex:outputLink styleClass="servicelink" value="{!$Page.Notes_ProgressNote_Create}"
                                                 rendered="{!(sa.RecordType.ID=assessmentOnlyRecTypeId)}">
-                                                New Progress Note
+                                                New Note
                                                 <apex:param value="{!sa.ID}" name="service_assignment" />
                                                 <apex:param value="{!admission.ID}" name="admission" />
                                                 <apex:param value="{!admission.Person_Being_Served__r.ID}"
@@ -300,10 +300,10 @@ table#persons_table.dataTable {
                                         data-record-id="{!jo.Service_Assignment__r.ID}"
                                         class="service_assignment_link">
                                             {!jo.Service_Assignment__r.Name} </a></td>
-                                    <td><a href="/{!jo.Short_term_Goal__r.Plan__r.ID}"
-                                        data-record-id="{!jo.Short_term_Goal__r.Plan__r.ID}"
+                                    <td><a href="/{!jo.ID}"
+                                        data-record-id="{!jo.ID}"
                                         class="plan_link"> <apex:outputText value="{0, date, MM/dd/yyyy}">
-                                                <apex:param value="{!jo.Plan_Expiration_Date__c}" />
+                                                <apex:param value="{!jo.Effective_Date__c}" />
                                             </apex:outputText> </a></td>
                                     <td><a
                                         href="/{!jo.Service_Assignment__r.Person_Being_Served__r.Account.Owner.ID}"
@@ -311,11 +311,11 @@ table#persons_table.dataTable {
                                             {!jo.Service_Assignment__r.Person_Being_Served__r.Account.Owner.Name}
                                     </a></td>
                                     <td><apex:outputLink styleClass="servicelink" value="{!$Page.Notes_ProgressNote_Create}"
-                                            rendered="{!(jo.Service_Assignment__r.RecordType.ID=assessmentOnlyRecTypeId || jo.Short_term_Goal__r.Plan__r.Status__c='Active')}">
-                                            New Progress Note
+                                            rendered="{!(jo.Service_Assignment__r.RecordType.ID=assessmentOnlyRecTypeId || jo.Status__c='Active Final')}">
+                                            New Note
                                             <apex:param value="{!jo.Service_Assignment__r.ID}"
                                                 name="service_assignment" />
-                                            <apex:param value="{!jo.Short_term_Goal__r.Plan__r.ID}"
+                                            <apex:param value="{!jo.ID}"
                                                 name="plan" />
                                             <apex:param value="{!jo.Service_Assignment__r.Admission__r.ID}"
                                                 name="admission" />
@@ -323,6 +323,11 @@ table#persons_table.dataTable {
                                                 name="person" />
                                             <apex:param value="{!jo.Service_Assignment__r.Admission__r.State__c}"
                                                 name="State" />
+                                        </apex:outputLink>&nbsp;
+                                        <apex:outputLink styleClass="servicelink" value="/{!jo.Id}#worksheets"
+                                            rendered="{! jo.Status__c='Active Final' && seeWorksheets && jo.Service_Assignment__r.Admission__r.State__c != 'AZ'}">
+                                            View Current Worksheets
+                                            
                                         </apex:outputLink></td>
                                     <td style="display:none;">{!jo.Service_Assignment__r.Admission__r.Status__c}</td>
                                 </tr>
@@ -335,6 +340,10 @@ table#persons_table.dataTable {
     </apex:pageBlock>
     <apex:outputPanel layout="block"
         style="float: left; width: 49%; padding-right: 10px;" id="divReports" >
+        <apex:pageBlock rendered="{! $user.Operating_Group__c = 'Redwood'}" title="Shift Note Report">
+            <apex:outputLink value="/apex/shiftnote_summary_rpt">Shift Note Summary Report</apex:outputLink>
+        
+        </apex:pageBlock>
         <c:TMN_List_Reports filterFor="%#notes%" OpenInEdit="false"  removeSFHeader="true"  TitleColor="black" Title="Reports" />
     </apex:outputPanel>
 
@@ -483,16 +492,16 @@ table#persons_table.dataTable {
                 function (result, event) {
                     if (event.status) { // Success
                         api.set('content.text',
-                            '<div class="pbHeader"><h2 class="mainTitle">Plan</h2></div>' + 
+                            '<div class="pbHeader"><h2 class="mainTitle">Action Plan</h2></div>' + 
                             '<div class="pbBody"><table class="detailList">' + 
                             '<tr><td class="labelCol">Name:</td><td class="dataCol">' + $j(e.target).parent().parent().data('name') + '</td></tr>' +
                             '<tr><td class="labelCol">Plan:</td><td class="dataCol">' + checkUndefined(result.Name) + '</td></tr>' +
-                            '<tr><td class="labelCol">Admission:</td><td class="dataCol">' + checkUndefined(result.Admission__r.Name) + '</td></tr>' +
+                            '<tr><td class="labelCol">Admission:</td><td class="dataCol">' + checkUndefined(result.Service_Assignment__r.Admission__r.Name) + '</td></tr>' +
+                            '<tr><td class="labelCol">Service Assignment:</td><td class="dataCol">' + checkUndefined(result.Service_Assignment__r.Name) + '</td></tr>' +
                             '<tr><td class="labelCol">Effective Date:</td><td class="dataCol">' + epoch_to_time(result.Effective_Date__c) + '</td></tr>' +
-                            '<tr><td class="labelCol">Expiration Date:</td><td class="dataCol">' + epoch_to_time(result.Expiration_Date_Override__c) + '</td></tr>' +
+                            '<tr><td class="labelCol">Target Date:</td><td class="dataCol">' + epoch_to_time(result.Target_Date__c) + '</td></tr>' +
                             '<tr><td class="labelCol">Status:</td><td class="dataCol">' + checkUndefined(result.Status__c) + '</td></tr></table>' +
-                            '<br /><div style="width:100% text-align:center;"><a class="btn" href="/' + plan_id + '">View Plan</a>' +
-                            '&nbsp;&nbsp;<a class="btn" <a class="btn" href="/' + plan_id + '">View Plan Goals</a><br /><Br /></div></div>'
+                            '<br /><div style="width:100% text-align:center;"><a class="btn" href="/' + plan_id + '">View Action Plan</a><br /><Br /></div></div>'
                         );
                     } else if (event.type === 'exception') {
                         api.set('content.text', 'Error: <br/>' + event.message);
@@ -543,7 +552,7 @@ table#persons_table.dataTable {
                 null, // Persons Being Served
                 null, // Admission
                 null, // Service Assignment
-                null, // Plan Exp
+                null, // Eff Date
                 null, // Owner
                 null, // Action
                 { "bVisible": false } // Admission Status

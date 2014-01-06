@@ -40,15 +40,15 @@ public with sharing class SearchLogicOnPBSR {
         if ((lastname!= null && lastname!='') || (firstname!=null && firstname!='')) {
             searchString= SearchLogicOnPBSR.buildCriteria(lastname,firstname,dob, age,gender,true, false);
             
-            List<Account> pbsList = Database.query(searchString);
-            for(Account pbs : pbsList)
+            List<Contact> pbsList = Database.query(searchString);
+            for(Contact pbs : pbsList)
             {
                 Integer matchedItems = 0;
                 if (lastname!=null && lastname!='' && pbs.LastName == lastName) matchedItems +=1;
                 if (firstname!=null && firstname!='' && pbs.FirstName == firstName) matchedItems +=1;
-                if (dob!=null && pbs.PersonBirthdate == dob) matchedItems +=1;
-                if (age!=null && age!=0 && pbs.Age__pc == age) matchedItems +=1;
-                if (gender!=null && gender!='' && pbs.Gender__pc == gender) matchedItems +=1;
+                if (dob!=null && pbs.Birthdate == dob) matchedItems +=1;
+                if (age!=null && age!=0 && pbs.Age__c == age) matchedItems +=1;
+                if (gender!=null && gender!='' && pbs.Gender__c == gender) matchedItems +=1;
                             
                 results.add(new ReferralSearchResults(pbs, matchedItems));  
             }
@@ -58,7 +58,7 @@ public with sharing class SearchLogicOnPBSR {
         return results;
         
     }
-    public static String buildCriteria(String lastname, String firstname, Date dob, Double age,String gender,Boolean isAccount, Boolean isPBR){
+    public static String buildCriteria(String lastname, String firstname, Date dob, Double age,String gender,Boolean isContact, Boolean isPBR){
         
         String sobjecttype='';
         
@@ -76,19 +76,19 @@ public with sharing class SearchLogicOnPBSR {
         
         String ssnfield='';
         String agefield='';
-        if(isAccount){
+        if(isContact){
             namefield='name';
             lastnamefield='lastname';
             firstnamefield='firstname';
-            genderfield='gender__pc';
-            dobfield='personbirthdate';
-            cityfield='personmailingcity';
-            statefield='personmailingstate';
-            zipfield='personmailingpostalcode';
-            street1field='personmailingstreet';
-            street2field='personotherstreet';
-            agefield='age__pc';
-            sobjecttype='account';
+            genderfield='gender__c';
+            dobfield='birthdate';
+            cityfield='mailingcity';
+            statefield='mailingstatecode';
+            zipfield='mailingpostalcode';
+            street1field='mailingstreet';
+            street2field='otherstreet';
+            agefield='age__c';
+            sobjecttype='contact';
         }
         if(isPBR){
             namefield='name';

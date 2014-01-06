@@ -149,19 +149,18 @@ function stopRKey(evt) {
         <apex:inputField value="{!Account[f.fieldPath]}" required="{!OR(f.required, f.dbrequired)}"  />
     </apex:repeat>
     </apex:pageBlockSection> 
-    <!--  
+      
 <apex:pageBlockSection title="Financial Information"
                              showHeader="true"
                              columns="2"
                              collapsible="true"  
                              id="pbsOutputFinancialInfo"
-                             >
+                             rendered="{!showDiagnosis}">
 
     <apex:repeat value="{!$ObjectType.Account.FieldSets.PBS_Financial}" var="f">
         <apex:inputField value="{!Account[f.fieldPath]}" required="{!OR(f.required, f.dbrequired)}"  />
     </apex:repeat>
 </apex:pageBlockSection>
--->   
     
 
 <!--Additional Information Section-->
