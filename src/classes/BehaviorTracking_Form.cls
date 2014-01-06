@@ -51,28 +51,33 @@ public class BehaviorTracking_Form{
             currentObjective = privateObjectives[0];
         }
                 
-        Table t1 = new Table(getHoursOfDay(), getDaysToDisplay());
-        t1.ObjectiveDescription = currentobjective.Description__c;
-        t1.ObjectiveId = currentObjective.Id;
-        system.debug(logginglevel.warn, currentobjective.Action_Behavior_Results__r.size());
-        for(Action_Behavior_Result__c result: ResultsForObjective(currentobjective, firstday)){
+        out.Add(GenerateObjectiveTable(currentObjective, firstDay));
+        return out;
+    }
+
+	private Table GenerateObjectiveTable(Action_Plan_Objective__c objective, Date firstDay){
+		Table t1 = new Table(getHoursOfDay(), getDaysToDisplay());
+        t1.ObjectiveDescription = objective.Description__c;
+        t1.ObjectiveId = objective.Id;
+        t1.IsTimeBased = IsTimeBased(objective);
+        system.debug(logginglevel.warn, objective.Action_Behavior_Results__r.size());
+        for(Action_Behavior_Result__c result: ResultsForObjective(objective, firstday)){
             t1.Put(result.Day_time__c.TimeGMT().hour(),result.Day_time__c.DateGMT(), result);
         }
         for( integer timeofday : t1.FirstKeys){
             for(Date day: getdaysofmonth()){
-                if ((!t1.Active(timeofday, day)) && DateValidForObjectiveAndPlan(day, currentobjective)){
+                if ((!t1.Active(timeofday, day)) && DateValidForObjectiveAndPlan(day, objective)){
                     Action_Behavior_Result__c blankResult = new Action_Behavior_Result__c();
-                    blankResult.Action_Plan_Objective__c = currentobjective.Id;
+                    blankResult.Action_Plan_Objective__c = objective.Id;
                     blankresult.Day_time__c = DateTime.newinstanceGMT(day, Time.newInstance(timeofday,0,0,0));
                     system.debug( blankresult.Day_time__c);
                     t1.Put(timeofday, day, blankResult);
                 }
             }
         }
-        out.Add(t1);
-        return out;
-    }
-    
+		return t1;
+	}    
+	
     public List<Date> getDaysToDisplay() {
         List<Date> month = new List<Date>();
         Date startDate = (worksheet.Start_Date__c - 1).toStartofWeek()+1; // we start on Monday
@@ -106,8 +111,12 @@ public class BehaviorTracking_Form{
 //        return ObjectiveIsTimeBased(CurrentObjective) ? 'checked' : '';
 //    }
     
-    public boolean getObjectiveIsTimeBased(){
-        return currentObjective.Type__c == 'Behavior - Duration';
+//    public boolean getObjectiveIsTimeBased(){
+//        return IsTimeBased(currentObjective);
+//    }
+    
+    private boolean IsTimeBased(Action_Plan_Objective__c objective){
+    	return objective.Type__c == 'Behavior - Duration';	
     }
     
     private List<Action_Plan_Objective__c> ReportableBehaviorObjectives(Date firstDay){
@@ -161,6 +170,17 @@ public class BehaviorTracking_Form{
             return null;
         }
         return switchObjective();
+    }
+    
+    public PageReference PrintOtherObjective(){
+    	string printObjectiveId = objectiveIdChosen;
+        for(Action_Plan_Objective__c objective:privateobjectives){
+            if (printObjectiveId == objective.Id){
+                anotoGenerate1(GenerateObjectiveTable(objective, worksheet.Start_Date__c));
+                break;
+            }
+        }
+    	return null;
     }
     
     public PageReference switchObjective(){
@@ -224,7 +244,7 @@ public class BehaviorTracking_Form{
     public Attachment anotoXml {get;set;}
     public String pdfExistenceUrl {get;set;}
     
-    public Dom.Document anotoGenerateDocument(){
+    public Dom.Document anotoGenerateDocument(Table objTable){
         AnotoXmlGeneration anoto = new AnotoXmlGeneration();
         system.debug('recordid:' + worksheet.id);
         anoto.RecordId = worksheet.Id;
@@ -246,7 +266,6 @@ public class BehaviorTracking_Form{
 
         integer page = 1;
         
-        for(Table objTable: Tables){
             Decimal top = 38.1;
 
             AnotoXmlGeneration.Widget objectivedescw = new AnotoXmlGeneration.Widget(AnotoXmlGeneration.WidgetTypeEnum.textfield, 'desc' + objTable.ObjectiveId );
@@ -276,7 +295,7 @@ public class BehaviorTracking_Form{
                                 datew.FontSize = 10;
                                 anoto.Widgets.Add(datew);
                             }
-                            if (getObjectiveIsTimeBased()){
+                            if (objTable.IsTimeBased){
                                 AnotoXmlGeneration.Widget timechkw = 
                                     new AnotoXmlGeneration.Widget(AnotoXmlGeneration.WidgetTypeEnum.checkbox,
                                                                   new BehaviorTrackingInput.BehaviorResultNodeName(
@@ -315,19 +334,28 @@ public class BehaviorTracking_Form{
             // Second half of the month needs a gap
             top += 13.8;
             } // Second part
-        } // objective and page
+
         return anoto.GenerateDocument();
     }
     
     public PageReference anotoGenerate(){
-        string txt = anotoGenerateDocument().toXmlString();
+        anotoGenerate1(Tables[0]);
+
+        return null;
+    }
+
+	private void anotoGenerate1(Table objTable){
+		string txt = anotoGenerateDocument(objTable).toXmlString();
         // send to the print processor
         try{
             pdfExistenceUrl = AnotoUtility.generatePdfByHandlerName('BehaviorTrackingForm', txt);
         } catch (AnotoUtility.PdfGenerationException excp){
             System.Debug(logginglevel.error,'Pdf exception:' + excp.getmessage());
         }    
-        // Allow preview of xml
+        //CreateXmlAttachment(txt);		
+	}    
+    private void CreateXmlAttachment(string txt){
+    	// Allow preview of xml
         Blob txtBlob = Blob.valueOf(txt); //Convert it to a blob
 
         Attachment attach = new Attachment(); //Make an attachment
@@ -338,7 +366,7 @@ public class BehaviorTracking_Form{
         insert attach;
         anotoXml = attach;
         System.Debug('Xml Generated '+ anotoXml.Id + ' name: ' + anotoXml.Name);
-        return null;
+    	
     }
 
     public class Table {
@@ -349,6 +377,7 @@ public class BehaviorTracking_Form{
         private Map<integer, Row> myRows;
         public string ObjectiveDescription {get;set;}
         public string ObjectiveId {get;set;}
+        public boolean IsTimeBased {get;set;}
         
         public Map<integer, Row> getRows(){
             return myRows;
