@@ -1,0 +1,42 @@
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+    <bean id="accountInsert"
+        class="com.salesforce.dataloader.process.ProcessRunner"
+        singleton="false">
+        <description>Create Person_Being_Served record from the CSV file 
+            and inserts it into Salesforce.</description>
+        <property name="name" value="accountInsert"/>
+        <property name="configOverrideMap">
+            <map>
+                <entry key="sfdc.debugMessages" value="true"/>
+                <entry key="sfdc.debugMessagesFile" 
+                    value="C:\Users\e-tbond\Workspaces\ESD_Development\esd\data\accountInsertSoapTrace.log"/>
+                <entry key="sfdc.endpoint" value="https://test.salesforce.com"/>
+                <entry key="sfdc.username" value="contractor.timothy.bond@thementornetwork.com.sandbox04"/>
+                <!--Password below has been encrypted using key file, 
+                    therefore, it will not work without the key setting: 
+                    process.encryptionKeyFile.
+                    The password is not a valid encrypted value, 
+                    please generate the real value using the encrypt.bat utility -->
+                <entry key="sfdc.password" value="4158dce3f1295ea10c0639acf0148e02"/>
+                <entry key="process.encryptionKeyFile" 
+                    value="C:\Users\e-tbond\Workspaces\ESD_Development\esd\data\key.txt"/>
+                <entry key="sfdc.timeoutSecs" value="600"/>
+                <entry key="sfdc.loadBatchSize" value="200"/>
+                <entry key="sfdc.entity" value="Persons_Being_Served"/>
+                <entry key="process.operation" value="insert"/>
+                <entry key="process.mappingFile" 
+                    value="C:\Users\e-tbond\Workspaces\ESD_Development\esd\data\Persons_Being_served.sdl"/>
+                <entry key="dataAccess.name" 
+                    value="C:\Users\e-tbond\Workspaces\ESD_Development\esd\data\Persons_Being_Served.csv"/>
+                <entry key="process.outputSuccess" 
+                    value="C:\Users\e-tbond\Workspaces\ESD_Development\esd\data\accountInsert_success.csv"/>
+                <entry key="process.outputError" 
+                    value="C:\Users\e-tbond\Workspaces\ESD_Development\esd\data\accountInsert_error.csv"/>
+                <entry key="dataAccess.type" value="csvRead"/>
+                <entry key="process.initialLastRunDate" 
+                    value="2005-12-01T00:00:00.000-0800"/>
+            </map>
+        </property>
+    </bean>
+</beans>
