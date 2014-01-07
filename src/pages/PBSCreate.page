@@ -1,0 +1,206 @@
+<apex:page standardController="Account"  extensions="PBS_Controller" standardStylesheets="true" sidebar="false"  tabStyle="Persons_Being_Served_New__tab">
+  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+
+  <apex:stylesheet value="{!$Resource.mentoresdcss}" />
+
+
+  <style type="text/css">
+    .nowrap {
+      white-space: nowrap;
+    }
+    .fixed-dialog{
+        position: fixed;
+        top:75px;
+        left:100px;
+        overflow-y:scroll;
+        max-height:400px;
+    }
+  </style>
+
+  <script language="javascript">
+
+   j$ = jQuery.noConflict();
+     //disable enter key
+function stopRKey(evt) {
+   var evt = (evt) ? evt : ((event) ? event : null);
+   var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+   if ((evt.keyCode == 13) && (node.type=="text")) {return false;}
+}
+
+  //opens the dialog
+  function openDialog(dialogId, tagType, titleString)
+  {
+   selector = tagType + '[id$=' + dialogId + ']';
+
+   j$(selector).dialog({dialogClass: 'fixed-dialog',title:titleString,modal:true, width:800, closeOnEscape:false}).parent().appendTo(j$('form[id$=referralForm]'));
+      j$(selector).parent().find('a.ui-dialog-titlebar-close').remove();
+  }
+  function closeDialog(dialogId, tagType)
+  {
+   selector = tagType + '[id$=' + dialogId + ']';
+
+   j$(selector).dialog('destroy');
+  }
+
+ function validateRelatedParty() {
+    var errors = '';
+    j$('#relatedPartyErrors').html(errors);
+    if (j$('input[id$=relatedPartyEntry_Name]').val() == '') {
+        errors += '<li>Party Name is a required field.</li>';
+    }
+    if (j$('select[id$=relatedPartyEntry_Type]').val() =='') {
+        errors += '<li>Type is a required field.</li>';
+    }
+    var x = j$('input[id$=relatedPartyEntry_Email]').val();
+    if (x.length > 0) {
+        var atpos=x.indexOf("@");
+        var dotpos=x.lastIndexOf(".");
+        if (atpos<1 || dotpos<atpos+2 || dotpos+2>=x.length) {
+            errors += '<li>Email is not a valid Email address</li>';
+        }
+    }
+    j$('#relatedPartyErrors').html(errors);
+    return (errors == '');
+  }
+
+  
+ //copies relatedParty fields from dialog for postback
+  function relatedPartySave(isDialogClose) {
+      if (validateRelatedParty()) {
+          var partyID = j$('input[id$=relatedPartyEntry_Id]').val();
+          var partyName = j$('input[id$=relatedPartyEntry_Name]').val();
+          var partyType = j$('select[id$=relatedPartyEntry_Type]').val();
+          var partyEmail = j$('input[id$=relatedPartyEntry_Email]').val();
+          var partyPhone1 = j$('input[id$=relatedPartyEntry_Phone]').val();
+          var partyAddress = j$('textarea[id$=relatedPartyEntry_Address]').val();
+          var partyPhone2 = j$('input[id$=relatedPartyEntry_Phone_2]').val();
+          var partyPhone1Type = j$('select[id$=relatedPartyEntry_Phone_1_Type]').val();
+          var partyPhone2Type = j$('select[id$=relatedPartyEntry_Phone_2_Type]').val();
+          var partyComments = j$('textarea[id$=relatedPartyEntry_Comments]').val();
+
+          PBS_controller.saveRelatedParty(partyID, partyName, partyType, partyPhone1, partyEmail,
+             partyAddress, partyPhone2, partyPhone1Type, partyPhone2Type, partyComments,
+             function(result, event){
+                    if (isDialogClose) {
+                        closeDialog('relatedPartyModal', 'span');
+                    }
+             },
+             {escape: true}
+           );
+      }
+      return false;
+  }
+
+
+  </script>
+
+  <apex:form id="pbsForm">
+    
+    <apex:pageMessages />
+
+<apex:pageBlock title="Person Being Served">
+ <div class="pbHeaderButton">
+ <apex:commandButton value="Save" id="SavePBSId"  action="{!savePBS}"  />
+ <apex:commandButton value="Cancel" id="CancelPBSId" action="{!cancel}" />
+ </div>
+ 
+ <apex:pageBlockSection showHeader="true"
+                             columns="2"
+                             collapsible="false"    
+                             id="pbsOutPutsectionId" >
+
+    <apex:repeat value="{!$ObjectType.Account.FieldSets.PBS_Basic}" var="f">
+    <apex:inputField value="{!Account[f]}"  rendered="{! AND(NOT(f = 'FirstName'), NOT(f = 'LastName'))}" required="{!OR(f.required, f.dbrequired)}"/>
+    <apex:inputtext label="First Name" value="{!fname}"  rendered="{!f = 'FirstName' }"/>
+	<apex:pageBlockSectionItem rendered="{!f = 'LastName'}" >
+	<apex:outputLabel value="Last Name" for="txtlast" />
+	<apex:outputPanel styleClass="requiredInput" layout="block" >
+  	<apex:outputPanel styleClass="requiredBlock" layout="block" />
+        <apex:inputtext id="txtlast" value="{!lname}" label="Last Name" required="true" />
+	</apex:outputPanel>
+	</apex:pageBlockSectionItem>
+
+    </apex:repeat>
+    </apex:pageBlockSection>
+      
+ <apex:pageBlockSection title="Funding Information"
+                             showHeader="true"
+                             columns="2"
+                             collapsible="true"   
+                             id="pbsOutputFundingSection" >
+
+    <apex:repeat value="{!$ObjectType.Account.FieldSets.Funding_Information}" var="f">
+        <apex:inputField value="{!Account[f.fieldPath]}" required="{!OR(f.required, f.dbrequired)}"  />
+    </apex:repeat>
+    </apex:pageBlockSection>      
+    
+    <!--Contact Information Section-->
+      
+      <apex:pageBlockSection title="Contact Information"
+                             showHeader="true"
+                             columns="2"
+                             collapsible="true"  
+                             id="pbsOutputContactInfo"
+                             >
+
+    <apex:repeat value="{!$ObjectType.Account.FieldSets.PBS_Contact}" var="f">
+        <apex:inputField value="{!Account[f.fieldPath]}" required="{!OR(f.required, f.dbrequired)}"  />
+    </apex:repeat>
+    </apex:pageBlockSection> 
+      
+<apex:pageBlockSection title="Financial Information"
+                             showHeader="true"
+                             columns="2"
+                             collapsible="true"  
+                             id="pbsOutputFinancialInfo"
+                             rendered="{!showDiagnosis}">
+
+    <apex:repeat value="{!$ObjectType.Account.FieldSets.PBS_Financial}" var="f">
+        <apex:inputField value="{!Account[f.fieldPath]}" required="{!OR(f.required, f.dbrequired)}"  />
+    </apex:repeat>
+</apex:pageBlockSection>
+    
+
+<!--Additional Information Section-->
+
+<apex:pageBlockSection columns="2" 
+                             title="Additional Information" 
+                             showHeader="true" 
+                             collapsible="False"   
+                             id="pbsOutputAdditionalInfo"> 
+	<apex:repeat value="{!$ObjectType.Account.FieldSets.Additional_Information}" var="f">
+        <apex:inputField value="{!Account[f.fieldPath]}" required="{!OR(f.required, f.dbrequired)}" />
+    </apex:repeat>
+         </apex:pageBlockSection> 
+    
+    </apex:pageBlock>
+<apex:pageBlock title="Related Party">
+
+        <apex:facet name="header">
+          <p><strong>For persons under the age of 18, enter a guardian here.  You will be able to enter more related parties after initial save.</strong></p>
+        </apex:facet>
+
+    
+        <apex:pageBlockSection columns="2" id="relatedPartyEntry">
+
+          <apex:inputField value="{!relParty.Name}" id="relatedPartyEntry_Name"/>
+          <apex:outputField value="{!relParty.Type__c}" id="relatedPartyEntry_Type"/>
+
+          <apex:inputField value="{!relParty.Address__c}" id="relatedPartyEntry_Address"/>
+          <apex:inputField value="{!relParty.Email__c}" id="relatedPartyEntry_Email"/>
+
+          <apex:inputField value="{!relParty.Phone__c}" id="relatedPartyEntry_Phone"/>
+          <apex:inputField value="{!relParty.Phone_1_Type__c}" id="relatedPartyEntry_Phone_1_Type"/>
+
+          <apex:inputField value="{!relParty.Phone_2__c}" id="relatedPartyEntry_Phone_2"/>
+          <apex:inputField value="{!relParty.Phone_2_Type__c}" id="relatedPartyEntry_Phone_2_Type"/>
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="1" id="relatedPartyEntry2">
+          <apex:inputField value="{!relParty.Comments__c}" style="width: 90%;" id="relatedPartyEntry_Comments"/>
+        </apex:pageBlockSection>
+      </apex:pageBlock>
+  </apex:form>
+
+</apex:page>

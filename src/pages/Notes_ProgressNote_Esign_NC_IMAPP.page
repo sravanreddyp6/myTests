@@ -1,0 +1,503 @@
+<apex:page standardController="Progress_Note__c" showHeader="false" sidebar="false" extensions="Notes_ProgressNote_View_Plan_Chlrn,ProgressNote_Esign">
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!$Resource.eSignature_js}" />
+<apex:outputLabel rendered="false" id="numsigs" value="{!Progress_Note__c.Number_of_Required_Signatures__c}" />
+<apex:outputLabel rendered="false" id="late" value="{!Progress_Note__c.Is_Note_Late__c}" />
+
+<apex:outputPanel style="display: none">
+    <apex:outputField value="{!Progress_Note__c.Service_Assignment__c}"/>
+    <apex:outputField value="{!Progress_Note__c.Admission__c}"/>
+    <apex:outputField value="{!Progress_Note__c.Action_Plan__c}"/>
+</apex:outputPanel>
+
+<head>
+<script>
+   $j = jQuery.noConflict();
+   var numsigs = 0;
+    
+   $j(document).ready(function() {
+    {!IF($ObjectType.Progress_Note__c.updateable,"", "alert('Insufficient privilege to e-sign document.'); window.close();")}
+
+    var numsigstr =  '{!Progress_Note__c.Number_of_Required_Signatures__c};'
+    if (numsigstr != '')
+        numsigs = parseInt( numsigstr );
+        
+    // dynamically append required number of signature lines
+    var newdiv;
+    for (i=0; i<numsigs;i++) {
+        newdiv = '<div id="divusername' + i + '" style="padding-left:20px;" align="left">Name (Print): &nbsp;<input id="UserNme" type="text" onchange="drawSignerNames(\'EsignInfo\',numsigs )" style="width:50%" /></div>';
+        $j(newdiv).appendTo('#signatureblock');
+    
+ 
+   
+    }
+    });
+   
+   
+   function saveSignature( note_id ){
+        var sigcanvas = $j('#EsignInfo');
+        var image_data = sigcanvas[0].toDataURL("image/png");
+        var htmlsource = document.documentElement.outerHTML;
+        var newstr = "";
+        var indexOfBase64String = -1;
+        var lengthOfBase64String = 0;
+        if (image_data.indexOf("data:")== 0 )
+         {
+            //remove unwanted header
+            indexOfBase64String = image_data.indexOf(",") + 1;
+            lengthOfBase64String = image_data.length - indexOfBase64String;
+            newstr  = image_data.substring(indexOfBase64String, lengthOfBase64String);
+        }
+    $j.ajax({
+        type: 'POST',
+        timeout: 20000,
+         url: '/apex/Notes_ProgressNote_ajaxpostback',
+         data: {
+            id : note_id,
+            img : newstr
+        },
+         success: function (msg) {
+             alert("Your signed form has been attached to the progress note.  Please refresh the note to see the attachment. ");
+         },
+         error: function (xhr, status) {
+              switch (status) {
+                 case 404:
+                     alert('File not found');
+                     break;
+                 case 500:
+                     alert('Server error');
+                     break;
+                 case 0:
+                     alert('Request aborted');
+                     break;
+                 default:
+                     alert('Unknown error: ' + xhr.status);
+             } 
+         }
+     });
+      return false;
+      }
+var drawingMade = false;
+function updateDrawingMade() {
+    drawingMade = true;
+    return true;
+}
+function validate() {
+    if (!drawingMade || $j("input#UserNme").val()=="") {
+        alert('Please Sign the Note and Enter your information on the Print Name line before selecting Electronically Sign.');
+        return false;
+    }
+    return true;
+}
+</script>
+</head>
+<body>
+<table style="width:100%;text-align:left">
+ <tr>
+   <td align="left">
+   <canvas id="EsignInfo" onfocus='init("EsignInfo", "EsignImg")' onmousedown='updateDrawingMade(); startDrawing("EsignInfo")'
+   onmouseup='stopDrawing("EsignInfo")' onmouseout='stopDrawing("EsignInfo")' height="1500" width="890" style="border:1px solid #d3d3d3;display:block;">
+   <p>At this time this browser is unsupported</p>
+   </canvas>
+   <img src="" id="EsignImg" style="border:1px solid #d3d3d3;display:none;"/>
+  </td>
+ </tr>
+</table>
+<div id="signatureblock" />
+<apex:form />
+    <div style="padding-left:20px;" align="left">
+        <input type="button" id="btnSign" value="Electronically Sign" onclick="if(!validate()) return false; printCanvas('EsignInfo','EsignImg',numsigs, this.id); return saveSignature( '{!Progress_Note__c.id}'); " />
+            &nbsp;
+        <input type="button" value="Re-sign Document" onclick="drawingMade=false;clearCanvas('EsignInfo', 'EsignImg',numsigs, btnSign);return false;" />
+
+    </div>
+
+</body>
+<script type="text/javascript">
+
+
+    window.onload = function () {
+       if (initdata == false) {
+            init("EsignInfo", "EsignImg");
+            initdata = true;
+        } 
+    }
+
+     function drawData() {
+        var canvas = document.getElementById("EsignInfo");
+        var context = canvas.getContext('2d');
+        var height = canvas.attributes.height.value;
+        var width = canvas.attributes.width.value;
+        var metrics;
+        var fontsize = 18;
+        line = 20;
+        
+        var col1 = 2;
+        var col2 = col1 + (width* .40); // 40%
+        var col3 = col2 + (width *.30); // 30%
+        var col1indent = col1 + 20;
+        var col1indent2 = col1 + 40;
+        var col1indent3 = col1 + 80;
+        
+        var col1a = col1;
+        var col2a = col1 + ((col2-col1)/2);
+        var col3a = col2;
+        var col4a = col3a + ((width-col2)/2);
+
+
+        // Fill Text 
+        context.lineWidth = 1;
+        context.fillStyle = "#000000";
+        context.strokeStyle = "#000000";
+        
+        context.font = "18px sans-serif";
+        fontsize = 18;
+        line += 2;
+        
+        var text = "NC MENTOR";
+        context.textAlign="center";
+        context.fillText( text, width/2 , line, width );
+        line += fontsize;        
+        text = "Multi-Service Planning Service Note (IMAPP)";
+        context.fillText( text, width/2, line, width );
+        line += fontsize;
+        
+        context.font = "bold 12px sans-serif";
+        line += 22;
+
+        context.textAlign="left";
+        text = "Client: {!JSENCODE(Progress_Note__c.Person_Being_Served__r.Name)} " ; 
+        context.fillText(text, col1+2, line );
+        context.strokeRect( col1 - 1, line - fontsize - 2, col2-col1 - 4, fontsize+6 );
+        
+        text = "Record Number: {!Progress_Note__c.Person_Being_Served__r.Other_ID__c}"; 
+        context.fillText(text, col2+2, line );
+        context.strokeRect( col2 - 1, line - fontsize - 2, col3-col2 - 4, fontsize+6 );
+
+        text = "Medicaid Number: {!Progress_Note__c.Person_Being_Served__r.Medicaid_ID__c}";
+        context.fillText(text, col3+2, line );
+        context.strokeRect( col3 - 1, line - fontsize - 2, width-col3, fontsize+6 );
+
+        line += fontsize+10;
+
+        text = "Date";
+        context.textAlign="center";
+        context.fillText(text, col1a + (col2a-col1a-8)/2, line, col2a-col1a);
+        context.strokeRect( col1a - 1, line - fontsize - 2, col2a-col1a-4, fontsize+6 );
+        
+        text = "Location";
+        context.fillText(text, col2a + (col3a-col2a-8)/2, line, col3a-col2a);
+        context.strokeRect( col2a - 1, line - fontsize - 2, col3a-col2a-4, fontsize+6 );
+        
+        text = "Type of Activity";
+        context.fillText(text, col3a + (col4a-col3a-8)/2, line, col4a-col3a);
+        context.strokeRect( col3a - 1, line - fontsize - 2, col4a-col3a-4, fontsize+6 );
+        
+        context.textAlign="left";
+        text = "Total Time: {!Progress_Note__c.Total_Time__c}";
+        context.fillText(text, col4a+2, line);
+        context.strokeRect( col4a - 1, line - fontsize - 2, width-col4a, fontsize+6 );
+        line += fontsize + 10;
+
+        context.textAlign="center";
+        var newdate = new Date( '{!Progress_Note__c.Start_Time__c}');
+        text = (newdate.getMonth()+1) + "/" + newdate.getDate() + "/" + newdate.getFullYear() + " " + formatTime(newdate) ;
+        context.fillText(text, col1a + (col2a-col1a-8)/2, line, col2a-col1a);
+        context.strokeRect( col1a - 1, line - fontsize - 2, col2a-col1a-4, fontsize+6 );
+
+        text = "{!Progress_Note__c.Service_Location__c}"; 
+        context.fillText( text, col2a+((col3a-col2a-8)/2), line );
+        context.strokeRect( col2a - 1, line - fontsize - 2, col3a-col2a - 4, fontsize + 6 );
+
+        text = "Ongoing Assessment and Planning";
+        context.fillText(text, col3a + (col4a-col3a-8)/2, line, col4a-col3a);
+        context.strokeRect( col3a - 1, line - fontsize - 2, col4a-col3a-4, fontsize+6 );
+    
+        context.textAlign="left";
+        text = "Type of Contact: {!Progress_Note__c.Type_of_Contact__c}"; 
+        context.fillText(text, col4a, line );
+        context.strokeRect( col4a - 1, line - fontsize - 2, col4a-col3a, fontsize + 6 );
+        line += fontsize + 10;
+        
+        text = "Service Delivered: {!Progress_Note__c.Service_Assignment__r.Service_Line__c}";
+        context.fillText( text, col1+2, line, width );
+        context.strokeRect( col1-1, line - fontsize - 2, width-2, fontsize + 6 );
+        line += fontsize + 10;
+        
+        text = "Service Frequency: {!Progress_Note__c.Service_Frequency__c}";
+        context.fillText( text, col1+2, line, width );
+        context.strokeRect( col1-1, line - fontsize - 2, width-2, fontsize + 6 );
+        line += fontsize*2;
+                
+        context.font = "bold 12px sans-serif";
+        fontsize = 14;
+        text = "Purpose of Contact/Goals" ;
+        metrics = context.measureText( text );
+        context.fillText(text, 2, line );
+        
+        context.font = "italic 12px sans-serif";
+        text = " (Enter exact words from PCP):" ;
+        context.fillText(text, metrics.width + 2, line);
+        line += fontsize;
+
+<apex:repeat value="{!apg}" var="g">
+        context.font = "bold 14px sans-serif";
+        line += fontsize*2;    
+        text = "Goal Description";
+        context.fillText( text, 2, line );
+        
+        line += fontsize * 2;
+        context.font = "12px sans-serif";
+        numlines = wrapText(context, "{!JSENCODE(g.Description__c)}", col1indent, line, col3, fontsize );
+        line = numlines;
+                    
+    <apex:repeat value="{!g.Action_plan_objectives__r}" var="o">
+            line += fontsize * 2 ;
+            context.font = "bold italic 14px sans-serif";
+            text = "Plan Objective";
+            metrics = context.measureText(text);
+            context.fillText(text, col1indent2, line += (fontsize));
+            line += fontsize;
+                context.font = "12px sans-serif";
+                
+                text = "{!JSENCODE(o.Description__c)}";
+                line = wrapText(context, text, col1indent2, line, col3, fontsize);
+                line += fontsize;    
+                
+    
+    </apex:repeat>
+</apex:repeat>        
+
+        line += 22;
+        context.moveTo(0, line);
+        context.lineTo(width, line);
+        context.stroke();
+        line += 22; 
+
+        context.font = "bold 12px sans-serif";
+        text = "Description of Intervention/Skill building Activity: Curriculum Progress Assessment";
+        context.fillText(text, 2, line);
+        fontsize = 14;
+        line += fontsize*2;
+
+        context.font = "bold underline 12px sans-serif";
+        text = "Curriculum Progress Assessment";
+        metrics = context.measureText( text);
+        context.fillText(text, col2a, line );
+        
+        context.font = "12px sans-serif";
+        text = " - (skill lesson progress and skill mastery - previous IMAPP)"; 
+        context.fillText( text, col2a + metrics.width + 2, line);
+        line += fontsize*1.5;
+        
+        context.font = "12px sans-serif";
+        text = "{!JSENCODE(Progress_Note__c.Curriculum_Progress_Assessment__c)}";
+        line = wrapText(context, text, col2a, line, col4a - col1a, fontsize);
+
+        line += fontsize*1.5;
+        
+        context.font = "italic bold 12px sans-serif";
+        //context.textAlign="center";
+        text = "Level of Mastery (LOM) – 1 is low, 2 is medium, 3 is high– assign # for each lesson completed";
+        //context.fillText( text, width/2, line );
+        line = wrapText(context, text, col2a, line, col4a- col1a, fontsize);
+        line += fontsize*2;
+           
+        context.font = "bold 12px sans-serif";
+        text = "Narrative Summary/Comments";
+        metrics = context.measureText( text);
+        context.fillText(text, col2a, line );
+        
+        context.font = "12px sans-serif";
+        text = " - (related to previous week's skill lesson progress and level of mastery)"; 
+        context.fillText( text, col2a + metrics.width + 2, line);
+        line += fontsize*1.5;
+        
+        context.font = "12px sans-serif";
+        text = "{!JSENCODE(Progress_Note__c.Narrative_Summary_Comments_Previous_We__c)}";
+        line = wrapText(context, text, col2a, line, col4a - col2a, fontsize);
+
+        line += fontsize*1.5;
+        
+        
+        
+        
+        
+        context.font = "bold 12px sans-serif";
+        context.textAlign = "left";
+        text = "Phases of Service Delivery";
+        metrics = context.measureText( text);
+        context.fillText(text, 2, line );
+        
+        context.font = "italic 12px sans-serif";
+        text = " - (Please indicate which phase of treament the Clinical Team assessed the child to be in after this curriculum progress assessment)"; 
+        context.fillText( text, 2+ metrics.width + 2, line);
+        line += fontsize;
+
+        context.font = "12px sans-serif";
+        text = "{!Progress_Note__c.Phases_of_Service_Delivery__c}";
+        context.fillText( text, 2, line );
+        line += fontsize*1.5;
+        
+        context.font = "bold 12px sans-serif";
+        text = "Justification for current phase:"
+        context.fillText( text, 2, line );
+        line += fontsize;
+        
+        context.font = "12px sans-serif";
+        text = "{!JSENCODE(Progress_Note__c.Justification_for_Current_Phase__c)}";
+        context.fillText( text, 2, line );
+        line += fontsize * 2;
+
+        context.moveTo(0, line);
+        context.lineTo(width, line);
+        context.stroke();
+        line += fontsize * 2; 
+
+        context.font = "bold 12px sans-serif";
+        text = "Description of Intervention/Skill building Activity: Curriculum-Based Skill Building Planning";
+        context.fillText(text, 2, line);
+        fontsize = 14;
+        line += fontsize*2;
+
+        context.font = "bold underline 12px sans-serif";
+        text = "Curriculum Planning for Upcoming Sessions";
+        metrics = context.measureText( text);
+        context.fillText(text, col2a, line );
+        
+        context.font = "12px sans-serif";
+        text = " - (based on previous IMAPPs curriculum progress assessment)"; 
+        context.fillText( text, col2a + metrics.width + 2, line);
+        line += fontsize*1.5;
+        
+        context.font = "12px sans-serif";
+        text = "{!JSENCODE(Progress_Note__c.Curriculum_Planning_for_Upcoming_Session__c)}";
+        line = wrapText(context, text, col2a, line, col4a- col2a, fontsize);
+        line += fontsize*1.5;
+       
+        context.font = "bold 12px sans-serif";
+        text = "Narrative Summary/Comments";
+        metrics = context.measureText( text);
+        context.fillText(text, col2a, line );
+        
+        context.font = "12px sans-serif";
+        text = " - (Related to next week's skill lesson planning)"; 
+        context.fillText( text, col2a + metrics.width + 2, line);
+        line += fontsize*1.5;
+        
+        context.font = "12px sans-serif";
+        text = "{!JSENCODE(Progress_Note__c.Narrative_Summary_Comments_Next_Week__c)}";
+        line = wrapText(context, text, col2a, line, col4a- col2a, fontsize);
+        line += fontsize*1.5;
+       
+       
+       
+        
+        context.moveTo(0, line);
+        context.lineTo(width, line);
+        context.stroke();
+        line += fontsize * 2; 
+                        
+        context.textAlign="left";
+        context.font = "bold 12px sans-serif";
+        text = "Progress Towards Goals/Effectiveness of Interventions ";
+        metrics = context.measureText(text);
+        context.fillText(text, 2, line);
+        
+        context.font = "12px sans-serif";
+        text = " - (include effect of skill building interventions on overall progress toward):"; 
+        context.fillText( text, col1 + metrics.width + 2, line);
+        line += fontsize;
+        
+        context.font = "12px sans-serif";
+        text = "{!JSENCODE(Progress_Note__c.Progress__c)}";
+        line = wrapText(context, text, col1, line, width- col1, fontsize);
+        line += fontsize*2;
+
+        context.moveTo(0, line);
+        context.lineTo(width, line);
+        context.stroke();
+        line += fontsize * 2; 
+
+        context.font = "bold 12px sans-serif";
+        text = "Follow Up ";
+        metrics = context.measureText(text);
+        context.fillText(text, 2, line);
+        
+        context.font = "12px sans-serif";
+        text = " - (Issues or concerns that are not directly related to curriculum-based skill building assessment and progress):"; 
+        context.fillText( text, col1 + metrics.width + 2, line);
+        line += fontsize;
+        
+        context.font = "12px sans-serif";
+        text = "{!JSENCODE(Progress_Note__c.Notes_For_Next_Visit__c)}";
+        line = wrapText(context, text, col1, line, width- col1, fontsize);
+        line += fontsize*2;
+
+        line += 22;
+        context.moveTo(0, line);
+        context.lineTo(width, line);
+        context.stroke();
+        line += 22;
+        
+        context.font = "10px sans-serif";
+        var date = new Date();
+        
+        var i= 0;
+        
+        for (i = 0 ; i< numsigs; i++ ) {
+            line += 100;
+            text = "Signature:________________________________________________________________________________ " + date.toString();
+            elesign[i] = line;
+            if ( i == 0 )
+                minsign = line;
+                
+            context.fillText(text, 10,line);
+        }
+        minsign = elesign[0];
+        maxsign = elesign[i-1];
+        
+        line += 50;
+        
+        context.font = "12px underline sans-serif";
+        fontsize = 12;
+        text="***For professionals, signature and credentials, degree or licensure required." 
+        context.fillText( text, 10, line);
+        line += fontsize;
+        text="***For paraprofessions, signature and position required.***";
+        context.fillText( text, 10, line);
+        
+        line += 50;
+        
+        context.font="10px sans-serif";
+        context.textAlign="center";
+        fontsize=10;
+        context.fillStyle = "rgb(128,128,128)";
+        text = "Created By: {!JSENCODE(Progress_Note__c.CreatedBy.Name)} {!JSENCODE(Progress_Note__c.CreatedBy.Title)}"
+        context.fillText( text, width/2, line );
+        line += fontsize;
+        
+        
+        
+        var isnotelate = "{!Progress_Note__c.Is_Note_Late__c}";
+        var lateentry = " "; 
+        if (isnotelate ==  "Yes")
+            lateentry = " - LATE ENTRY";
+            
+       
+        
+        
+        text = "Created Date: " + newdate.toString('MM/dd/yyyy hh:mm:ss a z') + lateentry
+        context.fillText( text, width/2, line );
+        line += fontsize;
+        text = "Latest Release of Form: 12/17/2013";
+        context.fillText( text, width/2, line );
+        line += 25;
+        
+        context.textAlign="left";
+        context.fillStyle = "rgb(0,0,0)";
+        return( line );
+        
+     }   
+</script>
+</apex:page>
