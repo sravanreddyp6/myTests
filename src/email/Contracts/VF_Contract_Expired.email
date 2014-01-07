@@ -1,0 +1,65 @@
+<messaging:emailTemplate subject="A Contract {!relatedTo.Name} has Expired" recipientType="User" relatedToType="TMN_Contract__c">
+<messaging:plainTextEmailBody >
+
+</messaging:plainTextEmailBody>
+
+<messaging:htmlEmailBody >
+<style>
+    .r1{ 
+        
+        border-bottom: 1px solid black;
+        
+    }
+    
+        .r2{
+            background-color: #efefef;
+            border-bottom: 1px solid black;
+            
+        }
+    .header{
+        border-bottom: 2px solid black;
+    }
+    .table{
+        width: 100%;
+    }
+</style>
+The following contract has expired. 
+
+
+<br/>
+<br/>
+<table class="table">
+    <tr class="r1">
+        <td>
+            Name
+        </td>   
+        <td>
+            {!relatedTo.Name} 
+        </td> 
+    </tr>
+
+    <tr class="r2">
+        <td>
+           Contract Number 
+        </td>   
+        <td>
+            {!relatedTo.Contract_Number__c} 
+        </td> 
+    </tr>
+    
+    <tr class="r1">
+        <td>
+            Termination Date
+        </td>   
+        <td>
+            <apex:outputField value="{!relatedTo.Termination_Date__c}"/>             
+        </td> 
+    </tr>    
+</table>
+<br/>
+<br/>
+
+           <apex:outputlink value="{!LEFT($Api.Partner_Server_URL_140,FIND('.com',$Api.Partner_Server_URL_140)+4)+'apex/viewContract?id='+relatedTo.Id}">Click here to view, edit, update or renew the contract.</apex:outputlink>
+   
+</messaging:htmlEmailBody>
+</messaging:emailTemplate>
