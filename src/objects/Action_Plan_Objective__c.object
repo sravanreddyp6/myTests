@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>false</enableActivities>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>false</enableReports>
+    <fields>
+        <fullName>Action_Plan_Goal__c</fullName>
+        <externalId>false</externalId>
+        <label>Action Plan Goal</label>
+        <referenceTo>Action_Plan_Goal__c</referenceTo>
+        <relationshipLabel>Action Plan Objectives</relationshipLabel>
+        <relationshipName>Action_Plan_Objectives</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <trackTrending>false</trackTrending>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Description__c</fullName>
+        <externalId>false</externalId>
+        <label>Description</label>
+        <length>1200</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Effective_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Effective Date</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Former_ID__c</fullName>
+        <caseSensitive>true</caseSensitive>
+        <externalId>true</externalId>
+        <label>Former ID</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>true</unique>
+    </fields>
+    <fields>
+        <fullName>Original_ObjectiveID__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>Objective from original Plan before migration to Action Plan</description>
+        <externalId>false</externalId>
+        <label>Objective</label>
+        <referenceTo>Objective__c</referenceTo>
+        <relationshipLabel>Action Plan Objectives</relationshipLabel>
+        <relationshipName>Action_Plan_Objectives</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Sort_Order__c</fullName>
+        <externalId>false</externalId>
+        <label>Sort Order</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>New</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>In Progress</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Revised</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Achieved</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Discontinued</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Services Ended Prior to Completion</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>N/A</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Target_End_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Target Date</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Behavior - Count</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Behavior - Duration</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Skill</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <label>Action Plan Objective</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Former_ID__c</columns>
+        <columns>OBJECT_ID</columns>
+        <columns>Action_Plan_Goal__c</columns>
+        <columns>Description__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <displayFormat>APO-{00000}</displayFormat>
+        <label>Action Plan Objective Name</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Action Plan Objectives</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ControlledByParent</sharingModel>
+    <validationRules>
+        <fullName>Description_Req</fullName>
+        <active>false</active>
+        <errorConditionFormula>TEXT(Status__c) != &apos;N/A&apos; &amp;&amp; ISBlank(Description__c)</errorConditionFormula>
+        <errorDisplayField>Description__c</errorDisplayField>
+        <errorMessage>Description is required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Effective_b4_plan_effective_date</fullName>
+        <active>true</active>
+        <errorConditionFormula>Effective_Date__c &lt; Action_Plan_Goal__r.Action_Plan__r.Effective_Date__c</errorConditionFormula>
+        <errorDisplayField>Effective_Date__c</errorDisplayField>
+        <errorMessage>Objective Effective Date must be on or after the Action Plan Effective Date</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Effective_req</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISBLANK( Effective_Date__c ) &amp;&amp;  $User.Operating_Group__c == &apos;Redwood&apos; &amp;&amp; !ISBLANK(Description__c)</errorConditionFormula>
+        <errorDisplayField>Effective_Date__c</errorDisplayField>
+        <errorMessage>Effective Date is required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Status_Req</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISblank(TEXT(Status__c)) &amp;&amp;  $User.Operating_Group__c == &apos;Redwood&apos; &amp;&amp; !ISBLANK(Description__c)</errorConditionFormula>
+        <errorDisplayField>Status__c</errorDisplayField>
+        <errorMessage>Objective Status Description is required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Status_Req_CB</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISblank(TEXT(Status__c)) &amp;&amp;  $User.Operating_Group__c == &apos;Cambridge&apos; &amp;&amp; !ISBLANK(Description__c)</errorConditionFormula>
+        <errorDisplayField>Status__c</errorDisplayField>
+        <errorMessage>Objective Status is required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>TargetDate_before_EfftiveDate</fullName>
+        <active>true</active>
+        <errorConditionFormula>Target_End_Date__c &lt;= Effective_Date__c</errorConditionFormula>
+        <errorDisplayField>Target_End_Date__c</errorDisplayField>
+        <errorMessage>Target Date must be after Effective Date</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Target_b4_plan_effective_date</fullName>
+        <active>true</active>
+        <errorConditionFormula>Target_End_Date__c  &gt; Action_Plan_Goal__r.Action_Plan__r.Target_Date__c</errorConditionFormula>
+        <errorDisplayField>Target_End_Date__c</errorDisplayField>
+        <errorMessage>Objective Target Date must be on or before the Action Plan Target Date</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Target_req</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISBLANK(  Target_End_Date__c ) &amp;&amp;  $User.Operating_Group__c == &apos;Redwood&apos; &amp;&amp; !ISBLANK(Description__c)</errorConditionFormula>
+        <errorDisplayField>Target_End_Date__c</errorDisplayField>
+        <errorMessage>Target Date is required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Type_Req</fullName>
+        <active>true</active>
+        <errorConditionFormula>TEXT(Status__c) != &apos;N/A&apos; &amp;&amp; 
+ISBlank(TEXT(Type__c))&amp;&amp;   
+$User.Operating_Group__c == &apos;Redwood&apos; &amp;&amp; 
+!ISBLANK(Description__c) &amp;&amp;
+
+ Action_Plan_Goal__r.Action_Plan__r.Service_Assignment__r.Admission__r.Person_Being_Served__r.MailingState != &apos;Arizona&apos;</errorConditionFormula>
+        <errorDisplayField>Type__c</errorDisplayField>
+        <errorMessage>Objective Type is required</errorMessage>
+    </validationRules>
+</CustomObject>
