@@ -26,9 +26,6 @@
         <titleSize>12</titleSize>
     </chart>
     <columns>
-        <field>Prospects__c$Owner</field>
-    </columns>
-    <columns>
         <field>Prospects__c$Entry_Point__c</field>
     </columns>
     <columns>
@@ -41,9 +38,6 @@
         <field>Prospects__c$First_Name__c</field>
     </columns>
     <columns>
-        <field>Prospects__c$Prospect_Comments__c</field>
-    </columns>
-    <columns>
         <field>Prospects__c$Date_of_Inquiry__c</field>
     </columns>
     <columns>
@@ -51,6 +45,9 @@
     </columns>
     <columns>
         <field>Prospects__c$Inquiry_Progress_percent__c</field>
+    </columns>
+    <columns>
+        <field>Prospects__c$Screening_Progress_Percent__c</field>
     </columns>
     <columns>
         <field>Prospects__c$How_did_you_hear_about_us__c</field>
@@ -67,7 +64,7 @@
     <columns>
         <field>Prospects__c$org__c</field>
     </columns>
-    <description>Prospects grouped by state and owner from Care.com Pilot Program</description>
+    <description>Prospects grouped by state and owner from Care.com</description>
     <filter>
         <booleanFilter>((1 OR 2 OR 3)) AND 4</booleanFilter>
         <criteriaItems>
@@ -87,8 +84,8 @@
         </criteriaItems>
         <criteriaItems>
             <column>Prospects__c$State__c</column>
-            <operator>notEqual</operator>
-            <value>AK,AZ,WV,CT,MO,NH,NY,SC,VA,WI</value>
+            <operator>equals</operator>
+            <value>AL,FL,GA,IL,IN,LA,MA,MD,NC,NJ,OH,PA,TX,SC,CA,IA,VA,AZ</value>
         </criteriaItems>
     </filter>
     <format>Summary</format>
@@ -99,10 +96,15 @@
     </groupingsDown>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>
+        <field>Prospects__c$Owner</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
         <field>Prospects__c$Status__c</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>Care.com Report</name>
+    <name>Care.com Report - All States</name>
     <params>
         <name>co</name>
         <value>1</value>
@@ -110,11 +112,8 @@
     <reportType>Prospects__c</reportType>
     <scope>organization</scope>
     <showDetails>true</showDetails>
-    <sortColumn>Prospects__c$Date_of_Inquiry__c</sortColumn>
-    <sortOrder>Asc</sortOrder>
     <timeFrameFilter>
         <dateColumn>Prospects__c$Date_of_Inquiry__c</dateColumn>
-        <endDate>2013-08-31</endDate>
         <interval>INTERVAL_CUSTOM</interval>
     </timeFrameFilter>
 </Report>

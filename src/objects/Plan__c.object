@@ -594,10 +594,33 @@ Manually editing this field may break the workflow logic.</description>
     <listViews>
         <fullName>All</fullName>
         <columns>NAME</columns>
-        <columns>Plan_Expiration_Date__c</columns>
         <columns>Person_Being_Served__c</columns>
         <columns>CREATEDBY_USER</columns>
+        <columns>UPDATEDBY_USER</columns>
+        <columns>OWNER.FIRST_NAME</columns>
+        <columns>OWNER.LAST_NAME</columns>
+        <columns>RECORDTYPE</columns>
+        <columns>Date_Service_Started__c</columns>
+        <columns>Effective_Date__c</columns>
+        <columns>Long_term_Goal_1__c</columns>
+        <columns>Long_term_Goal_2__c</columns>
+        <columns>State__c</columns>
         <filterScope>Everything</filterScope>
+        <filters>
+            <field>State__c</field>
+            <operation>contains</operation>
+            <value>FL</value>
+        </filters>
+        <filters>
+            <field>Effective_Date__c</field>
+            <operation>greaterThan</operation>
+            <value>6/11/2013</value>
+        </filters>
+        <filters>
+            <field>Status__c</field>
+            <operation>equals</operation>
+            <value>Inactive</value>
+        </filters>
         <label>All</label>
     </listViews>
     <nameField>

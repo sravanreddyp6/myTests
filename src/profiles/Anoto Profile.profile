@@ -83,27 +83,27 @@
     </classAccesses>
     <classAccesses>
         <apexClass>ActionPlan_Form_Test</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>ActionPlan_GoalObjective_rpt</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>ActionPlan_GoalObjective_rpt_Test</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>ActionPlan_form</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>ActionSummaryBase</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>ActionSummaryCreateForm</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>ActionSummaryCreateTest</apexClass>
@@ -111,15 +111,15 @@
     </classAccesses>
     <classAccesses>
         <apexClass>ActionSummaryReportForm</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>ActionSummaryTest</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>Action_Summary_ApprovalForm</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>AdmissionEditExtension</apexClass>
@@ -147,19 +147,19 @@
     </classAccesses>
     <classAccesses>
         <apexClass>AnotoFormHandler</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>AnotoUtility</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>AnotoXmlGeneration</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>AnotoXmlGenerationTest</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>AssessmentControllerExtension</apexClass>
@@ -203,39 +203,39 @@
     </classAccesses>
     <classAccesses>
         <apexClass>Assessment_BeforeInsert_BeforeUpdate</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>Assessment_CANSdetail_Ex</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>Assessment_RiskForm</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>Assessment_RiskFormTest</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>Assessment_RiskForm_Test</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>BehaviorTrackingInput</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>BehaviorTrackingInputTest</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>BehaviorTrackingTest</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>BehaviorTracking_Form</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>CMContract_Form</apexClass>
@@ -247,11 +247,11 @@
     </classAccesses>
     <classAccesses>
         <apexClass>CareMeridianAnotoFormHandler</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>CareMeridianAnotoFormHandlerTests</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>CareMeridianEvaluationAttachFile</apexClass>
@@ -263,11 +263,11 @@
     </classAccesses>
     <classAccesses>
         <apexClass>CareMeridianEvaluationCommonController</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>CareMeridianEvaluationCommonTests</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>CareMeridianEvaluationEditController</apexClass>
@@ -387,11 +387,11 @@
     </classAccesses>
     <classAccesses>
         <apexClass>EvaluationHandler</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>EvaluationHandlerTEST</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>EvaluationResponseTableController</apexClass>
@@ -483,11 +483,11 @@
     </classAccesses>
     <classAccesses>
         <apexClass>Notes_ProgressNote_Action_Plan_Chlrn</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>Notes_ProgressNote_AddlActions</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>Notes_ProgressNote_AddlActionsTEST</apexClass>
@@ -531,7 +531,7 @@
     </classAccesses>
     <classAccesses>
         <apexClass>Notes_ProgressNote_DurationInclude</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>Notes_ProgressNote_GetFieldsAudit_PDF</apexClass>
@@ -611,15 +611,15 @@
     </classAccesses>
     <classAccesses>
         <apexClass>ProgressNoteNotificationRunBatch</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>ProgressNoteNotificationRunBatchTEST</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>ProgressNoteNotifications</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>ProgressNotePDFController</apexClass>
@@ -631,7 +631,7 @@
     </classAccesses>
     <classAccesses>
         <apexClass>ProgressNote_EditRedirect</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>ProgressNote_Esign</apexClass>
@@ -639,7 +639,7 @@
     </classAccesses>
     <classAccesses>
         <apexClass>ProgressNotes_Detail_Ex</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>ProspectInsert</apexClass>
@@ -667,11 +667,11 @@
     </classAccesses>
     <classAccesses>
         <apexClass>RESTAnotoOutputController</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>RESTAnotoOutputControllerTests</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>RW_Contract_RenewalForm</apexClass>
@@ -715,11 +715,11 @@
     </classAccesses>
     <classAccesses>
         <apexClass>SObjectNotesAndAttachmentTests</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>SObjectNotesAndAttachmentsController</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>SearchLogicOnPBSR</apexClass>
@@ -771,7 +771,7 @@
     </classAccesses>
     <classAccesses>
         <apexClass>Shift_Note_Basic</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>Shift_Note_Basic_Test</apexClass>
@@ -787,7 +787,7 @@
     </classAccesses>
     <classAccesses>
         <apexClass>SkillSummaryTableForm</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>SkillSummaryTableTest</apexClass>
@@ -795,11 +795,11 @@
     </classAccesses>
     <classAccesses>
         <apexClass>SkillTrackingInput</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>SkillTrackingInputTest</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>SoundExTest</apexClass>
@@ -875,11 +875,11 @@
     </classAccesses>
     <classAccesses>
         <apexClass>WeeklySkillTracking_Form</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>WeeklySkillTracking_FormTest</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>attachPDF</apexClass>
@@ -907,11 +907,11 @@
     </classAccesses>
     <classAccesses>
         <apexClass>referralConversion_Controller</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>referralConversion_Controller_Test</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>referralResults_Controller</apexClass>
@@ -947,14 +947,10 @@
     </classAccesses>
     <classAccesses>
         <apexClass>shiftnote_summary_rpt</apexClass>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>shiftnote_summary_rpt_Test</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>testdeleteaccess</apexClass>
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
@@ -972,10 +968,6 @@
     <classAccesses>
         <apexClass>uploaderTest</apexClass>
         <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>zOnetimePopulateOpGroupOnUserRecord</apexClass>
-        <enabled>false</enabled>
     </classAccesses>
     <fieldPermissions>
         <editable>true</editable>
@@ -1458,9 +1450,9 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Action_Plan__c.Baseline__c</field>
-        <readable>false</readable>
+        <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
@@ -3444,17 +3436,22 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>ContentVersion.Control_Review_Date__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>ContentVersion.Control__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>ContentVersion.Department__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
         <field>ContentVersion.Publish_To__c</field>
-        <readable>false</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>ContentVersion.Regulatory__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12284,22 +12281,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Response__c.Operating_Group__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Response__c.State__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Response__c.Status__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Response__c.Supervisor_Name__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -14038,11 +14020,6 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
-        <field>TMN_User__c.Compliance_Link__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
         <editable>true</editable>
         <field>TMN_User__c.Email__c</field>
         <readable>true</readable>
@@ -14600,19 +14577,15 @@
         <recordType>ContentVersion.Application_Help_Doc</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ContentVersion-Form</layout>
-        <recordType>ContentVersion.Form</recordType>
+        <layout>ContentVersion-Control</layout>
+        <recordType>ContentVersion.Control_Audit_Doc</recordType>
     </layoutAssignments>
     <layoutAssignments>
         <layout>ContentVersion-General</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ContentVersion-Guideline</layout>
+        <layout>ContentVersion-IT Systems</layout>
         <recordType>ContentVersion.ESD</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>ContentVersion-Regulatory</layout>
-        <recordType>ContentVersion.Control_Audit_Doc</recordType>
     </layoutAssignments>
     <layoutAssignments>
         <layout>ContentVersion-Standard Support Procedure %28SSP%29</layout>
@@ -15989,31 +15962,31 @@
     </pageAccesses>
     <pageAccesses>
         <apexPage>ActionPlanForm</apexPage>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
         <apexPage>ActionPlanWordExport</apexPage>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
         <apexPage>ActionPlan_GoalObjective_rpt</apexPage>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
         <apexPage>ActionPlan_Print</apexPage>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
         <apexPage>ActionSummaryApproval</apexPage>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
         <apexPage>ActionSummaryCreate</apexPage>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
         <apexPage>ActionSummaryReport</apexPage>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
         <apexPage>AddDoc</apexPage>
@@ -16049,7 +16022,7 @@
     </pageAccesses>
     <pageAccesses>
         <apexPage>Assessment_RiskForm</apexPage>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
         <apexPage>BandwidthExceeded</apexPage>
@@ -16057,7 +16030,7 @@
     </pageAccesses>
     <pageAccesses>
         <apexPage>BehaviorTracking</apexPage>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
         <apexPage>CMContract_Form</apexPage>
@@ -16081,7 +16054,7 @@
     </pageAccesses>
     <pageAccesses>
         <apexPage>CareMeridianEvaluationPDF</apexPage>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
         <apexPage>CareMeridianEvaluationView</apexPage>
@@ -16189,7 +16162,7 @@
     </pageAccesses>
     <pageAccesses>
         <apexPage>Note_ShiftNote_Esign</apexPage>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
         <apexPage>Notes_PDF_Esign</apexPage>
@@ -16213,7 +16186,7 @@
     </pageAccesses>
     <pageAccesses>
         <apexPage>Notes_ProgressNote_AddlActions</apexPage>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
         <apexPage>Notes_ProgressNote_AjaxPostback</apexPage>
@@ -16357,7 +16330,7 @@
     </pageAccesses>
     <pageAccesses>
         <apexPage>Notes_ShiftNote_Pdf</apexPage>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
         <apexPage>PBSCreate</apexPage>
@@ -16393,11 +16366,11 @@
     </pageAccesses>
     <pageAccesses>
         <apexPage>ProgressNote_DetailPage</apexPage>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
         <apexPage>ProgressNote_EditRedirect</apexPage>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
         <apexPage>ProjectTabLayout</apexPage>
@@ -16425,7 +16398,7 @@
     </pageAccesses>
     <pageAccesses>
         <apexPage>ReferralConversion</apexPage>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
         <apexPage>ReferralHome</apexPage>
@@ -16513,11 +16486,11 @@
     </pageAccesses>
     <pageAccesses>
         <apexPage>WeeklySkillTracking</apexPage>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
         <apexPage>assessment_CANSdetail</apexPage>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
         <apexPage>assessment_tab</apexPage>
@@ -16557,11 +16530,11 @@
     </pageAccesses>
     <pageAccesses>
         <apexPage>shiftnote_basic_form</apexPage>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
         <apexPage>shiftnote_summary_rpt</apexPage>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
         <apexPage>test</apexPage>
@@ -16605,11 +16578,6 @@
     <recordTypeVisibilities>
         <default>false</default>
         <recordType>ContentVersion.ESD</recordType>
-        <visible>true</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <default>false</default>
-        <recordType>ContentVersion.Form</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
@@ -17406,6 +17374,10 @@
     <userPermissions>
         <enabled>true</enabled>
         <name>DistributeFromPersWksp</name>
+    </userPermissions>
+    <userPermissions>
+        <enabled>true</enabled>
+        <name>EditBillingInfo</name>
     </userPermissions>
     <userPermissions>
         <enabled>true</enabled>
