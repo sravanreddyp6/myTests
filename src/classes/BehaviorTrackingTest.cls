@@ -46,7 +46,7 @@ public with sharing class BehaviorTrackingTest{
         createobjects();
         BehaviorTracking_Form form = CreateTestController(testWorksheet);
         
-        Dom.Document xml = form.anotoGenerateDocument(form.Tables[0]);
+        Dom.Document xml = form.anotoGenerateDocument();
         
         System.assertnotequals(null, xml);
     }
