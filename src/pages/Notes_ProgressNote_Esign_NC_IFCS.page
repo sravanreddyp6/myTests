@@ -548,6 +548,7 @@ if({!Progress_Note__c.Non_Payable_Outcome__c}){
         if (isnotelate ==  "Yes")
             lateentry = " - LATE ENTRY";
         
+        newdate = new Date( '{!Progress_Note__c.CreatedDate}');
         text = "Created Date: " + newdate.toString('MM/dd/yyyy hh:mm:ss a z') + lateentry;
         context.fillText( text, width/2, line );
         line += fontsize;
