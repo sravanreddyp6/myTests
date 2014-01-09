@@ -70,7 +70,7 @@
         <div class="pbHeaderButton">
             <!-- <apex:commandButton rendered="{!assessmentTypes['CANS']}" onclick="window.open('/a0d/e?CF00NU00000036vU3={!admission.Name}&CF00NU00000036vU3_lkid={!admission.ID}', '_self'); return false;" value="New CANS Assessment" />&nbsp;&nbsp; -->
             <apex:commandButton rendered="{!(assessmentTypes['CANS'] &&  canCreateAsmt )&& showCans }" onclick="window.open('/apex/assessment_CANSdetail?admission={!admission.ID}&type={!CANsID}', '_self'); return false;" value="New CANS Assessment" />&nbsp;&nbsp;
-            <apex:commandButton rendered="{!(assessmentTypes['Risk'] && riskAssessments.size=0 && canCreateAsmt ) && !showCans }" action="{!createRiskAssess }" value="New Risk Assessment" />
+            <apex:commandButton rendered="{!(assessmentTypes['Risk'] && riskAssessments.size=0 && canCreateAsmt ) && !showCans}" action="{!createRiskAssess}" value="New Risk Assessment" />
             <apex:commandButton onclick="window.open('/{!Risk_Overview}?pv0={!Admission__c.Name}','_self'); return false;" rendered="{!(assessmentTypes['Risk'] && riskAssessments.size!=0 )}" value="Acknowledgment Overview" />
             
         </div>

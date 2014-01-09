@@ -52,11 +52,6 @@
             <operator>notContain</operator>
             <value>webforms</value>
         </criteriaItems>
-        <criteriaItems>
-            <column>User$Username</column>
-            <operator>notContain</operator>
-            <value>sbraga</value>
-        </criteriaItems>
     </filter>
     <format>Tabular</format>
     <name>SF Users with Non-MENTOR emails</name>
@@ -68,7 +63,7 @@
     <scope>organization</scope>
     <showDetails>true</showDetails>
     <timeFrameFilter>
-        <dateColumn>User$CreatedDate</dateColumn>
-        <interval>INTERVAL_PREVCUR2FY</interval>
+        <dateColumn>User$LastLoginDate</dateColumn>
+        <interval>INTERVAL_LAST30</interval>
     </timeFrameFilter>
 </Report>

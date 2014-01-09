@@ -3012,11 +3012,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <columns>Program__c</columns>
         <columns>Location__c</columns>
         <filterScope>Everything</filterScope>
-        <filters>
-            <field>CREATED_DATE</field>
-            <operation>greaterThan</operation>
-            <value>12/27/2013 12:00 AM</value>
-        </filters>
         <label>My Team&apos;s Notes</label>
         <sharedTo>
             <group>AccessHack_JeannieKing_NcRockAndRaleigh</group>
@@ -3051,9 +3046,9 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <columns>Plan__c</columns>
         <filterScope>Everything</filterScope>
         <filters>
-            <field>Program__c</field>
-            <operation>notEqual</operation>
-            <value>Phoenix</value>
+            <field>RECORDTYPE</field>
+            <operation>equals</operation>
+            <value>Progress_Note__c.FL_FSS_Progress_Note</value>
         </filters>
         <label>FL-My Team&apos;s Notes</label>
         <sharedTo>
@@ -13363,7 +13358,7 @@ errors.push(&apos;You must select the &quot;Type of Contact&quot; before continu
 } 
 
 //Check to see if there is a Service Code selected 
-var progressFields = sforce.connection.query(&quot;SELECT id, RecordTypeId, Service_Code__c, Authorization__c, Short_Term_Goals_Placeholder__c, plan__c from Progress_Note__c where id =&apos;{!Progress_Note__c.Id}&apos;&quot;); 
+var progressFields = sforce.connection.query(&quot;SELECT id, RecordTypeId, Service_Code__c, Authorization__c, Short_Term_Goals_Placeholder__c from Progress_Note__c where id =&apos;{!Progress_Note__c.Id}&apos;&quot;); 
 records = progressFields.getArray(&quot;records&quot;); 
 if(records[0].Service_Code__c == null){ 
 errors.push(&apos;You must select a &quot;Service Code&quot; before continuing.&apos;); 

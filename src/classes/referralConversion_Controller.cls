@@ -14,7 +14,6 @@ public with sharing class referralConversion_Controller {
   public String Program{ get; set;}
   public string Location{ get; set;}
   public string ServiceLine { get; set; }
-  public String ProgramCode{ get; set;}
   
   public referralConversion_Controller(ApexPages.standardController ctl){
 
@@ -60,22 +59,16 @@ public with sharing class referralConversion_Controller {
   
   private void parseLocationInfo( ) {
   	
-  	if  ( referralRecord.Service_Location__c != null ) {
+  	string tmp;
+  	
+  	if  ( (tmp = this.referralRecord.Service_Location_Program__c) != null ) {
   		
-		Service_Location__c sl = [select id, alias__c, city__c, program__c, service_value__c from service_location__c where id = :referralRecord.Service_Location__c];
-		
-		if (sl != null ) {
-			
-				ProgramCode = sl.Program__c;
-                Program = sl.Alias__c;
-                Location = ''; //sl.City__c;
-                integer dashpos = sl.Service_Value__c.indexOf('-');
-                
-                if (dashpos > -1 ) 
-                	ServiceLine = (sl.Service_Value__c).substring(dashpos+1);
-                else
-                	ServiceLine = sl.Service_Value__c;
-        }
+  		programInfo = tmp.split('-');
+	  	Location = programInfo[3]; 
+	   	//Program =  programInfo[1];
+	   	Program = referralRecord.service_location__r.alias__c;
+	   	//ServiceLine = programInfo[2];
+	   	ServiceLine = referralRecord.service_location__r.service_value__c;
   	} 	
   }
   
@@ -86,11 +79,6 @@ public with sharing class referralConversion_Controller {
   public string getProgram() {
   	return Program;
   }
-  
-    public string getProgramCode() {
-  	return ProgramCode;
-  }
-  
   public string getServiceLine() {
   	return ServiceLine;
   }
@@ -500,9 +488,8 @@ public with sharing class referralConversion_Controller {
  											Program_Detail__c = refCurr.Service_Location_Program__c,
  											Service_Location__c = refCurr.Service_Location__c,
  											Location_Region__c = getLocation(),
- 											Program_Code__c = getProgramCode(),
+ 											Program_Code__c = getProgram(),
  											Program__c = getProgram(),
- 											Service_Line__c = getServiceLine(),
  											Date_of_Injury__c = refCurr.Date_of_Injury__c,
  											Cause_of_Injury__c = refCurr.Cause_of_Injury__c,
  											Ref_Referring_Physician__c = refCurr.Referring_Physician__c,

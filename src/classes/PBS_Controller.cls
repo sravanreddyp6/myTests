@@ -13,16 +13,7 @@ public with sharing class PBS_Controller {
   private Id personBeingServedId {get; set;}
   public Id pBSId { get; set; }
   public boolean isEditor{get; set;}
-    public Boolean showDiagnosis { get {
-        TMN_User__c[] tmnUsers = [
-            SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:UserInfo.getUserId() LIMIT 1
-        ];
-        if (tmnUsers.size() == 0) {
-            return false;
-        }
 
-        return tmnUsers[0].Operating_Group__c=='Redwood';
-    }}
 
   public PBS_Controller(ApexPages.standardController ctl){
     	system.debug('in constructor');

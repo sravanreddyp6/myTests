@@ -3602,6 +3602,24 @@ TEXT( Im_intersted_in_supporting__c )
     </fields>
     <label>Prospect</label>
     <listViews>
+        <fullName>Active_Prospects3</fullName>
+        <columns>Date_of_Inquiry__c</columns>
+        <columns>First_Name__c</columns>
+        <columns>NAME</columns>
+        <columns>How_did_you_hear_about_us__c</columns>
+        <columns>Status__c</columns>
+        <columns>State__c</columns>
+        <columns>OWNER.LAST_NAME</columns>
+        <columns>LAST_UPDATE</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Status__c</field>
+            <operation>equals</operation>
+            <value>Active</value>
+        </filters>
+        <label>Active Prospects</label>
+    </listViews>
+    <listViews>
         <fullName>All_30_day</fullName>
         <columns>OWNER.LAST_NAME</columns>
         <columns>NAME</columns>
@@ -3643,25 +3661,6 @@ TEXT( Im_intersted_in_supporting__c )
             <value>7 Day</value>
         </filters>
         <label>All - 7 Day</label>
-    </listViews>
-    <listViews>
-        <fullName>All_Active</fullName>
-        <columns>OWNER.LAST_NAME</columns>
-        <columns>Date_of_Inquiry__c</columns>
-        <columns>NAME</columns>
-        <columns>First_Name__c</columns>
-        <columns>Region__c</columns>
-        <columns>Program__c</columns>
-        <columns>Contact_Made__c</columns>
-        <columns>Stage__c</columns>
-        <columns>LAST_ACTIVITY</columns>
-        <filterScope>Everything</filterScope>
-        <filters>
-            <field>Status__c</field>
-            <operation>equals</operation>
-            <value>Active</value>
-        </filters>
-        <label>All - Active</label>
     </listViews>
     <listViews>
         <fullName>All_Closed</fullName>
@@ -3957,18 +3956,19 @@ TEXT( Im_intersted_in_supporting__c )
     </listViews>
     <listViews>
         <fullName>Prospects_by_Owner_2</fullName>
-        <columns>State__c</columns>
-        <columns>First_Name__c</columns>
-        <columns>NAME</columns>
-        <columns>Status__c</columns>
-        <columns>LAST_UPDATE</columns>
         <columns>OWNER.FIRST_NAME</columns>
         <columns>OWNER.LAST_NAME</columns>
+        <columns>First_Name__c</columns>
+        <columns>NAME</columns>
+        <columns>Program__c</columns>
+        <columns>Region__c</columns>
+        <columns>Status__c</columns>
+        <columns>State__c</columns>
         <filterScope>Everything</filterScope>
         <filters>
             <field>OWNER.LAST_NAME</field>
             <operation>equals</operation>
-            <value>claire</value>
+            <value>Asiana</value>
         </filters>
         <filters>
             <field>Status__c</field>
