@@ -5,10 +5,6 @@
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
-        <actionName>CancelEdit</actionName>
-        <type>Default</type>
-    </actionOverrides>
-    <actionOverrides>
         <actionName>Clone</actionName>
         <type>Default</type>
     </actionOverrides>
@@ -21,19 +17,11 @@
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
-        <actionName>Follow</actionName>
-        <type>Default</type>
-    </actionOverrides>
-    <actionOverrides>
         <actionName>List</actionName>
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
         <actionName>New</actionName>
-        <type>Default</type>
-    </actionOverrides>
-    <actionOverrides>
-        <actionName>SaveEdit</actionName>
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
@@ -44,7 +32,6 @@
         <actionName>View</actionName>
         <type>Default</type>
     </actionOverrides>
-    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
     <description>NOTES Junction Object between Service Assignments and Short-term goals, Objectives and Interventions.</description>
     <enableActivities>false</enableActivities>
@@ -57,7 +44,6 @@
         <formula>Short_term_Goal__r.Plan__r.Guardian1_Name__c</formula>
         <label>Guardian1 Name</label>
         <required>false</required>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -67,7 +53,6 @@
         <formula>Short_term_Goal__r.Plan__r.Guardian_Phone_Number__c</formula>
         <label>Guardian Phone Number</label>
         <required>false</required>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -79,7 +64,6 @@
         <referenceTo>Intervention__c</referenceTo>
         <relationshipName>Service_Assignment_Relationship_JOs</relationshipName>
         <required>false</required>
-        <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -90,7 +74,6 @@
         <referenceTo>Objective__c</referenceTo>
         <relationshipName>Service_Assignment_Relationship_JOs</relationshipName>
         <required>false</required>
-        <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -99,7 +82,6 @@
         <formula>Short_term_Goal__r.Plan__r.Person_Being_Served__c</formula>
         <label>Person Being Served</label>
         <required>false</required>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -109,7 +91,6 @@
         <formula>Short_term_Goal__r.Plan__r.Plan_Expiration_Date__c</formula>
         <label>Plan Expiration Date</label>
         <required>false</required>
-        <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
     <fields>
@@ -118,7 +99,6 @@
         <formula>text(Short_term_Goal__r.Plan__r.Status__c)</formula>
         <label>Plan Status</label>
         <required>false</required>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -128,7 +108,6 @@
         <formula>Short_term_Goal__r.Plan__c</formula>
         <label>Plan</label>
         <required>false</required>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -140,7 +119,6 @@
         <relationshipName>Service_Assignment_Relationship_JOs</relationshipName>
         <relationshipOrder>0</relationshipOrder>
         <reparentableMasterDetail>true</reparentableMasterDetail>
-        <trackTrending>false</trackTrending>
         <type>MasterDetail</type>
         <writeRequiresMasterRead>false</writeRequiresMasterRead>
     </fields>
@@ -152,7 +130,6 @@
         <referenceTo>Short_Term_Goal__c</referenceTo>
         <relationshipName>Service_Assignment_Relationship_JOs</relationshipName>
         <required>false</required>
-        <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
     <label>Plan ServiceAssignment mJO</label>
