@@ -26,17 +26,11 @@ public with sharing class Notes_ProgressNote_Approval {
     }
     public PageReference myFinal(){
         PageReference pageRef = new PageReference('/apex/Notes_ProgressNote_Create_Flavor_PDF');
-        PageReference pageRefFlavor = ApexPages.currentPage();
-        pageRef .getParameters().put('id', thePN.id);
-        if(thePN.Number_of_Required_Signatures__c == 0 && thePN.RecordType.Name == 'FL-FSS Progress Note' ){
-        	PageRefFlavor = new PageReference('/apex/Notes_ProgressNote_FL_FFS');
-        	pageRefFlavor .getParameters().put('id', thePN.id);
-        }
+        pageRef.getParameters().put('id', thePN.id);
         
         try{
             update thePN;
             return pageRef;
-            return pageRefFlavor;
         }
             catch(DMLException e){
                 thePN.addError(e.getMessage());

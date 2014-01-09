@@ -1,4 +1,4 @@
-<apex:page standardController="Progress_Note__c" extensions="NotesTimeExtract" renderAs="pdf"  >
+<apex:page standardController="Progress_Note__c" extensions="NotesTimeExtract,ProgressNoteExtension" renderAs="pdf"  >
 <head>
 <style type="text/css">
     .BoldLabelLg {
@@ -34,7 +34,7 @@
 <table class="myTB">            
     <tr><td class="BoldLabelLg">Client Name:&nbsp;<apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Name}"/></td>
     <td align="right" class="BoldLabelLg">Record Number:&nbsp;<apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Other_ID__c}"/></td></tr>
-    <tr><td class="BoldLabelLg">Medicaid ID:&nbsp;<apex:outputLabel value="{!Progress_Note__c.Person_Being_Served__r.Medicaid_ID__c}"/></td>
+    <tr><td class="BoldLabelLg">Medicaid ID:&nbsp;<apex:outputLabel value="{!medicaidIDClear}"/></td>
     <td align="right" class="BoldLabelLg">Start Date:&nbsp;<apex:outputField value="{!Progress_Note__c.Start_Time__c}"/></td></tr>
     <tr><td class="BoldLabelLg">DOB:&nbsp;<apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Birthdate}"/></td>
     <td align="right" class="BoldLabelLg">Start Time:&nbsp;<apex:outputField value="{!Progress_Note__c.Start_Time__c}"/></td></tr>

@@ -26,7 +26,8 @@ private class Notes_ProgressNote_Create_Flavor_PDFTEST {
     	Notes_ProgressNote_Create_Flavor_PDF controller = new Notes_ProgressNote_Create_Flavor_PDF ();
         
 	 	  Contact testContact = new Contact(
-	        LastName = 'TestLastName'
+	        LastName = 'TestLastName', 
+	        Medicaid_ID__c = '12345'
 	      );
 	      insert testContact;
 	      
@@ -122,6 +123,11 @@ private class Notes_ProgressNote_Create_Flavor_PDFTEST {
 		    System.Assert(listAtchmnts.size()>0,'There are no attachments!');
 		    
 		    System.Assert(listAtchmnts.size() == pnsToInsertCounter, 'The number of attachments inserted does not equal the number of record types!');
-	       	
+		    
+		    
+		    ApexPages.StandardController sc = new ApexPages.StandardController( pnsToInsert[0]);
+	       	ProgressNoteExtension pe = new ProgressNoteExtension(sc);
+        	System.assertEquals( pe.MedicaidIDClear, testContact.Medicaid_Id__c);
+        	
 	   }
 }

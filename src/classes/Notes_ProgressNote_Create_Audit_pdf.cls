@@ -21,10 +21,10 @@ public with sharing class Notes_ProgressNote_Create_Audit_pdf {
        // PageReference gotoPage = new PageReference('/');          
             
                 if(thePN.No_Approval_Needed__c){
-                 //   insert attachmentPDF;
+                    insert attachmentPDF;
                 }
                 else{                    
-                 //   insert attachmentPDF;
+                    insert attachmentPDF;
                     return new PageReference('/p/process/Submit?retURL=%2F'+thePN.id+'&id='+thePN.id);
                 }            
             

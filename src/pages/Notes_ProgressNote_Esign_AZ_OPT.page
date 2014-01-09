@@ -370,7 +370,7 @@ function drawData() {
         if (isnotelate ==  "Yes")
             lateentry = " - LATE ENTRY";
 
-        newdate == '{!Progress_Note__c.CreatedDate}';
+        newdate = '{!Progress_Note__c.CreatedDate}';
         
         text = "Created Date: " + formatDate(newdate) + lateentry  ;
         context.fillText( text, width/2, line );
