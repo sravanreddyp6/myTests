@@ -2,7 +2,6 @@
 <CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
     <defaultLandingTab>standard-home</defaultLandingTab>
     <label>ESD</label>
-    <logo>SharedDocuments/TMNLogo.png</logo>
     <tab>standard-Chatter</tab>
     <tab>standard-Workspace</tab>
     <tab>Persons_Being_Served_New</tab>
