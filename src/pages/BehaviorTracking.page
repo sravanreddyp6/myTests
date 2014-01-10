@@ -58,8 +58,19 @@
             background-color: #e0e0e0;
             }
         .behaviortable tr:nth-child(even){
-            background-color: #fefefe
+            background-color: #fefefe;
             }
+        table.list.listtable tr.headerRow.listheader th{
+        	background-color: #99ccff;
+        	padding: 8px;
+        	border-bottom: 1px solid #9e9e9e;
+        }
+        .dataRow.row-odd{
+        	background-color:#ffffff;
+        }
+        .dataRow.row-even{
+        	background-color:#ececec;
+      	}
     </style>
 <c:PersonalRecord pbsId="{!personId}" parentPage="BehaviorTracking" apId="{!Action_Plan_Worksheet__c.Action_Plan__c}" servAssignId="{!Action_Plan_Worksheet__c.Action_Plan__r.Service_Assignment__c}" admId="{!Action_Plan_Worksheet__c.Action_Plan__r.Service_Assignment__r.Admission__c}"/>
 <br />
@@ -69,29 +80,34 @@
     <apex:outputField value="{!Action_Plan_Worksheet__c.Action_Plan__c}" rendered="false"/>
     <apex:pageBlock >
         <apex:pageBlockSection columns="1">
-            <apex:repeat var="otherobjectives" value="{!objectives}">
-                <apex:pageBlock rendered="{!editable}">
+            <apex:pageBlockTable var="otherobjectives" value="{!objectives}" rowClasses="row-odd,row-even" 
+            	headerClass="listheader" styleClass="listtable">
+				<apex:column width="150px">
+					<apex:facet name="header">Actions</apex:facet>
                     <apex:commandButton action="{!PrintOtherObjective}"
                         value="Print:"
-                        rerender="wholeform" status="waitStatus">
+                        rerender="wholeform" status="waitStatus"
+                        rendered="{!editable}">
                         <apex:param name="objectiveIdparam" assignTo="{!objectiveIdChosen}" value="{!otherobjectives.id}"/>
                     </apex:commandButton>
                     <apex:commandButton action="{!saveAndSwitchObjective}"
                         value="Save & Go To:"
-                        rerender="wholeform" status="waitStatus">
+                        rerender="wholeform" status="waitStatus"
+                        rendered="{!editable}">
                         <apex:param name="objectiveIdparam" assignTo="{!objectiveIdChosen}" value="{!otherobjectives.id}"/>
                     </apex:commandButton>
-                    <apex:outputText >{!otherobjectives.Description__c}</apex:outputText>
-                </apex:pageBlock>
-                <apex:pageBlockSectionItem rendered="{!!editable}">
                     <apex:commandButton action="{!switchObjective}"
                         value="Go To:"
+                        rendered="{!!editable}"
                         rerender="wholeform" status="waitStatus">
                         <apex:param name="objectiveIdparam" assignTo="{!objectiveIdChosen}" value="{!otherobjectives.id}"/>
                     </apex:commandButton>
+                </apex:column>
+                <apex:column >
+                	<apex:facet name="header">Objective</apex:facet>
                     <apex:outputText >{!otherobjectives.Description__c}</apex:outputText>
-                </apex:pageBlockSectionItem>
-            </apex:repeat>
+                </apex:column>
+            </apex:pageBlockTable>
         </apex:pageBlockSection>
     </apex:pageBlock>
     <apex:pageBlock title="Behavior Worksheet" >
