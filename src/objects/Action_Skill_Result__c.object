@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>false</enableActivities>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>false</enableReports>
+    <fields>
+        <fullName>Action_Plan_Objective__c</fullName>
+        <externalId>false</externalId>
+        <label>Action Plan Objective</label>
+        <referenceTo>Action_Plan_Objective__c</referenceTo>
+        <relationshipLabel>Action Skill Results</relationshipLabel>
+        <relationshipName>Action_Skill_Results</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Attempts__c</fullName>
+        <externalId>false</externalId>
+        <label>Attempts</label>
+        <precision>5</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Day__c</fullName>
+        <externalId>false</externalId>
+        <label>Day</label>
+        <required>true</required>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Initials__c</fullName>
+        <externalId>false</externalId>
+        <label>Initials</label>
+        <length>5</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Met_Objective__c</fullName>
+        <externalId>false</externalId>
+        <label>Met Objective</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Y</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>N</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>I</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>V</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>M</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>PP</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>FP</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>D</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>L</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>S</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>H</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>HL</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
+    </fields>
+    <label>Action Skill Result</label>
+    <listViews>
+        <fullName>All</fullName>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <label>Action Skill Tracking Id</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Action Skill Results</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ControlledByParent</sharingModel>
+    <validationRules>
+        <fullName>Attempts_Required_for_certain_status</fullName>
+        <active>true</active>
+        <description>Attempts is required unless status indicates the skill was not attempted.</description>
+        <errorConditionFormula>AND (
+    ISNULL( Attempts__c ),
+    CASE(  Status__c ,
+        &apos;I&apos;, 1,
+        &apos;V&apos;, 1,
+        &apos;P&apos;, 1,
+        &apos;FP&apos;, 1,
+        &apos;M&apos;, 1,
+        &apos;PP&apos;, 1,
+        &apos;D&apos;, 1,
+         0) == 1
+    )</errorConditionFormula>
+        <errorDisplayField>Attempts__c</errorDisplayField>
+        <errorMessage>Attempts required for this value of status</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Attempts_invalid_for_certain_statuses</fullName>
+        <active>true</active>
+        <description>Should not set Attempts with certain Statuses</description>
+        <errorConditionFormula>AND (
+     !ISNULL(Attempts__c) ,
+    CASE ( Status__c,
+           &apos;L&apos;, 1,
+           &apos;H&apos;, 1,
+           &apos;S&apos;, 1,
+           &apos;HL&apos;, 1,
+          0) == 1
+    )</errorConditionFormula>
+        <errorDisplayField>Attempts__c</errorDisplayField>
+        <errorMessage>Cannot set the number of attempts for this status.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Ensure_Status_is_a_PickList_value</fullName>
+        <active>true</active>
+        <errorConditionFormula>NOT( OR( ISPICKVAL( Status__c , &apos;I&apos;),
+        ISPICKVAL( Status__c ,&apos;V&apos;),
+        ISPICKVAL( Status__c ,&apos;M&apos;),
+        ISPICKVAL( Status__c ,&apos;PP&apos;),
+        ISPICKVAL( Status__c ,&apos;FP&apos;),
+        ISPICKVAL( Status__c ,&apos;D&apos;),
+        ISPICKVAL( Status__c ,&apos;L&apos;),
+        ISPICKVAL( Status__c ,&apos;S&apos;),
+        ISPICKVAL( Status__c ,&apos;H&apos;),
+        ISPICKVAL( Status__c ,&apos;HL&apos;)
+) )</errorConditionFormula>
+        <errorDisplayField>Status__c</errorDisplayField>
+        <errorMessage>Prompt/Status must be one of predefined values.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Met_Objective_No_for_this_status</fullName>
+        <active>true</active>
+        <description>Met_Objective must be No if skill declined</description>
+        <errorConditionFormula>AND (
+    CASE( Met_Objective__c ,
+        &apos;N&apos;, 0,
+        1) == 1,
+    CASE(  Status__c ,
+        &apos;D&apos;, 1,
+         0) == 1
+    )</errorConditionFormula>
+        <errorDisplayField>Met_Objective__c</errorDisplayField>
+        <errorMessage>Met Objective must be No for this value of status</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Met_Objective_Required_for_this_status</fullName>
+        <active>true</active>
+        <description>Met_Objective is required unless status indicates the skill was not attempted.</description>
+        <errorConditionFormula>AND (
+    CASE( Met_Objective__c ,
+        &apos;N&apos;, 1,
+        &apos;Y&apos;, 1,
+        0) == 0,
+    CASE(  Status__c ,
+        &apos;I&apos;, 1,
+        &apos;V&apos;, 1,
+        &apos;P&apos;, 1,
+        &apos;FP&apos;, 1,
+        &apos;M&apos;, 1,
+        &apos;PP&apos;, 1,
+         0) == 1
+    )</errorConditionFormula>
+        <errorDisplayField>Met_Objective__c</errorDisplayField>
+        <errorMessage>Met Objective required for this value of status</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Met_Objective_invalid_for_certain_status</fullName>
+        <active>true</active>
+        <description>Should not set Met_Objective with certain Statuses</description>
+        <errorConditionFormula>AND (
+     CASE( Met_Objective__c ,
+           &apos;Y&apos;, 1,
+           &apos;N&apos;, 1,
+            0) == 1 ,
+    CASE ( Status__c,
+           &apos;L&apos;, 1,
+           &apos;H&apos;, 1,
+           &apos;S&apos;, 1,
+           &apos;HL&apos;, 1,
+          0) == 1
+    )</errorConditionFormula>
+        <errorDisplayField>Met_Objective__c</errorDisplayField>
+        <errorMessage>Cannot set Met Objective for this status.</errorMessage>
+    </validationRules>
+</CustomObject>
