@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>An object to hold Service Assignment / Document cross-reference records.</description>
+    <enableActivities>false</enableActivities>
+    <enableEnhancedLookup>false</enableEnhancedLookup>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>false</enableReports>
+    <fields>
+        <fullName>Document_DueDate__c</fullName>
+        <description>If there is a Fixed Due Date, use it as default Due Date, else use the Relative Due Date Resolved as the default Due Date in case the Fixed Due Date is missing</description>
+        <externalId>false</externalId>
+        <formula>IF(Fixed_Due_Date__c != null, Fixed_Due_Date__c, Relative_Due_Date_Resolved__c)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Document Due Date</label>
+        <required>false</required>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Document_Filed__c</fullName>
+        <externalId>false</externalId>
+        <formula>Case(File_Status__c,&quot;Filed&quot;,1,0)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Document Filed</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Document_Filed_or_Filed_NCC__c</fullName>
+        <description>If the File Status for this filing is Filed or Filed - Not Contract Compliant, the field should have a value of 1. Otherwise, if it&apos;s a version of &quot;Waived&quot;/&quot;N/A&quot; or &quot;Not Filed,&quot; it should have a value of 0.</description>
+        <externalId>false</externalId>
+        <formula>CASE( File_Status__c , &apos;Filed&apos;, 1, &apos;Filed - Not Contract Compliant&apos;, 1, &apos;N/A&apos;, 0,&apos;N/A - File Transferred&apos;, 0,&apos;N/A - Document In Initial File&apos;, 0, &apos;Not Filed&apos;, 0, &apos;Not Filed - Unrecoverable&apos;, 0, &apos;N/A - Non-FCT&apos;, 0, &apos;Waived&apos;, 0, 0)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Document Filed or Filed NCC</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Document_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>Document__r.Name</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Document Name</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Document_NotFiled__c</fullName>
+        <externalId>false</externalId>
+        <formula>Case(File_Status__c,&quot;Not Filed&quot;,1,0)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Document Not Filed</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Document_Not_Filed_or_Not_Filed_Unrec__c</fullName>
+        <description>If the File Status for this filing is &quot;Not Filed&quot; or &quot;Not Filed - Unrecoverable,&quot; the field should have a value of 1. Otherwise, if it&apos;s a version of &quot;Filed,&quot; &quot;Waived,&quot; or &quot;N/A.&quot; It should have a value of 0.</description>
+        <externalId>false</externalId>
+        <formula>CASE( File_Status__c , &apos;Filed&apos;, 0, &apos;Filed - Not Contract Compliant&apos;, 0, &apos;N/A&apos;, 0,&apos;N/A - File Transferred&apos;, 0,&apos;N/A - Document In Initial File&apos;, 0, &apos;Not Filed&apos;, 1, &apos;Not Filed - Unrecoverable&apos;, 1, &apos;N/A - Non-FCT&apos;, 0, &apos;Waived&apos;, 0, 0)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Document Not Filed or Not Filed - Unrec.</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Document_Order__c</fullName>
+        <externalId>false</externalId>
+        <formula>Document__r.Order__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Document Order</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Document_Phase_or_Level__c</fullName>
+        <externalId>false</externalId>
+        <formula>TEXT(Document__r.Phase_or_Level__c)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Document Phase or Level</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Document_Type__c</fullName>
+        <externalId>false</externalId>
+        <formula>TEXT(Document__r.Type__c)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Document Type</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Document_Waived__c</fullName>
+        <externalId>false</externalId>
+        <formula>Case(File_Status__c,&quot;Waived&quot;,1,0)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Document Waived</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Document_Waived_or_N_A__c</fullName>
+        <description>If the File Status for this filing is Waived or one of the N/A types, the field should have a value of 1.  Otherwise, if it&apos;s a version of &quot;Filed&quot; or &quot;Not Filed,&quot; it should have a value of 0.</description>
+        <externalId>false</externalId>
+        <formula>CASE( File_Status__c , &apos;Filed&apos;, 0, &apos;Filed - Not Contract Compliant&apos;, 0, &apos;N/A&apos;, 1,&apos;N/A - File Transferred&apos;, 1,&apos;N/A - Document In Initial File&apos;, 1, &apos;Not Filed&apos;, 0, &apos;Not Filed - Unrecoverable&apos;, 0, &apos;N/A - Non-FCT&apos;, 1, &apos;Waived&apos;, 1, 0)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Document Waived or N/A</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Document__c</fullName>
+        <description>The Document in this Service Assignment / Document cross-reference record.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The Document in this Service Assignment / Document cross-reference record.</inlineHelpText>
+        <label>Document</label>
+        <referenceTo>Document__c</referenceTo>
+        <relationshipLabel>ServiceAssignment_Document_JOs</relationshipLabel>
+        <relationshipName>ServiceAssignment_Document_JOs</relationshipName>
+        <relationshipOrder>1</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Due_From_Employee_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>Due_From_Employee__r.myFullName__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Due From Employee Name</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Due_From_Employee__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Due From Employee</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>ServiceAssignment_Document_JOs</relationshipName>
+        <required>false</required>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>File_Status__c</fullName>
+        <externalId>false</externalId>
+        <label>File Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Filed</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Filed - Not Contract Compliant</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>N/A</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>N/A - File Transferred</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>N/A - Document In Initial File</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Not Filed</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Not Filed - Unrecoverable</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>N/A - Non-FCT</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Waived</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Filed_By__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Filed By</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>ServiceAssignment_Document_JOs1</relationshipName>
+        <required>false</required>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Filed_Date_Time__c</fullName>
+        <externalId>false</externalId>
+        <label>Filed Date/Time</label>
+        <required>false</required>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Fixed_Due_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Fixed Due Date</label>
+        <required>false</required>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Is_Document_Late__c</fullName>
+        <externalId>false</externalId>
+        <formula>TODAY()&gt;= Document_DueDate__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Is Document Late?</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Location__c</fullName>
+        <externalId>false</externalId>
+        <formula>TEXT(Service_Assignment__r.Location_Region__c)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Location</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>N_A_Reason__c</fullName>
+        <externalId>false</externalId>
+        <label>N/A Reason</label>
+        <required>false</required>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Relative_Due_Date_Event__c</fullName>
+        <externalId>false</externalId>
+        <label>Relative Due Date Event</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Calendar Month End</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Calendar Quarter End</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>MENTOR Fiscal Year End</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Client Tx Start</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Client Tx End</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other - Describe</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Monthly Anniversary of Client Tx Start</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Quarterly Anniversary of Client Tx Start</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Relative_Due_Date_Resolved__c</fullName>
+        <externalId>false</externalId>
+        <label>Relative Due Date Resolved</label>
+        <required>false</required>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Relative_Due_Date_UOM__c</fullName>
+        <externalId>false</externalId>
+        <label>Relative Due Date UOM</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Day(s)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Weeks(s)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Month(s)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Relative_Due_Date_Units__c</fullName>
+        <externalId>false</externalId>
+        <label>Relative Due Date Units</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Service_Assignment__c</fullName>
+        <description>The Service Assignment in this Service Assignment / Document cross-reference record.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The Service Assignment in this Service Assignment / Document cross-reference record.</inlineHelpText>
+        <label>Service Assignment</label>
+        <referenceTo>Service_Assignment__c</referenceTo>
+        <relationshipLabel>ServiceAssignment_Document_JOs</relationshipLabel>
+        <relationshipName>ServiceAssignment_Document_JOs</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <label>ServiceAssignment_Document_JO</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>Document_Name__c</columns>
+        <columns>Relative_Due_Date_Event__c</columns>
+        <columns>Relative_Due_Date_Resolved__c</columns>
+        <columns>Relative_Due_Date_Units__c</columns>
+        <columns>Relative_Due_Date_UOM__c</columns>
+        <columns>CREATED_DATE</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <label>ServiceAssignment_Document_JO Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>ServiceAssignment_Document_JOs</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ControlledByParent</sharingModel>
+    <validationRules>
+        <fullName>OnlyOneDueDateType</fullName>
+        <active>true</active>
+        <description>A rule to prevent saving of both a Relative Due Date and Fixed Due Date for any given Service Assignment / Document cross-reference.</description>
+        <errorConditionFormula>AND(OR(NOT(ISNULL(Relative_Due_Date_Units__c)),NOT(ISPICKVAL(Relative_Due_Date_UOM__c,&quot;&quot;)),NOT(ISPICKVAL(Relative_Due_Date_Event__c,&quot;&quot;))),NOT(ISNULL(Fixed_Due_Date__c)))</errorConditionFormula>
+        <errorMessage>A document cannot have both a Relative Due Date and a Fixed Due Date.  Please make appropriate changes to your data entry and try the transaction again.</errorMessage>
+    </validationRules>
+</CustomObject>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>CUST_NAME</field>
+    </columns>
+    <columns>
+        <field>TMN_User__c.Email__c</field>
+    </columns>
+    <columns>
+        <field>TMN_User__c.Employee_Number__c</field>
+    </columns>
+    <filter>
+        <criteriaItems>
+            <column>TMN_User__c.Email__c</column>
+            <operator>contains</operator>
+            <value>thementornetwork.com,caremeridian.com</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>TMN_User__c.Pay_Basis__c</column>
+            <operator>equals</operator>
+            <value>Salaried</value>
+        </criteriaItems>
+    </filter>
+    <format>Tabular</format>
+    <name>TMN User for Mailing</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>CustomEntity$TMN_User__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <timeFrameFilter>
+        <dateColumn>TMN_User__c.Hire_Date__c</dateColumn>
+        <endDate>2012-12-31</endDate>
+        <interval>INTERVAL_CUSTOM</interval>
+        <startDate>1900-04-30</startDate>
+    </timeFrameFilter>
+</Report>

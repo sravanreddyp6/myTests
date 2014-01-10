@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>NOTES Records the relationship between one Progress Note, Short-term Goals, Objectives and Interventions.</description>
+    <enableActivities>false</enableActivities>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>Intervention__c</fullName>
+        <deleteConstraint>Cascade</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Intervention</label>
+        <referenceTo>Intervention__c</referenceTo>
+        <relationshipName>Progress_Note_Short_term_Goals</relationshipName>
+        <required>false</required>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Objective__c</fullName>
+        <deleteConstraint>Cascade</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Objective</label>
+        <referenceTo>Objective__c</referenceTo>
+        <relationshipName>Progress_Note_Short_term_Goals</relationshipName>
+        <required>false</required>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Progress_Note__c</fullName>
+        <externalId>false</externalId>
+        <label>Progress Note</label>
+        <referenceTo>Progress_Note__c</referenceTo>
+        <relationshipName>Progress_Note_Goal_Junctions</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Short_Term_Goal__c</fullName>
+        <deleteConstraint>Cascade</deleteConstraint>
+        <description>The short-term goal for which progress was noted</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The short-term goal for which progress was noted</inlineHelpText>
+        <label>Short-Term Goal</label>
+        <referenceTo>Short_Term_Goal__c</referenceTo>
+        <relationshipName>Progress_Note_Goal_Junctions</relationshipName>
+        <required>false</required>
+        <type>Lookup</type>
+    </fields>
+    <label>ProgressNote ServiceAssignment mJO</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Progress_Note__c</columns>
+        <columns>Short_Term_Goal__c</columns>
+        <columns>Objective__c</columns>
+        <columns>Intervention__c</columns>
+        <columns>CREATED_DATE</columns>
+        <columns>LAST_UPDATE</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <displayFormat>PNG-{0000000000}</displayFormat>
+        <label>Progress Note Objective Junction ID</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>ProgressNote ServiceAssignment mJOs</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ControlledByParent</sharingModel>
+    <validationRules>
+        <fullName>Plans_Must_Match</fullName>
+        <active>false</active>
+        <description>The Plan selected when initially creating and saving a new Progress Note should be the same Plan belonging to the Short-Term Goals being targeted by this Progress Note.</description>
+        <errorConditionFormula>Short_Term_Goal__r.Plan__c =  Progress_Note__r.Plan__c</errorConditionFormula>
+        <errorDisplayField>Short_Term_Goal__c</errorDisplayField>
+        <errorMessage>The Short-Term Goal you selected does not belong to the Plan you initially selected when creating this Progress Note. Please select a Short-Term Goal  from the Plan on your Progress Note OR go back to your Progress Note and edit the Plan.</errorMessage>
+    </validationRules>
+</CustomObject>
