@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>A cross-reference object that links contracts with the document profiles for documents expected in the client file for clients associated with that contract.</description>
+    <enableActivities>false</enableActivities>
+    <enableEnhancedLookup>false</enableEnhancedLookup>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>false</enableReports>
+    <fields>
+        <fullName>Contract__c</fullName>
+        <description>The contract for this contract / document cross-reference.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The contract for this contract / document cross-reference.</inlineHelpText>
+        <label>-Contract</label>
+        <referenceTo>TMN_Contract__c</referenceTo>
+        <relationshipLabel>Contract Document JOs</relationshipLabel>
+        <relationshipName>Contract_Document_JOs</relationshipName>
+        <relationshipOrder>1</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Document__c</fullName>
+        <description>The document profile for this contract / document cross-reference.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The document profile for this contract / document cross-reference.</inlineHelpText>
+        <label>Document</label>
+        <referenceTo>Document__c</referenceTo>
+        <relationshipLabel>Contract Document JOs</relationshipLabel>
+        <relationshipName>Contract_Document_JOs</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <label>Contract Document JO</label>
+    <nameField>
+        <displayFormat>ConDocXref-{0000000}</displayFormat>
+        <label>Contract Document JO Name</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Contract Document JOs</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ControlledByParent</sharingModel>
+</CustomObject>

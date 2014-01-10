@@ -1,0 +1,3010 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <content>EditDetailsContract</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <content>EditDetailsContract</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <content>TabContract</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <content>ViewContract</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>CAMBRIDGE CONTRACT</description>
+    <enableActivities>true</enableActivities>
+    <enableFeeds>true</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>AdditionalGrowth__c</fullName>
+        <externalId>false</externalId>
+        <label>CL Additional Growth</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>AdditionalPermitsDetail__c</fullName>
+        <externalId>false</externalId>
+        <label>CL Additional Permits Detail</label>
+        <length>32000</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>7</visibleLines>
+    </fields>
+    <fields>
+        <fullName>AdditionalPermits__c</fullName>
+        <externalId>false</externalId>
+        <label>CL Additional Permits</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Agency_FY_End__c</fullName>
+        <externalId>false</externalId>
+        <formula>TEXT(ContractingParty__r.FY_End__c)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Agency FY End</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>AnnualFundingLimit__c</fullName>
+        <externalId>false</externalId>
+        <label>CL Annual Funding Limit</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>App1NextReviewDate__c</fullName>
+        <externalId>false</externalId>
+        <formula>Termination_Date__c -29</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>NextReviewDate</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>App_1_Compliance_Sign_Off__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>z1 Sign Off</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>App_2_Compliance_Sign_Off__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>z 2 Sign Off</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>App_3_Compliance_Sign_Off__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>z 3 Sign Off</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>App_4_Compliance_Sign_Off__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>z 4 Sign Off</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>App_5_Compliance_Sign_Off__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>z 5 Sign Off</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>App_6_Compliance_Sign_Off__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>z 6 Sign Off</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>App_7_Compliance_Sign_Off__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>z 7 Sign Off</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>ApprovalStage__c</fullName>
+        <externalId>false</externalId>
+        <label>Approval Stage</label>
+        <picklist>
+            <picklistValues>
+                <fullName>1</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>2</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>3</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>4</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>5</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>6</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>7</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Approved</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Rejected</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Legal</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Not Started</fullName>
+                <default>true</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Approver4__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Approver 4</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Approver4</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Approver5__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Approver 5</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Approver5</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Approver6__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Approver 6</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Approver6</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Approver7__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Approver 7</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Approver7</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Approver_1__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Approver 1</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Approver_1</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Approver_2__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Approver 2</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Approver_2</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Approver_3__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Approver 3</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Approver_3</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>AuditReqsDetail__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Audit Requirements Detail</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>true</trackHistory>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>AuditRequirementsYN__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Audit Requirements Y/N</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>true</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Audit_Requirements__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Audit Requirements</label>
+        <picklist>
+            <picklistValues>
+                <fullName>A-133</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>ACOR</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>AUP</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>HUD</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Stand Alone Audit</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>UFR</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>true</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>CL_AnnualFundingLimitDetail__c</fullName>
+        <externalId>false</externalId>
+        <label>CL Annual Funding Limit Detail</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>CL_CoveredByLimit__c</fullName>
+        <externalId>false</externalId>
+        <label>CL Covered by Limit</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>CL_DatesCorrectDetail__c</fullName>
+        <externalId>false</externalId>
+        <label>CL Dates Correct Detail</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>CL_Payback_ReviewClause__c</fullName>
+        <externalId>false</externalId>
+        <label>CL Payback/Review Clause</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>CL_SubcontractingTermsDetail__c</fullName>
+        <externalId>false</externalId>
+        <label>CL Subcontracting Terms Detail</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>CancelledReason__c</fullName>
+        <externalId>false</externalId>
+        <label>Cancelled Reason</label>
+        <picklist>
+            <controllingField>Status__c</controllingField>
+            <picklistValues>
+                <fullName>Non-Compliance</fullName>
+                <controllingFieldValues>Cancelled</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Rates Do Not Support Service Delivery</fullName>
+                <controllingFieldValues>Cancelled</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Lost Bid to Competitor</fullName>
+                <controllingFieldValues>Cancelled</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Company Decision</fullName>
+                <controllingFieldValues>Cancelled</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Purchaser Decision</fullName>
+                <controllingFieldValues>Cancelled</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Company Converting Res to Non-Res</fullName>
+                <controllingFieldValues>Cancelled</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <controllingFieldValues>Cancelled</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>MultiselectPicklist</type>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
+        <fullName>CheckListComplete__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Complete Check List</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Comments__c</fullName>
+        <externalId>false</externalId>
+        <label>Comments</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>true</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>CompanyNameCorrectDetail__c</fullName>
+        <externalId>false</externalId>
+        <label>CL Company Name Correct Detail</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>CompanyNameCorrect__c</fullName>
+        <externalId>false</externalId>
+        <label>CL Company Name Correct</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>CompleteAssignedApprovers__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Complete Assigned Approvers</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>ComplianceApproverNumber__c</fullName>
+        <externalId>false</externalId>
+        <formula>CASE($User.Id, 
+Approver_1__r.Id , 1,
+ Approver_2__r.Id , 2,
+ Approver_3__r.Id , 3,
+ Approver4__r.Id , 4,
+ Approver5__r.Id , 5,
+ Approver6__r.Id , 6,
+ Approver7__r.Id , 7,
+0)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Compliance Approver Number</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>ContractID__c</fullName>
+        <displayFormat>{0}</displayFormat>
+        <externalId>false</externalId>
+        <label>ContractID</label>
+        <trackHistory>false</trackHistory>
+        <type>AutoNumber</type>
+    </fields>
+    <fields>
+        <fullName>Contract_Number__c</fullName>
+        <externalId>false</externalId>
+        <label>Contract Number</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>ContractingParty__c</fullName>
+        <deleteConstraint>Restrict</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Issuing Agency</label>
+        <referenceTo>IssuingAgency__c</referenceTo>
+        <relationshipLabel>Contracts</relationshipLabel>
+        <relationshipName>Contracts</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>CostReimbursementDetail__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Cost Reimbursement Detail</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>CostReportRequiredYN__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Cost Report Required Y/N</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>CostReport__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Cost Report Required</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Fixed Fee for Service</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Reimbursement Rate Setting</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Negotiated Contract</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Retrospective Settle-up</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Prospective Rate Setting</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>true</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>CriticalIndicatorsComplete__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Complete Critical Indicators</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>DatesCorrect__c</fullName>
+        <externalId>false</externalId>
+        <label>CL Dates Correct</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Day_since_Start__c</fullName>
+        <externalId>false</externalId>
+        <formula>today()- Start_Date__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Day since Start</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>DaysRemaining__c</fullName>
+        <externalId>false</externalId>
+        <formula>Termination_Date__c -today()</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Days Remaining</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Description__c</fullName>
+        <externalId>false</externalId>
+        <label>Description</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>DetailsComplete__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Complete Details</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Due_Date_CI_Audit_Requirements__c</fullName>
+        <externalId>false</externalId>
+        <label>Due Date Audit Requirements</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Due_Date_Cost_Report_Required__c</fullName>
+        <externalId>false</externalId>
+        <label>Due Date Cost Report Required</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Due_Date_Other__c</fullName>
+        <externalId>false</externalId>
+        <label>Due Date Other</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Due_Date_Outcome_Requirements__c</fullName>
+        <externalId>false</externalId>
+        <label>Due Date Outcome Requirements</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>ExternalContact__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>Contact Name, Address, Phone # (Contractor)</inlineHelpText>
+        <label>External Contact</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>7</visibleLines>
+    </fields>
+    <fields>
+        <fullName>FrequencyOfVisitsDetail__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Frequency of Visits Detail</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>true</trackHistory>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>FrequencyOfVisitsYN__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Frequency of Visits Y/N</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>FullyExecutedContractUploaded__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Fully Executed Contract Uploaded</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Funding_Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Funding Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Medicaid</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Medicare</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>State Funds</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>County Funds</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grants</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Insurance Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>true</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>LN_ContractTermNoNotice__c</fullName>
+        <externalId>false</externalId>
+        <label>LN Contract Term w/o Notice</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>LN_LiabilityInsuranceExceedLimits__c</fullName>
+        <externalId>false</externalId>
+        <label>LN Liability Insurance Exceed Limits</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>LN_ManageCareRiskSharing__c</fullName>
+        <externalId>false</externalId>
+        <label>LN Manage Care Risk Sharing</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>LN_new_payor_or_a_new_service__c</fullName>
+        <externalId>false</externalId>
+        <label>LN new payor or a new service?</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>LegalEntity__c</fullName>
+        <externalId>false</externalId>
+        <label>Legal Entity</label>
+        <picklist>
+            <controllingField>State__c</controllingField>
+            <picklistValues>
+                <fullName>Alliance Human Services</fullName>
+                <controllingFieldValues>FL</controllingFieldValues>
+                <controllingFieldValues>IL</controllingFieldValues>
+                <controllingFieldValues>IL-Alliance</controllingFieldValues>
+                <controllingFieldValues>OH</controllingFieldValues>
+                <controllingFieldValues>OH-Alliance</controllingFieldValues>
+                <controllingFieldValues>PA</controllingFieldValues>
+                <controllingFieldValues>PA-Alliance</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Family Advocacy Services, LLC</fullName>
+                <controllingFieldValues>MA</controllingFieldValues>
+                <controllingFieldValues>MD</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Illinois Mentor Inc</fullName>
+                <controllingFieldValues>IL</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Institute for Family Centered Services, Inc.</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Massachusetts Mentor LLC</fullName>
+                <controllingFieldValues>MA</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Mentor Maryland, Inc.</fullName>
+                <controllingFieldValues>MD</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>National Mentor Healthcare, LLC</fullName>
+                <controllingFieldValues>AL</controllingFieldValues>
+                <controllingFieldValues>DE</controllingFieldValues>
+                <controllingFieldValues>FL</controllingFieldValues>
+                <controllingFieldValues>GA</controllingFieldValues>
+                <controllingFieldValues>IN</controllingFieldValues>
+                <controllingFieldValues>LA</controllingFieldValues>
+                <controllingFieldValues>NC</controllingFieldValues>
+                <controllingFieldValues>NJ</controllingFieldValues>
+                <controllingFieldValues>PA</controllingFieldValues>
+                <controllingFieldValues>RI</controllingFieldValues>
+                <controllingFieldValues>TX</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>National Mentor Services, LLC</fullName>
+                <controllingFieldValues>DE</controllingFieldValues>
+                <controllingFieldValues>GA</controllingFieldValues>
+                <controllingFieldValues>IN</controllingFieldValues>
+                <controllingFieldValues>MA</controllingFieldValues>
+                <controllingFieldValues>MD</controllingFieldValues>
+                <controllingFieldValues>MO</controllingFieldValues>
+                <controllingFieldValues>VA</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Ohio Mentor, Inc</fullName>
+                <controllingFieldValues>OH</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>REM Connecticut Community Services, LLC</fullName>
+                <controllingFieldValues>CT</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>REM New Jersey, Inc.</fullName>
+                <controllingFieldValues>NJ</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>REM New Jersey Properties, Inc</fullName>
+                <controllingFieldValues>NJ</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>South Carolina Mentor, Inc</fullName>
+                <controllingFieldValues>SC</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>IFCS (Institute for Family Centered Services, Inc.)</fullName>
+                <controllingFieldValues>FL</controllingFieldValues>
+                <controllingFieldValues>MA</controllingFieldValues>
+                <controllingFieldValues>MD</controllingFieldValues>
+                <controllingFieldValues>NC</controllingFieldValues>
+                <controllingFieldValues>VA</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>LegalReviewRequired__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Legal Review Required</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>MentorRegionOfficeProgramName__c</fullName>
+        <externalId>false</externalId>
+        <label>Mentor Region/Office/Program Name</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Number_of_value_type__c</fullName>
+        <externalId>false</externalId>
+        <label>Number of value type</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Operating_Group__c</fullName>
+        <externalId>false</externalId>
+        <label>Operating Group</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Cambridge</fullName>
+                <default>true</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>true</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>OtherSpecialRequirementsYN__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Other special requirementsY/N</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>OutcomeRequirementsDetail__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Outcome Requirements Detail</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>OutcomeRequirementsYN__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Outcome Requirements Y/N</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>true</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>PerformanceBasedContractYN__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Performance Based Contract Y/N</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>true</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>PerformanceDetail__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Performance Detail</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>true</trackHistory>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>PersonnelCredentialRequirementsDetail__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Personnel Credential Reqs Detail</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Personnel_CredentialRequirementsYN__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Personnel/Credential Requirements Y/N</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Population__c</fullName>
+        <externalId>false</externalId>
+        <label>Population</label>
+        <picklist>
+            <picklistValues>
+                <fullName>IDD</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>ARY</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Children and Families</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>ABI</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>SRS</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>true</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Previous_Contract__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Previous Contract</label>
+        <referenceTo>TMN_Contract__c</referenceTo>
+        <relationshipName>Previous_Contract</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>ProviderRequiredTrainingDetail__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Provider Required Training Detail</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>ProviderRequiredTrainingYN__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Provider Required Training Y/N</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>ProviderRequiredTraining__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Provider Required Training</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Direct Staff</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Foster Parents</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>MultiselectPicklist</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>RateChangeBudget__c</fullName>
+        <externalId>false</externalId>
+        <label>CL Rate Change vs. Budget</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Lower</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Higher</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>N/A</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>RateChangeLastContract__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>If the rate is &apos;Lower&apos; the VPO field is required for notification</inlineHelpText>
+        <label>CL Rate Change vs. Last Contract</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Lower</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Higher</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>N/A</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Rate_Structure__c</fullName>
+        <externalId>false</externalId>
+        <label>Rate Structure</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Hourly</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Per Diem</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>FFS</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Flat</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Billable Units</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Session</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>ReadyForApproval__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Ready for Approval</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Regions_Geography_Served__c</fullName>
+        <externalId>false</externalId>
+        <label>Regions/Geography Served</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Reminder_Days_Audit_Requirements__c</fullName>
+        <externalId>false</externalId>
+        <label>z Reminder Days Audit Requirements</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Reminder_Days_Cost_Report__c</fullName>
+        <externalId>false</externalId>
+        <label>z Reminder Days Cost Report</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Reminder_Days_Other__c</fullName>
+        <externalId>false</externalId>
+        <label>z Reminder Days Other</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Reminder_Days_Outcome__c</fullName>
+        <externalId>false</externalId>
+        <label>z Reminder Days Outcome</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>ReportingRequirementsDetail__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Reporting Requirements Detail</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>true</trackHistory>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>ReportingRequirementsYN__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Reporting Requirements Y/N</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>ReportingRequirements__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Reporting Requirements</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Annual Audits</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Billing</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Cost Reporting</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Incident Reporting</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Monthly/Quarterly Progress Summary</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>MultiselectPicklist</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>ServiceChange__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>If Services have &apos;Increased&apos; the VPO field is required for notification</inlineHelpText>
+        <label>CL Service Change Vs Last Contract</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Decreased</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Increased</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>N/A</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>ServiceDocumentationDetail__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Service Documentation Detail</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>ServiceDocumentationYN__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Service Documentation Y/N</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>true</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>ServiceDocumentation__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Service Documentation</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Contact Notes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Progress Notes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>MultiselectPicklist</type>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Service_Line__c</fullName>
+        <externalId>false</externalId>
+        <label>Service Line</label>
+        <picklist>
+            <picklistValues>
+                <fullName>ABI</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>ARY Group Home</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>ARY Host Home</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>ARY Periodic (Other)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Day Program</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Early Intervention</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Home Health</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>IDD Group Home/ICF</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>IDD Host Home</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>IDD Periodic (Other)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>IDD Supported Living</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Outpatient Services</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Schools</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>SpecialRequirementsDetail__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Other Requirements Detail</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>true</trackHistory>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>SpendDown__c</fullName>
+        <externalId>false</externalId>
+        <label>Spend Down</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Units</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Clients (Clients,Cap,Slots)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Dollars</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>N/A</fullName>
+                <default>true</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>true</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>SpendingRequirementsDetails__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Spending Requirements Details</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>7</visibleLines>
+    </fields>
+    <fields>
+        <fullName>SpendingRequirementsYN__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Spending Requirements Y/N</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>StaffingClientRequirementsYN__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Staffing/Client Requirements Y/N</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>StaffingClientRequirements__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Staffing/Client Requirements</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Behavioral Analyst</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Coordinators</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>DSP</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Foster Parent Limits</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Medical Staff</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Supervisors</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>MultiselectPicklist</type>
+        <visibleLines>7</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Staffing_ClientRequirementsDetail__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Staffing/Client Requirements Detail</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Start_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Start Date</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>State__c</fullName>
+        <externalId>false</externalId>
+        <label>State</label>
+        <picklist>
+            <picklistValues>
+                <fullName>AL</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>CT</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>DE</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>FL</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>GA</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>IL</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>IL-Alliance</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>IN</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>LA</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>MA</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>MD</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>MO</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>NC</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>NJ</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>OH</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>OH-Alliance</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>PA</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>PA-Alliance</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>RI</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>SC</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>TX</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>VA</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Status</label>
+        <picklist>
+            <controllingField>ApprovalStage__c</controllingField>
+            <picklistValues>
+                <fullName>Cancelled</fullName>
+                <controllingFieldValues>Approved</controllingFieldValues>
+                <controllingFieldValues>Not Started</controllingFieldValues>
+                <controllingFieldValues>Rejected</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Referral Hold</fullName>
+                <controllingFieldValues>Approved</controllingFieldValues>
+                <controllingFieldValues>Not Started</controllingFieldValues>
+                <controllingFieldValues>Rejected</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Placement Hold</fullName>
+                <controllingFieldValues>Approved</controllingFieldValues>
+                <controllingFieldValues>Not Started</controllingFieldValues>
+                <controllingFieldValues>Rejected</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Received</fullName>
+                <controllingFieldValues>Approved</controllingFieldValues>
+                <controllingFieldValues>Not Started</controllingFieldValues>
+                <controllingFieldValues>Rejected</controllingFieldValues>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Active</fullName>
+                <controllingFieldValues>Approved</controllingFieldValues>
+                <controllingFieldValues>Rejected</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Renewed</fullName>
+                <controllingFieldValues>Approved</controllingFieldValues>
+                <controllingFieldValues>Rejected</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Closed</fullName>
+                <controllingFieldValues>Approved</controllingFieldValues>
+                <controllingFieldValues>Not Started</controllingFieldValues>
+                <controllingFieldValues>Rejected</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Approved</fullName>
+                <controllingFieldValues>Approved</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Rejected</fullName>
+                <controllingFieldValues>Rejected</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Submitted</fullName>
+                <controllingFieldValues>1</controllingFieldValues>
+                <controllingFieldValues>2</controllingFieldValues>
+                <controllingFieldValues>3</controllingFieldValues>
+                <controllingFieldValues>4</controllingFieldValues>
+                <controllingFieldValues>5</controllingFieldValues>
+                <controllingFieldValues>6</controllingFieldValues>
+                <controllingFieldValues>7</controllingFieldValues>
+                <controllingFieldValues>Legal</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>true</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>SubcontractingTerms__c</fullName>
+        <externalId>false</externalId>
+        <label>CL: Subcontracting Terms</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>SubjectToCostReimbursementYN__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Subject to Cost Reimbursement Y/N</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Submitted_for_approval__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Submitted for approval</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>SupportServicesDetail__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Support Services Detail</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>true</trackHistory>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>SupportServicesYN__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Support Services Y/N</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>SupportServices__c</fullName>
+        <externalId>false</externalId>
+        <label>CI Support Services</label>
+        <picklist>
+            <picklistValues>
+                <fullName>DSP</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Therapists</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>MultiselectPicklist</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>TermNote60__c</fullName>
+        <externalId>false</externalId>
+        <label>Required Termination Notice</label>
+        <picklist>
+            <picklistValues>
+                <fullName>30</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>60</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>N/A</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>TermNoteOther__c</fullName>
+        <externalId>false</externalId>
+        <label>TermNote-Other</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Termination_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Termination Date</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>TotalDays__c</fullName>
+        <externalId>false</externalId>
+        <formula>Termination_Date__c - Start_Date__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Total Days</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Type_of_Contract__c</fullName>
+        <externalId>false</externalId>
+        <label>Type of Contract</label>
+        <picklist>
+            <picklistValues>
+                <fullName>New</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Renewal</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>VPO__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>VPO</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>VPO</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>ValueAnnual__c</fullName>
+        <description>A workflow sets this value to the formula field</description>
+        <externalId>false</externalId>
+        <label>Contract Value-Annual</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>ValueBucket__c</fullName>
+        <description>This is the bucket field</description>
+        <externalId>false</externalId>
+        <formula>IF( ValueAnnual__c &lt;200000, &apos;A | 0-199K&apos;, IF( ValueAnnual__c &lt;500000, &apos;B |200-499K&apos;,IF( ValueAnnual__c &lt;575000, &apos;C | 500-574K&apos;, IF( ValueAnnual__c &lt;999999, &apos;D | 575-1 Mil&apos;, IF( ValueAnnual__c &lt; 2000000, &apos;E | 1-2Mil&apos;, IF( ValueAnnual__c &lt; 5000000, &apos;F | 2-5 Mil&apos;, IF( ValueAnnual__c &lt;10000000, &apos;G | 5-10mil&apos;, IF( ValueAnnual__c &lt;20000000, &apos;H | 10-20mil&apos;, IF( ValueAnnual__c &lt;30000000, &apos;I | 20-30mil&apos;, IF( ValueAnnual__c &lt;50000000, &apos;J |30-50mil&apos;, IF(ValueAnnual__c &gt;49999999 , &apos;K | 50+mil&apos; , &apos;&apos;)))))))))))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Contract-Bucket</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>ValueEstStated__c</fullName>
+        <externalId>false</externalId>
+        <label>Contract Value-Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Estimated - Annual Value</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Stated - Full Contract Value</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Value_Type__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>If Value type is other than &apos;no ceiling, enter # in the text-box to the right</inlineHelpText>
+        <label>Funding Value Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No Ceiling</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName># of Slots</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Max Obligation (NTE)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Value__c</fullName>
+        <defaultValue>0</defaultValue>
+        <externalId>false</externalId>
+        <label>Contract Value-Actual</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>zzActualReminderAudits__c</fullName>
+        <externalId>false</externalId>
+        <formula>Due_Date_CI_Audit_Requirements__c - Reminder_Days_Audit_Requirements__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>zzActualReminderAudits</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>zzActualReminderCostReportRequired__c</fullName>
+        <externalId>false</externalId>
+        <formula>Due_Date_Cost_Report_Required__c -  Reminder_Days_Cost_Report__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>zzActualReminderCostReportRequired</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>zzActualReminderOther__c</fullName>
+        <externalId>false</externalId>
+        <formula>Due_Date_Other__c - Reminder_Days_Other__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>zzActualReminderOther</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>zzActualReminderOutcomeRequirements__c</fullName>
+        <externalId>false</externalId>
+        <formula>Due_Date_Outcome_Requirements__c - Reminder_Days_Outcome__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>zzActualReminderOutcomeRequirements</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>zzShowSignOff__c</fullName>
+        <description>Used to provide VF a way to render a compliance sign off link</description>
+        <externalId>false</externalId>
+        <formula>IF(AND(CASE(ComplianceApproverNumber__c, 
+1, IF( App_1_Compliance_Sign_Off__c =False,1,0), 
+2, IF( App_2_Compliance_Sign_Off__c =False,1,0), 
+3, IF( App_3_Compliance_Sign_Off__c =False,1,0), 
+4, IF( App_4_Compliance_Sign_Off__c =False,1,0), 
+5, IF( App_5_Compliance_Sign_Off__c =False,1,0), 
+6, IF( App_6_Compliance_Sign_Off__c =False,1,0), 
+7, IF( App_7_Compliance_Sign_Off__c =False,1,0), 
+0)&gt;0, Day_since_Start__c &gt;181,TEXT(Status__c)=&apos;Active&apos;),&apos;True&apos;,&apos;False&apos;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>zzShowSignOff</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <label>-Contract</label>
+    <listViews>
+        <fullName>Active</fullName>
+        <columns>ValueBucket__c</columns>
+        <columns>NAME</columns>
+        <columns>State__c</columns>
+        <columns>Start_Date__c</columns>
+        <columns>Termination_Date__c</columns>
+        <columns>DaysRemaining__c</columns>
+        <columns>OWNER.FIRST_NAME</columns>
+        <columns>OWNER.LAST_NAME</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Status__c</field>
+            <operation>equals</operation>
+            <value>Active</value>
+        </filters>
+        <label>Active</label>
+    </listViews>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>State__c</columns>
+        <columns>Status__c</columns>
+        <columns>Termination_Date__c</columns>
+        <columns>OWNER.FIRST_NAME</columns>
+        <columns>CREATED_DATE</columns>
+        <columns>CREATEDBY_USER</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <listViews>
+        <fullName>Expired</fullName>
+        <columns>Status__c</columns>
+        <columns>ValueBucket__c</columns>
+        <columns>NAME</columns>
+        <columns>State__c</columns>
+        <columns>Start_Date__c</columns>
+        <columns>Termination_Date__c</columns>
+        <columns>OWNER.FIRST_NAME</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>DaysRemaining__c</field>
+            <operation>lessThan</operation>
+            <value>0</value>
+        </filters>
+        <label>Expired</label>
+    </listViews>
+    <listViews>
+        <fullName>Legal_Review</fullName>
+        <columns>NAME</columns>
+        <columns>LN_ContractTermNoNotice__c</columns>
+        <columns>LN_LiabilityInsuranceExceedLimits__c</columns>
+        <columns>LN_ManageCareRiskSharing__c</columns>
+        <columns>LN_new_payor_or_a_new_service__c</columns>
+        <columns>ValueBucket__c</columns>
+        <columns>ApprovalStage__c</columns>
+        <columns>LegalReviewRequired__c</columns>
+        <columns>CREATED_DATE</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>LegalReviewRequired__c</field>
+            <operation>equals</operation>
+            <value>1</value>
+        </filters>
+        <filters>
+            <field>ApprovalStage__c</field>
+            <operation>equals</operation>
+            <value>1</value>
+        </filters>
+        <label>Legal Review Required</label>
+    </listViews>
+    <listViews>
+        <fullName>MyComplianceSignOff</fullName>
+        <columns>ValueBucket__c</columns>
+        <columns>NAME</columns>
+        <columns>Start_Date__c</columns>
+        <columns>Termination_Date__c</columns>
+        <columns>DaysRemaining__c</columns>
+        <columns>OWNER.FIRST_NAME</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>zzShowSignOff__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </filters>
+        <label>My Compliance Sign Off</label>
+    </listViews>
+    <listViews>
+        <fullName>Pending_Approval</fullName>
+        <columns>NAME</columns>
+        <columns>State__c</columns>
+        <columns>ApprovalStage__c</columns>
+        <columns>Approver_1__c</columns>
+        <columns>Approver_2__c</columns>
+        <columns>Approver_3__c</columns>
+        <columns>Approver4__c</columns>
+        <columns>Approver5__c</columns>
+        <columns>Approver6__c</columns>
+        <columns>Approver7__c</columns>
+        <columns>OWNER.FIRST_NAME</columns>
+        <columns>LAST_UPDATE</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Status__c</field>
+            <operation>equals</operation>
+            <value>Submitted</value>
+        </filters>
+        <label>Pending Approval</label>
+    </listViews>
+    <listViews>
+        <fullName>x30</fullName>
+        <columns>ValueBucket__c</columns>
+        <columns>NAME</columns>
+        <columns>State__c</columns>
+        <columns>Start_Date__c</columns>
+        <columns>Termination_Date__c</columns>
+        <columns>DaysRemaining__c</columns>
+        <columns>OWNER.FIRST_NAME</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Status__c</field>
+            <operation>equals</operation>
+            <value>Active</value>
+        </filters>
+        <filters>
+            <field>DaysRemaining__c</field>
+            <operation>lessOrEqual</operation>
+            <value>30</value>
+        </filters>
+        <filters>
+            <field>DaysRemaining__c</field>
+            <operation>greaterOrEqual</operation>
+            <value>0</value>
+        </filters>
+        <filters>
+            <field>State__c</field>
+            <operation>equals</operation>
+            <value>NC</value>
+        </filters>
+        <label>30</label>
+    </listViews>
+    <listViews>
+        <fullName>x60</fullName>
+        <columns>ValueBucket__c</columns>
+        <columns>NAME</columns>
+        <columns>State__c</columns>
+        <columns>Start_Date__c</columns>
+        <columns>Termination_Date__c</columns>
+        <columns>DaysRemaining__c</columns>
+        <columns>OWNER.FIRST_NAME</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Status__c</field>
+            <operation>equals</operation>
+            <value>Active</value>
+        </filters>
+        <filters>
+            <field>DaysRemaining__c</field>
+            <operation>lessOrEqual</operation>
+            <value>60</value>
+        </filters>
+        <filters>
+            <field>DaysRemaining__c</field>
+            <operation>greaterOrEqual</operation>
+            <value>31</value>
+        </filters>
+        <label>60</label>
+    </listViews>
+    <listViews>
+        <fullName>x90</fullName>
+        <columns>ValueBucket__c</columns>
+        <columns>NAME</columns>
+        <columns>State__c</columns>
+        <columns>Start_Date__c</columns>
+        <columns>Termination_Date__c</columns>
+        <columns>DaysRemaining__c</columns>
+        <columns>OWNER.FIRST_NAME</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Status__c</field>
+            <operation>equals</operation>
+            <value>Active</value>
+        </filters>
+        <filters>
+            <field>DaysRemaining__c</field>
+            <operation>lessOrEqual</operation>
+            <value>90</value>
+        </filters>
+        <filters>
+            <field>DaysRemaining__c</field>
+            <operation>greaterOrEqual</operation>
+            <value>61</value>
+        </filters>
+        <label>90</label>
+    </listViews>
+    <nameField>
+        <label>Contract Name</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Contracts</pluralLabel>
+    <searchLayouts>
+        <customTabListAdditionalFields>Description__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Status__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>ValueBucket__c</customTabListAdditionalFields>
+        <excludedStandardButtons>Accept</excludedStandardButtons>
+        <lookupDialogsAdditionalFields>Description__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Status__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>ValueBucket__c</lookupDialogsAdditionalFields>
+    </searchLayouts>
+    <sharingModel>Private</sharingModel>
+    <validationRules>
+        <fullName>Additional_Permits_No</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISBLANK(  AdditionalPermitsDetail__c )), TEXT( AdditionalPermits__c )=&apos;No&apos;)</errorConditionFormula>
+        <errorDisplayField>AdditionalPermitsDetail__c</errorDisplayField>
+        <errorMessage>This field is required to be blank when the question &apos;Are any additional permits or licenses required other than ones that currently exist?&apos; when answer is &apos;No&apos;.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Additional_Permits_Yes</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK(  AdditionalPermitsDetail__c ), TEXT( AdditionalPermits__c )=&apos;Yes&apos;)</errorConditionFormula>
+        <errorDisplayField>AdditionalPermitsDetail__c</errorDisplayField>
+        <errorMessage>This field is required when the question &apos;Are any additional permits or licenses required other than ones that currently exist?&apos; is answer &apos;Yes&apos;.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Annual_funding_limit_no</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISBLANK(  CL_AnnualFundingLimitDetail__c )), TEXT(  AnnualFundingLimit__c )=&apos;No&apos;)</errorConditionFormula>
+        <errorDisplayField>CL_AnnualFundingLimitDetail__c</errorDisplayField>
+        <errorMessage>This field is required to be blank when the question &apos;Is there an annual funding limit (total contract amount) in the contract?&apos; when answer is &apos;No&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Annual_funding_limit_yes</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK(  CL_AnnualFundingLimitDetail__c ), TEXT(  AnnualFundingLimit__c )=&apos;Yes&apos;)</errorConditionFormula>
+        <errorDisplayField>CL_AnnualFundingLimitDetail__c</errorDisplayField>
+        <errorMessage>This field is required when the question &apos;Is there an annual funding limit (total contract amount) in the contract?&apos; is answer &apos;yes&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>AuditRequirements_No</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISBLANK(TEXT(  Audit_Requirements__c ))), TEXT(  AuditRequirementsYN__c )=&apos;No&apos;)</errorConditionFormula>
+        <errorDisplayField>Audit_Requirements__c</errorDisplayField>
+        <errorMessage>A value is require for Audit Requirements to be blank when answer is &apos;No&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>AuditRequirements_Yes</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK(TEXT(  Audit_Requirements__c )), TEXT(  AuditRequirementsYN__c )=&apos;Yes&apos;)</errorConditionFormula>
+        <errorDisplayField>Audit_Requirements__c</errorDisplayField>
+        <errorMessage>A value is require for Audit Requirements</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Audit_No_details</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISBLANK( AuditReqsDetail__c)), TEXT(AuditRequirementsYN__c )=&apos;No&apos;)</errorConditionFormula>
+        <errorDisplayField>AuditReqsDetail__c</errorDisplayField>
+        <errorMessage>Audit Requirements Details are required to be blank when answer is &apos;No&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Audit_yes_details</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK(  AuditReqsDetail__c  ), TEXT(  AuditRequirementsYN__c )=&apos;Yes&apos;)</errorConditionFormula>
+        <errorDisplayField>AuditReqsDetail__c</errorDisplayField>
+        <errorMessage>Audit Requirements Details are required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>ChainApprover_1</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISBLANK( Approver_1__c )),ISBLANK( Approver_2__c ),
+OR(
+NOT(ISBLANK( Approver_3__c )),
+NOT(ISBLANK( Approver4__c )),
+NOT(ISBLANK(Approver5__c )),
+NOT(ISBLANK( Approver6__c )),
+NOT(ISBLANK( Approver7__c ))))</errorConditionFormula>
+        <errorMessage>Approvers are required to be sequential 2</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>ChainApprover_2</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK( Approver_3__c ),
+OR(
+NOT(ISBLANK( Approver4__c )),
+NOT(ISBLANK(Approver5__c )),
+NOT(ISBLANK( Approver6__c )),
+NOT(ISBLANK( Approver7__c ))))</errorConditionFormula>
+        <errorMessage>Approvers are required to be sequential 3</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>ChainApprover_3</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK( Approver4__c ),
+OR(NOT(ISBLANK(Approver5__c )),
+NOT(ISBLANK( Approver6__c )),
+NOT(ISBLANK( Approver7__c ))))</errorConditionFormula>
+        <errorMessage>Approvers are required to be sequential 4</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>ChainApprover_4</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK( Approver5__c ),
+OR(
+NOT(ISBLANK( Approver6__c )),
+NOT(ISBLANK( Approver7__c ))))</errorConditionFormula>
+        <errorMessage>Approvers are required to be sequential 5</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>ChainApprover_5</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK( Approver6__c),
+NOT(ISBLANK( Approver7__c )))</errorConditionFormula>
+        <errorMessage>Approvers are required to be sequential 6</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Company_Name_Blank_with_No</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISBLANK( CompanyNameCorrectDetail__c )), TEXT( CompanyNameCorrect__c )=&apos;Yes&apos;)</errorConditionFormula>
+        <errorDisplayField>CompanyNameCorrectDetail__c</errorDisplayField>
+        <errorMessage>Correct Company Name is required to be blank when answer is &apos;No&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Company_Name_Blank_with_yes</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK( CompanyNameCorrectDetail__c ), TEXT( CompanyNameCorrect__c )=&apos;No&apos;)</errorConditionFormula>
+        <errorDisplayField>CompanyNameCorrectDetail__c</errorDisplayField>
+        <errorMessage>Correct Company Name is required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>CostReport_No</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISBLANK(TEXT( CostReport__c ))), TEXT(CostReportRequiredYN__c )=&apos;No&apos;)</errorConditionFormula>
+        <errorDisplayField>CostReport__c</errorDisplayField>
+        <errorMessage>Cost report value is required to be blank when answer is &apos;No&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>CostReport_Yes</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK(TEXT( CostReport__c )), TEXT(   CostReportRequiredYN__c )=&apos;Yes&apos;)</errorConditionFormula>
+        <errorDisplayField>CostReport__c</errorDisplayField>
+        <errorMessage>Cost report value is required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Dates_Correct_No</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK(  CL_DatesCorrectDetail__c  ), TEXT(  DatesCorrect__c )=&apos;No&apos;)</errorConditionFormula>
+        <errorDisplayField>CL_DatesCorrectDetail__c</errorDisplayField>
+        <errorMessage>This field is requires when &apos;Do contract dates coincide with when you anticipate providing services?&apos; when answered is &apos;No&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>FrequencyOfVisits_No</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISBLANK(  FrequencyOfVisitsDetail__c)), TEXT(  FrequencyOfVisitsYN__c )=&apos;No&apos;)</errorConditionFormula>
+        <errorDisplayField>FrequencyOfVisitsDetail__c</errorDisplayField>
+        <errorMessage>Frequency Of Visits Detail is required to be blank when answer is &apos;No&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>FrequencyOfVisits_Yes</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK(  FrequencyOfVisitsDetail__c), TEXT(  FrequencyOfVisitsYN__c )=&apos;Yes&apos;)</errorConditionFormula>
+        <errorDisplayField>FrequencyOfVisitsDetail__c</errorDisplayField>
+        <errorMessage>Frequency Of Visits Detail is required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>No_Ceiling_value_type</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND( ISPICKVAL( Value_Type__c , &apos;No Ceiling&apos;), NOT(ISBLANK( Number_of_value_type__c )) )</errorConditionFormula>
+        <errorDisplayField>Number_of_value_type__c</errorDisplayField>
+        <errorMessage>This Field must be blank unless when selecting &apos;No Ceiling&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>No_Ceiling_value_type_Off</fullName>
+        <active>true</active>
+        <errorConditionFormula>IF(ISBLANK( TEXT(Value_Type__c )),False,IF(AND(NOT( ISPICKVAL( Value_Type__c , &apos;No Ceiling&apos;) ),ISBLANK( Number_of_value_type__c )) ,True,False))</errorConditionFormula>
+        <errorDisplayField>Number_of_value_type__c</errorDisplayField>
+        <errorMessage>This Field must not be blank unless selecting &apos;No Ceiling&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Other_Special_Requirements_No</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISBLANK( SpecialRequirementsDetail__c   )), TEXT(OtherSpecialRequirementsYN__c  )=&apos;No&apos;)</errorConditionFormula>
+        <errorDisplayField>SpecialRequirementsDetail__c</errorDisplayField>
+        <errorMessage>Details are required to be blank when answer is &apos;No&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Other_Special_Requirements_Yes</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK( SpecialRequirementsDetail__c   ), TEXT(OtherSpecialRequirementsYN__c  )=&apos;Yes&apos;)</errorConditionFormula>
+        <errorDisplayField>SpecialRequirementsDetail__c</errorDisplayField>
+        <errorMessage>Details are required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Outcome_Requirements_No</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISBLANK(  OutcomeRequirementsDetail__c )), TEXT(  OutcomeRequirementsYN__c )=&apos;No&apos;)</errorConditionFormula>
+        <errorDisplayField>OutcomeRequirementsDetail__c</errorDisplayField>
+        <errorMessage>Outcome Requirements Details is required to be blank when answer is &apos;No&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Outcome_Requirements_Yes</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK(  OutcomeRequirementsDetail__c ), TEXT(  OutcomeRequirementsYN__c )=&apos;Yes&apos;)</errorConditionFormula>
+        <errorDisplayField>OutcomeRequirementsDetail__c</errorDisplayField>
+        <errorMessage>Outcome Requirements Details are required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Performance_Based_Contract_No</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISBLANK(  PerformanceDetail__c )), TEXT(  PerformanceBasedContractYN__c )=&apos;No&apos;)</errorConditionFormula>
+        <errorDisplayField>PerformanceDetail__c</errorDisplayField>
+        <errorMessage>Performance Based Contract Details is required to be blank when answer is &apos;No&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Performance_Based_Contract_Yes</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK(  PerformanceDetail__c ), TEXT(  PerformanceBasedContractYN__c )=&apos;Yes&apos;)</errorConditionFormula>
+        <errorDisplayField>PerformanceDetail__c</errorDisplayField>
+        <errorMessage>Performance Based Contract Details are required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Personnel_Credential_Requirements_No</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISBLANK(  PersonnelCredentialRequirementsDetail__c )), TEXT(  Personnel_CredentialRequirementsYN__c )=&apos;No&apos;)</errorConditionFormula>
+        <errorDisplayField>PersonnelCredentialRequirementsDetail__c</errorDisplayField>
+        <errorMessage>Personnel/Credential Requirements Details is required to be blank when answer is &apos;No&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Personnel_Credential_Requirements_Yes</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK(  PersonnelCredentialRequirementsDetail__c ), TEXT(  Personnel_CredentialRequirementsYN__c )=&apos;Yes&apos;)</errorConditionFormula>
+        <errorDisplayField>PersonnelCredentialRequirementsDetail__c</errorDisplayField>
+        <errorMessage>Personnel/Credential Requirements Details are required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>ProviderRequiredTraining_No</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(  ISNULL(ProviderRequiredTraining__c ) ), TEXT(  ProviderRequiredTrainingYN__c )=&apos;No&apos;)</errorConditionFormula>
+        <errorDisplayField>ProviderRequiredTraining__c</errorDisplayField>
+        <errorMessage>Provider Required Training Value is required to be blank when answer is &apos;No&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>ProviderRequiredTraining_Yes</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(  ISNULL(ProviderRequiredTraining__c  ), TEXT(  ProviderRequiredTrainingYN__c )=&apos;Yes&apos;)</errorConditionFormula>
+        <errorDisplayField>ProviderRequiredTraining__c</errorDisplayField>
+        <errorMessage>Provider Required Training Value is required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Provider_Required_Training_No_Details</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISBLANK( ProviderRequiredTrainingDetail__c )), TEXT(  ProviderRequiredTrainingYN__c )=&apos;No&apos;)</errorConditionFormula>
+        <errorDisplayField>ProviderRequiredTrainingDetail__c</errorDisplayField>
+        <errorMessage>Provider Required Training Details is required to be blank when answer is &apos;No&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Provider_Required_Training_Yes_Details</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK( ProviderRequiredTrainingDetail__c ), TEXT(  ProviderRequiredTrainingYN__c )=&apos;Yes&apos;)</errorConditionFormula>
+        <errorDisplayField>ProviderRequiredTrainingDetail__c</errorDisplayField>
+        <errorMessage>Provider Required Training Details are requried</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>ReportingRequirements_No</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND( NOT(ISNULL(  ReportingRequirements__c )), TEXT(  ReportingRequirementsYN__c )=&apos;No&apos;)</errorConditionFormula>
+        <errorDisplayField>ReportingRequirements__c</errorDisplayField>
+        <errorMessage>Reporting Requirements Details is required to be blank</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>ReportingRequirements_yes</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND( ISNULL(  ReportingRequirements__c ), TEXT(  ReportingRequirementsYN__c )=&apos;Yes&apos;)</errorConditionFormula>
+        <errorDisplayField>ReportingRequirements__c</errorDisplayField>
+        <errorMessage>Reporting Requirements Details are required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Reporting_Requirements_No_Details</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISBLANK(  ReportingRequirementsDetail__c )), TEXT(  ReportingRequirementsYN__c )=&apos;No&apos;)</errorConditionFormula>
+        <errorDisplayField>ReportingRequirementsDetail__c</errorDisplayField>
+        <errorMessage>Reporting Requirements details is required to be blank when answer is &apos;No&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Reporting_Requirements_Yes_Details</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK(  ReportingRequirementsDetail__c ), TEXT(  ReportingRequirementsYN__c )=&apos;Yes&apos;)</errorConditionFormula>
+        <errorDisplayField>ReportingRequirementsDetail__c</errorDisplayField>
+        <errorMessage>Reporting Requirements details are required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>ServiceDocumentation_Yes</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND( ISNULL(  ServiceDocumentation__c ), TEXT(  ServiceDocumentationYN__c )=&apos;Yes&apos; )</errorConditionFormula>
+        <errorDisplayField>ServiceDocumentation__c</errorDisplayField>
+        <errorMessage>Service Documentation Value is required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Service_Documentation_No_Details</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISBLANK(  ServiceDocumentationDetail__c )), TEXT(  ServiceDocumentationYN__c )=&apos;No&apos;)</errorConditionFormula>
+        <errorDisplayField>ServiceDocumentationDetail__c</errorDisplayField>
+        <errorMessage>Service Documentation Details is required to be blank when answer is &apos;No&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Service_Documentation_Yes_Details</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK(  ServiceDocumentationDetail__c ), TEXT(  ServiceDocumentationYN__c )=&apos;Yes&apos;)</errorConditionFormula>
+        <errorDisplayField>ServiceDocumentationDetail__c</errorDisplayField>
+        <errorMessage>Service Documentation Details are required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Spending_Requirements_Yes</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK(  SpendingRequirementsDetails__c ), TEXT(  SpendingRequirementsYN__c )=&apos;Yes&apos;)</errorConditionFormula>
+        <errorDisplayField>SpendingRequirementsDetails__c</errorDisplayField>
+        <errorMessage>Spending Requirements Details are required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Staffing_Client_Requirements_Yes_Details</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK(  Staffing_ClientRequirementsDetail__c ), TEXT(  StaffingClientRequirementsYN__c )=&apos;Yes&apos;)</errorConditionFormula>
+        <errorDisplayField>Staffing_ClientRequirementsDetail__c</errorDisplayField>
+        <errorMessage>Staffing/Client Requirements Details are required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Staffing_Requirements_No</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT( ISNULL(  StaffingClientRequirements__c )),TEXT(  StaffingClientRequirementsYN__c )=&apos;No&apos; )</errorConditionFormula>
+        <errorDisplayField>StaffingClientRequirements__c</errorDisplayField>
+        <errorMessage>Staffing/Client Requirements value is required to be blank when answer is &apos;No&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Staffing_Requirements_Yes</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND( ISNULL(  StaffingClientRequirements__c ),TEXT(  StaffingClientRequirementsYN__c )=&apos;Yes&apos; )</errorConditionFormula>
+        <errorDisplayField>StaffingClientRequirements__c</errorDisplayField>
+        <errorMessage>Staffing/Client Requirements valueis required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Start_Date_Termination_Date</fullName>
+        <active>true</active>
+        <errorConditionFormula>Start_Date__c =  Termination_Date__c</errorConditionFormula>
+        <errorDisplayField>Termination_Date__c</errorDisplayField>
+        <errorMessage>Start date and Termination date can&apos;t be the same day</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Status_Active</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND( TEXT(Status__c)=&apos;Active&apos; ,NOT(TEXT( ApprovalStage__c )=&apos;Approved&apos;))</errorConditionFormula>
+        <errorDisplayField>Status__c</errorDisplayField>
+        <errorMessage>Contracts can&apos;t be placed as Active until they have been approved</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Status_Canceled</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(TEXT(Status__c)=&apos;Cancelled&apos;, ISNULL( CancelledReason__c ))</errorConditionFormula>
+        <errorDisplayField>CancelledReason__c</errorDisplayField>
+        <errorMessage>A Cancelled Reason is required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Status_Renewed</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND( TEXT(Status__c)=&apos;Renewed&apos; ,NOT(TEXT( ApprovalStage__c )=&apos;Approved&apos;))</errorConditionFormula>
+        <errorDisplayField>Status__c</errorDisplayField>
+        <errorMessage>Contracts can&apos;t be placed as Renewed until they have been approved</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Subcontracting_terms_No</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISBLANK(  CL_SubcontractingTermsDetail__c )), TEXT(  SubcontractingTerms__c )=&apos;No&apos;)</errorConditionFormula>
+        <errorDisplayField>CL_SubcontractingTermsDetail__c</errorDisplayField>
+        <errorMessage>This field is required to be blank when the question &quot;Are there any subcontracting terms?&quot; when answer is &apos;No&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Subcontracting_terms_Yes</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK(  CL_SubcontractingTermsDetail__c ), TEXT(  SubcontractingTerms__c )=&apos;Yes&apos;)</errorConditionFormula>
+        <errorDisplayField>CL_SubcontractingTermsDetail__c</errorDisplayField>
+        <errorMessage>This field is required when the question &quot;Are there any subcontracting terms?&quot; is answer &apos;Yes&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Subject_to_Cost_Reimbursement_Yes</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK(  CostReimbursementDetail__c ), TEXT(  SubjectToCostReimbursementYN__c )=&apos;Yes&apos;)</errorConditionFormula>
+        <errorDisplayField>CostReimbursementDetail__c</errorDisplayField>
+        <errorMessage>Subject to Cost Reimbursement details are required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Support_Services_No</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISBLANK(  SupportServices__c )), TEXT(  SupportServicesYN__c )=&apos;No&apos;)</errorConditionFormula>
+        <errorDisplayField>SupportServices__c</errorDisplayField>
+        <errorMessage>Support Services Value is required to be blank when answer is &apos;No&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Support_Services_No_details</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISBLANK(  SupportServicesDetail__c )), TEXT(  SupportServicesYN__c )=&apos;No&apos;)</errorConditionFormula>
+        <errorDisplayField>SupportServicesDetail__c</errorDisplayField>
+        <errorMessage>Support Services Details is required to be blank when answer is &apos;No&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Support_Services_Yes</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK(  SupportServices__c ), TEXT(  SupportServicesYN__c )=&apos;Yes&apos;)</errorConditionFormula>
+        <errorDisplayField>SupportServices__c</errorDisplayField>
+        <errorMessage>Support Services Value is required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Support_Services_Yes_details</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK(  SupportServicesDetail__c ), TEXT(  SupportServicesYN__c )=&apos;Yes&apos;)</errorConditionFormula>
+        <errorDisplayField>SupportServicesDetail__c</errorDisplayField>
+        <errorMessage>Support Services Details are required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Term_date_before_start_date</fullName>
+        <active>true</active>
+        <errorConditionFormula>Termination_Date__c &lt;  Start_Date__c</errorConditionFormula>
+        <errorDisplayField>Termination_Date__c</errorDisplayField>
+        <errorMessage>Termination Date can&apos;t be before the start date</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>VPO_required</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISBLANK(VPO__c),OR(TEXT( RateChangeLastContract__c )=&apos;Lower&apos;,TEXT(   ServiceChange__c )=&apos;Increased&apos;))</errorConditionFormula>
+        <errorDisplayField>VPO__c</errorDisplayField>
+        <errorMessage>A VPO is required when the rates are &apos;Lower&apos; or Services have &apos;Increased&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Valid_Approval_1</fullName>
+        <active>true</active>
+        <errorConditionFormula>NOT( Approver_1__r.Contract_Approver__c )</errorConditionFormula>
+        <errorDisplayField>Approver_1__c</errorDisplayField>
+        <errorMessage>Approver 1 is not a valid Contract Approver</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Valid_Approval_2</fullName>
+        <active>true</active>
+        <errorConditionFormula>NOT( Approver_2__r.Contract_Approver__c )</errorConditionFormula>
+        <errorDisplayField>Approver_2__c</errorDisplayField>
+        <errorMessage>Approver 2 is not a valid Contract Approver</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Valid_Approval_3</fullName>
+        <active>true</active>
+        <errorConditionFormula>NOT( Approver_3__r.Contract_Approver__c )</errorConditionFormula>
+        <errorDisplayField>Approver_3__c</errorDisplayField>
+        <errorMessage>Approver 3 is not a valid Contract Approver</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Valid_Approval_4</fullName>
+        <active>true</active>
+        <errorConditionFormula>NOT( Approver4__r.Contract_Approver__c )</errorConditionFormula>
+        <errorDisplayField>Approver4__c</errorDisplayField>
+        <errorMessage>Approver 4 is not a valid Contract Approver</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Valid_Approval_5</fullName>
+        <active>true</active>
+        <errorConditionFormula>NOT( Approver5__r.Contract_Approver__c )</errorConditionFormula>
+        <errorDisplayField>Approver5__c</errorDisplayField>
+        <errorMessage>Approver 5 is not a valid Contract Approver</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Valid_Approval_6</fullName>
+        <active>true</active>
+        <errorConditionFormula>NOT( Approver6__r.Contract_Approver__c )</errorConditionFormula>
+        <errorDisplayField>Approver6__c</errorDisplayField>
+        <errorMessage>Approver 6 is not a valid Contract Approver</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Valid_Approval_7</fullName>
+        <active>true</active>
+        <errorConditionFormula>NOT( Approver7__r.Contract_Approver__c )</errorConditionFormula>
+        <errorDisplayField>Approver7__c</errorDisplayField>
+        <errorMessage>Approver 7 is not a valid Contract Approver</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Valid_VPO</fullName>
+        <active>true</active>
+        <errorConditionFormula>NOT(  VPO__r.VPO__c  )</errorConditionFormula>
+        <errorDisplayField>VPO__c</errorDisplayField>
+        <errorMessage>This is not a valid VPO</errorMessage>
+    </validationRules>
+</CustomObject>
