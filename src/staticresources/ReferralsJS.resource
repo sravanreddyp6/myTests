@@ -1,0 +1,101 @@
+(function ($) {
+    openModalDialog = function (dialogId, tagType, titleString, dClass, width) {
+        if (!width) {
+            width = 800;
+        }
+        if (!dClass) {
+            dClass = 'fixed-dialog';
+        }
+        selector = tagType + '[id$=' + dialogId + ']';
+        if ($(selector).dialog("isOpen")!==true) {
+            $(selector).dialog({
+                dialogClass: dClass,
+                title:titleString,
+                modal:true,
+                width: width,
+                resizable: false,
+                minHeight: 0,
+                dialogClass: 'modalDialog',
+                closeOnEscape:false,
+                position: {
+                    my: "center top",
+                    at: "center top"
+                },
+                open: function () {
+                    // Don't allow "background" to be scrollable when dialogs
+                    // are open.
+                    $("body").css("overflow", "hidden");
+                }
+            }).parent().appendTo($('form[id$=referralForm]'));
+            $(selector).parent().find('a.ui-dialog-titlebar-close').remove();
+        }
+    };
+    closeModalDialog = function (dialogId, tagType) {
+        selector = tagType + '[id$=' + dialogId + ']';
+        $(selector).dialog('destroy');
+        // Allow "background" to be scrollable when dialogs are closed.
+        $("body").css("overflow", "auto");
+    };
+    validateEmail = function (email) {
+        return /\S+@\S+\.\S+/.test(email);  // Very simple regex to check email here
+    }
+    validateFundingSource = function (referralRecordType) {
+        var errors = [];
+        if (referralRecordType != 'CareMeridian' && $('select[id$=fundingEntry_Source]').val() == '') {
+            errors.push('Funding Source is required.');
+        } else if (referralRecordType == 'CareMeridian') {
+            // Validate dependent fields
+            var inputFields = $('[id*=FundingSourceModal] select').filter(function () {
+                return (this.id.indexOf('field_validation') != -1);
+            });
+            $.each(inputFields, function (index, inputField) {
+                var fieldId = $(inputField).attr('id');
+                var fieldNum = fieldId.substr(fieldId.length - 1);
+                var $fieldToCheck = $('[id*=FundingSourceModal] input[id*=field_check' + fieldNum + ']');
+                var $checkBoxLabel = $('label[for="' + $(inputField).attr('name') + '"]');
+                var $fieldLabel = $('label[for="' + $fieldToCheck.attr('name') + '"]');
+                if ($(inputField).val() == 'Yes' && $fieldToCheck.val() == '') {
+                    errors.push($fieldLabel.text() + ' cannot be empty when ' + $checkBoxLabel.text() + ' is Yes');
+                }
+            });
+            // Additional Coverage
+            if ($('[id*=additionalCoverage]').val() == 'Yes' && $('[id*=additionalCoverageDetail]').val() == '') {
+                errors.push('Please provide more detail for Additional Coverage');
+            }
+            // Validate claims submission email
+            var $claimsSubmissionEmail = $('[id*=claimsSubmissionEmail]');
+            if ($claimsSubmissionEmail.size()>0 && $claimsSubmissionEmail.val()!='' && !validateEmail($claimsSubmissionEmail.val())) {
+                errors.push('Claims Submission Email does not seem to a valid email address');
+            }
+            var $payerCmEmail = $('[id*=payerCmEmail]');
+            if ($payerCmEmail.size()>0 && $payerCmEmail.val()!='' && !validateEmail($payerCmEmail.val())) {
+                errors.push('Payer CM Email does not seem to a valid email address');
+            }
+        }
+        return errors;
+    }
+    fundingSourceSaveHelper = function (referralRecordType) {
+        fundingSourceClearMessages();
+        var errors = validateFundingSource(referralRecordType);
+        if (errors.length > 0) {
+            $('#fundingMessages').html('');
+            $.each(errors, function (index, error) {
+                $('#fundingMessages').append('<li class="error">' + error + '</li>');
+            });
+            fundingSourceScrollToTop();
+        } else {
+            saveFundingSource();
+        }
+    }
+    fundingSourceScrollToTop = function (isSuccess) {
+        if (isSuccess) {
+            $('#fundingMessages').append('<li class="success">Save successful!</li>');
+        }
+        $('[id*=FundingSourceModal].ui-dialog-content').parent().animate({
+            scrollTop: 0
+        }, 200);
+    }
+    fundingSourceClearMessages = function () {
+        $('#fundingMessages').html('');
+    }
+}) (jQuery.noConflict());
