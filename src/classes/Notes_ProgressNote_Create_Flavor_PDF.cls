@@ -5,7 +5,7 @@ public with sharing class Notes_ProgressNote_Create_Flavor_PDF {
         PageReference pageRef2 = new PageReference('/' + myId); 
 //AZ - OPT        
         try{
-        thePN = [select id, Name, No_Approval_Needed__c, Person_Being_Served__r.Name, RecordType.Name, Status__c from Progress_Note__c where id= :myId];         
+        thePN = [select id, Name, No_Approval_Needed__c, Person_Being_Served__r.Name, person_being_served__r.medicaid_Id__c, RecordType.Name, Status__c from Progress_Note__c where id= :myId];         
             PageReference pageRef = new PageReference('/');
             if(thePN.RecordType.Name=='FL-FSS Progress Note'){
                 pageRef = new PageReference('/apex/Notes_ProgressNote_PDF_FL_FSS');
@@ -63,6 +63,8 @@ public with sharing class Notes_ProgressNote_Create_Flavor_PDF {
             }
             
             pageRef.getParameters().put('id', thePN.id);
+            pageRef.getParameters().put('id2', thePN.Person_Being_Served__r.Medicaid_ID__c);	// this is required so we can unmask the field on PDF
+            
             Attachment attachmentPDF = new Attachment();
             attachmentPDF.parentId = thePN.id;
             attachmentPDF.Name = 'State Template (no signature) - ' + thePN.Person_Being_Served__r.Name + ' - ' + thePN.RecordType.Name +' - (' + date.today().month() + '-' + date.today().day() + '-' + date.today().year() + ').pdf';
@@ -74,7 +76,7 @@ public with sharing class Notes_ProgressNote_Create_Flavor_PDF {
                 attachmentPDF.body = testBlob;
             }  
        // PageReference gotoPage = new PageReference('/');          
-           
+
            System.Debug('What is in thePN.No_Approval_Needed__c WHEN I NEED IT?: ' + thePN.No_Approval_Needed__c);
            
                 if(thePN.No_Approval_Needed__c){

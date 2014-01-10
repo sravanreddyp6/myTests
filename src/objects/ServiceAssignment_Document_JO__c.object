@@ -5,10 +5,6 @@
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
-        <actionName>CancelEdit</actionName>
-        <type>Default</type>
-    </actionOverrides>
-    <actionOverrides>
         <actionName>Clone</actionName>
         <type>Default</type>
     </actionOverrides>
@@ -21,19 +17,11 @@
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
-        <actionName>Follow</actionName>
-        <type>Default</type>
-    </actionOverrides>
-    <actionOverrides>
         <actionName>List</actionName>
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
         <actionName>New</actionName>
-        <type>Default</type>
-    </actionOverrides>
-    <actionOverrides>
-        <actionName>SaveEdit</actionName>
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
@@ -44,7 +32,6 @@
         <actionName>View</actionName>
         <type>Default</type>
     </actionOverrides>
-    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
     <description>An object to hold Service Assignment / Document cross-reference records.</description>
     <enableActivities>false</enableActivities>
@@ -60,7 +47,6 @@
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Document Due Date</label>
         <required>false</required>
-        <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
     <fields>
@@ -72,7 +58,6 @@
         <precision>18</precision>
         <required>false</required>
         <scale>0</scale>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -86,7 +71,6 @@
         <precision>18</precision>
         <required>false</required>
         <scale>2</scale>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -97,7 +81,6 @@
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Document Name</label>
         <required>false</required>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -110,7 +93,6 @@
         <precision>18</precision>
         <required>false</required>
         <scale>0</scale>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -124,7 +106,6 @@
         <precision>18</precision>
         <required>false</required>
         <scale>0</scale>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -137,7 +118,6 @@
         <precision>18</precision>
         <required>false</required>
         <scale>0</scale>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -148,7 +128,6 @@
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Document Phase or Level</label>
         <required>false</required>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -159,7 +138,6 @@
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Document Type</label>
         <required>false</required>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -172,7 +150,6 @@
         <precision>18</precision>
         <required>false</required>
         <scale>0</scale>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -186,7 +163,6 @@
         <precision>18</precision>
         <required>false</required>
         <scale>2</scale>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -201,7 +177,6 @@
         <relationshipName>ServiceAssignment_Document_JOs</relationshipName>
         <relationshipOrder>1</relationshipOrder>
         <reparentableMasterDetail>false</reparentableMasterDetail>
-        <trackTrending>false</trackTrending>
         <type>MasterDetail</type>
         <writeRequiresMasterRead>false</writeRequiresMasterRead>
     </fields>
@@ -212,7 +187,6 @@
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Due From Employee Name</label>
         <required>false</required>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -224,7 +198,6 @@
         <referenceTo>User</referenceTo>
         <relationshipName>ServiceAssignment_Document_JOs</relationshipName>
         <required>false</required>
-        <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -270,7 +243,6 @@
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -281,7 +253,6 @@
         <referenceTo>User</referenceTo>
         <relationshipName>ServiceAssignment_Document_JOs1</relationshipName>
         <required>false</required>
-        <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -289,7 +260,6 @@
         <externalId>false</externalId>
         <label>Filed Date/Time</label>
         <required>false</required>
-        <trackTrending>false</trackTrending>
         <type>DateTime</type>
     </fields>
     <fields>
@@ -297,7 +267,6 @@
         <externalId>false</externalId>
         <label>Fixed Due Date</label>
         <required>false</required>
-        <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
     <fields>
@@ -306,7 +275,6 @@
         <formula>TODAY()&gt;= Document_DueDate__c</formula>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Is Document Late?</label>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -316,7 +284,6 @@
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Location</label>
         <required>false</required>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -325,7 +292,6 @@
         <externalId>false</externalId>
         <label>N/A Reason</label>
         <required>false</required>
-        <trackTrending>false</trackTrending>
         <type>TextArea</type>
     </fields>
     <fields>
@@ -367,7 +333,6 @@
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -375,7 +340,6 @@
         <externalId>false</externalId>
         <label>Relative Due Date Resolved</label>
         <required>false</required>
-        <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
     <fields>
@@ -397,7 +361,6 @@
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -407,7 +370,6 @@
         <precision>18</precision>
         <required>false</required>
         <scale>0</scale>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -422,7 +384,6 @@
         <relationshipName>ServiceAssignment_Document_JOs</relationshipName>
         <relationshipOrder>0</relationshipOrder>
         <reparentableMasterDetail>false</reparentableMasterDetail>
-        <trackTrending>false</trackTrending>
         <type>MasterDetail</type>
         <writeRequiresMasterRead>false</writeRequiresMasterRead>
     </fields>

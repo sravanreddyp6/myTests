@@ -1,4 +1,4 @@
-<apex:page standardController="Progress_Note__c" renderAs="pdf" applyBodyTag="false">
+<apex:page standardController="Progress_Note__c" extensions="ProgressNoteExtension"  renderAs="pdf" applyBodyTag="false">
 <head>
 <style type="text/css">
 .myTB{
@@ -52,7 +52,7 @@
     <apex:outputField value="{!Progress_Note__c.Start_Time__c}"/>   
     
     Medicaid Number:&nbsp;
-    <apex:outputLabel value="{!Progress_Note__c.Person_Being_Served__r.Medicaid_ID__c}"/>
+    <apex:outputLabel value="{!medicaidIDClear}"/>
     
     End Date/Time:
     <apex:outputField value="{!Progress_Note__c.End_Time__c}"/> 
