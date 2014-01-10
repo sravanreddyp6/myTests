@@ -286,7 +286,7 @@ function validate() {
 </apex:repeat>        
 
 
-
+		line += fontsize*2; // skip another 2 lines 
         context.font = "14px sans-serif";
         text = "Intervention/Activity: ";
         metrics = context.measureText(text);
@@ -376,6 +376,7 @@ function validate() {
         context.fillText( text, width/2, line );
         line += fontsize;
         
+        newdate = new Date( '{!Progress_Note__c.CreatedDate}');
         text = "Created Date: " + newdate.toString('MM/dd/yyyy hh:mm:ss a z');
         context.fillText( text, width/2, line );
         line += fontsize;

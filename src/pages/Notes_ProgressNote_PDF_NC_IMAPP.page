@@ -1,4 +1,4 @@
-<apex:page standardController="Progress_Note__c" renderAs="pdf">
+<apex:page standardController="Progress_Note__c" extensions="ProgressNoteExtension"  renderAs="pdf">
 <head>
 <style type="text/css">
 .myTB{
@@ -39,7 +39,7 @@
    <tr>
     <td width="40%" class="medBoldBrdr">Client:&nbsp;<apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Name}"/></td> 
     <td width="30%" class="medBoldBrdr">Record ID:&nbsp;<apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Other_ID__c}"/></td>
-    <td width="20%" class="medBoldBrdr">Medicaid ID:&nbsp;<apex:outputLabel value="{!Progress_Note__c.Person_Being_Served__r.Medicaid_ID__c}"/></td>
+    <td width="20%" class="medBoldBrdr">Medicaid ID:&nbsp;<apex:outputLabel value="{!medicaidIDClear}"/></td>
    </tr>
 </table>
 <table class="myTB"> 
