@@ -169,7 +169,7 @@ public class BehaviorTrackingInput implements AnotoFormHandler{
             this.ObjectId = objectId;
             this.DayTime = day;
             this.Property = propertyName;
-            String daystring = day.format('yyyy-MM-dd-HH-mm-ss');
+            String daystring = day.formatGMT('yyyy-MM-dd-HH-mm-ss');
             NodeName = String.join(propertyName == null
                                    ? new List<string>{'behavior', objectId, daystring}
                                    : new List<string>{'behavior', objectId, daystring, propertyName}, '_');
