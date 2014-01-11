@@ -288,7 +288,7 @@ public class BehaviorTracking_Form{
                                     new AnotoXmlGeneration.Widget(AnotoXmlGeneration.WidgetTypeEnum.textfield,
                                                                   new BehaviorTrackingInput.BehaviorResultNodeName(
                                                                       objTable.ObjectiveId, 
-                                                                      DateTime.newInstance(day, Time.newInstance(tofday, 0, 0, 0)),'HeaderDate').NodeName);
+                                                                      DateTime.newInstanceGMT(day, Time.newInstance(tofday, 0, 0, 0)),'HeaderDate').NodeName);
                                 datew.WriteEnabled = false;
                                 datew.DefaultValue = DateTime.newinstance(day, Time.newinstance(0,0,0,0)).format('d');
                                 datew.Layout(page, top - 10.0 , left + 2.9, 5.5, 15); 
@@ -300,7 +300,7 @@ public class BehaviorTracking_Form{
                                     new AnotoXmlGeneration.Widget(AnotoXmlGeneration.WidgetTypeEnum.checkbox,
                                                                   new BehaviorTrackingInput.BehaviorResultNodeName(
                                                                       objTable.ObjectiveId, 
-                                                                      DateTime.newInstance(day, Time.newInstance(tofday, 0, 0, 0)),'Occurred').NodeName);
+                                                                      DateTime.newInstanceGMT(day, Time.newInstance(tofday, 0, 0, 0)),'Occurred').NodeName);
                                 if (behavior_result.Occurred__c != null){
                                     timechkw.DefaultValue = behavior_result.Occurred__c ? 'true' : 'false';
                                 }
@@ -313,7 +313,7 @@ public class BehaviorTracking_Form{
                                     new AnotoXmlGeneration.Widget(AnotoXmlGeneration.WidgetTypeEnum.textfield,
                                                                   new BehaviorTrackingInput.BehaviorResultNodeName(
                                                                       objTable.ObjectiveId, 
-                                                                      DateTime.newInstance(day, Time.newInstance(tofday, 0, 0, 0)),'Occurrences').NodeName);
+                                                                      DateTime.newInstanceGMT(day, Time.newInstance(tofday, 0, 0, 0)),'Occurrences').NodeName);
                                 if (behavior_result.Occurrences__c != null){
                                     countw.DefaultValue = behavior_result.Occurrences__c.format();
                                 }
@@ -455,11 +455,18 @@ public class BehaviorTracking_Form{
         public integer mytime;
         public Date myDate;
         public boolean Active {get{ return myObject <> null;}}
-        
+
+/*****
+** Needed if the timezone ever springs forward causing 2am to become 3am
+**        public boolean Active {get{ return myObject <> null && !missinghour;}}
+**        private boolean missinghour;
+******/        
         public Action_Behavior_Wrapper(integer tofd, Date day, Action_Behavior_Result__c obj){
             myobject = obj;
             mytime = tofd;
             myDate = day;
+            //catch the missing hour when the day goes forward
+            //missinghour = DateTime.NewInstanceGMT(day, Time.NewInstance(tofd, 0, 0, 0)).hourGMT() != tofd;
         }
         
         public Action_Behavior_Result__c DataObject{ 
@@ -468,7 +475,7 @@ public class BehaviorTracking_Form{
         }
         
         public string getDayOfWeek(){
-            return DateTime.newInstance(myDate, Time.newInstance(0,0,0,0)).format('E');
+            return DateTime.newInstanceGMT(myDate, Time.newInstance(0,0,0,0)).format('E');
         }
     }
 }
