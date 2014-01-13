@@ -81,6 +81,9 @@ global class ChatterRetention implements Database.Batchable<sObject>{
        //loop through feedComments in temp feed comment list
        for(FeedComment fc : tempFeedCommentList){
             //saved and skipped feedItemIds
+            // 01/10/13 - check for empty comment body, which will occur with content only types (file, no text)
+           if ( fc.CommentBody == null )
+            	continue;
            if(fc.CommentBody.toLowerCase().contains('#save') || u.get(fc.CreatedById).legal_custodian__c == true){
             system.debug('Comment Saved!: ' + fc.CommentBody);
             feedItemIdsToKeep.add(fc.FeedItemId);
