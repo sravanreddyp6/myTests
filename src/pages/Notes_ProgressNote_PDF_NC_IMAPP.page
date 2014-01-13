@@ -1,0 +1,108 @@
+<apex:page standardController="Progress_Note__c" extensions="ProgressNoteExtension"  renderAs="pdf">
+<head>
+<style type="text/css">
+.myTB{
+    width: 100%;
+    text-align: left;
+    }
+.sm{
+    font-size: 10pt;
+    }
+.med{
+    font-size: 12pt;
+    }
+.medBold{
+    font-size: 14px;
+    font-weight: bold;
+    }
+.smBold{
+    font-size: 10pt;
+    font-weight: bold;
+    }
+.medBoldBrdr{
+    font-size: 13px;
+    font-weight: bold;
+    border-style: solid;
+    border-width: .5px;
+    padding:2px;
+    }
+</style>
+</head>
+<body>
+
+<table class="myTB" style="color:rgb(128,128,128)">
+  <tr><td align="center" style="font-size:15pt">NC MENTOR</td></tr>
+  <tr><td align="center">Multi-Service Planning Service Note (IMAPP)</td></tr>
+</table>
+<br/>
+<table class="myTB">
+   <tr>
+    <td width="40%" class="medBoldBrdr">Client:&nbsp;<apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Name}"/></td> 
+    <td width="30%" class="medBoldBrdr">Record ID:&nbsp;<apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Other_ID__c}"/></td>
+    <td width="20%" class="medBoldBrdr">Medicaid ID:&nbsp;<apex:outputLabel value="{!medicaidIDClear}"/></td>
+   </tr>
+</table>
+<table class="myTB"> 
+  <tr>
+    <td width="15%" align="center" class="medBoldBrdr">Date</td>
+    <td width="15%" align="center" class="medBoldBrdr">Location</td>
+    <td width="30%" align="center" class="medBoldBrdr">Type of Activity</td>
+    <td width="20%" class="medBoldBrdr">Total Time:&nbsp;<apex:outputField value="{!Progress_Note__c.Total_Time__c}"/></td>
+  </tr>
+  <tr>
+    <td width="20%" align="center" class="medBoldBrdr"><apex:outputField value="{!Progress_Note__c.Start_Time__c}"/></td>
+    <td width="15%" align="center" class="medBoldBrdr"><apex:outputField value="{!Progress_Note__c.Service_Location__c}"/></td>
+    <td width="30%" align="center" class="medBoldBrdr">On-going Assessment and Planning</td> 
+    <td width="20%" class="medBoldBrdr">Type of Contact:&nbsp;<apex:outputField value="{!Progress_Note__c.Type_of_Contact__c}"/></td>
+  </tr>
+</table>
+<table class="myTB">
+  <tr><td width="100%" class="medBoldBrdr">Service Delivered:&nbsp;<apex:outputPanel styleClass="medBold"><apex:outputField value="{!Progress_Note__c.Service_Assignment__r.Service_Line__c}"/></apex:outputPanel></td></tr>
+  <tr><td width="100%" class="medBoldBrdr">Service Frequency:&nbsp;<apex:outputPanel styleClass="medBold"><apex:outputField value="{!Progress_Note__c.Service_Frequency__c}" /></apex:outputPanel></td></tr>
+</table>
+<table class="myTB">
+    <tr><td class="smBold">Purpose of Contact/Goals: <i>(Exact Wording from PCP)</i></td></tr>
+    <tr><td><apex:include pageName="progressnote_actionplan_embed_include"/></td></tr>     
+    <tr><td class="smBold">Description of Intervention/Skill building Activity: Curriculum Progress Assessment</td></tr>
+</table>
+<table class="myTB">
+    <tr><td style="font-size:10pt" align="center"><u><b>Curriculum Progress Assessment</b> - <i>(skill lesson progress and skill mastery - previous imapp)</i></u></td></tr>
+    <tr><td align="center"><apex:outputPanel styleClass="sm"><apex:outputField styleClass="sm" value="{!Progress_Note__c.Curriculum_Progress_Assessment__c}"/></apex:outputPanel></td></tr>
+    <tr><td class="smBold" align="center"><i>Level of Mastery (LOM) – 1 is low, 2 is medium, 3 is high </i> – assign # for each lesson completed</td></tr>
+</table><br/>
+<table class="myTB">
+    <tr><td class="sm"><b>Narrative Summary/Comments</b> - <i>(related to previous week's skill lesson progress and level of mastery):</i></td></tr>
+    <tr><td><apex:outputPanel styleClass="sm"><apex:outputField value="{!Progress_Note__c.Narrative_Summary_Comments_Previous_We__c}"/></apex:outputPanel></td></tr><br/>
+    <tr><td class="sm"><b>Phases of Service Delivery</b> - <i>(Please indicate which phase of treament the Clinical Team assessed the child to be in after this curriculum progress assessment)</i></td></tr>
+    <tr><td><apex:outputPanel styleClass="sm"><apex:outputField value="{!Progress_Note__c.Phases_of_Service_Delivery__c}"/></apex:outputPanel></td></tr>
+    <tr><td class="smBold">Justification for current phase:</td></tr>
+    <tr><td><apex:outputText value="{!Progress_Note__c.Justification_for_Current_Phase__c}"/></td></tr>
+</table>
+<table class="myTB">
+    <hr/>
+    <tr><td class="smBold">Description of Intervention/Skill building Activity: Curriculum Based Skill Building Planning</td></tr>
+</table>
+<table class="myTB">
+    <tr><td style="font-size:10pt" align="center"><u><b>Curriculum Planning for Upcoming Sessions</b> - <i>(based on previous IMAPPs curriculum progress assessment)</i></u></td></tr> 
+    <tr><td align="center"><apex:outputPanel styleClass="sm"><apex:outputField value="{!Progress_Note__c.Curriculum_Planning_for_Upcoming_Session__c}"/></apex:outputPanel></td></tr>
+    <tr><td class="sm"><b>Narrative Summary/Comments</b> - <i>(Related to next week's skill lesson planning):</i></td></tr>
+    <tr><td><apex:outputPanel styleClass="sm"><apex:outputField value="{!Progress_Note__c.Narrative_Summary_Comments_Next_Week__c}"/></apex:outputPanel></td></tr><br/>
+    
+</table><hr/>
+<table class="myTB">
+    <tr><td class="sm"><b>Progress Towards Goals Effectiveness of Intervention</b> - <i>(include effect of skill building interventions on overall progress toward):</i></td></tr>
+    <tr><td><apex:outputField value="{!Progress_Note__c.Progress__c}"/></td></tr>
+</table>
+<br/><hr/>
+<table class="myTB">
+    <tr><td class="sm"><b>Follow Up</b> - <i>(Issues or concerns that are not directly related curriculum-based skill building assessment and progress):</i></td></tr>
+    <tr><td><apex:outputField value="{!Progress_Note__c.Notes_For_Next_Visit__c}"/></td></tr>
+</table>
+<br/><hr/><br/>
+    <div class="smBold">Signature  Credentials, Degree/Licensure of Staff: _____________________________________________________</div><br/>
+    
+    <div class="sm" align="center" style="color:rgb(128,128,128)">Created By:&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedBy.Name}"/>,&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedBy.Title}"/></div>
+    <div class="sm" align="center" style="color:rgb(128,128,128)">Created Date:&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedDate}"/><apex:outputLabel rendered="{!Progress_Note__c.Is_Note_Late__c == 'Yes'}"  > - LATE ENTRY</apex:outputLabel></div>
+    <div class="sm" align="center" style="color:rgb(128,128,128)">Latest release of form: 8/13/12</div>
+</body>
+</apex:page>
