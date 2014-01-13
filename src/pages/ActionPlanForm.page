@@ -438,7 +438,7 @@ function highlightButtons ( btype, sfid, on )
         
      
     </apex:pageBlock> 
-    <apex:pageBlock title="Shift Notes" rendered="{!notes.size > 0}">
+    <apex:pageBlock title="Notes" rendered="{!notes.size > 0}">
     <apex:pageBlockTable value="{!notes}" var="pn">
         <apex:column >
             <apex:outputLink value="/{!pn.id}">{!pn.name}</apex:outputLink>
@@ -447,6 +447,9 @@ function highlightButtons ( btype, sfid, on )
         <apex:column value="{!pn.End_Time__c}"/>
     
     </apex:pageBlockTable>   
+    <br/>
+    <apex:outputPanel rendered="{!notes.size!=0}">Showing the 10 most recent notes click&nbsp;<apex:outputLink value="/a0L?id={!Action_Plan__c.id}&rlid=00NU0000003m5Tn&lsr=0" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
+
     </apex:pageBlock>
     
     
