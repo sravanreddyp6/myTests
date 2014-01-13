@@ -1,0 +1,1173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <content>ServiceAssignmentEditNew</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <content>ServiceAssignmentEditNew</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <content>ServiceAssignmentEditNew</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>NOTES Service Assignments describe the services that can be performed for a Person Being Served. This object is master-detail to Admissions.</description>
+    <enableActivities>true</enableActivities>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>Admission__c</fullName>
+        <externalId>false</externalId>
+        <label>Admission</label>
+        <referenceTo>Admission__c</referenceTo>
+        <relationshipLabel>Service Assignment</relationshipLabel>
+        <relationshipName>Service_Agreements</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <trackHistory>true</trackHistory>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Avatar_Upload_ID__c</fullName>
+        <externalId>true</externalId>
+        <label>Avatar Upload ID</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Billing_System__c</fullName>
+        <externalId>false</externalId>
+        <label>Billing System</label>
+        <picklist>
+            <picklistValues>
+                <fullName>WV Avatar</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>IN   Avatar</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>CA Avatar</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>WI Avatar</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>MN Avatar</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>OH Avatar</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>AZ Avatar</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>NJ Avatar</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>DE Avatar</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>NC Avatar</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>GA Avatar</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>FL Avatar</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>MA Avatar</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>RI Avatar</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>true</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Cause_of_Injury__c</fullName>
+        <description>populated on conversion from referral - brain injury details for MN</description>
+        <externalId>false</externalId>
+        <label>Cause of Injury</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Contract_Concatenation__c</fullName>
+        <description>A field that contains a ~ delimited listing of all contracts associated with the Service Assignment, populated by before insert and before update trigger actions.</description>
+        <externalId>false</externalId>
+        <label>Contract_Concatenation</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Date_of_Injury__c</fullName>
+        <externalId>false</externalId>
+        <label>Date of Injury</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Day_of_last_Note__c</fullName>
+        <defaultValue>TODAY()</defaultValue>
+        <description>The day the system sent the last email notification for billing system change reminders</description>
+        <externalId>false</externalId>
+        <label>Day of last Note</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Days_in_Treatment__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(  ISNULL( End_Date__c ) , TODAY() - Start_Date__c, Start_Date__c  -  End_Date__c)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Days in Treatment</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>DocDueFromPerson__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>A field to store the primary case document due from person.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>A field to store the primary case document due from person.</inlineHelpText>
+        <label>DocDueFromPerson</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Service_Assignment</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>End_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>End Date</label>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>External_ID__c</fullName>
+        <caseSensitive>false</caseSensitive>
+        <externalId>true</externalId>
+        <label>External ID</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+        <unique>true</unique>
+    </fields>
+    <fields>
+        <fullName>Location_Region__c</fullName>
+        <externalId>false</externalId>
+        <label>Location</label>
+        <picklist>
+            <picklistValues>
+                <fullName>NC</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>MA</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>PA</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>TRIAD</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>true</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Outcomes__c</fullName>
+        <externalId>false</externalId>
+        <label>Outcomes</label>
+        <length>32768</length>
+        <trackHistory>true</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Person_Being_Served__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Person Being Served</label>
+        <referenceTo>Contact</referenceTo>
+        <relationshipLabel>Service Assignment</relationshipLabel>
+        <relationshipName>Service_Assignment</relationshipName>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Phase_1_End_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Phase 1 End Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Phase_1_Start_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Phase 1 Start Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Phase_2_End_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Phase 2 End Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Phase_2_Start_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Phase 2 Start Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Phase_3_End_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Phase 3 End Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Phase_3_Start_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Phase 3 Start Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Phase_4_End_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Phase 4 End Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Phase_4_Start_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Phase 4 Start Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Phase__c</fullName>
+        <externalId>false</externalId>
+        <label>Phase</label>
+        <precision>3</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Phase_of_Treatment__c</fullName>
+        <externalId>false</externalId>
+        <label>Phase of Treatment</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Phase 1</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Phase 2</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Phase 3</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Phase 4</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Prior_Location_City__c</fullName>
+        <description>city of location at time of referral - MN brain injury detail</description>
+        <externalId>false</externalId>
+        <label>Prior Location City</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Prior_Location_Email__c</fullName>
+        <description>email at location at time of referral - MN brain injury details</description>
+        <externalId>false</externalId>
+        <label>Prior Location Email</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Email</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Prior_Location_Phone__c</fullName>
+        <description>phone of location at time of referral - MN brain injury details</description>
+        <externalId>false</externalId>
+        <label>Prior Location Phone</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Phone</type>
+    </fields>
+    <fields>
+        <fullName>Prior_Location_State__c</fullName>
+        <description>state of location at time of referral - MN brain injury details</description>
+        <externalId>false</externalId>
+        <label>Prior Location State</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Alabama</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Alaska</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Arizona</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Arkansas</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>California</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Colorado</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Connecticut</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Delaware</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>District of Columbia</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Florida</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Georgia</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Guam</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Hawaii</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Idaho</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Illinois</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Indiana</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Iowa</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Kansas</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Kentucky</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Louisiana</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Maine</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Maryland</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Massachusetts</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Michigan</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Minnesota</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Mississippi</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Missouri</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Montana</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Nebraska</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Nevada</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>New Hampshire</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>New Jersey</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>New Mexico</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>New York</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>North Carolina</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>North Dakota</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Ohio</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Oklahoma</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Oregon</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Pennsylvania</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Rhode Island</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>South Carolina</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>South Dakota</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Tennessee</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Texas</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Utah</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Vermont</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Virginia</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Washington</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>West Virginia</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Wisconsin</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Wyoming</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Prior_Location_Street_1__c</fullName>
+        <description>Street address for location at time of referral - for MN brain injury</description>
+        <externalId>false</externalId>
+        <label>Prior Location Street 1</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Prior_Location_Street_2__c</fullName>
+        <description>street address of location at time of referral - MN brain injury details</description>
+        <externalId>false</externalId>
+        <label>Prior Location Street 2</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Prior_Location_Zip__c</fullName>
+        <description>ZIP of location at time of referral - MN brain injury detail</description>
+        <externalId>false</externalId>
+        <label>Prior Location Zip</label>
+        <length>5</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Program_Code__c</fullName>
+        <externalId>false</externalId>
+        <label>Program Code</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Program_Detail__c</fullName>
+        <externalId>false</externalId>
+        <label>Program Detail</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Program__c</fullName>
+        <externalId>false</externalId>
+        <label>Program</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Projected_Treatment_End_Date__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>This field is only required when associating Document types of Case and or Fidelity with a Service Assignment.</inlineHelpText>
+        <label>Projected Treatment End Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Ref_Referring_Physician__c</fullName>
+        <description>Referring physician at time of referral - MN brain injury details</description>
+        <externalId>false</externalId>
+        <label>Ref Referring Physician</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Referral_Est_Discharge_Date__c</fullName>
+        <description>Estimated discharge date for referral - MN brain injury details</description>
+        <externalId>false</externalId>
+        <label>Referral Est Discharge Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Referral__c</fullName>
+        <deleteConstraint>Restrict</deleteConstraint>
+        <description>Reference to referral that converted to this service assignment</description>
+        <externalId>false</externalId>
+        <label>Referral</label>
+        <referenceTo>Referral__c</referenceTo>
+        <relationshipLabel>Service Assignment</relationshipLabel>
+        <relationshipName>Service_Assignment</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>SA_Hidden__c</fullName>
+        <externalId>false</externalId>
+        <label>SA # (Hidden)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>true</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Service_Assignment_Number__c</fullName>
+        <displayFormat>SA - {000000}</displayFormat>
+        <externalId>false</externalId>
+        <label>Service Assignment Number</label>
+        <trackHistory>false</trackHistory>
+        <type>AutoNumber</type>
+    </fields>
+    <fields>
+        <fullName>Service_Line__c</fullName>
+        <externalId>false</externalId>
+        <label>Service Line</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Service_Location__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>Location where service is being performed</description>
+        <externalId>false</externalId>
+        <label>Service Location</label>
+        <referenceTo>Service_Location__c</referenceTo>
+        <relationshipLabel>Service Assignment</relationshipLabel>
+        <relationshipName>Service_Assignment</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Start_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Start Date</label>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Active</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>On-Hold</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Inactive</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>true</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <label>Service Assignment</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>CREATED_DATE</columns>
+        <columns>Program_Code__c</columns>
+        <columns>Program_Detail__c</columns>
+        <columns>Program__c</columns>
+        <columns>CREATEDBY_USER</columns>
+        <columns>End_Date__c</columns>
+        <columns>Start_Date__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Start_Date__c</field>
+            <operation>greaterThan</operation>
+            <value>9/1/2013</value>
+        </filters>
+        <filters>
+            <field>NAME</field>
+            <operation>contains</operation>
+            <value>Only</value>
+        </filters>
+        <filters>
+            <field>End_Date__c</field>
+            <operation>greaterThan</operation>
+            <value>9/1/2013</value>
+        </filters>
+        <label>All</label>
+    </listViews>
+    <listViews>
+        <fullName>Assessment_Only_Service_Assignments</fullName>
+        <columns>NAME</columns>
+        <columns>Admission__c</columns>
+        <columns>Person_Being_Served__c</columns>
+        <columns>CREATEDBY_USER</columns>
+        <columns>CREATED_DATE</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>RECORDTYPE</field>
+            <operation>equals</operation>
+            <value>Service_Assignment__c.Assessment_Only</value>
+        </filters>
+        <label>Assessment Only Service Assignments</label>
+    </listViews>
+    <nameField>
+        <label>Service Assignment Name</label>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+    </nameField>
+    <namedFilters>
+        <fullName>nf_01IJ00000000JNEMA2_00NJ0000000IM6oMAG</fullName>
+        <active>true</active>
+        <field>Progress_Note__c.Service_Assignment__c</field>
+        <filterItems>
+            <field>Service_Assignment__c.Admission__c</field>
+            <operation>equals</operation>
+            <valueField>$Source.Admission__c</valueField>
+        </filterItems>
+        <isOptional>false</isOptional>
+        <name>Progress Note_Service Assignment</name>
+        <sourceObject>Progress_Note__c</sourceObject>
+    </namedFilters>
+    <pluralLabel>Service Assignment</pluralLabel>
+    <recordTypeTrackHistory>false</recordTypeTrackHistory>
+    <recordTypes>
+        <fullName>Assessment_Only</fullName>
+        <active>true</active>
+        <description>This option is for Assessment Only Service Assignments. There will be no Plan/STGs.</description>
+        <label>Assessment Only</label>
+        <picklistValues>
+            <picklist>Billing_System__c</picklist>
+            <values>
+                <fullName>AZ Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>CA Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DE Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>FL Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>GA Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IN   Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MA Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MN Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>NC Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>NJ Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>OH Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>RI Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>WI Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>WV Avatar</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_Region__c</picklist>
+            <values>
+                <fullName>MA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>NC</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>TRIAD</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Phase_of_Treatment__c</picklist>
+            <values>
+                <fullName>Phase 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Phase 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Phase 3</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Phase 4</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Status__c</picklist>
+            <values>
+                <fullName>Active</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Inactive</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>On-Hold</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Standard_Service_Assignment</fullName>
+        <active>true</active>
+        <description>This option is for any standard service assignment</description>
+        <label>Standard Service Assignment</label>
+        <picklistValues>
+            <picklist>Billing_System__c</picklist>
+            <values>
+                <fullName>AZ Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>CA Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DE Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>FL Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>GA Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IN   Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MA Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MN Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>NC Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>NJ Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>OH Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>RI Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>WI Avatar</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>WV Avatar</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_Region__c</picklist>
+            <values>
+                <fullName>MA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>NC</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>TRIAD</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Phase_of_Treatment__c</picklist>
+            <values>
+                <fullName>Phase 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Phase 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Phase 3</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Phase 4</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Status__c</picklist>
+            <values>
+                <fullName>Active</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Inactive</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>On-Hold</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <searchLayouts>
+        <lookupDialogsAdditionalFields>OBJECT_ID</lookupDialogsAdditionalFields>
+        <searchFilterFields>Service_Line__c</searchFilterFields>
+        <searchFilterFields>Program__c</searchFilterFields>
+    </searchLayouts>
+    <sharingModel>ControlledByParent</sharingModel>
+    <validationRules>
+        <fullName>Do_not_allow_Active_SA_if_Discharged</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(text(Admission__r.Status__c)=&quot;Discharged&quot;, text(Status__c)=&quot;Active&quot;)</errorConditionFormula>
+        <errorMessage>Service Assignments cannot be saved as Active when their Admission is set to Discharged.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Prevent_End_Date_Save_If_Active</fullName>
+        <active>true</active>
+        <description>A validation rule to prevent the saving of an end date for a service assignment if the status field is set to &apos;Active.&apos;</description>
+        <errorConditionFormula>ISPICKVAL( Status__c , &apos;Active&apos;)  &amp;&amp;   NOT ISNULL( End_Date__c )</errorConditionFormula>
+        <errorMessage>A Service Assignment with status Active cannot be saved with an End Date.  Please review the data and adjust accordingly.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>SA_Dates_Within_ADM_Range</fullName>
+        <active>true</active>
+        <description>A validation rule to ensure that the service assignment start and end dates are within the admission&apos;s date range (account for NULL Admission End Date, etc.).</description>
+        <errorConditionFormula>(Start_Date__c &lt;  Admission__r.Effective_Date__c) || ( End_Date__c &lt;  Admission__r.Effective_Date__c) || ( Start_Date__c &gt;  Admission__r.Discharged_Date__c ) || ( End_Date__c &gt;  Admission__r.Discharged_Date__c)</errorConditionFormula>
+        <errorMessage>The date range specified for a service assignment must be completely contained within the date range for the associated admission.  Please check the Effective Date and Discharge Date data for this admission, and adjust accordingly.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>SA_Start_Date_Not_Before_SA_End_Date</fullName>
+        <active>true</active>
+        <description>A validation rule to prevent entry of a service assignment end date that is before the service assignment start ddate.</description>
+        <errorConditionFormula>End_Date__c  &lt; Start_Date__c</errorConditionFormula>
+        <errorMessage>The End Date for the Service Assignment must be on or after the Start Date for that Service Assignment.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Start_Date_before_Admin_Effective_Date</fullName>
+        <active>true</active>
+        <errorConditionFormula>Start_Date__c &lt;  Admission__r.Effective_Date__c</errorConditionFormula>
+        <errorDisplayField>Start_Date__c</errorDisplayField>
+        <errorMessage>The Start Date can&apos;t be before the Admission Effective Date</errorMessage>
+    </validationRules>
+    <webLinks>
+        <fullName>New_Assessment_Only_Service_Assignment</fullName>
+        <availability>online</availability>
+        <displayType>massActionButton</displayType>
+        <encodingKey>UTF-8</encodingKey>
+        <linkType>url</linkType>
+        <masterLabel>New Assessment Only Service Assignment</masterLabel>
+        <openType>replace</openType>
+        <protected>false</protected>
+        <requireRowSelection>false</requireRowSelection>
+        <url>/a0M/e?RecordType=012U0000000Dbhl
+&amp;CF00NU00000036mQa={!Admission__c.Person_Being_Served__c}
+&amp;CF00NU00000036mQa_lkid={!Admission__c.Person_Being_ServedId__c}
+&amp;CF00NU00000036mLo={!Admission__c.Name}
+&amp;Name=TBD - Autofilled
+&amp;CF00NU00000036mLo_lkid={!Admission__c.Id}
+&amp;retURL={!Admission__c.Id}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>New_Standard_Service_Assignment</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <height>600</height>
+        <linkType>page</linkType>
+        <masterLabel>New Standard Service Assignment</masterLabel>
+        <openType>noSidebar</openType>
+        <page>ServiceAssignmentEditNew</page>
+        <protected>false</protected>
+    </webLinks>
+    <webLinks>
+        <fullName>Refresh</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Refresh</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <url>location.reload(true);</url>
+    </webLinks>
+</CustomObject>
