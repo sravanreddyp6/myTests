@@ -328,6 +328,18 @@ table#persons_table.dataTable {
                                             rendered="{! jo.Status__c='Active Final' && seeWorksheets && jo.Service_Assignment__r.Admission__r.State__c != 'AZ'}">
                                             View Current Worksheets
                                             
+                                        </apex:outputLink>
+                                        <apex:variable value="{!jo.Service_Assignment__r.Admission__r.State__c != 'MN'}" 
+                                                        var="ShowNoteLink"/>
+                                        <apex:variable value="{!jo.Service_Assignment__r.Admission__r.State__c != 'IN'}" 
+                                                        var="ShowNoteLink"/>
+                                        <apex:variable value="{!jo.Service_Assignment__r.Admission__r.State__c != 'CA'}" 
+                                                        var="ShowNoteLink"/>                                                                                                               
+                                        
+                                        <apex:outputLink styleClass="servicelink" value="/{!jo.Service_Assignment__r.Id}#worksheets"
+                                            rendered="{! jo.Status__c='Active Final' && ShowNoteLink}">
+                                            View Current Notes
+                                            
                                         </apex:outputLink></td>
                                     <td style="display:none;">{!jo.Service_Assignment__r.Admission__r.Status__c}</td>
                                 </tr>
