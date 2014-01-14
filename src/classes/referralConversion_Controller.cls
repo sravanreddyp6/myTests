@@ -154,6 +154,7 @@ public with sharing class referralConversion_Controller {
       					r.Cause_of_Injury__c,
       					r.Case_Manager_Name__c,
       					r.Case_Manager_Phone__c, 
+      					r.Billing_ID__c,
       					r.Axis_V__c, 
       					r.Axis_I__c, 
       					r.Axis_IV__c, 
@@ -397,6 +398,7 @@ public with sharing class referralConversion_Controller {
  								Guardian_Phone_Number__pc = sGuardian1Phone,
  								UCI_ID__pc = string.valueOf(this.referralRecord.UCI_Number__c),
  								Marital_Status__pc = pbrCurr.Marital_Status__c,
+ 								Avatar_ID__pc = referralRecord.Billing_ID__c,
  								Legal_Guardianship_Status__pc = referralRecord.Legal_Guardian_Status__c
  								);
  								
