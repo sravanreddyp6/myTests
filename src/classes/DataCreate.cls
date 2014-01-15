@@ -25,16 +25,7 @@ public with sharing class DataCreate {
 		Map<string,Schema.SObjectField> Fmap = info.fields.getmap();
 		for(string fieldname:fieldmap.keyset()){
 			if (fmap.containsKey(fieldname)){
-				Schema.SObjectField F = fmap.get(fieldname);
-				if (f.getdescribe().getType() != Schema.DisplayType.Reference){
-					newobj.put(fieldname, fieldmap.get(fieldname));
-				} else {
-					if (pseudonyms.containskey((string)fieldmap.get(fieldname))){
-						newobj.put(fieldname, pseudonyms.get((string)fieldmap.get(fieldname)).id);
-					} else {
-						DelayedReferences.Add(new DelayedReference(newobj,fieldname, (string)fieldmap.get(fieldname)));
-					}
-				}
+				PutWithCast(newobj, fmap.get(fieldname).getdescribe(),fieldmap.get(fieldname));
 			}
 		}
 		insert newobj;
@@ -104,6 +95,66 @@ public with sharing class DataCreate {
 		}		
 	}
 	
+	public integer ProcessXml(string xml){
+		Dom.Document doc = new Dom.Document();
+		doc.load(xml);
+		integer objCount = 0;
+		
+		for(Dom.XmlNode objnode: doc.getRootElement().getChildElements()){
+			system.debug('Node: ' + objnode.getName() + ':' + objnode.GetAttributeValue('classname', ''));
+			map<string,Object> fieldmap = new map<string,Object>();
+			for(Dom.XmlNode fieldnode: objnode.getChildElements()){
+				system.debug('Field Node: ' + fieldnode.getName() + ':' + fieldnode.getAttributeValue('name', ''));
+				// todo: type based parsing????
+				fieldmap.Put(fieldnode.getAttributeValue('name', ''), fieldnode.getText());
+			}
+			string pseudonym = objnode.getattributeValue('pseudonym', '');
+			if (pseudonym == null) {
+				CreateObject(objnode.GetAttributeValue('classname', ''), fieldmap);
+			} else {
+				CreateObject(objnode.GetAttributeValue('classname', ''), fieldmap, pseudonym);
+			}
+			objCount++;
+		}
+		FixReferences();
+		
+		return objCount;
+	}
+	
+	private void PutWithCast(SObject newobj, Schema.DescribeFieldResult fielddescribe, object value){
+		if (fielddescribe.getType() == Schema.DisplayType.Reference){
+			if (pseudonyms.containskey((string)value)){
+				newobj.put(fielddescribe.Name, pseudonyms.get((string)value).id);
+			} else {
+				DelayedReferences.Add(new DelayedReference(newobj,fielddescribe.Name, (string)value));
+			}
+		} else if (fielddescribe.getType() == Schema.DisplayType.Date){
+			newobj.put(fielddescribe.Name, DataConvert.ToDate(value));
+		} else if (fielddescribe.getType() == Schema.DisplayType.DateTime){
+			newobj.put(fielddescribe.Name, DataConvert.ToDateTime(value));
+		} else if (fielddescribe.getType() == Schema.DisplayType.Time){
+			newobj.put(fielddescribe.Name, DataConvert.ToTime(value));
+		} else if (fielddescribe.getType() == Schema.DisplayType.Boolean){
+			newobj.put(fielddescribe.Name, DataConvert.ToBoolean(value));
+		} else if (fielddescribe.getType() == Schema.DisplayType.Currency){
+			newobj.put(fielddescribe.Name, DataConvert.ToDecimal(value));
+		} else if (fielddescribe.getType() == Schema.DisplayType.Double){
+			newobj.put(fielddescribe.Name, DataConvert.ToDouble(value));
+		} else if (fielddescribe.getType() == Schema.DisplayType.Integer){
+			newobj.put(fielddescribe.Name, DataConvert.ToInteger(value));
+		} else if (fielddescribe.getType() == Schema.DisplayType.String){
+			newobj.put(fielddescribe.Name, DataConvert.ToString(value));
+		} else if (fielddescribe.getType() == Schema.DisplayType.TextArea){
+			newobj.put(fielddescribe.Name, DataConvert.ToString(value));
+		} else if (fielddescribe.getType() == Schema.DisplayType.URL){
+			newobj.put(fielddescribe.Name, DataConvert.ToString(value));
+		} else if (fielddescribe.getType() == Schema.DisplayType.Email){
+			newobj.put(fielddescribe.Name, DataConvert.ToString(value));
+		} else {
+			newobj.put(fielddescribe.Name, value);
+		}
+	}
+	
 	public class DataCreateException extends Exception{
 	}
 	
@@ -118,4 +169,5 @@ public with sharing class DataCreate {
 			this.ReferencedPseudonym = pseudonym;
 		}
 	}
+	
 }

@@ -27,7 +27,7 @@ private class DataCreateTest {
         
         map<string, object> fieldmap = new map<string, object>();
         fieldmap.put('lastname', 'Mouse');
-        fieldmap.put('personbirthdate', date.newinstance(1954,5,7));
+        fieldmap.put('personbirthdate', '5/7/1954');
         Account pbs = (Account)c.CreateObject('Account', fieldmap);
         
         System.assertequals('Mouse', pbs.lastname);
@@ -112,5 +112,26 @@ private class DataCreateTest {
         list<string> apo_req = req.get('Action_Plan_Objective__c');
         
         system.assertequals(1, apo_req.size());
+    }
+    
+    static testmethod void FirstXml(){
+        DataCreate c = new DataCreate();
+    	
+    	System.AssertEquals(2, c.ProcessXml('<objects><object pseudonym="Mickey" classname="Contact">' + 
+    		'<field name="lastname">Mouse</field>' + 
+    		'<field name="personbirthdate">6/24/35</field></object>' + 
+    		'<object classname="Admission__c">' + 
+    		'<field name="state__c">CA</field>' + 
+    		'<field name="person_being_served__c">Mickey</field></object>' +
+    		'</objects>'));
+    		
+        Contact mickey = [select lastname from Contact];
+        system.assertequals('Mouse', mickey.lastname);
+        //system.assertequals(date.newinstance(1935,6,24), mickey.personbirthdate);
+        
+        Admission__c adm = [select state__c, person_being_served__c from Admission__c];
+        system.assertequals('CA', adm.state__c);
+        system.assertequals(mickey.id, adm.person_being_served__c);
+        
     }
 }
