@@ -103,12 +103,12 @@ public with sharing class referral_Controller2 {
     this.editableTasks = new Map<Id, Boolean>();
     this.locations = new List<Referral_Location__c>();
 
-	system.debug( this.referralRecord);
-	
- 	getPBRId();
- 	system.debug( 'PBR= '+ pBRid);
+    system.debug( this.referralRecord);
+
+     getPBRId();
+     system.debug( 'PBR= '+ pBRid);
     getPBSId();
-    
+
     if (pBRId != null) {
       this.personBeingRefRecord = getPBRRec();
       populateRelParties();
@@ -165,9 +165,9 @@ public with sharing class referral_Controller2 {
     }
 
   private void populateRelParties() {
-  	if (this.personBeingRefRecord.Id == null && this.personBeingServedRecord.Id == null)
-  		return;
-  		
+      if (this.personBeingRefRecord.Id == null && this.personBeingServedRecord.Id == null)
+          return;
+
     try {
       if(this.personBeingRefRecord != null && this.personBeingRefRecord.Id != null){
       this.relParties = [select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, comments__c,
@@ -254,11 +254,11 @@ public with sharing class referral_Controller2 {
       populateLocations();
           populateActivities();
       if (this.personBeingServedRecord != null && this.personBeingServedRecord.Id != null) {
-      	this.relatedReferrals = [select Id, Name, Referral_Status__c from Referral__c 
+          this.relatedReferrals = [select Id, Name, Referral_Status__c from Referral__c
                                where Person_Being_Served__c = :this.personBeingServedRecord.Id and id != :this.referralRecord.Id
                                order by Name];
       } else if (this.personBeingRefRecord != null && this.personBeingRefRecord.Id != null) {
-      this.relatedReferrals = [select Id, Name, Referral_Status__c from Referral__c 
+      this.relatedReferrals = [select Id, Name, Referral_Status__c from Referral__c
                                where Person_Being_Referred__c = :this.personBeingRefRecord.Id and id != :this.referralRecord.Id
                                order by Name];
       }
@@ -285,7 +285,7 @@ public with sharing class referral_Controller2 {
     Person_Being_Referred__c pBRRec;
     try {
       pBRRec = [select Age__c, City__c, Date_of_Birth__c, Email_Address__c,
-                       Ethnicity__c, Fax__c, First_Name__c, Gender__c,
+                       Race__c, Ethnicity__c, Fax__c, First_Name__c, Gender__c,
                        Home_County__c, Last_Name__c, Marital_Status__c,
                        Middle_Initial__c, Phone__c, Primary_Language__c, SSN__c,
                        State__c, Street_1__c, Street_2__c, Zip_Code__c,
@@ -312,7 +312,7 @@ public with sharing class referral_Controller2 {
 
     pBSId = (this.referralRecord.Person_Being_Served__c != null) ? this.referralRecord.Person_Being_Served__c : pBSIdParam;
   }
-  
+
   private Contact getPBSRec() {
     Contact pBSRec;
     try {
@@ -361,51 +361,14 @@ public with sharing class referral_Controller2 {
   }
 
   public void showEditFundingSource() {
-    fundingSource = [
-        SELECT ID, Funding_Source__c, Status__c, Comment__c, Funding_Source_ID__c,
-               Service_Being_Funded__c, Type_of_Coverage__c, Payer_Verification_Date__c,
-               Verified_With__c, Representing__c, Call_Reference_Number__c,
-               Payer_Name__c, TPA__c, Primary_Med_Ind_Phys_Group__c,
-               Policy_Holder__c, Group_Name__c, Relationship_To_Patient__c,
-               Group_Number__c, Policy_Number__c, Benefit_Cycle__c, Effective_Date__c,
-               Benefit_Year_Start_Date__c, Termination_Date__c, Benefit_Year_End_Date__c,
-               Additional_Coverage__c, Additional_Coverage_Comments__c,
-               Deductible__c, Copay__c, Deductible_Met__c, SNF_Day_Total__c,
-               Rate_of_Reimbursement__c, SNF_Days_Used__c, OOP_Expense__c,
-               Qualifying_Stay_Criteria__c, OOP_Expense_Met__c, Precert_Required__c,
-               Deductible_Applicable_to_OOP__c, Precert_Company__c,
-               RoR_to_100_after_met_OOP_Max__c, SNF_Phone__c, Lifetime_Max__c,
-               SNF_Fax__c, Lifetime_Max_Met__c, DME_Benefits__c,
-               Transportation_Benefits__c, DME_Maximum__c, Transportation_Maximum__c,
-               Claims_Submission_Company__c, Claims_Submission_Street_1__c,
-               Claims_Submission_Phone__c, Claims_Submission_Street_2__c,
-               Claims_Submission_Email__c, Claims_Submission_City__c,
-               Claims_Submission_Fax__c, Claims_Submission_State__c,
-               Claims_Submission_Zip__c, Month_to_Month__c, Basis__c,
-               Medicare_is_Secondary_Coverage__c, Cobra__c, Can_Patient_Return_to_Work__c,
-               Payment_Detail__c, Patient_Has_Policy__c, Individual_Plan__c,
-               Continued_Payment__c, More_than_1_5_Yrs_of_Disability__c,
-               Under_Pre_Existing_Period__c, Dx_Pre_Existing__c,
-               Self_Inflicted__c,  Covered__c,
-               Readmission__c, Prior_Pmt_Received__c, Swing_Bed_Billing_at_SNF_Rate__c,
-               Number_of_Days__c, Requested_By__c, Given_By__c, Request_Date__c,
-               Received_Date_Time__c, Reference_Number__c, Authorization_Number__c,
-               Request_Contact_Name__c, Review_Nurse__c,
-               Contract_Used__c, Request_Phone__c, Level__c, Request_Fax__c,
-               Justification__c, Rate__c, Internal_Contact__c, Internal_Phone__c,
-               Internal_Fax__c, Internal_Email__c, Referral__c, Verified_By__c,
-               Referral__r.Person_Being_Referred__r.Age__c, Payer_Phone__c,
-               TPA_Phone__c, Primary_Med_Ind_Phys_Group_Phone__c, Network__c,
-               Policy_Type__c, Network_Phone__c, DME_Precert_Required__c,
-               Transportation_Precert_Required__c, Is_Patient_Policy_Holder__c,
-               Patient_Over_26_and_On_Parent_s_Policy__c, Coverage_Details__c,
-               Representing_Request__c, Representing_Received__c,
-               Days_Authorized_From__c, Days_Authorized_To__c, Did_CM_Confirm_Level__c,
-               Authorization_Comments__c, Does_PH_Plan_to_Continue_Working__c,
-               ALS_ESRD_Black_Lung_Disease__c, Patient_Over_64_Years_of_Age__c
-        FROM Funding_Source__c WHERE Id=:fundingSource.Id
-        ORDER BY Type_of_Coverage__c LIMIT 1
-    ];
+    String query = 'SELECT ';
+    Set<String> fields = Schema.SObjectType.Funding_Source__c.fields.getMap().keySet();
+    for (String field: fields) {
+        query += field + ', ';
+    }
+    query = query.substring(0, query.length() - 2);
+    query += ' FROM Funding_Source__c WHERE Id=\'' + fundingSource.Id + '\' ORDER BY Type_of_Coverage__c LIMIT 1';
+    fundingSource = Database.query(query);
   }
 
   public void saveFundingSource() {
@@ -455,86 +418,86 @@ public with sharing class referral_Controller2 {
       return pg;
   }
     public PageReference redirectToConversion() {
-    
-    
+
+
     if (checkRequiredFields() ) {
           PageReference pg = new PageReference(REFERRAL_CONVERT_URL +'?id='+referralRecord.id);
           pg.setRedirect(true);
           return pg;
-          
+
     } else
-    	return null;
-    } 
+        return null;
+    }
    public boolean checkRequiredFields()
  {
     List<String> messages = new List<String>{};
     boolean hasReq = false;
-    
-    
+
+
     // requirements to create a new PBS
     if ( (string.valueOf(this.referralRecord.Person_Being_Served__c) == '' )) {
-        
+
         // need last name, state of residence
         if ( this.personBeingRefRecord.Last_Name__c == null) {
                 messages.Add( 'Last Name' );
                 this.personBeingRefRecord.Last_Name__c.AddError('Last Name' );
                 hasReq = false;
-        }   
+        }
         if ( this.personBeingRefRecord.State__c == null ) {
             messages.Add( ' Person Being Referred State' );
             hasReq = false;
         }
-        
+
         // dob and then if < 18 need a guardian
         if ( this.personBeingRefRecord.Date_of_Birth__c == null ) {
             messages.Add( 'Date of Birth' );
             this.personBeingRefRecord.Date_of_Birth__c.AddError('Value required for conversion');
             hasReq = false;
         } else {
-            
+
             // get age, if < 18, need a guardian
             if ( this.personBeingRefRecord.Age__c < 18 ) {
                 boolean hasGuardian = false;
-                
+
                 for ( Related_Party__c rp : this.relParties ) {
                     if ( rp.Type__c == 'Guardian') {
                         hasGuardian = true;
                         break;
                     }
                 }
-                
+
                 if ( !hasGuardian ) {
                     hasReq = false;
                     messages.Add( 'Person Being Referred is under 18 and requires a related party of type Guardian');
                 }
             }
-            
+
         }
     }
-    
+
     // requirements for admission and service assignment: anticipated admission date, anticipated location
     if ( this.referralRecord.Anticipated_Admission_Date__c == null ) {
         messages.Add( 'Anticipated Admission Date' );
         hasReq = false;
     }
-    
+
     System.Debug( ' anticipated service location = ' +this.referralRecord.Service_Location__c );
     if ( String.IsBlank(this.referralRecord.Service_Location_Program__c) ) {
         messages.Add( 'Anticipated Service Location' );
         hasReq = false;
     }
-    
+
     if ( messages.size() > 0 && !hasReq ) {
         ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
             'Please fill in the following fields to convert to an admission.'));
         for ( string s : messages ) {
             ApexPages.addMessage( new ApexPages.Message(ApexPages.Severity.ERROR, s));
-        }   
+        }
     } else
         hasReq = true;
-    
+
     return hasReq;
- }   
+ }
   public void unlinkPBR()
   {
       if (this.referralRecord.oldPBR__c != null) {
@@ -554,7 +517,7 @@ public with sharing class referral_Controller2 {
           this.pbsID = this.referralRecord.oldPBS__c;
           this.referralRecord.oldPBS__c = null;
           update this.referralRecord;
-          
+
           this.personBeingServedRecord = getPBSRec();
           populateRelParties();
       }
