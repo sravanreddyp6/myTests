@@ -1654,6 +1654,7 @@ document.onkeypress = stopRKey;
         </apex:outputPanel>
         <apex:pageBlockTable value="{!Referral__c.Evaluations__r}" var="evaluation">
           <apex:column headerValue="Name"><a href="/{!evaluation.Id}">{!evaluation.Name}</a></apex:column>
+          <apex:column headerValue="Signed" value="{!evaluation.Is_Signed__c}"></apex:column>
           <apex:column headerValue="Last Modified" value="{!evaluation.LastModifiedDate}" />
         </apex:pageBlockTable>
       </apex:pageBlockSection>
