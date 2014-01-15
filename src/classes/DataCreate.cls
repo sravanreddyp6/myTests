@@ -31,6 +31,8 @@ public with sharing class DataCreate {
 				} else {
 					if (pseudonyms.containskey((string)fieldmap.get(fieldname))){
 						newobj.put(fieldname, pseudonyms.get((string)fieldmap.get(fieldname)).id);
+					} else {
+						DelayedReferences.Add(new DelayedReference(newobj,fieldname, (string)fieldmap.get(fieldname)));
 					}
 				}
 			}
@@ -41,14 +43,17 @@ public with sharing class DataCreate {
 	
 	public integer FixReferences(){
 		List<DelayedReference> unresolved = new List<DelayedReference>();
+		List<SObject> updates = new List<Sobject>();
 		
 		for(DelayedReference ref: DelayedReferences){
 			if (pseudonyms.containskey(ref.ReferencedPseudonym)){
-				ref.Origin.put(ref.fieldName, pseudonyms.get(ref.ReferencedPseudonym));
+				ref.Origin.put(ref.fieldName, pseudonyms.get(ref.ReferencedPseudonym).id);
+				updates.Add(ref.Origin);
 			} else {
 				unresolved.Add(ref);
 			}
 		}
+		update updates;
 		DelayedReferences = unresolved;
 		return unresolved.size();
 	}

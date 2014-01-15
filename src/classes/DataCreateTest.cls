@@ -80,35 +80,37 @@ private class DataCreateTest {
         System.assertequals(0, c.FixReferences());
         System.assertequals(ref.id, sa.referral__c);
         
+        Service_Assignment__c dbsa = [select referral__c from Service_Assignment__c where id = :sa.id];
+        system.assertequals(ref.id, dbsa.referral__c);
     }
     
     static testmethod void PseudonymsTest(){
-    	DataCreate c = new DataCreate();
-    	
-    	Contact a1 = new Contact();
-    	Contact a2 = new Contact();
-    	
-    	c.PutPseudonym('a1', a1);
-    	system.assertequals(1, c.GetPseudonyms().size());
-    	system.assertequals(a1, c.GetPseudonym('a1'));
+        DataCreate c = new DataCreate();
+        
+        Contact a1 = new Contact();
+        Contact a2 = new Contact();
+        
+        c.PutPseudonym('a1', a1);
+        system.assertequals(1, c.GetPseudonyms().size());
+        system.assertequals(a1, c.GetPseudonym('a1'));
 
-    	c.PutPseudonym('a2', a1);
-    	system.assertequals(2, c.GetPseudonyms().size());
-    	system.assertequals(a2, c.GetPseudonym('a2'));
-    	
-    	system.assert(c.GetPseudonyms().contains('a1'));
-    	system.assert(c.GetPseudonyms().contains('a2'));
+        c.PutPseudonym('a2', a1);
+        system.assertequals(2, c.GetPseudonyms().size());
+        system.assertequals(a2, c.GetPseudonym('a2'));
+        
+        system.assert(c.GetPseudonyms().contains('a1'));
+        system.assert(c.GetPseudonyms().contains('a2'));
     }
     
     static testmethod void RequirementsTest(){
-    	map<string, list<string>> req = DataCreate.Requirements('Action_Plan_Objective__c');
-    	
-    	for(string classname:req.keyset()){
-    		system.debug('Class: '+ classname + ':' + String.Join(req.get(classname), ', '));
-    	}
-    	system.assertequals(3, req.size());
-    	list<string> apo_req = req.get('Action_Plan_Objective__c');
-    	
-    	system.assertequals(1, apo_req.size());
+        map<string, list<string>> req = DataCreate.Requirements('Action_Plan_Objective__c');
+        
+        for(string classname:req.keyset()){
+            system.debug('Class: '+ classname + ':' + String.Join(req.get(classname), ', '));
+        }
+        system.assertequals(3, req.size());
+        list<string> apo_req = req.get('Action_Plan_Objective__c');
+        
+        system.assertequals(1, apo_req.size());
     }
 }
