@@ -83,13 +83,15 @@ public with sharing class CareMeridianAnotoFormHandler implements AnotoFormHandl
                     }
                 }
             }
+            // Bypass the check in Josh's trigger
+            evaluation.Is_Being_Signed__c = evaluation.Is_Signed__c;
             System.debug('Before saving evaluation, pen upload errors: ' + evaluation.Pen_Upload_Error__c);
             saveEvaluation();
 
             // Get a brand new sobject record here so we don't run into
             // any other issue.
             Evaluation__c anotherEval = [
-                SELECT Id, Pen_Upload_Error__c FROM Evaluation__c
+                SELECT Id, Pen_Upload_Error__c, Is_Signed__c FROM Evaluation__c
                 WHERE Id=:evaluation.Id
             ];
             // Manually put together the address for related parties
@@ -214,6 +216,8 @@ public with sharing class CareMeridianAnotoFormHandler implements AnotoFormHandl
                     }
                 }
             }
+            // Bypass Josh's trigger again
+            anotherEval.Is_Being_Signed__c = anotherEval.Is_Signed__c;
             update anotherEval;
         }
 
