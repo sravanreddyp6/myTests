@@ -134,4 +134,33 @@ private class DataCreateTest {
         system.assertequals(mickey.id, adm.person_being_served__c);
         
     }
+    
+    static testmethod void ProcessDocTest(){
+        DataCreate c = new DataCreate();
+    	
+    	Document docorig = new Document();
+    	docorig.Body = Blob.valueof('<objects><object pseudonym="Mickey" classname="Contact">' + 
+    		'<field name="lastname">Mouse</field>' + 
+    		'<field name="personbirthdate">6/24/35</field></object>' + 
+    		'<object classname="Admission__c">' + 
+    		'<field name="state__c">CA</field>' + 
+    		'<field name="person_being_served__c">Mickey</field></object>' +
+    		'</objects>');
+    	docorig.Name = 'PBSMickey.xml';
+    	docorig.FolderId = [select id from Folder where name = 'DataCreate' limit 1].id;
+    	insert docorig;
+    	
+    	Document doc = [select Body from Document where Name = 'PBSMickey.xml'];
+    	System.AssertEquals(2, c.ProcessXmlDocument(doc));
+    		
+        Contact mickey = [select lastname from Contact];
+        system.assertequals('Mouse', mickey.lastname);
+        //system.assertequals(date.newinstance(1935,6,24), mickey.personbirthdate);
+        
+        Admission__c adm = [select state__c, person_being_served__c from Admission__c];
+        system.assertequals('CA', adm.state__c);
+        system.assertequals(mickey.id, adm.person_being_served__c);
+        
+    }
+    
 }

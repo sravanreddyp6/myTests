@@ -121,6 +121,10 @@ public with sharing class DataCreate {
 		return objCount;
 	}
 	
+	public integer ProcessXmlDocument(Document doc){
+		return ProcessXml(doc.Body.toString());
+	}
+	
 	private void PutWithCast(SObject newobj, Schema.DescribeFieldResult fielddescribe, object value){
 		if (fielddescribe.getType() == Schema.DisplayType.Reference){
 			if (pseudonyms.containskey((string)value)){
