@@ -281,6 +281,7 @@ public with sharing class referral_Controller2 {
     pBRId = (this.referralRecord.Person_Being_Referred__c != null) ? this.referralRecord.Person_Being_Referred__c : pBRIdParam;
   }
 
+	// CTEAE-9:  Josh added Race__c to the query to populate pBRRec.
   private Person_Being_Referred__c getPBRRec() {
     Person_Being_Referred__c pBRRec;
     try {
