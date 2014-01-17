@@ -9,7 +9,7 @@ public with sharing class CareMeridianEvaluationCommonController {
               AND Name='BodyMarkup.png'
         ];
         if (attachments.size() > 0) {
-            return System.URL.getSalesforceBaseURL().toExternalForm() + '/servlet/servlet.FileDownload?file=' + attachments[0].Id;
+            return '/servlet/servlet.FileDownload?file=' + attachments[0].Id;
         }
         return null;
     } }

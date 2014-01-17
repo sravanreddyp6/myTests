@@ -46,9 +46,15 @@ public with sharing class progressnote_actionplan_embed_ex {
       //  controller.AddFields (new List<String> {'Service_Assignment__c', 'Admission__c', 'Action_Plan__c'});
         note = (Progress_Note__c )controller.getRecord();
         
+        List<string> okstatus = new list<string>();
+        okstatus.add ('In Progress');
+        okstatus.add ('Revised');
+        okstatus.add ('New'); 
+        okstatus.add ('N/A');
+                
         if (note.action_plan__c != null){
             allgoals = [select id, description__c, 
-                            (select id, Description__c, status__c from action_plan_objectives__r Order BY Sort_Order__c) 
+                            (select id, Description__c, status__c from action_plan_objectives__r where status__c in :okstatus Order BY Sort_Order__c) 
                                     from Action_Plan_Goal__c 
                                         where Action_Plan__c = :note.Action_Plan__c Order BY Sort_Order__c];  
                                         
