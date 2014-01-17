@@ -62,6 +62,15 @@ public with sharing class DataCreate {
 		return obj;
 	}
 	
+	public SObject PutPseudonym(string pseudonym, string classname, string whereclause){
+		list<SObject> objs = database.query('select id from ' + classname + ' where ' + whereclause + ' limit 1');
+		if (objs.size() > 0){
+			Pseudonyms.Put(pseudonym, objs[0]);
+			return objs[0];
+		}
+		return null;
+	}
+	
 	public SObject GetPseudonym(string pseudonym){
 		return Pseudonyms.containskey(pseudonym) ? pseudonyms.get(pseudonym) : null;
 	}
@@ -109,20 +118,37 @@ public with sharing class DataCreate {
 		integer objCount = 0;
 		
 		for(Dom.XmlNode objnode: doc.getRootElement().getChildElements()){
+			List<DelayedPseudonym> delayedPseudonyms = new List<DelayedPseudonym>();
 			system.debug('Node: ' + objnode.getName() + ':' + objnode.GetAttributeValue('classname', ''));
 			map<string,Object> fieldmap = new map<string,Object>();
 			for(Dom.XmlNode fieldnode: objnode.getChildElements()){
 				system.debug('Field Node: ' + fieldnode.getName() + ':' + fieldnode.getAttributeValue('name', ''));
-				// todo: type based parsing????
 				fieldmap.Put(fieldnode.getAttributeValue('name', ''), fieldnode.getText());
+				string fieldpseudonym = fieldnode.getattributeValue('pseudonym', '');
+				if (fieldpseudonym != null){
+					delayedPseudonyms.Add(new DelayedPseudonym(fieldnode.getAttributeValue('name', ''), fieldpseudonym));
+				}
 			}
+			SObject newobj;
 			string pseudonym = objnode.getattributeValue('pseudonym', '');
 			if (pseudonym == null) {
-				CreateObject(objnode.GetAttributeValue('classname', ''), fieldmap);
+				newobj = CreateObject(objnode.GetAttributeValue('classname', ''), fieldmap);
 			} else {
-				CreateObject(objnode.GetAttributeValue('classname', ''), fieldmap, pseudonym);
+				newobj = CreateObject(objnode.GetAttributeValue('classname', ''), fieldmap, pseudonym);
 			}
 			objCount++;
+			
+			for(DelayedPseudonym delayed:delayedPseudonyms){
+				Object newval = newobj.get(delayed.Fieldname);
+				System.debug('Pseudonym value:' + newval);
+				if (newval instanceof SObject){
+					PutPseudonym(delayed.Pseudonym,(SObject)newval);
+				} else if (newval instanceof Id){
+					throw new DataCreateException('pull obj from db:' + (id)newval);
+				} else {
+					throw new DataCreateException('Unknown Obj:' + newval);
+				}
+			}
 		}
 		FixReferences();
 		
@@ -179,6 +205,16 @@ public with sharing class DataCreate {
 			this.origin = origin;
 			this.FieldName = fieldname;
 			this.ReferencedPseudonym = pseudonym;
+		}
+	}
+	
+	private class DelayedPseudonym {
+		public string FieldName {get;set;}
+		public string Pseudonym {get;set;}
+		
+		public DelayedPseudonym(string fieldname, string pseudonym){
+			this.FieldName = fieldname;
+			this.Pseudonym = pseudonym;
 		}
 	}
 	
