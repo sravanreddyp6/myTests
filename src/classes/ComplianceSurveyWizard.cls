@@ -21,7 +21,7 @@ public with sharing class ComplianceSurveyWizard {
 
     
     public ComplianceSurveyWizard(){
-        Boolean Submitted = [SELECT Id FROM Response__c WHERE TMN_User__r.Employee_Number__c =: getUserID()].size() >= 1; 
+        Boolean Submitted = [SELECT Id FROM Response__c WHERE Response__c.Survey__c != 'a0lU0000003YfSHIA0' AND TMN_User__r.Employee_Number__c =: getUserID()].size() >= 1; 
         //if(Submitted || ApexPages.currentPage().getCookies().get('submitted') != null){
         if(Submitted){
             QuestionID = 'Submitted';
@@ -177,6 +177,9 @@ public with sharing class ComplianceSurveyWizard {
             Response.First_Name__c = TMN_User.First_Name__c;
             Response.Last_Name__c = TMN_User.Last_Name__c;
             Response.Email__c = TMN_User.Email__c;
+            Response.Operating_Group__c = TMN_User.Operating_Group__c;
+            //Response.State__c = TMN_User.Work_State__c;
+            //Response.Supervisor_Name__c = TMN_User.Manager_Name__c;
             Response.Job_Title__c = TMN_User.Job_Title__c;
             Response.Note__c += 'I am ' + Response.First_Name__c + ' ' + Response.Last_Name__c + '<br/> Yes <br/><br/>';
             for(Question__c q : Questions){
