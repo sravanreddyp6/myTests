@@ -1041,7 +1041,8 @@ function stopRKey(evt) {
         </apex:pageBlockSectionItem>
         <apex:outputField value="{!Referral__c.Referrer_Address__c}" rendered="{!ReferralRecordType == 'Cambridge Florida' || ReferralRecordType == 'Cambridge Maryland'}"/>
         <apex:outputField value="{!Referral__c.Referrer_Email__c}" rendered="{!ReferralRecordType=='NeuroRestorative' || ReferralRecordType == 'Cambridge Florida' || ReferralRecordType == 'Cambridge Maryland'}"/>
-        <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
+        <apex:outputField value="{!Referral__c.Billing_ID__c}" rendered="{! isCambridge}" />
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative' }"/>
         <apex:outputField value="{!Referral__c.Referrer_Fax__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
         <apex:outputField value="{!Referral__c.Case_Manager_Name__c}" />
         <apex:outputField value="{!Referral__c.Case_Manager_Phone__c}" />
