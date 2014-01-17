@@ -1097,7 +1097,8 @@ document.onkeypress = stopRKey;
         <apex:inputField value="{!Referral__c.Referral_Source_Type_Other_Describe__c}" required="true" rendered="{!Referral__c.Referral_Source_Type__c=='Other'}" />
         <apex:inputField value="{!Referral__c.Agency_Name__c}" label="Referral Source" />
         <apex:inputField value="{!Referral__c.How_did_they_learn__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" />
-        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'CareMeridian'}" />
+        
+        <apex:pageBlockSectionItem rendered="{! ReferralRecordType == 'CareMeridian'}"  />
         <apex:inputField value="{!Referral__c.Referral_Name__c}" />
         <apex:inputText id="referrerPhone" label="Referrer Phone Number" value="{!Referral__c.Referral_Phone_Number__c}" onblur="j$('input[id$=referrerPhone]').val(this.value.replace(/(\d\d\d)(\d\d\d)(\d\d\d\d)/, '$1-$2-$3'))"/>
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType != 'CareMeridian'}" />
@@ -1115,7 +1116,9 @@ document.onkeypress = stopRKey;
         </apex:pageBlockSectionItem>
         <apex:inputField value="{!Referral__c.Referrer_Address__c}" rendered="{!ReferralRecordType=='Cambridge Florida' || ReferralRecordType=='Cambridge Maryland'}"/>
         <apex:inputField value="{!Referral__c.Referrer_Email__c}" rendered="{!ReferralRecordType=='NeuroRestorative' || ReferralRecordType=='Cambridge Florida' || ReferralRecordType=='Cambridge Maryland'}"/>
-        <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative' || isCambridge}"/>
+        <apex:inputField value="{!Referral__c.Billing_ID__c}" rendered="{!isCambridge}" />
+        
         <apex:inputText id="referrerFax" value="{!Referral__c.Referrer_Fax__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" onblur="j$('input[id$=referrerFax]').val(this.value.replace(/(\d\d\d)(\d\d\d)(\d\d\d\d)/, '$1-$2-$3'))"/>
         <apex:inputField value="{!Referral__c.Case_Manager_Name__c}" />
         <apex:inputField value="{!Referral__c.Case_Manager_Phone__c}" />
