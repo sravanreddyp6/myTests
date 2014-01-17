@@ -118,41 +118,38 @@ public with sharing class DataCreate {
 		integer objCount = 0;
 		
 		for(Dom.XmlNode objnode: doc.getRootElement().getChildElements()){
-			List<DelayedPseudonym> delayedPseudonyms = new List<DelayedPseudonym>();
-			system.debug('Node: ' + objnode.getName() + ':' + objnode.GetAttributeValue('classname', ''));
-			map<string,Object> fieldmap = new map<string,Object>();
-			for(Dom.XmlNode fieldnode: objnode.getChildElements()){
-				system.debug('Field Node: ' + fieldnode.getName() + ':' + fieldnode.getAttributeValue('name', ''));
-				fieldmap.Put(fieldnode.getAttributeValue('name', ''), fieldnode.getText());
-				string fieldpseudonym = fieldnode.getattributeValue('pseudonym', '');
-				if (fieldpseudonym != null){
-					delayedPseudonyms.Add(new DelayedPseudonym(fieldnode.getAttributeValue('name', ''), fieldpseudonym));
-				}
-			}
 			SObject newobj;
-			string pseudonym = objnode.getattributeValue('pseudonym', '');
-			if (pseudonym == null) {
-				newobj = CreateObject(objnode.GetAttributeValue('classname', ''), fieldmap);
-			} else {
-				newobj = CreateObject(objnode.GetAttributeValue('classname', ''), fieldmap, pseudonym);
-			}
-			objCount++;
-			
-			for(DelayedPseudonym delayed:delayedPseudonyms){
-				Object newval = newobj.get(delayed.Fieldname);
-				System.debug('Pseudonym value:' + newval);
-				if (newval instanceof SObject){
-					PutPseudonym(delayed.Pseudonym,(SObject)newval);
-				} else if (newval instanceof Id){
-					throw new DataCreateException('pull obj from db:' + (id)newval);
-				} else {
-					throw new DataCreateException('Unknown Obj:' + newval);
+			system.debug('Node: ' + objnode.getName() + ':' + objnode.GetAttributeValue('classname', ''));
+			if (objnode.getName() == 'object'){
+				map<string,Object> fieldmap = new map<string,Object>();
+				for(Dom.XmlNode fieldnode: objnode.getChildElements()){
+					system.debug('Field Node: ' + fieldnode.getName() + ':' + fieldnode.getAttributeValue('name', ''));
+					fieldmap.Put(fieldnode.getAttributeValue('name', ''), fieldnode.getText());
 				}
+				string pseudonym = objnode.getattributeValue('pseudonym', '');
+				if (pseudonym == null) {
+					newobj = CreateObject(objnode.GetAttributeValue('classname', ''), fieldmap);
+				} else {
+					newobj = CreateObject(objnode.GetAttributeValue('classname', ''), fieldmap, pseudonym);
+				}
+				objCount++;
+			} else if (objnode.getname() == 'pseudonym'){
+				PutPseudonym(objnode.GetAttributeValue('name', ''), 
+					objnode.GetAttributeValue('classname', ''),
+					ReplacePseudonymIds(objnode.GetAttributeValue('where', '')));
 			}
+			
 		}
 		FixReferences();
 		
 		return objCount;
+	}
+	
+	private string ReplacepseudonymIds(string whereClause){
+		for(string key:GetPseudonyms()){
+			whereClause = whereClause.replace(':' + key + '.Id', '\'' + GetPseudonym(key).Id + '\'');
+		}
+		return whereClause;
 	}
 	
 	public integer ProcessXmlDocument(Document doc){

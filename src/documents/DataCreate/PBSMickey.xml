@@ -1,10 +1,13 @@
 <objects>
-	<object pseudonym="Mickey" classname="Contact">
+	<object pseudonym="Mickey" classname="Account" recordtypeid="person_being_served">
     	<field name="lastname">Mouse</field>
-    	<field name="personbirthdate">6/24/35</field>
-	</object>
+    	<field name="personbirthdate">6/24/1935</field>
+    	<field name="personmailingstate">California</field>
+    	<field name="personContactid" pseudonym="mickeyc"></field>
+    </object>
+    <pseudonym name="mickeyc" classname="Contact" where="accountId=:Mickey.Id"/>
     <object classname="Admission__c">
     	<field name="state__c">CA</field>
-    	<field name="person_being_served__c">Mickey</field>
+    	<field name="person_being_served__c">mickeyc</field>
 	</object>
 </objects>

@@ -25,9 +25,12 @@ private class DataCreateTest {
     static testMethod void CreateAccount() {
         DataCreate c = new DataCreate();
         
+        c.PutPseudonym('Person_being_servedType', [select id from RecordType where developername='person_being_served' and sobjecttype= 'Account']);
         map<string, object> fieldmap = new map<string, object>();
         fieldmap.put('lastname', 'Mouse');
+        fieldmap.put('RecordTypeID', 'Person_being_servedType');
         fieldmap.put('personbirthdate', '5/7/1954');
+        fieldmap.put('personmailingstate', 'California');
         Account pbs = (Account)c.CreateObject('Account', fieldmap);
         
         System.assertequals('Mouse', pbs.lastname);
@@ -41,17 +44,23 @@ private class DataCreateTest {
     static testMethod void CreateAdmission() {
         DataCreate c = new DataCreate();
         
+        c.PutPseudonym('Person_being_servedType', [select id from RecordType where developername='person_being_served' and sobjecttype= 'Account']);
         map<string, object> fieldmap = new map<string, object>();
         fieldmap.put('lastname', 'Mouse');
+        fieldmap.put('RecordTypeID', 'Person_being_servedType');
         fieldmap.put('personbirthdate', date.newinstance(1954,5,7));
-        Contact pbs = (Contact)c.CreateObject('Contact', fieldmap, 'mickey');
+        fieldmap.put('personmailingstate', 'California');
+        Account pacct = (Account)c.CreateObject('Account', fieldmap, 'mickey');
         
+        c.PutPseudonym('mickeyContact', [select id from Contact where id in (select personcontactid from Account where id = :pacct.id)]);
+        
+        Account pbs = [select id, personcontactid, recordtypeid from account];
         map<string, object> fieldmap1 = new map<string, object>();
         fieldmap1.put('state', 'CA');
-        fieldmap1.put('person_being_served__c', 'mickey');
+        fieldmap1.put('person_being_served__c', 'mickeyContact');
         Admission__c adm = (Admission__c)c.CreateObject('Admission__c', fieldmap1);
-        System.assertequals(pbs.id, adm.person_being_served__c);
-        
+        System.assertequals(pbs.personcontactid, adm.person_being_served__c);
+        System.assertequals('012U0000000DbifIAC', pbs.recordtypeid);
     }
 
     static testMethod void CreateServiceAssignment() {
@@ -63,7 +72,7 @@ private class DataCreateTest {
         Contact pbs = (Contact)c.CreateObject('Contact', fieldmap, 'mickey');
         
         map<string, object> fieldmap1 = new map<string, object>();
-        fieldmap1.put('state', 'CA');
+        fieldmap1.put('personmailingstate', 'CA');
         fieldmap1.put('person_being_served__c', 'mickey');
         Admission__c adm = (Admission__c)c.CreateObject('Admission__c', fieldmap1, 'today');
         
@@ -100,6 +109,10 @@ private class DataCreateTest {
         
         system.assert(c.GetPseudonyms().contains('a1'));
         system.assert(c.GetPseudonyms().contains('a2'));
+        
+        c.PutPseudonym('pbstype', 'Recordtype', 'developername=\'person_being_served\' and sobjecttype=\'account\'');
+        system.assertequals('012U0000000DbifIAC',c.GetPseudonym('pbstype').id);
+        
     }
     
     static testmethod void RequirementsTest(){
@@ -117,21 +130,25 @@ private class DataCreateTest {
     static testmethod void FirstXml(){
         DataCreate c = new DataCreate();
     	
-    	System.AssertEquals(2, c.ProcessXml('<objects><object pseudonym="Mickey" classname="Contact">' + 
+    	System.AssertEquals(2, c.ProcessXml('<objects><object pseudonym="Mickey" classname="Account" recordtypeid="person_being_served">' + 
     		'<field name="lastname">Mouse</field>' + 
-    		'<field name="personbirthdate">6/24/35</field></object>' + 
+    		'<field name="personbirthdate">6/24/1935</field>' +
+    		'<field name="personmailingstate">California</field>' +
+    		'<field name="personContactid" pseudonym="mickeyc"></field>' +
+    		'</object>' + 
+    		'<pseudonym name="mickeyc" classname="Contact" where="accountId=:Mickey.Id"/>' +
     		'<object classname="Admission__c">' + 
     		'<field name="state__c">CA</field>' + 
-    		'<field name="person_being_served__c">Mickey</field></object>' +
+    		'<field name="person_being_served__c">mickeyc</field></object>' +
     		'</objects>'));
     		
-        Contact mickey = [select lastname from Contact];
+        Account mickey = [select lastname, personcontactid, personbirthdate from Account];
         system.assertequals('Mouse', mickey.lastname);
-        //system.assertequals(date.newinstance(1935,6,24), mickey.personbirthdate);
+        system.assertequals(date.newinstance(1935,6,24), mickey.personbirthdate);
         
         Admission__c adm = [select state__c, person_being_served__c from Admission__c];
         system.assertequals('CA', adm.state__c);
-        system.assertequals(mickey.id, adm.person_being_served__c);
+        system.assertequals(mickey.personcontactid, adm.person_being_served__c);
         
     }
     
@@ -139,12 +156,16 @@ private class DataCreateTest {
         DataCreate c = new DataCreate();
     	
     	Document docorig = new Document();
-    	docorig.Body = Blob.valueof('<objects><object pseudonym="Mickey" classname="Contact">' + 
+    	docorig.Body = Blob.valueof('<objects><object pseudonym="Mickey" classname="Account" recordtypeid="person_being_served">' + 
     		'<field name="lastname">Mouse</field>' + 
-    		'<field name="personbirthdate">6/24/35</field></object>' + 
+    		'<field name="personbirthdate">6/24/1935</field>' +
+    		'<field name="personmailingstate">California</field>' +
+    		'<field name="personContactid" pseudonym="mickeyc"></field>' +
+    		'</object>' + 
+    		'<pseudonym name="mickeyc" classname="Contact" where="accountId=:Mickey.Id"/>' +
     		'<object classname="Admission__c">' + 
     		'<field name="state__c">CA</field>' + 
-    		'<field name="person_being_served__c">Mickey</field></object>' +
+    		'<field name="person_being_served__c">mickeyc</field></object>' +
     		'</objects>');
     	docorig.Name = 'PBSMickey.xml';
     	docorig.FolderId = [select id from Folder where name = 'DataCreate' limit 1].id;
@@ -153,13 +174,13 @@ private class DataCreateTest {
     	Document doc = [select Body from Document where Name = 'PBSMickey.xml'];
     	System.AssertEquals(2, c.ProcessXmlDocument(doc));
     		
-        Contact mickey = [select lastname from Contact];
+        Account mickey = [select lastname, personcontactid, personbirthdate from Account];
         system.assertequals('Mouse', mickey.lastname);
-        //system.assertequals(date.newinstance(1935,6,24), mickey.personbirthdate);
+        system.assertequals(date.newinstance(1935,6,24), mickey.personbirthdate);
         
         Admission__c adm = [select state__c, person_being_served__c from Admission__c];
         system.assertequals('CA', adm.state__c);
-        system.assertequals(mickey.id, adm.person_being_served__c);
+        system.assertequals(mickey.personcontactid, adm.person_being_served__c);
         
     }
     
