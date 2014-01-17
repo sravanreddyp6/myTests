@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<objects>
+	<object pseudonym="luke" classname="Account" recordtypeid="person_being_served">
+    	<field name="lastname">Skywalker</field>
+    	<field name="firstname">Luke</field>
+    	<field name="personmailingstreet"></field>
+    	<field name="personmailingPostalCode">40215</field>
+    	<field name="personmailingCity">Raleigh</field>
+    	<field name="personmailingstate">North Carolina</field>
+    	<field name="personEmail">mentor.exam@gmail.com</field>
+    	<field name="personHomePhone">5555555555</field>
+    	<field name="personMobilePhone">5555555555</field>
+    </object>
+    <pseudonym name="lukec" classname="Contact" where="accountId=:luke.Id"/>
+    <object classname="Admission__c" pseudonym="testadm">
+    	<field name="person_being_served__c">lukec</field>
+    	<field name="Effective_Date__c">1/1/2013</field>
+    	<field name="Discharged_Date__c">6/30/2013</field>
+    	<field name="status__c">Discharged</field>
+    	<field name="discharged_status__c">Positive</field>
+    	<field name="Reason_for_Discharge__c">TEST REASON FOR DISCHARGE</field>
+		<field name="Network_Offering__c">ARY</field>
+	</object>
+    <object classname="Admission__c" pseudonym="testadm2">
+    	<field name="person_being_served__c">lukec</field>
+    	<field name="Effective_Date__c">7/1/2013</field>
+		<field name="Network_Offering__c">ARY</field>
+	</object>
+    <object classname="Service_Assignment__c" pseudonym="testsa">
+    	<field name="Admission__c">testadm</field>
+    	<field name="person_being_served__c">lukec</field>
+    	<field name="Start_Date__c">1/1/2013</field>
+    	<field name="End_Date__c">1/31/2013</field>
+		<field name="status__c">Inactive</field>
+	</object>
+    <object classname="Service_Assignment__c" pseudonym="testsa2">
+    	<field name="Admission__c">testadm</field>
+    	<field name="person_being_served__c">lukec</field>
+    	<field name="Start_Date__c">2/1/2013</field>
+    	<field name="End_Date__c">2/28/2013</field>
+		<field name="status__c">Inactive</field>
+	</object>
+    <object classname="Service_Assignment__c" pseudonym="testsa3">
+    	<field name="Admission__c">testadm2</field>
+    	<field name="person_being_served__c">lukec</field>
+    	<field name="Start_Date__c">7/1/2013</field>
+		<field name="status__c">Active</field>
+	</object>
+</objects>
