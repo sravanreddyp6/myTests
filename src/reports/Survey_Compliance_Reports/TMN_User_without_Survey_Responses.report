@@ -28,6 +28,11 @@
         <field>TMN_User__c.Work_State__c</field>
     </columns>
     <crossFilters>
+        <criteriaItems>
+            <column>Survey__c</column>
+            <operator>equals</operator>
+            <value>2014 Compliance Survey</value>
+        </criteriaItems>
         <operation>without</operation>
         <primaryTableColumn>CUST_ID</primaryTableColumn>
         <relatedTable>Response__c</relatedTable>
@@ -38,12 +43,17 @@
         <criteriaItems>
             <column>TMN_User__c.Email__c</column>
             <operator>contains</operator>
-            <value>thementornetwork.com,caremeridian.com</value>
+            <value>thementornetwork.com,caremeridian.com,neurorestorative.com</value>
         </criteriaItems>
         <criteriaItems>
             <column>TMN_User__c.Pay_Basis__c</column>
             <operator>equals</operator>
             <value>Salaried</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>TMN_User__c.Job_Status__c</column>
+            <operator>equals</operator>
+            <value>Active</value>
         </criteriaItems>
     </filter>
     <format>Tabular</format>
@@ -57,8 +67,6 @@
     <showDetails>true</showDetails>
     <timeFrameFilter>
         <dateColumn>TMN_User__c.Hire_Date__c</dateColumn>
-        <endDate>2012-12-31</endDate>
         <interval>INTERVAL_CUSTOM</interval>
-        <startDate>1900-04-30</startDate>
     </timeFrameFilter>
 </Report>
