@@ -23,12 +23,20 @@ public with sharing class DataCreate {
 		SObject newobj = info.getSobjectType().newSObject();
 		
 		Map<string,Schema.SObjectField> Fmap = info.fields.getmap();
+		Schema.SObjectField upsertfield = null;
 		for(string fieldname:fieldmap.keyset()){
 			if (fmap.containsKey(fieldname)){
 				PutWithCast(newobj, fmap.get(fieldname).getdescribe(),fieldmap.get(fieldname));
+				if (fmap.get(fieldname).getdescribe().isIdLookup()){
+					upsertfield = fmap.get(fieldname);
+				}
 			}
 		}
-		insert newobj;
+		if (upsertfield != null){
+			database.upsert(newobj, upsertfield);
+		} else {
+			insert newobj;
+		}
 		return newobj;
 	}
 	
