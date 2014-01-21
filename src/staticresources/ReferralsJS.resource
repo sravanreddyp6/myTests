@@ -41,16 +41,18 @@
     }
     validateFundingSource = function (referralRecordType) {
         var errors = [];
-        if (referralRecordType != 'CareMeridian' && $('select[id$=fundingEntry_Source]').val() == '') {
+        if (referralRecordType != 'CareMeridian' && referralRecordType != 'NeuroRestorative' && $('select[id$=fundingEntry_Source]').val() == '') {
             errors.push('Funding Source is required.');
-        } else if (referralRecordType == 'CareMeridian') {
+        }
+        if (referralRecordType == 'CareMeridian' || referralRecordType == 'NeuroRestorative') {
             // Validate dependent fields
             var inputFields = $('[id*=FundingSourceModal] select').filter(function () {
                 return (this.id.indexOf('field_validation') != -1);
             });
             $.each(inputFields, function (index, inputField) {
                 var fieldId = $(inputField).attr('id');
-                var fieldNum = fieldId.substr(fieldId.length - 1);
+                //var fieldNum = fieldId.substr(fieldId.length - 1);
+                var fieldNum = fieldId.substr(fieldId.indexOf('field_validation') + 16, fieldId.length);
                 var $fieldToCheck = $('[id*=FundingSourceModal] input[id*=field_check' + fieldNum + ']');
                 var $checkBoxLabel = $('label[for="' + $(inputField).attr('name') + '"]');
                 var $fieldLabel = $('label[for="' + $fieldToCheck.attr('name') + '"]');
@@ -58,6 +60,8 @@
                     errors.push($fieldLabel.text() + ' cannot be empty when ' + $checkBoxLabel.text() + ' is Yes');
                 }
             });
+        }
+        if (referralRecordType == 'CareMeridian') {
             // Additional Coverage
             if ($('[id*=additionalCoverage]').val() == 'Yes' && $('[id*=additionalCoverageDetail]').val() == '') {
                 errors.push('Please provide more detail for Additional Coverage');
@@ -70,6 +74,25 @@
             var $payerCmEmail = $('[id*=payerCmEmail]');
             if ($payerCmEmail.size()>0 && $payerCmEmail.val()!='' && !validateEmail($payerCmEmail.val())) {
                 errors.push('Payer CM Email does not seem to a valid email address');
+            }
+        }
+        if (referralRecordType == 'NeuroRestorative') {
+            // Validate email fields
+            var $claimsSubmissionEmail = $('[id*=claimsSubmissionEmail]');
+            if ($claimsSubmissionEmail.size()>0 && $claimsSubmissionEmail.val()!='' && !validateEmail($claimsSubmissionEmail.val())) {
+                errors.push('Claims Submission Email does not seem to a valid email address');
+            }
+            var $payerCmEmail = $('[id*=payerCmEmail]');
+            if ($payerCmEmail.size()>0 && $payerCmEmail.val()!='' && !validateEmail($payerCmEmail.val())) {
+                errors.push('Payer CM Email does not seem to a valid email address');
+            }
+            var $nrCmEmail = $('[id*=nrCmEmail]');
+            if ($nrCmEmail.size()>0 && $nrCmEmail.val()!='' && !validateEmail($nrCmEmail.val())) {
+                errors.push('NR CM Email does not seem to a valid email address');
+            }
+            var $adjusterEmail = $('[id*=adjusterEmail]');
+            if ($adjusterEmail.size()>0 && $adjusterEmail.val()!='' && !validateEmail($adjusterEmail.val())) {
+                errors.push('Adjustor Email does not seem to a valid email address');
             }
         }
         return errors;
@@ -97,5 +120,9 @@
     }
     fundingSourceClearMessages = function () {
         $('#fundingMessages').html('');
+    }
+    assignValue = function (elSelector, value) {
+        var $el = $(document.getElementById(elSelector));
+        $el.val(value);
     }
 }) (jQuery.noConflict());

@@ -6,6 +6,11 @@ public with sharing class Shift_Note_Basic {
     public map<string, clsPlan_Goal> Goals = new map<string, clsPlan_Goal>();
     public map<string, clsPlan_Goal> getGoals() {return Goals;}
     
+    public boolean canFinalize {get; set;}
+    
+    public map<string, list<action_plan_action__c>> mapActions = new map<string, list<action_plan_action__c>>();
+    public map<string, list<action_plan_action__c>> getMapActions(){ return mapActions ;}
+        
     public map<id, ProgressNote_ActionPlanChildren_mjo__c> childrenScope = new map<id, ProgressNote_ActionPlanChildren_mjo__c>();
     public map<id, ProgressNote_ActionPlanChildren_mjo__c> getchildrenScope() {return childrenScope ;}
     public boolean editMode {get; set;}
@@ -19,6 +24,7 @@ public with sharing class Shift_Note_Basic {
         }
         note = (Progress_Note__c )controller.getRecord();
         editMode = false;
+        canFinalize = false;
         if(apexpages.currentpage().getparameters().get('edit')=='1' && !note.locked__c){
             editMode= true;
         }
@@ -39,7 +45,8 @@ public with sharing class Shift_Note_Basic {
         List<string> okstatus = new list<string>();
         okstatus.add ('In Progress');
         okstatus.add ('Revised');
-        okstatus.add ('New');   
+        okstatus.add ('New'); 
+        okstatus.add ('N/A');   
         
         if (note.action_plan__c != null){
             allgoals = [select id, description__c, 
@@ -73,6 +80,10 @@ public with sharing class Shift_Note_Basic {
                         Goals.get(g.id).objs.get(o.id).inNote = childrenScope.containskey(o.id);
                     }     
             }
+            for(action_plan_objective__c o:[select id, (select description__c, id from Action_Plan_Actions__r order by Sort_Order__c) from action_plan_objective__c where action_plan_goal__r.action_plan__c = :note.Action_Plan__c]){
+                mapActions.put(o.id, o.Action_Plan_Actions__r);
+            
+            }             
         }
     }
     
@@ -175,17 +186,8 @@ public with sharing class Shift_Note_Basic {
         editMode = true;
         return null;
     }
-    public PageReference myFinal(){
-        PageReference pageRef = new PageReference('/apex/Notes_ProgressNote_Create_Flavor_PDF');
-        PageReference pageRefFlavor = ApexPages.currentPage();
-        pageRef .getParameters().put('id', note.id);
-        if(note.Number_of_Required_Signatures__c == 0 && note.RecordType.Name == 'FL-FSS Progress Note' ){
-            PageRefFlavor = new PageReference('/apex/Notes_ProgressNote_FL_FFS');
-            pageRefFlavor .getParameters().put('id', note.id);
-        }
-        
-        try{
-
+    public PageReference myCheckB4Final(){
+        canFinalize = false;
             if(note.Number_of_Required_Signatures__c <1){
                 note.no_approval_needed__c = false;
                 note.addError('Number of Required Signatures must be at least one before you can Finalize this note');
@@ -199,6 +201,17 @@ public with sharing class Shift_Note_Basic {
                return null;
             
             }
+            canFinalize = true;    
+        return null;
+    }
+    
+    public PageReference myFinal(){
+        PageReference pageRef = new PageReference('/apex/Notes_ProgressNote_Create_Flavor_PDF');
+        PageReference pageRefFlavor = ApexPages.currentPage();
+        pageRef .getParameters().put('id', note.id);
+        
+        try{
+
             
             PageReference Note_Pdf_ref = new PageReference('/');
             Note_Pdf_ref = new PageReference('/apex/Notes_ShiftNote_Pdf');

@@ -72,6 +72,55 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Adjuster_Company__c</fullName>
+        <externalId>false</externalId>
+        <label>Adjuster Company</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Adjuster_Email__c</fullName>
+        <externalId>false</externalId>
+        <label>Adjuster Email</label>
+        <required>false</required>
+        <type>Email</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Adjuster_Fax__c</fullName>
+        <externalId>false</externalId>
+        <label>Adjuster Fax</label>
+        <required>false</required>
+        <type>Phone</type>
+    </fields>
+    <fields>
+        <fullName>Adjuster_Name__c</fullName>
+        <externalId>false</externalId>
+        <label>Adjuster Name</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Adjuster_Phone__c</fullName>
+        <externalId>false</externalId>
+        <label>Adjuster Phone</label>
+        <required>false</required>
+        <type>Phone</type>
+    </fields>
+    <fields>
+        <fullName>Are_injuries_covered__c</fullName>
+        <externalId>false</externalId>
+        <label>Are Injuries Covered</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Authorization_Comments__c</fullName>
         <externalId>false</externalId>
         <label>Authorization Comments</label>
@@ -127,6 +176,14 @@
             </picklistValues>
             <picklistValues>
                 <fullName>Spell of Illness</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Contract Year</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Month to Month</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -560,6 +617,15 @@
         <type>Date</type>
     </fields>
     <fields>
+        <fullName>Days_Authorized__c</fullName>
+        <externalId>false</externalId>
+        <label>Days Authorized</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Deductible_Applicable_to_OOP__c</fullName>
         <externalId>false</externalId>
         <label>Deductible Applicable to OOP</label>
@@ -602,6 +668,23 @@
         <required>false</required>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Did_drugs_alcohol_contribute_to_injury__c</fullName>
+        <externalId>false</externalId>
+        <label>Did drugs/alcohol contribute to injury</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Does_PH_Plan_to_Continue_Working__c</fullName>
@@ -1322,6 +1405,15 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>In_patient_Benefits_Limit__c</fullName>
+        <externalId>false</externalId>
+        <label>In-patient Benefits Limit</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Individual_Plan__c</fullName>
         <externalId>false</externalId>
         <label>Individual Plan</label>
@@ -1337,6 +1429,23 @@
             <sorted>false</sorted>
         </picklist>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Insured_DOB__c</fullName>
+        <externalId>false</externalId>
+        <label>Insured DOB</label>
+        <required>false</required>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Insured_SSN__c</fullName>
+        <externalId>false</externalId>
+        <label>Insured SSN</label>
+        <length>11</length>
+        <maskChar>X</maskChar>
+        <maskType>ssn</maskType>
+        <required>false</required>
+        <type>EncryptedText</type>
     </fields>
     <fields>
         <fullName>Internal_Contact__c</fullName>
@@ -1464,6 +1573,55 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>NR_CM_Company__c</fullName>
+        <externalId>false</externalId>
+        <label>NR CM Company</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>NR_CM_Email__c</fullName>
+        <externalId>false</externalId>
+        <label>NR CM Email</label>
+        <required>false</required>
+        <type>Email</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>NR_CM_Fax__c</fullName>
+        <externalId>false</externalId>
+        <label>NR CM Fax</label>
+        <required>false</required>
+        <type>Phone</type>
+    </fields>
+    <fields>
+        <fullName>NR_CM_Name__c</fullName>
+        <externalId>false</externalId>
+        <label>NR CM Name</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>NR_CM_Phone__c</fullName>
+        <externalId>false</externalId>
+        <label>NR CM Phone</label>
+        <required>false</required>
+        <type>Phone</type>
+    </fields>
+    <fields>
+        <fullName>Negotiated_Rate__c</fullName>
+        <externalId>false</externalId>
+        <label>Negotiated Rate</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Network_Phone__c</fullName>
         <externalId>false</externalId>
         <label>Network Phone</label>
@@ -1504,6 +1662,16 @@
         <length>255</length>
         <required>false</required>
         <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Out_patient_Visit_Limit__c</fullName>
+        <externalId>false</externalId>
+        <label>Out-patient Visit Limit</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
         <unique>false</unique>
     </fields>
     <fields>
@@ -1554,6 +1722,79 @@
         <label>Payer Phone</label>
         <required>false</required>
         <type>Phone</type>
+    </fields>
+    <fields>
+        <fullName>Payer_Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Payer Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Insurance HMO</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Insurance PPO</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Insurance POS</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Insurance EPO</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Insuarnce Indemnity</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Medicaid</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Medi-Cal</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Medicare</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Managed Medicare</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Managed Medicaid</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Managed Medi-Cal</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Private Pay - Lien</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Private Pay - Cash</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Regional Center</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Work Comp</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>VA</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Payer_Verification_Date__c</fullName>
@@ -1715,6 +1956,15 @@
         <label>Received Date Time</label>
         <required>false</required>
         <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Received_Rate__c</fullName>
+        <externalId>false</externalId>
+        <label>Received Rate</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Reference_Number__c</fullName>
@@ -1890,6 +2140,23 @@
         <fullName>Self_Inflicted__c</fullName>
         <externalId>false</externalId>
         <label>Is Dx Self Inflicted</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Self_Insured_Policy__c</fullName>
+        <externalId>false</externalId>
+        <label>Self-Insured Policy</label>
         <picklist>
             <picklistValues>
                 <fullName>Yes</fullName>
@@ -7042,6 +7309,246 @@
         <active>true</active>
         <label>NeuroRestorative</label>
         <picklistValues>
+            <picklist>Benefit_Cycle__c</picklist>
+            <values>
+                <fullName>Calendar Year</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Contract Year</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month to Month</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Claims_Submission_State__c</picklist>
+            <values>
+                <fullName>AK</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>AL</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>AR</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>AZ</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>CA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>CO</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>CT</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DE</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>FL</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>GA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HI</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IL</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IN</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>KS</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>KY</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>LA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MD</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MI</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MN</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MO</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MS</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MT</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>NC</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ND</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>NE</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>NH</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>NJ</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>NM</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>NV</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>NY</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>OH</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>OK</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>OR</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>RI</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SC</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SD</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>TN</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>TX</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>UT</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>VA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>VT</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>WA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>WI</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>WV</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>WY</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Cobra__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Did_drugs_alcohol_contribute_to_injury__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Funding_Source__c</picklist>
             <values>
                 <fullName>Group Health</fullName>
@@ -7057,6 +7564,136 @@
             </values>
             <values>
                 <fullName>Workers Comp</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Payer_Type__c</picklist>
+            <values>
+                <fullName>Insuarnce Indemnity</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Insurance EPO</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Insurance HMO</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Insurance POS</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Insurance PPO</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Managed Medi-Cal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Managed Medicaid</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Managed Medicare</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medi-Cal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medicaid</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medicare</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Private Pay - Cash</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Private Pay - Lien</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Regional Center</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>VA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Work Comp</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Precert_Required__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Relationship_To_Patient__c</picklist>
+            <values>
+                <fullName>Employer</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Parent</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Patient%2FSelf</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Spouse</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>RoR_to_100_after_met_OOP_Max__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Self_Inflicted__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Self_Insured_Policy__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7087,6 +7724,25 @@
             </values>
             <values>
                 <fullName>Pending Approval</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type_of_Coverage__c</picklist>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Primary</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Secondary</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Tertiary</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
