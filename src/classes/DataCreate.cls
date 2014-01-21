@@ -1,6 +1,7 @@
 public with sharing class DataCreate {
 	private map<string, sobject> pseudonyms = new map<string, sobject>();
 	private List<DelayedReference> DelayedReferences = new List<DelayedReference>();
+	private integer DMLCount = 0;
 	
 	public SObject CreateObject(string classname, map<string, object> fieldmap, string pseudonym){
 		SObject sobj = CreateObject(classname, fieldmap);
@@ -34,8 +35,18 @@ public with sharing class DataCreate {
 		}
 		if (upsertfield != null){
 			database.upsert(newobj, upsertfield);
+			DmlCount++; System.Debug('DML Count ' + DmlCount);
 		} else {
-			insert newobj;
+			try {
+				insert newobj;
+				DmlCount++; System.Debug('DML Count ' + DmlCount);
+			} catch (System.DmlException excp){
+				if (excp.getDmlType(0) == StatusCode.DUPLICATE_VALUE){
+					newobj.Id = ParseIdFromDuplicateMessage(excp.GetDmlMessage(0));
+					update newobj; 
+					DmlCount++; System.Debug('DML Count ' + DmlCount);
+				}
+			}
 		}
 		return newobj;
 	}
@@ -64,6 +75,7 @@ public with sharing class DataCreate {
 	
 	public SObject PutPseudonym(string pseudonym, string classname, string whereclause){
 		list<SObject> objs = database.query('select id from ' + classname + ' where ' + whereclause + ' limit 1');
+		DmlCount++; System.Debug('DML Count ' + DmlCount);
 		if (objs.size() > 0){
 			Pseudonyms.Put(pseudonym, objs[0]);
 			return objs[0];
@@ -156,6 +168,14 @@ public with sharing class DataCreate {
 		return ProcessXml(doc.Body.toString());
 	}
 	
+	@future
+	public static void FutureProcessDocument(string docname){
+		Document doc = [select Body from Document where developername = :docname limit 1];
+		DataCreate c = new DataCreate();
+		c.ProcessXml(doc.Body.toString());
+		
+	}
+	
 	private void PutWithCast(SObject newobj, Schema.DescribeFieldResult fielddescribe, object value){
 		if (fielddescribe.getType() == Schema.DisplayType.Reference){
 			if (pseudonyms.containskey((string)value)){
@@ -188,6 +208,12 @@ public with sharing class DataCreate {
 		} else {
 			newobj.put(fielddescribe.Name, value);
 		}
+	}
+	
+	private Id ParseIdFromDuplicateMessage(string msg){
+		string match = msg.substringAfterLast('record with id: ');
+		system.debug(msg + 'Match Id: ' + match);
+		return (Id)match;
 	}
 	
 	public class DataCreateException extends Exception{
