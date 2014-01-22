@@ -407,13 +407,15 @@ function stopRKey(evt) {
             <apex:outputText label="" value="{!personBeingRefRecord.Last_Name__c}" />
           </apex:outputPanel>
         </apex:pageBlockSectionItem>
-        <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}"/>
         <apex:outputField value="{!personBeingRefRecord.Ethnicity__c}"/>
-
+        
+        <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}"/>
         <apex:outputField value="{!personBeingRefRecord.Race__c}"/>
+        
+        <apex:outputField value="{!personBeingRefRecord.Age__c}" id="pbrAge"/>
         <apex:outputField value="{!personBeingRefRecord.Marital_Status__c}"/>
 
-        <apex:outputField value="{!personBeingRefRecord.Age__c}" id="pbrAge"/>
+        <apex:outputField value="{!personBeingRefRecord.Gender__c}"/>
         <apex:pageBlockSectionItem >
           <apex:outputText value="Primary Language"/>
           <apex:outputPanel styleClass="nowrap">
@@ -424,13 +426,8 @@ function stopRKey(evt) {
             <apex:outputField value="{!personBeingRefRecord.Sign_Language__c}"  />
           </apex:outputPanel>
         </apex:pageBlockSectionItem>
-
-
-        <apex:outputField value="{!personBeingRefRecord.Gender__c}"/>
+        
         <apex:outputField value="{!personBeingRefRecord.SSN__c}"/>
-
-
-
       </apex:pageBlockSection>
       <apex:pageBlockSection showHeader="false"
                              columns="1"
