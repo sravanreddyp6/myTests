@@ -318,14 +318,15 @@ document.onkeypress = stopRKey;
             <apex:inputText label="" value="{!personBeingRefRecord.Last_Name__c}" />
           </apex:outputPanel>
         </apex:pageBlockSectionItem>
-        <apex:inputField value="{!personBeingRefRecord.Date_of_Birth__c}"/>
         <apex:inputField value="{!personBeingRefRecord.Ethnicity__c}"/>
-
+        
+        <apex:inputField value="{!personBeingRefRecord.Date_of_Birth__c}"/>
         <apex:inputField value="{!personBeingRefRecord.Race__c}"/>
+ 
+        <apex:inputField value="{!personBeingRefRecord.Age__c}" id="pbrAge" />       
         <apex:inputField value="{!personBeingRefRecord.Marital_Status__c}"/>
 
-        <apex:inputField value="{!personBeingRefRecord.Age__c}" id="pbrAge" />
-
+        <apex:inputField value="{!personBeingRefRecord.Gender__c}"/>
         <apex:pageBlockSectionItem helpText="{!$ObjectType.Person_Being_Referred__c.fields.Non_Verbal__c.inlineHelpText}">
           <apex:outputText value="Primary Language"/>
           <apex:outputPanel styleClass="nowrap">
@@ -336,20 +337,16 @@ document.onkeypress = stopRKey;
             <apex:inputField value="{!personBeingRefRecord.Sign_Language__c}"  />
           </apex:outputPanel>
         </apex:pageBlockSectionItem>
-
-
-        <apex:inputField value="{!personBeingRefRecord.Gender__c}"/>
         <apex:inputField value="{!personBeingRefRecord.SSN__c}"/>
-
-
-
-      </apex:pageBlockSection>
+      </apex:pageBlockSection>     
       <apex:pageBlockSection showHeader="false"
                              columns="1"
                              collapsible="false"
                              rendered="{!ISNULL(personBeingServedRecord.id)}">
         <apex:inputField value="{!personBeingRefRecord.Additional_Information_Comments__c}" style="width: 90%;" />
-      </apex:pageBlockSection>
+      </apex:pageBlockSection>       
+
+
 
       <apex:pageBlockSection title="Contact Information"
                              showHeader="true"
