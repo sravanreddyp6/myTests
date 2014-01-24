@@ -1,0 +1,36 @@
+<apex:page standardController="Progress_Note__c" extensions="Notes_ProgressNote_Svc_Code_Selection" >
+
+<apex:variable var="Final" value="{!IF(Progress_Note__c.Status__c='Final',True,False)}"/>
+<apex:variable var="Pending" value="{!IF(Progress_Note__c.Approval_Status__c='Pending',True,False)}"/>
+<apex:form id="myFrm" >
+<apex:pageMessages ></apex:pageMessages>
+
+    <apex:pageBlock mode="mainDetail" >
+                    <apex:actionStatus id="myStatus">
+                        <apex:facet name="start">
+                            <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                                <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Saving... <span class="waitingDescription"></span>
+                            </div>
+                        </apex:facet>
+                        <apex:facet name="stop"></apex:facet>
+                    </apex:actionStatus>    
+          <apex:pageBlockSection title="Service Code and Authorization" collapsible="false" >
+
+
+
+          <apex:selectList size="1" title="Service Code" value="{!Progress_Note__c.Service_Code__c}" rendered="{!!Final}" disabled="{!Pending}">
+                <apex:selectOptions value="{!Codes}"></apex:selectOptions>
+                <apex:actionSupport event="onchange" reRender="myFrm" status="myStatus" action="{!quicksave}"/>
+            </apex:selectList>
+            
+          <apex:selectList size="1" title="Authorization" value="{!Progress_Note__c.Authorization__c}"  rendered="{!!Final}" disabled="{!Pending}">
+                
+            <apex:selectOptions value="{!Auths}"></apex:selectOptions>
+                    <apex:actionSupport event="onchange" reRender="myFrm" status="myStatus" action="{!quicksave}"/>
+            </apex:selectList>
+            <apex:outputField label="Service Code" value="{!Progress_Note__c.Service_Code__r.Service_Value__c}"  rendered="{!Final}"/>
+            <apex:outputField label="Authorization" value="{!Progress_Note__c.Authorization__r.Display_Name__c}"  rendered="{!Final}"/>            
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+</apex:form>
+</apex:page>

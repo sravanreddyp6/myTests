@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>An object to hold records representing Service Assignment / Contract cross-references for the Document Tracker feature.</description>
+    <enableActivities>false</enableActivities>
+    <enableEnhancedLookup>false</enableEnhancedLookup>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>false</enableReports>
+    <fields>
+        <fullName>Contract__c</fullName>
+        <description>The Contract for this Service Assignment / Contract cross-reference.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The Contract for this Service Assignment / Contract cross-reference.</inlineHelpText>
+        <label>-Contract</label>
+        <referenceTo>TMN_Contract__c</referenceTo>
+        <relationshipName>ServiceAssignment_Contract_JOs</relationshipName>
+        <relationshipOrder>1</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Service_Assignment__c</fullName>
+        <description>The Service Assignment for this Service Assignment / Contract cross-reference.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The Service Assignment for this Service Assignment / Contract cross-reference.</inlineHelpText>
+        <label>Service Assignment</label>
+        <referenceTo>Service_Assignment__c</referenceTo>
+        <relationshipName>ServiceAssignment_Contract_JOs</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <label>Contract Association</label>
+    <nameField>
+        <displayFormat>ServAssgn_Cntrct_JO-{0000000}</displayFormat>
+        <label>ServiceAssignment_Contract_JO Name</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Contract Associations</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ControlledByParent</sharingModel>
+</CustomObject>
