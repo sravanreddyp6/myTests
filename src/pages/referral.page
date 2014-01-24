@@ -1628,9 +1628,11 @@ document.onkeypress = stopRKey;
 
       </apex:pageBlockSection>
       <apex:pageBlockSection showHeader="false" columns="1" collapsible="false" id="ReferralServices">
-        <apex:inputField value="{!Referral__c.Program_Category__c}" rendered="{!isCambridge}"/>
-        <apex:inputField value="{!Referral__c.Service_Line__c}" rendered="{!isCambridge}"/>
-        <apex:inputField id="servicesRequested" value="{!Referral__c.Services_Requested__c}" Rendered="{!referralRecordType!='CareMeridian'}"/>
+        <apex:inputField value="{!Referral__c.Program_Category__c}" rendered="{!isCambridge}" required="{!isCambridge}"/>
+        <br />
+        <apex:inputField value="{!Referral__c.Service_Line__c}" rendered="{!isCambridge}" required="{!isCambridge}"/>
+        <br />
+        <apex:inputField id="servicesRequested" value="{!Referral__c.Services_Requested__c}" Rendered="{!referralRecordType!='CareMeridian'}" required="{!isCambridge}"/>
         <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Family_History__c}" rendered="{!isCambridge}"/>
         <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Medical_History__c}" rendered="{!isCambridge}"/>
         <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Behavior_Summary__c}" rendered="{!isCambridge}"/>
