@@ -81,6 +81,7 @@ public list<ProgressNote_ActionPlanChildren_mjo__c> getNote_plan_joins(){
                                     
                                             AND Person_Being_Served__c In :selectedPBS 
                                             AND Healthcare_Medical_Note__c in :isHCfilter.Values() 
+                                            AND RecordType.DeveloperName = 'Shift_Note'
                                         ORDER BY CreatedDate ];      
      
         return null;

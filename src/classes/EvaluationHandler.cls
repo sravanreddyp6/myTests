@@ -150,9 +150,6 @@ public with sharing class EvaluationHandler {
             'rash__c' => new Map<String, String[]>{
                 '1' => new String[] {'rash_description__c', 'rash_location__c'}
             },
-            'intact__c' => new Map<String, String[]>{
-                '1' => new String[] {'rash__c'}
-            },
             'burns__c' => new Map<String, String[]>{
                 '1' => new String[] {'tbsa_percent__c', 'burns_area__c'}
             },

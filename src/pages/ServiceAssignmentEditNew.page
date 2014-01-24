@@ -1,5 +1,5 @@
 <apex:page standardController="Service_Assignment__c" extensions="ServiceAssignmentExt" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab" showheader="true">
-<apex:stylesheet value="{!$Resource.mentoresdcss}" />
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:stylesheet value="{!$Resource.pbscardcss}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
@@ -558,6 +558,8 @@ END: Uncomment to have the element collapsed by default -->
 
      <apex:column rendered="{!editSA}" headerValue="Action"><a href="#Diag" onclick="showEditDiagnosis('{!dg.id}');return false;">Edit</a></apex:column>
      <apex:column headerValue="Effective Date" value="{!dg.Effective_Date__c}"/>
+     <apex:column value="{!dg.Primary_Diagnosis__c}"  headerValue="Primary" />
+     <apex:column value="{!dg.Secondary_Diagnosis__c}"  headerValue="Secondary" />
      <apex:column value="{!dg.Axis_I__c}"  headerValue="Axis I" />
      <apex:column value="{!dg.Axis_II__c}" headerValue="Axis II" />
      <apex:column value="{!dg.Axis_III__c}" headerValue="Axis III" />

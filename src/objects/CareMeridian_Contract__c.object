@@ -5,6 +5,10 @@
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
         <actionName>Clone</actionName>
         <type>Default</type>
     </actionOverrides>
@@ -19,6 +23,10 @@
         <type>Visualforce</type>
     </actionOverrides>
     <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
         <actionName>List</actionName>
         <type>Default</type>
     </actionOverrides>
@@ -27,6 +35,10 @@
         <content>CMContract_Form</content>
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
         <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
     </actionOverrides>
     <actionOverrides>
         <actionName>Tab</actionName>
@@ -38,6 +50,7 @@
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
         <type>Visualforce</type>
     </actionOverrides>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
     <enableActivities>true</enableActivities>
     <enableFeeds>true</enableFeeds>
@@ -420,18 +433,20 @@
         </picklist>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Billed_Rate_Bed_Holds__c</fullName>
         <externalId>false</externalId>
         <label>Billed Rate Bed Holds</label>
-        <precision>18</precision>
+        <length>255</length>
         <required>false</required>
-        <scale>0</scale>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
-        <type>Currency</type>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Billed_Rate_Level_1__c</fullName>
@@ -442,6 +457,7 @@
         <scale>2</scale>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Currency</type>
     </fields>
     <fields>
@@ -453,6 +469,7 @@
         <scale>2</scale>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Currency</type>
     </fields>
     <fields>
@@ -464,6 +481,7 @@
         <scale>2</scale>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Currency</type>
     </fields>
     <fields>
@@ -475,6 +493,7 @@
         <scale>2</scale>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Currency</type>
     </fields>
     <fields>
@@ -486,6 +505,7 @@
         <scale>2</scale>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Currency</type>
     </fields>
     <fields>
@@ -529,6 +549,7 @@
         </picklist>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>MultiselectPicklist</type>
         <visibleLines>5</visibleLines>
     </fields>
@@ -539,6 +560,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>TextArea</type>
     </fields>
     <fields>
@@ -548,6 +570,7 @@
         <length>32768</length>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>5</visibleLines>
     </fields>
@@ -568,6 +591,7 @@
         </picklist>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -577,6 +601,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>TextArea</type>
     </fields>
     <fields>
@@ -586,6 +611,7 @@
         <label>Customized DME</label>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -597,6 +623,7 @@
         <required>false</required>
         <scale>0</scale>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -607,6 +634,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>TextArea</type>
     </fields>
     <fields>
@@ -616,6 +644,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>TextArea</type>
     </fields>
     <fields>
@@ -625,6 +654,7 @@
         <label>Dialysis</label>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -634,6 +664,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>TextArea</type>
     </fields>
     <fields>
@@ -693,6 +724,7 @@
         </picklist>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>MultiselectPicklist</type>
         <visibleLines>3</visibleLines>
     </fields>
@@ -713,6 +745,7 @@
         </picklist>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -722,6 +755,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>TextArea</type>
     </fields>
     <fields>
@@ -749,6 +783,7 @@
         </picklist>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -759,6 +794,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -803,6 +839,7 @@
         </picklist>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -822,6 +859,7 @@
         </picklist>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -831,6 +869,7 @@
         <label>Initial</label>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -841,6 +880,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -852,6 +892,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -863,6 +904,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -874,6 +916,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -885,6 +928,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1009,6 +1053,7 @@
         </picklist>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>MultiselectPicklist</type>
         <visibleLines>5</visibleLines>
     </fields>
@@ -1022,6 +1067,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -1031,6 +1077,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>TextArea</type>
     </fields>
     <fields>
@@ -1040,6 +1087,7 @@
         <label>Non-CareMeridian Radiology Services</label>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1049,6 +1097,7 @@
         <label>Open Ended Termination Date</label>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1064,6 +1113,7 @@
         </picklist>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -1073,6 +1123,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>TextArea</type>
     </fields>
     <fields>
@@ -1082,6 +1133,7 @@
         <label>Other Ex</label>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1092,6 +1144,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1136,6 +1189,7 @@
         </picklist>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -1155,6 +1209,7 @@
         </picklist>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -1166,6 +1221,7 @@
         <scale>0</scale>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Percent</type>
     </fields>
     <fields>
@@ -1175,6 +1231,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>TextArea</type>
     </fields>
     <fields>
@@ -1184,6 +1241,7 @@
         <label>Pharmacy</label>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1193,6 +1251,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>TextArea</type>
     </fields>
     <fields>
@@ -1202,6 +1261,7 @@
         <label>Physician Visits</label>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1215,6 +1275,10 @@
             </picklistValues>
             <picklistValues>
                 <fullName>Insurance Co</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Lien</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -1249,6 +1313,7 @@
         </picklist>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>MultiselectPicklist</type>
         <visibleLines>4</visibleLines>
     </fields>
@@ -1262,18 +1327,20 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Reimbursement_Rate_Bed_Holds__c</fullName>
         <externalId>false</externalId>
         <label>Reimbursement Rate Bed Holds</label>
-        <precision>18</precision>
+        <length>255</length>
         <required>false</required>
-        <scale>0</scale>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
-        <type>Currency</type>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Reimbursement_Rate_Level_1__c</fullName>
@@ -1284,6 +1351,7 @@
         <scale>2</scale>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Currency</type>
     </fields>
     <fields>
@@ -1295,6 +1363,7 @@
         <scale>2</scale>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Currency</type>
     </fields>
     <fields>
@@ -1306,6 +1375,7 @@
         <scale>2</scale>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Currency</type>
     </fields>
     <fields>
@@ -1317,6 +1387,7 @@
         <scale>2</scale>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Currency</type>
     </fields>
     <fields>
@@ -1328,6 +1399,7 @@
         <scale>2</scale>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Currency</type>
     </fields>
     <fields>
@@ -1337,6 +1409,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
     <fields>
@@ -1346,6 +1419,7 @@
         <label>Renewed / Amended</label>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1356,6 +1430,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1384,6 +1459,7 @@
         </picklist>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -1394,6 +1470,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1414,6 +1491,7 @@
         </picklist>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -1457,6 +1535,7 @@
         </picklist>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -1484,6 +1563,7 @@
         </picklist>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>MultiselectPicklist</type>
         <visibleLines>4</visibleLines>
     </fields>
@@ -1494,6 +1574,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>TextArea</type>
     </fields>
     <fields>
@@ -1503,6 +1584,7 @@
         <label>Specialized DME</label>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1512,6 +1594,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>TextArea</type>
     </fields>
     <fields>
@@ -1521,6 +1604,7 @@
         <label>Specialty Beds</label>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1530,6 +1614,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
     <fields>
@@ -1561,6 +1646,7 @@
         </picklist>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>MultiselectPicklist</type>
         <visibleLines>4</visibleLines>
     </fields>
@@ -1581,6 +1667,7 @@
         </picklist>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -1591,6 +1678,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
     <fields>
@@ -1601,6 +1689,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
     <fields>
@@ -1613,6 +1702,7 @@
         <label>Termination Group</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1625,6 +1715,7 @@
         <scale>0</scale>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -1657,6 +1748,7 @@
         </picklist>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -1666,6 +1758,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>TextArea</type>
     </fields>
     <fields>
@@ -1675,6 +1768,7 @@
         <label>Therapy</label>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1684,6 +1778,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>TextArea</type>
     </fields>
     <fields>
@@ -1693,7 +1788,33 @@
         <label>Transportation</label>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Type_of_Change__c</fullName>
+        <externalId>false</externalId>
+        <label>Type of Change</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Rate</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Location</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>MultiselectPicklist</type>
+        <visibleLines>3</visibleLines>
     </fields>
     <fields>
         <fullName>Wound_Vac_Details__c</fullName>
@@ -1702,6 +1823,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>TextArea</type>
     </fields>
     <fields>
@@ -1711,6 +1833,7 @@
         <label>Wound Vac</label>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1720,6 +1843,7 @@
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>TextArea</type>
     </fields>
     <fields>
@@ -1729,6 +1853,7 @@
         <label>1:1 Sitter</label>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1738,6 +1863,7 @@
         <label>email temp is record new</label>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <label>CareMeridian Contract</label>

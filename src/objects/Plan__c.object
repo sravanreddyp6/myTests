@@ -5,6 +5,10 @@
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
         <actionName>Clone</actionName>
         <type>Default</type>
     </actionOverrides>
@@ -17,11 +21,19 @@
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
         <actionName>List</actionName>
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
         <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
@@ -32,6 +44,7 @@
         <actionName>View</actionName>
         <type>Default</type>
     </actionOverrides>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
     <description>NOTES Plan object is Master-detail to Persons Being Served. (PENDING SECURITY MODEL FINALIZATION)</description>
     <enableActivities>true</enableActivities>
@@ -46,6 +59,7 @@
         <label>Account_Owner_Name</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -59,6 +73,7 @@
         <relationshipName>Plans</relationshipName>
         <required>true</required>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -69,6 +84,7 @@
         <label>Anticipated Transition Date</label>
         <required>false</required>
         <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
     <fields>
@@ -91,6 +107,7 @@
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -100,6 +117,7 @@
         <label>Date Last Reviewed</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
     <fields>
@@ -110,6 +128,7 @@
         <label>Date Service Started</label>
         <required>false</required>
         <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
     <fields>
@@ -120,6 +139,7 @@
         <label>Date of Birth</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
     <fields>
@@ -131,6 +151,7 @@
         <required>false</required>
         <scale>0</scale>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -143,6 +164,7 @@
         <label>Effective Date</label>
         <required>true</required>
         <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
     <fields>
@@ -152,6 +174,7 @@
         <label>Expiration Date Override</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
     <fields>
@@ -161,6 +184,7 @@
         <inlineHelpText>Checking this makes the plan READ ONLY. NOTE: This can only be unchecked and undone by System Administrators!</inlineHelpText>
         <label>External Plan</label>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -172,6 +196,7 @@ e.g siblings or extended family that may live with the person</inlineHelpText>
         <label>Family Member/Other</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -181,6 +206,7 @@ e.g siblings or extended family that may live with the person</inlineHelpText>
         <label>Frequency &amp; Duration</label>
         <length>1200</length>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>4</visibleLines>
     </fields>
@@ -192,6 +218,7 @@ e.g siblings or extended family that may live with the person</inlineHelpText>
         <label>Guardian1 Name</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -203,6 +230,7 @@ e.g siblings or extended family that may live with the person</inlineHelpText>
         <label>Guardian2 Name</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -214,6 +242,7 @@ e.g siblings or extended family that may live with the person</inlineHelpText>
         <label>Guardian Phone Number</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -229,6 +258,7 @@ e.g siblings or extended family that may live with the person</inlineHelpText>
         <label>Person Being Served (full name)</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -238,6 +268,7 @@ e.g siblings or extended family that may live with the person</inlineHelpText>
         <label>Long-term Goal 1</label>
         <length>1000</length>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>5</visibleLines>
     </fields>
@@ -247,6 +278,7 @@ e.g siblings or extended family that may live with the person</inlineHelpText>
         <label>Long-term Goal 2</label>
         <length>1000</length>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>5</visibleLines>
     </fields>
@@ -256,6 +288,7 @@ e.g siblings or extended family that may live with the person</inlineHelpText>
         <label>Long-term Goal 3</label>
         <length>1000</length>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>5</visibleLines>
     </fields>
@@ -265,6 +298,7 @@ e.g siblings or extended family that may live with the person</inlineHelpText>
         <label>Long-term Goal 4</label>
         <length>1000</length>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>5</visibleLines>
     </fields>
@@ -286,6 +320,7 @@ List the following
         <label>Medications</label>
         <length>32768</length>
         <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>10</visibleLines>
     </fields>
@@ -297,6 +332,7 @@ List the following
         <label>PBS Template Billing Id</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -308,6 +344,7 @@ List the following
         <label>PBS Template Name</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -321,6 +358,7 @@ List the following
         <relationshipName>Plans</relationshipName>
         <required>false</required>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -330,6 +368,7 @@ List the following
         <label>Plan Description</label>
         <length>32768</length>
         <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>3</visibleLines>
     </fields>
@@ -339,6 +378,7 @@ List the following
         <label>Plan Expiration Date</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
     <fields>
@@ -349,6 +389,7 @@ List the following
         <required>false</required>
         <scale>0</scale>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -359,6 +400,7 @@ List the following
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -370,6 +412,7 @@ List the following
         <length>255</length>
         <required>false</required>
         <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -379,6 +422,7 @@ List the following
         <externalId>false</externalId>
         <label>Plan Number</label>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>AutoNumber</type>
     </fields>
     <fields>
@@ -388,6 +432,7 @@ List the following
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -419,6 +464,7 @@ List the following
             <sorted>false</sorted>
         </picklist>
         <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -427,6 +473,7 @@ List the following
         <externalId>false</externalId>
         <label>Read Only</label>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -437,6 +484,7 @@ Manually editing this field may break the workflow logic.</description>
         <externalId>false</externalId>
         <label>Schedule A Time Dependent Notification</label>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -447,6 +495,7 @@ Manually editing this field may break the workflow logic.</description>
         <label>State</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -466,6 +515,7 @@ Manually editing this field may break the workflow logic.</description>
             <sorted>false</sorted>
         </picklist>
         <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -476,6 +526,7 @@ Manually editing this field may break the workflow logic.</description>
         <required>false</required>
         <scale>0</scale>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -487,6 +538,7 @@ Manually editing this field may break the workflow logic.</description>
         <required>false</required>
         <scale>0</scale>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -498,6 +550,7 @@ Manually editing this field may break the workflow logic.</description>
         <required>false</required>
         <scale>0</scale>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -509,6 +562,7 @@ Manually editing this field may break the workflow logic.</description>
         <required>false</required>
         <scale>0</scale>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -520,6 +574,7 @@ Manually editing this field may break the workflow logic.</description>
         <required>false</required>
         <scale>0</scale>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -531,6 +586,7 @@ Manually editing this field may break the workflow logic.</description>
         <required>false</required>
         <scale>0</scale>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>

@@ -5,6 +5,10 @@
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
         <actionName>Clone</actionName>
         <type>Default</type>
     </actionOverrides>
@@ -17,11 +21,19 @@
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
         <actionName>List</actionName>
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
         <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
@@ -32,6 +44,7 @@
         <actionName>View</actionName>
         <type>Default</type>
     </actionOverrides>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
     <description>PMC</description>
     <enableActivities>false</enableActivities>
@@ -46,6 +59,7 @@
         <label>County</label>
         <length>100</length>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -56,6 +70,7 @@
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>RegionID</label>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -66,6 +81,7 @@
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Region State</label>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -76,6 +92,7 @@
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Route To ARY Next</label>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -86,6 +103,7 @@
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Route To IDD Next</label>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -95,6 +113,7 @@
         <formula>Route_To_Region__r.Route_To__c</formula>
         <label>Route To ID</label>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -105,6 +124,7 @@
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Route To Region IDD Next</label>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -116,6 +136,7 @@
         <inlineHelpText>Split  - IDD Region ID</inlineHelpText>
         <label>Route To Region IDD RegionID</label>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -130,6 +151,7 @@
         <relationshipLabel>Zip Codes (Route To Region IDD)</relationshipLabel>
         <relationshipName>Zip_Codes1</relationshipName>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -143,6 +165,7 @@
         <relationshipLabel>Zip Codes</relationshipLabel>
         <relationshipName>Zip_Codes</relationshipName>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -152,6 +175,7 @@
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Route To Undecided Next</label>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -164,6 +188,7 @@ IF(Route_To_Region__r.Last_Undecided_Date__c  &lt; Route_To_Region_IDD__r.Last_U
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Route To Undecided Split Next</label>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -178,6 +203,7 @@ IF(Route_To_Region__r.Last_Undecided_Date__c  &lt; Route_To_Region_IDD__r.Last_U
         <precision>18</precision>
         <required>false</required>
         <scale>0</scale>
+        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -390,6 +416,7 @@ IF(Route_To_Region__r.Last_Undecided_Date__c  &lt; Route_To_Region_IDD__r.Last_U
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
+        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -399,6 +426,7 @@ IF(Route_To_Region__r.Last_Undecided_Date__c  &lt; Route_To_Region_IDD__r.Last_U
         <label>Zip Code</label>
         <length>5</length>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>true</unique>
     </fields>

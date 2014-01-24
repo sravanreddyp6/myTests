@@ -5,6 +5,10 @@
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
         <actionName>Clone</actionName>
         <type>Default</type>
     </actionOverrides>
@@ -17,11 +21,19 @@
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
         <actionName>List</actionName>
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
         <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
@@ -34,6 +46,7 @@
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
         <type>Visualforce</type>
     </actionOverrides>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
     <description>ASSESSMENT - Stores basic assessment info</description>
     <enableActivities>true</enableActivities>
@@ -124,6 +137,7 @@
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>AccountID</label>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -138,6 +152,7 @@ Delete Me</description>
         <relationshipLabel>Assessments</relationshipLabel>
         <relationshipName>Assessment_Junction</relationshipName>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -146,6 +161,7 @@ Delete Me</description>
         <externalId>false</externalId>
         <label>Additional Areas of Concern</label>
         <length>32768</length>
+        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>4</visibleLines>
     </fields>
@@ -158,6 +174,7 @@ Delete Me</description>
         <relationshipLabel>Assessments</relationshipLabel>
         <relationshipName>Assessments</relationshipName>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -165,6 +182,7 @@ Delete Me</description>
         <externalId>false</externalId>
         <label>Approval Date</label>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
     <fields>
@@ -192,6 +210,7 @@ Delete Me</description>
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
+        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -203,6 +222,7 @@ Delete Me</description>
         <referenceTo>User</referenceTo>
         <relationshipName>Assessments</relationshipName>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -211,6 +231,7 @@ Delete Me</description>
         <label>AssessmentQuestionCount</label>
         <summaryForeignKey>Assessment_Response__c.Assessment__c</summaryForeignKey>
         <summaryOperation>count</summaryOperation>
+        <trackTrending>false</trackTrending>
         <type>Summary</type>
     </fields>
     <fields>
@@ -225,6 +246,7 @@ Delete Me</description>
         </summaryFilterItems>
         <summaryForeignKey>Assessment_Response__c.Assessment__c</summaryForeignKey>
         <summaryOperation>count</summaryOperation>
+        <trackTrending>false</trackTrending>
         <type>Summary</type>
     </fields>
     <fields>
@@ -234,6 +256,7 @@ Delete Me</description>
         <precision>18</precision>
         <required>false</required>
         <scale>0</scale>
+        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -244,6 +267,7 @@ Delete Me</description>
         <inlineHelpText>The official date for this assessment.</inlineHelpText>
         <label>Assessment Date</label>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
     <fields>
@@ -253,6 +277,7 @@ Delete Me</description>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Assessment Type Id</label>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -263,6 +288,7 @@ Delete Me</description>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Assessment Type Name</label>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -275,6 +301,7 @@ Delete Me</description>
         <relationshipLabel>Assessments</relationshipLabel>
         <relationshipName>Assessment_Junction</relationshipName>
         <required>true</required>
+        <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -284,6 +311,7 @@ Delete Me</description>
         <inlineHelpText>A field to allow users to record descriptive information about the given assessment, including exception case details and brief thoughts/concerns.</inlineHelpText>
         <label>Comments</label>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>TextArea</type>
     </fields>
     <fields>
@@ -291,6 +319,7 @@ Delete Me</description>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
         <label>Delete Assessment</label>
+        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -298,6 +327,7 @@ Delete Me</description>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
         <label>Disregard</label>
+        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -305,6 +335,7 @@ Delete Me</description>
         <externalId>false</externalId>
         <label>Finalized Date</label>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
     <fields>
@@ -327,6 +358,7 @@ Delete Me</description>
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
+        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -336,6 +368,7 @@ Delete Me</description>
         <externalId>false</externalId>
         <inlineHelpText>A field to control whether or not an assessment has been submitted and locked, unlocked, etc.</inlineHelpText>
         <label>Locked</label>
+        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -346,6 +379,7 @@ Delete Me</description>
         <precision>18</precision>
         <required>false</required>
         <scale>0</scale>
+        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -359,6 +393,7 @@ Delete Me</description>
         <relationshipLabel>Assessments</relationshipLabel>
         <relationshipName>Assessments</relationshipName>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -370,6 +405,7 @@ Delete Me</description>
         <precision>4</precision>
         <required>false</required>
         <scale>0</scale>
+        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -380,6 +416,7 @@ Delete Me</description>
         <label>Recommended Day Services Staffing Ratio</label>
         <length>255</length>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -390,6 +427,7 @@ Delete Me</description>
         <summarizedField>Assessment_Response__c.ScoreOld__c</summarizedField>
         <summaryForeignKey>Assessment_Response__c.Assessment__c</summaryForeignKey>
         <summaryOperation>sum</summaryOperation>
+        <trackTrending>false</trackTrending>
         <type>Summary</type>
     </fields>
     <fields>
@@ -397,6 +435,7 @@ Delete Me</description>
         <externalId>false</externalId>
         <label>Level of Services Required for Day Servi</label>
         <length>32768</length>
+        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>3</visibleLines>
     </fields>
@@ -406,6 +445,7 @@ Delete Me</description>
         <externalId>false</externalId>
         <label>Staffing/Supervision Needs</label>
         <length>30000</length>
+        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>2</visibleLines>
     </fields>
@@ -440,6 +480,7 @@ Delete Me</description>
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
+        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -448,6 +489,7 @@ Delete Me</description>
         <description>Selected when Assessment is complete</description>
         <externalId>false</externalId>
         <label>Submitted</label>
+        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -456,6 +498,7 @@ Delete Me</description>
         <externalId>false</externalId>
         <label>Level of Support Required for Residentia</label>
         <length>32768</length>
+        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>3</visibleLines>
     </fields>
@@ -474,6 +517,7 @@ Delete Me</description>
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
+        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -481,6 +525,7 @@ Delete Me</description>
         <externalId>false</externalId>
         <label>Verbal Approval Obtained From</label>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>TextArea</type>
     </fields>
     <fields>
@@ -488,6 +533,7 @@ Delete Me</description>
         <externalId>false</externalId>
         <label>Verbal Approval Obtained On</label>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
     <label>Assessment</label>
