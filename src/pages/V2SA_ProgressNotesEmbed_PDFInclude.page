@@ -1,0 +1,88 @@
+<!-- Created by Ryan Johnson on 11/26/2012. Copy of ProgressNotesEmbed without the style text. Used in PDF Output forms for CANS -->
+<apex:page showHeader="false" sidebar="false" standardController="Progress_Note__c" extensions="V2SA_ProgressNotesEmbed" >
+<apex:form >
+<apex:outputPanel id="cGoals" styleClass="customGoals">
+    <apex:pageBlock >   
+            <table border="0" width="100%" cellpadding="3" cellspacing="3">
+                <tr>
+                    <td width="40%">
+                        <apex:outputPanel >
+                            <strong>Goal Description</strong>
+                        </apex:outputPanel>
+                    </td>
+                    <td width="20%">
+                        <apex:outputPanel >
+                            <strong>Frequency and Duration</strong>
+                        </apex:outputPanel>
+                    </td>
+                    <td width="20%">
+                        <apex:outputPanel >
+                            <strong>Status</strong>
+                        </apex:outputPanel>
+                    </td>
+                </tr>
+            </table>
+            <apex:repeat value="{!lstInnObjectives}" var="innObjective">
+                <apex:outputPanel rendered="{!innObjective.belongsToNote}">
+                    <table border="0" width="100%" cellpadding="3" cellspacing="3">
+                        <tr>
+                            <td width="40%" style="vertical-align: top;">
+                                <apex:inputCheckbox value="{!innObjective.belongsToNote}">
+                                    <apex:actionSupport event="onclick" action="{!saveObjectives}" status="Performing" rerender="cGoals"/>
+                                </apex:inputCheckbox>&nbsp;
+                                <apex:outputField value="{!innObjective.objective.Short_Term_Goal_Description__c}" rendered="{!innObjective.isEditable=false}"/>
+                                <apex:inputField value="{!innObjective.objective.Short_Term_Goal_Description__c}" rendered="{!innObjective.isEditable}"/>
+                            </td>
+                            <td width="20%" style="vertical-align: top;">
+                                <apex:outputField value="{!innObjective.objective.Frequency_and_Duration__c}" rendered="{!innObjective.isEditable=false}"/>
+                                <apex:inputField value="{!innObjective.objective.Frequency_and_Duration__c}" rendered="{!innObjective.isEditable}"/>
+                            </td>
+                            <td width="20%" style="vertical-align: top;">
+                                <apex:outputField value="{!innObjective.objective.Status__c}" rendered="{!innObjective.isEditable=false}"/>
+                                <apex:inputField value="{!innObjective.objective.Status__c}" rendered="{!innObjective.isEditable}"/>
+                            </td>
+                        </tr>
+                    </table>
+                    <apex:outputPanel rendered="{!AND(innObjective.belongsToNote, innObjective.lstInnPO.size>0)}" layout="block" styleClass="plannObjPanel">
+                        <apex:repeat value="{!innObjective.lstInnPO}" var="innPO">
+                            <apex:outputPanel rendered="{!innPO.belongsToNote}" style="padding-left: 27px"><i><b>Plan Objective(s)</b></i></apex:outputPanel>
+                            <apex:outputPanel rendered="{!innPO.belongsToNote}">
+                            <table border="0" width="100%" cellpadding="3" cellspacing="3">
+                                <tr>
+                                    <td width="40%" style="vertical-align: top; padding-left:20px;">
+                                        <apex:inputCheckbox value="{!innPO.belongsToNote}" disabled="{!checkBoxesDisabled}">
+                                            <apex:actionSupport event="onclick" action="{!innPO.updateMe}" status="Performing" rerender="cGoals"/>
+                                        </apex:inputCheckbox>&nbsp;
+                                        <apex:outputField value="{!innPO.planObjective.Objective_Description__c}" />
+                                    </td>
+                                    <td width="20%" style="vertical-align: top;"><apex:outputField value="{!innPO.planObjective.Frequency_and_Duration__c}" /></td>
+                                    <td width="20%" style="vertical-align: top;"><apex:outputField value="{!innPO.planObjective.Status__c}" /></td>
+                                </tr>
+                            </table>
+                            <apex:outputPanel rendered="{!AND(innPO.belongsToNote, innPO.lstInnInt.size>0)}" layout="block" styleClass="interventionPanel">
+                                 <apex:repeat value="{!innPO.lstInnInt}" var="innInt">
+                                <apex:outputPanel rendered="{!innInt.belongsToNote}" style="padding-left: 5px"><i><b>Interventions</b></i></apex:outputPanel><br/>
+                                    <apex:inputCheckbox value="{!innInt.belongsToNote}" disabled="{!checkBoxesDisabled}">
+                                        <apex:actionSupport event="onclick" action="{!innInt.updateMe}" status="Performing" rerender="cGoals"/>
+                                    </apex:inputCheckbox>&nbsp;
+                                    <apex:outputField rendered="{!innInt.belongsToNote}" value="{!innInt.intervention.Intervention_Description__c}" />
+                                    <br/>
+                                </apex:repeat>                               
+                            </apex:outputPanel>
+                          </apex:outputPanel>  
+                        </apex:repeat>
+                    </apex:outputPanel>
+                </apex:outputPanel> 
+                <hr class="cLine" />
+            </apex:repeat>
+    </apex:pageBlock>   
+</apex:outputPanel>
+</apex:form>
+<script type="text/javascript">
+    //checking if current progress note was created maximum than 10 seconds ago. if true display javascript alert in visualforce page that newly created progress note should be submitted for approval
+    var isSave = {!isSave};
+    if(isSave){
+        //alert('REMINDER: Please submit this Progress Note for approval using the Submit for Approval button.');
+    }
+</script>
+</apex:page>
