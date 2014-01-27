@@ -448,7 +448,7 @@ function stopRKey(evt) {
      
       </apex:pageBlockTable>
        <apex:outputText value="No Tasks to display" rendered="{!(taskOnCurrentPBSAccount.size=0)}" />
-       <apex:outputPanel rendered="{!taskOnCurrentPBSAccount.size!=0}">Showing the 10 most recent tasks click&nbsp;<apex:outputLink value="/T00?id={!currentContact.AccountID}&rlid=RelatedActivityList" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel> 
+       <apex:outputPanel rendered="{!taskOnCurrentPBSAccount.size!=0}">Showing the 10 most recent tasks click&nbsp;<apex:outputLink value="/00T?id={!currentContact.AccountID}&rlid=RelatedActivityList" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel> 
        </apex:pageBlockSection>                                       
 
 <apex:pageBlockSection title="Activity History"
@@ -482,7 +482,7 @@ function stopRKey(evt) {
              
       </apex:pageBlockTable>
         <apex:outputText value="No Activities to display" rendered="{!(eventOnCurrentPBSAccount.size=0)}" />
-		<apex:outputPanel rendered="{!eventOnCurrentPBSAccount.size!=0}">Showing the 10 most recent events click&nbsp;<apex:outputLink value="/T00?id={!currentContact.AccountID}&rlid=RelatedEventList" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel> 
+		<apex:outputPanel rendered="{!eventOnCurrentPBSAccount.size!=0}">Showing the 10 most recent events click&nbsp;<apex:outputLink value="/00U?id={!currentContact.AccountID}&rlid=RelatedEventList" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel> 
        
       </apex:pageBlockSection>
        </apex:pageBlock>
