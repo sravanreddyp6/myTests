@@ -1,0 +1,757 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>NOTES Plan object is Master-detail to Persons Being Served. (PENDING SECURITY MODEL FINALIZATION)</description>
+    <enableActivities>true</enableActivities>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>Account_Owner_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>Person_Being_Served__r.Account.Owner_Copy__r.myFullName__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Account_Owner_Name</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Admission__c</fullName>
+        <deleteConstraint>Restrict</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Admission</label>
+        <referenceTo>Admission__c</referenceTo>
+        <relationshipLabel>Plans</relationshipLabel>
+        <relationshipName>Plans</relationshipName>
+        <required>true</required>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Anticipated_Transition_Date__c</fullName>
+        <description>Anticipated date of Transition/Level of Care Change/Discharge Plan</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Anticipated date of Transition/Level of Care Change/Discharge Plan</inlineHelpText>
+        <label>Anticipated Transition Date</label>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Approval_Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Approval Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Pending</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Approved</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Needs Refinement</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Date_Last_Reviewed__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>This is for users to manually enter the date the plan was reviewed in order to receive notifications.</inlineHelpText>
+        <label>Date Last Reviewed</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Date_Service_Started__c</fullName>
+        <description>TODO: Create a cross object workflow to update the date from a child progress note</description>
+        <externalId>false</externalId>
+        <inlineHelpText>This field auto fills based on the date the first Progress Note&apos;s create date associated to this Plan</inlineHelpText>
+        <label>Date Service Started</label>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Date_of_Birth__c</fullName>
+        <externalId>false</externalId>
+        <formula>Person_Being_Served__r.Birthdate</formula>
+        <inlineHelpText>The birthday of the person being served.</inlineHelpText>
+        <label>Date of Birth</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Days_Till_Expiration__c</fullName>
+        <externalId>false</externalId>
+        <formula>Plan_Expiration_Date__c -  TODAY()</formula>
+        <label>Days Till Expiration</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Effective_Date__c</fullName>
+        <defaultValue>now()</defaultValue>
+        <description>Date the Plan should be implemented</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The date the Plan can be implemented providing all approvals are on file</inlineHelpText>
+        <label>Effective Date</label>
+        <required>true</required>
+        <trackHistory>true</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Expiration_Date_Override__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>Only fill in the expiration date of the plan here if your state requires an expiration date other than 1 year after the effective date of the plan.</inlineHelpText>
+        <label>Expiration Date Override</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>External_Plan__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <inlineHelpText>Checking this makes the plan READ ONLY. NOTE: This can only be unchecked and undone by System Administrators!</inlineHelpText>
+        <label>External Plan</label>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Family_Member_Other__c</fullName>
+        <externalId>false</externalId>
+        <formula>Person_Being_Served__r.Family_Member_Other__c</formula>
+        <inlineHelpText>List of family members and other relationships. 
+e.g siblings or extended family that may live with the person</inlineHelpText>
+        <label>Family Member/Other</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Frequency_Duration__c</fullName>
+        <externalId>false</externalId>
+        <label>Frequency &amp; Duration</label>
+        <length>1200</length>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Guardian1_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>Person_Being_Served__r.Guardian1_Name__c</formula>
+        <inlineHelpText>Guardian or parent of person being served.</inlineHelpText>
+        <label>Guardian1 Name</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Guardian2_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>Person_Being_Served__r.Guardian2_Name__c</formula>
+        <inlineHelpText>Guardian or parent of person being served.</inlineHelpText>
+        <label>Guardian2 Name</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Guardian_Phone_Number__c</fullName>
+        <externalId>false</externalId>
+        <formula>Person_Being_Served__r.Guardian_Phone_Number__c</formula>
+        <inlineHelpText>Phone Number of a Guardian or Parent.</inlineHelpText>
+        <label>Guardian Phone Number</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Individual_Name__c</fullName>
+        <description>The plan should populate the individuals name of who the plan pertains to on the screen. More elements are usually captured but that should be found in the &quot;referral/client data such as their Date of Birth, Medicaid #, AVATAR# etc.</description>
+        <externalId>false</externalId>
+        <formula>&quot;&quot;
+&amp; Admission__r.Person_Being_Served__r.FirstName
+&amp; &quot; &quot;
+&amp; Admission__r.Person_Being_Served__r.LastName</formula>
+        <inlineHelpText>The plan should populate the individuals name of who the plan pertains to on the screen. More elements are usually captured but that should be found in the &quot;referral/client data such as their Date of Birth, Medicaid #, AVATAR# etc.</inlineHelpText>
+        <label>Person Being Served (full name)</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Long_term_Goal_1__c</fullName>
+        <externalId>false</externalId>
+        <label>Long-term Goal 1</label>
+        <length>1000</length>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Long_term_Goal_2__c</fullName>
+        <externalId>false</externalId>
+        <label>Long-term Goal 2</label>
+        <length>1000</length>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Long_term_Goal_3__c</fullName>
+        <externalId>false</externalId>
+        <label>Long-term Goal 3</label>
+        <length>1000</length>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Long_term_Goal_4__c</fullName>
+        <externalId>false</externalId>
+        <label>Long-term Goal 4</label>
+        <length>1000</length>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Medications__c</fullName>
+        <description>TODO: To support reporting on this field, consider breaking it out into its own object.
+List the following
+(1) Medication Name
+(2)Dose
+(3)Plans for Change-including Rate of Detox
+(4)Physician who prescribed the medication</description>
+        <externalId>false</externalId>
+        <inlineHelpText>TODO: To support reporting on this field, consider breaking it out into its own object.
+List the following
+(1) Medication Name
+(2)Dose
+(3)Plans for Change-including Rate of Detox
+(4)Physician who prescribed the medication</inlineHelpText>
+        <label>Medications</label>
+        <length>32768</length>
+        <trackHistory>true</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
+        <fullName>PBS_Template_Billing_Id__c</fullName>
+        <externalId>false</externalId>
+        <formula>Person_Being_Served__r.Avatar_ID__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>PBS Template Billing Id</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>PBS_Template_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>Person_Being_Served__r.FirstName+&apos; &apos;+LEFT(Person_Being_Served__r.LastName,1)+&apos;.&apos;</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>PBS Template Name</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Person_Being_Served__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Person Being Served</label>
+        <referenceTo>Contact</referenceTo>
+        <relationshipLabel>Plans</relationshipLabel>
+        <relationshipName>Plans</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Plan_Description__c</fullName>
+        <description>A high-level description of the plan. Details about goals, objectives and interventions should be described in child goal, objective and interventions records.</description>
+        <externalId>false</externalId>
+        <label>Plan Description</label>
+        <length>32768</length>
+        <trackHistory>true</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Plan_Expiration_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Plan Expiration Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Plan_Hidden__c</fullName>
+        <externalId>false</externalId>
+        <label>Plan # (Hidden)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Plan_Location_Names__c</fullName>
+        <externalId>false</externalId>
+        <label>Plan Location Names</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Plan_Name__c</fullName>
+        <description>A short summary of the plan</description>
+        <externalId>false</externalId>
+        <label>Plan Name</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Plan_Number__c</fullName>
+        <displayFormat>Pl - {000000}</displayFormat>
+        <externalId>false</externalId>
+        <label>Plan Number</label>
+        <trackHistory>false</trackHistory>
+        <type>AutoNumber</type>
+    </fields>
+    <fields>
+        <fullName>Plan_Program_Names__c</fullName>
+        <externalId>false</externalId>
+        <label>Plan Program Names</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Progress_Since_Last_Plan__c</fullName>
+        <description>(Some states have Check Boxes) MA &amp; PA each have 3 check boxes Ex: Check box to indicate progress 
+(1) Partially Met
+(2) Not Met
+(3) Met&quot;</description>
+        <externalId>false</externalId>
+        <inlineHelpText>(Some states have Check Boxes) MA &amp; PA each have 3 check boxes Ex: Check box to indicate progress 
+(1) Partially Met
+(2) Not Met
+(3) Met&quot;</inlineHelpText>
+        <label>Progress Since Last Plan</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Partially Met</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Not Met</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Met</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>true</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Read_Only__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Read Only</label>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Schedule_A_Time_Dependent_Notification__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>This field will be solely used by 2 workflows for a recurring &apos;Notification of Service Plan Review&apos; to be sent to the owner of the Plan record. 
+Manually editing this field may break the workflow logic.</description>
+        <externalId>false</externalId>
+        <label>Schedule A Time Dependent Notification</label>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>State__c</fullName>
+        <externalId>false</externalId>
+        <formula>TEXT(Admission__r.State__c)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>State</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Active</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Inactive</fullName>
+                <default>true</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>true</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Total_Interventions__c</fullName>
+        <externalId>false</externalId>
+        <label>Total Interventions</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Total_Objectives__c</fullName>
+        <externalId>false</externalId>
+        <label>Total Objectives</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Total_Short_Term_Goals__c</fullName>
+        <externalId>false</externalId>
+        <label>Total Short-Term Goals</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Total_Valid_Interventions__c</fullName>
+        <externalId>false</externalId>
+        <label>Total Valid Interventions</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Total_Valid_Objectives__c</fullName>
+        <externalId>false</externalId>
+        <label>Total Valid Objectives</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Total_Valid_Short_Term_Goals__c</fullName>
+        <externalId>false</externalId>
+        <label>Total Valid Short-Term Goals</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <label>Plan</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Person_Being_Served__c</columns>
+        <columns>CREATEDBY_USER</columns>
+        <columns>UPDATEDBY_USER</columns>
+        <columns>OWNER.FIRST_NAME</columns>
+        <columns>OWNER.LAST_NAME</columns>
+        <columns>RECORDTYPE</columns>
+        <columns>Date_Service_Started__c</columns>
+        <columns>Effective_Date__c</columns>
+        <columns>Long_term_Goal_1__c</columns>
+        <columns>Long_term_Goal_2__c</columns>
+        <columns>State__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>State__c</field>
+            <operation>contains</operation>
+            <value>FL</value>
+        </filters>
+        <filters>
+            <field>Effective_Date__c</field>
+            <operation>greaterThan</operation>
+            <value>6/11/2013</value>
+        </filters>
+        <filters>
+            <field>Status__c</field>
+            <operation>equals</operation>
+            <value>Inactive</value>
+        </filters>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <label>Plan Name</label>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+    </nameField>
+    <namedFilters>
+        <fullName>nf_01IJ00000000JNEMA2_00NJ0000000IBXsMAO</fullName>
+        <active>false</active>
+        <field>Progress_Note__c.Plan__c</field>
+        <filterItems>
+            <field>Plan__c.Admission__c</field>
+            <operation>equals</operation>
+            <valueField>$Source.Person_Being_Served__c</valueField>
+        </filterItems>
+        <isOptional>false</isOptional>
+        <name>Progress Note_Plan</name>
+        <sourceObject>Progress_Note__c</sourceObject>
+    </namedFilters>
+    <pluralLabel>Plans</pluralLabel>
+    <recordTypeTrackHistory>true</recordTypeTrackHistory>
+    <recordTypes>
+        <fullName>PA_Periodic_Services</fullName>
+        <active>true</active>
+        <label>Periodic Services</label>
+        <picklistValues>
+            <picklist>Approval_Status__c</picklist>
+            <values>
+                <fullName>Approved</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Needs Refinement</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Progress_Since_Last_Plan__c</picklist>
+            <values>
+                <fullName>Met</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Met</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partially Met</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Status__c</picklist>
+            <values>
+                <fullName>Active</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Inactive</fullName>
+                <default>true</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <searchLayouts>
+        <customTabListAdditionalFields>Individual_Name__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Status__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Plan_Expiration_Date__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Guardian1_Name__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Guardian_Phone_Number__c</customTabListAdditionalFields>
+        <listViewButtons>New_Plan</listViewButtons>
+        <lookupDialogsAdditionalFields>Individual_Name__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Plan_Name__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Status__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Admission__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Effective_Date__c</lookupDialogsAdditionalFields>
+        <searchResultsAdditionalFields>Individual_Name__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Plan_Name__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Status__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Admission__c</searchResultsAdditionalFields>
+    </searchLayouts>
+    <sharingModel>Private</sharingModel>
+    <validationRules>
+        <fullName>Do_not_allow_Admission_change</fullName>
+        <active>true</active>
+        <description>The Admission can not be updated on the Plan, this rule prevents that from happening.</description>
+        <errorConditionFormula>ischanged( Admission__c )</errorConditionFormula>
+        <errorMessage>The Admission can not be updated on the Plan.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Prevent_Edit_on_External_Plan</fullName>
+        <active>true</active>
+        <errorConditionFormula>and(Read_Only__c =True, $User.ProfileId &lt;&gt;&quot;00eU0000000myCw&quot;)</errorConditionFormula>
+        <errorMessage>You do not have access to modify an external plan or the Plan is over 12 months old and can no longer be changed.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Status_Active_Plan_Children_Count</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(Total_Interventions__c =0 ||  Total_Objectives__c =0 ||  Total_Short_Term_Goals__c =0, LOWER(TEXT(Status__c)) = &apos;active&apos;)</errorConditionFormula>
+        <errorDisplayField>Status__c</errorDisplayField>
+        <errorMessage>A PLAN can&apos;t be active until it has at least 1 Short Term Goal, with 1 Objective and 1 Intervention. The Short-Term Goal, Objective and Intervention must also have a related Service assignment.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Status_Active_Plan_Total_Against_Valid</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND( $User.Username != &apos;integration@thementornetwork.com.prod.staging&apos;, Total_Valid_Interventions__c != Total_Interventions__c || 
+Total_Valid_Objectives__c != Total_Objectives__c ||  
+Total_Valid_Short_Term_Goals__c !=Total_Short_Term_Goals__c, LOWER(TEXT(Status__c)) = &apos;active&apos;)</errorConditionFormula>
+        <errorDisplayField>Status__c</errorDisplayField>
+        <errorMessage>A plan can&apos;t be active until all Short Term Goal, Objectives, and Interventions have at least one Service Assignment. The Short-Term Goal, Objective and Intervention must also have a related Service assignment.</errorMessage>
+    </validationRules>
+    <webLinks>
+        <fullName>Access_Plan_Viewer</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <encodingKey>UTF-8</encodingKey>
+        <height>600</height>
+        <linkType>url</linkType>
+        <masterLabel>Access Plan Viewer</masterLabel>
+        <openType>sidebar</openType>
+        <protected>false</protected>
+        <url>/apex/V2SA_PlanView?id={!Plan__c.Id}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Activate_this_Plan</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <linkType>page</linkType>
+        <masterLabel>Activate this Plan</masterLabel>
+        <openType>replace</openType>
+        <page>Notes_Plan_ApprovaInclude</page>
+        <protected>false</protected>
+    </webLinks>
+    <webLinks>
+        <fullName>Change_Status</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <linkType>page</linkType>
+        <masterLabel>Change Status</masterLabel>
+        <openType>replace</openType>
+        <page>Notes_Plan_ApprovaInclude</page>
+        <protected>false</protected>
+    </webLinks>
+    <webLinks>
+        <fullName>Confirm_External_Plan</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <encodingKey>UTF-8</encodingKey>
+        <height>600</height>
+        <linkType>url</linkType>
+        <masterLabel>Confirm External Plan</masterLabel>
+        <openType>sidebar</openType>
+        <protected>false</protected>
+        <url>/apex/V2SA_externalPlanCheck?id={!Plan__c.Id}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Construct_Short_Term_Goals</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Construct Short-term Goals</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <url>if({!Plan__c.Read_Only__c} ){
+alert(&apos;This plan has already been confirmed as an external plan.&apos;);
+}else{
+window.location.href = &apos;/apex/V2SA_ConstructSTG?id={!Plan__c.Id}&amp;person={! Plan__c.Person_Being_ServedId__c }&apos;;
+}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>New_Plan</fullName>
+        <availability>online</availability>
+        <displayType>massActionButton</displayType>
+        <encodingKey>UTF-8</encodingKey>
+        <linkType>url</linkType>
+        <masterLabel>New Plan</masterLabel>
+        <openType>replace</openType>
+        <protected>false</protected>
+        <requireRowSelection>true</requireRowSelection>
+        <url>/a0J/e?
+00NJ0000000IA83={!Admission__c.Person_Being_Served__c}&apos;s Plan
+&amp;Name=TBD+(Autofilled)
+&amp;CF00NU00000036mNF={!Admission__c.Person_Being_Served__c}
+&amp;CF00NU00000036mMv={!Admission__c.Name}</url>
+    </webLinks>
+</CustomObject>
