@@ -685,12 +685,17 @@ function hidedio(dio, dio2){
             <apex:pageBlockSection title="Comments" columns="1"  rendered="{!editMode}">
                 <apex:inputField styleClass="mytxtarea" value="{!CareMeridian_Contract__c.Comments__c}"/> 
                 <apex:outputField value="{!CareMeridian_Contract__c.Previous_Contract__c}"/>
-                <apex:outputField value="{!CareMeridian_Contract__c.Next_Contract__c}"  />            
+                <apex:pageBlockSectionItem rendered="{!isRev}" >Type of Change
+                <apex:selectCheckboxes id="typechangeselect" value="{!selectedTypes}"  >
+            		<apex:selectOptions value="{!changeTypes}"/>
+        		</apex:selectCheckboxes>
+        		</apex:pageBlockSectionItem>
             </apex:pageBlockSection>                                                                             
             <apex:pageBlockSection title="Comments" columns="1"  rendered="{!!editMode}">
                 <apex:outputField value="{!CareMeridian_Contract__c.Comments__c}"/> 
                 <apex:outputField value="{!CareMeridian_Contract__c.Previous_Contract__c}"/>
-                <apex:outputField value="{!CareMeridian_Contract__c.Next_Contract__c}"  />            
+                <apex:outputField value="{!CareMeridian_Contract__c.Next_Contract__c}"  />     
+                <apex:outputText value="{!CareMeridian_Contract__c.Type_of_Change__c}"  />
             </apex:pageBlockSection>        
             <apex:pageBlockSection title="System Info">
                 <apex:outputField label="Created By" value="{!CareMeridian_Contract__c.CreatedById}"/>
