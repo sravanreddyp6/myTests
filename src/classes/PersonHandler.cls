@@ -55,7 +55,7 @@ public with sharing class PersonHandler {
    						Person__c = p.Id
    					);			
    					credRecs.add(credRec);
-   					System.debug('Added a Credential Record to credRecs for a \'Mentor\' Record Type...');
+   					System.debug('Added a Credential Record (' + cp.Name + ') to credRecs for a \'Mentor\' Record Type...');
        			}
        			if(thisPersonsRecordTypeName=='Related Party') {
 	   				if(p.Related_Party_Type__c=='Co-Applicant' && cp.Required_for_Co_Applicant__c==true) {
