@@ -41,6 +41,33 @@ private class DataCreateTest {
         
     }
 
+    static testMethod void UpdateActionSummary() {
+    	// Account will dedupe based on name and birthdate.  DataCreate should update in this scenario
+        DataCreate c = new DataCreate();
+        
+        c.PutPseudonym('Person_being_servedType', [select id from RecordType where developername='person_being_served' and sobjecttype= 'Account']);
+        map<string, object> fieldmap = new map<string, object>();
+        fieldmap.put('lastname', 'Mouse');
+        fieldmap.put('RecordTypeID', 'Person_being_servedType');
+        fieldmap.put('personbirthdate', '5/7/1954');
+        fieldmap.put('personmailingstate', 'California');
+        Account pbs = (Account)c.CreateObject('Account', fieldmap);
+        
+        map<string, object> fieldmap1 = new map<string, object>();
+        fieldmap1.put('lastname', 'Mouse');
+        fieldmap1.put('RecordTypeID', 'Person_being_servedType');
+        fieldmap1.put('personbirthdate', '5/7/1954');
+        fieldmap1.put('personmailingstate', 'North Carolina');
+        Account pbs1 = (Account)c.CreateObject('Account', fieldmap1);
+
+		System.assertequals(pbs.Id, pbs1.Id);
+		        
+        Account mickey = [select lastname, firstname, personbirthdate from Account];
+        System.assertequals('Mouse', mickey.lastname);
+        system.assertequals('North Carolina', mickey.personmailingstate);
+        
+    }
+
     static testMethod void CreateAdmission() {
         DataCreate c = new DataCreate();
         
