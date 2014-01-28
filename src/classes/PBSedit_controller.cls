@@ -166,7 +166,13 @@ public void showAddRelParty() {
       upsert relParties;
     }
   }
-    
+
+    public id getRelatedPartyReport(){
+        id theId;
+        theID = [select id, developername from report where developername = 'Related_Party_for_PBS' limit 1].id;
+
+        return theId;
+    }
 
 public pageReference cancelPBSController(){
     
