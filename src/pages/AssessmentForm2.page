@@ -1,0 +1,234 @@
+<apex:page standardController="Assessment__c" extensions="AssessmentForm"  >
+<head>
+<style>
+.c22{width: 700px;}
+.tbHeader{display: none;}
+.abc{display: block;}
+.cba{display:none;}
+.helppanel{ color:red;}
+.toggle{text-decoration:underline; cursor: pointer; font-size: 10pt; font-weight: bold; float: right; margin-right:10px;}
+.myFrm{width: 1160px;}
+.myTest{border-right: 19px solid white;
+border-top: 19px solid #eee;
+height: 0;
+margin-left: 950px;
+width: 0;}
+.myLeft{border-left: 19px solid white;
+border-top: 19px solid #eee;
+height: 0;
+margin-left: 231px;
+margin-top:-20px;
+width: 0;}
+</style>
+<script>
+<!-- START: Trick VF into setting focus to top of page instead of to first input field  --> 
+function setFocusOnLoad() {}
+<!-- END: Trick VF into setting focus to top of page instead of to first input field  -->
+
+$.noConflict();
+function toggleDiv3(divId, divId2){
+jQuery("."+divId).slideToggle(10);
+    jQuery("."+divId).slideWidth(200);
+};
+
+function toggleDiv(divId, divId2){
+    jQuery("."+divId).slideToggle(800);
+    jQuery("."+divId2).toggle(700);
+    jQuery("."+divId+"w").toggle(10);  
+    jQuery("."+divId+"ww").toggle(800);     
+     
+};
+function toggleDiv2(divId, divId2){
+
+    jQuery("."+divId).slideToggle(800);
+    jQuery("."+divId2).delay(800).toggle(200);
+    jQuery("."+divId+"w").toggle(800);
+    jQuery("."+divId+"ww").toggle(10);            
+};
+function HideClass(HideClass, ShowClass, HideHelp, ShowHelp){
+
+    jQuery("."+HideClass).slideUp(800);
+    jQuery("."+ShowClass).animate({width: "400px"},800); 
+    jQuery("."+ShowClass).css('float','left');
+    jQuery("."+HideHelp).css('display','none');  
+    jQuery("."+ShowHelp).css('display','block');             
+};
+function ShowClass(HideClass, ShowClass, HideHelp, ShowHelp){
+
+    jQuery("."+HideClass).slideDown(800);
+    jQuery("."+ShowClass).animate({width: "950px"},800); 
+    jQuery("."+ShowClass).css('float','none'); 
+    jQuery("."+HideHelp).css('display','none');  
+    jQuery("."+ShowHelp).css('display','block');               
+};
+</script>
+</head>
+
+<!-- include jquery 
+<apex:includeScript value="{!$Resource.jquery}"/>
+-->
+
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+
+<!-- error messages-->
+<apex:outputPanel id="mymess">
+    <apex:pagemessages />
+</apex:outputPanel>
+<!-- decore -->
+
+<apex:sectionHeader title="Assessment"/>
+<apex:outputPanel layout="block" style="width:500px; margin:10px;">
+<b>Mode</b>
+<br/>
+<apex:outputPanel layout="block" style="float: left; display: none; background-color:#00335b;" styleClass="edit" >&nbsp;</apex:outputPanel>
+<apex:outputPanel layout="block" style="float: left; cursor: pointer;" onclick="javascript:HideClass('Scoring', 'thisHeader','summary','edit');" >
+&nbsp;
+    Summary
+&nbsp;
+&nbsp;    
+</apex:outputPanel> 
+<br/>
+<apex:outputPanel layout="block" style="float: left; background-color:#00335b;"  styleClass="summary">&nbsp;</apex:outputPanel>
+<apex:outputPanel layout="block" style="float: left; cursor: pointer;" onclick="javascript:ShowClass('Scoring', 'thisHeader','edit','summary');" >
+ &nbsp;   
+    Edit
+    </apex:outputPanel> 
+</apex:outputPanel>
+<br/>
+<apex:form styleClass="myFrm" id="myFRM" >
+
+<apex:pageBlock mode="mainDetail" >    
+    <apex:repeat value="{!ThisRecordsDomains}" var="thisDomain">
+<apex:outputPanel layout="block" > 
+        <apex:outputPanel layout="block" styleClass="thisHeader" style="width:950px; margin-top:25px; margin-right:25px; background-color: #f8f8f8; border: 1px solid #eaeaea;  padding: 10px; border-radius: 7px; border-bottom-right-radius: 0px; border-top: 3px solid #00335b; border-bottom-left-radius: 0px;">
+                <apex:outputPanel styleClass="toggle {!thisDomain.id}w" onclick="javascript:toggleDiv('{!thisDomain.id}', '{!thisDomain.id}q');" >?</apex:outputPanel>                     
+                <apex:outputPanel style="display: none;" styleClass="toggle {!thisDomain.id}ww" onclick="javascript:toggleDiv2('{!thisDomain.id}', '{!thisDomain.id}q');">X</apex:outputPanel>                
+                
+                <apex:outputPanel layout="block" style="font-size: 17px; color: #00335b; font-weight: bold; ">{!thisDomain.Title__c}</apex:outputPanel>
+                
+                <apex:outputPanel id="thiscooltrick" layout="block" style="margin: 15px; padding-left: 15px; color: black; font-size: 14px; display: none; " styleClass="{!thisDomain.id}" >
+                       <center>
+                        <apex:outputPanel layout="block" style="width: 550px; text-align:left;" >
+                        <apex:outputField value="{!MapDomains[thisDomain.Assessment_Domain__c].Description__c}" />
+                        </apex:outputPanel>
+                        </center>
+                </apex:outputPanel>  
+
+                <apex:outputPanel layout="block" id="values" style="width: 230px; padding:20px; " >
+
+                    <apex:pageBlockSection columns="1" >
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel >Progress</apex:outputLabel>
+                            <apex:outputPanel style="font-size: 12px;" >
+                            {!"("+TEXT(thisDomain.Answered_Questions__c)+"/"+TEXT(thisDomain.Total_Questions__c)+")"}
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                    
+                    
+                                       
+                    
+                    </apex:pageBlockSection>
+                    
+                    <div style="width:100px; margin:10px; background-color: #ffb777;"><div style="width:{!(thisDomain.Answered_Questions__c/thisDomain.Total_Questions__c)*100}px; background-color: #00335b;">&nbsp;</div></div>
+                    <apex:outputPanel style="float:left; margin-top:35px; margin-left:70px; font-size: 48px; color: gray;">
+                        <apex:outputField label="Score"  value="{!thisDomain.Score__c}"/>
+                    </apex:outputPanel>
+                </apex:outputPanel>                
+                               
+        </apex:outputPanel>  
+        <div class="myTest summary"></div>
+        <div class="myLeft summary"></div>          
+                    <apex:outputPanel id="options" layout="block" styleClass="Scoring" style="" >
+
+                   
+                                            
+ <apex:pageBlockTable value="{!MapDomains[thisDomain.Assessment_Domain__c].Question__r}" var="thisQuestion" style="margin-left:250px; margin-top:-118px; background-color: #f8f8f8; width:700px;  border: 2px solid #eee; padding: 13px; border-radius: 7px; " headerClass="tbHeader"  >
+
+               
+                    <apex:column id="qTitle" style="border-color: #ededed; width: 275px; text-align: left; vertical-align: top; padding-left: 5px; padding-top:7px; font-size: 11pt; color: black;" >
+                        <apex:outputPanel layout="block"  >{!thisQuestion.Question_Title__c}</apex:outputPanel>
+
+                        <apex:outputPanel id="meee" layout="block" styleClass="{!thisQuestion.id}" style="display: none;padding-left: 7px;" ><br/>{!thisQuestion.Question_Description__c}</apex:outputPanel>
+                        <apex:outputLabel value="PLEASE NOTE:   If any value but 0 is selected for this prompt, please take appropriate action in treatment planning and other tasks." rendered="{!IF(AND(Assessment__c.Assessment_Type__r.Name=='CANS',thisQuestion.Question_Title__c=='DEVELOPMENTAL/INTELLECTUAL'),true,false)}" style="color:red;" />                    
+                        </apex:column>
+                    
+                  
+                  
+                    <apex:column id="qRating" style="border-color: #ededed; width: 65px; text-align: center; vertical-align: middle; color: #788080; font-size: 14pt; " >
+                       <apex:outputPanel layout="block" id="answer" styleClass="{!thisQuestion.id}q" >
+                                    <apex:actionStatus id="myStatus" >
+                                        <apex:facet name="start">
+                                            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /></span>
+                                        </apex:facet>  
+                                        <apex:facet name="stop">  {!MapAnswers[thisQuestion.id].Rating__c}    </apex:facet>         
+                                    </apex:actionStatus>                    
+                       </apex:outputPanel>
+                    </apex:column>  
+                    
+                  <apex:column id="qRatingColor" style="vertical-align: middle; width: 35px" >
+                    <apex:outputPanel styleClass="{!thisQuestion.id}q"  layout="block" style="text-align: center; vertical-align: middle; height:32px; width: 15px; border: 2px solid Black; background-color: {!MapAnswers[thisQuestion.id].Color__c};" id="answer2">
+                 
+                       </apex:outputPanel>
+                </apex:column>                
+                    
+                      
+                    <apex:column id="qOptions" style="border-color: #ededed; " >
+                    
+                    <apex:outputPanel id="options" layout="block" >
+
+                     
+                                                   
+          
+                                                
+                                        <apex:repeat value="{!MapQuestions[thisQuestion.id].Assessment_Question_Option__r}" var="thisOption"> 
+                                                    <apex:commandButton action="{!myUpsert}" value="{!thisOption.Rating__c} "  rendered="{!!Assessment__c.Locked__c}" status="myStatus" reRender="options, mymess, answer, answer2, meee, values"
+                                                        disabled="{!IF(MapAnswers[thisQuestion.id].Rating__c = thisOption.Rating__c, 'True', 'False')}"   
+                                                          style="height: 35px; Width: 35px; color: gray; {!IF(MapAnswers[thisQuestion.id].Rating__c = thisOption.Rating__c, 'background: none;  border-radius: 0px; border: none; border-top:0px solid '+thisOption.Color__c+';', ';font-style: italic;')}"
+                                                          styleClass="{!thisQuestion.id}q"                                                     
+                                                          title="{!thisOption.Rating_Description__c}">
+                                                          
+                                                                <apex:param assignTo="{!QuestionID}" value="{!thisQuestion.id}" name="QuestionID" /> 
+                                                                <apex:param assignTo="{!DomainResultID}" value="{!thisDomain.id}" name="DomainResultID" /> 
+                                                                <apex:param assignTo="{!MyRating }" value="{!thisOption.Rating__c}" name="MyRating " /> 
+                                                                <apex:param assignTo="{!MyColor}" value="{!thisOption.Color__c}" name="MyColor " />
+                                                                <apex:param assignTo="{!MyScore}" value="{!thisOption.Score__c}" name="MyScore " />                                                             
+                                                    </apex:commandButton>
+                                                  <div class="{!thisQuestion.id}" style="display: none; padding: 7px; border: 3px solid {!thisOption.Color__c}; border-top: none; border-bottom: none; margin: 7px;">
+                                                  <center>{!thisOption.Rating__c}</center><br/>
+                                                  {!thisOption.Rating_Description__c}
+                                                  </div>
+                                        </apex:repeat>
+                             </apex:outputPanel> 
+                    </apex:column>
+                    
+                    
+                   <apex:column id="qHelp" style="vertical-align: top; padding:7px; " >
+                        <apex:outputPanel styleClass="{!thisQuestion.id}w" onclick="javascript:toggleDiv('{!thisQuestion.id}', '{!thisQuestion.id}q');" style="text-decoration:underline; cursor: pointer; font-size: 10pt;"  ><b>?</b></apex:outputPanel>
+                        <apex:outputPanel styleClass="{!thisQuestion.id}ww" style="display: none;text-decoration:underline; cursor: pointer; font-size: 10pt;" onclick="javascript:toggleDiv2('{!thisQuestion.id}', '{!thisQuestion.id}q');"  ><b>X</b></apex:outputPanel>
+                </apex:column>     
+                
+ 
+                      </apex:pageBlockTable>
+
+                     <br/>
+                     <br/>                
+                             </apex:outputPanel>                 
+  
+           
+        
+</apex:outputPanel>          
+    </apex:repeat>
+                
+        <div style="margin-left:250px;">        
+                <apex:outputPanel >
+                  COMMENTS (optional)&nbsp;&nbsp;
+                <apex:inputTextarea value="{!Assessment__c.Comments__c}" style="width:500px; height:50px;" disabled="{!IF(Assessment__c.Status__c=='Locked',true,false)}" />
+               <!-- <apex:outputField value="{!Assessment__c.Comments__c}" rendered="{!IF(Assessment__c.Status__c=='Locked',true,false)}"/>  -->
+                  &nbsp;&nbsp;
+                  <apex:commandButton action="{!save}" value="Save Comments" disabled="{!IF(Assessment__c.Status__c=='Locked',true,false)}" />
+                </apex:outputPanel>
+        </div>
+                 
+</apex:pageBlock>
+</apex:form>
+</apex:page>
