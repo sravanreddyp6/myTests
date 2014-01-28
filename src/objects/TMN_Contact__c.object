@@ -18,7 +18,7 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>Edit</actionName>
-        <content>PersonEdit</content>
+        <content>MentorEdit</content>
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
         <type>Visualforce</type>
     </actionOverrides>
@@ -32,8 +32,8 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>New</actionName>
-        <content>PersonEdit</content>
-        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <content>MentorEdit</content>
+        <skipRecordTypeSelect>true</skipRecordTypeSelect>
         <type>Visualforce</type>
     </actionOverrides>
     <actionOverrides>
@@ -46,7 +46,7 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
-        <content>PersonView</content>
+        <content>MentorView</content>
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
         <type>Visualforce</type>
     </actionOverrides>
@@ -90,11 +90,10 @@
         <fullName>Chessie_ID__c</fullName>
         <externalId>false</externalId>
         <label>Chessie ID</label>
-        <precision>7</precision>
+        <length>7</length>
         <required>false</required>
-        <scale>0</scale>
         <trackTrending>false</trackTrending>
-        <type>Number</type>
+        <type>Text</type>
         <unique>false</unique>
     </fields>
     <fields>
@@ -251,7 +250,7 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
         <label>Mentor</label>
-        <referenceTo>Person__c</referenceTo>
+        <referenceTo>TMN_Contact__c</referenceTo>
         <relationshipLabel>Related Parties</relationshipLabel>
         <relationshipName>Related_Parties</relationshipName>
         <required>false</required>
@@ -377,6 +376,17 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
         </picklist>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Role__c</fullName>
+        <description>This field centralizes the Role for Mentors and their Household Members.</description>
+        <externalId>false</externalId>
+        <formula>IF( CONTAINS(RecordType.Name, &apos;Mentor&apos;) , &apos;Mentor&apos;, IF ( CONTAINS(RecordType.Name, &apos;Related Party&apos;),  TEXT( Related_Party_Type__c ) , &apos;&apos; ) )</formula>
+        <label>Role</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Secondary_Phone__c</fullName>
@@ -644,7 +654,7 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
         <type>Text</type>
         <unique>false</unique>
     </fields>
-    <label>Person</label>
+    <label>TMN Contact</label>
     <listViews>
         <fullName>All</fullName>
         <filterScope>Everything</filterScope>
@@ -652,10 +662,10 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
     </listViews>
     <nameField>
         <displayFormat>{0}</displayFormat>
-        <label>Person Number</label>
+        <label>TMN Contact Number</label>
         <type>AutoNumber</type>
     </nameField>
-    <pluralLabel>People</pluralLabel>
+    <pluralLabel>TMN Contacts</pluralLabel>
     <recordTypes>
         <fullName>Mentor</fullName>
         <active>true</active>
@@ -1241,7 +1251,9 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
             </values>
         </picklistValues>
     </recordTypes>
-    <searchLayouts/>
+    <searchLayouts>
+        <searchResultsAdditionalFields>Role__c</searchResultsAdditionalFields>
+    </searchLayouts>
     <sharingModel>ReadWrite</sharingModel>
     <validationRules>
         <fullName>Email_Required_for_Co_Applicant</fullName>
