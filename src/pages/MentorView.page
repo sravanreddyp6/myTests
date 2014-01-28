@@ -1,0 +1,130 @@
+<apex:page standardController="TMN_Contact__c" extensions="MentorViewController">
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+    <style>
+    .dialogLoadingSpinner {
+        margin-left: 5px;
+    }
+    </style>
+    <apex:form id="wholeForm">
+        <apex:actionFunction name="showAddHouseholdMember" action="{!showAddHouseholdMember}" status="loadingHouseholdMemberStatus" rerender="householdMemberDialogMainBlock" oncomplete="openModalDialog('{!$Component.householdMemberDialog}', 'Add Household Member', '{!$Component.wholeForm}');" />
+        <apex:actionFunction name="showEditHouseholdMember" action="{!showEditHouseholdMember}" status="loadinghouseholdMemberStatus" rerender="householdMemberDialogMainBlock" oncomplete="openModalDialog('{!$Component.householdMemberDialog}', 'Edit Household Member', '{!$Component.wholeForm}');">
+            <apex:param name="currentHouseholdMemberId" assignTo="{!currentHouseholdMemberId}" value="" />
+        </apex:actionFunction>
+        <apex:pageBlock >
+            <apex:pageBlockSection title="Demographics">
+                <apex:outputField value="{!TMN_Contact__c.Full_Name__c}" label="Name" />
+                <apex:outputField value="{!TMN_Contact__c.Chessie_ID__c}" />
+
+                <apex:outputField value="{!TMN_Contact__c.Date_of_Birth__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Gender__c}" />
+
+                <apex:outputField value="{!TMN_Contact__c.Age__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Relationship_Status__c}" />
+
+                <apex:outputField value="{!TMN_Contact__c.Race__c}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Contact Information">
+                <apex:outputField value="{!TMN_Contact__c.Street_1__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Street_2__c}" />
+
+                <apex:outputField value="{!TMN_Contact__c.City__c}" />
+                <apex:outputField value="{!TMN_Contact__c.State__c}" />
+
+                <apex:pageBlockSectionItem />
+                <apex:outputField value="{!TMN_Contact__c.Zip_Code__c}" />
+
+                <apex:outputField value="{!TMN_Contact__c.Primary_Phone__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Secondary_Phone__c}" />
+
+                <apex:outputField value="{!TMN_Contact__c.Email__c}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Mentor Status" columns="2">
+                <apex:outputField value="{!TMN_Contact__c.Disregarded__c}" />
+                <apex:pageBlockSectionItem />
+                <apex:outputField value="{!TMN_Contact__c.In_Progress__c}" />
+                <apex:outputField value="{!TMN_Contact__c.In_Progress_Date__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Active__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Active_Date__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Hold__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Hold_Date__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Suspended__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Suspend_Date__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Inactive__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Inactive_Date__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Most_Recent_Recertification_Date__c}" />
+            </apex:pageBlockSection>
+            <a id="householdMembers" ></a>
+            <apex:pageBlockSection title="Household Members" columns="1">
+                <apex:outputPanel layout="none">
+                    <apex:commandButton value="Add Household Member" onclick="showAddHouseholdMember(); return false;" />
+                    <apex:actionStatus id="loadingHouseholdMemberStatus">
+                        <apex:facet name="start">
+                          <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                        </apex:facet>
+                        <apex:facet name="stop" />
+                    </apex:actionStatus>
+                    <apex:pageBlockTable value="{!householdMembers}" var="householdMember" id="householdMemberTable">
+                        <apex:column headerValue="{!IF(householdMembers.size>0, 'Action', '')}" width="50px">
+                            <apex:commandLink onclick="showEditHouseholdMember('{!householdMember.Id}'); return false;" value="Edit" />
+                        </apex:column>
+                        <apex:column value="{!householdMember.Full_Name__c}" />
+                        <apex:column value="{!householdMember.Related_Party_Type__c}" headerValue="{!IF(householdMembers.size>0, 'Relationship', '')}" />
+                        <apex:column value="{!householdMember.Date_of_Birth__c}" />
+                        <apex:column value="{!householdMember.Age__c}" />
+                        <apex:column value="{!householdMember.Primary_Phone__c}" />
+                        <apex:column value="{!householdMember.Email__c}" />
+                        <apex:column value="{!householdMember.Comments__c}" />
+                    </apex:pageBlockTable>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Edit"
+                    onclick="window.location='{!URLFOR($Action.TMN_Contact__c.Edit, TMN_Contact__c.Id)}'; return false;" />
+                <apex:commandButton value="View Credentials"
+                    onclick="window.location='/apex/Credential?contactId={!TMN_Contact__c.Id}'; return false;" />
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        <apex:outputPanel id="householdMemberDialog" style="display:none">
+            <apex:pageBlock title="Add/Edit Household Member" id="householdMemberDialogMainBlock">
+                <apex:pageblockButtons location="bottom">
+                   <apex:actionFunction name="saveHouseholdMember" action="{!saveHouseholdMember}" rerender="householdMemberTable, householdMemberDialogMainBlock, householdMemberDialogErrors" status="saveHouseholdMemberStatus" oncomplete="afterSave('{!$Component.householdMemberDialog}', request.options.parameters.keepDialogOpen, showAddHouseholdMember);">
+                        <apex:param name="keepDialogOpen" value="" />
+                    </apex:actionFunction>
+                    <apex:commandButton value="Save" onClick="saveHouseholdMember(false); return false;" />
+                    <apex:commandButton value="Save & New" onClick="saveHouseholdMember(true); return false;" />
+                    <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.householdMemberDialog}'); return false;" />
+                    <apex:actionStatus id="saveHouseholdMemberStatus">
+                        <apex:facet name="start">
+                            <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                        </apex:facet>
+                        <apex:facet name="stop" />
+                    </apex:actionStatus>
+                </apex:pageblockButtons>
+                <apex:pageMessages id="householdMemberDialogErrors" />
+                <apex:pageBlockSection columns="1">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputText value="First Name"/>
+                        <apex:outputPanel styleClass="nowrap">
+                            <apex:inputText label="" value="{!currentHouseholdMember.First_Name__c}" />&nbsp;&nbsp;
+                            <apex:inputText label="" value="{!currentHouseholdMember.Middle_Initial__c}"  size="1"/>&nbsp;&nbsp;
+                            <apex:inputText label="" value="{!currentHouseholdMember.Last_Name__c}" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="2">
+                    <apex:inputField value="{!currentHouseholdMember.Date_of_Birth__c}" />
+                    <apex:inputField value="{!currentHouseholdMember.Related_Party_Type__c}" label="Type of Relationship" />
+                    <apex:inputField value="{!currentHouseholdMember.Primary_Phone__c}" />
+                    <apex:inputField value="{!currentHouseholdMember.Secondary_Phone__c}" />
+                    <apex:inputField value="{!currentHouseholdMember.Email__c}" />
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="1">
+                    <apex:inputField value="{!currentHouseholdMember.Comments__c}" />
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+        </apex:outputPanel>
+    </apex:form>
+</apex:page>
