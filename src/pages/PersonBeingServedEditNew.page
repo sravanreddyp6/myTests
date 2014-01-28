@@ -447,7 +447,8 @@ function stopRKey(evt) {
       
      
       </apex:pageBlockTable>
-       <apex:outputText value="No Tasks to display" rendered="{!(taskOnCurrentPBSAccount.size=0)}" /> 
+       <apex:outputText value="No Tasks to display" rendered="{!(taskOnCurrentPBSAccount.size=0)}" />
+       <apex:outputPanel rendered="{!taskOnCurrentPBSAccount.size!=0}">Showing the 10 most recent tasks click&nbsp;<apex:outputLink value="/00T?id={!currentContact.AccountID}&rlid=RelatedActivityList" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel> 
        </apex:pageBlockSection>                                       
 
 <apex:pageBlockSection title="Activity History"
@@ -455,7 +456,7 @@ function stopRKey(evt) {
                              columns="1"
                              collapsible="true">
                              
-     <apex:pageBlockTable value="{!eventOnCurrentPBSAccout}" var="ActiveHis" rendered="{!(eventOnCurrentPBSAccout.size>0)}">
+     <apex:pageBlockTable value="{!eventOnCurrentPBSAccount}" var="ActiveHis" rendered="{!(eventOnCurrentPBSAccount.size>0)}">
      
      <apex:column >
                <apex:outputlink value="/{!ActiveHis.Id}">{!ActiveHis.Subject}</apex:outputLink>
@@ -480,8 +481,9 @@ function stopRKey(evt) {
              <apex:column value="{!ActiveHis.LastModifiedDate}"/>
              
       </apex:pageBlockTable>
-              <apex:outputText value="No Activities to display" rendered="{!(eventOnCurrentPBSAccout.size=0)}" />
-
+        <apex:outputText value="No Activities to display" rendered="{!(eventOnCurrentPBSAccount.size=0)}" />
+		<apex:outputPanel rendered="{!eventOnCurrentPBSAccount.size!=0}">Showing the 10 most recent events click&nbsp;<apex:outputLink value="/00T?id={!currentContact.AccountID}&rlid=RelatedActivityList" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel> 
+       
       </apex:pageBlockSection>
        </apex:pageBlock>
        <apex:pageBlock >  
