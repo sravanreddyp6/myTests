@@ -1,7 +1,7 @@
-trigger PersonTrigger on Person__c (after delete, after insert, after undelete, 
+trigger TMN_ContactTrigger on TMN_Contact__c (after delete, after insert, after undelete, 
 after update, before delete, before insert, before update) {
 
-    PersonHandler handler = new PersonHandler(true);
+	TMN_ContactHandler handler = new TMN_ContactHandler(true);
 
     /* Before Insert */
     if(Trigger.isInsert && Trigger.isBefore){

@@ -20,7 +20,7 @@
  * See the Apex Language Reference for more information about Testing and Code Coverage.
  */
 @isTest
-private class PersonHandlerTEST {
+private class TMN_ContactHandlerTEST {
 
     static testMethod void myUnitTest() {
 
@@ -506,58 +506,58 @@ private class PersonHandlerTEST {
 		System.debug('countReqForPet: ' + countReqForPet);	
 		
 				
-		List<RecordType> rts = [ SELECT Id, Name FROM RecordType WHERE SobjectType='Person__c' ];
+		List<RecordType> rts = [ SELECT Id, Name FROM RecordType WHERE SobjectType='TMN_Contact__c' ];
 		
-		Schema.DescribeSObjectResult personSchemaInfo = Person__c.SObjectType.getDescribe();
+		Schema.DescribeSObjectResult personSchemaInfo = TMN_Contact__c.SObjectType.getDescribe();
 		List<Schema.RecordTypeInfo> personRecordTypes = personSchemaInfo.getRecordTypeInfos();
 		
-		List<Schema.PicklistEntry> rpTypes = Person__c.Related_Party_Type__c.getDescribe().getPicklistValues();
+		List<Schema.PicklistEntry> rpTypes = TMN_Contact__c.Related_Party_Type__c.getDescribe().getPicklistValues();
 		for(Schema.PicklistEntry rpType : rpTypes) {
 			System.debug('rpType values from schema: ' + rpType);
 		}
 
-		List<Person__c> newPersons = new List<Person__c>();
+		List<TMN_Contact__c> newPersons = new List<TMN_Contact__c>();
 
 		for(RecordType rt : rts) {
 			if(rt.Name=='Mentor') {
-				Person__c myNewPerson = new Person__c(
+				TMN_Contact__c myNewPerson = new TMN_Contact__c(
 					RecordTypeId = rt.Id
 				);
 				newPersons.add(myNewPerson);
 			}
 			else if(rt.Name=='Related Party') {
-				Person__c myNewPersonCoApp = new Person__c(
+				TMN_Contact__c myNewPersonCoApp = new TMN_Contact__c(
 					RecordTypeId = rt.Id,
 					Related_Party_Type__c = 'Co-Applicant'
 				);
 				newPersons.add(myNewPersonCoApp);
 				
-				Person__c myNewPersonFpRel = new Person__c(
+				TMN_Contact__c myNewPersonFpRel = new TMN_Contact__c(
 					RecordTypeId = rt.Id,
 					Related_Party_Type__c = 'Foster Parent\'s Relative'
 				);
 				newPersons.add(myNewPersonFpRel);
 				
-				Person__c myNewPersonFpChild = new Person__c(
+				TMN_Contact__c myNewPersonFpChild = new TMN_Contact__c(
 					RecordTypeId = rt.Id,
 					Related_Party_Type__c = 'Foster Parent\'s Child'
 				);
 				newPersons.add(myNewPersonFpChild);
 				
-				Person__c myNewPersonResNonRel = new Person__c(
+				TMN_Contact__c myNewPersonResNonRel = new TMN_Contact__c(
 					RecordTypeId = rt.Id,
 					Related_Party_Type__c = 'Resident-Non Relative'
 				);
 				newPersons.add(myNewPersonResNonRel);
 				
-				Person__c myNewPersonPet = new Person__c(
+				TMN_Contact__c myNewPersonPet = new TMN_Contact__c(
 					RecordTypeId = rt.Id,
 					Related_Party_Type__c = 'Pet'
 				);
 				newPersons.add(myNewPersonPet);				
 			}
 			else {
-				Person__c myNewPersonOther = new Person__c(
+				TMN_Contact__c myNewPersonOther = new TMN_Contact__c(
 					RecordTypeId = rt.Id
 				);
 				newPersons.add(myNewPersonOther);
@@ -569,10 +569,10 @@ private class PersonHandlerTEST {
 		} 
 		insert newPersons;      
 
-		List<Credential_Record__c> credRecs = [ SELECT Id, Name, Person__r.Id FROM Credential_Record__c WHERE Person__c = :newPersons ];
+		List<Credential_Record__c> credRecs = [ SELECT Id, Name, TMN_Contact__r.Id FROM Credential_Record__c WHERE TMN_Contact__c = :newPersons ];
 
-		List<Person__c> myPersons = [ SELECT Id, Name, RecordTypeId, Related_Party_Type__c FROM Person__c ];
-		for(Person__c p : myPersons) {
+		List<TMN_Contact__c> myPersons = [ SELECT Id, Name, RecordTypeId, Related_Party_Type__c FROM TMN_Contact__c ];
+		for(TMN_Contact__c p : myPersons) {
 			System.debug('newP7ersons loops is executing...');
 			System.debug('The Person\'s Record Type ID is: ' + p.RecordTypeId);
 			
@@ -586,7 +586,7 @@ private class PersonHandlerTEST {
 			
 			integer credRecCounter = 0;
 			for(Credential_Record__c c : credRecs) {
-				if(p.Id==c.Person__r.Id) {
+				if(p.Id==c.TMN_Contact__r.Id) {
 					System.debug('Person: ' + p.Id + '; Credential Record added: ' + c.Name);
 					credRecCounter++;
 				}

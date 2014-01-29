@@ -46,6 +46,45 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Control_Review_Date__c</fullName>
+        <description>Use this field with Regulatory content to assign a date that the content must be reviewed for compliance purposes.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Use this field with Regulatory content to assign a date that the content must be reviewed for compliance purposes.</inlineHelpText>
+        <label>Control Review Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Control_Type__c</fullName>
+        <description>Identify content that requires control to ensure appropriate governance and review. Control types include: regulatory implications, general controls (SOPs), SOX, or audit.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>This content requires control to ensure appropriate governance and review. Select at least 1 Control type from the picklist.</inlineHelpText>
+        <label>Control Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Audit</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>General Controls</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Regulatory</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>SOX</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <type>MultiselectPicklist</type>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
         <fullName>Department__c</fullName>
         <description>The governing body - not the user of the document</description>
         <externalId>false</externalId>
@@ -196,6 +235,25 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Control_Type__c</picklist>
+            <values>
+                <fullName>Audit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>General Controls</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Regulatory</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SOX</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Department__c</picklist>
             <values>
                 <fullName>All</fullName>
@@ -302,6 +360,25 @@
             </values>
             <values>
                 <fullName>PMC</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Control_Type__c</picklist>
+            <values>
+                <fullName>Audit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>General Controls</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Regulatory</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SOX</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -416,6 +493,25 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Control_Type__c</picklist>
+            <values>
+                <fullName>Audit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>General Controls</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Regulatory</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SOX</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Department__c</picklist>
             <values>
                 <fullName>All</fullName>
@@ -522,6 +618,25 @@
             </values>
             <values>
                 <fullName>PMC</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Control_Type__c</picklist>
+            <values>
+                <fullName>Audit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>General Controls</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Regulatory</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SOX</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -636,6 +751,25 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Control_Type__c</picklist>
+            <values>
+                <fullName>Audit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>General Controls</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Regulatory</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SOX</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Department__c</picklist>
             <values>
                 <fullName>All</fullName>
@@ -706,4 +840,28 @@
             </values>
         </picklistValues>
     </recordTypes>
+    <validationRules>
+        <fullName>Content_Application_Required</fullName>
+        <active>true</active>
+        <description>Content Application Required requires that content uploaded to the IT Salesforce Libraries with the IT-Systems Content Type must select an application from its list.</description>
+        <errorConditionFormula>AND(ISPICKVAL( Application__c , &apos;&apos;),  RecordType.Name == &apos;Application&apos;)</errorConditionFormula>
+        <errorDisplayField>Application__c</errorDisplayField>
+        <errorMessage>You must select a value from the list.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Content_Control_Review_Date_Required</fullName>
+        <active>true</active>
+        <description>Content Control Review Date Required requires that content uploaded to Salesforce Libraries with the Control Content Type must select a a date to review the content to ensure compliance.</description>
+        <errorConditionFormula>OR(AND(RecordType.Name == &apos;Control&apos;, ISBLANK(Control_Review_Date__c)), AND(NOT(ISBLANK(Control_Review_Date__c)),  RecordType.Name == &apos;Control&apos;,  Control_Review_Date__c &lt;= TODAY()))</errorConditionFormula>
+        <errorDisplayField>Control_Review_Date__c</errorDisplayField>
+        <errorMessage>Populate the date (use the date picker or enter a date formatted as mm/dd/yyyy) that this content needs to be reviewed for control requirements.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Content_Control_Type_Required</fullName>
+        <active>true</active>
+        <description>Content Control Required requires that content uploaded to Salesforce Libraries with the Control Content Type must select a control type from the picklist.</description>
+        <errorConditionFormula>AND(ISBLANK(Control_Type__c),  RecordType.Name == &apos;Control&apos;)</errorConditionFormula>
+        <errorDisplayField>Control_Type__c</errorDisplayField>
+        <errorMessage>You must select one or more values from the list.</errorMessage>
+    </validationRules>
 </CustomObject>
