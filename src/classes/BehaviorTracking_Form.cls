@@ -258,6 +258,12 @@ public class BehaviorTracking_Form{
         personw.DefaultValue = getPersonName();
         anoto.Widgets.Add(personw);
 
+        AnotoXmlGeneration.Widget objtypew = new AnotoXmlGeneration.Widget(AnotoXmlGeneration.WidgetTypeEnum.textfield, 'objtype' + getPersonId() );
+        objtypew.WriteEnabled = false;
+        objtypew.Layout(1, 7.0, 88.9, 5.8, 48); 
+        objtypew.DefaultValue = objTable.IsTimeBased ? 'Duration': 'Count';
+        anoto.Widgets.Add(objtypew);
+
         AnotoXmlGeneration.Widget formdatew = new AnotoXmlGeneration.Widget(AnotoXmlGeneration.WidgetTypeEnum.textfield, 'day' + worksheet.Id );
         formdatew.WriteEnabled = false;
         formdatew.Layout(1, 7.0, 180.2, 5.8, 34.8); 
