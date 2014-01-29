@@ -67,8 +67,9 @@
                         <apex:facet name="stop" />
                     </apex:actionStatus>
                     <apex:pageBlockTable value="{!householdMembers}" var="householdMember" id="householdMemberTable">
-                        <apex:column headerValue="{!IF(householdMembers.size>0, 'Action', '')}" width="50px">
-                            <apex:commandLink onclick="showEditHouseholdMember('{!householdMember.Id}'); return false;" value="Edit" />
+                        <apex:column headerValue="{!IF(householdMembers.size>0, 'Action', '')}" style="width: 130px;">
+                            <apex:commandLink onclick="showEditHouseholdMember('{!householdMember.Id}'); return false;" value="Edit" />&nbsp;|&nbsp;
+                            <apex:commandLink onclick="window.location='/apex/Credential?contactId={!householdMember.Id}'; return false;" value="View Credentials" />
                         </apex:column>
                         <apex:column value="{!householdMember.Full_Name__c}" />
                         <apex:column value="{!householdMember.Related_Party_Type__c}" headerValue="{!IF(householdMembers.size>0, 'Relationship', '')}" />
