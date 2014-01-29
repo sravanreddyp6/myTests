@@ -18,7 +18,7 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>Edit</actionName>
-        <content>MentorEdit</content>
+        <content>MentorEditAll</content>
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
         <type>Visualforce</type>
     </actionOverrides>
@@ -46,7 +46,7 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
-        <content>MentorView</content>
+        <content>MentorViewAll</content>
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
         <type>Visualforce</type>
     </actionOverrides>
@@ -657,11 +657,19 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
     <label>TMN Contact</label>
     <listViews>
         <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Full_Name__c</columns>
+        <columns>Role__c</columns>
+        <columns>Date_of_Birth__c</columns>
+        <columns>Age__c</columns>
+        <columns>Primary_Phone__c</columns>
+        <columns>Email__c</columns>
+        <columns>Comments__c</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>
     <nameField>
-        <displayFormat>{0}</displayFormat>
+        <displayFormat>TMN-CNT-{0000}</displayFormat>
         <label>TMN Contact Number</label>
         <type>AutoNumber</type>
     </nameField>
@@ -1252,7 +1260,27 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
         </picklistValues>
     </recordTypes>
     <searchLayouts>
+        <customTabListAdditionalFields>Full_Name__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Role__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Date_of_Birth__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Age__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Primary_Phone__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Email__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Comments__c</customTabListAdditionalFields>
+        <lookupDialogsAdditionalFields>Full_Name__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Role__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Date_of_Birth__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Age__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Primary_Phone__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Email__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Comments__c</lookupDialogsAdditionalFields>
+        <searchResultsAdditionalFields>Full_Name__c</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>Role__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Date_of_Birth__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Age__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Primary_Phone__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Email__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Comments__c</searchResultsAdditionalFields>
     </searchLayouts>
     <sharingModel>ReadWrite</sharingModel>
     <validationRules>

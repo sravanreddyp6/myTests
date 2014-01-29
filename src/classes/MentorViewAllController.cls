@@ -14,7 +14,7 @@ public with sharing class MentorViewAllController {
         // Member section.
         System.debug('Contact: ' + contact);
         if (contact.RecordType.Name.indexOf('Mentor') == -1) {
-            PageReference ref = new PageReference('/apex/MentorView?id=' + contact.Mentor__c + '#householdMembers');
+            PageReference ref = new PageReference('/apex/MentorView?id=' + contact.Mentor__c);
             ref.setAnchor('householdMembers');
             return ref;
         }
