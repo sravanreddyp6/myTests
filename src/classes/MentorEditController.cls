@@ -1,5 +1,5 @@
 public with sharing class MentorEditController {
-    public TMN_Contact__c contact;
+    public TMN_Contact__c contact { get; set; }
 
     public MentorEditController(ApexPages.standardController stdController) {
         contact = (TMN_Contact__c) stdController.getRecord();
