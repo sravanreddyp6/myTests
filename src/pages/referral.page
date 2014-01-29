@@ -56,6 +56,9 @@
     .requiredInput {
       display: inline;
       margin-left: 4px;
+    } 
+    .fieldLabel {
+    	font-size:95%;
     }
   </style>
 
@@ -1199,6 +1202,7 @@ document.onkeypress = stopRKey;
        <apex:inputField id="infoRealese" value="{!Referral__c.Is_Information_Release_Signed__c}" rendered="{!ReferralRecordType == 'Wisconsin'}"/>
        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}"/>
      </apex:pageBlockSection>
+	<apex:actionRegion >
      <apex:pageBlockSection title="Placement Risk" rendered="{!referralRecordType=='Cambridge Florida' || referralRecordType=='Cambridge Maryland'}">
          <apex:inputField label="Is the person at risk of an out of home placement?" value="{!Referral__c.Risk_of_Out_of_Home_Placement__c}">
              <apex:actionStatus id="statusPlaceRisk">
@@ -1211,9 +1215,9 @@ document.onkeypress = stopRKey;
              </apex:actionStatus>
              <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusPlaceRisk" />
          </apex:inputField>
-         <apex:inputField label="How great is the risk?" value="{!Referral__c.Risk_Level__c}" html-disabled="true" rendered="{!Referral__c.Risk_of_Out_of_Home_Placement__c!='Yes'}" />
-         <apex:inputField label="How great is the risk?" value="{!Referral__c.Risk_Level__c}" rendered="{!Referral__c.Risk_of_Out_of_Home_Placement__c=='Yes'}" />
-         <apex:inputField label="Select the type of placement that would be most likely to occur, should an out of home placement be required:" value="{!Referral__c.Placement_Type_Risk__c}" html-disabled="true" rendered="{!Referral__c.Risk_of_Out_of_Home_Placement__c!='Yes'}" />
+	     <apex:inputField label="How great is the risk?" value="{!Referral__c.Risk_Level__c}" html-disabled="true" rendered="{!Referral__c.Risk_of_Out_of_Home_Placement__c!='Yes'}" />
+	     <apex:inputField label="How great is the risk?" value="{!Referral__c.Risk_Level__c}" rendered="{!Referral__c.Risk_of_Out_of_Home_Placement__c=='Yes'}" />
+		 <apex:inputField label="Select the type of placement that would be most likely to occur, should an out of home placement be required:" value="{!Referral__c.Placement_Type_Risk__c}" html-disabled="true" rendered="{!Referral__c.Risk_of_Out_of_Home_Placement__c!='Yes'}" />
          <apex:inputField label="Select the type of placement that would be most likely to occur, should an out of home placement be required:" value="{!Referral__c.Placement_Type_Risk__c}" rendered="{!Referral__c.Risk_of_Out_of_Home_Placement__c=='Yes'}">
              <apex:actionStatus id="statusPlaceTypeRisk">
                  <apex:facet name="start">
@@ -1228,6 +1232,8 @@ document.onkeypress = stopRKey;
          <apex:inputField label="Other (specify)" value="{!Referral__c.Other_Placement_Type_Desc__c}" html-disabled="true" rendered="{!Referral__c.Placement_Type_Risk__c!='Other (specify)'}" />
          <apex:inputField label="Other (specify)" value="{!Referral__c.Other_Placement_Type_Desc__c}" rendered="{!Referral__c.Placement_Type_Risk__c=='Other (specify)'}" />
      </apex:pageBlockSection>
+   </apex:actionRegion>
+   <apex:actionRegion >
      <apex:pageBlockSection id="PlacementHxBlockSection" title="Placement History" rendered="{!referralRecordType=='Cambridge Florida' || referralRecordType=='Cambridge Maryland'}">
          <apex:inputField label="Does the person have a history of placements (past or current)?" value="{!Referral__c.Placement_History__c}">
              <apex:actionStatus id="statusPlaceHx">
@@ -1292,7 +1298,7 @@ document.onkeypress = stopRKey;
          <apex:inputField label="The person is not currently in an out of home placement but has a history of placements" value="{!Referral__c.Placement_Non_Current_Historical__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
          <apex:inputField label="The person is not currently in an out of home placement but has a history of placements" value="{!Referral__c.Placement_Non_Current_Historical__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
          <apex:pageBlockSectionItem />
-         <apex:outputText value="If there have been previous placements, enter the number of each type of placement that has occurred (enter 0 for each type that has not occurred):" style="font-size:smallest;" />
+         <apex:outputText value="If there have been previous placements, enter the number of each type of placement that has occurred (enter 0 for each type that has not occurred):" styleClass="fieldLabel" />
          <apex:pageBlockSectionItem />
          <apex:inputField value="{!Referral__c.Placement_Foster_Care_Count__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
          <apex:inputField value="{!Referral__c.Placement_Foster_Care_Count__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
@@ -1363,6 +1369,7 @@ document.onkeypress = stopRKey;
          <apex:inputField value="{!Referral__c.Repeat_Offender__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
          <apex:inputField value="{!Referral__c.Repeat_Offender__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
      </apex:pageBlockSection>
+    </apex:actionRegion> 
      <apex:pageBlockSection showHeader="false" columns="2" collapsible="false" id="ReferralStatus">
        <apex:inputField id="closeDate" value="{!Referral__c.Close_Date__c}" rendered="{!Referral__c.Referral_Status__c=='Closed'}"/>
        <apex:inputField id="closeReason" value="{!Referral__c.Close_Reason__c}" rendered="{!Referral__c.Referral_Status__c=='Closed'}"/>
