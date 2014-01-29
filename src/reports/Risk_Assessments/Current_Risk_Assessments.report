@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>Assessment__c.AccountPerson__c</field>
+    </columns>
+    <columns>
+        <field>Assessment__c.Admission__c</field>
+    </columns>
+    <columns>
+        <field>CUST_NAME</field>
+    </columns>
+    <columns>
+        <field>Assessment__c.Approval_Date__c</field>
+    </columns>
+    <columns>
+        <field>Assessment__c.Verbal_Approval_Obtained_On__c</field>
+    </columns>
+    <columns>
+        <field>Assessment__c.Status__c</field>
+    </columns>
+    <columns>
+        <field>CUST_CREATED_NAME</field>
+    </columns>
+    <columns>
+        <field>Assessment__c.Approved_By__c</field>
+    </columns>
+    <columns>
+        <field>Assessment__c.Finalized_Date__c</field>
+    </columns>
+    <description>#notes</description>
+    <filter>
+        <criteriaItems>
+            <column>Assessment__c.Status__c</column>
+            <operator>equals</operator>
+            <value>Active Final,Inactive Draft</value>
+        </criteriaItems>
+    </filter>
+    <format>Tabular</format>
+    <name>Current Risk Assessments</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>CustomEntity$Assessment__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <sortColumn>CUST_NAME</sortColumn>
+    <sortOrder>Desc</sortOrder>
+    <timeFrameFilter>
+        <dateColumn>Assessment__c.Approval_Date__c</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>
