@@ -777,7 +777,11 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
   }
 
   public void saveRelParty() {
-    this.relParty.Type__c = this.relParty.Type_String__c;
+    // CTEAE-22: J. Gilliam commented this line by Appirio that seems to be unnecessary for the save fo Related Party records, and in particular
+    // was causing new Related Party records to save without a Type after we fixed the order of operations issue that was triggering 
+    // the required field validation.  1-31-14
+    //
+    // this.relParty.Type__c = this.relParty.Type_String__c;
     this.relParties.add(this.relParty);
     this.relParty = new Related_Party__c();
     relParty.RecordTypeId = Utility.getRelatedPartyRecordTypeFromReferral(this.ReferralRecord);
