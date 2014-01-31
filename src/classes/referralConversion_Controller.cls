@@ -143,7 +143,8 @@ public with sharing class referralConversion_Controller {
       					r.Email_Address__c, 
       					r.Days_To_Convert_Referral__c, 
       					r.Date_of_Injury__c, 
-      					r.Current_Medical_Conditions__c, 
+      					r.Current_Medical_Conditions__c,
+      					r.Current_Medications__c, 
       					r.Current_Location__c, 
       					r.CreatedDate, 
       					r.CreatedById, 
@@ -399,7 +400,8 @@ public with sharing class referralConversion_Controller {
  								UCI_ID__pc = string.valueOf(this.referralRecord.UCI_Number__c),
  								Marital_Status__pc = pbrCurr.Marital_Status__c,
  								Avatar_ID__pc = referralRecord.Billing_ID__c,
- 								Legal_Guardianship_Status__pc = referralRecord.Legal_Guardian_Status__c
+ 								Legal_Guardianship_Status__pc = referralRecord.Legal_Guardian_Status__c,
+ 								Current_Medications__pc = referralRecord.Current_Medications__c
  								);
  								
  	insert accNew;
