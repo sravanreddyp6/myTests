@@ -1747,7 +1747,8 @@ document.onkeypress = stopRKey;
         <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Family_History__c}" rendered="{!isCambridge}"/>
         <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Medical_History__c}" rendered="{!isCambridge}"/>
         <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Behavior_Summary__c}" rendered="{!isCambridge}"/>
-        <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Current_Medications__c}" rendered="{!isCambridge}"/>
+        <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Current_Medications__c}" rendered="{!isCambridge && !isLinkedPersonBeingServed}"/>
+        <apex:outputField value="{!personBeingServedRecord.Current_Medications__c}" rendered="{!isCambridge && isLinkedPersonBeingServed}"/>
         <apex:inputField value="{!Referral__c.Prior_Program_Information__c}" style="width: 90%;" Rendered="{!referralRecordType!='CareMeridian'}"/>
         <apex:inputField value="{!Referral__c.Comments__c}" style="width: 90%;" />
       </apex:pageBlockSection>
