@@ -3,7 +3,7 @@
   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
   <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
   
-<apex:stylesheet value="{!$Resource.mentoresdcss}" />
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
    <style type="text/css">
     .nowrap {
       white-space: nowrap;
@@ -378,6 +378,8 @@ function stopRKey(evt) {
    
      <apex:column headerValue="Effective Date" value="{!diag.Effective_Date__c}"/>
      <apex:column headerValue="Service Assignment"><a href="/{!diag.Service_Assignment__c}">{!diag.Service_Assignment__r.Name}</a></apex:column>
+     <apex:column value="{!diag.Primary_Diagnosis__c}"  headerValue="Primary" />
+     <apex:column value="{!diag.Secondary_Diagnosis__c}"  headerValue="Secondary" />
      <apex:column value="{!diag.Axis_I__c}"  headerValue="Axis I" />
      <apex:column value="{!diag.Axis_II__c}" headerValue="Axis II" />
      <apex:column value="{!diag.Axis_III__c}" headerValue="Axis III" />
@@ -447,7 +449,7 @@ function stopRKey(evt) {
       
      
       </apex:pageBlockTable>
-       <apex:outputText value="No Tasks to display" rendered="{!(taskOnCurrentPBSAccount.size=0)}" />
+       <apex:outputText value="No Tasks to display" rendered="{!(taskOnCurrentPBSAccount.size=0)}" /> 
        <apex:outputPanel rendered="{!taskOnCurrentPBSAccount.size!=0}">Showing the 10 most recent tasks click&nbsp;<apex:outputLink value="/00T?id={!currentContact.AccountID}&rlid=RelatedActivityList" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel> 
        </apex:pageBlockSection>                                       
 
@@ -483,7 +485,7 @@ function stopRKey(evt) {
       </apex:pageBlockTable>
         <apex:outputText value="No Activities to display" rendered="{!(eventOnCurrentPBSAccount.size=0)}" />
 		<apex:outputPanel rendered="{!eventOnCurrentPBSAccount.size!=0}">Showing the 10 most recent events click&nbsp;<apex:outputLink value="/00T?id={!currentContact.AccountID}&rlid=RelatedActivityList" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel> 
-       
+
       </apex:pageBlockSection>
        </apex:pageBlock>
        <apex:pageBlock >  

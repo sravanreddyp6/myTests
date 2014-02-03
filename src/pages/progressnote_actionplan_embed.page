@@ -1,6 +1,8 @@
 <apex:page standardController="Progress_Note__c" extensions="progressnote_actionplan_embed_ex" >
 <apex:includeScript value="{!$Resource.jquery}"/>
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+
+<apex:variable value="{!Progress_Note__c.Locked__c || Progress_Note__c.Status__c == 'Final'}" var="vfVarLock"/>
 <style>
     .goal{padding-left: 20px;}
     .obj{padding-left: 60px;}
@@ -53,7 +55,6 @@ function toggleByClass2(cls){
 
 };
 </script>
-<apex:variable value="{!Progress_Note__c.Locked__c || Progress_Note__c.Status__c == 'Final'}" var="vfVarLock"/>
 <apex:outputPanel style="display: none">
 <apex:outputField value="{!Progress_Note__c.Service_Assignment__c}"/>
 <apex:outputField value="{!Progress_Note__c.Admission__c}"/>
@@ -64,10 +65,6 @@ function toggleByClass2(cls){
     <apex:pageBlock mode="mainDetail" >
     <apex:outputPanel layout="block" styleClass="fixedElement">
         <apex:outputPanel styleClass="mytitle">Goals and Objectives</apex:outputPanel> 
-        <apex:outputPanel style="padding-left: 10px;">
-            <apex:outputPanel onclick="toggleByClass2('ifalse' );return false;" styleClass="myhide">hide unselected </apex:outputPanel>
-            <apex:outputPanel onclick="toggleByClass2('ifalse' );return false;" styleClass="myshow" style="display: none;">show all</apex:outputPanel>        
-        </apex:outputPanel>
     </apex:outputPanel>
     <br/>
     <br/>
@@ -91,8 +88,8 @@ function toggleByClass2(cls){
                     </apex:outputPanel>
                               
                     <apex:repeat value="{!g.action_plan_objectives__r }" var="o">
-                        <apex:outputPanel layout="block" styleClass="obj i{!MapItemInNote[o.id]}">
-                            <apex:inputCheckbox value="{!MapItemInNote[o.id]}" id="obj" disabled="{!vfVarLock || !MapItemInNote[g.id]}">
+                        <apex:outputPanel layout="block" styleClass="obj i{!MapItemInNote[o.id]}" rendered="{!MapItemInNote[g.id]}">
+                            <apex:inputCheckbox value="{!MapItemInNote[o.id]}" id="obj" disabled="{!vfVarLock}">
                                 <apex:actionSupport event="onclick" action="{!myUpdate}" status="myStatus" reRender="myFrm">
                                     <apex:param assignTo="{!updatingID}" value="{!o.id}" name="updatingID"  /> 
                                     <apex:param assignTo="{!isGoal}" value="false" name="isGoal"  />
@@ -103,12 +100,12 @@ function toggleByClass2(cls){
                             </apex:outputLabel>                            
                         </apex:outputPanel> 
                         
-                        <apex:outputPanel layout="block" styleClass="act i{!MapItemInNote[o.id]}">
+                        <apex:outputPanel layout="block" styleClass="act i{!MapItemInNote[o.id]}" rendered="{!MapItemInNote[o.id]}">
                             <apex:outputPanel layout="block" styleClass="myheader"><b>Actions</b> <br/></apex:outputPanel>
                         </apex:outputPanel>
                               
                             <apex:repeat value="{!mapActions[o.id]}" var="a">
-                                <apex:outputPanel layout="block" styleClass="act i{!MapItemInNote[o.id]}">
+                                <apex:outputPanel layout="block" styleClass="act i{!MapItemInNote[o.id]}" rendered="{!MapItemInNote[o.id]}">
                                    <apex:outputField value="{!a.description__c} "/>                                
                                 </apex:outputPanel>  
                             </apex:repeat>                            

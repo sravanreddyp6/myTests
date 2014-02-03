@@ -1,4 +1,4 @@
-<apex:page standardController="Evaluation__c" extensions="CareMeridianEvaluationViewController" showHeader="false" renderas="pdf">
+<apex:page standardController="Evaluation__c" extensions="CareMeridianEvaluationViewController,CareMeridianEvaluationCommonController" showHeader="false" renderas="pdf">
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
@@ -6,7 +6,7 @@
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
     <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
     <apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}"/>
-    <style>         
+    <style>
         [id$=skinBodyFooter] {
             clear: both;
         }
@@ -19,7 +19,7 @@
             height: 5px;
         }
         .hrSmall {
-            height: 1px;  
+            height: 1px;
             border: 0;
             color: black;
             background-color: black;
@@ -39,13 +39,13 @@
                                 <apex:outputLabel id="FullNameLabel" for="FullNameField" value="Full Name" style="margin:10px;font-weight:bold;" />
                                 <apex:outputText id="FullNameField" value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Full_Name__c}" />
                                </td>
-                               <td> 
+                               <td>
                                 <apex:outputLabel id="DobLabel" for="DobField" value="Date of Birth" style="margin:10px;font-weight:bold;" />
                                 <apex:outputField id="DobField" value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Date_of_Birth__c}" />
                                </td>
                            </tr>
                            <tr>
-                               <td> 
+                               <td>
                                 <apex:outputLabel id="NumChildLabel" for="NumChildField" value="Number of Children" style="margin:10px;font-weight:bold;" />
                                 <apex:outputField id="NumChildField" value="{!Evaluation__c.Number_of_Children__c}" />
                                </td>
@@ -130,7 +130,7 @@
                             <apex:column value="{!relatedParty.Comments__c}"/>
                         </apex:pageBlockTable>
                     </apex:pageBlockSection>
-                        <br />   
+                        <br />
                         <table>
                             <tr>
                                 <td>
@@ -148,7 +148,7 @@
                                     <apex:outputField id="DOIOnsetField" label="DOIOnsetLabel" value="{!Evaluation__c.Date_of_Injury_Onset__c}" />
                                 </td>
                                 <td>
-                                    <apex:outputLabel id="BarLabel" value="Bariatric Equipment" style="margin:10px;font-weight:bold;" />    
+                                    <apex:outputLabel id="BarLabel" value="Bariatric Equipment" style="margin:10px;font-weight:bold;" />
                                     <apex:outputField id="BarField" label="BarLabel" value="{!Evaluation__c.Bariatric_Equipment__c}" />
                                 </td>
                             </tr>
@@ -180,7 +180,7 @@
                         <apex:outputField value="{!Evaluation__c.Clinical_Course__c}" /><br />
                         <apex:outputField value="{!Evaluation__c.Details_Section_Completed__c}" />
                     </apex:pageBlockSection>
-                </apex:pageBlock>           
+                </apex:pageBlock>
             <hr />
 <!--            </apex:tab>-->
 <!--            <apex:tab label="Diagnostics" name="diagnosticTab" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">-->
@@ -397,26 +397,26 @@
                     <hr />
                     <h2 style="display: block; margin: 10px;">Body Map</h2>
                     <br /><br />
-                    <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
-                       <apex:image width="318" height="298" style="float: left; border: 3px solid #ECECEC;" value="{!URLFOR($Resource.WholeBodyNoGrid)}" id="bodyMap" />
-                        
+                    <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px; height: 298px;">
+                       <apex:image width="318" height="298" style="float: left; border: 3px solid #ECECEC;" value="{!IF(bodyMapUrl=null, URLFOR($Resource.WholeBodyNoGrid), bodyMapUrl)}" id="bodyMap" />
+
                         <apex:variable var="index" value="{!1}" />
                         <apex:repeat value="{!annotations}" var="annotation">
-                          <div class='annotation-number' 
-                             style="pointer-events:none; position: absolute; text-align: center; 
-                             left:{!annotation.Annotation_X__c * 100}%; 
-                             width:{!annotation.Annotation_Width__c* 100}%;
-                             top:{!annotation.Annotation_Y__c * 100}%; 
-                             height:{!annotation.Annotation_Height__c * 100}%;">
-                             
-                        <span style="line-height:{!annotation.Annotation_Height__c}px; color: red; font-size: 1.5em;">
-                            {!index}</span>    
-                            
-                        </div>
-                        <apex:variable var="index" value="{!index+1}" />                      
-                        </apex:repeat>                        
- 
- 
+                          <div class='annotation-number'
+                               style="pointer-events: none;
+                                      position: absolute;
+                                      text-align: center;
+                                      left: {!annotation.Annotation_X__c * 100}%;
+                                      width: {!annotation.Annotation_Width__c * 100}%;
+                                      top: {!annotation.Annotation_Y__c * 100}%;
+                                      height: {!annotation.Annotation_Height__c * 100}%;
+                                      border: 1px black solid;">
+                            <span style="color: red; font-size: 1em;">{!index}</span>
+                          </div>
+                        <apex:variable var="index" value="{!index+1}" />
+                        </apex:repeat>
+
+
                                            </div>
                     <div style="margin-left: 420px; height: 298px;">
                         <table id="annotations">
@@ -431,6 +431,7 @@
                     </div>
                     <hr />
                     <apex:pageBlockSection columns="1" id="skinBodyFooter">
+                        <apex:outputField value="{!Evaluation__c.Body_Map_Comments__c}" label="Other Body Map Comments" />
                         <apex:outputField value="{!Evaluation__c.Skin_Body_Comments__c}" />
                         <apex:outputField value="{!Evaluation__c.Skin_Section_Completed__c}" />
                     </apex:pageBlockSection>
@@ -615,7 +616,7 @@
 <!--            </apex:tab>-->
 <!--            <apex:tab label="Ortho" name="orthoTab" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">-->
                 <apex:pageBlock title="Ortho">
-                    <hr style="height: 12px; color:gray; background-color:gray;" /> 
+                    <hr style="height: 12px; color:gray; background-color:gray;" />
                     <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Fracture Detail" formId="{!$Component.wholePage}" uniqueId="fracture" isPdf="true" />
                     <apex:pageBlockSection columns="1">
                         <apex:outputField value="{!Evaluation__c.Weight_Bearing_Precautions__c}" />
@@ -792,7 +793,7 @@
                     <apex:pageBlockSection >
                         <apex:outputText label="Evaluation Signed" value="{!IF(Evaluation__c.Is_Signed__c,'YES','NO')}" style="padding:10px;" />
                     </apex:pageBlockSection>
-                </apex:pageBlock>   
+                </apex:pageBlock>
 <!--            </apex:tab>-->
 <!--        </apex:tabPanel>-->
     </apex:form>

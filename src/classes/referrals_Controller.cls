@@ -553,7 +553,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
         initReferralRecordType();
 
         referralRecordType= (this.ReferralRecord.RecordTypeId != null)?Utility.getRecordTypeForReferral(Id.valueOf(this.ReferralRecord.RecordTypeId)):''; //(this.ReferralRecord.RecordType.Name!=null)?this.ReferralRecord.RecordType.Name:[select name from recordtype where id=:this.referralRecord.recordTypeId limit 1].name;
-
+  
   }
 
    private void populateRelParties() {
@@ -685,7 +685,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     Person_Being_Referred__c pBRRec;
     try {
       pBRRec = [select Age__c, City__c, Date_of_Birth__c, Email_Address__c,
-                       Ethnicity__c, Fax__c, First_Name__c, Gender__c,
+                       Race__c, Ethnicity__c, Fax__c, First_Name__c, Gender__c,
                        Home_County__c, Last_Name__c, Marital_Status__c,
                        Middle_Initial__c, Phone__c, Primary_Language__c, SSN__c,
                        State__c, Street_1__c, Street_2__c, Zip_Code__c,
@@ -777,7 +777,11 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
   }
 
   public void saveRelParty() {
-    this.relParty.Type__c = this.relParty.Type_String__c;
+    // CTEAE-22: J. Gilliam commented this line by Appirio that seems to be unnecessary for the save fo Related Party records, and in particular
+    // was causing new Related Party records to save without a Type after we fixed the order of operations issue that was triggering 
+    // the required field validation.  1-31-14
+    //
+    // this.relParty.Type__c = this.relParty.Type_String__c;
     this.relParties.add(this.relParty);
     this.relParty = new Related_Party__c();
     relParty.RecordTypeId = Utility.getRelatedPartyRecordTypeFromReferral(this.ReferralRecord);
