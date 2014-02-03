@@ -62,6 +62,95 @@
         <visibleLines>4</visibleLines>
     </fields>
     <fields>
+        <fullName>Care_Giver_Relationship_Other__c</fullName>
+        <externalId>false</externalId>
+        <label>Care Giver Relationship Other</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Care_Giver_Relationship__c</fullName>
+        <description>Relationship of caregiver to person being served.</description>
+        <externalId>false</externalId>
+        <label>Care Giver Relationship</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Biological Mother</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Biological Father</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Foster Mother</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Foster Father</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Adoptive Mother</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Adoptive Father</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grandmother</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grandfather</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Step-mother</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Step-father</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other Female Relative</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other Male Relative</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Family Friend</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Client&apos;s friend</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Child of Client</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Comments__c</fullName>
         <externalId>false</externalId>
         <label>Comments</label>
@@ -77,6 +166,88 @@
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Email</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Employment_Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Employment Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Unemployed</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Employed</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Retired</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Disabled</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Highest_Education__c</fullName>
+        <externalId>false</externalId>
+        <label>Highest Education</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No School</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grammar/Middle School</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Some High School</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>High School Diploma/GED</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Some College</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Vocational/Technical Associates Degree</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Bachelors Degree</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Masters Degree</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>PhD/MD</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Occupation__c</fullName>
+        <externalId>false</externalId>
+        <label>Occupation</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
         <unique>false</unique>
     </fields>
     <fields>
@@ -281,6 +452,135 @@
         <active>true</active>
         <label>Cambridge</label>
         <picklistValues>
+            <picklist>Care_Giver_Relationship__c</picklist>
+            <values>
+                <fullName>Adoptive Father</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Adoptive Mother</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Biological Father</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Biological Mother</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Child of Client</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Client%27s friend</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family Friend</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Foster Father</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Foster Mother</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Grandfather</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Grandmother</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other Female Relative</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other Male Relative</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Step-father</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Step-mother</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Employment_Status__c</picklist>
+            <values>
+                <fullName>Disabled</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Employed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Retired</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unemployed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Highest_Education__c</picklist>
+            <values>
+                <fullName>Bachelors Degree</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Grammar%2FMiddle School</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High School Diploma%2FGED</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Masters Degree</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No School</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PhD%2FMD</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Some College</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Some High School</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Vocational%2FTechnical Associates Degree</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Phone_1_Type__c</picklist>
             <values>
                 <fullName>Cell</fullName>
@@ -355,6 +655,135 @@
         <active>true</active>
         <label>CareMeridian</label>
         <picklistValues>
+            <picklist>Care_Giver_Relationship__c</picklist>
+            <values>
+                <fullName>Adoptive Father</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Adoptive Mother</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Biological Father</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Biological Mother</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Child of Client</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Client%27s friend</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family Friend</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Foster Father</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Foster Mother</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Grandfather</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Grandmother</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other Female Relative</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other Male Relative</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Step-father</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Step-mother</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Employment_Status__c</picklist>
+            <values>
+                <fullName>Disabled</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Employed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Retired</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unemployed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Highest_Education__c</picklist>
+            <values>
+                <fullName>Bachelors Degree</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Grammar%2FMiddle School</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High School Diploma%2FGED</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Masters Degree</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No School</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PhD%2FMD</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Some College</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Some High School</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Vocational%2FTechnical Associates Degree</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Phone_1_Type__c</picklist>
             <values>
                 <fullName>Cell</fullName>
@@ -425,9 +854,357 @@
         </picklistValues>
     </recordTypes>
     <recordTypes>
+        <fullName>Care_Giver</fullName>
+        <active>true</active>
+        <label>Care Giver</label>
+        <picklistValues>
+            <picklist>Care_Giver_Relationship__c</picklist>
+            <values>
+                <fullName>Adoptive Father</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Adoptive Mother</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Biological Father</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Biological Mother</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Child of Client</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Client%27s friend</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family Friend</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Foster Father</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Foster Mother</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Grandfather</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Grandmother</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other Female Relative</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other Male Relative</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Step-father</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Step-mother</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Employment_Status__c</picklist>
+            <values>
+                <fullName>Disabled</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Employed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Retired</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unemployed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Highest_Education__c</picklist>
+            <values>
+                <fullName>Bachelors Degree</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Grammar%2FMiddle School</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High School Diploma%2FGED</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Masters Degree</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No School</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PhD%2FMD</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Some College</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Some High School</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Vocational%2FTechnical Associates Degree</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Phone_1_Type__c</picklist>
+            <values>
+                <fullName>Cell</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Fax</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Work</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Phone_2_Type__c</picklist>
+            <values>
+                <fullName>Cell</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Fax</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Work</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Caregiver</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Case Worker</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Employment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family%2FFriends</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Financial Worker</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Funder Resources</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Guardian</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Insurance</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referring Provider</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
         <fullName>Generic</fullName>
         <active>true</active>
         <label>Generic</label>
+        <picklistValues>
+            <picklist>Care_Giver_Relationship__c</picklist>
+            <values>
+                <fullName>Adoptive Father</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Adoptive Mother</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Biological Father</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Biological Mother</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Child of Client</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Client%27s friend</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Family Friend</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Foster Father</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Foster Mother</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Grandfather</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Grandmother</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other Female Relative</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other Male Relative</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Step-father</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Step-mother</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Employment_Status__c</picklist>
+            <values>
+                <fullName>Disabled</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Employed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Retired</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unemployed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Highest_Education__c</picklist>
+            <values>
+                <fullName>Bachelors Degree</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Grammar%2FMiddle School</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High School Diploma%2FGED</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Masters Degree</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No School</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PhD%2FMD</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Some College</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Some High School</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Vocational%2FTechnical Associates Degree</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
         <picklistValues>
             <picklist>Phone_1_Type__c</picklist>
             <values>

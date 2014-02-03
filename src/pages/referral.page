@@ -24,7 +24,7 @@
       width: 12px;
     }
     .modalDialog {
-      max-height: 500px;
+      max-height: 600px;
       overflow: auto;
     }
     .modalDialog .modalSubheader {
@@ -278,6 +278,23 @@ document.onkeypress = stopRKey;
       }
   }
 
+function ConfigureAddRelatedPartyDialog(control){
+	if (control==null) {
+		control = j$('select[id$=relatedPartyEntry_Type]');
+	}
+	fields = j$('[id$=careGiverEntry]', j$(control).parents('.ui-dialog'));
+	myval = j$(control).val();
+	fields.toggle(myval == 'Caregiver');
+}
+
+function ConfigureRelationshipOther(control){
+	if (control==null) {
+		control = j$('select[id$=relatedPartyEntryCareGiver_Relationship]');
+	}
+	fields = j$('[id$=relatedPartyEntryCareGiver_Relationship_Other], label[for$=relatedPartyEntryCareGiver_Relationship_Other]', j$(control).parents('.ui-dialog'));
+	myval = j$(control).val();
+	fields.toggle(myval == 'Other');
+}
  </script>
 
   <apex:form id="referralForm">
@@ -285,7 +302,7 @@ document.onkeypress = stopRKey;
     <apex:actionFunction name="checkRedFlags" action="{!checkRedFlags}" oncomplete="alertOnHighRisk(); saveRef(); return false;" rerender="redFlagged"/>
     <apex:actionFunction name="setReferralRecordType" action="{!setReferralRecordType}" rerender="ReferralDetail,Funding,progConsid,ReferralServices,msgs,ReferralDetailHeader,progConsiderationsDetail" />
     <apex:actionRegion >  		
-    	<apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" oncomplete="openModalDialog('relatedPartyModal', 'span', 'Add Related Party','none');" status="showAddRelPartyStatus" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs" />
+    	<apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" oncomplete="openModalDialog('relatedPartyModal', 'span', 'Add Related Party','none');ConfigureAddRelatedPartyDialog();ConfigureRelationshipOther();return false;" status="showAddRelPartyStatus" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs" />
     </apex:actionRegion>
     <apex:actionRegion >
     	<apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" oncomplete="fundingSourceScrollToTop(); fundingSourceClearMessages(); openModalDialog('FundingSourceModal', 'span', 'Add Funding Source','none', 1000);" action="{!showAddFundingSource}" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceAuthorizationDetailEntry,fundingSourceEntry,msgs"/>
@@ -517,7 +534,9 @@ document.onkeypress = stopRKey;
 
         <apex:pageBlockSection columns="2" id="relatedPartyEntry">
           <apex:inputField value="{!relParty.Name}" id="relatedPartyEntry_Name" />
-          <apex:inputField value="{!relParty.Type__c}" id="relatedPartyEntry_Type"/>
+          <apex:inputField value="{!relParty.Type__c}" id="relatedPartyEntry_Type"
+          	onchange="ConfigureAddRelatedPartyDialog(this);">
+          </apex:inputField>
 
           <apex:inputField value="{!relParty.Address__c}" id="relatedPartyEntry_Address"/>
           <apex:inputField value="{!relParty.Email__c}" id="relatedPartyEntry_Email"/>
@@ -527,6 +546,16 @@ document.onkeypress = stopRKey;
 
           <apex:inputField value="{!relParty.Phone_2__c}" id="relatedPartyEntry_Phone_2"/>
           <apex:inputField value="{!relParty.Phone_2_Type__c}" id="relatedPartyEntry_Phone_2_Type"/>
+        </apex:pageBlockSection>
+
+        <apex:pageBlockSection columns="2" id="careGiverEntry">
+          <apex:inputField value="{!relParty.Care_Giver_Relationship__c}" id="relatedPartyEntryCareGiver_Relationship"
+          	onchange="ConfigureRelationshipOther(this)"/>
+          <apex:inputField value="{!relParty.Care_Giver_Relationship_Other__c}" id="relatedPartyEntryCareGiver_Relationship_Other"/>
+          <apex:inputField value="{!relParty.Employment_Status__c}" id="relatedPartyCareGiver_Employment_Status"/>
+          <apex:inputField value="{!relParty.Occupation__c}" id="relatedPartyCareGiver_Occupation"/>
+          <apex:inputField value="{!relParty.Highest_Education__c}" id="relatedPartyCareGiver_Education"/>
+
         </apex:pageBlockSection>
 
         <apex:pageBlockSection columns="1" id="relatedPartyEntry2">
