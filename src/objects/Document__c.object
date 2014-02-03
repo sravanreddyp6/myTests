@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <content>Document_Edit</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <content>Document_Edit</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <content>Document_Edit</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>An object for holding document profiles for the Document Tracker.</description>
+    <enableActivities>false</enableActivities>
+    <enableEnhancedLookup>false</enableEnhancedLookup>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>Active__c</fullName>
+        <defaultValue>true</defaultValue>
+        <description>A checkbox to indicate a document profiles active status.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Check if the document is active, uncheck if the document is inactive.</inlineHelpText>
+        <label>Active</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Auto_Include__c</fullName>
+        <defaultValue>true</defaultValue>
+        <description>This box should be checked if you want this document to be automatically included when creating a new Service Assignment for clients associated with a state(s) this document is associated with.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>This box should be checked if you want this document to be automatically included when creating a new Service Assignment for clients associated with a state(s) this document is associated with.</inlineHelpText>
+        <label>Auto Include</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Order__c</fullName>
+        <externalId>false</externalId>
+        <label>Order</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Phase_or_Level__c</fullName>
+        <externalId>false</externalId>
+        <label>Phase or Level</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Program__c</fullName>
+        <description>A field to hold the program name for Fidelity Documents ONLY, in order to provide an easy means of getting the Fidelity Document program on the Document list view.  The inclusion of Fidelity Documents on a given Service Assignment is handled via creation of a cross-reference record in Program_Document_Xref__c, NOT by reference to this field on the Document__c record(s).</description>
+        <externalId>false</externalId>
+        <label>Program</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Relative_Due_Date_Event__c</fullName>
+        <description>The event that serves as the baseline for relative due dates.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Select an event to server as the baseline for this document&apos;s relative due date.</inlineHelpText>
+        <label>Relative Due Date Event</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Calendar Month End</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Calendar Quarter End</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>MENTOR Fiscal Year End</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Client Tx Start</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Client Tx End</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Monthly Anniversary of Client Tx Start</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Quarterly Anniversary of Client Tx Start</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Relative_Due_Date_UOM__c</fullName>
+        <description>The Unit of Measure (UOM) specified for the relative due date for a document profile.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Select a Unit of Measure (UOM) for the relative due date for a document profile.</inlineHelpText>
+        <label>Relative Due Date Unit of Measure</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Day(s)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Week(s)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Month(s)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Relative_Due_Date_Units__c</fullName>
+        <description>The number of units of the unit of measure specified for the relative due date value.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The number of units of the unit of measure specified for the relative due date value.</inlineHelpText>
+        <label>Relative Due Date Units</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Required_From_Date__c</fullName>
+        <description>The start date of the date range within which the document is required.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The start date of the date range within which the document is required.</inlineHelpText>
+        <label>Required From Date</label>
+        <required>false</required>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Required_To_Date__c</fullName>
+        <description>The end date of the date range within which the document is required.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The end date of the date range within which the document is required.</inlineHelpText>
+        <label>Required To Date</label>
+        <required>false</required>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Service_Line__c</fullName>
+        <externalId>false</externalId>
+        <label>Service Line</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>State__c</fullName>
+        <description>The state(s) to which a document is related</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Pick a state(s) to which the document profile will be associated.</inlineHelpText>
+        <label>State</label>
+        <picklist>
+            <picklistValues>
+                <fullName>AL</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>CT</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>DE</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>FL</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>GA</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>IL</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>IL-Alliance</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>IN</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>LA</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>MA</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>MD</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>MO</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>NC</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>NJ</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>OH</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>OH-Alliance</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>PA</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>PA-Alliance</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>RI</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>SC</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>TX</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>VA</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Case Document</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Fidelity Document</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
+    </fields>
+    <label>Document</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Type__c</columns>
+        <columns>Program__c</columns>
+        <columns>Service_Line__c</columns>
+        <columns>Phase_or_Level__c</columns>
+        <columns>Order__c</columns>
+        <columns>Active__c</columns>
+        <columns>Relative_Due_Date_Units__c</columns>
+        <columns>Relative_Due_Date_UOM__c</columns>
+        <columns>Relative_Due_Date_Event__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <label>Document Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Documents</pluralLabel>
+    <searchLayouts>
+        <customTabListAdditionalFields>State__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Auto_Include__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Phase_or_Level__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Active__c</customTabListAdditionalFields>
+        <excludedStandardButtons>New</excludedStandardButtons>
+        <excludedStandardButtons>ChangeOwner</excludedStandardButtons>
+        <listViewButtons>New_Document</listViewButtons>
+        <lookupDialogsAdditionalFields>State__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Auto_Include__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Phase_or_Level__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Active__c</lookupDialogsAdditionalFields>
+        <lookupPhoneDialogsAdditionalFields>State__c</lookupPhoneDialogsAdditionalFields>
+        <lookupPhoneDialogsAdditionalFields>Auto_Include__c</lookupPhoneDialogsAdditionalFields>
+        <lookupPhoneDialogsAdditionalFields>Phase_or_Level__c</lookupPhoneDialogsAdditionalFields>
+        <lookupPhoneDialogsAdditionalFields>Active__c</lookupPhoneDialogsAdditionalFields>
+        <searchResultsAdditionalFields>State__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Auto_Include__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Phase_or_Level__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Active__c</searchResultsAdditionalFields>
+    </searchLayouts>
+    <sharingModel>ReadWrite</sharingModel>
+    <validationRules>
+        <fullName>Prevent_CaseDocs_Without_DueDateInfo</fullName>
+        <active>true</active>
+        <description>Prevent saving a Document__c profile if &quot;Fidelity Document&quot; is NOT selected as the Document__c Type value, and any of the following fields are NULL:  Relative Due Date Units, Relative Due Date UOM, Relative Due Date Event.</description>
+        <errorConditionFormula>AND(  ISPICKVAL(Type__c, &apos;Case Document&apos;), OR(ISNULL( Relative_Due_Date_Units__c ), ISPICKVAL( Relative_Due_Date_UOM__c ,&apos;&apos;),ISPICKVAL( Relative_Due_Date_Event__c, &apos;&apos; )))</errorConditionFormula>
+        <errorMessage>If &quot;Fidelity Document&quot; is not indicated for Doc Type, then a  value must be supplied for Relative Due Date Units, Relative Due Date UOM, and Relative Due Date Event.  Please edit the document and try again.</errorMessage>
+    </validationRules>
+    <webLinks>
+        <fullName>New_Document</fullName>
+        <availability>online</availability>
+        <displayType>massActionButton</displayType>
+        <encodingKey>UTF-8</encodingKey>
+        <linkType>url</linkType>
+        <masterLabel>Add</masterLabel>
+        <openType>replace</openType>
+        <protected>false</protected>
+        <requireRowSelection>true</requireRowSelection>
+        <url>/apex/Document_Edit?save_new=1</url>
+    </webLinks>
+</CustomObject>
