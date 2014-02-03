@@ -75,7 +75,9 @@ public with sharing class referrals_Controller{
     
   private Id personBeingServedId {get; set;}
   public Id pBSId { get; set; }
-  
+  public boolean isLinkedPersonBeingServed {
+  	get { return pBSId != null; }
+  }
 
 
   public static final String REFERRAL_EDIT_URL = '/apex/referral';
@@ -725,6 +727,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
                        LastName, Ethnicity_Picklist__c,
                        Middle_Name__c, Phone, Primary_Language__c, SSN__c,
                        MailingState, MailingStreet, OtherStreet, MailingPostalCode, Legal_Guardianship_Status__c, Sign_Language__c, Non_Verbal__c
+                       ,Current_Medications__c
                 from Contact
                 where Id = :pBSId
                 limit 1];
