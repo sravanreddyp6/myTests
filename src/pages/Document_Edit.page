@@ -1,0 +1,192 @@
+<apex:page standardController="Document__c" extensions="DocumentController2" standardStylesheets="true" sidebar="false"  tabStyle="Documents__tab" readOnly="false">
+    <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.js')}" />
+    <apex:stylesheet value="{!$Resource.mentoresdcss}" />
+    <apex:stylesheet value="{!$Resource.pbscardcss}" />
+    <apex:stylesheet value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.css')}" />
+
+<head>
+<script>
+$( document ).ready(function() {    
+    
+    j$ = jQuery.noConflict();
+    var docTypeField = j$('[id$=DocumentTypeField]');
+    j$('.doctype').hide();
+    var str = j$(docTypeField).val();
+    var replaced = str.split(' ').join('');
+    j$('#'+replaced).show();    
+    
+    j$(docTypeField).change(function(event){
+        j$('.doctype').hide();
+        j$('.requiredFromInfo').hide();
+        var str = j$(this).val();
+        var replaced = str.split(' ').join('');
+        j$('#'+replaced).show('slow');
+        if(str!='' && str!='--None--') {
+            j$('#RequiredFrom').show('slow');
+        }
+        event.preventDefault();
+    });
+
+      
+    var stateField = j$('[id$=StateField]');
+    j$('.afterState').hide();
+    var stateVal = j$(stateField).val();
+    if(stateVal!='' && stateVal!='--None--') {
+        j$('#DisplayedAfterState').show();    
+    }
+    
+    j$(stateField).change(function(event){
+        j$('.afterState').hide();
+        var stateVal = j$(this).val();
+        if(stateVal=='--None--' || stateVal==''){
+            j$('#DisplayedAfterState').hide();
+        }
+        else{
+            j$('#DisplayedAfterState').show('slow');
+        }
+        event.preventDefault();
+    });   
+});
+</script>
+<style>
+.doctype {
+
+}
+.afterState {
+
+}
+.docContractTable {
+  border-spacing:0;
+  border-collapse:collapse;
+  border: 1px solid black;
+}
+.docContractTable th {
+    border: solid black 1px;
+    border-style: solid
+}
+</style>
+</head>
+   
+    <apex:form id="DocDetailForm">
+        <div class="breadcrumb"><a href="{!baseUrl}">Home</a> >&nbsp; <apex:outputLink value="/apex/DocumentListView">Documents</apex:outputLink> > Add a Document</div>
+        <br /><br />
+    <apex:outputPanel >
+    <apex:actionStatus id="MyStatus">
+     <apex:facet name="start">
+        <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+            <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+        </div>
+    </apex:facet>
+    <apex:facet name="stop"> 
+          <apex:pageMessages />
+  <apex:pageBlock title="Add a Document">
+          <div class="pbHeaderButton"><apex:commandButton value="Save" action="{!saveDocInfo}" /><apex:commandButton value="Cancel" action="/apex/DocumentListView" /></div>        
+
+      <!--<apex:outputPanel id="DocInfo" layout="block" rendered="true" >-->
+        <apex:pageBlockSection title="Document Detail" collapsible="false">
+                <apex:inputField value="{!myDoc.Name}" id="DocumentNameField" style="width:400px;" />
+                <apex:selectList id="StateField" label="State"  size="1" value="{!currentState}">
+                    <apex:actionSupport event="onchange"  rerender="DocDetailForm,CaseDocContracts,CaseDocPrograms,CaseDocRelativeDueDate" action="{!updateProgramsAndContracts}" status="MyStatus" />
+                    <apex:selectOptions value="{!stateSelectOptions}" />
+                </apex:selectList>
+                        <apex:selectList id="DocumentTypeField" label="Document Type" size="1" value="{!docType}" rendered="{!currentState!=null && currentState!='' && currentState!='--None--'}">
+                            <apex:actionSupport event="onchange" rerender="DocDetailForm,CaseDocContracts,CaseDocContractsB,CaseDocPrograms,CaseDocRelativeDueDate" action="{!updateProgramsAndContracts}" status="MyStatus" />
+                            <apex:selectOptions value="{!docTypeSelectOptions}" />
+                        </apex:selectList>
+                        </apex:pageBlockSection>
+          <apex:pageBlockSection id="CaseDocContracts" title="For Persons Served by These Contracts" collapsible="false" rendered="{!docType=='Case Document'}" columns="1">
+                <apex:pageBlockTable value="{!displayedContracts}" var="con" rowclasses="row-odd, row-even">
+                   <apex:column headerValue="Contract Name" value="{!con.data.Name}" rendered="{!IF(con.data.State__c==currentState||con=='',true,false)}" />
+                   <apex:column headerValue="Selected" rendered="{!IF(con.data.State__c==currentState||con=='',true,false)}">
+                       <apex:inputCheckbox value="{!con.selectedContract}" />
+                   </apex:column>
+                   
+                </apex:pageBlockTable>
+                
+          </apex:pageBlockSection>
+          <apex:pageBlockSection id="CaseDocPrograms" title="For Persons Served by These Programs" collapsible="false" rendered="{!docType=='Case Document'}" columns="1">             
+               <apex:pageBlockTable value="{!displayedPrograms}" var="p" rowclasses="row-odd, row-even">                       
+                       <apex:column headerValue="Program Name" value="{!p.programName}" rendered="{!IF(p.programState==currentState||p.programState=='',true,false)}" />
+                       <apex:column headerValue="Selected" rendered="{!IF(p.programState==currentState||p=='',true,false)}">
+                           <apex:inputCheckbox value="{!p.selectedProgram}" />
+                       </apex:column>
+               </apex:pageBlockTable>
+               
+           </apex:pageBlockSection>
+           <apex:pageBlockSection id="CaseDocRelativeDueDate" rendered="{!docType=='Case Document'}" title="Document Display Rules" collapsible="false" columns="1">
+                    <apex:inputField value="{!myDoc.Relative_Due_Date_Units__c}"/>
+                    
+                    <apex:inputField value="{!myDoc.Relative_Due_Date_UOM__c}"/>
+                    
+                    <apex:inputField value="{!myDoc.Relative_Due_Date_Event__c}" />
+                    
+                    <apex:inputField value="{!myDoc.Auto_Include__c}"/>
+               
+                </apex:pageBlockSection>
+            <apex:pageBlockSection id="FidDoc" rendered="{!docType=='Fidelity Document' && currentState!=null && currentState!='' && currentState!='--None--'}" title="Document Display Rules" collapsible="false" columns="1"> 
+                        <apex:pageBlockSection id="FidCheckPageBlock"  columns="1">
+
+                <!--<div id="FidelityDocument" class="doctype" style="display:none">-->
+
+                        <apex:selectList label="Program" size="1" value="{!currentProgram}">
+                            <apex:actionSupport event="onchange" action="{!updateLocations}" reRender="DocDetailForm" status="MyStatus">
+                                <apex:param assignTo="{!currentLocation}" value="--None--" />
+                                <apex:param assignTo="{!currentServiceLine}" value="--None--" />
+                            </apex:actionSupport>
+                            <apex:selectOptions value="{!programSelectOptions}" />
+                        </apex:selectList>
+                        
+                        <apex:selectList id="LocationField" label="Location" size="1" value="{!currentLocation}">
+                            <apex:actionSupport event="onchange" action="{!updateServiceLines}" reRender="DocDetailForm" status="MyStatus">
+                                <apex:param assignTo="{!currentServiceLine}" value="--None--" />
+                            </apex:actionSupport>
+                            <apex:selectOptions value="{!locationSelectOptions}" />
+                        </apex:selectList> 
+                        
+                        <apex:selectList label="Service Line" size="1" value="{!currentServiceLine}">
+                            <apex:actionSupport event="onchange"  status="MyStatus">
+                                <apex:param assignTo="{!currentProgram}" value="{!currentProgram}" />
+                                <apex:param assignTo="{!currentLocation}" value="{!currentLocation}" />
+                            </apex:actionSupport>
+                            <apex:selectOptions value="{!serviceLineSelectOptions}" />
+                        </apex:selectList>
+                        
+                        <apex:inputField value="{!myDoc.Phase_or_Level__c}" />
+                        
+                        <apex:inputField value="{!myDoc.Order__c}" />
+                        </apex:pageBlockSection>
+
+            </apex:pageBlockSection>
+    
+                <!--<div id="RequiredFrom" class="requiredFromInfo" style="display:none">-->
+
+                <apex:pageBlockSection rendered="{!docType=='Case Document' || docType=='Fidelity Document' && (docType=='Fidelity Document' && currentState!=null && currentState!='' && currentState!='--None--')}">
+                    <apex:inputField value="{!myDoc.Required_From_Date__c}"/>
+                    <apex:inputField value="{!myDoc.Required_To_Date__c}"/>
+                    <apex:inputField id="ActiveCheckbox" value="{!myDoc.Active__c}"/>  
+                </apex:pageBlockSection>
+                <apex:pageBlockSection rendered="{!pageHeader=='Document Detail'}">
+                    <apex:inputField id="LastModifiedByField" value="{!myDoc.LastModifiedById}"/>
+                    <apex:inputField id="LastModifiedDateField" value="{!myDoc.LastModifiedDate}"/>
+                    <apex:inputField id="CreatedByField" value="{!myDoc.CreatedById}"/>
+                    <apex:inputField id="CreatedDate" value="{!myDoc.CreatedDate}"/>
+                    
+                </apex:pageBlockSection>
+          <!--</apex:facet>-->
+          <!--</apex:actionStatus>-->
+       <!--</apex:outputPanel>-->
+        <br />
+        
+		<div style="float:right; position:relative; right:10px; top:-25px">
+		<apex:commandButton value="Save" action="{!saveDocInfo}" /><apex:commandButton value="Cancel" action="/apex/DocumentListView" />
+		</div>        
+         
+    </apex:pageBlock>
+    </apex:facet>
+    </apex:actionStatus>
+</apex:outputPanel>
+    </apex:form>
+
+</apex:page>
