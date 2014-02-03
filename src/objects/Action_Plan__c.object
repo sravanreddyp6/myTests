@@ -188,6 +188,14 @@
         <errorMessage>A Target Date is Required before finalizing an action plan</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>EffectiveDate_LessThan_SA_StartDate</fullName>
+        <active>true</active>
+        <description>RBO-226</description>
+        <errorConditionFormula>Effective_Date__c &lt;  Service_Assignment__r.Start_Date__c</errorConditionFormula>
+        <errorDisplayField>Effective_Date__c</errorDisplayField>
+        <errorMessage>Action Plan Effective Date must be on or after the Service Assignment Start Date.</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>TargetDate_before_EfftiveDate</fullName>
         <active>true</active>
         <errorConditionFormula>Target_Date__c &lt;= Effective_Date__c</errorConditionFormula>
