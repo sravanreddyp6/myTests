@@ -51,6 +51,11 @@
         overflow-y:scroll;
         max-height:400px;
     }
+    .fieldLabel {
+    	font-size:90%;
+    	color:#4a4a56;
+    	font-weight:bold;
+    }
   </style>
 
   <script language="javascript">
@@ -1152,19 +1157,19 @@ function stopRKey(evt) {
          <apex:pageBlockSectionItem />
          <apex:outputField label="The person is not currently in an out of home placement but has a history of placements" value="{!Referral__c.Placement_Non_Current_Historical__c}" />
          <apex:pageBlockSectionItem />
-         <apex:outputText value="If there have been previous placements, enter the number of each type of placement that has occurred (enter 0 for each type that has not occurred):" style="font-size:smallest;" />
+         <apex:outputText styleClass="fieldLabel" value="If there have been previous placements, enter the number of each type of placement that has occurred (enter 0 for each type that has not occurred):" />
          <apex:pageBlockSectionItem />
          <apex:outputField value="{!Referral__c.Placement_Foster_Care_Count__c}" />
+         <apex:outputField value="{!Referral__c.Placement_Group_Home_Count__c}" />
          <apex:outputField value="{!Referral__c.Placement_Relative_Count__c}" />
-         <apex:outputField label="Psychiatric Hospitalization (how many times?)" value="{!Referral__c.Placement_PsychHosp_Count__c}" />
-         <apex:outputField label="Group Home (Juvenile Services) (how many times?)" value="{!Referral__c.Placement_GroupHomeJuv_Count__c}" />
-         <apex:outputField value="{!Referral__c.Placement_Secure_Detention_Count__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
-         <apex:outputField value="{!Referral__c.Placement_Group_Home_Count__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
          <apex:outputField label="Residential Treatment Facility (how many times?)" value="{!Referral__c.Placement_ResTreatFacility_Count__c}" />
+         <apex:outputField label="Psychiatric Hospitalization (how many times?)" value="{!Referral__c.Placement_PsychHosp_Count__c}" />
          <apex:outputField label="Respite/Emergency Shelter (how many times?)" value="{!Referral__c.Placement_RespEmShelter_Count__c}" />
+         <apex:outputField label="Group Home (Juvenile Services) (how many times?)" value="{!Referral__c.Placement_GroupHomeJuv_Count__c}" />
          <apex:outputField label="Long Term Secure Confinement (how many times?)" value="{!Referral__c.Placement_LongTermSecConfine_Count__c}" />
+         <apex:outputField value="{!Referral__c.Placement_Secure_Detention_Count__c}" />
+         <apex:outputField label="Inpatient Substance Abuse Treatment (how many times?)" value="{!Referral__c.Placement_InpatientSubAbuseTx_Count__c}" />        
          <apex:outputField value="{!Referral__c.Placement_Other_Count__c}" />
-         <apex:pageBlockSectionItem />
          <apex:outputField value="{!Referral__c.Placement_Past_Other_Describe__c}" />
          <apex:pageBlockSectionItem >
              <hr />
@@ -1184,6 +1189,9 @@ function stopRKey(evt) {
           <apex:pageBlockSectionItem />
          <apex:outputField label="Current Charges" value="{!Referral__c.Current_Charges__c}" style="width:95%;" />
          <apex:pageBlockSectionItem />
+         <apex:outputField label="Is this charge considered a misdemeanor?" value="{!Referral__c.Misdemeanor__c}" />
+         <apex:outputField label="Is this charge considered a felony?" value="{!Referral__c.Felony__c}" />
+         
          <apex:outputField label="Is this client considered pre-court with charges pending?" value="{!Referral__c.Pre_Court__c}" />
 
          <apex:outputField value="{!Referral__c.Adjudicated_Delinquent__c}" />
