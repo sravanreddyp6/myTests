@@ -112,7 +112,7 @@
         <apex:outputPanel id="householdMemberDialog" style="display:none">
             <apex:pageBlock title="Add/Edit Household Member" id="householdMemberDialogMainBlock">
                 <apex:pageblockButtons location="bottom">
-                   <apex:actionFunction name="saveHouseholdMember" action="{!saveHouseholdMember}" rerender="householdMemberTable, householdMemberDialogMainBlock, householdMemberDialogErrors" status="saveHouseholdMemberStatus" oncomplete="afterSave('{!$Component.householdMemberDialog}', request.options.parameters.keepDialogOpen, showAddHouseholdMember);">
+                   <apex:actionFunction name="saveHouseholdMember" action="{!saveHouseholdMember}" rerender="householdMemberTable, householdMemberDialogMainBlock" status="saveHouseholdMemberStatus" oncomplete="afterSave('{!$Component.householdMemberDialog}', request.options.parameters.keepDialogOpen, showAddHouseholdMember);">
                         <apex:param name="keepDialogOpen" value="" />
                     </apex:actionFunction>
                     <apex:commandButton value="Save" onClick="saveHouseholdMember(false); return false;" />
@@ -125,7 +125,7 @@
                         <apex:facet name="stop" />
                     </apex:actionStatus>
                 </apex:pageblockButtons>
-                <apex:pageMessages id="householdMemberDialogErrors" />
+                <apex:pageMessages />
                 <apex:pageBlockSection columns="1">
                     <apex:pageBlockSectionItem >
                         <apex:outputText value="First Name"/>
