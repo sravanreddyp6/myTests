@@ -1,4 +1,4 @@
-<apex:page standardController="TMN_Contact__c">
+<apex:page standardController="TMN_Contact__c" extensions="MentorEditController">
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <script>
     jQuery.noConflict();
@@ -69,7 +69,6 @@
     });
     </script>
     <apex:form >
-        <apex:actionFunction name="saveRecord" action="{!save}" />
         <apex:pageBlock >
             <apex:pageBlockSection title="Demographics">
                 <apex:pageBlockSectionItem >

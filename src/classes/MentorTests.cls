@@ -18,7 +18,7 @@ public with sharing class MentorTests {
             RecordTypeId = getRecordTypeId('TMN_Contact__c', 'Mentor')
         );
         insert contact;
-        Id rpRecordTypeId = getRecordTypeId('TMN_Contact__c', 'Related Party');
+        Id rpRecordTypeId = getRecordTypeId('TMN_Contact__c', 'Household Member');
         TMN_Contact__c[] householdMembers = new TMN_Contact__c[] {
             new TMN_Contact__c(
                 RecordTypeId = rpRecordTypeId,
@@ -52,7 +52,7 @@ public with sharing class MentorTests {
         );
         System.assert(controller.routeRequest().getUrl().indexOf('MentorEdit') != -1);
         System.assert(controller.routeRequest().getUrl().indexOf('editId') == -1);
-        contact.RecordTypeId = getRecordTypeId('TMN_Contact__c', 'Mentor');
+        contact.RecordTypeId = getRecordTypeId('TMN_Contact__c', 'Household Member');
         insert contact;
         controller = new MentorEditAllController(
             new ApexPages.standardController(contact)
@@ -60,7 +60,7 @@ public with sharing class MentorTests {
         System.assert(!controller.routeRequest().getParameters().containsKey('editId'));
         TMN_Contact__c rp = new TMN_Contact__c(
             Mentor__c = contact.Id,
-            RecordTypeId = getRecordTypeId('TMN_Contact__c', 'Related Party')
+            RecordTypeId = getRecordTypeId('TMN_Contact__c', 'Household Member')
         );
         insert rp;
         controller = new MentorEditAllController(
@@ -86,7 +86,7 @@ public with sharing class MentorTests {
         System.assertEquals(null, controller.routeRequest().getAnchor());
         TMN_Contact__c rp = new TMN_Contact__c(
             Mentor__c = contact.Id,
-            RecordTypeId = getRecordTypeId('TMN_Contact__c', 'Related Party')
+            RecordTypeId = getRecordTypeId('TMN_Contact__c', 'Household Member')
         );
         insert rp;
         controller = new MentorViewAllController(
