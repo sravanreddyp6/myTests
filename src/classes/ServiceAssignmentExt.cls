@@ -104,11 +104,9 @@ public class ServiceAssignmentExt {
         if (tmnUsers.size() == 0) {
             return false;
         }
-        if(admission.state__c == 'AZ'){
-            return false;
         
-        }
-        return tmnUsers[0].Operating_Group__c=='Redwood';
+        return tmnUsers[0].Operating_Group__c=='Redwood'
+        	|| tmnUsers[0].Operating_Group__c=='Cambridge';
     }}
 
 
