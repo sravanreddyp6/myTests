@@ -267,7 +267,7 @@ function stopRKey(evt) {
     </apex:outputPanel>
     </apex:pageBlockSectionItem>
     
-         </apex:pageBlockSection> 
+  </apex:pageBlockSection> 
     
     </apex:pageBlock>
     <!--Related Parties Section-->
@@ -275,6 +275,7 @@ function stopRKey(evt) {
 
     <apex:pageBlock id="relatedPartiesListId">
         <div class="pbSubHeadButton">
+            				<apex:commandButton onclick="window.open('/{!RelatedPartyReport}?pv0={!Contact.Name}', '_self'); return false;" value="Related Parties Report" />
                             <apex:commandButton value="Add Related Party"
                               onClick="showAddRelParty();openDialog('relatedPartyModal', 'span', 'Add Related Party'); return false;" rendered="{!AND(isEditor, canEdit)}"/>
                               </div>
