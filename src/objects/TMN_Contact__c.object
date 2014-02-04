@@ -200,6 +200,16 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Household_Id__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(CONTAINS(RecordType.Name, &apos;Mentor&apos;), Id, IF(CONTAINS(RecordType.Name, &apos;Household Member&apos;), Mentor__c, null))</formula>
+        <label>Household Id</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>In_Progress_Date__c</fullName>
         <description>This field is used for the Mentor record type.</description>
         <externalId>false</externalId>
@@ -675,9 +685,10 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
     </nameField>
     <pluralLabel>TMN Contacts</pluralLabel>
     <recordTypes>
-        <fullName>Mentor</fullName>
+        <fullName>Household_Member</fullName>
         <active>true</active>
-        <label>Mentor</label>
+        <description>A Household Member of a Mentor</description>
+        <label>Household Member</label>
         <picklistValues>
             <picklist>Gender__c</picklist>
             <values>
@@ -967,10 +978,9 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
         </picklistValues>
     </recordTypes>
     <recordTypes>
-        <fullName>Related_Party</fullName>
+        <fullName>Mentor</fullName>
         <active>true</active>
-        <description>A Related Party to a Mentor</description>
-        <label>Related Party</label>
+        <label>Mentor</label>
         <picklistValues>
             <picklist>Gender__c</picklist>
             <values>
