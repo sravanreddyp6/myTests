@@ -16,5 +16,14 @@ public class CredentialController {
                 Credential_Profile__r.Applies_FBI_Full_Disclosure__c, FBI_Full_Disclosure_Required__c,
                 Credential_Profile__r.Help_Text__c
                 FROM Credential_Record__c WHERE TMN_Contact__c = :contactID ORDER BY Credential_Profile__r.Name];
+    }
+    
+    public PageReference SaveCreds() {
+    	
+    	update AllRecords;
+    	
+    	PageReference myPageRef = new PageReference('/apex/MentorView?id=' + contactID);
+    	return myPageRef;
+    	
     }   
 }
