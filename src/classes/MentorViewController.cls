@@ -30,7 +30,7 @@ public with sharing class MentorViewController {
     public void showAddHouseholdMember() {
         Id relatedPartyRecordTypeId;
         for (RecordType rt: contactRecordTypes) {
-            if (rt.Name == 'Related Party') {
+            if (rt.Name == 'Household Member') {
                 relatedPartyRecordTypeId = rt.Id;
             }
         }

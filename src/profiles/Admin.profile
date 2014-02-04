@@ -3,7 +3,7 @@
     <applicationVisibilities>
         <application>CareMeridian_Contracts</application>
         <default>false</default>
-        <visible>true</visible>
+        <visible>false</visible>
     </applicationVisibilities>
     <applicationVisibilities>
         <application>Compliance_Survey</application>
@@ -286,10 +286,6 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>ChangePasswordController</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>ChatRetentionTest2</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -438,10 +434,6 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>ForgotPasswordController</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>GenericHistoryComponentController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -458,7 +450,15 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>MentorEditAllController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>MentorEditController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>MentorTests</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -467,10 +467,6 @@
     </classAccesses>
     <classAccesses>
         <apexClass>MentorViewController</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>MyProfilePageController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -814,14 +810,6 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>SiteLoginController</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>SiteRegisterController</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>SkillSummaryTableForm</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -990,10 +978,6 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>testdeleteaccess</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>tmn_manage_groups</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -1007,10 +991,6 @@
     </classAccesses>
     <classAccesses>
         <apexClass>uploaderTest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>zOnetimePopulateOpGroupOnUserRecord</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <fieldPermissions>
@@ -3481,6 +3461,16 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>ContentVersion.Application__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>ContentVersion.Control_Review_Date__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>ContentVersion.Control_Type__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -13794,6 +13784,11 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>TMN_Contact__c.Household_Id__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>TMN_Contact__c.In_Progress_Date__c</field>
         <readable>true</readable>
@@ -16023,11 +16018,11 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>TMN_Contact__c-TMN Contact Layout</layout>
-        <recordType>TMN_Contact__c.Mentor</recordType>
+        <recordType>TMN_Contact__c.Household_Member</recordType>
     </layoutAssignments>
     <layoutAssignments>
         <layout>TMN_Contact__c-TMN Contact Layout</layout>
-        <recordType>TMN_Contact__c.Related_Party</recordType>
+        <recordType>TMN_Contact__c.Mentor</recordType>
     </layoutAssignments>
     <layoutAssignments>
         <layout>TMN_Contract__c-Contracts Layout</layout>
@@ -17112,6 +17107,10 @@
         <enabled>true</enabled>
     </pageAccesses>
     <pageAccesses>
+        <apexPage>MentorEditAll</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
         <apexPage>MentorView</apexPage>
         <enabled>true</enabled>
     </pageAccesses>
@@ -17533,7 +17532,6 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
-        <personAccountDefault>true</personAccountDefault>
         <recordType>ContentVersion.Application_Help_Doc</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -17669,7 +17667,6 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
-        <personAccountDefault>true</personAccountDefault>
         <recordType>Funding_Source__c.Generic</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -17761,7 +17758,6 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
-        <personAccountDefault>true</personAccountDefault>
         <recordType>Plan_ServiceAssignment_mJO__c.SA_Intervention_JO</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -17777,7 +17773,6 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
-        <personAccountDefault>true</personAccountDefault>
         <recordType>Plan__c.PA_Periodic_Services</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -17878,7 +17873,6 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
-        <personAccountDefault>true</personAccountDefault>
         <recordType>Project__c.Growth_Goal</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -17939,7 +17933,6 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
-        <personAccountDefault>true</personAccountDefault>
         <recordType>Referral__c.Generic</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -18020,19 +18013,17 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
-        <personAccountDefault>true</personAccountDefault>
         <recordType>Service_Assignment__c.Standard_Service_Assignment</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
-        <default>true</default>
-        <personAccountDefault>true</personAccountDefault>
-        <recordType>TMN_Contact__c.Mentor</recordType>
+        <default>false</default>
+        <recordType>TMN_Contact__c.Household_Member</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
-        <default>false</default>
-        <recordType>TMN_Contact__c.Related_Party</recordType>
+        <default>true</default>
+        <recordType>TMN_Contact__c.Mentor</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
@@ -18042,7 +18033,6 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
-        <personAccountDefault>true</personAccountDefault>
         <recordType>Task.Progress_Note_Tasks</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -18053,18 +18043,6 @@
     </recordTypeVisibilities>
     <tabVisibilities>
         <tab>Account_Administration__c</tab>
-        <visibility>DefaultOff</visibility>
-    </tabVisibilities>
-    <tabVisibilities>
-        <tab>Action_Plan_Action__c</tab>
-        <visibility>DefaultOff</visibility>
-    </tabVisibilities>
-    <tabVisibilities>
-        <tab>Action_Plan_Goal__c</tab>
-        <visibility>DefaultOff</visibility>
-    </tabVisibilities>
-    <tabVisibilities>
-        <tab>Action_Plan_Objective__c</tab>
         <visibility>DefaultOff</visibility>
     </tabVisibilities>
     <tabVisibilities>
@@ -18094,10 +18072,6 @@
     <tabVisibilities>
         <tab>Authorization__c</tab>
         <visibility>DefaultOff</visibility>
-    </tabVisibilities>
-    <tabVisibilities>
-        <tab>CareMeridian_Contract__c</tab>
-        <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <tabVisibilities>
         <tab>ContractAmendment__c</tab>
