@@ -11,6 +11,11 @@ public ID PBSId{get;set;}
 public boolean isEditor{get; set;}
 public boolean canEdit{get; set;}
 public boolean canCreateAdm { get; set; }
+public boolean canViewFamilyInfo { 
+	get {
+		return TMNUser == null ? false : TMNUser.Operating_Group__c == 'Cambridge';
+	}}
+
 public Boolean isUserLevel1or2 { get { return PBS_controller_helper.isUserLevel1or2();} set; }
  
 private TMN_User__c TMNUser_internal;
