@@ -130,7 +130,7 @@ public with sharing class EvaluationHandler {
                 'Other' => new String[] {'elimination_bowel_no_appliance_other__c'}
             },
             'elimination_bowel_continent__c' => new Map<String, String[]>{
-                '0' => new String[] {'elimination_bowel_no_appliance__c'}
+                '0' => new String[] {'elimination_bowel_no_continent_appliance__c'}
             },
             'bowel_program__c' => new Map<String, String[]>{
                 '1' => new String[] {'elimination_bowel_program_type__c'}
