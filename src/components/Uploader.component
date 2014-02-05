@@ -2,13 +2,11 @@
     <apex:attribute name="objId" type="String" description="The id of the object to manage attachments for" required="true" assignTo="{!sobjId}"/>
     <apex:attribute name="showExisting" type="String" description="Show attachments related list?" required="false" default="false"/>
     <apex:attribute name="showFileName" type="String" description="Show the name of the file?" required="false" default="true"/>
-      
-      
-  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
-  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
 
-   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/redmond/jquery-ui.css"></link>
-    
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js"></script>
+   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/themes/redmond/jquery-ui.css"></link>
+
     <style>
         .deleteLink
         {
@@ -16,28 +14,28 @@
             cursor:pointer;
         }
     </style>
-    
+
         <script>
         var id;
-        
-    
-        
+
+
+
         (function($) {
-        
+
             $.fn.filestyle = function(options) {
-        
+
                 /* TODO: This should not override CSS. */
                 var settings = {
                     width : 250,
                     showFilename: true
                 };
-        
+
                 if(options) {
                     $.extend(settings, options);
                 };
-        
+
                 return this.each(function() {
-        
+
                     var self = this;
                     var wrapper = $("<div>")
                                     .css({
@@ -49,19 +47,19 @@
                                         "position": "absolute",
                                         "overflow": "hidden"
                                     });
-        
+
                     var filename = $('<input class="file">')
                                      .addClass($(self).attr("class"))
                                      .css({
                                          "display": "inline",
                                          "width": settings.width + "px"
                                      });
-        
+
                     if (settings.showFilename) {
                         $(self).before(filename);
                     }
                     $(self).wrap(wrapper);
-        
+
                     $(self).css({
                                 "position": "relative",
                                 "height": settings.imageheight + "px",
@@ -70,7 +68,7 @@
                                 "cursor": "pointer",
                                 "opacity": "0.0"
                             });
-        
+
                     if ($.browser.mozilla) {
                         if (/Win/.test(navigator.platform)) {
                             $(self).css("margin-left", "-142px");
@@ -80,45 +78,40 @@
                 } else {
                     $(self).css("margin-left", settings.imagewidth - settings.width + "px");
                 };
-    
+
                 if (settings.showFilename) {
                     $(self).bind("change", function() {
                         filename.val($(self).val());
                     });
                 }
-    
+
             });
-    
+
         };
+
     })(jQuery);
+
         $(document).ready(function() {
-            $(".headShotCheckbox input").bind("click", function (e) {
-               $(".headShotCheckbox input").each(function () {
-                   if (this!==e.target) {
-                       $(this).attr("checked", false);
-                   }
-               });
+            $("input[type=file]").filestyle({
+                image: "http://images.fpitesters.com/uploadButton.gif",
+                imageheight : 26,
+                imagewidth : 88,
+                width : 200,
+                showFilename:{!showFileName}
             });
-             $("input[type=file]").filestyle({ 
-                 image: "http://images.fpitesters.com/uploadButton.gif",
-                 imageheight : 26,
-                 imagewidth : 88,
-                 width : 200,
-                  showFilename:{!showFileName}
-             });
-    
-    
+
+
             $( ".dialog" ).dialog({
                 resizable: false,
                 autoOpen:false,
-                height:180,
+                height:140,
                 modal: true,
                 buttons: {
-                    "Choose File": function() {
-                     
+                    "Yes": function() {
+
                         $( this ).dialog( "close" );
                         removeAttachment(id);
-                        
+
                     },
                     Cancel: function() {
                         $( this ).dialog( "close" );
@@ -126,86 +119,53 @@
                 }
             });
 
-          $('body').on('click', '.deleteLink', function() {
-                 id = $(this).attr('id');
-       
-                 $('#dialog-confirm').dialog('open');
-                 return false;
-           })
-              
-             });
+            $('body').on('click', '.deleteLink', function () {
+                id = $(this).attr('id');
+
+                $('#dialog-confirm').dialog('open');
+                return false;
+            });
+        });
         </script>
 
-    <c:PersonalRecord rendered="{!showPersonalRecord}" pbsId="{!sobjId}" parentPage="PBS" />
-    <br />
+
     <apex:form id="attForm">
         <apex:pageBlock title="Upload Attachments">
             <apex:repeat value="{!newAttachments}" var="newAtt">
-                <apex:pageBlockSection columns="4" id="files">
-                    <!-- 
-                    <apex:panelGrid columns="3" style="width: 100%; ">
-                        <apex:outputPanel >
-                            <apex:outputLabel value="File"/>                         
-                            <apex:inputFile value="{!newAtt.body}" filename="{!newAtt.name}"/>
-                        </apex:outputPanel>
-                        <apex:outputPanel >
-                            <apex:outputLabel value="Description"/>
-                            <apex:inputText value="{!newAtt.Description}"/>
-                        </apex:outputPanel>
-                        <apex:outputPanel >
-                            <apex:outputLabel value="Head Shot"/>
-                            <apex:selectRadio value="{!newAtt.isHeadShot}" styleClass="headShotCheckbox">
-                                <apex:selectOption itemValue="true" />
-                            </apex:selectRadio>
-                        </apex:outputPanel>
-                    </apex:panelGrid>
-                     -->
+                <apex:pageBlockSection columns="3" id="files">
 
-                   <apex:pageBlockSectionItem labelStyle="width: 10%">
-                        <apex:outputLabel value="File"/>                         
+                   <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="File"/>
                         <apex:inputFile value="{!newAtt.body}" filename="{!newAtt.name}"/>
                     </apex:pageBlockSectionItem>
                     <apex:pageBlockSectionItem >
-                        <apex:outputLabel value="Description"/>                      
+                        <apex:outputLabel value="Description"/>
                         <apex:inputText value="{!newAtt.Description}"/>
-                    </apex:pageBlockSectionItem> 
-                    <apex:pageBlockSectionItem rendered="{!showHeadShotSelection}">
-                        <apex:outputLabel value="Head Shot"/>
-                        <apex:selectRadio style="position: relative; top: -5px;" value="{!newAtt.isHeadShot}" styleClass="headShotCheckbox">
-                            <apex:selectOption itemValue="true" />
-                        </apex:selectRadio>
                     </apex:pageBlockSectionItem>
                 </apex:pageBlockSection>
             </apex:repeat>
-            <apex:commandButton value="Add More" action="{!addMore}" />
+            <apex:commandButton value="Add More" action="{!addMore}"/>
             <apex:commandButton value="Upload" action="{!save}"/>
             <apex:commandButton value="Done" action="{!done}"/>
         </apex:pageBlock>
     </apex:form>
-    
-      <apex:form id="form">   
+
+      <apex:form id="form">
      <apex:actionFunction action="{!deleteFile}" name="removeAttachment" reRender="attachmentsTable" status="working" >
              <apex:param name="aId" value="" />
       </apex:actionFunction>
-        
-        <apex:actionstatus id="working"> 
+
+        <apex:actionstatus id="working">
             Deleting....
-        </apex:actionstatus> 
+        </apex:actionstatus>
     <apex:outputPanel id="datePanelContainer">
     <apex:pageBlock title="Existing Attachments" rendered="{!showExisting}" >
         <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
             <apex:column headerValue="Action">
-               <apex:outputLink value="{!URLFOR($Action.Attachment.Download, attachment.Id)}" target="_blank">View</apex:outputLink>   |
-               <apex:outputText >
+               <apex:outputLink value="{!URLFOR($Action.Attachment.Download, attachment.Id)}" target="_blank">View</apex:outputLink>
+               <apex:outputText rendered="{!$Profile.Name == 'System Administrator'}">   |
                <a id="{!attachment.id}" class="deleteLink">Del</a>
                </apex:outputText>
-                   <apex:outputPanel rendered="{!showHeadShotSelection}">
-                   <apex:outputText value=" | " />
-                   <apex:commandLink action="{!chooseHeadShot}" value="Choose as Head Shot">
-                       <apex:param name="aId" value="{!attachment.ID}" />
-                       <apex:param name="aName" value="{!attachment.Name}" />
-                   </apex:commandLink>
-               </apex:outputPanel>
             </apex:column>
             <apex:column value="{!attachment.Name}"/>
             <apex:column value="{!attachment.Description}"/>
@@ -214,9 +174,9 @@
     </apex:outputPanel>
   </apex:form>
 
-    
+
 <div id="dialog-confirm" class="dialog" title="Delete Attachment?">
     <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Are you sure you want to delete this attachment?</p>
-</div>    
+</div>
 
 </apex:component>
