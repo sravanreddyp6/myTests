@@ -235,8 +235,8 @@ function stopRKey(evt) {
                              collapsible="False"   
                              id="pbsOutputAdditionalInfo"> 
     <apex:repeat value="{!$ObjectType.Contact.FieldSets.Additional_Information}" var="f">
-        <apex:outputField value="{!Contact[f]}"  rendered="{!NOT(pbsEditModeOn)}" />
-        <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn}" required="{!OR(f.required, f.dbrequired)}"/>
+        <apex:outputField value="{!Contact[f]}"  rendered="{!NOT(pbsEditModeOn) && !Contains(dontShowFields, f.FieldPath)}" />
+        <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn && !Contains(dontShowFields, f.FieldPath)}" required="{!OR(f.required, f.dbrequired)}"/>
     </apex:repeat>
     
     <apex:pageBlockSectionItem >
