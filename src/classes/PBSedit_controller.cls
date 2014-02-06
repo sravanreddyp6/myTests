@@ -23,9 +23,14 @@ private boolean TMNUser_set = false;
 private TMN_User__c TMNUser {
 	get {
 		if (!TMNUser_set) {
-			tmnUser_internal = [
+			TMN_User__c[] users = [
             	SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:currentContact.OwnerID LIMIT 1
         	];
+        	if (users.size() == 0) {
+        		TMNUser_internal = null;
+        	} else {
+        		TMNUser_internal = users[0];
+        	}
         	TMNUser_set = true;
 		}
 		return TMNUser_internal;
