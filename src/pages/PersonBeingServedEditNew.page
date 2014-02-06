@@ -235,8 +235,8 @@ function stopRKey(evt) {
                              collapsible="False"   
                              id="pbsOutputAdditionalInfo"> 
     <apex:repeat value="{!$ObjectType.Contact.FieldSets.Additional_Information}" var="f">
-        <apex:outputField value="{!Contact[f]}"  rendered="{!NOT(pbsEditModeOn)}" />
-        <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn}" required="{!OR(f.required, f.dbrequired)}"/>
+        <apex:outputField value="{!Contact[f]}"  rendered="{!NOT(pbsEditModeOn) && !Contains(dontShowFields, f.FieldPath)}" />
+        <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn && !Contains(dontShowFields, f.FieldPath)}" required="{!OR(f.required, f.dbrequired)}"/>
     </apex:repeat>
     
     <apex:pageBlockSectionItem >
@@ -269,7 +269,29 @@ function stopRKey(evt) {
     
   </apex:pageBlockSection> 
     
-    </apex:pageBlock>
+<!--Family Information Section-->
+
+		<apex:pageBlockSection columns="2" rendered="{!canViewFamilyInfo}"
+		                             title="Family Information" 
+		                             showHeader="true" 
+		                             collapsible="True"   
+		                             id="pbsOutputFamilyInfo">
+			<apex:inputfield value="{!Contact.Family_Annual_Income__c}" rendered="{!pbsEditModeOn}" />
+			<apex:outputfield value="{!Contact.Family_Annual_Income__c}" rendered="{!!pbsEditModeOn}" />
+			<span/>
+			<apex:inputfield value="{!Contact.Family_Military_Involvement__c}" rendered="{!pbsEditModeOn}" />
+			<apex:outputfield value="{!Contact.Family_Military_Involvement__c}" rendered="{!!pbsEditModeOn}" />
+			<apex:inputfield value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!pbsEditModeOn}" />
+			<apex:outputfield value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!!pbsEditModeOn && Contact.Family_Military_Involvement__c = 'Prior'}" />
+			<apex:inputfield value="{!Contact.Family_Military_Involvement_Branch__c}" rendered="{!pbsEditModeOn}" />
+			<apex:outputfield value="{!Contact.Family_Military_Involvement_Branch__c}" rendered="{!!pbsEditModeOn && Contact.Family_Military_Involvement__c != 'None'}" />
+			<apex:inputfield value="{!Contact.Family_Native_American_Ancestry__c}" rendered="{!pbsEditModeOn}" />
+			<apex:outputfield value="{!Contact.Family_Native_American_Ancestry__c}" rendered="{!!pbsEditModeOn}" />
+			<apex:inputfield value="{!Contact.Family_Native_American_Tribe__c}" rendered="{!pbsEditModeOn}" />
+			<apex:outputfield value="{!Contact.Family_Native_American_Tribe__c}" rendered="{!!pbsEditModeOn && Contact.Family_Native_American_Ancestry__c}" />
+		</apex:pageBlockSection>
+    
+  </apex:pageBlock>
     <!--Related Parties Section-->
     <a name="RP" id="RP"></a>
 
