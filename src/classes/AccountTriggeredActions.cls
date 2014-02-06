@@ -29,12 +29,10 @@ public with sharing class AccountTriggeredActions {
         
     }
 
-    public void OnBeforeUpdate(Account[] oldObjects, Account[] updatedObjects, Map<Id,Account> newObjMap){
+    public void OnBeforeUpdate(Account[] oldObjects, Account[] updatedObjects, Map<Id,Account> newObjMap, Map<Id, Account> oldObjMap){
         // BEFORE UPDATE LOGIC
         
-        Account[] theseAccts = (Account[])updatedObjects;
-        
- 		for(Account x : theseAccts){
+ 		for(Account x : updatedObjects ){
 	
 	        // check that owner is a user (not a queue)
 	        if( ((String)x.OwnerId).substring(0,3) == '005' ){
@@ -44,6 +42,13 @@ public with sharing class AccountTriggeredActions {
 	            // in case of Queue we clear out our copy field
 	            x.Owner_Copy__c = null;
 	        }
+	        
+	        // EB-143 - blank out avatar upload tag if billing id or state change
+	        if ( ( x.avatar_id__pc != oldObjMap.get(x.Id).avatar_id__pc) ||( x.PersonMailingStateCode != oldObjMap.get(x.Id).PersonMailingStateCode) ) {
+        		System.Debug( 'billing ids do not match');
+        		x.avatar_unique_id__pc = '';
+        	}  
+        	
 	    }	
     }
 

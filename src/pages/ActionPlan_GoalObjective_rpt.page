@@ -13,11 +13,9 @@
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
-
 <apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables_themeroller.css')}"/>
-
 <apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables.css')}"/>
-<apex:stylesheet value="{!$Resource.mentoresdcss}" />
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 
 
 <style>
@@ -77,7 +75,7 @@
 </style>
 </head>
 
-<c:PersonalRecord pbsId="{!Service_Assignment__c.Admission__r.Person_Being_Served__c}" admId="{!Service_Assignment__c.Admission__c}" servAssignId="{!Service_Assignment__c.Id}" parentPage="ServAssign"  />
+<c:PersonalRecord pbsId="{!Service_Assignment__c.Admission__r.Person_Being_Served__c}" admId="{!Service_Assignment__c.Admission__c}" servAssignId="{!Service_Assignment__c.Id}" parentPage="GoalObjRpt"  />
 <br/>
 <apex:form >
 <apex:pageBlock title="Goal/Objective Documentation Report"  >
