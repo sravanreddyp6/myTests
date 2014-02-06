@@ -1552,26 +1552,22 @@ document.onkeypress = stopRKey;
      <apex:pageBlockSection showHeader="true" title="Diagnosis Information" columns="2" collapsible="false" id="ReferralDetail">
         <apex:outputText label="Diagnosis" rendered="{!OR(ReferralRecordType == 'Wisconsin',ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota',ReferralRecordType == 'NeuroRestorative')}" />
         <apex:outputText label="Brain Injury Detail" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota',ReferralRecordType == 'NeuroRestorative')}" />
-        <apex:outputText label="Diagnosis Programming Considerations" rendered="{!ReferralRecordType == 'Wisconsin'}" />
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}" />
         <!--apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',referralRecordType!='CareMeridian')}"/-->
 
         <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_I__c}" rendered="{!ReferralRecordType != 'CareMeridian'}" />
-        <apex:inputField value="{!Referral__c.Choking_Risk__c}" rendered="{!ReferralRecordType == 'Wisconsin'}"/>
-        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Wisconsin',ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',ReferralRecordType != 'NeuroRestorative',referralRecordType!='CareMeridian')}"/>
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',ReferralRecordType != 'NeuroRestorative',referralRecordType!='CareMeridian')}"/>
         <apex:inputField value="{!Referral__c.Date_of_Injury__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota',referralRecordType=='CareMeridian')}" />
 
         <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_II__c}"  rendered="{!ReferralRecordType != 'CareMeridian'}" />
         <apex:inputField value="{!Referral__c.Type_of_Injury__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
-        <apex:inputField value="{!Referral__c.History_of_Bowel_Obstructions__c}" rendered="{!ReferralRecordType == 'Wisconsin'}"/>
-        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Wisconsin',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian')}"/>
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian')}"/>
 
         <apex:inputField value="{!Referral__c.Cause_of_Injury__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" />
 
         <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_III__c}" rendered="{!ReferralRecordType != 'CareMeridian'}" />
         <apex:inputField value="{!Referral__c.Cause_of_Injury__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
-        <apex:inputField value="{!Referral__c.Takes_Injectible_Medications__c}" rendered="{!ReferralRecordType == 'Wisconsin'}" />
-        <!-- <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}"/> -->
-        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Wisconsin',ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian')}"/>
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian')}"/>
          <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}">
              <apex:outputText value="Current Location"/>
              <apex:outputPanel >
@@ -1586,14 +1582,12 @@ document.onkeypress = stopRKey;
                  <input id="MN_usePermanent" type="checkbox" value="1" onchange="copyPermanent(this);"/>&nbsp;Same as Permanent
              </apex:outputPanel>
          </apex:pageBlockSectionItem>
-        <apex:inputField value="{!Referral__c.Ventilator_Dependent__c}" rendered="{!ReferralRecordType == 'Wisconsin'}" />
-        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Wisconsin',ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota', ReferralRecordType != 'CareMeridian')}"/>
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota', ReferralRecordType != 'CareMeridian')}"/>
         <apex:inputField value="{!Referral__c.Street_1__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" id="MN_Street1"/>
 
         <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_V__c}" rendered="{!ReferralRecordType != 'CareMeridian'}" />
         <apex:inputField value="{!Referral__c.Street_1__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" id="Neuro_Street1"/>
-        <apex:inputField value="{!Referral__c.Eating_Disorders__c}" rendered="{!ReferralRecordType == 'Wisconsin'}"/>
-        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Wisconsin',ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota')}"/>
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota')}"/>
         <apex:inputField value="{!Referral__c.Street_2__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}"  id="MN_Street2"/>
 
         <apex:inputField value="{!Referral__c.Diagnosis_Date__c}" rendered="{!ReferralRecordType == 'Iowa'}"/>
@@ -1730,16 +1724,13 @@ document.onkeypress = stopRKey;
         <apex:inputField value="{!Referral__c.Anticipated_Job_Accomodations__c}" rendered="{!AND(ReferralRecordType == 'West Virginia',referralRecordType!='CareMeridian')}" />
 
        <apex:inputField value="{!Referral__c.Residential_Support_Rate_Established__c}" rendered="{!ReferralRecordType == 'Wisconsin'}"/>
-       <apex:inputField value="{!Referral__c.Ingesting_Non_Consumables__c}" rendered="{!ReferralRecordType == 'Wisconsin'}" />
-       <!--apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}"/-->
+       <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}" />
 
        <apex:inputField value="{!Referral__c.Residential_Support_Rate__c}" rendered="{!ReferralRecordType == 'Wisconsin'}"/>
-       <apex:inputField label="Inpatient Psychiatric or Mental Health Hospitalization" value="{!Referral__c.Psychiatric_Mental_Hospitalization__c}" rendered="{!ReferralRecordType == 'Wisconsin'}" />
-       <!--apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}"/-->
+       <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}" />
 
        <apex:inputField label="Patient's Current Location (if other than Home)" value="{!Referral__c.Current_Location__c}" rendered="{!ReferralRecordType == 'Wisconsin'}"/>
-       <apex:inputField value="{!Referral__c.Hospitalization_Within_the_past_year__c}" rendered="{!ReferralRecordType == 'Wisconsin'}"/>
-       <!--apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}"/-->
+       <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}" />
 
       </apex:pageBlockSection>
       <apex:pageBlockSection showHeader="false" columns="1" collapsible="false" id="ReferralServices">
@@ -1874,106 +1865,801 @@ document.onkeypress = stopRKey;
                                collapsible="false"
                                id="progConsid"
                                rendered="{!AND(ReferralRecordType!='CareMeridian',ReferralRecordType!='NeuroRestorative')}">
-          <apex:inputField value="{!Referral__c.Staffing_Needs__c}" rendered="{!ReferralRecordType != 'Indiana'}"/><apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Indiana'}"/>
-          <apex:inputField value="{!Referral__c.Accessible_Housing_Needed__c}"/>
-          <apex:inputField value="{!Referral__c.Law_Enforcement_Involvement__c}" />
-          <apex:inputField value="{!Referral__c.Chemical_Use_Current__c}" />
+          <!-- Row 1, Col 1 -->
+          <apex:inputField value="{!Referral__c.Staffing_Needs__c}" rendered="{!ReferralRecordType != 'Indiana'}"/>
+          <apex:inputField value="{!Referral__c.Living_Environment__c}" rendered="{!ReferralRecordType = 'Indiana'}"/>
+          <!-- Row 1, Col 2 -->
+          <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Peers__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Staff__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Area_of_State_Interested_In__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California'||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <!-- Row 1, Col 3 -->
+          <apex:inputField value="{!Referral__c.Uses_Tobacco__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Property_Destruction__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon'}"
+          />
+          <apex:inputField value="{!Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}"
+            rendered="{!ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Law_Enforcement_Involvement__c}"
+            rendered="{!ReferralRecordType = 'Wisconsin'}"
+          />
+          <!-- Row 1, Col 4 -->
+          <apex:inputField value="{!Referral__c.Maintain_Sibling_Group__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Nursing_Care_Needed__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin'}"
+          />
+          <apex:inputField value="{!Referral__c.Elopement__c}"
+            rendered="{!ReferralRecordType = 'Indiana'}"
+          />
+          <apex:inputField value="{!Referral__c.Unwanted_Sexual_Behavior__c}"
+            rendered="{!ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <!-- Row 2, Col 1 -->
+          <apex:inputField value="{!Referral__c.Staffing_Ratio__c}"
+            rendered="{!ReferralRecordType != 'Indiana'}"
+          />
+          <apex:inputField value="{!Referral__c.Mobility__c}"
+            rendered="{!ReferralRecordType = 'Indiana'}"
+          />
+          <!-- Row 2, Col 2 -->
+          <apex:inputField value="{!Referral__c.Verbally_Aggressive__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Self__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Staff__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <!-- Row 2, Col 3 -->
+          <apex:inputField value="{!Referral__c.Chemical_Use_Recovery__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Law_Enforcement_Involvement__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon'}"
+          />
+          <apex:inputField value="{!Referral__c.Property_Destruction__c}"
+            rendered="{!ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Uses_Tobacco__c}"
+            rendered="{!ReferralRecordType = 'Wisconsin'}"
+          />
+          <!-- Row 2, Col 4 -->
+          <apex:inputField value="{!Referral__c.If_Yes_How_Many__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Level_of_Support_Required__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin'}"
+          />
+          <apex:inputField value="{!Referral__c.Unwanted_Sexual_Behavior__c}"
+            rendered="{!ReferralRecordType = 'Indiana'}"
+          />
+          <apex:inputField value="{!Referral__c.Nursing_Care_Needed__c}"
+            rendered="{!ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <!-- Row 3, Col 1 -->
+          <apex:inputField value="{!Referral__c.Living_Environment__c}"
+            rendered="{!ReferralRecordType != 'Indiana'}"
+          />
+          <apex:inputField value="{!Referral__c.Accessible_Housing_Needed__c}"
+            rendered="{!ReferralRecordType = 'Indiana'}"
+          />
+          <!-- Row 3, Col 2 -->
+          <apex:inputField value="{!Referral__c.Suicide_Threats__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Peers__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Self__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <!-- Row 3, Col 3 -->
+          <apex:inputField value="{!Referral__c.Chemical_Use_Current__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Chemical_Use_Recovery__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin'}"
+          />
+          <apex:inputField value="{!Referral__c.Law_Enforcement_Involvement__c}"
+            rendered="{!ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <!-- Row 3, Col 4 -->
+          <apex:inputField value="{!Referral__c.No_Same_Sex_Peers__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Unsupervised_Time__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin'}"
+          />
+          <apex:inputField value="{!Referral__c.Level_of_Support_Required__c}"
+            rendered="{!ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <!-- Row 4, Col 1 -->
+          <apex:inputField value="{!Referral__c.Preferred_Setting__c}"
+            rendered="{!isCambridge ||
+                        ReferralRecordType = 'California'}"
+          />
+          <apex:inputField value="{!Referral__c.Mobility__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Accessible_Vehicle_Needed__c}"
+            rendered="{!ReferralRecordType = 'Indiana'}"
+          />
+          <!-- Row 4, Col 2 -->
+          <apex:inputField value="{!Referral__c.Suicide_Attempts__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Verbally_Aggressive__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Peers__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <!-- Row 4, Col 3 -->
+          <apex:inputField value="{!Referral__c.Chemical_Dependency_Treatment__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Chemical_Use_Current__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin'}"
+          />
+          <apex:inputField value="{!Referral__c.Chemical_Use_Recovery__c}"
+            rendered="{!ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <!-- Row 4, Col 4 -->
+          <apex:inputField value="{!Referral__c.Live_with_Opposite_Sex__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Length_of_time__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin'}"
+          />
+          <apex:inputField value="{!Referral__c.Unsupervised_Time__c}"
+            rendered="{!ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <!-- Row 5, Col 1 -->
+          <apex:inputField value="{!Referral__c.Mobility__c}"
+            rendered="{!isCambridge ||
+                        ReferralRecordType = 'California'}"
+          />
+          <apex:inputField value="{!Referral__c.Gender_Specific_Staffing__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <apex:inputField value="{!Referral__c.Accessible_Housing_Needed__c}"
+            rendered="{!ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Area_of_State_Interested_In__c}"
+            rendered="{!ReferralRecordType = 'Indiana'}"
+          />
+          <!-- Row 5, Col 2 -->
+          <apex:inputField value="{!Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Suicide_Threats__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Verbally_Aggressive__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <!-- Row 5, Col 3 -->
+          <apex:inputField value="{!Referral__c.Drug_Possession_Distribution__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Elopement__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey'}"
+          />
+          <apex:inputField value="{!Referral__c.Chemical_Dependency_Treatment__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin'}"
+          />
+          <apex:inputField value="{!Referral__c.Chemical_Use_Current__c}"
+            rendered="{!ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <!-- Row 5, Col 4 -->
+          <apex:inputField value="{!Referral__c.No_Cross_Cultural_Placement__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Live_with_Opposite_Sex__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin'}"
+          />
+          <apex:inputField value="{!Referral__c.Length_of_time__c}"
+            rendered="{!ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <!-- Row 6, Col 1 -->
+          <apex:inputField value="{!Referral__c.Accessible_Housing_Needed__c}"
+            rendered="{!isCambridge ||
+                        ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <apex:inputField value="{!Referral__c.Accessible_Vehicle_Needed__c}"
+            rendered="{!ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Current_Medical_Conditions__c}"
+            rendered="{!ReferralRecordType = 'Indiana'}"
+          />
 
-          <apex:inputField value="{!Referral__c.Staffing_Ratio__c}" rendered="{!ReferralRecordType != 'Indiana'}"/><apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Indiana'}"/>
-          <apex:inputField value="{!Referral__c.Accessible_Vehicle_Needed__c}"/>
-          <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Staff__c}" />
-          <apex:inputField value="{!Referral__c.Elopement__c}" id="elopement" />
-          <apex:inputField value="{!Referral__c.Living_Environment__c}"/>
-          <apex:inputField value="{!Referral__c.Unsupervised_Time__c}"/>
-          <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Self__c}" />
-          <apex:inputField value="{!Referral__c.Suicide_Threats__c}" />
+          <!-- Row 6, Col 2 -->
+          <apex:inputField value="{!Referral__c.Fire_Setting__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Suicide_Attempts__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Suicide_Threats__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
 
-          <apex:inputField value="{!Referral__c.Mobility__c}"/>
-          <apex:inputField value="{!Referral__c.Length_of_time__c}"/>
-          <apex:inputField value="{!Referral__c.Geographic_Restrictions__c}" rendered="{!isCambridge}" />
-          <apex:inputField value="{!Referral__c.Preferred_Setting__c}" rendered="{!isCambridge}" />
-          <apex:inputField value="{!Referral__c.No_Cross_Cultural_Placement__c}" rendered="{!isCambridge}" />
-          <apex:inputField value="{!Referral__c.Access_to_Public_Transportation__c}" rendered="{!isCambridge}" />
-          <apex:inputField value="{!Referral__c.Live_with_Opposite_Sex__c}"/>
-          <apex:inputField value="{!Referral__c.Uses_Tobacco__c}" rendered="{!isCambridge}" />
-          <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Peers__c}" />
-          <apex:inputField value="{!Referral__c.Suicide_Attempts__c}" />
-          <apex:inputField value="{!Referral__c.Chemical_Dependency_Treatment__c}"/>
-          <apex:inputField value="{!Referral__c.Nursing_Care_Needed__c}" rendered="{!ReferralRecordType != 'Indiana'}" />
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Indiana'}"/>
-          <apex:inputField value="{!Referral__c.Verbally_Aggressive__c}"/>
+          <!-- Row 6, Col 3 -->
+          <apex:inputField value="{!Referral__c.Elopement__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland' ||
+                        ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin'}"
+          />
+          <apex:inputField value="{!Referral__c.Unwanted_Sexual_Behavior__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey'}"
+          />
+          <apex:inputField value="{!Referral__c.Chemical_Dependency_Treatment__c}"
+            rendered="{!ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
 
-          <apex:inputField value="{!Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}" />
-          <apex:inputField value="{!Referral__c.Chemical_Use_Recovery__c}" />
-          <apex:inputField value="{!Referral__c.Level_of_Support_Required__c}" rendered="{!ReferralRecordType != 'Indiana'}"/><apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Indiana'}"/>
-          <apex:inputField value="{!Referral__c.Property_Destruction__c}"/>
-          <apex:inputField value="{!Referral__c.Maintain_Sibling_Group__c}" rendered="{!isCambridge}" />
-
-          <apex:inputField value="{!Referral__c.Unwanted_Sexual_Behavior__c}" />
-          <apex:inputField value="{!Referral__c.Fire_Setting__c}" rendered="{!isCambridge}" />
-
-          <apex:inputField value="{!Referral__c.Family_Involvement_Restrictions__c}" rendered="{!isCambridge}" />
-          <apex:inputField value="{!Referral__c.If_Yes_How_Many__c}" rendered="{!isCambridge}" />
-          <apex:inputField value="{!Referral__c.If_Yes_Type_of_Unwanted_Sexual_Behavior__c}" label="If Yes, Type" rendered="{!ReferralRecordType == 'Cambridge Georgia'}" />
-          <apex:inputField value="{!Referral__c.Can_Be_Placed_With_Other_Children__c}" rendered="{!isCambridge}" />
-          <apex:inputField value="{!Referral__c.If_Yes_Level__c}" rendered="{!ReferralRecordType == 'Cambridge Georgia'}" />
-          <apex:inputField value="{!Referral__c.Legal_History__c}" rendered="{!isCambridge}" />
-
-          <apex:inputField value="{!Referral__c.If_Yes_Level__c}" rendered="{!isCambridge && ReferralRecordType != 'Cambridge Georgia'}" />
-          <apex:inputField value="{!Referral__c.No_Same_Sex_Peers__c}" rendered="{!isCambridge}" />
-          <apex:inputField value="{!Referral__c.If_Yes_Age_Requirements__c}" rendered="{!isCambridge}" />
-          <apex:inputField value="{!Referral__c.Has_Pets__c}" rendered="{!ReferralRecordType == 'Cambridge Georgia'}" />
-          <apex:inputField value="{!Referral__c.Area_of_State_Interested_In__c}"/>
-          <apex:inputField value="{!Referral__c.Animal_Cruelty__c}" rendered="{!ReferralRecordType == 'Cambridge Florida' || ReferralRecordType == 'Cambridge Georgia'}"/>
-          <apex:inputField value="{!Referral__c.Drug_Possession_Distribution__c}" rendered="{!ReferralRecordType == 'Cambridge Florida' || ReferralRecordType == 'Cambridge Maryland'}"/>
-          <apex:inputField value="{!Referral__c.Theft__c}" rendered="{!ReferralRecordType == 'Cambridge Florida' || ReferralRecordType == 'Cambridge Maryland'}"/>
-          <apex:inputField value="{!Referral__c.Felony__c}" rendered="{!ReferralRecordType == 'Cambridge Florida' || ReferralRecordType == 'Cambridge Maryland'}"/>
-          <apex:inputField value="{!Referral__c.Sex_Offender__c}" rendered="{!ReferralRecordType == 'Cambridge Florida' || ReferralRecordType == 'Cambridge Maryland'}"/>
-          <apex:inputField value="{!Referral__c.Gang_Involvement__c}" rendered="{!ReferralRecordType == 'Cambridge Florida' || ReferralRecordType == 'Cambridge Maryland'}"/>
-
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Cambridge Georgia'}" />
-          <apex:inputField value="{!Referral__c.If_Yes_What_kind__c}" label="If Yes, Type" rendered="{!ReferralRecordType == 'Cambridge Georgia'}" />
-          <!--Flavor Specific fields-->
-          <apex:inputField value="{!Referral__c.Fire_Setting__c}" rendered="{!OR(ReferralRecordType == 'Wisconsin',ReferralRecordType == 'Iowa')}" />
-          <apex:inputField value="{!Referral__c.X17_Under__c}" rendered="{!ReferralRecordType == 'Iowa'}" />
-          <apex:inputField value="{!Referral__c.Extreme_Unwanted_Behaviors__c}" rendered="{!ReferralRecordType == 'Iowa'}" />
-          <apex:inputField value="{!Referral__c.Registered_Sex_Offender__c}" rendered="{!OR(ReferralRecordType == 'California',ReferralRecordType == 'Iowa',ReferralRecordType == 'Ohio')}" />
-          <apex:inputField value="{!Referral__c.Legal_History__c}" rendered="{!ReferralRecordType == 'Iowa'}" />
-          <apex:inputField value="{!Referral__c.No_Mixed_Diagnosis__c}" rendered="{!ReferralRecordType == 'Iowa'}" />
-          <apex:inputField value="{!Referral__c.Restricted_Health_Conditions__c}" rendered="{!ReferralRecordType == 'California'}">
-
-          </apex:inputField>
-          <apex:inputField value="{!Referral__c.Current_Medical_Conditions__c}" rendered="{!ReferralRecordType == 'West Virginia'}"/>
-          <apex:inputField value="{!Referral__c.Has_Pets__c}" rendered="{!ReferralRecordType == 'Wisconsin'}"/>
-          <apex:inputField value="{!Referral__c.Locked_Seclusion_Room_Needed__c}" rendered="{!ReferralRecordType == 'Wisconsin'}" />
-          <apex:inputField label="Exterior Locking Mechanism Required for Elopement" value="{!Referral__c.Exterior_Locking_Mechanism_Required__c}" rendered="{!ReferralRecordType == 'Wisconsin'}" />
-          <apex:inputField value="{!Referral__c.Uses_Tobacco__c}" rendered="{!ReferralRecordType == 'Wisconsin'}"/>
-          <apex:inputField value="{!Referral__c.If_Yes_What_kind__c}" rendered="{!ReferralRecordType == 'Wisconsin'}"/>
-          <apex:inputField label="Restrictive measures or rights restrictions will need to be implemented to safely support this individual" value="{!Referral__c.Safety_Measures_Required__c}" rendered="{!ReferralRecordType == 'Wisconsin'}" />
-          <apex:inputField value="{!Referral__c.Aversive_Procedures_Currently_in_Place__c}" rendered="{!ReferralRecordType == 'Ohio'}" />
-          <apex:inputField value="{!Referral__c.Gender_Specific_Staffing__c}" rendered="{!OR(ReferralRecordType == 'Arizona',ReferralRecordType == 'Nevada')}"/>
-          <apex:inputField value="{!Referral__c.Lift_Transfer_Assistance__c}" rendered="{!OR(ReferralRecordType == 'Arizona',ReferralRecordType == 'Nevada')}"/>
-          <apex:inputField value="{!Referral__c.Visual_Impairment__c}" rendered="{!OR(ReferralRecordType == 'Arizona',ReferralRecordType == 'Nevada')}"/>
-          <apex:pageBlockSectionItem rendered="{!isCambridge && ReferralRecordType == 'Cambridge Florida'}" />
-          <apex:pageBlockSectionItem rendered="{!isCambridge && ReferralRecordType == 'Cambridge Florida'}" />
-          <apex:pageBlockSectionItem rendered="{!isCambridge && ReferralRecordType == 'Cambridge Maryland'}" />
-          <apex:pageBlockSectionItem rendered="{!isCambridge && ReferralRecordType == 'Cambridge Maryland'}" />
-          <apex:pageBlockSectionItem rendered="{!isCambridge && ReferralRecordType == 'Cambridge Maryland'}" />
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Cambridge Georgia'}" />
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Cambridge Georgia'}" />
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Cambridge Georgia'}" />
-          <apex:outputText rendered="{!isCambridge}"><h1>Diagnosis Programming Considerations</h1> <hr /></apex:outputText>
-          <apex:pageBlockSectionItem rendered="{!isCambridge}" />
-          <apex:pageBlockSectionItem rendered="{!isCambridge}" />
-          <apex:pageBlockSectionItem rendered="{!isCambridge}" />
-          <apex:inputField value="{!Referral__c.Choking_Risk__c}" rendered="{!isCambridge}" />
-          <apex:inputField value="{!Referral__c.History_of_Bowel_Obstructions__c}" rendered="{!isCambridge}" />
-          <apex:inputField value="{!Referral__c.Takes_Injectible_Medications__c}" rendered="{!isCambridge}" />
-          <apex:inputField value="{!Referral__c.Ventilator_Dependent__c}" rendered="{!isCambridge}" />
-          <apex:inputField value="{!Referral__c.Eating_Disorders__c}" rendered="{!isCambridge}" />
-          <apex:inputField value="{!Referral__c.Ingesting_Non_Consumables__c}" rendered="{!isCambridge}" />
-          <apex:inputField value="{!Referral__c.Psychiatric_Mental_Hospitalization__c}" rendered="{!isCambridge}" />
-          <apex:inputField value="{!Referral__c.Hospitalization_Within_the_past_year__c}" rendered="{!isCambridge}" />
+          <!-- Row 6, Col 4 -->
+          <apex:inputField value="{!Referral__c.Can_Be_Placed_With_Other_Children__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Current_Medical_Conditions__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Oregon'}"
+          />
+          <apex:inputField value="{!Referral__c.X17_Under__c}"
+            rendered="{!ReferralRecordType = 'Iowa'}"
+          />
+          <apex:inputField value="{!Referral__c.Live_with_Opposite_Sex__c}"
+            rendered="{!ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Aversive_Procedures_Currently_in_Place__c}"
+            rendered="{!ReferralRecordType = 'Ohio'}"
+          />
+          <apex:inputField value="{!Referral__c.Has_Pets__c}"
+            rendered="{!ReferralRecordType = 'Wisconsin'}"
+          />
+          <!-- Row 7, Col 1 -->
+          <apex:inputField value="{!Referral__c.Accessible_Vehicle_Needed__c}"
+            rendered="{!isCambridge ||
+                        ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <apex:inputField value="{!Referral__c.Area_of_State_Interested_In__c}"
+            rendered="{!ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <!-- Row 7, Col 2 -->
+          <apex:inputField value="{!Referral__c.Property_Destruction__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin'}"
+          />
+          <apex:inputField value="{!Referral__c.Suicide_Attempts__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <!-- Row 7, Col 3 -->
+          <apex:inputField value="{!Referral__c.Unwanted_Sexual_Behavior__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland' ||
+                        ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon'}"
+          />
+          <apex:inputField value="{!Referral__c.If_Yes_Type_of_Unwanted_Sexual_Behavior__c}" label="if Yes, Type"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia'}"
+          />
+          <apex:inputField value="{!Referral__c.Nursing_Care_Needed__c}"
+            rendered="{!ReferralRecordType = 'Cambridge New Jersey'}"
+          />
+          <apex:inputField value="{!Referral__c.Elopement__c}"
+            rendered="{!ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Exterior_Locking_Mechanism_Required__c}"
+            rendered="{!ReferralRecordType = 'Wisconsin'}"
+          />
+          <!-- Row 7, Col 4 -->
+          <apex:inputField value="{!Referral__c.If_Yes_Age_Requirements__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Extreme_Unwanted_Behaviors__c}"
+            rendered="{!ReferralRecordType = 'Iowa'}"
+          />
+          <apex:inputField value="{!Referral__c.If_Yes_What_kind__c}"
+            rendered="{!ReferralRecordType = 'Wisconsin'}"
+          />
+          <!-- Row 8, Col 1 -->
+          <apex:inputField value="{!Referral__c.Geographic_Restrictions__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Lift_Transfer_Assistance__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <apex:inputField value="{!Referral__c.Current_Medical_Conditions__c}"
+            rendered="{!ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <!-- Row 8, Col 2 -->
+          <apex:inputField value="{!Referral__c.Gang_Involvement__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Fire_Setting__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Wisconsin'}"
+          />
+          <apex:inputField value="{!Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <!-- Row 8, Col 3 -->
+          <apex:inputField value="{!Referral__c.Registered_Sex_Offender__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Ohio'}"
+          />
+          <apex:inputField value="{!Referral__c.Nursing_Care_Needed__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia'}"
+          />
+          <apex:inputField value="{!Referral__c.Level_of_Support_Required__c}"
+            rendered="{!ReferralRecordType = 'Cambridge New Jersey'}"
+          />
+          <apex:inputField value="{!Referral__c.Visual_Impairment__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Unwanted_Sexual_Behavior__c}"
+            rendered="{!ReferralRecordType = 'Wisconsin'}"
+          />
+          <!-- Row 8, Col 4 -->
+          <apex:inputField value="{!Referral__c.Family_Involvement_Restrictions__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'California'}" />
+          <apex:inputField value="{!Referral__c.No_Mixed_Diagnosis__c}"
+            rendered="{!ReferralRecordType = 'Iowa'}"
+          />
+          <apex:inputField value="{!Referral__c.Locked_Seclusion_Room_Needed__c}"
+            rendered="{!ReferralRecordType = 'Wisconsin'}"
+          />
+          <!-- Row 9, Col 1 -->
+          <apex:inputField value="{!Referral__c.Area_of_State_Interested_In__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Restricted_Health_Conditions__c}"
+            rendered="{!ReferralRecordType = 'California'}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'Iowa'}" />
+          <!-- Row 9, Col 2 -->
+          <apex:inputField value="{!Referral__c.Theft__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Legal_History__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey' ||
+                        ReferralRecordType = 'Iowa'}"
+          />
+          <apex:inputField value="{!Referral__c.Property_Destruction__c}"
+            rendered="{!ReferralRecordType = 'Wisconsin'}"
+          />
+          <!-- Row 9, Col 3 -->
+          <apex:inputField value="{!Referral__c.Nursing_Care_Needed__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Level_of_Support_Required__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia'}"
+          />
+          <apex:inputField value="{!Referral__c.Unsupervised_Time__c}"
+            rendered="{!ReferralRecordType = 'Cambridge New Jersey'}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Wisconsin'}" />
+          <!-- Row 9, Col 4 -->
+          <apex:inputField value="{!Referral__c.If_Yes_Level__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Safety_Measures_Required__c}" label="Restrictive measures or rights restrictions will need to be implemented to safely support this individual"
+            rendered="{!ReferralRecordType = 'Wisconsin'}"
+          />
+          <!-- Row 10, Col 1 -->
+          <apex:inputField value="{!Referral__c.Access_to_Public_Transportation__c}"
+            rendered="{!isCambridge}"
+          />
+          <!-- Row 10, Col 2 -->
+          <apex:inputField value="{!Referral__c.Legal_History__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Law_Enforcement_Involvement__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey'}"
+          />
+          <!-- Row 10, Col 3 -->
+          <apex:inputField value="{!Referral__c.Level_of_Support_Required__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Unsupervised_Time__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia'}"
+          />
+          <apex:inputField value="{!Referral__c.Length_of_time__c}"
+            rendered="{!ReferralRecordType = 'Cambridge New Jersey'}"
+          />
+          <!-- Row 10, Col 4 -->
+          <apex:inputField value="{!Referral__c.Animal_Cruelty__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida'}"
+          />
+          <apex:inputField value="{!Referral__c.Has_Pets__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia'}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Maryland' ||
+                        ReferralRecordType = 'Cambridge New Jersey'}" />
+          <!-- Row 11, Col 1 -->
+          <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Staff__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey'}" />
+          <!-- Row 11, Col 2 -->
+          <apex:inputField value="{!Referral__c.Law_Enforcement_Involvement__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Property_Destruction__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey'}"
+          />
+          <!-- Row 11, Col 3 -->
+          <apex:inputField value="{!Referral__c.Unsupervised_Time__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Length_of_time__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia'}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge New Jersey'}" />
+          <!-- Row 11, Col 4 -->
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland' ||
+                        ReferralRecordType = 'Cambridge New Jersey'}" />
+          <apex:inputField value="{!Referral__c.If_Yes_What_kind__c}" label="If Yes, Type"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia'}"
+          />
+          <!-- Row 12, Col 1 -->
+          <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Self__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
+          <!-- Row 12, Col 2 -->
+          <apex:inputField value="{!Referral__c.Felony__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
+          <!-- Row 12, Col 3 -->
+          <apex:inputField value="{!Referral__c.Length_of_time__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
+          <!-- Row 12, Col 4 -->
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}" />
+          <apex:inputField value="{!Referral__c.Animal_Cruelty__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia'}"
+          />
+          <!-- This section is standard among the operating groups, so wwe keep them in one place -->
+          <apex:outputText rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}">
+            <h1>Diagnosis Programming Considerations</h1> <hr />
+          </apex:outputText>
+          <apex:pageBlockSectionItem rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
+          <apex:pageBlockSectionItem rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
+          <apex:pageBlockSectionItem rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
+          <apex:inputField value="{!Referral__c.Choking_Risk__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
+          <apex:inputField value="{!Referral__c.History_of_Bowel_Obstructions__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
+          <apex:inputField value="{!Referral__c.Takes_Injectible_Medications__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
+          <apex:inputField value="{!Referral__c.Ventilator_Dependent__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
+          <apex:inputField value="{!Referral__c.Eating_Disorders__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
+          <apex:inputField value="{!Referral__c.Ingesting_Non_Consumables__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
+          <apex:inputField value="{!Referral__c.Psychiatric_Mental_Hospitalization__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
+          <apex:inputField value="{!Referral__c.Hospitalization_Within_the_past_year__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
+          <!-- TADA -->
         </apex:pageBlockSection>
         <apex:pageBlockSection columns="1" id="progConsiderationsDetail">
           <apex:inputField value="{!Referral__c.Restricted_Health_Conditions__c}" rendered="{!ReferralRecordType == 'Cambridge Georgia'}" />
