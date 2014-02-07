@@ -609,6 +609,33 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Adjudicated_offense_status__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Adjudicated offense status</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Adjudicated_offenses__c</fullName>
+        <externalId>false</externalId>
+        <label>Adjudicated offenses</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Misdemeanor/s</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Felony/ies</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>MultiselectPicklist</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
         <fullName>Admission_Location__c</fullName>
         <externalId>false</externalId>
         <label>Admission Location</label>
@@ -1553,6 +1580,28 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Discrimination_Reason__c</fullName>
+        <externalId>false</externalId>
+        <label>Discrimination Reason</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Sexual Orientation</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Drug_Possession_Distribution__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
@@ -1715,6 +1764,14 @@
         </picklist>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Felony_ies__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Felony/ies</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
     </fields>
     <fields>
         <fullName>Financial_Resources__c</fullName>
@@ -2569,6 +2626,14 @@
         </picklist>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Misdemeanor_s__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Misdemeanor/s</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
     </fields>
     <fields>
         <fullName>Mobility__c</fullName>
@@ -4076,6 +4141,10 @@
                 <fullName>Physical Disability</fullName>
                 <default>false</default>
             </picklistValues>
+            <picklistValues>
+                <fullName>Victim of Discrimination</fullName>
+                <default>false</default>
+            </picklistValues>
             <sorted>false</sorted>
         </picklist>
         <trackTrending>false</trackTrending>
@@ -4129,6 +4198,10 @@
             </picklistValues>
             <picklistValues>
                 <fullName>Victim of Bullying</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Victim of Discrimination</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -6902,6 +6975,7 @@
         <columns>Name_PBR__c</columns>
         <columns>Referral_Status__c</columns>
         <columns>Services_Requested__c</columns>
+        <columns>RECORDTYPE</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>
@@ -6931,6 +7005,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7318,6 +7403,21 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -9705,6 +9805,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>After_Care__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -9754,6 +9865,21 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11317,6 +11443,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -11727,6 +11864,21 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -13053,6 +13205,10 @@
                 <fullName>Physical Disability</fullName>
                 <default>false</default>
             </values>
+            <values>
+                <fullName>Victim of Discrimination</fullName>
+                <default>false</default>
+            </values>
         </picklistValues>
         <picklistValues>
             <picklist>Reason_Category_Mental_Health_Emotional__c</picklist>
@@ -13098,6 +13254,10 @@
             </values>
             <values>
                 <fullName>Victim of Bullying</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Victim of Discrimination</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -14517,6 +14677,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -14927,6 +15098,21 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -18205,6 +18391,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -18663,6 +18860,21 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -21457,6 +21669,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -21867,6 +22090,21 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -23209,6 +23447,10 @@
                 <fullName>Physical Disability</fullName>
                 <default>false</default>
             </values>
+            <values>
+                <fullName>Victim of Discrimination</fullName>
+                <default>false</default>
+            </values>
         </picklistValues>
         <picklistValues>
             <picklist>Reason_Category_Mental_Health_Emotional__c</picklist>
@@ -23254,6 +23496,10 @@
             </values>
             <values>
                 <fullName>Victim of Bullying</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Victim of Discrimination</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -24697,6 +24943,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -25107,6 +25364,21 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -27897,6 +28169,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -28291,6 +28574,21 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -30886,6 +31184,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>After_Care__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -30935,6 +31244,21 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -32566,6 +32890,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -32949,6 +33284,21 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -35232,6 +35582,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>After_Care__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -35281,6 +35642,21 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -36800,6 +37176,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -37183,6 +37570,21 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -39482,6 +39884,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>After_Care__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -39531,6 +39944,21 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -41038,6 +41466,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -41413,6 +41852,21 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -43870,6 +44324,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -44253,6 +44718,21 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -46543,6 +47023,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -46926,6 +47417,21 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -49228,6 +49734,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -49611,6 +50128,21 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -51937,6 +52469,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -52320,6 +52863,21 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -54631,6 +55189,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>After_Care__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -54680,6 +55249,21 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -56219,6 +56803,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -56602,6 +57197,21 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
