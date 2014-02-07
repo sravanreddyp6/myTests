@@ -142,10 +142,12 @@ function stopRKey(evt) {
     <apex:repeat value="{!$ObjectType.Contact.FieldSets.PBS_Basic}" var="f">
         
             <apex:outputField value="{!Contact[f]}"  rendered="{! NOT(pbsEditModeOn) && (f != 'Primary_Language__c')}" />
-            <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn && (f != 'Primary_Language__c')}" required="{!OR(f.required, f.dbrequired)}"/>
+            <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn && (f != 'Primary_Language__c') }" required="{!OR(f.required, f.dbrequired)}"/>
             
-                        
+            
+            <apex:pageBlockSectionItem rendered="{! f== 'Primary_Language__c'}" /><!--  blank space on left of primary language -->            
             <apex:pageBlockSectionItem rendered="{!  NOT(pbsEditModeOn) && (f == 'Primary_Language__c')}">
+            
             <apex:outputText value="Primary Language"/>
             <apex:outputPanel styleClass="nowrap">
             <apex:outputField value="{!Contact[f]}"  /> &nbsp;&nbsp;
