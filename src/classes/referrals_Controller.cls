@@ -77,7 +77,7 @@ public with sharing class referrals_Controller{
   public Id pBSId { get; set; }
   
   public boolean isLinkedPersonBeingServed {
-  	get { return pBSId != null; }
+        get { return pBSId != null; }
   }
 
   public static final String REFERRAL_EDIT_URL = '/apex/referral';
@@ -803,7 +803,16 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
   }
 
   public PageReference saveRef() {
-
+  // start CTEAE -34
+    if(referralRecord.Adjudicated_offense_status__c){
+        if(!referralRecord.Misdemeanor_s__c   & !referralRecord.Felony_ies__c){
+            referralRecord.Adjudicated_offense_status__c.addError('Please Select at least one - Misdemeanor/s or Felony/ies');
+            return null;
+        
+        }
+    
+    }
+    // ennd CTEAE - 34
       system.debug('DOUGDOUG - in saveREF');
     Id refId;
 
@@ -987,6 +996,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     return current;
   }
   public void checkRedFlags() {
+   
     redFlagged = false;
     String fieldSetName = 'Red_Flag_' + ReferralRecordType.replace(' ', '_');
     Set<String> allFieldSets = Schema.SObjectType.Referral__c.fieldSets.getMap().keySet();
@@ -1012,7 +1022,12 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     // the Record Type to be changed when the user first opens up a referral
     // record.
     //if (this.referralRecord == null || this.referralRecord.RecordTypeId == null) {
+      
+
+      
         setReferralRecordType();
+      
+      
     //}
     if (Utility.getRecordTypeNameForReferralObject(this.referralRecord).startsWith('Cambridge')) {
         isCambridge = true;

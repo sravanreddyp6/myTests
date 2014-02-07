@@ -180,7 +180,7 @@ function stopRKey(evt) {
   }
 
   fundingSourceSave = function (isClose) {
-    // We can't use Visualforce functions/variables in a Static Resource JS file,
+    // We cant use Visualforce functions/variables in a Static Resource JS file,
     // so we have to pass it in here.
     closeFundingSource = isClose;
     fundingSourceSaveHelper('{!JSENCODE(ReferralRecordType)}');
@@ -1096,7 +1096,23 @@ function stopRKey(evt) {
 
 
      <apex:pageBlockSection rendered="{!ReferralRecordType=='Cambridge Florida' || ReferralRecordType=='Cambridge Maryland'}">
-         <apex:outputField value="{!Referral__c.Reason_Category_Mental_Health_Emotional__c}" />
+         <apex:pageblockSectionItem >
+             <apex:outputPanel >         
+                 <apex:outputLabel >Reason Category: Mental Health/Emotional</apex:outputLabel>
+                 <apex:outputPanel rendered="{!Referral__c.Discrimination_Reason__c != ''}">
+                     <br/>
+                     <apex:outputLabel >Discrimination Reason</apex:outputLabel>
+                 </apex:outputPanel>
+                 
+             </apex:outputPanel>
+             <apex:outputPanel >
+                 <apex:outputField value="{!Referral__c.Reason_Category_Mental_Health_Emotional__c}" />
+                 <apex:outputPanel rendered="{!Referral__c.Discrimination_Reason__c != ''}">
+                     <br/>
+                     <apex:outputField value="{!Referral__c.Discrimination_Reason__c}" />
+                 </apex:outputPanel>
+             </apex:outputPanel> 
+         </apex:pageblockSectionItem>
          <apex:outputField value="{!Referral__c.Reason_Category_School_Problems__c}" />
          <apex:outputField value="{!Referral__c.Reason_Category_Medical_Problems__c}" />
          <apex:outputField value="{!Referral__c.Reason_Category_Physical_Environment__c}" />
@@ -2316,10 +2332,30 @@ function stopRKey(evt) {
           />
           <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
           <!-- Row 12, Col 2 -->
+          <!--
           <apex:outputField value="{!Referral__c.Felony__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Maryland'}"
           />
+          
+          see CTEAE-34 for reason commented out
+          -->
+          <apex:pageBlockSectionItem Rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                          ReferralRecordType = 'Cambridge Maryland'}">
+              <apex:outputLabel >Adjudicated offense status</apex:outputLabel>
+              <apex:outputPanel >
+                  <apex:outputField id="Adjudicated_offense_status" value="{!Referral__c.Adjudicated_offense_status__c}"/>                  
+                  <apex:outputPanel rendered="{!Referral__c.Adjudicated_offense_status__c}">
+                      <br/>
+                      <apex:outputField id="Misdemeanor_s" value="{!Referral__c.Misdemeanor_s__c}"/>Misdemeanor/s
+                      <br/>
+                      <apex:outputField id="Felony_ies" value="{!Referral__c.Felony_ies__c}"/>Felony/ies                 
+                  </apex:outputPanel>
+              </apex:outputPanel>
+          
+          </apex:pageBlockSectionItem>          
+          
+          
           <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
           <!-- Row 12, Col 3 -->
           <apex:outputField value="{!Referral__c.Length_of_time__c}"

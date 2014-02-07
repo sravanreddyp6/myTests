@@ -172,7 +172,7 @@ document.onkeypress = stopRKey;
   }
 
   fundingSourceSave = function (isClose) {
-    // We can't use Visualforce functions/variables in a Static Resource JS file,
+    // We cant use Visualforce functions/variables in a Static Resource JS file,
     // so we have to pass it in here.
     closeFundingSource = isClose;
     fundingSourceSaveHelper('{!JSENCODE(ReferralRecordType)}');
@@ -277,7 +277,19 @@ document.onkeypress = stopRKey;
           j$('input[id$=reviewOn]').val('');
       }
   }
-
+  function clearReason_MentalHealth(){
+      j$('select[id$=clearReason_MentalHealth_input]').val('');
+  
+  
+  
+  }
+  function clearAdjudicated_offense_status(){
+  //window.alert("sometext");
+      j$('input[id$=Misdemeanor_s]').prop("checked", false);
+      j$('input[id$=Felony_ies]').prop("checked", false);
+  
+  
+  }
  </script>
 
   <apex:form id="referralForm">
@@ -1269,7 +1281,34 @@ document.onkeypress = stopRKey;
         <apex:inputField value="{!Referral__c.Secondary_Location__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
      </apex:pageBlockSection>
      <apex:pageBlockSection rendered="{!ReferralRecordType=='Cambridge Florida' || ReferralRecordType=='Cambridge Maryland'}">
-         <apex:inputField value="{!Referral__c.Reason_Category_Mental_Health_Emotional__c}" />
+         <!-- added section item for CTEAE-37 -->
+         <apex:pageBlockSectionItem >
+             <apex:outputLabel >
+                 Reason Category: Mental Health/Emotional
+                 <br/>
+                 <apex:actionStatus id="statusMental_Health">
+                     <apex:facet name="start">
+                         <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                             <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                         </div>
+                     </apex:facet>
+                     <apex:facet name="stop"></apex:facet>
+                 </apex:actionStatus>             
+             </apex:outputLabel>
+             <apex:outputPanel id="itemMental_Health">   
+                <apex:actionRegion >
+                <apex:inputField value="{!Referral__c.Reason_Category_Mental_Health_Emotional__c}" >
+                    <apex:actionSupport event="onchange" rerender="itemMental_Health" status="statusMental_Health" oncomplete="clearReason_MentalHealth(); return false;" /> 
+                </apex:inputField>
+                </apex:actionRegion>             
+                <br/>
+                <apex:outputLabel >Discrimination Reason</apex:outputLabel>
+                <apex:actionRegion > 
+                    <apex:inputField value="{!Referral__c.Discrimination_Reason__c}" id="clearReason_MentalHealth_input" rendered="{!IF(CONTAINS(Referral__c.Reason_Category_Mental_Health_Emotional__c,'Victim of Discrimination'),false,true)}" html-disabled="true" />
+                    <apex:inputField value="{!Referral__c.Discrimination_Reason__c}" required="{!IF(CONTAINS(Referral__c.Reason_Category_Mental_Health_Emotional__c,'Victim of Discrimination'),true,false)}" rendered="{!IF(CONTAINS(Referral__c.Reason_Category_Mental_Health_Emotional__c,'Victim of Discrimination'),true,false)}" />        
+                </apex:actionRegion>
+             </apex:outputPanel>
+         </apex:pageBlockSectionItem>
          <apex:inputField value="{!Referral__c.Reason_Category_School_Problems__c}" />
          <apex:inputField value="{!Referral__c.Reason_Category_Medical_Problems__c}" />
          <apex:inputField value="{!Referral__c.Reason_Category_Physical_Environment__c}" />
@@ -1326,8 +1365,8 @@ document.onkeypress = stopRKey;
              </apex:actionStatus>
              <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusPlaceHx" />
          </apex:inputField>
-         <apex:inputField label="This is a reunification process due to recent placement in the home/community" value="{!Referral__c.Is_Reunification_Process__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
-         <apex:inputField label="This is a reunification process due to recent placement in the home/community" value="{!Referral__c.Is_Reunification_Process__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
+         <apex:inputField label="This is a reunification process due to recent placement back in the home /community." value="{!Referral__c.Is_Reunification_Process__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
+         <apex:inputField label="This is a reunification process due to recent placement back in the home /community." value="{!Referral__c.Is_Reunification_Process__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
          <apex:pageBlockSectionItem >
              <hr />
          </apex:pageBlockSectionItem>
@@ -2628,10 +2667,47 @@ document.onkeypress = stopRKey;
           />
           <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
           <!-- Row 12, Col 2 -->
+          <!--
           <apex:inputField value="{!Referral__c.Felony__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Maryland'}"
           />
+          -->
+
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Cambridge Florida' || 
+                        ReferralRecordType == 'Cambridge Maryland'}">
+              <apex:outputPanel >
+                  <apex:outputLabel for="Adjudicated_offense_status">Adjudicated offense status<br/></apex:outputLabel>
+                  <apex:actionStatus id="statusAdjudicated_offense_status">
+                     <apex:facet name="start">
+                         <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                             <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                         </div>
+                     </apex:facet>
+                     <apex:facet name="stop"></apex:facet>
+                 </apex:actionStatus>  
+              </apex:outputPanel>
+              <apex:outputPanel id="Adjudicated_offense_status_Item" layout="block" style="width: 150px;" >
+                  <apex:inputField id="Adjudicated_offense_status" value="{!Referral__c.Adjudicated_offense_status__c}">
+                      <apex:actionSupport event="onchange" rerender="Adjudicated_offense_status_Item" status="statusAdjudicated_offense_status" oncomplete="clearAdjudicated_offense_status(); return false;" /> 
+                  </apex:inputField>
+                  <apex:outputPanel layout="block" rendered="{! !Referral__c.Adjudicated_offense_status__c}" style="display: none;">
+                      <apex:outputLabel ></apex:outputLabel>
+                      <br/>
+                      <apex:inputField id="Misdemeanor_s" value="{!Referral__c.Misdemeanor_s__c}" html-disabled="true" />Misdemeanor/s
+                      <br/>
+                      <apex:inputField id="Felony_ies" value="{!Referral__c.Felony_ies__c}" html-disabled="true"/> Felony/ies
+                  </apex:outputPanel>
+                  <apex:outputPanel layout="block" rendered="{!Referral__c.Adjudicated_offense_status__c}" >
+                      <apex:outputLabel ><b>Select one :</b></apex:outputLabel>
+                      <br/>
+                      <apex:inputField id="cbMisdemeanor_s" value="{!Referral__c.Misdemeanor_s__c}"/><apex:outputLabel for="cbMisdemeanor_s">Misdemeanor/s</apex:outputLabel>
+                      <br/>
+                      <apex:inputField id="cbFelony_ies" value="{!Referral__c.Felony_ies__c}"/><apex:outputLabel for="cbFelony_ies">Felony/ies</apex:outputLabel> 
+                  </apex:outputPanel>                  
+              </apex:outputPanel>
+          </apex:pageBlockSectionItem>
+          
           <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
           <!-- Row 12, Col 3 -->
           <apex:inputField value="{!Referral__c.Length_of_time__c}"
