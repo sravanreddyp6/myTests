@@ -403,7 +403,7 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
         <fullName>Role__c</fullName>
         <description>This field centralizes the Role for Mentors and their Household Members.</description>
         <externalId>false</externalId>
-        <formula>IF( CONTAINS(RecordType.Name, &apos;Mentor&apos;) , &apos;Mentor&apos;, IF ( CONTAINS(RecordType.Name, &apos;Related Party&apos;),  TEXT( Related_Party_Type__c ) , &apos;&apos; ) )</formula>
+        <formula>IF( CONTAINS(RecordType.Name, &apos;Mentor&apos;) , &apos;Mentor&apos;, IF ( CONTAINS(RecordType.Name, &apos;Household Member&apos;),  TEXT( Related_Party_Type__c ) + &apos; (&apos; + Mentor__r.Full_Name__c + &apos;)&apos; , &apos;&apos; ) )</formula>
         <label>Role</label>
         <required>false</required>
         <trackTrending>false</trackTrending>
