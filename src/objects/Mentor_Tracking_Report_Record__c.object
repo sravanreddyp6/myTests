@@ -54,8 +54,7 @@
     <fields>
         <fullName>Foster_Family_Structure__c</fullName>
         <externalId>false</externalId>
-        <formula>IF(  ISPICKVAL(Mentor__r.Gender__c, &apos;Male&apos;)  &amp;&amp;  ISPICKVAL(Mentor__r.Relationship_Status__c, &apos;Single&apos;), &apos;Single Male&apos;, IF (ISPICKVAL(Mentor__r.Gender__c, &apos;Female&apos;)  &amp;&amp;   ISPICKVAL(Mentor__r.Relationship_Status__c, &apos;Single&apos;),&apos;Single Female&apos;,IF( ISPICKVAL(Mentor__r.Relationship_Status__c, &apos;Married&apos;),&apos;Married Couple&apos;, IF(ISPICKVAL(Mentor__r.Relationship_Status__c, &apos;Unmarried Couple&apos;),&apos;Unmarried Couple&apos;,&apos;&apos;))))</formula>
-        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <formula>IF(  ISPICKVAL(Mentor__r.Gender__c, &apos;Male&apos;)  &amp;&amp;  ISPICKVAL(Mentor__r.Marital_Status__c, &apos;Single&apos;), &apos;Single Male&apos;, IF (ISPICKVAL(Mentor__r.Gender__c, &apos;Female&apos;)  &amp;&amp;   ISPICKVAL(Mentor__r.Marital_Status__c, &apos;Single&apos;),&apos;Single Female&apos;,IF( ISPICKVAL(Mentor__r.Marital_Status__c, &apos;Married&apos;),&apos;Married Couple&apos;, IF(ISPICKVAL(Mentor__r.Marital_Status__c, &apos;Unmarried Couple&apos;),&apos;Unmarried Couple&apos;,&apos;&apos;))))</formula>
         <label>Foster Family Structure</label>
         <required>false</required>
         <trackTrending>false</trackTrending>
