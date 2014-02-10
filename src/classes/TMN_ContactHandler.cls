@@ -7,7 +7,7 @@ public with sharing class TMN_ContactHandler {
     }
 
     public void OnBeforeInsert(TMN_Contact__c[] newObjects){
-        // EXECUTE BEFORE INSERT LOGIC
+        // EXECUTE BEFORE INSERT LOGIC		
     }
 
     public void OnAfterInsert(TMN_Contact__c[] newObjects){
@@ -27,11 +27,25 @@ public with sharing class TMN_ContactHandler {
         			Optional_for_Foster_Parent_Child__c, Required_for_Resident_Non_Relative__c, Optional_for_Resident_Non_Relative__c,
         			Required_for_Pet__c, Optional_for_Pet__c FROM Credential_Profile__c ];
        System.debug('credList holds: ' + credList);
+       
        // Loop through the person records that were just created, and determine which Credential_Profile__c records matter for them, based on the TMN_Contact__c        
 		for (TMN_Contact__c p : thesePersons) {
        		System.debug('The persons loop in PersonHandler.cls is executing...');
        		System.debug('What is p in the persons loop in PersonHandler.cls: ' + p);
+			
+			Mentor_Tracking_Report_Record__c thisContactsReptRec = new Mentor_Tracking_Report_Record__c(
+       			TMN_Contact__c = p.Id,
+       			Mentor__c = p.Mentor__c
+       		);
+       		
 
+       		
+       		
+			if(p.Disregarded__c!=true) {
+       			insert thisContactsReptRec;
+       		}
+       		
+			
 			string thisPersonsRecordTypeName;
 
    			for(Schema.RecordTypeInfo sPrts : personRecordTypes) {
@@ -66,21 +80,42 @@ public with sharing class TMN_ContactHandler {
 	   					);			
 	   					credRecs.add(credRec);
        				}
-	   				if(p.Related_Party_Type__c=='Foster Parent\'s Relative' && cp.Required_for_Foster_Parent_Relative__c==true) {
+	   				if(p.Related_Party_Type__c=='Foster Parent\'s Relative' && p.Age__c < 18 && cp.Required_for_Foster_Parent_Relative__c==true && cp.Needed_for_Under_18__c==true) {
 	   					Credential_Record__c credRec = new Credential_Record__c(
 	   						Credential_Profile__c = cp.Id,
 	   						TMN_Contact__c = p.Id
 	   					);			
 	   					credRecs.add(credRec);
        				}
-	   				if(p.Related_Party_Type__c=='Foster Parent\'s Child' && cp.Required_for_Foster_Parent_Child__c==true) {
+	   				if(p.Related_Party_Type__c=='Foster Parent\'s Relative' && p.Age__c >= 18 && cp.Required_for_Foster_Parent_Relative__c==true && cp.Needed_for_18_Over__c==true) {
 	   					Credential_Record__c credRec = new Credential_Record__c(
 	   						Credential_Profile__c = cp.Id,
 	   						TMN_Contact__c = p.Id
 	   					);			
 	   					credRecs.add(credRec);
        				}
-	   				if(p.Related_Party_Type__c=='Resident-Non Relative' && cp.Required_for_Resident_Non_Relative__c==true) {
+	   				if(p.Related_Party_Type__c=='Foster Parent\'s Child' && p.Age__c < 18 && cp.Required_for_Foster_Parent_Child__c==true && cp.Needed_for_Under_18__c==true) {
+	   					Credential_Record__c credRec = new Credential_Record__c(
+	   						Credential_Profile__c = cp.Id,
+	   						TMN_Contact__c = p.Id
+	   					);			
+	   					credRecs.add(credRec);
+       				}
+	   				if(p.Related_Party_Type__c=='Foster Parent\'s Child' && p.Age__c >= 18 && cp.Required_for_Foster_Parent_Child__c==true && cp.Needed_for_18_Over__c==true) {
+	   					Credential_Record__c credRec = new Credential_Record__c(
+	   						Credential_Profile__c = cp.Id,
+	   						TMN_Contact__c = p.Id
+	   					);			
+	   					credRecs.add(credRec);
+       				}
+	   				if(p.Related_Party_Type__c=='Resident-Non Relative' && p.Age__c < 18 && cp.Required_for_Resident_Non_Relative__c==true && cp.Needed_for_Under_18__c==true) {
+	   					Credential_Record__c credRec = new Credential_Record__c(
+	   						Credential_Profile__c = cp.Id,
+	   						TMN_Contact__c = p.Id
+	   					);			
+	   					credRecs.add(credRec);
+       				}
+	   				if(p.Related_Party_Type__c=='Resident-Non Relative' && p.Age__c >= 18 && cp.Required_for_Resident_Non_Relative__c==true && cp.Needed_for_18_Over__c==true) {
 	   					Credential_Record__c credRec = new Credential_Record__c(
 	   						Credential_Profile__c = cp.Id,
 	   						TMN_Contact__c = p.Id
@@ -96,8 +131,9 @@ public with sharing class TMN_ContactHandler {
        				}       				 
        			}    			
        		}
-       		insert credRecs;
-       }
+       		insert credRecs; 
+       		     
+       }       
         
     }
 
