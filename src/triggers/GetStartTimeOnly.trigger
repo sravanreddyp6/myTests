@@ -98,7 +98,7 @@ trigger GetStartTimeOnly on Progress_Note__c (before update, before insert) {
            n.Date_of_Service__c = n.Start_Time__c.date();
        }
        
-       if (Trigger.isInsert || (Trigger.isUpdate && (Trigger.oldMap.get(n.Id).Start_Time__c != n.Start_Time__c || Trigger.oldMap.get(n.Id).Type_of_Activity__c != n.Type_of_Activity__c)) &&
+       if (Trigger.isInsert || (Trigger.isUpdate && (Trigger.oldMap.get(n.Id).Start_Time__c != n.Start_Time__c || Trigger.oldMap.get(n.Id).Type_of_Activity__c != n.Type_of_Activity__c || Trigger.oldMap.get(n.Id).Disregard_Note__c != n.Disregard_Note__c)) &&
            n.Start_Time__c != null) {
          
                
@@ -109,7 +109,10 @@ trigger GetStartTimeOnly on Progress_Note__c (before update, before insert) {
                				recordTypeMap.get(n.RecordTypeId).Name;
                
            		if ( Trigger.isUpdate ) {
-                	n.Name += ' - ' + ownerMap.get(n.CreatedById).FirstName.Substring(0,1) + ownerMap.get(n.CreatedById).LastName;
+           			if ( n.Disregard_Note__c ) 
+           				n.Name += ' - DISREGARD';
+           			else
+                		n.Name += ' - ' + ownerMap.get(n.CreatedById).FirstName.Substring(0,1) + ownerMap.get(n.CreatedById).LastName;
            		} else  { // isInsert
                 	n.Name += ' - ' + UserInfo.getFirstName().Substring(0,1) + UserInfo.getLastName();
            		}

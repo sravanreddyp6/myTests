@@ -71,6 +71,7 @@ public list<ProgressNote_ActionPlanChildren_mjo__c> getNote_plan_joins(){
        isHCfilter.put('false',false);
        isHCfilter.remove(HCMCfilter);
        
+       // RBO-265 - filter out Disregarded notes
         notes = [Select Name, ID, Start_Time__c, Person_Being_Served__c, End_Time__c, CreatedByid, Healthcare_Medical_Note__c, Narrative__c 
             From Progress_Note__c where 
                                         (
@@ -82,6 +83,7 @@ public list<ProgressNote_ActionPlanChildren_mjo__c> getNote_plan_joins(){
                                             AND Person_Being_Served__c In :selectedPBS 
                                             AND Healthcare_Medical_Note__c in :isHCfilter.Values() 
                                             AND RecordType.DeveloperName = 'Shift_Note'
+                                            AND Disregard_note__c = false	
                                         ORDER BY CreatedDate ];      
      
         return null;
