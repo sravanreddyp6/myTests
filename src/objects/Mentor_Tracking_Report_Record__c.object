@@ -52,9 +52,50 @@
     <enableHistory>false</enableHistory>
     <enableReports>false</enableReports>
     <fields>
+        <fullName>Affiliation_Type__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(  TMN_Contact__r.RecordType.DeveloperName  = &apos;Mentor&apos;, &apos;Applicant&apos;, TEXT(TMN_Contact__r.Related_Party_Type__c) )</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Affiliation Type</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>CPA_Home_City__c</fullName>
+        <externalId>false</externalId>
+        <formula>TMN_Contact__r.City__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>CPA Home City</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>CPA_Home_Zipcode__c</fullName>
+        <externalId>false</externalId>
+        <label>CPA Home Zipcode</label>
+        <length>10</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Date_Most_Recent_HHSI__c</fullName>
+        <externalId>false</externalId>
+        <label>Most Recent Home Health Safety Inspectio</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
         <fullName>Foster_Family_Structure__c</fullName>
         <externalId>false</externalId>
-        <formula>IF(  ISPICKVAL(Mentor__r.Gender__c, &apos;Male&apos;)  &amp;&amp;  ISPICKVAL(Mentor__r.Marital_Status__c, &apos;Single&apos;), &apos;Single Male&apos;, IF (ISPICKVAL(Mentor__r.Gender__c, &apos;Female&apos;)  &amp;&amp;   ISPICKVAL(Mentor__r.Marital_Status__c, &apos;Single&apos;),&apos;Single Female&apos;,IF( ISPICKVAL(Mentor__r.Marital_Status__c, &apos;Married&apos;),&apos;Married Couple&apos;, IF(ISPICKVAL(Mentor__r.Marital_Status__c, &apos;Unmarried Couple&apos;),&apos;Unmarried Couple&apos;,&apos;&apos;))))</formula>
+        <formula>IF(  ISPICKVAL(Mentor__r.Gender__c, &apos;Male&apos;)  &amp;&amp;  OR(ISPICKVAL(Mentor__r.Relationship_Status__c,&apos;Single&apos;),ISPICKVAL(Mentor__r.Relationship_Status__c,&apos;Widowed&apos;),ISPICKVAL(Mentor__r.Relationship_Status__c,&apos;Divorced&apos;)), &apos;Single Male&apos;, IF (ISPICKVAL(Mentor__r.Gender__c, &apos;Female&apos;)  &amp;&amp;   OR(ISPICKVAL(Mentor__r.Relationship_Status__c, &apos;Single&apos;),ISPICKVAL(Mentor__r.Relationship_Status__c,&apos;Widowed&apos;),ISPICKVAL(Mentor__r.Relationship_Status__c,&apos;Divorced&apos;)),&apos;Single Female&apos;,IF( ISPICKVAL(Mentor__r.Relationship_Status__c, &apos;Married&apos;),&apos;Married Couple&apos;, IF(ISPICKVAL(Mentor__r.Relationship_Status__c, &apos;Unmarried Couple&apos;),&apos;Unmarried Couple&apos;,&apos;&apos;))))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Foster Family Structure</label>
         <required>false</required>
         <trackTrending>false</trackTrending>
@@ -80,16 +121,48 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Mentor_Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Mentor Status</label>
+        <length>32</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Mentor__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
-        <label>TMN Contact</label>
+        <label>Mentor</label>
         <referenceTo>TMN_Contact__c</referenceTo>
         <relationshipLabel>Mentor Tracking Report Records</relationshipLabel>
         <relationshipName>Mentor_Tracking_Report_Records</relationshipName>
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Primary_Race__c</fullName>
+        <externalId>false</externalId>
+        <formula>TEXT( TMN_Contact__r.Race__c )</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Primary Race</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Secondary_Race__c</fullName>
+        <externalId>false</externalId>
+        <formula>TEXT( TMN_Contact__r.Race__c )</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Secondary Race</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Street_Address_of_CPA_Home__c</fullName>
@@ -102,9 +175,36 @@
         <type>Text</type>
         <unique>false</unique>
     </fields>
+    <fields>
+        <fullName>TMN_Contact__c</fullName>
+        <externalId>false</externalId>
+        <label>TMN Contact</label>
+        <referenceTo>TMN_Contact__c</referenceTo>
+        <relationshipLabel>Mentor Tracking Report Records (TMN Contact)</relationshipLabel>
+        <relationshipName>Mentor_Tracking_Report_Records1</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <trackTrending>false</trackTrending>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
     <label>Mentor Tracking Report Record</label>
     <listViews>
         <fullName>All</fullName>
+        <columns>OBJECT_ID</columns>
+        <columns>NAME</columns>
+        <columns>Foster_Family_Structure__c</columns>
+        <columns>Hispanic_Heritage__c</columns>
+        <columns>Mentor__c</columns>
+        <columns>Date_Most_Recent_HHSI__c</columns>
+        <columns>Street_Address_of_CPA_Home__c</columns>
+        <columns>TMN_Contact__c</columns>
+        <columns>CREATEDBY_USER.ALIAS</columns>
+        <columns>CREATEDBY_USER</columns>
+        <columns>CREATED_DATE</columns>
+        <columns>UPDATEDBY_USER.ALIAS</columns>
+        <columns>UPDATEDBY_USER</columns>
+        <columns>LAST_UPDATE</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>
@@ -114,5 +214,5 @@
     </nameField>
     <pluralLabel>Mentor Tracking Report Records</pluralLabel>
     <searchLayouts/>
-    <sharingModel>ReadWrite</sharingModel>
+    <sharingModel>ControlledByParent</sharingModel>
 </CustomObject>
