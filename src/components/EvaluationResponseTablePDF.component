@@ -1,0 +1,25 @@
+<apex:component controller="EvaluationResponseTableController" allowDML="true">
+    <apex:attribute name="parentId" description="Id of the parent Evaluation record"
+        type="Id" required="true" assignTo="{!evaluationId}" />
+    <apex:attribute name="type" description="The type of this table"
+        type="String" required="true" assignTo="{!responseType}" />
+    <apex:attribute name="onEdit" description="The Javascript function to call when Edit is clicked"
+        type="String" />
+    <apex:attribute name="formId" description="Id of the form element that includes this component"
+        type="String" />
+    <apex:attribute name="uniqueId" description="Unique ID so we can differentiate JS functions"
+        type="String" required="true" />
+    <apex:attribute name="isPdf" description="Boolean describing whether or not this is for a PDF rendering"
+        type="Boolean" required="false" default="false" />
+
+    <apex:pageBlockSection columns="1" title="{!type}">
+    
+        <apex:pageBlockTable value="{!responses}" var="response" id="responseTable" border="1px" style="text-align:center;th padding:10px;">
+                <apex:repeat value="{!columnsToFetch}" var="column">
+                    <apex:column value="{!response[column]}" style="padding:10px;margin:10px;text-align:center;" />
+                </apex:repeat>    
+        </apex:pageBlockTable>
+
+    </apex:pageBlockSection>
+
+</apex:component>

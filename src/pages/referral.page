@@ -1,0 +1,2759 @@
+<apex:page standardController="Referral__c" extensions="referrals_Controller">
+  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+
+  <style type="text/css">
+    .dialogLoadingSpinner {
+      margin-left: 5px;
+    }
+    #fundingMessages {
+      margin-bottom: 10px
+    }
+    #fundingMessages .error {
+      color: red;
+    }
+    #fundingMessages .success {
+      color: green;
+    }
+    #progConsid [id*=progConsiderationsDetail] tr td:first-child {
+      width: 11.5%;
+    }
+    [id*=progConsiderationsDetail] .multiSelectPicklistCell {
+      width: 12px;
+    }
+    .modalDialog {
+      max-height: 500px;
+      overflow: auto;
+    }
+    .modalDialog .modalSubheader {
+      font-weight: bold;
+    }
+    .modalDialog .pbHeader {
+      font-size: 0.9em;
+    }
+    #progConsid td.labelCol {
+      width: 20%;
+    }
+    #progConsid td.dataCol {
+      width: 30px;
+    }
+    #ReferralDetailHeader td.labelCol {
+      width: 20%;
+    }
+    #ReferralDetailHeader td.dataCol {
+      width: 20px;
+    }
+    .nowrap {
+      white-space: nowrap;
+    }
+    .custom-lookup-dialog{
+        overflow-y:scroll;
+        max-height:400px;
+        position:absolute;
+    }
+    .requiredInput {
+      display: inline;
+      margin-left: 4px;
+    }
+    .fieldLabel {
+        font-size:90%;
+        color:#4a4a56;
+        font-weight:bold;
+    }
+    .thinking{
+        opacity:0.8;
+        background-color:#ccc;
+        position:fixed;
+        width:100%;
+        height:100%;
+        top:0px;
+        left:0px;
+        z-index:10000;
+    }
+    .thinkingwheel{
+        position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+    }
+  </style>
+
+  <script language="javascript">
+
+   j$ = jQuery.noConflict();
+    //disable enter key
+
+function stopRKey(evt) {
+   var evt = (evt) ? evt : ((event) ? event : null);
+   var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+   if ((evt.keyCode == 13) && (node.type=="text")) {return false;}
+}
+
+document.onkeypress = stopRKey;
+
+  function validateRelatedParty() {
+    var errors = '';
+    j$('#relatedPartyErrors').html(errors);
+    if (j$('input[id$=relatedPartyEntry_Name]').val() == '') {
+        errors += '<li>Party Name is a required field.</li>';
+    }
+    if (j$('select[id$=relatedPartyEntry_Type]').val() =='') {
+        errors += '<li>Type is a required field.</li>';
+    }
+    var x = j$('input[id$=relatedPartyEntry_Email]').val();
+    if (x.length > 0) {
+        var atpos=x.indexOf("@");
+        var dotpos=x.lastIndexOf(".");
+        if (atpos<1 || dotpos<atpos+2 || dotpos+2>=x.length) {
+            errors += '<li>Email is not a valid Email address</li>';
+        }
+    }
+    j$('#relatedPartyErrors').html(errors);
+    return (errors == '');
+  }
+
+   function validateLocation() {
+
+    var errors = '';
+    j$('#locationErrors').html(errors);
+    if (j$('input[id$=locationEntry_ServiceLocation]').val() == '') {
+        errors += '<li>Alias is a required field.</li>';
+    } else if (j$('input[id$=locationEntry_ServiceLocation_lkid]').val() =='') {
+        errors += '<li>You must lookup the Alias</li>';
+    }
+    if (j$('input[id$=locationEntry_User]').val() =='') {
+        errors += '<li>User Assigned is a required field.</li>';
+    } else if (j$('input[id$=locationEntry_User_lkid]').val() =='') {
+        errors += '<li>You must lookup the User</li>';
+    }
+    if (j$('select[id$=locationEntry_Status]').val() =='') {
+        errors += '<li>Status is a required field.</li>';
+    }
+    j$('#locationErrors').html(errors);
+    return (errors == '');
+  }
+
+  function validateActivity() {
+    var errors = '';
+    j$('#activityErrors').html(errors);
+    if (j$('input[id$=activityEntry_Subject]').val() == '') {
+        errors += '<li>Subject is a required field.</li>';
+    }
+    if (j$('select[id$=activityEntry_Priority]').val() =='') {
+        errors += '<li>Priority is a required field.</li>';
+    }
+    if (j$('select[id$=activityEntry_Status]').val() =='') {
+        errors += '<li>Status is a required field.</li>';
+    }
+    if (j$('input[id$=activityEntry_Owner]').val() =='') {
+        errors += '<li>Assigned To is a required field.</li>';
+    }
+    j$('#activityErrors').html(errors);
+    return (errors == '');
+  }
+
+ //copies relatedParty fields from dialog for postback
+  function relatedPartySave(isClose) {
+    if (validateRelatedParty()) {
+      j$('input[id$=relatedPartyName]').val(j$('input[id$=relatedPartyEntry_Name]').val());
+      j$('input[id$=relatedPartyType]').val(j$('select[id$=relatedPartyEntry_Type]').val());
+      j$('input[id$=relatedPartyEmail]').val(j$('input[id$=relatedPartyEntry_Email]').val());
+      j$('input[id$=relatedPartyPhone]').val(j$('input[id$=relatedPartyEntry_Phone]').val());
+      j$('input[id$=relatedPartyAddress]').val(j$('textarea[id$=relatedPartyEntry_Address]').val());
+      j$('input[id$=relatedPartyPhone_2]').val(j$('input[id$=relatedPartyEntry_Phone_2]').val());
+      j$('input[id$=relatedPartyPhone_1_Type]').val(j$('select[id$=relatedPartyEntry_Phone_1_Type]').val());
+      j$('input[id$=relatedPartyPhone_2_Type]').val(j$('select[id$=relatedPartyEntry_Phone_2_Type]').val());
+      j$('input[id$=relatedPartyComments]').val(j$('textarea[id$=relatedPartyEntry_Comments]').val());
+
+      saveRelParty();
+      if (isClose) {
+          closeModalDialog('relatedPartyModal', 'span');
+      }
+    }
+  }
+
+  fundingSourceSave = function (isClose) {
+    // We cant use Visualforce functions/variables in a Static Resource JS file,
+    // so we have to pass it in here.
+    closeFundingSource = isClose;
+    fundingSourceSaveHelper('{!JSENCODE(ReferralRecordType)}');
+  }
+
+  //copies Agency fields from dialog for postback
+  function agencySave(isClose) {
+      j$('#agencyErrors').html('');
+      if (j$('input[id$=agencyEntry_Name]').val() != '') {
+          j$('input[id$=agencyName]').val(j$('input[id$=agencyEntry_Name]').val());
+          j$('input[id$=agencyPhone]').val(j$('input[id$=agencyEntry_Phone]').val());
+          j$('input[id$=agencyAddress]').val(j$('textarea[id$=agencyEntry_Address]').val());
+          j$('input[id$=agencyReason]').val(j$('textarea[id$=agencyEntry_Reason]').val());
+
+          saveAgency();
+          if (isClose) {
+              closeModalDialog('agencyModal', 'span');
+          }
+      } else {
+          j$('#agencyErrors').html('<li>Name is required.</li>');
+      }
+  }
+
+  //copies activity fields from dialog for postback
+  function activitySave(isClose) {
+      if (validateActivity()) {
+          j$('input[id$=activitySubject]').val(j$('input[id$=activityEntry_Subject]').val());
+          j$('input[id$=activityPriority]').val(j$('select[id$=activityEntry_Priority]').val());
+          j$('input[id$=activityStatus]').val(j$('select[id$=activityEntry_Status]').val());
+          j$('input[id$=activityActivityDate]').val(j$('input[id$=activityEntry_ActivityDate]').val());
+          j$('input[id$=activityOwner]').val(j$('input[id$=activityEntry_Owner_lkid]').val());
+          j$('input[id$=activityComments__c]').val(j$('textarea[id$=activityEntry_Comments__c]').val());
+
+          saveActivity();
+          if (isClose) {
+              closeModalDialog('ActivityModal', 'span');
+          }
+      }
+  }
+
+       //copies Location fields from dialog for postback
+  function locationSave(isClose) {
+      if (validateLocation()) {
+          j$('input[id$=locationServiceLocation]').val(j$('input[id$=locationEntry_ServiceLocation_lkid]').val());
+          j$('input[id$=locationUser]').val(j$('input[id$=locationEntry_User_lkid]').val());
+          j$('input[id$=locationStatus]').val(j$('select[id$=locationEntry_Status]').val());
+
+          saveLocation();
+          if (isClose) {
+              closeModalDialog('ReferralLocationModal', 'span');
+          }
+      }
+  }
+
+  function copyPermanent(element) {
+      var street1 = '';
+      var street2 = '';
+      var city = '';
+      var state = '';
+      var zip = '';
+      var phone = '';
+      var email = '';
+      var fax = '';
+      if (element.checked) {
+          street1 = j$('input[id$=Perm_Street1]').val();
+          street2 = j$('input[id$=Perm_Street2]').val();
+          city = j$('input[id$=Perm_City]').val();
+          state = j$('select[id$=Perm_State]').val();
+          zip = j$('input[id$=Perm_Zip]').val();
+          phone = j$('input[id$=Perm_Phone]').val();
+          email = j$('input[id$=Perm_Email]').val();
+          fax = j$('input[id$=Perm_Fax]').val();
+      }
+
+      j$('input[id$=MN_Street1]').val(street1);
+      j$('input[id$=Neuro_Street1]').val(street1);
+      j$('input[id$=MN_Street2]').val(street2);
+      j$('input[id$=Neuro_Street2]').val(street2);
+      j$('input[id$=MN_City]').val(city);
+      j$('select[id$=MN_State]').val(state);
+      j$('input[id$=MN_Zip]').val(zip);
+      j$('input[id$=MN_Phone]').val(phone);
+      j$('input[id$=MN_Email]').val(email);
+      j$('input[id$=MN_Fax]').val(fax);
+  }
+
+  function alertOnHighRisk() {
+    if (j$('[id*=redFlagged]').val() == "true") {
+      alert('This referral has been flagged as High Risk. Please follow the process in your state to move forward with this referral appropriately.');
+    }
+  }
+
+  function unsetAdditionalFields(value){
+      if(value != 'Closed'){
+          j$('select[id$=closeReason]').val('');
+          j$('input[id$=closeDate]').val('');
+          j$('textarea[id$=closeComment]').val('');
+      }
+      if(value != 'On Hold'){
+          j$('select[id$=holdReason]').val('');
+          j$('input[id$=holdDate]').val('');
+          j$('input[id$=reviewOn]').val('');
+      }
+  }
+  function clearReason_MentalHealth(){
+      j$('select[id$=clearReason_MentalHealth_input]').val('');
+  
+  
+  
+  }
+  function clearAdjudicated_offense_status(){
+  //window.alert("sometext");
+      j$('input[id$=Misdemeanor_s]').prop("checked", false);
+      j$('input[id$=Felony_ies]').prop("checked", false);
+  
+  
+  }
+ </script>
+
+  <apex:form id="referralForm">
+    <apex:actionFunction name="saveRef" action="{!saveRef}"/>
+    <apex:actionFunction name="checkRedFlags" action="{!checkRedFlags}" oncomplete="alertOnHighRisk(); saveRef(); return false;" rerender="redFlagged"/>
+    <apex:actionRegion >
+        <apex:actionFunction name="setReferralRecordType" action="{!setReferralRecordType}" rerender="ReferralDetail,Funding,progConsid,ReferralServices,msgs,ReferralDetailHeader,progConsiderationsDetail" />
+    </apex:actionRegion>
+    <apex:actionRegion >
+        <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" oncomplete="openModalDialog('relatedPartyModal', 'span', 'Add Related Party','none');" status="showAddRelPartyStatus" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs" />
+    </apex:actionRegion>
+    <apex:actionRegion >
+        <apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" oncomplete="fundingSourceScrollToTop(); fundingSourceClearMessages(); openModalDialog('FundingSourceModal', 'span', 'Add Funding Source','none', 1000);" action="{!showAddFundingSource}" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceAuthorizationDetailEntry,fundingSourceEntry,msgs"/>
+    </apex:actionRegion>
+    <apex:actionRegion >
+        <apex:actionFunction name="showAddAgency" action="{!showAddAgency}" rerender="agencies,agencyEntry,msgs"/>
+    </apex:actionRegion>
+    <apex:actionRegion >
+        <apex:actionFunction name="showAddActivity" action="{!showAddActivity}" rerender="activities,activityEntry,msgs"/>
+    </apex:actionRegion>
+    <apex:actionRegion >
+        <apex:actionFunction name="showAddLocation" action="{!showAddLocation}" rerender="locations,locationEntry,msgs" oncomplete="openModalDialog('ReferralLocationModal', 'span', 'Add Location','referral-location'); " status="AddLocationStatus" />
+    </apex:actionRegion>
+    <apex:actionFunction name="locationLookup" action="{!resetSearchItems}" rerender="block,table" oncomplete="j$('input[id$=nameFilter]').val(j$('input[id$=locationEntry_ServiceLocation]').val());openModalDialog('searchDialog', 'span', 'Search Service Location','custom-lookup-dialog');return false;"/>
+    <apex:actionFunction name="locationLookup2" action="{!resetSearchItems2}" rerender="block2,table2" oncomplete="j$('input[id$=nameFilter2]').val(j$('input[id$=sl]').val());openModalDialog('searchDialog2', 'span', 'Search Service Location','custom-lookup-dialog');return false;"/>
+    <apex:actionFunction name="unsetStatusHelperFiels" action="{!unsetStatusHelperFiels}" rerender="ReferralStatus" oncomplete="unsetAdditionalFields(j$('select[id$=referralStatus]').val());"/>
+
+    <apex:pageMessages id="msgs"/>
+
+    <apex:inputhidden value="{!Referral__c.Person_Being_Referred__c}" />
+    <apex:inputhidden value="{!Referral__c.Person_Being_Served__c}" />
+    <!--apex:inputhidden value="{!Referral__c.RecordType.Name}" /-->
+    <!--<apex:outputpanel style="display:none">
+        <apex:inputField value="{!Referral__c.RecordType.Name}" />
+    </apex:outputpanel>-->
+
+     <apex:pageBlock mode="edit">
+      <apex:pageblockButtons location="bottom" rendered="{!AND(ISNULL(personBeingRefRecord.Id),ISNULL(personBeingServedRecord.Id))}">
+        <apex:commandButton value="Create Person Being Referred"
+                            id="createPBRButton"
+                            action="{!createPBR}"
+                            rendered="{!ISNULL(personBeingRefRecord.Id)}"/>
+        <apex:commandButton value="Cancel" id="cancelButton" action="{!cancel}"/>
+      </apex:pageblockButtons>
+
+      <apex:pageblockButtons location="Top">
+            <apex:commandButton value="Search for Duplicates" action="{!redirectToSearch}"/>
+            <apex:commandButton value="Unlink Referral" action="{!unlinkPBR}" rendered="{!Referral__c.OldPBR__c != null}"/>
+            <apex:commandButton value="Unlink Referral" action="{!unlinkPBS}" rendered="{!Referral__c.OldPBS__c != null}"/>
+      </apex:pageblockButtons>
+
+      <apex:pageBlockSection title="Person Being Referred"
+                             showHeader="true"
+                             columns="2"
+                             collapsible="false"
+                             id="PBRSection"
+                             rendered="{!ISNULL(personBeingServedRecord.id)}">
+        <apex:pageBlockSectionItem >
+          <apex:outputText value="Name"/>
+          <apex:outputPanel styleClass="nowrap">
+            <apex:inputText label="" value="{!personBeingRefRecord.First_Name__c}" />&nbsp;&nbsp;
+            <apex:inputText label="" value="{!personBeingRefRecord.Middle_Initial__c}"  size="1"/>&nbsp;&nbsp;
+            <apex:inputText label="" value="{!personBeingRefRecord.Last_Name__c}" />
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:inputField value="{!personBeingRefRecord.Ethnicity__c}"/>
+
+        <apex:inputField value="{!personBeingRefRecord.Date_of_Birth__c}"/>
+        <apex:inputField value="{!personBeingRefRecord.Race__c}"/>
+
+        <apex:inputField value="{!personBeingRefRecord.Age__c}" id="pbrAge" />
+        <apex:inputField value="{!personBeingRefRecord.Marital_Status__c}"/>
+
+        <apex:inputField value="{!personBeingRefRecord.Gender__c}"/>
+        <apex:pageBlockSectionItem helpText="{!$ObjectType.Person_Being_Referred__c.fields.Non_Verbal__c.inlineHelpText}">
+          <apex:outputText value="Primary Language"/>
+          <apex:outputPanel styleClass="nowrap">
+            <apex:inputField value="{!personBeingRefRecord.Primary_Language__c}" />&nbsp;
+            <apex:outputLabel value="Non-Verbal" />&nbsp;
+            <apex:inputField value="{!personBeingRefRecord.Non_Verbal__c}" />&nbsp;
+            <apex:outputLabel value="Sign Language" />&nbsp;
+            <apex:inputField value="{!personBeingRefRecord.Sign_Language__c}"  />
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:inputField value="{!personBeingRefRecord.SSN__c}"/>
+      </apex:pageBlockSection>
+      <apex:pageBlockSection showHeader="false"
+                             columns="1"
+                             collapsible="false"
+                             rendered="{!ISNULL(personBeingServedRecord.id)}">
+        <apex:inputField value="{!personBeingRefRecord.Additional_Information_Comments__c}" style="width: 90%;" />
+      </apex:pageBlockSection>
+
+
+
+      <apex:pageBlockSection title="Contact Information"
+                             showHeader="true"
+                             columns="2"
+                             collapsible="false"
+                             id="ContactSection"
+                             rendered="{!ISNULL(personBeingServedRecord.id)}">
+        <apex:inputField value="{!personBeingRefRecord.Street_1__c}" id="Perm_Street1"/>
+        <apex:inputField value="{!personBeingRefRecord.Phone__c}" id="Perm_Phone"/>
+        <apex:inputField value="{!personBeingRefRecord.Street_2__c}" id="Perm_Street2"/>
+        <apex:inputField value="{!personBeingRefRecord.Email_Address__c}" id="Perm_Email"/>
+        <apex:pageBlockSectionItem >
+          <apex:outputText value="City"/>
+          <apex:outputPanel styleClass="nowrap">
+            <apex:inputText value="{!personBeingRefRecord.City__c}"  id="Perm_City"/>&nbsp;
+            <apex:outputLabel value="State" />&nbsp;
+            <apex:inputField value="{!personBeingRefRecord.State__c}"  id="Perm_State"/>&nbsp;
+            <apex:outputLabel value="Zip" />&nbsp;
+            <apex:inputText value="{!personBeingRefRecord.Zip_Code__c}" style="width: 42px;"  id="Perm_Zip"/>
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:inputField value="{!personBeingRefRecord.Fax__c}" id="Perm_Fax"/>
+        <apex:inputField value="{!personBeingRefRecord.Home_County__c}"/>
+      </apex:pageBlockSection>
+
+      <apex:pageBlockSection title="Person Being Served"
+                             showHeader="true"
+                             columns="2"
+                             collapsible="false"
+                             id="readPBSSection"
+                             rendered="{!!ISNULL(personBeingServedRecord.id)}">
+          <apex:pageBlockSectionItem >
+          <apex:outputText value="Name"/>
+          <apex:outputPanel styleClass="nowrap">
+            <apex:outputText label="" value="{!personBeingServedRecord.FirstName}" />&nbsp;&nbsp;
+            <apex:outputText label="" value="{!personBeingServedRecord.Middle_Name__c}" />&nbsp;&nbsp;
+            <apex:outputText label="" value="{!personBeingServedRecord.LastName}" />
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:outputField value="{!personBeingServedRecord.Ethnicity_Picklist__c}"/>
+
+        <apex:outputField value="{!personBeingServedRecord.BirthDate}"/>
+        <apex:outputField value="{!personBeingServedRecord.Primary_Language__c}" />
+        <apex:outputField value="{!personBeingServedRecord.Age__c}"/>
+
+
+        <apex:outputField value="{!personBeingServedRecord.Gender__c}"/>
+        <apex:outputField value="{!personBeingServedRecord.SSN__c}"/>
+
+      </apex:pageBlockSection>
+
+      <apex:pageBlockSection title="Contact Information"
+                             showHeader="true"
+                             columns="2"
+                             collapsible="false"
+                             id="readContactSection"
+                             rendered="{!!ISNULL(personBeingServedRecord.id)}">
+          <apex:outputField value="{!personBeingServedRecord.MailingStreet}" id="Perm_Street1"/>
+        <apex:outputField value="{!personBeingServedRecord.Phone}"  id="Perm_Phone"/>
+        <apex:outputField value="{!personBeingServedRecord.OtherStreet}" id="Perm_Street2"/>
+        <apex:outputField value="{!personBeingServedRecord.Email}" id="Perm_Email"/>
+        <apex:pageBlockSectionItem >
+          <apex:outputText value="City"/>
+          <apex:outputPanel styleClass="nowrap">
+            <apex:outputText value="{!personBeingServedRecord.MailingCity}" id="Perm_City"/>&nbsp;
+            <apex:outputLabel value="State" />&nbsp;
+            <apex:outputText value="{!personBeingServedRecord.MailingState}"  id="Perm_State"/>&nbsp;
+            <apex:outputLabel value="Zip" />&nbsp;
+            <apex:outputText value="{!personBeingServedRecord.MailingPostalCode}" style="width: 42px;"  id="PermZip"/>
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:outputField value="{!personBeingServedRecord.Fax}" id="Perm_Fax"/>
+      </apex:pageBlockSection>
+
+      <apex:pageblockSection columns="1"
+                             title="State For Preferred Service"
+                             id="stateForPreferredService" rendered="{!OR(!ISNULL(personBeingRefRecord.Id),!ISNULL(personBeingServedRecord.Id))}">
+          <apex:actionRegion >
+              <apex:inputField value="{!Referral__c.State_for_Preferred_Service__c}" required="{!referralRecordType!='NeuroRestorative'}" id="sfps">
+                  <apex:actionSupport event="onchange" oncomplete="j$('select[id$=servicesRequested]').val('');setReferralRecordType();" rerender="referralDetailBlock,ReferralDetailHeader,ReferralDetail,ReferralServices,progConsid,ReferralDetail_1"/>
+              </apex:inputField>
+          </apex:actionRegion>
+      </apex:pageblockSection>
+
+      <apex:pageBlockSection columns="1"
+                             title="Related Parties"
+                             id="relatedParties"
+                             rendered="{!OR(!ISNULL(personBeingRefRecord.Id),!ISNULL(personBeingServedRecord.Id))}">
+        <apex:pageBlockSectionItem >
+          <apex:actionRegion >
+          <apex:commandButton value="Add Related Party"
+                              id="addRelParty"
+                              onClick="showAddRelParty();return false;"/>
+            <apex:actionStatus id="showAddRelPartyStatus">
+                <apex:facet name="start">
+                  <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                </apex:facet>
+                <apex:facet name="stop" />
+                </apex:actionStatus>
+            </apex:actionRegion>
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockTable value="{!relParties}" var="relParty">
+          <apex:column value="{!relParty.Type__c}"/>
+          <apex:column value="{!relParty.Name}"/>
+          <apex:column value="{!relParty.Address__c}"/>
+          <apex:column value="{!relParty.Email__c}"/>
+          <apex:column value="{!relParty.Phone__c}"/>
+          <apex:column value="{!relParty.Phone_1_Type__c}"/>
+          <apex:column value="{!relParty.Phone_2__c}"/>
+          <apex:column value="{!relParty.Phone_2_Type__c}"/>
+          <apex:column value="{!relParty.Comments__c}"/>
+        </apex:pageBlockTable>
+          <apex:outputpanel style="display:none">
+              <apex:inputHidden value="{!relParty.Name}" id="relatedPartyName"/>
+              <apex:inputHidden value="{!relParty.Type_String__c}" id="relatedPartyType"/>
+              <apex:inputHidden value="{!relParty.Address__c}" id="relatedPartyAddress"/>
+              <apex:inputHidden value="{!relParty.Email__c}" id="relatedPartyEmail"/>
+              <apex:inputHidden value="{!relParty.Phone__c}" id="relatedPartyPhone"/>
+              <apex:inputHidden value="{!relParty.Phone_1_Type_String__c}" id="relatedPartyPhone_1_Type"/>
+              <apex:inputHidden value="{!relParty.Phone_2__c}" id="relatedPartyPhone_2"/>
+              <apex:inputHidden value="{!relParty.Phone_2_Type_String__c}" id="relatedPartyPhone_2_Type"/>
+              <apex:inputHidden value="{!relParty.Comments__c}" id="relatedPartyComments"/>
+          </apex:outputpanel>
+      </apex:pageBlockSection>
+
+    </apex:pageBlock>
+
+    <!-- Add Related Party modal. -->
+<apex:actionRegion >
+    <apex:outputPanel id="relatedPartyModal" style="display:none">
+
+        <apex:actionFunction name="saveRelParty" action="{!saveRelParty}" status="myStatus" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs" />
+
+      <apex:pageBlock title="Add Related Party">
+        <apex:pageblockButtons location="bottom">
+          <apex:commandButton value="Save" onClick="relatedPartySave(true); return false;"/ >
+          <apex:commandButton value="Save & New" onClick="relatedPartySave(false);return false;"/ >
+          <apex:commandButton value="Cancel" onClick="closeModalDialog('relatedPartyModal', 'span'); j$('#relatedPartyErrors').html('');return false;" />
+        </apex:pageblockButtons>
+
+        <apex:facet name="header">
+          <p><strong>Add a related party below:</strong></p>
+        </apex:facet>
+
+        <div id='relatedPartyErrors' style='color:red' />
+
+        <apex:pageBlockSection columns="2" id="relatedPartyEntry">
+          <apex:inputField value="{!relParty.Name}" id="relatedPartyEntry_Name" />
+          <apex:inputField value="{!relParty.Type__c}" id="relatedPartyEntry_Type"/>
+
+          <apex:inputField value="{!relParty.Address__c}" id="relatedPartyEntry_Address"/>
+          <apex:inputField value="{!relParty.Email__c}" id="relatedPartyEntry_Email"/>
+
+          <apex:inputField value="{!relParty.Phone__c}" id="relatedPartyEntry_Phone"/>
+          <apex:inputField value="{!relParty.Phone_1_Type__c}" id="relatedPartyEntry_Phone_1_Type"/>
+
+          <apex:inputField value="{!relParty.Phone_2__c}" id="relatedPartyEntry_Phone_2"/>
+          <apex:inputField value="{!relParty.Phone_2_Type__c}" id="relatedPartyEntry_Phone_2_Type"/>
+        </apex:pageBlockSection>
+
+        <apex:pageBlockSection columns="1" id="relatedPartyEntry2">
+          <apex:inputField value="{!relParty.Comments__c}" style="width: 90%;" id="relatedPartyEntry_Comments"/>
+        </apex:pageBlockSection>
+      </apex:pageBlock>
+    </apex:outputPanel>
+</apex:actionRegion>
+
+
+    <!-- Add Agency modal. -->
+<apex:actionRegion >
+    <apex:outputPanel id="agencyModal" style="display:none">
+
+        <apex:actionFunction name="saveAgency" action="{!saveAgency}" status="myStatus" rerender="agencies,agencyEntry,msgs"/>
+
+      <apex:pageBlock title="Add Agency Involved with Individual">
+        <apex:pageblockButtons location="bottom">
+          <apex:commandButton value="Save" onclick="agencySave(true); return false;"/ >
+          <apex:commandButton value="Save & New" onclick="agencySave(false); return false;"/ >
+          <apex:commandButton value="Cancel" onclick="closeModalDialog('agencyModal', 'span');j$('#agencyErrors').html('');return false;" />
+        </apex:pageblockButtons>
+
+        <apex:facet name="header">
+          <p><strong>Add an agency involved with the person being referred below:</strong></p>
+        </apex:facet>
+
+        <div id='agencyErrors' style='color:red' />
+
+        <apex:pageBlockSection columns="1" id="agencyEntry">
+          <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Agency Name:"/>
+            <apex:inputText value="{!agency.Name}" id="agencyEntry_Name"/>
+          </apex:pageBlockSectionItem>
+
+          <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Address:"/>
+            <apex:inputTextarea value="{!agency.Address__c}" id="agencyEntry_Address"/>
+          </apex:pageBlockSectionItem>
+
+          <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Phone Number:"/>
+            <apex:inputField value="{!agency.Phone__c}" id="agencyEntry_Phone"/>
+          </apex:pageBlockSectionItem>
+
+          <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Reason for Involvement:"/>
+            <apex:inputTextarea value="{!agency.Reason_for_Involvement__c}" id="agencyEntry_Reason"/>
+          </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+      </apex:pageBlock>
+    </apex:outputPanel>
+</apex:actionRegion>
+
+    <!-- Add Funding Source modal. -->
+<apex:actionRegion >
+    <apex:outputPanel id="FundingSourceModal" style="display:none">
+
+        <apex:actionFunction name="saveFundingSource" status="saveFundingSourceStatus" action="{!saveFundingSource}" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialog('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceAuthorizationDetailEntry,fundingSourceEntry,msgs"/>
+
+      <div id='fundingMessages' />
+      <apex:pageBlock title="Add Funding Source" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative'}">
+        <apex:pageBlockSection columns="1" id="fundingSourceEntry">
+            <apex:inputField value="{!fundingSource.Funding_Source__c}" id="fundingEntry_Source"/>
+            <apex:inputField value="{!fundingSource.Funding_Source_ID__c}" id="fundingEntry_SourceId"/>
+            <apex:inputField value="{!fundingSource.Service_Being_Funded__c}" id="fundingEntry_Service" rendered="{!ReferralRecordType!='CareMeridian'}"/>
+            <apex:inputField value="{!fundingSource.Payor__c}" id="fundingEntry_Payor" rendered="{!ReferralRecordType=='CareMeridian'}"/>
+            <apex:inputField value="{!fundingSource.Status__c}" id="fundingEntry_Status"/>
+            <apex:inputField value="{!fundingSource.Comment__c}"  id="fundingEntry_comment"/>
+            <apex:inputHidden value="{!fundingSource.Id}"  id="fundingEntry_Id" rendered="{!!ISBLANK(fundingSource.Id)}"/>
+        </apex:pageBlockSection>
+      </apex:pageBlock>
+      <apex:pageBlock title="Payer Detail" id="fundingSourcePayerDetailEntry" rendered="{!ReferralRecordType == 'CareMeridian' || ReferralRecordType == 'NeuroRestorative'}">
+        <apex:pageBlockSection columns="2" rendered="{!ReferralRecordType == 'CareMeridian'}">
+            <apex:outputField value="{!personBeingRefRecord.Full_Name__c}" />
+            <!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
+            <apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!personBeingRefRecord.Age__c})">
+                <apex:param value="{!personBeingRefRecord.Date_of_Birth__c}"/>
+            </apex:outputText>
+            <apex:inputField value="{!fundingSource.Type_of_Coverage__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Payer_Name__c}" />
+            <apex:inputField value="{!fundingSource.Payer_Phone__c}" />
+            <apex:inputField value="{!fundingSource.TPA__c}" />
+            <apex:inputField value="{!fundingSource.TPA_Phone__c}" />
+            <apex:inputField value="{!fundingSource.Primary_Med_Ind_Phys_Group__c}" />
+            <apex:inputField value="{!fundingSource.Primary_Med_Ind_Phys_Group_Phone__c}" />
+            <apex:inputField value="{!fundingSource.Network__c}" />
+            <apex:inputField value="{!fundingSource.Network_Phone__c}" />
+            <apex:inputField value="{!fundingSource.Verified_By__c}" />
+            <apex:inputField value="{!fundingSource.Payer_Verification_Date__c}" />
+            <apex:inputField value="{!fundingSource.Verified_With__c}" />
+            <apex:inputField value="{!fundingSource.Representing__c}" />
+            <apex:inputField value="{!fundingSource.Funding_Source__c}" label="Payer Type" />
+            <apex:inputField value="{!fundingSource.Call_Reference_Number__c}" />
+            <apex:inputField value="{!fundingSource.Policy_Type__c}" />
+            <apex:inputField value="{!fundingSource.Policy_Number__c}" />
+            <apex:inputField value="{!fundingSource.Group_Name__c}" />
+            <apex:inputField value="{!fundingSource.Group_Number__c}" />
+            <apex:inputField value="{!fundingSource.Policy_Holder__c}" />
+            <apex:inputField value="{!fundingSource.Relationship_To_Patient__c}" id="policyHolderRelationship" />
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="2" rendered="{!ReferralRecordType == 'NeuroRestorative'}">
+            <apex:outputField value="{!personBeingRefRecord.Full_Name__c}" />
+            <!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
+            <apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!personBeingRefRecord.Age__c})">
+                <apex:param value="{!personBeingRefRecord.Date_of_Birth__c}"/>
+            </apex:outputText>
+            <apex:inputField value="{!fundingSource.Type_of_Coverage__c}" />
+            <apex:inputField value="{!fundingSource.Payer_Type__c}" />
+            <apex:inputField value="{!fundingSource.Payer_Name__c}" />
+            <apex:inputField value="{!fundingSource.Payer_Phone__c}" />
+            <apex:inputField value="{!fundingSource.Policy_Holder__c}" />
+            <apex:inputField value="{!fundingSource.Relationship_To_Patient__c}" />
+
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel for="insuredSSN" value="Insured SSN" />
+                <apex:outputPanel >
+                    <apex:inputField value="{!fundingSource.Insured_SSN__c}" id="insuredSSN" />
+                    <apex:commandLink value="Same as PBR" onclick="assignValue('{!$Component.insuredSSN}', '{!Referral__c.Person_Being_Referred__r.SSN__c}'); return false;" />
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel for="insuredDOB" value="Insured DOB" />
+                <apex:outputPanel >
+                    <apex:inputField value="{!fundingSource.Insured_DOB__c}" id="insuredDOB" />
+                    <apex:commandLink value="Same as PBR" onclick="assignValue('{!$Component.insuredDOB}', '{!Referral__c.Person_Being_Referred__r.Date_of_Birth__c}'); return false;" />
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            <apex:inputField value="{!fundingSource.Policy_Number__c}" />
+            <apex:inputField value="{!fundingSource.Group_Number__c}" />
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="1" rendered="{!ReferralRecordType == 'CareMeridian'}">
+            <apex:inputField value="{!fundingSource.Additional_Coverage__c}" id="additionalCoverage" />
+            <apex:inputTextarea value="{!fundingSource.Additional_Coverage_Comments__c}" id="additionalCoverageDetail" label="" cols="80" />
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="2" rendered="{!ReferralRecordType == 'CareMeridian'}">
+            <apex:outputText value="Benefit Information" styleClass="modalSubheader" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Effective_Date__c}" />
+            <apex:inputField value="{!fundingSource.Termination_Date__c}" />
+            <apex:inputField value="{!fundingSource.Benefit_Cycle__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Benefit_Year_Start_Date__c}" />
+            <apex:inputField value="{!fundingSource.Benefit_Year_End_Date__c}" />
+            <apex:inputField value="{!fundingSource.Deductible__c}" />
+            <apex:inputField value="{!fundingSource.Deductible_Met__c}" />
+            <apex:inputField value="{!fundingSource.Rate_of_Reimbursement__c}" />
+            <apex:inputField value="{!fundingSource.RoR_to_100_after_met_OOP_Max__c}" label="Rate of Reimbursement changes to 100% after OOP Max is met?" />
+            <apex:inputField value="{!fundingSource.OOP_Expense__c}" />
+            <apex:inputField value="{!fundingSource.OOP_Expense_Met__c}" />
+            <apex:inputField value="{!fundingSource.Deductible_Applicable_to_OOP__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Lifetime_Max__c}" />
+            <apex:inputField value="{!fundingSource.Lifetime_Max_Met__c}" />
+
+            <apex:outputText value="SNF" styleClass="modalSubheader" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Copay__c}" />
+            <apex:inputText value="{!fundingSource.Qualifying_Stay_Criteria__c}" label="Qualifying Stay Criteria" />
+            <apex:inputField value="{!fundingSource.SNF_Day_Total__c}" />
+            <apex:inputField value="{!fundingSource.SNF_Days_Used__c}" />
+            <apex:inputField value="{!fundingSource.Precert_Required__c}" />
+            <apex:pageBlockSectionItem />
+
+            <apex:outputText value="DME" styleClass="modalSubheader" />
+            <apex:pageBlockSectionItem />
+            <apex:inputText value="{!fundingSource.DME_Benefits__c}" label="DME Benefits" />
+            <apex:inputField value="{!fundingSource.DME_Maximum__c}" />
+            <apex:inputField value="{!fundingSource.DME_Precert_Required__c}" />
+            <apex:pageBlockSectionItem />
+
+            <apex:outputText value="Transportation" styleClass="modalSubheader" />
+            <apex:pageBlockSectionItem />
+            <apex:inputText value="{!fundingSource.Transportation_Benefits__c}" label="Transportation Benefits" />
+            <apex:inputField value="{!fundingSource.Transportation_Maximum__c}" />
+            <apex:inputField value="{!fundingSource.Transportation_Precert_Required__c}" />
+            <apex:pageBlockSectionItem />
+
+            <apex:inputField value="{!fundingSource.Precert_Company__c}" />
+            <apex:inputField value="{!fundingSource.SNF_Phone__c}" label="Precert Company Phone" />
+            <apex:inputField value="{!fundingSource.SNF_Fax__c}" label="Fax" />
+            <apex:pageBlockSectionItem />
+
+            <apex:outputText value="Claims Submission" styleClass="modalSubheader" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Company__c}" label="Company" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Street_1__c}" label="Street 1" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Phone__c}" label="Phone" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Street_2__c}" label="Street 2" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Email__c}" label="Email Address" id="claimsSubmissionEmail" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_City__c}" label="City" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Fax__c}" label="Fax" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_State__c}" label="State" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Zip__c}" label="Zip" />
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="2" rendered="{!ReferralRecordType == 'NeuroRestorative'}">
+            <apex:outputText value="Benefit Information" styleClass="modalSubheader" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Benefit_Cycle__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Effective_Date__c}" />
+            <apex:inputField value="{!fundingSource.Termination_Date__c}" />
+            <apex:inputField value="{!fundingSource.Copay__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.In_patient_Benefits_Limit__c}" />
+            <apex:inputField value="{!fundingSource.Out_patient_Visit_Limit__c}" />
+            <apex:inputField value="{!fundingSource.Deductible__c}" />
+            <apex:inputField value="{!fundingSource.Deductible_Met__c}" />
+            <apex:inputField value="{!fundingSource.Rate_of_Reimbursement__c}" />
+            <apex:inputField value="{!fundingSource.RoR_to_100_after_met_OOP_Max__c}" label="Rate of Reimbursement changes to 100% after OOP Max is met?" />
+            <apex:outputText value="SNF" styleClass="modalSubheader" />
+            <apex:pageBlockSectionItem />
+
+            <apex:inputField value="{!fundingSource.SNF_Day_Total__c}" />
+            <apex:inputField value="{!fundingSource.SNF_Days_Used__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Precert_Required__c}" />
+            <apex:inputField value="{!fundingSource.Precert_Company__c}" />
+            <apex:inputField value="{!fundingSource.SNF_Phone__c}" label="Precert Company Phone" />
+            <apex:inputField value="{!fundingSource.SNF_Fax__c}" label="Fax" />
+            <apex:pageBlockSectionItem />
+
+            <apex:outputText value="Claims Submission" styleClass="modalSubheader" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Company__c}" label="Company" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Street_1__c}" label="Street 1" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Phone__c}" label="Phone" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Street_2__c}" label="Street 2" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Email__c}" label="Email Address" id="claimsSubmissionEmail" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_City__c}" label="City" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Fax__c}" label="Fax" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_State__c}" label="State" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Zip__c}" label="Zip" />
+        </apex:pageBlockSection>
+      </apex:pageBlock>
+      <apex:pageBlock title="Red Flags" id="fundingSourceRedFlagsEntry" rendered="{!ReferralRecordType == 'CareMeridian' || ReferralRecordType == 'NeuroRestorative'}">
+        <apex:pageBlockSection columns="2" rendered="{!ReferralRecordType == 'CareMeridian'}">
+            <apex:inputField value="{!fundingSource.Month_to_Month__c}" id="field_validation1" />
+            <apex:inputField value="{!fundingSource.Basis__c}" id="field_check1" />
+            <apex:inputField value="{!fundingSource.Cobra__c}" id="field_validation2" />
+            <apex:inputField value="{!fundingSource.Payment_Detail__c}" id="field_check2" />
+            <apex:inputField value="{!fundingSource.Individual_Plan__c}" id="field_validation3" />
+            <apex:inputField value="{!fundingSource.Continued_Payment__c}" id="field_check3" />
+            <apex:inputField value="{!fundingSource.Under_Pre_Existing_Period__c}" id="field_validation4" />
+            <apex:inputField value="{!fundingSource.Dx_Pre_Existing__c}" id="field_check4" />
+            <apex:inputField value="{!fundingSource.Self_Inflicted__c}" id="field_validation5" />
+            <apex:inputField value="{!fundingSource.Covered__c}" id="field_check5" />
+            <apex:inputField value="{!fundingSource.Readmission__c}" id="field_validation6" />
+            <apex:inputField value="{!fundingSource.Prior_Pmt_Received__c}" id="field_check6" />
+            <apex:inputField value="{!fundingSource.Swing_Bed_Billing_at_SNF_Rate__c}" id="field_validation7" />
+            <apex:inputField value="{!fundingSource.Number_of_Days__c}" id="field_check7" />
+            <apex:inputField value="{!fundingSource.Medicare_is_Secondary_Coverage__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Patient_Over_26_and_On_Parent_s_Policy__c}" />
+            <apex:inputField value="{!fundingSource.Coverage_Details__c}" />
+            <apex:inputField value="{!fundingSource.Is_patient_policy_holder__c}" />
+            <apex:inputField value="{!fundingSource.Can_Patient_Return_to_Work__c}" id="canPatientReturnToWork" label="If Yes, Can Patient Return to Work?" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Patient_Has_Policy__c}" id="patientHasPolicy" label="If No, Does Patient Have Policy?" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Does_PH_Plan_to_Continue_Working__c}" label="If No, Does PH Plan to Continue Working?" />
+
+            <apex:outputText >
+                <div class="modalSubheader">Medicare Eligibility <c:HelpTooltip helpText="If any of the following check boxes are selected, patient is Medicare eligible." /></div>
+            </apex:outputText>
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.More_than_1_5_Yrs_of_Disability__c}" id="yearsOfDisability" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.ALS_ESRD_Black_Lung_Disease__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Patient_Over_64_Years_of_Age__c}" />
+
+            <apex:pageBlockSectionItem />
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="2" rendered="{!ReferralRecordType == 'NeuroRestorative'}">
+            <apex:inputField value="{!fundingSource.Cobra__c}" id="field_validation20" />
+            <apex:inputField value="{!fundingSource.Payment_Detail__c}" id="field_check20" />
+            <apex:inputField value="{!fundingSource.Self_Inflicted__c}" id="field_validation21" />
+            <apex:inputField value="{!fundingSource.Covered__c}" id="field_check21" />
+            <apex:inputField value="{!fundingSource.Self_Insured_Policy__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Did_drugs_alcohol_contribute_to_injury__c}" id="field_validation22" />
+            <apex:inputField value="{!fundingSource.Are_injuries_covered__c}" id="field_check22" />
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="1" rendered="{!ReferralRecordType == 'CareMeridian'}">
+            <apex:inputTextArea value="{!fundingSource.Comment__c}" label="Additional Comments" cols="80" />
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="1" rendered="{!ReferralRecordType == 'NeuroRestorative'}">
+            <apex:inputTextArea value="{!fundingSource.Comment__c}" label="Red Flag Comments" cols="80" />
+        </apex:pageBlockSection>
+      </apex:pageBlock>
+      <apex:pageBlock title="Authorization Detail" id="fundingSourceAuthorizationDetailEntry" rendered="{!ReferralRecordType == 'CareMeridian' || ReferralRecordType == 'NeuroRestorative'}">
+        <apex:pageBlockSection columns="2" rendered="{!ReferralRecordType == 'CareMeridian'}">
+            <apex:inputField value="{!fundingSource.Status__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:outputText value="Request" styleClass="modalSubheader" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Requested_By__c}" />
+            <apex:inputField value="{!fundingSource.Request_Date__c}" />
+            <apex:inputField value="{!fundingSource.Request_Contact_Name__c}" />
+            <apex:inputField value="{!fundingSource.Representing_Request__c}" />
+            <apex:inputField value="{!fundingSource.Reference_Number__c}" />
+            <apex:inputField value="{!fundingSource.Review_Nurse__c}" />
+            <apex:inputField value="{!fundingSource.Request_Phone__c}" label="Phone" />
+            <apex:inputField value="{!fundingSource.Request_Fax__c}" label="Fax" />
+
+            <apex:outputText value="Received" styleClass="modalSubheader" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Given_By__c}" />
+            <apex:inputField value="{!fundingSource.Representing_Received__c}" />
+            <apex:inputField value="{!fundingSource.Received_Date_Time__c}" label="Date/Time Received" />
+            <apex:inputField value="{!fundingSource.Authorization_Number__c}" />
+            <apex:inputField value="{!fundingSource.Days_Authorized_From__c}" />
+            <apex:inputField value="{!fundingSource.Days_Authorized_To__c}" />
+            <apex:inputField value="{!fundingSource.Contract_Used__c}" />
+            <apex:inputField value="{!fundingSource.Level__c}" />
+            <apex:inputField value="{!fundingSource.Justification__c}" />
+            <apex:inputField value="{!fundingSource.Rate__c}" />
+            <apex:inputField value="{!fundingSource.Internal_Contact__c}" />
+            <apex:inputField value="{!fundingSource.Internal_Phone__c}" />
+            <apex:inputField value="{!fundingSource.Internal_Fax__c}" />
+            <apex:inputField value="{!fundingSource.Internal_Email__c}" id="payerCmEmail" />
+            <apex:inputField value="{!fundingSource.Did_CM_confirm_level__c}" />
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="2" rendered="{!ReferralRecordType == 'NeuroRestorative'}">
+            <apex:inputField value="{!fundingSource.Status__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:outputText value="Request" styleClass="modalSubheader" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Requested_By__c}" />
+            <apex:inputField value="{!fundingSource.Request_Date__c}" />
+            <apex:inputField value="{!fundingSource.Request_Contact_Name__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Request_Phone__c}" label="Phone" />
+            <apex:inputField value="{!fundingSource.Request_Fax__c}" label="Fax" />
+
+            <apex:outputText value="Received" styleClass="modalSubheader" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Given_By__c}" />
+            <apex:inputField value="{!fundingSource.Authorization_Number__c}" />
+            <apex:inputField value="{!fundingSource.Days_Authorized__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Days_Authorized_From__c}" />
+            <apex:inputField value="{!fundingSource.Days_Authorized_To__c}" />
+            <apex:inputField value="{!fundingSource.Received_Rate__c}" label="Rate" />
+            <apex:inputField value="{!fundingSource.Negotiated_Rate__c}" />
+            <apex:inputField value="{!fundingSource.Internal_Contact__c}" />
+            <apex:inputField value="{!fundingSource.Internal_Phone__c}" />
+            <apex:inputField value="{!fundingSource.Internal_Fax__c}" />
+            <apex:inputField value="{!fundingSource.Internal_Email__c}" id="payerCmEmail" />
+            <apex:inputField value="{!fundingSource.NR_CM_Name__c}" />
+            <apex:inputField value="{!fundingSource.NR_CM_Phone__c}" />
+            <apex:inputField value="{!fundingSource.NR_CM_Fax__c}" />
+            <apex:inputField value="{!fundingSource.NR_CM_Email__c}" id="nrCmEmail" />
+            <apex:inputField value="{!fundingSource.Adjuster_Name__c}" />
+            <apex:inputField value="{!fundingSource.Adjuster_Company__c}" />
+            <apex:inputField value="{!fundingSource.Adjuster_Phone__c}" />
+            <apex:inputField value="{!fundingSource.Adjuster_Fax__c}" />
+            <apex:inputField value="{!fundingSource.Adjuster_Email__c}" id="adjuterEmail" />
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="1">
+            <apex:inputTextArea value="{!fundingSource.Authorization_Comments__c}" label="Authorization Comments" cols="80" />
+        </apex:pageBlockSection>
+      </apex:pageBlock>
+      <apex:pageBlock >
+        <apex:pageblockButtons location="bottom">
+          <apex:commandButton value="Save" onclick="fundingSourceSave(true); return false;"/ >
+          <apex:commandButton value="Save & New" onclick="fundingSourceSave(false); return false;"/ >
+          <apex:commandButton value="Cancel" onclick="closeModalDialog('FundingSourceModal', 'span');j$('#fundingErrors').html('');return false;" />
+          <apex:actionStatus id="saveFundingSourceStatus">
+            <apex:facet name="start">
+              <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+            </apex:facet>
+            <apex:facet name="stop" />
+            </apex:actionStatus>
+        </apex:pageblockButtons>
+      </apex:pageBlock>
+    </apex:outputPanel>
+</apex:actionRegion>
+
+    <!-- Add Referral Location modal. -->
+<apex:actionRegion >
+    <apex:outputPanel id="ReferralLocationModal" style="display:none">
+
+        <apex:actionFunction name="saveLocation" action="{!saveLocation}" status="myStatus" rerender="locations,locationEntry,msgs"/>
+
+      <apex:pageBlock title="Add Location">
+        <apex:pageblockButtons location="bottom">
+          <apex:commandButton value="Save" onclick="locationSave(true); return false;"/ >
+          <apex:commandButton value="Save & New" onclick="locationSave(false); return false;"/ >
+          <apex:commandButton value="Cancel" onclick="closeModalDialog('ReferralLocationModal', 'span');j$('#locationErrors').html('');return false;" />
+        </apex:pageblockButtons>
+
+        <apex:facet name="header">
+          <p><strong>Add Referral Location:</strong></p>
+        </apex:facet>
+        <div id='locationErrors' style='color:red' />
+        <apex:pageBlockSection columns="1" id="locationEntry">
+          <!-- Added by Kossi 06/06/13 2:00 AM -->
+            <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Alias"/>
+            <apex:pageBlockSectionItem >
+                <apex:inputText id="locationEntry_ServiceLocation" value="{!searchedServiceLocationName}" size="20"/><a onClick="locationLookup();"><img valign="bottom" src="/s.gif" alt="Service Location Lookup (New Window)" class="lookupIcon"
+                                    onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';"
+                                    onmouseout="this.className = 'lookupIcon';"
+                                    onmouseover="this.className = 'lookupIconOn';"
+                                    title="Service Location Lookup (New Window)"/></a>
+            </apex:pageBlockSectionItem>
+            </apex:pageBlockSectionItem>
+
+            <apex:inputHidden id="locationEntry_ServiceLocation_lkid" value="{!searchedServiceLocationId}"/>
+            <!---->
+          <!--apex:inputField value="{!location.Service_Location__c}" id="locationEntry_ServiceLocation"/-->
+          <apex:inputField value="{!location.User_Assigned__c}" id="locationEntry_User"/>
+          <apex:inputField value="{!location.Status__c}" id="locationEntry_Status"/>
+        </apex:pageBlockSection>
+      </apex:pageBlock>
+    </apex:outputPanel>
+</apex:actionRegion>
+
+    <!-- Added by Kossi 06/06/13 2:00 AM -->
+
+        <apex:outputPanel id="searchDialog" style="display:none">
+            <apex:pageBlock id="block">
+                <apex:pageblockButtons location="top">
+                    <input type="button" class="btn" value="Cancel" onclick="closeModalDialog('searchDialog', 'span');return false;" />
+                </apex:pageblockButtons>
+                <apex:pageBlockButtons id="buttons" location="bottom">
+                    <apex:outputPanel rendered="{!IF(searchedServiceLocationResultSize!=0,True,False)}">
+                        <apex:outputText ><i style="color:#696969;">{!OffsetSize+1}&nbsp;&nbsp;-&nbsp;&nbsp;{!(OffsetSize+searchedServiceLocationResultSize)}&nbsp;&nbsp;of&nbsp;&nbsp;{!CountTotalRecords}</i></apex:outputText>
+                    </apex:outputPanel>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <apex:commandButton value="First" action="{!First}" rerender="table,block"
+                                    status="status" disabled="{!DisablePrevious}" />
+                    <apex:commandButton value="Previous" action="{!Previous}" rerender="table,block"
+                                    status="status" disabled="{!DisablePrevious}" />
+                    <apex:commandButton value="Next" action="{!Next}" reRender="table,block"
+                                    status="status" disabled="{!DisableNext}" />
+                    <apex:commandButton value="Last" action="{!Last}" rerender="table,block"
+                                    status="status" disabled="{!DisableNext}" />
+                    <apex:actionStatus id="status" startText="Paging..."/>
+
+                </apex:pageBlockButtons>
+
+                <apex:outputLabel >Alias&nbsp;&nbsp;&nbsp;</apex:outputLabel>
+                <apex:inputText value="{!nameFilter}" id="nameFilter"/>
+                <apex:outputLabel >&nbsp;&nbsp;&nbsp;City&nbsp;&nbsp;&nbsp;</apex:outputLabel>
+                <apex:inputText value="{!cityFilter}"/>
+                <apex:outputLabel >&nbsp;&nbsp;&nbsp;State&nbsp;&nbsp;&nbsp;</apex:outputLabel>
+                <apex:inputText value="{!stateFilter}"/>&nbsp;&nbsp;&nbsp;
+                <apex:commandButton value="Search!" action="{!search}" reRender="table,block" status="searchStatus"/>
+                <apex:actionStatus id="searchStatus" startText=" Searching..."/>
+                <br/><br/>
+                <apex:pageblockTable value="{!searchedServiceLocationresults}" var="r" id="table" >
+
+                    <apex:column headerValue="Name">
+                        <a href="#" onClick="j$('input[id$=locationEntry_ServiceLocation]').val('{!r.name}');j$('input[id$=locationEntry_ServiceLocation_lkid]').val('{!r.id}');closeModalDialog('searchDialog', 'span', 'Search Service Location');return false ">{!r.name}</a>
+                    </apex:column>
+                    <apex:column headerValue="Program">
+                        <apex:outputText >{!r.Program__c}</apex:outputText>
+                    </apex:column>
+                    <apex:column headerValue="Setting">
+                        <apex:outputText >{!r.Setting__c}</apex:outputText>
+                    </apex:column>
+                    <apex:column headerValue="Service Value">
+                        <apex:outputText >{!r.Service_Value__c}</apex:outputText>
+                    </apex:column>
+                    <apex:column headerValue="Phone">
+                        <apex:outputText >{!r.Phone__c}</apex:outputText>
+                    </apex:column>
+                    <apex:column headerValue="Street">
+                        <apex:outputText >{!r.Street__c}</apex:outputText>
+                    </apex:column>
+                    <apex:column headerValue="City">
+                        <apex:outputText >{!r.City__c}</apex:outputText>
+                    </apex:column>
+                    <apex:column headerValue="State">
+                        <apex:outputText >{!r.State__c}</apex:outputText>
+                    </apex:column>
+                    <apex:column headerValue="Zip">
+                        <apex:outputText >{!r.Zip__c}</apex:outputText>
+                    </apex:column>
+                </apex:pageblockTable>
+            </apex:pageBlock>
+        </apex:outputPanel>
+
+        <apex:outputPanel id="searchDialog2" style="display:none">
+            <apex:pageBlock id="block2">
+                <apex:pageblockButtons location="top">
+                    <input type="button" class="btn" value="Cancel" onclick="closeModalDialog('searchDialog2', 'span');return false;" />
+                </apex:pageblockButtons>
+                <apex:pageBlockButtons id="buttons2" location="bottom">
+                    <apex:outputPanel rendered="{!IF(searchedServiceLocationResultSize2!=0,True,False)}">
+                        <apex:outputText ><i style="color:#696969;">{!OffsetSize2+1}&nbsp;&nbsp;-&nbsp;&nbsp;{!(OffsetSize2+searchedServiceLocationResultSize2)}&nbsp;&nbsp;of&nbsp;&nbsp;{!CountTotalRecords2}</i></apex:outputText>
+                    </apex:outputPanel>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <apex:commandButton value="First" action="{!First2}" rerender="table2,block2"
+                                    status="status2" disabled="{!DisablePrevious2}" />
+                    <apex:commandButton value="Previous" action="{!Previous2}" rerender="table2,block2"
+                                    status="status2" disabled="{!DisablePrevious2}" />
+                    <apex:commandButton value="Next" action="{!Next2}" reRender="table2,block2"
+                                    status="status2" disabled="{!DisableNext2}" />
+                    <apex:commandButton value="Last" action="{!Last2}" rerender="table2,block2"
+                                    status="status2" disabled="{!DisableNext2}" />
+                    <apex:actionStatus id="status2" startText="Paging..."/>
+
+                </apex:pageBlockButtons>
+
+                <apex:outputLabel >Alias&nbsp;&nbsp;&nbsp;</apex:outputLabel>
+                <apex:inputText value="{!nameFilter2}" id="nameFilter2"/>
+                <apex:outputLabel >&nbsp;&nbsp;&nbsp;City&nbsp;&nbsp;&nbsp;</apex:outputLabel>
+                <apex:inputText value="{!cityFilter2}"/>
+                <apex:outputLabel >&nbsp;&nbsp;&nbsp;State&nbsp;&nbsp;&nbsp;</apex:outputLabel>
+                <apex:inputText value="{!stateFilter2}"/>&nbsp;&nbsp;&nbsp;
+                <apex:commandButton value="Search!" action="{!search2}" reRender="table2,block2" status="searchStatus2"/>
+                <apex:actionStatus id="searchStatus2" startText=" Searching..."/>
+                <br/><br/>
+                <apex:pageblockTable value="{!searchedServiceLocationresults2}" var="r" id="table2" >
+
+                    <apex:column headerValue="Name">
+                        <a href="#" onClick="j$('input[id$=sl]').val('{!r.name}');j$('input[id$=sl_lkid]').val('{!r.id}');closeModalDialog('searchDialog2', 'span', 'Search Service Location');return false ">{!r.name}</a>
+                    </apex:column>
+                    <apex:column headerValue="Program">
+                        <apex:outputText >{!r.Program__c}</apex:outputText>
+                    </apex:column>
+                    <apex:column headerValue="Setting">
+                        <apex:outputText >{!r.Setting__c}</apex:outputText>
+                    </apex:column>
+                    <apex:column headerValue="Service Value">
+                        <apex:outputText >{!r.Service_Value__c}</apex:outputText>
+                    </apex:column>
+                    <apex:column headerValue="Phone">
+                        <apex:outputText >{!r.Phone__c}</apex:outputText>
+                    </apex:column>
+                    <apex:column headerValue="Street">
+                        <apex:outputText >{!r.Street__c}</apex:outputText>
+                    </apex:column>
+                    <apex:column headerValue="City">
+                        <apex:outputText >{!r.City__c}</apex:outputText>
+                    </apex:column>
+                    <apex:column headerValue="State">
+                        <apex:outputText >{!r.State__c}</apex:outputText>
+                    </apex:column>
+                    <apex:column headerValue="Zip">
+                        <apex:outputText >{!r.Zip__c}</apex:outputText>
+                    </apex:column>
+                </apex:pageblockTable>
+            </apex:pageBlock>
+        </apex:outputPanel>
+
+    <!---->
+
+    <!--Activities Modal-->
+<apex:actionRegion >
+    <apex:outputpanel style="display:none" id="ActivityModal">
+
+        <apex:actionFunction name="saveActivity" action="{!saveActivity}" status="myStatus" rerender="activities,activityEntry,msgs"/>
+
+       <apex:pageBlock title="Add Activity">
+        <apex:pageblockButtons location="bottom">
+          <apex:commandButton value="Save" onclick="activitySave(true); return false;"/ >
+          <apex:commandButton value="Save & New" onclick="activitySave(false); return false;"/ >
+          <apex:commandButton value="Cancel" onclick="closeModalDialog('ActivityModal', 'span');j$('#activityErrors').html('');return false;" />
+        </apex:pageblockButtons>
+
+        <apex:facet name="header">
+          <p><strong>Add Activity:</strong></p>
+        </apex:facet>
+
+        <div id='activityErrors' style='color:red' />
+
+        <apex:pageBlockSection columns="1" id="activityEntry" >
+            <apex:inputField value="{!activity.Subject}" id="activityEntry_Subject"/>
+            <apex:inputField value="{!activity.OwnerId}"  id="activityEntry_Owner"/>
+            <apex:inputField value="{!activity.ActivityDate}"  id="activityEntry_ActivityDate"/>
+            <apex:inputField value="{!activity.Priority}"  id="activityEntry_Priority"/>
+            <apex:inputField value="{!activity.Status}"  id="activityEntry_Status"/>
+            <apex:inputField value="{!activity.Comments__c}"  id="activityEntry_Comments__c"/>
+
+        </apex:pageBlockSection>
+      </apex:pageBlock>
+    </apex:outputpanel>
+</apex:actionRegion>
+
+    <!-- Referral Detail -->
+    <apex:pageBlock mode="edit" id="referralDetailBlock" rendered="{!OR(!ISNULL(personBeingRefRecord.Id), !ISNULL(personBeingServedRecord.Id))}">
+      <apex:pageblockButtons location="bottom">
+        <apex:commandButton value="Save Referral"
+                            id="saveRefButton"
+                            onclick="checkRedFlags();return false;"
+                           rendered="{!OR(!ISNULL(personBeingRefRecord.Id), !ISNULL(personBeingServedRecord.Id))}" />
+
+        <apex:commandButton value="Cancel" id="cancelButton" action="{!cancel}"/>
+      </apex:pageblockButtons>
+
+      <apex:pageBlockSection title="Referral Detail"
+                     showHeader="true"
+                     columns="2"
+                     collapsible="false"
+                     id="ReferralDetailHeader">
+        <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}"/>
+        <apex:inputHidden value="{!redFlagged}" id="redFlagged" />
+        <apex:inputField value="{!Referral__c.How_did_referral_come_in__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
+        <apex:inputField value="{!Referral__c.Referral_Date__c}"  required="true"/>
+        <!--apex:inputField value="{!ReferralRecordType}" onchange="setReferralRecordType();" required="true"/-->
+        <apex:inputField id="referralStatus" value="{!Referral__c.Referral_Status__c}" onchange="unsetStatusHelperFiels();" required="true">
+          <!--<apex:actionSupport event="onchange" rerender="ReferralStatus" oncomplete="unsetStatusHelperFiels();//unsetAdditionalFields(j$('select[id$=referralStatus]').val());"/>-->
+        </apex:inputField>
+        <apex:inputField value="{!Referral__c.UCI_Number__c}" rendered="{!ReferralRecordType=='California'}"/>
+
+            <apex:pageBlockSectionItem />
+
+
+                  <apex:pageBlockSectionItem >
+                      <apex:outputLabel for="refSourceTypeField" value="Referral Source Type" />
+                      <apex:actionRegion >
+                    <apex:inputField id="refSourceTypeField" value="{!Referral__c.Referral_Source_Type__c}">
+                         <apex:actionStatus id="statusRefSourceType">
+                             <apex:facet name="start">
+                                 <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                                     <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                                 </div>
+                             </apex:facet>
+                             <apex:facet name="stop"></apex:facet>
+                         </apex:actionStatus>
+                        <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusRefSourceType" />
+                    </apex:inputField>
+                    </apex:actionRegion>
+                    </apex:pageBlockSectionItem>
+
+
+               <apex:pageBlockSectionItem >
+                     <apex:outputLabel for="refSourceTypeOtherField" value="Other (Describe)" />
+                     <apex:actionRegion >
+                    <apex:inputField value="{!Referral__c.Referral_Source_Type_Other_Describe__c}" rendered="{!Referral__c.Referral_Source_Type__c!='Other'}" html-disabled="true" />
+                    <apex:inputField value="{!Referral__c.Referral_Source_Type_Other_Describe__c}" required="{!Referral__c.Referral_Source_Type__c=='Other'}" rendered="{!Referral__c.Referral_Source_Type__c=='Other'}" />
+                    </apex:actionRegion>
+                </apex:pageBlockSectionItem>
+
+        <apex:inputField value="{!Referral__c.Agency_Name__c}" label="Referral Source" />
+        <apex:inputField value="{!Referral__c.How_did_they_learn__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" />
+
+        <apex:pageBlockSectionItem rendered="{! ReferralRecordType == 'CareMeridian'}"  />
+        <apex:inputField value="{!Referral__c.Referral_Name__c}" />
+        <apex:inputText id="referrerPhone" label="Referrer Phone Number" value="{!Referral__c.Referral_Phone_Number__c}" onblur="j$('input[id$=referrerPhone]').val(this.value.replace(/(\d\d\d)(\d\d\d)(\d\d\d\d)/, '$1-$2-$3'))"/>
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType != 'CareMeridian'}" />
+        <apex:inputField value="{!Referral__c.Financial_Status__c}" rendered="{!ReferralRecordType == 'CareMeridian'}" />
+        <apex:inputField value="{!Referral__c.Clinical_Evaluation_Status__c}" rendered="{!ReferralRecordType == 'CareMeridian'}" />
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}">
+          <apex:outputText value="City"/>
+          <apex:outputPanel styleClass="nowrap@">
+            <apex:inputText value="{!Referral__c.Referrer_City__c}"  id="Perm_City"/>&nbsp;
+            <apex:outputLabel value="State" />&nbsp;
+            <apex:inputField value="{!Referral__c.Referrer_State__c}"  id="Perm_State"/>&nbsp;
+            <apex:outputLabel value="Zip" />&nbsp;
+            <apex:inputText value="{!Referral__c.Referrer_Zip__c}" style="width: 42px;"  id="Perm_Zip"/>
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:inputField value="{!Referral__c.Referrer_Address__c}" rendered="{!ReferralRecordType=='Cambridge Florida' || ReferralRecordType=='Cambridge Maryland'}"/>
+        <apex:inputField value="{!Referral__c.Referrer_Email__c}" rendered="{!ReferralRecordType=='NeuroRestorative' || ReferralRecordType=='Cambridge Florida' || ReferralRecordType=='Cambridge Maryland'}"/>
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative' || isCambridge}"/>
+        <apex:inputField value="{!Referral__c.Billing_ID__c}" rendered="{!isCambridge}" />
+
+        <apex:inputText id="referrerFax" value="{!Referral__c.Referrer_Fax__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" onblur="j$('input[id$=referrerFax]').val(this.value.replace(/(\d\d\d)(\d\d\d)(\d\d\d\d)/, '$1-$2-$3'))"/>
+        <apex:inputField value="{!Referral__c.Case_Manager_Name__c}" />
+        <apex:inputField value="{!Referral__c.Case_Manager_Phone__c}" />
+        <!--apex:inputField value="{!Referral__c.Evaluation_Date__c}" rendered="{!referralRecordType=='CareMeridian'}"/-->
+        <apex:inputField value="{!Referral__c.Evaluated_By__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
+
+<!--  START NEURO EvalBy and RefBy SECTION -->
+        <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+        <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+        <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+        <apex:inputField value="{!Referral__c.Evaluated_By_Source__c}" rendered="{!referralRecordType=='NeuroRestorative'}">
+            <apex:actionStatus id="statusEvalBy">
+                 <apex:facet name="start">
+                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                     </div>
+                 </apex:facet>
+                 <apex:facet name="stop"></apex:facet>
+             </apex:actionStatus>
+            <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusEvalBy" />
+        </apex:inputField>
+        <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+        <apex:inputField value="{!Referral__c.Evaluated_By_Internal__c}" html-disabled="true" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Evaluated_By_Source__c != 'Internal'}" />
+        <apex:inputField value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Evaluated_By_Source__c == 'Internal'}" />
+        <apex:inputField value="{!Referral__c.Evaluated_By_External__c}" html-disabled="true" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Evaluated_By_Source__c != 'External'}" />
+        <apex:inputField value="{!Referral__c.Evaluated_By_External__c}" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Evaluated_By_Source__c == 'External'}" />
+        <apex:inputField label="Evaluated By (NeuroRestorative Legacy)" value="{!Referral__c.Neuro_Evaluated_By__c}" html-disabled="true" rendered="{!referralRecordType=='NeuroRestorative'}" />
+        <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+        <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+        <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+
+        <apex:inputField value="{!referralRecord.Referral_Provided_By_Source__c}" rendered="{!referralRecordType=='NeuroRestorative'}">
+           <apex:actionStatus id="statusRefBy">
+                 <apex:facet name="start">
+                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                     </div>
+                 </apex:facet>
+                 <apex:facet name="stop"></apex:facet>
+             </apex:actionStatus>
+            <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusRefBy" />
+        </apex:inputField>
+        <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+        <apex:inputField value="{!Referral__c.Referral_Provided_By__c}" html-disabled="true" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Referral_Provided_By_Source__c != 'Internal'}" />
+        <apex:inputField value="{!Referral__c.Referral_Provided_By__c}" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Referral_Provided_By_Source__c == 'Internal'}" />
+        <apex:inputField value="{!Referral__c.Referral_Provided_By_External__c}" html-disabled="true" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Referral_Provided_By_Source__c != 'External'}" />
+        <apex:inputField value="{!Referral__c.Referral_Provided_By_External__c}" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Referral_Provided_By_Source__c == 'External'}" />
+        <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+        <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+<!--  END NEURO EvalBy and RefBy SECTION -->
+
+        <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}"/>
+
+        <apex:inputField value="{!Referral__c.Current_Location__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
+        <apex:inputField value="{!Referral__c.Current_Location_Type__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
+
+        <apex:inputField value="{!Referral__c.Legal_Guardian_Status__c}"/>
+        <apex:inputField value="{!Referral__c.Current_Representative_Payee__c}" rendered="{!isCambridge}" />
+        <apex:inputField value="{!Referral__c.Billing_ID__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
+        <apex:inputField value="{!Referral__c.CYBER_ID_Number__c}" rendered="{!referralRecordType=='Cambridge New Jersey'}" />
+        <apex:inputField value="{!Referral__c.CYBER_Referral_Number__c}" rendered="{!referralRecordType=='Cambridge New Jersey'}" />
+        <apex:inputField value="{!Referral__c.Spirit_Case_Number__c}" rendered="{!referralRecordType=='Cambridge New Jersey'}" />
+        <apex:inputField value="{!Referral__c.Spirit_Person_Number__c}" rendered="{!referralRecordType=='Cambridge New Jersey'}" />
+        <apex:inputField value="{!Referral__c.CHESSIE_ID__c}" rendered="{!referralRecordType=='Cambridge Maryland'}" />
+        <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}"/>
+
+        <apex:inputField value="{!Referral__c.Primary_Requested_Location__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
+        <apex:inputField value="{!Referral__c.Secondary_Location__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
+     </apex:pageBlockSection>
+     <apex:pageBlockSection rendered="{!ReferralRecordType=='Cambridge Florida' || ReferralRecordType=='Cambridge Maryland'}">
+         <!-- added section item for CTEAE-37 -->
+         <apex:pageBlockSectionItem >
+             <apex:outputLabel >
+                 Reason Category: Mental Health/Emotional
+                 <br/>
+                 <apex:actionStatus id="statusMental_Health">
+                     <apex:facet name="start">
+                         <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                             <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                         </div>
+                     </apex:facet>
+                     <apex:facet name="stop"></apex:facet>
+                 </apex:actionStatus>             
+             </apex:outputLabel>
+             <apex:outputPanel id="itemMental_Health">   
+                <apex:actionRegion >
+                <apex:inputField value="{!Referral__c.Reason_Category_Mental_Health_Emotional__c}" >
+                    <apex:actionSupport event="onchange" rerender="itemMental_Health" status="statusMental_Health" oncomplete="clearReason_MentalHealth(); return false;" /> 
+                </apex:inputField>
+                </apex:actionRegion>             
+                <br/>
+                <apex:outputLabel >Discrimination Reason</apex:outputLabel>
+                <apex:actionRegion > 
+                    <apex:inputField value="{!Referral__c.Discrimination_Reason__c}" id="clearReason_MentalHealth_input" rendered="{!IF(CONTAINS(Referral__c.Reason_Category_Mental_Health_Emotional__c,'Victim of Discrimination'),false,true)}" html-disabled="true" />
+                    <apex:inputField value="{!Referral__c.Discrimination_Reason__c}" required="{!IF(CONTAINS(Referral__c.Reason_Category_Mental_Health_Emotional__c,'Victim of Discrimination'),true,false)}" rendered="{!IF(CONTAINS(Referral__c.Reason_Category_Mental_Health_Emotional__c,'Victim of Discrimination'),true,false)}" />        
+                </apex:actionRegion>
+             </apex:outputPanel>
+         </apex:pageBlockSectionItem>
+         <apex:inputField value="{!Referral__c.Reason_Category_School_Problems__c}" />
+         <apex:inputField value="{!Referral__c.Reason_Category_Medical_Problems__c}" />
+         <apex:inputField value="{!Referral__c.Reason_Category_Physical_Environment__c}" />
+         <apex:inputField value="{!Referral__c.Reason_Category_Behavioral_Problems__c}" />
+     </apex:pageBlockSection>
+     <apex:pageBlockSection showHeader="false" columns="1" collapsible="false" id="ReferralDetail_1">
+       <apex:inputField value="{!Referral__c.Reason_for_Referral__c}" style="width: 90%;" />
+       <apex:inputTextarea value="{!Referral__c.Update_Notes__c}" style="width: 90%;" />
+
+       <apex:inputField id="infoRealese" value="{!Referral__c.Is_Information_Release_Signed__c}" rendered="{!ReferralRecordType == 'Wisconsin'}"/>
+       <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}"/>
+     </apex:pageBlockSection>
+    <apex:actionRegion >
+     <apex:pageBlockSection title="Placement Risk" rendered="{!referralRecordType=='Cambridge Florida' || referralRecordType=='Cambridge Maryland'}">
+         <apex:inputField label="Is the person at risk of an out of home placement?" value="{!Referral__c.Risk_of_Out_of_Home_Placement__c}">
+             <apex:actionStatus id="statusPlaceRisk">
+                 <apex:facet name="start">
+                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                     </div>
+                 </apex:facet>
+                 <apex:facet name="stop"></apex:facet>
+             </apex:actionStatus>
+             <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusPlaceRisk" />
+         </apex:inputField>
+         <apex:inputField label="How great is the risk?" value="{!Referral__c.Risk_Level__c}" html-disabled="true" rendered="{!Referral__c.Risk_of_Out_of_Home_Placement__c!='Yes'}" />
+         <apex:inputField label="How great is the risk?" value="{!Referral__c.Risk_Level__c}" rendered="{!Referral__c.Risk_of_Out_of_Home_Placement__c=='Yes'}" />
+         <apex:inputField label="Select the type of placement that would be most likely to occur, should an out of home placement be required:" value="{!Referral__c.Placement_Type_Risk__c}" html-disabled="true" rendered="{!Referral__c.Risk_of_Out_of_Home_Placement__c!='Yes'}" />
+         <apex:inputField label="Select the type of placement that would be most likely to occur, should an out of home placement be required:" value="{!Referral__c.Placement_Type_Risk__c}" rendered="{!Referral__c.Risk_of_Out_of_Home_Placement__c=='Yes'}">
+             <apex:actionStatus id="statusPlaceTypeRisk">
+                 <apex:facet name="start">
+                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                     </div>
+                 </apex:facet>
+                 <apex:facet name="stop"></apex:facet>
+             </apex:actionStatus>
+             <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusPlaceTypeRisk" />
+         </apex:inputField>
+         <apex:inputField label="Other (specify)" value="{!Referral__c.Other_Placement_Type_Desc__c}" html-disabled="true" rendered="{!Referral__c.Placement_Type_Risk__c!='Other (specify)'}" />
+         <apex:inputField label="Other (specify)" value="{!Referral__c.Other_Placement_Type_Desc__c}" rendered="{!Referral__c.Placement_Type_Risk__c=='Other (specify)'}" />
+     </apex:pageBlockSection>
+   </apex:actionRegion>
+   <apex:actionRegion >
+     <apex:pageBlockSection id="PlacementHxBlockSection" title="Placement History" rendered="{!referralRecordType=='Cambridge Florida' || referralRecordType=='Cambridge Maryland'}">
+         <apex:inputField label="Does the person have a history of placements (past or current)?" value="{!Referral__c.Placement_History__c}">
+             <apex:actionStatus id="statusPlaceHx">
+                 <apex:facet name="start">
+                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                     </div>
+                 </apex:facet>
+                 <apex:facet name="stop"></apex:facet>
+             </apex:actionStatus>
+             <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusPlaceHx" />
+         </apex:inputField>
+         <apex:inputField label="This is a reunification process due to recent placement back in the home /community." value="{!Referral__c.Is_Reunification_Process__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
+         <apex:inputField label="This is a reunification process due to recent placement back in the home /community." value="{!Referral__c.Is_Reunification_Process__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
+         <apex:pageBlockSectionItem >
+             <hr />
+         </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+             <hr />
+         </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+             <apex:outputText value="Current Placement Info" style="font-weight:bold;" />
+         </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem />
+         <apex:inputField label="Is the person currently in an out of home placement?" value="{!Referral__c.Placement_Current__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
+         <apex:inputField label="Is the person currently in an out of home placement?" value="{!Referral__c.Placement_Current__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}">
+             <apex:actionStatus id="statusPlaceCur">
+                 <apex:facet name="start">
+                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                     </div>
+                 </apex:facet>
+                 <apex:facet name="stop"></apex:facet>
+             </apex:actionStatus>
+             <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusPlaceCur" />
+         </apex:inputField>
+         <apex:inputField label="Is the plan to return the person to home/community?" value="{!Referral__c.Placement_History_Plan_to_Return__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || Referral__c.Placement_Current__c!='Yes'}" />
+         <apex:inputField label="Is the plan to return the person to home/community?" value="{!Referral__c.Placement_History_Plan_to_Return__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Current__c=='Yes'}" />
+         <apex:inputField label="Select the type of the current out of home placement:" value="{!Referral__c.Placement_Type_Current__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || Referral__c.Placement_Current__c!='Yes'}" />
+         <apex:inputField label="Select the type of the current out of home placement:" value="{!Referral__c.Placement_Type_Current__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Current__c=='Yes'}">
+             <apex:actionStatus id="statusPlaceTypeCur">
+                 <apex:facet name="start">
+                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                     </div>
+                 </apex:facet>
+                 <apex:facet name="stop"></apex:facet>
+             </apex:actionStatus>
+             <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusPlaceTypeCur" />
+         </apex:inputField>
+         <apex:inputField label="Other (specify)" value="{!Referral__c.Placement_Type_Current_Other__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || Referral__c.Placement_Current__c!='Yes' || Referral__c.Placement_Type_Current__c!='Other (specify)'}" />
+         <apex:inputField label="Other (specify)" value="{!Referral__c.Placement_Type_Current_Other__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Current__c=='Yes' && Referral__c.Placement_Type_Current__c=='Other (specify)'}" />
+         <apex:pageBlockSectionItem >
+             <hr />
+         </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+             <hr />
+         </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+             <apex:outputText value="Previous Placement Info" style="font-weight:bold;" />
+         </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem />
+         <apex:inputField label="The person is not currently in an out of home placement but has a history of placements" value="{!Referral__c.Placement_Non_Current_Historical__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
+         <apex:inputField label="The person is not currently in an out of home placement but has a history of placements" value="{!Referral__c.Placement_Non_Current_Historical__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
+         <apex:pageBlockSectionItem />
+         <apex:outputText value="If there have been previous placements, enter the number of each type of placement that has occurred (enter 0 for each type that has not occurred):" styleClass="fieldLabel" />
+         <apex:pageBlockSectionItem />
+         <apex:inputField value="{!Referral__c.Placement_Foster_Care_Count__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
+         <apex:inputField value="{!Referral__c.Placement_Foster_Care_Count__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
+         <apex:inputField value="{!Referral__c.Placement_Group_Home_Count__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
+         <apex:inputField value="{!Referral__c.Placement_Group_Home_Count__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
+         <apex:inputField value="{!Referral__c.Placement_Relative_Count__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
+         <apex:inputField value="{!Referral__c.Placement_Relative_Count__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
+         <apex:inputField label="Residential Treatment Facility (how many times?)" value="{!Referral__c.Placement_ResTreatFacility_Count__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
+         <apex:inputField label="Residential Treatment Facility (how many times?)" value="{!Referral__c.Placement_ResTreatFacility_Count__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
+         <apex:inputField label="Psychiatric Hospitalization (how many times?)" value="{!Referral__c.Placement_PsychHosp_Count__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
+         <apex:inputField label="Psychiatric Hospitalization (how many times?)" value="{!Referral__c.Placement_PsychHosp_Count__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
+         <apex:inputField label="Respite/Emergency Shelter (how many times?)" value="{!Referral__c.Placement_RespEmShelter_Count__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
+         <apex:inputField label="Respite/Emergency Shelter (how many times?)" value="{!Referral__c.Placement_RespEmShelter_Count__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
+         <apex:inputField label="Group Home (Juvenile Services) (how many times?)" value="{!Referral__c.Placement_GroupHomeJuv_Count__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
+         <apex:inputField label="Group Home (Juvenile Services) (how many times?)" value="{!Referral__c.Placement_GroupHomeJuv_Count__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
+         <apex:inputField label="Long Term Secure Confinement (how many times?)" value="{!Referral__c.Placement_LongTermSecConfine_Count__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
+         <apex:inputField label="Long Term Secure Confinement (how many times?)" value="{!Referral__c.Placement_LongTermSecConfine_Count__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
+         <apex:inputField value="{!Referral__c.Placement_Secure_Detention_Count__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
+         <apex:inputField value="{!Referral__c.Placement_Secure_Detention_Count__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
+         <apex:inputField label="Inpatient Substance Abuse Treatment (how many times?)" value="{!Referral__c.Placement_InpatientSubAbuseTx_Count__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
+         <apex:inputField label="Inpatient Substance Abuse Treatment (how many times?)" value="{!Referral__c.Placement_InpatientSubAbuseTx_Count__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
+         <apex:inputField value="{!Referral__c.Placement_Other_Count__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
+         <apex:inputField value="{!Referral__c.Placement_Other_Count__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}">
+             <apex:actionStatus id="statusPlaceOtherCount">
+                 <apex:facet name="start">
+                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                     </div>
+                 </apex:facet>
+                 <apex:facet name="stop"></apex:facet>
+             </apex:actionStatus>
+             <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusPlaceOtherCount" />
+         </apex:inputField>
+         <apex:inputField value="{!Referral__c.Placement_Past_Other_Describe__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || Referral__c.Placement_Other_Count__c == null || Referral__c.Placement_Other_Count__c == 0}" />
+         <apex:inputField value="{!Referral__c.Placement_Past_Other_Describe__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Other_Count__c != null && Referral__c.Placement_Other_Count__c > 0}" />
+         <apex:pageBlockSectionItem >
+             <hr />
+         </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+             <hr />
+         </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+             <apex:outputText value="Juvenile Services Info" style="font-weight:bold;" />
+         </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem />
+         <apex:inputField value="{!Referral__c.Previous_Juvenile_Services_Involvement__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
+         <apex:inputField value="{!Referral__c.Previous_Juvenile_Services_Involvement__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
+         <apex:pageBlockSectionItem />
+         <apex:inputField value="{!Referral__c.Current_Juvenile_Services_Involvement__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
+         <apex:inputField value="{!Referral__c.Current_Juvenile_Services_Involvement__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
+         <apex:pageBlockSectionItem />
+          <apex:pageBlockSectionItem />
+          <apex:pageBlockSectionItem />
+         <apex:inputField label="Current Charges" value="{!Referral__c.Current_Charges__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" style="width:95%;" />
+         <apex:inputField label="Current Charges" value="{!Referral__c.Current_Charges__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" style="width:95%;" />
+         <apex:pageBlockSectionItem />
+         <apex:inputField label="Is this charge considered a misdemeanor?" value="{!Referral__c.Misdemeanor__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
+         <apex:inputField label="Is this charge considered a misdemeanor?" value="{!Referral__c.Misdemeanor__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}">
+             <apex:actionStatus id="statusMis">
+                 <apex:facet name="start">
+                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                     </div>
+                 </apex:facet>
+                 <apex:facet name="stop"></apex:facet>
+             </apex:actionStatus>
+             <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusMis" />
+         </apex:inputField>
+         <apex:inputField label="Is this charge considered a felony?" value="{!Referral__c.Felony__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
+         <apex:inputField label="Is this charge considered a felony?" value="{!Referral__c.Felony__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}">
+             <apex:actionStatus id="statusFel">
+                 <apex:facet name="start">
+                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                     </div>
+                 </apex:facet>
+                 <apex:facet name="stop"></apex:facet>
+             </apex:actionStatus>
+             <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusFel" />
+         </apex:inputField>
+
+
+         <apex:inputField label="Is this client considered pre-court with charges pending?" value="{!Referral__c.Pre_Court__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || (Referral__c.Felony__c!='Yes' && Referral__c.Misdemeanor__c!='Yes')}" />
+         <apex:inputField label="Is this client considered pre-court with charges pending?" value="{!Referral__c.Pre_Court__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && (Referral__c.Felony__c=='Yes' || Referral__c.Misdemeanor__c=='Yes')}" />
+
+         <apex:inputField value="{!Referral__c.Adjudicated_Delinquent__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || (Referral__c.Felony__c!='Yes' && Referral__c.Misdemeanor__c!='Yes')}" />
+         <apex:inputField value="{!Referral__c.Adjudicated_Delinquent__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && (Referral__c.Felony__c=='Yes' || Referral__c.Misdemeanor__c=='Yes')}" />
+
+         <apex:inputField value="{!Referral__c.Probation__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || (Referral__c.Felony__c!='Yes' && Referral__c.Misdemeanor__c!='Yes')}" />
+         <apex:inputField value="{!Referral__c.Probation__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && (Referral__c.Felony__c=='Yes' || Referral__c.Misdemeanor__c=='Yes')}" />
+
+         <apex:inputField label="Is this client receiving after care supervision?" value="{!Referral__c.After_Care__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || (Referral__c.Felony__c!='Yes' && Referral__c.Misdemeanor__c!='Yes')}" />
+         <apex:inputField label="Is this client receiving after care supervision?" value="{!Referral__c.After_Care__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && (Referral__c.Felony__c=='Yes' || Referral__c.Misdemeanor__c=='Yes')}" />
+
+         <apex:inputField value="{!Referral__c.Repeat_Offender__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || (Referral__c.Felony__c!='Yes' && Referral__c.Misdemeanor__c!='Yes')}" />
+         <apex:inputField value="{!Referral__c.Repeat_Offender__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && (Referral__c.Felony__c=='Yes' || Referral__c.Misdemeanor__c=='Yes')}" />
+     </apex:pageBlockSection>
+    </apex:actionRegion>
+     <apex:pageBlockSection showHeader="false" columns="2" collapsible="false" id="ReferralStatus">
+       <apex:inputField id="closeDate" value="{!Referral__c.Close_Date__c}" rendered="{!Referral__c.Referral_Status__c=='Closed'}"/>
+       <apex:inputField id="closeReason" value="{!Referral__c.Close_Reason__c}" rendered="{!Referral__c.Referral_Status__c=='Closed'}"/>
+       <apex:pageBlockSectionItem rendered="{!Referral__c.Referral_Status__c!='Closed$'}"/>
+       <apex:inputField id="closeComment" value="{!Referral__c.Close_Comment__c}" rendered="{!Referral__c.Referral_Status__c=='Closed' && !isCambridge}"/>
+       <apex:inputField id="holdDate" value="{!Referral__c.Hold_Date__c}" rendered="{!Referral__c.Referral_Status__c=='On Hold'}"/>
+       <apex:inputField id="holdReason" value="{!Referral__c.Hold_Reason__c}" rendered="{!Referral__c.Referral_Status__c=='On Hold'}"/>
+       <apex:inputField id="reviewOn" value="{!Referral__c.Review_On__c}" rendered="{!Referral__c.Referral_Status__c=='On Hold'}"/>
+
+     </apex:pageBlockSection>
+     <apex:pageBlockSection title="Anticipated Admission Location Information" columns="1" collapsible="false" id="LocationInfo">
+       <apex:inputField value="{!Referral__c.Anticipated_Admission_Date__c}" />
+       <apex:inputHidden id="sl_lkid" value="{!Referral__c.Service_Location__c}" />
+       <!-- Added by Kossi 06/06/13 2:00 AM -->
+            <apex:pageBlockSectionItem rendered="{!referralRecordType!='CareMeridian'}">
+            <apex:outputLabel value="Alias"/>
+            <apex:pageBlockSectionItem >
+                <apex:inputText id="sl" value="{!searchedServiceLocationName2}" size="20"/><a onClick="locationLookup2();"><img valign="bottom" src="/s.gif" alt="Service Location Lookup (New Window)" class="lookupIcon"
+                                    onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';"
+                                    onmouseout="this.className = 'lookupIcon';"
+                                    onmouseover="this.className = 'lookupIconOn';"
+                                    title="Service Location Lookup (New Window)"/></a>
+            </apex:pageBlockSectionItem>
+            </apex:pageBlockSectionItem>
+            <apex:inputField value="{!Referral__c.Admission_Location__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
+
+            <!--apex:inputHidden id="locationEntry_ServiceLocation_lkid" value="{!searchedServiceLocationId}"/-->
+            <!---->
+     </apex:pageBlockSection>
+
+       <apex:pageBlockSection columns="1"
+                             title="Locations Working Referral" id="locations"
+                             rendered="{!AND(ReferralRecordType!='NeuroRestorative', ReferralRecordType!='CareMeridian')}">
+        <apex:pageBlockSectionItem >
+          <apex:outputPanel layout="none">
+            <apex:commandButton value="Add Location"
+                                id="addLocation"
+                                onclick="showAddLocation(); return false;" />
+            <apex:actionStatus id="AddLocationStatus">
+                <apex:facet name="start">
+                  <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                </apex:facet>
+                <apex:facet name="stop" />
+            </apex:actionStatus>
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockTable value="{!locations}" var="location">
+           <apex:column value="{!location.Service_Location__c}"/>
+            <apex:column value="{!location.Service_Location_Service_Value__c}"/>
+            <apex:column value="{!location.Service_Location__r.Setting__c}"/>
+          <apex:column value="{!location.Service_Location_Program__c}"/>
+          <apex:column headerValue="Address">
+              <c:AddressDisplay Street1="{!location.Service_Location_Street__c}"
+                                City="{!location.Service_Location_City__c}"
+                                State="{!location.Service_Location_State__c}"
+                                Zip="{!location.Service_Location_Zip__c}"/>
+          </apex:column>
+          <apex:column value="{!location.User_Assigned__c}"/>
+          <apex:column value="{!location.Status__c}"/>
+          <apex:column value="{!location.LastModifiedDate}"/>
+        </apex:pageBlockTable>
+
+        <apex:outputpanel style="display:none">
+
+  <apex:inputHidden value="{!location.Service_Location__c}" id="locationServiceLocation"/>
+  <apex:inputHidden value="{!location.User_Assigned__c}" id="locationUser"/>
+  <apex:inputHidden value="{!location.Status_String__c}" id="locationStatus"/>
+        </apex:outputpanel>
+      </apex:pageBlockSection>
+
+
+     <apex:pageBlockSection showHeader="true" title="Diagnosis Information" columns="2" collapsible="false" id="ReferralDetail">
+        <apex:outputText label="Diagnosis" rendered="{!OR(ReferralRecordType == 'Wisconsin',ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota',ReferralRecordType == 'NeuroRestorative')}" />
+        <apex:outputText label="Brain Injury Detail" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota',ReferralRecordType == 'NeuroRestorative')}" />
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}" />
+        <!--apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',referralRecordType!='CareMeridian')}"/-->
+
+        <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_I__c}" rendered="{!ReferralRecordType != 'CareMeridian'}" />
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',ReferralRecordType != 'NeuroRestorative',referralRecordType!='CareMeridian')}"/>
+        <apex:inputField value="{!Referral__c.Date_of_Injury__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota',referralRecordType=='CareMeridian')}" />
+
+        <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_II__c}"  rendered="{!ReferralRecordType != 'CareMeridian'}" />
+        <apex:inputField value="{!Referral__c.Type_of_Injury__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian')}"/>
+
+        <apex:inputField value="{!Referral__c.Cause_of_Injury__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" />
+
+        <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_III__c}" rendered="{!ReferralRecordType != 'CareMeridian'}" />
+        <apex:inputField value="{!Referral__c.Cause_of_Injury__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian')}"/>
+         <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}">
+             <apex:outputText value="Current Location"/>
+             <apex:outputPanel >
+                 <input id="MN_usePermanent" type="checkbox" value="1" onchange="copyPermanent(this);"/>&nbsp;Same as Permanent
+             </apex:outputPanel>
+         </apex:pageBlockSectionItem>
+
+        <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_IV__c}" rendered="{!ReferralRecordType != 'CareMeridian'}" />
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}">
+             <apex:outputText value="Current Location"/>
+             <apex:outputPanel >
+                 <input id="MN_usePermanent" type="checkbox" value="1" onchange="copyPermanent(this);"/>&nbsp;Same as Permanent
+             </apex:outputPanel>
+         </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota', ReferralRecordType != 'CareMeridian')}"/>
+        <apex:inputField value="{!Referral__c.Street_1__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" id="MN_Street1"/>
+
+        <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_V__c}" rendered="{!ReferralRecordType != 'CareMeridian'}" />
+        <apex:inputField value="{!Referral__c.Street_1__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" id="Neuro_Street1"/>
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota')}"/>
+        <apex:inputField value="{!Referral__c.Street_2__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}"  id="MN_Street2"/>
+
+        <apex:inputField value="{!Referral__c.Diagnosis_Date__c}" rendered="{!ReferralRecordType == 'Iowa'}"/>
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Iowa'}"/>
+
+        <apex:inputField value="{!Referral__c.Diagnosis_I__c}" rendered="{!ReferralRecordType == 'Iowa'}"/>
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Iowa'}"/>
+
+        <apex:inputField value="{!Referral__c.Diagnosis_II__c}" rendered="{!ReferralRecordType == 'Iowa'}"/>
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Iowa'}"/>
+
+        <apex:inputField value="{!Referral__c.Diagnosis_III__c}" rendered="{!ReferralRecordType == 'Iowa'}"/>
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Iowa'}"/>
+
+        <apex:inputField value="{!Referral__c.Vision__c}" rendered="{!ReferralRecordType == 'Illinois'}"/>
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois'}"/>
+
+        <apex:inputField value="{!Referral__c.Hearing__c}" rendered="{!ReferralRecordType == 'Illinois'}"/>
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois'}"/>
+
+        <apex:inputField value="{!Referral__c.Seizures__c}" rendered="{!ReferralRecordType == 'Illinois'}"/>
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois'}"/>
+
+        <apex:inputField value="{!Referral__c.Other__c}" rendered="{!ReferralRecordType == 'Illinois'}"/>
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois'}"/>
+
+        <apex:inputTextarea value="{!Referral__c.Communication_Summary__c}" cols="50" rows="3" rendered="{!ReferralRecordType == 'Illinois' || ReferralRecordType == 'Cambridge Florida'}"/>
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois' || isCambridge}"/>
+
+        <apex:inputTextarea value="{!Referral__c.ADL_Summary__c}" cols="50" rows="3" rendered="{!ReferralRecordType == 'Illinois' || ReferralRecordType == 'Cambridge Florida'}"/>
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois' || isCambridge}"/>
+
+        <apex:inputField value="{!Referral__c.Behavior_Summary__c}" rendered="{!ReferralRecordType == 'Illinois'}"/>
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois'}"/>
+
+        <apex:inputTextarea value="{!Referral__c.Current_Medications__c}" rendered="{!ReferralRecordType == 'Illinois'}"/>
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois'}"/>
+
+        <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}"/>
+        <apex:inputField value="{!Referral__c.Street_2__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}"  id="Neuro_Street2"/>
+        <apex:pageBlockSection rendered="{!ReferralRecordType=='NeuroRestorative'}" />
+        <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}">
+          <apex:outputText value="City"/>
+          <apex:outputPanel styleClass="nowrap">
+            <apex:inputText value="{!Referral__c.City__c}"  id="MN_City"/>&nbsp;
+            <apex:outputLabel value="State" />&nbsp;
+            <apex:inputField value="{!Referral__c.State__c}"  id="MN_State"/>&nbsp;
+            <apex:outputLabel value="Zip" />&nbsp;
+            <apex:inputText value="{!Referral__c.Zip_Code__c}" style="width: 42px;"  id="MN_Zip"/>
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}"/>
+         <apex:inputField value="{!Referral__c.Current_Location_Type__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}"/>
+        <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}"/>
+         <apex:inputField value="{!Referral__c.Phone__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" id="MN_Phone"/>
+        <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}"/>
+        <apex:inputField value="{!Referral__c.Email_Address__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}"  id="MN_Email"/>
+
+        <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}"/>
+        <apex:inputField value="{!Referral__c.Fax__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}"  id="MN_Fax"/>
+
+        <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}"/>
+        <apex:inputField value="{!Referral__c.Estimated_Discharge_Date__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
+
+        <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}"/>
+        <apex:inputField value="{!Referral__c.Referring_Physician__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
+
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
+
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
+        <apex:inputField value="{!Referral__c.Previous_Brain_Injury__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}">
+            <apex:actionSupport event="onchange" reRender="ReferralDetail"/>
+        </apex:inputField>
+
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Previous_Brain_Injury__c=='Yes')}"/>
+        <apex:inputField value="{!Referral__c.Type_of_Injury_Previous__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Previous_Brain_Injury__c=='Yes')}"/>
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Previous_Brain_Injury__c=='Yes')}"/>
+        <apex:inputField value="{!Referral__c.Cause_Of_Injury_Previous__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Previous_Brain_Injury__c=='Yes')}"/>
+
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
+        <apex:inputField value="{!Referral__c.Did_Alcohol_Contribute_to_Injury__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}">
+            <apex:actionSupport event="onchange" reRender="ReferralDetail"/>
+        </apex:inputField>
+
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Did_Alcohol_Contribute_to_Injury__c=='Yes')}"/>
+        <apex:inputField value="{!Referral__c.Level_At_Time_of_Injury__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Did_Alcohol_Contribute_to_Injury__c=='Yes')}"/>
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Did_Alcohol_Contribute_to_Injury__c=='Yes')}"/>
+        <apex:inputField value="{!Referral__c.Current_Alcohol_Use__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Did_Alcohol_Contribute_to_Injury__c=='Yes')}"/>
+
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
+        <apex:inputField value="{!Referral__c.Did_Drug_Use_Contribute_to_Injury__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}">
+            <apex:actionSupport event="onchange" reRender="ReferralDetail"/>
+        </apex:inputField>
+
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Did_Drug_Use_Contribute_to_Injury__c=='Yes')}"/>
+        <apex:inputField value="{!Referral__c.Current_Drug_Use__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Did_Drug_Use_Contribute_to_Injury__c=='Yes')}"/>
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Did_Drug_Use_Contribute_to_Injury__c=='Yes')}"/>
+        <apex:inputField value="{!Referral__c.Litigation__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Did_Drug_Use_Contribute_to_Injury__c=='Yes')}"/>
+
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
+        <apex:inputField value="{!Referral__c.Military_Service_Related_Injury__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}">
+            <apex:actionSupport event="onchange" reRender="ReferralDetail"/>
+        </apex:inputField>
+
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Military_Service_Related_Injury__c=='Yes')}"/>
+        <apex:inputField value="{!Referral__c.Military_Status__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Military_Service_Related_Injury__c=='Yes')}"/>
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Military_Service_Related_Injury__c=='Yes')}"/>
+        <apex:inputField value="{!Referral__c.Branch_of_Service__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Military_Service_Related_Injury__c=='Yes')}"/>
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Military_Service_Related_Injury__c=='Yes')}"/>
+        <apex:inputField value="{!Referral__c.Years_of_Service__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Military_Service_Related_Injury__c=='Yes')}"/>
+
+
+
+
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
+        <apex:inputField value="{!Referral__c.Primary_Requested_Location__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
+        <apex:inputField value="{!Referral__c.Secondary_Location__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
+
+        <!--Flavor Specific fields-->
+
+        <apex:inputField value="{!Referral__c.Primary_Diagnosis__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
+        <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}"/>
+
+        <apex:inputField value="{!Referral__c.Secondary_Diagnosis__c}" rendered="{!OR(ReferralRecordType == 'California',referralRecordType=='CareMeridian')}" />
+        <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}"/>
+
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'California'}"/>
+        <apex:inputField value="{!Referral__c.Level_of_Disability__c}" rendered="{!ReferralRecordType == 'California'}" />
+
+        <apex:inputField value="{!Referral__c.Health_and_Safety_Needs__c}" rendered="{!AND(ReferralRecordType == 'West Virginia',referralRecordType!='CareMeridian')}" />
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType == 'West Virginia',referralRecordType!='CareMeridian')}"/>
+        <apex:inputField value="{!Referral__c.Anticipated_Job_Accomodations__c}" rendered="{!AND(ReferralRecordType == 'West Virginia',referralRecordType!='CareMeridian')}" />
+
+       <apex:inputField value="{!Referral__c.Residential_Support_Rate_Established__c}" rendered="{!ReferralRecordType == 'Wisconsin'}"/>
+       <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}" />
+
+       <apex:inputField value="{!Referral__c.Residential_Support_Rate__c}" rendered="{!ReferralRecordType == 'Wisconsin'}"/>
+       <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}" />
+
+       <apex:inputField label="Patient's Current Location (if other than Home)" value="{!Referral__c.Current_Location__c}" rendered="{!ReferralRecordType == 'Wisconsin'}"/>
+       <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}" />
+
+      </apex:pageBlockSection>
+      <apex:pageBlockSection showHeader="false" columns="1" collapsible="false" id="ReferralServices">
+        <apex:inputField value="{!Referral__c.Program_Category__c}" rendered="{!isCambridge}" required="{!isCambridge}"/>
+        <br />
+        <apex:inputField value="{!Referral__c.Service_Line__c}" rendered="{!isCambridge}" required="{!isCambridge}"/>
+        <br />
+        <apex:inputField id="servicesRequested" value="{!Referral__c.Services_Requested__c}" Rendered="{!referralRecordType!='CareMeridian'}" required="{!isCambridge}"/>
+        <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Family_History__c}" rendered="{!isCambridge}"/>
+        <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Medical_History__c}" rendered="{!isCambridge}"/>
+        <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Behavior_Summary__c}" rendered="{!isCambridge}"/>
+        <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Current_Medications__c}" rendered="{!isCambridge && !isLinkedPersonBeingServed}"/>
+        <apex:outputField value="{!personBeingServedRecord.Current_Medications__c}" rendered="{!isCambridge && isLinkedPersonBeingServed}"/>
+        <apex:inputField value="{!Referral__c.Prior_Program_Information__c}" style="width: 90%;" Rendered="{!referralRecordType!='CareMeridian'}"/>
+        <apex:inputField value="{!Referral__c.Comments__c}" style="width: 90%;" />
+      </apex:pageBlockSection>
+
+      <apex:pageBlockSection showHeader="true" title="Evaluation" columns="1" collapsible="false" rendered="{!ReferralRecordType=='CareMeridian'}">
+        <apex:outputPanel >
+          <apex:variable var="emptyList" value="'[]'"/>
+          <apex:variable var="evaluationList" value="'{!Referral__c.Evaluations__r}'"/>
+          <apex:commandButton value="Add Evaluation" action="{!addEvaluation}" rendered="{!AND(evaluationList == emptyList, ReferralRecord.Id != null)}" />
+          <apex:commandButton value="Add Evaluation" onclick="alert('Please save the referral before creating a new Evaluation'); return false;" rendered="{!ReferralRecord.Id == null}" />
+        </apex:outputPanel>
+        <apex:pageBlockTable value="{!Referral__c.Evaluations__r}" var="evaluation">
+          <apex:column headerValue="Name"><a href="/{!evaluation.Id}">{!evaluation.Name}</a></apex:column>
+          <apex:column headerValue="Signed" value="{!evaluation.Is_Signed__c}"></apex:column>
+          <apex:column headerValue="Last Modified" value="{!evaluation.LastModifiedDate}" />
+        </apex:pageBlockTable>
+      </apex:pageBlockSection>
+
+      <apex:pageBlockSection columns="1"
+                             title="Agencies Involved With Individual" id="agencies" rendered="{!ReferralRecordType!='NeuroRestorative' && ReferralRecordType!='CareMeridian'}">
+        <apex:pageBlockSectionItem >
+          <apex:commandButton value="Add Agency Involved With Individual"
+                              id="addAgency"
+                              onclick="showAddAgency();openModalDialog('agencyModal', 'span', 'Add Agency','none'); return false;" />
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockTable value="{!agencies}" var="agency">
+          <apex:column value="{!agency.Name}"/>
+          <apex:column value="{!agency.Address__c}"/>
+          <apex:column value="{!agency.Phone__c}"/>
+          <apex:column value="{!agency.Reason_for_Involvement__c}"/>
+        </apex:pageBlockTable>
+        <apex:outputpanel style="display:none">
+        <apex:inputHidden value="{!agency.Name}" id="agencyName"/>
+        <apex:inputHidden value="{!agency.Address__c}" id="agencyAddress"/>
+        <apex:inputHidden value="{!agency.Phone__c}" id="agencyPhone"/>
+        <apex:inputHidden value="{!agency.Reason_for_Involvement__c}" id="agencyReason"/>
+        </apex:outputpanel>
+      </apex:pageBlockSection>
+
+     <apex:pageBlockSection columns="1" title="Funding Sources" id="fundingSources">
+        <apex:pageBlockSectionItem >
+          <apex:outputPanel layout="none">
+            <apex:commandButton value="Add Funding Source"
+                                onclick="showAddFundingSource(); return false;" />
+            <apex:actionStatus id="AddFundingSourceStatus">
+              <apex:facet name="start">
+                <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+              </apex:facet>
+              <apex:facet name="stop" />
+            </apex:actionStatus>
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative'}">
+          <apex:column value="{!fundingSource.Funding_Source__c}"/>
+          <apex:column value="{!fundingSource.Funding_Source_ID__c}"/>
+          <apex:column value="{!fundingSource.Service_Being_Funded__c}" rendered="{!ReferralRecordType!='CareMeridian'}"/>
+          <apex:column value="{!fundingSource.Payor__c}" rendered="{!ReferralRecordType=='CareMeridian'}"/>
+          <apex:column value="{!fundingSource.Status__c}"/>
+          <apex:column value="{!fundingSource.Comment__c}"/>
+        </apex:pageBlockTable>
+        <apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!ReferralRecordType == 'CareMeridian'}">
+          <apex:column value="{!fundingSource.Type_of_Coverage__c}"/>
+          <apex:column value="{!fundingSource.Payer_Name__c}"/>
+          <apex:column value="{!fundingSource.Effective_Date__c}"/>
+          <apex:column value="{!fundingSource.Termination_Date__c}"/>
+          <apex:column value="{!fundingSource.Status__c}"/>
+          <apex:column value="{!fundingSource.Comment__c}"/>
+        </apex:pageBlockTable>
+        <apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!ReferralRecordType == 'NeuroRestorative'}">
+          <apex:column value="{!fundingSource.Type_of_Coverage__c}"/>
+          <apex:column value="{!fundingSource.Payer_Name__c}"/>
+          <apex:column value="{!fundingSource.Effective_Date__c}"/>
+          <apex:column value="{!fundingSource.Termination_Date__c}"/>
+          <apex:column value="{!fundingSource.Comment__c}" />
+          <apex:column value="{!fundingSource.Status__c}"/>
+        </apex:pageBlockTable>
+
+        <apex:inputHidden value="{!fundingSource.RecordType.Name}" id="fundingSourceEntryRecordType" />
+        <apex:inputHidden value="{!fundingSource.RecordTypeId}" id="fundingSourceEntryRecordTypeId" />
+        <!--
+        <apex:outputpanel style="display:none">
+        <apex:inputhidden value="{!fundingSource.Funding_Source__c}" id="fundingSource"/>
+        <apex:inputhidden value="{!fundingSource.Funding_Source_ID__c}" id="fundingSourceId"/>
+        <apex:inputhidden value="{!fundingSource.Status_String__c}" id="fundingStatus"/>
+        <apex:inputhidden value="{!fundingSource.Service_Being_Funded_String__c}" id="fundingService"/>
+        <apex:inputhidden value="{!fundingSource.Comment__c}" id="fundingComment"/>
+        </apex:outputpanel> -->
+      </apex:pageBlockSection>
+
+      <apex:pageBlockSection columns="1" title="Referral Tracking" id="activities">
+        <apex:pageBlockSectionItem >
+          <apex:commandButton value="Add Referral Tracking Activity"
+                              onclick="showAddActivity(); openModalDialog('ActivityModal', 'span', 'Add Activity','none');return false;" />
+        </apex:pageBlockSectionItem>
+
+            <apex:pageBlockTable value="{!activities}" var="activity">
+          <apex:column value="{!activity.Subject}" />
+          <apex:column value="{!activity.ActivityDate}" />
+          <apex:column value="{!activity.OwnerId}" />
+          <apex:column value="{!activity.Priority}" />
+                <apex:column value="{!activity.Status}" />
+        </apex:pageBlockTable>
+        <apex:outputPanel style="display:none" rendered="{!activity != null}"  >
+        <apex:inputHidden value="{!activity.Subject}" id="activitySubject"/>
+        <apex:inputHidden value="{!activity.Priority}" id="activityPriority"/>
+            <apex:inputHidden value="{!activity.Status}" id="activityStatus"/>
+        <apex:inputHidden value="{!activity.OwnerId}" id="activityOwner"/>
+        <apex:inputHidden value="{!activity.ActivityDate}" id="activityActivityDate"/>
+        <apex:inputHidden value="{!activity.Comments__c}" id="activityComments__c"/>
+          </apex:outputPanel>
+
+      </apex:pageBlockSection>
+
+      <span id="progConsid">
+        <apex:pageBlockSection title="Programming Considerations"
+                               showHeader="true"
+                               columns="4"
+                               collapsible="false"
+                               id="progConsid"
+                               rendered="{!AND(ReferralRecordType!='CareMeridian',ReferralRecordType!='NeuroRestorative')}">
+          <!-- Row 1, Col 1 -->
+          <apex:inputField value="{!Referral__c.Staffing_Needs__c}" rendered="{!ReferralRecordType != 'Indiana'}"/>
+          <apex:inputField value="{!Referral__c.Living_Environment__c}" rendered="{!ReferralRecordType = 'Indiana'}"/>
+          <!-- Row 1, Col 2 -->
+          <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Peers__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Staff__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Area_of_State_Interested_In__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California'||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <!-- Row 1, Col 3 -->
+          <apex:inputField value="{!Referral__c.Uses_Tobacco__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Property_Destruction__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon'}"
+          />
+          <apex:inputField value="{!Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}"
+            rendered="{!ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Law_Enforcement_Involvement__c}"
+            rendered="{!ReferralRecordType = 'Wisconsin'}"
+          />
+          <!-- Row 1, Col 4 -->
+          <apex:inputField value="{!Referral__c.Maintain_Sibling_Group__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Nursing_Care_Needed__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin'}"
+          />
+          <apex:inputField value="{!Referral__c.Elopement__c}"
+            rendered="{!ReferralRecordType = 'Indiana'}"
+          />
+          <apex:inputField value="{!Referral__c.Unwanted_Sexual_Behavior__c}"
+            rendered="{!ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <!-- Row 2, Col 1 -->
+          <apex:inputField value="{!Referral__c.Staffing_Ratio__c}"
+            rendered="{!ReferralRecordType != 'Indiana'}"
+          />
+          <apex:inputField value="{!Referral__c.Mobility__c}"
+            rendered="{!ReferralRecordType = 'Indiana'}"
+          />
+          <!-- Row 2, Col 2 -->
+          <apex:inputField value="{!Referral__c.Verbally_Aggressive__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Self__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Staff__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <!-- Row 2, Col 3 -->
+          <apex:inputField value="{!Referral__c.Chemical_Use_Recovery__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Law_Enforcement_Involvement__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon'}"
+          />
+          <apex:inputField value="{!Referral__c.Property_Destruction__c}"
+            rendered="{!ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Uses_Tobacco__c}"
+            rendered="{!ReferralRecordType = 'Wisconsin'}"
+          />
+          <!-- Row 2, Col 4 -->
+          <apex:inputField value="{!Referral__c.If_Yes_How_Many__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Level_of_Support_Required__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin'}"
+          />
+          <apex:inputField value="{!Referral__c.Unwanted_Sexual_Behavior__c}"
+            rendered="{!ReferralRecordType = 'Indiana'}"
+          />
+          <apex:inputField value="{!Referral__c.Nursing_Care_Needed__c}"
+            rendered="{!ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <!-- Row 3, Col 1 -->
+          <apex:inputField value="{!Referral__c.Living_Environment__c}"
+            rendered="{!ReferralRecordType != 'Indiana'}"
+          />
+          <apex:inputField value="{!Referral__c.Accessible_Housing_Needed__c}"
+            rendered="{!ReferralRecordType = 'Indiana'}"
+          />
+          <!-- Row 3, Col 2 -->
+          <apex:inputField value="{!Referral__c.Suicide_Threats__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Peers__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Self__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <!-- Row 3, Col 3 -->
+          <apex:inputField value="{!Referral__c.Chemical_Use_Current__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Chemical_Use_Recovery__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin'}"
+          />
+          <apex:inputField value="{!Referral__c.Law_Enforcement_Involvement__c}"
+            rendered="{!ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <!-- Row 3, Col 4 -->
+          <apex:inputField value="{!Referral__c.No_Same_Sex_Peers__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Unsupervised_Time__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin'}"
+          />
+          <apex:inputField value="{!Referral__c.Level_of_Support_Required__c}"
+            rendered="{!ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <!-- Row 4, Col 1 -->
+          <apex:inputField value="{!Referral__c.Preferred_Setting__c}"
+            rendered="{!isCambridge ||
+                        ReferralRecordType = 'California'}"
+          />
+          <apex:inputField value="{!Referral__c.Mobility__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Accessible_Vehicle_Needed__c}"
+            rendered="{!ReferralRecordType = 'Indiana'}"
+          />
+          <!-- Row 4, Col 2 -->
+          <apex:inputField value="{!Referral__c.Suicide_Attempts__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Verbally_Aggressive__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Peers__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <!-- Row 4, Col 3 -->
+          <apex:inputField value="{!Referral__c.Chemical_Dependency_Treatment__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Chemical_Use_Current__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin'}"
+          />
+          <apex:inputField value="{!Referral__c.Chemical_Use_Recovery__c}"
+            rendered="{!ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <!-- Row 4, Col 4 -->
+          <apex:inputField value="{!Referral__c.Live_with_Opposite_Sex__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Length_of_time__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin'}"
+          />
+          <apex:inputField value="{!Referral__c.Unsupervised_Time__c}"
+            rendered="{!ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <!-- Row 5, Col 1 -->
+          <apex:inputField value="{!Referral__c.Mobility__c}"
+            rendered="{!isCambridge ||
+                        ReferralRecordType = 'California'}"
+          />
+          <apex:inputField value="{!Referral__c.Gender_Specific_Staffing__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <apex:inputField value="{!Referral__c.Accessible_Housing_Needed__c}"
+            rendered="{!ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Area_of_State_Interested_In__c}"
+            rendered="{!ReferralRecordType = 'Indiana'}"
+          />
+          <!-- Row 5, Col 2 -->
+          <apex:inputField value="{!Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Suicide_Threats__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Verbally_Aggressive__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <!-- Row 5, Col 3 -->
+          <apex:inputField value="{!Referral__c.Drug_Possession_Distribution__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Elopement__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey'}"
+          />
+          <apex:inputField value="{!Referral__c.Chemical_Dependency_Treatment__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin'}"
+          />
+          <apex:inputField value="{!Referral__c.Chemical_Use_Current__c}"
+            rendered="{!ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <!-- Row 5, Col 4 -->
+          <apex:inputField value="{!Referral__c.No_Cross_Cultural_Placement__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Live_with_Opposite_Sex__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin'}"
+          />
+          <apex:inputField value="{!Referral__c.Length_of_time__c}"
+            rendered="{!ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <!-- Row 6, Col 1 -->
+          <apex:inputField value="{!Referral__c.Accessible_Housing_Needed__c}"
+            rendered="{!isCambridge ||
+                        ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <apex:inputField value="{!Referral__c.Accessible_Vehicle_Needed__c}"
+            rendered="{!ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Current_Medical_Conditions__c}"
+            rendered="{!ReferralRecordType = 'Indiana'}"
+          />
+
+          <!-- Row 6, Col 2 -->
+          <apex:inputField value="{!Referral__c.Fire_Setting__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Suicide_Attempts__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Suicide_Threats__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+
+          <!-- Row 6, Col 3 -->
+          <apex:inputField value="{!Referral__c.Elopement__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland' ||
+                        ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin'}"
+          />
+          <apex:inputField value="{!Referral__c.Unwanted_Sexual_Behavior__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey'}"
+          />
+          <apex:inputField value="{!Referral__c.Chemical_Dependency_Treatment__c}"
+            rendered="{!ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+
+          <!-- Row 6, Col 4 -->
+          <apex:inputField value="{!Referral__c.Can_Be_Placed_With_Other_Children__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Current_Medical_Conditions__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Indiana' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Oregon'}"
+          />
+          <apex:inputField value="{!Referral__c.X17_Under__c}"
+            rendered="{!ReferralRecordType = 'Iowa'}"
+          />
+          <apex:inputField value="{!Referral__c.Live_with_Opposite_Sex__c}"
+            rendered="{!ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Aversive_Procedures_Currently_in_Place__c}"
+            rendered="{!ReferralRecordType = 'Ohio'}"
+          />
+          <apex:inputField value="{!Referral__c.Has_Pets__c}"
+            rendered="{!ReferralRecordType = 'Wisconsin'}"
+          />
+          <!-- Row 7, Col 1 -->
+          <apex:inputField value="{!Referral__c.Accessible_Vehicle_Needed__c}"
+            rendered="{!isCambridge ||
+                        ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <apex:inputField value="{!Referral__c.Area_of_State_Interested_In__c}"
+            rendered="{!ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <!-- Row 7, Col 2 -->
+          <apex:inputField value="{!Referral__c.Property_Destruction__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin'}"
+          />
+          <apex:inputField value="{!Referral__c.Suicide_Attempts__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <!-- Row 7, Col 3 -->
+          <apex:inputField value="{!Referral__c.Unwanted_Sexual_Behavior__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland' ||
+                        ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon'}"
+          />
+          <apex:inputField value="{!Referral__c.If_Yes_Type_of_Unwanted_Sexual_Behavior__c}" label="if Yes, Type"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia'}"
+          />
+          <apex:inputField value="{!Referral__c.Nursing_Care_Needed__c}"
+            rendered="{!ReferralRecordType = 'Cambridge New Jersey'}"
+          />
+          <apex:inputField value="{!Referral__c.Elopement__c}"
+            rendered="{!ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Exterior_Locking_Mechanism_Required__c}"
+            rendered="{!ReferralRecordType = 'Wisconsin'}"
+          />
+          <!-- Row 7, Col 4 -->
+          <apex:inputField value="{!Referral__c.If_Yes_Age_Requirements__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Extreme_Unwanted_Behaviors__c}"
+            rendered="{!ReferralRecordType = 'Iowa'}"
+          />
+          <apex:inputField value="{!Referral__c.If_Yes_What_kind__c}"
+            rendered="{!ReferralRecordType = 'Wisconsin'}"
+          />
+          <!-- Row 8, Col 1 -->
+          <apex:inputField value="{!Referral__c.Geographic_Restrictions__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Lift_Transfer_Assistance__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <apex:inputField value="{!Referral__c.Current_Medical_Conditions__c}"
+            rendered="{!ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <!-- Row 8, Col 2 -->
+          <apex:inputField value="{!Referral__c.Gang_Involvement__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Fire_Setting__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Wisconsin'}"
+          />
+          <apex:inputField value="{!Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <!-- Row 8, Col 3 -->
+          <apex:inputField value="{!Referral__c.Registered_Sex_Offender__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland' ||
+                        ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Ohio'}"
+          />
+          <apex:inputField value="{!Referral__c.Nursing_Care_Needed__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia'}"
+          />
+          <apex:inputField value="{!Referral__c.Level_of_Support_Required__c}"
+            rendered="{!ReferralRecordType = 'Cambridge New Jersey'}"
+          />
+          <apex:inputField value="{!Referral__c.Visual_Impairment__c}"
+            rendered="{!ReferralRecordType = 'Arizona' ||
+                        ReferralRecordType = 'Nevada'}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Illinois' ||
+                        ReferralRecordType = 'Minnesota' ||
+                        ReferralRecordType = 'North Dakota' ||
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'West Virginia'}"
+          />
+          <apex:inputField value="{!Referral__c.Unwanted_Sexual_Behavior__c}"
+            rendered="{!ReferralRecordType = 'Wisconsin'}"
+          />
+          <!-- Row 8, Col 4 -->
+          <apex:inputField value="{!Referral__c.Family_Involvement_Restrictions__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'California'}" />
+          <apex:inputField value="{!Referral__c.No_Mixed_Diagnosis__c}"
+            rendered="{!ReferralRecordType = 'Iowa'}"
+          />
+          <apex:inputField value="{!Referral__c.Locked_Seclusion_Room_Needed__c}"
+            rendered="{!ReferralRecordType = 'Wisconsin'}"
+          />
+          <!-- Row 9, Col 1 -->
+          <apex:inputField value="{!Referral__c.Area_of_State_Interested_In__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Restricted_Health_Conditions__c}"
+            rendered="{!ReferralRecordType = 'California'}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'Iowa'}" />
+          <!-- Row 9, Col 2 -->
+          <apex:inputField value="{!Referral__c.Theft__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Legal_History__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey' ||
+                        ReferralRecordType = 'Iowa'}"
+          />
+          <apex:inputField value="{!Referral__c.Property_Destruction__c}"
+            rendered="{!ReferralRecordType = 'Wisconsin'}"
+          />
+          <!-- Row 9, Col 3 -->
+          <apex:inputField value="{!Referral__c.Nursing_Care_Needed__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Level_of_Support_Required__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia'}"
+          />
+          <apex:inputField value="{!Referral__c.Unsupervised_Time__c}"
+            rendered="{!ReferralRecordType = 'Cambridge New Jersey'}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Wisconsin'}" />
+          <!-- Row 9, Col 4 -->
+          <apex:inputField value="{!Referral__c.If_Yes_Level__c}"
+            rendered="{!isCambridge}"
+          />
+          <apex:inputField value="{!Referral__c.Safety_Measures_Required__c}" label="Restrictive measures or rights restrictions will need to be implemented to safely support this individual"
+            rendered="{!ReferralRecordType = 'Wisconsin'}"
+          />
+          <!-- Row 10, Col 1 -->
+          <apex:inputField value="{!Referral__c.Access_to_Public_Transportation__c}"
+            rendered="{!isCambridge}"
+          />
+          <!-- Row 10, Col 2 -->
+          <apex:inputField value="{!Referral__c.Legal_History__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Law_Enforcement_Involvement__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey'}"
+          />
+          <!-- Row 10, Col 3 -->
+          <apex:inputField value="{!Referral__c.Level_of_Support_Required__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Unsupervised_Time__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia'}"
+          />
+          <apex:inputField value="{!Referral__c.Length_of_time__c}"
+            rendered="{!ReferralRecordType = 'Cambridge New Jersey'}"
+          />
+          <!-- Row 10, Col 4 -->
+          <apex:inputField value="{!Referral__c.Animal_Cruelty__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida'}"
+          />
+          <apex:inputField value="{!Referral__c.Has_Pets__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia'}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Maryland' ||
+                        ReferralRecordType = 'Cambridge New Jersey'}" />
+          <!-- Row 11, Col 1 -->
+          <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Staff__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey'}" />
+          <!-- Row 11, Col 2 -->
+          <apex:inputField value="{!Referral__c.Law_Enforcement_Involvement__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Property_Destruction__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
+                        ReferralRecordType = 'Cambridge New Jersey'}"
+          />
+          <!-- Row 11, Col 3 -->
+          <apex:inputField value="{!Referral__c.Unsupervised_Time__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:inputField value="{!Referral__c.Length_of_time__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia'}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge New Jersey'}" />
+          <!-- Row 11, Col 4 -->
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland' ||
+                        ReferralRecordType = 'Cambridge New Jersey'}" />
+          <apex:inputField value="{!Referral__c.If_Yes_What_kind__c}" label="If Yes, Type"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia'}"
+          />
+          <!-- Row 12, Col 1 -->
+          <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Self__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
+          <!-- Row 12, Col 2 -->
+          <!--
+          <apex:inputField value="{!Referral__c.Felony__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          -->
+
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Cambridge Florida' || 
+                        ReferralRecordType == 'Cambridge Maryland'}">
+              <apex:outputPanel >
+                  <apex:outputLabel for="Adjudicated_offense_status">Adjudicated offense status<br/></apex:outputLabel>
+                  <apex:actionStatus id="statusAdjudicated_offense_status">
+                     <apex:facet name="start">
+                         <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                             <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                         </div>
+                     </apex:facet>
+                     <apex:facet name="stop"></apex:facet>
+                 </apex:actionStatus>  
+              </apex:outputPanel>
+              <apex:outputPanel id="Adjudicated_offense_status_Item" layout="block" style="width: 150px;" >
+                  <apex:inputField id="Adjudicated_offense_status" value="{!Referral__c.Adjudicated_offense_status__c}">
+                      <apex:actionSupport event="onchange" rerender="Adjudicated_offense_status_Item" status="statusAdjudicated_offense_status" oncomplete="clearAdjudicated_offense_status(); return false;" /> 
+                  </apex:inputField>
+                  <apex:outputPanel layout="block" rendered="{! !Referral__c.Adjudicated_offense_status__c}" style="display: none;">
+                      <apex:outputLabel ></apex:outputLabel>
+                      <br/>
+                      <apex:inputField id="Misdemeanor_s" value="{!Referral__c.Misdemeanor_s__c}" html-disabled="true" />Misdemeanor/s
+                      <br/>
+                      <apex:inputField id="Felony_ies" value="{!Referral__c.Felony_ies__c}" html-disabled="true"/> Felony/ies
+                  </apex:outputPanel>
+                  <apex:outputPanel layout="block" rendered="{!Referral__c.Adjudicated_offense_status__c}" >
+                      <apex:outputLabel ><b>Select one :</b></apex:outputLabel>
+                      <br/>
+                      <apex:inputField id="cbMisdemeanor_s" value="{!Referral__c.Misdemeanor_s__c}"/><apex:outputLabel for="cbMisdemeanor_s">Misdemeanor/s</apex:outputLabel>
+                      <br/>
+                      <apex:inputField id="cbFelony_ies" value="{!Referral__c.Felony_ies__c}"/><apex:outputLabel for="cbFelony_ies">Felony/ies</apex:outputLabel> 
+                  </apex:outputPanel>                  
+              </apex:outputPanel>
+          </apex:pageBlockSectionItem>
+          
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
+          <!-- Row 12, Col 3 -->
+          <apex:inputField value="{!Referral__c.Length_of_time__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}"
+          />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
+          <!-- Row 12, Col 4 -->
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Florida' ||
+                        ReferralRecordType = 'Cambridge Maryland'}" />
+          <apex:inputField value="{!Referral__c.Animal_Cruelty__c}"
+            rendered="{!ReferralRecordType = 'Cambridge Georgia'}"
+          />
+          <!-- This section is standard among the operating groups, so wwe keep them in one place -->
+          <apex:outputText rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}">
+            <h1>Diagnosis Programming Considerations</h1> <hr />
+          </apex:outputText>
+          <apex:pageBlockSectionItem rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
+          <apex:pageBlockSectionItem rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
+          <apex:pageBlockSectionItem rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
+          <apex:inputField value="{!Referral__c.Choking_Risk__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
+          <apex:inputField value="{!Referral__c.History_of_Bowel_Obstructions__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
+          <apex:inputField value="{!Referral__c.Takes_Injectible_Medications__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
+          <apex:inputField value="{!Referral__c.Ventilator_Dependent__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
+          <apex:inputField value="{!Referral__c.Eating_Disorders__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
+          <apex:inputField value="{!Referral__c.Ingesting_Non_Consumables__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
+          <apex:inputField value="{!Referral__c.Psychiatric_Mental_Hospitalization__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
+          <apex:inputField value="{!Referral__c.Hospitalization_Within_the_past_year__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
+          <!-- TADA -->
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="1" id="progConsiderationsDetail">
+          <apex:inputField value="{!Referral__c.Restricted_Health_Conditions__c}" rendered="{!ReferralRecordType == 'Cambridge Georgia'}" />
+          <apex:inputTextarea value="{!Referral__c.Programming_Considerations_Comments__c}" cols="80" rendered="{!isCambridge}" />
+        </apex:pageBlockSection>
+      </span>
+
+    </apex:pageBlock>
+  </apex:form>
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <div  class="thinking">
+            <div class="thinkingwheel">
+                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+            </div>
+        </div>
+    </apex:facet>
+    <apex:facet name="stop"> </apex:facet>
+</apex:actionStatus>
+</apex:page>
