@@ -9,15 +9,20 @@
         var setUpDep = function () {
             $('[data-enable]').each(function (index, el) {
                 var $el = $(el);
-                var $targetEl = $(document.getElementById($el.data('enable')));
-                var disabled = true;
-                if ($el.prop('checked')) {
-                    disabled = false;
-                }
-                if (disabled) {
-                    $targetEl.val('');
-                }
-                $targetEl.prop('disabled', disabled);
+                var targetEls = $el.data('enable').split(',');
+                $.each(targetEls, function (index, targetEl) {
+                    var $targetEl = $(document.getElementById(targetEl));
+                    var disabled = true;
+                    if ($el.prop('checked')) {
+                        disabled = false;
+                    }
+                    if (disabled) {
+                        $targetEl.val('');
+                    }
+                    $targetEl.prop('disabled', disabled);
+
+                });
+
             });
         };
         setUpDep();
@@ -36,15 +41,18 @@
         // Set up onclick field dependency
         $('body').on('click', '[data-enable]', function (event) {
             var $this = $(this);
-            var $targetEl = $(document.getElementById($this.data('enable')));
-            var disabled = true;
-            if ($this.prop('checked')) {
-                disabled = false;
-            }
-            $targetEl.prop('disabled', disabled);
-            if (disabled) {
-                $targetEl.val('');
-            }
+            var targetEls = $this.data('enable').split(',');
+            $.each(targetEls, function (index, targetEl) {
+                var $targetEl = $(document.getElementById($this.data('enable')));
+                var disabled = true;
+                if ($this.prop('checked')) {
+                    disabled = false;
+                }
+                $targetEl.prop('disabled', disabled);
+                if (disabled) {
+                    $targetEl.val('');
+                }
+            });
             // Events bubble up the DOM tree, so we stop the bubbling here to
             // stop the browser from doing unnecessary work.
             event.stopPropagation();
@@ -116,10 +124,6 @@
                     html-data-enable="{!$Component.activeDate}"
                     html-data-checkbox-group="status" />
                 <apex:inputField value="{!TMN_Contact__c.Active_Date__c}" id="activeDate" label="Date" />
-                <apex:inputField value="{!TMN_Contact__c.Hold__c}"
-                    html-data-enable="{!$Component.holdDate}"
-                    html-data-checkbox-group="status" />
-                <apex:inputField value="{!TMN_Contact__c.Hold_Date__c}" id="holdDate" label="Date" />
                 <apex:inputField value="{!TMN_Contact__c.Suspended__c}"
                     html-data-enable="{!$Component.suspendDate}"
                     html-data-checkbox-group="status" />
@@ -128,6 +132,18 @@
                     html-data-enable="{!$Component.inactiveDate}"
                     html-data-checkbox-group="status" />
                 <apex:inputField value="{!TMN_Contact__c.Inactive_Date__c}" id="inactiveDate" label="Date" />
+                <apex:inputField value="{!TMN_Contact__c.Denied__c}"
+                    html-data-enable="{!$Component.deniedDate},{!$Component.deniedReason}"
+                    html-data-checkbox-group="status" />
+                <apex:inputField value="{!TMN_Contact__c.Denied_Date__c}" id="deniedDate" label="Date" />
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{!TMN_Contact__c.Denied_Reason__c}" id="deniedReason" label="Reason" />
+                <apex:inputField value="{!TMN_Contact__c.Withdrawn__c}"
+                    html-data-enable="{!$Component.withdrawnDate},{!$Component.withdrawnReason}"
+                    html-data-checkbox-group="status" />
+                <apex:inputField value="{!TMN_Contact__c.Withdrawn_Date__c}" id="withdrawnDate" label="Date" />
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{!TMN_Contact__c.Withdrawn_Reason__c}" id="withdrawnReason" label="Reason" />
                 <apex:inputField value="{!TMN_Contact__c.Most_Recent_Recertification_Date__c}" />
             </apex:pageBlockSection>
             <apex:pageBlockButtons >
