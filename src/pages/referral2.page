@@ -395,7 +395,7 @@ function stopRKey(evt) {
         <apex:commandButton value="Search for Duplicates" action="{!redirectToSearch}"/>
           <apex:commandButton value="Unlink Referral" action="{!unlinkPBR}" rendered="{!Referral__c.OldPBR__c != null}"/>
           <apex:commandButton value="Unlink Referral" action="{!unlinkPBS}" rendered="{!Referral__c.OldPBS__c != null}"/>
-          <apex:commandButton value="Convert" action="{!redirectToConversion}"  rendered="{!Referral__c.Referral_Status__c != 'Closed'}"/>
+          <apex:commandButton value="Convert" action="{!redirectToConversion}"  rendered="{!Referral__c.Referral_Status__c != 'Closed' && canConvert }"/>
       </apex:pageblockButtons>
 
       <apex:pageBlockSection title="Person Being Referred"
