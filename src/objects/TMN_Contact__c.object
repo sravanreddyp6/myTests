@@ -308,24 +308,6 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
         <type>Picklist</type>
     </fields>
     <fields>
-        <fullName>Hold_Date__c</fullName>
-        <description>This field is used for the Mentor record type.</description>
-        <externalId>false</externalId>
-        <label>Hold Date</label>
-        <required>false</required>
-        <trackTrending>false</trackTrending>
-        <type>Date</type>
-    </fields>
-    <fields>
-        <fullName>Hold__c</fullName>
-        <defaultValue>false</defaultValue>
-        <description>This field is used for the Mentor record type.</description>
-        <externalId>false</externalId>
-        <label>Hold</label>
-        <trackTrending>false</trackTrending>
-        <type>Checkbox</type>
-    </fields>
-    <fields>
         <fullName>Household_Id__c</fullName>
         <externalId>false</externalId>
         <formula>IF(CONTAINS(RecordType.Name, &apos;Mentor&apos;), Id, IF(CONTAINS(RecordType.Name, &apos;Household Member&apos;), Mentor__c, null))</formula>
@@ -528,7 +510,7 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
     <fields>
         <fullName>Related_Party_Type__c</fullName>
         <externalId>false</externalId>
-        <label>Related Party Type</label>
+        <label>Type of Relationship</label>
         <picklist>
             <picklistValues>
                 <fullName>Co-Applicant</fullName>
@@ -1756,5 +1738,13 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
         <errorConditionFormula>AND( ISPICKVAL( Related_Party_Type__c , &apos;Co-Applicant&apos; ), ISBLANK( Email__c ) )</errorConditionFormula>
         <errorDisplayField>Email__c</errorDisplayField>
         <errorMessage>Email required for Co-Applicant</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Relationship_Type_Required_for_HH_Member</fullName>
+        <active>true</active>
+        <description>Relationship_Type_Required_for_Household_Member</description>
+        <errorConditionFormula>AND(CONTAINS(RecordType.Name, &apos;Household Member&apos;),  ISPICKVAL(Related_Party_Type__c, &apos;&apos;))</errorConditionFormula>
+        <errorDisplayField>Related_Party_Type__c</errorDisplayField>
+        <errorMessage>Type of Relationship cannot be blank</errorMessage>
     </validationRules>
 </CustomObject>
