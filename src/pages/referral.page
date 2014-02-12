@@ -279,16 +279,16 @@ document.onkeypress = stopRKey;
   }
   function clearReason_MentalHealth(){
       j$('select[id$=clearReason_MentalHealth_input]').val('');
-  
-  
-  
+
+
+
   }
   function clearAdjudicated_offense_status(){
   //window.alert("sometext");
       j$('input[id$=Misdemeanor_s]').prop("checked", false);
       j$('input[id$=Felony_ies]').prop("checked", false);
-  
-  
+
+
   }
  </script>
 
@@ -1293,19 +1293,19 @@ document.onkeypress = stopRKey;
                          </div>
                      </apex:facet>
                      <apex:facet name="stop"></apex:facet>
-                 </apex:actionStatus>             
+                 </apex:actionStatus>
              </apex:outputLabel>
-             <apex:outputPanel id="itemMental_Health">   
+             <apex:outputPanel id="itemMental_Health">
                 <apex:actionRegion >
                 <apex:inputField value="{!Referral__c.Reason_Category_Mental_Health_Emotional__c}" >
-                    <apex:actionSupport event="onchange" rerender="itemMental_Health" status="statusMental_Health" oncomplete="clearReason_MentalHealth(); return false;" /> 
+                    <apex:actionSupport event="onchange" rerender="itemMental_Health" status="statusMental_Health" oncomplete="clearReason_MentalHealth(); return false;" />
                 </apex:inputField>
-                </apex:actionRegion>             
+                </apex:actionRegion>
                 <br/>
                 <apex:outputLabel >Discrimination Reason</apex:outputLabel>
-                <apex:actionRegion > 
+                <apex:actionRegion >
                     <apex:inputField value="{!Referral__c.Discrimination_Reason__c}" id="clearReason_MentalHealth_input" rendered="{!IF(CONTAINS(Referral__c.Reason_Category_Mental_Health_Emotional__c,'Victim of Discrimination'),false,true)}" html-disabled="true" />
-                    <apex:inputField value="{!Referral__c.Discrimination_Reason__c}" required="{!IF(CONTAINS(Referral__c.Reason_Category_Mental_Health_Emotional__c,'Victim of Discrimination'),true,false)}" rendered="{!IF(CONTAINS(Referral__c.Reason_Category_Mental_Health_Emotional__c,'Victim of Discrimination'),true,false)}" />        
+                    <apex:inputField value="{!Referral__c.Discrimination_Reason__c}" required="{!IF(CONTAINS(Referral__c.Reason_Category_Mental_Health_Emotional__c,'Victim of Discrimination'),true,false)}" rendered="{!IF(CONTAINS(Referral__c.Reason_Category_Mental_Health_Emotional__c,'Victim of Discrimination'),true,false)}" />
                 </apex:actionRegion>
              </apex:outputPanel>
          </apex:pageBlockSectionItem>
@@ -2674,7 +2674,7 @@ document.onkeypress = stopRKey;
           />
           -->
 
-        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Cambridge Florida' || 
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Cambridge Florida' ||
                         ReferralRecordType == 'Cambridge Maryland'}">
               <apex:outputPanel >
                   <apex:outputLabel for="Adjudicated_offense_status">Adjudicated offense status<br/></apex:outputLabel>
@@ -2685,12 +2685,14 @@ document.onkeypress = stopRKey;
                          </div>
                      </apex:facet>
                      <apex:facet name="stop"></apex:facet>
-                 </apex:actionStatus>  
+                 </apex:actionStatus>
               </apex:outputPanel>
               <apex:outputPanel id="Adjudicated_offense_status_Item" layout="block" style="width: 150px;" >
-                  <apex:inputField id="Adjudicated_offense_status" value="{!Referral__c.Adjudicated_offense_status__c}">
-                      <apex:actionSupport event="onchange" rerender="Adjudicated_offense_status_Item" status="statusAdjudicated_offense_status" oncomplete="clearAdjudicated_offense_status(); return false;" /> 
-                  </apex:inputField>
+                  <apex:actionRegion >
+                      <apex:inputField id="Adjudicated_offense_status" value="{!Referral__c.Adjudicated_offense_status__c}">
+                          <apex:actionSupport event="onchange" rerender="Adjudicated_offense_status_Item" status="statusAdjudicated_offense_status" oncomplete="clearAdjudicated_offense_status(); return false;" />
+                      </apex:inputField>
+                  </apex:actionRegion>
                   <apex:outputPanel layout="block" rendered="{! !Referral__c.Adjudicated_offense_status__c}" style="display: none;">
                       <apex:outputLabel ></apex:outputLabel>
                       <br/>
@@ -2703,11 +2705,11 @@ document.onkeypress = stopRKey;
                       <br/>
                       <apex:inputField id="cbMisdemeanor_s" value="{!Referral__c.Misdemeanor_s__c}"/><apex:outputLabel for="cbMisdemeanor_s">Misdemeanor/s</apex:outputLabel>
                       <br/>
-                      <apex:inputField id="cbFelony_ies" value="{!Referral__c.Felony_ies__c}"/><apex:outputLabel for="cbFelony_ies">Felony/ies</apex:outputLabel> 
-                  </apex:outputPanel>                  
+                      <apex:inputField id="cbFelony_ies" value="{!Referral__c.Felony_ies__c}"/><apex:outputLabel for="cbFelony_ies">Felony/ies</apex:outputLabel>
+                  </apex:outputPanel>
               </apex:outputPanel>
           </apex:pageBlockSectionItem>
-          
+
           <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
           <!-- Row 12, Col 3 -->
           <apex:inputField value="{!Referral__c.Length_of_time__c}"
