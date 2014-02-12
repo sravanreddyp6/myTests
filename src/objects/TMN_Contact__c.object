@@ -398,6 +398,15 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Mentor_Is_Active__c</fullName>
+        <description>Used for reporting purpose. We set the Household Members&apos; Active status to be the same as their Mentors.</description>
+        <externalId>false</externalId>
+        <formula>IF(CONTAINS(RecordType.Name, &apos;Mentor&apos;), Active__c, IF(CONTAINS(RecordType.Name, &apos;Household Member&apos;), Mentor__r.Active__c, False))</formula>
+        <label>Mentor Is Active</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>Mentor__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
