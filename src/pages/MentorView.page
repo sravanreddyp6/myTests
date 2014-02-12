@@ -30,8 +30,8 @@
     });
     </script>
     <apex:form id="wholeForm">
-        <apex:actionFunction name="showAddHouseholdMember" action="{!showAddHouseholdMember}" status="loadingHouseholdMemberStatus" rerender="householdMemberDialogMainBlock" oncomplete="openModalDialog('{!$Component.householdMemberDialog}', 'Add Household Member', '{!$Component.wholeForm}');" />
-        <apex:actionFunction name="showEditHouseholdMember" action="{!showEditHouseholdMember}" status="loadinghouseholdMemberStatus" rerender="householdMemberDialogMainBlock" oncomplete="openModalDialog('{!$Component.householdMemberDialog}', 'Edit Household Member', '{!$Component.wholeForm}');">
+        <apex:actionFunction name="showAddHouseholdMember" action="{!showAddHouseholdMember}" status="loadingHouseholdMemberStatus" rerender="householdMemberDialogMainBlock" oncomplete="openModalDialog('{!$Component.householdMemberDialog}', 'Add Household Member', '{!$Component.wholeForm}');" immediate="true" />
+        <apex:actionFunction name="showEditHouseholdMember" action="{!showEditHouseholdMember}" status="loadinghouseholdMemberStatus" rerender="householdMemberDialogMainBlock" oncomplete="openModalDialog('{!$Component.householdMemberDialog}', 'Edit Household Member', '{!$Component.wholeForm}');" immediate="true">
             <apex:param name="currentHouseholdMemberId" assignTo="{!currentHouseholdMemberId}" value="" />
         </apex:actionFunction>
         <apex:pageBlock >
@@ -144,7 +144,7 @@
                 </apex:pageBlockSection>
                 <apex:pageBlockSection columns="2">
                     <apex:inputField value="{!currentHouseholdMember.Date_of_Birth__c}" />
-                    <apex:inputField value="{!currentHouseholdMember.Related_Party_Type__c}" label="Type of Relationship" />
+                    <apex:inputField value="{!currentHouseholdMember.Related_Party_Type__c}" required="true" />
                     <apex:inputField value="{!currentHouseholdMember.Primary_Phone__c}" />
                     <apex:inputField value="{!currentHouseholdMember.Secondary_Phone__c}" />
                     <apex:inputField value="{!currentHouseholdMember.Email__c}" />
