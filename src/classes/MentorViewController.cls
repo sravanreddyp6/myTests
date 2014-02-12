@@ -61,9 +61,7 @@ public with sharing class MentorViewController {
 
     public void changeHouseholdMemberType() {
         // Blank out Gender and Marital Status fields for Pets
-        System.debug('Current Related_Party_Type__c: ' + currentHouseholdMember.Related_Party_Type__c);
         if (currentHouseholdMember.Related_Party_Type__c == 'Pet') {
-            System.debug('In the if');
             currentHouseholdMember.Gender__c = '';
             currentHouseholdMember.Marital_Status__c = '';
         }
