@@ -43,7 +43,7 @@
             var $this = $(this);
             var targetEls = $this.data('enable').split(',');
             $.each(targetEls, function (index, targetEl) {
-                var $targetEl = $(document.getElementById($this.data('enable')));
+                var $targetEl = $(document.getElementById(targetEl));
                 var disabled = true;
                 if ($this.prop('checked')) {
                     disabled = false;
@@ -97,6 +97,10 @@
                 <apex:inputField value="{!TMN_Contact__c.Marital_Status__c}" />
 
                 <apex:inputField value="{!TMN_Contact__c.Race__c}" />
+                <apex:inputField value="{!TMN_Contact__c.Hispanic_Heritage__c}" />
+
+                <apex:inputField value="{!TMN_Contact__c.DHR_CPA_Race_1__c}" />
+                <apex:inputField value="{!TMN_Contact__c.DHR_CPA_Race_2__c}" />
             </apex:pageBlockSection>
             <apex:pageBlockSection title="Contact Information">
                 <apex:inputField value="{!TMN_Contact__c.Street_1__c}" />
@@ -115,6 +119,8 @@
             </apex:pageBlockSection>
             <apex:pageBlockSection title="Mentor Status" columns="2">
                 <apex:inputField value="{!TMN_Contact__c.Disregarded__c}" />
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{!TMN_Contact__c.Population_This_Home_Is_Associated_With__c}" label="With which population is this home associated?" />
                 <apex:pageBlockSectionItem />
                 <apex:inputField value="{!TMN_Contact__c.In_Progress__c}"
                     html-data-enable="{!$Component.inProgressDate}"

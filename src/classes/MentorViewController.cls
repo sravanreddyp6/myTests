@@ -45,7 +45,8 @@ public with sharing class MentorViewController {
             SELECT Id, Name, Full_Name__c, First_Name__c, Middle_Initial__c,
                    Last_Name__c, Primary_Phone__c, Secondary_Phone__c,
                    Related_Party_Type__c, Email__c, Comments__c, Date_of_Birth__c,
-                   Age__c
+                   Age__c, Gender__c, Marital_Status__c, No_Longer_In_Home__c,
+                   Population_This_Home_Is_Associated_With__c
             FROM TMN_Contact__c WHERE ID=:currentHouseholdMemberId
         ];
     }
@@ -55,6 +56,16 @@ public with sharing class MentorViewController {
             upsert currentHouseholdMember;
         } catch (DMLException ex) {
             // SF will automatically generate a PageMessage error here.
+        }
+    }
+
+    public void changeHouseholdMemberType() {
+        // Blank out Gender and Marital Status fields for Pets
+        System.debug('Current Related_Party_Type__c: ' + currentHouseholdMember.Related_Party_Type__c);
+        if (currentHouseholdMember.Related_Party_Type__c == 'Pet') {
+            System.debug('In the if');
+            currentHouseholdMember.Gender__c = '';
+            currentHouseholdMember.Marital_Status__c = '';
         }
     }
 }
