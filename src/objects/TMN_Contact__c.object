@@ -308,24 +308,6 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
         <type>Picklist</type>
     </fields>
     <fields>
-        <fullName>Hold_Date__c</fullName>
-        <description>This field is used for the Mentor record type.</description>
-        <externalId>false</externalId>
-        <label>Hold Date</label>
-        <required>false</required>
-        <trackTrending>false</trackTrending>
-        <type>Date</type>
-    </fields>
-    <fields>
-        <fullName>Hold__c</fullName>
-        <defaultValue>false</defaultValue>
-        <description>This field is used for the Mentor record type.</description>
-        <externalId>false</externalId>
-        <label>Hold</label>
-        <trackTrending>false</trackTrending>
-        <type>Checkbox</type>
-    </fields>
-    <fields>
         <fullName>Household_Id__c</fullName>
         <externalId>false</externalId>
         <formula>IF(CONTAINS(RecordType.Name, &apos;Mentor&apos;), Id, IF(CONTAINS(RecordType.Name, &apos;Household Member&apos;), Mentor__c, null))</formula>
