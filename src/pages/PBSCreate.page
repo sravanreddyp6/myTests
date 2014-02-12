@@ -1,9 +1,9 @@
-<apex:page standardController="Account"  extensions="PBS_Controller" standardStylesheets="true" sidebar="false"  tabStyle="Persons_Being_Served_New__tab">
+<apex:page standardController="Account"  extensions="PBS_Controller,PBS_controller_helper" standardStylesheets="true" sidebar="false"  tabStyle="Persons_Being_Served_New__tab">
   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
   <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 
-  <apex:stylesheet value="{!$Resource.mentoresdcss}" />
+ <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 
 
   <style type="text/css">
@@ -149,19 +149,20 @@ function stopRKey(evt) {
         <apex:inputField value="{!Account[f.fieldPath]}" required="{!OR(f.required, f.dbrequired)}"  />
     </apex:repeat>
     </apex:pageBlockSection> 
-    <!--  
+  
+  
 <apex:pageBlockSection title="Financial Information"
                              showHeader="true"
                              columns="2"
                              collapsible="true"  
                              id="pbsOutputFinancialInfo"
+                             rendered="{!showDiagnosis && !isUserLevel1or2}"
                              >
 
     <apex:repeat value="{!$ObjectType.Account.FieldSets.PBS_Financial}" var="f">
         <apex:inputField value="{!Account[f.fieldPath]}" required="{!OR(f.required, f.dbrequired)}"  />
     </apex:repeat>
 </apex:pageBlockSection>
--->   
     
 
 <!--Additional Information Section-->
