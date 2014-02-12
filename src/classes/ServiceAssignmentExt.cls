@@ -111,13 +111,6 @@ public class ServiceAssignmentExt {
     		pshowDiag = true;
     		pshowLocation = false;
     	
-	    	if (currentRecord.Admission__r.State__c == 'AZ') {
-	    		pshowDiag = false;
-	    		pshowLocation = true;
-	    		psetFlags = true;
-	    		return pSetFlags;
-	    	}
-	    	
 	        System.Debug('getting showDiagnosis with SF account = ' + pbsOwner);
     	    TMN_User__c[] tmnUsers = [
         	    SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:pbsOwner LIMIT 1
