@@ -25,7 +25,7 @@ public with sharing class TMN_ContactHandler {
         credList = [ SELECT Id, Name, Required_for_Mentor__c, Optional_for_Mentor__c, Required_for_Co_Applicant__c, Optional_for_Co_Applicant__c, 
         			Required_for_Foster_Parent_Relative__c, Optional_for_Foster_Parent_Relative__c, Required_for_Foster_Parent_Child__c, 
         			Optional_for_Foster_Parent_Child__c, Required_for_Resident_Non_Relative__c, Optional_for_Resident_Non_Relative__c,
-        			Required_for_Pet__c, Optional_for_Pet__c FROM Credential_Profile__c ];
+        			Required_for_Pet__c, Optional_for_Pet__c, Needed_for_Under_18__c, Needed_for_18_Over__c FROM Credential_Profile__c ];
        System.debug('credList holds: ' + credList);
        
        // Loop through the person records that were just created, and determine which Credential_Profile__c records matter for them, based on the TMN_Contact__c        
@@ -72,7 +72,7 @@ public with sharing class TMN_ContactHandler {
    					credRecs.add(credRec);
    					System.debug('Added a Credential Record (' + cp.Name + ') to credRecs for a \'Mentor\' Record Type...');
        			}
-       			if(thisPersonsRecordTypeName=='Related Party') {
+       			if(thisPersonsRecordTypeName=='Household Member') {
 	   				if(p.Related_Party_Type__c=='Co-Applicant' && cp.Required_for_Co_Applicant__c==true) {
 	   					Credential_Record__c credRec = new Credential_Record__c(
 	   						Credential_Profile__c = cp.Id,

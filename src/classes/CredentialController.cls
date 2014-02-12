@@ -4,7 +4,7 @@ public class CredentialController {
     public List<Credential_Record__c> AllRecords  {get;set;}
        
     public CredentialController() {
-            AllRecords = [SELECT Name, Requested_Date__c, Received_Date__c, Expiration_Date__c, Note__c, Credential_Profile__r.Name, 
+            AllRecords = [SELECT Name, Requested_Date__c, Received_Date__c, Expiration_Date__c, Note__c, Exam_Date__c, Credential_Profile__r.Name, 
                 Credential_Profile__r.Applies_Requested_Date__c, Credential_Profile__r.Applies_Received_Date__c, 
                 Credential_Profile__r.Applies_Expiration_Date__c, Credential_Profile__r.Applies_Note__c, Credential_Profile__r.PBI__c,
                 Credential_Profile__r.Applies_CPS_Full_Disclosure__c, CPS_Full_Disclosure_Required__c, Credential_Profile__r.Applies_State_Conviction__c,
@@ -14,7 +14,7 @@ public class CredentialController {
                 Credential_Profile__r.Applies_Type_of_Conviction_Federal__c,
                 Credential_Profile__r.Applies_Conviction_Past_5_Federal__c, Conviction_Past_5_Years_Federal__c, 
                 Credential_Profile__r.Applies_FBI_Full_Disclosure__c, FBI_Full_Disclosure_Required__c,
-                Credential_Profile__r.Help_Text__c
+                Credential_Profile__r.Applies_Exam_Date__c, Credential_Profile__r.Help_Text__c
                 FROM Credential_Record__c WHERE TMN_Contact__c = :contactID ORDER BY Credential_Profile__r.Name];
     }
     
