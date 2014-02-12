@@ -30,8 +30,8 @@
     });
     </script>
     <apex:form id="wholeForm">
-        <apex:actionFunction name="showAddHouseholdMember" action="{!showAddHouseholdMember}" status="loadingHouseholdMemberStatus" rerender="householdMemberDialogMainBlock" oncomplete="openModalDialog('{!$Component.householdMemberDialog}', 'Add Household Member', '{!$Component.wholeForm}');" />
-        <apex:actionFunction name="showEditHouseholdMember" action="{!showEditHouseholdMember}" status="loadinghouseholdMemberStatus" rerender="householdMemberDialogMainBlock" oncomplete="openModalDialog('{!$Component.householdMemberDialog}', 'Edit Household Member', '{!$Component.wholeForm}');">
+        <apex:actionFunction name="showAddHouseholdMember" action="{!showAddHouseholdMember}" status="loadingHouseholdMemberStatus" rerender="householdMemberDialogMainBlock" oncomplete="openModalDialog('{!$Component.householdMemberDialog}', 'Add Household Member', '{!$Component.wholeForm}');" immediate="true" />
+        <apex:actionFunction name="showEditHouseholdMember" action="{!showEditHouseholdMember}" status="loadinghouseholdMemberStatus" rerender="householdMemberDialogMainBlock" oncomplete="openModalDialog('{!$Component.householdMemberDialog}', 'Edit Household Member', '{!$Component.wholeForm}');" immediate="true">
             <apex:param name="currentHouseholdMemberId" assignTo="{!currentHouseholdMemberId}" value="" />
         </apex:actionFunction>
         <apex:pageBlock >
@@ -46,6 +46,10 @@
                 <apex:outputField value="{!TMN_Contact__c.Marital_Status__c}" />
 
                 <apex:outputField value="{!TMN_Contact__c.Race__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Hispanic_Heritage__c}" />
+
+                <apex:outputField value="{!TMN_Contact__c.DHR_CPA_Race_1__c}" />
+                <apex:outputField value="{!TMN_Contact__c.DHR_CPA_Race_2__c}" />
             </apex:pageBlockSection>
             <apex:pageBlockSection title="Contact Information">
                 <apex:outputField value="{!TMN_Contact__c.Street_1__c}" />
@@ -64,6 +68,8 @@
             </apex:pageBlockSection>
             <apex:pageBlockSection title="Mentor Status" columns="2">
                 <apex:outputField value="{!TMN_Contact__c.Disregarded__c}" />
+                <apex:pageBlockSectionItem />
+                <apex:outputField value="{!TMN_Contact__c.Population_This_Home_Is_Associated_With__c}" label="With which population is this home associated?" />
                 <apex:pageBlockSectionItem />
                 <apex:outputField value="{!TMN_Contact__c.In_Progress__c}" />
                 <apex:outputField value="{!TMN_Contact__c.In_Progress_Date__c}" />
@@ -144,10 +150,15 @@
                 </apex:pageBlockSection>
                 <apex:pageBlockSection columns="2">
                     <apex:inputField value="{!currentHouseholdMember.Date_of_Birth__c}" />
-                    <apex:inputField value="{!currentHouseholdMember.Related_Party_Type__c}" label="Type of Relationship" />
+                    <apex:inputField value="{!currentHouseholdMember.Related_Party_Type__c}" required="true">
+                        <apex:actionSupport event="onchange" action="{!changeHouseholdMemberType}" rerender="householdMemberDialogMainBlock" />
+                    </apex:inputField>
+                    <apex:inputField value="{!currentHouseholdMember.Gender__c}" rendered="{!currentHouseholdMember.Related_Party_Type__c != 'Pet'}" />
+                    <apex:inputField value="{!currentHouseholdMember.Marital_Status__c}" rendered="{!currentHouseholdMember.Related_Party_Type__c != 'Pet'}" />
                     <apex:inputField value="{!currentHouseholdMember.Primary_Phone__c}" />
                     <apex:inputField value="{!currentHouseholdMember.Secondary_Phone__c}" />
                     <apex:inputField value="{!currentHouseholdMember.Email__c}" />
+                    <apex:inputField value="{!currentHouseholdMember.No_Longer_In_Home__c}" />
                 </apex:pageBlockSection>
                 <apex:pageBlockSection columns="1">
                     <apex:inputField value="{!currentHouseholdMember.Comments__c}" />
