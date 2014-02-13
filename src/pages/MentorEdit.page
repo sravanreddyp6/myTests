@@ -1,0 +1,164 @@
+<apex:page standardController="TMN_Contact__c" extensions="MentorEditController">
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+    <script>
+    jQuery.noConflict();
+    jQuery(document).ready(function ($) {
+        "use strict";
+        // Set up initial field dependency (enabling a field when another field is selected)
+        var setUpDep = function () {
+            $('[data-enable]').each(function (index, el) {
+                var $el = $(el);
+                var targetEls = $el.data('enable').split(',');
+                $.each(targetEls, function (index, targetEl) {
+                    var $targetEl = $(document.getElementById(targetEl));
+                    var disabled = true;
+                    if ($el.prop('checked')) {
+                        disabled = false;
+                    }
+                    if (disabled) {
+                        $targetEl.val('');
+                    }
+                    $targetEl.prop('disabled', disabled);
+
+                });
+
+            });
+        };
+        setUpDep();
+
+        var enableDisabledFields = function () {
+            // Disabled fields are not sent with the POST requests to SF server,
+            // which will result in inconsistencies between the client and the
+            // server (blanked out fields are not sent to server, so the server
+            // holds on to the old versions of the fields). Therefore we need
+            // to re-enable those fields here.
+            $('[disabled]').prop('disabled', false);
+            return true;
+        }
+        window.enableDisabledFields = enableDisabledFields;
+
+        // Set up onclick field dependency
+        $('body').on('click', '[data-enable]', function (event) {
+            var $this = $(this);
+            var targetEls = $this.data('enable').split(',');
+            $.each(targetEls, function (index, targetEl) {
+                var $targetEl = $(document.getElementById(targetEl));
+                var disabled = true;
+                if ($this.prop('checked')) {
+                    disabled = false;
+                }
+                $targetEl.prop('disabled', disabled);
+                if (disabled) {
+                    $targetEl.val('');
+                }
+            });
+            // Events bubble up the DOM tree, so we stop the bubbling here to
+            // stop the browser from doing unnecessary work.
+            event.stopPropagation();
+        });
+
+        // Set up checkbox groups (if multiple checkboxes are in a group, only
+        // one can be selected at every point in time - radio button behavior)
+        $('body').on('click', '[data-checkbox-group]', function (event) {
+            var checked = false;
+            if (!$(this).prop("checked")) {
+                return;
+            }
+            var that = this;
+            $('[data-checkbox-group=' + $(this).data('checkbox-group') + ']').each(function (index, el) {
+                var $el = $(el);
+                if (el != that && $el.prop('checked')) {
+                    $el.prop('checked', false);
+                }
+            });
+            setUpDep();
+            event.stopPropagation();
+        });
+    });
+    </script>
+    <apex:form >
+        <apex:pageBlock >
+            <apex:pageBlockSection title="Demographics">
+                <apex:pageBlockSectionItem >
+                    <apex:outputText value="Name"/>
+                    <apex:outputPanel styleClass="nowrap">
+                        <apex:inputText label="" value="{!TMN_Contact__c.First_Name__c}" />&nbsp;&nbsp;
+                        <apex:inputText label="" value="{!TMN_Contact__c.Middle_Initial__c}"  size="1"/>&nbsp;&nbsp;
+                        <apex:inputText label="" value="{!TMN_Contact__c.Last_Name__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:inputField value="{!TMN_Contact__c.Chessie_ID__c}" />
+
+                <apex:inputField value="{!TMN_Contact__c.Date_of_Birth__c}" />
+                <apex:inputField value="{!TMN_Contact__c.Gender__c}" />
+
+                <apex:inputField value="{!TMN_Contact__c.Age__c}" />
+                <apex:inputField value="{!TMN_Contact__c.Marital_Status__c}" />
+
+                <apex:inputField value="{!TMN_Contact__c.Race__c}" />
+                <apex:inputField value="{!TMN_Contact__c.Hispanic_Heritage__c}" />
+
+                <apex:inputField value="{!TMN_Contact__c.DHR_CPA_Race_1__c}" />
+                <apex:inputField value="{!TMN_Contact__c.DHR_CPA_Race_2__c}" />
+                <apex:inputField value="{!TMN_Contact__c.OwnerId}" rendered="{!TMN_Contact__c.Id != null}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Contact Information">
+                <apex:inputField value="{!TMN_Contact__c.Street_1__c}" />
+                <apex:inputField value="{!TMN_Contact__c.Street_2__c}" />
+
+                <apex:inputField value="{!TMN_Contact__c.City__c}" />
+                <apex:inputField value="{!TMN_Contact__c.State__c}" />
+
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{!TMN_Contact__c.Zip_Code__c}" />
+
+                <apex:inputField value="{!TMN_Contact__c.Primary_Phone__c}" />
+                <apex:inputField value="{!TMN_Contact__c.Secondary_Phone__c}" />
+
+                <apex:inputField value="{!TMN_Contact__c.Email__c}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Mentor Status" columns="2">
+                <apex:inputField value="{!TMN_Contact__c.Disregarded__c}" />
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{!TMN_Contact__c.Population_This_Home_Is_Associated_With__c}" label="With which population is this home associated?" />
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{!TMN_Contact__c.In_Progress__c}"
+                    html-data-enable="{!$Component.inProgressDate}"
+                    html-data-checkbox-group="status" />
+                <apex:inputField value="{!TMN_Contact__c.In_Progress_Date__c}" id="inProgressDate" label="Date" />
+                <apex:inputField value="{!TMN_Contact__c.Active__c}"
+                    html-data-enable="{!$Component.activeDate}"
+                    html-data-checkbox-group="status" />
+                <apex:inputField value="{!TMN_Contact__c.Active_Date__c}" id="activeDate" label="Date" />
+                <apex:inputField value="{!TMN_Contact__c.Suspended__c}"
+                    html-data-enable="{!$Component.suspendDate}"
+                    html-data-checkbox-group="status" />
+                <apex:inputField value="{!TMN_Contact__c.Suspend_Date__c}" id="suspendDate" label="Date" />
+                <apex:inputField value="{!TMN_Contact__c.Inactive__c}"
+                    html-data-enable="{!$Component.inactiveDate}"
+                    html-data-checkbox-group="status" />
+                <apex:inputField value="{!TMN_Contact__c.Inactive_Date__c}" id="inactiveDate" label="Date" />
+                <apex:inputField value="{!TMN_Contact__c.Denied__c}"
+                    html-data-enable="{!$Component.deniedDate},{!$Component.deniedReason}"
+                    html-data-checkbox-group="status" />
+                <apex:inputField value="{!TMN_Contact__c.Denied_Date__c}" id="deniedDate" label="Date" />
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{!TMN_Contact__c.Denied_Reason__c}" id="deniedReason" label="Reason" />
+                <apex:inputField value="{!TMN_Contact__c.Withdrawn__c}"
+                    html-data-enable="{!$Component.withdrawnDate},{!$Component.withdrawnReason}"
+                    html-data-checkbox-group="status" />
+                <apex:inputField value="{!TMN_Contact__c.Withdrawn_Date__c}" id="withdrawnDate" label="Date" />
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{!TMN_Contact__c.Withdrawn_Reason__c}" id="withdrawnReason" label="Reason" />
+                <apex:inputField value="{!TMN_Contact__c.Most_Recent_Recertification_Date__c}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!save}" onclick="return enableDisabledFields();" value="Save" />
+                <apex:commandButton value="Cancel"
+                    onclick="window.location='{!URLFOR($Action.TMN_Contact__c.View, TMN_Contact__c.Id)}'; return false;"
+                    rendered="{!TMN_Contact__c.Id != null}" />
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
