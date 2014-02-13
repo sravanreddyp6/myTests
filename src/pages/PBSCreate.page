@@ -156,7 +156,7 @@ function stopRKey(evt) {
                              columns="2"
                              collapsible="true"  
                              id="pbsOutputFinancialInfo"
-                             rendered="{!showDiagnosis && !isUserLevel1or2}"
+                             rendered="{!showDiagnosis && !isUserLevel1or2 && !canViewFamilyInfo}"
                              >
 
     <apex:repeat value="{!$ObjectType.Account.FieldSets.PBS_Financial}" var="f">
