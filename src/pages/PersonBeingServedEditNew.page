@@ -287,10 +287,38 @@ function stopRKey(evt) {
 			<apex:outputfield value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!!pbsEditModeOn && Contact.Family_Military_Involvement__c = 'Prior'}" />
 			<apex:inputfield value="{!Contact.Family_Military_Involvement_Branch__c}" rendered="{!pbsEditModeOn}" />
 			<apex:outputfield value="{!Contact.Family_Military_Involvement_Branch__c}" rendered="{!!pbsEditModeOn && Contact.Family_Military_Involvement__c != 'None'}" />
-			<apex:inputfield value="{!Contact.Family_Native_American_Ancestry__c}" rendered="{!pbsEditModeOn}" />
-			<apex:outputfield value="{!Contact.Family_Native_American_Ancestry__c}" rendered="{!!pbsEditModeOn}" />
-			<apex:inputfield value="{!Contact.Family_Native_American_Tribe__c}" rendered="{!pbsEditModeOn}" />
+			
+			
+			<apex:PageBlockSectionitem >
+			 <apex:outputLabel Value="Family Native American Tribe" for="nativetribe"/>
+			<apex:outputpanel id="familynativeamericantribe" >
+          	 <apex:inputfield value="{!Contact.Family_Native_American_Tribe__c}" rendered="{!pbsEditModeOn && NOT(Contact.Family_Native_American_Ancestry__c)}" html-disabled="true"/>
+          	 <apex:inputfield value="{!Contact.Family_Native_American_Tribe__c}" required="{!Contact.Family_Native_American_Ancestry__c}" rendered="{!pbsEditModeOn && Contact.Family_Native_American_Ancestry__c}"/>
+          	 
+          	 </apex:outputpanel>
+          	 </apex:PageBlockSectionitem>
+			
+			
 			<apex:outputfield value="{!Contact.Family_Native_American_Tribe__c}" rendered="{!!pbsEditModeOn && Contact.Family_Native_American_Ancestry__c}" />
+			
+			<apex:pageBlockSectionItem rendered="{!pbsEditModeOn}">
+                      <apex:outputLabel for="nativeancestry" value="Family Native American Ancestry"/>
+                      <apex:actionRegion >
+                    <apex:inputField id="nativeancestry" value="{!Contact.Family_Native_American_Ancestry__c}">
+                         <apex:actionStatus id="statusnativeancestry">
+                             <apex:facet name="start">
+                                 <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                                     <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                                 </div>
+                             </apex:facet>
+                             <apex:facet name="stop"></apex:facet>
+                         </apex:actionStatus>
+                        <apex:actionSupport event="onchange" rerender="familynativeamericantribe" status="statusnativeancestry" />
+                    </apex:inputField>
+                    </apex:actionRegion>
+                    </apex:pageBlockSectionItem>
+			<apex:outputfield value="{!Contact.Family_Native_American_Ancestry__c}" rendered="{!!pbsEditModeOn}" />
+			
 		</apex:pageBlockSection>
     
   </apex:pageBlock>
