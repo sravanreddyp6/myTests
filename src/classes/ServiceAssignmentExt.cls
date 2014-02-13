@@ -104,6 +104,12 @@ public class ServiceAssignmentExt {
     		}
     		return pshowDiag;
     }}
+    public Boolean showLocation { get {
+    		if (! psetFlags ) {
+    			psetFlags = setShowFlags();
+    		}
+    		return pshowLocation;
+    }}
 	
 	private Boolean setShowFlags() {	
     	if (! psetFlags) {
@@ -129,8 +135,6 @@ public class ServiceAssignmentExt {
         return psetFlags;
     	}
     
-    public Boolean showLocation { get { return pshowLocation; } set; }
-    	
     public void showAddLocation() {
         // empty for action support
     }
