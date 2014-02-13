@@ -210,13 +210,15 @@
 
 
     </apex:pageBlockSection>
+    
+    <apex:outputPanel rendered="{!!showLocation}" ><hr /></apex:outputPanel>    
     <apex:pageBlockSection title="Service Code Selection"
                              showHeader="true"
                              columns="2"
                              collapsible="false"
                              id="ServCodeSelect"
                              rendered="{!!showLocation}">
-                             <hr />
+                         
               <apex:outputPanel layout="block" styleClass="col" rendered="{!OR(currentProgram=='',currentLocation=='',currentServiceLine=='')}">
                   You must select a Program, Location, and Service Line for this Service Assignment before you can select a Service Code.
               </apex:outputPanel>
