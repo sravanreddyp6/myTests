@@ -64,7 +64,8 @@ public with sharing class referralConversion_Controller {
   	if  ( (tmp = this.referralRecord.Service_Location_Program__c) != null ) {
   		
   		programInfo = tmp.split('-');
-	  	Location = programInfo[3]; 
+	  	if (programInfo.size() > 3)
+	  		Location = programInfo[3]; 
 	   	//Program =  programInfo[1];
 	   	Program = referralRecord.service_location__r.alias__c;
 	   	//ServiceLine = programInfo[2];
@@ -143,7 +144,8 @@ public with sharing class referralConversion_Controller {
       					r.Email_Address__c, 
       					r.Days_To_Convert_Referral__c, 
       					r.Date_of_Injury__c, 
-      					r.Current_Medical_Conditions__c, 
+      					r.Current_Medical_Conditions__c,
+      					r.Current_Medications__c, 
       					r.Current_Location__c, 
       					r.CreatedDate, 
       					r.CreatedById, 
@@ -178,7 +180,7 @@ public with sharing class referralConversion_Controller {
       pBRRec = [select Age__c, City__c, Date_of_Birth__c, Email_Address__c,
                        Ethnicity__c, Fax__c, First_Name__c, Gender__c,
                        Home_County__c, Last_Name__c, Marital_Status__c,
-                       Middle_Initial__c, Phone__c, Primary_Language__c, SSN__c,
+                       Middle_Initial__c, Phone__c, Primary_Language__c, Race__c, SSN__c,
                        State__c, Street_1__c, Street_2__c, Zip_Code__c,
                        Additional_Information_Comments__c, Sign_Language__c,
                        Legal_Guardianship_Status__c, Non_Verbal__c
@@ -202,7 +204,7 @@ public with sharing class referralConversion_Controller {
       pBSRec = [select MailingCity, BirthDate, Email,
                        Ethnicity_Picklist__c, Fax, FirstName, Gender__c,
                        Mailing_County__c, LastName, 
-                       Middle_Name__c, Phone, Primary_Language__c, SSN__c,
+                       Middle_Name__c, Phone, Primary_Language__c, Race__c, SSN__c,
                        MailingState, MailingStreet, MailingPostalCode, uci_id__c, medicaid_id__c, Marital_Status__c, non_verbal__c, sign_language__c, legal_guardianship_status__c
                        
                 from Contact
@@ -390,6 +392,7 @@ public with sharing class referralConversion_Controller {
  								Person_Being_Referred__pc = pbrCurr.Id, 
  								Primary_Language__pc = pbrCurr.Primary_Language__c,
  								Non_Verbal__pc = pbrCurr.Non_Verbal__c,
+ 								Race__pc = pbrCurr.Race__c,
  								Sign_Language__pc = pbrCurr.Sign_Language__c, 
  								SSN__pc = pbrCurr.SSN__c,
  								Guardian1_Name__pc =  sGuardian1Name,
@@ -399,7 +402,8 @@ public with sharing class referralConversion_Controller {
  								UCI_ID__pc = string.valueOf(this.referralRecord.UCI_Number__c),
  								Marital_Status__pc = pbrCurr.Marital_Status__c,
  								Avatar_ID__pc = referralRecord.Billing_ID__c,
- 								Legal_Guardianship_Status__pc = referralRecord.Legal_Guardian_Status__c
+ 								Legal_Guardianship_Status__pc = referralRecord.Legal_Guardian_Status__c,
+ 								Current_Medications__pc = referralRecord.Current_Medications__c
  								);
  								
  	insert accNew;
