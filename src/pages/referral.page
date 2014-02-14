@@ -951,6 +951,7 @@ document.onkeypress = stopRKey;
           <!--apex:inputField value="{!location.Service_Location__c}" id="locationEntry_ServiceLocation"/-->
           <apex:inputField value="{!location.User_Assigned__c}" id="locationEntry_User"/>
           <apex:inputField value="{!location.Status__c}" id="locationEntry_Status"/>
+          <apex:inputHidden value="{!location.Service_Location__c}" id="locationServiceLocation"/>
         </apex:pageBlockSection>
       </apex:pageBlock>
     </apex:outputPanel>
@@ -1542,7 +1543,6 @@ document.onkeypress = stopRKey;
 
         <apex:outputpanel style="display:none">
 
-  <apex:inputHidden value="{!location.Service_Location__c}" id="locationServiceLocation"/>
   <apex:inputHidden value="{!location.User_Assigned__c}" id="locationUser"/>
   <apex:inputHidden value="{!location.Status_String__c}" id="locationStatus"/>
         </apex:outputpanel>
