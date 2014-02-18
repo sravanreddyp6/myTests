@@ -196,7 +196,7 @@
         <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
             <apex:column headerValue="Action">
                <apex:outputLink value="{!URLFOR($Action.Attachment.Download, attachment.Id)}" target="_blank">View</apex:outputLink>   |
-               <apex:outputText  rendered="{!$Profile.Name == 'System Administrator'} >
+               <apex:outputText  rendered="{!$Profile.Name == 'System Administrator'}" >
                <a id="{!attachment.id}" class="deleteLink">Del</a>
                </apex:outputText>
                    <apex:outputPanel rendered="{!showHeadShotSelection}">
