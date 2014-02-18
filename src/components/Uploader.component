@@ -184,7 +184,7 @@
     </apex:form>
     
       <apex:form id="form">   
-     <apex:actionFunction action="{!deleteFile}" name="removeAttachment" reRender="attachmentsTable" status="working" rendered="{!$Profile.Name == 'System Administrator'} >
+     <apex:actionFunction action="{!deleteFile}" name="removeAttachment" reRender="attachmentsTable" status="working">
              <apex:param name="aId" value="" />
       </apex:actionFunction>
         
@@ -196,7 +196,7 @@
         <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
             <apex:column headerValue="Action">
                <apex:outputLink value="{!URLFOR($Action.Attachment.Download, attachment.Id)}" target="_blank">View</apex:outputLink>   |
-               <apex:outputText >
+               <apex:outputText  rendered="{!$Profile.Name == 'System Administrator'} >
                <a id="{!attachment.id}" class="deleteLink">Del</a>
                </apex:outputText>
                    <apex:outputPanel rendered="{!showHeadShotSelection}">
