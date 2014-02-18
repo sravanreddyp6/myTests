@@ -1,12 +1,39 @@
+//////////////////////////////////////////////////
+// Originally Developed by: Josh Gilliam		//
+// Date:  February 2014							//	
+// Ticket(s):  CMMT-7 (Mentor Tracking Project) //
+//////////////////////////////////////////////////
 public with sharing class CredentialRecordHandler {
 	
     private boolean m_isExecuting = false;
 
-	private class HouseholdUpdate {
+	private class DhrUpdate {
 		
+		Boolean doUpdate { get; set; }
+		Credential_Record__c dhrUpdateCred { get; set; }
+		string reportReceivedFieldForUpdate { get; set; }
+		Date receivedDateToUse { get; set; }
+		string reportDocumentedFieldForUpdate { get; set; }
+		string documentedStatusToUse { get; set; }
 		public Id mentorsTmnContactId { get; set; }
 		public List<TMN_Contact__c> householdsNonMentors { get; set; }
 
+		public DhrUpdate(Boolean updateOrNot, Credential_Record__c aCred, List<TMN_Contact__c> household) {
+			doUpdate = updateOrNot;
+			dhrUpdateCred = aCred;
+			reportReceivedFieldForUpdate = aCred.DHR_Received_Field__c;
+			receivedDateToUse = aCred.Received_Date__c;
+			reportDocumentedFieldForUpdate = aCred.DHR_Documented_Field__c;
+			householdsNonMentors = household;
+			
+			if(aCred.Received_Date__c!=null) {
+				documentedStatusToUse = 'Yes';
+			}
+			else {
+				documentedStatusToUse = 'No';
+			}
+		}
+	
 	}
 
     public CredentialRecordHandler(boolean isExecuting){
@@ -19,13 +46,27 @@ public with sharing class CredentialRecordHandler {
 
     public void OnAfterInsert(Credential_Record__c[] newObjects){
         // EXECUTE AFTER INSERT LOGIC
-        List<Credential_Record__c> theseCredRecs = newObjects;
+        List<Credential_Record__c> theseCredRecs = newObjects; 
+        
+        List<Id> m = new List<Id>();
+        
+        for(Credential_Record__c c : theseCredRecs) {
+        	m.add(c.TMN_Contact__c);
+        }
+        
+        List<Mentor_Tracking_Report_Record__c> checkForExistingReptRecs = [ SELECT Id FROM Mentor_Tracking_Report_Record__c WHERE TMN_Contact__r.Id = :m ];
         
         for(Credential_Record__c cR : theseCredRecs) {
         	
         	Mentor_Tracking_Report_Record__c theContactsReptRec = new Mentor_Tracking_Report_Record__c();
         	
-        	Mentor_Tracking_Report_Record__c checkForExistingReptRec = [ SELECT Id FROM Mentor_Tracking_Report_Record__c WHERE TMN_Contact__r.Id = :cR.TMN_Contact__c ];
+        	Mentor_Tracking_Report_Record__c checkForExistingReptRec = new Mentor_Tracking_Report_Record__c();
+        	
+        	for(Mentor_Tracking_Report_Record__c mTrr : checkForExistingReptRecs) {
+        		if(mTrr.Id==cR.TMN_Contact__r.Id) {
+        			checkForExistingReptRec = mTrr;
+        		}
+        	}
         	
         	if(checkForExistingReptRec==null) {
         		// This should NEVER happen.  The initial insert of the Mentor_Tracking_Report_Record__c record is happening in the TMN_ContactHandler.cls.  Seems
@@ -122,13 +163,18 @@ public with sharing class CredentialRecordHandler {
         
         // Get a list of all credentials for which we have to make comparisons to determine if one or more are in the file, and which is more current.  ONLY get
         // credentials for TMN_Contact__c people who are in this trigger's update context. (Starting with just Mentors, to keep it simple...)
-        List<Credential_Record__c> mentorsCredsToCompare = [ SELECT Id, Credential_Profile_Name__c, Documented_Date__c, Received_Date__c FROM Credential_Record__c WHERE TMN_Contact__c = :mentors ];
+        List<Credential_Record__c> mentorsCredsToCompare = [ SELECT Id, Credential_Profile_Name__c, Documented_Date__c, Received_Date__c, CreatedDate, 
+        														Similar_Credentials__c, DHR_Scope__c,
+        														DHR_Documented_Field__c, DHR_Received_Field__c
+        														FROM Credential_Record__c WHERE TMN_Contact__c = :mentors ];
         	        
         
         Set<Mentor_Tracking_Report_Record__c> reptsForTheMentors = new Set<Mentor_Tracking_Report_Record__c>([ SELECT Id, Name, TMN_Contact__c FROM Mentor_Tracking_Report_Record__c WHERE TMN_Contact__r.Id = :mentors ]);
         List<Mentor_Tracking_Report_Record__c> reptsToUpdate = new List<Mentor_Tracking_Report_Record__c>();
         
         Set<Mentor_Tracking_Report_Record__c> householdMembersRepts = new Set<Mentor_Tracking_Report_Record__c>([ SELECT Id, Name, TMN_Contact__c, TMN_Contact__r.Id FROM Mentor_Tracking_Report_Record__c WHERE TMN_Contact__r.Id = :householdMemberIdsForTheseCreds ]);
+        
+        List<DhrUpdate> theseUpdates = new List<DhrUpdate>();      
         
         for(TMN_Contact__c aMentor : mentors) {
 	        	
@@ -152,6 +198,8 @@ public with sharing class CredentialRecordHandler {
 	        		theContactsReptRec = checkForExistingReptRec;
 	        	}
 
+			List<TMN_Contact__c> householdToUpdate = mentorsToHouseholdMembers.get(aMentor.Id);
+
 	        for(Credential_Record__c cR : theseCredRecs) {
 	        	System.debug('Check 1');
 	        	System.debug('cR.TMN_Contact__r.Id: ' + cR.TMN_Contact__r.Id);
@@ -163,6 +211,11 @@ public with sharing class CredentialRecordHandler {
 		        		// If it DOES, then we've had a NEW insert of each of the Credential_Record__c credential profiles represented by the incoming list.  A given contact should 
 		        		// only ever have ONE record for any given Credential_Profile__c cred.  AFTER AN UPDATE, we DO care about the data in the records.
 		
+						// TEST OF MentorCredUpdate method call...
+						if(cR.Similar_Credentials__c!=null) {
+							theseUpdates.add(MentorCredUpdate(cR, mentorsCredsToCompare, householdToUpdate));
+						}
+			/*	
 			     		if(cR.Credential_Profile_Name__c=='Health Inspection') {
 			    			System.debug('Check 3');
 			    			System.debug('What is theContactReptRec: ' + theContactsReptRec);
@@ -233,6 +286,7 @@ public with sharing class CredentialRecordHandler {
 								theContactsReptRec.Doc_of_Fire_Safety_in_File__c = 'No';
 							}
 			    		}
+					*/
 					}
 		        	// ELSE IF it's NOT a Mentor...
 		        	else {
@@ -240,7 +294,7 @@ public with sharing class CredentialRecordHandler {
 		        	}					
 	       		}
 	        }
-	        					    						
+	        /*					    						
 			// Get the list of household members from our map.
 				System.debug('Check 6');
 				List<TMN_Contact__c> householdToUpdate = mentorsToHouseholdMembers.get(aMentor.Id);
@@ -248,30 +302,22 @@ public with sharing class CredentialRecordHandler {
 					System.debug('Check 8');
 					for(Mentor_Tracking_Report_Record__c houseMemberReport : householdMembersRepts) {
 						System.debug('Check 9');
-						// HERE we update the values of all household members if the MENTOR's credential value is what we want to see on the DHR CPA report.
+						// HERE we update the values of all household members if the MENTOR's credential value is what we want to see on the DHR CPA report.  We should be able to count
+						// on just COPYING the values from the Mentor's Mentor_Tracking_Report_Record__c, since we've already done the work above to figure out which document
+						// version(s) are most recent, etc.
 						if(householdMember.Id==houseMemberReport.TMN_Contact__r.Id) {
 							for(Credential_Record__c cR2 : theseCredRecs) {
 								if(cR2.TMN_Contact__c==householdMember.Mentor__c) {
 									System.debug('Check 10');
-									if(cR2.Credential_Profile_Name__c=='Health Inspection') {
+									if(cR2.Credential_Profile_Name__c=='Health Inspection' || cR2.Credential_Profile_Name__c=='Health Inspection-Due to Move') {
 										System.debug('Check 11');
-										houseMemberReport.Date_Most_Recent_HHSI__c = cR2.Documented_Date__c;
-										if(cR2.Received_Date__c!=null) {
-											houseMemberReport.Doc_of_Home_Safety_Inspection_in_File__c = 'Yes';
-										}
-										else {
-											houseMemberReport.Doc_of_Home_Safety_Inspection_in_File__c = 'No';
-										}
+										houseMemberReport.Date_Most_Recent_HHSI__c = theContactsReptRec.Date_Most_Recent_HHSI__c;
+										houseMemberReport.Doc_of_Home_Safety_Inspection_in_File__c = theContactsReptRec.Doc_of_Home_Safety_Inspection_in_File__c;
 									}
 									if(cR2.Credential_Profile_Name__c=='Fire Inspection') {
 										System.debug('Check 12');
-										houseMemberReport.Date_Most_Recent_Fire_Safety__c = cR2.Documented_Date__c;
-										if(cR2.Received_Date__c!=null) {
-											houseMemberReport.Doc_of_Fire_Safety_in_File__c = 'Yes';
-										}
-										else {
-											houseMemberReport.Doc_of_Fire_Safety_in_File__c = 'No';
-										}
+										houseMemberReport.Date_Most_Recent_Fire_Safety__c = theContactsReptRec.Date_Most_Recent_Fire_Safety__c;
+										houseMemberReport.Doc_of_Fire_Safety_in_File__c = theContactsReptRec.Doc_of_Fire_Safety_in_File__c;
 									}
 								}
 							}
@@ -279,11 +325,30 @@ public with sharing class CredentialRecordHandler {
 						}
 					}
 				}
+			*/
 			
 	        System.debug('Check 13');
+		    for(DhrUpdate dU : theseUpdates) {
+	        	System.debug('dU.reportReceivedFieldForUpdate: ' +  dU.reportReceivedFieldForUpdate);
+	        	System.debug('dU.documentedStatusToUse: ' + dU.documentedStatusToUse);
+	        
+	        	string theFieldName = dU.reportDocumentedFieldForUpdate;
+	        
+	        	theContactsReptRec.put(theFieldName, dU.dhrUpdateCred.Documented_Date__c);
+	        	
+        		for(Mentor_Tracking_Report_Record__c houseMemberReport : householdMembersRepts) {
+        			houseMemberReport.put(theFieldName, dU.dhrUpdateCred.Documented_Date__c);
+        			reptsToUpdate.add(houseMemberReport);
+        		}
+	        	
+	        }
 	    	reptsToUpdate.add(theContactsReptRec);
 		}  	
+        
         System.debug('Check 14');
+
+        
+        System.debug('Check 15');
        	update reptsToUpdate;
     }
 
@@ -302,4 +367,92 @@ public with sharing class CredentialRecordHandler {
     public boolean IsTriggerContext{
         get{ return m_isExecuting;}
     }
+    
+///////////////////////////////////////////////////////
+// METHODS FOR MENTOR TRACKING REPORT RECORD UPDATES //
+///////////////////////////////////////////////////////
+
+	public DhrUpdate MentorCredUpdate(Credential_Record__c theCred, List<Credential_Record__c> theMentorsCreds, List<TMN_Contact__c> householdToUpdate) {
+		System.debug('MentorCredUpdate; theCred: ' + theCred);
+		System.debug('MentorCredUpdate; theMentorsCreds' + theMentorsCreds);
+		
+		Boolean goForUpdate = false;
+		Credential_Record__c winningCred = new Credential_Record__c();
+		winningCred = theCred;
+		
+		Date currentMostRecentDate;
+		
+		// Check to see if the Similar Doc(s) is also in the file
+		for(Credential_Record__c credBeta : theMentorsCreds) {
+			if(theCred.Similar_Credentials__c.contains('{~}' + credBeta.Credential_Profile_Name__c + '{~}')) {
+				// Then do the comparison work to figure out if this other doc is more recent than the cred.
+				System.debug('WIN ON SIM CRED MATCH!');
+				if(theCred.Documented_Date__c!=null){
+					// Then use Documented_Date__c to determine which doc is more current.
+					if(winningCred.Documented_Date__c < credBeta.Documented_Date__c) {
+						winningCred = credBeta;
+					}
+					else {
+						winningCred = winningCred;
+					}
+				}
+				else if(winningCred.Received_Date__c!=null){
+					// Then use Received_Date__c to determine which doc is more current.
+					if(winningCred.Received_Date__c < credBeta.Received_Date__c) {
+						winningCred = credBeta;						
+					}
+					else {
+						winningCred = winningCred;
+					}
+				}
+				else {
+					// Then use the CreatedDate.
+					if(winningCred.CreatedDate < credBeta.CreatedDate) {
+						winningCred = credBeta;						
+					}
+					else {
+						winningCred = winningCred;
+					}
+				}		
+			}
+		}
+	
+		DhrUpdate thisUpdate = new DhrUpdate(goForUpdate, winningCred, householdToUpdate);
+		
+		return thisUpdate;
+		
+		////////////////////////////////////////
+		/*
+ 		if(cR.Credential_Profile_Name__c=='Health Inspection') {
+			System.debug('Check 3');
+			System.debug('What is theContactReptRec: ' + theContactsReptRec);			
+			
+			// Check to see if the 'Health Inspection-Due to Move' is also in the file.
+			for(Credential_Record__c cRCompare1 : mentorsCredsToCompare) {
+				if(cRCompare1.Credential_Profile_Name__c=='Health Inspection-Due to Move') {
+					// If 'Health Inspection-Due to Move' IS in the file, figure out which one is more recent.  Use the "Documented Date" to determine which is more current.
+					// Insert the Documented Date and Documentation status based on the more recent document.
+					if(cR.Documented_Date__c > cRCompare1.Documented_Date__c) {
+						theContactsReptRec.Date_Most_Recent_HHSI__c = cR.Documented_Date__c;
+						if(cR.Received_Date__c!=null) {
+							theContactsReptRec.Doc_of_Home_Safety_Inspection_in_File__c = 'Yes';
+						}
+						else {
+							theContactsReptRec.Doc_of_Home_Safety_Inspection_in_File__c = 'No';
+						}
+					}
+					else if(cR.Documented_Date__c < cRCompare1.Documented_Date__c) {
+						theContactsReptRec.Date_Most_Recent_HHSI__c = cRCompare1.Documented_Date__c;
+						if(cRCompare1.Received_Date__c!=null) {
+							theContactsReptRec.Doc_of_Home_Safety_Inspection_in_File__c = 'Yes';
+						}
+						else {
+							theContactsReptRec.Doc_of_Home_Safety_Inspection_in_File__c = 'No';
+						}
+					}
+				}
+			}
+		}
+		*/		
+	}  
 }
