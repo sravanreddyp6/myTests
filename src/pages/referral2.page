@@ -58,7 +58,7 @@
     }
   </style>
 
-  <script language="javascript">
+  <script type="text/javascript">
 
    j$ = jQuery.noConflict();
      //disable enter key
@@ -300,7 +300,7 @@ function stopRKey(evt) {
           //      alert('during load event@@@@ '+lookupId+'\n'+lookupName);
                 j$('input[id$=locationEntry_Id]').val(result.Id);
                 j$(lookupId).val(result.Service_Location__c);
-                j$(lookupName).val(result.Service_Location__r.name);
+                j$(lookupName).val(result.Service_Location__r.Name);
           //      alert('lookup id field value'+j$(lookupId).val());
           //      alert('lookup name field value'+j$(lookupName).val());
           //      j$('input[id$=locationEntry_ServiceLocation]').val(result.Service_Location__r.Name);
