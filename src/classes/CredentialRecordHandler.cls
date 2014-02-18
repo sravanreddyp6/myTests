@@ -15,12 +15,14 @@ public with sharing class CredentialRecordHandler {
 		Date receivedDateToUse { get; set; }
 		string reportDocumentedFieldForUpdate { get; set; }
 		string documentedStatusToUse { get; set; }
-		public Id mentorsTmnContactId { get; set; }
-		public List<TMN_Contact__c> householdsNonMentors { get; set; }
+		Id mentorsTmnContactId { get; set; }
+		TMN_Contact__c dhrUpdateMentor { get; set; }
+		List<TMN_Contact__c> householdsNonMentors { get; set; }
 
-		public DhrUpdate(Boolean updateOrNot, Credential_Record__c aCred, List<TMN_Contact__c> household) {
+		public DhrUpdate(Boolean updateOrNot, Credential_Record__c aCred, TMN_Contact__c aMentor, List<TMN_Contact__c> household) {
 			doUpdate = updateOrNot;
 			dhrUpdateCred = aCred;
+			dhrUpdateMentor = aMentor;
 			reportReceivedFieldForUpdate = aCred.DHR_Received_Field__c;
 			receivedDateToUse = aCred.Received_Date__c;
 			reportDocumentedFieldForUpdate = aCred.DHR_Documented_Field__c;
@@ -187,6 +189,8 @@ public with sharing class CredentialRecordHandler {
 	        		}
 	        	}
 	        	
+	        	
+	        	// WORK TO CREATE THE REPORT RECORD FOR THIS MENTOR.  It stays in context until the aMentor for loop iterates.
 	        	if(checkForExistingReptRec==null) {
 	        		// This should NEVER happen.  The initial insert of the Mentor_Tracking_Report_Record__c record is happening in the TMN_ContactHandler.cls  Seems
 	        		// to make sense to insert a record if one is NOT present, though, so I'm leaving this.  The only case I think it MIGHT execute under is if a Disregarded TMN_Contact__c
@@ -213,7 +217,7 @@ public with sharing class CredentialRecordHandler {
 		
 						// TEST OF MentorCredUpdate method call...
 						if(cR.Similar_Credentials__c!=null) {
-							theseUpdates.add(MentorCredUpdate(cR, mentorsCredsToCompare, householdToUpdate));
+							theseUpdates.add(MentorCredUpdate(cR, mentorsCredsToCompare, aMentor, householdToUpdate));
 						}
 			/*	
 			     		if(cR.Credential_Profile_Name__c=='Health Inspection') {
@@ -332,16 +336,41 @@ public with sharing class CredentialRecordHandler {
 	        	System.debug('dU.reportReceivedFieldForUpdate: ' +  dU.reportReceivedFieldForUpdate);
 	        	System.debug('dU.documentedStatusToUse: ' + dU.documentedStatusToUse);
 	        
-	        	string theFieldName = dU.reportDocumentedFieldForUpdate;
+	        	string documentedFieldName = dU.reportDocumentedFieldForUpdate;
+	        	string receivedInFileFieldName = dU.reportReceivedFieldForUpdate;
 	        
-	        	theContactsReptRec.put(theFieldName, dU.dhrUpdateCred.Documented_Date__c);
-	        	
-        		for(Mentor_Tracking_Report_Record__c houseMemberReport : householdMembersRepts) {
-        			houseMemberReport.put(theFieldName, dU.dhrUpdateCred.Documented_Date__c);
-        			reptsToUpdate.add(houseMemberReport);
-        		}
-	        	
+	        	theContactsReptRec.put(documentedFieldName, dU.dhrUpdateCred.Documented_Date__c);
+	        	if(dU.dhrUpdateCred.Received_Date__c!=null) {
+	        		theContactsReptRec.put(receivedInFileFieldName, 'Yes');
+	        	}
+	        	else {
+	        		theContactsReptRec.put(receivedInFileFieldName, 'No');
+	        	}
 	        }
+	        
+        	for(TMN_Contact__c householdMember : householdToUpdate) {
+	            for(Mentor_Tracking_Report_Record__c houseMemberReport : householdMembersRepts) {
+        			if(householdMember.Id==houseMemberReport.TMN_Contact__r.Id){
+	        			for(DhrUpdate dU2 : theseUpdates) {
+	        				string documentedFieldName2 = dU2.reportDocumentedFieldForUpdate;
+				        	string receivedInFileFieldName2 = dU2.reportReceivedFieldForUpdate;
+				        	
+				        	if(dU2.dhrUpdateMentor.Id==householdMember.Mentor__c) {
+					        	houseMemberReport.put(documentedFieldName2, dU2.dhrUpdateCred.Documented_Date__c);
+					        	if(dU2.dhrUpdateCred.Received_Date__c!=null) {
+					        		houseMemberReport.put(receivedInFileFieldName2, 'Yes');
+					        	}
+					        	else {
+					        		houseMemberReport.put(receivedInFileFieldName2, 'No');
+					        	}
+				        	}
+	        			}
+        			reptsToUpdate.add(houseMemberReport);
+        			}
+        		}
+        	}
+	        
+	        
 	    	reptsToUpdate.add(theContactsReptRec);
 		}  	
         
@@ -372,7 +401,7 @@ public with sharing class CredentialRecordHandler {
 // METHODS FOR MENTOR TRACKING REPORT RECORD UPDATES //
 ///////////////////////////////////////////////////////
 
-	public DhrUpdate MentorCredUpdate(Credential_Record__c theCred, List<Credential_Record__c> theMentorsCreds, List<TMN_Contact__c> householdToUpdate) {
+	public DhrUpdate MentorCredUpdate(Credential_Record__c theCred, List<Credential_Record__c> theMentorsCreds, TMN_Contact__c theMentor, List<TMN_Contact__c> householdToUpdate) {
 		System.debug('MentorCredUpdate; theCred: ' + theCred);
 		System.debug('MentorCredUpdate; theMentorsCreds' + theMentorsCreds);
 		
@@ -417,7 +446,7 @@ public with sharing class CredentialRecordHandler {
 			}
 		}
 	
-		DhrUpdate thisUpdate = new DhrUpdate(goForUpdate, winningCred, householdToUpdate);
+		DhrUpdate thisUpdate = new DhrUpdate(goForUpdate, winningCred, theMentor, householdToUpdate);
 		
 		return thisUpdate;
 		
