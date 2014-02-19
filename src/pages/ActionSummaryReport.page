@@ -1,5 +1,5 @@
 <apex:page standardController="Action_Summary__c" extensions="ActionSummaryReportForm" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab">
-  <apex:stylesheet value="{!$Resource.mentoresdcss}" />
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
   <style>
   .skillSummary {
       padding-left:120px;
@@ -249,8 +249,11 @@
       </apex:repeat>
       </apex:pageBlockSection>
   </apex:repeat>
+  <div align="Right">
   <apex:commandButton value="Save " action="{!SaveAll}" id="formSave2" status="myStatus" rendered="{!Action_Summary__c.Status__c != 'Final'}"/>
-
+  <apex:commandButton value="Finalize" action="{!Finalize}"  rendered="{!(Action_Summary__c.Status__c != 'Final') && canFinalize}"/>
+  
+	</div>
   </apex:PageBlock>
     </apex:Form>
     <style>

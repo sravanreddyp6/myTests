@@ -32,7 +32,19 @@ public with sharing class PersonalRecordController {
 	public String parentPageName {get; set { System.Debug('parentPage: ' + value); }
 	}
 	
-	public String admissionId { get; set { System.Debug('admissionId: ' + value); }}
+	public String admissionId { get {
+									if ( String.isEmpty(admissionId))  {
+										Admission__c[] adm = [ select id from admission__c where person_being_served__c = :con.Id order by createddate desc];
+										
+										if ( adm.size() > 0 ) {
+											admissionId = adm[0].Id; 
+											return adm[0].Id;
+										}
+										else
+											return null;
+									} else { return admissionId; }
+									} set { System.Debug('admissionId: ' + value); }}
+									
 	public String assessmentId { get; set { System.Debug('assessmentId: ' + value); }}
 	public String assessmentType { get; set { System.Debug('assessmenttype: ' + value); }}
 	public String saId { get; set; }
@@ -40,6 +52,10 @@ public with sharing class PersonalRecordController {
     public String planId { get; set; }
 	public PageReference breadcrumb { get; set; }
 	
+	public String opGrp { get { 
+						TMN_User__c TU = [select Operating_Group__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1]; 
+						return TU.Operating_Group__c; 
+        				} set;}
 	
     public PersonalRecordController() {
       

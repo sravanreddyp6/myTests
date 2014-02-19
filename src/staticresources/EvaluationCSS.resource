@@ -57,12 +57,13 @@ img[src$="spacer.gif"] {
     background-color: #E3E6EF;
     background-image: none;
     border: 0;
-    color: 333333;
+    color: #cc6633;
     font-weight: bold;
+    font-size: 12px;
 }
 .evaluationActiveTab:hover {
     cursor: pointer;
-    color: #cc6600;
+    color: #cc6633;
 }
 .evaluationInactiveTab {
     background-color: #E3E6EF;
@@ -71,8 +72,23 @@ img[src$="spacer.gif"] {
 }
 .evaluationInactiveTab:hover {
     cursor: pointer;
-    color: #cc6600;
+    color: #cc6633;
 }
 .rich-tabhdr-cell-disabled, .rich-tabhdr-cell-inactive {
     padding-top: 0;
+}
+
+.tabLinkActive {
+    background-color: #E3E6EF;
+    background-image: none;
+    border: 0;
+    color: #cc6633 !important;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.tabLink:hover, .tabLink:hover{
+    cursor: pointer;
+    color: #cc6633 !important;
+    text-decoration:none !important;
 }

@@ -11,8 +11,8 @@ public with sharing class Shift_Note_Basic {
     public map<string, list<action_plan_action__c>> mapActions = new map<string, list<action_plan_action__c>>();
     public map<string, list<action_plan_action__c>> getMapActions(){ return mapActions ;}
         
-    public map<id, ProgressNote_ActionPlanChildren_mjo__c> childrenScope = new map<id, ProgressNote_ActionPlanChildren_mjo__c>();
-    public map<id, ProgressNote_ActionPlanChildren_mjo__c> getchildrenScope() {return childrenScope ;}
+    public map<string, ProgressNote_ActionPlanChildren_mjo__c> childrenScope = new map<string, ProgressNote_ActionPlanChildren_mjo__c>();
+    public map<string, ProgressNote_ActionPlanChildren_mjo__c> getchildrenScope() {return childrenScope ;}
     public boolean editMode {get; set;}
     public Action_Plan__c plan { get {return plan;} set;}
     public id planID {get; set;}
@@ -49,10 +49,10 @@ public with sharing class Shift_Note_Basic {
         okstatus.add ('N/A');   
         
         if (note.action_plan__c != null){
-            allgoals = [select id, description__c, 
-                            (select id, Description__c from action_plan_objectives__r where status__c in :okstatus) 
+            allgoals = [select id, description__c, sort_order__c, 
+                            (select id, Description__c, sort_order__c from action_plan_objectives__r where status__c in :okstatus order by Sort_Order__c) 
                                     from Action_Plan_Goal__c 
-                                        where Action_Plan__c = :note.Action_Plan__c];
+                                        where Action_Plan__c = :note.Action_Plan__c order by Sort_Order__c];
           //  Goals = new map<string, clsPlan_Goal>();
             system.debug('id is - ' + note.Action_Plan__c);
             //set<id> childrenScope 
@@ -60,28 +60,28 @@ public with sharing class Shift_Note_Basic {
        
                
                 for (ProgressNote_ActionPlanChildren_mjo__c item: 
-                            [select id, name, Progress_Note__c, Goal__c, Objective__c 
+                            [select id, name, Progress_Note__c, Goal__c, Goal__r.Sort_Order__c, Objective__c, Objective__r.Sort_Order__c 
                                     From ProgressNote_ActionPlanChildren_mjo__c 
                                         Where Progress_Note__c = :note.id  ]){
                     
-                      childrenScope.put(item.Goal__c,item);                  
-                      childrenScope.put(item.Objective__c, item);
+                      childrenScope.put(item.Goal__r.Sort_Order__c + item.Goal__c,item);                  
+                      childrenScope.put(item.Objective__r.Sort_Order__c + item.Objective__c, item);
                 }        
             
                             
             for(Action_Plan_Goal__c g : allgoals){
                 clsPlan_Goal tmpclsG =  new clsPlan_Goal(g);
-                Goals.put(g.id, tmpclsG);
-                Goals.get(g.id).inNote = childrenScope.containskey(g.id); 
+                Goals.put(g.sort_order__c + g.id, tmpclsG);
+                Goals.get(g.sort_order__c + g.id).inNote = childrenScope.containskey(g.sort_order__c + g.id); 
             
                     for(Action_Plan_Objective__c o : g.Action_Plan_Objectives__r){
                         clsPlan_Obj tmpclsO = new clsPlan_Obj(o);
-                        Goals.get(g.id).objs.put(o.id, tmpclsO);
-                        Goals.get(g.id).objs.get(o.id).inNote = childrenScope.containskey(o.id);
+                        Goals.get(g.sort_order__c + g.id).objs.put(o.sort_order__c + o.id, tmpclsO);
+                        Goals.get(g.sort_order__c + g.id).objs.get(o.sort_order__c + o.id).inNote = childrenScope.containskey(o.sort_order__c + o.id);
                     }     
             }
-            for(action_plan_objective__c o:[select id, (select description__c, id from Action_Plan_Actions__r order by Sort_Order__c) from action_plan_objective__c where action_plan_goal__r.action_plan__c = :note.Action_Plan__c]){
-                mapActions.put(o.id, o.Action_Plan_Actions__r);
+            for(action_plan_objective__c o:[select id, Sort_order__c, (select description__c, id from Action_Plan_Actions__r order by Sort_Order__c) from action_plan_objective__c where action_plan_goal__r.action_plan__c = :note.Action_Plan__c]){
+                mapActions.put(o.sort_order__c + o.id, o.Action_Plan_Actions__r);
             
             }             
         }

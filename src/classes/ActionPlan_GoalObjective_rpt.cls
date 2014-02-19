@@ -88,6 +88,7 @@ public ActionPlan_GoalObjective_rpt(ApexPages.StandardController controller) {
                                         ) 
                                     
                                             AND Progress_Note__r.Service_Assignment__c = :SA.id  
+                                           and progress_note__r.Disregard_note__c = false	// RBO-266
                                         ORDER BY CreatedDate
                                         limit 1000]){
                                   //  

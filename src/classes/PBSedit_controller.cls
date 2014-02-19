@@ -11,8 +11,31 @@ public ID PBSId{get;set;}
 public boolean isEditor{get; set;}
 public boolean canEdit{get; set;}
 public boolean canCreateAdm { get; set; }
+public boolean canViewFamilyInfo { 
+	get {
+		return TMNUser == null ? false : TMNUser.Operating_Group__c == 'Cambridge';
+	}}
+
 public Boolean isUserLevel1or2 { get { return PBS_controller_helper.isUserLevel1or2();} set; }
  
+private TMN_User__c TMNUser_internal;
+private boolean TMNUser_set = false;
+private TMN_User__c TMNUser {
+	get {
+		if (!TMNUser_set) {
+			TMN_User__c[] users = [
+            	SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:currentContact.OwnerID LIMIT 1
+        	];
+        	if (users.size() == 0) {
+        		TMNUser_internal = null;
+        	} else {
+        		TMNUser_internal = users[0];
+        	}
+        	TMNUser_set = true;
+		}
+		return TMNUser_internal;
+	}}
+
   public Related_Party__c relParty {
     get {
       if (relParty == null)
@@ -25,6 +48,17 @@ public Boolean isUserLevel1or2 { get { return PBS_controller_helper.isUserLevel1
   public List<Related_Party__c> relParties { get; set; }
   public List<Agency_Involved_With_Individual__c> relAgencies { get; set; }
 
+
+// Filter some of the Additional Info Fields
+public string dontShowFields {
+	get {
+		List<string> dontshow = new List<string>();
+		if (TMNUser == null || TMNUser.Operating_Group__c != 'Cambridge'){
+			dontshow.Add('Current_Medications__c');
+		}
+		return ' ' + String.Join(dontshow, ',');
+	}
+}
 // In order to show field labels instead of API names for history
 public Map<String, String> fieldMap { get; set; }
 
@@ -92,14 +126,12 @@ public Map<String, String> fieldMap { get; set; }
 
     public List<Admission__c> admissions{get{return [select id,Name,Discharged_Date__c, Effective_Date__c, Status__c  from Admission__c where Person_Being_Served__c=:Apexpages.currentpage().getparameters().get('Id') ];}set;}
     public Boolean showDiagnosis { get {
-        TMN_User__c[] tmnUsers = [
-            SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:currentContact.OwnerID LIMIT 1
-        ];
-        if (tmnUsers.size() == 0) {
+        if (TMNUser == null) {
             return false;
         }
 
-        return tmnUsers[0].Operating_Group__c=='Redwood';
+        return TMNUser.Operating_Group__c=='Redwood'
+        	|| TMNUser.Operating_Group__c=='Cambridge';
     }}
     public list<Diagnosis__c> diagnosis{get{
         return [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__r.Admission__r.Person_Being_Served__c=:Apexpages.currentpage().getparameters().get('Id')];
@@ -165,7 +197,13 @@ public void showAddRelParty() {
       upsert relParties;
     }
   }
-    
+
+    public id getRelatedPartyReport(){
+        id theId;
+        theID = [select id, developername from report where developername = 'Related_Party_for_PBS' limit 1].id;
+
+        return theId;
+    }
 
 public pageReference cancelPBSController(){
     
