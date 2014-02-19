@@ -796,9 +796,10 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
 
   public void saveLocation() {
       system.debug(this.location);
-    this.location.State__c = this.location.State_String__c;
-     this.location.Status__c = this.location.Status_String__c;
+    //this.location.State__c = this.location.State_String__c;
+    // this.location.Status__c = this.location.Status_String__c;
     this.locations.add(this.location);
+    system.debug('Loc Status:'+ this.location.status__c);
     location = new Referral_Location__c();
   }
 

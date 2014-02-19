@@ -35,7 +35,6 @@ public with sharing class ReferralLocationTriggeredActions {
         
                 
         list<referral__c> r = [select id, Assigned_users__c from Referral__c where ID in :rid];
-        list<referral_location__c> AssnUsers =  [select id, user_assigned__c, status__c from referral_location__C where status__c = 'Active' and id = :id];
         map<id,user> fullnames = new Map<id,user>([select id, name, myfullname__c from user where id = :uid]);     
        
         for (referral__c rr : r){
@@ -44,7 +43,8 @@ public with sharing class ReferralLocationTriggeredActions {
             
             for(referral_Location__c au : newobjects){
             
-                if (au.Status__c == 'Active' && au.referral__c == rr.id) {
+				// REF-141 - All users are copied to referral irrespective of Status
+                if (au.referral__c == rr.id) {
                     user u = fullnames.get(au.user_assigned__c);
                     if(string.isempty(theAssignedUsers))
                     {
@@ -102,7 +102,6 @@ public with sharing class ReferralLocationTriggeredActions {
         
                 
         list<referral__c> r = [select id, Assigned_users__c from Referral__c where ID in :rid];
-        list<referral_location__c> AssnUsers =  [select id, user_assigned__c, status__c from referral_location__C where status__c = 'Active' and id = :id];
         map<id,user> fullnames = new Map<id,user>([select id, name from user where id = :uid]);     
                
        
@@ -113,76 +112,43 @@ public with sharing class ReferralLocationTriggeredActions {
             
             for(referral_Location__c au : updatedobjects){
                     
-            referral_location__c old = oldObjMap.get(au.id);
-            
-            string oldAssnUser = '';
-            string newAssnUser = '';
-            if (old.user_assigned__c != null) oldAssnUser = fullnames.get(old.user_assigned__c).name;
-            if (au.user_assigned__c != null) newAssnUser = fullnames.get(au.user_assigned__c).name;
-            System.Debug('What is in the old user:' + oldAssnUser);
-            System.Debug('What is in the new user:' + newAssnUser);
-                    
-            if (au.referral__c == rr.id) {
-            //If assigned user value changes remove old value from string and add new value if status is active 
-            if (oldAssnUser != newAssnUser)
-            {
-                if (au.Status__c == 'Active') 
-                {
-                    theassignedusers = theassignedusers.replace(oldAssnUser, newAssnUser);
-                }
-            }
-                        
-            //If status changes to Active, Add Assigned User to Referral.assigned users
-            if (au.Status__c == 'Active') 
-            {
-                if (old.Status__c != 'Active')
-                {
-                        if(string.isempty(theAssignedUsers))
-                    {
-                        theAssignedUsers  = newAssnUser;
-                
-                    }
-                    else
-                    {   
-                        theAssignedUsers += ', ' +  newAssnUser;
-                    }
-                
-                }
-                
-            }
-            
-            
-            //If status changes from Active to something else remove Assigned user from Referral.assigned users
-            if(au.status__c != 'Active')
-            {
-                if (old.status__c == 'Active' ) 
-                {
-                    System.Debug('What is in theassignedusers:' + theAssignedUsers);
-                    System.Debug('What is in the old user:' + oldAssnUser);
-                    System.Debug('What is in the new user:' + newAssnUser);
-                    System.Debug('What is in the old status:' + old.status__c);
-                    System.Debug('What is in the new status:' + au.status__c);
-                    
-                    
-                    theassignedusers = theassignedusers.remove(oldAssnUser);
-                }   
-            }
-            
-                }
+	            referral_location__c old = oldObjMap.get(au.id);
+	            
+	            string oldAssnUser = '';
+	            string newAssnUser = '';
+	            if (old.user_assigned__c != null) oldAssnUser = fullnames.get(old.user_assigned__c).name;
+	            if (au.user_assigned__c != null) newAssnUser = fullnames.get(au.user_assigned__c).name;
+	            System.Debug('What is in the old user:' + oldAssnUser);
+	            System.Debug('What is in the new user:' + newAssnUser);
+	                    
+	            if (au.referral__c == rr.id) {
+		            //If assigned user value changes remove old value from string and add new value if status is active 
+		            if (oldAssnUser != newAssnUser)
+		            {
+		                theassignedusers = theassignedusers.replace(oldAssnUser, newAssnUser);
+		            }
+	            }
+
+				// REF-141 - All users are copied to referral irrespective of Status
+				// Have to add any that are not already in the list
+				if (!theAssignedUsers.Contains(newAssnUser)){
+					theAssignedUsers += ', ' +  newAssnUser;
+				}
+				
             }
         
-                //Clean up extra commas
-                theassignedusers = theassignedusers.replace(',,', ',');
-                
-                if (theassignedusers.startsWith(', '))
-                {
-                    theassignedusers = theassignedusers.removestart(', ');
-                }
+            //Clean up extra commas
+            theassignedusers = theassignedusers.replace(',,', ',');
             
-                
-                System.Debug('What is in theassignedusers:' + theAssignedUsers);
-                rr.Assigned_users__c = theAssignedUsers;
-                update r;
+            if (theassignedusers.startsWith(', '))
+            {
+                theassignedusers = theassignedusers.removestart(', ');
+            }
+        
+            
+            System.Debug('What is in theassignedusers:' + theAssignedUsers);
+            rr.Assigned_users__c = theAssignedUsers;
+            update r;
             
         }   
        
