@@ -1,5 +1,5 @@
 <apex:page controller="shiftnote_summary_rpt" sidebar="false" docType="html-5.0" readOnly="true" >
-    <apex:stylesheet value="{!$Resource.mentoresdcss}" />
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:includeScript value="{!$Resource.jquery}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
@@ -108,7 +108,7 @@
              </td>
              <td>
                  <apex:outputLink value="/{!n.id}">
-                     View
+                     {!n.name}
                  </apex:outputLink>                 
              </td>             
          </tr>

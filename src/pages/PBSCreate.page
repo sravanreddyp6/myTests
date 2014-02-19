@@ -1,9 +1,9 @@
-<apex:page standardController="Account"  extensions="PBS_Controller" standardStylesheets="true" sidebar="false"  tabStyle="Persons_Being_Served_New__tab">
+<apex:page standardController="Account"  extensions="PBS_Controller,PBS_controller_helper" standardStylesheets="true" sidebar="false"  tabStyle="Persons_Being_Served_New__tab">
   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
   <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 
-  <apex:stylesheet value="{!$Resource.mentoresdcss}" />
+ <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 
 
   <style type="text/css">
@@ -149,19 +149,20 @@ function stopRKey(evt) {
         <apex:inputField value="{!Account[f.fieldPath]}" required="{!OR(f.required, f.dbrequired)}"  />
     </apex:repeat>
     </apex:pageBlockSection> 
-    <!--  
+  
+  
 <apex:pageBlockSection title="Financial Information"
                              showHeader="true"
                              columns="2"
                              collapsible="true"  
                              id="pbsOutputFinancialInfo"
+                             rendered="{!showDiagnosis && !isUserLevel1or2 && !canViewFamilyInfo}"
                              >
 
     <apex:repeat value="{!$ObjectType.Account.FieldSets.PBS_Financial}" var="f">
         <apex:inputField value="{!Account[f.fieldPath]}" required="{!OR(f.required, f.dbrequired)}"  />
     </apex:repeat>
 </apex:pageBlockSection>
--->   
     
 
 <!--Additional Information Section-->
@@ -175,6 +176,44 @@ function stopRKey(evt) {
         <apex:inputField value="{!Account[f.fieldPath]}" required="{!OR(f.required, f.dbrequired)}" />
     </apex:repeat>
          </apex:pageBlockSection> 
+         
+         <apex:pageBlockSection columns="2" rendered="{!canViewFamilyInfo}" title="Family Information" showHeader="True" id="pbsFamilyInfo">
+         	 <apex:inputfield value="{!Account.Family_Annual_Income__pc}"/>
+         	 <span/>
+             <apex:inputfield value="{!Account.Family_Military_Involvement__pc}"/>
+             <apex:inputfield value="{!Account.Family_Prior_Military_Involvement_Date__pc}"/>
+             <apex:inputField value="{!Account.Family_Military_Involvement_Branch__pc}"/>
+             
+             <apex:PageBlockSectionitem >
+            
+             <apex:outputLabel Value="Family Native American Tribe" for="nativetribe"/>
+              <apex:outputpanel id="familynativeamericantribe" >
+          	 <apex:inputfield value="{!Account.Family_Native_American_Tribe__pc}" rendered="{!NOT(Account.Family_Native_American_Ancestry__pc)}" html-disabled="true"/>
+          	 <apex:inputfield value="{!Account.Family_Native_American_Tribe__pc}" required="{!Account.Family_Native_American_Ancestry__pc}" rendered="{!Account.Family_Native_American_Ancestry__pc = True}"/>
+          	 
+          	 </apex:outputpanel>
+          	 </apex:PageBlockSectionitem>
+             
+             <apex:pageBlockSectionItem >
+                      <apex:outputLabel for="nativeancestry" value="Family Native American Ancestry" />
+                      <apex:actionRegion >
+                    <apex:inputField id="nativeancestry" value="{!Account.Family_Native_American_Ancestry__pc}">
+                         <apex:actionStatus id="statusnativeancestry">
+                             <apex:facet name="start">
+                                 <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                                     <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                                 </div>
+                             </apex:facet>
+                             <apex:facet name="stop"></apex:facet>
+                         </apex:actionStatus>
+                        <apex:actionSupport event="onchange" rerender="familynativeamericantribe" status="statusnativeancestry" />
+                    </apex:inputField>
+                    </apex:actionRegion>
+                    </apex:pageBlockSectionItem>
+             
+             
+         	
+         </apex:pageBlockSection>
     
     </apex:pageBlock>
 <apex:pageBlock title="Related Party">

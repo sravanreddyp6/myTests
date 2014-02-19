@@ -35,16 +35,24 @@
             border: none;
             height: 5px;
         }
-        .evaluationTabHeader .sectionCompleted {
-            background-image: url("{!URLFOR($Resource.EvaluationResources, 'orangecheck.png')}");
+        .evaluationTabHeader .sectionCompleted, .sectionCompletedLink {
+            background-image: url("{!URLFOR($Resource.EvaluationResources, 'greencheck.png')}");
             background-repeat: no-repeat;
             padding-top: 22px;
         }
-        .evaluationTabHeader .sectionNotCompleted {
+        .evaluationTabHeader .sectionNotCompleted, .sectionNotCompletedLink {
             background-image: url("{!URLFOR($Resource.EvaluationResources, 'whitecheck.png')}");
             background-repeat: no-repeat;
             padding-top: 22px;
         }
+        
+        .sectionNotCompletedLink, .sectionCompletedLink {
+        	vertical-align:bottom !important;
+        	background-position: center top;
+        	padding-left:10px;
+        	padding-right:10px;
+        }
+        
     </style>
     <script>
         function setFocusOnLoad() {}  // Overwrite VF function to focus on the 1st field
@@ -716,7 +724,7 @@
                         <apex:outputText value="ROM" />
                         <apex:outputLabel for="romNotTested" value="Not Tested" />
                         <apex:inputField value="{!Evaluation__c.ROM_Not_Tested__c}" label="Not Tested" id="romNotTested"
-                            html-data-rules="{&quot;0&quot;: [&quot;{!$Component.rUpperROM}&quot;, &quot;{!$Component.rLowerROM}&quot;, &quot;{!$Component.lUpperROM}&quot;, &quot;{!$Component.lLowerROM}&quot;, &quot;{!$Component.ROMComments}&quot;]}" />
+                            html-data-rules="{&quot;0&quot;: [&quot;{!$Component.rUpperROM}&quot;, &quot;{!$Component.rLowerROM}&quot;, &quot;{!$Component.lUpperROM}&quot;, &quot;{!$Component.lLowerROM}&quot;]}" />
                         <apex:inputField value="{!Evaluation__c.R_Upper_ROM__c}" label="" id="rUpperROM" />
                         <apex:inputField value="{!Evaluation__c.R_Lower_ROM__c}" label="" id="rLowerROM" />
                         <apex:inputField value="{!Evaluation__c.L_Upper_ROM__c}" label="" id="lUpperROM" />
@@ -726,7 +734,7 @@
                         <apex:outputText value="Tone" />
                         <apex:outputLabel for="toneNotTested" value="Not Tested" />
                         <apex:inputField value="{!Evaluation__c.Tone_Not_Tested__c}" label="Not Tested" id="toneNotTested"
-                            html-data-rules="{&quot;0&quot;: [&quot;{!$Component.rUpperTone}&quot;, &quot;{!$Component.rLowerTone}&quot;, &quot;{!$Component.lUpperTone}&quot;, &quot;{!$Component.lLowerTone}&quot;, &quot;{!$Component.toneComments}&quot;]}" />
+                            html-data-rules="{&quot;0&quot;: [&quot;{!$Component.rUpperTone}&quot;, &quot;{!$Component.rLowerTone}&quot;, &quot;{!$Component.lUpperTone}&quot;, &quot;{!$Component.lLowerTone}&quot;]}" />
                         <apex:inputField value="{!Evaluation__c.R_Upper_Tone__c}" label="" id="rUpperTone" />
                         <apex:inputField value="{!Evaluation__c.R_Lower_Tone__c}" label="" id="rLowerTone" />
                         <apex:inputField value="{!Evaluation__c.L_Upper_Tone__c}" label="" id="lUpperTone" />
@@ -736,7 +744,7 @@
                         <apex:outputText value="Strength" />
                         <apex:outputLabel for="strengthNotTested" value="Not Tested" />
                         <apex:inputField value="{!Evaluation__c.Strength_Not_Tested__c}" label="Not Tested" id="strengthNotTested"
-                            html-data-rules="{&quot;0&quot;: [&quot;{!$Component.rUpperStrength}&quot;, &quot;{!$Component.rLowerStrength}&quot;, &quot;{!$Component.lUpperStrength}&quot;, &quot;{!$Component.lLowerStrength}&quot;, &quot;{!$Component.strengthComments}&quot;]}" />
+                            html-data-rules="{&quot;0&quot;: [&quot;{!$Component.rUpperStrength}&quot;, &quot;{!$Component.rLowerStrength}&quot;, &quot;{!$Component.lUpperStrength}&quot;, &quot;{!$Component.lLowerStrength}&quot;]}" />
                         <apex:inputField value="{!Evaluation__c.R_Upper_Strength__c}" label="" id="rUpperStrength" />
                         <apex:inputField value="{!Evaluation__c.R_Lower_Strength__c}" label="" id="rLowerStrength" />
                         <apex:inputField value="{!Evaluation__c.L_Upper_Strength__c}" label="" id="lUpperStrength" />
@@ -746,7 +754,7 @@
                         <apex:outputText value="Sensation" />
                         <apex:outputLabel for="sensationNotTested" value="Not Tested" />
                         <apex:inputField value="{!Evaluation__c.Sensation_Not_Tested__c}" label="Not Tested" id="sensationNotTested"
-                             html-data-rules="{&quot;0&quot;: [&quot;{!$Component.rUpperSensation}&quot;, &quot;{!$Component.rLowerSensation}&quot;, &quot;{!$Component.lUpperSensation}&quot;, &quot;{!$Component.lLowerSensation}&quot;, &quot;{!$Component.sensationComments}&quot;]}" />
+                             html-data-rules="{&quot;0&quot;: [&quot;{!$Component.rUpperSensation}&quot;, &quot;{!$Component.rLowerSensation}&quot;, &quot;{!$Component.lUpperSensation}&quot;, &quot;{!$Component.lLowerSensation}&quot;]}" />
                         <apex:inputField value="{!Evaluation__c.R_Upper_Sensation__c}" label="" id="rUpperSensation" />
                         <apex:inputField value="{!Evaluation__c.R_Lower_Sensation__c}" label="" id="rLowerSensation" />
                         <apex:inputField value="{!Evaluation__c.L_Upper_Sensation__c}" label="" id="lUpperSensation" />
@@ -996,10 +1004,54 @@
                         <apex:inputField value="{!Evaluation__c.Evaluation_Date__c}" />
                         <apex:inputField value="{!Evaluation__c.Discharge_Section_Completed__c}" />
                     </apex:pageBlockSection>
-                </apex:pageBlock>
+                </apex:pageBlock> 
             </apex:tab>
         </apex:tabPanel>
+
+ 
+        
         <apex:pageBlock id="buttons">
+        
+                <!--  add anchor ribbon to mimic tabs above  -->
+                
+ <table style="border:1px solid black;height:38px;background-color:#E3E6EF;">
+ <tr>
+ <td class="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompletedLink', 'sectionNotCompletedLink')}">
+       <a id="detailsLink" onclick="changeTab('detailsTab'); return false;" class="tabLink {! IF(OR(selectedTab == 'detailsTab', selectedTab == ''), 'tabLinkActive','' )} ">Details</a>
+</td>
+<td class="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompletedLink', 'sectionNotCompletedLink')}">  
+       <a id="diagnosticLink" onclick="changeTab('diagnosticTab'); return false;" class="tabLink {! IF(selectedTab == 'diagnosticTab', 'tabLinkActive','' )}" >Diagnostics</a>
+</td>
+<td class="{!IF(Evaluation__c.MAR_Section_Completed__c, 'sectionCompletedLink', 'sectionNotCompletedLink')}">
+       <a id="marLink" onclick="changeTab('marTab'); return false;" class="tabLink {! IF(selectedTab == 'marTab', 'tabLinkActive','' )}" >MAR</a>
+</td>
+<td class="{!IF(Evaluation__c.Cardio_Section_Completed__c, 'sectionCompletedLink', 'sectionNotCompletedLink')}">
+       <a id="cardioLink" onclick="changeTab('cardioTab'); return false;" class="tabLink {! IF(selectedTab == 'cardioTab', 'tabLinkActive','' )}">Cardiopulmonary</a>
+</td>
+<td class="{!IF(Evaluation__c.Nutrition_Section_Completed__c, 'sectionCompletedLink', 'sectionNotCompletedLink')}">
+       <a id="nutritionLink" onclick="changeTab('nutritionTab'); return false;" class="tabLink {! IF(selectedTab == 'nutritionTab', 'tabLinkActive' ,'')}" >GU/GI/Nutrition</a>
+</td>
+<td class="{!IF(Evaluation__c.Skin_Section_Completed__c, 'sectionCompletedLink', 'sectionNotCompletedLink')}">
+       <a id="skinBodyLink" onclick="changeTab('skinBodyTab'); return false;" class="tabLink {! IF(selectedTab == 'skinBodyTab', 'tabLinkActive','' )}" >Skin/Body</a>
+</td>
+<td class="{!IF(Evaluation__c.Neuro_Section_Completed__c, 'sectionCompletedLink', 'sectionNotCompletedLink')}">
+       <a id="neuroLink" onclick="changeTab('neuroTab'); return false;" class="tabLink {! IF(selectedTab == 'neuroTab', 'tabLinkActive','' )}">Neurological</a>
+</td>
+<td class="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompletedLink', 'sectionNotCompletedLink')}">
+       <a id="orthoLink" onclick="changeTab('orthoTab'); return false;" class="tabLink {! IF(selectedTab == 'orthoTab', 'tabLinkActive','' )}">Ortho</a>
+</td>
+<td class="{!IF(Evaluation__c.Rehab_Section_Completed__c, 'sectionCompletedLink', 'sectionNotCompletedLink')}">
+       <a id="rehabLink" onclick="changeTab('rehabTab'); return false;" class="tabLink {! IF(selectedTab == 'rehabTab', 'tabLinkActive','' )}">Rehab</a>
+</td>
+<td class="{!IF(Evaluation__c.Psycho_Social_Section_Completed__c, 'sectionCompletedLink', 'sectionNotCompletedLink')}">
+       <a id="psychoSocialTab" onclick="changeTab('psychoSocialTab'); return false;" class="tabLink {! IF(selectedTab == 'psychoSocialTab', 'tabLinkActive','' )}">Psycho/Social</a>
+</td>
+<td class="{!IF(Evaluation__c.Discharge_Section_Completed__c, 'sectionCompletedLink', 'sectionNotCompletedLink')}">
+       <a id="dischargeTab" onclick="changeTab('dischargeTab'); return false;" class="tabLink {! IF(selectedTab == 'dischargeTab', 'tabLinkActive','' )}">Discharge Plan</a>
+</td>
+</tr>
+</table> 
+
             <apex:pageBlockButtons location="bottom">
                 <apex:commandButton action="{!save}" value="Save" />
                 <apex:commandButton onclick="window.location='/apex/CareMeridianEvaluationView?id={!Evaluation__c.Id}&tab={!selectedTab}'; return false;" value="Cancel" />

@@ -10,17 +10,25 @@
     <apex:stylesheet value="{!$Resource.pbscardcss}" />
 
     <!--  breadcrumb -->
-    <div id="breadcrumb" class="breadcrumb"><a href="/">Home</a>&nbsp;>&nbsp;<a href="/apex/PersonsBeingServedListView">Persons Being Served</a>&nbsp;>&nbsp;<apex:outputLink value="/apex/PersonBeingServedEditnew?id={!con.Id}">{!con.FirstName} {!con.LastName}</apex:outputLink>
-    <apex:outputPanel id="admlink" rendered="{!parentPage != 'PBS'}">&nbsp;>&nbsp;<apex:outputLink value="/{!admId}">Admission</apex:outputLink></apex:outputPanel>
-    <apex:outputPanel id="asmtlink" rendered="{!parentPage = 'Assessment'}">&nbsp;>&nbsp;<a href="/{!asmtId}">{!asmtType} Assessment</a></apex:outputPanel>
-    <apex:outputPanel id="svcassignlink" rendered="{! parentPage = 'ActionPlan' || parentPage = 'SkillsTracking' || parentPage = 'ActionSummaryReport' || parentPage = 'ShiftNote' || parentPage = 'BehaviorTracking'}">&nbsp;>&nbsp;<a href="/{!servAssignId}">Service Assignment</a></apex:outputPanel>
-    <apex:outputPanel id="planlink" rendered="{!parentPage = 'ActionPlan' || parentPage = 'SkillsTracking' || parentPage = 'BehaviorTracking' || ( parentPage = 'ShiftNote' && planID != null)}">&nbsp;>&nbsp;<a href="/{!apId}">Action Plan</a></apex:outputPanel>
-    <apex:outputPanel id="skillslink" rendered="{! parentPage = 'SkillsTracking'}">&nbsp;>&nbsp;Skills Tracking</apex:outputPanel>
+    
+    <div id="breadcrumb" class="breadcrumb"><a href="/">Home</a>&nbsp;>&nbsp;
+    <a href="/apex/PersonsBeingServedListView">Persons Being Served</a>&nbsp;>&nbsp;
+    <apex:outputLink rendered="{!parentPage != 'PBS'}" value="/apex/PersonBeingServedEditnew?id={!con.Id}">{!con.FirstName} {!con.LastName}</apex:outputLink><apex:outputText value="{!con.FirstName} {!con.LastName}" rendered="{!parentPage == 'PBS'}" />
+    <apex:outputPanel id="admlink" rendered="{!parentPage != 'PBS'}">&nbsp;>&nbsp;<apex:outputLink rendered="{!parentPage!= 'Admission'}" value="/{!admId}">Admission</apex:outputLink><apex:outputText rendered="{!parentPage == 'Admission'}" value="Admission" /></apex:outputPanel>
+    <apex:outputText id="asmtlink" rendered="{!parentPage == 'Assessment'}" value=" > {!asmtType} Assessment" />
+    <apex:outputPanel id="svcassignlink" rendered="{! parentPage == 'ActionPlan' || parentPage = 'SkillsTracking' || parentPage = 'ActionSummaryReport' || parentPage = 'ShiftNote' || parentPage = 'BehaviorTracking' || parentPage='GoalObjRpt' }">&nbsp;>&nbsp;<a href="/{!servAssignId}">Service Assignment</a></apex:outputPanel>
+    <apex:outputPanel id="planlink" rendered="{! parentPage == 'SkillsTracking' || parentPage == 'BehaviorTracking' || ( parentPage == 'ShiftNote' && planID != null)}">&nbsp;>&nbsp;<a href="/{!apId}">Action Plan</a></apex:outputPanel>
+    <apex:outputText id="planlinkplan" rendered="{!parentPage == 'ActionPlan'}" value=" > Action Plan" />
+    <apex:outputText id="goalobj" rendered="{!parentPage == 'GoalObjRpt'}" value=" > Goal/Objective Documentation Report" />
+    <apex:outputPanel id="skillslink" rendered="{! parentPage =='SkillsTracking'}">&nbsp;>&nbsp;Skills Worksheet</apex:outputPanel>
+    <apex:outputPanel id="behaviorlink" rendered="{! parentPage == 'BehaviorTracking'}">&nbsp;>&nbsp;Behavior Worksheet</apex:outputPanel>
+    <apex:outputText id="summaryRept" rendered="{!parentPage == 'ActionSummaryReport'}" value=" > Action Plan Summary" />
     <apex:outputPanel id="notelink" rendered="{! parentPage = 'ShiftNote'}">&nbsp;>&nbsp;Notes</apex:outputPanel>
     <apex:outputPanel id="servAssignText" rendered="{!parentPage == 'ServAssign'}">&nbsp;>&nbsp;Service Assignment</apex:outputPanel>
     <apex:outputPanel id="servAssignLink" rendered="{!parentPage == 'CaseDocs' || parentPage == 'FidelityChecklist'}">&nbsp;>&nbsp;<a href="/apex/ServiceAssignmentEditNew?id={!servAssignId}">Service Assignment</a></apex:outputPanel>
     <apex:outputPanel id="caseDocsText" rendered="{!parentPage == 'CaseDocs'}">&nbsp;>&nbsp;Case Docs</apex:outputPanel>
     <apex:outputPanel id="fidelityChecklistText" rendered="{!parentPage == 'FidelityChecklist'}">&nbsp;>&nbsp;Fidelity Checklist</apex:outputPanel>
+    
        </div>  
     <br />
     
@@ -79,7 +87,9 @@
                         </td>
                             
                         <td style="vertical-align:top; padding-left:10px; padding-right:20px; line-height:20px">
-                            <!-- <a href="" class="servicelink">View Risk Assessment</a> -->
+                        	<apex:outputText rendered="{! parentPage != 'Assessment' && opGrp == 'Redwood' && !ISBLANK(admissionID)}">
+                            <a href="{!IF(parentPage != 'Admission', '/apex/AdmissionView?id=' + admissionID, '')}#Asmt" class="servicelink">View Risk Assessment</a><Br />
+                            </apex:outputText>
                             <apex:outputText rendered="{!(parentPage == 'Admission')}">
                             <a href="{!IF(parentPage != 'PBS', '/apex/PersonBeingServedEditNew?id=' + con.ID, '')}#Diag" class="servicelink">View Diagnosis</a><br />
                             </apex:outputText>
@@ -88,11 +98,11 @@
                             <a href="{!IF(parentPage != 'PBS', '/apex/PersonBeingServedEditNew?id=' + con.ID, '')}#Adm" class="servicelink">View Admission</a><br />
                             </apex:outputText>
                             
-                            <apex:outputText rendered="{!(parentPage == 'ServAssign' && saNew == false)}">
+                            <apex:outputText rendered="{!(parentPage == 'ServAssign' && saNew == false && opGrp == 'Cambridge' )}">
                             <a href="/apex/ServAssignExpectedDocs?id={!saId}" class="servicelink">View Case Documents</a><br />
                             </apex:outputText>
                             
-                            <apex:outputText rendered="{!(parentPage == 'ServAssign' && saNew == false)}">
+                            <apex:outputText rendered="{!(parentPage == 'ServAssign' && saNew == false && opGrp == 'Cambridge' )}">
                             <a href="/apex/ServAssignFidelityChecklist?id={!saId}" class="servicelink">View Fidelity Checklist</a><br />
                             </apex:outputText>
                                      

@@ -96,22 +96,45 @@ public class ServiceAssignmentExt {
         canCreateSummary = oSchema.IsCreateable();
     }
 
-        public Boolean showDiagnosis { get {
-        System.Debug('getting showDiagnosis with SF account = ' + pbsOwner);
-        TMN_User__c[] tmnUsers = [
-            SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:pbsOwner LIMIT 1
-        ];
-        if (tmnUsers.size() == 0) {
-            return false;
-        }
-        if(admission.state__c == 'AZ'){
-            return false;
-        
-        }
-        return tmnUsers[0].Operating_Group__c=='Redwood';
+	private Boolean pshowDiag, pshowLocation; 
+	private static Boolean psetFlags = false;
+    public Boolean showDiagnosis { get {
+    		if (! psetFlags ) {
+    			psetFlags = setShowFlags();
+    		}
+    		return pshowDiag;
     }}
-
-
+    public Boolean showLocation { get {
+    		if (! psetFlags ) {
+    			psetFlags = setShowFlags();
+    		}
+    		return pshowLocation;
+    }}
+	
+	private Boolean setShowFlags() {	
+    	if (! psetFlags) {
+    		
+    		pshowDiag = true;
+    		pshowLocation = false;
+    	
+	        System.Debug('getting showDiagnosis with SF account = ' + pbsOwner);
+    	    TMN_User__c[] tmnUsers = [
+        	    SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:pbsOwner LIMIT 1
+        	];
+        	if (tmnUsers.size() == 0) {
+            	pshowDiag = false;
+            	pshowLocation = false;
+            	psetFlags = false;
+        	} else {
+        		pshowDiag = tmnUsers[0].Operating_Group__c=='Redwood' || tmnUsers[0].Operating_Group__c=='Cambridge';
+        		pshowLocation =  tmnUsers[0].Operating_Group__c=='Redwood' ;
+        		psetFlags = true;
+        	}
+        	
+        }
+        return psetFlags;
+    	}
+    
     public void showAddLocation() {
         // empty for action support
     }
