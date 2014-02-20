@@ -543,7 +543,7 @@ function stopRKey(evt) {
       <apex:pageBlock title="Add Related Party">
         <apex:pageblockButtons location="bottom">
           <input type="button" value="Save" onClick="relatedPartySave(true); " class="btn" />
-          <input type="button" value="Save & New" onClick="relatedPartySave(false);"  class="btn"/ >
+          <input type="button" value="Save & New" onClick="relatedPartySave(false);"  class="btn"/>
           <input type="button" value="Cancel" onClick="closeModalDialog('relatedPartyModal', 'span'); j$('#relatedPartyErrors').html('');return false;"  class="btn"/>
         </apex:pageblockButtons>
 
@@ -551,7 +551,7 @@ function stopRKey(evt) {
           <p><strong>Add a related party below:</strong></p>
         </apex:facet>
 
-        <div id='relatedPartyErrors' style='color:red' />
+        <div id='relatedPartyErrors' style='color:red' ></div>
 
         <apex:pageBlockSection columns="2" id="relatedPartyEntry">
 
@@ -581,8 +581,8 @@ function stopRKey(evt) {
 
       <apex:pageBlock title="Add Agency Involved with Individual">
         <apex:pageblockButtons location="bottom">
-          <input type="button" class="btn" value="Save" onclick="agencySave(true); return false;"/ >
-          <input type="button" class="btn"  value="Save & New" onclick="agencySave(false); return false;"/ >
+          <input type="button" class="btn" value="Save" onclick="agencySave(true); return false;"/>
+          <input type="button" class="btn"  value="Save & New" onclick="agencySave(false); return false;"/>
           <input type="button" class="btn"  value="Cancel" onclick="closeModalDialog('agencyModal', 'span');j$('#agencyErrors').html('');return false;" />
         </apex:pageblockButtons>
 
@@ -590,7 +590,7 @@ function stopRKey(evt) {
           <p><strong>Add an agency involved with the person being referred below:</strong></p>
         </apex:facet>
 
-        <div id='agencyErrors' style='color:red' />
+        <div id='agencyErrors' style='color:red' ></div>
 
         <apex:pageBlockSection columns="1" id="agencyEntry">
           <apex:pageBlockSectionItem >
@@ -619,7 +619,7 @@ function stopRKey(evt) {
 
  <!-- Add Funding Source modal. -->
     <apex:outputPanel id="FundingSourceModal" style="display:none">
-      <div id='fundingMessages' />
+      <div id='fundingMessages' ></div>
       <apex:pageBlock title="Add Funding Source" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative'}">
         <apex:pageBlockSection columns="1" id="fundingSourceEntry">
             <apex:inputField value="{!fundingSource.Funding_Source__c}" id="fundingEntry_Source"/>
@@ -951,8 +951,8 @@ function stopRKey(evt) {
       <apex:pageBlock title="Add Location" id="ReferralLocationModalBlock">
       <!--<p>{!$Component.ReferralLocationModalBlock.referralLocationEntry.sectionItem.sl.comp.lookupElement_lkid}</p>-->
         <apex:pageblockButtons location="bottom" id="buttonsBlock">
-          <input type="button" id="tb" class="btn" value="Save" onclick="locationSave(true,'{!$Component.ReferralLocationModalBlock.referralLocationEntry.sectionItem.sl.comp.lookupElement_lkid}'); return false;"/ >
-          <input type="button" class="btn" value="Save & New" onclick="locationSave(false,'{!$Component.ReferralLocationModalBlock.referralLocationEntry.sectionItem.sl.comp.lookupElement_lkid}'); return false;"/ >
+          <input type="button" id="tb" class="btn" value="Save" onclick="locationSave(true,'{!$Component.ReferralLocationModalBlock.referralLocationEntry.sectionItem.sl.comp.lookupElement_lkid}'); return false;"/>
+          <input type="button" class="btn" value="Save & New" onclick="locationSave(false,'{!$Component.ReferralLocationModalBlock.referralLocationEntry.sectionItem.sl.comp.lookupElement_lkid}'); return false;"/>
           <input type="button" class="btn" value="Cancel" onclick="closeModalDialog('ReferralLocationModal', 'span');j$('#locationErrors').html('');return false;" />
         </apex:pageblockButtons>
 
@@ -960,7 +960,7 @@ function stopRKey(evt) {
           <p><strong>Add Referral Location:</strong></p>
         </apex:facet>
 
-        <div id='locationErrors' style='color:red' />
+        <div id='locationErrors' style='color:red' ></div>
 
         <apex:pageBlockSection columns="1" id="referralLocationEntry">
             <!-- Added by Kossi 05/06/13 2:00 AM -->
@@ -982,8 +982,8 @@ function stopRKey(evt) {
     <apex:outputpanel style="display:none" id="ActivityModal">
        <apex:pageBlock title="Add Activity">
         <apex:pageblockButtons location="bottom">
-          <input type="button" class="btn" value="Save" onclick="activitySave(true); return false;"/ >
-          <input type="button" class="btn" value="Save & New" onclick="activitySave(false); return false;"/ >
+          <input type="button" class="btn" value="Save" onclick="activitySave(true); return false;"/>
+          <input type="button" class="btn" value="Save & New" onclick="activitySave(false); return false;"/>
           <input type="button" class="btn" value="Cancel" onclick="closeModalDialog('ActivityModal', 'span');j$('#activityErrors').html('');return false;" />
         </apex:pageblockButtons>
 
@@ -991,7 +991,7 @@ function stopRKey(evt) {
           <p><strong>Add Activity:</strong></p>
         </apex:facet>
 
-        <div id='activityErrors' style='color:red' />
+        <div id='activityErrors' style='color:red' ></div>
 
         <apex:pageBlockSection columns="1" id="activityEntry" >
             <apex:inputField value="{!activity.Subject}" id="activityEntry_Subject"/>
@@ -1790,6 +1790,7 @@ function stopRKey(evt) {
           />
           <apex:outputField value="{!Referral__c.Mobility__c}"
             rendered="{!ReferralRecordType = 'Arizona' ||
+            			ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Iowa' ||
                         ReferralRecordType = 'Illinois' ||
                         ReferralRecordType = 'Minnesota' ||
@@ -1868,8 +1869,7 @@ function stopRKey(evt) {
           />
           <!-- Row 5, Col 1 -->
           <apex:outputField value="{!Referral__c.Mobility__c}"
-            rendered="{!isCambridge ||
-                        ReferralRecordType = 'California'}"
+            rendered="{!isCambridge }"
           />
           <apex:outputField value="{!Referral__c.Gender_Specific_Staffing__c}"
             rendered="{!ReferralRecordType = 'Arizona' ||
@@ -1877,6 +1877,7 @@ function stopRKey(evt) {
           />
           <apex:outputField value="{!Referral__c.Accessible_Housing_Needed__c}"
             rendered="{!ReferralRecordType = 'Iowa' ||
+            			ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Illinois' ||
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'North Dakota' ||
@@ -1960,11 +1961,11 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Accessible_Housing_Needed__c}"
             rendered="{!isCambridge ||
                         ReferralRecordType = 'Arizona' ||
-                        ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}"
           />
           <apex:outputField value="{!Referral__c.Accessible_Vehicle_Needed__c}"
-            rendered="{!ReferralRecordType = 'Iowa' ||
+            rendered="{!ReferralRecordType = 'California' ||
+            			ReferralRecordType = 'Iowa' ||
                         ReferralRecordType = 'Illinois' ||
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'North Dakota' ||
@@ -2056,8 +2057,10 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Accessible_Vehicle_Needed__c}"
             rendered="{!isCambridge ||
                         ReferralRecordType = 'Arizona' ||
-                        ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}"
+          />
+          <apex:outputField value="{!Referral__c.Current_Medical_Conditions__c}"
+            rendered="{!ReferralRecordType = 'California'}"
           />
           <apex:outputField value="{!Referral__c.Area_of_State_Interested_In__c}"
             rendered="{!ReferralRecordType = 'Iowa' ||
@@ -2146,9 +2149,11 @@ function stopRKey(evt) {
             rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'Nevada'}"
           />
+          <apex:outputField value="{!Referral__c.Restricted_Health_Conditions__c}"
+            rendered="{!ReferralRecordType = 'California'}"
+          />
           <apex:outputField value="{!Referral__c.Current_Medical_Conditions__c}"
-            rendered="{!ReferralRecordType = 'California' ||
-                        ReferralRecordType = 'Iowa' ||
+            rendered="{!ReferralRecordType = 'Iowa' ||
                         ReferralRecordType = 'Illinois' ||
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'North Dakota' ||
@@ -2221,9 +2226,6 @@ function stopRKey(evt) {
           <!-- Row 9, Col 1 -->
           <apex:outputField value="{!Referral__c.Area_of_State_Interested_In__c}"
             rendered="{!isCambridge}"
-          />
-          <apex:outputField value="{!Referral__c.Restricted_Health_Conditions__c}"
-            rendered="{!ReferralRecordType = 'California'}"
           />
           <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Wisconsin' ||
                         ReferralRecordType = 'Iowa'}" />
