@@ -286,6 +286,10 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>ChangePasswordController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>ChatRetentionTest2</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -322,7 +326,19 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>CredentialAdd</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>CredentialController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>CredentialRecordHandler</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>CredentialRecordHandlerTEST</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -434,6 +450,10 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>ForgotPasswordController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>GenericHistoryComponentController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -467,6 +487,10 @@
     </classAccesses>
     <classAccesses>
         <apexClass>MentorViewController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>MyProfilePageController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -635,6 +659,10 @@
     </classAccesses>
     <classAccesses>
         <apexClass>Plans_AttachmentCloneBatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>ProgressNoteExtension</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -810,6 +838,14 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>SiteLoginController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>SiteRegisterController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>SkillSummaryTableForm</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -843,6 +879,14 @@
     </classAccesses>
     <classAccesses>
         <apexClass>TMNUserTestClass</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>TMN_ContactHandler</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>TMN_ContactHandlerTEST</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -2960,11 +3004,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>CareMeridian_Contract__c.Type_of_Change__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>CareMeridian_Contract__c.Wound_Vac_Details__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -3650,12 +3689,52 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Credential_Profile__c.Applies_CPS_Full_Disclosure__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Profile__c.Applies_Conviction_Past_5_Federal__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Profile__c.Applies_Conviction_Past_5_State__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Profile__c.Applies_Documented_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Profile__c.Applies_Exam_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Credential_Profile__c.Applies_Expiration_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Credential_Profile__c.Applies_FBI_Full_Disclosure__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Profile__c.Applies_Federal_Conviction__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Credential_Profile__c.Applies_Note__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Profile__c.Applies_Outcome_of_Clearance__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -3666,6 +3745,56 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Credential_Profile__c.Applies_Requested_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Profile__c.Applies_State_Conviction__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Profile__c.Applies_Type_of_Conviction_Federal__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Profile__c.Applies_Type_of_Conviction_State__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Profile__c.DHR_Documented_Field__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Profile__c.DHR_Received_Field__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Profile__c.DHR_Scope__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Profile__c.Help_Text_Note__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Profile__c.Help_Text__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Profile__c.Needed_for_18_Over__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Profile__c.Needed_for_Under_18__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -3690,7 +3819,27 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Credential_Profile__c.Optional_for_Pet__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Profile__c.Optional_for_Resident_Non_Rel_Over_18__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Profile__c.Optional_for_Resident_Non_Rel_Under_18__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Credential_Profile__c.Optional_for_Resident_Non_Relative__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Profile__c.PBI__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -3715,12 +3864,77 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Credential_Profile__c.Required_for_Pet__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Credential_Profile__c.Required_for_Resident_Non_Relative__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Credential_Profile__c.Similar_Credentials__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Record__c.CPS_Full_Disclosure_Required__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Record__c.Conviction_Past_5_Years_Federal__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Record__c.Conviction_Past_5_Years_State__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Credential_Record__c.Conviction_Past_5_Years__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Credential_Record__c.Credential_Profile_Name__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Credential_Record__c.Credential_Profile__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Credential_Record__c.DHR_Documented_Field__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Credential_Record__c.DHR_Received_Field__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Credential_Record__c.DHR_Scope__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Credential_Record__c.Days_Since_Expired__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Credential_Record__c.Days_Since_Received__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Record__c.Documented_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -3730,12 +3944,27 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Credential_Record__c.FBI_Full_Disclosure_Required__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Record__c.Federal_Conviction__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Credential_Record__c.In_File__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Credential_Record__c.Note__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Credential_Record__c.Person__c</field>
+        <field>Credential_Record__c.Outcome_of_Clearance__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -3746,6 +3975,31 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Credential_Record__c.Requested_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Credential_Record__c.Similar_Credentials__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Record__c.State_Conviction__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Record__c.TMN_Contact__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Record__c.Type_of_Conviction_Federal__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Record__c.Type_of_Conviction_State__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -5710,36 +5964,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Funding_Source__c.Adjuster_Company__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Funding_Source__c.Adjuster_Email__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Funding_Source__c.Adjuster_Fax__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Funding_Source__c.Adjuster_Name__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Funding_Source__c.Adjuster_Phone__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Funding_Source__c.Are_injuries_covered__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Funding_Source__c.Authorization_Comments__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -5895,11 +6119,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Funding_Source__c.Days_Authorized__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Funding_Source__c.Deductible_Applicable_to_OOP__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -5916,11 +6135,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Funding_Source__c.Did_CM_confirm_level__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Funding_Source__c.Did_drugs_alcohol_contribute_to_injury__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -5965,22 +6179,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Funding_Source__c.In_patient_Benefits_Limit__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Funding_Source__c.Individual_Plan__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Funding_Source__c.Insured_DOB__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Funding_Source__c.Insured_SSN__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -6045,36 +6244,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Funding_Source__c.NR_CM_Company__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Funding_Source__c.NR_CM_Email__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Funding_Source__c.NR_CM_Fax__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Funding_Source__c.NR_CM_Name__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Funding_Source__c.NR_CM_Phone__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Funding_Source__c.Negotiated_Rate__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Funding_Source__c.Network_Phone__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -6100,11 +6269,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Funding_Source__c.Out_patient_Visit_Limit__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Funding_Source__c.Patient_Has_Policy__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -6126,11 +6290,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Funding_Source__c.Payer_Phone__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Funding_Source__c.Payer_Type__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -6211,11 +6370,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Funding_Source__c.Received_Date_Time__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Funding_Source__c.Received_Rate__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -6306,11 +6460,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Funding_Source__c.Self_Inflicted__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Funding_Source__c.Self_Insured_Policy__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -6921,6 +7070,236 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Media_Outlet__c.Type__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Mentor_Tracking_Metadata__c.Credential_Profile__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Metadata__c.Credential_Record_Date_Field__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Metadata__c.Credential_Record_Source_Field__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Metadata__c.Field_to_Update__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Metadata__c.Parallel_Credentials_Operator__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Metadata__c.Parallel_Credentials__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Metadata__c.Report__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Metadata__c.Similar_Credentials__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Metadata__c.Superceded_By__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Metadata__c.Supercedes__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Mentor_Tracking_Report_Record__c.Affiliation_Type__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Mentor_Tracking_Report_Record__c.CPA_Home_City__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Mentor_Tracking_Report_Record__c.CPA_Home_Zipcode__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.Conviction_Past_5_Years__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.Date_Current_CPS_Clearance_Request__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.Date_Current_CPS_Clearance_Results__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.Date_Fed_Crim_Background_Check_Request__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.Date_Fed_Crim_Background_Check_Results__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Mentor_Tracking_Report_Record__c.Date_Foster_Home_Close__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.Date_Foster_Home_Initial_Approval__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.Date_Foster_Home_Most_Recent_Approval__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.Date_Most_Recent_Fire_Safety__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.Date_Most_Recent_HHSI__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.Date_Most_Recent_Med_Eval__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.Date_State_Crim_Background_Check_Request__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.Date_State_Crim_Background_Check_Results__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.Doc_of_Current_CPS_Clearance_in_File__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.Doc_of_Fed_Crim_Background_Check_in_File__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.Doc_of_Fire_Safety_in_File__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.Doc_of_Home_Safety_Inspection_in_File__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.Doc_of_Med_Eval_in_File__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.Doc_of_State_Crim_Bckgrnd_Check_in_File__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.Federal_Conviction__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Mentor_Tracking_Report_Record__c.Foster_Family_Structure__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.Hispanic_Heritage__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Mentor_Tracking_Report_Record__c.Include_in_DHR_Report__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.Mentor__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.Outcome_of_Clearance__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Mentor_Tracking_Report_Record__c.Population_This_Home_Is_Associated_With__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Mentor_Tracking_Report_Record__c.Primary_Race__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Mentor_Tracking_Report_Record__c.Secondary_Race__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.State_Conviction__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Mentor_Tracking_Report_Record__c.Street_Address_of_CPA_Home__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.TMN_Contact__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.Type_of_Conviction_Federal__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -8120,11 +8499,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Person_Being_Referred__c.Race__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Person_Being_Referred__c.SSN__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -8180,17 +8554,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Person__c.Comments__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Person__c.Date_of_Birth__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Person__c.Disregarded__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -11385,17 +11749,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Referral__c.Adjudicated_Delinquent__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Referral__c.Admission_Location__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.After_Care__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -11461,11 +11815,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Referral__c.Behavior_Summary__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Billing_ID__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -11580,17 +11929,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Referral__c.Current_Charges__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Referral__c.Current_Drug_Use__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Current_Juvenile_Services_Involvement__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -11665,11 +12004,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Referral__c.Drug_Possession_Distribution__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Referral__c.Eating_Disorders__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -11686,21 +12020,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Referral__c.Estimated_Discharge_Date__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Evaluated_By_External__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Evaluated_By_Internal__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Evaluated_By_Source__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -11740,11 +12059,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Referral__c.Felony__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Referral__c.Financial_Resources__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -11756,11 +12070,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Referral__c.Fire_Setting__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Gang_Involvement__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -11816,11 +12125,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Referral__c.How_did_referral_come_in__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.How_did_they_learn__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -11959,11 +12263,6 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Most_Likely_Placement_Type__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
         <editable>false</editable>
         <field>Referral__c.Name_PBR__c</field>
         <readable>true</readable>
@@ -12005,17 +12304,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Referral__c.Other_Placement_Type_Desc__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Referral__c.Other__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Out_of_Home_Placement_Risk_Level__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12050,117 +12339,12 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Referral__c.Placement_Current__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Placement_Foster_Care_Count__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Placement_GroupHomeJuv_Count__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Placement_Group_Home_Count__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Placement_History_Plan_to_Return__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Placement_History__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Placement_InpatientSubAbuseTx_Count__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Placement_LongTermSecConfine_Count__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Placement_Non_Current_Historical__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Placement_Other_Count__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Placement_Past_Other_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Placement_PsychHosp_Count__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Placement_Relative_Count__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Placement_ResTreatFacility_Count__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Placement_RespEmShelter_Count__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Placement_Secure_Detention_Count__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Placement_Type_Current_Other__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Placement_Type_Current__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Placement_Type_Risk__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Pre_Court__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Referral__c.Preferred_Setting__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>Referral__c.Previous_Brain_Injury__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Previous_Juvenile_Services_Involvement__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12176,11 +12360,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Referral__c.Prior_Program_Information__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Probation__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12245,31 +12424,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Referral__c.Reason_Category_Behavioral_Problems__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Reason_Category_Medical_Problems__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Reason_Category_Mental_Health_Emotional__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Reason_Category_Physical_Environment__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Reason_Category_School_Problems__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Referral__c.Reason_for_Referral__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -12315,31 +12469,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Referral__c.Referral_Provided_By_External__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Referral_Provided_By_MENTOR_Staff__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Referral_Provided_By_Source__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Referral_Provided_By__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Referral_Source_Type_Other_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Referral__c.Referral_Source_Type__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -12351,11 +12480,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Referral__c.Referral_Status__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Referrer_Address__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12395,11 +12519,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Referral__c.Repeat_Offender__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Referral__c.Residential_Support_Rate_Established__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -12416,16 +12535,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Referral__c.Review_On__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Risk_Level__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Risk_of_Out_of_Home_Placement__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12505,11 +12614,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Referral__c.Sex_Offender__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Referral__c.Spirit_Case_Number__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -12581,11 +12685,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Referral__c.Target_Org_Contact_Id__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Theft__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -13745,7 +13844,32 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>TMN_Contact__c.DHR_CPA_Race_1__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>TMN_Contact__c.DHR_CPA_Race_2__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>TMN_Contact__c.Date_of_Birth__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>TMN_Contact__c.Denied_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>TMN_Contact__c.Denied_Reason__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>TMN_Contact__c.Denied__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -13771,6 +13895,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>TMN_Contact__c.Gender__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>TMN_Contact__c.Hispanic_Heritage__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -13815,6 +13944,16 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>TMN_Contact__c.Marital_Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>TMN_Contact__c.Mentor_Is_Active__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>TMN_Contact__c.Mentor__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -13826,6 +13965,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>TMN_Contact__c.Most_Recent_Recertification_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>TMN_Contact__c.No_Longer_In_Home__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>TMN_Contact__c.Population_This_Home_Is_Associated_With__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -13881,6 +14030,21 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>TMN_Contact__c.Suspended__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>TMN_Contact__c.Withdrawn_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>TMN_Contact__c.Withdrawn_Reason__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>TMN_Contact__c.Withdrawn__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -15485,7 +15649,7 @@
         <layout>Credential_Profile__c-Credential Profile Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Credential_Record__c-Credential Record Layout</layout>
+        <layout>Credential_Record__c-Credential Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Diagnosis__c-Diagnosis Layout</layout>
@@ -15667,6 +15831,12 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>Media_Outlet__c-Marketing Source Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Mentor_Tracking_Metadata__c-Mentor Tracking Metadata Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Mentor_Tracking_Report_Record__c-Mentor Tracking Report Record Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>NPA_Audit__c-NPA_Audit Layout</layout>
@@ -16508,6 +16678,24 @@
         <allowEdit>true</allowEdit>
         <allowRead>true</allowRead>
         <modifyAllRecords>true</modifyAllRecords>
+        <object>Mentor_Tracking_Metadata__c</object>
+        <viewAllRecords>true</viewAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <allowCreate>true</allowCreate>
+        <allowDelete>true</allowDelete>
+        <allowEdit>true</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>true</modifyAllRecords>
+        <object>Mentor_Tracking_Report_Record__c</object>
+        <viewAllRecords>true</viewAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <allowCreate>true</allowCreate>
+        <allowDelete>true</allowDelete>
+        <allowEdit>true</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>true</modifyAllRecords>
         <object>NPA_Audit__c</object>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
@@ -17043,6 +17231,10 @@
         <enabled>true</enabled>
     </pageAccesses>
     <pageAccesses>
+        <apexPage>CredentialAdd</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
         <apexPage>DocPreview</apexPage>
         <enabled>true</enabled>
     </pageAccesses>
@@ -17532,6 +17724,7 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
+        <personAccountDefault>true</personAccountDefault>
         <recordType>ContentVersion.Application_Help_Doc</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -17667,6 +17860,7 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
+        <personAccountDefault>true</personAccountDefault>
         <recordType>Funding_Source__c.Generic</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -17748,6 +17942,7 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
+        <personAccountDefault>true</personAccountDefault>
         <recordType>Person__c.Mentor</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -17758,6 +17953,7 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
+        <personAccountDefault>true</personAccountDefault>
         <recordType>Plan_ServiceAssignment_mJO__c.SA_Intervention_JO</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -17773,6 +17969,7 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
+        <personAccountDefault>true</personAccountDefault>
         <recordType>Plan__c.PA_Periodic_Services</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -17873,6 +18070,7 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
+        <personAccountDefault>true</personAccountDefault>
         <recordType>Project__c.Growth_Goal</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -17933,6 +18131,7 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
+        <personAccountDefault>true</personAccountDefault>
         <recordType>Referral__c.Generic</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -18013,16 +18212,18 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
+        <personAccountDefault>true</personAccountDefault>
         <recordType>Service_Assignment__c.Standard_Service_Assignment</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>false</default>
         <recordType>TMN_Contact__c.Household_Member</recordType>
-        <visible>true</visible>
+        <visible>false</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
+        <personAccountDefault>true</personAccountDefault>
         <recordType>TMN_Contact__c.Mentor</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -18033,6 +18234,7 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
+        <personAccountDefault>true</personAccountDefault>
         <recordType>Task.Progress_Note_Tasks</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -18078,6 +18280,14 @@
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <tabVisibilities>
+        <tab>Credential_Profile__c</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>Credential_Record__c</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
         <tab>Field_Tag__c</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
@@ -18099,6 +18309,14 @@
     </tabVisibilities>
     <tabVisibilities>
         <tab>Media_Outlet__c</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>Mentor_Tracking_Metadata__c</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>Mentor_Tracking_Report_Record__c</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <tabVisibilities>
