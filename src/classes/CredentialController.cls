@@ -2,10 +2,11 @@ public class CredentialController {
 
 	public Id contactID = apexpages.currentpage().getparameters().get('contactid');
     public List<Credential_Record__c> AllRecords  {get;set;}
+    public TMN_Contact__c theTmnContact {get;set;}
        
     public CredentialController() {
-            AllRecords = [SELECT Name, Requested_Date__c, Documented_Date__c, Received_Date__c, Expiration_Date__c, Note__c, Credential_Profile__r.Name, 
-                Credential_Profile__r.Applies_Requested_Date__c, Credential_Profile__r.Applies_Documented_Date__c, Credential_Profile__r.Applies_Received_Date__c, 
+            AllRecords = [SELECT Name, Requested_Date__c, Documented_Date__c, Received_Date__c, Expiration_Date__c, Note__c,
+            	Credential_Profile__r.Name, Credential_Profile__r.Applies_Requested_Date__c, Credential_Profile__r.Applies_Documented_Date__c, Credential_Profile__r.Applies_Received_Date__c, 
                 Credential_Profile__r.Applies_Expiration_Date__c, Credential_Profile__r.Applies_Note__c, Credential_Profile__r.PBI__c,
                 Credential_Profile__r.Applies_CPS_Full_Disclosure__c, CPS_Full_Disclosure_Required__c, Credential_Profile__r.Applies_State_Conviction__c,
                 State_Conviction__c, Type_of_Conviction_State__c, Credential_Profile__r.Applies_Type_of_Conviction_State__c,
@@ -16,6 +17,8 @@ public class CredentialController {
                 Credential_Profile__r.Applies_FBI_Full_Disclosure__c, FBI_Full_Disclosure_Required__c, Credential_Profile__r.Help_Text__c,
                 Outcome_of_Clearance__c, Credential_Profile__r.Applies_Outcome_of_Clearance__c
                 FROM Credential_Record__c WHERE TMN_Contact__c = :contactID ORDER BY Credential_Profile__r.Name];
+                
+            TheTmnContact = [ SELECT Full_Name__c FROM TMN_Contact__c WHERE Id = :contactID ];
     }
     
     public PageReference SaveCreds() {
