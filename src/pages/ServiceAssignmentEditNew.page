@@ -77,7 +77,7 @@
                              columns="3"
                              collapsible="false"
                              id="ContractAssoc"
-                             rendered="{!!showDiagnosis}">
+                             rendered="{!!showLocation}">
             <apex:pageBlockTable value="{!contractRows}" var="c" id="ContractTable">
                 <apex:column headerValue="Select" >
                     <apex:inputCheckbox value="{!c.selectedContract}" disabled="{!!editSA}">
@@ -96,11 +96,11 @@
                              columns="1"
                              collapsible="false"
                              id="ProgAssocViewNEW"
-                             rendered="{!!editSA}" >
+                             rendered="{!!editSA && !showLocation}" >
                 <apex:outputText value="{!theServAssign.Program__c}" />
                 <apex:outputText value="{!theServAssign.Location_Region__c}" />
                 <apex:outputText value="{!theServAssign.Service_Line__c}" />
-        <apex:outputPanel id="ProgAssocPanelView2NEW" layout="block" styleClass="col" rendered="{!!editSA && !showDiagnosis}" >
+        <apex:outputPanel id="ProgAssocPanelView2NEW" layout="block" styleClass="col" rendered="{!!editSA && !showLocation }" >
             <apex:pageBlockTable value="{!programRows}" var="pR" id="ProgramAssocTableNEW" rendered="{!theServAssign.Program__c=='IFCS'}">
                 <apex:column headerValue="{!IF(editSA,'Select','Selected')}">
                     <apex:outputPanel rendered="{!(pR.paPhase<>999 && pR.paPhase==theServAssign.Phase__c)}">
@@ -136,7 +136,7 @@
                              columns="1"
                              collapsible="false"
                              id="ProgAssoc"
-                             rendered="{!editSA && !showDiagnosis}">
+                             rendered="{!editSA && !showLocation}">
             <apex:outputPanel id="ProgAssocPanelEdit" layout="block" styleClass="col" rendered="{!editSA}" >
                 <apex:actionStatus id="myStatus">
                         <apex:facet name="start">
@@ -210,13 +210,15 @@
 
 
     </apex:pageBlockSection>
-    <hr />
+    
+    <apex:outputPanel rendered="{!!showLocation}" ><hr /></apex:outputPanel>    
     <apex:pageBlockSection title="Service Code Selection"
                              showHeader="true"
                              columns="2"
                              collapsible="false"
                              id="ServCodeSelect"
-                             rendered="{!!showDiagnosis}">
+                             rendered="{!!showLocation}">
+                         
               <apex:outputPanel layout="block" styleClass="col" rendered="{!OR(currentProgram=='',currentLocation=='',currentServiceLine=='')}">
                   You must select a Program, Location, and Service Line for this Service Assignment before you can select a Service Code.
               </apex:outputPanel>
@@ -357,7 +359,7 @@ END: Uncomment to have the element collapsed by default -->
                              columns="1"
                              collapsible="true"
                              id="ProgAssoc"
-                             rendered="{!!showDiagnosis}">
+                             rendered="{!!showLocation}">
             <apex:outputPanel id="ProgAssocPanelView" layout="block" styleClass="col" rendered="{!!editSA}" >
                 <apex:outputLabel for="ProgramField" title="Program" value="Program " style="font-weight:bold" />
                 <apex:outputField id="ProgramField" value="{!theServAssign.Program__c}" /><br />
@@ -406,7 +408,7 @@ END: Uncomment to have the element collapsed by default -->
 
 
     </apex:pageBlockSection>
-    <apex:outputPanel rendered="{!!showDiagnosis}">
+    <apex:outputPanel rendered="{!!showLocation}">
         <hr />
     </apex:outputPanel>
     
@@ -415,7 +417,7 @@ END: Uncomment to have the element collapsed by default -->
                              columns="2"
                              collapsible="true"
                              id="ServCodeSelect"
-                             rendered="{!!showDiagnosis}">
+                             rendered="{!!showLocation}">
               <apex:outputPanel layout="block" styleClass="col" rendered="{!OR(currentProgram=='',currentLocation=='',currentServiceLine=='')}">
                   You must select a Program, Location, and Service Line for this Service Assignment before you can select a Service Code.
               </apex:outputPanel>
@@ -491,7 +493,7 @@ END: Uncomment to have the element collapsed by default -->
                 </apex:actionStatus>
             </apex:outputPanel>
     </apex:pageBlockSection>
-    <apex:outputPanel rendered="{!!showDiagnosis}">
+    <apex:outputPanel rendered="{!!showLocation}">
         <hr />
     </apex:outputPanel>
     <apex:pageBlockSection title="System Information"
@@ -517,7 +519,7 @@ END: Uncomment to have the element collapsed by default -->
 
 </apex:pageBlock>
 
-<apex:pageBlock title="Location of Service" rendered="{!showDiagnosis}">
+<apex:pageBlock title="Location of Service" rendered="{!showLocation}">
 <apex:pageBlockSection columns="2"
                              id="locationDisplay" collapsible="false">
           <apex:pageBlockSectionItem rendered="{!editSA}" >
@@ -777,7 +779,7 @@ END: Uncomment to have the element collapsed by default -->
     </apex:outputPanel>
     </apex:outputPanel>
 </apex:form>
-<apex:relatedList list="Action_Summaries__r" rendered="{!showDiagnosis && $ObjectType.Action_Summary__c.accessible && !editSA}" />
+<apex:relatedList list="Action_Summaries__r" rendered="{!showLocation && $ObjectType.Action_Summary__c.accessible && !editSA}" />
 <c:SObjectNotesAndAttachments parentId="{!Service_Assignment__c.id}" showAction="false" rendered="{!!editSA && newSA==false}" ></c:SObjectNotesAndAttachments> 
 <c:GenericHistoryComponent myObject="{!Service_Assignment__c}" rendered="{!!editSA && newSA==false}" />
 

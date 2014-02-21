@@ -10,7 +10,8 @@ public without sharing class Notes_ProgressNote_AddlActions {
 	public Notes_ProgressNote_AddlActions( ApexPages.StandardController controller ) {
 		
 		thePN = (Progress_Note__c) controller.getRecord();
-		thePN = [select id, Purpose_Service_is_Billable__c, disregard_note__c, status__c,approval_status__c, locked__c, ownerid from Progress_Note__c where id = :thePN.Id];
+		if (thePN.ID != null )
+			thePN = [select id, Purpose_Service_is_Billable__c, disregard_note__c, status__c,approval_status__c, locked__c, ownerid from Progress_Note__c where id = :thePN.Id];
 		
 	}
 	
@@ -57,9 +58,15 @@ public without sharing class Notes_ProgressNote_AddlActions {
 			
 			
 			if (
+				// Cambridge			
 				p.PermissionSet.Name.Contains('ESD_Notes_Supervisor') || 
 				p.PermissionSet.Name.Contains('ESD_Notes_Case_Handler')  ||
-				( p.PermissionSet.Name.Contains('ESD_Notes_Clinical_Data_User') && thePN.OwnerID == UserInfo.getUserId()) ) {
+				// Redwood
+				p.PermissionSet.Name.Contains('Level_3') ||
+				( ( p.PermissionSet.Name.Contains('ESD_Notes_Clinical_Data_User') || 
+					p.PermissionSet.Name.Contains('Level_2') ||
+					p.PermissionSet.Name.Contains('Level_1') ) &&
+					thePN.OwnerID == UserInfo.getUserId()) ) {
 				System.Debug('User is allowed.');
 				return true;	
 				}

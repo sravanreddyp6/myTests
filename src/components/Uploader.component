@@ -136,7 +136,7 @@
              });
         </script>
 
-    <c:PersonalRecord rendered="{!showPersonalRecord}" pbsId="{!sobjId}" parentPage="PBS" />
+    <c:PersonalRecord rendered="{!showPersonalRecord}" pbsId="{!sobjId}" parentPage="Uploader" />
     <br />
     <apex:form id="attForm">
         <apex:pageBlock title="Upload Attachments">
@@ -184,7 +184,7 @@
     </apex:form>
     
       <apex:form id="form">   
-     <apex:actionFunction action="{!deleteFile}" name="removeAttachment" reRender="attachmentsTable" status="working" >
+     <apex:actionFunction action="{!deleteFile}" name="removeAttachment" reRender="attachmentsTable" status="working">
              <apex:param name="aId" value="" />
       </apex:actionFunction>
         
@@ -196,7 +196,7 @@
         <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
             <apex:column headerValue="Action">
                <apex:outputLink value="{!URLFOR($Action.Attachment.Download, attachment.Id)}" target="_blank">View</apex:outputLink>   |
-               <apex:outputText >
+               <apex:outputText rendered="{!$Profile.Name == 'System Administrator'}" >
                <a id="{!attachment.id}" class="deleteLink">Del</a>
                </apex:outputText>
                    <apex:outputPanel rendered="{!showHeadShotSelection}">

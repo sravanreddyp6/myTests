@@ -85,7 +85,16 @@ public with sharing class referral_Controller2 {
   public Id pBRId { get; set; }
   private Id personBeingServedId {get; set;}
   public Id pBSId { get; set; }
-    public boolean isEditor{get; set;}
+  public boolean isEditor{get; set;}
+  public boolean canConvert{ get { 
+  	
+  		Set<string> RWStates = new Set<string>{'Minnesota', 'California', 'Indiana'};
+  		system.debug( 'Ref record type: ' + referralrecordtype );
+  		system.debug(' is cambridge:' + iscambridge);
+  		system.debug(' operatinggroup:' + operatinggroup);
+  		return ((operatinggroup == 'Cambridge' && isCambridge )|| (operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ));
+  	} set;}
+    
 
   public static final String REFERRAL_EDIT_URL = '/apex/referral';
   public static final String REFERRAL_CONVERT_URL = '/apex/referralConversion';
@@ -135,6 +144,7 @@ public with sharing class referral_Controller2 {
     }
 
     setIsEditor();
+    isCambridge = false;
     referralRecordType= (this.ReferralRecord.RecordTypeId != null)?Utility.getRecordTypeForReferral(Id.valueOf(this.ReferralRecord.RecordTypeId)):'';//(this.ReferralRecord.RecordType.Name!=null)?this.ReferralRecord.RecordType.Name:[select name from recordtype where id=:this.referralRecord.recordTypeId limit 1].name;
     if(referralRecordType.startsWith('Cambridge')) {
         isCambridge = true;
@@ -281,7 +291,6 @@ public with sharing class referral_Controller2 {
     pBRId = (this.referralRecord.Person_Being_Referred__c != null) ? this.referralRecord.Person_Being_Referred__c : pBRIdParam;
   }
 
-	// CTEAE-9:  Josh added Race__c to the query to populate pBRRec.
   private Person_Being_Referred__c getPBRRec() {
     Person_Being_Referred__c pBRRec;
     try {

@@ -13,8 +13,38 @@ public with sharing class PBS_Controller {
   private Id personBeingServedId {get; set;}
   public Id pBSId { get; set; }
   public boolean isEditor{get; set;}
+public Boolean showDiagnosis { get {
+        if (TMNUser == null) {
+            return false;
+        }
 
+        return TMNUser.Operating_Group__c=='Redwood'
+        	|| TMNUser.Operating_Group__c=='Cambridge';
+    }}	
 
+public boolean canViewFamilyInfo { 
+	get {
+		return TMNUser == null ? false : TMNUser.Operating_Group__c == 'Cambridge';
+	}}
+
+private TMN_User__c TMNUser_internal;
+private boolean TMNUser_set = false;
+private TMN_User__c TMNUser {
+	get {
+		if (!TMNUser_set) {
+			TMN_User__c[] users = [
+            	SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c= :UserInfo.getUserId() LIMIT 1
+        	];
+        	if (users.size() == 0) {
+        		TMNUser_internal = null;
+        	} else {
+        		TMNUser_internal = users[0];
+        	}
+        	TMNUser_set = true;
+		}
+		return TMNUser_internal;
+	}}
+  	
   public PBS_Controller(ApexPages.standardController ctl){
     	system.debug('in constructor');
 

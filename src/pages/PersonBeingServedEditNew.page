@@ -174,10 +174,12 @@ function ConfigureRelationshipOther(control){
     <apex:repeat value="{!$ObjectType.Contact.FieldSets.PBS_Basic}" var="f">
         
             <apex:outputField value="{!Contact[f]}"  rendered="{! NOT(pbsEditModeOn) && (f != 'Primary_Language__c')}" />
-            <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn && (f != 'Primary_Language__c')}" required="{!OR(f.required, f.dbrequired)}"/>
+            <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn && (f != 'Primary_Language__c') }" required="{!OR(f.required, f.dbrequired)}"/>
             
-                        
+            
+            <apex:pageBlockSectionItem rendered="{! f== 'Primary_Language__c'}" /><!--  blank space on left of primary language -->            
             <apex:pageBlockSectionItem rendered="{!  NOT(pbsEditModeOn) && (f == 'Primary_Language__c')}">
+            
             <apex:outputText value="Primary Language"/>
             <apex:outputPanel styleClass="nowrap">
             <apex:outputField value="{!Contact[f]}"  /> &nbsp;&nbsp;
@@ -246,7 +248,7 @@ function ConfigureRelationshipOther(control){
                              columns="2"
                              collapsible="true"  
                              id="pbsOutputFinancialInfo"
-                             rendered="{! showDiagnosis && !isUserLevel1or2}"
+                             rendered="{! showDiagnosis && !isUserLevel1or2 && !canViewFamilyInfo}"
                              >
 
     <apex:repeat value="{!$ObjectType.Contact.FieldSets.PBS_Financial}" var="f">
@@ -267,9 +269,8 @@ function ConfigureRelationshipOther(control){
                              collapsible="False"   
                              id="pbsOutputAdditionalInfo"> 
     <apex:repeat value="{!$ObjectType.Contact.FieldSets.Additional_Information}" var="f">
-    
         <apex:outputField value="{!Contact[f]}"  rendered="{!NOT(pbsEditModeOn) && !Contains(dontShowFields, f.FieldPath)}" />
-        <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn}" required="{!OR(f.required, f.dbrequired)}"/>
+        <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn && !Contains(dontShowFields, f.FieldPath)}" required="{!OR(f.required, f.dbrequired)}"/>
     </apex:repeat>
     
     <apex:pageBlockSectionItem >
@@ -301,27 +302,58 @@ function ConfigureRelationshipOther(control){
     </apex:pageBlockSectionItem>
     
   </apex:pageBlockSection> 
-
+    
 <!--Family Information Section-->
 
-<apex:pageBlockSection columns="2" rendered="{!canViewFamilyInfo}"
-                             title="Family Information" 
-                             showHeader="true" 
-                             collapsible="True"   
-                             id="pbsOutputFamilyInfo">
-	<apex:inputfield value="{!Contact.Family_Military_Involvement__c}" rendered="{!pbsEditModeOn}" />
-	<apex:outputfield value="{!Contact.Family_Military_Involvement__c}" rendered="{!!pbsEditModeOn}" />
-	<apex:inputfield value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!pbsEditModeOn}" />
-	<apex:outputfield value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!!pbsEditModeOn && Contact.Family_Military_Involvement__c = 'Prior'}" />
-	<apex:inputfield value="{!Contact.Family_Military_Involvement_Branch__c}" rendered="{!pbsEditModeOn}" />
-	<apex:outputfield value="{!Contact.Family_Military_Involvement_Branch__c}" rendered="{!!pbsEditModeOn && Contact.Family_Military_Involvement__c != 'None'}" />
-	<apex:inputfield value="{!Contact.Family_Native_American_Ancestry__c}" rendered="{!pbsEditModeOn}" />
-	<apex:outputfield value="{!Contact.Family_Native_American_Ancestry__c}" rendered="{!!pbsEditModeOn}" />
-	<apex:inputfield value="{!Contact.Family_Native_American_Tribe__c}" rendered="{!pbsEditModeOn}" />
-	<apex:outputfield value="{!Contact.Family_Native_American_Tribe__c}" rendered="{!!pbsEditModeOn && Contact.Family_Native_American_Ancestry__c}" />
-</apex:pageBlockSection>
+		<apex:pageBlockSection columns="2" rendered="{!canViewFamilyInfo}"
+		                             title="Family Information" 
+		                             showHeader="true" 
+		                             collapsible="True"   
+		                             id="pbsOutputFamilyInfo">
+			<apex:inputfield value="{!Contact.Family_Annual_Income__c}" rendered="{!pbsEditModeOn}" />
+			<apex:outputfield value="{!Contact.Family_Annual_Income__c}" rendered="{!!pbsEditModeOn}" />
+			<span/>
+			<apex:inputfield value="{!Contact.Family_Military_Involvement__c}" rendered="{!pbsEditModeOn}" />
+			<apex:outputfield value="{!Contact.Family_Military_Involvement__c}" rendered="{!!pbsEditModeOn}" />
+			<apex:inputfield value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!pbsEditModeOn}" />
+			<apex:outputfield value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!!pbsEditModeOn && Contact.Family_Military_Involvement__c = 'Prior'}" />
+			<apex:inputfield value="{!Contact.Family_Military_Involvement_Branch__c}" rendered="{!pbsEditModeOn}" />
+			<apex:outputfield value="{!Contact.Family_Military_Involvement_Branch__c}" rendered="{!!pbsEditModeOn && Contact.Family_Military_Involvement__c != 'None'}" />
+			
+			
+			<apex:PageBlockSectionitem >
+			 <apex:outputLabel Value="Family Native American Tribe" for="nativetribe"/>
+			<apex:outputpanel id="familynativeamericantribe" >
+          	 <apex:inputfield value="{!Contact.Family_Native_American_Tribe__c}" rendered="{!pbsEditModeOn && NOT(Contact.Family_Native_American_Ancestry__c)}" html-disabled="true"/>
+          	 <apex:inputfield value="{!Contact.Family_Native_American_Tribe__c}" required="{!Contact.Family_Native_American_Ancestry__c}" rendered="{!pbsEditModeOn && Contact.Family_Native_American_Ancestry__c}"/>
+          	 
+          	 </apex:outputpanel>
+          	 </apex:PageBlockSectionitem>
+			
+			
+			<apex:outputfield value="{!Contact.Family_Native_American_Tribe__c}" rendered="{!!pbsEditModeOn && Contact.Family_Native_American_Ancestry__c}" />
+			
+			<apex:pageBlockSectionItem rendered="{!pbsEditModeOn}">
+                      <apex:outputLabel for="nativeancestry" value="Family Native American Ancestry"/>
+                      <apex:actionRegion >
+                    <apex:inputField id="nativeancestry" value="{!Contact.Family_Native_American_Ancestry__c}">
+                         <apex:actionStatus id="statusnativeancestry">
+                             <apex:facet name="start">
+                                 <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                                     <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                                 </div>
+                             </apex:facet>
+                             <apex:facet name="stop"></apex:facet>
+                         </apex:actionStatus>
+                        <apex:actionSupport event="onchange" rerender="familynativeamericantribe" status="statusnativeancestry" />
+                    </apex:inputField>
+                    </apex:actionRegion>
+                    </apex:pageBlockSectionItem>
+			<apex:outputfield value="{!Contact.Family_Native_American_Ancestry__c}" rendered="{!!pbsEditModeOn}" />
+			
+		</apex:pageBlockSection>
     
-    </apex:pageBlock>
+  </apex:pageBlock>
     <!--Related Parties Section-->
     <a name="RP" id="RP"></a>
 

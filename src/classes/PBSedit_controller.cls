@@ -15,22 +15,27 @@ public boolean canViewFamilyInfo {
 	get {
 		return TMNUser == null ? false : TMNUser.Operating_Group__c == 'Cambridge';
 	}}
-	
-public Boolean isUserLevel1or2 { get { return PBS_controller_helper.isUserLevel1or2();} set; }
 
+public Boolean isUserLevel1or2 { get { return PBS_controller_helper.isUserLevel1or2();} set; }
+ 
 private TMN_User__c TMNUser_internal;
 private boolean TMNUser_set = false;
 private TMN_User__c TMNUser {
 	get {
 		if (!TMNUser_set) {
-			tmnUser_internal = [
+			TMN_User__c[] users = [
             	SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:currentContact.OwnerID LIMIT 1
         	];
+        	if (users.size() == 0) {
+        		TMNUser_internal = null;
+        	} else {
+        		TMNUser_internal = users[0];
+        	}
         	TMNUser_set = true;
 		}
 		return TMNUser_internal;
 	}}
-	  
+
   public Related_Party__c relParty {
     get {
       if (relParty == null)
@@ -43,17 +48,17 @@ private TMN_User__c TMNUser {
   public List<Related_Party__c> relParties { get; set; }
   public List<Agency_Involved_With_Individual__c> relAgencies { get; set; }
 
-// Filter some of the Additional Info fields
+
+// Filter some of the Additional Info Fields
 public string dontShowFields {
 	get {
 		List<string> dontshow = new List<string>();
-		if (TMNUser == null || TMNUSer.Operating_Group__c != 'Cambridge'){
+		if (TMNUser == null || TMNUser.Operating_Group__c != 'Cambridge'){
 			dontshow.Add('Current_Medications__c');
 		}
 		return ' ' + String.Join(dontshow, ',');
 	}
 }
-
 // In order to show field labels instead of API names for history
 public Map<String, String> fieldMap { get; set; }
 
