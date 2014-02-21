@@ -46,13 +46,15 @@ public with sharing class ReferralLocationTriggeredActions {
 				// REF-141 - All users are copied to referral irrespective of Status
                 if (au.referral__c == rr.id) {
                     user u = fullnames.get(au.user_assigned__c);
-                    if(string.isempty(theAssignedUsers))
-                    {
-                        theAssignedUsers  = u.name;
-                    }
-                    else
-                    {   
-                        theAssignedUsers += ', ' +  u.name;
+                    if (u != null){
+	                    if(theAssignedUsers == null || string.isempty(theAssignedUsers))
+	                    {
+	                        theAssignedUsers  = u.name;
+	                    }
+	                    else
+	                    {   
+	                        theAssignedUsers += ', ' +  u.name;
+	                    }
                     }
                 }
             }
