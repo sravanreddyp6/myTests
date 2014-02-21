@@ -750,7 +750,7 @@ END: Uncomment to have the element collapsed by default -->
         <apex:pageblockButtons location="bottom">
           <apex:commandButton value="Save" onClick="diagnosisSave(true); return false;" />
           <apex:commandButton value="Save & New" onClick="diagnosisSave(false);return false;" />
-          <apex:commandButton value="Cancel" onClick="closeDialog('diagnosisModal', 'span'); j$('#diagnosisErrors').html('');return false;" />
+          <apex:commandButton value="Cancel" onClick="closeDialog('diagnosisModal', 'span'); $j('#diagnosisErrors').html('');return false;" />
         </apex:pageblockButtons>
         <apex:facet name="header">
           <p><strong>Add a diagnosis below:</strong></p>
@@ -784,7 +784,7 @@ END: Uncomment to have the element collapsed by default -->
 <c:GenericHistoryComponent myObject="{!Service_Assignment__c}" rendered="{!!editSA && newSA==false}" />
 
 <script type="text/javascript">
-j$(setFocus);
+$j(setFocus);
 function setFocus() {
               document.getElementById("hiddenElementId").focus();
 }
@@ -794,41 +794,41 @@ function RefreshPage() {
 
 function validateDiagnosis() {
     var errors = '';
-    j$('#diagnosisErrors').html(errors);
+    $j('#diagnosisErrors').html(errors);
 
-    if (j$('input[id$=diagnosisEntry_EffDate]').val() == '') {
+    if ($j('input[id$=diagnosisEntry_EffDate]').val() == '') {
         errors += '<li>Effective Date is a required field.</li>';
     }
 
-    j$('#diagnosisErrors').html(errors);
+    $j('#diagnosisErrors').html(errors);
     return (errors == '');
   }
 
   //copies diagnosis fields from dialog for postback
   function diagnosisSave(isClose) {
     if (validateDiagnosis()) {
-      j$('input[id$=diagId]').val(j$('input[id$=diagnosisEntry_Id]').val());
-      j$('input[id$=diagEffDate]').val(j$('input[id$=diagnosisEntry_EffDate]').val());
-      j$('input[id$=diagAxisI]').val(j$('input[id$=diagnosisEntry_AxisI]').val());
-      j$('input[id$=diagPrimaryDiagnosis]').val(j$('input[id$=diagnosisEntry_PrimaryDiag]').val());
-      j$('input[id$=diagAxisII]').val(j$('input[id$=diagnosisEntry_AxisII]').val());
-      j$('input[id$=diagSecondaryDiagnosis]').val(j$('input[id$=diagnosisEntry_SecondaryDiag]').val());
-      j$('input[id$=diagAxisIII]').val(j$('input[id$=diagnosisEntry_AxisIII]').val());
-      j$('input[id$=diagLevelofDisability]').val(j$('input[id$=diagnosisEntry_LevelofDisability]').val());
-      j$('input[id$=diagAxisIV]').val(j$('input[id$=diagnosisEntry_AxisIV]').val());
-      j$('input[id$=diagComments]').val(j$('textarea[id$=diagnosisEntry_Comments]').val());
+      $j('input[id$=diagId]').val($j('input[id$=diagnosisEntry_Id]').val());
+      $j('input[id$=diagEffDate]').val($j('input[id$=diagnosisEntry_EffDate]').val());
+      $j('input[id$=diagAxisI]').val($j('input[id$=diagnosisEntry_AxisI]').val());
+      $j('input[id$=diagPrimaryDiagnosis]').val($j('input[id$=diagnosisEntry_PrimaryDiag]').val());
+      $j('input[id$=diagAxisII]').val($j('input[id$=diagnosisEntry_AxisII]').val());
+      $j('input[id$=diagSecondaryDiagnosis]').val($j('input[id$=diagnosisEntry_SecondaryDiag]').val());
+      $j('input[id$=diagAxisIII]').val($j('input[id$=diagnosisEntry_AxisIII]').val());
+      $j('input[id$=diagLevelofDisability]').val($j('input[id$=diagnosisEntry_LevelofDisability]').val());
+      $j('input[id$=diagAxisIV]').val($j('input[id$=diagnosisEntry_AxisIV]').val());
+      $j('input[id$=diagComments]').val($j('textarea[id$=diagnosisEntry_Comments]').val());
 
       saveDiagnosis();
-      j$('input[id$=diagnosisEntry_Id]').val('');
-      j$('input[id$=diagnosisEntry_EffDate]').val('');
-      j$('input[id$=diagnosisEntry_AxisI]').val('');
-      j$('input[id$=diagnosisEntry_AxisII]').val('');
-      j$('input[id$=diagnosisEntry_AxisIII]').val('');
-      j$('input[id$=diagnosisEntry_AxisIV]').val('');
-      j$('input[id$=diagnosisEntry_PrimaryDiag]').val('')
-      j$('input[id$=diagnosisEntry_SecondaryDiag]').val('')
-      j$('input[id$=diagnosisEntry_LevelofDisability]').val('')
-      j$('textarea[id$=diagnosisEntry_Comments]').val('')
+      $j('input[id$=diagnosisEntry_Id]').val('');
+      $j('input[id$=diagnosisEntry_EffDate]').val('');
+      $j('input[id$=diagnosisEntry_AxisI]').val('');
+      $j('input[id$=diagnosisEntry_AxisII]').val('');
+      $j('input[id$=diagnosisEntry_AxisIII]').val('');
+      $j('input[id$=diagnosisEntry_AxisIV]').val('');
+      $j('input[id$=diagnosisEntry_PrimaryDiag]').val('')
+      $j('input[id$=diagnosisEntry_SecondaryDiag]').val('')
+      $j('input[id$=diagnosisEntry_LevelofDisability]').val('')
+      $j('textarea[id$=diagnosisEntry_Comments]').val('')
 
       if (isClose) {
           closeDialog('diagnosisModal', 'span');
@@ -872,17 +872,17 @@ function validateDiagnosis() {
                 strDate += mins;
                 strDate += ' ' + ampm;
 
-                j$('[id$=diagnosisEntry_Id]').val(result.Id);
-                j$('input[id$=diagnosisEntry_EffDate]').val(strDate);
-                        j$('input[id$=diagnosisEntry_AxisI]').val(result.Axis_I__c);
-                        j$('input[id$=diagnosisEntry_AxisII]').val(result.Axis_II__c);
-                        j$('input[id$=diagnosisEntry_AxisIII]').val(result.Axis_III__c);
-                        j$('input[id$=diagnosisEntry_AxisIV]').val(result.Axis_IV__c);
-                        j$('input[id$=diagnosisEntry_AxisV]').val(result.Axis_V__c);
-                        j$('input[id$=diagnosisEntry_PrimaryDiag]').val(result.Primary_Diagnosis__c)
-                        j$('input[id$=diagnosisEntry_SecondaryDiag]').val(result.Secondary_Diagnosis__c)
-                        j$('input[id$=diagnosisEntry_LevelofDisability]').val(result.Level_of_Diability__c)
-                        j$('textarea[id$=diagnosisEntry_Comments]').val(result.Comments__c)
+                $j('[id$=diagnosisEntry_Id]').val(result.Id);
+                $j('input[id$=diagnosisEntry_EffDate]').val(strDate);
+                        $j('input[id$=diagnosisEntry_AxisI]').val(result.Axis_I__c);
+                        $j('input[id$=diagnosisEntry_AxisII]').val(result.Axis_II__c);
+                        $j('input[id$=diagnosisEntry_AxisIII]').val(result.Axis_III__c);
+                        $j('input[id$=diagnosisEntry_AxisIV]').val(result.Axis_IV__c);
+                        $j('input[id$=diagnosisEntry_AxisV]').val(result.Axis_V__c);
+                        $j('input[id$=diagnosisEntry_PrimaryDiag]').val(result.Primary_Diagnosis__c)
+                        $j('input[id$=diagnosisEntry_SecondaryDiag]').val(result.Secondary_Diagnosis__c)
+                        $j('input[id$=diagnosisEntry_LevelofDisability]').val(result.Level_of_Diability__c)
+                        $j('textarea[id$=diagnosisEntry_Comments]').val(result.Comments__c)
 
             } else { alert ('Error loading diagnosis to edit.');  }
           },
@@ -909,23 +909,23 @@ document.onkeypress = stopRKey;
   {
    selector = tagType + '[id$=' + dialogId + ']';
 
-    if (j$(selector).dialog("isOpen")!==true) {
-        j$(selector).dialog({dialogClass: dClass,
+    if ($j(selector).dialog("isOpen")!==true) {
+        $j(selector).dialog({dialogClass: dClass,
                              title:titleString,
                              modal:true,
                              width:800,
                              closeOnEscape:false
                            })
                   .parent()
-                  .appendTo(j$('form[id$=myFRM]'));
-    j$(selector).parent().find('a.ui-dialog-titlebar-close').remove();
+                  .appendTo($j('form[id$=myFRM]'));
+    $j(selector).parent().find('a.ui-dialog-titlebar-close').remove();
    }
   }
   function closeDialog(dialogId, tagType)
   {
    selector = tagType + '[id$=' + dialogId + ']';
 
-   j$(selector).dialog('destroy');
+   $j(selector).dialog('destroy');
   }
 
 
