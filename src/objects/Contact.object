@@ -200,6 +200,11 @@
             <isRequired>false</isRequired>
         </displayedFields>
         <displayedFields>
+            <field>Race__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
             <field>Primary_Language__c</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>false</isRequired>
@@ -557,6 +562,48 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Family_Annual_Income__c</fullName>
+        <externalId>false</externalId>
+        <label>Family Annual Income</label>
+        <picklist>
+            <picklistValues>
+                <fullName>15,000 or under</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>15,001 - 25,000</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>25,001 - 35,000</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>35,001 - 50,000</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>50,001 - 65,000</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>65,001 - 80,000</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>80,001 - 100,000</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Over 100,000</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Family_Member_Other__c</fullName>
         <externalId>false</externalId>
         <label>Family Members / Other / Notes</label>
@@ -569,24 +616,35 @@
         <externalId>false</externalId>
         <label>Family Military Involvement Branch</label>
         <picklist>
+            <controllingField>Family_Military_Involvement__c</controllingField>
             <picklistValues>
                 <fullName>Air Force</fullName>
+                <controllingFieldValues>Active</controllingFieldValues>
+                <controllingFieldValues>Prior</controllingFieldValues>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
                 <fullName>Army</fullName>
+                <controllingFieldValues>Active</controllingFieldValues>
+                <controllingFieldValues>Prior</controllingFieldValues>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
                 <fullName>Coast Guard</fullName>
+                <controllingFieldValues>Active</controllingFieldValues>
+                <controllingFieldValues>Prior</controllingFieldValues>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
                 <fullName>National Guard</fullName>
+                <controllingFieldValues>Active</controllingFieldValues>
+                <controllingFieldValues>Prior</controllingFieldValues>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
                 <fullName>Navy</fullName>
+                <controllingFieldValues>Active</controllingFieldValues>
+                <controllingFieldValues>Prior</controllingFieldValues>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -1260,6 +1318,48 @@
         <scale>2</scale>
         <trackHistory>false</trackHistory>
         <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Race__c</fullName>
+        <externalId>false</externalId>
+        <label>Race</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Caucasian</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>African American</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>American Indian/Alaskan</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Asian/Pacific Islands</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Hispanic</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Multi-Racial</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Middle Eastern</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>ReportsToId</fullName>

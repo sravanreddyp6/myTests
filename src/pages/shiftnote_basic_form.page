@@ -1,4 +1,4 @@
-<apex:page standardController="Progress_Note__c" extensions="Shift_Note_Basic" sidebar="false" >
+<apex:page standardController="Progress_Note__c" extensions="Shift_Note_Basic,Notes_ProgressNote_AddlActions" sidebar="false" >
 <apex:variable value="{!Progress_Note__c}" var="pn"/>
 <apex:includeScript value="{!$Resource.jquery}"/>
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
@@ -208,7 +208,11 @@ function highlightButtons ( btype, sfid, on )
                                         status="myStatus"
                                         onComplete="toggleById('finalize_form'); return false;"
                                         reRender="messages, finalize_form_wrapper" 
-                                        />        
+                                        />
+					<apex:commandButton value="Disregard"
+										action="{!updateLocked}"
+										rendered="{!canDisregard}"
+										/>                                                
                 </div>           
             </apex:pageBlockButtons>
             
@@ -217,13 +221,16 @@ function highlightButtons ( btype, sfid, on )
                 <apex:inputField label="Shift End Time" value="{!pn.End_Time__c}"/>
                 <apex:inputField value="{!pn.Number_of_Required_Signatures__c}" 
                                  required="true"
-                                 />               
+                                 />     
+                <apex:outputField value="{!pn.Disregard_Note__c}" />         
+                                           
             </apex:pageBlockSection>
             
             <apex:pageBlockSection columns="1" rendered="{! !editMode}" >
                 <apex:outputField label="Shift Start Time" value="{!pn.Start_Time__c}"/>
                 <apex:outputField label="Shift End Time" value="{!pn.End_Time__c}"/>
-                <apex:outputField value="{!pn.Number_of_Required_Signatures__c}" />               
+                <apex:outputField value="{!pn.Number_of_Required_Signatures__c}" />      
+                <apex:outputField value="{!pn.Disregard_Note__c}" />         
             </apex:pageBlockSection> 
             
         <apex:actionRegion >        
