@@ -509,6 +509,36 @@ function hidedio(dio, dio2){
                         <br/>
                         <apex:inputField styleClass="mytxtarea extxt" value="{!CareMeridian_Contract__c.Other_Ex_Details__c}" />                      
                     </apex:panelGroup>
+                    <apex:panelGroup >
+                        <apex:inputField id="oth1" value="{!CareMeridian_Contract__c.Other_Ex1__c}" />
+                        <apex:outputLabel for="oth1" >Other</apex:outputLabel>  
+                        <br/>
+                        <apex:inputField styleClass="mytxtarea extxt" value="{!CareMeridian_Contract__c.Other_Ex1_Details__c}" />                      
+                    </apex:panelGroup>
+                    <apex:panelGroup >
+                        <apex:inputField id="oth2" value="{!CareMeridian_Contract__c.Other_Ex2__c}" />
+                        <apex:outputLabel for="oth2" >Other</apex:outputLabel>  
+                        <br/>
+                        <apex:inputField styleClass="mytxtarea extxt" value="{!CareMeridian_Contract__c.Other_Ex2_Details__c}" />                      
+                    </apex:panelGroup>
+                    <apex:panelGroup >
+                        <apex:inputField id="oth3" value="{!CareMeridian_Contract__c.Other_Ex3__c}" />
+                        <apex:outputLabel for="oth3" >Other</apex:outputLabel>  
+                        <br/>
+                        <apex:inputField styleClass="mytxtarea extxt" value="{!CareMeridian_Contract__c.Other_Ex3_Details__c}" />                      
+                    </apex:panelGroup>
+                    <apex:panelGroup >
+                        <apex:inputField id="oth4" value="{!CareMeridian_Contract__c.Other_Ex4__c}" />
+                        <apex:outputLabel for="oth4" >Other</apex:outputLabel>  
+                        <br/>
+                        <apex:inputField styleClass="mytxtarea extxt" value="{!CareMeridian_Contract__c.Other_Ex4_Details__c}" />                      
+                    </apex:panelGroup>
+                    <apex:panelGroup >
+                        <apex:inputField id="oth5" value="{!CareMeridian_Contract__c.Other_Ex5__c}" />
+                        <apex:outputLabel for="oth5" >Other</apex:outputLabel>  
+                        <br/>
+                        <apex:inputField styleClass="mytxtarea extxt" value="{!CareMeridian_Contract__c.Other_Ex5_Details__c}" />                      
+                    </apex:panelGroup>
                 </apex:panelGrid> 
                 
                     <apex:panelGrid columns="4" style="width:100%;" columnClasses="mycols" cellspacing="0" cellpadding="0"  rendered="{!!editMode}">
@@ -630,6 +660,56 @@ function hidedio(dio, dio2){
                                 <br/>
                                 <apex:outputPanel layout="block" styleClass="exdets">
                                     <apex:outputField styleClass="mytxtarea" value="{!CareMeridian_Contract__c.Other_Ex_Details__c}" />      
+                                </apex:outputPanel>                            
+                            </apex:outputPanel>                 
+                        </apex:panelGroup>                   
+                        <apex:panelGroup rendered="{!CareMeridian_Contract__c.Other_Ex1__c}" >
+                            <apex:outputPanel layout="block" styleClass="exwrapper">
+                                <apex:outputField value="{!CareMeridian_Contract__c.Other_Ex1__c}" />
+                                <apex:outputLabel styleClass="mylbl" >Other</apex:outputLabel>  
+                                <br/>
+                                <apex:outputPanel layout="block" styleClass="exdets">
+                                    <apex:outputField styleClass="mytxtarea" value="{!CareMeridian_Contract__c.Other_Ex1_Details__c}" />      
+                                </apex:outputPanel>                            
+                            </apex:outputPanel>                 
+                        </apex:panelGroup>                   
+                        <apex:panelGroup rendered="{!CareMeridian_Contract__c.Other_Ex2__c}" >
+                            <apex:outputPanel layout="block" styleClass="exwrapper">
+                                <apex:outputField value="{!CareMeridian_Contract__c.Other_Ex2__c}" />
+                                <apex:outputLabel styleClass="mylbl" >Other</apex:outputLabel>  
+                                <br/>
+                                <apex:outputPanel layout="block" styleClass="exdets">
+                                    <apex:outputField styleClass="mytxtarea" value="{!CareMeridian_Contract__c.Other_Ex2_Details__c}" />      
+                                </apex:outputPanel>                            
+                            </apex:outputPanel>                 
+                        </apex:panelGroup>                   
+                        <apex:panelGroup rendered="{!CareMeridian_Contract__c.Other_Ex3__c}" >
+                            <apex:outputPanel layout="block" styleClass="exwrapper">
+                                <apex:outputField value="{!CareMeridian_Contract__c.Other_Ex3__c}" />
+                                <apex:outputLabel styleClass="mylbl" >Other</apex:outputLabel>  
+                                <br/>
+                                <apex:outputPanel layout="block" styleClass="exdets">
+                                    <apex:outputField styleClass="mytxtarea" value="{!CareMeridian_Contract__c.Other_Ex3_Details__c}" />      
+                                </apex:outputPanel>                            
+                            </apex:outputPanel>                 
+                        </apex:panelGroup>                   
+                        <apex:panelGroup rendered="{!CareMeridian_Contract__c.Other_Ex4__c}" >
+                            <apex:outputPanel layout="block" styleClass="exwrapper">
+                                <apex:outputField value="{!CareMeridian_Contract__c.Other_Ex4__c}" />
+                                <apex:outputLabel styleClass="mylbl" >Other</apex:outputLabel>  
+                                <br/>
+                                <apex:outputPanel layout="block" styleClass="exdets">
+                                    <apex:outputField styleClass="mytxtarea" value="{!CareMeridian_Contract__c.Other_Ex4_Details__c}" />      
+                                </apex:outputPanel>                            
+                            </apex:outputPanel>                 
+                        </apex:panelGroup>                   
+                        <apex:panelGroup rendered="{!CareMeridian_Contract__c.Other_Ex5__c}" >
+                            <apex:outputPanel layout="block" styleClass="exwrapper">
+                                <apex:outputField value="{!CareMeridian_Contract__c.Other_Ex5__c}" />
+                                <apex:outputLabel styleClass="mylbl" >Other</apex:outputLabel>  
+                                <br/>
+                                <apex:outputPanel layout="block" styleClass="exdets">
+                                    <apex:outputField styleClass="mytxtarea" value="{!CareMeridian_Contract__c.Other_Ex5_Details__c}" />      
                                 </apex:outputPanel>                            
                             </apex:outputPanel>                 
                         </apex:panelGroup>                   
