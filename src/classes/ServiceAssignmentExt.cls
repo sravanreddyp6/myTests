@@ -1026,7 +1026,8 @@ public class ServiceAssignmentExt {
 
                 if ( showDiagnosis )
                     createDiagnoses();
-                else {
+                
+                if (!showLocation) {
                     saveServiceCodeSelections();
                     saveContractSelections();
                 }

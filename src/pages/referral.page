@@ -529,7 +529,7 @@ document.onkeypress = stopRKey;
           <p><strong>Add a related party below:</strong></p>
         </apex:facet>
 
-        <div id='relatedPartyErrors' style='color:red' />
+        <div id='relatedPartyErrors' style='color:red' ></div>
 
         <apex:pageBlockSection columns="2" id="relatedPartyEntry">
           <apex:inputField value="{!relParty.Name}" id="relatedPartyEntry_Name" />
@@ -570,7 +570,7 @@ document.onkeypress = stopRKey;
           <p><strong>Add an agency involved with the person being referred below:</strong></p>
         </apex:facet>
 
-        <div id='agencyErrors' style='color:red' />
+        <div id='agencyErrors' style='color:red' ></div>
 
         <apex:pageBlockSection columns="1" id="agencyEntry">
           <apex:pageBlockSectionItem >
@@ -603,7 +603,7 @@ document.onkeypress = stopRKey;
 
         <apex:actionFunction name="saveFundingSource" status="saveFundingSourceStatus" action="{!saveFundingSource}" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialog('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceAuthorizationDetailEntry,fundingSourceEntry,msgs"/>
 
-      <div id='fundingMessages' />
+      <div id='fundingMessages' ></div>
       <apex:pageBlock title="Add Funding Source" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative'}">
         <apex:pageBlockSection columns="1" id="fundingSourceEntry">
             <apex:inputField value="{!fundingSource.Funding_Source__c}" id="fundingEntry_Source"/>
@@ -944,7 +944,7 @@ document.onkeypress = stopRKey;
         <apex:facet name="header">
           <p><strong>Add Referral Location:</strong></p>
         </apex:facet>
-        <div id='locationErrors' style='color:red' />
+        <div id='locationErrors' style='color:red' ></div>
         <apex:pageBlockSection columns="1" id="locationEntry">
           <!-- Added by Kossi 06/06/13 2:00 AM -->
             <apex:pageBlockSectionItem >
@@ -1118,7 +1118,7 @@ document.onkeypress = stopRKey;
           <p><strong>Add Activity:</strong></p>
         </apex:facet>
 
-        <div id='activityErrors' style='color:red' />
+        <div id='activityErrors' style='color:red' ></div>
 
         <apex:pageBlockSection columns="1" id="activityEntry" >
             <apex:inputField value="{!activity.Subject}" id="activityEntry_Subject"/>
@@ -2121,11 +2121,11 @@ document.onkeypress = stopRKey;
           />
           <!-- Row 4, Col 1 -->
           <apex:inputField value="{!Referral__c.Preferred_Setting__c}"
-            rendered="{!isCambridge ||
-                        ReferralRecordType = 'California'}"
+            rendered="{!isCambridge }"
           />
           <apex:inputField value="{!Referral__c.Mobility__c}"
             rendered="{!ReferralRecordType = 'Arizona' ||
+            			ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Iowa' ||
                         ReferralRecordType = 'Illinois' ||
                         ReferralRecordType = 'Minnesota' ||
@@ -2204,8 +2204,7 @@ document.onkeypress = stopRKey;
           />
           <!-- Row 5, Col 1 -->
           <apex:inputField value="{!Referral__c.Mobility__c}"
-            rendered="{!isCambridge ||
-                        ReferralRecordType = 'California'}"
+            rendered="{!isCambridge}"
           />
           <apex:inputField value="{!Referral__c.Gender_Specific_Staffing__c}"
             rendered="{!ReferralRecordType = 'Arizona' ||
@@ -2213,6 +2212,7 @@ document.onkeypress = stopRKey;
           />
           <apex:inputField value="{!Referral__c.Accessible_Housing_Needed__c}"
             rendered="{!ReferralRecordType = 'Iowa' ||
+            			ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Illinois' ||
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'North Dakota' ||
@@ -2296,11 +2296,11 @@ document.onkeypress = stopRKey;
           <apex:inputField value="{!Referral__c.Accessible_Housing_Needed__c}"
             rendered="{!isCambridge ||
                         ReferralRecordType = 'Arizona' ||
-                        ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}"
           />
           <apex:inputField value="{!Referral__c.Accessible_Vehicle_Needed__c}"
-            rendered="{!ReferralRecordType = 'Iowa' ||
+            rendered="{!ReferralRecordType = 'California' ||
+            			ReferralRecordType = 'Iowa' ||
                         ReferralRecordType = 'Illinois' ||
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'North Dakota' ||
@@ -2392,8 +2392,10 @@ document.onkeypress = stopRKey;
           <apex:inputField value="{!Referral__c.Accessible_Vehicle_Needed__c}"
             rendered="{!isCambridge ||
                         ReferralRecordType = 'Arizona' ||
-                        ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}"
+          />
+          <apex:inputField value="{!Referral__c.Current_Medical_Conditions__c}"
+            rendered="{!ReferralRecordType = 'California'}"
           />
           <apex:inputField value="{!Referral__c.Area_of_State_Interested_In__c}"
             rendered="{!ReferralRecordType = 'Iowa' ||
@@ -2482,9 +2484,9 @@ document.onkeypress = stopRKey;
             rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'Nevada'}"
           />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'California'}" />
           <apex:inputField value="{!Referral__c.Current_Medical_Conditions__c}"
-            rendered="{!ReferralRecordType = 'California' ||
-                        ReferralRecordType = 'Iowa' ||
+            rendered="{!ReferralRecordType = 'Iowa' ||
                         ReferralRecordType = 'Illinois' ||
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'North Dakota' ||
@@ -2557,9 +2559,6 @@ document.onkeypress = stopRKey;
           <!-- Row 9, Col 1 -->
           <apex:inputField value="{!Referral__c.Area_of_State_Interested_In__c}"
             rendered="{!isCambridge}"
-          />
-          <apex:inputField value="{!Referral__c.Restricted_Health_Conditions__c}"
-            rendered="{!ReferralRecordType = 'California'}"
           />
           <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Wisconsin' ||
                         ReferralRecordType = 'Iowa'}" />
@@ -2741,6 +2740,9 @@ document.onkeypress = stopRKey;
           <!-- TADA -->
         </apex:pageBlockSection>
         <apex:pageBlockSection columns="1" id="progConsiderationsDetail">
+          <apex:inputField value="{!Referral__c.Restricted_Health_Conditions__c}"
+            rendered="{!ReferralRecordType = 'California'}"
+          />
           <apex:inputField value="{!Referral__c.Restricted_Health_Conditions__c}" rendered="{!ReferralRecordType == 'Cambridge Georgia'}" />
           <apex:inputTextarea value="{!Referral__c.Programming_Considerations_Comments__c}" cols="80" rendered="{!isCambridge}" />
         </apex:pageBlockSection>
