@@ -187,6 +187,7 @@ function hidedio(dio, dio2){
                 
                 <apex:outputPanel styleClass="dialog2">
                     <apex:commandButton onclick="window.open('/apex/CMContract_Form?oldid={!CareMeridian_Contract__c.id}', '_self'); return false;" value="Renew / Amend" reRender="nothing" rendered="{!!editMode  && !hasnextcontract}"/>
+                    <apex:commandButton onclick="window.open('/apex/CMContract_Form?oldid={!CareMeridian_Contract__c.id}&isClone=1', '_self'); return false;" value="Clone" reRender="nothing" rendered="{!!editMode }"/>
                 </apex:outputPanel><!--javascript:showdio('dialog','dialog2'); -->
                 <apex:commandButton onclick="window.open('/apex/CMContract_FormPrint?Id={!CareMeridian_Contract__c.Id}', '_blank'); return false;" value="Print" rendered="{! !editMode}"/>
             </apex:pageBlockButtons>
