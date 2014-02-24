@@ -378,7 +378,7 @@ function hidedio(dio, dio2){
         </td>                                                
     </tr> 
        
-<apex:repeat value="{!MapRateLevel }" var="RL" rendered="{!editMode}">
+<apex:repeat value="{!MapRateLevelKeys }" var="RL" rendered="{!editMode}">
 <tr>
     <td class="detailrow">
         <apex:commandButton value="X" action="{!removeCRL}" reRender="theRLs" style="flost: left; width: 20px;" status="myStatus" title="Remove" immediate="true" >
@@ -408,7 +408,7 @@ function hidedio(dio, dio2){
 </apex:repeat>   
 
 
-<apex:repeat value="{!MapRateLevel}" var="RL" rendered="{! !editMode}">
+<apex:repeat value="{!MapRateLevelKeys}" var="RL" rendered="{! !editMode}">
 <tr>
     <td class="detailrow">
         <apex:outputPanel layout="block" styleClass="mydtl" rendered="{!!editMode}"> {!MapRateLevel[RL].theRL.Details__c}</apex:outputPanel>
