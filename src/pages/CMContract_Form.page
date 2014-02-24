@@ -220,6 +220,8 @@ function hidedio(dio, dio2){
             
             <apex:pageBlockSection title="Timeframe" columns="2" rendered="{!editMode}" >
                 <apex:inputField value="{!CareMeridian_Contract__c.Start_Date__c}" /> 
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{!CareMeridian_Contract__c.Term_Begin_Date__c}" /> 
                 <apex:inputField value="{!CareMeridian_Contract__c.Term_Date__c}" /> 
                 <apex:inputField value="{!CareMeridian_Contract__c.Termination_Date__c}" />
                 <apex:inputField value="{!CareMeridian_Contract__c.Renegotiation_Deadline__c}" /> 
@@ -230,6 +232,8 @@ function hidedio(dio, dio2){
             </apex:pageBlockSection>
             <apex:pageBlockSection title="Timeframe" columns="2" rendered="{!!editMode}" >
                 <apex:outputField value="{!CareMeridian_Contract__c.Start_Date__c}" />  
+                <apex:pageBlockSectionItem />
+                <apex:outputField value="{!CareMeridian_Contract__c.Term_Begin_Date__c}" />              
                 <apex:outputField value="{!CareMeridian_Contract__c.Term_Date__c}" />              
                 <apex:outputField value="{!CareMeridian_Contract__c.Termination_Date__c}" />
                 <apex:outputField value="{!CareMeridian_Contract__c.Renegotiation_Deadline__c}" /> 
