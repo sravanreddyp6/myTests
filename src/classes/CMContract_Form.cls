@@ -13,6 +13,10 @@ public with sharing class CMContract_Form {
     public map<string, clsRateLevel> MapRateLevel = new Map<string, clsRateLevel>();
     public map<string, clsRateLevel> getMapRateLevel()
         { return MapRateLevel;}
+    public list<string> mapRateLevelKeys = new list<string>();
+    public list<string> getMapRateLevelKeys() {
+    	return mapRateLevelKeys;
+    }
     public List<SelectOption> changeTypes;  
     public List<String> selectedTypes { get; set;}  
         /*
@@ -36,6 +40,7 @@ public with sharing class CMContract_Form {
 //            cmRL.add( item);
             clsRateLevel tmpRL = new clsRateLevel(item, false);
             MapRateLevel.put(string.valueof(s) + item.id, tmpRL);
+            MapRateLevelKeys.add(string.valueof(s) + item.id);
             s++;
         
         }
@@ -91,7 +96,9 @@ public with sharing class CMContract_Form {
     public PageReference myAddRL() {
         CareMeridian_Contract_Rate_and_Level__c newRL = new CareMeridian_Contract_Rate_and_Level__c();
         clsRateLevel tmpRL = new clsRateLevel(newRL , true);
-        MapRateLevel.put('Z'+string.valueof(system.now()).remove(' ').remove(':').remove('-'), tmpRL);
+        string key = 'Z'+string.valueof(system.now()).remove(' ').remove(':').remove('-');
+        MapRateLevel.put(key, tmpRL);
+        MapRateLevelKeys.add(key);
       // 'z'+string.valueof(system.now()).remove(' ').remove(':').remove('-'),
         return null ;
     }  
@@ -103,13 +110,24 @@ public with sharing class CMContract_Form {
                 delete MapRateLevel.get(removeid).theRL; 
             }
             
-            MapRateLevel.remove(removeid);   
+            MapRateLevel.remove(removeid);  
+            MapRateLevelKeys = ListRemove(MapRateLevelKeys,removeid); 
         }
         catch(Exception e) {
                 ApexPages.addMessages(e);
                 System.debug('The following exception has occurred: ' + e.getMessage());  
             } 
         return null; 
+    }
+    
+    private list<string> ListRemove(list<string> listobj, string removeValue) {
+    	list<string> newlist = new list<string>();
+    	for(string item: listobj){
+    		if (item != removeValue){
+    			newlist.add(item);
+    		}
+    	}
+    	return newlist;
     }
     
     public PageReference save() {
