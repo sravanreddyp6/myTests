@@ -34,7 +34,7 @@ public static testmethod void testPBSEdit(){
 		controller.showAddRelParty();
 		
 		controller.relParty = PBS_Controller_Helper.saveRelatedParty('', 'test related party', 'Case Manager', 'phone1', '', 
-                                              'addr', '', '', '', 'comments', pbs.Id);
+                                              'addr', '', '', '', 'comments', '','','','','', pbs.Id);
                                               
 		PBS_Controller_Helper.loadRelatedParty( controller.relParty.Id);
 		
