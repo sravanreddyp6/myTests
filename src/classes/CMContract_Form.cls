@@ -58,7 +58,10 @@ public with sharing class CMContract_Form {
         if(oldID != null){
                    
                     String query = 'SELECT ';
-                    for(Schema.FieldSetMember f : SObjectType.CareMeridian_Contract__c.FieldSets.Renewal_Fields.getFields()) {        
+                    FieldSet copyfields = isClone 
+                    					? SObjectType.CareMeridian_Contract__c.FieldSets.Full_Clone_Fields
+                    					: SObjectType.CareMeridian_Contract__c.FieldSets.Renewal_Fields;
+                    for(Schema.FieldSetMember f : copyFields.getFields()) {        
                         query += f.getFieldPath() + ', ';
             
                     }    
@@ -68,7 +71,7 @@ public with sharing class CMContract_Form {
                     OldContract = Database.query(query);
                     System.Debug( oldcontract);
                     isRev = !isClone;	// catches case of new contract that is a revision
-                    for(Schema.FieldSetMember f : SObjectType.CareMeridian_Contract__c.FieldSets.Renewal_Fields.getFields()) {        
+                    for(Schema.FieldSetMember f : copyfields.getFields()) {        
                         myContract.put(f.getFieldPath(), OldContract.get(f.getFieldPath()));
                     }
                     integer i = 0;
