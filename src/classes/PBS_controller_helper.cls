@@ -6,6 +6,7 @@ public with sharing class PBS_controller_helper {
     public static Related_Party__c loadRelatedParty(string relPartyId) {
             Related_Party__c party = 
                 [select Id,Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, comments__c,Person_Being_Served__c
+                 , Care_Giver_Relationship__c, Care_Giver_Relationship_Other__c, Highest_Education__c, Occupation__c, Employment_Status__c
                  from Related_Party__c where id = :relPartyId];
             return party;
      }
@@ -13,15 +14,20 @@ public with sharing class PBS_controller_helper {
     @RemoteAction
     public static Related_Party__c saveRelatedParty(string partyID, string Name, string PartyType, string Phone1, string Email, 
                                               string Address, string Phone2, string Phone1Type, string Phone2Type, string comments,
+                                              string relationship, string relationship_Other, string Highest_Education, string Occupation, string Employment_Status,
                                               string PBSId) {
       Related_Party__c party;                                        
       if (String.isEmpty(partyID)) {
          party = new Related_Party__c(Name=Name, Type__c=PartyType, Phone__c = Phone1, Email__c = Email, Address__c = Address,
                                                     Phone_2__c = Phone2, Phone_1_Type__c = Phone1Type, Phone_2_Type__c = Phone2Type, Comments__c=Comments,
+                                                    Care_Giver_Relationship__c = relationship, Care_Giver_Relationship_Other__c = relationship_Other,
+                                                    Highest_Education__c = Highest_Education, Occupation__c = Occupation, Employment_Status__c = Employment_Status, 
                                                     Person_Being_Served__c = PBSId);
       } else {
          party = new Related_Party__c(Name=Name, Type__c=PartyType, Phone__c = Phone1, Email__c = Email, Address__c = Address,
                                                     Phone_2__c = Phone2, Phone_1_Type__c = Phone1Type, Phone_2_Type__c = Phone2Type, Comments__c=Comments,
+                                                    Care_Giver_Relationship__c = relationship, Care_Giver_Relationship_Other__c = relationship_Other,
+                                                    Highest_Education__c = Highest_Education, Occupation__c = Occupation, Employment_Status__c = Employment_Status, 
                                                     Person_Being_Served__c = PBSId, ID = partyID);
       }
       upsert party;                                  
