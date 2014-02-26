@@ -27,6 +27,28 @@
         };
         setUpDep();
 
+        // Set up initial field dependency for picklist / other (enabling a field when another field is selected)
+        var setUpDepPicklist = function () {
+            $('[data-enablepicklist]').each(function (index, el) {
+                var $el = $(el);
+                var targetEls = $el.data('enablepicklist').split(',');
+                $.each(targetEls, function (index, targetEl) {
+                    var $targetEl = $(document.getElementById(targetEl));
+                    var disabled = true;
+                    if ($el.val()=='Other') {
+                        disabled = false;
+                    }
+                    if (disabled) {
+                        $targetEl.val('');
+                    }
+                    $targetEl.prop('disabled', disabled);
+
+                });
+
+            });
+        };
+        setUpDepPicklist();
+
         var enableDisabledFields = function () {
             // Disabled fields are not sent with the POST requests to SF server,
             // which will result in inconsistencies between the client and the
@@ -57,6 +79,28 @@
             // stop the browser from doing unnecessary work.
             event.stopPropagation();
         });
+        
+        // START: Josh, try at Set up onchange field dependency
+        $('body').on('change', '[data-enablepicklist]', function(event) {
+        	var $this = $(this);
+        	var targetEls2 = $this.data('enablepicklist').split(',');
+        	$.each(targetEls2, function (index, targetEl2) {
+                var $targetEl2 = $(document.getElementById(targetEl2));
+                var disabled = true;
+                if ($this.val()=='Other') {
+                    disabled = false;
+                }
+                $targetEl2.prop('disabled', disabled);
+                if (disabled) {
+                    $targetEl2.val('');
+                }        		
+            });
+            // Events bubble up the DOM tree, so we stop the bubbling here to
+            // stop the browser from doing unnecessary work.
+            event.stopPropagation();
+        });
+        // END: Josh, try at Set up onchange field dependency
+        
 
         // Set up checkbox groups (if multiple checkboxes are in a group, only
         // one can be selected at every point in time - radio button behavior)
@@ -116,6 +160,12 @@
                 <apex:inputField value="{!TMN_Contact__c.Secondary_Phone__c}" />
 
                 <apex:inputField value="{!TMN_Contact__c.Email__c}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Marketing Info" columns="2">
+            	<apex:inputField value="{!TMN_Contact__c.How_did_you_hear_about_us__c}" 
+            		html-data-enablepicklist="{!$Component.howDidYouHearOtherDesc}"/>
+            	<apex:inputField value="{!TMN_Contact__c.How_did_you_hear_Other_Describe__c}" id="howDidYouHearOtherDesc" />
+            	<apex:inputField value="{!TMN_Contact__c.Referral_Type__c}" />
             </apex:pageBlockSection>
             <apex:pageBlockSection title="Mentor Status" columns="2">
                 <apex:inputField value="{!TMN_Contact__c.Disregarded__c}" />
