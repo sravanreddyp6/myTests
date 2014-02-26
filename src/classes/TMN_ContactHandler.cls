@@ -7,7 +7,7 @@ public with sharing class TMN_ContactHandler {
     }
 
     public void OnBeforeInsert(TMN_Contact__c[] newObjects){
-        // EXECUTE BEFORE INSERT LOGIC	
+        // EXECUTE BEFORE INSERT LOGIC
     }
 
     public void OnAfterInsert(TMN_Contact__c[] newObjects){
@@ -144,6 +144,10 @@ public with sharing class TMN_ContactHandler {
 
     public void OnAfterUpdate(TMN_Contact__c[] oldObjects, TMN_Contact__c[] updatedObjects, Map<Id,TMN_Contact__c> newObjMap){
         // AFTER UPDATE LOGIC
+
+		//////
+		//START: MENTOR TRACKING MSR REPORT STATUS HANDLING 
+    	//////	
  		
  		List<TMN_Contact__c> theseTmnContactsRecordTypeDevNames = [ SELECT RecordType.DeveloperName FROM TMN_Contact__c WHERE Id = :updatedObjects ];
  
@@ -161,6 +165,18 @@ public with sharing class TMN_ContactHandler {
 		        	}
         		}
         	}
+    	}
+    	
+    	Map<TMN_Contact__c,List<TMN_Contact__c>> mentorToHouseholdMembers = new Map<TMN_Contact__c,List<TMN_Contact__c>>();
+    	List<TMN_Contact__c> householdMemberList = [ SELECT Mentor__c FROM TMN_Contact__c WHERE Mentor__c = :updatedObjects ];
+    	for(TMN_Contact__c m : mentors) {
+    		List<TMN_Contact__c> thisHouseholdsMembers = new List<TMN_Contact__c>();
+	    	for(TMN_Contact__c hM : householdMemberList) {
+	    		if(hM.Mentor__c==m.Id) {
+	    			thisHouseholdsMembers.add(hM);
+	    		}
+	    	}
+	    	mentorToHouseholdMembers.put(m,thisHouseholdsMembers);
     	}
 
 		List<Mentor_Tracking_Report_Record__c> dhrReportRecordsForAllTmnContactsAndHouseholdMembersThisUpdate = [ SELECT TMN_Contact__c, Status__c, Mentor__c, TMN_Contact__r.No_Longer_In_Home__c 
@@ -264,6 +280,44 @@ public with sharing class TMN_ContactHandler {
 		
 		update dhrReportsToUpdate;
 		
+		//////
+		//END: MENTOR TRACKING MSR REPORT STATUS HANDLING
+    	//////	
+    
+    	/////////////////////////////////////////////////////////////////////////////
+    	/////////////////////////////////////////////////////////////////////////////
+    
+		//////
+		//START: MENTOR TRACKING TMN_CONTACT__C OWNERSHIP
+		//////    
+
+		for(TMN_Contact__c t : mentors) {
+			for(TMN_Contact__c tUpdate : updatedObjects) {
+				if(t.Id==tUpdate.Id) {  // If the record being updated is a Mentor...
+					for(TMN_Contact__c tOld : oldObjects) {
+						if(tUpdate.Id==tOld.Id && tUpdate.OwnerId!=tOld.OwnerId) { //...and the old owner for the contact doesn't equal the new owner
+							List<TMN_Contact__c> theseHouseholdMembers = mentorToHouseholdMembers.get(t);
+							List<TMN_Contact__c> householdMembersToUpdate = new List<TMN_Contact__c>();
+							for(TMN_Contact__c thisHouseholdMember : theseHouseholdMembers) {
+								thisHouseholdMember.OwnerId = tUpdate.OwnerId;
+								householdMembersToUpdate.add(thisHouseholdMember);	
+							}
+							try {
+								update householdMembersToUpdate;
+							}
+							catch(DmlException e) {
+								System.debug('The following exception has occurred: ' + e.getMessage());
+							}
+						}
+					}
+				}
+			}
+		}
+
+		//////
+		//END: MENTOR TRACKING TMN_CONTACT__C OWNERSHIP
+		//////    
+    
     }
 
     public void OnBeforeDelete(TMN_Contact__c[] ObjectsToDelete, Map<Id,TMN_Contact__c> oldObjMap){

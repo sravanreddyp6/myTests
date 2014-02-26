@@ -44,7 +44,8 @@ public with sharing class MentorViewController {
         }
         this.currentHouseholdMember = new TMN_Contact__c(
             Mentor__c = contact.Id,
-            RecordTypeId = relatedPartyRecordTypeId
+            RecordTypeId = relatedPartyRecordTypeId,
+            OwnerId = contact.OwnerId
         );
     }
 
