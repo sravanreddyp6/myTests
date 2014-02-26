@@ -97,6 +97,12 @@ function highlightButtons ( btype, sfid, on )
 .thinkingwheel{
     position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
 }
+    .editcol{
+        width: 50px;
+    }
+    .datecol{
+        width: 250px;
+    }
 .lblaction{
     padding-left: 22px;
 }
@@ -394,14 +400,15 @@ function highlightButtons ( btype, sfid, on )
                          </apex:commandLink><br/>
                     </apex:repeat>
                 </apex:outputPanel>
-            <apex:dataList value="{!WeekResults}" var="resultset">
-                <apex:commandLink action="{!GotoSkillWorksheet}">
-                    <apex:param assignTo="{!WorksheetId}" name="WorksheetId" value="{!resultset.Name}"/>
-                        <apex:outputText value="Week of {0, date, MM/dd/yyyy}">
-                            <apex:param value="{!resultset.Start_Date__c}" />
-                        </apex:outputText> 
-                </apex:commandLink>
-            </apex:dataList>
+            <apex:pageBlockTable value="{!WeekResults}" var="skillWorksheet">
+                <apex:column headerValue="Action" styleClass="editcol"><a href="/apex/WeeklySkillTracking?id={!skillWorksheet.Id}">Edit</a></apex:column>
+                <apex:column styleClass="datecol" headerValue="Start Date">
+                    <a href="/apex/WeeklySkillTracking?id={!skillWorksheet.Id}">Week of&nbsp;<apex:outputField value="{!skillWorksheet.start_date__c }"/></a>
+                </apex:column>
+                <apex:column headerValue="Action Plan Name" >
+                <apex:outputLink value="/{!Action_Plan__c}"><apex:outputField value="{! Action_plan__c.name}"/></apex:outputLink>
+                </apex:column>
+            </apex:pageBlockTable>
         </apex:pageBlockSection>
     </apex:pageBlock>
     <apex:pageBlock title="Behavior Worksheets" rendered="{!showWorksheets && vfVarCanAccessWS}"> 
@@ -416,14 +423,16 @@ function highlightButtons ( btype, sfid, on )
                          </apex:commandLink><br/>
                     </apex:repeat>
                 </apex:outputPanel>
-            <apex:dataList value="{!BehaviorWorksheets}" var="resultset">
-                <apex:commandLink action="{!GotoBehaviorWorksheet}">
-                    <apex:param assignTo="{!worksheetId}" name="WorksheetId" value="{!resultset.Name}"/>
-                        <apex:outputText value="{0, date, MMMyyyy}">
-                            <apex:param value="{!resultset.Start_Date__c}" />
-                        </apex:outputText> 
-                </apex:commandLink>
-            </apex:dataList>
+  
+            <apex:pageBlockTable value="{!BehaviorWorksheets}" var="behaviorWorksheet">
+                <apex:column headerValue="Action" styleClass="editcol"><a href="/apex/BehaviorTracking?id={!behaviorWorksheet.Id}">Edit</a></apex:column>
+                 <apex:column styleClass="datecol" headerValue="Start Date" >
+                     <a href="/apex/BehaviorTracking?id={!behaviorWorksheet.Id}"> <apex:outputField value="{!behaviorWorksheet.start_date__c }"/></a>
+                 </apex:column>
+                 <apex:column headerValue="Action Plan Name" >
+                    <apex:outputLink value="/{!Action_Plan__c.id}"><apex:outputField value="{! Action_plan__c.name}"/></apex:outputLink>
+                </apex:column>            
+            </apex:pageBlockTable>
         </apex:pageBlockSection>
     </apex:pageBlock>
         <apex:pageBlock title="Acknowledgments" rendered="{! !editMode && Action_plan__c.Status__c !='Inactive Draft'}"> 
@@ -439,6 +448,18 @@ function highlightButtons ( btype, sfid, on )
      
     </apex:pageBlock> 
     <apex:pageBlock title="Notes" rendered="{!notes.size > 0}">
+        <apex:pageBlockButtons location="top" >
+            <div class="pbHeaderButton" style="top: 0px;" >    
+                <apex:commandButton value="New Note" rendered="{!Action_Plan__c.Status__c = 'Active Final'}"
+                    onclick="window.open('{!$Page.Notes_ProgressNote_Create}?plan={!Action_Plan__c}&service_assignment={!Action_Plan__c.Service_Assignment__c}&admission={!Action_Plan__c.Service_Assignment__r.Admission__c}&person={!Action_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}&state={!Action_Plan__c.Service_Assignment__r.Admission__r.State__c}', '_self'); return false;" >
+                    
+                        <apex:param value="{!Action_Plan__c.Service_Assignment__c}" name="service_assignment" />
+                        <apex:param value="{!Action_Plan__c.Service_Assignment__r.Admission__c}" name="admission" />
+                        <apex:param value="{!Action_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}" name="person" />
+                        <apex:param value="{!Action_Plan__c.Service_Assignment__r.Admission__r.State__c}" name="State" />                    
+                </apex:commandButton>
+            </div>
+        </apex:pageBlockButtons>    
     <apex:pageBlockTable value="{!notes}" var="pn">
         <apex:column >
             <apex:outputLink value="/{!pn.id}">{!pn.name}</apex:outputLink>

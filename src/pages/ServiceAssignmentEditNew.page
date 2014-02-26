@@ -6,6 +6,7 @@
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 <apex:variable value="{!$ObjectType.Action_Plan_Worksheet__c.accessible}" var="vfVarCanAccessWS"/>
 <apex:variable value="{!$User.Operating_Group__c == 'Cambridge'}" var="vfVarIsCB"/>
+
 <style>
     .pbButton {
     float: right;
@@ -636,7 +637,7 @@ END: Uncomment to have the element collapsed by default -->
 
          <apex:column headerValue="Action" styleClass="editcol"><a href="/apex/WeeklySkillTracking?id={!skillWorksheet.Id}">Edit</a></apex:column>
          <apex:column styleClass="datecol" headerValue="Start Date">
-             Week of&nbsp;<apex:outputField value="{!skillWorksheet.start_date__c }"/>
+             <a href="/apex/WeeklySkillTracking?id={!skillWorksheet.Id}">Week of&nbsp;<apex:outputField value="{!skillWorksheet.start_date__c }"/></a>
          </apex:column>
              <apex:column headerValue="Action Plan Name" >
                 <apex:outputLink value="/{!skillWorksheet.Action_Plan__c}"><apex:outputField value="{!skillWorksheet.Action_plan__r.name}"/></apex:outputLink>
@@ -667,7 +668,9 @@ END: Uncomment to have the element collapsed by default -->
      <apex:pageblockTable value="{!BehaviorWorksheets}" var="behaviorWorksheet" rendered="{!(BehaviorWorksheets.size>0)}" >
 
          <apex:column headerValue="Action" styleClass="editcol"><a href="/apex/BehaviorTracking?id={!behaviorWorksheet.Id}">Edit</a></apex:column>
-             <apex:column styleClass="datecol" value="{!behaviorWorksheet.start_date__c }"/>
+             <apex:column styleClass="datecol" headerValue="Start Date" >
+                 <a href="/apex/BehaviorTracking?id={!behaviorWorksheet.Id}"> <apex:outputField value="{!behaviorWorksheet.start_date__c }"/></a>
+             </apex:column>
              <apex:column headerValue="Action Plan Name" >
                 <apex:outputLink value="/{!behaviorWorksheet.Action_Plan__c}"><apex:outputField value="{!behaviorWorksheet.Action_plan__r.name}"/></apex:outputLink>
             </apex:column>
@@ -683,7 +686,8 @@ END: Uncomment to have the element collapsed by default -->
     <div class="pbHeaderButton">
        <!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
            <apex:commandButton onclick="window.open('/apex/ActionPlan_GoalObjective_rpt?ID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{! notes.size!=0 && !vfVarIsCB}"  value="Goal/Objective Documentation" />
-
+            <apex:commandButton rendered="{!ActivePlan.size = 1}" value="New Note"
+               onclick="window.open('{!$Page.Notes_ProgressNote_Create}?plan={!ActivePlan[0].id}&service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}', '_self'); return false;" />
     </div>
     <apex:pageBlockSection columns="1"
                              collapsible="false">

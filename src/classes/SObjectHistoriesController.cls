@@ -8,7 +8,9 @@ public with sharing class SObjectHistoriesController {
         public SObject histItem { get; set; }
         public DateTime CreatedDate {
             get {
-                return (DateTime) histItem.get('CreatedDate');
+                TimeZone zone = UserInfo.getTimeZone();
+                datetime  createDateTime = (DateTime) histItem.get('CreatedDate');
+                return createDateTime.addSeconds((zone.getOffset(createDateTime )/1000));
             }
         }
         public String Field {
