@@ -14,7 +14,12 @@ public with sharing class CMContract_Form {
     public map<string, clsRateLevel> getMapRateLevel()
         { return MapRateLevel;}
     public List<SelectOption> changeTypes;  
-    public List<String> selectedTypes { get; set;}  
+    public List<String> selectedTypes { get; set;}
+    public Boolean isNeuro{get ; set;}
+    public Boolean isCM{get ; set;}   
+    public CareMeridian_Contract__c rectype {get; set;}
+    Public LIST<RecordType> rt=new List<RecordType>();
+    
         /*
     public list< CareMeridian_Contract_Rate_and_Level__c>  cmRL = new list< CareMeridian_Contract_Rate_and_Level__c>();
     public list< CareMeridian_Contract_Rate_and_Level__c>  getcmRL() 
@@ -24,9 +29,11 @@ public with sharing class CMContract_Form {
 
         myContract = (CareMeridian_Contract__c)controller.getRecord();
         changeTypes = new List<SelectOption>();
-		selectedTypes = new List<String>();      
+        selectedTypes = new List<String>();      
         isRev = false;
         editMode = false;
+        isNeuro = false;
+        isCM = false;
         integer s = 0;
         for(CareMeridian_Contract_Rate_and_Level__c item : 
                     [select Sort_Key__c, Bed_Holds__c, Level_1__c, Level_2__c, Level_3__c, Level_4__c, Level_5__c, CareMeridian_Contract__c, Details__c 
@@ -42,11 +49,46 @@ public with sharing class CMContract_Form {
         if(myContract.id == null){
             editMode = true;
             mycontract.ownerid = UserInfo.getUserId();
-        } else {
-        	isRev = true;	// want to enter type of change on every update other than brand new contract
-        	if ( !String.isBlank( myContract.Type_of_Change__c ))
-            	selectedTypes = myContract.Type_of_Change__c.Split(';');
+              
+         
+            if(ApexPages.currentPage().getParameters().get('RecordType') == null){
             	
+            	Schema.DescribeSObjectResult describecontract = Schema.SObjectType.CareMeridian_Contract__c;
+				List<Schema.RecordTypeInfo> rtInfos = describecontract.getRecordTypeInfos();
+				for(Schema.RecordTypeinfo rtInfo: rtInfos){
+					if(rtInfo.getName()!='Master' && rtInfo.isAvailable()){
+						System.debug('The RecordType :' +rtInfo.getName() + ' and the id: ' + rtInfo.getRecordTypeId() +' is available');
+						if(rtInfo.getName()=='NeuroRestorative Contracts'){
+							isNeuro=True;
+						}else{
+							isNeuro=False;
+						}
+					
+						
+					}
+				}
+            }
+            
+           if(ApexPages.currentPage().getParameters().get('RecordType')== '012J00000000Xzi')
+           		
+           		isNeuro=True;      	    
+            
+        } else {
+            rectype = [SELECT ID, RecordTypeID, RecordType.DeveloperName FROM CareMeridian_Contract__c WHERE id=:ApexPages.CurrentPage().getparameters().get('id')];
+            
+            system.debug(rectype.RecordType.DeveloperName);
+            
+            if (rectype.RecordType.DeveloperName =='NeuroRestorative_Contracts'){
+                isNeuro=True;
+                
+           }
+           if (rectype.RecordType.DeveloperName =='CareMeridian_Contracts'){
+               isNeuro=False;
+           }
+            isRev = true;   // want to enter type of change on every update other than brand new contract
+            if ( !String.isBlank( myContract.Type_of_Change__c ))
+                selectedTypes = myContract.Type_of_Change__c.Split(';');
+                
         }
         
             
@@ -62,7 +104,7 @@ public with sharing class CMContract_Form {
                     query += '\'';
                     OldContract = Database.query(query);
                     System.Debug( oldcontract);
-                    isRev = true;	// catches case of new contract that is a revision
+                    isRev = true;   // catches case of new contract that is a revision
                     for(Schema.FieldSetMember f : SObjectType.CareMeridian_Contract__c.FieldSets.Renewal_Fields.getFields()) {        
                         myContract.put(f.getFieldPath(), OldContract.get(f.getFieldPath()));
                     }
@@ -80,8 +122,8 @@ public with sharing class CMContract_Form {
         
         }
         
-        
-        
+      		
+                      
     }
 
     public PageReference myEdit() {
@@ -117,28 +159,28 @@ public with sharing class CMContract_Form {
             
             
             if(oldID!= null) 
-            	myContract.Previous_Contract__c = OldContract.id;
+                myContract.Previous_Contract__c = OldContract.id;
 
-			System.Debug( 'selectedTypes1 = ' + selectedTypes + ', isrev=' + isrev);	
-			if ( isRev ) {            	
-            	System.Debug( 'selectedTypes2 = ' + selectedTypes);	
-            	// ECDC-40 01/06/14: record type of change field 
-            	String strtypes= '';
-            	for ( String s : selectedTypes ) 
-            		strtypes += s + ';';	
-	            
-	            if ( strtypes != '' )  {
-        	    	strtypes = strtypes.Substring(0, strtypes.length() - 1); // cut last semicolon off
-        	    	myContract.Type_of_Change__c = strtypes;
-	            } else {
-            		// type of change required for revisions/amendments
-            		 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'At least one Type of Change must be selected to Save this record.'));
-            		 return null;
-            	} 
-            		
-            	
-            	
-            	
+            System.Debug( 'selectedTypes1 = ' + selectedTypes + ', isrev=' + isrev);    
+            if ( isRev ) {              
+                System.Debug( 'selectedTypes2 = ' + selectedTypes); 
+                // ECDC-40 01/06/14: record type of change field 
+                String strtypes= '';
+                for ( String s : selectedTypes ) 
+                    strtypes += s + ';';    
+                
+                if ( strtypes != '' )  {
+                    strtypes = strtypes.Substring(0, strtypes.length() - 1); // cut last semicolon off
+                    myContract.Type_of_Change__c = strtypes;
+                } else {
+                    // type of change required for revisions/amendments
+                     ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'At least one Type of Change must be selected to Save this record.'));
+                     return null;
+                } 
+                    
+                
+                
+                
             }
             
             upsert myContract;
@@ -188,17 +230,19 @@ public with sharing class CMContract_Form {
     
     
     } 
-  	
-  	public List<SelectOption> getchangeTypes() {
-  		List<SelectOption> options = new List<SelectOption>();
-  		
-  		Schema.DescribeFieldResult changeType = CareMeridian_Contract__c.Type_of_Change__c.getDescribe();
-  		//System.Debug( 'ChangeType field describe: ' + changeType );
-		for (Schema.PicklistEntry a : changeType.getPickListValues())
-        	options.add(new SelectOption(a.getLabel(), a.getValue())); 
+    
+    public List<SelectOption> getchangeTypes() {
+        List<SelectOption> options = new List<SelectOption>();
+        
+        Schema.DescribeFieldResult changeType = CareMeridian_Contract__c.Type_of_Change__c.getDescribe();
+        //System.Debug( 'ChangeType field describe: ' + changeType );
+        for (Schema.PicklistEntry a : changeType.getPickListValues())
+            options.add(new SelectOption(a.getLabel(), a.getValue())); 
 
-		//system.debug('Change types: ' +  options);
-    	return options;
-	}	 
+        //system.debug('Change types: ' +  options);
+        return options;
+    }    
+    
+    
 
 }
