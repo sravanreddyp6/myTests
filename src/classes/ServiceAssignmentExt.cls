@@ -20,6 +20,7 @@ public class ServiceAssignmentExt {
     public Boolean canCreatePlan { get; set; }
     public Boolean canCreateSummary { get; set; }
     public Boolean canEditSA { get; set; }
+    public Boolean canCreateDiag { get; set;}
     public static Boolean showdiagModal { get; set; }
     public string diagEditId {get; set; }
     public Service_Location__c serviceLocation { get; set; }
@@ -94,6 +95,10 @@ public class ServiceAssignmentExt {
     private void setcanCreateSummary() {
         Schema.DescribeSObjectResult oSchema = Action_Summary__c.sObjectType.getDescribe();
         canCreateSummary = oSchema.IsCreateable();
+    }
+	private void setcanCreateDiag() {
+        Schema.DescribeSObjectResult oSchema = Diagnosis__c.sObjectType.getDescribe();
+        canCreateDiag = oSchema.IsCreateable();
     }
 
 	private Boolean pshowDiag, pshowLocation; 
@@ -197,7 +202,7 @@ public class ServiceAssignmentExt {
 
 
   public void createDiagnoses() {
-    if (diagnoses != null && this.theServAssign.Id != null) {
+    if (diagnoses != null && diagnoses.size() > 0 && this.theServAssign.Id != null) {
       for (Diagnosis__c dg : diagnoses ) {
         dg.Service_Assignment__c = this.theServAssign.Id;
       }
@@ -278,6 +283,7 @@ public class ServiceAssignmentExt {
         setcanEditSA();
         setcanCreatePlan();
         setcanCreateSummary();
+        setcanCreateDiag();
 
 
         getContractsAndXrefs();
@@ -995,7 +1001,7 @@ public class ServiceAssignmentExt {
                 system.debug('What is s.RecordType.Name before the upsert?: ' + s.RecordType.Name);
                 system.debug('What is s.RecordType before the upsert?: ' + s.RecordType);
 
-                 if ( showDiagnosis ){
+                 if ( showLocation ){
 
                        // update program string from service location
                        // System.Debug('Service location is: ' + theservassign.service_location__c);

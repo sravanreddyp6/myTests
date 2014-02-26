@@ -551,7 +551,7 @@ END: Uncomment to have the element collapsed by default -->
         <apex:commandButton value="Add Diagnosis"
                             id="addDiagnosis"
                             onClick="showAddDiagnosis();return false;"
-                            rendered="{!editSA}"/>
+                            rendered="{!editSA && canCreateDiag}"/>
     </div>
     <apex:pageBlockSection columns="1"
                              collapsible="false">
