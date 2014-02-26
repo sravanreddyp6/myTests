@@ -194,64 +194,68 @@ function hidedio(dio, dio2){
                 <apex:inputField value="{!CareMeridian_Contract__c.Contract_Type__c}" />
                 <apex:inputField value="{!CareMeridian_Contract__c.Plan_Type__c}" />
                 <apex:inputField value="{!CareMeridian_Contract__c.Name}" required="true" />
-                <apex:inputField value="{!CareMeridian_Contract__c.Business_Line__c}" />
+                <apex:inputField value="{!CareMeridian_Contract__c.Business_Line__c}" rendered="{!!isNeuro}"/>
                 <apex:inputField styleClass="mytxtarea" value="{!CareMeridian_Contract__c.Description__c}"/>   
             </apex:pageBlockSection>
             <apex:pageBlockSection title="Information " columns="1" rendered="{!!editMode}">
                 <apex:outputField value="{!CareMeridian_Contract__c.Contract_Type__c}" />
                 <apex:outputField value="{!CareMeridian_Contract__c.Plan_Type__c}" />
                 <apex:outputField value="{!CareMeridian_Contract__c.Name}" />
-                <apex:outputField value="{!CareMeridian_Contract__c.Business_Line__c}" />
+                <apex:outputField value="{!CareMeridian_Contract__c.Business_Line__c}" rendered="{!!isNeuro}" />
                 <apex:outputField value="{!CareMeridian_Contract__c.Description__c}"/>   
-            </apex:pageBlockSection>
-                        
+            </apex:pageBlockSection>              
             <apex:pageBlockSection title="Location" columns="1" rendered="{!editMode}">
                 <apex:inputField value="{!CareMeridian_Contract__c.Operating_Group__c}" />
-                <apex:inputField value="{!CareMeridian_Contract__c.State__c}"/>
+                <apex:inputField value="{!CareMeridian_Contract__c.State__c}" rendered="{!!isNeuro}"/>
                 <apex:inputField value="{!CareMeridian_Contract__c.Location__c}"/>
                 <apex:inputField value="{!CareMeridian_Contract__c.Service_Line__c}"/>  
             </apex:pageBlockSection>
             <apex:pageBlockSection title="Location" columns="1" rendered="{!!editMode}">
                 <apex:outputField value="{!CareMeridian_Contract__c.Operating_Group__c}" />
-                <apex:outputField value="{!CareMeridian_Contract__c.State__c}"/>
+                <apex:outputField value="{!CareMeridian_Contract__c.State__c}" rendered="{!!isNeuro}"/>
                 <apex:outputField value="{!CareMeridian_Contract__c.Location__c}"/>
                 <apex:outputField value="{!CareMeridian_Contract__c.Service_Line__c}"/>  
-            </apex:pageBlockSection>            
-            
+            </apex:pageBlockSection>           
             <apex:pageBlockSection title="Timeframe" columns="2" rendered="{!editMode}" >
                 <apex:inputField value="{!CareMeridian_Contract__c.Start_Date__c}" /> 
-                <apex:inputField value="{!CareMeridian_Contract__c.Term_Date__c}" /> 
+                <apex:inputField value="{!CareMeridian_Contract__c.Term_Date__c}" rendered="{!!isNeuro}" /> 
                 <apex:inputField value="{!CareMeridian_Contract__c.Termination_Date__c}" />
-                <apex:inputField value="{!CareMeridian_Contract__c.Renegotiation_Deadline__c}" /> 
-                <apex:inputField value="{!CareMeridian_Contract__c.Open_Ended_Termintion_Date__c}"/> 
+                <apex:inputField Value="{!CareMeridian_Contract__c.Term_Type__c}" rendered="{!isNeuro}"/>
+                <apex:inputField value="{!CareMeridian_Contract__c.Renegotiation_Deadline__c}" rendered="{!!isNeuro}"/> 
+                <apex:inputField value="{!CareMeridian_Contract__c.Open_Ended_Termintion_Date__c}" rendered="{!!isNeuro}"/> 
                 <apex:inputField value="{!CareMeridian_Contract__c.Termination_Notice__c}"/>
                 <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
                 <apex:inputField value="{!CareMeridian_Contract__c.Termination_Notice_Other__c}"/>                
             </apex:pageBlockSection>
             <apex:pageBlockSection title="Timeframe" columns="2" rendered="{!!editMode}" >
                 <apex:outputField value="{!CareMeridian_Contract__c.Start_Date__c}" />  
-                <apex:outputField value="{!CareMeridian_Contract__c.Term_Date__c}" />              
+                <apex:outputField value="{!CareMeridian_Contract__c.Term_Date__c}" rendered="{!!isNeuro}"/>  
+                <apex:outputField Value="{!CareMeridian_Contract__c.Term_Type__c}" rendered="{!isNeuro}"/>            
                 <apex:outputField value="{!CareMeridian_Contract__c.Termination_Date__c}" />
-                <apex:outputField value="{!CareMeridian_Contract__c.Renegotiation_Deadline__c}" /> 
-                <apex:outputField value="{!CareMeridian_Contract__c.Open_Ended_Termintion_Date__c}"/> 
-                <apex:outputField value="{!CareMeridian_Contract__c.Termination_Notice__c}"/>
+                <apex:outputField value="{!CareMeridian_Contract__c.Renegotiation_Deadline__c}" rendered="{!!isNeuro}" /> 
+                <apex:outputField value="{!CareMeridian_Contract__c.Open_Ended_Termintion_Date__c}" rendered="{!!isNeuro}"/> 
+                <apex:outputField value="{!CareMeridian_Contract__c.Termination_Notice__c}"/> 
                 <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
                 <apex:outputField value="{!CareMeridian_Contract__c.Termination_Notice_Other__c}"/>
-            </apex:pageBlockSection>            
-            
-            <apex:pageBlockSection title="Billing Guidelines" columns="1"  rendered="{!editMode}">
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Reimbursement Details" columns="1" rendered="{!AND(editMode , isNeuro)}">
+            <apex:inputField styleClass="mytxtarea" value="{!CareMeridian_Contract__c.Reimbursement_Details__c}"/>
+            </apex:pageBlockSection> 
+            <apex:pageBlockSection title="Reimbursement Details" columns="1" rendered="{!AND(NOT(editMode),isNeuro)}">
+            <apex:outputField styleClass="mytxtarea" value="{!CareMeridian_Contract__c.Reimbursement_Details__c}"/>
+            </apex:pageBlockSection>              
+            <apex:pageBlockSection title="Billing Guidelines" columns="1"  rendered="{!AND(editMode,NOT(isNeuro))}">
                 <apex:inputField value="{!CareMeridian_Contract__c.Fee_Schedule__c}"/>
                 <apex:inputField value="{!CareMeridian_Contract__c.Bill_Rate__c}"/>
                 <apex:inputField value="{!CareMeridian_Contract__c.Percentage_Discount__c}"/>
                 <apex:inputField styleClass="mytxtarea" value="{!CareMeridian_Contract__c.Fee_Schedule_Details__c}"/> 
             </apex:pageBlockSection>
-            <apex:pageBlockSection title="Billing Guidelines" columns="1"  rendered="{!!editMode}">
+            <apex:pageBlockSection title="Billing Guidelines" columns="1"  rendered="{!AND(NOT(editMode),NOT(isNeuro))}">
                 <apex:outputField value="{!CareMeridian_Contract__c.Fee_Schedule__c}"/>
                 <apex:outputField value="{!CareMeridian_Contract__c.Bill_Rate__c}"/>
                 <apex:outputField value="{!CareMeridian_Contract__c.Percentage_Discount__c}"/>
                 <apex:outputField styleClass="mytxtarea" value="{!CareMeridian_Contract__c.Fee_Schedule_Details__c}"/> 
             </apex:pageBlockSection>              
-            
             <apex:pageBlockSection title="Contract Levels and Rates" columns="1" >
                 <apex:commandButton action="{!myAddRL}" value="Add Note" reRender="theRLs" rendered="{!editMode}" status="myStatus" immediate="true"/>
                 <apex:commandButton onclick="window.open('/apex/CMContract_FormPrint?Id={!CareMeridian_Contract__c.Id}&onlyRL=1', '_blank'); return false;"  
@@ -435,11 +439,12 @@ function hidedio(dio, dio2){
 
                 </apex:outputPanel>           
             </apex:pageBlockSection>
-            <apex:pageBlockSection title="Exclusions" columns="1" >
+            <apex:pageBlockSection title="Exclusions" columns="1"  rendered="{!!isNeuro}">
                 <apex:panelGrid columns="4" style="width:100%;" columnClasses="mycols, mycols, mycols, mycols2" cellspacing="0"  rendered="{!editMode}"  >
                     <apex:panelGroup style="maring-left: 15px" >
                         <apex:inputField id="pv" value="{!CareMeridian_Contract__c.Physician_Visits__c}" />
-                        <apex:outputLabel for="pv" >{!$ObjectType.CareMeridian_Contract__c.fields.Physician_Visits__c.label}</apex:outputLabel>
+                        <apex:outputLabel for="pv">{!$ObjectType.CareMeridian_Contract__c.fields.Physician_Visits__c.label}</apex:outputLabel>
+                        
                         <br/>
                         <apex:inputField styleClass="mytxtarea extxt" value="{!CareMeridian_Contract__c.Physician_Visits_Details__c}" />
                     </apex:panelGroup>                    
@@ -637,12 +642,222 @@ function hidedio(dio, dio2){
                                              
             </apex:pageBlockSection> 
             
+            
+            
+            <apex:pageBlockSection title="Exclusions" columns="1"  rendered="{!isNeuro}">
+                <apex:panelGrid columns="4" style="width:100%;" columnClasses="mycols, mycols, mycols, mycols2" cellspacing="0"  rendered="{!editMode}"  >
+                    <apex:panelGroup style="maring-left: 15px" >
+                        <apex:inputField id="rb" value="{!CareMeridian_Contract__c.Room_Board__c}" />
+                        <apex:outputLabel for="rb">{!$ObjectType.CareMeridian_Contract__c.fields.Room_Board__c.label}</apex:outputLabel>
+                        
+                        <br/>
+                        <apex:inputField styleClass="mytxtarea extxt" value="{!CareMeridian_Contract__c.Room_Board_Details__c}" />
+                    </apex:panelGroup>                    
+                    <apex:panelGroup style="maring-left: 15px" >
+                        <apex:inputField id="ns" value="{!CareMeridian_Contract__c.Nursing_Services__c}" />
+                        <apex:outputLabel for="ns" >{!$ObjectType.CareMeridian_Contract__c.fields.Nursing_Services__c.label}</apex:outputLabel>
+                        <br/>
+                        <apex:inputField styleClass="mytxtarea extxt" value="{!CareMeridian_Contract__c.Nursing_Services_Details__c}" />
+                    </apex:panelGroup> 
+                    <apex:panelGroup >
+                        <apex:inputField id="tps" value="{!CareMeridian_Contract__c.Therapies__c}" />
+                        <apex:outputLabel for="tps" >{!$ObjectType.CareMeridian_Contract__c.fields.Therapies__c.label}</apex:outputLabel>
+                        <br/>
+                        <apex:inputField styleClass="mytxtarea extxt" value="{!CareMeridian_Contract__c.Therapies_Details__c}" />
+                    </apex:panelGroup>
+                    <apex:panelGroup >
+                        <apex:inputField id="cs" value="{!CareMeridian_Contract__c.Counselling_Services__c}" /> 
+                        <apex:outputLabel for="cs" >{!$ObjectType.CareMeridian_Contract__c.fields.Counselling_Services__c.label}</apex:outputLabel>
+                        <br/>
+                        <apex:inputField styleClass="mytxtarea extxt" value="{!CareMeridian_Contract__c.Counselling_Services_Details__c}" /> 
+                    </apex:panelGroup> 
+                    <apex:panelGroup >
+                        <apex:inputField id="fep" value="{!CareMeridian_Contract__c.Formal_Education_Program__c}" />
+                        <apex:outputLabel for="fep" >{!$ObjectType.CareMeridian_Contract__c.fields.Formal_Education_Program__c.label}</apex:outputLabel>
+                        <br/>
+                        <apex:inputField styleClass="mytxtarea extxt" value="{!CareMeridian_Contract__c.Formal_Education_Program_Details__c}" />                        
+                    </apex:panelGroup>                    
+                    <apex:panelGroup >
+                        <apex:inputField id="psc" value="{!CareMeridian_Contract__c.Physician_Services_Consultations__c}" />
+                        <apex:outputLabel for="psc" >{!$ObjectType.CareMeridian_Contract__c.fields.Physician_Services_Consultations__c.label}</apex:outputLabel>
+                        <br/>
+                        <apex:inputField styleClass="mytxtarea extxt" value="{!CareMeridian_Contract__c.Physician_Services_Consultations_Details__c}" />
+                    </apex:panelGroup> 
+                    <apex:panelGroup >
+                        <apex:inputField id="mc" value="{!CareMeridian_Contract__c.Medications__c}" />
+                        <apex:outputLabel for="mc" >{!$ObjectType.CareMeridian_Contract__c.fields.Medications__c.label}</apex:outputLabel>
+                        <br/>
+                        <apex:inputField styleClass="mytxtarea extxt" value="{!CareMeridian_Contract__c.Medications_Details__c}" />
+                    </apex:panelGroup>
+                    <apex:panelGroup >
+                        <apex:inputField id="mes" value="{!CareMeridian_Contract__c.Medical_Equipment_Supplies__c}" /> 
+                        <apex:outputLabel for="mes" >{!$ObjectType.CareMeridian_Contract__c.fields.Medical_Equipment_Supplies__c.label}</apex:outputLabel>
+                        <br/>
+                        <apex:inputField styleClass="mytxtarea extxt" value="{!CareMeridian_Contract__c.Medical_Equipment_Supplies_Details__c}" />
+                    </apex:panelGroup>
+                    <apex:panelGroup >
+                        <apex:inputField id="sde" value="{!CareMeridian_Contract__c.Ancillary__c}"/>
+                        <apex:outputLabel for="sde" >{!$ObjectType.CareMeridian_Contract__c.fields.Ancillary__c.label}</apex:outputLabel>
+                        <br/>
+                        <apex:inputField styleClass="mytxtarea extxt" value="{!CareMeridian_Contract__c.Ancillary_Details__c}" />
+                    </apex:panelGroup> 
+                    <apex:panelGroup >
+                        <apex:inputField id="tr" value="{!CareMeridian_Contract__c.Neuropsych_Eval_Beh_Analysis_Therapy__c}" />
+                        <apex:outputLabel for="tr" >{!$ObjectType.CareMeridian_Contract__c.fields.Neuropsych_Eval_Beh_Analysis_Therapy__c.label}</apex:outputLabel>
+                        <br/>
+                        <apex:inputField styleClass="mytxtarea extxt" value="{!CareMeridian_Contract__c.Neuropsych_Eval_Beh_Anal_Therapy_Detail__c}" />
+                    </apex:panelGroup>
+                    <apex:panelGroup >
+                        <apex:inputField id="sit" value="{!CareMeridian_Contract__c.X1_1_Supervision__c}" /> 
+                        <apex:outputLabel for="sit" >{!$ObjectType.CareMeridian_Contract__c.fields.X1_1_Supervision__c.label}</apex:outputLabel>
+                        <br/>
+                        <apex:inputField styleClass="mytxtarea extxt" value="{!CareMeridian_Contract__c.X1_1_Supervision_Details__c}" /> 
+                    </apex:panelGroup>
+                    <apex:panelGroup >
+                        <apex:inputField id="oth" value="{!CareMeridian_Contract__c.Other_Ex__c}" />
+                        <apex:outputLabel for="oth" >Other</apex:outputLabel>  
+                        <br/>
+                        <apex:inputField styleClass="mytxtarea extxt" value="{!CareMeridian_Contract__c.Other_Ex_Details__c}" />                      
+                    </apex:panelGroup>
+                </apex:panelGrid> 
+                
+                    <apex:panelGrid columns="4" style="width:100%;" columnClasses="mycols" cellspacing="0" cellpadding="0"  rendered="{!AND(NOT(editMode),isNeuro)}">
+                        <apex:panelGroup rendered="{!CareMeridian_Contract__c.Room_Board__c}"  >
+                            <apex:outputPanel layout="block" styleClass="exwrapper">
+                                <apex:outputField value="{!CareMeridian_Contract__c.Room_Board__c}"/>
+                                <apex:outputLabel styleClass="mylbl" >{!$ObjectType.CareMeridian_Contract__c.fields.Physician_Visits__c.label}</apex:outputLabel>
+                                <br/>
+                                <apex:outputPanel layout="block" styleClass="exdets">
+                                    <apex:outputField value="{!CareMeridian_Contract__c.Room_Board_Details__c}" />
+                                </apex:outputPanel>
+                            </apex:outputPanel>
+                        </apex:panelGroup>                    
+                        <apex:panelGroup rendered="{!CareMeridian_Contract__c.Nursing_Services__c}">
+                            <apex:outputPanel layout="block" styleClass="exwrapper">
+                                <apex:outputField value="{!CareMeridian_Contract__c.Nursing_Services__c}" />
+                                <apex:outputLabel styleClass="mylbl" >{!$ObjectType.CareMeridian_Contract__c.fields.Nursing_Services__c}</apex:outputLabel>
+                                <br/>
+                                <apex:outputPanel layout="block" styleClass="exdets">
+                                    <apex:outputField value="{!CareMeridian_Contract__c.Nursing_Services_Details__c}" />    
+                                </apex:outputPanel>                            
+                            </apex:outputPanel>
+                        </apex:panelGroup> 
+                        <apex:panelGroup rendered="{!CareMeridian_Contract__c.Therapies__c}" >
+                            <apex:outputPanel layout="block" styleClass="exwrapper">
+                                <apex:outputField value="{!CareMeridian_Contract__c.Therapies__c}" />
+                                <apex:outputLabel styleClass="mylbl" >{!$ObjectType.CareMeridian_Contract__c.fields.Therapies__c.label}</apex:outputLabel>
+                                <br/>
+                                <apex:outputPanel layout="block" styleClass="exdets">
+                                    <apex:outputField value="{!CareMeridian_Contract__c.Therapies_Details__c}" />    
+                                </apex:outputPanel>                            
+                            </apex:outputPanel>
+                        </apex:panelGroup>
+                        <apex:panelGroup rendered="{!CareMeridian_Contract__c.Counselling_Services__c}" >
+                            <apex:outputPanel layout="block" styleClass="exwrapper">
+                                <apex:outputField value="{!CareMeridian_Contract__c.Counselling_Services__c}" /> 
+                                <apex:outputLabel styleClass="mylbl" >{!$ObjectType.CareMeridian_Contract__c.fields.Counselling_Services__c.label}</apex:outputLabel>
+                                <br/>
+                                <apex:outputPanel layout="block" styleClass="exdets">
+                                    <apex:outputField value="{!CareMeridian_Contract__c.Counselling_Services_Details__c}" />     
+                                </apex:outputPanel>                            
+                            </apex:outputPanel>
+                        </apex:panelGroup>                    
+                                            
+                        <apex:panelGroup rendered="{!CareMeridian_Contract__c.Formal_Education_Program__c}" >
+                            <apex:outputPanel layout="block" styleClass="exwrapper">
+                                <apex:outputField value="{!CareMeridian_Contract__c.Formal_Education_Program__c}" />
+                                <apex:outputLabel styleClass="mylbl" >{!$ObjectType.CareMeridian_Contract__c.fields.Customized_DME__c.label}</apex:outputLabel>
+                                <br/>
+                                <apex:outputPanel layout="block" styleClass="exdets">
+                                    <apex:outputField styleClass="mytxtarea" value="{!CareMeridian_Contract__c.Formal_Education_Program_Details__c}" />    
+                                </apex:outputPanel>                            
+                            </apex:outputPanel>
+                        </apex:panelGroup>                    
+                        <apex:panelGroup rendered="{!CareMeridian_Contract__c.Physician_Services_Consultations__c}" >
+                            <apex:outputPanel layout="block" styleClass="exwrapper">
+                                <apex:outputField value="{!CareMeridian_Contract__c.Physician_Services_Consultations__c}" />
+                                <apex:outputLabel styleClass="mylbl" >{!$ObjectType.CareMeridian_Contract__c.fields.Physician_Services_Consultations__c.label}</apex:outputLabel>
+                                <br/>
+                                <apex:outputPanel layout="block" styleClass="exdets">
+                                    <apex:outputField styleClass="mytxtarea" value="{!CareMeridian_Contract__c.Physician_Services_Consultations_Details__c}" />   
+                                </apex:outputPanel>
+                            </apex:outputPanel>
+                        </apex:panelGroup> 
+                        <apex:panelGroup rendered="{!CareMeridian_Contract__c.Medications__c}" >
+                            <apex:outputPanel layout="block" styleClass="exwrapper">
+                                <apex:outputField value="{!CareMeridian_Contract__c.Medications__c}" />
+                                <apex:outputLabel styleClass="mylbl" >{!$ObjectType.CareMeridian_Contract__c.fields.Medications__c.label}</apex:outputLabel>
+                                <br/>
+                                <apex:outputPanel layout="block" styleClass="exdets">
+                                    <apex:outputField styleClass="mytxtarea" value="{!CareMeridian_Contract__c.Medications_Details__c}" />    
+                                </apex:outputPanel>                            
+                            </apex:outputPanel>
+                        </apex:panelGroup>
+                        <apex:panelGroup rendered="{!CareMeridian_Contract__c.Medical_Equipment_Supplies__c}" >
+                            <apex:outputPanel layout="block" styleClass="exwrapper">
+                                <apex:outputField value="{!CareMeridian_Contract__c.Medical_Equipment_Supplies__c}" /> 
+                                <apex:outputLabel styleClass="mylbl" >{!$ObjectType.CareMeridian_Contract__c.fields.Medical_Equipment_Supplies__c.label}</apex:outputLabel>
+                                <br/>
+                                <apex:outputPanel layout="block" styleClass="exdets">
+                                    <apex:outputField styleClass="mytxtarea" value="{!CareMeridian_Contract__c.Medical_Equipment_Supplies_Details__c}" />    
+                                </apex:outputPanel>                            
+                            </apex:outputPanel>
+                        </apex:panelGroup>
+                        <apex:panelGroup rendered="{!CareMeridian_Contract__c.Ancillary__c}" >
+                            <apex:outputPanel layout="block" styleClass="exwrapper">
+                                <apex:outputField value="{!CareMeridian_Contract__c.Ancillary__c}"/>
+                                <apex:outputLabel styleClass="mylbl" >{!$ObjectType.CareMeridian_Contract__c.fields.Ancillary__c.label}</apex:outputLabel>
+                                <br/>
+                                <apex:outputPanel layout="block" styleClass="exdets">
+                                    <apex:outputField styleClass="mytxtarea" value="{!CareMeridian_Contract__c.Ancillary_Details__c}" />    
+                                </apex:outputPanel>                            
+                            </apex:outputPanel>
+                        </apex:panelGroup>                    
+                        <apex:panelGroup rendered="{!CareMeridian_Contract__c.Neuropsych_Eval_Beh_Analysis_Therapy__c}" >
+                            <apex:outputPanel layout="block" styleClass="exwrapper">
+                                <apex:outputField value="{!CareMeridian_Contract__c.Neuropsych_Eval_Beh_Analysis_Therapy__c}" />
+                                <apex:outputLabel styleClass="mylbl" >{!$ObjectType.CareMeridian_Contract__c.fields.Neuropsych_Eval_Beh_Analysis_Therapy__c.label}</apex:outputLabel>
+                                <br/>
+                                <apex:outputPanel layout="block" styleClass="exdets">
+                                    <apex:outputField styleClass="mytxtarea" value="{!CareMeridian_Contract__c.Neuropsych_Eval_Beh_Anal_Therapy_Detail__c}" />    
+                                </apex:outputPanel>                            
+                            </apex:outputPanel>
+                        </apex:panelGroup>
+                        <apex:panelGroup rendered="{!CareMeridian_Contract__c.X1_1_Supervision__c}" >
+                            <apex:outputPanel layout="block" styleClass="exwrapper">
+                                <apex:outputField value="{!CareMeridian_Contract__c.X1_1_Supervision__c}" /> 
+                                <apex:outputLabel styleClass="mylbl" >{!$ObjectType.CareMeridian_Contract__c.fields.X1_1_Supervision__c.label}</apex:outputLabel>
+                                <br/>
+                                <apex:outputPanel layout="block" styleClass="exdets">
+                                    <apex:outputField styleClass="mytxtarea" value="{!CareMeridian_Contract__c.X1_1_Supervision_Details__c}" />    
+                                </apex:outputPanel>                            
+                            </apex:outputPanel> 
+                        </apex:panelGroup>
+                        <apex:panelGroup rendered="{!CareMeridian_Contract__c.Other_Ex__c}" >
+                            <apex:outputPanel layout="block" styleClass="exwrapper">
+                                <apex:outputField value="{!CareMeridian_Contract__c.Other_Ex__c}" />
+                                <apex:outputLabel styleClass="mylbl" >Other</apex:outputLabel>  
+                                <br/>
+                                <apex:outputPanel layout="block" styleClass="exdets">
+                                    <apex:outputField styleClass="mytxtarea" value="{!CareMeridian_Contract__c.Other_Ex_Details__c}" />      
+                                </apex:outputPanel>                            
+                            </apex:outputPanel>                 
+                        </apex:panelGroup>                   
+                    </apex:panelGrid>
+                                             
+            </apex:pageBlockSection> 
+            
+            
+            
+            
             <apex:pageBlockSection title="Timely Filing Requirements" columns="1" rendered="{!editMode}" >
+            	<apex:inputField value="{!CareMeridian_Contract__c.Billing_Format__c}" rendered="{!isNeuro}"/>
                 <apex:inputField value="{!CareMeridian_Contract__c.Filing_Requirements__c}"/>
                 <apex:inputField value="{!CareMeridian_Contract__c.Filing_Deadline__c}"/>
                 <apex:inputField styleClass="lngtxt" value="{!CareMeridian_Contract__c.Filing_Deadline_Other__c}"/> 
             </apex:pageBlockSection>  
             <apex:pageBlockSection title="Timely Filing Requirements" columns="1"  rendered="{!!editMode}">
+           		 <apex:outputField value="{!CareMeridian_Contract__c.Billing_Format__c}" rendered="{!isNeuro}"/>
                 <apex:outputField value="{!CareMeridian_Contract__c.Filing_Requirements__c}"/>
                 <apex:outputField value="{!CareMeridian_Contract__c.Filing_Deadline__c}"/>
                 <apex:outputField value="{!CareMeridian_Contract__c.Filing_Deadline_Other__c}"/> 
@@ -675,11 +890,13 @@ function hidedio(dio, dio2){
                 <apex:outputField value="{!CareMeridian_Contract__c.Initial__c}" />
                 <apex:outputField value="{!CareMeridian_Contract__c.Renewed__c}"  />
                 <apex:inputField value="{!CareMeridian_Contract__c.Status__c}" required="true"/> 
+                <apex:inputField styleClass="lngtxt" value="{!CareMeridian_Contract__c.Closed_Reason__c}" rendered="{!isNeuro}"/>
             </apex:pageBlockSection> 
             <apex:pageBlockSection title="Status" columns="1"  rendered="{!!editMode}">
                 <apex:outputField value="{!CareMeridian_Contract__c.Initial__c}"  />
                 <apex:outputField value="{!CareMeridian_Contract__c.Renewed__c}"  />
                 <apex:outputField value="{!CareMeridian_Contract__c.Status__c}"/> 
+                <apex:outputField styleClass="lngtxt" value="{!CareMeridian_Contract__c.Closed_Reason__c}" rendered="{!isNeuro}"/>
             </apex:pageBlockSection>
                         
             <apex:pageBlockSection title="Comments" columns="1"  rendered="{!editMode}">
@@ -687,9 +904,9 @@ function hidedio(dio, dio2){
                 <apex:outputField value="{!CareMeridian_Contract__c.Previous_Contract__c}"/>
                 <apex:pageBlockSectionItem rendered="{!isRev}" >Type of Change
                 <apex:selectCheckboxes id="typechangeselect" value="{!selectedTypes}"  >
-            		<apex:selectOptions value="{!changeTypes}"/>
-        		</apex:selectCheckboxes>
-        		</apex:pageBlockSectionItem>
+                        <apex:selectOptions value="{!changeTypes}"/>
+                        </apex:selectCheckboxes>
+                        </apex:pageBlockSectionItem>
             </apex:pageBlockSection>                                                                             
             <apex:pageBlockSection title="Comments" columns="1"  rendered="{!!editMode}">
                 <apex:outputField value="{!CareMeridian_Contract__c.Comments__c}"/> 
