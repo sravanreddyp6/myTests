@@ -527,7 +527,7 @@ public pagereference mySave(){
         return [select id, name, start_date__c from Action_Plan_Worksheet__c 
                     where Action_Plan__c = :ActionPlan.Id
                       and RecordType.name = 'Weekly Skill Result' 
-                    order by start_date__c];     
+                    order by start_date__c DESC];     
     }    
     public List<myDate> getuncheckedWeeks(){
         Date firstMonday = (ActionPlan.Effective_Date__c - 1).toStartOfWeek() +1;
@@ -565,7 +565,7 @@ public pagereference mySave(){
         return [select id, name, start_date__c from Action_Plan_Worksheet__c 
                     where Action_Plan__c = :ActionPlan.Id
                       and RecordType.name = 'Monthly Behavior Result' 
-                    order by start_date__c];     
+                    order by start_date__c DESC];     
     }
     
     public void refreshPlan(){

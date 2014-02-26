@@ -18,6 +18,7 @@
         j$(':input').bind("change", function() { setConfirmUnload(true); }); // Prevent accidental navigation away
         j$('[id *=formSave]').bind("click", function() { setConfirmUnload(false); }); // Ok to save
         j$('[id *=formSave2]').bind("click", function() { setConfirmUnload(false); }); // Ok to save
+        j$('[id *=formSave3]').bind("click", function() { setConfirmUnload(false); }); // Ok to save
     });
 
 // salesforce ids have lots of colons
@@ -108,6 +109,7 @@
   <apex:form id="theForm" title="Weekly Skill Tracking Sheet">
      <apex:pageBlock title="Weekly Skill Worksheet" >
     <div class="pbHeaderButton">
+                <apex:commandButton id="formSave3" styleClass="btn" action="{!myNewNote}" value="Save & New Note" status="waitStatus" rendered="{!Action_Plan_Worksheet__c.Action_Plan__r.Status__c = 'Active Final'}" />    
       <apex:outputpanel id="xmlGenerate">
           <apex:commandButton id="xmlGenerateCmd" action="{!anotoGenerate}" value="Print Form" rerender="xmlGenerate" status="waitStatus"/>
 <!--           <apex:outputLink value="{!URLFOR($Action.Attachment.Download, anotoXml.id)}" target="_blank" rendered="{!!isnull(anotoXml)}">{!anotoXml.name}</apex:outputLink>-->
@@ -142,7 +144,7 @@
                    </table>
         </div>
         <div style="float:right; width:30%" class="prompts">
-        <table style="padding:10px"><tr><td rowspan="2"  style="vertical-align:top"><b>Met<br />Objective</b></td>
+        <table style="padding:10px"><tr><td rowspan="2"  style="vertical-align:top; text-align:center"><b>Met<br />Objective</b></td>
                    <td>Y = Yes<br />
                    N = No</td>
                    </tr>
@@ -164,12 +166,18 @@
 
       <apex:repeat value="{!objectivesMap}" var="objectivewrp">
       <div class="objective"> <!--  sfid="{!objectivewrp.Objective.id}"-->
-      <table style="padding-top 10px; padding-bottom: 10px">
+      <table id="tbl" style="padding-top 10px; padding-bottom: 10px: width: 100%">
       <tr>
-          <td style="text-align:center"><b>Objective</b></td>
-          <td>{!objectivewrp.Objective.Description__c}</td>
-          </tr>
-          </table>
+          <td style="text-align:center; width: 100%">
+              <b>Objective</b>
+          </td>
+          <td/>
+      </tr>
+      <tr>
+              <td style="text-align:center; width: 100%">{!objectivewrp.Objective.Description__c}</td>
+              <td/>
+      </tr>
+      </table>
       </div>
       <table style="border:1px solid black;width:100%;padding:0px; border-collapse:collapse">
       <tr style="border-bottom:1px solid black">
