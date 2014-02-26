@@ -153,7 +153,8 @@ function ConfigureRelationshipOther(control){
   <br />
   <apex:form id="FormId" >
       <apex:actionFunction name="saveRelParty" action="{!saveRelParty}" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs"/>
-    <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs"/>
+   	  <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs"/>
+   	  <apex:actionFunction name="showAddRelContact" action="{!showAddRelContact}" rerender="relatedContacts,relatedContactEntry,relatedContactEntry2,msgs"/>
   
   <apex:pageMessages />         
    
@@ -312,7 +313,7 @@ function ConfigureRelationshipOther(control){
 		                             id="pbsOutputFamilyInfo">
 			<apex:inputfield value="{!Contact.Family_Annual_Income__c}" rendered="{!pbsEditModeOn}" />
 			<apex:outputfield value="{!Contact.Family_Annual_Income__c}" rendered="{!!pbsEditModeOn}" />
-			<span/>
+			<span></span>
 			<apex:inputfield value="{!Contact.Family_Military_Involvement__c}" rendered="{!pbsEditModeOn}" />
 			<apex:outputfield value="{!Contact.Family_Military_Involvement__c}" rendered="{!!pbsEditModeOn}" />
 			<apex:inputfield value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!pbsEditModeOn}" />
@@ -352,10 +353,30 @@ function ConfigureRelationshipOther(control){
 			<apex:outputfield value="{!Contact.Family_Native_American_Ancestry__c}" rendered="{!!pbsEditModeOn}" />
 			
 		</apex:pageBlockSection>
-    
+
+		<apex:pageBlockSection title="Caregiver Information" columns="2">
+			<apex:pageBlockSection columns="1" rendered="{!primaryCaregiver != null}">
+				<apex:outputField value="{!primaryCaregiver.To_TMN_Contact__r.Name}"/>
+				<apex:pageBlockSection columns="2">
+					<apex:outputField value="{!primaryCaregiver.Relation_Type__c}"/>
+					<apex:outputField value="{!primaryCaregiver.Other_Type_Name__c}"/>
+					<apex:outputField value="{!primaryCaregiver.To_TMN_Contact__r.Employment_Status__c}"/>
+					<apex:outputField value="{!primaryCaregiver.To_TMN_Contact__r.Occupation__c}"/>
+					<apex:outputField value="{!primaryCaregiver.To_TMN_Contact__r.Highest_Education__c}"/>
+				</apex:pageBlockSection>
+			</apex:pageBlockSection>    
+			<apex:pageBlockSection title="Caregiver Information" columns="1" rendered="{!secondaryCaregiver != null}">
+				<apex:outputField value="{!secondaryCaregiver.To_TMN_Contact__r.Name}"/>
+				<apex:outputField value="{!secondaryCaregiver.Relation_Type__c}"/>
+				<apex:outputField value="{!secondaryCaregiver.To_TMN_Contact__r.Employment_Status__c}"/>
+				<apex:outputField value="{!secondaryCaregiver.To_TMN_Contact__r.Occupation__c}"/>
+				<apex:outputField value="{!secondaryCaregiver.To_TMN_Contact__r.Highest_Education__c}"/>
+			</apex:pageBlockSection>    
+			
+		</apex:pageBlockSection>    
   </apex:pageBlock>
     <!--Related Parties Section-->
-    <a name="RP" id="RP"></a>
+    <a id="RP"></a>
 
     <apex:pageBlock id="relatedPartiesListId">
         <div class="pbSubHeadButton">
@@ -390,7 +411,7 @@ function ConfigureRelationshipOther(control){
       <apex:pageBlock title="Add Related Party">
         <apex:pageblockButtons location="bottom">
           <input type="button" value="Save" onClick="relatedPartySave(true); " class="btn" />
-          <input type="button" value="Save & New" onClick="relatedPartySave(false);"  class="btn"/ >
+          <input type="button" value="Save & New" onClick="relatedPartySave(false);"  class="btn"/>
           <input type="button" value="Cancel" onClick="closeDialog('relatedPartyModal', 'span'); j$('#relatedPartyErrors').html('');return false;"  class="btn"/>
         </apex:pageblockButtons>
 
@@ -398,7 +419,7 @@ function ConfigureRelationshipOther(control){
           <p><strong>Add a related party below:</strong></p>
         </apex:facet>
 
-        <div id="relatedPartyErrors" style="color:red" />
+        <div id="relatedPartyErrors" style="color:red" ></div>
 
         <apex:pageBlockSection columns="2" id="relatedPartyEntry">
 
@@ -435,8 +456,88 @@ function ConfigureRelationshipOther(control){
       </apex:pageBlock>
     </apex:outputPanel>
     
+    <!--Related Contacts Section-->
+    <a id="RC"></a>
+
+    <apex:pageBlock id="relatedContactsListId">
+         <div class="pbSubHeadButton">
+                            <apex:commandButton value="Add Related Contact"
+                              onClick="showAddRelContact();openDialog('relatedContactModal', 'span', 'Add Related Contact');return false;" rendered="{!AND(isEditor, canEdit)}"/>
+         </div>
+
+       <apex:pageBlockSection columns="1"
+                             title="Related Contacts" id="relatedContacts" collapsible="false">
+        <apex:pageBlockSectionItem >
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockTable value="{!relContacts}" var="relContact">
+            <apex:column headerValue="Action">
+            	<apex:outputPanel rendered="{!$ObjectType.TMN_Contact__c.updateable}"> 
+<!--            		<a href="#" onclick="loadRelatedParty('{!relParty.Id}');return false; ">Edit</a>-->
+					Edit
+           		</apex:outputPanel>
+           	</apex:column>
+          <apex:column value="{!relContact.Relation_Type__c}"/>
+          <apex:column value="{!relContact.Caregiver_Role__c}"/>
+          <apex:column ><apex:outputfield value="{!relContact.To_TMN_Contact__c}"/></apex:column>
+        </apex:pageBlockTable>
+
+      </apex:pageBlockSection>
+</apex:pageBlock>
+    <!-- Add Related Party modal. -->
+    <apex:outputPanel id="relatedContactModal" style="display:none">
+
+      <apex:pageBlock title="Add Related Contact">
+        <apex:pageblockButtons location="bottom">
+          <input type="button" value="Save" onClick="relatedContactSave(true); " class="btn" />
+          <input type="button" value="Save & New" onClick="relatedContactSave(false);"  class="btn"/>
+          <input type="button" value="Cancel" onClick="closeDialog('relatedContactModal', 'span'); j$('#relatedContactErrors').html('');return false;"  class="btn"/>
+        </apex:pageblockButtons>
+
+        <apex:facet name="header">
+          <p><strong>Add a related contact below:</strong></p>
+        </apex:facet>
+
+        <div id="relatedContactErrors" style="color:red" ></div>
+
+<!--        <apex:pageBlockSection columns="2" id="relatedContactEntry">
+
+           <apex:inputField value="{!relContact.Name}" id="relatedContactEntry_Name"/>
+          <apex:inputField value="{!relContact.Type__c}" id="relatedContactEntry_Type"
+          	onchange="ConfigureAddRelatedContactDialog(this);"/>
+
+          <apex:inputField value="{!relContact.Address__c}" id="relatedContactEntry_Address"/>
+          <apex:inputField value="{!relContact.Email__c}" id="relatedContactEntry_Email"/>
+
+          <apex:inputField value="{!relContact.Phone__c}" id="relatedContactEntry_Phone"/>
+          <apex:inputField value="{!relContact.Phone_1_Type__c}" id="relatedContactEntry_Phone_1_Type"/>
+
+          <apex:inputField value="{!relContact.Phone_2__c}" id="relatedContactEntry_Phone_2"/>
+          <apex:inputField value="{!relContact.Phone_2_Type__c}" id="relatedContactEntry_Phone_2_Type"/>
+        </apex:pageBlockSection>
+
+        <apex:pageBlockSection columns="2" id="careGiverEntry">
+          <apex:inputField value="{!relContact.Care_Giver_Relationship__c}" id="relatedContactEntry_Relationship"
+          	onchange="ConfigureRelationshipOther(this)"/>
+          <apex:inputField value="{!relContact.Care_Giver_Relationship_Other__c}" id="relatedContactEntry_RelationshipOther"/>
+          <apex:inputField value="{!relContact.Employment_Status__c}" id="relatedContactEntry_EmploymentStatus"/>
+          <apex:inputField value="{!relContact.Occupation__c}" id="relatedContactEntry_Occupation"/>
+          <apex:inputField value="{!relContact.Highest_Education__c}" id="relatedContactEntry_Education"/>
+
+        </apex:pageBlockSection>
+
+        <apex:pageBlockSection columns="1" id="relatedContactEntry2">
+          <apex:inputField value="{!relContact.Comments__c}" style="width: 90%;" id="relatedContactEntry_Comments"/>
+            <apex:outputPanel style="display:none" >
+              <apex:inputHidden value="{!relContact.Id}" id="relatedContactEntry_Id"/>
+            </apex:outputPanel>
+        </apex:pageBlockSection>
+        -->
+      </apex:pageBlock>
+    </apex:outputPanel>
+
      <!--Agencies Related to Person Section-->
-    <a name="Agency" id="Agency"></a>
+    <a id="Agency"></a>
 
     <apex:pageBlock id="relatedAgenciesId" rendered="{!showDiagnosis}">
     <!--     <div class="pbSubHeadButton">
@@ -463,7 +564,7 @@ function ConfigureRelationshipOther(control){
     
         
     <!--Diagnosis Section -->
-    <a name="Diag" id="Diag" />
+    <a id="Diag" ></a>
     <apex:pageBlock id="Diagnosis" rendered="{!showDiagnosis && contact.MailingState != 'Arizona'}">
   
     <apex:pageBlockSection title="Diagnosis"
@@ -492,7 +593,7 @@ function ConfigureRelationshipOther(control){
     </apex:pageBlock>
    
     <!--Admissions Section-->
-    <a name="Adm" id="Adm"></a>
+    <a id="Adm"></a>
     <apex:pageBlock id="AdmissionListId" >
     <div class="pbSubHeadButton"><apex:commandButton Value="Add New Admission" onclick="window.open('/apex/AdmissionEdit?pbsId={!Contact.Id}&retURL={!URLENCODE(currentUrl)}', '_self'); return false;" rendered="{!AND(canCreateAdm, isEditor)}" /></div>
     <apex:pageBlockSection title="Admissions"

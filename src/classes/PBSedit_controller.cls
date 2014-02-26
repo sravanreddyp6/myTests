@@ -45,10 +45,46 @@ private TMN_User__c TMNUser {
     set;
   }
   
+  private Contact_Relationship_JO__c relContactInt;
+  public Contact_Relationship_JO__c relContact {
+    get {
+      if (relContactInt == null)
+        relContactInt = new Contact_Relationship_JO__c();
+      return relContactInt;
+    }
+    set;
+  }
+  
   public List<Related_Party__c> relParties { get; set; }
   public List<Agency_Involved_With_Individual__c> relAgencies { get; set; }
 
 
+  protected List<Contact_Relationship_JO__c> relContactsInt = null; 
+  public List<Contact_Relationship_JO__c> relContacts { 
+  	get {
+  		if (relContactsInt == null){
+  			relContactsInt = [select Id, To_TMN_Contact__c, Caregiver_Role__c, Relation_Type__c,
+  									To_TMN_Contact__r.Name
+  								from Contact_Relationship_JO__c 
+  								where From_Contact__c = :PBSId];
+  		}
+  		return relContactsInt;
+  	}
+  }
+
+ public Contact_Relationship_JO__c primaryCaregiver {
+ 	get {
+ 		list<Contact_Relationship_JO__c> carer = [select Id, To_TMN_Contact__c, Caregiver_Role__c, Relation_Type__c, Other_Type_Name__c,
+  									To_TMN_Contact__r.Name, To_TMN_Contact__r.Employment_status__c, To_TMN_Contact__r.Highest_Education__c,
+  									To_TMN_Contact__r.Occupation__c
+  								from Contact_Relationship_JO__c 
+  								where From_Contact__c = :PBSId and caregiver_role__c = 'primary'];
+  		return carer.size()>0 ? carer[0] : null;
+ 	}
+ }
+ 
+ public Contact_Relationship_JO__c secondaryCaregiver {get;}
+ 
 // Filter some of the Additional Info Fields
 public string dontShowFields {
 	get {
@@ -205,6 +241,15 @@ public void showAddRelParty() {
         return theId;
     }
 
+public void showAddRelContact() {
+    relContactInt = new Contact_Relationship_JO__c();
+  }
+
+  public void saveRelContact() {
+    //populateRelParties();
+    relContactInt = new Contact_Relationship_JO__c();
+  }
+    
 public pageReference cancelPBSController(){
     
     pbsEditModeOn=false;
