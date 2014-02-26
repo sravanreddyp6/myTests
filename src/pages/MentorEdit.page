@@ -1,4 +1,4 @@
-<apex:page standardController="TMN_Contact__c" extensions="MentorEditController">
+<apex:page standardController="TMN_Contact__c" extensions="MentorEditController" sidebar="false">
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <script>
@@ -101,7 +101,6 @@
 
                 <apex:inputField value="{!TMN_Contact__c.DHR_CPA_Race_1__c}" />
                 <apex:inputField value="{!TMN_Contact__c.DHR_CPA_Race_2__c}" />
-                <apex:inputField value="{!TMN_Contact__c.OwnerId}" rendered="{!TMN_Contact__c.Id != null}" />
             </apex:pageBlockSection>
             <apex:pageBlockSection title="Contact Information">
                 <apex:inputField value="{!TMN_Contact__c.Street_1__c}" />
@@ -152,6 +151,11 @@
                 <apex:pageBlockSectionItem />
                 <apex:inputField value="{!TMN_Contact__c.Withdrawn_Reason__c}" id="withdrawnReason" label="Reason" />
                 <apex:inputField value="{!TMN_Contact__c.Most_Recent_Recertification_Date__c}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="System Info" columns="2">
+            	<apex:inputField value="{!TMN_Contact__c.OwnerId}" />
+            	<apex:outputText label="Created By" value="{!TMN_Contact__c.CreatedBy.Name}, {!TMN_Contact__c.CreatedDate}" />
+            	<apex:outputText label="Last Modified By" value="{!TMN_Contact__c.LastModifiedBy.Name}, {!TMN_Contact__c.LastModifiedDate}" />
             </apex:pageBlockSection>
             <apex:pageBlockButtons >
                 <apex:commandButton action="{!save}" onclick="return enableDisabledFields();" value="Save" />
