@@ -697,7 +697,11 @@ END: Uncomment to have the element collapsed by default -->
              <apex:column headerValue="Name" >
                 <apex:outputLink value="/{!note.id}"><apex:outputField value="{!note.name}"/></apex:outputLink>
             </apex:column>
-             <apex:column value="{!note.action_plan__r.name }"/>
+             <apex:column headerValue="Action Plan">
+                 <apex:outputLink value="/{!note.Action_Plan__c}">{!note.action_plan__r.name }</apex:outputLink>
+             </apex:column>
+             <apex:column value="{!note.Start_time__c }"/>
+             <apex:column value="{!note.End_Time__c }"/>
              <apex:column value="{!note.createddate }"/>
              <apex:column value="{!note.createdby.name }"/>
      </apex:pageblockTable>
