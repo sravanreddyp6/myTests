@@ -1216,8 +1216,9 @@ document.onkeypress = stopRKey;
         <apex:inputField value="{!Referral__c.Case_Manager_Name__c}" />
         <apex:inputField value="{!Referral__c.Case_Manager_Phone__c}" />
         <!--apex:inputField value="{!Referral__c.Evaluation_Date__c}" rendered="{!referralRecordType=='CareMeridian'}"/-->
-        <apex:inputField value="{!Referral__c.Evaluated_By__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
-
+        
+            
+            
 <!--  START NEURO EvalBy and RefBy SECTION -->
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
@@ -1263,7 +1264,9 @@ document.onkeypress = stopRKey;
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
 <!--  END NEURO EvalBy and RefBy SECTION -->
 
+
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}"/>
+        <apex:inputField label="Evaluated By" value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
 
         <apex:inputField value="{!Referral__c.Current_Location__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
         <apex:inputField value="{!Referral__c.Current_Location_Type__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
