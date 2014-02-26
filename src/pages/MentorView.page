@@ -1,9 +1,10 @@
-<apex:page standardController="TMN_Contact__c" extensions="MentorViewController">
+<apex:page standardController="TMN_Contact__c" extensions="MentorViewController" sidebar="false">
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+    <apex:stylesheet value="{!$Resource.pbscardcss}" />
     <style>
     .dialogLoadingSpinner {
         margin-left: 5px;
@@ -34,6 +35,7 @@
         <apex:actionFunction name="showEditHouseholdMember" action="{!showEditHouseholdMember}" status="loadinghouseholdMemberStatus" rerender="householdMemberDialogMainBlock" oncomplete="openModalDialog('{!$Component.householdMemberDialog}', 'Edit Household Member', '{!$Component.wholeForm}');" immediate="true">
             <apex:param name="currentHouseholdMemberId" assignTo="{!currentHouseholdMemberId}" value="" />
         </apex:actionFunction>
+        <div class="breadcrumb"><a href="{!baseUrl}">Home</a> >&nbsp; <apex:outputLink value="/apex/TmnContactListView">TMN Contacts</apex:outputLink> > TMN Contact</div>
         <apex:pageBlock >
             <apex:pageBlockSection title="Demographics">
                 <apex:outputField value="{!TMN_Contact__c.Full_Name__c}" label="Name" />
@@ -50,7 +52,6 @@
 
                 <apex:outputField value="{!TMN_Contact__c.DHR_CPA_Race_1__c}" />
                 <apex:outputField value="{!TMN_Contact__c.DHR_CPA_Race_2__c}" />
-                <apex:outputField value="{!TMN_Contact__c.OwnerId}" />
             </apex:pageBlockSection>
             <apex:pageBlockSection title="Contact Information">
                 <apex:outputField value="{!TMN_Contact__c.Street_1__c}" />
@@ -89,6 +90,11 @@
                 <apex:pageBlockSectionItem />
                 <apex:outputField value="{!TMN_Contact__c.Withdrawn_Reason__c}" />
                 <apex:outputField value="{!TMN_Contact__c.Most_Recent_Recertification_Date__c}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="System Info">
+            	<apex:outputField value="{!TMN_Contact__c.OwnerId}" />
+            	<apex:outputText label="Created By" value="{!TMN_Contact__c.CreatedBy.Name}, {!TMN_Contact__c.CreatedDate}" />
+            	<apex:outputText label="Last Modified By" value="{!TMN_Contact__c.LastModifiedBy.Name}, {!TMN_Contact__c.LastModifiedDate}" />
             </apex:pageBlockSection>
             <a id="householdMembers" ></a>
             <apex:pageBlockSection title="Household Members" columns="1">
@@ -141,11 +147,11 @@
                 <apex:pageMessages />
                 <apex:pageBlockSection columns="1">
                     <apex:pageBlockSectionItem >
-                        <apex:outputText value="First Name"/>
+                        <apex:outputText value="Name"/>
                         <apex:outputPanel styleClass="nowrap">
-                            <apex:inputText label="" value="{!currentHouseholdMember.First_Name__c}" />&nbsp;&nbsp;
-                            <apex:inputText label="" value="{!currentHouseholdMember.Middle_Initial__c}"  size="1"/>&nbsp;&nbsp;
-                            <apex:inputText label="" value="{!currentHouseholdMember.Last_Name__c}" />
+                            <apex:inputField label="" value="{!currentHouseholdMember.First_Name__c}" />&nbsp;&nbsp;
+                            <apex:inputField label="" value="{!currentHouseholdMember.Middle_Initial__c}" style="width:20px;" />&nbsp;&nbsp;
+                            <apex:inputField label="" value="{!currentHouseholdMember.Last_Name__c}" />
                         </apex:outputPanel>
                     </apex:pageBlockSectionItem>
                 </apex:pageBlockSection>

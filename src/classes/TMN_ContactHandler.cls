@@ -7,7 +7,7 @@ public with sharing class TMN_ContactHandler {
     }
 
     public void OnBeforeInsert(TMN_Contact__c[] newObjects){
-        // EXECUTE BEFORE INSERT LOGIC		
+        // EXECUTE BEFORE INSERT LOGIC	
     }
 
     public void OnAfterInsert(TMN_Contact__c[] newObjects){
@@ -35,7 +35,8 @@ public with sharing class TMN_ContactHandler {
 			
 			Mentor_Tracking_Report_Record__c thisContactsReptRec = new Mentor_Tracking_Report_Record__c(
        			TMN_Contact__c = p.Id,
-       			Mentor__c = p.Mentor__c
+       			Mentor__c = p.Mentor__c,
+       			Status__c = 'New'
        		);
        		
 
@@ -143,6 +144,126 @@ public with sharing class TMN_ContactHandler {
 
     public void OnAfterUpdate(TMN_Contact__c[] oldObjects, TMN_Contact__c[] updatedObjects, Map<Id,TMN_Contact__c> newObjMap){
         // AFTER UPDATE LOGIC
+ 		
+ 		List<TMN_Contact__c> theseTmnContactsRecordTypeDevNames = [ SELECT RecordType.DeveloperName FROM TMN_Contact__c WHERE Id = :updatedObjects ];
+ 
+        List<TMN_Contact__c> mentors = new List<TMN_Contact__c>();
+        List<TMN_Contact__c> nonMentors = new List<TMN_Contact__c>();       
+        for(TMN_Contact__c tmnContact : updatedObjects) {
+        	for(TMN_Contact__c devName : theseTmnContactsRecordTypeDevNames) {
+        		if(tmnContact.Id==devName.Id) {
+		        	System.debug('What is devName.RecordType.DeveloperName: ' + devName.RecordType.DeveloperName);
+		        	if(devName.RecordType.DeveloperName=='Mentor') {
+		        		mentors.add(tmnContact);
+		        	}
+		        	if(devName.RecordType.DeveloperName!='Mentor') {
+		        		nonMentors.add(tmnContact);	
+		        	}
+        		}
+        	}
+    	}
+
+		List<Mentor_Tracking_Report_Record__c> dhrReportRecordsForAllTmnContactsAndHouseholdMembersThisUpdate = [ SELECT TMN_Contact__c, Status__c, Mentor__c, TMN_Contact__r.No_Longer_In_Home__c 
+																													FROM Mentor_Tracking_Report_Record__c 
+																													WHERE TMN_Contact__c = :updatedObjects OR Mentor__c = :updatedObjects ];
+        List<Mentor_Tracking_Report_Record__c> dhrReportRecordsForMentors = new List<Mentor_Tracking_Report_Record__c>();
+        List<Mentor_Tracking_Report_Record__c> dhrReportRecordsForMentorsHouseholdMembers = new List<Mentor_Tracking_Report_Record__c>();
+        List<Mentor_Tracking_Report_Record__c> dhrReportRecordsForNonMentors = new List<Mentor_Tracking_Report_Record__c>();        
+        for(Mentor_Tracking_Report_Record__c dhrRec : dhrReportRecordsForAllTmnContactsAndHouseholdMembersThisUpdate) {
+			System.debug('TMN_Contact__c this loop: ' + dhrRec.TMN_Contact__c);
+			for(TMN_Contact__c t : mentors) {
+				System.debug('A Mentor: ' + t.Full_Name__c);
+				if(t.Id==dhrRec.TMN_Contact__c) {
+					dhrReportRecordsForMentors.add(dhrRec);
+				}	
+			}
+			for(TMN_Contact__c t : nonMentors) {
+				System.debug('A Non-Mentor: ' + t.Full_Name__c);
+				if(t.Id==dhrRec.TMN_Contact__c) {
+					dhrReportRecordsForNonMentors.add(dhrRec);
+				}	
+			}
+			if(dhrRec.Mentor__c!=null) {
+				dhrReportRecordsForMentorsHouseholdMembers.add(dhrRec);
+			}	
+        }
+        
+        List<Mentor_Tracking_Report_Record__c> dhrReportsToUpdate = new List<Mentor_Tracking_Report_Record__c>();
+        
+        
+        // I think this will break if we ever get an update of a list of TMN_Contact__c records that includes both mentors and non-mentors, if the non-mentors are household members
+        // of any of the submitted mentors.  If we start getting errors around the same member being added to a list multiple times, come back to this and extract the .add calls
+        // from the nested for loops, etc.  J. Gilliam, 2/24/14.
+		for(TMN_Contact__c t : updatedObjects) {
+			for(Mentor_Tracking_Report_Record__c mentor : dhrReportRecordsForMentors) {
+				if(t.Id==mentor.TMN_Contact__c) {
+					if(t.Inactive__c==true) {
+						System.debug('t.Inactive__C==true');
+						if(mentor.Status__c!='Closed') {
+							System.debug('Setting mentor.Status__c to Closed');
+							mentor.Status__c = 'Closed';
+							mentor.Skip_Trigger__c = true;
+						}
+						List<Mentor_Tracking_Report_Record__c> dhrReportUpdatesThisHouseholdLoop = new List<Mentor_Tracking_Report_Record__c>();	
+						for(Mentor_Tracking_Report_Record__c householdMember : dhrReportRecordsForMentorsHouseholdMembers) {
+							if(t.Id==householdMember.Mentor__c) {
+								if(householdMember.Status__c!='Closed') {
+									householdMember.Status__c = 'Closed';
+									householdMember.Skip_Trigger__c = true;
+								}
+								dhrReportUpdatesThisHouseholdLoop.add(householdMember);
+							}
+						}
+						update dhrReportUpdatesThisHouseholdLoop;
+					}
+					if(t.Active__c==true || t.Suspended__c==true || t.In_Progress__c==true) {
+						System.debug('STATUS IS ACTIVE, SUSPENDED, OR IN PROGRESS');
+						if(mentor.Status__c=='Closed') {
+							mentor.Status__c = 'Updated';
+							mentor.Submitted_Once_Closed__c = false;
+						}
+						List<Mentor_Tracking_Report_Record__c> dhrReportUpdatesThisHouseholdLoop2 = new List<Mentor_Tracking_Report_Record__c>();	
+						for(Mentor_Tracking_Report_Record__c householdMember : dhrReportRecordsForMentorsHouseholdMembers) {
+							if(t.Id==householdMember.Mentor__c) {
+								if(householdMember.Status__c=='Closed' && householdMember.TMN_Contact__r.No_Longer_In_Home__c==false) {
+									householdMember.Status__c = 'Updated';
+									householdMember.Submitted_Once_Closed__c = false;
+								}
+								else if(householdMember.Status__c=='Closed' && householdMember.TMN_Contact__r.No_Longer_In_Home__c==true) {
+									householdMember.Skip_Trigger__c = true;
+								}
+								dhrReportUpdatesThisHouseholdLoop2.add(householdMember);
+							}
+						}
+						update dhrReportUpdatesThisHouseholdLoop2;
+					}
+				}
+				dhrReportsToUpdate.add(mentor);
+			}
+			for(Mentor_Tracking_Report_Record__c nonMentor : dhrReportRecordsForNonMentors) {
+				if(t.Id==nonMentor.TMN_Contact__c) {
+					System.debug('t.Id==nonMentor.TMN_Contact__c');
+					if(t.No_Longer_In_Home__c==true) {
+						System.debug('t.No_Longer_In_Home__c==true');
+						if(nonMentor.Status__c!='Closed') {
+							nonMentor.Status__c = 'Closed';
+							nonMentor.Skip_Trigger__c = true;
+							dhrReportsToUpdate.add(nonMentor);
+						}
+					}
+					if(t.No_Longer_In_Home__c==false) {
+						if(nonMentor.Status__c=='Closed') {
+							nonMentor.Status__c = 'Updated';
+							nonMentor.Submitted_Once_Closed__c = false;
+							dhrReportsToUpdate.add(nonMentor);
+						}
+					}
+				}	
+			}
+		}
+		
+		update dhrReportsToUpdate;
+		
     }
 
     public void OnBeforeDelete(TMN_Contact__c[] ObjectsToDelete, Map<Id,TMN_Contact__c> oldObjMap){
