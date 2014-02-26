@@ -32,7 +32,7 @@ public with sharing class ActionPlan_form {
     public map<string, clsGoal> planStuff = new map<string, clsGoal> ();
     public map<string, clsGoal> GETplanStuff(){return planStuff;}      
     public list<Progress_Note__c> getNotes(){
-        return [select id, name, Start_Time__c, End_Time__c from Progress_Note__c where Action_plan__c = :actionplan.id limit 10];
+        return [select id, name, Start_Time__c, End_Time__c, createddate, createdby.name from Progress_Note__c where Action_plan__c = :actionplan.id limit 10];
 
     }      
 
