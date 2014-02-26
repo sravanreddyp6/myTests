@@ -135,7 +135,8 @@ public with sharing class CredentialRecordHandler {
         
         List<Mentor_Tracking_Metadata__c> metaDataRecs = [ SELECT Credential_Profile__c, Credential_Record_Date_Field__c, 
         													Credential_Record_Source_Field__c, Field_to_Update__c,
-        													Report__c, Similar_Credentials__c, Supercedes__c, Superceded_By__c, Parallel_Credentials__c, Parallel_Credentials_Operator__c
+        													Report__c, Similar_Credentials__c, Supercedes__c, Superceded_By__c, 
+        													Parallel_Credentials__c, Parallel_Credentials_Operator__c, Parallel_Credentials_Type__c
         													 FROM Mentor_Tracking_Metadata__c ];
         
         
@@ -655,6 +656,11 @@ public with sharing class CredentialRecordHandler {
 		Credential_Record__c winningCred = new Credential_Record__c();
 		winningCred = theCred;
 		
+		Credential_Record__c parallelCredWinner1 = new Credential_Record__c();
+		Credential_Record__c parallelCredWinner2 = new Credential_Record__c();
+		parallelCredWinner1 = theCred;
+		parallelCredWinner2 = theCred;
+		
 		Date currentMostRecentDate;
 
 		// IF there are any parallel credentials listed...
@@ -664,13 +670,13 @@ public with sharing class CredentialRecordHandler {
 				if(mtm.Similar_Credentials__c!=null) {
 					for(Credential_Record__c credBeta : theMentorsCreds) {
 						if(credBeta.Credential_Profile__c==mtm.Superceded_By__c) {
-							winningCred = theCred;
+							parallelCredWinner1 = theCred;
 						}
 						else if(credBeta.Credential_Profile__c==mtm.Supercedes__c) {
-							winningCred = credBeta;
+							parallelCredWinner1 = credBeta;
 						}
 						else {
-							Date winningCredDate = Date.valueOf(winningCred.get(mtm.Credential_Record_Date_Field__c));
+							Date parallelCredWinner1Date = Date.valueOf(parallelCredWinner1.get(mtm.Credential_Record_Date_Field__c));
 							Date credBetaDate = Date.valueOf(credBeta.get(mtm.Credential_Record_Date_Field__c));
 							
 							if(mtm.Similar_Credentials__c.contains('{~}' + credBeta.Credential_Profile_Name__c + '{~}')) {
@@ -678,17 +684,17 @@ public with sharing class CredentialRecordHandler {
 								System.debug('WIN ON SIM CRED MATCH!');
 								
 								
-								System.debug('winningCred.get(mtm.Credential_Record_Source_Field__c): ' + winningCred.get(mtm.Credential_Record_Source_Field__c));
+								System.debug('parallelCredWinner1.get(mtm.Credential_Record_Source_Field__c): ' + parallelCredWinner1.get(mtm.Credential_Record_Source_Field__c));
 								
 								
 								if(theCred.get(mtm.Credential_Record_Date_Field__c)!=null){
 									// Then use Documented_Date__c to determine which doc is more current.
 									
-									if(winningCredDate < credBetaDate) {
-										winningCred = credBeta;
+									if(parallelCredWinner1Date < credBetaDate) {
+										parallelCredWinner1 = credBeta;
 									}
 									else {
-										winningCred = winningCred;
+										parallelCredWinner1 = parallelCredWinner1;
 									}
 									
 								}
@@ -702,7 +708,69 @@ public with sharing class CredentialRecordHandler {
 				parallelCreds = mtm.Parallel_Credentials__c.split(Pattern.quote('{~}'),0);
 				// THEN, LOOP THROUGH THE LIST AND DO THE WIN/LOSE LOOP...FOR EACH MATCH???
 				for(string pC : parallelCreds) {
-					System.debug('pC: ' + pC);
+					if(mtm.Similar_Credentials__c!=null) {
+						for(Credential_Record__c credBeta : theMentorsCreds) {
+							if(credBeta.Credential_Profile_Name__c==pC) {
+								if(credBeta.Credential_Profile__c==mtm.Superceded_By__c) {
+									parallelCredWinner2 = credBeta;
+								}
+								else if(credBeta.Credential_Profile__c==mtm.Supercedes__c) {
+									parallelCredWinner2 = theCred;
+								}
+								else {
+									Date parallelCredWinner2Date = Date.valueOf(parallelCredWinner2.get(mtm.Credential_Record_Date_Field__c));
+									Date credBetaDate = Date.valueOf(credBeta.get(mtm.Credential_Record_Date_Field__c));
+									
+									if(mtm.Similar_Credentials__c.contains('{~}' + credBeta.Credential_Profile_Name__c + '{~}')) {
+										// Then do the comparison work to figure out if this other doc is more recent than the cred.
+										System.debug('WIN ON SIM CRED MATCH!');
+										
+										
+										System.debug('parallelCredWinner2.get(mtm.Credential_Record_Source_Field__c): ' + parallelCredWinner2.get(mtm.Credential_Record_Source_Field__c));
+										
+										
+										if(theCred.get(mtm.Credential_Record_Date_Field__c)!=null){
+											// Then use Documented_Date__c to determine which doc is more current.
+											
+											if(parallelCredWinner2Date < credBetaDate) {
+												parallelCredWinner2 = credBeta;
+											}
+											else {
+												parallelCredWinner2 = parallelCredWinner2;
+											}
+											
+										}
+									}
+								}
+							}	
+						}
+					}
+				}
+				if(mtm.parallel_Credentials_Type__c=='OR') {
+					if(parallelCredWinner1.get(mtm.Credential_Record_Source_Field__c)=='Yes' || parallelCredWinner2.get(mtm.Credential_Record_Source_Field__c)=='Yes') {
+						if(parallelCredWinner1.get(mtm.Credential_Record_Source_Field__c)=='Yes') {
+							winningCred = parallelCredWinner1;
+						}
+						else {
+							winningCred = parallelCredWinner2;
+						}
+					}
+					else {
+						winningCred = parallelCredWinner1;
+					}
+				}
+				else if(mtm.parallel_Credentials_Type__c=='AND') {
+					if(parallelCredWinner1.get(mtm.Credential_Record_Source_Field__c)=='Yes' && parallelCredWinner2.get(mtm.Credential_Record_Source_Field__c)=='Yes') {
+						winningCred = parallelCredWinner1;
+					}
+					else {
+						if(parallelCredWinner1.get(mtm.Credential_Record_Source_Field__c)=='No') {
+							winningCred = parallelCredWinner1;
+						}
+						else {
+							winningCred = parallelCredWinner2;
+						}
+					}
 				}
 			}
 		// ELSE IF there are no similar docs...
@@ -713,11 +781,14 @@ public with sharing class CredentialRecordHandler {
 			else if(mtm.Similar_Credentials__c!=null) {
 				// Check to see if the Similar Doc(s) is also in the file
 				for(Credential_Record__c credBeta : theMentorsCreds) {
+					System.debug('credBeta: ' + credBeta);
+					System.debug('mtm.Superceded_By__c: ' + mtm.Superceded_By__c);
+					System.debug('mtm.Supercedes__c: ' + mtm.Supercedes__c);
 					if(credBeta.Credential_Profile__c==mtm.Superceded_By__c) {
-						winningCred = theCred;
+						winningCred = credBeta;
 					}
 					else if(credBeta.Credential_Profile__c==mtm.Supercedes__c) {
-						winningCred = credBeta;
+						winningCred = theCred;
 					}
 					else {
 						Date winningCredDate = Date.valueOf(winningCred.get(mtm.Credential_Record_Date_Field__c));
