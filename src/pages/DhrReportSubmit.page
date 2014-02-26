@@ -1,0 +1,15 @@
+<apex:page controller="DhrReportSubmit" tabStyle="TMN_Contact__c" sidebar="false" docType="html-5.0">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:stylesheet value="{!$Resource.pbscardcss}" />
+<apex:form >
+	<div class="pbHeaderButton" style="margin-top:50px;margin-bottom:0px;">
+		<apex:commandButton value="Save" action="{!SubmitDhr}" />
+		<apex:commandButton value="Cancel" action="{!Cancel}" />
+	</div>
+	<apex:pageBlock >
+		<apex:pageBlockSection columns="1">
+			<apex:input label="Submission Date" value="{!submissionDate}" type="date" />
+		</apex:pageBlockSection>
+	</apex:pageBlock>
+</apex:form>
+</apex:page>

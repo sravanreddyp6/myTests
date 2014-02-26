@@ -2,6 +2,14 @@ public with sharing class MentorViewController {
     public TMN_Contact__c contact { get; set; }
     public TMN_Contact__c currentHouseholdMember { get; set; }
     public Id currentHouseholdMemberId { get; set; }
+    public string baseUrl {
+    	get {
+    		String aBaseUrl = URL.getSalesforceBaseUrl().toExternalForm();
+    		return aBaseUrl;
+    	}
+    	set;
+    }
+    
     public TMN_Contact__c[] householdMembers {
         get {
             return [
