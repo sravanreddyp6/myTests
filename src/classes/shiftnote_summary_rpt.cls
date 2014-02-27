@@ -92,7 +92,9 @@ public with sharing class shiftnote_summary_rpt {
      
         Set<ID> noteIDs = new Set<id>();
         for(Progress_Note__c pn: notes){
-            noteIDs.add(pn.id);        
+            noteIDs.add(pn.id);   
+            List<ProgressNote_ActionPlanChildren_mjo__c> tmpLST = new List<ProgressNote_ActionPlanChildren_mjo__c >();
+            Note_Goals.put(pn.id, tmpLST);     
         }
         
         note_plan_joins = [Select Goal__r.Description__c, Goal__c, Progress_note__c 
