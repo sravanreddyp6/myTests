@@ -238,6 +238,45 @@ public with sharing class DataCreate {
             newobj.put(fielddescribe.Name, value);
         }
     }
+
+	public string Export(sObject obj){
+		Schema.DescribeSObjectResult info = obj.getsObjectType().getDescribe();
+		sObject fullObj = FullyPopulate(obj, info);
+		
+		string outstring = ExportInternal(fullObj, info);
+		
+		//need to find all the detail objects and persist them recursively - should bulkify this too
+		return outstring;
+	}
+	
+	public string ExportInternal(sObject fullObj, Schema.DescribeSObjectResult info){
+		string outstring = '<object classname="' + info.Name + '" pseudonym="' + fullObj.Id + '">';		
+		
+		Map<string,Schema.SObjectField> Fmap = info.fields.getmap();
+		Schema.SObjectField upsertfield = null;
+
+		for(string fieldname:Fmap.keyset()){
+			if (Fmap.get(fieldname).getdescribe().isupdateable() && 
+				fullObj.get(fieldname) != null){
+				outstring += '<field name="' + fieldname + '">' +	fullObj.get(fieldname) + '</field>\n';
+			}
+		}
+		outstring += '</object>';
+		return outstring;
+	}
+	
+	private sObject FullyPopulate(sObject obj, Schema.DescribeSObjectResult describe){
+		String query = 'SELECT ';
+		Id objId = obj.Id;
+
+		Map<string,Schema.SObjectField> Fmap = describe.fields.getmap();
+//        for(string  f : fmap.keyset()) {        
+//            query += f + ', ';
+//        }    
+        query += String.Join(new list<string>(fmap.keyset()), ', ') + ' FROM ' + describe.name + ' Where ID =:objID';    
+        return Database.query(query);		
+	}
+	
     
     private Id ParseIdFromDuplicateMessage(string msg){
         string match = msg.substringAfterLast('record with id: ');
