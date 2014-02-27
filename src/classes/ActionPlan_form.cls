@@ -32,7 +32,7 @@ public with sharing class ActionPlan_form {
     public map<string, clsGoal> planStuff = new map<string, clsGoal> ();
     public map<string, clsGoal> GETplanStuff(){return planStuff;}      
     public list<Progress_Note__c> getNotes(){
-        return [select id, name, Start_Time__c, End_Time__c, createddate, createdby.name from Progress_Note__c where Action_plan__c = :actionplan.id limit 10];
+        return [select id, name, Start_Time__c, End_Time__c, createddate, createdby.name from Progress_Note__c where Action_plan__c = :actionplan.id order by createddate DESC limit 10 ];
 
     }      
 
@@ -527,7 +527,7 @@ public pagereference mySave(){
         return [select id, name, start_date__c from Action_Plan_Worksheet__c 
                     where Action_Plan__c = :ActionPlan.Id
                       and RecordType.name = 'Weekly Skill Result' 
-                    order by createddate DESC];     
+                    order by start_date__c DESC];     
     }    
     public List<myDate> getuncheckedWeeks(){
         Date firstMonday = (ActionPlan.Effective_Date__c - 1).toStartOfWeek() +1;
@@ -565,7 +565,7 @@ public pagereference mySave(){
         return [select id, name, start_date__c from Action_Plan_Worksheet__c 
                     where Action_Plan__c = :ActionPlan.Id
                       and RecordType.name = 'Monthly Behavior Result' 
-                    order by createddate DESC];     
+                    order by start_date__c DESC];     
     }
     
     public void refreshPlan(){
