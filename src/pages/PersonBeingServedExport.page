@@ -1,0 +1,14 @@
+<apex:page standardController="Contact" extensions="PBSExportForm" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab">
+    <style>
+    .largexmlout {
+        width:100%;
+        height: 80px;
+        }
+    </style>
+    <apex:form >
+        <apex:pageBlock >
+            <apex:commandButton action="{!exportPerson}" value="export" reRender="output"/>
+        </apex:pageBlock>
+        <apex:inputTextarea id="output" value="{!xmlOut}" styleClass="largexmlout"/>
+    </apex:form>
+</apex:page>
