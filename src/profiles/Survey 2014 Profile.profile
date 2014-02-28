@@ -286,10 +286,6 @@
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>ChangePasswordController</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>ChatRetentionTest2</apexClass>
         <enabled>false</enabled>
     </classAccesses>
@@ -434,10 +430,6 @@
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>ForgotPasswordController</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>GenericHistoryComponentController</apexClass>
         <enabled>false</enabled>
     </classAccesses>
@@ -451,10 +443,6 @@
     </classAccesses>
     <classAccesses>
         <apexClass>GuardianTriggeredActions</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>MyProfilePageController</apexClass>
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
@@ -802,14 +790,6 @@
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>SiteLoginController</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>SiteRegisterController</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>SkillSummaryTableForm</apexClass>
         <enabled>false</enabled>
     </classAccesses>
@@ -978,10 +958,6 @@
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>testdeleteaccess</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>tmn_manage_groups</apexClass>
         <enabled>false</enabled>
     </classAccesses>
@@ -995,10 +971,6 @@
     </classAccesses>
     <classAccesses>
         <apexClass>uploaderTest</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>zOnetimePopulateOpGroupOnUserRecord</apexClass>
         <enabled>false</enabled>
     </classAccesses>
     <fieldPermissions>
@@ -3469,6 +3441,21 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>ContentVersion.Application__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>ContentVersion.Control_Review_Date__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>ContentVersion.Control_Type__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>ContentVersion.Control__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12692,14 +12679,14 @@
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Response__c.Operating_Group__c</field>
-        <readable>false</readable>
+        <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Response__c.State__c</field>
-        <readable>false</readable>
+        <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
@@ -12707,9 +12694,9 @@
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Response__c.Supervisor_Name__c</field>
-        <readable>false</readable>
+        <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
@@ -14449,7 +14436,7 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>TMN_User__c.Compliance_Link__c</field>
-        <readable>false</readable>
+        <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
@@ -15009,19 +14996,19 @@
         <recordType>ContentVersion.Application_Help_Doc</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ContentVersion-Form</layout>
-        <recordType>ContentVersion.Form</recordType>
+        <layout>ContentVersion-Control</layout>
+        <recordType>ContentVersion.Control_Audit_Doc</recordType>
     </layoutAssignments>
     <layoutAssignments>
         <layout>ContentVersion-General</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ContentVersion-Guideline</layout>
-        <recordType>ContentVersion.ESD</recordType>
+        <layout>ContentVersion-General</layout>
+        <recordType>ContentVersion.Form</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ContentVersion-Regulatory</layout>
-        <recordType>ContentVersion.Control_Audit_Doc</recordType>
+        <layout>ContentVersion-IT Systems</layout>
+        <recordType>ContentVersion.ESD</recordType>
     </layoutAssignments>
     <layoutAssignments>
         <layout>ContentVersion-Standard Support Procedure %28SSP%29</layout>
@@ -15595,6 +15582,51 @@
         <modifyAllRecords>false</modifyAllRecords>
         <object>Idea</object>
         <viewAllRecords>false</viewAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <allowCreate>true</allowCreate>
+        <allowDelete>true</allowDelete>
+        <allowEdit>true</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>true</modifyAllRecords>
+        <object>Question__c</object>
+        <viewAllRecords>true</viewAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <allowCreate>true</allowCreate>
+        <allowDelete>true</allowDelete>
+        <allowEdit>true</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>true</modifyAllRecords>
+        <object>Reply__c</object>
+        <viewAllRecords>true</viewAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <allowCreate>true</allowCreate>
+        <allowDelete>true</allowDelete>
+        <allowEdit>true</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>true</modifyAllRecords>
+        <object>Response__c</object>
+        <viewAllRecords>true</viewAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <allowCreate>true</allowCreate>
+        <allowDelete>true</allowDelete>
+        <allowEdit>true</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>true</modifyAllRecords>
+        <object>Survey__c</object>
+        <viewAllRecords>true</viewAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <allowCreate>false</allowCreate>
+        <allowDelete>true</allowDelete>
+        <allowEdit>true</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>true</modifyAllRecords>
+        <object>TMN_User__c</object>
+        <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
     <pageAccesses>
         <apexPage>AccountEdit</apexPage>
@@ -16208,7 +16240,7 @@
         <visible>false</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
-        <default>false</default>
+        <default>true</default>
         <recordType>ContentVersion.Application_Help_Doc</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -16225,7 +16257,7 @@
     <recordTypeVisibilities>
         <default>false</default>
         <recordType>ContentVersion.Form</recordType>
-        <visible>true</visible>
+        <visible>false</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>false</default>
