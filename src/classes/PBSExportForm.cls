@@ -7,7 +7,7 @@ public with sharing class PBSExportForm {
     public void exportPerson(){
         DataCreate util = new DataCreate();
         
-        xmlout = '<objects>' + util.Export(PBSController.getrecord()) + '</objects>';
+        xmlout = '<objects>\n' + util.Export(PBSController.getrecord()) + '</objects>\n';
     }
     
     public string xmlOut { get ; set;}

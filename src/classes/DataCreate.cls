@@ -246,22 +246,36 @@ public with sharing class DataCreate {
 		string outstring = ExportInternal(fullObj, info);
 		
 		//need to find all the detail objects and persist them recursively - should bulkify this too
+		for(Schema.ChildRelationship childRel: info.ChildRelationships){
+			Schema.DescribeSObjectResult childinfo = childRel.getChildSObject().getDescribe();
+			if (childinfo.name.endsWith('__c')){
+//				outstring += 'relname:' + childRel.getRelationshipName() 
+//					+ ':' + childinfo.name 
+//					+ ':' + childrel.getField().getdescribe().name + '\n';
+
+				for(sobject child: FullyPopulateRelated(obj, childrel.getField().getdescribe().name, childinfo)){
+					outstring += ExportInternal((sObject)child, childinfo);
+				}
+			}
+		}
 		return outstring;
 	}
 	
 	public string ExportInternal(sObject fullObj, Schema.DescribeSObjectResult info){
-		string outstring = '<object classname="' + info.Name + '" pseudonym="' + fullObj.Id + '">';		
+		string outstring = '   <object classname="' + info.Name + '" pseudonym="' + fullObj.Id + '">\n';		
 		
 		Map<string,Schema.SObjectField> Fmap = info.fields.getmap();
 		Schema.SObjectField upsertfield = null;
 
 		for(string fieldname:Fmap.keyset()){
-			if (Fmap.get(fieldname).getdescribe().isupdateable() && 
-				fullObj.get(fieldname) != null){
-				outstring += '<field name="' + fieldname + '">' +	fullObj.get(fieldname) + '</field>\n';
+			Schema.Describefieldresult fieldinfo = Fmap.get(fieldname).getdescribe();
+			if (fieldinfo.isupdateable() && 
+				(//fullObj.get(fieldname) != null ||
+				 fullObj.get(fieldname) != fieldinfo.DefaultValue)){
+				outstring += '      <field name="' + fieldname + '">' +	fullObj.get(fieldname) + '</field>\n';
 			}
 		}
-		outstring += '</object>';
+		outstring += '   </object>\n';
 		return outstring;
 	}
 	
@@ -270,10 +284,28 @@ public with sharing class DataCreate {
 		Id objId = obj.Id;
 
 		Map<string,Schema.SObjectField> Fmap = describe.fields.getmap();
-//        for(string  f : fmap.keyset()) {        
-//            query += f + ', ';
-//        }    
         query += String.Join(new list<string>(fmap.keyset()), ', ') + ' FROM ' + describe.name + ' Where ID =:objID';    
+        return Database.query(query);		
+	}
+	
+	private list<sObject> FullyPopulate(list<sObject> objs, Schema.DescribeSObjectResult describe){
+		list<id> objIds = new list<id>();
+		for(sObject obj: objs){
+			objids.add(obj.Id);
+		}
+		String query = 'SELECT ';
+
+		Map<string,Schema.SObjectField> Fmap = describe.fields.getmap();
+        query += String.Join(new list<string>(fmap.keyset()), ', ') + ' FROM ' + describe.name + ' Where ID in :objIds';    
+        return Database.query(query);		
+	}
+	
+	private list<sObject> FullyPopulateRelated(sObject obj,string invRelName,  Schema.DescribeSObjectResult describe){
+		String query = 'SELECT ';
+		Id objId = obj.Id;
+
+		Map<string,Schema.SObjectField> Fmap = describe.fields.getmap();
+        query += String.Join(new list<string>(fmap.keyset()), ', ') + ' FROM ' + describe.name + ' Where ' + invRelName + ' = :objId';    
         return Database.query(query);		
 	}
 	
