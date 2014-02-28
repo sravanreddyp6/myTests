@@ -36,7 +36,7 @@ public with sharing class CMContract_Form {
         isCM = false;
         integer s = 0;
         for(CareMeridian_Contract_Rate_and_Level__c item : 
-                    [select Sort_Key__c, Bed_Holds__c, Level_1__c, Level_2__c, Level_3__c, Level_4__c, Level_5__c, CareMeridian_Contract__c, Details__c 
+                    [select Sort_Key__c, Bed_Holds__c, Level_1__c, Level_2__c, Level_3__c, Level_4__c, Level_5__c, Level_6__c, Level_7__c, CareMeridian_Contract__c, Details__c 
                         from CareMeridian_Contract_Rate_and_Level__c
                             Where CareMeridian_Contract__c = :myContract.id
                                 Order By Sort_Key__c]){
@@ -109,7 +109,7 @@ public with sharing class CMContract_Form {
                         myContract.put(f.getFieldPath(), OldContract.get(f.getFieldPath()));
                     }
                     integer i = 0;
-                    List<CareMeridian_Contract_Rate_and_Level__c>  tmpQ = [select Sort_Key__c, Bed_Holds__c, Level_1__c, Level_2__c, Level_3__c, Level_4__c, Level_5__c, CareMeridian_Contract__c, Details__c from CareMeridian_Contract_Rate_and_Level__c Where CareMeridian_Contract__c = :OldContract.id Order By Sort_Key__c];
+                    List<CareMeridian_Contract_Rate_and_Level__c>  tmpQ = [select Sort_Key__c, Bed_Holds__c, Level_1__c, Level_2__c, Level_3__c, Level_4__c, Level_5__c, Level_6__c, Level_7__c, CareMeridian_Contract__c, Details__c from CareMeridian_Contract_Rate_and_Level__c Where CareMeridian_Contract__c = :OldContract.id Order By Sort_Key__c];
                     for(CareMeridian_Contract_Rate_and_Level__c item: tmpQ){
                         CareMeridian_Contract_Rate_and_Level__c tmp = new CareMeridian_Contract_Rate_and_Level__c ();
                         tmp = item.clone();

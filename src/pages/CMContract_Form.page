@@ -50,6 +50,7 @@ border-bottom: 1px solid #cccccc !important;
  font-weight: bold;
  font-size: 13px;  
  color: #4a4a56; 
+
  
 
 }
@@ -238,12 +239,14 @@ function hidedio(dio, dio2){
                 <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
                 <apex:outputField value="{!CareMeridian_Contract__c.Termination_Notice_Other__c}"/>
             </apex:pageBlockSection>
+            
             <apex:pageBlockSection title="Reimbursement Details" columns="1" rendered="{!AND(editMode , isNeuro)}">
             <apex:inputField styleClass="mytxtarea" value="{!CareMeridian_Contract__c.Reimbursement_Details__c}"/>
             </apex:pageBlockSection> 
             <apex:pageBlockSection title="Reimbursement Details" columns="1" rendered="{!AND(NOT(editMode),isNeuro)}">
             <apex:outputField styleClass="mytxtarea" value="{!CareMeridian_Contract__c.Reimbursement_Details__c}"/>
-            </apex:pageBlockSection>              
+            </apex:pageBlockSection>    
+             
             <apex:pageBlockSection title="Billing Guidelines" columns="1"  rendered="{!AND(editMode,NOT(isNeuro))}">
                 <apex:inputField value="{!CareMeridian_Contract__c.Fee_Schedule__c}"/>
                 <apex:inputField value="{!CareMeridian_Contract__c.Bill_Rate__c}"/>
@@ -264,7 +267,7 @@ function hidedio(dio, dio2){
                                     style="float: right; margin-top: -25px;"/>
                 <apex:outputPanel id="theRLs">
                                 
-<table  style="width: 100%;" cellspacing="0">
+<table  style="width: 100%" cellspacing="0">
     <tr>
         <td width="20%" class="detail" >
             <apex:outputLabel styleClass="mylbl">Details</apex:outputLabel>
@@ -283,10 +286,19 @@ function hidedio(dio, dio2){
         </td> 
         <td class="level">
             <apex:outputLabel styleClass="mylbl">Level 5</apex:outputLabel>                     
-        </td>     
+        </td>      
         <td class="level">
+        	<apex:outputLabel styleClass="mylbl" rendered="{!isNeuro}"> Level 6 </apex:outputLabel>
+        </td>
+        	
+        <td class="level" >
+        	<apex:outputLabel styleClass="mylbl" rendered="{!isNeuro}"> Level 7 </apex:outputLabel>
+        </td>
+         <td class="level">
             <apex:outputLabel styleClass="mylbl">Bed Holds</apex:outputLabel>                      
-        </td>                                                
+        </td>  
+        	
+                                                      
     </tr>
 
     <tr>
@@ -313,6 +325,16 @@ function hidedio(dio, dio2){
             <apex:inputField value="{!CareMeridian_Contract__c.Level_5_Name__c}"  rendered="{!editMode}" />
             <apex:outputField value="{!CareMeridian_Contract__c.Level_5_Name__c}"  rendered="{!!editMode}" />
         </td>     
+        
+        <td class="dets">
+            <apex:inputField value="{!CareMeridian_Contract__c.Level_6_Name__c}"  rendered="{!AND(editMode, isNeuro)}" />
+            <apex:outputField value="{!CareMeridian_Contract__c.Level_6_Name__c}"  rendered="{!AND(NOT(editMode),isNeuro)}" />
+        </td>   
+        <td class="dets">
+            <apex:inputField value="{!CareMeridian_Contract__c.Level_7_Name__c}"  rendered="{!AND(editMode, isNeuro)}"/>
+            <apex:outputField value="{!CareMeridian_Contract__c.Level_7_Name__c}"  rendered="{!AND(NOT(editMode),isNeuro)}" />
+        </td>   
+        
         <td class="dets">
 
         </td>                                                
@@ -341,7 +363,15 @@ function hidedio(dio, dio2){
         <td class="dets">
             <apex:inputField value="{!CareMeridian_Contract__c.Billed_Rate_Level_5__c}"  rendered="{!editMode}" />
             <apex:outputField value="{!CareMeridian_Contract__c.Billed_Rate_Level_5__c}"  rendered="{!!editMode}" />
-        </td>     
+        </td>    
+        <td class="dets">
+            <apex:inputField value="{!CareMeridian_Contract__c.Billed_Rate_Level_6__c}"  rendered="{!AND(editMode, isNeuro)}" />
+            <apex:outputField value="{!CareMeridian_Contract__c.Billed_Rate_Level_6__c}"  rendered="{!AND(NOT(editMode),isNeuro)}" />
+        </td>   
+        <td class="dets">
+            <apex:inputField value="{!CareMeridian_Contract__c.Billed_Rate_Level_7__c}"  rendered="{!AND(editMode, isNeuro)}"/>
+            <apex:outputField value="{!CareMeridian_Contract__c.Billed_Rate_Level_7__c}"  rendered="{!AND(NOT(editMode),isNeuro)}" />
+        </td>    
         <td class="dets">
             <apex:inputField value="{!CareMeridian_Contract__c.Billed_Rate_Bed_Holds__c}"  rendered="{!editMode}" />
             <apex:outputField value="{!CareMeridian_Contract__c.Billed_Rate_Bed_Holds__c}"  rendered="{!!editMode}" />
@@ -373,6 +403,14 @@ function hidedio(dio, dio2){
             <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Level_5__c}"  rendered="{!!editMode}"/>
         </td>     
         <td class="dets">
+            <apex:inputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Level_6__c}"  rendered="{!AND(editMode, isNeuro)}" />
+            <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Level_6__c}"  rendered="{!AND(NOT(editMode),isNeuro)}" />
+        </td>   
+        <td class="dets">
+            <apex:inputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Level_7__c}"  rendered="{!AND(editMode, isNeuro)}"/>
+            <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Level_7__c}"  rendered="{!AND(NOT(editMode),isNeuro)}" />
+        </td>    
+        <td class="dets">
             <apex:inputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Bed_Holds__c}"  rendered="{!editMode}"/>
             <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Bed_Holds__c}"  rendered="{!!editMode}"/>
         </td>                                                
@@ -402,6 +440,12 @@ function hidedio(dio, dio2){
         <apex:inputField value="{!MapRateLevel[RL].theRL.Level_5__c}"  />
     </td>
     <td class="dets">
+        <apex:inputField value="{!MapRateLevel[RL].theRL.Level_6__c}" rendered="{!isNeuro}" />
+    </td>
+    <td class="dets">
+        <apex:inputField value="{!MapRateLevel[RL].theRL.Level_7__c}" rendered="{!isNeuro}"  />
+    </td>
+    <td class="dets">
         <apex:inputField value="{!MapRateLevel[RL].theRL.Bed_Holds__c}"  />
     </td>
 </tr>
@@ -428,6 +472,12 @@ function hidedio(dio, dio2){
     <td class="dets">
         <apex:outputField value="{!MapRateLevel[RL].theRL.Level_5__c}"  />
     </td>
+     <td class="dets">
+        <apex:outputField value="{!MapRateLevel[RL].theRL.Level_6__c}" rendered="{!isNeuro}"/>
+    </td>
+     <td class="dets">
+        <apex:outputField value="{!MapRateLevel[RL].theRL.Level_7__c}" rendered="{!isNeuro}"/>
+    </td>
     <td class="dets">
         <apex:outputField value="{!MapRateLevel[RL].theRL.Bed_Holds__c}"  />
     </td>
@@ -436,7 +486,7 @@ function hidedio(dio, dio2){
 </apex:repeat> 
                      
 </table> 
-
+		
                 </apex:outputPanel>           
             </apex:pageBlockSection>
             <apex:pageBlockSection title="Exclusions" columns="1"  rendered="{!!isNeuro}">
@@ -641,7 +691,6 @@ function hidedio(dio, dio2){
                     </apex:panelGrid>
                                              
             </apex:pageBlockSection> 
-            
             
             
             <apex:pageBlockSection title="Exclusions" columns="1"  rendered="{!isNeuro}">
@@ -850,18 +899,29 @@ function hidedio(dio, dio2){
             
             
             
-            <apex:pageBlockSection title="Timely Filing Requirements" columns="1" rendered="{!editMode}" >
-            	<apex:inputField value="{!CareMeridian_Contract__c.Billing_Format__c}" rendered="{!isNeuro}"/>
+            <apex:pageBlockSection title="Timely Filing Requirements" columns="1" rendered="{!AND(editMode,NOT(isNeuro))}" >
                 <apex:inputField value="{!CareMeridian_Contract__c.Filing_Requirements__c}"/>
                 <apex:inputField value="{!CareMeridian_Contract__c.Filing_Deadline__c}"/>
                 <apex:inputField styleClass="lngtxt" value="{!CareMeridian_Contract__c.Filing_Deadline_Other__c}"/> 
             </apex:pageBlockSection>  
-            <apex:pageBlockSection title="Timely Filing Requirements" columns="1"  rendered="{!!editMode}">
-           		 <apex:outputField value="{!CareMeridian_Contract__c.Billing_Format__c}" rendered="{!isNeuro}"/>
+            <apex:pageBlockSection title="Timely Filing Requirements" columns="1"  rendered="{!AND(NOT(editMode),NOT(isNeuro))}">
                 <apex:outputField value="{!CareMeridian_Contract__c.Filing_Requirements__c}"/>
                 <apex:outputField value="{!CareMeridian_Contract__c.Filing_Deadline__c}"/>
                 <apex:outputField value="{!CareMeridian_Contract__c.Filing_Deadline_Other__c}"/> 
             </apex:pageBlockSection> 
+            
+             <apex:pageBlockSection title="Billing Requirements" columns="1" rendered="{!AND(editMode,isNeuro)}" >
+            	<apex:inputField value="{!CareMeridian_Contract__c.Billing_Format__c}"/>
+                <apex:inputField value="{!CareMeridian_Contract__c.Filing_Requirements__c}"/>
+                <apex:inputField value="{!CareMeridian_Contract__c.Filing_Deadline__c}"/>
+                <apex:inputField styleClass="lngtxt" value="{!CareMeridian_Contract__c.Filing_Deadline_Other__c}"/> 
+            </apex:pageBlockSection>  
+            <apex:pageBlockSection title="Billing Requirements" columns="1"  rendered="{!AND(NOT(editMode),isNeuro)}">
+           		 <apex:outputField value="{!CareMeridian_Contract__c.Billing_Format__c}"/> 
+                <apex:outputField value="{!CareMeridian_Contract__c.Filing_Requirements__c}"/>
+                <apex:outputField value="{!CareMeridian_Contract__c.Filing_Deadline__c}"/>
+                <apex:outputField value="{!CareMeridian_Contract__c.Filing_Deadline_Other__c}"/>
+                </apex:pageBlockSection>
                           
             <apex:pageBlockSection title="Timely Payment Requirements" columns="1"  rendered="{!editMode}" >
                 <apex:inputField value="{!CareMeridian_Contract__c.Payment_Requirements__c}"/>
