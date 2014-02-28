@@ -1185,6 +1185,21 @@
         <type>Date</type>
     </fields>
     <fields>
+        <fullName>Days_Created_past_DOS__c</fullName>
+        <description># of days after service that the note was created</description>
+        <externalId>false</externalId>
+        <formula>datevalue(CreatedDate) - Date_of_Service__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>#Days Created past DOS</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Dev_Impl_Home_Based_Support_Plan__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
