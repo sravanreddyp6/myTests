@@ -78,5 +78,11 @@ public class CredentialController {
     	PageReference myPageRef = new PageReference('/apex/MentorViewAll?id=' + contactID);
     	return myPageRef;
     	
+    }
+    
+    public PageReference CancelCreds() {
+    	PageReference cancelPageRef = new PageReference('/apex/MentorViewAll?id=' + contactID);
+    	cancelPageRef.setRedirect(true);
+    	return cancelPageRef;
     }   
 }
