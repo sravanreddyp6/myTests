@@ -1,4 +1,4 @@
-<apex:page standardController="TMN_Contact__c" extensions="MentorEditController" sidebar="false">
+<apex:page standardController="TMN_Contact__c" extensions="MentorEditController" sidebar="false" tabstyle="TMN_Contacts__tab">
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <script>
@@ -17,10 +17,16 @@
                         disabled = false;
                     }
                     if (disabled) {
-                        $targetEl.val('');
+                        //$targetEl.val('');
                     }
                     $targetEl.prop('disabled', disabled);
-
+                    $targetEl.prop('required', !disabled);
+					if(!disabled){
+						$targetEl.css('border-left', 'solid 3px #C00');
+                	}
+                	else {
+                		$targetEl.css('border-left', '0px');
+                	}
                 });
 
             });
@@ -42,7 +48,13 @@
                         $targetEl.val('');
                     }
                     $targetEl.prop('disabled', disabled);
-
+                    $targetEl.prop('required', !disabled);
+					if(!disabled){
+						$targetEl.css('border-left', 'solid 3px #C00');
+                	}
+                	else {
+                		$targetEl.css('border-left', '0px');
+                	}
                 });
 
             });
@@ -72,7 +84,7 @@
                 }
                 $targetEl.prop('disabled', disabled);
                 if (disabled) {
-                    $targetEl.val('');
+                    //$targetEl.val('');
                 }
             });
             // Events bubble up the DOM tree, so we stop the bubbling here to
@@ -87,10 +99,14 @@
         	$.each(targetEls2, function (index, targetEl2) {
                 var $targetEl2 = $(document.getElementById(targetEl2));
                 var disabled = true;
+                var borderString = '0px';
                 if ($this.val()=='Other') {
                     disabled = false;
+                    borderString = 'solid 3px #C00';
                 }
                 $targetEl2.prop('disabled', disabled);
+                $targetEl2.prop('required', !disabled);
+                $targetEl2.css('border-left', borderString);
                 if (disabled) {
                     $targetEl2.val('');
                 }        		
@@ -123,6 +139,7 @@
     </script>
     <apex:pageMessages />
     <apex:form >
+    	<apex:actionFunction name="rerenderCheckbox" rerender="actionDate" />
         <apex:pageBlock >
             <apex:pageBlockSection title="Demographics">
                 <apex:pageBlockSectionItem >
@@ -179,7 +196,8 @@
                 <apex:inputField value="{!TMN_Contact__c.In_Progress_Date__c}" id="inProgressDate" label="Date" />
                 <apex:inputField value="{!TMN_Contact__c.Active__c}"
                     html-data-enable="{!$Component.activeDate}"
-                    html-data-checkbox-group="status" />
+                    html-data-checkbox-group="status" 
+                    onclick="rerenderCheckbox()" />    
                 <apex:inputField value="{!TMN_Contact__c.Active_Date__c}" id="activeDate" label="Date" />
                 <apex:inputField value="{!TMN_Contact__c.Suspended__c}"
                     html-data-enable="{!$Component.suspendDate}"

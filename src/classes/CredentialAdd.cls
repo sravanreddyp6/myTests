@@ -4,13 +4,18 @@ public with sharing class CredentialAdd {
     public List<Credential_Profile__c> possibleCreds  {get;set;}
     public List<SelectOption> credSelectList {get;set;}
     public Id selectedCredId {get;set;}
+    public TMN_Contact__c thisTmnContact {get;set;}
+    public String baseUrl { get; set; }
+    public boolean canCreateCredRec {get;set;}
+    
+    public class CredentialException extends Exception{}
        
     public CredentialAdd() {
     
     	contactID = apexpages.currentpage().getparameters().get('contactid');
     
     	// 1.  Figure out what kind of TMN_Contact__c this is (Mentor? Co-Applicant? App Family?  App Child? Non-Relative? Pet?)
-    	TMN_Contact__c thisTmnContact = [ SELECT RecordTypeId, Related_Party_Type__c FROM TMN_Contact__c WHERE Id = :contactId ];
+    	thisTmnContact = [ SELECT RecordTypeId, Related_Party_Type__c, Full_Name__c FROM TMN_Contact__c WHERE Id = :contactId ];
 			
 		string thisPersonsRecordTypeName;
 			
@@ -55,9 +60,17 @@ public with sharing class CredentialAdd {
     	credSelectList = new List<SelectOption>();
     	credSelectList.add(new SelectOption('--None--','--None--'));
     	
-    	for(Credential_Profile__c cP : possibleCreds) {
-            credSelectList.add(new SelectOption(cp.Id,cp.Name));	
+    	if(possibleCreds!=null) {
+	    	for(Credential_Profile__c cP : possibleCreds) {
+	            credSelectList.add(new SelectOption(cp.Id,cp.Name));	
+	    	}
     	}
+    	
+    	baseUrl = URL.getSalesforceBaseUrl().toExternalForm();
+    
+        Schema.DescribeSObjectResult credRecSchema = Credential_Record__c.sObjectType.getDescribe();
+        canCreateCredRec = credRecSchema.IsCreateable();
+    
     }
     
     public PageReference SaveAddCred() {
@@ -66,10 +79,22 @@ public with sharing class CredentialAdd {
 			Credential_Profile__c = selectedCredId,
 			TMN_Contact__c = contactID			
 		);
-		insert credToSave;
 		
+		PageReference myPageRef;
+		
+		try {
+			if(canCreateCredRec==true) {
+				insert credToSave;
+				myPageRef = new PageReference('/apex/Credential?contactid=' + contactID);
+			}
+			else {
+				throw new CredentialException('You have insufficient privileges to create a credential record. Please click cancel or navigate away from this page to continue.');
+			}
+		}
+		catch(CredentialException e) {
+			ApexPages.addMessages(e);
+		}
     	
-    	PageReference myPageRef = new PageReference('/apex/Credential?contactid=' + contactID);
     	return myPageRef;
     }
     

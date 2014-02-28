@@ -197,6 +197,32 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>DHR_CPA_Status__c</fullName>
+        <externalId>false</externalId>
+        <label>DHR CPA Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>New</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Current</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Update</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Closed</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Date_of_Birth__c</fullName>
         <externalId>false</externalId>
         <label>Date of Birth</label>
@@ -314,24 +340,6 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
         <type>Picklist</type>
     </fields>
     <fields>
-        <fullName>Hold_Date__c</fullName>
-        <description>This field is used for the Mentor record type.</description>
-        <externalId>false</externalId>
-        <label>Hold Date</label>
-        <required>false</required>
-        <trackTrending>false</trackTrending>
-        <type>Date</type>
-    </fields>
-    <fields>
-        <fullName>Hold__c</fullName>
-        <defaultValue>false</defaultValue>
-        <description>This field is used for the Mentor record type.</description>
-        <externalId>false</externalId>
-        <label>Hold</label>
-        <trackTrending>false</trackTrending>
-        <type>Checkbox</type>
-    </fields>
-    <fields>
         <fullName>Household_Id__c</fullName>
         <externalId>false</externalId>
         <formula>IF(CONTAINS(RecordType.Name, &apos;Mentor&apos;), Id, IF(CONTAINS(RecordType.Name, &apos;Household Member&apos;), Mentor__c, null))</formula>
@@ -340,6 +348,71 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>How_did_you_hear_Other_Describe__c</fullName>
+        <externalId>false</externalId>
+        <label>Other - Describe</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>How_did_you_hear_about_us__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>Identifies the medium upon which the prospective Mentor heard about us (TV, newspaper, event, etc.).</inlineHelpText>
+        <label>How did you hear about us?</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Online</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Newspaper Ad</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>TV Ad</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Radio Ad</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Attended an Event</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>News Story</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Referred by Someone</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Billboard</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Direct Mail</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Email</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>In_Progress_Date__c</fullName>
@@ -471,6 +544,17 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Owner_Full_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>Owner:User.FirstName &amp; &apos; &apos; &amp; Owner:User.LastName</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Owner Full Name</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Population_This_Home_Is_Associated_With__c</fullName>
         <externalId>false</externalId>
         <label>Population This Home Is Associated With</label>
@@ -535,6 +619,28 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
             </picklistValues>
             <picklistValues>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Referral_Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Referral Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>By Mentor</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>By Employee</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>By Other</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -907,11 +1013,11 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
         <columns>NAME</columns>
         <columns>Full_Name__c</columns>
         <columns>Role__c</columns>
-        <columns>Date_of_Birth__c</columns>
-        <columns>Age__c</columns>
-        <columns>Primary_Phone__c</columns>
-        <columns>Email__c</columns>
-        <columns>Comments__c</columns>
+        <columns>Owner_Full_Name__c</columns>
+        <columns>CREATEDBY_USER</columns>
+        <columns>CREATED_DATE</columns>
+        <columns>UPDATEDBY_USER</columns>
+        <columns>LAST_UPDATE</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>
@@ -989,6 +1095,25 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>DHR_CPA_Status__c</picklist>
+            <values>
+                <fullName>Closed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Current</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>New</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Update</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Gender__c</picklist>
             <values>
                 <fullName>Female</fullName>
@@ -1011,6 +1136,53 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>How_did_you_hear_about_us__c</picklist>
+            <values>
+                <fullName>Attended an Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Billboard</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Direct Mail</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Email</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>News Story</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Newspaper Ad</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Online</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Radio Ad</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referred by Someone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>TV Ad</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -1088,6 +1260,21 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Referral_Type__c</picklist>
+            <values>
+                <fullName>By Employee</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>By Mentor</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>By Other</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -1400,6 +1587,25 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>DHR_CPA_Status__c</picklist>
+            <values>
+                <fullName>Closed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Current</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>New</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Update</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Gender__c</picklist>
             <values>
                 <fullName>Female</fullName>
@@ -1422,6 +1628,53 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>How_did_you_hear_about_us__c</picklist>
+            <values>
+                <fullName>Attended an Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Billboard</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Direct Mail</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Email</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>News Story</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Newspaper Ad</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Online</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Radio Ad</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referred by Someone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>TV Ad</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -1499,6 +1752,21 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Referral_Type__c</picklist>
+            <values>
+                <fullName>By Employee</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>By Mentor</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>By Other</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -1764,8 +2032,9 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
         <searchResultsAdditionalFields>Date_of_Birth__c</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>Age__c</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>Primary_Phone__c</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields>Email__c</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields>Comments__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>OWNER.FIRST_NAME</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>OWNER.LAST_NAME</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>CREATED_DATE</searchResultsAdditionalFields>
     </searchLayouts>
     <sharingModel>ReadWrite</sharingModel>
     <validationRules>
