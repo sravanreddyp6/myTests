@@ -4,7 +4,7 @@
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.js')}" />
-    <apex:stylesheet value="{!$Resource.mentoresdcss}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.css')}" />
     
     <style>
@@ -329,15 +329,11 @@ table#persons_table.dataTable {
                                             View Current Worksheets
                                             
                                         </apex:outputLink>
-                                        <apex:variable value="{!jo.Service_Assignment__r.Admission__r.State__c != 'MN'}" 
-                                                        var="ShowNoteLink"/>
-                                        <apex:variable value="{!jo.Service_Assignment__r.Admission__r.State__c != 'IN'}" 
-                                                        var="ShowNoteLink"/>
-                                        <apex:variable value="{!jo.Service_Assignment__r.Admission__r.State__c != 'CA'}" 
-                                                        var="ShowNoteLink"/>                                                                                                               
+                                        <apex:variable value="{!jo.Service_Assignment__r.Admission__r.State__c == 'MN' || jo.Service_Assignment__r.Admission__r.State__c == 'IN' || jo.Service_Assignment__r.Admission__r.State__c == 'CA'}" 
+                                                        var="HideNoteLink"/>                                                                                                             
                                         
-                                        <apex:outputLink styleClass="servicelink" value="/{!jo.Service_Assignment__r.Id}#worksheets"
-                                            rendered="{! jo.Status__c='Active Final' && ShowNoteLink}">
+                                        <apex:outputLink styleClass="servicelink" value="/{!jo.Service_Assignment__r.Id}#Notes"
+                                            rendered="{! jo.Status__c='Active Final' && !HideNoteLink}">
                                             View Current Notes
                                             
                                         </apex:outputLink></td>

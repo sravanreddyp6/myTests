@@ -2,6 +2,7 @@ public with sharing class CMContract_Form {
     public boolean editMode {get; set;}
     public boolean isRenewal {get; set;}
     public string oldID =  apexpages.currentpage().getparameters().get('oldid');
+    public boolean isClone =  apexpages.currentpage().getparameters().get('isClone') == '1';
     public boolean isRev{ get; set; }
     public string removeid {get; set;}
     public CareMeridian_Contract__c OldContract = new CareMeridian_Contract__c ();
@@ -13,6 +14,10 @@ public with sharing class CMContract_Form {
     public map<string, clsRateLevel> MapRateLevel = new Map<string, clsRateLevel>();
     public map<string, clsRateLevel> getMapRateLevel()
         { return MapRateLevel;}
+    public list<string> mapRateLevelKeys = new list<string>();
+    public list<string> getMapRateLevelKeys() {
+    	return mapRateLevelKeys;
+    }
     public List<SelectOption> changeTypes;  
     public List<String> selectedTypes { get; set;}  
         /*
@@ -36,34 +41,37 @@ public with sharing class CMContract_Form {
 //            cmRL.add( item);
             clsRateLevel tmpRL = new clsRateLevel(item, false);
             MapRateLevel.put(string.valueof(s) + item.id, tmpRL);
+            MapRateLevelKeys.add(string.valueof(s) + item.id);
             s++;
         
         }
-        if(myContract.id == null){
+        if(myContract.id == null || isClone){
             editMode = true;
             mycontract.ownerid = UserInfo.getUserId();
         } else {
-        	isRev = true;	// want to enter type of change on every update other than brand new contract
+        	isRev = true;	// want to enter type of change on every update other than brand new contract or a clone
         	if ( !String.isBlank( myContract.Type_of_Change__c ))
             	selectedTypes = myContract.Type_of_Change__c.Split(';');
-            	
         }
         
             
         if(oldID != null){
                    
                     String query = 'SELECT ';
-                    for(Schema.FieldSetMember f : SObjectType.CareMeridian_Contract__c.FieldSets.Renewal_Fields.getFields()) {        
+                    FieldSet copyfields = isClone 
+                    					? SObjectType.CareMeridian_Contract__c.FieldSets.Full_Clone_Fields
+                    					: SObjectType.CareMeridian_Contract__c.FieldSets.Renewal_Fields;
+                    for(Schema.FieldSetMember f : copyFields.getFields()) {        
                         query += f.getFieldPath() + ', ';
             
                     }    
-                    query += 'Id FROM CareMeridian_Contract__c Where ID =\'';    
-                    query += oldID;
-                    query += '\'';
+                    query += 'Id FROM CareMeridian_Contract__c Where ID =:oldID';    
+//                    query += oldID;
+//                    query += '\'';
                     OldContract = Database.query(query);
                     System.Debug( oldcontract);
-                    isRev = true;	// catches case of new contract that is a revision
-                    for(Schema.FieldSetMember f : SObjectType.CareMeridian_Contract__c.FieldSets.Renewal_Fields.getFields()) {        
+                    isRev = !isClone;	// catches case of new contract that is a revision
+                    for(Schema.FieldSetMember f : copyfields.getFields()) {        
                         myContract.put(f.getFieldPath(), OldContract.get(f.getFieldPath()));
                     }
                     integer i = 0;
@@ -73,6 +81,7 @@ public with sharing class CMContract_Form {
                         tmp = item.clone();
                         clsRateLevel tmpRL = new clsRateLevel(tmp, true);
                         MapRateLevel.put(tmpRL.theRL.Sort_Key__c + string.valueof(i), tmpRL);
+                        MapRateLevelKeys.Add(tmpRL.theRL.Sort_Key__c + string.valueof(i));
                         //cmRL.add( tmp) ;   
                         i++;
                     
@@ -91,7 +100,9 @@ public with sharing class CMContract_Form {
     public PageReference myAddRL() {
         CareMeridian_Contract_Rate_and_Level__c newRL = new CareMeridian_Contract_Rate_and_Level__c();
         clsRateLevel tmpRL = new clsRateLevel(newRL , true);
-        MapRateLevel.put('Z'+string.valueof(system.now()).remove(' ').remove(':').remove('-'), tmpRL);
+        string key = 'Z'+string.valueof(system.now()).remove(' ').remove(':').remove('-');
+        MapRateLevel.put(key, tmpRL);
+        MapRateLevelKeys.add(key);
       // 'z'+string.valueof(system.now()).remove(' ').remove(':').remove('-'),
         return null ;
     }  
@@ -103,7 +114,8 @@ public with sharing class CMContract_Form {
                 delete MapRateLevel.get(removeid).theRL; 
             }
             
-            MapRateLevel.remove(removeid);   
+            MapRateLevel.remove(removeid);  
+            MapRateLevelKeys = ListRemove(MapRateLevelKeys,removeid); 
         }
         catch(Exception e) {
                 ApexPages.addMessages(e);
@@ -112,11 +124,21 @@ public with sharing class CMContract_Form {
         return null; 
     }
     
+    private list<string> ListRemove(list<string> listobj, string removeValue) {
+    	list<string> newlist = new list<string>();
+    	for(string item: listobj){
+    		if (item != removeValue){
+    			newlist.add(item);
+    		}
+    	}
+    	return newlist;
+    }
+    
     public PageReference save() {
         try{
             
             
-            if(oldID!= null) 
+            if(oldID!= null && !isClone) 
             	myContract.Previous_Contract__c = OldContract.id;
 
 			System.Debug( 'selectedTypes1 = ' + selectedTypes + ', isrev=' + isrev);	
@@ -143,7 +165,7 @@ public with sharing class CMContract_Form {
             
             upsert myContract;
             
-            if(oldID!= null){
+            if(oldID!= null && !isClone){
                 oldContract.Renewed__c = true;
                 oldContract.Status__c = 'Closed';           
                 OldContract.Next_Contract__c = myContract.id;

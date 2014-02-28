@@ -22,6 +22,8 @@ trigger GetStartTimeOnly on Progress_Note__c (before update, before insert) {
     Map<Id, User> ownerMap = new Map<Id, User>([
         SELECT Id, FirstName, LastName FROM User WHERE Id IN :ownersToFetch
     ]);
+    
+   
     /*
     Map<Id, TMN_User__c> TMNUserMap = new Map<Id, TMN_User__c>();
     for (TMN_User__c t : [SELECT Salesforce_User_Account__c, First_Name__c, Last_Name__c FROM TMN_User__c WHERE Salesforce_User_Account__c in :TMNUsersToFetch]) {
@@ -98,7 +100,7 @@ trigger GetStartTimeOnly on Progress_Note__c (before update, before insert) {
            n.Date_of_Service__c = n.Start_Time__c.date();
        }
        
-       if (Trigger.isInsert || (Trigger.isUpdate && (Trigger.oldMap.get(n.Id).Start_Time__c != n.Start_Time__c || Trigger.oldMap.get(n.Id).Type_of_Activity__c != n.Type_of_Activity__c)) &&
+       if (Trigger.isInsert || (Trigger.isUpdate && (Trigger.oldMap.get(n.Id).Start_Time__c != n.Start_Time__c || Trigger.oldMap.get(n.Id).Type_of_Activity__c != n.Type_of_Activity__c || Trigger.oldMap.get(n.Id).Disregard_Note__c != n.Disregard_Note__c)) &&
            n.Start_Time__c != null) {
          
                
@@ -109,9 +111,15 @@ trigger GetStartTimeOnly on Progress_Note__c (before update, before insert) {
                				recordTypeMap.get(n.RecordTypeId).Name;
                
            		if ( Trigger.isUpdate ) {
-                	n.Name += ' - ' + ownerMap.get(n.CreatedById).FirstName.Substring(0,1) + ownerMap.get(n.CreatedById).LastName;
+           			if ( n.Disregard_Note__c ) 
+           				n.Name += ' - DISREGARD';
+           
+					else
+						n.name += (ownerMap.get(n.CreatedById).FirstName!='' && ownerMap.get(n.CreatedById).FirstName!=null) ? ' - ' + ownerMap.get(n.CreatedById).FirstName.Substring(0,1) + ownerMap.get(n.CreatedById).LastName : ' - ' + ownerMap.get(n.CreatedById).LastName;
            		} else  { // isInsert
-                	n.Name += ' - ' + UserInfo.getFirstName().Substring(0,1) + UserInfo.getLastName();
+           			
+                	n.Name += (UserInfo.getFirstName()!='' && UserInfo.getFirstName()!=null) ? ' - ' + UserInfo.getFirstName().Substring(0,1) + UserInfo.getLastName() : ' - ' + UserInfo.getLastName(); 	
+           		
            		}
            }  else {
            	  n.Name = pbsMap.get(n.Person_Being_Served__c).Name +

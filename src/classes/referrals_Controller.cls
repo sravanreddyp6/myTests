@@ -76,7 +76,9 @@ public with sharing class referrals_Controller{
   private Id personBeingServedId {get; set;}
   public Id pBSId { get; set; }
   
-
+  public boolean isLinkedPersonBeingServed {
+        get { return pBSId != null; }
+  }
 
   public static final String REFERRAL_EDIT_URL = '/apex/referral';
   private static final String REFERRAL_RESULTS_URL = '/apex/referralResults';
@@ -725,6 +727,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
                        LastName, Ethnicity_Picklist__c,
                        Middle_Name__c, Phone, Primary_Language__c, SSN__c,
                        MailingState, MailingStreet, OtherStreet, MailingPostalCode, Legal_Guardianship_Status__c, Sign_Language__c, Non_Verbal__c
+                       , Current_Medications__c
                 from Contact
                 where Id = :pBSId
                 limit 1];
@@ -777,7 +780,11 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
   }
 
   public void saveRelParty() {
-    this.relParty.Type__c = this.relParty.Type_String__c;
+    // CTEAE-22: J. Gilliam commented this line by Appirio that seems to be unnecessary for the save fo Related Party records, and in particular
+    // was causing new Related Party records to save without a Type after we fixed the order of operations issue that was triggering 
+    // the required field validation.  1-31-14
+    //
+    // this.relParty.Type__c = this.relParty.Type_String__c;
     this.relParties.add(this.relParty);
     this.relParty = new Related_Party__c();
     relParty.RecordTypeId = Utility.getRelatedPartyRecordTypeFromReferral(this.ReferralRecord);
@@ -789,14 +796,24 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
 
   public void saveLocation() {
       system.debug(this.location);
-    this.location.State__c = this.location.State_String__c;
-     this.location.Status__c = this.location.Status_String__c;
+    //this.location.State__c = this.location.State_String__c;
+    // this.location.Status__c = this.location.Status_String__c;
     this.locations.add(this.location);
+    system.debug('Loc Status:'+ this.location.status__c);
     location = new Referral_Location__c();
   }
 
   public PageReference saveRef() {
-
+  // start CTEAE -34
+    if(referralRecord.Adjudicated_offense_status__c){
+        if(!referralRecord.Misdemeanor_s__c   & !referralRecord.Felony_ies__c){
+            referralRecord.Adjudicated_offense_status__c.addError('Please Select at least one - Misdemeanor/s or Felony/ies');
+            return null;
+        
+        }
+    
+    }
+    // ennd CTEAE - 34
       system.debug('DOUGDOUG - in saveREF');
     Id refId;
 
@@ -980,6 +997,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     return current;
   }
   public void checkRedFlags() {
+   
     redFlagged = false;
     String fieldSetName = 'Red_Flag_' + ReferralRecordType.replace(' ', '_');
     Set<String> allFieldSets = Schema.SObjectType.Referral__c.fieldSets.getMap().keySet();
@@ -1005,7 +1023,12 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     // the Record Type to be changed when the user first opens up a referral
     // record.
     //if (this.referralRecord == null || this.referralRecord.RecordTypeId == null) {
+      
+
+      
         setReferralRecordType();
+      
+      
     //}
     if (Utility.getRecordTypeNameForReferralObject(this.referralRecord).startsWith('Cambridge')) {
         isCambridge = true;

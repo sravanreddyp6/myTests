@@ -1,5 +1,5 @@
 <apex:page title="Admission: {!admission.Name}" standardController="Admission__c" extensions="AdmissionViewExtension"  standardStylesheets="true" sidebar="false"  tabStyle="Persons_Being_Served_New__tab">
-<apex:stylesheet value="{!$Resource.mentoresdcss}" />
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:variable value="{! $User.Operating_Group__c = 'Cambridge'}" var="showCans"/>
     <c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" parentPage="Admission" admId="{!admission.Id}"/>
     <br />
@@ -55,17 +55,18 @@
     <br />
     <apex:pageBlock title="Authorizations" >
         <apex:pageBlockTable styleclass="pbBody-list"  value="{!admission.Authorized_Services__r}" var="item" rendered="{!(admission.Authorized_Services__r!=null && admission.Authorized_Services__r.size>0)}">
-            <apex:column value="{!item.name}"/>
+            <apex:column ><apex:facet name="header">Authorization ID</apex:facet><apex:outputlink value="/{!item.id}">{!item.name}</apex:outputlink></apex:column>
             <apex:column value="{!item.Authorization_Status__c}"/>
             <apex:column value="{!item.Payer_Authorization_Date__c}"/>
             <apex:column value="{!item.Payer_Effective_Date__c}"/>
-            <apex:column value="{!item.Payer_Authorization_ID__c}"/>
+            <apex:column value="{!item.Payer_End_Date__c}"/>
+            <apex:column value="{!item.Payer_Name__c}"/>
             <apex:column value="{!item.Number_Of_Authorized_Units__c}"/>
             <apex:column value="{!item.Remaining_Units__c}"/>
         </apex:pageBlockTable>
         <apex:outputText value="No records to display" rendered="{!(admission.Authorized_Services__r==null || admission.Authorized_Services__r.size=0)}" />
         </apex:pageBlock>
-    
+    <a name="Asmt" id="Asmt" ></a>
 <apex:pageBlock title="Assessments">
         <div class="pbHeaderButton">
             <!-- <apex:commandButton rendered="{!assessmentTypes['CANS']}" onclick="window.open('/a0d/e?CF00NU00000036vU3={!admission.Name}&CF00NU00000036vU3_lkid={!admission.ID}', '_self'); return false;" value="New CANS Assessment" />&nbsp;&nbsp; -->

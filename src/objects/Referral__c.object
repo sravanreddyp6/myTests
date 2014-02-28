@@ -609,6 +609,33 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Adjudicated_offense_status__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Adjudicated Offense Status</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Adjudicated_offenses__c</fullName>
+        <externalId>false</externalId>
+        <label>Adjudicated offenses</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Misdemeanor/s</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Felony/ies</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>MultiselectPicklist</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
         <fullName>Admission_Location__c</fullName>
         <externalId>false</externalId>
         <label>Admission Location</label>
@@ -627,6 +654,10 @@
             </picklistValues>
             <picklistValues>
                 <fullName>Cowan Hieghts</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Elk Grove</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -715,10 +746,6 @@
             </picklistValues>
             <picklistValues>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -1553,6 +1580,28 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Discrimination_Reason__c</fullName>
+        <externalId>false</externalId>
+        <label>Discrimination Reason</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Sexual Orientation</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Drug_Possession_Distribution__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
@@ -1700,9 +1749,27 @@
     </fields>
     <fields>
         <fullName>Felony__c</fullName>
-        <defaultValue>false</defaultValue>
         <externalId>false</externalId>
         <label>Felony</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Felony_ies__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Felony/ies</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
@@ -2201,6 +2268,24 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Is_Reunification_Process__c</fullName>
+        <externalId>false</externalId>
+        <label>Is Reunification Process</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Law_Enforcement_Involvement__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
@@ -2523,6 +2608,32 @@
         </picklist>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Misdemeanor__c</fullName>
+        <externalId>false</externalId>
+        <label>Misdemeanor</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Misdemeanor_s__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Misdemeanor/s</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
     </fields>
     <fields>
         <fullName>Mobility__c</fullName>
@@ -3370,6 +3481,10 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </picklistValues>
@@ -3455,10 +3570,6 @@
             </picklistValues>
             <picklistValues>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -4030,6 +4141,10 @@
                 <fullName>Physical Disability</fullName>
                 <default>false</default>
             </picklistValues>
+            <picklistValues>
+                <fullName>Victim of Discrimination</fullName>
+                <default>false</default>
+            </picklistValues>
             <sorted>false</sorted>
         </picklist>
         <trackTrending>false</trackTrending>
@@ -4083,6 +4198,10 @@
             </picklistValues>
             <picklistValues>
                 <fullName>Victim of Bullying</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Victim of Discrimination</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -4941,6 +5060,10 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </picklistValues>
@@ -5026,10 +5149,6 @@
             </picklistValues>
             <picklistValues>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -6710,7 +6829,7 @@
         <fullName>Uses_Tobacco__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
-        <label>Uses Tobacco</label>
+        <label>Tobacco Use (Current)</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
@@ -6856,6 +6975,7 @@
         <columns>Name_PBR__c</columns>
         <columns>Referral_Status__c</columns>
         <columns>Services_Requested__c</columns>
+        <columns>RECORDTYPE</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>
@@ -6889,6 +7009,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -6904,6 +7035,10 @@
             </values>
             <values>
                 <fullName>Cowan Hieghts</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Elk Grove</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -6992,10 +7127,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -7276,6 +7407,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Evaluated_By_Source__c</picklist>
             <values>
                 <fullName>External</fullName>
@@ -7283,6 +7429,17 @@
             </values>
             <values>
                 <fullName>Internal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Felony__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7470,6 +7627,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Is_Reunification_Process__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
                 <fullName>Civil Committment</fullName>
@@ -7612,6 +7780,17 @@
             </values>
             <values>
                 <fullName>D%2FC Other than Honorable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Misdemeanor__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7902,6 +8081,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -7987,10 +8170,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -8812,6 +8991,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -8897,10 +9080,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -9626,6 +9805,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>After_Care__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -9679,6 +9869,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Evaluated_By_Source__c</picklist>
             <values>
                 <fullName>External</fullName>
@@ -9686,6 +9891,17 @@
             </values>
             <values>
                 <fullName>Internal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Felony__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -9783,6 +9999,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Is_Reunification_Process__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
                 <fullName>Civil Committment</fullName>
@@ -9837,6 +10064,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Misdemeanor__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11205,6 +11443,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -11220,6 +11469,10 @@
             </values>
             <values>
                 <fullName>Cowan Hieghts</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Elk Grove</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -11308,10 +11561,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -11619,6 +11868,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Evaluated_By_Source__c</picklist>
             <values>
                 <fullName>External</fullName>
@@ -11626,6 +11890,17 @@
             </values>
             <values>
                 <fullName>Internal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Felony__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11932,6 +12207,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Is_Reunification_Process__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
                 <fullName>Civil Committment</fullName>
@@ -12074,6 +12360,17 @@
             </values>
             <values>
                 <fullName>D%2FC Other than Honorable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Misdemeanor__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12387,6 +12684,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -12568,10 +12869,6 @@
             </values>
             <values>
                 <fullName>RI</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -12908,6 +13205,10 @@
                 <fullName>Physical Disability</fullName>
                 <default>false</default>
             </values>
+            <values>
+                <fullName>Victim of Discrimination</fullName>
+                <default>false</default>
+            </values>
         </picklistValues>
         <picklistValues>
             <picklist>Reason_Category_Mental_Health_Emotional__c</picklist>
@@ -12953,6 +13254,10 @@
             </values>
             <values>
                 <fullName>Victim of Bullying</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Victim of Discrimination</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -13448,6 +13753,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -13629,10 +13938,6 @@
             </values>
             <values>
                 <fullName>RI</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -14372,6 +14677,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -14387,6 +14703,10 @@
             </values>
             <values>
                 <fullName>Cowan Hieghts</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Elk Grove</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -14475,10 +14795,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -14786,6 +15102,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Evaluated_By_Source__c</picklist>
             <values>
                 <fullName>External</fullName>
@@ -14793,6 +15124,17 @@
             </values>
             <values>
                 <fullName>Internal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Felony__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -15099,6 +15441,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Is_Reunification_Process__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
                 <fullName>Civil Committment</fullName>
@@ -15241,6 +15594,17 @@
             </values>
             <values>
                 <fullName>D%2FC Other than Honorable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Misdemeanor__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -15554,6 +15918,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -15735,10 +16103,6 @@
             </values>
             <values>
                 <fullName>RI</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -16599,6 +16963,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -16780,10 +17148,6 @@
             </values>
             <values>
                 <fullName>RI</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -18027,6 +18391,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -18042,6 +18417,10 @@
             </values>
             <values>
                 <fullName>Cowan Hieghts</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Elk Grove</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -18130,10 +18509,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -18489,6 +18864,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Evaluated_By_Source__c</picklist>
             <values>
                 <fullName>External</fullName>
@@ -18496,6 +18886,17 @@
             </values>
             <values>
                 <fullName>Internal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Felony__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -18802,6 +19203,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Is_Reunification_Process__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
                 <fullName>Civil Committment</fullName>
@@ -18944,6 +19356,17 @@
             </values>
             <values>
                 <fullName>D%2FC Other than Honorable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Misdemeanor__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -19257,6 +19680,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -19438,10 +19865,6 @@
             </values>
             <values>
                 <fullName>RI</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -20270,6 +20693,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -20451,10 +20878,6 @@
             </values>
             <values>
                 <fullName>RI</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -21246,6 +21669,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -21261,6 +21695,10 @@
             </values>
             <values>
                 <fullName>Cowan Hieghts</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Elk Grove</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -21349,10 +21787,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -21660,6 +22094,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Evaluated_By_Source__c</picklist>
             <values>
                 <fullName>External</fullName>
@@ -21667,6 +22116,17 @@
             </values>
             <values>
                 <fullName>Internal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Felony__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -21973,6 +22433,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Is_Reunification_Process__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
                 <fullName>Civil Committment</fullName>
@@ -22131,6 +22602,17 @@
             </values>
             <values>
                 <fullName>D%2FC Other than Honorable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Misdemeanor__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -22444,6 +22926,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -22625,10 +23111,6 @@
             </values>
             <values>
                 <fullName>RI</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -22965,6 +23447,10 @@
                 <fullName>Physical Disability</fullName>
                 <default>false</default>
             </values>
+            <values>
+                <fullName>Victim of Discrimination</fullName>
+                <default>false</default>
+            </values>
         </picklistValues>
         <picklistValues>
             <picklist>Reason_Category_Mental_Health_Emotional__c</picklist>
@@ -23010,6 +23496,10 @@
             </values>
             <values>
                 <fullName>Victim of Bullying</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Victim of Discrimination</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -23505,6 +23995,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -23686,10 +24180,6 @@
             </values>
             <values>
                 <fullName>RI</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -24453,6 +24943,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -24468,6 +24969,10 @@
             </values>
             <values>
                 <fullName>Cowan Hieghts</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Elk Grove</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -24556,10 +25061,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -24867,6 +25368,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Evaluated_By_Source__c</picklist>
             <values>
                 <fullName>External</fullName>
@@ -24874,6 +25390,17 @@
             </values>
             <values>
                 <fullName>Internal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Felony__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -25180,6 +25707,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Is_Reunification_Process__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
                 <fullName>Civil Committment</fullName>
@@ -25322,6 +25860,17 @@
             </values>
             <values>
                 <fullName>D%2FC Other than Honorable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Misdemeanor__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -25635,6 +26184,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -25816,10 +26369,6 @@
             </values>
             <values>
                 <fullName>RI</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -26684,6 +27233,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -26865,10 +27418,6 @@
             </values>
             <values>
                 <fullName>RI</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -27620,6 +28169,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -27635,6 +28195,10 @@
             </values>
             <values>
                 <fullName>Cowan Hieghts</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Elk Grove</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -27723,10 +28287,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -28018,6 +28578,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Evaluated_By_Source__c</picklist>
             <values>
                 <fullName>External</fullName>
@@ -28025,6 +28600,17 @@
             </values>
             <values>
                 <fullName>Internal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Felony__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -28331,6 +28917,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Is_Reunification_Process__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
                 <fullName>Civil Committment</fullName>
@@ -28473,6 +29070,17 @@
             </values>
             <values>
                 <fullName>D%2FC Other than Honorable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Misdemeanor__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -28782,6 +29390,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -28867,10 +29479,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -29703,6 +30311,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -29788,10 +30400,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -30576,6 +31184,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>After_Care__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -30629,6 +31248,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Evaluated_By_Source__c</picklist>
             <values>
                 <fullName>External</fullName>
@@ -30636,6 +31270,17 @@
             </values>
             <values>
                 <fullName>Internal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Felony__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -30729,6 +31374,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Is_Reunification_Process__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
                 <fullName>Civil Committment</fullName>
@@ -30783,6 +31439,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Misdemeanor__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -32223,6 +32890,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -32238,6 +32916,10 @@
             </values>
             <values>
                 <fullName>Cowan Hieghts</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Elk Grove</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -32326,10 +33008,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -32610,6 +33288,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Evaluated_By_Source__c</picklist>
             <values>
                 <fullName>External</fullName>
@@ -32617,6 +33310,17 @@
             </values>
             <values>
                 <fullName>Internal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Felony__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -32804,6 +33508,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Is_Reunification_Process__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
                 <fullName>Civil Committment</fullName>
@@ -32946,6 +33661,17 @@
             </values>
             <values>
                 <fullName>D%2FC Other than Honorable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Misdemeanor__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -33236,6 +33962,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -33321,10 +34051,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -34146,6 +34872,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -34231,10 +34961,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -34856,6 +35582,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>After_Care__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -34909,6 +35646,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Evaluated_By_Source__c</picklist>
             <values>
                 <fullName>External</fullName>
@@ -34916,6 +35668,17 @@
             </values>
             <values>
                 <fullName>Internal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Felony__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -35013,6 +35776,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Is_Reunification_Process__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
                 <fullName>Civil Committment</fullName>
@@ -35067,6 +35841,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Misdemeanor__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -36391,6 +37176,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -36406,6 +37202,10 @@
             </values>
             <values>
                 <fullName>Cowan Hieghts</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Elk Grove</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -36494,10 +37294,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -36778,6 +37574,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Evaluated_By_Source__c</picklist>
             <values>
                 <fullName>External</fullName>
@@ -36785,6 +37596,17 @@
             </values>
             <values>
                 <fullName>Internal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Felony__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -36972,6 +37794,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Is_Reunification_Process__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
                 <fullName>Civil Committment</fullName>
@@ -37114,6 +37947,17 @@
             </values>
             <values>
                 <fullName>D%2FC Other than Honorable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Misdemeanor__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -37404,6 +38248,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -37489,10 +38337,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -38314,6 +39158,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -38399,10 +39247,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -39040,6 +39884,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>After_Care__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -39093,6 +39948,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Evaluated_By_Source__c</picklist>
             <values>
                 <fullName>External</fullName>
@@ -39100,6 +39970,17 @@
             </values>
             <values>
                 <fullName>Internal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Felony__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -39189,6 +40070,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Is_Reunification_Process__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
                 <fullName>Conservatorship</fullName>
@@ -39231,6 +40123,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Misdemeanor__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -40563,6 +41466,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -40578,6 +41492,10 @@
             </values>
             <values>
                 <fullName>Cowan Hieghts</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Elk Grove</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -40666,10 +41584,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -40942,6 +41856,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Evaluated_By_Source__c</picklist>
             <values>
                 <fullName>External</fullName>
@@ -40949,6 +41878,17 @@
             </values>
             <values>
                 <fullName>Internal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Felony__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -41136,6 +42076,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Is_Reunification_Process__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
                 <fullName>Civil Committment</fullName>
@@ -41278,6 +42229,17 @@
             </values>
             <values>
                 <fullName>D%2FC Other than Honorable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Misdemeanor__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -43362,6 +44324,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -43377,6 +44350,10 @@
             </values>
             <values>
                 <fullName>Cowan Hieghts</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Elk Grove</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -43465,10 +44442,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -43749,6 +44722,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Evaluated_By_Source__c</picklist>
             <values>
                 <fullName>External</fullName>
@@ -43756,6 +44744,17 @@
             </values>
             <values>
                 <fullName>Internal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Felony__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -43943,6 +44942,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Is_Reunification_Process__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
                 <fullName>Civil Committment</fullName>
@@ -44085,6 +45095,17 @@
             </values>
             <values>
                 <fullName>D%2FC Other than Honorable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Misdemeanor__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -44375,6 +45396,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -44460,10 +45485,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -45285,6 +46306,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -45370,10 +46395,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -46002,6 +47023,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -46017,6 +47049,10 @@
             </values>
             <values>
                 <fullName>Cowan Hieghts</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Elk Grove</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -46105,10 +47141,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -46389,6 +47421,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Evaluated_By_Source__c</picklist>
             <values>
                 <fullName>External</fullName>
@@ -46396,6 +47443,17 @@
             </values>
             <values>
                 <fullName>Internal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Felony__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -46583,6 +47641,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Is_Reunification_Process__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
                 <fullName>Civil Committment</fullName>
@@ -46725,6 +47794,17 @@
             </values>
             <values>
                 <fullName>D%2FC Other than Honorable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Misdemeanor__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -47015,6 +48095,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -47100,10 +48184,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -47925,6 +49005,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -48010,10 +49094,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -48654,6 +49734,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -48669,6 +49760,10 @@
             </values>
             <values>
                 <fullName>Cowan Hieghts</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Elk Grove</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -48757,10 +49852,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -49041,6 +50132,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Evaluated_By_Source__c</picklist>
             <values>
                 <fullName>External</fullName>
@@ -49048,6 +50154,17 @@
             </values>
             <values>
                 <fullName>Internal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Felony__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -49235,6 +50352,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Is_Reunification_Process__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
                 <fullName>Civil Committment</fullName>
@@ -49377,6 +50505,17 @@
             </values>
             <values>
                 <fullName>D%2FC Other than Honorable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Misdemeanor__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -49667,6 +50806,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -49752,10 +50895,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -50577,6 +51716,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -50662,10 +51805,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -51330,6 +52469,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -51345,6 +52495,10 @@
             </values>
             <values>
                 <fullName>Cowan Hieghts</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Elk Grove</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -51433,10 +52587,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -51717,6 +52867,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Evaluated_By_Source__c</picklist>
             <values>
                 <fullName>External</fullName>
@@ -51724,6 +52889,17 @@
             </values>
             <values>
                 <fullName>Internal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Felony__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -51911,6 +53087,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Is_Reunification_Process__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
                 <fullName>Civil Committment</fullName>
@@ -52053,6 +53240,17 @@
             </values>
             <values>
                 <fullName>D%2FC Other than Honorable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Misdemeanor__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -52343,6 +53541,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -52428,10 +53630,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -53253,6 +54451,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -53338,10 +54540,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -53991,6 +55189,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>After_Care__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -54044,6 +55253,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Evaluated_By_Source__c</picklist>
             <values>
                 <fullName>External</fullName>
@@ -54051,6 +55275,17 @@
             </values>
             <values>
                 <fullName>Internal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Felony__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -54144,6 +55379,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Is_Reunification_Process__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
                 <fullName>Civil Committment</fullName>
@@ -54198,6 +55444,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Misdemeanor__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -55546,6 +56803,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Adjudicated_offenses__c</picklist>
+            <values>
+                <fullName>Felony%2Fies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Misdemeanor%2Fs</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admission_Location__c</picklist>
             <values>
                 <fullName>Any Facility</fullName>
@@ -55561,6 +56829,10 @@
             </values>
             <values>
                 <fullName>Cowan Hieghts</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Elk Grove</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -55649,10 +56921,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -55933,6 +57201,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Discrimination_Reason__c</picklist>
+            <values>
+                <fullName>Gender</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Race</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Orientation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Evaluated_By_Source__c</picklist>
             <values>
                 <fullName>External</fullName>
@@ -55940,6 +57223,17 @@
             </values>
             <values>
                 <fullName>Internal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Felony__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -56127,6 +57421,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Is_Reunification_Process__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
                 <fullName>Civil Committment</fullName>
@@ -56269,6 +57574,17 @@
             </values>
             <values>
                 <fullName>D%2FC Other than Honorable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Misdemeanor__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -56559,6 +57875,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -56644,10 +57964,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -57469,6 +58785,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Elk Grove</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Escondido</fullName>
                 <default>false</default>
             </values>
@@ -57554,10 +58874,6 @@
             </values>
             <values>
                 <fullName>Pleasanton</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Sacremento</fullName>
                 <default>false</default>
             </values>
             <values>

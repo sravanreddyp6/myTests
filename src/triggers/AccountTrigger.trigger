@@ -11,7 +11,7 @@ trigger AccountTrigger on Account (after delete, after insert, after undelete, a
     }
     /* Before Update */
     else if(Trigger.isUpdate && Trigger.isBefore){
-        handler.OnBeforeUpdate(Trigger.old, Trigger.new, Trigger.newMap);
+        handler.OnBeforeUpdate(Trigger.old, Trigger.new, Trigger.newMap, Trigger.oldMap);
     }
     /* After Update */
     else if(Trigger.isUpdate && Trigger.isAfter){

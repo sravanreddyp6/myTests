@@ -1185,6 +1185,21 @@
         <type>Date</type>
     </fields>
     <fields>
+        <fullName>Days_Created_past_DOS__c</fullName>
+        <description># of days after service that the note was created</description>
+        <externalId>false</externalId>
+        <formula>datevalue(CreatedDate) - Date_of_Service__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>#Days Created past DOS</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Dev_Impl_Home_Based_Support_Plan__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
@@ -3046,9 +3061,9 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <columns>Plan__c</columns>
         <filterScope>Everything</filterScope>
         <filters>
-            <field>Program__c</field>
-            <operation>notEqual</operation>
-            <value>Phoenix</value>
+            <field>RECORDTYPE</field>
+            <operation>equals</operation>
+            <value>Progress_Note__c.FL_FSS_Progress_Note</value>
         </filters>
         <label>FL-My Team&apos;s Notes</label>
         <sharedTo>
@@ -6452,7 +6467,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <fullName>NC_IFCS_Progress_Note</fullName>
         <active>true</active>
         <description>Use this record type for Persons in NC for T1023, H2022, H0032,  90801, 90804, 90806, 90808, 90846, 90847, 90849, or H0004 service types.</description>
-        <label>NC - IFCS</label>
+        <label>NC - FCT</label>
         <picklistValues>
             <picklist>Appearance__c</picklist>
             <values>
