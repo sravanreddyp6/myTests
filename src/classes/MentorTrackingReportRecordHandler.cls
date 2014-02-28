@@ -31,7 +31,7 @@ public with sharing class MentorTrackingReportRecordHandler {
                
         for(Mentor_Tracking_Report_Record__c m : updatedObjects) {
  			for(TMN_Contact__c t : theTmnContacts) {
-		    	if(m.TMN_Contact__c==t.Id && m.Skip_Trigger__c==false) {
+		    	if(m.TMN_Contact__c==t.Id && m.Skip_Trigger__c==false && m.Submitted_At_Least_Once__c==true) {
 		        	m.Status__c = 'Update';
 		    	}
  			}

@@ -22,6 +22,9 @@ public with sharing class DhrReportSubmit {
 			}
 			
 			m.Skip_Trigger__c = true;
+			m.MSR_Submission_Date__c = submissionDate;
+			m.MSR_Submission_Recorded_Datetime__c = datetime.now();
+			m.MSR_Submission_Recorded_By__c = UserInfo.getUserId();
 			dhrReportsToUpdate.add(m);
 		}
 		update dhrReportsToUpdate;

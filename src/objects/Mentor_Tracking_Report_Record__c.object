@@ -383,8 +383,8 @@ IF( ISPICKVAL( TMN_Contact__r.Gender__c, &apos;Male&apos; ), &apos;Single Male&a
         <fullName>Include_in_DHR_Report__c</fullName>
         <externalId>false</externalId>
         <formula>IF( TMN_Contact__r.RecordType.Name = &apos;Mentor&apos;, 
-IF(  OR(TMN_Contact__r.Active__c = true,  TMN_Contact__r.Suspended__c = true, AND( TMN_Contact__r.Inactive__c = true, (TODAY() -  TMN_Contact__r.Inactive_Date__c) &lt;= 30 )), &apos;Yes&apos;,&apos;No&apos;),
-IF( AND(OR( Mentor__r.Active__c = true,  Mentor__r.Suspended__c = true,  AND(Mentor__r.Inactive__c = true,  (TODAY() - Mentor__r.Inactive_Date__c) &lt;= 30 )), TMN_Contact__r.No_Longer_In_Home__c = false), &apos;Yes&apos;, &apos;No&apos;)
+IF(  OR(TMN_Contact__r.Active__c = true,  TMN_Contact__r.Suspended__c = true, AND( TMN_Contact__r.Inactive__c = true,  Submitted_Once_Closed__c = false)), &apos;Yes&apos;,&apos;No&apos;),
+IF(OR( Mentor__r.Active__c = true,  Mentor__r.Suspended__c = true,  AND(Mentor__r.Inactive__c = true, Submitted_Once_Closed__c = false), AND( TMN_Contact__r.No_Longer_In_Home__c, Submitted_Once_Closed__c = false)), &apos;Yes&apos;, &apos;No&apos;)
 )</formula>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Include in DHR Report?</label>
@@ -392,6 +392,33 @@ IF( AND(OR( Mentor__r.Active__c = true,  Mentor__r.Suspended__c = true,  AND(Men
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>MSR_Submission_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>MSR Submission Date</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>MSR_Submission_Recorded_By__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>MSR Submission Recorded By</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Mentor_Tracking_Report_Records</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>MSR_Submission_Recorded_Datetime__c</fullName>
+        <externalId>false</externalId>
+        <label>MSR Submission Recorded Datetime</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
     </fields>
     <fields>
         <fullName>Mentor__c</fullName>
@@ -485,6 +512,14 @@ IF( AND(OR( Mentor__r.Active__c = true,  Mentor__r.Suspended__c = true,  AND(Men
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Skip_Trigger__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Skip Trigger</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>State_Conviction__c</fullName>
         <externalId>false</externalId>
         <label>Is there a State conviction in the follo</label>
@@ -542,6 +577,22 @@ IF( AND(OR( Mentor__r.Active__c = true,  Mentor__r.Suspended__c = true,  AND(Men
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Submitted_At_Least_Once__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Submitted At Least Once</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Submitted_Once_Closed__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Submitted Once Closed</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
     </fields>
     <fields>
         <fullName>TMN_Contact__c</fullName>
