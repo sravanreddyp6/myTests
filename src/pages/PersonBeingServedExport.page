@@ -2,13 +2,12 @@
     <style>
     .largexmlout {
         width:100%;
-        height: 80px;
         }
     </style>
     <apex:form >
         <apex:pageBlock >
             <apex:commandButton action="{!exportPerson}" value="export" reRender="output"/>
         </apex:pageBlock>
-        <apex:inputTextarea id="output" value="{!xmlOut}" styleClass="largexmlout"/>
+        <apex:inputTextarea id="output" value="{!xmlOut}" styleClass="largexmlout" rows="40"/>
     </apex:form>
 </apex:page>
