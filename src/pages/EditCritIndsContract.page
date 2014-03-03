@@ -1,0 +1,175 @@
+<!-- 
+//////////////////////////
+!!!!!!!!!!!!Important!!!!!!!!!!
+
+any field used in this page must also be used in the viewcontract page 
+//////////////////////////
+-->
+<apex:page standardController="TMN_Contract__c" >
+<apex:stylesheet value="{!$Resource.ContractCss}"/>
+<style>
+.dateFormat{
+
+    display: none;
+}
+</style>
+<!--decore-->
+<apex:sectionHeader title="{!TMN_Contract__c.Status__c}" subtitle="{!TMN_Contract__c.Name}"/>
+
+<apex:form styleClass="frm">
+<apex:messages style="color: red" />
+<!-- wrapper pageblock -->
+<apex:pageBlock mode="mainDetail" >
+    <apex:pageBlockButtons >
+        <apex:commandButton action="{!save}" value="Save"/>              
+        <apex:commandButton action="{!cancel}" value="Cancel"/>            
+    </apex:pageBlockButtons>        
+
+<!-- the help message in the top right corner-->       
+    <apex:outputPanel styleClass="rBlue" layout="block">&nbsp; * Required before the contract can be sumbitted for approval </apex:outputPanel>
+    <br/>
+<!--
+//////////////
+ Note: in all sections a wapper pannel is placed around required before approval fields so they may be styled corretly - this was required b/c IE would not render the styling on input fields correctly
+\\\\\\\\\\\\
+-->         
+            
+    <apex:pageBlock id="CIs" mode="maindetail" >
+        <apex:pageBlockSection columns="1" title="Audit" collapsible="false"> 
+            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                <apex:inputField label="" value="{!TMN_Contract__c.AuditRequirementsYN__c}" /> 
+            </apex:outputPanel>   
+            <apex:inputField label="" value="{!TMN_Contract__c.Audit_Requirements__c}" />
+            <apex:inputField label="" styleClass="txtArea" value="{!TMN_Contract__c.AuditReqsDetail__c}"/>
+            <apex:panelGroup >
+                Due on: &nbsp;
+                <apex:inputField label="" value="{!TMN_Contract__c.Due_Date_CI_Audit_Requirements__c}" />
+                &nbsp; Send a reminder &nbsp;
+                <apex:inputField style="width: 35px" label="" value="{!TMN_Contract__c.Reminder_Days_Audit_Requirements__c}" /> 
+                &nbsp; day(s) before Due Date
+            </apex:panelGroup>
+        </apex:pageBlockSection>        
+        
+        <apex:pageBlockSection columns="1" title="Cost Report Required" collapsible="false" >
+            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                <apex:inputField label="" value="{!TMN_Contract__c.CostReportRequiredYN__c}"  />        
+            </apex:outputPanel>     
+            <apex:inputField label="" value="{!TMN_Contract__c.CostReport__c}" />  
+            <apex:panelGroup >
+                Due on: &nbsp;
+                <apex:inputField label="" value="{!TMN_Contract__c.Due_Date_Cost_Report_Required__c}" />
+                &nbsp; Send a reminder &nbsp;
+                <apex:inputField style="width: 35px" label="" value="{!TMN_Contract__c.Reminder_Days_Cost_Report__c}" /> 
+                &nbsp; day(s) before Due Date
+            </apex:panelGroup>                                        
+        </apex:pageBlockSection>  
+        
+        <apex:pageBlockSection columns="1" title="Frequency of Visits" collapsible="false">
+            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                <apex:inputField label="" value="{!TMN_Contract__c.FrequencyOfVisitsYN__c}" />
+            </apex:outputPanel>    
+            <apex:inputField styleClass="txtArea" label="" value="{!TMN_Contract__c.FrequencyOfVisitsDetail__c}" />   
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection columns="1" title="Outcome Requirements" collapsible="false">
+            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                <apex:inputField label="" styleClass="lBlue" value="{!TMN_Contract__c.OutcomeRequirementsYN__c}" /> 
+            </apex:outputPanel>   
+            <apex:inputField label="" styleClass="txtArea"  value="{!TMN_Contract__c.OutcomeRequirementsDetail__c}" />        
+            <apex:panelGroup >
+                Due on: &nbsp;
+                <apex:inputField label="" value="{!TMN_Contract__c.Due_Date_Outcome_Requirements__c}" />
+                &nbsp; Send a reminder &nbsp;
+                <apex:inputField style="width: 35px" label="" value="{!TMN_Contract__c.Reminder_Days_Outcome__c}" /> 
+                &nbsp; day(s) before Due Date
+            </apex:panelGroup>                                           
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection columns="1" title="Performance Based Contract" collapsible="false">
+            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                <apex:inputField label="" value="{!TMN_Contract__c.PerformanceBasedContractYN__c}" /> 
+            </apex:outputPanel>   
+            <apex:inputField styleClass="txtArea" label="" value="{!TMN_Contract__c.PerformanceDetail__c}" />
+        </apex:pageBlockSection>
+                            
+        <apex:pageBlockSection columns="1" title="Personnel Credential Requirements" collapsible="false">
+            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                <apex:inputField label="" value="{!TMN_Contract__c.Personnel_CredentialRequirementsYN__c}" />
+            </apex:outputPanel>
+            <apex:inputField label="" styleClass="txtArea" value="{!TMN_Contract__c.PersonnelCredentialRequirementsDetail__c}" />
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection columns="1" title="Provider Required Training" collapsible="false">
+            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                <apex:inputField label="" value="{!TMN_Contract__c.ProviderRequiredTrainingYN__c}" />
+            </apex:outputPanel>
+            <apex:inputField label="" value="{!TMN_Contract__c.ProviderRequiredTraining__c}" />
+            <apex:inputField label="" styleClass="txtArea"  value="{!TMN_Contract__c.ProviderRequiredTrainingDetail__c}" />
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection columns="1" title="Reporting Requirements" collapsible="false">
+            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                <apex:inputField label="" value="{!TMN_Contract__c.ReportingRequirementsYN__c}" />
+            </apex:outputPanel>
+            <apex:inputField label="" value="{!TMN_Contract__c.ReportingRequirements__c}" />
+            <apex:inputField label="" styleClass="txtArea"  value="{!TMN_Contract__c.ReportingRequirementsDetail__c}" />  
+        </apex:pageBlockSection>
+           
+        <apex:pageBlockSection columns="1" title="Service Documentation" collapsible="false">
+            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                <apex:inputField label="" value="{!TMN_Contract__c.ServiceDocumentationYN__c}" />
+            </apex:outputPanel>
+            <apex:inputField label="" value="{!TMN_Contract__c.ServiceDocumentation__c}" />
+            <apex:inputField styleClass="txtArea" label="" value="{!TMN_Contract__c.ServiceDocumentationDetail__c}" />
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection columns="1" title="Spending Requirements" collapsible="false">
+            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                <apex:inputField label="" value="{!TMN_Contract__c.SpendingRequirementsYN__c}" />
+            </apex:outputPanel>
+            <apex:inputField styleClass="txtArea" label="" value="{!TMN_Contract__c.SpendingRequirementsDetails__c}" />
+        </apex:pageBlockSection>
+            
+        
+        <apex:pageBlockSection columns="1" title="Staffing Client Requirements" collapsible="false">
+            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                <apex:inputField label="" value="{!TMN_Contract__c.StaffingClientRequirementsYN__c}" />
+            </apex:outputPanel>
+            <apex:inputField label="" value="{!TMN_Contract__c.StaffingClientRequirements__c}" />
+            <apex:inputField styleClass="txtArea" label="" value="{!TMN_Contract__c.Staffing_ClientRequirementsDetail__c}" />
+        </apex:pageBlockSection>
+        
+        
+        <apex:pageBlockSection columns="1" title="Subject to Cost Reimbursement" collapsible="false">
+            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                <apex:inputField label="" value="{!TMN_Contract__c.SubjectToCostReimbursementYN__c}" />
+            </apex:outputPanel>
+            <apex:inputField styleClass="txtArea" label="" value="{!TMN_Contract__c.CostReimbursementDetail__c}" />
+        </apex:pageBlockSection>
+        
+        
+        <apex:pageBlockSection columns="1" title="Support Services" collapsible="false">
+            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                <apex:inputField label="" value="{!TMN_Contract__c.SupportServicesYN__c}"/>   
+            </apex:outputPanel>                 
+            <apex:inputField label="" value="{!TMN_Contract__c.SupportServices__c}" />
+            <apex:inputField styleClass="txtArea" label="" value="{!TMN_Contract__c.SupportServicesDetail__c}" />    
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection columns="1" title="Other Unusual or Special Requirements" collapsible="false">
+            <apex:outputPanel layout="block" styleClass="reqApprovalField" >
+                <apex:inputField label="" value="{!TMN_Contract__c.OtherSpecialRequirementsYN__c}" />
+            </apex:outputPanel>    
+            <apex:inputField styleClass="txtArea" label="" value="{!TMN_Contract__c.SpecialRequirementsDetail__c}" />
+            <apex:panelGroup >
+                Due on: &nbsp;
+                <apex:inputField label="" value="{!TMN_Contract__c.Due_Date_Other__c}" />
+                &nbsp; Send a reminder &nbsp;
+                <apex:inputField style="width: 35px" label="" value="{!TMN_Contract__c.Reminder_Days_Other__c}" /> 
+                &nbsp; day(s) before Due Date
+            </apex:panelGroup>                                        
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+</apex:pageBlock><!-- end wrapper pageblock-->
+</apex:form>
+</apex:page>
