@@ -240,25 +240,41 @@ public with sharing class DataCreate {
     }
 
 	public string Export(sObject obj){
-		Schema.DescribeSObjectResult info = obj.getsObjectType().getDescribe();
+		ExportCollection exports = new ExportCollection();
+		Schema.DescribeSObjectResult info = exports.getDescribe(obj.getsObjectType());
 		sObject fullObj = FullyPopulate(obj, info);
 		
-		string outstring = ExportInternal(fullObj, info);
+		exports.AddIsNew(fullObj);
 		
+		ExportRecurse(fullObj, exports);
+		
+		string outstring = '';
+		for(SObjectType oType: exports.getTypes()){
+			for(SObject itobj: exports.getObjects(oType)){
+				outstring += ExportInternal(itobj, exports.getDescribe(oType));
+			}
+		} 
+		return outstring;
+		
+	}
+	
+	private void ExportRecurse(SObject obj, ExportCollection exports){
+		Schema.DescribeSObjectResult info = exports.getDescribe(obj.getsObjectType());
 		//need to find all the detail objects and persist them recursively - should bulkify this too
 		for(Schema.ChildRelationship childRel: info.ChildRelationships){
-			Schema.DescribeSObjectResult childinfo = childRel.getChildSObject().getDescribe();
+			Schema.DescribeSObjectResult childinfo = exports.getDescribe(childRel.getChildSObject());
 			if (childinfo.name.endsWith('__c')){
 //				outstring += 'relname:' + childRel.getRelationshipName() 
 //					+ ':' + childinfo.name 
 //					+ ':' + childrel.getField().getdescribe().name + '\n';
 
 				for(sobject child: FullyPopulateRelated(obj, childrel.getField().getdescribe().name, childinfo)){
-					outstring += ExportInternal((sObject)child, childinfo);
+					if (exports.AddIsNew(child)) {
+						ExportRecurse(child, exports);
+					}
 				}
 			}
 		}
-		return outstring;
 	}
 	
 	public string ExportInternal(sObject fullObj, Schema.DescribeSObjectResult info){
@@ -342,6 +358,78 @@ public with sharing class DataCreate {
             this.FieldName = fieldname;
             this.Pseudonym = pseudonym;
         }
+    }
+    
+    // Collection of objects with associated describe info ready for export
+    private class ExportCollection {
+    	map <SObjectType, ExportClassCollection> innerData = new map <SObjectType, ExportClassCollection>();
+    	
+    	public boolean AddIsNew(SObject newobj){
+    		SObjectType oType = newobj.getSObjectType();
+    		return CollectionForType(oType).AddIsNew(newobj);
+    	} 
+    	
+    	public Schema.DescribeSObjectResult getDescribe(SObjectType oType){
+    		return CollectionForType(oType).getDescribe();
+    	}
+    	
+    	public list<SObjectType> getTypes() {
+    		return new list<SObjectType>(innerData.keyset());
+    	}
+    	
+    	public list<SObject> getObjects(SObjectType oType){
+    		return CollectionForType(oType).getObjects();
+    	}
+    	
+    	private ExportClassCollection CollectionForType(SObjectType oType){
+    		if (innerData.ContainsKey(oType)){
+    			return innerData.get(oType);
+    		}
+    		ExportClassCollection coll = new ExportClassCollection(oType);
+    		innerData.Put(oType, coll);
+    		return coll;
+    	}
+    }
+    
+    // Collection of objects of single class with associated describe info ready for export
+    private class ExportClassCollection {
+    	private list<sObject> objects = new list<sObject>();
+    	private Schema.DescribeSObjectResult metadata;
+    	public SObjectType oType;
+    	
+    	public ExportClassCollection(SObjectType objType){
+    		oType = objType;
+    		metadata = objType.getDescribe();
+    	}
+    	
+    	public boolean AddIsNew(SObject newobj){
+    		if (!(newobj.getSObjectType() == oType)){
+    			throw new DataCreateException('object of wrong type');
+    		}
+    		if (Contains(newobj)){
+    			return false;
+    		} else {
+    			objects.Add(newobj);
+    		}
+    		return true;
+    	}
+    	
+    	public boolean Contains(SObject obj){
+    		for(SObject itObject: objects){
+    			if (itObject.Id == obj.Id){
+    				return true;
+    			}
+    		}
+    		return false;
+    	}
+    	
+    	public Schema.DescribeSObjectResult getDescribe(){
+    		return metadata;
+    	}
+    	
+    	public list<SObject> getObjects(){
+    		return new list<SObject>(objects);
+    	}
     }
     
 }
