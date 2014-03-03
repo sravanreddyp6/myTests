@@ -30,6 +30,8 @@
             </apex:selectList>
             <apex:outputField label="Service Code" value="{!Progress_Note__c.Service_Code__r.Service_Value__c}"  rendered="{!Final}"/>
             <apex:outputField label="Authorization" value="{!Progress_Note__c.Authorization__r.Display_Name__c}"  rendered="{!Final}"/>            
+            <apex:pageBlockSectionItem />         
+            <apex:outputField label="Payor Name" value="{!Progress_Note__c.Authorization__r.Payer_Name__c}" />
         </apex:pageBlockSection>
     </apex:pageBlock>
 </apex:form>
