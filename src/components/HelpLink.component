@@ -1,0 +1,4 @@
+<apex:component controller="HelpLinkController">
+    <apex:attribute name="ObjectId" type="string" required="True" assignTo="{!prefix}" description="Object for which the help page needs to be rendered"/>
+    <apex:commandLink styleClass="helpLink" value="Help" onclick="window.open('/apex/cGuide__Guide_Viewer?id={!CrowdGuideid}&url=https%3A%2F%2Fcs10.salesforce.com%2F{!prefix}%2Fo','_blank','width=1024,height=600,bottom=500,right=800');return False;" rendered="{!showGuide}"/>
+</apex:component>
