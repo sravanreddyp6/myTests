@@ -32,7 +32,7 @@ public with sharing class CredentialAdd {
     	if(thisPersonsRecordTypeName=='Mentor') {
             possibleCreds = [SELECT Id, Name FROM Credential_Profile__c WHERE Optional_for_Mentor__c = true AND Id NOT IN (SELECT Credential_Profile__c FROM Credential_Record__c WHERE TMN_Contact__c = :contactID) ORDER BY Name];
     	}
-    	else if(thisPersonsRecordTypeName=='Related Party') {
+    	else if(thisPersonsRecordTypeName=='Household Member') {
             if(thisTmnContact.Related_Party_Type__c=='Co-Applicant') {
             	possibleCreds = [SELECT Id, Name FROM Credential_Profile__c WHERE Optional_for_Co_Applicant__c = true AND Id NOT IN (SELECT Credential_Profile__c FROM Credential_Record__c WHERE TMN_Contact__c = :contactID) ORDER BY Name];
             }
