@@ -96,44 +96,49 @@ public class ServiceAssignmentExt {
         canCreateSummary = oSchema.IsCreateable();
     }
 
-	private Boolean pshowDiag, pshowLocation; 
-	private static Boolean psetFlags = false;
+    public List<Action_Plan__c> getActivePlan(){
+    
+        return [Select id From Action_Plan__c where Action_Plan__c.Service_Assignment__c = :currentRecord.id AND Status__c = 'Active Final' Limit 1];
+    }
+
+    private Boolean pshowDiag, pshowLocation; 
+    private static Boolean psetFlags = false;
     public Boolean showDiagnosis { get {
-    		if (! psetFlags ) {
-    			psetFlags = setShowFlags();
-    		}
-    		return pshowDiag;
+            if (! psetFlags ) {
+                psetFlags = setShowFlags();
+            }
+            return pshowDiag;
     }}
     public Boolean showLocation { get {
-    		if (! psetFlags ) {
-    			psetFlags = setShowFlags();
-    		}
-    		return pshowLocation;
+            if (! psetFlags ) {
+                psetFlags = setShowFlags();
+            }
+            return pshowLocation;
     }}
-	
-	private Boolean setShowFlags() {	
-    	if (! psetFlags) {
-    		
-    		pshowDiag = true;
-    		pshowLocation = false;
-    	
-	        System.Debug('getting showDiagnosis with SF account = ' + pbsOwner);
-    	    TMN_User__c[] tmnUsers = [
-        	    SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:pbsOwner LIMIT 1
-        	];
-        	if (tmnUsers.size() == 0) {
-            	pshowDiag = false;
-            	pshowLocation = false;
-            	psetFlags = false;
-        	} else {
-        		pshowDiag = tmnUsers[0].Operating_Group__c=='Redwood' || tmnUsers[0].Operating_Group__c=='Cambridge';
-        		pshowLocation =  tmnUsers[0].Operating_Group__c=='Redwood' ;
-        		psetFlags = true;
-        	}
-        	
+    
+    private Boolean setShowFlags() {    
+        if (! psetFlags) {
+            
+            pshowDiag = true;
+            pshowLocation = false;
+        
+            System.Debug('getting showDiagnosis with SF account = ' + pbsOwner);
+            TMN_User__c[] tmnUsers = [
+                SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:pbsOwner LIMIT 1
+            ];
+            if (tmnUsers.size() == 0) {
+                pshowDiag = false;
+                pshowLocation = false;
+                psetFlags = false;
+            } else {
+                pshowDiag = tmnUsers[0].Operating_Group__c=='Redwood' || tmnUsers[0].Operating_Group__c=='Cambridge';
+                pshowLocation =  tmnUsers[0].Operating_Group__c=='Redwood' ;
+                psetFlags = true;
+            }
+            
         }
         return psetFlags;
-    	}
+        }
     
     public void showAddLocation() {
         // empty for action support
@@ -737,7 +742,7 @@ public class ServiceAssignmentExt {
                                where RecordType.Name = 'Monthly Behavior Result'
                                and Action_Plan__c = :activePlan.id Order by Start_Date__c DESC];
              }
-        notes = [select name, id, createddate, createdby.name, action_plan__r.Name from Progress_Note__c where Service_Assignment__c = :currentID Order by CreatedDate DESC Limit 10];
+        notes = [select name, id, Start_Time__c, End_time__c, createddate, createdby.name, action_plan__r.Name, Action_plan__c from Progress_Note__c where Service_Assignment__c = :currentID Order by CreatedDate DESC Limit 10];
         diagnoses = [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__c = :currentID];
         }
         if ( currentrecord.Service_Location__c != null)
@@ -1009,9 +1014,9 @@ public class ServiceAssignmentExt {
                                         integer dashpos = sl.Service_Value__c.indexOf('-');
                                         
                                         if (dashpos > -1 ) 
-                                        	s.Service_Line__c = (sl.Service_Value__c).substring(dashpos+1);
+                                            s.Service_Line__c = (sl.Service_Value__c).substring(dashpos+1);
                                         else
-                                        	s.Service_Line__c = sl.Service_Value__c;
+                                            s.Service_Line__c = sl.Service_Value__c;
                                 }
                         }
                 } else {
