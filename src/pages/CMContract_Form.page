@@ -983,9 +983,10 @@ function hidedio(dio, dio2){
                 <apex:inputField value="{!CareMeridian_Contract__c.Ownerid}"  rendered="{!editMode}"/>
             </apex:pageBlockSection>
         </apex:pageBlock>
-    
-   
+     
     </apex:form>
+    <c:SObjectHistories object="{!myContract}" title="NeuroRestorative Contracts Field History" rendered="{!AND(NOT(editMode),isNeuro)}"/>
+   
 </apex:outputPanel>    
     <apex:actionStatus id="myStatus" >
     <apex:facet name="start">
