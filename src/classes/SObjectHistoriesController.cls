@@ -8,7 +8,20 @@ public with sharing class SObjectHistoriesController {
         public SObject histItem { get; set; }
         public DateTime CreatedDate {
             get {
+            
+                TimeZone zone;
+                if(!Test.isRunningTest()){
+                    system.debug('not test');
+                    zone = UserInfo.getTimeZone();
+                }
+                
+                if(zone != null){
+                    datetime  createDateTime = (DateTime) histItem.get('CreatedDate');
+                    return createDateTime.addSeconds((zone.getOffset(createDateTime )/1000));                
+                }
+                
                 return (DateTime) histItem.get('CreatedDate');
+                
             }
         }
         public String Field {
@@ -48,6 +61,7 @@ public with sharing class SObjectHistoriesController {
             record = Database.query(query);
             Map<String, Schema.SObjectField> tempMap = Schema.getGlobalDescribe().get(name).getDescribe().fields.getMap();
             fieldMap = new Map<String, String>();
+            fieldMap.put('locked','Record Locked');
             for (String fieldName: tempMap.keySet()) {
                 fieldMap.put(fieldName, tempMap.get(fieldName).getDescribe().getLabel());
             }
