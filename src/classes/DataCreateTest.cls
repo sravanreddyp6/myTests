@@ -157,7 +157,7 @@ private class DataCreateTest {
     static testmethod void FirstXml(){
         DataCreate c = new DataCreate();
     	
-    	System.AssertEquals(2, c.ProcessXml('<objects><object pseudonym="Mickey" classname="Account" recordtypeid="person_being_served">' + 
+    	System.AssertEquals(2, c.ProcessXml('<objects><object pseudonym="Mickey" classname="Account">' + 
     		'<field name="lastname">Mouse</field>' + 
     		'<field name="personbirthdate">6/24/1935</field>' +
     		'<field name="personmailingstate">California</field>' +
@@ -183,16 +183,21 @@ private class DataCreateTest {
         DataCreate c = new DataCreate();
     	
     	Document docorig = new Document();
-    	docorig.Body = Blob.valueof('<objects><object pseudonym="Mickey" classname="Account" recordtypeid="person_being_served">' + 
+    	docorig.Body = Blob.valueof('<objects><object pseudonym="Mickey" classname="Account">' + 
     		'<field name="lastname">Mouse</field>' + 
     		'<field name="personbirthdate">6/24/1935</field>' +
     		'<field name="personmailingstate">California</field>' +
     		'<field name="personContactid" pseudonym="mickeyc"></field>' +
     		'</object>' + 
     		'<pseudonym name="mickeyc" classname="Contact" where="accountId=:Mickey.Id"/>' +
-    		'<object classname="Admission__c">' + 
-    		'<field name="state__c">CA</field>' + 
+    		'<object classname="Admission__c" pseudonym="adm">' + 
+    		'<field name="state__c">CA</field>' +
+    		'<field name="effective_date__c">3/1/2014</field>' + 
     		'<field name="person_being_served__c">mickeyc</field></object>' +
+    		'<object classname="Service_Assignment__c" pseudonym="sa" recordtypeid="assessment_only">' +
+    		'<field name="start_date__c">3/1/2014</field>' +
+    		'<field name="Admission__c">adm</field>' +
+    		'</object>' +
     		'</objects>');
     	docorig.Name = 'PBSMickey.xml';
     	docorig.FolderId = [select id from Folder where name = 'DataCreate' limit 1].id;
@@ -209,6 +214,8 @@ private class DataCreateTest {
         system.assertequals('CA', adm.state__c);
         system.assertequals(mickey.personcontactid, adm.person_being_served__c);
         
+        Service_Assignment__c sa = [select RecordType.Name from Service_Assignment__c];
+        system.assertequals('Assessment_only', sa.RecordType.Name);
     }
     
 }

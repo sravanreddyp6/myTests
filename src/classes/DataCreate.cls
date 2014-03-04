@@ -26,12 +26,23 @@ public with sharing class DataCreate {
         Map<string,Schema.SObjectField> Fmap = info.fields.getmap();
         Schema.SObjectField upsertfield = null;
         for(string fieldname:fieldmap.keyset()){
-            if (fmap.containsKey(fieldname)){
-                PutWithCast(newobj, fmap.get(fieldname).getdescribe(),fieldmap.get(fieldname));
-                if (fmap.get(fieldname).getdescribe().isIdLookup()){
-                    upsertfield = fmap.get(fieldname);
-                }
-            }
+	    	if (fieldname == 'RecordTypename'){
+	    		// Convert value from name to id;
+	    		map<string, RecordTypeInfo> rimap = info.getRecordTypeInfosByName();
+	    		if (rimap != null && rimap.ContainsKey((string)fieldmap.get(fieldname))){
+		    		RecordTypeInfo rtid = info.getRecordTypeInfosByName().get((string)fieldmap.get(fieldname));
+		    		newobj.put('RecordTypeId', rtid.getRecordTypeId());
+	    		} else {
+	    			throw new DataCreateException('Unknown RecordType:' + (string)fieldmap.get(fieldname));
+	    		}
+	    	} else {
+	            if (fmap.containsKey(fieldname)){
+	                PutWithCast(newobj, fmap.get(fieldname).getdescribe(),fieldmap.get(fieldname));
+	                if (fmap.get(fieldname).getdescribe().isIdLookup()){
+	                    upsertfield = fmap.get(fieldname);
+	                }
+	            }
+	    	}
         }
         
         UpsertObject(newobj, upsertfield, classname);
@@ -70,9 +81,15 @@ public with sharing class DataCreate {
 	                        throw newexcp;
 	                    }
                     }
+                }
+                list<string> fieldnames = new list<string>();
+                if (excp.GetDMLFields(0) != null){
+                	for(Schema.sObjectField field: excp.GetDMLFields(0)){
+                		fieldnames.Add(field.getDescribe().Name);
+                	}
                 } 
                 DataCreateException newexcp = new DataCreateException('Whilst inserting '+ classname + ':' 
-                	+ excp.GetDmlMessage(0));
+                	+ excp.GetDmlMessage(0) +  String.Join( fieldnames, ', ') );
                 newexcp.initCause(excp);
                 throw newexcp;
             }
@@ -166,6 +183,10 @@ public with sharing class DataCreate {
                 for(Dom.XmlNode fieldnode: objnode.getChildElements()){
                     system.debug('Field Node: ' + fieldnode.getName() + ':' + fieldnode.getAttributeValue('name', ''));
                     fieldmap.Put(fieldnode.getAttributeValue('name', ''), fieldnode.getText());
+                }
+                string recordtype = objnode.GetAttributeValue('recordtype', '');
+                if (recordtype != null){
+                	fieldmap.Put('recordtypename', recordtype);
                 }
                 string pseudonym = objnode.getattributeValue('pseudonym', '');
                 if (pseudonym == null) {
@@ -278,19 +299,27 @@ public with sharing class DataCreate {
 	}
 	
 	public string ExportInternal(sObject fullObj, Schema.DescribeSObjectResult info){
-		string outstring = '   <object classname="' + info.Name + '" pseudonym="' + fullObj.Id + '">\n';		
+		string outstring = '   <object classname="' + info.Name + '" pseudonym="' + fullObj.Id + '" ';
 		
 		Map<string,Schema.SObjectField> Fmap = info.fields.getmap();
 		Schema.SObjectField upsertfield = null;
 
+		string fieldsstring = '';
+		string recordtypestring = ''; 
 		for(string fieldname:Fmap.keyset()){
-			Schema.Describefieldresult fieldinfo = Fmap.get(fieldname).getdescribe();
-			if (fieldinfo.isupdateable() && 
-				(//fullObj.get(fieldname) != null ||
-				 fullObj.get(fieldname) != fieldinfo.DefaultValue)){
-				outstring += '      <field name="' + fieldname + '">' +	fullObj.get(fieldname) + '</field>\n';
+			if (fieldname == 'recordtypeid'){
+				recordtypestring = ' recordtypeid="' + fullObj.get(fieldname) + '"';
+			} else {
+				Schema.Describefieldresult fieldinfo = Fmap.get(fieldname).getdescribe();
+				if (fieldinfo.isupdateable() && 
+					(//fullObj.get(fieldname) != null ||
+					 fullObj.get(fieldname) != fieldinfo.DefaultValue)){
+					fieldsstring += '      <field name="' + fieldname + '">' +	fullObj.get(fieldname) + '</field>\n';
+				}
 			}
 		}
+		outstring += recordtypestring + '>\n';
+		outstring += fieldsstring;
 		outstring += '   </object>\n';
 		return outstring;
 	}
@@ -300,7 +329,8 @@ public with sharing class DataCreate {
 		Id objId = obj.Id;
 
 		Map<string,Schema.SObjectField> Fmap = describe.fields.getmap();
-        query += String.Join(new list<string>(fmap.keyset()), ', ') + ' FROM ' + describe.name + ' Where ID =:objID';    
+        query += String.Join(new list<string>(fmap.keyset()), ', ') + ' FROM ' + describe.name + ' Where ID =:objID';  
+        System.debug(obj.Id + ':' + query);  
         return Database.query(query);		
 	}
 	
@@ -362,7 +392,9 @@ public with sharing class DataCreate {
     
     // Collection of objects with associated describe info ready for export
     private class ExportCollection {
+    	//static Map<string, SObjectType> gd = Schema.getGlobalDescribe();
     	map <SObjectType, ExportClassCollection> innerData = new map <SObjectType, ExportClassCollection>();
+    	list<SObjectType> typeOrder = new list<SObjectType>();
     	
     	public boolean AddIsNew(SObject newobj){
     		SObjectType oType = newobj.getSObjectType();
@@ -374,7 +406,7 @@ public with sharing class DataCreate {
     	}
     	
     	public list<SObjectType> getTypes() {
-    		return new list<SObjectType>(innerData.keyset());
+    		return typeOrder;
     	}
     	
     	public list<SObject> getObjects(SObjectType oType){
@@ -387,6 +419,7 @@ public with sharing class DataCreate {
     		}
     		ExportClassCollection coll = new ExportClassCollection(oType);
     		innerData.Put(oType, coll);
+    		typeOrder.Add(oType);
     		return coll;
     	}
     }
