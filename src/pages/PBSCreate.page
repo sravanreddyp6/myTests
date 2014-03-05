@@ -173,7 +173,7 @@ function stopRKey(evt) {
                              collapsible="False"   
                              id="pbsOutputAdditionalInfo"> 
 	<apex:repeat value="{!$ObjectType.Account.FieldSets.Additional_Information}" var="f">
-        <apex:inputField value="{!Account[f.fieldPath]}" required="{!OR(f.required, f.dbrequired)}" />
+        <apex:inputField value="{!Account[f.fieldPath]}" rendered="{!!Contains(dontShowFields, f.FieldPath)}" required="{!OR(f.required, f.dbrequired)}" />
     </apex:repeat>
          </apex:pageBlockSection> 
          
