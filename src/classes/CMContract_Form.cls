@@ -18,9 +18,9 @@ public with sharing class CMContract_Form {
     public Boolean isNeuro{get ; set;}
     public Boolean isCM{get ; set;}   
     public CareMeridian_Contract__c rectype {get; set;}
-    Public LIST<RecordType> rt=new List<RecordType>();
-    public string myTIN {get; set;}
-    public string myNPI{get; set;}
+    public string tin {get; set;}
+    public string npi{get; set;}
+    public string tinnpi{get; set;}
     public List<Contract_ServiceLocation_JO__c> locations { get; set; }
     Public Contract_ServiceLocation_JO__c location { get; set; }
     
@@ -37,8 +37,10 @@ public with sharing class CMContract_Form {
         isRev = false;
         editMode = false;
         isNeuro = false;
-        myTIN='';
-        myNPI='';
+        tin='';
+        npi='';
+        tinnpi='';
+       // myContract.TIN_NPI__c='';
         isCM = false;
         integer s = 0;
         for(CareMeridian_Contract_Rate_and_Level__c item : 
@@ -76,8 +78,8 @@ public with sharing class CMContract_Form {
             }
             RecordType neuroRestorativeContractsRT =[Select r.Id From RecordType r WHERE r.SobjectType='CareMeridian_Contract__c' 
                 AND r.DeveloperName='NeuroRestorative_Contracts' AND r.IsActive=True];
-if(neuroRestorativeContractsRT==null) return; 
-if(ApexPages.currentPage().getParameters().get('RecordType')== neuroRestorativeContractsRT.id)
+			if(neuroRestorativeContractsRT==null) return; 
+			if(ApexPages.currentPage().getParameters().get('RecordType')== neuroRestorativeContractsRT.id)
                    
                    isNeuro=True;              
             
@@ -91,11 +93,11 @@ if(ApexPages.currentPage().getParameters().get('RecordType')== neuroRestorativeC
                 
            }
 
-if (rectype.RecordType.DeveloperName =='CareMeridian_Contracts'){
+		   if (rectype.RecordType.DeveloperName =='CareMeridian_Contracts'){
                isNeuro=False;
            }
             isRev = true;   // want to enter type of change on every update other than brand new contract
-            if ( !String.isBlank( myContract.Type_of_Change__c ))
+           if ( !String.isBlank( myContract.Type_of_Change__c ))
                 selectedTypes = myContract.Type_of_Change__c.Split(';');
                 
         }
@@ -227,10 +229,13 @@ if (rectype.RecordType.DeveloperName =='CareMeridian_Contracts'){
     
  }
  
- public void addtin(){
- 	myContract.TIN_NPI__c=myTIN+'-'+myNPI;
- 	myTIN='';
- 	myNPI='';
+ public PageReference addtinnpi(){
+ 	//myContract.TIN_NPI__c+=tin+'-'+npi+';'+'\n';
+ 	tinnpi+=tin+'-'+npi+';'+'\n';
+ 	tin='';
+ 	npi='';
+ 	myContract.TIN_NPI__c=tinnpi;
+ 	return null;
  	
  }
  
