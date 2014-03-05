@@ -20,12 +20,24 @@ border-bottom: 1px solid #cccccc !important;
     padding-left: 25px;
 
 }
+.mycols3{
+    width: 7%;
+    padding-left: 25px;
+
+}
 .mytxtarea{
     width: 250px;
     height: 100px;
     padding: 5px;
 
 
+}
+.vertxtarea{
+	width: 100px;
+	height: 150px;
+	padding: none;
+	
+	
 }
 .lngtxt{
     width: 400px;
@@ -157,6 +169,7 @@ function hidedio(dio, dio2){
     
 };
 
+
   
 </script>
     
@@ -165,6 +178,11 @@ function hidedio(dio, dio2){
 
 
 <apex:form id="myFrm" >
+
+	 <apex:actionRegion >
+        <apex:actionFunction name="showAddLocation" action="{!showAddLocation}" rerender="locations,locationEntry,msgs" oncomplete="openModalDialog('ReferralLocationModal', 'span', 'Add Location','referral-location'); " status="AddLocationStatus" />
+    </apex:actionRegion>
+    
  <apex:outputPanel rendered="{!editMode}" >
     <style>
     
@@ -204,17 +222,61 @@ function hidedio(dio, dio2){
                 <apex:outputField value="{!CareMeridian_Contract__c.Name}" />
                 <apex:outputField value="{!CareMeridian_Contract__c.Business_Line__c}" rendered="{!!isNeuro}" />
                 <apex:outputField value="{!CareMeridian_Contract__c.Description__c}"/>   
-            </apex:pageBlockSection>              
-            <apex:pageBlockSection title="Location" columns="1" rendered="{!editMode}">
-                <apex:inputField value="{!CareMeridian_Contract__c.Operating_Group__c}" />
-                <apex:inputField value="{!CareMeridian_Contract__c.State__c}" rendered="{!!isNeuro}"/>
-                <apex:inputField value="{!CareMeridian_Contract__c.Location__c}"/>
-                <apex:inputField value="{!CareMeridian_Contract__c.Service_Line__c}"/>  
+            </apex:pageBlockSection>  
+                   
+            <apex:pageBlockSection title="Location" columns="1" rendered="{!AND(editMode,isNeuro)}">
+                <apex:inputField value="{!CareMeridian_Contract__c.Operating_Group__c}"/> 
+                <apex:panelGrid columns="6" style="width:60%;" columnClasses="mycols3, mycols3,mycols3,mycols3" cellspacing="0">
+                
+                    <apex:panelGroup >
+                        <apex:outputLabel for="TIN">TIN</apex:outputLabel>
+                        <apex:inputText id="TIN" value="{!myTIN}" />
+                     
+                    </apex:panelGroup>.
+                    <apex:panelGroup >
+                    	<apex:outputLabel for="NPI">NPI</apex:outputLabel>
+                        <apex:inputText id="NPI" value="{!myNPI}"/>
+                       
+                    </apex:panelGroup>
+                    <apex:panelGroup >
+                    	<apex:CommandButton value="Add TIN and NPI" Action="{!addtin}"/>
+                    </apex:panelGroup>
+                    <apex:panelgroup >
+                   		 <apex:outPutLabel for="tinnpi"> TIN-NPI</apex:outPutLabel>
+                    	 <apex:inputField id="tinnpi" styleClass="vertxtarea" value="{!CareMeridian_Contract__c.TIN_NPI__c}" />
+                    	 <br/>
+                    </apex:panelgroup>
+                    </apex:panelGrid>   
+                <apex:inputField value="{!CareMeridian_Contract__c.Service_Line__c}"/> 
+                <apex:PageBlockSectionitem >
+                	<apex:outputPanel layout="none">
+                		<apex:CommandButton value="Add Location"
+                							id="addLocation"
+                							onclick="showAddLocation(); return false;"/>
+                		<apex:actionStatus id="AddLocationStatus">
+                			<apex:facet name="Start">
+                				<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadSpinner"/>
+                			</apex:facet>
+                			<apex:facet name="stop"/>
+                		</apex:actionStatus>
+                	</apex:outputPanel>
+                </apex:PageblockSectionitem>
+                <apex:PageBlockTable value="{!locations}" var="locations">
+                </apex:PageBlockTable> 
             </apex:pageBlockSection>
+            
+            <apex:pageblockSection title="Locations" Columns="1" rendered="{!AND(editMode,NOT(isNeuro))}">
+            	<apex:inputField value="{!CareMeridian_Contract__c.Operating_Group__c}"/> 
+            	<apex:inputField value="{!CareMeridian_Contract__c.State__c}"/>
+            	<apex:inputField value="{!CareMeridian_Contract__c.Location__c}"/>
+            	<apex:inputField value="{!CareMeridian_Contract__c.Service_Line__c}"/>
+            </apex:pageblockSection>
+            	
             <apex:pageBlockSection title="Location" columns="1" rendered="{!!editMode}">
                 <apex:outputField value="{!CareMeridian_Contract__c.Operating_Group__c}" />
+                <apex:outputField styleClass="vertxtarea" value="{!CareMeridian_Contract__c.TIN_NPI__c}" rendered="{!isNeuro}"/>
                 <apex:outputField value="{!CareMeridian_Contract__c.State__c}" rendered="{!!isNeuro}"/>
-                <apex:outputField value="{!CareMeridian_Contract__c.Location__c}"/>
+                <apex:outputField value="{!CareMeridian_Contract__c.Location__c}" rendered="{!!isNeuro}"/>
                 <apex:outputField value="{!CareMeridian_Contract__c.Service_Line__c}"/>  
             </apex:pageBlockSection>           
             <apex:pageBlockSection title="Timeframe" columns="2" rendered="{!editMode}" >
