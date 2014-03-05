@@ -19,6 +19,10 @@ public with sharing class CMContract_Form {
     public Boolean isCM{get ; set;}   
     public CareMeridian_Contract__c rectype {get; set;}
     Public LIST<RecordType> rt=new List<RecordType>();
+    public string myTIN {get; set;}
+    public string myNPI{get; set;}
+    public List<Contract_ServiceLocation_JO__c> locations { get; set; }
+    Public Contract_ServiceLocation_JO__c location { get; set; }
     
         /*
     public list< CareMeridian_Contract_Rate_and_Level__c>  cmRL = new list< CareMeridian_Contract_Rate_and_Level__c>();
@@ -33,6 +37,8 @@ public with sharing class CMContract_Form {
         isRev = false;
         editMode = false;
         isNeuro = false;
+        myTIN='';
+        myNPI='';
         isCM = false;
         integer s = 0;
         for(CareMeridian_Contract_Rate_and_Level__c item : 
@@ -68,10 +74,12 @@ public with sharing class CMContract_Form {
 					}
 				}
             }
-            
-           if(ApexPages.currentPage().getParameters().get('RecordType')== '012J00000000Xzi')
-           		
-           		isNeuro=True;      	    
+            RecordType neuroRestorativeContractsRT =[Select r.Id From RecordType r WHERE r.SobjectType='CareMeridian_Contract__c' 
+                AND r.DeveloperName='NeuroRestorative_Contracts' AND r.IsActive=True];
+if(neuroRestorativeContractsRT==null) return; 
+if(ApexPages.currentPage().getParameters().get('RecordType')== neuroRestorativeContractsRT.id)
+                   
+                   isNeuro=True;              
             
         } else {
             rectype = [SELECT ID, RecordTypeID, RecordType.DeveloperName FROM CareMeridian_Contract__c WHERE id=:ApexPages.CurrentPage().getparameters().get('id')];
@@ -82,7 +90,8 @@ public with sharing class CMContract_Form {
                 isNeuro=True;
                 
            }
-           if (rectype.RecordType.DeveloperName =='CareMeridian_Contracts'){
+
+if (rectype.RecordType.DeveloperName =='CareMeridian_Contracts'){
                isNeuro=False;
            }
             isRev = true;   // want to enter type of change on every update other than brand new contract
@@ -90,6 +99,8 @@ public with sharing class CMContract_Form {
                 selectedTypes = myContract.Type_of_Change__c.Split(';');
                 
         }
+            
+         
         
             
         if(oldID != null){
@@ -215,6 +226,19 @@ public with sharing class CMContract_Form {
        return null;
     
  }
+ 
+ public void addtin(){
+ 	myContract.TIN_NPI__c=myTIN+'-'+myNPI;
+ 	myTIN='';
+ 	myNPI='';
+ 	
+ }
+ 
+ public void showAddLocation() {
+    location = new Contract_ServiceLocation_JO__c();
+  }
+ 
+ 
  
     public class clsRateLevel{
         public CareMeridian_Contract_Rate_and_Level__c theRL {get; set;}
