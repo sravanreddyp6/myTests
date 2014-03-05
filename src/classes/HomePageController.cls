@@ -103,6 +103,10 @@ public with sharing class HomePageController {
     get { return populateTasks(); }
     private set;
   }
+  public List<Approval> Approvals {
+  	get { return populateApprovals(); }
+  	private set;
+  }
   public Integer listESDNewsCount { get; private set; }
 
   private static final Id eSDChatterGroupId = Home_Page_Settings__c.getInstance().ESD_Chatter_Feed_ID__c;
@@ -128,4 +132,8 @@ public with sharing class HomePageController {
                             order by ActivityDate desc, Priority limit 25];
         return tasks;
     }
+    private List<Approval> populateApprovals() {
+    List<Approval> approvals = [select ApproveComment,CreatedDate,OwnerId,ParentId,RequestComment,Status from Approval where OwnerId=:UserInfo.getUserId()];
+    return approvals;
+     }
 }
