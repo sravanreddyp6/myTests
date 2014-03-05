@@ -43,7 +43,7 @@
     };
     afterSave = function (dialogId, keepDialogOpen, functionToOpenNewDialog) {
         var $dialog = $(document.getElementById(dialogId));
-        if ($dialog.find('.errorMsg').length == 0) {
+        if ($dialog.find('.message').length == 0) {
             closeModalDialog(dialogId);
             if (keepDialogOpen) {
                 (functionToOpenNewDialog)();

@@ -27,6 +27,18 @@ public boolean canViewFamilyInfo {
 		return TMNUser == null ? false : TMNUser.Operating_Group__c == 'Cambridge';
 	}}
 
+// Filter some of the Additional Info Fields
+public string dontShowFields {
+	get {
+		system.debug('OpGroup:' + TMNUser.Operating_Group__c);
+		List<string> dontshow = new List<string>();
+		if (TMNUser == null || TMNUser.Operating_Group__c != 'Cambridge'){
+			dontshow.Add('Current_Medications__pc');
+		}
+		return ' ' + String.Join(dontshow, ',');
+	}
+}
+
 private TMN_User__c TMNUser_internal;
 private boolean TMNUser_set = false;
 private TMN_User__c TMNUser {
