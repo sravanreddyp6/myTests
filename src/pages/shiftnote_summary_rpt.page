@@ -89,6 +89,7 @@
 </apex:pageBlock>
 </apex:form>
 </apex:outputPanel>
+
 <apex:outputPanel layout="block" style="float: left; width: 700px; padding: 15px;" id="dataTable"> 
 
     <apex:repeat value="{!notes }" var="n">   
@@ -163,7 +164,24 @@
              <td  >
                  <apex:outputField value="{!n.Healthcare_Medical_Note__c}"/> 
              </td>
-         </tr>          
+         </tr> 
+         
+                  
+         <tr>
+             <td class="left_col">
+                Goals/Objectives :
+             </td>         
+             <td  >
+                 <apex:repeat value="{!Note_Goals[n.id]}" var="g">
+                     <apex:outputField value="{!g.Goal__r.Description__c}" />
+                     <br/>
+                         <apex:repeat value="{!Note_Objs[n.id + g.Goal__c]}" var="o">
+                             &nbsp;&nbsp;<apex:outputField value="{!o.Objective__r.Description__c}" />
+                             <br/>
+                         </apex:repeat>
+                 </apex:repeat>
+             </td>
+         </tr> 
       </table>              
      </apex:pageBlock>                                
      </apex:repeat> 
