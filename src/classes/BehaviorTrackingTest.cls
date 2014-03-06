@@ -38,7 +38,7 @@ public with sharing class BehaviorTrackingTest{
         BehaviorTracking_Form.Row row = tables.get(0).getrows().get(0);
         BehaviorTracking_Form.Action_Behavior_Wrapper wrapper = row.getitems().get( date.parse('10/15/2013'));
         System.assertEquals('12AM', row.getHeader());
-        System.assertEquals('Mon', wrapper.getDayOfWeek());
+        System.assertEquals('Tue', wrapper.getDayOfWeek());
 
     }
     
@@ -83,18 +83,18 @@ public with sharing class BehaviorTrackingTest{
     }    
     
    private static Action_Plan__c createObjects(){
-        person = new Contact();
-        person.LastName = 'Contact';
-        person.FirstName = 'Test';
-        insert person;
-        personId = person.Id;
-        Admission__c adm = new Admission__c();
-        adm.person_being_served__c = person.id;
-        insert adm;
-        Service_Assignment__c sa = new Service_Assignment__c(); 
-        sa.Person_Being_Served__c = person.id;
-        sa.admission__c = adm.id;
-        insert sa;  
+		person = new Contact();
+		person.LastName = 'Contact';
+		person.FirstName = 'Test';
+		insert person;
+		personId = person.Id;
+   		Admission__c adm = new Admission__c();
+   		adm.person_being_served__c = person.id;
+   		insert adm;
+		Service_Assignment__c sa = new Service_Assignment__c();	
+		sa.Person_Being_Served__c = person.id;
+		sa.admission__c = adm.id;
+		insert sa;	
       testplan = new Action_Plan__c();
        testplan.Service_Assignment__c = sa.id;
        testplan.Effective_Date__c = Date.parse('10/1/2013');
@@ -124,9 +124,9 @@ public with sharing class BehaviorTrackingTest{
        
        insert testObjectived;
 
-        testWorksheet = new Action_Plan_Worksheet__c();
-        testWorksheet.Start_Date__c = Date.parse('10/1/2013');
-        testWorksheet.Action_Plan__c = testplan.Id;
+		testWorksheet = new Action_Plan_Worksheet__c();
+		testWorksheet.Start_Date__c = Date.parse('10/1/2013');
+       	testWorksheet.Action_Plan__c = testplan.Id;
        
        insert testWorksheet;
        
@@ -145,7 +145,7 @@ public with sharing class BehaviorTrackingTest{
        return testplan;
    }
    
-    private static BehaviorTracking_Form CreateTestController(Action_Plan_Worksheet__c actsum){
+  	private static BehaviorTracking_Form CreateTestController(Action_Plan_Worksheet__c actsum){
         if (actsum == null) {
             actsum = new Action_Plan_Worksheet__c();
             actsum .Start_Date__c = Date.parse('10/1/2013');
