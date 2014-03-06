@@ -22,7 +22,7 @@ public with sharing class CMContract_Form {
     public string npi{get; set;}
     public string tinnpi{get; set;}
     public List<Contract_ServiceLocation_JO__c> locations { get; set; }
-    Public Contract_ServiceLocation_JO__c location { get; set; }
+    public Contract_ServiceLocation_JO__c location { get; set; }
     
         /*
     public list< CareMeridian_Contract_Rate_and_Level__c>  cmRL = new list< CareMeridian_Contract_Rate_and_Level__c>();
@@ -40,7 +40,7 @@ public with sharing class CMContract_Form {
         tin='';
         npi='';
         tinnpi='';
-       // myContract.TIN_NPI__c='';
+      // myContract.TIN_NPI__c='';
         isCM = false;
         integer s = 0;
         for(CareMeridian_Contract_Rate_and_Level__c item : 
@@ -230,8 +230,17 @@ public with sharing class CMContract_Form {
  }
  
  public PageReference addtinnpi(){
+ 	//if(myContract.TIN_NPI__c==null)
+    //myContract.TIN_NPI__c=tin+'-'+npi+';\n';
+//else
+   // myContract.TIN_NPI__c+=tin+'-'+npi+';\n';
  	//myContract.TIN_NPI__c+=tin+'-'+npi+';'+'\n';
- 	tinnpi+=tin+'-'+npi+';'+'\n';
+ 	if(editMode){
+ 		
+ 		tinnpi=myContract.TIN_NPI__c+'\n'+tin+'-'+npi+';'+'\n';
+ 	}
+ 	else
+ 		tinnpi+=tin+'-'+npi+';'+'\n';
  	tin='';
  	npi='';
  	myContract.TIN_NPI__c=tinnpi;
