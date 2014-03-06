@@ -491,7 +491,7 @@ public class BehaviorTracking_Form{
         }
         
         public string getDayOfWeek(){
-            return DateTime.newInstanceGMT(myDate, Time.newInstance(0,0,0,0)).format('E');
+            return DateTime.newInstanceGMT(myDate, Time.newInstance(0,0,0,0)).formatGMT('E');
         }
     }
 }
