@@ -374,7 +374,7 @@ public with sharing class referralConversion_Controller {
  		
  	// EB-145 - default Billing System to AVATAR if it is filled in on conversion	
  	String strBillingSystem = '';
- 	if ( !String.IsBlank(referralRecord.Billing_ID__c))
+ 	if ( !String.IsBlank(referralRecord.Billing_ID__c) && referralRecord.Billing_ID__c.length() == 6)
  		strBillingSystem = 'AVATAR';
  			
  	Account accNew = new Account( RecordTypeID = idPBStype, 
