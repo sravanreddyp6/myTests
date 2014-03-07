@@ -43,18 +43,56 @@ private class CredentialAddTEST {
 		
 		System.assertEquals('/apex/Credential?contactid=' + tmnContact.Id, nextPage);
 		
+		
+		PageReference credAdd2 = Page.CredentialAdd;
+		Test.setCurrentPage(credAdd2);
+		
+		
 		RecordType householdMemberRecordType = [ SELECT Id FROM RecordType WHERE Name = 'Household Member' AND SObjectTYpe = 'TMN_Contact__c' ];
+		System.debug('householdMemberRecordType: ' + householdMemberRecordType);
+		List<TMN_Contact__c> tmnContactsToInsert = new List<TMN_Contact__c>();
 		TMN_Contact__c coApplicant = new TMN_Contact__c(
-			RecordType = householdMemberRecordType,
+			RecordTypeId = householdMemberRecordType.Id,
 			Related_Party_Type__c = 'Co-Applicant',
 			Email__c = 'test@test.com'
 		);
-		insert coApplicant;
+		tmnContactsToInsert.add(coApplicant);
+		TMN_Contact__c fosterParentChild = new TMN_Contact__c(
+			RecordTypeId = householdMemberRecordType.Id,
+			Related_Party_Type__c = 'Foster Parent\'s Child'
+		);
+		tmnContactsToInsert.add(fosterParentChild);
+		TMN_Contact__c fosterParentRelative = new TMN_Contact__c(
+			RecordTypeId = householdMemberRecordType.Id,
+			Related_Party_Type__c = 'Foster Parent\'s Relative'
+		);
+		tmnContactsToInsert.add(fosterParentRelative);
+		TMN_Contact__c nonResident = new TMN_Contact__c(
+			RecordTypeId = householdMemberRecordType.Id,
+			Related_Party_Type__c = 'Resident-Non Relative'
+		);
+		tmnContactsToInsert.add(nonResident);
+		TMN_Contact__c pet = new TMN_Contact__c(
+			RecordTypeId = householdMemberRecordType.Id,
+			Related_Party_Type__c = 'Pet'
+		);
+		tmnContactsToInsert.add(pet);
+		insert tmnContactsToInsert;
+		System.debug('The coApplicant: ' + coApplicant);
 		
 		ApexPages.currentPage().getParameters().put('contactid', coApplicant.Id);
-		controller = new CredentialAdd();
+		CredentialAdd controller2 = new CredentialAdd();
 		
-		nextPage = controller.SaveAddCred().getUrl();
-		
+		ApexPages.currentPage().getParameters().put('contactid', fosterParentChild.Id);
+		CredentialAdd controller3 = new CredentialAdd();		
+
+		ApexPages.currentPage().getParameters().put('contactid', fosterParentRelative.Id);
+		CredentialAdd controller4 = new CredentialAdd();		
+
+		ApexPages.currentPage().getParameters().put('contactid', nonResident.Id);
+		CredentialAdd controller5 = new CredentialAdd();
+
+		ApexPages.currentPage().getParameters().put('contactid', pet.Id);
+		CredentialAdd controller6 = new CredentialAdd();
     }
 }
