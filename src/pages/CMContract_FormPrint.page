@@ -139,17 +139,24 @@ h3{
                 <apex:outputField value="{!CareMeridian_Contract__c.Contract_Type__c}" rendered="{! !onlyRL}" />
                 <apex:outputField value="{!CareMeridian_Contract__c.Plan_Type__c}" style="padding: 15px;" rendered="{! !onlyRL}" />
                 <apex:outputField value="{!CareMeridian_Contract__c.Name}"  style="padding: 150px;"/>
-                <apex:outputField value="{!CareMeridian_Contract__c.Business_Line__c}" />
+                <apex:outputField value="{!CareMeridian_Contract__c.Business_Line__c}" rendered="{!!isNeuro}"/>
                 <apex:outputField styleClass="mytxtarea" value="{!CareMeridian_Contract__c.Description__c}" rendered="{! !onlyRL}"/>   
             </apex:pageBlockSection>
                         
             <apex:pageBlockSection title="Location" columns="1"  rendered="{! !onlyRL}">
                 <apex:outputField value="{!CareMeridian_Contract__c.Operating_Group__c}" />
-                <apex:outputField value="{!CareMeridian_Contract__c.State__c}"/>
-                <Apex:pageBlockSectionItem >
+                <apex:outputField value="{!CareMeridian_Contract__c.State__c}" rendered="{!!isNeuro}"/>
+                <Apex:pageBlockSectionItem rendered="{!!isNeuro}" >
                     <apex:outputLabel >Location</apex:outputLabel>
                     <apex:outputPanel layout="block" style="width: 399px;">
                          {!SUBSTITUTE(CareMeridian_Contract__c.Location__c,';', '; ')}
+                    </apex:outputPanel>
+                </Apex:pageBlockSectionItem>
+                
+                <Apex:pageBlockSectionItem rendered="{!isNeuro}" >
+                    <apex:outputLabel >TIN-NPI</apex:outputLabel>
+                    <apex:outputPanel layout="block" style="width: 399px;">
+                         {!SUBSTITUTE(CareMeridian_Contract__c.TIN_NPI__c,';', '; ')}
                     </apex:outputPanel>
                 </Apex:pageBlockSectionItem>
                 
@@ -158,13 +165,19 @@ h3{
             
             <apex:pageBlockSection title="Timeframe" columns="1"   >
                 <apex:outputField value="{!CareMeridian_Contract__c.Start_Date__c}" />  
-                <apex:outputField value="{!CareMeridian_Contract__c.Term_Date__c}" />              
+                <apex:outputField value="{!CareMeridian_Contract__c.Term_Date__c}" rendered="{!!isNeuro}"/>              
                 <apex:outputField value="{!CareMeridian_Contract__c.Termination_Date__c}" />
-                <apex:outputField value="{!CareMeridian_Contract__c.Renegotiation_Deadline__c}"  /> 
-                <apex:outputField value="{!CareMeridian_Contract__c.Open_Ended_Termintion_Date__c}" /> 
-            </apex:pageBlockSection>            
+                <apex:outputField value="{!CareMeridian_Contract__c.Term_Type__c}" rendered="{!isNeuro}"/>
+                <apex:outputField value="{!CareMeridian_Contract__c.Renegotiation_Deadline__c}"  rendered="{!!isNeuro}" /> 
+                <apex:outputField value="{!CareMeridian_Contract__c.Open_Ended_Termintion_Date__c}"  rendered="{!!isNeuro}"/> 
+            </apex:pageBlockSection>         
             
-            <apex:pageBlockSection title="Billing Guidelines" columns="1"   rendered="{! !onlyRL}">
+            <apex:pageblockSection title="Reimbursement Details" columns="1" rendered="{!isNeuro}">
+            	<apex:outputField styleclass="mytxtarea" value="{!CareMeridian_Contract__c.Reimbursement_Details__c}"/>
+            </apex:pageblockSection>
+            	   
+            
+            <apex:pageBlockSection title="Billing Guidelines" columns="1"   rendered="{!AND(isNeuro,NOT(onlyRL))}">
                 <apex:outputField value="{!CareMeridian_Contract__c.Fee_Schedule__c}"/>
                 <apex:outputField value="{!CareMeridian_Contract__c.Bill_Rate__c}"/>
                 <apex:outputField value="{!CareMeridian_Contract__c.Percentage_Discount__c}"/>
@@ -211,8 +224,14 @@ h3{
             <apex:outputField value="{!CareMeridian_Contract__c.Level_4_Name__c}"   />
         </td> 
         <td>
-            <apex:outputField value="{!CareMeridian_Contract__c.Level_5_Name__c}"   />
-        </td>     
+            <apex:outputField value="{!CareMeridian_Contract__c.Level_5_Name__c}"  />
+        </td>  
+        <td>
+            <apex:outputField value="{!CareMeridian_Contract__c.Level_6_Name__c}" rendered="{!isNeuro}"  />
+        </td> 
+        <td>
+            <apex:outputField value="{!CareMeridian_Contract__c.Level_7_Name__c}" rendered="{!isNeuro}"/>
+        </td>    
         <td>
 
         </td>                                                
@@ -238,6 +257,12 @@ h3{
         <td>
             <apex:outputField value="{!CareMeridian_Contract__c.Billed_Rate_Level_5__c}"   />
         </td>     
+        <td>
+            <apex:outputField value="{!CareMeridian_Contract__c.Billed_Rate_Level_6__c}" rendered="{!isNeuro}"/>
+        </td>
+        <td>
+            <apex:outputField value="{!CareMeridian_Contract__c.Billed_Rate_Level_7__c}" rendered="{!isNeuro}"/>
+        </td>  
         <td>
             <apex:outputField value="{!CareMeridian_Contract__c.Billed_Rate_Bed_Holds__c}"   />
         </td>                                                
