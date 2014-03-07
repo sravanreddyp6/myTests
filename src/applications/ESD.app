@@ -8,4 +8,5 @@
     <tab>Progress_Note__c</tab>
     <tab>ReferralsHome</tab>
     <tab>Assessment__c</tab>
+    <tab>TMN_Contacts</tab>
 </CustomApplication>
