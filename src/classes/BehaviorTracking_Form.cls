@@ -8,15 +8,15 @@ public class BehaviorTracking_Form{
 
     public BehaviorTracking_Form(ApexPages.StandardController controller){
         this.Controller = controller;
-        AddFields(new List<string>{'Action_plan__r.Status__c'});
+        AddFields(new List<string>{'Action_plan__r.Status__c', 'Action_Plan__r.Service_Assignment__r.Admission__r.State__c', 'Action_Plan__c', 'Action_Plan__r.Service_Assignment__c', 'Action_Plan__r.Service_Assignment__r.Admission__c', 'Action_Plan__r.Service_Assignment__r.Admission__r.Person_Being_Served__c'});
         worksheet = (Action_Plan_Worksheet__c)controller.getrecord();
         currentObjectiveid = ApexPages.CurrentPage().getParameters().get('objectiveid');
     }
     
     public void AddFields(List<string> newfields){
-    	if (!test.isRunningTest()){
-    		Controller.AddFields(newfields);
-    	}
+        if (!test.isRunningTest()){
+            Controller.AddFields(newfields);
+        }
     }
     
     public String getPersonName(){
@@ -55,8 +55,8 @@ public class BehaviorTracking_Form{
         return out;
     }
 
-	private Table GenerateObjectiveTable(Action_Plan_Objective__c objective, Date firstDay){
-		Table t1 = new Table(getHoursOfDay(), getDaysToDisplay());
+    private Table GenerateObjectiveTable(Action_Plan_Objective__c objective, Date firstDay){
+        Table t1 = new Table(getHoursOfDay(), getDaysToDisplay());
         t1.ObjectiveDescription = objective.Description__c;
         t1.ObjectiveId = objective.Id;
         t1.IsTimeBased = IsTimeBased(objective);
@@ -75,9 +75,9 @@ public class BehaviorTracking_Form{
                 }
             }
         }
-		return t1;
-	}    
-	
+        return t1;
+    }    
+    
     public List<Date> getDaysToDisplay() {
         List<Date> month = new List<Date>();
         Date startDate = (worksheet.Start_Date__c - 1).toStartofWeek()+1; // we start on Monday
@@ -116,7 +116,7 @@ public class BehaviorTracking_Form{
 //    }
     
     private boolean IsTimeBased(Action_Plan_Objective__c objective){
-    	return objective.Type__c == 'Behavior - Duration';	
+        return objective.Type__c == 'Behavior - Duration';  
     }
     
     private List<Action_Plan_Objective__c> ReportableBehaviorObjectives(Date firstDay){
@@ -130,23 +130,23 @@ public class BehaviorTracking_Form{
                  order by action_plan_goal__r.sort_order__c, action_plan_goal__c,  sort_order__c];
     }
 
-	private List<Action_Behavior_Result__c> ResultsForObjective(Action_Plan_Objective__c objective, Date firstDay){
-    	return [select Day_time__c, Occurrences__c, Occurred__c
+    private List<Action_Behavior_Result__c> ResultsForObjective(Action_Plan_Objective__c objective, Date firstDay){
+        return [select Day_time__c, Occurrences__c, Occurred__c
                            from Action_Behavior_Result__c
                           where Action_Plan_Objective__c = :objective.id
-                          	and Day_time__c >= :firstDay 
+                            and Day_time__c >= :firstDay 
                             and Day_time__c < :firstDay.addmonths(1)
-                          order by Day_time__c]; 		
-	}
-	
+                          order by Day_time__c];        
+    }
+    
     private Map<id, Action_Behavior_Result__c> ResultMap(Date firstDay){
         Map<id, Action_Behavior_Result__c> origData = new Map<id, Action_Behavior_Result__c>();
         for(Action_Plan_Objective__c objective: ReportableBehaviorObjectives(firstDay)){
-        	if (objective.id == currentObjective.Id){
-	             for(Action_Behavior_Result__c result: ResultsForObjective(objective, firstDay)){
-	                 origData.Put(result.id, result);
-	             }
-        	}
+            if (objective.id == currentObjective.Id){
+                 for(Action_Behavior_Result__c result: ResultsForObjective(objective, firstDay)){
+                     origData.Put(result.id, result);
+                 }
+            }
         }
         return origData;
     }
@@ -173,14 +173,14 @@ public class BehaviorTracking_Form{
     }
     
     public PageReference PrintOtherObjective(){
-    	string printObjectiveId = objectiveIdChosen;
+        string printObjectiveId = objectiveIdChosen;
         for(Action_Plan_Objective__c objective:privateobjectives){
             if (printObjectiveId == objective.Id){
                 anotoGenerate1(GenerateObjectiveTable(objective, worksheet.Start_Date__c));
                 break;
             }
         }
-    	return null;
+        return null;
     }
     
     public PageReference switchObjective(){
@@ -190,6 +190,16 @@ public class BehaviorTracking_Form{
         pdfExistenceUrl = null;
         PageReference page = new PageReference('/apex/BehaviorTracking?id=' + worksheet.id + '&objectiveid=' + currentObjectiveID);
         page.setRedirect(true);
+        return page;
+    }
+    
+    public PageReference myNewNote(){
+        mySave();
+        PageReference page = new PageReference('/apex/Notes_ProgressNote_Create?plan=' + worksheet.Action_plan__c + 
+                                                '&service_assignment=' + worksheet.Action_plan__r.Service_Assignment__c +
+                                                '&admission=' + worksheet.Action_Plan__r.Service_Assignment__r.Admission__c +
+                                                '&person=' + worksheet.Action_Plan__r.Service_Assignment__r.Admission__r.Person_Being_Served__c+
+                                                '&state=' + worksheet.Action_Plan__r.Service_Assignment__r.Admission__r.State__c);
         return page;
     }
     
@@ -350,18 +360,18 @@ public class BehaviorTracking_Form{
         return null;
     }
 
-	private void anotoGenerate1(Table objTable){
-		string txt = anotoGenerateDocument(objTable).toXmlString();
+    private void anotoGenerate1(Table objTable){
+        string txt = anotoGenerateDocument(objTable).toXmlString();
         // send to the print processor
         try{
             pdfExistenceUrl = AnotoUtility.generatePdfByHandlerName('BehaviorTrackingForm', txt);
         } catch (AnotoUtility.PdfGenerationException excp){
             System.Debug(logginglevel.error,'Pdf exception:' + excp.getmessage());
         }    
-        //CreateXmlAttachment(txt);		
-	}    
+        //CreateXmlAttachment(txt);     
+    }    
     private void CreateXmlAttachment(string txt){
-    	// Allow preview of xml
+        // Allow preview of xml
         Blob txtBlob = Blob.valueOf(txt); //Convert it to a blob
 
         Attachment attach = new Attachment(); //Make an attachment
@@ -372,7 +382,7 @@ public class BehaviorTracking_Form{
         insert attach;
         anotoXml = attach;
         System.Debug('Xml Generated '+ anotoXml.Id + ' name: ' + anotoXml.Name);
-    	
+        
     }
 
     public class Table {
