@@ -194,7 +194,7 @@ private class DataCreateTest {
     		'<field name="state__c">CA</field>' +
     		'<field name="effective_date__c">3/1/2014</field>' + 
     		'<field name="person_being_served__c">mickeyc</field></object>' +
-    		'<object classname="Service_Assignment__c" pseudonym="sa" recordtypeid="assessment_only">' +
+    		'<object classname="Service_Assignment__c" pseudonym="sa" recordtype="assessment_only">' +
     		'<field name="start_date__c">3/1/2014</field>' +
     		'<field name="Admission__c">adm</field>' +
     		'</object>' +

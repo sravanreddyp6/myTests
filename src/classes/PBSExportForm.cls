@@ -5,9 +5,9 @@ public with sharing class PBSExportForm {
     }
     
     public void exportPerson(){
-        DataCreate util = new DataCreate();
+        DataExport util = new DataExport();
         
-        xmlout = '<objects>\n' + util.Export(PBSController.getrecord()) + '</objects>\n';
+        xmlout = util.Export(PBSController.getrecord());
     }
     
     public string xmlOut { get ; set;}
