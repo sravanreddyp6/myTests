@@ -24,6 +24,51 @@ private class TMN_ContactHandlerTEST {
 
     static testMethod void myUnitTest() {
 
+		Profile profile = [SELECT Id FROM Profile WHERE Name='ESD General' LIMIT 1 ];
+
+		List<User> userList = new List<User>();
+		User testUser1 = new User(
+          	Alias = 'standt', 
+          	Email='standarduser@testorg.com', 
+            EmailEncodingKey='UTF-8', 
+            LastName='Testing', 
+            LanguageLocaleKey='en_US', 
+            LocaleSidKey='en_US', 
+            ProfileId = profile.Id, 
+            TimeZoneSidKey='America/Los_Angeles', 
+            UserName='alpha@testorg.com'
+		);
+		User testUser2 = new User(
+          	Alias = 'standt2', 
+          	Email='standarduser2@testorg.com', 
+            EmailEncodingKey='UTF-8', 
+            LastName='Testing2', 
+            LanguageLocaleKey='en_US', 
+            LocaleSidKey='en_US', 
+            ProfileId = profile.Id, 
+            TimeZoneSidKey='America/Los_Angeles', 
+            UserName='beta@testorg.com'		
+		);
+		userList.add(testUser1);
+		userList.add(testUser2);
+		insert userList;
+
+		PermissionSet credOnlyFullPermSet = [ SELECT Id FROM PermissionSet WHERE Name = 'ESD_Credentials_Only_Full' LIMIT 1 ];
+
+		List<PermissionSetAssignment> permSetAssignsToInsert = new List<PermissionSetAssignment>();
+		
+		PermissionSetAssignment myPermSetAssignment = new PermissionSetAssignment(
+			AssigneeId = testUser1.Id,
+			PermissionSetId = credOnlyFullPermSet.Id
+		);
+		permSetAssignsToInsert.add(myPermSetAssignment);
+		PermissionSetAssignment myPermSetAssignment2 = new PermissionSetAssignment(
+			AssigneeId = testUser2.Id,
+			PermissionSetId = credOnlyFullPermSet.Id			
+		);
+		permSetAssignsToInsert.add(myPermSetAssignment2);
+		insert permSetAssignsToInsert;
+
 		List<Credential_Profile__c> testCredentialProfiles = new List<Credential_Profile__c>();
         
 		Credential_Profile__c birthCert = new Credential_Profile__c(					
@@ -113,32 +158,98 @@ private class TMN_ContactHandlerTEST {
 		testCredentialProfiles.add(financialVerification);		
 
 		Credential_Profile__c cpsClearance = new Credential_Profile__c(					
-			Name='CPS Clearance', 
-			Required_for_Mentor__c=true
+        	Name = 'CPS Clearance',
+        	Required_for_Mentor__c = true,
+        	Required_for_Co_Applicant__c = true,
+        	Required_for_Foster_Parent_Relative__c = true,
+        	Required_for_Foster_Parent_Child__c = true,
+        	Required_for_Resident_Non_Relative__c = true,
+        	Needed_for_18_Over__c = true,
+        	PBI__c = true,
+        	Applies_Requested_Date__c = true,
+        	Applies_Received_Date__c = true,
+        	Applies_Note__c = true,
+        	Applies_CPS_Full_Disclosure__c = true,
+        	Applies_Documented_Date__c = true,
+        	Applies_Outcome_of_Clearance__c = true,
+        	DHR_Scope__c = 'Self Adult, Mentor Minors'
 		);
 		testCredentialProfiles.add(cpsClearance);				
 
 		Credential_Profile__c cpsFullDisclosure = new Credential_Profile__c(					
-			Name='CPS Full Disclosure', 
-			Optional_for_Mentor__c=true
+        	Name = 'CPS Full Disclosure',
+        	Optional_for_Mentor__c = true,
+        	Optional_for_Co_Applicant__c = true,
+        	Optional_for_Foster_Parent_Relative__c = true,
+        	Optional_for_Foster_Parent_Child__c = true,
+        	Optional_for_Resident_Non_Relative__c = true,
+        	Needed_for_18_Over__c = true,
+        	Applies_Requested_Date__c = true,
+        	Applies_Received_Date__c = true,
+        	Applies_Note__c = true,
+        	Applies_Documented_Date__c = true,
+        	Applies_Outcome_of_Clearance__c = true,
+        	DHR_Scope__c = 'Self Adult, Mentor Minors'
 		);
 		testCredentialProfiles.add(cpsFullDisclosure);
 
 		Credential_Profile__c stateCriminalHistory = new Credential_Profile__c(					
-			Name='State Criminal History', 
-			Required_for_Mentor__c=true
+        	Name = 'State Criminal History',
+        	Required_for_Mentor__c = true,
+        	Required_for_Co_Applicant__c = true,
+        	Required_for_Foster_Parent_Relative__c = true,
+        	Required_for_Foster_Parent_Child__c = true,
+        	Required_for_Resident_Non_Relative__c = true,
+        	Needed_for_18_Over__c = true,
+        	PBI__c = true,
+        	Applies_Requested_Date__c = true,
+        	Applies_Received_Date__c = true,
+        	Applies_Note__c = true,
+        	Applies_Conviction_Past_5_State__c = true,
+        	Applies_Type_of_Conviction_State__c = true,
+        	Applies_State_Conviction__c = true,
+        	Applies_Documented_Date__c = true,
+        	DHR_Scope__c = 'Self Adult, Mentor Minors'
 		);
 		testCredentialProfiles.add(stateCriminalHistory);
 
 		Credential_Profile__c fbiCriminalHistory = new Credential_Profile__c(					
-			Name='FBI Criminal History', 
-			Required_for_Mentor__c=true
+        	Name = 'FBI Criminal History',
+        	Required_for_Mentor__c = true,
+        	Required_for_Co_Applicant__c = true,
+        	Required_for_Foster_Parent_Relative__c = true,
+        	Required_for_Foster_Parent_Child__c = true,
+        	Required_for_Resident_Non_Relative__c = true,
+        	Needed_for_18_Over__c = true,
+        	PBI__c = true,
+        	Applies_Requested_Date__c = true,
+        	Applies_Received_Date__c = true,
+        	Applies_Note__c = true,
+        	Applies_Conviction_Past_5_Federal__c = true,
+        	Applies_Type_of_Conviction_Federal__c = true,
+        	Applies_Federal_Conviction__c = true,
+        	Applies_FBI_Full_Disclosure__c = true,
+        	Applies_Documented_Date__c = true,
+        	DHR_Scope__c = 'Self Adult, Mentor Minors'
 		);
 		testCredentialProfiles.add(fbiCriminalHistory);
 
 		Credential_Profile__c fbiFullDisclosure = new Credential_Profile__c(					
-			Name='FBI Full Disclosure', 
-			Optional_for_Mentor__c=true
+        	Name = 'FBI Full Disclosure',
+        	Optional_for_Mentor__c = true,
+        	Optional_for_Co_Applicant__c = true,
+        	Optional_for_Foster_Parent_Relative__c = true,
+        	Optional_for_Foster_Parent_Child__c = true,
+        	Optional_for_Resident_Non_Relative__c = true,
+        	Needed_for_18_Over__c = true,
+        	Applies_Requested_Date__c = true,
+        	Applies_Received_Date__c = true,
+        	Applies_Note__c = true,
+        	Applies_Conviction_Past_5_Federal__c = true,
+        	Applies_Type_of_Conviction_Federal__c = true,
+        	Applies_Federal_Conviction__c = true,
+        	Applies_Documented_Date__c = true,
+        	DHR_Scope__c = 'Self Adult, Mentor Minors'
 		);
 		testCredentialProfiles.add(fbiFullDisclosure);
 		
@@ -227,14 +338,26 @@ private class TMN_ContactHandlerTEST {
 		testCredentialProfiles.add(safeNarrative);
 
 		Credential_Profile__c healthInspection = new Credential_Profile__c(					
-			Name='Health Inspection', 
-			Required_for_Mentor__c=true
+        	Name = 'Health Inspection',
+        	Required_for_Mentor__c = true,
+        	PBI__c = true,
+        	Applies_Requested_Date__c = true,
+        	Applies_Received_Date__c = true,
+        	Applies_Note__c = true,
+        	Applies_Documented_Date__c = true,
+        	DHR_Scope__c = 'Household'
 		);
 		testCredentialProfiles.add(healthInspection);
 
 		Credential_Profile__c healthInspectionMove = new Credential_Profile__c(					
-			Name='Health Inspection-Due to Move', 
-			Optional_for_Mentor__c=true
+        	Name = 'Health Inspection-Due to Move',
+        	Optional_for_Mentor__c = true,
+        	PBI__c = true,
+        	Applies_Requested_Date__c = true,
+        	Applies_Received_Date__c = true,
+        	Applies_Note__c = true,
+        	Applies_Documented_Date__c = true,
+        	DHR_Scope__c = 'Household'
 		);
 		testCredentialProfiles.add(healthInspectionMove);
 
@@ -257,8 +380,19 @@ private class TMN_ContactHandlerTEST {
 		testCredentialProfiles.add(petImmunization);
 
 		Credential_Profile__c medicalExam = new Credential_Profile__c(					
-			Name='Medical Exam', 
-			Required_for_Mentor__c=true
+        	Name = 'Medical Exam',
+        	Required_for_Mentor__c = true,
+        	Required_for_Co_Applicant__c = true,
+        	Required_for_Foster_Parent_Relative__c = true,
+        	Required_for_Foster_Parent_Child__c = true,
+        	Required_for_Resident_Non_Relative__c = true,
+        	Needed_for_Under_18__c = true,
+        	Needed_for_18_Over__c = true,
+        	PBI__c = true,
+        	Applies_Received_Date__c = true,
+        	Applies_Note__c = true,
+        	Applies_Documented_Date__c = true,
+        	DHR_Scope__c = 'Self'
 		);
 		testCredentialProfiles.add(medicalExam);
 
@@ -521,47 +655,76 @@ private class TMN_ContactHandlerTEST {
 		for(RecordType rt : rts) {
 			if(rt.Name=='Mentor') {
 				TMN_Contact__c myNewPerson = new TMN_Contact__c(
-					RecordTypeId = rt.Id
+					RecordTypeId = rt.Id,
+					OwnerId = testUser1.Id
 				);
 				newPersons.add(myNewPerson);
 			}
-			else if(rt.Name=='Related Party') {
+			else if(rt.Name=='Household Member') {
 				TMN_Contact__c myNewPersonCoApp = new TMN_Contact__c(
 					RecordTypeId = rt.Id,
-					Related_Party_Type__c = 'Co-Applicant'
+					Related_Party_Type__c = 'Co-Applicant',
+					Email__c = 'test@test.com',
+					OwnerId = testUser1.Id 
 				);
 				newPersons.add(myNewPersonCoApp);
 				
 				TMN_Contact__c myNewPersonFpRel = new TMN_Contact__c(
 					RecordTypeId = rt.Id,
-					Related_Party_Type__c = 'Foster Parent\'s Relative'
+					Related_Party_Type__c = 'Foster Parent\'s Relative',
+					Date_of_Birth__c = date.newInstance(1977,5,4),
+					OwnerId = testUser1.Id 
 				);
 				newPersons.add(myNewPersonFpRel);
+
+				TMN_Contact__c myNewPersonFpRel2 = new TMN_Contact__c(
+					RecordTypeId = rt.Id,
+					Related_Party_Type__c = 'Foster Parent\'s Relative',
+					Date_of_Birth__c = date.newInstance(2010,5,4),
+					OwnerId = testUser1.Id 
+				);
+				newPersons.add(myNewPersonFpRel2);
 				
 				TMN_Contact__c myNewPersonFpChild = new TMN_Contact__c(
 					RecordTypeId = rt.Id,
-					Related_Party_Type__c = 'Foster Parent\'s Child'
+					Related_Party_Type__c = 'Foster Parent\'s Child',
+					Date_of_Birth__c = date.newInstance(1977,5,4),
+					OwnerId = testUser1.Id 
 				);
 				newPersons.add(myNewPersonFpChild);
+
+				TMN_Contact__c myNewPersonFpChild2 = new TMN_Contact__c(
+					RecordTypeId = rt.Id,
+					Related_Party_Type__c = 'Foster Parent\'s Child',
+					Date_of_Birth__c = date.newInstance(2010,5,4),
+					OwnerId = testUser1.Id 
+				);
+				newPersons.add(myNewPersonFpChild2);
 				
 				TMN_Contact__c myNewPersonResNonRel = new TMN_Contact__c(
 					RecordTypeId = rt.Id,
-					Related_Party_Type__c = 'Resident-Non Relative'
+					Related_Party_Type__c = 'Resident-Non Relative',
+					Date_of_Birth__c = date.newInstance(1977,5,4),
+					OwnerId = testUser1.Id 
 				);
 				newPersons.add(myNewPersonResNonRel);
 				
+				TMN_Contact__c myNewPersonResNonRel2 = new TMN_Contact__c(
+					RecordTypeId = rt.Id,
+					Related_Party_Type__c = 'Resident-Non Relative',
+					Date_of_Birth__c = date.newInstance(2010,5,4)
+				);
+				newPersons.add(myNewPersonResNonRel2);
+								
 				TMN_Contact__c myNewPersonPet = new TMN_Contact__c(
 					RecordTypeId = rt.Id,
-					Related_Party_Type__c = 'Pet'
+					Related_Party_Type__c = 'Pet',
+					OwnerId = testUser1.Id 
 				);
 				newPersons.add(myNewPersonPet);				
 			}
 			else {
-				TMN_Contact__c myNewPersonOther = new TMN_Contact__c(
-					RecordTypeId = rt.Id
-				);
-				newPersons.add(myNewPersonOther);
-								
+				// No other types should occur...
 			}
 			//insert myNewPerson;
 			//System.debug('The Person\'s ID is: ' + myNewPerson.Id);
@@ -625,11 +788,48 @@ private class TMN_ContactHandlerTEST {
 				System.debug('RECORD TYPE WAS NOT ACCOUNTED FOR!');
 			}
 			
-			update newPersons;
-			delete newPersons;
-			undelete newPersons;
-			
 		}
+		
+		List<TMN_Contact__c> tmnContactsToUpdate = new List<TMN_Contact__c>();
+		
+		TMN_Contact__c mentorPerson	= [ SELECT Id, Date_of_Birth__c FROM TMN_Contact__c WHERE RecordType.Name = 'Mentor' LIMIT 1 ];		
+		mentorPerson.Date_of_Birth__c = date.newInstance(1977,6,20);
+		mentorPerson.Inactive__c = true;
+		
+		TMN_Contact__c coAppPerson = [ SELECT Id, Date_of_Birth__c FROM TMN_Contact__c WHERE RecordType.Name = 'Household Member' AND Related_Party_Type__c = 'Co-Applicant' LIMIT 1 ];
+		coAppPerson.Date_of_Birth__c = date.newInstance(1978,12,16);
+		coAppPerson.Mentor__c = mentorPerson.Id;
+		coAppPerson.Inactive__c = true;
+		update coAppPerson;
+
+		update mentorPerson;
+		delete mentorPerson;
+		undelete mentorPerson;
+		
+		Mentor_Tracking_Report_Record__c mentorsMtrr = [ SELECT Id FROM Mentor_Tracking_Report_Record__c WHERE TMN_Contact__c = :mentorPerson.Id ];
+		mentorsMtrr.Status__c = 'Closed';
+		update mentorsMtrr;
+		
+		Mentor_Tracking_Report_Record__c coAppsMtrr = [ SELECT Id FROM Mentor_Tracking_Report_Record__c WHERE TMN_Contact__c = :coAppPerson.Id ];
+		coAppsMtrr.Status__c = 'Closed';
+		update coAppsMtrr;		
+		
+		List<TMN_Contact__c> tmnContactsForUpdate = new List<TMN_Contact__c>();
+		List<Mentor_Tracking_Report_Record__c> mtrrsForUpdate = new List<Mentor_Tracking_Report_Record__c>();
+		mentorPerson.Active__c = true;
+		tmnContactsForUpdate.add(mentorPerson);
+		mentorsMtrr.Status__c = 'Closed';
+		mtrrsForUpdate.add(mentorsMtrr);
+		
+		update tmnContactsForUpdate;
+		update mtrrsForUpdate;
+		
+		mentorPerson.OwnerId = testUser2.Id;
+		update mentorPerson;
+		 
+		
+		TMN_ContactHandler myObj = new TMN_ContactHandler(true);
+		System.assert(myObj.IsTriggerContext==true,'IsTriggerContext does not return true as expected.');		
 
     }
 }

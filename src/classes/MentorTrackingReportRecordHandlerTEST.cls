@@ -46,5 +46,12 @@ private class MentorTrackingReportRecordHandlerTEST {
         myMtrr.Submitted_At_Least_Once__c = true;
         update myMtrr;
         
+        delete myMtrr;
+        undelete myMtrr;
+        
+        MentorTrackingReportRecordHandler mtrrh = new MentorTrackingReportRecordHandler(true);
+        Boolean b = mtrrh.IsTriggerContext;
+        System.assert(b==true, 'The IsTriggerContext boolean is not equal to true, counter to expectations.');
+        
     }
 }
