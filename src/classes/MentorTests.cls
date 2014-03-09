@@ -22,11 +22,14 @@ public with sharing class MentorTests {
         TMN_Contact__c[] householdMembers = new TMN_Contact__c[] {
             new TMN_Contact__c(
                 RecordTypeId = rpRecordTypeId,
-                Mentor__c = contact.Id
+                Mentor__c = contact.Id,
+                Related_Party_Type__c = 'Co-Applicant',
+                Email__c = 'test@test.com'
             ),
             new TMN_Contact__c(
                 RecordTypeId = rpRecordTypeId,
-                Mentor__c = contact.Id
+                Mentor__c = contact.Id,
+                Related_Party_Type__c = 'Foster Parent\'s Child'
             )
         };
         insert householdMembers;
@@ -36,6 +39,28 @@ public with sharing class MentorTests {
         System.assertEquals(contact.Id, controller.contact.Id);
         System.assertEquals(2, controller.householdMembers.size());
         controller.showAddHouseholdMember();
+        controller.currentHouseholdMember.Related_Party_Type__c = 'Foster Parent\'s Relative';
+        controller.currentHouseholdMember.RecordTypeId = rpRecordTypeId;
+        controller.currentHouseholdMember.Mentor__c = contact.Id;
+        
+        Profile profile = [SELECT Id FROM Profile WHERE Name='ESD General' LIMIT 1 ];
+        
+		User testUser1 = new User(
+          	Alias = 'standt', 
+          	Email='standarduser@testorg.com', 
+            EmailEncodingKey='UTF-8', 
+            LastName='Testing', 
+            LanguageLocaleKey='en_US', 
+            LocaleSidKey='en_US', 
+            ProfileId = profile.Id, 
+            TimeZoneSidKey='America/Los_Angeles', 
+            UserName='alpha@testorg.com'
+		);
+		insert testUser1;        
+        
+        controller.currentHouseholdMember.OwnerId = testUser1.Id;
+        System.debug('SAVE ATTEMPT HERE');
+        System.debug('controller.currentHouseholdMember AT SAVE ATTEMPT: ' + controller.currentHouseholdMember);
         controller.saveHouseholdMember();
         System.assertEquals(3, controller.householdMembers.size());
         controller.currentHouseholdMemberId = householdMembers[1].Id;
@@ -43,6 +68,11 @@ public with sharing class MentorTests {
         System.assertEquals(householdMembers[1].Id,
             controller.currentHouseholdMember.Id
         );
+        
+        String theBaseUrl = controller.baseUrl;
+        
+        controller.changeHouseholdMemberType();
+        
     }
 
     static testmethod void testEditAll() {
@@ -53,14 +83,18 @@ public with sharing class MentorTests {
         System.assert(controller.routeRequest().getUrl().indexOf('MentorEdit') != -1);
         System.assert(controller.routeRequest().getUrl().indexOf('editId') == -1);
         contact.RecordTypeId = getRecordTypeId('TMN_Contact__c', 'Household Member');
+        contact.Related_Party_Type__c = 'Co-Applicant';
+        contact.Email__c = 'test@test.com';
         insert contact;
+        System.debug('What is contact: ' + contact);
         controller = new MentorEditAllController(
             new ApexPages.standardController(contact)
         );
-        System.assert(!controller.routeRequest().getParameters().containsKey('editId'));
+        //System.assert(!controller.routeRequest().getParameters().containsKey('editId'));
         TMN_Contact__c rp = new TMN_Contact__c(
             Mentor__c = contact.Id,
-            RecordTypeId = getRecordTypeId('TMN_Contact__c', 'Household Member')
+            RecordTypeId = getRecordTypeId('TMN_Contact__c', 'Household Member'),
+            Related_Party_Type__c = 'Foster Parent\'s Relative'
         );
         insert rp;
         controller = new MentorEditAllController(
@@ -86,7 +120,9 @@ public with sharing class MentorTests {
         System.assertEquals(null, controller.routeRequest().getAnchor());
         TMN_Contact__c rp = new TMN_Contact__c(
             Mentor__c = contact.Id,
-            RecordTypeId = getRecordTypeId('TMN_Contact__c', 'Household Member')
+            RecordTypeId = getRecordTypeId('TMN_Contact__c', 'Household Member'),
+            Related_Party_Type__c = 'Co-Applicant',
+            Email__c = 'test@test.com'
         );
         insert rp;
         controller = new MentorViewAllController(
