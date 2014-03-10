@@ -9,4 +9,5 @@
     <tab>ReferralsHome</tab>
     <tab>Assessment__c</tab>
     <tab>TMN_Contacts</tab>
+    <tab>standard-report</tab>
 </CustomApplication>
