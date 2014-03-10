@@ -40,8 +40,6 @@ public with sharing class CMContract_Form {
         tin='';
         npi='';
         tinnpi='';
-      // myContract.TIN_NPI__c='';
-        isCM = false;
         integer s = 0;
         for(CareMeridian_Contract_Rate_and_Level__c item : 
                     [select Sort_Key__c, Bed_Holds__c, Level_1__c, Level_2__c, Level_3__c, Level_4__c, Level_5__c, Level_6__c, Level_7__c, CareMeridian_Contract__c, Details__c 
@@ -90,7 +88,8 @@ public with sharing class CMContract_Form {
             
             if (rectype.RecordType.DeveloperName =='NeuroRestorative_Contracts'){
                 isNeuro=True;
-                
+                locations=[SELECT ID, Name, service_location__c,Service_Location_Service_Value__c, Service_Location__r.Setting__c, Service_Location_Program__c,Service_Location_Street__c,Service_Location_City__c,
+                						Service_Location_State__c, Service_Location_Zip__c,	LastModifiedDate FROM Contract_ServiceLocation_JO__c WHERE Contract__c=:ApexPages.CurrentPage().getparameters().get('id')];
            }
 
 		   if (rectype.RecordType.DeveloperName =='CareMeridian_Contracts'){
@@ -230,17 +229,11 @@ public with sharing class CMContract_Form {
  }
  
  public PageReference addtinnpi(){
- 	//if(myContract.TIN_NPI__c==null)
-    //myContract.TIN_NPI__c=tin+'-'+npi+';\n';
-//else
-   // myContract.TIN_NPI__c+=tin+'-'+npi+';\n';
- 	//myContract.TIN_NPI__c+=tin+'-'+npi+';'+'\n';
- 	if(editMode){
- 		
- 		tinnpi=myContract.TIN_NPI__c+'\n'+tin+'-'+npi+';'+'\n';
+ 	if(editMode && myContract.TIN_NPI__c==null){
+ 		tinnpi=tin+' - '+npi+';'+'\n';
  	}
  	else
- 		tinnpi+=tin+'-'+npi+';'+'\n';
+ 		tinnpi=myContract.TIN_NPI__c+'\n'+tin+' - '+npi+';'+'\n';
  	tin='';
  	npi='';
  	myContract.TIN_NPI__c=tinnpi;
@@ -252,6 +245,16 @@ public with sharing class CMContract_Form {
     location = new Contract_ServiceLocation_JO__c();
   }
  
+  public List<Attachment> Attachments{
+        get{
+            
+            if(Attachments==null){
+                Attachments= [select Id, ParentId, Name, Description from Attachment where parentId=:ApexPages.CurrentPage().getparameters().get('id')];
+            }
+            return Attachments;
+        }
+        set;
+    }
  
  
     public class clsRateLevel{
