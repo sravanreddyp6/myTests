@@ -1885,10 +1885,15 @@
             <operation>equals</operation>
             <value>Active</value>
         </filters>
-        <label>Active</label>
+        <filters>
+            <field>Contract_Type__c</field>
+            <operation>equals</operation>
+            <value>Contract</value>
+        </filters>
+        <label>Active Contracts</label>
     </listViews>
     <listViews>
-        <fullName>All</fullName>
+        <fullName>Active_LetterOfAgreement</fullName>
         <columns>NAME</columns>
         <columns>Contract_Type__c</columns>
         <columns>Renewed__c</columns>
@@ -1900,10 +1905,60 @@
         <columns>CREATEDBY_USER</columns>
         <columns>UPDATEDBY_USER</columns>
         <filterScope>Everything</filterScope>
-        <label>All</label>
+        <filters>
+            <field>Status__c</field>
+            <operation>equals</operation>
+            <value>Active</value>
+        </filters>
+        <filters>
+            <field>Contract_Type__c</field>
+            <operation>equals</operation>
+            <value>Letter of Agreement</value>
+        </filters>
+        <label>Active LOA</label>
     </listViews>
     <listViews>
-        <fullName>Closed_Contracts</fullName>
+        <fullName>All_Contracts</fullName>
+        <columns>NAME</columns>
+        <columns>Contract_Type__c</columns>
+        <columns>Renewed__c</columns>
+        <columns>Renegotiation_Deadline__c</columns>
+        <columns>Start_Date__c</columns>
+        <columns>Termination_Date__c</columns>
+        <columns>Open_Ended_Termintion_Date__c</columns>
+        <columns>Term_Date__c</columns>
+        <columns>CREATEDBY_USER</columns>
+        <columns>UPDATEDBY_USER</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Contract_Type__c</field>
+            <operation>equals</operation>
+            <value>Contract</value>
+        </filters>
+        <label>All Contracts</label>
+    </listViews>
+    <listViews>
+        <fullName>All_LOAs</fullName>
+        <columns>NAME</columns>
+        <columns>Contract_Type__c</columns>
+        <columns>Renewed__c</columns>
+        <columns>Renegotiation_Deadline__c</columns>
+        <columns>Start_Date__c</columns>
+        <columns>Termination_Date__c</columns>
+        <columns>Open_Ended_Termintion_Date__c</columns>
+        <columns>Term_Date__c</columns>
+        <columns>CREATEDBY_USER</columns>
+        <columns>UPDATEDBY_USER</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Contract_Type__c</field>
+            <operation>equals</operation>
+            <value>Letter of Agreement</value>
+        </filters>
+        <label>All LOAs</label>
+    </listViews>
+    <listViews>
+        <fullName>Closed_LOAs</fullName>
         <columns>NAME</columns>
         <columns>Contract_Type__c</columns>
         <columns>Renewed__c</columns>
@@ -1918,7 +1973,12 @@
             <operation>equals</operation>
             <value>Closed</value>
         </filters>
-        <label>Closed</label>
+        <filters>
+            <field>Contract_Type__c</field>
+            <operation>equals</operation>
+            <value>Letter of Agreement</value>
+        </filters>
+        <label>Closed LOAs</label>
     </listViews>
     <nameField>
         <label>Contract Name</label>

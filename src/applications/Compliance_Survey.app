@@ -2,6 +2,7 @@
 <CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
     <defaultLandingTab>Survey__c</defaultLandingTab>
     <label>Compliance Survey</label>
+    <logo>SharedDocuments/MENTOR_png.png</logo>
     <tab>standard-Chatter</tab>
     <tab>standard-Workspace</tab>
     <tab>TMN_User__c</tab>
