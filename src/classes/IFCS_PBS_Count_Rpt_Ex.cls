@@ -1,7 +1,8 @@
 public with sharing class IFCS_PBS_Count_Rpt_Ex {
 
+
     public Date fStartDate{get{return fStartDate;} set;}
-    public Date fEndDate{get{return fStartDate;} set;}
+    public Date fEndDate{get{return fEndDate;} set;}
     
     public List<Service_Assignment__c> Results = new List<Service_Assignment__c>();
     public List<Service_Assignment__c> getResults(){return Results;}
@@ -22,20 +23,29 @@ public with sharing class IFCS_PBS_Count_Rpt_Ex {
         results.clear();
         uniquePBS.clear();
         
-        Date SixMonth = fStartDate.addDays(-180);
         Results = [Select  id, 
                         Admission__r.State__c,
-                        Admission__r.Person_Being_Served__r.id
+                        Admission__r.Person_Being_Served__r.id,
+                        Start_Date__c,
+                        End_Date__c
                         From Service_Assignment__c
                         Where Program__c='IFCS'
                         
-                         AND(
-                            (Start_Date__c > :fStartDate OR End_Date__c > :fStartDate) 
-                                OR 
-                            (Start_Date__c < :fEndDate OR End_Date__c < :fEndDate)
-                            )];
+                         AND
+                         (
+                            ((Start_Date__c >= :fStartDate OR End_Date__c >= :fStartDate) 
+                              AND  
+                            (Start_Date__c <= :fEndDate OR End_Date__c <= :fEndDate) )                         
+                       OR
+                           (Start_Date__c  >= :fStartDate AND Start_Date__c <= :fEndDate AND End_Date__c = null )  
+                         )
+                            ];
     
+        /*
+         
+                                  
         
+        */
         for(Service_Assignment__c SA: Results){
           //  List<Service_Assignment__c> tmpSA = new List<Service_Assignment__c>();
             ParsedData.put(SA.Admission__r.State__c, 0);
