@@ -7,6 +7,17 @@
 <apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables_themeroller.css')}"/>
 <apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables.css')}"/>
 
+<script type="text/javascript"> 
+
+function stopRKey(evt) { 
+  var evt = (evt) ? evt : ((event) ? event : null); 
+  var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null); 
+  if ((evt.keyCode == 13) && (node.type=="text"))  {return false;} 
+} 
+
+document.onkeypress = stopRKey; 
+
+</script>
 <script>
     function setFocusOnLoad() {}
 </script>
@@ -65,11 +76,12 @@
 .timecol{
 }
 </style>
-
+<apex:sectionHeader title="Active Persons Being Served Open Over 6 Months Report"/>
+<apex:pageMessages id="msg"></apex:pageMessages>
 <apex:form >
     <apex:pageBlock title="Filters" >
-        <apex:pageBlockButtons >
-            <apex:commandButton value="Run" action="{!runreport}" reRender="dataTable" status="myStatus"/>
+        <apex:pageBlockButtons location="bottom" >
+            <apex:commandButton value="Run" action="{!runreport}" reRender="dataTable, msg" status="myStatus"/>
         </apex:pageBlockButtons>
         <apex:pageBlockSection >
         
@@ -94,8 +106,8 @@
                 <tr class="headRow">
                     <td class="headRow" >First Name</td>
                     <td class="headRow" >Last Name</td>
-                    <td class="headRow" >Region Name</td>
-                    <td class="headRow">Application Date</td>
+                    <td class="headRow" >SA Program Association Location</td>
+                    <td class="headRow">Admission Date</td>
                     <td class="headRow">Start Date</td>
                     <td class="headRow" >Report Date</td>
                     <td class="headRow" >Months Open</td> 
@@ -114,14 +126,14 @@
                         </apex:outputText>                     
                     </td>
                     <td>
-                        {!ROUND((fStartDate - item.Start_Date__c)/30,2)}
+                        {!ROUND((fStartDate - item.Start_Date__c)/30,1)}
                     </td>
                 </tr>            
             </apex:repeat>
         </table>
    </apex:pageBlock>   
 
-</apex:outputPanel>
+
 <apex:actionStatus id="myStatus" >
     <apex:facet name="start">
         <div  class="thinking">
@@ -152,4 +164,5 @@ var tableToExcel = (function() {
   }
 })()
 </script>
+</apex:outputPanel>
 </apex:page>

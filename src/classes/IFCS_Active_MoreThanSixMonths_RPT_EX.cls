@@ -1,4 +1,5 @@
 public with sharing class IFCS_Active_MoreThanSixMonths_RPT_EX {
+
     public Date fStartDate{get{return fStartDate;} set;}
     public List<Service_Assignment__c> Results = new List<Service_Assignment__c>();
     public List<Service_Assignment__c> getResults(){
