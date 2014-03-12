@@ -4,6 +4,8 @@ public with sharing class CMContract_Form {
     public string stateFilter{get;set;} 
     public Integer CountTotalRecords{get;set;}       
     public List<Service_Location__c> tmpResults{get;set;}
+    public string searchedServiceLocationName{get;set;}
+    public string searchedServiceLocationId{get;set;}
     public Integer OffsetSize = 0;
     private Integer QueryLimit = 25;
     public List<Service_Location__c> searchedServiceLocationResults{
@@ -11,6 +13,65 @@ public with sharing class CMContract_Form {
             return (tmpResults!=null) ? [select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c from service_location__c where id in :tmpResults order by name limit :QueryLimit offset :OffsetSize] : null;
         }
         set;
+    }
+    public Integer getOffsetSize(){
+        return OffsetSize;
+    }
+    public Integer searchedServiceLocationResultSize{
+        get{
+            return (searchedServiceLocationResults!=null) ? searchedServiceLocationResults.size():0;
+        }
+        set;
+    }
+    public void resetSearchItems(){
+        tmpResults=null;
+        searchedServiceLocationResults=null;
+        nameFilter=null;
+        stateFilter=null;
+        cityFilter=null;
+        searchedServiceLocationName=null;
+        searchedServiceLocationId=null;
+        OffsetSize = 0;
+        QueryLimit = 25;
+        CountTotalRecords = 0;
+    }
+    public Boolean getDisablePrevious(){
+        if(OffsetSize>0){
+            return false;
+        }
+        else return true;
+    }
+
+    public Boolean getDisableNext() {
+        system.debug('OffsetSize--->'+OffsetSize);
+        system.debug('QueryLimit--->'+QueryLimit); 
+        system.debug('countTotalRecords--->'+countTotalRecords);                
+        if (OffsetSize + QueryLimit < countTotalRecords){
+            return false;
+        }
+        else return true;
+    }
+    public void First() {
+        OffsetSize =0;
+        //return null;
+    }
+    public void Last() {
+        Integer tmp=(counttotalrecords/QueryLimit);
+        if(Math.mod(counttotalrecords,QueryLimit)==0){
+            OffsetSize = (tmp-1)*QueryLimit;
+        }else{
+            OffsetSize = (tmp)*QueryLimit;
+        }
+        //return null;
+    }
+    public void Next() {
+        OffsetSize += QueryLimit;
+        //return null;
+    }
+
+    public void Previous() {
+        OffsetSize -= QueryLimit;
+        //return null;
     }
 
   public String OperatingGroup{
@@ -82,6 +143,7 @@ public with sharing class CMContract_Form {
             system.debug('tmpResults--->'+tmpResults);            
             countTotalRecords=tmpResults.size();
             system.debug('countTotalRecords--->'+countTotalRecords);
+            showAddListLocs();
         /*}else{
             tmpResults=null;
             countTotalRecords=0;
@@ -360,13 +422,26 @@ public with sharing class CMContract_Form {
   public boolean isShowAddLocation{get;set;}
   public pagereference showAddLocations(){
       isShowAddLocation=true;
+      resetSearchItems();
       return null;      
   }
 
   public pagereference hideAddLocations(){
       isShowAddLocation=false;
+      hideAddListLocs();
       return null;
   }
+  
+  public boolean isShowListLocs{get;set;}
+  public pagereference showAddListLocs(){
+      isShowListLocs=true;
+      return null;      
+  }
+
+  public pagereference hideAddListLocs(){
+      isShowListLocs=false;
+      return null;
+  }  
    
   public List<Attachment> Attachments{
         get{
