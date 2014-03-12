@@ -1,4 +1,93 @@
 public with sharing class CMContract_Form {
+    public string nameFilter{get;set;}
+    public string cityFilter{get;set;}
+    public string stateFilter{get;set;} 
+    public Integer CountTotalRecords{get;set;}       
+    public List<Service_Location__c> tmpResults{get;set;}
+    public Integer OffsetSize = 0;
+    private Integer QueryLimit = 25;
+    public List<Service_Location__c> searchedServiceLocationResults{
+        get{
+            return (tmpResults!=null) ? [select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c from service_location__c where id in :tmpResults order by name limit :QueryLimit offset :OffsetSize] : null;
+        }
+        set;
+    }
+
+  public String OperatingGroup{
+      get{
+          if(operatinggroup!=null && operatinggroup!='' && operatingGroup.equalsIgnoreCase('Care Meridian')){
+              operatinggroup = 'CareMeridian';
+          }
+          return operatinggroup;
+      }
+      set;
+  }
+
+    public void searchRes(){
+        tmpResults=null;
+        searchedServiceLocationResults=null;
+        String qs1='select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c from service_location__c where ';
+        string qs = '';
+    
+        system.debug('qs1--->'+qs1);
+        //if(!((nameFilter=='' || nameFilter==null)&&(cityFilter=='' || cityFilter==null)&&(stateFilter=='' || stateFilter==null))){
+            
+            if(!(nameFilter=='' || nameFilter==null)){
+                if(nameFilter.contains('*')){
+                    qs+=' name like \''+String.escapeSingleQuotes(nameFilter.replace('*','%'))+'\' ';
+                }else{
+                    qs+=' name = :nameFilter ';
+                }
+            }
+            if(!(cityFilter=='' || cityFilter==null)){
+                if(!(nameFilter=='' || nameFilter==null)){
+                    if(cityFilter.contains('*')){
+                        qs+=' and city__c like \''+String.escapeSingleQuotes(cityFilter.replace('*','%'))+'\' ';
+                    }else{
+                        qs+=' and city__c = :cityFilter ';
+                    }
+                }else{
+                    if(cityFilter.contains('*')){
+                        qs+=' city__c like \''+String.escapeSingleQuotes(cityFilter.replace('*','%'))+'\' ';
+                    }else{
+                        qs+=' city__c = :cityFilter ';
+                    }
+                }
+            }
+            if(!(stateFilter=='' || stateFilter==null)){
+                if(!((nameFilter=='' || nameFilter==null) && (cityFilter=='' || cityFilter==null))){
+                    if(stateFilter.contains('*')){
+                        qs+=' and state__c like \''+String.escapeSingleQuotes(stateFilter.replace('*','%'))+'\' ';
+                    }else{
+                        qs+=' and state__c = :stateFilter ';
+                    }
+                }else{
+                    if(stateFilter.contains('*')){
+                        qs+=' state__c like \''+String.escapeSingleQuotes(stateFilter.replace('*','%'))+'\' ';
+                    }else{
+                        qs+=' state__c = :stateFilter ';
+                    }
+                }
+
+            }
+            if ( qs != '') qs += ' and ';
+            if (this.operatinggroup == 'NeuroRestorative') {
+                qs += 'FacilityId__c = 20';
+            } else {
+                qs += 'FacilityId__c != 20';
+            }
+            system.debug('qs1--->'+qs1);
+            system.debug('qs--->'+qs);            
+            tmpResults=Database.query(qs1 + qs);
+            system.debug('tmpResults--->'+tmpResults);            
+            countTotalRecords=tmpResults.size();
+            system.debug('countTotalRecords--->'+countTotalRecords);
+        /*}else{
+            tmpResults=null;
+            countTotalRecords=0;
+        }*/
+    }
+    
     public boolean editMode {get; set;}
     public boolean isRenewal {get; set;}
     public string oldID =  apexpages.currentpage().getparameters().get('oldid');
@@ -16,7 +105,7 @@ public with sharing class CMContract_Form {
         { return MapRateLevel;}
     public list<string> mapRateLevelKeys = new list<string>();
     public list<string> getMapRateLevelKeys() {
-    	return mapRateLevelKeys;
+        return mapRateLevelKeys;
     }
     public List<SelectOption> changeTypes;  
     public List<String> selectedTypes { get; set;}
@@ -64,26 +153,26 @@ public with sharing class CMContract_Form {
               
          
             if(ApexPages.currentPage().getParameters().get('RecordType') == null){
-            	
-            	Schema.DescribeSObjectResult describecontract = Schema.SObjectType.CareMeridian_Contract__c;
-				List<Schema.RecordTypeInfo> rtInfos = describecontract.getRecordTypeInfos();
-				for(Schema.RecordTypeinfo rtInfo: rtInfos){
-					if(rtInfo.getName()!='Master' && rtInfo.isAvailable()){
-						System.debug('The RecordType :' +rtInfo.getName() + ' and the id: ' + rtInfo.getRecordTypeId() +' is available');
-						if(rtInfo.getName()=='NeuroRestorative Contracts'){
-							isNeuro=True;
-						}else{
-							isNeuro=False;
-						}
-					
-						
-					}
-				}
+                
+                Schema.DescribeSObjectResult describecontract = Schema.SObjectType.CareMeridian_Contract__c;
+                List<Schema.RecordTypeInfo> rtInfos = describecontract.getRecordTypeInfos();
+                for(Schema.RecordTypeinfo rtInfo: rtInfos){
+                    if(rtInfo.getName()!='Master' && rtInfo.isAvailable()){
+                        System.debug('The RecordType :' +rtInfo.getName() + ' and the id: ' + rtInfo.getRecordTypeId() +' is available');
+                        if(rtInfo.getName()=='NeuroRestorative Contracts'){
+                            isNeuro=True;
+                        }else{
+                            isNeuro=False;
+                        }
+                    
+                        
+                    }
+                }
             }
             RecordType neuroRestorativeContractsRT =[Select r.Id From RecordType r WHERE r.SobjectType='CareMeridian_Contract__c' 
                 AND r.DeveloperName='NeuroRestorative_Contracts' AND r.IsActive=True];
-			if(neuroRestorativeContractsRT==null) return; 
-			if(ApexPages.currentPage().getParameters().get('RecordType')== neuroRestorativeContractsRT.id)
+            if(neuroRestorativeContractsRT==null) return; 
+            if(ApexPages.currentPage().getParameters().get('RecordType')== neuroRestorativeContractsRT.id)
                    
                    isNeuro=True;              
             
@@ -95,10 +184,10 @@ public with sharing class CMContract_Form {
             if (rectype.RecordType.DeveloperName =='NeuroRestorative_Contracts'){
                 isNeuro=True;
                 locations=[SELECT ID, Name, service_location__c,Service_Location_Service_Value__c, Service_Location__r.Setting__c, Service_Location_Program__c,Service_Location_Street__c,Service_Location_City__c,
-                						Service_Location_State__c, Service_Location_Zip__c,	LastModifiedDate FROM Contract_ServiceLocation_JO__c WHERE Contract__c=:ApexPages.CurrentPage().getparameters().get('id')];
+                                        Service_Location_State__c, Service_Location_Zip__c, LastModifiedDate FROM Contract_ServiceLocation_JO__c WHERE Contract__c=:ApexPages.CurrentPage().getparameters().get('id')];
            }
 
-		   if (rectype.RecordType.DeveloperName =='CareMeridian_Contracts'){
+           if (rectype.RecordType.DeveloperName =='CareMeridian_Contracts'){
                isNeuro=False;
            }
             isRev = true;   // want to enter type of change on every update other than brand new contract
@@ -114,8 +203,8 @@ public with sharing class CMContract_Form {
                    
                     String query = 'SELECT ';
                     FieldSet copyfields = isClone 
-                    					? SObjectType.CareMeridian_Contract__c.FieldSets.Full_Clone_Fields
-                    					: SObjectType.CareMeridian_Contract__c.FieldSets.Renewal_Fields;
+                                        ? SObjectType.CareMeridian_Contract__c.FieldSets.Full_Clone_Fields
+                                        : SObjectType.CareMeridian_Contract__c.FieldSets.Renewal_Fields;
                     for(Schema.FieldSetMember f : copyFields.getFields()) {        
                         query += f.getFieldPath() + ', ';
             
@@ -125,7 +214,7 @@ public with sharing class CMContract_Form {
 //                    query += '\'';
                     OldContract = Database.query(query);
                     System.Debug( oldcontract);
-                    isRev = !isClone;	// catches case of new contract that is a revision
+                    isRev = !isClone;   // catches case of new contract that is a revision
                     for(Schema.FieldSetMember f : copyfields.getFields()) {        
                         myContract.put(f.getFieldPath(), OldContract.get(f.getFieldPath()));
                     }
@@ -144,8 +233,8 @@ public with sharing class CMContract_Form {
         
         }
         
-      		
-                      
+            
+        //isShowAddLocation=false;                      
     }
 
     public PageReference myEdit() {
@@ -180,13 +269,13 @@ public with sharing class CMContract_Form {
     }
     
     private list<string> ListRemove(list<string> listobj, string removeValue) {
-    	list<string> newlist = new list<string>();
-    	for(string item: listobj){
-    		if (item != removeValue){
-    			newlist.add(item);
-    		}
-    	}
-    	return newlist;
+        list<string> newlist = new list<string>();
+        for(string item: listobj){
+            if (item != removeValue){
+                newlist.add(item);
+            }
+        }
+        return newlist;
     }
     
     public PageReference save() {
@@ -194,7 +283,7 @@ public with sharing class CMContract_Form {
             
             
             if(oldID!= null && !isClone) 
-            	myContract.Previous_Contract__c = OldContract.id;
+                myContract.Previous_Contract__c = OldContract.id;
 
             System.Debug( 'selectedTypes1 = ' + selectedTypes + ', isrev=' + isrev);    
             if ( isRev ) {              
@@ -252,22 +341,33 @@ public with sharing class CMContract_Form {
  }
  
  public PageReference addtinnpi() {
- 	if(editMode && myContract.TIN_NPI__c==null){
- 		tinnpi=tin+' - '+npi+';'+'\n';
- 	}
- 	else
- 		tinnpi=myContract.TIN_NPI__c+'\n'+tin+' - '+npi+';'+'\n';
- 	tin='';
- 	npi='';
- 	myContract.TIN_NPI__c=tinnpi;
- 	return null;
- 	
+    if(editMode && myContract.TIN_NPI__c==null){
+        tinnpi=tin+' - '+npi+';'+'\n';
+    }
+    else
+        tinnpi=myContract.TIN_NPI__c+'\n'+tin+' - '+npi+';'+'\n';
+    tin='';
+    npi='';
+    myContract.TIN_NPI__c=tinnpi;
+    return null;
+    
  }
  
  public void showAddLocation() {
     location = new Contract_ServiceLocation_JO__c();
   }
- 
+
+  public boolean isShowAddLocation{get;set;}
+  public pagereference showAddLocations(){
+      isShowAddLocation=true;
+      return null;      
+  }
+
+  public pagereference hideAddLocations(){
+      isShowAddLocation=false;
+      return null;
+  }
+   
   public List<Attachment> Attachments{
         get{
             

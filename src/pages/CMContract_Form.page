@@ -212,6 +212,93 @@ function hidedio(dio, dio2){
                 </apex:outputPanel><!--javascript:showdio('dialog','dialog2'); -->
                 <apex:commandButton onclick="window.open('/apex/CMContract_FormPrint?Id={!CareMeridian_Contract__c.Id}', '_blank'); return false;" value="Print" rendered="{! !editMode}"/>
             </apex:pageBlockButtons>
+
+            <!-- START -->
+            <apex:PageBlockSection columns="1" rendered="{!isNeuro}" >
+                <apex:outputPanel id="refreshServiceLocationPanel">
+                    <apex:CommandButton value="Add Location"
+                                        id="addLocation"
+                                        rerender="refreshServiceLocationPanel" 
+                                        status="AddLocationStatus" action="{!showAddLocations}" rendered="{!NOT(isShowAddLocation)}"/>
+                                 
+                    <apex:actionStatus startText="Requesting..." id="AddLocationStatus">
+                        <apex:facet name="stop">
+                            <apex:pageblockSection >
+                                <apex:CommandButton value="Select"
+                                                    id="selLocation"
+                                                    rerender="refreshServiceLocationPanel,addLocation" 
+                                                    status="AddLocationStatus" action="{!hideAddLocations}"  rendered="{!isShowAddLocation}"/>
+
+                                <apex:outputPanel id="searchDialog">
+                                    <apex:actionRegion >
+                                        <apex:actionFunction name="showAddLocation" action="{!searchRes}" rerender="table" status="searchStatus" />
+                                    </apex:actionRegion>                                
+                                    <apex:pageBlock id="block" >
+                                    <apex:pageblockSection columns="8">
+                                        <apex:outputLabel >Alias&nbsp;&nbsp;&nbsp;</apex:outputLabel>
+                                        <apex:inputText value="{!nameFilter}" id="nameFilter"/>
+                                        <apex:outputLabel >&nbsp;&nbsp;&nbsp;City&nbsp;&nbsp;&nbsp;</apex:outputLabel>
+                                        <apex:inputText value="{!cityFilter}"/>
+                                        <apex:outputLabel >&nbsp;&nbsp;&nbsp;State&nbsp;&nbsp;&nbsp;</apex:outputLabel>
+                                        <apex:inputText value="{!stateFilter}"/>&nbsp;&nbsp;&nbsp;
+                                        <apex:commandButton value="Search!" onclick="showAddLocation(); return false;"/>
+                                        <apex:actionStatus id="searchStatus" startText=" Searching..."/>
+                                    </apex:pageblockSection>
+                                    <apex:pageblockSection >
+                                        <apex:pageblockTable value="{!searchedServiceLocationresults}" var="r" id="table" >
+                                            <apex:column headerValue="Program">
+                                                <apex:outputText >{!r.Program__c}</apex:outputText>
+                                            </apex:column>
+                                            <apex:column headerValue="Setting">
+                                                <apex:outputText >{!r.Setting__c}</apex:outputText>
+                                            </apex:column>
+                                            <apex:column headerValue="Service Value">
+                                                <apex:outputText >{!r.Service_Value__c}</apex:outputText>
+                                            </apex:column>
+                                            <apex:column headerValue="Phone">
+                                                <apex:outputText >{!r.Phone__c}</apex:outputText>
+                                            </apex:column>
+                                            <apex:column headerValue="Street">
+                                                <apex:outputText >{!r.Street__c}</apex:outputText>
+                                            </apex:column>
+                                            <apex:column headerValue="City">
+                                                <apex:outputText >{!r.City__c}</apex:outputText>
+                                            </apex:column>
+                                            <apex:column headerValue="State">
+                                                <apex:outputText >{!r.State__c}</apex:outputText>
+                                            </apex:column>
+                                            <apex:column headerValue="Zip">
+                                                <apex:outputText >{!r.Zip__c}</apex:outputText>
+                                            </apex:column>
+                                        </apex:pageblockTable>
+                                    </apex:pageblockSection>                            
+                                    </apex:pageBlock>
+                                </apex:outputPanel>
+
+
+                            </apex:pageblockSection>
+                        </apex:facet>
+                    </apex:actionStatus>
+                </apex:outputPanel>                            
+                <apex:PageBlockTable value="{!locations}" var="location">
+                    <apex:Column Value="{!location.Service_Location__c}"/>
+                    <apex:Column Value="{!location.Service_Location_Service_Value__c}"/>
+                    <apex:column value="{!location.Service_Location__r.Setting__c}"/>
+                    <apex:column value="{!location.Service_Location_Program__c}"/>
+                    <apex:Column headerValue="Address">
+                        <c:AddressDisplay Street1="{!location.Service_Location_Street__c}"
+                                City="{!location.Service_Location_City__c}"
+                                State="{!location.Service_Location_State__c}"
+                                Zip="{!location.Service_Location_Zip__c}"/>
+                    </apex:Column>
+                    <apex:Column Value="{!location.LastModifiedDate}"/>
+                    
+                </apex:PageBlockTable> 
+            </apex:PageblockSection>
+
+            <!-- END -->
+
+            
             <apex:pageBlockSection title="Information" columns="1" rendered="{!editMode}">
                 <apex:inputField value="{!CareMeridian_Contract__c.Contract_Type__c}" />
                 <apex:inputField value="{!CareMeridian_Contract__c.Guarantor__c}" rendered="{!isNeuro}"/>
@@ -237,17 +324,17 @@ function hidedio(dio, dio2){
                 <apex:actionRegion >
                <apex:PageBlockSection columns="18" rendered="{!AND(editMode,isNeuro)}">
                 <apex:inputText id="tin"  label="TIN" value="{!tin}"/>
-            	<apex:inputText id="npi" label="NPI" value="{!npi}"/>
+                <apex:inputText id="npi" label="NPI" value="{!npi}"/>
               <apex:commandButton value="Add TIN-NPI>>>" Action="{!addtinnpi}" rerender="refreshtinnpi,tin,npi" status="status"/>              
                 <apex:outputPanel id="refreshtinnpi">
-                	<apex:outputLabel styleClass="mylbl"> TIN-NPI: </apex:outputLabel>	
-                	<apex:actionStatus startText="Fetching data..." id="Status">
-                		<apex:facet name="stop">
-                			<apex:inputField value="{!CareMeridian_Contract__c.TIN_NPI__c}" label="TIN - NPI" styleClass="vertxtarea"/>
-                		</apex:facet>
+                    <apex:outputLabel styleClass="mylbl"> TIN-NPI: </apex:outputLabel>  
+                    <apex:actionStatus startText="Fetching data..." id="Status">
+                        <apex:facet name="stop">
+                            <apex:inputField value="{!CareMeridian_Contract__c.TIN_NPI__c}" label="TIN - NPI" styleClass="vertxtarea"/>
+                        </apex:facet>
                   </apex:actionStatus>
-                </apex:outputPanel> 	
-               		<br/>
+                </apex:outputPanel>     
+                    <br/>
                 <apex:Pageblocksectionitem />
               </apex:PageBlockSection>
               </apex:actionRegion>
@@ -268,36 +355,7 @@ function hidedio(dio, dio2){
                 <apex:outputField value="{!CareMeridian_Contract__c.Service_Line__c}"/>  
             </apex:pageBlockSection>     
             
-                  
-            <apex:PageBlockSection columns="1" rendered="{!isNeuro}" >
-                	<apex:PageblockSectionitem >
-                    <apex:outputPanel layout="none">
-                        <apex:CommandButton value="Add Location"
-                                            id="addLocation"
-                                            onclick="showAddLocation(); return false;"/>
-                        <apex:actionStatus id="AddLocationStatus">
-                            <apex:facet name="Start">
-                                <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadSpinner"/>
-                            </apex:facet>
-                            <apex:facet name="stop"/>
-                        </apex:actionStatus>
-                    </apex:outputPanel>
-           		</apex:PageBlockSectionitem>
-            	<apex:PageBlockTable value="{!locations}" var="location">
-            		<apex:Column Value="{!location.Service_Location__c}"/>
-            		<apex:Column Value="{!location.Service_Location_Service_Value__c}"/>
-            		<apex:column value="{!location.Service_Location__r.Setting__c}"/>
-            		<apex:column value="{!location.Service_Location_Program__c}"/>
-            		<apex:Column headerValue="Address">
-            			<c:AddressDisplay Street1="{!location.Service_Location_Street__c}"
-                                City="{!location.Service_Location_City__c}"
-                                State="{!location.Service_Location_State__c}"
-                                Zip="{!location.Service_Location_Zip__c}"/>
-                    </apex:Column>
-            		<apex:Column Value="{!location.LastModifiedDate}"/>
-            		
-                </apex:PageBlockTable> 
-             </apex:PageblockSection>
+            <!-- Code Placeholder for ADD LOCATION -->                  
             
             
             
@@ -315,11 +373,11 @@ function hidedio(dio, dio2){
             </apex:pageBlockSection>
             
             <apex:pageBlockSection title="Timeframe" columns="2" rendered="{!AND(editMode,isNeuro)}" >
-            	<apex:inputField value="{!CareMeridian_Contract__c.Start_Date__c}" />
-            	<apex:inputField value="{!CareMeridian_Contract__c.Termination_Notice__c}"/>
-            	<apex:inputField value="{!CareMeridian_Contract__c.Termination_Date__c}"/>
-            	<apex:inputField value="{!CareMeridian_Contract__c.Need_to_get_Notified__c}"/> 
-            	<apex:inputField Value="{!CareMeridian_Contract__c.Term_Type__c}"/>
+                <apex:inputField value="{!CareMeridian_Contract__c.Start_Date__c}" />
+                <apex:inputField value="{!CareMeridian_Contract__c.Termination_Notice__c}"/>
+                <apex:inputField value="{!CareMeridian_Contract__c.Termination_Date__c}"/>
+                <apex:inputField value="{!CareMeridian_Contract__c.Need_to_get_Notified__c}"/> 
+                <apex:inputField Value="{!CareMeridian_Contract__c.Term_Type__c}"/>
             </apex:pageBlockSection>
              
             <apex:pageBlockSection title="Timeframe" columns="2" rendered="{!AND(!editMode,!isNeuro)}" >
@@ -337,11 +395,11 @@ function hidedio(dio, dio2){
             </apex:pageBlockSection>
             
             <apex:pageBlockSection title="Timeframe" columns="2" rendered="{!AND(!editMode,isNeuro)}">
-            	<apex:outputField value="{!CareMeridian_Contract__c.Start_Date__c}"/> 
-            	<apex:outputField value="{!CareMeridian_Contract__c.Termination_Notice__c}"/>
-            	<apex:outputField value="{!CareMeridian_Contract__c.Termination_Date__c}"/>
-            	<apex:outputField value="{!CareMeridian_Contract__c.Need_to_get_Notified__c}"/> 
-            	<apex:outputField Value="{!CareMeridian_Contract__c.Term_Type__c}"/>
+                <apex:outputField value="{!CareMeridian_Contract__c.Start_Date__c}"/> 
+                <apex:outputField value="{!CareMeridian_Contract__c.Termination_Notice__c}"/>
+                <apex:outputField value="{!CareMeridian_Contract__c.Termination_Date__c}"/>
+                <apex:outputField value="{!CareMeridian_Contract__c.Need_to_get_Notified__c}"/> 
+                <apex:outputField Value="{!CareMeridian_Contract__c.Term_Type__c}"/>
             </apex:pageBlockSection>
             
             
@@ -1180,8 +1238,8 @@ function hidedio(dio, dio2){
                 <apex:column headerValue="Attachment Name"><a href="/{!a.Id}">{!a.Name}</a></apex:column>
             </apex:pageBlockTable>
              <apex:outputText value="No Attachments to display" rendered="{!(attachments.size=0)}" /> 
-       		 </apex:pageBlockSection> 
-       		 
+             </apex:pageBlockSection> 
+             
             <apex:pageBlockSection title="System Info">
                 <apex:outputField label="Created By" value="{!CareMeridian_Contract__c.CreatedById}"/>
                 <apex:outputField label="Last Modified By" value="{!CareMeridian_Contract__c.LastModifiedById}"/>
