@@ -48,7 +48,6 @@
     padding: 0px;
     margin-top: -9px;
     margin-bottom: 7px;
-    width: 100%;
 
 }
 .sorting{
@@ -65,17 +64,30 @@
 }
 .timecol{
 }
+.mytbl{
+
+    border: 1px #dbdbdb solid;
+    width: 250px;
+    margin-left: 40%;
+}
+.tblheader{
+    background-color: #99ccff;
+    border-bottom: 1px #dbdbdb solid;
+
+}
+.tblrow{
+
+    border-bottom: 1px #dbdbdb solid;
+}
 </style>
 <apex:sectionHeader title="Count Persons Being Served in a Month Report"/>
 <apex:pageMessages id="msgs" ></apex:pageMessages>
+<apex:actionRegion >
 <apex:form id="frm" >
     <apex:pageBlock title="Filters" >
-        <apex:pageBlockButtons location="bottom" >
-            <apex:commandButton value="Run" action="{!runreport}" reRender="dataTable, msgs" status="myStatus"/>
-        </apex:pageBlockButtons>
         <apex:pageBlockSection columns="1" >
         
-        
+
         <apex:inputText id="start_date" 
                         size="10" 
                         onfocus="DatePicker.pickDate(false, this , false);" 
@@ -83,6 +95,7 @@
                         label="Start Date"  
                         value="{!fStartDate}"
                         required="true" />
+                      
         <apex:inputText id="end_date" 
                         size="10" 
                         onfocus="DatePicker.pickDate(false, this , false);" 
@@ -90,31 +103,35 @@
                         label="End Date"  
                         value="{!fEndDate}"
                         required="true" />                        
-                        
-                        
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel ></apex:outputPanel>
+            <apex:commandButton value="Run" action="{!runreport}" reRender="dataTable, msgs" status="myStatus" oncomplete="test()"/> 
+        </apex:pageBlockSectionItem>                
+                       
         </apex:pageBlockSection>
    </apex:pageBlock>
 </apex:form>
+</apex:actionRegion>
 <apex:outputPanel id="dataTable"> 
   
    <apex:pageBlock title="Results" rendered="{!allCount >0}">
         <apex:pageBlockButtons > 
             <div style="float: right"><input class="btn" type="button" onclick="tableToExcel('mytbl', 'W3C Example Table')" value="Export to Excel"/></div>
         </apex:pageBlockButtons>   
-        <table  width="100%" cellpadding="3" cellspacing="0">
-            <tr>
-                <td style="text-align: right; width: 48%;"><strong>State</strong></td>
-                <td style="text-align: left;"><strong>Count</strong></td>
-            </tr>
+        <table id="mytbl" class="mytbl"  cellpadding="7" cellspacing="0">
+                <tr class="tblheader">
+                    <td class="tblheader" style="text-align: right; width: 48%;"><strong>State</strong></td>
+                    <td class="tblheader" style="text-align: left;"><strong>Count</strong></td>
+                </tr>
             <apex:repeat value="{!ParsedData}" var="item">
                 <tr>
-                    <td style="text-align: right; width: 48%;"><strong>{!item}</strong></td>
-                    <td style="text-align: left;">{!ParsedData[item]}</td>                                        
+                    <td class="tblrow" style="text-align: right; width: 48%;"><strong>{!item}</strong></td>
+                    <td class="tblrow" style="text-align: left;">{!ParsedData[item]}</td>                                        
                 </tr>            
             </apex:repeat>
                 <tr>
-                    <td style="text-align: right;"><strong>All</strong></td>
-                    <td style="text-align: left;">{!allCount}</td>                    
+                    <td class="tblrow" style="text-align: right;"><strong>All</strong></td>
+                    <td class="tblrow" style="text-align: left;">{!allCount}</td>                    
                 </tr>
         </table>
    </apex:pageBlock>   

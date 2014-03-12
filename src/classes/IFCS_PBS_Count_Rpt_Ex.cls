@@ -37,7 +37,7 @@ public with sharing class IFCS_PBS_Count_Rpt_Ex {
                               AND  
                             (Start_Date__c <= :fEndDate OR End_Date__c <= :fEndDate) )                         
                        OR
-                           (Start_Date__c  >= :fStartDate AND Start_Date__c <= :fEndDate AND End_Date__c = null )  
+                           (Start_Date__c  <= :fEndDate AND End_Date__c = null ) 
                          )
                             ];
     
@@ -60,7 +60,8 @@ public with sharing class IFCS_PBS_Count_Rpt_Ex {
             }
             uniquePBS.add(sa.Admission__r.Person_Being_Served__r.id);
         }
-        
+        fStartDate = null;
+        fEndDate= null;
         return null;
     }       
 

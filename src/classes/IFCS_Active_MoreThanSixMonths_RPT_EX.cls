@@ -28,7 +28,7 @@ public with sharing class IFCS_Active_MoreThanSixMonths_RPT_EX {
                         Start_Date__c <= :SixMonth
                          AND
                         Status__c = 'Active'];
-    
+        fStartDate = null;
         return null;
     }
 
