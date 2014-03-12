@@ -221,20 +221,39 @@ function hidedio(dio, dio2){
                                         rerender="refreshServiceLocationPanel" 
                                         status="AddLocationStatus" action="{!showAddLocations}" rendered="{!NOT(isShowAddLocation)}"/>
                                  
-                    <apex:actionStatus startText="Requesting..." id="AddLocationStatus">
+                    <apex:actionStatus id="AddLocationStatus">
+                        <apex:facet name="start">
+                          <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                        </apex:facet>
                         <apex:facet name="stop">
-                            <apex:pageblockSection >
+                            <apex:pageblockSection columns="1">
                                 <apex:CommandButton value="Select"
                                                     id="selLocation"
                                                     rerender="refreshServiceLocationPanel,addLocation" 
-                                                    status="AddLocationStatus" action="{!hideAddLocations}"  rendered="{!isShowAddLocation}"/>
+                                                    status="AddLocationStatus" action="{!hideAddLocations}" rendered="{!isShowAddLocation}"/>
 
-                                <apex:outputPanel id="searchDialog">
+                                <apex:outputPanel id="searchDialog" rendered="{!isShowAddLocation}" >
                                     <apex:actionRegion >
-                                        <apex:actionFunction name="showAddLocation" action="{!searchRes}" rerender="table" status="searchStatus" />
+                                        <apex:actionFunction name="showAddLocation" action="{!searchRes}" rerender="table, block" status="searchStatus" />
                                     </apex:actionRegion>                                
                                     <apex:pageBlock id="block" >
-                                    <apex:pageblockSection columns="8">
+                                        <apex:pageBlockButtons id="buttons" location="bottom" rendered="{!isShowListLocs}" >
+                                            <apex:outputPanel rendered="{!IF(searchedServiceLocationResultSize!=0,True,False)}">
+                                                <apex:outputText ><i style="color:#696969;">{!OffsetSize+1}&nbsp;&nbsp;-&nbsp;&nbsp;{!(OffsetSize+searchedServiceLocationResultSize)}&nbsp;&nbsp;of&nbsp;&nbsp;{!CountTotalRecords}</i></apex:outputText>
+                                            </apex:outputPanel>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <apex:commandButton value="First" action="{!First}" rerender="table,block"
+                                                            status="status" disabled="{!DisablePrevious}" />
+                                            <apex:commandButton value="Previous" action="{!Previous}" rerender="table,block"
+                                                            status="status" disabled="{!DisablePrevious}" />
+                                            <apex:commandButton value="Next" action="{!Next}" reRender="table,block"
+                                                            status="status" disabled="{!DisableNext}" />
+                                            <apex:commandButton value="Last" action="{!Last}" rerender="table,block"
+                                                            status="status" disabled="{!DisableNext}" />
+                                            <apex:actionStatus id="status" startText="Paging..."/>
+                        
+                                        </apex:pageBlockButtons>                                    
+                                    <apex:pageblockSection columns="12">
                                         <apex:outputLabel >Alias&nbsp;&nbsp;&nbsp;</apex:outputLabel>
                                         <apex:inputText value="{!nameFilter}" id="nameFilter"/>
                                         <apex:outputLabel >&nbsp;&nbsp;&nbsp;City&nbsp;&nbsp;&nbsp;</apex:outputLabel>
@@ -244,8 +263,8 @@ function hidedio(dio, dio2){
                                         <apex:commandButton value="Search!" onclick="showAddLocation(); return false;"/>
                                         <apex:actionStatus id="searchStatus" startText=" Searching..."/>
                                     </apex:pageblockSection>
-                                    <apex:pageblockSection >
-                                        <apex:pageblockTable value="{!searchedServiceLocationresults}" var="r" id="table" >
+                                    <apex:pageblockSection title="Results...">
+                                        <apex:pageblockTable value="{!searchedServiceLocationresults}" var="r" id="table">
                                             <apex:column headerValue="Program">
                                                 <apex:outputText >{!r.Program__c}</apex:outputText>
                                             </apex:column>
