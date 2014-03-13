@@ -1,0 +1,217 @@
+<apex:page standardController="Progress_Note__c" renderAs="pdf">
+<head>
+    <style type="text/css">
+.dataTbTd{
+   1px solid black;
+    padding: 6px;
+}
+
+.BoldLabelLg {
+    font-size: 13px;
+    font-weight: bold;
+    width: 100px;
+}
+.Header{
+    border-top: 2px solid black;
+    border-bottom: 1px solid black;
+
+}
+.Lg {
+    font-size: 20px;
+    font-weight: bold;
+    
+
+}
+.alightRight2{
+    text-align: right;
+}
+
+.alignTop{
+    vertical-align: top;
+    
+}
+
+
+
+.inTbTdWidth {
+    width: 100px;
+    padding-right: 5px;
+}
+.tbCB{
+    
+    padding: 7px;
+    
+
+ }
+ 
+.smTxt{
+    font-size: 5pt;
+}
+.medTxt{
+
+    font-size: 16pt;
+    }
+.myTB{
+    width: 100%;
+    background-color:;
+    padding: 7px;
+}
+.myBorderTB{
+    width: 100%;
+    border: 1px solid black;
+    padding: 7px;
+}
+.myNonBorderStyle {
+    border: 0;
+}
+
+.innerTb{
+    padding-left: 3px;
+    padding-top: 4px;
+    vertical-align:top;
+    margin-left:10px;
+    margin-top: 15px;
+    margin-right: 30px;
+    width: 90%;      
+    background-color: ;
+        
+}
+.innerTb2{
+    
+    padding-left: 3px;
+    padding-top: 4px;
+    vertical-align:top;
+    margin-left:10px;
+    margin-top: 15px;
+    margin-right: 30px;
+    width: 290px; 
+    background-color: ;        
+}
+.shaded{
+    background-color:#ebebeb;
+    
+    } 
+.dataTable{
+    border: 1px solid black;
+
+}    
+</style>
+</head>
+<table class="myTB" cellspacing="0" cellpadding="0"    >
+  <tr>
+  <td class="Lg"><center>Pennsylvania MENTOR</center></td>
+  </tr>
+  <tr>
+    <td class="BoldLabelLg "><center>7310  Tilghman Street,STE 100 Allentown,PA 18106</center></td>   
+    </tr>
+    </table>
+    <table class="myTB" cellspacing="0" cellpadding="0" >
+    <tr>
+    <td colspan="2"><center>FAMILY BASED MENTAL HEALTH SERVICES</center></td>
+    </tr>
+    <tr>
+    <td colspan="2"><center>CLINICAL PROGRESS NOTE</center></td>
+    </tr> 
+    </table> 
+<table class="myTB" cellspacing="2" cellpadding="0" border="1" >
+<tr>
+<td  colspan="" class="BoldLabelLg" >Client Name:</td>
+<td>{!Progress_Note__c.Person_Being_Served__r.Name}</td> 
+<td  colspan="" class="BoldLabelLg">DOB:</td>
+<td><apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Birthdate}"/></td>
+</tr>
+<tr>
+<td  colspan="" class="BoldLabelLg ">Client INS/MA#:</td>
+<td><apex:outputField value="{!Progress_Note__c.Long_term_Goals__c}"/></td> 
+<td  colspan="" class="BoldLabelLg">Met With:</td>
+<td><apex:outputField value="{!Progress_Note__c.People_Present__c}"/></td> 
+</tr>
+<tr>
+<td  colspan="" class="BoldLabelLg">MHP:</td>
+<td><apex:outputField value="{!Progress_Note__c.Long_term_Goals__c}"/></td> 
+<td  colspan="" class="BoldLabelLg">MHW:</td>
+<td><apex:outputField value="{!Progress_Note__c.Long_term_Goals__c}"/></td> 
+</tr>
+<tr>
+<td  colspan="" class="BoldLabelLg">Time(from):</td>
+<td><apex:outputField value="{!Progress_Note__c.Start_Time__c}"/></td> 
+<td  colspan="" class="BoldLabelLg">Session Date:</td>
+<td><apex:outputField value="{!Progress_Note__c.Start_Time__c}"/></td> 
+</tr>
+<tr>
+<td  colspan="" class="BoldLabelLg">Time(To):</td>
+<td><apex:outputField value="{!Progress_Note__c.End_Time__c}"/></td> 
+<td  colspan="" class="BoldLabelLg">Total Units:</td>
+<td><apex:outputField value="{!Progress_Note__c.Units__c}"/></td>  
+
+</tr>
+<tr>
+<td  colspan="" class="BoldLabelLg">Type of Contact:</td>
+<td><apex:outputField value="{!Progress_Note__c.Type_of_Contact__c}"/></td> 
+
+</tr>
+</table>
+<table class="myTB" cellspacing="2" cellpadding="0" Width="100%">
+<tr>
+<td  cellspacing="1" class="BoldLabelLg" >Goal #1-Long Term Goal Problem/Need-Short Term Objectives with Target Dates</td>
+</tr>
+<tr>
+<td><apex:include pageName="V2SA_ProgressNotesEmbed_PDFInclude"/></td>
+</tr>
+</table>
+<table class="myTB" cellspacing="2" cellpadding="0" Width="100%" border="1">
+<tr>
+<td  cellspacing="1" class="BoldLabelLg">To effectively help: XXXXXXXX, the family and thetreatment team need to develop a therapeutic relationship and develop goals and objectives.</td>
+</tr>
+<tr>
+<td  cellspacing="1" class="BoldLabelLg">XXXXXXXX, her family and the treatment team will develop and maintain a therapeutic alliance to addresss issues of social functioning</td>
+</tr>
+<tr>
+<td  cellspacing="1" class="BoldLabelLg">1a. On one of two sessions weekly basis, XXXX, XXX family, and the treatment team will participate in Structural Family Therapy sessions to develop a therapeutic relatinoship and develop treatment goals and objectives, (complete by:_XXXXXX/></td>
+</tr>
+<tr>
+<td  cellspacing="1" class="BoldLabelLg">1b. In one out of four sessions, XXXXX, XXXX family, and the treatment team will participate in therapy to improve and enhance the therapeutic relationship that is necessary to promote growth and change. Completed by XXXXX.</td>
+</tr>
+</table>
+<table class="Lg" cellspacing="2" cellpadding="0" Width="100%">
+<tr>
+<td  cellspacing="1" class="Lg">Interventions Utilized:</td>
+<br/>
+<br/>
+<br/>
+</tr>
+</table>
+<table class="Lg" cellspacing="2" cellpadding="0" Width="100%">
+<tr>
+<td  cellspacing="1" class="Lg">Outcome of Interventions: (How did the client respond to the interventions?)</td>
+<br/>
+<br/>
+<br/>
+</tr>
+</table>
+<table class="Lg" cellspacing="2" cellpadding="0" Width="100%">
+<tr>
+<td  cellspacing="1" class="Lg">Assessment of Session:</td>
+<br/>
+<br/>
+<br/>
+</tr>
+</table>
+<table class="Lg" cellspacing="2" cellpadding="0" Width="100%">
+<tr>
+<td  cellspacing="1" class="Lg">Plan and Date for Next Session</td>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+</tr>
+</table>
+<table class="myTB" cellspacing="2" cellpadding="0" Width="100%">
+<tr>
+<td  cellspacing="1" class="BoldLabelLg">Staff Signature________________________</td> 
+<td  cellspacing="1" class="BoldLabelLg">Date________________________</td>
+</tr>
+</table>
+</apex:page>
