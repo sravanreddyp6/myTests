@@ -229,12 +229,12 @@ function hidedio(dio, dio2){
                             <apex:pageblockSection columns="1">
                                 <apex:CommandButton value="Select"
                                                     id="selLocation"
-                                                    rerender="refreshServiceLocationPanel,addLocation" 
+                                                    rerender="refreshServiceLocationPanel,addLocation, refreshContractLocs" 
                                                     status="AddLocationStatus" action="{!hideAddLocations}" rendered="{!isShowAddLocation}"/>
 
                                 <apex:outputPanel id="searchDialog" rendered="{!isShowAddLocation}" >
                                     <apex:actionRegion >
-                                        <apex:actionFunction name="showAddLocation" action="{!searchRes}" rerender="table, block" status="searchStatus" />
+                                        <apex:actionFunction name="showAddLocation" action="{!searchRes}" rerender="block" status="searchStatus" />
                                     </apex:actionRegion>                                
                                     <apex:pageBlock id="block" >
                                         <apex:pageBlockButtons id="buttons" location="bottom" rendered="{!isShowListLocs}" >
@@ -253,44 +253,55 @@ function hidedio(dio, dio2){
                                             <apex:actionStatus id="status" startText="Paging..."/>
                         
                                         </apex:pageBlockButtons>                                    
-                                    <apex:pageblockSection columns="12">
-                                        <apex:outputLabel >Alias&nbsp;&nbsp;&nbsp;</apex:outputLabel>
-                                        <apex:inputText value="{!nameFilter}" id="nameFilter"/>
-                                        <apex:outputLabel >&nbsp;&nbsp;&nbsp;City&nbsp;&nbsp;&nbsp;</apex:outputLabel>
-                                        <apex:inputText value="{!cityFilter}"/>
-                                        <apex:outputLabel >&nbsp;&nbsp;&nbsp;State&nbsp;&nbsp;&nbsp;</apex:outputLabel>
-                                        <apex:inputText value="{!stateFilter}"/>&nbsp;&nbsp;&nbsp;
-                                        <apex:commandButton value="Search!" onclick="showAddLocation(); return false;"/>
-                                        <apex:actionStatus id="searchStatus" startText=" Searching..."/>
-                                    </apex:pageblockSection>
-                                    <apex:pageblockSection title="Results...">
-                                        <apex:pageblockTable value="{!searchedServiceLocationresults}" var="r" id="table">
-                                            <apex:column headerValue="Program">
-                                                <apex:outputText >{!r.Program__c}</apex:outputText>
-                                            </apex:column>
-                                            <apex:column headerValue="Setting">
-                                                <apex:outputText >{!r.Setting__c}</apex:outputText>
-                                            </apex:column>
-                                            <apex:column headerValue="Service Value">
-                                                <apex:outputText >{!r.Service_Value__c}</apex:outputText>
-                                            </apex:column>
-                                            <apex:column headerValue="Phone">
-                                                <apex:outputText >{!r.Phone__c}</apex:outputText>
-                                            </apex:column>
-                                            <apex:column headerValue="Street">
-                                                <apex:outputText >{!r.Street__c}</apex:outputText>
-                                            </apex:column>
-                                            <apex:column headerValue="City">
-                                                <apex:outputText >{!r.City__c}</apex:outputText>
-                                            </apex:column>
-                                            <apex:column headerValue="State">
-                                                <apex:outputText >{!r.State__c}</apex:outputText>
-                                            </apex:column>
-                                            <apex:column headerValue="Zip">
-                                                <apex:outputText >{!r.Zip__c}</apex:outputText>
-                                            </apex:column>
-                                        </apex:pageblockTable>
-                                    </apex:pageblockSection>                            
+                                        <apex:pageblockSection title="Search Location" columns="8">
+                                            <apex:pageblockSectionItem >
+                                                <apex:outputLabel >Alias</apex:outputLabel>
+                                                <apex:inputText value="{!nameFilter}" id="nameFilter"/>
+                                            </apex:pageblockSectionItem>
+                                            <apex:pageblockSectionItem >
+                                                <apex:outputLabel >City</apex:outputLabel>
+                                                <apex:inputText value="{!cityFilter}"/>
+                                            </apex:pageblockSectionItem>
+                                            <apex:pageblockSectionItem >
+                                                <apex:outputLabel >State</apex:outputLabel>
+                                                <apex:inputText value="{!stateFilter}"/>
+                                            </apex:pageblockSectionItem>
+                                            <apex:pageblockSectionItem >
+                                                <apex:commandButton value="Search!" onclick="showAddLocation(); return false;"/>
+                                                <apex:actionStatus id="searchStatus" startText=" Searching..."/>
+                                            </apex:pageblockSectionItem>
+                                        </apex:pageblockSection>
+                                        <apex:pageblockSection title="Results..." columns="1" rendered="{!if(countTotalRecords>0 && isShowAddLocation,TRUE,FALSE)}">
+                                            <apex:pageblockTable value="{!searchedServiceLocationresults}" var="r" id="table">
+                                                <apex:column >
+                                                    <apex:inputCheckbox value="{!r.selected}"/>
+                                                </apex:column>
+                                                <apex:column headerValue="Program">
+                                                    <apex:outputText >{!r.sl.Program__c}</apex:outputText>
+                                                </apex:column>
+                                                <apex:column headerValue="Setting">
+                                                    <apex:outputText >{!r.sl.Setting__c}</apex:outputText>
+                                                </apex:column>
+                                                <apex:column headerValue="Service Value">
+                                                    <apex:outputText >{!r.sl.Service_Value__c}</apex:outputText>
+                                                </apex:column>
+                                                <apex:column headerValue="Phone">
+                                                    <apex:outputText >{!r.sl.Phone__c}</apex:outputText>
+                                                </apex:column>
+                                                <apex:column headerValue="Street">
+                                                    <apex:outputText >{!r.sl.Street__c}</apex:outputText>
+                                                </apex:column>
+                                                <apex:column headerValue="City">
+                                                    <apex:outputText >{!r.sl.City__c}</apex:outputText>
+                                                </apex:column>
+                                                <apex:column headerValue="State">
+                                                    <apex:outputText >{!r.sl.State__c}</apex:outputText>
+                                                </apex:column>
+                                                <apex:column headerValue="Zip">
+                                                    <apex:outputText >{!r.sl.Zip__c}</apex:outputText>
+                                                </apex:column>
+                                            </apex:pageblockTable>
+                                        </apex:pageblockSection>                            
                                     </apex:pageBlock>
                                 </apex:outputPanel>
 
@@ -299,7 +310,7 @@ function hidedio(dio, dio2){
                         </apex:facet>
                     </apex:actionStatus>
                 </apex:outputPanel>                            
-                <apex:PageBlockTable value="{!locations}" var="location">
+                <apex:PageBlockTable value="{!locations}" var="location" id="refreshContractLocs">
                     <apex:Column Value="{!location.Service_Location__c}"/>
                     <apex:Column Value="{!location.Service_Location_Service_Value__c}"/>
                     <apex:column value="{!location.Service_Location__r.Setting__c}"/>

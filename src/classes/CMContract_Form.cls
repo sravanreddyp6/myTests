@@ -1,4 +1,16 @@
-public with sharing class CMContract_Form {
+public class CMContract_Form {
+
+     class cSearchedServiceLocationResults {
+         public Service_Location__c sl {get; set;}
+         public Boolean selected {get; set;}
+  
+         
+         public cSearchedServiceLocationResults(Service_Location__c psl) {
+             sl = psl;
+             selected = false;
+         }
+     }
+
     public string nameFilter{get;set;}
     public string cityFilter{get;set;}
     public string stateFilter{get;set;} 
@@ -8,12 +20,69 @@ public with sharing class CMContract_Form {
     public string searchedServiceLocationId{get;set;}
     public Integer OffsetSize = 0;
     private Integer QueryLimit = 25;
-    public List<Service_Location__c> searchedServiceLocationResults{
+    public List<cSearchedServiceLocationResults> searchedServiceLocationResultsList {get; set;}
+    public List<cSearchedServiceLocationResults> searchedServiceLocationResults{
         get{
-            return (tmpResults!=null) ? [select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c from service_location__c where id in :tmpResults order by name limit :QueryLimit offset :OffsetSize] : null;
+            //return (tmpResults!=null) ? [select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c from service_location__c where id in :tmpResults order by name limit :QueryLimit offset :OffsetSize] : null;
+            system.debug('searchedServiceLocationResultsList--->'+searchedServiceLocationResultsList);
+            system.debug('tmpResults--->'+tmpResults);
+            system.debug('QueryLimit--->'+QueryLimit);
+            system.debug('OffsetSize--->'+OffsetSize);            
+            if(searchedServiceLocationResultsList==null)
+                searchedServiceLocationResultsList=new List<cSearchedServiceLocationResults>();            
+            if(tmpResults!=null){
+                for(service_location__c sloc : [select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c 
+                                                from service_location__c where id in :tmpResults order by name limit :QueryLimit offset :OffsetSize]) {
+                    searchedServiceLocationResultsList.add(new cSearchedServiceLocationResults(sloc));
+                }
+            }
+            system.debug('Size-searchedServiceLocationResultsList--->'+searchedServiceLocationResultsList.size());
+            system.debug('Final-searchedServiceLocationResultsList--->'+searchedServiceLocationResultsList);
+            return searchedServiceLocationResultsList;
         }
         set;
     }
+
+    List<Contract_ServiceLocation_JO__c> Contractlocs { get; set; }
+      public void processSelected() {
+          list<Contract_ServiceLocation_JO__c> locs=new list<Contract_ServiceLocation_JO__c>();
+          Contract_ServiceLocation_JO__c location;
+          id ContractId=ApexPages.CurrentPage().getparameters().get('id');    
+          system.debug('ContractId--->'+ContractId);
+          system.debug('myContract.id--->'+myContract.id);
+          List<cSearchedServiceLocationResults> selectedsLocs = new List<cSearchedServiceLocationResults>();
+          for(cSearchedServiceLocationResults cCon : searchedServiceLocationResults) {
+              if(cCon.selected == true) {
+                  selectedsLocs.add(cCon);
+                  location=new Contract_ServiceLocation_JO__c();
+                  location.Contract__c=ContractId;
+                  location.Service_Location__c=cCon.sl.id;
+                  locs.add(location);
+              }
+              system.debug('selectedsLocs--->'+selectedsLocs);
+          }
+          system.debug('locs--->'+locs);
+          insert locs;
+          locations=locs;
+          
+          /*list<Service_Location__c> slocs=new list<Service_Location__c>();
+          string selectedsLocsIds='';
+          if(!selectedsLocs.IsEmpty() && selectedsLocs.size()>=1){
+              for(cSearchedServiceLocationResults sloc:selectedsLocs){
+                  selectedsLocsIds+=sloc.sl.Id+',';
+                  slocs.add(sloc.sl);
+              }
+          }
+          system.debug('selectedsLocsIds--->'+selectedsLocsIds);
+          selectedsLocsIds=selectedsLocsIds.substring(0,(selectedsLocsIds.length()-1));
+          system.debug('selectedsLocsIds--->'+selectedsLocsIds);
+          system.debug('slocs--->'+slocs);
+          */
+          
+          
+          //return null;
+      }
+
     public Integer getOffsetSize(){
         return OffsetSize;
     }
@@ -65,7 +134,9 @@ public with sharing class CMContract_Form {
         //return null;
     }
     public void Next() {
+        system.debug('Before-OffsetSize--->'+OffsetSize);
         OffsetSize += QueryLimit;
+        system.debug('After-OffsetSize--->'+OffsetSize);
         //return null;
     }
 
@@ -427,6 +498,7 @@ public with sharing class CMContract_Form {
   }
 
   public pagereference hideAddLocations(){
+      processSelected();        
       isShowAddLocation=false;
       hideAddListLocs();
       return null;
