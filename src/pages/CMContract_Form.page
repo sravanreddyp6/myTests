@@ -385,7 +385,7 @@ function hidedio(dio, dio2){
         <apex:commandButton value="X" action="{!removeCRL}" reRender="theRLs" style="flost: left; width: 20px;" status="myStatus" title="Remove" immediate="true" >
             <apex:param assignTo="{!removeid}" value="{!RL}" name="removeid"  />
         </apex:commandButton>
-        <apex:inputField style="float: right; width: 230px;" value="{!MapRateLevel[RL].theRL.Details__c}"  /> 
+        <apex:inputField style="float: right; width: 230px;" html-maxlength="2000" value="{!MapRateLevel[RL].theRL.Details__c}"  /> 
     </td>
     <td class="dets">
         <apex:inputField value="{!MapRateLevel[RL].theRL.Level_1__c}"  />
