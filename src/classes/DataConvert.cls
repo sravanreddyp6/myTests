@@ -158,8 +158,10 @@ public with sharing  class DataConvert {
 			return ToString((datetime)invalue);
 		} else if (invalue instanceof time){
 			return ToString((time)invalue);
+		} else if (invalue instanceof boolean){
+			return ToString((boolean)invalue);
 		}
-		throw new DataConvertException('Invalid cast to string');
+		throw new DataConvertException('Invalid cast to string:' + invalue);
 	}
 	public static String ToString(integer invalue){
 		return invalue.format();
@@ -182,6 +184,9 @@ public with sharing  class DataConvert {
 	public static String ToString(time invalue){
 		return invalue.hour() + ':' + invalue.minute() + ':' + invalue.second() +
 			(invalue.millisecond() != 0 ? '.' + invalue.millisecond() : '');
+	}
+	public static String ToString(boolean invalue){
+		return '' + invalue;
 	}
 	
 	public class DataConvertException extends Exception{

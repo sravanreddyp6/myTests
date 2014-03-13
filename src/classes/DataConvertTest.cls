@@ -137,6 +137,8 @@ private class DataConvertTest {
     
         static testMethod void StringConversion() {
     		System.assertEquals('123', ToString(123L));
+    		System.assertEquals('true', ToString(true));
+    		System.assertEquals('false', ToString(false));
         }
     
 }
