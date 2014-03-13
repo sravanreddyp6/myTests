@@ -36,6 +36,9 @@ public with sharing class DataExport {
 		
 		while (waitingobjects.size() > 0){ 
 			FollowRelations(waitingObjects.remove(0), exports);
+			if (limits.getQueries()>= 99){
+				break;
+			}
 		}
 		
 		string outstring = '<objects>\n';
