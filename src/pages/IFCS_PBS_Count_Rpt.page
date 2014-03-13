@@ -1,4 +1,4 @@
-<apex:page controller="IFCS_PBS_Count_Rpt_Ex" sidebar="false" tabStyle="Persons_Being_Served_New__tab" >
+<apex:page controller="IFCS_PBS_Count_Rpt_Ex" sidebar="false" tabStyle="Persons_Being_Served_New__tab"  docType="html-5.0"  readOnly="true">
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:includeScript value="{!$Resource.jquery}"/>
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
@@ -78,9 +78,15 @@
 .tblrow{
 
     border-bottom: 1px #dbdbdb solid;
+    border-right: 1px #dbdbdb solid;
+}
+.header{
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px;
 }
 </style>
-<apex:sectionHeader title="Count Persons Being Served in a Month Report"/>
+<div class="header">Count Persons Being Served in a Month Report </div>
 <apex:pageMessages id="msgs" ></apex:pageMessages>
 <apex:actionRegion >
 <apex:form id="frm" >
@@ -118,7 +124,7 @@
         <apex:pageBlockButtons > 
             <div style="float: right"><input class="btn" type="button" onclick="tableToExcel('mytbl', 'W3C Example Table')" value="Export to Excel"/></div>
         </apex:pageBlockButtons>   
-        <table id="mytbl" class="mytbl"  cellpadding="7" cellspacing="0">
+        <table id="mytbl" class="mytbl"  cellpadding="7" cellspacing="0" >
                 <tr class="tblheader">
                     <td class="tblheader" style="text-align: right; width: 48%;"><strong>State</strong></td>
                     <td class="tblheader" style="text-align: left;"><strong>Count</strong></td>
@@ -136,13 +142,12 @@
         </table>
    </apex:pageBlock>   
 <br/>
-<apex:dataTable value="{!results}" var="item" width="100%" rendered="{!$CurrentPage.parameters.showdetails=='1'}">
-<apex:column value="{!item.id}" headerValue="id"/>
+<apex:dataTable value="{!filteredResults }" var="item" width="100%" rendered="{!$CurrentPage.parameters.showdetails=='1'}">
+<apex:column headerValue="id">
+<apex:outputLink value="/{!item.id}" >{!item.id}</apex:outputLink>
+</apex:column>
 <apex:column value="{!item.Start_Date__c}" headerValue="start"/>
 <apex:column value="{!item.End_Date__c}" headerValue="end"/>
-<apex:column >
-{!item.Start_Date__c <= fEndDate}
-</apex:column>
 </apex:dataTable>
 
 </apex:outputPanel>
