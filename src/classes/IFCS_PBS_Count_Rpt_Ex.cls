@@ -19,6 +19,11 @@ public with sharing class IFCS_PBS_Count_Rpt_Ex {
     public Map<string, integer > getParsedData(){return ParsedData;}
     
     public PageReference runReport(){
+    if(fEndDate < fStartDate){
+        ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,'Start Date must be before the End Date');//Same old drama 
+        ApexPages.addMessage(myMsg);            
+        return null;
+    }
         ParsedData.clear();
         results.clear();
         uniquePBS.clear();
@@ -29,9 +34,8 @@ public with sharing class IFCS_PBS_Count_Rpt_Ex {
                         Start_Date__c,
                         End_Date__c
                         From Service_Assignment__c
-                        Where Program__c='IFCS'
+                        Where
                         
-                         AND
                          (
                             ((Start_Date__c >= :fStartDate OR End_Date__c >= :fStartDate) 
                               AND  
