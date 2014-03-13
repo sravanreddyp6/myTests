@@ -6,7 +6,10 @@ public with sharing class IFCS_PBS_Count_Rpt_Ex {
     
     public List<Service_Assignment__c> Results = new List<Service_Assignment__c>();
     public List<Service_Assignment__c> getResults(){return Results;}
-    
+ 
+    public List<Service_Assignment__c> filteredResults = new List<Service_Assignment__c>();
+    public List<Service_Assignment__c> getfilteredResults (){return filteredResults ;}
+        
     public IFCS_PBS_Count_Rpt_Ex () {
        // fStartDate = system.today();
        allCount = 0;
@@ -19,9 +22,15 @@ public with sharing class IFCS_PBS_Count_Rpt_Ex {
     public Map<string, integer > getParsedData(){return ParsedData;}
     
     public PageReference runReport(){
+    if(fEndDate < fStartDate){
+        ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,'Start Date must be before the End Date');//Same old drama 
+        ApexPages.addMessage(myMsg);            
+        return null;
+    }
         ParsedData.clear();
         results.clear();
         uniquePBS.clear();
+        filteredResults.clear();
         
         Results = [Select  id, 
                         Admission__r.State__c,
@@ -29,9 +38,8 @@ public with sharing class IFCS_PBS_Count_Rpt_Ex {
                         Start_Date__c,
                         End_Date__c
                         From Service_Assignment__c
-                        Where Program__c='IFCS'
+                        Where
                         
-                         AND
                          (
                             ((Start_Date__c >= :fStartDate OR End_Date__c >= :fStartDate) 
                               AND  
@@ -41,11 +49,6 @@ public with sharing class IFCS_PBS_Count_Rpt_Ex {
                          )
                             ];
     
-        /*
-         
-                                  
-        
-        */
         for(Service_Assignment__c SA: Results){
           //  List<Service_Assignment__c> tmpSA = new List<Service_Assignment__c>();
             ParsedData.put(SA.Admission__r.State__c, 0);
@@ -57,6 +60,7 @@ public with sharing class IFCS_PBS_Count_Rpt_Ex {
             if(!uniquePBS.contains(sa.Admission__r.Person_Being_Served__r.id)){
                 ParsedData.put(SA.Admission__r.State__c, i);
                 Allcount +=1;
+                filteredResults.add(SA);
             }
             uniquePBS.add(sa.Admission__r.Person_Being_Served__r.id);
         }
