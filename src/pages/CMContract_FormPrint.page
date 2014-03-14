@@ -281,7 +281,8 @@ h3{
     
     <tr>
         <td  class="detailrow">
-            <apex:outputLabel styleClass="mydtl">Reimbursement Rate</apex:outputLabel>
+            <apex:outputLabel styleClass="mydtl" rendered="{!!isNeuro}">Reimbursement Rate</apex:outputLabel>
+            <apex:outputLabel styleClass="mydtl" rendered="{!isNeuro}">Reimbursement Rate - $ Fixed</apex:outputLabel>
         </td>  
         <td>
             <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Level_1__c}"   />            
@@ -308,7 +309,36 @@ h3{
             <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Bed_Holds__c}"  />
         </td>                                                
     </tr>      
-
+	
+	<tr>
+        <td  class="detailrow">
+            <apex:outputLabel styleClass="mydtl" rendered="{!isNeuro}">Reimbursement Rate - % of Charges</apex:outputLabel>
+        </td>  
+        <td>
+            <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_1__c}" rendered="{!isNeuro}"  />            
+        </td> 
+        <td>
+            <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_2__c}" rendered="{!isNeuro}"  />
+        </td> 
+        <td>
+            <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_3__c}" rendered="{!isNeuro}" />
+        </td> 
+        <td>
+            <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_4__c}" rendered="{!isNeuro}" />
+        </td> 
+        <td>
+            <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_5__c}" rendered="{!isNeuro}" />
+        </td>  
+        <td>
+            <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_6__c}" rendered="{!isNeuro}"/>
+        </td> 
+        <td>
+            <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_7__c}" rendered="{!isNeuro}"/>
+        </td>    
+        <td>
+            <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_Bed_Holds__c}" rendered="{!isNeuro}" />
+        </td>                                                
+    </tr>      
 
 <apex:repeat value="{!MapRateLevel}" var="RL" >
 <tr>
