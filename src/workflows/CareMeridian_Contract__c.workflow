@@ -10,6 +10,17 @@
         <senderType>CurrentUser</senderType>
         <template>Contracts/CM_Contract_Edit_Note</template>
     </alerts>
+    <alerts>
+        <fullName>Neuro_Termination_Notice_alert</fullName>
+        <description>Neuro Termination Notice alert</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>contractor.sravan.pinninti@thementornetwork.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>Contracts/NeuroRestorative_Termination_Notice</template>
+    </alerts>
     <fieldUpdates>
         <fullName>cm_set_initial_on</fullName>
         <field>Initial__c</field>
@@ -54,5 +65,33 @@ If the contract has renew&apos;d send a note on the renewal but not on the old c
         <active>true</active>
         <formula>ISBLANK( Previous_Contract__c )</formula>
         <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>NeuroRestorative Termination Notice</fullName>
+        <active>false</active>
+        <criteriaItems>
+            <field>CareMeridian_Contract__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>NeuroRestorative Contracts</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>CareMeridian_Contract__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Active</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>CareMeridian_Contract__c.Termination_Notice__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Neuro_Termination_Notice_alert</name>
+                <type>Alert</type>
+            </actions>
+            <offsetFromField>CareMeridian_Contract__c.Neuro_Term_Notice_Date__c</offsetFromField>
+            <timeLength>0</timeLength>
+            <workflowTimeTriggerUnit>Hours</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
     </rules>
 </Workflow>

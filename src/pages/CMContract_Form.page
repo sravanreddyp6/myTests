@@ -585,7 +585,8 @@ function hidedio(dio, dio2){
     
     <tr>
         <td  class="detailrow">
-            <apex:outputLabel styleClass="mydtl">Reimbursement Rate</apex:outputLabel>
+            <apex:outputLabel styleClass="mydtl" rendered="{!!isNeuro}">Reimbursement Rate</apex:outputLabel>
+            <apex:outputLabel styleClass="mydtl" rendered="{!isNeuro}">Reimbursement Rate - $Fixed</apex:outputLabel>
         </td>  
         <td class="dets">
             <apex:inputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Level_1__c}"   rendered="{!editMode}" />  
@@ -620,7 +621,44 @@ function hidedio(dio, dio2){
             <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Bed_Holds__c}" rendered="{!!editMode}"/>
         </td>                                                
     </tr> 
-       
+     
+    <tr>
+        <td  class="detailrow">
+            <apex:outputLabel styleClass="mydtl" rendered="{!isNeuro}">Reimbursement Rate - % of Charges</apex:outputLabel>
+        </td>  
+        <td class="dets">
+            <apex:inputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_1__c}"   rendered="{!AND(editMode,isNeuro)}" />  
+            <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_1__c}"  rendered="{!AND(!editMode,isNeuro)}"/>            
+        </td> 
+        <td class="dets">
+            <apex:inputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_2__c}"   rendered="{!AND(editMode,isNeuro)}" />
+            <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_2__c}"  rendered="{!AND(!editMode,isNeuro)}" />
+        </td> 
+        <td  class="dets">
+            <apex:inputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_3__c}"   rendered="{!AND(editMode,isNeuro)}"/>
+            <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_3__c}"  rendered="{!AND(!editMode,isNeuro)}"/>
+        </td> 
+        <td class="dets">
+            <apex:inputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_4__c}"   rendered="{!AND(editMode,isNeuro)}"/>
+            <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_4__c}"  rendered="{!AND(!editMode,isNeuro)}"/>
+        </td> 
+        <td class="dets">
+            <apex:inputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_5__c}"   rendered="{!AND(editMode,isNeuro)}"/>
+            <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_5__c}"  rendered="{!AND(!editMode,isNeuro)}"/>
+        </td>     
+        <td class="dets">
+            <apex:inputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_6__c}"   rendered="{!AND(editMode,isNeuro)}" />
+            <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_6__c}"  rendered="{!AND(!editMode,isNeuro)}" />
+        </td>   
+        <td class="dets">
+            <apex:inputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_7__c}"   rendered="{!AND(editMode,isNeuro)}"/>
+            <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_7__c}"  rendered="{!AND(!editMode,isNeuro)}" />
+        </td>    
+        <td class="dets">
+            <apex:inputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_Bed_Holds__c}"  rendered="{!AND(editMode,isNeuro)}"/>
+            <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_Bed_Holds__c}" rendered="{!AND(!editMode,isNeuro)}"/>
+        </td>                                                
+    </tr> 
 <apex:repeat value="{!MapRateLevelKeys }" var="RL" rendered="{!editMode}">
 <tr>
     <td class="detailrow">
