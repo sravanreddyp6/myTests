@@ -1793,11 +1793,11 @@ document.onkeypress = stopRKey;
 
         <!--Flavor Specific fields-->
 
-        <apex:inputField value="{!Referral__c.Primary_Diagnosis__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
-        <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}"/>
+        <apex:inputField value="{!Referral__c.Primary_Diagnosis__c}" rendered="{! OR(referralRecordType=='CareMeridian',referralRecordType=='Wisconsin' ) }"/>
+        <apex:pageBlockSectionItem rendered="{!OR(referralRecordType=='CareMeridian',referralRecordType=='Wisconsin' )}"/>
 
-        <apex:inputField value="{!Referral__c.Secondary_Diagnosis__c}" rendered="{!OR(ReferralRecordType == 'California',referralRecordType=='CareMeridian')}" />
-        <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}"/>
+        <apex:inputField value="{!Referral__c.Secondary_Diagnosis__c}" rendered="{!OR(ReferralRecordType == 'California',referralRecordType=='CareMeridian', referralRecordType=='Wisconsin')}" />
+        <apex:pageBlockSectionItem rendered="{!OR(referralRecordType=='CareMeridian',referralRecordType=='Wisconsin' )}"/>
 
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'California'}"/>
         <apex:inputField value="{!Referral__c.Level_of_Disability__c}" rendered="{!ReferralRecordType == 'California'}" />
