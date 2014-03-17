@@ -11,7 +11,7 @@
             <apex:column headerValue="User" value="{!hist.CreatedBy}"/>
             <apex:column headerValue="Action">
                 <apex:outputText rendered="{!(hist.field!='created')}">Changed <b>{!fieldMap[LOWER(hist.field)]}</b> 
-                    <apex:outputPanel rendered="{!hist.newvalue !=''}">
+                    <apex:outputPanel rendered="{! !AND(hist.newvalue =='', hist.oldvalue == '')}">
                         from <b>{!hist.oldvalue}</b> to <b>{!hist.newvalue}</b>
                     </apex:outputPanel>
                 </apex:outputText>
