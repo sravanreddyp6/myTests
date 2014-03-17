@@ -311,7 +311,7 @@ function hidedio(dio, dio2){
                     </apex:actionStatus>
                 </apex:outputPanel>                            
                 <apex:PageBlockTable value="{!locations}" var="location" id="refreshContractLocs">
-                    <apex:Column Value="{!location.Service_Location__c}"/>
+                    <apex:Column Value="{!location.Service_Location__r.Name}"/>
                     <apex:Column Value="{!location.Service_Location_Service_Value__c}"/>
                     <apex:column value="{!location.Service_Location__r.Setting__c}"/>
                     <apex:column value="{!location.Service_Location_Program__c}"/>
