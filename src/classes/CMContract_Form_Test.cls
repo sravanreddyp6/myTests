@@ -8,9 +8,17 @@ private class CMContract_Form_Test {
         CMContract_Form mycontractnew = new CMContract_Form(scnew);
 
 		// now insert one                
+		Schema.DescribeSobjectResult conSchema = Schema.SobjectType.CareMeridian_Contract__c;
+		Map<String,Schema.RecordTypeInfo> contractRecordTypeInfo = conSchema.getRecordTypeInfosByName();
+		Id rtId = contractRecordTypeInfo.get('NeuroRestorative Contracts').getRecordTypeId();
+		
         CareMeridian_Contract__c c = new CareMeridian_Contract__c ();
         c.name = 'test';
         c.Status__c = 'Active';
+        c.RecordTypeId = rtID;
+        c.Filing_Deadline__c = '30 Days';
+        c.Payment_Deadline__c = '30 Days';
+        c.Resubmission_Deadline__c = '30 Days';
         insert c;
         
         System.Debug('INSERTED: ' + c.Id);
@@ -18,12 +26,14 @@ private class CMContract_Form_Test {
         ApexPages.StandardController sc = new ApexPages.StandardController(c);
         PageReference pageRef = Page.CMContract_Form;
         Test.setCurrentPageReference(pageRef);
+        ApexPages.CurrentPage().getParameters().put('id',c.id);
         CMContract_Form mycontract = new CMContract_Form(sc);
         
         mycontract.myEdit();
         System.AssertEquals( mycontract.editMode, true);
         mycontract.myAddRL();
         mycontract.save();
+        mycontract.addtinnpi();
         
         map<string, CMContract_Form.clsRateLevel> mrl = mycontract.getmapratelevel();
         for ( String rlkey : mrl.keyset() ) {
