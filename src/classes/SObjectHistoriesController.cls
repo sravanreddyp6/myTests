@@ -62,7 +62,6 @@ public with sharing class SObjectHistoriesController {
             Map<String, Schema.SObjectField> tempMap = Schema.getGlobalDescribe().get(name).getDescribe().fields.getMap();
             fieldMap = new Map<String, String>();
             fieldMap.put('locked','Record Locked');
-            fieldMap.put('unlocked','Record Locked');
             for (String fieldName: tempMap.keySet()) {
                 fieldMap.put(fieldName, tempMap.get(fieldName).getDescribe().getLabel());
             }
