@@ -11,12 +11,31 @@
         <template>Contracts/CM_Contract_Edit_Note</template>
     </alerts>
     <alerts>
+        <fullName>NeuroRestorative_Termination_Notice_Alert</fullName>
+        <description>NeuroRestorative Termination Notice Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <type>creator</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>Contracts/NeuroRestorative_Termination_Notice</template>
+    </alerts>
+    <alerts>
         <fullName>Neuro_Termination_Notice_alert</fullName>
         <description>Neuro Termination Notice alert</description>
         <protected>false</protected>
         <recipients>
-            <recipient>contractor.sravan.pinninti@thementornetwork.com</recipient>
-            <type>user</type>
+            <type>creator</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>Contracts/NeuroRestorative_Termination_Notice</template>
+    </alerts>
+    <alerts>
+        <fullName>Neuro_need_to_get_notified_alert</fullName>
+        <description>Neuro need to get notified alert</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
         </recipients>
         <senderType>CurrentUser</senderType>
         <template>Contracts/NeuroRestorative_Termination_Notice</template>
@@ -67,8 +86,40 @@ If the contract has renew&apos;d send a note on the renewal but not on the old c
         <triggerType>onAllChanges</triggerType>
     </rules>
     <rules>
-        <fullName>NeuroRestorative Termination Notice</fullName>
-        <active>false</active>
+        <fullName>NeuroRestorative Need to get notified notice</fullName>
+        <active>true</active>
+        <criteriaItems>
+            <field>CareMeridian_Contract__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>NeuroRestorative Contracts</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>CareMeridian_Contract__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Active</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>CareMeridian_Contract__c.Termination_Notice__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>CareMeridian_Contract__c.Need_to_get_Notified__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Neuro_need_to_get_notified_alert</name>
+                <type>Alert</type>
+            </actions>
+            <offsetFromField>CareMeridian_Contract__c.Neuro_Term_Notice_Date__c</offsetFromField>
+            <timeLength>0</timeLength>
+            <workflowTimeTriggerUnit>Hours</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+    <rules>
+        <fullName>NeuroRestorative Termination notice alert</fullName>
+        <active>true</active>
         <criteriaItems>
             <field>CareMeridian_Contract__c.RecordTypeId</field>
             <operation>equals</operation>
@@ -86,10 +137,10 @@ If the contract has renew&apos;d send a note on the renewal but not on the old c
         <triggerType>onCreateOrTriggeringUpdate</triggerType>
         <workflowTimeTriggers>
             <actions>
-                <name>Neuro_Termination_Notice_alert</name>
+                <name>NeuroRestorative_Termination_Notice_Alert</name>
                 <type>Alert</type>
             </actions>
-            <offsetFromField>CareMeridian_Contract__c.Neuro_Term_Notice_Date__c</offsetFromField>
+            <offsetFromField>CareMeridian_Contract__c.Neuro_Termination_Not_Date__c</offsetFromField>
             <timeLength>0</timeLength>
             <workflowTimeTriggerUnit>Hours</workflowTimeTriggerUnit>
         </workflowTimeTriggers>
