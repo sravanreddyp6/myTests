@@ -151,7 +151,7 @@ public static Id getAccountRecordType(){
         Service_Location__c loc = new Service_Location__c(Alias__c = alias, UniqueID__c = alias, FacilityID__c=1,ProgramID__c=alias, Program__c=alias);
         insert loc;
         Service_Location__c testLoc = [SELECT Id, Name, CreatedDate, UniqueID__c, FacilityID__c, Alias__c, ProgramID__c, Program__c, Street__c, City__c, 
-                                       State__c, Zip__c, Phone__c, Service_Value__c, Setting__c from service_location__c];
+                                       State__c, Zip__c, Phone__c, Service_Value__c, Setting__c from service_location__c limit 1];
         return testLoc;
     }
     
@@ -169,7 +169,18 @@ public static Id getAccountRecordType(){
     public static User createTestUser(string userAlias, string userName) {
         return createTestUser(userAlias,userName, 'Test', 'Testing');
     }
-    
+    public static ProcessInstance createProcessInstance(Id TargetObjtId){
+    	/*ProcessInstance PI = new ProcessInstance(TargetObjectId = TargetObjtId);
+        insert PI;*/
+        ProcessInstance testpi = [SELECT CreatedById,CreatedDate,Id,IsDeleted,LastModifiedById,LastModifiedDate,Status,SystemModstamp,TargetObjectId FROM ProcessInstance];
+        return testpi;
+    }
+    public static ProcessInstanceWorkitem createProcessInstanceWorkItem(Id ActId,Id OriginalActId,Id ProcessInsId){
+    	/*ProcessInstanceWorkitem PIwi = new ProcessInstanceWorkitem(ActorId = ActId, OriginalActorId = OriginalActId,ProcessInstanceId = ProcessInsId);
+        insert PIwi;*/
+        ProcessInstanceWorkitem testpiwi = [SELECT ActorId,CreatedById,CreatedDate,Id,IsDeleted,OriginalActorId,ProcessInstanceId,SystemModstamp FROM ProcessInstanceWorkitem];
+        return testpiwi;
+    }
     public static User createTestUser(string userAlias, string userName, string firstName, string lastName) {
        return createTestUser(userAlias,userName, firstName, lastName, 'Redwood');
     }
@@ -183,8 +194,8 @@ public static Id getAccountRecordType(){
                                 localesidkey='en_US',
                                 profileid = prof.Id,
                                 timezonesidkey='America/Los_Angeles',
-                                username=username + System.currentTimeMillis());/*,
-                                operating_group__c=OperatingGroup);*/
+                                username=username + System.currentTimeMillis(),
+                                Operating_Group__c=OperatingGroup);
         insert testUser;
         
         Tmn_User__c tmnUser= new Tmn_User__c(operating_group__c=OperatingGroup, Salesforce_User_Account__c=testUser.id);

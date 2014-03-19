@@ -206,7 +206,7 @@ table#persons_table.dataTable {
                 </thead>
                 <tbody>
                     <apex:repeat value="{!accountIds}" var="acct">
-                        <apex:outputPanel layout="none"
+                       <apex:outputPanel layout="none"
                             rendered="{!(accountIdToJOSize[acct]=0 && accountIdToAdmissionSize[acct]=0)}">
                             <tr
                                 data-name="{!(accountIdMap[acct].LastName + ', ' +accountIdMap[acct].FirstName)}">
@@ -222,7 +222,7 @@ table#persons_table.dataTable {
                                 <td></td>
                                 <td style="display:none;"></td>
                             </tr>
-                        </apex:outputPanel>
+                        </apex:outputPanel> 
                         <apex:outputPanel layout="none"
                             rendered="{!(accountIdToAdmissionSize[acct]>0)}">
                             <apex:repeat value="{!accountIdToAdmission[acct]}"
@@ -573,6 +573,7 @@ table#persons_table.dataTable {
         });
         table.fnSort( [ [0,'asc'] ] );
         $j("#table_filter_box").keyup();
+       
     }
     $j.fn.dataTableExt.afnFiltering.push(function( oSettings, aData, iDataIndex ) {
         var textToSearch = $j('#table_filter_box').val().toLowerCase();

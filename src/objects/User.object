@@ -230,6 +230,15 @@ IF(  VPO__c ,&quot;VPO&quot;&amp; BR(),&quot;&quot;)</formula>
         <type>Text</type>
         <unique>false</unique>
     </fields>
+    <fields>
+        <fullName>tester__c</fullName>
+        <externalId>false</externalId>
+        <label>Tester</label>
+        <relationshipName>Users</relationshipName>
+        <restrictedAdminField>false</restrictedAdminField>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Hierarchy</type>
+    </fields>
     <listViews>
         <fullName>ActiveUsers</fullName>
         <columns>FULL_NAME</columns>
@@ -421,6 +430,31 @@ IF(  VPO__c ,&quot;VPO&quot;&amp; BR(),&quot;&quot;)</formula>
             <group>Admins</group>
         </sharedTo>
     </listViews>
+    <namedFilters>
+        <fullName>User_00N11000000LV5KEAW</fullName>
+        <active>true</active>
+        <field>User.tester__c</field>
+        <filterItems>
+            <field>User.LastName</field>
+            <operation>equals</operation>
+            <value>Bond</value>
+        </filterItems>
+        <isOptional>false</isOptional>
+        <name>User_Tester</name>
+    </namedFilters>
+    <namedFilters>
+        <fullName>User_Manager</fullName>
+        <active>true</active>
+        <field>User.ManagerId</field>
+        <filterItems>
+            <field>User.ManagerId</field>
+            <operation>equals</operation>
+            <valueField>$Source.tester__c</valueField>
+        </filterItems>
+        <isOptional>false</isOptional>
+        <name>User_Manager</name>
+        <sourceObject>User</sourceObject>
+    </namedFilters>
     <searchLayouts>
         <lookupDialogsAdditionalFields>FULL_NAME</lookupDialogsAdditionalFields>
         <lookupDialogsAdditionalFields>CORE.USER_ROLE.NAME</lookupDialogsAdditionalFields>
