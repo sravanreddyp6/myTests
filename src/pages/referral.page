@@ -259,32 +259,6 @@ document.onkeypress = stopRKey;
       j$('input[id$=MN_Fax]').val(fax);
   }
 
-  function copyPermanentNeuro(element) {
-      var street1 = '';
-      var street2 = '';
-      var city = '';
-      var state = '';
-      var zip = '';
-      var phone = '';
-      var email = '';
-      var fax = '';
-      if (element.checked) {
-          street1 = j$('input[id$=Ref_Perm_Street]').val();
-          city = j$('input[id$=Ref_Perm_City]').val();
-          state = j$('select[id$=Ref_Perm_State]').val();
-          zip = j$('input[id$=Ref_Perm_Zip]').val();
-      }
-
-      j$('input[id$=MN_Street1]').val(street1);
-      j$('input[id$=Neuro_Street1]').val(street1);
-      j$('input[id$=MN_Street2]').val(street2);
-      j$('input[id$=Neuro_Street2]').val(street2);
-      j$('input[id$=MN_City]').val(city);
-      j$('select[id$=MN_State]').val(state);
-      j$('input[id$=MN_Zip]').val(zip);
-
-  }
-
   function alertOnHighRisk() {
     if (j$('[id*=redFlagged]').val() == "true") {
       alert('This referral has been flagged as High Risk. Please follow the process in your state to move forward with this referral appropriately.');
@@ -1225,20 +1199,16 @@ document.onkeypress = stopRKey;
         <apex:inputField value="{!Referral__c.Financial_Status__c}" rendered="{!ReferralRecordType == 'CareMeridian'}" />
         <apex:inputField value="{!Referral__c.Clinical_Evaluation_Status__c}" rendered="{!ReferralRecordType == 'CareMeridian'}" />
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}">
-          <apex:outputText value="Location"/>
+          <apex:outputText value="City"/>
           <apex:outputPanel styleClass="nowrap@">
-            <apex:outputLabel value="Street" style="width: 10px;" />&nbsp;
-            <apex:inputText value="{!Referral__c.Referrer_Street__c}"  id="Ref_Perm_Street"/>&nbsp;
-            <br/>   
-            <apex:outputLabel value="City"  style="width: 10px;" />&nbsp; &nbsp; &nbsp;
-            <apex:inputText value="{!Referral__c.Referrer_City__c}"  id="Ref_Perm_City"/>&nbsp;
+            <apex:inputText value="{!Referral__c.Referrer_City__c}"  id="Perm_City"/>&nbsp;
             <apex:outputLabel value="State" />&nbsp;
-            <apex:inputField value="{!Referral__c.Referrer_State__c}"  id="Ref_Perm_State"/>&nbsp;
+            <apex:inputField value="{!Referral__c.Referrer_State__c}"  id="Perm_State"/>&nbsp;
             <apex:outputLabel value="Zip" />&nbsp;
-            <apex:inputText value="{!Referral__c.Referrer_Zip__c}" style="width: 42px;"  id="Ref_Perm_Zip"/>
+            <apex:inputText value="{!Referral__c.Referrer_Zip__c}" style="width: 42px;"  id="Perm_Zip"/>
           </apex:outputPanel>
         </apex:pageBlockSectionItem>
-        <apex:inputField value="{!Referral__c.Referrer_Street__c}" rendered="{!ReferralRecordType=='Cambridge Florida' || ReferralRecordType=='Cambridge Maryland'}"/>
+        <apex:inputField value="{!Referral__c.Referrer_Address__c}" rendered="{!ReferralRecordType=='Cambridge Florida' || ReferralRecordType=='Cambridge Maryland'}"/>
         <apex:inputField value="{!Referral__c.Referrer_Email__c}" rendered="{!ReferralRecordType=='NeuroRestorative' || ReferralRecordType=='Cambridge Florida' || ReferralRecordType=='Cambridge Maryland'}"/>
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative' || isCambridge}"/>
         <apex:inputField value="{!Referral__c.Billing_ID__c}" rendered="{!isCambridge}" />
@@ -1687,7 +1657,7 @@ document.onkeypress = stopRKey;
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}">
              <apex:outputText value="Current Location"/>
              <apex:outputPanel >
-                 <input id="NR_usePermanent" type="checkbox" value="1" onchange="copyPermanentNeuro(this);"/>&nbsp; <apex:outputLabel for="NR_usePermanent">Same as Facility</apex:outputLabel> 
+                 <input id="MN_usePermanent" type="checkbox" value="1" onchange="copyPermanent(this);"/>&nbsp;Same as Permanent
              </apex:outputPanel>
          </apex:pageBlockSectionItem>
         <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota', ReferralRecordType != 'CareMeridian')}"/>
