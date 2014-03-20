@@ -7,7 +7,7 @@
 <style>
 .mycols{
     width: 25%;
-  //  border-right: 2px solid #ccccff !important;
+    //border-right: 2px solid #ccccff !important;
     padding-left: 25px;
 
 }
@@ -180,9 +180,9 @@ function hidedio(dio, dio2){
 
 <apex:form id="myFrm" >
 
-     <apex:actionRegion >
+    <apex:actionRegion >
         <apex:actionFunction name="showAddLocation" action="{!showAddLocation}" rerender="locations,locationEntry,msgs" oncomplete="openModalDialog('ReferralLocationModal', 'span', 'Add Location','referral-location'); " status="AddLocationStatus" />
-    </apex:actionRegion>
+   </apex:actionRegion>
     
     
  <apex:outputPanel rendered="{!editMode}" >
@@ -214,118 +214,8 @@ function hidedio(dio, dio2){
             </apex:pageBlockButtons>
 
             <!-- START -->
-            <apex:PageBlockSection columns="1" rendered="{!isNeuro}" >
-                <apex:outputPanel id="refreshServiceLocationPanel">
-                    <apex:CommandButton value="Add Location"
-                                        id="addLocation"
-                                        rerender="refreshServiceLocationPanel" 
-                                        status="AddLocationStatus" action="{!showAddLocations}" rendered="{!NOT(isShowAddLocation)}"/>
-                                 
-                    <apex:actionStatus id="AddLocationStatus">
-                        <apex:facet name="start">
-                          <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
-                        </apex:facet>
-                        <apex:facet name="stop">
-                            <apex:pageblockSection columns="1">
-                                <apex:CommandButton value="Select"
-                                                    id="selLocation"
-                                                    rerender="refreshServiceLocationPanel,addLocation, refreshContractLocs" 
-                                                    status="AddLocationStatus" action="{!hideAddLocations}" rendered="{!isShowAddLocation}"/>
-
-                                <apex:outputPanel id="searchDialog" rendered="{!isShowAddLocation}" >
-                                    <apex:actionRegion >
-                                        <apex:actionFunction name="showAddLocation" action="{!searchRes}" rerender="block" status="searchStatus" />
-                                    </apex:actionRegion>                                
-                                    <apex:pageBlock id="block" >
-                                        <apex:pageBlockButtons id="buttons" location="bottom" rendered="{!isShowListLocs}" >
-                                            <apex:outputPanel rendered="{!IF(searchedServiceLocationResultSize!=0,True,False)}">
-                                                <apex:outputText ><i style="color:#696969;">{!OffsetSize+1}&nbsp;&nbsp;-&nbsp;&nbsp;{!(OffsetSize+searchedServiceLocationResultSize)}&nbsp;&nbsp;of&nbsp;&nbsp;{!CountTotalRecords}</i></apex:outputText>
-                                            </apex:outputPanel>
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                            <apex:commandButton value="First" action="{!First}" rerender="table,block"
-                                                            status="status" disabled="{!DisablePrevious}" />
-                                            <apex:commandButton value="Previous" action="{!Previous}" rerender="table,block"
-                                                            status="status" disabled="{!DisablePrevious}" />
-                                            <apex:commandButton value="Next" action="{!Next}" reRender="table,block"
-                                                            status="status" disabled="{!DisableNext}" />
-                                            <apex:commandButton value="Last" action="{!Last}" rerender="table,block"
-                                                            status="status" disabled="{!DisableNext}" />
-                                            <apex:actionStatus id="status" startText="Paging..."/>
-                        
-                                        </apex:pageBlockButtons>                                    
-                                        <apex:pageblockSection title="Search Location" columns="8">
-                                            <apex:pageblockSectionItem >
-                                                <apex:outputLabel >Alias</apex:outputLabel>
-                                                <apex:inputText value="{!nameFilter}" id="nameFilter"/>
-                                            </apex:pageblockSectionItem>
-                                            <apex:pageblockSectionItem >
-                                                <apex:outputLabel >City</apex:outputLabel>
-                                                <apex:inputText value="{!cityFilter}"/>
-                                            </apex:pageblockSectionItem>
-                                            <apex:pageblockSectionItem >
-                                                <apex:outputLabel >State</apex:outputLabel>
-                                                <apex:inputText value="{!stateFilter}"/>
-                                            </apex:pageblockSectionItem>
-                                            <apex:pageblockSectionItem >
-                                                <apex:commandButton value="Search!" onclick="showAddLocation(); return false;"/>
-                                                <apex:actionStatus id="searchStatus" startText=" Searching..."/>
-                                            </apex:pageblockSectionItem>
-                                        </apex:pageblockSection>
-                                        <apex:pageblockSection title="Results..." columns="1" rendered="{!if(countTotalRecords>0 && isShowAddLocation,TRUE,FALSE)}">
-                                            <apex:pageblockTable value="{!searchedServiceLocationresults}" var="r" id="table">
-                                                <apex:column >
-                                                    <apex:inputCheckbox value="{!r.selected}"/>
-                                                </apex:column>
-                                                <apex:column headerValue="Program">
-                                                    <apex:outputText >{!r.sl.Program__c}</apex:outputText>
-                                                </apex:column>
-                                                <apex:column headerValue="Setting">
-                                                    <apex:outputText >{!r.sl.Setting__c}</apex:outputText>
-                                                </apex:column>
-                                                <apex:column headerValue="Service Value">
-                                                    <apex:outputText >{!r.sl.Service_Value__c}</apex:outputText>
-                                                </apex:column>
-                                                <apex:column headerValue="Phone">
-                                                    <apex:outputText >{!r.sl.Phone__c}</apex:outputText>
-                                                </apex:column>
-                                                <apex:column headerValue="Street">
-                                                    <apex:outputText >{!r.sl.Street__c}</apex:outputText>
-                                                </apex:column>
-                                                <apex:column headerValue="City">
-                                                    <apex:outputText >{!r.sl.City__c}</apex:outputText>
-                                                </apex:column>
-                                                <apex:column headerValue="State">
-                                                    <apex:outputText >{!r.sl.State__c}</apex:outputText>
-                                                </apex:column>
-                                                <apex:column headerValue="Zip">
-                                                    <apex:outputText >{!r.sl.Zip__c}</apex:outputText>
-                                                </apex:column>
-                                            </apex:pageblockTable>
-                                        </apex:pageblockSection>                            
-                                    </apex:pageBlock>
-                                </apex:outputPanel>
-
-
-                            </apex:pageblockSection>
-                        </apex:facet>
-                    </apex:actionStatus>
-                </apex:outputPanel>                            
-                <apex:PageBlockTable value="{!locations}" var="location" id="refreshContractLocs">
-                    <apex:Column Value="{!location.Service_Location__r.Name}"/>
-                    <apex:Column Value="{!location.Service_Location_Service_Value__c}"/>
-                    <apex:column value="{!location.Service_Location__r.Setting__c}"/>
-                    <apex:column value="{!location.Service_Location_Program__c}"/>
-                    <apex:Column headerValue="Address">
-                        <c:AddressDisplay Street1="{!location.Service_Location_Street__c}"
-                                City="{!location.Service_Location_City__c}"
-                                State="{!location.Service_Location_State__c}"
-                                Zip="{!location.Service_Location_Zip__c}"/>
-                    </apex:Column>
-                    <apex:Column Value="{!location.LastModifiedDate}"/>
-                    
-                </apex:PageBlockTable> 
-            </apex:PageblockSection>
-
+           
+            
             <!-- END -->
 
             
@@ -386,8 +276,165 @@ function hidedio(dio, dio2){
             </apex:pageBlockSection>     
             
             <!-- Code Placeholder for ADD LOCATION -->                  
+            <apex:PageBlockSection columns="1" rendered="{!isNeuro}" >
+                <apex:outputPanel id="refreshServiceLocationPanel">
+                    <apex:CommandButton value="Add Location"
+                                        id="addLocation"
+                                        rerender="refreshServiceLocationPanel" 
+                                        status="AddLocationStatus" action="{!showAddLocations}" rendered="{!AND(NOT(isShowAddLocation),editMode)}"/>
+                                 
+                    <apex:actionStatus id="AddLocationStatus">
+                        <apex:facet name="start">
+                          <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                        </apex:facet>
+                        <apex:facet name="stop">
+                            <apex:pageblockSection columns="1">
+                                <apex:outputPanel rendered="{!isReloadPage}">
+                                    <script language="javascript">
+                                        location.reload();
+                                    </script>
+                                </apex:outputPanel>
+                                <apex:outputPanel id="refreshLocsBtn">
+                                    <apex:CommandButton value="Add Selected..."
+                                                        id="selLocation"
+                                                        rerender="refreshServiceLocationPanel, refreshContractLocs, refreshOnlyLocs, refreshLocsBtn" 
+                                                        status="AddLocationStatus" action="{!hideAddLocations}" rendered="{!isShowAddLocation}"/>
+                                    <apex:CommandButton value="Select All"
+                                                        id="selLocsAll"
+                                                        rerender="refreshServiceLocationPanel, refreshContractLocs, refreshLocsBtn" 
+                                                        status="AddLocationStatus" action="{!selectAllLocations}" rendered="{!isShowAddLocation}"/>
+                                    <apex:CommandButton value="Unselect All"
+                                                        id="unSelLocsAll"
+                                                        rerender="refreshServiceLocationPanel, refreshContractLocs, refreshLocsBtn" 
+                                                        status="AddLocationStatus" action="{!unSelectAllLocations}" rendered="{!isShowAddLocation}"/>                                                        
+                                </apex:outputPanel>
+                                <apex:outputPanel id="searchDialog" rendered="{!isShowAddLocation}" > 
+                                    <apex:pageBlock id="block" >
+                                        <apex:pageBlockButtons id="buttons" location="bottom" rendered="{!isShowListLocs}" >
+                                            <apex:outputPanel rendered="{!IF(searchedServiceLocationResultSize!=0,True,False)}">
+                                                <apex:outputText ><i style="color:#696969;">{!OffsetSize+1}&nbsp;&nbsp;-&nbsp;&nbsp;{!(OffsetSize+searchedServiceLocationResultSize)}&nbsp;&nbsp;of&nbsp;&nbsp;{!CountTotalRecords}</i></apex:outputText>
+                                            </apex:outputPanel>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <apex:commandButton value="First" action="{!First}" rerender="table,block"
+                                                            status="status" disabled="{!DisablePrevious}" />
+                                            <apex:commandButton value="Previous" action="{!Previous}" rerender="table,block"
+                                                            status="status" disabled="{!DisablePrevious}" />
+                                            <apex:commandButton value="Next" action="{!Next}" reRender="table,block"
+                                                            status="status" disabled="{!DisableNext}" />
+                                            <apex:commandButton value="Last" action="{!Last}" rerender="table,block"
+                                                            status="status" disabled="{!DisableNext}" />
+                                            <apex:actionStatus id="status" startText="Paging..."/>
+                        
+                                        </apex:pageBlockButtons>                                    
+                                        <apex:pageblockSection id="SearchLocation" title="Search Location" columns="8">
+                                            <apex:pageblockSectionItem >
+                                                <apex:outputLabel >Alias</apex:outputLabel>
+                                                <apex:inputText value="{!nameFilter}" id="nameFilter"/>
+                                            </apex:pageblockSectionItem>
+                                            <apex:pageblockSectionItem >
+                                                <apex:outputLabel >City</apex:outputLabel>
+                                                <apex:inputText value="{!cityFilter}"/>
+                                            </apex:pageblockSectionItem>
+                                            <apex:pageblockSectionItem >
+                                                <apex:outputLabel >State</apex:outputLabel>
+                                                <apex:inputText value="{!stateFilter}"/>
+                                            </apex:pageblockSectionItem>
+                                            <apex:pageblockSectionItem >
+                                                <apex:commandButton value="Search!" action="{!searchRes}" status="searchStatus" reRender="refreshServiceLocationPanel"/>
+                                                <apex:actionStatus startText="Searching..." id="searchStatus" />
+                                            </apex:pageblockSectionItem>
+                                        </apex:pageblockSection>
+                                    
+                                        <apex:pageblockSection title="Results..." columns="1" id="table">
+                                            <apex:pageblockTable value="{!searchedServiceLocationResults}" var="r">
+                                                <apex:column >
+                                                    <apex:inputCheckbox value="{!r.selected}"/>
+                                                </apex:column>
+                                                <apex:column headerValue="Program">
+                                                    <apex:outputText >{!r.sl.Program__c}</apex:outputText>
+                                                </apex:column>
+                                                <apex:column headerValue="Setting">
+                                                    <apex:outputText >{!r.sl.Setting__c}</apex:outputText>
+                                                </apex:column>
+                                                <apex:column headerValue="Service Value">
+                                                    <apex:outputText >{!r.sl.Service_Value__c}</apex:outputText>
+                                                </apex:column>
+                                                <apex:column headerValue="Phone">
+                                                    <apex:outputText >{!r.sl.Phone__c}</apex:outputText>
+                                                </apex:column>
+                                                <apex:column headerValue="Street">
+                                                    <apex:outputText >{!r.sl.Street__c}</apex:outputText>
+                                                </apex:column>
+                                                <apex:column headerValue="City">
+                                                    <apex:outputText >{!r.sl.City__c}</apex:outputText>
+                                                </apex:column>
+                                                <apex:column headerValue="State">
+                                                    <apex:outputText >{!r.sl.State__c}</apex:outputText>
+                                                </apex:column>
+                                                <apex:column headerValue="Zip">
+                                                    <apex:outputText >{!r.sl.Zip__c}</apex:outputText>
+                                                </apex:column>
+                                            </apex:pageblockTable>                                                                                                
+                                        </apex:pageblockSection>                                    
+                                    </apex:pageBlock>
+                                </apex:outputPanel>
+
+
+                            </apex:pageblockSection>
+                        </apex:facet>
+                    </apex:actionStatus>
+                </apex:outputPanel>                            
+                <apex:PageBlockTable value="{!locations}" var="location" id="refreshContractLocs">
+                    <apex:column headerValue="Action" >
+                            <apex:commandLink value="Delete" action="{!RemoveItem}" reRender="refreshContractLocs" status="st">
+                                <apex:param value="{!location.Service_Location__r.id}" name="p1" assignTo="{!paramSvcLocId}"/>
+                            </apex:commandLink>
+                            <apex:actionstatus id="st">
+                                <apex:facet name="start">
+                                    <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                                </apex:facet>                            
+                            </apex:actionstatus>
+                    </apex:column>                    
+                    <apex:Column Value="{!location.Service_Location__r.Name}"/>
+                    <apex:Column Value="{!location.Service_Location_Service_Value__c}"/>
+                    <apex:column value="{!location.Service_Location__r.Setting__c}"/>
+                    <apex:column value="{!location.Service_Location_Program__c}"/>
+                    <apex:Column headerValue="Address">
+                        <c:AddressDisplay Street1="{!location.Service_Location_Street__c}"
+                                City="{!location.Service_Location_City__c}"
+                                State="{!location.Service_Location_State__c}"
+                                Zip="{!location.Service_Location_Zip__c}"/>
+                    </apex:Column>
+                    <apex:Column Value="{!location.LastModifiedDate}"/>
+                    
+                </apex:PageBlockTable> 
+            </apex:PageblockSection>
             
-            
+            <apex:PageblockSection id="refreshOnlyLocs" columns="1" title="Locations added need to be saved against the contract...">
+                <apex:PageBlockTable value="{!selectedsLocs}" var="selLoc" >
+                    <apex:column headerValue="Action" >
+                            <apex:commandLink value="Delete" action="{!RemoveItem2}" reRender="refreshOnlyLocs" status="st">
+                                <apex:param value="{!selLoc.sl.id}" name="p2" assignTo="{!paramSvcLocId2}"/>
+                            </apex:commandLink>
+                            <apex:actionstatus id="st">
+                                <apex:facet name="start">
+                                    <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                                </apex:facet>                            
+                            </apex:actionstatus>
+                    </apex:column>                    
+                    <apex:Column Value="{!selLoc.sl.Name}"/>
+                    <apex:column value="{!selLoc.sl.Setting__c}"/>
+                    <apex:Column Value="{!selLoc.sl.Service_Value__c}"/>
+                    <apex:column value="{!selLoc.sl.Program__c}"/>
+                    <apex:Column headerValue="Address">
+                        <c:AddressDisplay Street1="{!selLoc.sl.Street__c}"
+                                City="{!selLoc.sl.City__c}"
+                                State="{!selLoc.sl.State__c}"
+                                Zip="{!selLoc.sl.Zip__c}"/>
+                    </apex:Column>
+                    
+                </apex:PageBlockTable> 
+            </apex:PageblockSection>
             
             <apex:pageBlockSection title="Timeframe" columns="2" rendered="{!AND(editMode,!isNeuro)}" >
                 <apex:inputField value="{!CareMeridian_Contract__c.Start_Date__c}" /> 
@@ -586,7 +633,7 @@ function hidedio(dio, dio2){
     <tr>
         <td  class="detailrow">
             <apex:outputLabel styleClass="mydtl" rendered="{!!isNeuro}">Reimbursement Rate</apex:outputLabel>
-            <apex:outputLabel styleClass="mydtl" rendered="{!isNeuro}">Reimbursement Rate - $Fixed</apex:outputLabel>
+            <apex:outputLabel styleClass="mydtl" rendered="{!isNeuro}">Reimbursement Rate - $ Fixed</apex:outputLabel>
         </td>  
         <td class="dets">
             <apex:inputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Level_1__c}"   rendered="{!editMode}" />  
