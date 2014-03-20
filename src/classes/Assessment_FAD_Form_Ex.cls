@@ -11,7 +11,11 @@ public with sharing class Assessment_FAD_Form_Ex {
         assess = new assessment__c ();
         assess = (Assessment__c) controller.getRecord();
         assess.Type__c = 'FAD';
-        mode = 'edit';
+        mode ='view';
+        if(ApexPages.currentPage().getParameters().get('edit') == '1'){
+            mode = 'edit';
+        }
+        
         if(ApexPages.currentPage().getParameters().get('isnew') == '1'){
             assess.accountperson__c = ApexPages.currentPage().getParameters().get('pbs');
             assess.service_assignment__c = ApexPages.currentPage().getParameters().get('sa'); 
