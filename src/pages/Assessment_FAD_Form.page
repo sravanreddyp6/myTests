@@ -31,6 +31,9 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
 
 }
 </style>
+
+
+
 <apex:outputPanel id="everything">
 <apex:pageMessages ></apex:pageMessages>
 <apex:form >
@@ -52,7 +55,9 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
     <apex:pageBlockSection rendered="{!mode='edit'}" >
         <apex:inputField label="Date of Admistration"  value="{!Assessment__c.Assessment_Date__c}"/>
         <apex:outputField value="{!Assessment__c.AccountPerson__c}"/>
-        <apex:inputField value="{!Assessment__c.Phase__c}"/>
+        <apex:inputField value="{!Assessment__c.Phase__c}">
+            <apex:actionSupport reRender="previous_CG" event="onchange" status="myStatus"/>
+        </apex:inputField>
         <apex:outputField value="{!Assessment__c.Service_Assignment__c}"/>
         <apex:outputField value="{!Assessment__c.Status__c}"/>
         <apex:outputField value="{!Assessment__c.Disregard__c}"/>
@@ -72,8 +77,12 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
     <apex:pageBlockSection columns="1" title="Person Being Served" collapsible="false" rendered="{!mode='edit'}">
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['PBS_Could_Not_complete'].Question_Title__c}</apex:outputPanel>            
-            <apex:outputPanel >
-                <apex:inputCheckbox value="{!mapRes['PBS_Could_Not_complete'].Yes_No__c}"/>    
+            <apex:outputPanel layout="block" >
+                <apex:inputCheckbox value="{!mapRes['PBS_Could_Not_complete'].Yes_No__c}" onclick="toggleOptions(this, 'PBS_CNC2');"/>  
+                &nbsp;
+                <span id="PBS_CNC2" style="{!if(mapRes['PBS_Could_Not_complete'].Yes_No__c,'','display:none;')}">
+                    Reason:&nbsp;<apex:inputField id="PBS_CNC" value="{!mapRes['PBS_Could_Not_complete_reason'].Rating__c}"/>
+                </span>
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>    
         <apex:pageBlockSectionItem >
@@ -131,7 +140,8 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['PBS_Could_Not_complete'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:outputField value="{!mapRes['PBS_Could_Not_complete'].Yes_No__c}" />    
+                <apex:outputField value="{!mapRes['PBS_Could_Not_complete'].Yes_No__c}" /> 
+                <apex:outputField value="{!mapRes['PBS_Could_Not_complete_reason'].Rating__c}"/>   
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>    
         <apex:pageBlockSectionItem >
@@ -190,9 +200,22 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['CG_Could_Not_complete'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:inputCheckbox value="{!mapRes['CG_Could_Not_complete'].Yes_No__c}"/>    
+                <apex:inputCheckbox value="{!mapRes['CG_Could_Not_complete'].Yes_No__c}"  onclick="toggleOptions(this, 'CG_CNC2');"/>
+                <span id="CG_CNC2" style="{!if(mapRes['CG_Could_Not_complete'].Yes_No__c,'','display:none;')}">
+                    Reason:&nbsp;<apex:inputField value="{!mapRes['CG_Could_Not_complete_reason'].Rating__c}"/>
+                </span>                     
             </apex:outputPanel>        
-        </apex:pageBlockSectionItem>     
+        </apex:pageBlockSectionItem>   
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['CG_is_same_as_other_assessment'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel id="previous_CG"> 
+                <apex:selectRadio value="{!mapRes['CG_is_same_as_other_assessment'].Rating__c}" 
+                                    disabled="{!Assessment__c.Phase__c !='Initial'}">
+                    <apex:selectOption itemLabel="Yes" itemValue="Yes"></apex:selectOption>
+                    <apex:selectOption itemLabel="No" itemValue="No"></apex:selectOption>
+                </apex:selectRadio>
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem>          
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['CG_Problem_Solving'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
@@ -248,9 +271,16 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['CG_Could_Not_complete'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:outputField value="{!mapRes['CG_Could_Not_complete'].Yes_No__c}" />    
+                <apex:outputField value="{!mapRes['CG_Could_Not_complete'].Yes_No__c}" />
+                <apex:outputField value="{!mapRes['CG_Could_Not_complete_reason'].Rating__c}"/>    
             </apex:outputPanel>        
-        </apex:pageBlockSectionItem>     
+        </apex:pageBlockSectionItem> 
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['CG_is_same_as_other_assessment'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel id="previous_CG"> 
+                <apex:outputField value="{!mapRes['CG_is_same_as_other_assessment'].Rating__c}" />
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem>             
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['CG_Problem_Solving'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
@@ -319,4 +349,26 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
 </apex:actionStatus>
 
 </apex:outputPanel>
+
+<script>
+function scrollWindow()
+  {
+  window.scrollTo(0,0)
+  }
+
+jQuery.noConflict();
+var j$ = jQuery.noConflict();
+function toggleOptions( rb, divopt ) {
+    if ( j$(rb).prop('checked')  )
+       // j$('input[id$=PBS_CNC]').val() ='test';
+        document.getElementById(divopt).style.display = 'inline';
+      //j$( "[id$='PBS_CNC']" ).val('Foo');
+    else
+        document.getElementById( divopt).style.display = 'none';
+};
+function toggleById(id, ms){
+    j$(document.getElementById(id)).toggle(ms);
+};
+</script>
+
 </apex:page>
