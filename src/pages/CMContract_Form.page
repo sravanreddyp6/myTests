@@ -410,7 +410,7 @@ function hidedio(dio, dio2){
                 </apex:PageBlockTable> 
             </apex:PageblockSection>
             
-            <apex:PageblockSection id="refreshOnlyLocs" columns="1" title="Locations added need to be saved against the contract...">
+            <apex:PageblockSection id="refreshOnlyLocs" columns="1" title="Locations added need to be saved against the contract..." rendered="{!AND(isNeuro,editMode)}">
                 <apex:PageBlockTable value="{!selectedsLocs}" var="selLoc" >
                     <apex:column headerValue="Action" >
                             <apex:commandLink value="Delete" action="{!RemoveItem2}" reRender="refreshOnlyLocs" status="st">

@@ -285,6 +285,7 @@ public class CMContract_Form {
     public Boolean isNeuro{get ; set;}
     public Boolean isCM{get ; set;}   
     public CareMeridian_Contract__c rectype {get; set;}
+    public CareMeridian_Contract__c oldrectype {get; set;}
     public string tin {get; set;}
     public string npi{get; set;}
     public string tinnpi{get; set;}
@@ -325,7 +326,7 @@ public class CMContract_Form {
             mycontract.ownerid = UserInfo.getUserId();
               
          
-            if(ApexPages.currentPage().getParameters().get('RecordType') == null){
+            if(ApexPages.currentPage().getParameters().get('RecordType') == null && (oldId== null || oldId== '')){
                 
                 Schema.DescribeSObjectResult describecontract = Schema.SObjectType.CareMeridian_Contract__c;
                 List<Schema.RecordTypeInfo> rtInfos = describecontract.getRecordTypeInfos();
@@ -407,7 +408,15 @@ public class CMContract_Form {
                         //cmRL.add( tmp) ;   
                         i++;
                     
-                    }        
+                    }
+                    
+                    if(ApexPages.currentPage().getParameters().get('RecordType') == null){
+					oldrectype = rectype = [SELECT ID, RecordTypeID, RecordType.DeveloperName FROM CareMeridian_Contract__c WHERE id=:oldId];
+						if (rectype.RecordType.DeveloperName =='NeuroRestorative_Contracts')
+						isNeuro=True;
+						if (rectype.RecordType.DeveloperName =='CareMeridian_Contracts')
+						isNeuro=False;
+				}        
         
         }
         
@@ -502,7 +511,7 @@ public class CMContract_Form {
             }
             upsert cmRL;
             
-            if(editMode){
+            if(editMode && isNeuro){
               Contract_ServiceLocation_JO__c location;
               list<Contract_ServiceLocation_JO__c> locs=new list<Contract_ServiceLocation_JO__c>();
               for(cSearchedServiceLocationResults cCon : selectedsLocs) {

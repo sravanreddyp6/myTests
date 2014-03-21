@@ -161,7 +161,23 @@ h3{
                     </apex:outputPanel>
                 </Apex:pageBlockSectionItem>
                 
-                <apex:outputField value="{!CareMeridian_Contract__c.Service_Line__c}"/>  
+                <apex:outputField value="{!CareMeridian_Contract__c.Service_Line__c}"/>
+                
+                <apex:PageBlockTable Value="{!locations}" var="location" rendered="{!isNeuro}">
+                <apex:Column Value="{!location.Service_Location__r.Name}"/>
+                    <apex:Column Value="{!location.Service_Location_Service_Value__c}"/>
+                    <apex:column value="{!location.Service_Location__r.Setting__c}"/>
+                    <apex:column value="{!location.Service_Location_Program__c}"/>
+                    <apex:Column headerValue="Address">
+                        <c:AddressDisplay Street1="{!location.Service_Location_Street__c}"
+                                City="{!location.Service_Location_City__c}"
+                                State="{!location.Service_Location_State__c}"
+                                Zip="{!location.Service_Location_Zip__c}"/>
+                    </apex:Column>
+                    <apex:Column Value="{!location.LastModifiedDate}"/>
+                    
+                </apex:PageBlockTable> 
+                 
             </apex:pageBlockSection>            
             
             <apex:pageBlockSection title="Timeframe" columns="1"   >
