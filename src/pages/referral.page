@@ -1357,7 +1357,7 @@ document.onkeypress = stopRKey;
        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}"/>
      </apex:pageBlockSection>
     <apex:actionRegion >
-     <apex:pageBlockSection title="Placement Risk" rendered="{!referralRecordType=='Cambridge Florida' || referralRecordType=='Cambridge Maryland'}">
+     <apex:pageBlockSection title="Placement Risk" id="placementRiskBlock" rendered="{!referralRecordType=='Cambridge Florida' || referralRecordType=='Cambridge Maryland'}">
          <apex:inputField label="Is the person at risk of an out of home placement?" value="{!Referral__c.Risk_of_Out_of_Home_Placement__c}">
              <apex:actionStatus id="statusPlaceRisk">
                  <apex:facet name="start">
@@ -1367,8 +1367,9 @@ document.onkeypress = stopRKey;
                  </apex:facet>
                  <apex:facet name="stop"></apex:facet>
              </apex:actionStatus>
-             <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusPlaceRisk" />
+             <apex:actionSupport event="onchange" rerender="placementRiskBlock" status="statusPlaceRisk" />
          </apex:inputField>
+         
          <apex:inputField label="How great is the risk?" value="{!Referral__c.Risk_Level__c}" html-disabled="true" rendered="{!Referral__c.Risk_of_Out_of_Home_Placement__c!='Yes'}" />
          <apex:inputField label="How great is the risk?" value="{!Referral__c.Risk_Level__c}" rendered="{!Referral__c.Risk_of_Out_of_Home_Placement__c=='Yes'}" />
          <apex:inputField label="Select the type of placement that would be most likely to occur, should an out of home placement be required:" value="{!Referral__c.Placement_Type_Risk__c}" html-disabled="true" rendered="{!Referral__c.Risk_of_Out_of_Home_Placement__c!='Yes'}" />
@@ -1381,7 +1382,7 @@ document.onkeypress = stopRKey;
                  </apex:facet>
                  <apex:facet name="stop"></apex:facet>
              </apex:actionStatus>
-             <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusPlaceTypeRisk" />
+             <apex:actionSupport event="onchange" rerender="placementRiskBlock" status="statusPlaceTypeRisk" />
          </apex:inputField>
          <apex:inputField label="Other (specify)" value="{!Referral__c.Other_Placement_Type_Desc__c}" html-disabled="true" rendered="{!Referral__c.Placement_Type_Risk__c!='Other (specify)'}" />
          <apex:inputField label="Other (specify)" value="{!Referral__c.Other_Placement_Type_Desc__c}" rendered="{!Referral__c.Placement_Type_Risk__c=='Other (specify)'}" />
