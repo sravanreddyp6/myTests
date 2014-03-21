@@ -411,10 +411,10 @@ public class CMContract_Form {
                     }
                     
                     if(ApexPages.currentPage().getParameters().get('RecordType') == null){
-					oldrectype = rectype = [SELECT ID, RecordTypeID, RecordType.DeveloperName FROM CareMeridian_Contract__c WHERE id=:oldId];
-						if (rectype.RecordType.DeveloperName =='NeuroRestorative_Contracts')
+					oldrectype = [SELECT ID, RecordTypeID, RecordType.DeveloperName FROM CareMeridian_Contract__c WHERE id=:oldId];
+						if (oldrectype.RecordType.DeveloperName =='NeuroRestorative_Contracts')
 						isNeuro=True;
-						if (rectype.RecordType.DeveloperName =='CareMeridian_Contracts')
+						if (oldrectype.RecordType.DeveloperName =='CareMeridian_Contracts')
 						isNeuro=False;
 				}        
         
