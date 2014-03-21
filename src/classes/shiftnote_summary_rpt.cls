@@ -127,8 +127,12 @@ public with sharing class shiftnote_summary_rpt {
         }
         */                           
         for(ProgressNote_ActionPlanChildren_mjo__c item: note_plan_joins ){
+        	
             string tmp = string.valueof(item.Progress_note__c) + string.valueof(item.Objective__r.Action_Plan_Goal__c);
-            Note_Objs.get(tmp ).add(item);           
+            
+            // RBO-277 - an objective associated without its parent goal can cause an issue here.  Check for existence first.
+            if ( Note_objs.containskey(tmp) )
+            	Note_Objs.get(tmp ).add(item);           
         }           
          
                                    
