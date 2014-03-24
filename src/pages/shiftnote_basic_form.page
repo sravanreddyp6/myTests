@@ -313,10 +313,14 @@ function highlightButtons ( btype, sfid, on )
             <apex:pageBlockSection title="System Information" collapsible="false">
                 <apex:outputField value="{!pn.createdbyid}"/>
                 <apex:outputField value="{!pn.lastmodifiedbyid}"/>
+                <apex:outputField value=" {!pn.CreatedDate}" />
+                <apex:outputField value=" {!pn.LastModifiedDate}" />
                 <apex:outputField value="{!pn.No_Approval_Needed__c}"/>
                 <apex:outputField value="{!pn.Locked__c}" rendered="{! !editMode}"/>
                 <apex:outputField value="{!pn.Locked__c}" rendered="{!editMode}"/>
                 <apex:outputField value="{!pn.Approval_Status__c}"/>
+                <apex:outputField value=" {!pn.Approval_Status_Date__c}" />
+ 
             
             </apex:pageBlockSection>
             
