@@ -1,0 +1,68 @@
+<!-- Prospect Web Form -->
+<apex:page showHeader="false" sidebar="false" controller="ProspectInsert" >
+
+<style type="text/css">
+        .dropDown
+        {
+            width:250px;
+        }
+        .txtArea {
+            width: 380px;
+            height: 75px;
+        }
+</style>
+
+    <apex:form forceSSL="TRUE">
+
+ <apex:panelGrid columns="1" rendered="{!success}">
+            <apex:outputPanel >
+                <div>
+                    Thank you for your interest in becoming a Mentor!  <br/>
+                    We’re excited to speak with you and tell you how you can make a difference and earn extra income supporting an individual with intellectual and developmental disabilities or a child in need in your home.  
+                    You’ll receive an email from us shortly with more information and then one of our staff members will be in touch to answer questions and tell you more about this exciting opportunity.  
+                    <br/>
+                    Thank you!
+                </div>                           
+            </apex:outputPanel>
+        </apex:panelGrid>
+
+<apex:outputPanel layout="block" styleClass="myBG">
+     
+        
+        <apex:pageBlock mode="maindetail"  rendered="{!Not(success)}">
+                <apex:pageMessages /> 
+                
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Submit"  action="{!Submit}" />
+            </apex:pageBlockButtons>
+            
+            
+            
+            <apex:PageBlockSection showHeader="false" columns="2">            
+                    <apex:inputField required="true" taborderhint="1" label="First" value="{!myProspect.First_Name__c}"/>         
+                    <apex:inputField required="true" taborderhint="5" value="{!myProspect.State__c}" > </apex:inputField>
+                    <apex:inputField required="true" taborderhint="2" label="Last" value="{!myProspect.Name}"/>
+                    <apex:inputField required="true" taborderhint="6" value="{!myProspect.Zip__c}"/>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="1">                    
+                    <apex:inputField required="true" taborderhint="3" value="{!myProspect.Email__c}"/>
+                    <apex:inputField required="true" taborderhint="4" label="Phone" value="{!myProspect.Primary_Phone__c}"/>            
+            </apex:pageBlockSection>
+                
+            <apex:pageBlockSection showHeader="false" columns="1">
+                            <apex:inputField required="true" styleClass="dropDown" value="{!myProspect.How_did_you_hear_about_us__c}"/>               
+                            <apex:inputField required="true" styleClass="dropDown" value="{!myProspect.Im_intersted_in_supporting__c}"/>
+                            <apex:inputField styleClass="txtArea" value="{!myProspect.Prospect_Comments__c}"/>                                
+                                <apex:pageBlockSectionItem >
+                                    <apex:inputField label=" " value="{!myProspect.Do_NOT_Email__c}"/>
+                                From time to time, we may send information regarding our organization and opportunities to become a Mentor. 
+                                    Please check here if you do not wish to receive future communications. 
+
+                                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+        </apex:pageBlock>
+</apex:outputPanel>   
+    </apex:form>
+</apex:page>
