@@ -162,23 +162,31 @@ h3{
                 </Apex:pageBlockSectionItem>
                 
                 <apex:outputField value="{!CareMeridian_Contract__c.Service_Line__c}"/>
-                
-                <apex:PageBlockTable Value="{!locations}" var="location" rendered="{!isNeuro}">
-                <apex:Column Value="{!location.Service_Location__r.Name}"/>
-                    <apex:Column Value="{!location.Service_Location_Service_Value__c}"/>
-                    <apex:column value="{!location.Service_Location__r.Setting__c}"/>
-                    <apex:column value="{!location.Service_Location_Program__c}"/>
-                    <apex:Column headerValue="Address">
-                        <c:AddressDisplay Street1="{!location.Service_Location_Street__c}"
-                                City="{!location.Service_Location_City__c}"
-                                State="{!location.Service_Location_State__c}"
-                                Zip="{!location.Service_Location_Zip__c}"/>
-                    </apex:Column>
-                    <apex:Column Value="{!location.LastModifiedDate}"/>
-                    
-                </apex:PageBlockTable> 
                  
-            </apex:pageBlockSection>            
+ 		<table border="1" style="width: 100%;" >
+			<tr>
+				<th>Alias</th>
+				<th>Service Value</th>
+				<th>Setting</th>
+				<th>Program</th>
+				<th>Address</th>
+				<th>LastModifiedDate</th>	
+			</tr>
+	
+		<apex:repeat var="location" value="{!locations}">
+	
+			<tr>
+				<td>{!location.Service_Location__r.Name} </td>
+				<td>{!location.Service_Location_Service_Value__c} </td>
+				<td>{!location.Service_Location__r.Setting__c} </td>
+				<td>{!location.Service_Location_Program__c} </td>
+				<td></td>
+				<td>{!location.LastModifiedDate}</td>	
+			</tr>
+	
+		</apex:repeat>
+		</table>      
+       </apex:pageBlockSection>            
             
             <apex:pageBlockSection title="Timeframe" columns="1"   >
                 <apex:outputField value="{!CareMeridian_Contract__c.Start_Date__c}" />  

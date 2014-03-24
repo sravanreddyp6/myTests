@@ -83,11 +83,11 @@ public class CMContract_Form {
                       location.Service_Location__c=cCon.sl.id;
                       locs.add(location);
                   }
-                  system.debug('selectedsLocs--->'+selectedsLocs);
               }
+              system.debug('selectedsLocs--->'+selectedsLocs);
               system.debug('locs--->'+locs);
               insert locs;
-              locations=locs;
+              //locations=locs;
           }
           else{
               system.debug('searchedServiceLocationResults--->'+searchedServiceLocationResults);
@@ -175,16 +175,6 @@ public class CMContract_Form {
         OffsetSize -= QueryLimit;
         //return null;
     }
-
-  public String OperatingGroup{
-      get{
-          if(operatinggroup!=null && operatinggroup!='' && operatingGroup.equalsIgnoreCase('Care Meridian')){
-              operatinggroup = 'CareMeridian';
-          }
-          return operatinggroup;
-      }
-      set;
-  }
 
     public void searchRes(){
         isSearchClicked=true;
@@ -411,12 +401,12 @@ public class CMContract_Form {
                     }
                     
                     if(ApexPages.currentPage().getParameters().get('RecordType') == null){
-					oldrectype = [SELECT ID, RecordTypeID, RecordType.DeveloperName FROM CareMeridian_Contract__c WHERE id=:oldId];
-						if (oldrectype.RecordType.DeveloperName =='NeuroRestorative_Contracts')
-						isNeuro=True;
-						if (oldrectype.RecordType.DeveloperName =='CareMeridian_Contracts')
-						isNeuro=False;
-				}        
+                    oldrectype = [SELECT ID, RecordTypeID, RecordType.DeveloperName FROM CareMeridian_Contract__c WHERE id=:oldId];
+                        if (oldrectype.RecordType.DeveloperName =='NeuroRestorative_Contracts')
+                        isNeuro=True;
+                        if (oldrectype.RecordType.DeveloperName =='CareMeridian_Contracts')
+                        isNeuro=False;
+                }        
         
         }
         
@@ -511,19 +501,44 @@ public class CMContract_Form {
             }
             upsert cmRL;
             
+            
             if(editMode && isNeuro){
               Contract_ServiceLocation_JO__c location;
-              list<Contract_ServiceLocation_JO__c> locs=new list<Contract_ServiceLocation_JO__c>();
+              list<Contract_ServiceLocation_JO__c> xlocs=new list<Contract_ServiceLocation_JO__c>();
+              system.debug('xselectedsLocs--->'+selectedsLocs);
+              //de-duplicate records
+              set<id> idSL=new set<id>();
               for(cSearchedServiceLocationResults cCon : selectedsLocs) {
-                  location=new Contract_ServiceLocation_JO__c();
-                  location.Contract__c=myContract.id;
-                  location.Service_Location__c=cCon.sl.id;
-                  locs.add(location);
+                  idSL.add(cCon.sl.id);
               }
-              system.debug('locs--->'+locs);
-              insert locs;
-              locations=locs;
+              system.debug('idSL--->'+idSL);
+              map<id,Contract_ServiceLocation_JO__c> mapCSLJO=new map<id,Contract_ServiceLocation_JO__c>();
+              list<Contract_ServiceLocation_JO__c> lstCSLJO=[select id, Service_Location__c from Contract_ServiceLocation_JO__c 
+                                                                          where Contract__c=:myContract.id
+                                                                          and Service_Location__c in:idSL];
+              system.debug('lstCSLJO--->'+lstCSLJO);
+              for(Contract_ServiceLocation_JO__c csljo: lstCSLJO){
+                  mapCSLJO.put(csljo.Service_Location__c, csljo);
+              } 
+              system.debug('mapCSLJO--->'+mapCSLJO);                                                          
+              for(cSearchedServiceLocationResults cCon : selectedsLocs) {
+                  system.debug('cCon.sl.id--->'+cCon.sl.id); 
+                  if(!mapCSLJO.containskey(cCon.sl.id)){
+                      location=new Contract_ServiceLocation_JO__c();
+                      location.Contract__c=myContract.id;
+                      location.Service_Location__c=cCon.sl.id;
+                      xlocs.add(location);
+                  }
+              }
+              
+              system.debug('xlocs--->'+xlocs);
+              system.debug('locations--->'+locations);
+              if (!xlocs.IsEmpty() && xlocs.size()>0)
+                  insert xlocs;
+              
             }
+            
+            
             
             ApexPages.StandardController ctr = new ApexPages.StandardController(this.mycontract);
         
@@ -538,6 +553,48 @@ public class CMContract_Form {
        return null;
     
  }
+ 
+ 
+    public PageReference cancel() {
+        try{
+            if(this.mycontract.id!=null){
+              system.debug('this.mycontract--->'+this.mycontract);
+              Contract_ServiceLocation_JO__c location;
+              
+              set<id> idSL=new set<id>();
+              if(selectedsLocs!=null){
+                  for(cSearchedServiceLocationResults cCon : selectedsLocs) {
+                      idSL.add(cCon.sl.id);
+                  }
+                  system.debug('idSL--->'+idSL);
+                  system.debug('ID param--->'+ApexPages.CurrentPage().getparameters().get('id'));
+                  list<Contract_ServiceLocation_JO__c> lstCSLJO=[select id, Service_Location__c, Contract__c from Contract_ServiceLocation_JO__c 
+                                                                              where Contract__c=:ApexPages.CurrentPage().getparameters().get('id')
+                                                                              and Service_Location__c in:idSL];
+                  system.debug('lstCSLJO--->'+lstCSLJO);
+                  if (!lstCSLJO.IsEmpty() && lstCSLJO.size()>0)
+                      delete lstCSLJO;
+                  //removal records
+                  if (!selectedsLocs.IsEmpty() && selectedsLocs.size()>0)
+                      selectedsLocs.clear();
+                }
+              ApexPages.StandardController ctr = new ApexPages.StandardController(this.mycontract);
+        
+              return ctr.view();              
+            }
+            PageReference pr = new PageReference('/a0z/o');
+            return pr;
+                         
+        
+        }
+        catch(Exception e) {
+            ApexPages.addMessages(e);
+            System.debug('The following exception has occurred: ' + e.getMessage());
+    
+    }    
+       return null;
+    
+ } 
  
  public PageReference addtinnpi() {
     if(editMode && myContract.TIN_NPI__c==null){
