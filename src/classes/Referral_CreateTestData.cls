@@ -28,10 +28,10 @@ public static Id getAccountRecordType(){
         List<Account> testAcct = [Select Id, PersonContactId, RecordTypeID From Account a WHERE a.Id = :Accnt.Id];
         return testAcct[0];
   }
-    public static Person_Being_Referred__c createPersonBeingReferred(double age, Date dob) {
+    public static Person_Being_Referred__c createPersonBeingReferred(String FirstName, String LastName, double age, Date dob) {
         Person_Being_Referred__c pbr = new Person_Being_Referred__c();
-        pbr.First_Name__c = 'Doug';
-        pbr.Last_Name__c = 'Surfleet';
+        pbr.First_Name__c = FirstName;
+        pbr.Last_Name__c = LastName;
         if (age != null && age > 0) {
             pbr.Age__c = age;
         }
@@ -39,8 +39,9 @@ public static Id getAccountRecordType(){
             pbr.Date_of_Birth__c = dob;
         }
         pbr.Gender__c = 'Male';
+        pbr.State__c = 'MA';
         insert pbr;
-        Person_Being_Referred__c testPBR = [Select Id, First_Name__c, Last_Name__c, Age__c, Date_of_Birth__c From Person_Being_Referred__c a WHERE a.Id = :pbr.Id];
+        Person_Being_Referred__c testPBR = [Select Id,Name,Full_Name__c,State__c,First_Name__c, Last_Name__c, Age__c, Date_of_Birth__c From Person_Being_Referred__c a WHERE a.Id = :pbr.Id];
         return testPBR;
     }
     
