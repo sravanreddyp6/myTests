@@ -1203,10 +1203,8 @@ function stopRKey(evt) {
          <apex:pageBlockSectionItem >
              <hr />
          </apex:pageBlockSectionItem>
-         <apex:pageBlockSectionItem >
-             <apex:outputText value="Juvenile Services Info" style="font-weight:bold;" />
-         </apex:pageBlockSectionItem>
-         <apex:pageBlockSectionItem />
+         </apex:pageBlockSection>
+         <apex:pageBlockSection title="Juvenile Services Info" rendered="{!referralRecordType=='Cambridge Florida' || referralRecordType=='Cambridge Maryland'}">
          <apex:outputField value="{!Referral__c.Previous_Juvenile_Services_Involvement__c}" />
          <apex:pageBlockSectionItem />
          <apex:outputField value="{!Referral__c.Current_Juvenile_Services_Involvement__c}" />
