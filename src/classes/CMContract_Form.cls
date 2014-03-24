@@ -502,7 +502,7 @@ public class CMContract_Form {
             upsert cmRL;
             
             
-            if(editMode && isNeuro){
+            if(isNeuro && selectedsLocs!=null){
               Contract_ServiceLocation_JO__c location;
               list<Contract_ServiceLocation_JO__c> xlocs=new list<Contract_ServiceLocation_JO__c>();
               system.debug('xselectedsLocs--->'+selectedsLocs);
