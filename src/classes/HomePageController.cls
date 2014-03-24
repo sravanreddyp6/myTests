@@ -1,4 +1,4 @@
-public with sharing class HomePageController {
+public with sharing class HomePageController{
     public final String OperatingGroup = [select operating_group__c from user where id=:UserInfo.getUserId() limit 1].operating_group__c;
     public static Map<String,Schema.SObjectType> gSchema;   
     public Map<String,String> sObjNamesMap{get;set;}
@@ -7,7 +7,9 @@ public with sharing class HomePageController {
     public String viewstsk{get;set;}
     public String FrstName{get;set;}
     public String LstName{get;set;}
-    
+    public boolean displayPop{get;set;}
+     public String objectName{get;set;}
+     
    private static Set<String> sObjNamesSet; 
       //declaration of variables
       public List<Report> refrportlst{get;set;}
@@ -15,6 +17,7 @@ public with sharing class HomePageController {
       public List<Report> contractrportlst{get;set;}
       public List<Report> docrportlst{get;set;}
       public List<Task> populateTasks{get;set;}
+      public List<VF_Reports__c> VFReportlst{get;set;}
   
       public boolean RefCreate{get;set;}
       public boolean RefView{get;set;}
@@ -26,7 +29,8 @@ public with sharing class HomePageController {
       public boolean ContractView{get;set;}
       public boolean DocCreate{get;set;}
       public boolean DocView{get;set;}
-    
+      public boolean Refresh=false;
+      
       public String RefId;
       public String RedCntrctId;
       public String ESDbillingId;
@@ -47,6 +51,7 @@ public with sharing class HomePageController {
     }
     //Wrapper class for Approvals
     public List<wrapper> getListApprovals(){
+        if(Refresh==false){
         gSchema = Schema.getGlobalDescribe();   
         sObjNamesMap = new Map<String,String>{};
         sObjNamesSet = gSchema.keyset();
@@ -59,12 +64,18 @@ public with sharing class HomePageController {
                  system.debug('**************'+sObjNamesSet);
                  system.debug('**************'+sObjNamesMap);
         }
+        
         for(ProcessInstanceWorkitem app:[select Id,ProcessInstanceId,CreatedDate,ActorId,CreatedById,CreatedBy.Name,ProcessInstance.LastModifiedBy.Name,ProcessInstance.TargetObject.Name,ProcessInstance.LastModifiedById,ProcessInstance.TargetObjectId from ProcessInstanceWorkitem where ActorId=:UserInfo.getUserId() order by CreatedDate desc]){
                 String sub = app.ProcessInstance.TargetObjectId;
                 String IdType = sub.substring(0,3);
                 String Type = sObjNamesMap.get(IdType);
+                
                 AppWrapper.add(new wrapper(app.Id,app.ProcessInstance.TargetObjectId,app.ProcessInstance.LastModifiedById,app.ProcessInstance.LastModifiedBy.Name,app.CreatedDate,app.ProcessInstance.TargetObject.Name,Type));
                 
+        }
+        
+        
+        Refresh = true;
         }
         return AppWrapper;
     }
@@ -291,7 +302,9 @@ public with sharing class HomePageController {
   }
    
    public List<Report> reports() {
-   
+   	      String ESDAct,ref,Care,ESDbill,ESDsup,Red;
+          VF_Reports__c vf = VF_Reports__c.getInstance();
+          VFReportlst = [SELECT Name,Id,Description__c,link__c from VF_Reports__c];
           for(Folder tmp:[SELECT AccessType,Id,IsReadonly,Name,DeveloperName,Type FROM Folder WHERE Type = 'Report']){
       
               if(tmp.DeveloperName=='Referrals'){
@@ -302,6 +315,7 @@ public with sharing class HomePageController {
                  
                 }else if(tmp.DeveloperName=='ESD_Activity'){
                     ESDActivityId = tmp.Id;
+                    ESDAct = 'ESDAct';
                  }
                  else if(tmp.DeveloperName=='ESD_Billing'){
                     ESDbillingId = tmp.Id;
@@ -314,27 +328,35 @@ public with sharing class HomePageController {
                  }         
             }
             
-            refrportlst = report(RefId);
-            contractrportlst = report(RedCntrctId);
-            docrportlst = report(ESDActivityId);
+            refrportlst = report(RefId,ref);
+            contractrportlst = report(RedCntrctId,Red);
+            docrportlst = report(ESDActivityId,ESDAct);
             
-            for(Report rpt:report(CareCntrctId)){
+            for(Report rpt:report(CareCntrctId,Care)){
                 contractrportlst.add(rpt);
             }
             
-            PBSrportlst = report(ESDActivityId);
-             for(Report rpt1:report(ESDbillingId)){
+            PBSrportlst = report(ESDActivityId,ESDAct);
+             for(Report rpt1:report(ESDbillingId,ESDbill)){
                 PBSrportlst.add(rpt1);
             }
             
-             for(Report rpt2:report(ESDSupyId)){
+             for(Report rpt2:report(ESDSupyId,ESDsup)){
                 PBSrportlst.add(rpt2);
             }
            
             return null;
  }
- public List<Report> report(Id ownId){
-    List<Report> tempreport = [SELECT Name, Id,OwnerId, description, DeveloperName, SystemModstamp FROM report where OwnerId=:ownId order by name];
+ public List<Report> report(Id ownId,String ReportText){
+ 	String query = 'SELECT Name, Id,OwnerId, description, DeveloperName, SystemModstamp FROM report where OwnerId=:ownId';
+ 	if(ReportText!=null && ReportText=='ESDAct'){
+ 		query+=' and description like \'%#notes%\' order by name'; 
+ 	}else{
+ 		query+= ' order by name';
+ 	}
+ 	
+ 	List<Report> tempreport = database.query(query);
+ 	// List<Report> tempreport = [SELECT Name, Id,OwnerId, description, DeveloperName, SystemModstamp FROM report where OwnerId=:ownId order by name];
     return tempreport;
  }
   
@@ -403,19 +425,28 @@ public with sharing class HomePageController {
                    
   }
   public PageReference getsearchNames(){
-    
+    system.debug('************search names');
     try {
-           if(FrstName!=null || LstName!=null){
-           	 
-           	  
-              PageReference newocp= new PageReference('/apex/HomePage_Search?FirstNM='+FrstName+'&&LastNM='+LstName);
+          if(((FrstName!=null && String.isNotBlank(FrstName)) || (LstName!=null && String.isNotBlank(LstName))) || ((FrstName!=null && String.isNotBlank(FrstName)) && (LstName!=null && String.isNotBlank(LstName)))){
+          // if(FrstName!=null || LstName!= null){
+           	system.debug('coming here');
+           	 displayPop = false;
+           	  PageReference newocp= new PageReference('/apex/HomePage_Search?FirstNM='+FrstName+'&&LastNM='+LstName);
               newocp.setRedirect(true);
               return newocp;
-           }      
+           //}
+          }else{
+          	displayPop = true;
+          	return null;
+          }
+                
     } catch (DMLException e) {
-      ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Error opening the Search Results.'));
-      return null;
+    	
+		      ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Error opening the Search Results.'));
+		      return null;
+    
     }
+      
     return null;
   }
  
