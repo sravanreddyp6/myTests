@@ -1532,7 +1532,7 @@ document.onkeypress = stopRKey;
          </apex:pageBlockSectionItem>
          <apex:pageblockSectionItem />
          </apex:pageBlockSection>
-		<apex:pageBlockSection id="HxBlock">
+		<apex:pageBlockSection id="HxBlock" rendered="{!referralRecordType=='Cambridge Florida' || referralRecordType=='Cambridge Maryland'}">
           
          <apex:inputField label="Current Charges" value="{!Referral__c.Current_Charges__c}" html-disabled="true" rendered="{!Referral__c.Current_Juvenile_Services_Involvement__c!='Yes' }" style="width:95%;" />
          <apex:inputField label="Current Charges" value="{!Referral__c.Current_Charges__c}" rendered="{!Referral__c.Current_Juvenile_Services_Involvement__c=='Yes' }" style="width:95%;" required="{!Referral__c.Current_Juvenile_Services_Involvement__c == 'Yes'}"/>
@@ -1576,7 +1576,7 @@ document.onkeypress = stopRKey;
          </apex:pageBlockSectionItem>
          
 </apex:pageBlockSection>
-<apex:pageBlockSection id="moreHxBlock">
+<apex:pageBlockSection id="moreHxBlock" rendered="{!referralRecordType=='Cambridge Florida' || referralRecordType=='Cambridge Maryland'}">
 
 
          <apex:inputField label="Is this client considered pre-court with charges pending?" value="{!Referral__c.Pre_Court__c}" html-disabled="true" rendered="{! Referral__c.Current_Juvenile_Services_Involvement__c!='Yes' || (Referral__c.Felony__c!='Yes' && Referral__c.Misdemeanor__c!='Yes')}"/>
