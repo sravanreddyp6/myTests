@@ -891,18 +891,24 @@ public class ServiceAssignmentExt {
 
     public void saveServiceCodeSelections() {
 
-        List<ServiceAssignment_ServiceCode_JO__c> alreadySavedCodeXrefs = [ SELECT Service_Code__c FROM ServiceAssignment_ServiceCode_JO__c WHERE Service_Assignment__r.Id = :currentId ];
+        List<ServiceAssignment_ServiceCode_JO__c> alreadySavedCodeXrefs = [ SELECT Service_Code__c FROM ServiceAssignment_ServiceCode_JO__c WHERE Service_Assignment__c = :currentId ];
         List<ServiceAssignment_ServiceCode_JO__c> servCodeXrefsToSave = new List<ServiceAssignment_ServiceCode_JO__c>();
         List<ServiceAssignment_ServiceCode_JO__c> servCodeXrefsToDelete = new List<ServiceAssignment_ServiceCode_JO__c>();
-
+		System.Debug( alreadySavedCodeXrefs);
+		
+		Boolean okToSave;
         for(Service_Code__c sc : SelectedCodes.values()) {
-            Boolean okToSave = true;
+            okToSave = true;
+	
+			// CTEAE-75 - correct issue with compare to already saved service code id, not JO id
             for(ServiceAssignment_ServiceCode_JO__c alreadySaved : alreadySavedCodeXrefs) {
-                if(sc.Id==alreadySaved.Id){
+                if(sc.Id==alreadySaved.Service_Code__c){
                     okToSave = false;
+                    break;
                 }
             }
-            if(okToSave == true) {
+            
+            if(okToSave) {
                 ServiceAssignment_ServiceCode_JO__c servCodeXrefToSave = new ServiceAssignment_ServiceCode_JO__c(
                     Service_Code__c = sc.Id,
                     Service_Assignment__c = theServAssign.Id

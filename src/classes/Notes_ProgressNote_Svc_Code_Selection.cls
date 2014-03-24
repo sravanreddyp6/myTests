@@ -15,15 +15,12 @@ public with sharing class Notes_ProgressNote_Svc_Code_Selection {
         SelectOption SOtmp = new SelectOption('', '--None--');
         Codes.Add(SOtmp);
         
-            for(ServiceAssignment_ServiceCode_Jo__c local : 
-                    [Select Service_Code__r.ID, Service_Code__r.Service_Value__c 
-                        From ServiceAssignment_ServiceCode_Jo__c 
-                            Where
-                            Service_Code__r.isActive__c = 1
-                            	AND 
-                        	Service_Assignment__c = :currentRecord.Service_Assignment__c])
+            for(Service_code__c local : 
+            		[SELECT Id, Service_Code__c, Service_Value__c From Service_Code__c
+            		where id in (select service_code__c from ServiceAssignment_ServiceCode_Jo__c where service_assignment__c = :currentRecord.Service_Assignment__c)
+            		and isActive__c = 1])
             {                                   
-                SelectOption SO = new SelectOption(local.Service_Code__r.ID, local.Service_Code__r.Service_Value__c);
+                SelectOption SO = new SelectOption(local.ID, local.Service_Value__c);
                 Codes.Add(SO);
             }        
         return Codes;
