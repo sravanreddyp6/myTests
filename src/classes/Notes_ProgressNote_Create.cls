@@ -12,6 +12,10 @@ public with sharing class Notes_ProgressNote_Create {
 
     public list<SelectOption> rtOptions = new list<SelectOption>();
     public list<SelectOption> getrtOptions(){return rtOptions ;}
+	
+	// ADDED FOR WVPN-6 to give us a way to identify RecordType default for unsaved note when only one Record Type option is present.
+	// J. Gilliam, 3/19/14.
+	public RecordType defaultRt { get; set; }
 
     private Final Progress_Note__c pn;
 
@@ -90,6 +94,30 @@ public with sharing class Notes_ProgressNote_Create {
                 }
             }
         }
+        
+        // START: ADDED FOR WVPN-6; default selection if only one record type is present on the page (J. Gilliam, 3/19/14)
+        if(rtOptions.size()==1) {
+        	Id defaultRtId;
+        	for(SelectOption o : rtOptions) {
+        		defaultRtId = o.getValue();
+        	}
+        	defaultRt = [ SELECT Id, Name, DeveloperName FROM RecordType WHERE Id = :defaultRtId ];
+        	pn.RecordTypeId = defaultRt.Id;
+        }
+        // END: ADDED FOR WVPN-6; default selection if only one record type is present on the page (J. Gilliam, 3/19/14)
+
+
+		// WVPN-6
+		// GET RECORD TYPES THAT SHOULD HAVE DEFAULT 0 FOR pn.Number_Of_Required_Signatures__c
+		List<RecordType> rtsForZeroSigs = new List<RecordType>();
+		rtsForZeroSigs = [ SELECT Name, DeveloperName FROM RecordType WHERE DeveloperName = 'IN_IFCS' OR DeveloperName = 'MA_IFCS'
+							OR DeveloperName = 'MD_IFCS' OR DeveloperName = 'OH_IFCS' ];
+		// LOOP THROUGH THOSE RECORD TYPES AND COMPARE TO RECORD TYPES OF THIS NOTE.  IF SAME, THEN DEFAULT SIGS TO 0
+		for(RecordType rtForLoop : rtsForZeroSigs) {
+			if(rtForLoop.Id==pn.RecordTypeId && pn.Number_of_Required_Signatures__c==null) {
+				pn.Number_of_Required_Signatures__c = 0;
+			}
+		}
 
     }
 

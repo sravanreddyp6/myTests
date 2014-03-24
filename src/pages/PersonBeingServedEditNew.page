@@ -244,19 +244,14 @@ function stopRKey(evt) {
     <apex:pageBlockSectionItem >
     <apex:outputLabel value="Created By" />
     <apex:outputPanel layout="none">
-    <apex:outputField value="{!Contact.CreatedById}"  />, <apex:outputText value="{0,date, MM/dd/yyyy hh:mm:ss a}">
-       <apex:param value="{!Contact.CreatedDate}" />
-    </apex:outputText>
+    <apex:outputField value="{!Contact.CreatedById}"  />,&nbsp;<apex:outputText value=" {!Contact.CreatedDate}" />
     </apex:outputPanel>
     </apex:pageBlockSectionItem>
     
      <apex:pageBlockSectionItem >
     <apex:outputLabel value="Last Modified By" />
     <apex:outputPanel layout="none">
-     <apex:outputField value="{!Contact.LastModifiedById}"  />, <apex:outputText value="{0,date, MM/dd/yyyy hh:mm:ss a}">
-       <apex:param value="{!Contact.LastModifiedDate}" />
-    </apex:outputText>
-
+     <apex:outputField value="{!Contact.LastModifiedById}"  />,&nbsp;<apex:outputText value=" {!Contact.LastModifiedDate}" />
     </apex:outputPanel>
     </apex:pageBlockSectionItem>
 
@@ -561,7 +556,7 @@ function stopRKey(evt) {
                              collapsible="false">
                            <apex:outputText />
          <apex:pageBlockTable value="{!personHistory}" var="PBSHistory" rendered="{!(personHistory.size>0)}" >
-            <apex:column headerValue="Date" value="{!PBSHistory.createddate}"/>
+            <apex:column headerValue="Date" value=" {!PBSHistory.createddate}"/>
             <apex:column headerValue="User" value="{!PBSHistory.CreatedBy.Name}"/>
             <apex:column headerValue="Action">
                 <apex:outputText rendered="{!(PBSHistory.field!='created')}">Changed <b>{!fieldMap[Lower(PBSHistory.field)]}</b> from <b>{!PBSHistory.oldvalue}</b> to <b>{!PBSHistory.newvalue}</b></apex:outputText>

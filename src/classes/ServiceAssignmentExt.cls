@@ -1000,7 +1000,7 @@ public class ServiceAssignmentExt {
                 system.debug('What is s.RecordType.Name before the upsert?: ' + s.RecordType.Name);
                 system.debug('What is s.RecordType before the upsert?: ' + s.RecordType);
 
-                 if ( showDiagnosis ){
+                 if ( showLocation ){
 
                        // update program string from service location
                        // System.Debug('Service location is: ' + theservassign.service_location__c);
