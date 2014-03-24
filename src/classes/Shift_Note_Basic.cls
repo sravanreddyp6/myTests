@@ -135,25 +135,32 @@ public with sharing class Shift_Note_Basic {
                     tmpGoalJoin.Goal__c = clsG.theGoal.id;
                     insertJO.add(tmpGoalJoin);
                 }
-                // if it has been inserted and then wasa unchecked in this seeson we must delete that jo record
+                // if it has been inserted and then was unchecked in this session we must delete that jo record
                 if(childrenScope.containskey(clsG.theGoal.id) && !clsG.inNote ){
+                	system.debug('removing goal: ' + clsG.theGoal.id);
                     deleteJO.add(childrenScope.get(clsG.theGoal.id)); 
                 }
                 
-                    for(clsPlan_Obj clsO : clsG.objs.values()){
-                        if(clsO.inNote && !childrenScope.containskey(clsO.theObj.id)){
-                            ProgressNote_ActionPlanChildren_mjo__c tmpObjJoin = new ProgressNote_ActionPlanChildren_mjo__c();
-                            tmpObjJoin.Progress_Note__c = note.id;
-                            tmpObjJoin.Objective__c = clsO.theObj.id;
-                            insertJO.add(tmpObjJoin);                        
-                        } 
-                        if(childrenScope.containskey(clsO.theObj.id) && !clsO.inNote ){
-                            deleteJO.add(childrenScope.get(clsO.theObj.id)); 
-                        }
-                        
-                        if(!clsG.inNote && childrenScope.containskey(clsO.theObj.id)) {
-                            deleteJO.add(childrenScope.get(clsO.theObj.id));
-                        }                          
+	            for(clsPlan_Obj clsO : clsG.objs.values()){
+	            	
+	            	
+	            	// RBO-277 - do not add an objective whose parent goal is not also checked
+	                if(clsO.inNote && clsG.inNote && !childrenScope.containskey(clsO.theObj.id)){
+	                    ProgressNote_ActionPlanChildren_mjo__c tmpObjJoin = new ProgressNote_ActionPlanChildren_mjo__c();
+	                    tmpObjJoin.Progress_Note__c = note.id;
+	                    tmpObjJoin.Objective__c = clsO.theObj.id;
+	                    insertJO.add(tmpObjJoin);                        
+	                }
+	                // delete the objective if it had been selected and is no longer 
+	                if(childrenScope.containskey(clsO.theObj.id) && !clsO.inNote ){
+	                    deleteJO.add(childrenScope.get(clsO.theObj.id)); 
+	                }
+	                
+	                // delete any objectives if the parent goal has been deleted
+	                if(!clsG.inNote && childrenScope.containskey(clsO.theObj.id)) {
+	                	system.debug('removing obj: ' + clsO.theObj.id );
+	                    deleteJO.add(childrenScope.get(clsO.theObj.id));
+	                }                          
                     
                     }
             

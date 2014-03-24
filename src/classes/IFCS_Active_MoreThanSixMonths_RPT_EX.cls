@@ -1,4 +1,5 @@
 public with sharing class IFCS_Active_MoreThanSixMonths_RPT_EX {
+
     public Date fStartDate{get{return fStartDate;} set;}
     public List<Service_Assignment__c> Results = new List<Service_Assignment__c>();
     public List<Service_Assignment__c> getResults(){
@@ -22,12 +23,10 @@ public with sharing class IFCS_Active_MoreThanSixMonths_RPT_EX {
                         Start_Date__c,
                         Location_Region__c
                         From Service_Assignment__c
-                        Where Program__c='IFCS'
-                         AND
+                        Where 
                         Start_Date__c <= :SixMonth
                          AND
                         Status__c = 'Active'];
-    
         return null;
     }
 
