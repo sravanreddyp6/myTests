@@ -1,11 +1,13 @@
-<apex:page title="Home Page Search" controller="HomePageSearchController" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab" readOnly="true">
+<apex:page title="Home Page Search"
+    controller="HomePageSearchController" standardStylesheets="true" sidebar="false"  
+    tabStyle="Get_Started__tab" readOnly="true">
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.js')}" />
-     
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.css')}" />
-<style>
+    
+    <style>
 #table_filter h1 {
     font-size: 14px;
     display: inline-block;
@@ -15,6 +17,7 @@
 input#table_filter_box {
     padding-top: 1px;
 }
+
 [id *=view_filter] {
     margin-bottom: 10px;
 }
@@ -31,30 +34,31 @@ input#table_filter_box {
 [id *=view_filter] a:hover {
     color: #015BA7;
 }
-table#Total_Names {
+
+table#persons_table {
     border-collapse: collapse;
     border: 1px solid;
     width: 100%;
 }
 
-table#Total_Names thead,table#Total_Names thead td {
+table#persons_table thead,table#persons_table thead td {
     border: 1px solid;
 }
 
-table#Total_Names thead tr {
-    background-color: #32CD32;
+table#persons_table thead tr {
+    background-color: #F2F3F3;
 }
 
-table#Total_Names thead td {
+table#persons_table thead td {
     font-weight: bold;
     background-color: #ededed;
 }
 
-table#Total_Names tbody tr:hover {
+table#persons_table tbody tr:hover {
     background-color: #E3F3FF;
 }
 
-table#Total_Names td {
+table#persons_table td {
     padding: 6px 10px;
 }
 
@@ -72,7 +76,9 @@ div#table_start_filter a.active {
     font-weight: bold;
 }
 
-
+[id *=table_commands] {
+    float: right;
+}
 
 .paginate_disabled_previous,.paginate_disabled_next,.paginate_enabled_previous,.paginate_enabled_next
     {
@@ -89,11 +95,11 @@ div#table_start_filter a.active {
     min-width: 800px; /* Make sure the table is not too small */
 }
 
-table#Total_Names.dataTable {
+table#persons_table.dataTable {
     border-bottom: 0;
 }
 
-#Total_Names_wrapper .bottom {
+#persons_table_wrapper .bottom {
     border: 1px solid;
     border-top: 0;
     padding-bottom: 5px;
@@ -109,7 +115,7 @@ table#Total_Names.dataTable {
     display: inline-block;
 }
 
-#Total_Names_info {
+#persons_table_info {
     display: inline-block;
     float: left;
     margin-left: 50px;
@@ -135,12 +141,8 @@ table#Total_Names.dataTable {
 }
 
 </style>
- 
- <apex:pageBlock id="table_block">
-   <!-- <div id="loading_modal">
-            <img style="position: relative; top: 30px;" src="/img/loading32.gif" />
-        </div> -->
-     <div id="table_start_filter" >
+    <apex:pageBlock id="table_block">
+            <div id="table_start_filter" >
                 Browse by Name 
                 <a href="#" data-filter='[A]'>A</a>&nbsp;|&nbsp;<a href="#" data-filter='[B]'>B</a>&nbsp;|&nbsp;
                 <a href="#" data-filter='[C]'>C</a>&nbsp;|&nbsp;<a href="#" data-filter='[D]'>D</a>&nbsp;|&nbsp;
@@ -155,12 +157,11 @@ table#Total_Names.dataTable {
                 <a href="#" data-filter='[U]'>U</a>&nbsp;|&nbsp;<a href="#" data-filter='[V]'>V</a>&nbsp;|&nbsp;
                 <a href="#" data-filter='[W]'>W</a>&nbsp;|&nbsp;<a href="#" data-filter='[XYZ]'>XYZ</a>&nbsp;|&nbsp;
                 <a href="#" class="active" data-filter='.'>All</a>
-       </div>
-       <br />
-       <br />
+            </div>
+            
         <apex:outputPanel layout="block" id="table_div">
             
-            <table id="Total_Names" class="tablesorter">
+            <table id="persons_table">
                 <thead>
                     <tr>
                         <td style="width: 25%">Full Name</td>
@@ -170,34 +171,29 @@ table#Total_Names.dataTable {
                     </tr>
                 </thead>
                 <tbody>
-                   <apex:repeat value="{!TotalList}" var="acct">
-                        <apex:outputPanel layout="none">
-                            <tr data-name="{!(acct.FullName)}">
-                                <td><apex:outputLink rendered="{!(acct.Type=='Person Being Referred')}">
-                                             <a href="/apex/ReferralSearch?referralNumber={!acct.Names}" data-record-id="{!acct}" class="account_link">{!(acct.FullName)}</a>
-                                    </apex:outputLink>
-                                     <apex:outputLink rendered="{!(acct.Type=='Person Being Served')}">
-                                             <a href="/PersonsBeingServedListView?table_filter_box={!acct.FullName}.val()" data-record-id="{!acct}" class="account_link">{!(acct.FullName)}</a>
-                                    </apex:outputLink>
-                                     <apex:outputLink rendered="{!(acct.Type=='Mentor')}">
-                                             <a href="/apex/TmnContactListView?j_id0%3Aj_id3%3Afcf=00B11000000Q4YH" data-record-id="{!acct}" class="account_link">{!(acct.FullName)}</a>
-                                    </apex:outputLink></td>
+                    <apex:repeat value="{!TotalList}" var="acct">
+                      <tr>
+                            <td>   <apex:outputText rendered="{!(acct.Type=='Person Being Referred')}">
+                                             <a href="/apex/ReferralSearch?referralNumber={!acct.Names}" data-record-id="{!acct}">{!(acct.FullName)}</a>
+                                   </apex:outputText>
+                                   <apex:outputText rendered="{!(acct.Type=='Person Being Served')}">
+                                             <a href="/apex/PersonBeingServedEditNew?id={!acct.recordId}" data-record-id="{!acct}">{!(acct.FullName)}</a>
+                                    </apex:outputText>
+                                     <apex:outputText rendered="{!(acct.Type=='Mentor')}">
+                                             <a href="/apex/TmnContactListView?j_id0%3Aj_id3%3Afcf=00B11000000Q4YH" data-record-id="{!acct}">{!(acct.FullName)}</a>
+                                   </apex:outputText>
+                           </td>
                                 <td>{!acct.Age}</td>
                                 <td>{!acct.State}</td>
                                 <td>{!acct.Type}</td>
-                            </tr>
-                        </apex:outputPanel>
-                  </apex:repeat>
-               </tbody>
-              </table>
-          </apex:outputPanel>
-       <!--         /apex/ReferralSearch?referralNumber={!acct.recordId}     ************************************************************ -->
-      
-       
-
-   </apex:pageBlock>
+                                    </tr>
+                        </apex:repeat>
+                </tbody>
+            </table>
+        </apex:outputPanel>
+    </apex:pageBlock>
    
-  <script type="text/javascript">
+    <script type="text/javascript">
     $j = jQuery.noConflict();
     function checkUndefined(field) {
         if (field !== undefined) {
@@ -205,79 +201,10 @@ table#Total_Names.dataTable {
         }
         return "-";
     }
-    function refreshQtips() {
-    
-        // All qtips share the same config, so we refactor it here.
-        var qtip_options = function (selector, fn) {
-            return $j(selector).qtip({
-                style: { classes: 'bPageBlock' },
-                show: {
-                    delay: 1000
-                },
-                hide: {
-                    fixed: true,
-                    delay: 500
-                },
-                content: {
-                    text: fn
-                },
-                position: {
-                    my: 'top left',
-                    at: 'bottom center',
-                    adjust: {
-                       y: 15 // because site-wide CSS applies a 15px border-top for <body>
-                    }
-                }
-            });
-        }
-        var epoch_to_time = function (miliseconds) {
-            // Returns string representation of an epoch time.
-            // Because UTC epoch is sent back, we have to parse the time like
-            // this. See: http://stackoverflow.com/questions/4631928/convert-utc-epoch-to-local-date-with-javascript
-            if (miliseconds === undefined) {
-                return "-";
-            }
-            var d = new Date(0);
-            d.setUTCMilliseconds(miliseconds);
-            return (d.getUTCMonth()+1) + '/' + d.getUTCDate() + '/' + d.getUTCFullYear();
-        }
-        qtip_options(".account_link", function(e, api) {
-            var account_id = $j(e.target).data("record-id");
-            Visualforce.remoting.Manager.invokeAction(
-                '{!TotalList}'
-                function (result, event) {
-                    if (event.status) { // Success
-                        api.set('content.text',
-                            '<div class="pbHeader"><h2 class="mainTitle">Full Name</h2></div>' + 
-                            '<div class="pbBody"><table class="detailList">' + 
-                            '<tr><td class="labelCol">Name:</td><td class="dataCol">' + $j(e.target).parent().parent().data('name') + '</td></tr>' +
-                            '<tr><td class="labelCol">Name:</td><td class="dataCol">' + checkUndefined(result.FullName) + '</td></tr>' +
-                            '<tr><td class="labelCol">Age:</td><td class="dataCol">' + checkUndefined(result.Age) + '</td></tr>' +
-                            '<tr><td class="labelCol">State:</td><td class="dataCol">' + checkUndefined(result.State) + '</td></tr>' +
-                            '<tr><td class="labelCol">Type:</td><td class="dataCol">' + checkUndefined(result.Type) + '</td></tr>' +
-                            '<br /><div style="width:100% text-align:center;"><a class="btn" href="/' + result.recordId + '">View Record</a>' +
-                            '&nbsp;&nbsp;<a class="btn" href="/' + result.recordId + '#RP">View Related Parties</a><br /><Br /></div></div>'
-                        );
-                    } else if (event.type === 'exception') {
-                        api.set('content.text', 'Error: <br/>' + event.message);
-                        console.log(event);
-                    } else {
-                        api.set('content.text', event.message);
-                    }
-                }
-            );
-            return "Loading ...";
-        });
-     
-    }
-    
-   /* function showLoadingModal() {
-        $j("#loading_modal").css("display", "block");
-    }
-    function refreshDataTable() {
-        refreshQtips();
+   function refreshDataTable() {
+        
         // Have to make this var global in order for filter to work
-        table = $j("#Total_Names").dataTable({
+        table = $j("#persons_table").dataTable({
             "bProcessing": true,
             "bAutoWidth": false,
             "sDom": '<"top">t<"bottom"rpi><"clear">',
@@ -291,8 +218,8 @@ table#Total_Names.dataTable {
                 return "<div class='dataTables_record_info'>" + iStart + " - " + iEnd + " of " + iTotal + "</div><div class='dataTables_page_info'>Page " + info.iPage +" of "+ info.iTotalPages + '</div>';
             },
             "fnInitComplete": function () {
-                filterByStatus(this);
-                $j("#loading_modal").css("display", "none");
+                //filterByStatus(this);
+                //$j("#loading_modal").css("display", "none");
             },
             "oLanguage": {
                  "sInfo": "_START_ - _END_ of _TOTAL_",
@@ -309,51 +236,19 @@ table#Total_Names.dataTable {
                 null, // Full Name
                 null, // Age
                 null, // State
-                null, // Type
-               { "bVisible": false } // Admission Status
-            ]
+                null // Type
+               ]
         });
-       table.fnSort( [ [0,'asc'] ] );
-        $j("#table_filter_box").keyup();
-    }*/
-    $j.fn.dataTableExt.afnFiltering.push(function( oSettings, aData, iDataIndex ) {
-        var textToSearch = $j('#table_filter_box').val().toLowerCase();
-        if (aData[0].toLowerCase().indexOf(textToSearch)!==-1 ||
-            aData[1].toLowerCase().indexOf(textToSearch)!==-1 ||
-            aData[2].toLowerCase().indexOf(textToSearch)!==-1 ||
-            aData[3].toLowerCase().indexOf(textToSearch)!==-1 ||
-            aData[4].toLowerCase().indexOf(textToSearch)!==-1) {
-            return true;
-        }
-        return false;
-    });
-    var filterByStatus = function (injectedTable) {
-        var statusToSearch = $j('#table_status_filter_box :selected').val();
-        if (statusToSearch === 'All') {
-            statusToSearch = '';
-        }
-        if (injectedTable) {
-            injectedTable.fnFilter(statusToSearch, 6, true);
-        } else {
-            table.fnFilter(statusToSearch, 6, true);
-        }
+        table.fnSort( [ [0,'asc'] ] );
+        //$j("#table_filter_box").keyup();
+       
     }
+    
     $j(document).ready(function() {
-       // refreshDataTable();
-        filterByStatus();
-        $j('#table_filter_box').on('keyup', function () {
-            table.fnFilter('', 0, true);  // Clear the column-based filter first
-            table.fnFilter($j('#table_filter_box').val());
-            $j('#table_start_filter a.active').removeClass('active');
-            $j('#table_start_filter a:contains("All")').addClass('active');
-            return false;
-        });
-        $j('#table_status_filter_box').on('change', function (event) {
-            filterByStatus();
-        });
+        refreshDataTable();       
         $j('body').on('click', '#table_start_filter a', function (event) {
-            $j('#table_filter_box').val('');  // Remove the text in filter box
-            table.fnFilter('');  // Clear the global filter
+            //$j('#table_filter_box').val('');  // Remove the text in filter box
+            //table.fnFilter('');  // Clear the global filter
             var regex = '^' + $j(event.target).data('filter');
             table.fnFilter(regex, 0, true);
             $j('#table_start_filter a.active').removeClass('active');
@@ -362,7 +257,6 @@ table#Total_Names.dataTable {
         });
     });
     
-      
     (function ($) {
         $.fn.dataTableExt.oPagination.four_button = {
             "fnInit": function ( oSettings, nPaging, fnCallbackDraw )
@@ -379,7 +273,7 @@ table#Total_Names.dataTable {
                   
                 nFirst.className = "paginate_button first";
                 nPrevious.className = "paginate_button previous";
-                nNext.className = "paginate_button next";
+                nNext.className="paginate_button next";
                 nLast.className = "paginate_button last";
                   
                 nPaging.appendChild( nFirst );
@@ -466,19 +360,6 @@ table#Total_Names.dataTable {
             };
         };
     } ($j))
-    </script> 
-    <script type="text/javascript" src="/path/to/jquery.tablesorter.js">
-    $('table').ready(function()
-    {
-      $("#Total_Names").tablesorter();
-    }
-    );
-    $('table').ready(function()
-     {
-       $("#Total_Names").tablesorter({sortList: [[0,0], [1,0]]});
-     }
-    );
-    
-    
     </script>
+
 </apex:page>
