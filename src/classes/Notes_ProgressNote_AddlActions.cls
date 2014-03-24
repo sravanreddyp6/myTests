@@ -42,7 +42,9 @@ public without sharing class Notes_ProgressNote_AddlActions {
             User integrateUser = [ SELECT Id FROM User WHERE Username LIKE 'integration%' LIMIT 1];
             Id integrateUserId = integrateUser.Id;
             
-            Task t = new Task(Subject = 'Disregard', Status = 'Completed', Priority = 'Normal', OwnerId = integrateUserId, Description = 'Note disregarded by ' + UserInfo.getName() + ', ' + Datetime.now().format('m/d/y h:m:s a'), WhoId = thePN.Person_Being_Served__c, WhatId = thePN.Id, ActivityDate = Date.today());
+            // CTEAE-73  fix datetime format on task info
+            DateTime n = DateTime.now();
+            Task t = new Task(Subject = 'Disregard', Status = 'Completed', Priority = 'Normal', OwnerId = integrateUserId, Description = 'Note disregarded by ' + UserInfo.getName() + ', ' + n.format('MM/dd/yyyy hh:mm a'), WhoId = thePN.Person_Being_Served__c, WhatId = thePN.Id, ActivityDate = n.date());
             insert t;
 
 			return new PageReference('/' + thePN.Id);
