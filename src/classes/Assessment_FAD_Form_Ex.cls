@@ -101,7 +101,71 @@ public with sharing class Assessment_FAD_Form_Ex {
         if(mapRes.get('PBS_Could_Not_complete').Yes_No__c && mapRes.get('PBS_Could_Not_complete_reason').Rating__c == null){
             mapRes.get('PBS_Could_Not_complete_reason').Rating__c.addError('Please provide a reason the Person being served could not complete all questions');
             hasError = true;   
+        }  
+        // check the PBS questions
+        if(mapRes.get('PBS_Problem_Solving').Score__c == null && !mapRes.get('PBS_Could_Not_complete').Yes_No__c){
+            mapRes.get('PBS_Problem_Solving').Score__c.addError('Person Being Served - Problem Solving must have a score');
+            hasError = true;
+        }
+        if(mapRes.get('PBS_Communication').Score__c == null && !mapRes.get('PBS_Could_Not_complete').Yes_No__c){
+            mapRes.get('PBS_Communication').Score__c.addError('Person Being Served - Communication must have a score');
+            hasError = true;
+        }                             
+        if(mapRes.get('PBS_Roles').Score__c == null && !mapRes.get('PBS_Could_Not_complete').Yes_No__c){
+            mapRes.get('PBS_Roles').Score__c.addError('Person Being Served - Roles must have a score');
+            hasError = true;
         }        
+        if(mapRes.get('PBS_Affective_Responses').Score__c == null && !mapRes.get('PBS_Could_Not_complete').Yes_No__c){
+            mapRes.get('PBS_Affective_Responses').Score__c.addError('Person Being Served - Affective Responses must have a score');
+            hasError = true;
+        } 
+        if(mapRes.get('PBS_Affective_Involvement').Score__c == null && !mapRes.get('PBS_Could_Not_complete').Yes_No__c){
+            mapRes.get('PBS_Affective_Involvement').Score__c.addError('Person Being Served - Affective Involvement must have a score');
+            hasError = true;
+        }        
+        if(mapRes.get('PBS_Behavior_Control').Score__c == null && !mapRes.get('PBS_Could_Not_complete').Yes_No__c){
+            mapRes.get('PBS_Behavior_Control').Score__c.addError('Person Being Served - Behavior Control must have a score');
+            hasError = true;
+        } 
+        if(mapRes.get('PBS_General_Functioning').Score__c == null && !mapRes.get('PBS_Could_Not_complete').Yes_No__c){
+            mapRes.get('PBS_General_Functioning').Score__c.addError('Person Being Served - General Functioning must have a score');
+            hasError = true;
+        } 
+        // Caregiver check
+        if(mapRes.get('CG_Problem_Solving').Score__c == null && !mapRes.get('CG_Could_Not_complete').Yes_No__c){
+            mapRes.get('CG_Problem_Solving').Score__c.addError('Caregiver - Problem Solving must have a score');
+            hasError = true;
+        }
+        if(mapRes.get('CG_Communication').Score__c == null && !mapRes.get('CG_Could_Not_complete').Yes_No__c){
+            mapRes.get('CG_Communication').Score__c.addError('Caregiver - Communication must have a score');
+            hasError = true;
+        }                             
+        if(mapRes.get('CG_Roles').Score__c == null && !mapRes.get('CG_Could_Not_complete').Yes_No__c){
+            mapRes.get('CG_Roles').Score__c.addError('Caregiver - Roles must have a score');
+            hasError = true;
+        }        
+        if(mapRes.get('CG_Affective_Responses').Score__c == null && !mapRes.get('CG_Could_Not_complete').Yes_No__c){
+            mapRes.get('CG_Affective_Responses').Score__c.addError('Caregiver - Affective Responses must have a score');
+            hasError = true;
+        } 
+        if(mapRes.get('CG_Affective_Involvement').Score__c == null && !mapRes.get('CG_Could_Not_complete').Yes_No__c){
+            mapRes.get('CG_Affective_Involvement').Score__c.addError('Caregiver - Affective Involvement must have a score');
+            hasError = true;
+        }        
+        if(mapRes.get('CG_Behavior_Control').Score__c == null && !mapRes.get('CG_Could_Not_complete').Yes_No__c){
+            mapRes.get('CG_Behavior_Control').Score__c.addError('Caregiver - Behavior Control must have a score');
+            hasError = true;
+        } 
+        if(mapRes.get('CG_General_Functioning').Score__c == null && !mapRes.get('CG_Could_Not_complete').Yes_No__c){
+            mapRes.get('CG_General_Functioning').Score__c.addError('Caregiver - General Functioning must have a score');
+            hasError = true;
+        }                        
+        if(mapRes.get('CG_is_same_as_other_assessment').Rating__c == null && assess.Phase__c !='Initial' ){
+            mapRes.get('CG_is_same_as_other_assessment').Rating__c.addError('Caregiver - Did they caregiver who completed the initial FAD assessment also complete this 3-month or final assessment');
+            hasError = true;
+        }        
+        
+              
         if(hasError){
             mode='edit';
             return null;

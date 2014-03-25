@@ -52,13 +52,13 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
                                 rendered="{!mode='view'}" 
                                 reRender="everything" 
                                 status="myStatus"/>                                 
-                                
+         -->                       
             <apex:commandButton action="{!myLock}" 
                                 value="Submit" 
-                                rendered="{!mode='view'}" 
+                                rendered="{!mode='view' && Assessment__c.Status__c =='Open'}" 
                                 reRender="everything" 
                                 status="myStatus"/>                                        
-        -->
+        
             <apex:commandButton action="{!mySave}" 
                                 value="Save" 
                                 rendered="{!mode='edit'}" 
@@ -66,7 +66,7 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
                                 status="myStatus"/>
             <apex:commandButton action="{!myEdit}" 
                                 value="Edit" 
-                                rendered="{!mode='view'}" 
+                                rendered="{!mode='view' && Assessment__c.Status__c =='Open'}" 
                                 reRender="everything" 
                                 status="myStatus"/>
             <apex:commandButton action="{!cancel}" 
@@ -113,7 +113,7 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
     </apex:pageBlockSection> 
     
 <hr/>      
-<!-- edit -->
+<!-- PBS edit -->
     <apex:pageBlockSection columns="1" title="Person Being Served" collapsible="false" rendered="{!mode='edit'}">
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['PBS_Could_Not_complete'].Question_Title__c}</apex:outputPanel>            
@@ -175,7 +175,7 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         </apex:pageBlockSectionItem> 
     </apex:pageBlockSection>
 
-<!--view-->
+<!-- PBS view-->
     <apex:pageBlockSection columns="1" title="Person Being Served" collapsible="false" rendered="{!mode='view'}">
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['PBS_Could_Not_complete'].Question_Title__c}</apex:outputPanel>            
@@ -235,7 +235,7 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
     </apex:pageBlockSection>
 <br/>
 <hr/>       
-<!-- edit -->    
+<!-- CG edit -->    
     <apex:pageBlockSection columns="1" title="Caregiver" collapsible="false"  rendered="{!mode='edit'}">
         <apex:pageBlockSectionItem >
             <apex:outputPanel >Primary Caregiver</apex:outputPanel>            
@@ -312,7 +312,7 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>    
     </apex:pageBlockSection>
-<!-- view --> 
+<!-- CG view --> 
     <apex:pageBlockSection columns="1" title="Caregiver" collapsible="false"  rendered="{!mode='view'}">
         <apex:pageBlockSectionItem >
             <apex:outputPanel >Primary Caregiver</apex:outputPanel>            
