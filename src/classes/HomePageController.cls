@@ -60,9 +60,7 @@ public with sharing class HomePageController{
                  String tempName = oSchema.getName();
                  String tempPrefix = oSchema.getKeyPrefix();   
                  sObjNamesMap.put(tempPrefix, tempName);   
-                 system.debug('**************'+gSchema);
-                 system.debug('**************'+sObjNamesSet);
-                 system.debug('**************'+sObjNamesMap);
+               
         }
         
         for(ProcessInstanceWorkitem app:[select Id,ProcessInstanceId,CreatedDate,ActorId,CreatedById,CreatedBy.Name,ProcessInstance.LastModifiedBy.Name,ProcessInstance.TargetObject.Name,ProcessInstance.LastModifiedById,ProcessInstance.TargetObjectId from ProcessInstanceWorkitem where ActorId=:UserInfo.getUserId() order by CreatedDate desc]){
@@ -97,7 +95,7 @@ public with sharing class HomePageController{
          TMNView = oSchema3.isAccessible();
          //Contract object
          List<TMN_User__c> tmnUsers = [SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c= :UserInfo.getUserId() LIMIT 1];
-         system.debug('tmnUsers'+tmnUsers);
+       
           
          for(TMN_User__c tmn:tmnUsers){
              if(tmn.Operating_Group__c=='Cambridge'){
@@ -107,9 +105,9 @@ public with sharing class HomePageController{
              }else if(tmn.Operating_Group__c=='NeuroRestorative' || tmn.Operating_Group__c=='Redwood'){
                 oSchema4 = Redwood_Contract__c.sObjectType.getDescribe();
              }
-         system.debug('***************objtmn'+oSchema4);
+         
          }
-         system.debug('***************objtmn'+oSchema4);
+        
          ContractCreate = oSchema4.IsCreateable();
          ContractView = oSchema4.isAccessible(); 
         
@@ -144,63 +142,15 @@ public with sharing class HomePageController{
         
       }
      }
-     /*public String GroupChatterLabel{
-        get{
-            Home_Page_Settings__c hps = Home_Page_Settings__c.getInstance();
-            if(OperatingGroup == 'Redwood'){
-                GroupChatterLabel = hps.Redwood_Chatter_Group_Label__c;
-            }
-            if(OperatingGroup == 'CareMeridian'){
-                GroupChatterLabel = hps.CareMeridian_Chatter_Group_Label__c;
-            }
-            if(OperatingGroup == 'Cambridge'){
-                GroupChatterLabel = hps.Cambridge_Chatter_Group_Label__c;
-            }
-            if(OperatingGroup == 'NeuroRestorative'){
-                GroupChatterLabel = hps.Neuro_Chatter_Group_Label__c;
-            }
-            return GroupChatterLabel;
-        }
-        set;
-    }
-    public String GroupChatterId{
-        get{
-            Home_Page_Settings__c hps = Home_Page_Settings__c.getInstance();
-            if(OperatingGroup == 'Redwood'){
-                GroupChatterId = hps.Redwood_Chatter_Id__c;
-            }
-            if(OperatingGroup == 'CareMeridian'){
-                GroupChatterId = hps.CareMeridian_Chatter_Group_Id__c;
-            }
-            if(OperatingGroup == 'Cambridge'){
-                GroupChatterId = hps.Cambridge_Chatter_Group_Id__c;
-            }
-            if(OperatingGroup == 'NeuroRestorative'){
-                GroupChatterId = hps.Neuro_Chatter_Group_Id__c;
-            }
-            return GroupChatterId;
-        }
-        set;
-    }
-*/
+
     public string referralPrefix {
         get { 
                 Schema.DescribeSObjectResult d = Referral__c.sObjectType.getDescribe();
-                system.debug('*******referral describe'+d);
+               
                 return d.getKeyPrefix();
         }
         private set;
     }
-    
-  /*public List<CollaborationGroupFeed> listESDNews {
-    get { return populateESDNews(eSDChatterGroupId); }
-    private set;
-  }
-
-  public List<CollaborationGroupFeed> listGroupChatter {
-    get { return populateESDNews(GroupChatterId); }
-    private set;
-  }*/
 
   public Map<String, String> personsBeingServedViews {
     get {
@@ -212,7 +162,7 @@ public with sharing class HomePageController{
         ApexPages.StandardSetController con = new ApexPages.StandardSetController(Database.getQueryLocator(query));
         SelectOption[] options = con.getListViewOptions();
         for (SelectOption option : options) {
-            system.debug('************views'+option);
+           
             if (option.getLabel().toLowerCase().indexOf('all persons being served')!=-1) {
                 personsBeingServedViews.put('all', option.getValue());
             } else if (option.getLabel().toLowerCase().indexOf('recently viewed')!=-1) {
@@ -223,7 +173,7 @@ public with sharing class HomePageController{
                 personsBeingServedViews.put('my', option.getValue());
             }
         }
-        System.debug('Views: ' + personsBeingServedViews);
+       
         return personsBeingServedViews;
     }
     set;
@@ -238,14 +188,14 @@ public with sharing class HomePageController{
         ApexPages.StandardSetController con2 = new ApexPages.StandardSetController(Database.getQueryLocator(query2));
         SelectOption[] options2 = con2.getListViewOptions();
         for (SelectOption option2 : options2) {
-            system.debug('************views'+option2);
+           
             if (option2.getLabel().toLowerCase().indexOf('all')!=-1) {
                 ReferralViews.put('all', option2.getValue().substring(0,15));
             } else if (option2.getLabel().toLowerCase().indexOf('my referrals')!=-1) {
                 ReferralViews.put('my', option2.getValue().substring(0,15));
             }
         }
-        System.debug('Views: ' + ReferralViews);
+       
         return ReferralViews;
     }
     set;
@@ -270,7 +220,7 @@ public with sharing class HomePageController{
             } 
         }
         
-        System.debug('Views: ' + DocViews);
+        
         return DocViews;
     }
     set;
@@ -288,14 +238,14 @@ public with sharing class HomePageController{
        
         for (SelectOption option4 : options4) {
             
-            system.debug('**********tmn view '+option4);
+     
             
              if (option4.getLabel().toLowerCase().indexOf('my')!=-1) {
                 TMNViews.put('my', option4.getValue().substring(0,15));
             } 
         }
         
-        System.debug('Views: ' + TMNViews);
+      
         return TMNViews;
     }
     set;
@@ -304,7 +254,7 @@ public with sharing class HomePageController{
    public List<Report> reports() {
    	      String ESDAct,ref,Care,ESDbill,ESDsup,Red;
           VF_Reports__c vf = VF_Reports__c.getInstance();
-          VFReportlst = [SELECT Name,Id,Description__c,link__c from VF_Reports__c];
+          VFReportlst = [SELECT Name,Id,Name__c,Description__c,link__c from VF_Reports__c];
           for(Folder tmp:[SELECT AccessType,Id,IsReadonly,Name,DeveloperName,Type FROM Folder WHERE Type = 'Report']){
       
               if(tmp.DeveloperName=='Referrals'){
@@ -356,30 +306,10 @@ public with sharing class HomePageController{
  	}
  	
  	List<Report> tempreport = database.query(query);
- 	// List<Report> tempreport = [SELECT Name, Id,OwnerId, description, DeveloperName, SystemModstamp FROM report where OwnerId=:ownId order by name];
-    return tempreport;
+ 	return tempreport;
  }
   
- /* public Integer listESDNewsCount { get; private set; }
 
-  private static final Id eSDChatterGroupId = Home_Page_Settings__c.getInstance().ESD_Chatter_Feed_ID__c;
-  private static final Id whatsNewChatterGroupId = Home_Page_Settings__c.getInstance().Redwood_Chatter_ID__c;
-
-  private List<CollaborationGroupFeed> populateESDNews(Id entityId) {
-    List<CollaborationGroupFeed> tempListESDNews;
-
-    tempListESDNews = [select Id, Body, CreatedBy.Name, CreatedDate
-                        from CollaborationGroupFeed
-                        where parentId = :entityId
-                        order by createdDate DESC, Id DESC
-                        limit 5];
-
-    listESDNewsCount = tempListESDNews.size();
-
-    return tempListESDNews;
-  }
-  */
-  
   public List<SelectOption> getviewvalues() {
     List<SelectOption> Options = new List<SelectOption>();
     Options.add(new SelectOption('All Open','All Open'));
@@ -419,23 +349,23 @@ public with sharing class HomePageController{
                 query+=' order by ActivityDate desc, Priority limit 25';
             }
     //and RecordTypeId = :Utility.getRecordTypeForTask('Referral Tasks')
-      
-      system.debug('******query'+query);
+    
       populateTasks = database.query(query);     
                    
   }
   public PageReference getsearchNames(){
-    system.debug('************search names');
+  
     try {
-          if(((FrstName!=null && String.isNotBlank(FrstName)) || (LstName!=null && String.isNotBlank(LstName))) || ((FrstName!=null && String.isNotBlank(FrstName)) && (LstName!=null && String.isNotBlank(LstName)))){
-          // if(FrstName!=null || LstName!= null){
+    	  if((FrstName!=null && FrstName!='') || (LstName!=null && LstName!='')){
            	system.debug('coming here');
            	 displayPop = false;
            	  PageReference newocp= new PageReference('/apex/HomePage_Search?FirstNM='+FrstName+'&&LastNM='+LstName);
               newocp.setRedirect(true);
               return newocp;
-           //}
-          }else{
+  	      }
+      
+         else{
+       
           	displayPop = true;
           	return null;
           }
