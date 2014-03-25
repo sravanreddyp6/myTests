@@ -1,24 +1,3 @@
-/**
- * This class contains unit tests for validating the behavior of Apex classes
- * and triggers.
- *
- * Unit tests are class methods that verify whether a particular piece
- * of code is working properly. Unit test methods take no arguments,
- * commit no data to the database, and are flagged with the testMethod
- * keyword in the method definition.
- *
- * All test methods in an organization are executed whenever Apex code is deployed
- * to a production organization to confirm correctness, ensure code
- * coverage, and prevent regressions. All Apex classes are
- * required to have at least 75% code coverage in order to be deployed
- * to a production organization. In addition, all triggers must have some code coverage.
- * 
- * The @isTest class annotation indicates this class only contains test
- * methods. Classes defined with the @isTest annotation do not count against
- * the organization size limit for all Apex scripts.
- *
- * See the Apex Language Reference for more information about Testing and Code Coverage.
- */
 @isTest
 private class AssessmentControllerExtensionTEST {
 
@@ -109,7 +88,7 @@ private class AssessmentControllerExtensionTEST {
             TFC_Family_Vistas__c = 'No'
         );
         insert testAssmt2;
-      
+      	System.Debug( 'AFter insert' + testAssmt2.TFC_Family_Vistas__c);
         PageReference pageRef = Page.AssessmentForm;
         Test.setCurrentPageReference(pageRef);
         
@@ -121,18 +100,25 @@ private class AssessmentControllerExtensionTEST {
         
         ApexPages.StandardController sc2 = new ApexPages.StandardController(testAssmt2);
         AssessmentControllerExtension testACE2 = new AssessmentControllerExtension(sc2);
+    System.Debug( 'AFter insert' + testAssmt2.TFC_Family_Vistas__c);
     
-        testACE2.SaveAndLock();
-        testACE2.Unlock();
-        testACE2.SaveAndLock();
-        
-        if ( testACE2.disregardAllowed ) {
+    if ( testACE2.disregardAllowed ) {
+        	System.Debug( testAssmt2.TFC_Family_Vistas__c);
+        	
         	testACE2.setDisregard();
         	
         	testAssmt2 = [ select id, disregard__c from assessment__c where id = :testAssmt2.Id];
         	
         	System.AssertEquals( true, testAssmt2.disregard__c);
         }
+        
+        
+        // WARNING - SaveAndLock resets the value of TFC Family Vistas to null which will cause a validation error on save.  
+        testACE2.SaveAndLock();
+        testACE2.Unlock();
+        testACE2.SaveAndLock();
+        
+        
     
     }
 }
