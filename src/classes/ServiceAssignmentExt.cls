@@ -96,6 +96,8 @@ public class ServiceAssignmentExt {
         canCreateSummary = oSchema.IsCreateable();
     }
 
+	public Boolean episodeReq { get { return (admission.State__c == 'AZ' || admission.state__c == 'NC');} set; }
+	
     public List<Action_Plan__c> getActivePlan(){
     
         return [Select id From Action_Plan__c where Action_Plan__c.Service_Assignment__c = :currentRecord.id AND Status__c = 'Active Final' Limit 1];
