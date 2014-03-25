@@ -40,6 +40,7 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
 <apex:pageBlock title="FAD Assessment" >
     <apex:pageBlockButtons >
         <div style="float: right" >
+            <apex:image value="/img/lock_small.gif" alt="Locked" width="20" height="20" title="Record is Locked" rendered="{!Assessment__c.Status__c =='Locked'}" />         
         <!--
             <apex:commandButton action="{!myUnlock}" 
                                 value="Unlock" 
