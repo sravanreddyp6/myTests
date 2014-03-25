@@ -103,7 +103,7 @@ public class ServiceAssignmentExt {
 
     public List<Assessment__c> getAssessments_Fad(){
         
-        return [select id, Assessment_Date__c, Phase__c, Status__c, Disregard__c from Assessment__c where Type__c = 'FAD' AND Service_Assignment__c = :theServAssign.Id Order By Assessment_Date__c DESC];
+        return [select id, Name, Assessment_Date__c, Phase__c, Status__c, Disregard__c from Assessment__c where Type__c = 'FAD' AND Service_Assignment__c = :theServAssign.Id Order By Assessment_Date__c DESC];
     }
     
     public PageReference createFadAssess(){
@@ -113,7 +113,7 @@ public class ServiceAssignmentExt {
         assess.Service_Assignment__c = theServAssign.Id;
         assess.Status__c = 'Open';
         insert assess;
-        PageReference ref =  new PageReference('/apex/Assessment_FAD_Form?id='+assess.id + '&edit=1');
+        PageReference ref =  new PageReference('/apex/Assessment_FAD_Form?id='+assess.id + '&edit=1&isnew=1');
             
         return ref;
     }
