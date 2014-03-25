@@ -132,7 +132,7 @@ public class ServiceAssignmentExt {
                 psetFlags = false;
             } else {
                 pshowDiag = tmnUsers[0].Operating_Group__c=='Redwood' || tmnUsers[0].Operating_Group__c=='Cambridge';
-                pshowLocation =  tmnUsers[0].Operating_Group__c=='Redwood' ;
+                pshowLocation =  ( tmnUsers[0].Operating_Group__c=='Redwood' && admission.State__c != 'AZ');
                 psetFlags = true;
             }
             
