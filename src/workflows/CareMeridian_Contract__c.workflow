@@ -18,7 +18,7 @@
             <type>creator</type>
         </recipients>
         <senderType>CurrentUser</senderType>
-        <template>Contracts/NeuroRestorative_Termination_Notice</template>
+        <template>Contracts/Neuro_Termination_Notice_Alert</template>
     </alerts>
     <alerts>
         <fullName>Neuro_Termination_Notice_alert</fullName>
