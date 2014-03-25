@@ -101,6 +101,23 @@ public class ServiceAssignmentExt {
         return [Select id From Action_Plan__c where Action_Plan__c.Service_Assignment__c = :currentRecord.id AND Status__c = 'Active Final' Limit 1];
     }
 
+    public List<Assessment__c> getAssessments_Fad(){
+        
+        return [select id, Assessment_Date__c, Phase__c, Status__c, Disregard__c from Assessment__c where Type__c = 'FAD' AND Service_Assignment__c = :theServAssign.Id Order By Assessment_Date__c DESC];
+    }
+    
+    public PageReference createFadAssess(){
+        Assessment__c assess = new Assessment__c ();
+        assess.type__c = 'FAD';
+        assess.Admission__c = admission.id;
+        assess.Service_Assignment__c = theServAssign.Id;
+        assess.Status__c = 'Open';
+        insert assess;
+        PageReference ref =  new PageReference('/apex/Assessment_FAD_Form?id='+assess.id + '&edit=1');
+            
+        return ref;
+    }
+    
     private Boolean pshowDiag, pshowLocation; 
     private static Boolean psetFlags = false;
     public Boolean showDiagnosis { get {
