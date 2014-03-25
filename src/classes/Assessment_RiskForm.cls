@@ -96,6 +96,11 @@ public PageReference testForCans() {
         PageReference ref =  new PageReference('/apex/AssessmentView?id='+this.assessment.id);
             
             return ref;
+       }
+       if (assessment.type__c == 'FAD'){
+           PageReference ref =  new PageReference('/apex/Assessment_FAD_Form?id='+this.assessment.id);
+           return ref;
+       
        }     
             return null;
 
@@ -273,13 +278,13 @@ public PageReference testForCans() {
         hasErrorOnFinalize = false;
         
         if(assessment.Recommended_Day_Services_Staffing_Ratio__c !=null){
-        	RecDayServicesStaffingRatio =  assessment.Recommended_Day_Services_Staffing_Ratio__c.split(glbListSeperator);
-        	// 01/01/14 - adding this line to support the display of staffing ratio in summary mode
-        	recommendedDayServicesStaffingRatioFull = String.valueOf(RecDayServicesStaffingRatio.size() > 0);
-        	}
+            RecDayServicesStaffingRatio =  assessment.Recommended_Day_Services_Staffing_Ratio__c.split(glbListSeperator);
+            // 01/01/14 - adding this line to support the display of staffing ratio in summary mode
+            recommendedDayServicesStaffingRatioFull = String.valueOf(RecDayServicesStaffingRatio.size() > 0);
+            }
         if(assessment.Staffing_Supervision_Needs__c != null){
-        	Staffing_Supervision_Needs = assessment.Staffing_Supervision_Needs__c.split(glbListSeperator);
-        	}
+            Staffing_Supervision_Needs = assessment.Staffing_Supervision_Needs__c.split(glbListSeperator);
+            }
         if(assessment.Services_Required_Level_Day_Services__c != null){ 
             Level_Required_DayServices = assessment.Services_Required_Level_Day_Services__c.split(glbListSeperator);
             displayLevel_Required_DayServices = assessment.Services_Required_Level_Day_Services__c.split(glbListSeperator);
@@ -290,7 +295,7 @@ public PageReference testForCans() {
             Level_Required_ResidentialServices = assessment.Support_Required_Level_Residential__c.split(glbListSeperator);
             displayLevel_Required_ResidentialServices  = assessment.Support_Required_Level_Residential__c.split(glbListSeperator);
             // 01/01/14 - adding this line to support the display of residential services in summary mode
-     		levelRequiredResidentialFull = String.valueOf(displayLevel_Required_ResidentialServices.size() > 0);
+            levelRequiredResidentialFull = String.valueOf(displayLevel_Required_ResidentialServices.size() > 0);
             System.Debug('display level required res: ' + displayLevel_Required_ResidentialServices + ', size: ' + String.valueOf(displayLevel_Required_ResidentialServices.size()));
         }
         
