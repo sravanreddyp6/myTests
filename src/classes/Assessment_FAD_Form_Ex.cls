@@ -20,6 +20,7 @@ public with sharing class Assessment_FAD_Form_Ex {
             assess.accountperson__c = ApexPages.currentPage().getParameters().get('pbs');
             assess.service_assignment__c = ApexPages.currentPage().getParameters().get('sa'); 
             assess.admission__c = ApexPages.currentPage().getParameters().get('admin');
+            mode = 'edit';
         }
         
         for(Assessment_Question__c aq: [select id, Dev_Name__c, Question_Title__c from Assessment_Question__c Where Question_Domain__r.Assessment_Type2__c = 'FAD']){        
@@ -33,8 +34,28 @@ public with sharing class Assessment_FAD_Form_Ex {
         
         }
     }
+    public PageReference myCG_is_same_as_other_assessment(){
+        if(assess.Phase__c =='Initial'){
+        
+        mapRes.get('CG_is_same_as_other_assessment').Rating__c = null;
+        }
+        return null;
+    }
+    public PageReference myDisregard(){
+        try{
+            Assess.Disregard__c = True;
+            upsert Assess;
+        
+        
     
-    
+        } catch (Exception ex) {
+                ApexPages.addMessages(ex);
+                return null;
+        }  
+        mode = 'view';
+        return null;   
+    } 
+        
     public PageReference mySave(){
         try{
             upsert mapRes.values();
@@ -57,4 +78,14 @@ public with sharing class Assessment_FAD_Form_Ex {
         return null;   
     }       
 
+    public PageReference myLock(){
+        assess.Status__c = 'Locked';
+        update assess;
+        return null;   
+    }  
+    public PageReference myUnlock(){
+        assess.Status__c = 'Open';
+        update assess;
+        return null;   
+    }      
 }
