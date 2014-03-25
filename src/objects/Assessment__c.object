@@ -300,7 +300,7 @@ Delete Me</description>
         <referenceTo>Assessment_Type__c</referenceTo>
         <relationshipLabel>Assessments</relationshipLabel>
         <relationshipName>Assessment_Junction</relationshipName>
-        <required>true</required>
+        <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
@@ -384,6 +384,28 @@ Delete Me</description>
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Phase__c</fullName>
+        <externalId>false</externalId>
+        <label>Phase</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Initial</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>3 Month</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Final</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Previous__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <description>The Assessment that this one is cloned from</description>
@@ -429,6 +451,18 @@ Delete Me</description>
         <summaryOperation>sum</summaryOperation>
         <trackTrending>false</trackTrending>
         <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>Service_Assignment__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Service Assignment</label>
+        <referenceTo>Service_Assignment__c</referenceTo>
+        <relationshipLabel>Assessments</relationshipLabel>
+        <relationshipName>Assessments</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Services_Required_Level_Day_Services__c</fullName>
@@ -521,6 +555,28 @@ Delete Me</description>
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>CANS</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>FAD</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>RISK</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Verbal_Approval_Obtained_From__c</fullName>
         <externalId>false</externalId>
         <label>Verbal Approval Obtained From</label>
@@ -566,7 +622,7 @@ Delete Me</description>
     <validationRules>
         <fullName>Admission_Required</fullName>
         <active>true</active>
-        <errorConditionFormula>ISBLANK(Admission__c)</errorConditionFormula>
+        <errorConditionFormula>(ISBLANK(Admission__c) &amp;&amp; TEXT(Type__c) != &apos;FAD&apos;)</errorConditionFormula>
         <errorDisplayField>Admission__c</errorDisplayField>
         <errorMessage>An Admission is required for all Assessments</errorMessage>
     </validationRules>

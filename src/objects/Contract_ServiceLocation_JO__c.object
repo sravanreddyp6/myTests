@@ -46,124 +46,126 @@
     </actionOverrides>
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
-    <description>ASSESSMENT  - Question for Assessment</description>
-    <enableActivities>false</enableActivities>
+    <description>This object will be used to link Contracts with service locations.</description>
+    <enableActivities>true</enableActivities>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableReports>true</enableReports>
     <fields>
-        <fullName>Allow_Custom_Question_Text__c</fullName>
-        <defaultValue>false</defaultValue>
+        <fullName>Contract__c</fullName>
         <externalId>false</externalId>
-        <label>Allow Custom Question Text</label>
+        <label>Contract</label>
+        <referenceTo>CareMeridian_Contract__c</referenceTo>
+        <relationshipLabel>Contract Locations</relationshipLabel>
+        <relationshipName>Contract_Locations</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
         <trackTrending>false</trackTrending>
-        <type>Checkbox</type>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
     </fields>
     <fields>
-        <fullName>Assessment_Type__c</fullName>
+        <fullName>Service_Location_City__c</fullName>
         <externalId>false</externalId>
-        <formula>Question_Domain__r.Assessment_Type__r.Id</formula>
-        <label>Assessment Type</label>
+        <formula>Service_Location__r.City__c</formula>
+        <label>City</label>
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
     <fields>
-        <fullName>Dev_Name__c</fullName>
+        <fullName>Service_Location_Program__c</fullName>
         <externalId>false</externalId>
-        <label>Dev Name</label>
-        <length>255</length>
+        <formula>Service_Location__r.Program__c</formula>
+        <label>Program</label>
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
     <fields>
-        <fullName>Excluded_States__c</fullName>
-        <description>In these states (comma separated). this question is not displayed in the assessment form.</description>
+        <fullName>Service_Location_Service_Value__c</fullName>
         <externalId>false</externalId>
-        <label>Excluded States</label>
-        <length>255</length>
+        <formula>Service_Location__r.Service_Value__c</formula>
+        <label>Service Value</label>
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
     <fields>
-        <fullName>Question_Description__c</fullName>
-        <description>Description of the Question</description>
+        <fullName>Service_Location_Setting__c</fullName>
         <externalId>false</externalId>
-        <label>Question Description</label>
-        <length>32768</length>
+        <formula>Service_Location__r.Setting__c</formula>
+        <label>Setting</label>
+        <required>false</required>
         <trackTrending>false</trackTrending>
-        <type>LongTextArea</type>
-        <visibleLines>5</visibleLines>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
-        <fullName>Question_Domain__c</fullName>
+        <fullName>Service_Location_State__c</fullName>
+        <externalId>false</externalId>
+        <formula>Service_Location__r.State__c</formula>
+        <label>State</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Service_Location_Street__c</fullName>
+        <externalId>false</externalId>
+        <formula>Service_Location__r.Street__c</formula>
+        <label>Street</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Service_Location_Zip__c</fullName>
+        <externalId>false</externalId>
+        <formula>Service_Location__r.Zip__c</formula>
+        <label>ZIP</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Service_Location__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
-        <label>Question Domain</label>
-        <referenceTo>Assessment_Domain__c</referenceTo>
-        <relationshipLabel>Assessment Questions</relationshipLabel>
-        <relationshipName>Question</relationshipName>
+        <label>Alias</label>
+        <referenceTo>Service_Location__c</referenceTo>
+        <relationshipLabel>Contract Locations</relationshipLabel>
+        <relationshipName>Contract_Locations</relationshipName>
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
-    <fields>
-        <fullName>Question_Number__c</fullName>
-        <description>Number of the Question</description>
-        <externalId>false</externalId>
-        <label>Question Number</label>
-        <precision>18</precision>
-        <required>false</required>
-        <scale>0</scale>
-        <trackTrending>false</trackTrending>
-        <type>Number</type>
-        <unique>false</unique>
-    </fields>
-    <fields>
-        <fullName>Question_Title__c</fullName>
-        <description>Title of the Question</description>
-        <externalId>false</externalId>
-        <label>Question Title</label>
-        <required>false</required>
-        <trackTrending>false</trackTrending>
-        <type>TextArea</type>
-    </fields>
-    <fields>
-        <fullName>external_id__c</fullName>
-        <externalId>true</externalId>
-        <label>external id</label>
-        <length>255</length>
-        <required>false</required>
-        <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
-    </fields>
-    <label>Assessment Question</label>
+    <label>Contract ServiceLocation JO</label>
     <listViews>
         <fullName>All</fullName>
         <columns>NAME</columns>
-        <columns>Dev_Name__c</columns>
-        <columns>Question_Number__c</columns>
-        <columns>Question_Description__c</columns>
-        <columns>Question_Domain__c</columns>
-        <columns>Question_Title__c</columns>
-        <columns>Assessment_Type__c</columns>
+        <columns>Service_Location_City__c</columns>
+        <columns>Contract__c</columns>
+        <columns>Service_Location_Program__c</columns>
+        <columns>Service_Location_Service_Value__c</columns>
+        <columns>Service_Location_Setting__c</columns>
+        <columns>Service_Location_State__c</columns>
+        <columns>Service_Location_Street__c</columns>
+        <columns>Service_Location_Zip__c</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>
     <nameField>
-        <displayFormat>{0}</displayFormat>
-        <label>QuestionID</label>
-        <type>AutoNumber</type>
+        <label>Contract Location JO Name</label>
+        <type>Text</type>
     </nameField>
-    <pluralLabel>Assessment Questions</pluralLabel>
-    <searchLayouts>
-        <customTabListAdditionalFields>Question_Title__c</customTabListAdditionalFields>
-    </searchLayouts>
-    <sharingModel>Read</sharingModel>
+    <pluralLabel>Contract Locations</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ControlledByParent</sharingModel>
 </CustomObject>
