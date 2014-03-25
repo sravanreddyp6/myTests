@@ -23,7 +23,7 @@ public with sharing class HomePageSearchController{
       // person being served     
     
       
-      for(Contact cnt:[select Id,Name,FirstName,First_Name_SoundEx_Key__c,LastName,Last_Name_SoundEx_Key__c,Age__c,Account.BillingState,(select Person_Being_Served__r.Name,Person_Being_Served__c,State__c from Episodes__r) from Contact where FirstName like:FirstNMe and LastName like:LastNMe]){
+      for(Contact cnt:[select Id,Name,FirstName,LastName,Age__c,Account.BillingState,(select Person_Being_Served__r.Name,Person_Being_Served__c,State__c from Episodes__r) from Contact where FirstName like:FirstNMe and LastName like:LastNMe]){
          
              fullname = cnt.LastName + ', ' + cnt.FirstName;
              age = String.valueof(cnt.Age__c);
@@ -44,7 +44,7 @@ public with sharing class HomePageSearchController{
        
        //Person Being Referred
        
-      for(Person_Being_Referred__c pbr:[select Id,Name,First_Name__c,First_Name_SoundEx_Key__c,Last_Name__c,Last_Name_SoundEx_Key__c,Full_Name__c,Age__c,State__c,(select Name,State_for_Preferred_Service__c,Name_PBR__c,Person_Being_Referred__r.Name,Person_Being_Referred__c from Referrals__r) from Person_Being_Referred__c where First_Name__c like:FirstNMe and Last_Name__c like :LastNMe]){
+      for(Person_Being_Referred__c pbr:[select Id,Name,First_Name__c,Last_Name__c,Full_Name__c,Age__c,State__c,(select Name,State_for_Preferred_Service__c,Name_PBR__c,Person_Being_Referred__r.Name,Person_Being_Referred__c from Referrals__r) from Person_Being_Referred__c where First_Name__c like:FirstNMe and Last_Name__c like :LastNMe]){
             fullname = pbr.Last_Name__c + ', ' + pbr.First_Name__c;
             age = String.valueOf(pbr.Age__c);
             for(Referral__c ref:pbr.Referrals__r){
@@ -63,7 +63,7 @@ public with sharing class HomePageSearchController{
        
       // Mentor
      
-        for(TMN_Contact__c tmn:[select Id,Name,First_Name__c,First_Name_SoundEx_Key__c,Last_Name__c,Last_Name_SoundEx_Key__c,Full_Name__c,Age__c,State__c from TMN_Contact__c where First_Name__c like:FirstNMe and Last_Name__c like:LastNMe])  {
+        for(TMN_Contact__c tmn:[select Id,Name,First_Name__c,Last_Name__c,Full_Name__c,Age__c,State__c from TMN_Contact__c where First_Name__c like:FirstNMe and Last_Name__c like:LastNMe])  {
             fullname = tmn.Last_Name__c + ', ' + tmn.First_Name__c;
             age = String.valueOf(tmn.Age__c);
             state = tmn.State__c;
