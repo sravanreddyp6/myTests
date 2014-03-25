@@ -322,7 +322,7 @@ document.onkeypress = stopRKey;
     <apex:actionFunction name="saveRef" action="{!saveRef}"/>
     <apex:actionFunction name="checkRedFlags" action="{!checkRedFlags}" oncomplete="alertOnHighRisk(); saveRef(); return false;" rerender="redFlagged"/>
     <apex:actionRegion >
-        <apex:actionFunction name="setReferralRecordType" action="{!setReferralRecordType}" rerender="ReferralDetail,Funding,progConsid,ReferralServices,msgs,ReferralDetailHeader,progConsiderationsDetail" />
+        <apex:actionFunction name="setReferralRecordType" action="{!setReferralRecordType}" rerender="ReferralDetail,ReferralDetail_1,Funding,progConsid,ReferralServices,msgs,ReferralDetailHeader,referralDetailBlock,progConsid,progConsiderationsDetail,placementRiskBlock, JuvBlockSection, PlacementHxBlockSection, HxBlock"/> 
     </apex:actionRegion>
     <apex:actionRegion >
         <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" oncomplete="openModalDialog('relatedPartyModal', 'span', 'Add Related Party','none');" status="showAddRelPartyStatus" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs" />
@@ -489,7 +489,7 @@ document.onkeypress = stopRKey;
                              id="stateForPreferredService" rendered="{!OR(!ISNULL(personBeingRefRecord.Id),!ISNULL(personBeingServedRecord.Id))}">
           <apex:actionRegion >
               <apex:inputField value="{!Referral__c.State_for_Preferred_Service__c}" required="{!referralRecordType!='NeuroRestorative'}" id="sfps">
-                  <apex:actionSupport event="onchange" oncomplete="j$('select[id$=servicesRequested]').val('');setReferralRecordType();" rerender="referralDetailBlock,ReferralDetailHeader,ReferralDetail,ReferralServices,progConsid,ReferralDetail_1"/>
+                  <apex:actionSupport event="onchange" oncomplete="j$('select[id$=servicesRequested]').val('');setReferralRecordType();" rerender="placementRiskBlock, JuvBlockSection, PlacementHxBlockSection, HxBlock"/>
               </apex:inputField>
           </apex:actionRegion>
       </apex:pageblockSection>
@@ -1532,7 +1532,7 @@ document.onkeypress = stopRKey;
          </apex:pageBlockSectionItem>
          <apex:pageblockSectionItem />
          </apex:pageBlockSection>
-		<apex:pageBlockSection id="HxBlock">
+		<apex:pageBlockSection id="HxBlock" rendered="{!referralRecordType=='Cambridge Florida' || referralRecordType=='Cambridge Maryland'}">
           
          <apex:inputField label="Current Charges" value="{!Referral__c.Current_Charges__c}" html-disabled="true" rendered="{!Referral__c.Current_Juvenile_Services_Involvement__c!='Yes' }" style="width:95%;" />
          <apex:inputField label="Current Charges" value="{!Referral__c.Current_Charges__c}" rendered="{!Referral__c.Current_Juvenile_Services_Involvement__c=='Yes' }" style="width:95%;" required="{!Referral__c.Current_Juvenile_Services_Involvement__c == 'Yes'}"/>
@@ -1576,7 +1576,7 @@ document.onkeypress = stopRKey;
          </apex:pageBlockSectionItem>
          
 </apex:pageBlockSection>
-<apex:pageBlockSection id="moreHxBlock">
+<apex:pageBlockSection id="moreHxBlock" rendered="{!referralRecordType=='Cambridge Florida' || referralRecordType=='Cambridge Maryland'}">
 
 
          <apex:inputField label="Is this client considered pre-court with charges pending?" value="{!Referral__c.Pre_Court__c}" html-disabled="true" rendered="{! Referral__c.Current_Juvenile_Services_Involvement__c!='Yes' || (Referral__c.Felony__c!='Yes' && Referral__c.Misdemeanor__c!='Yes')}"/>
