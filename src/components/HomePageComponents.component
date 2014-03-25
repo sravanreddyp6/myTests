@@ -26,9 +26,10 @@
       border-radius: 8px 8px 8px 8px;
       padding: 6px 6px 6px 6px;
       margin-top: 4px;
+      height: 440px;
     }
-
-    .block-inner ul {
+    
+      .block-inner ul {
       margin-left: 5px;
       margin-right: 0px;
       padding-left: 10px;
@@ -153,12 +154,12 @@
                                   </li>
                               </apex:repeat> 
                               <apex:outputPanel rendered="{!objectName=='Person Being Served'}">
-	                              <apex:repeat value="{!VFReportlst}" var="VFReport"> 
-				                    <li>
-				                      <apex:outputLink value="{!'/apex/' + VFReport.link__c }" target="_blank" title="View this Report">{!VFReport.link__c}</apex:outputLink>
-				                    </li>
-				                  </apex:repeat>
-			                  </apex:outputPanel>
+                                  <apex:repeat value="{!VFReportlst}" var="VFReport"> 
+                                    <li>
+                                      <apex:outputLink value="{!'/apex/' + VFReport.link__c }" target="_blank" title="View this Report">{!VFReport.Name__c}</apex:outputLink>
+                                    </li>
+                                  </apex:repeat>
+                              </apex:outputPanel>
                         </ul>
                     </li>
                     </apex:outputPanel>
