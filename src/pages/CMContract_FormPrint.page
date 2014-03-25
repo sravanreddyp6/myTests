@@ -72,7 +72,7 @@ h3{
 .level2{
 	padding: 0px;
 	font-size: 13px;
-	overflow:hidden;
+	//overflow:hidden;
 }
 .table2{
 	width: 100%;
@@ -170,7 +170,7 @@ h3{
                 <apex:pageBlockSectionItem rendered="{!isNeuro}" >
                     <apex:outputLabel >TIN-NPI</apex:outputLabel>
                     <apex:outputPanel layout="block" style="width: 399px;">
-                         {!SUBSTITUTE(CareMeridian_Contract__c.TIN_NPI__c,';', '; ')}
+                         {!SUBSTITUTE(CareMeridian_Contract__c.TIN_NPI__c,';', ', ')}
                     </apex:outputPanel>
                 </Apex:pageBlockSectionItem>
                 
@@ -178,12 +178,13 @@ h3{
                 
                 <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
                  
- 		<table border="1" cellpadding="0" class="table2" cellspacing="0" colspan="0"  rendered="{!isNeuro}">
+        <apex:variable var="t" value="" rendered="{!isNeuro}">
+ 		<table border="1" cellpadding="0" class="table2" cellspacing="0" colspan="0">
 			<tr>
 				<th class="level2" width="8%">Alias</th>
 				<th class="level2" width="10%">Service Value</th>
-				<th class="level2" width="18%">Setting</th>
-				<th class="level2" Width="35%">Program</th>
+				<th class="level2" width="20%">Setting</th>
+				<th class="level2" Width="25%">Program</th>
 				<th class="level2">Address</th>
 				<th class="level2" width="12%">Last Modified Date</th>
 			</tr>
@@ -193,8 +194,8 @@ h3{
 			<tr>
 				<td class="level2" width="8%">{!location.Service_Location__r.Name}</td>
 				<td class="level2" width="10%">{!location.Service_Location_Service_Value__c}</td>
-				<td class="level2" width="18%">{!location.Service_Location__r.Setting__c}</td>
-				<td width="35%" class="level2">{!location.Service_Location_Program__c}</td>
+				<td class="level2" width="20%">{!location.Service_Location__r.Setting__c}</td>
+				<td width="25%" class="level2">{!SUBSTITUTE(location.Service_Location_Program__c,'-',' - ')}</td>
 				<td class="level2">{!location.Service_Location_Street__c}<br/>
                     {!location.Service_Location_City__c}<br/>
                     {!location.Service_Location_State__c}<br/>
@@ -203,7 +204,8 @@ h3{
 			</tr>
 	
 		</apex:repeat>
-		</table>      
+		</table>     
+		</apex:variable> 
        </apex:pageBlockSection>            
             
             <apex:pageBlockSection title="Timeframe" columns="1"   >
