@@ -52,7 +52,7 @@ private class HomePageSearchControllerTest {
 								Date_of_Birth__c = date.newinstance(1990, 2, 17)
 					);
     insert tmnaccnt;
-  	List<TMN_Contact__c> testtmn = [select Id,Name,First_Name__c,First_Name_SoundEx_Key__c,Last_Name__c,Last_Name_SoundEx_Key__c,Full_Name__c,Age__c,State__c from TMN_Contact__c];
+  	List<TMN_Contact__c> testtmn = [select Id,Name,First_Name__c,Last_Name__c,Full_Name__c,Age__c,State__c from TMN_Contact__c];
   	return testtmn[0];
   }
   public static Contact newContact(String Fname,String Lname){
@@ -63,7 +63,7 @@ private class HomePageSearchControllerTest {
   	                      Birthdate = date.newinstance(1990, 2, 17)
   	                    );
   	insert cnt;
-  	List<Contact> testcnt = [select Id,Name,FirstName,First_Name_SoundEx_Key__c,LastName,Last_Name_SoundEx_Key__c,Age__c from Contact limit 1];
+  	List<Contact> testcnt = [select Id,Name,FirstName,LastName,Age__c from Contact limit 1];
   	return testcnt[0];
   }
   
