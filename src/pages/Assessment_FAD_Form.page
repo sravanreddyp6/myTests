@@ -1,4 +1,4 @@
-<apex:page standardController="Assessment__c" extensions="Assessment_FAD_Form_Ex" docType="html-5.0" sidebar="false">
+<apex:page standardController="Assessment__c" extensions="Assessment_FAD_Form_Ex"  sidebar="false">
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
@@ -40,21 +40,25 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
 <apex:pageBlock title="FAD Assessment" >
     <apex:pageBlockButtons >
         <div style="float: right" >
+        <!--
             <apex:commandButton action="{!myUnlock}" 
                                 value="Unlock" 
                                 rendered="{!mode='view'}" 
                                 reRender="everything" 
                                 status="myStatus"/>
-            <apex:commandButton action="{!myLock}" 
-                                value="Lock" 
-                                rendered="{!mode='view'}" 
-                                reRender="everything" 
-                                status="myStatus"/>                                        
+                                
             <apex:commandButton action="{!myDisregard}" 
                                 value="Disregard" 
                                 rendered="{!mode='view'}" 
                                 reRender="everything" 
-                                status="myStatus"/>         
+                                status="myStatus"/>                                 
+                                
+            <apex:commandButton action="{!myLock}" 
+                                value="Submit" 
+                                rendered="{!mode='view'}" 
+                                reRender="everything" 
+                                status="myStatus"/>                                        
+        -->
             <apex:commandButton action="{!mySave}" 
                                 value="Save" 
                                 rendered="{!mode='edit'}" 
@@ -67,17 +71,33 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
                                 status="myStatus"/>
             <apex:commandButton action="{!cancel}" 
                                 value="Cancel" 
-                                rendered="{!mode='edit'}" 
-                                reRender="everything" 
-                                status="myStatus"/>                                
+                                rendered="{!$CurrentPage.parameters.isnew !='1' && mode='edit'}" 
+                                immediate="true" />    
+            <apex:commandButton action="{!mycancel}" 
+                                value="Cancel" 
+                                rendered="{!$CurrentPage.parameters.isnew =='1' && mode='edit'}" 
+                                immediate="true"/>                                 
+                                
         </div>
     </apex:pageBlockButtons>
+<!-- edit -->    
     <apex:pageBlockSection rendered="{!mode='edit'}" >
         <apex:inputField label="Date of Admistration" required="true"  value="{!Assessment__c.Assessment_Date__c}"/>
         <apex:outputField value="{!Assessment__c.AccountPerson__c}"/>
+        
         <apex:inputField required="true" value="{!Assessment__c.Phase__c}">
             <apex:actionSupport reRender="previous_CG" event="onchange" action="{!myCG_is_same_as_other_assessment}"  />
         </apex:inputField>
+        
+        <!--
+        <apex:selectList size="1" value="{!Assessment__c.Phase__c}" required="true">
+            <apex:selectOption itemLabel="--None--" itemValue="" ></apex:selectOption>
+            <apex:selectOption itemLabel="Initial" itemValue="Initial" ></apex:selectOption>
+            <apex:selectOption itemLabel="3 Month" itemValue="3 Month"></apex:selectOption>
+            <apex:selectOption itemLabel="Final" itemValue="Final"></apex:selectOption>
+            <apex:actionSupport reRender="previous_CG" event="onchange" action="{!myCG_is_same_as_other_assessment}"  />
+        </apex:selectList>
+        -->
         <apex:outputField value="{!Assessment__c.Service_Assignment__c}"/>
         <apex:outputField value="{!Assessment__c.Status__c}"/>
         <apex:outputField value="{!Assessment__c.Disregard__c}"/>
@@ -218,6 +238,12 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
 <!-- edit -->    
     <apex:pageBlockSection columns="1" title="Caregiver" collapsible="false"  rendered="{!mode='edit'}">
         <apex:pageBlockSectionItem >
+            <apex:outputPanel >Primary Caregiver</apex:outputPanel>            
+            <apex:outputPanel >
+                TBD        
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem>    
+        <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['CG_Could_Not_complete'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
                 <apex:inputCheckbox value="{!mapRes['CG_Could_Not_complete'].Yes_No__c}"  onclick="toggleOptions(this, 'CG_CNC2');"/>
@@ -288,6 +314,12 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
     </apex:pageBlockSection>
 <!-- view --> 
     <apex:pageBlockSection columns="1" title="Caregiver" collapsible="false"  rendered="{!mode='view'}">
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >Primary Caregiver</apex:outputPanel>            
+            <apex:outputPanel >
+                TBD        
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem>     
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['CG_Could_Not_complete'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
