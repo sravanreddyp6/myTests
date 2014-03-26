@@ -110,8 +110,8 @@ public with sharing class Notes_ProgressNote_Create {
 		// WVPN-6
 		// GET RECORD TYPES THAT SHOULD HAVE DEFAULT 0 FOR pn.Number_Of_Required_Signatures__c
 		List<RecordType> rtsForZeroSigs = new List<RecordType>();
-		rtsForZeroSigs = [ SELECT Name, DeveloperName FROM RecordType WHERE DeveloperName = 'IN_IFCS' OR DeveloperName = 'MA_IFCS'
-							OR DeveloperName = 'MD_IFCS' OR DeveloperName = 'OH_IFCS' ];
+		rtsForZeroSigs = [ SELECT Name, DeveloperName FROM RecordType WHERE DeveloperName = 'IN_FCT' OR DeveloperName = 'MA_FCT'
+							OR DeveloperName = 'MD_FCT' OR DeveloperName = 'OH_FCT' ];
 		// LOOP THROUGH THOSE RECORD TYPES AND COMPARE TO RECORD TYPES OF THIS NOTE.  IF SAME, THEN DEFAULT SIGS TO 0
 		for(RecordType rtForLoop : rtsForZeroSigs) {
 			if(rtForLoop.Id==pn.RecordTypeId && pn.Number_of_Required_Signatures__c==null) {
