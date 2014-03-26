@@ -372,6 +372,11 @@ public with sharing class referralConversion_Controller {
  	if ( pbrCurr.Street_2__c != null)
  		strFullSt += ', ' + pbrCurr.Street_2__c;
  		
+ 	// EB-145 - default Billing System to AVATAR if it is filled in on conversion	
+ 	String strBillingSystem = '';
+ 	if ( !String.IsBlank(referralRecord.Billing_ID__c) && referralRecord.Billing_ID__c.length() == 6)
+ 		strBillingSystem = 'AVATAR';
+ 			
  	Account accNew = new Account( RecordTypeID = idPBStype, 
  								FirstName = pbrCurr.First_Name__c, 
  								Middle_Name__pc = pbrCurr.Middle_Initial__c,
@@ -402,6 +407,7 @@ public with sharing class referralConversion_Controller {
  								UCI_ID__pc = string.valueOf(this.referralRecord.UCI_Number__c),
  								Marital_Status__pc = pbrCurr.Marital_Status__c,
  								Avatar_ID__pc = referralRecord.Billing_ID__c,
+ 								Avatar_Source_System__pc = strBillingSystem,
  								Legal_Guardianship_Status__pc = referralRecord.Legal_Guardian_Status__c,
  								Current_Medications__pc = referralRecord.Current_Medications__c
  								);

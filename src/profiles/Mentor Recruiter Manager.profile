@@ -450,6 +450,10 @@
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>FieldPrintTransform</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>ForgotPasswordController</apexClass>
         <enabled>false</enabled>
     </classAccesses>
@@ -467,6 +471,14 @@
     </classAccesses>
     <classAccesses>
         <apexClass>GuardianTriggeredActions</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>IFCS_Active_MoreThanSixMonths_RPT_EX</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>IFCS_PBS_Count_Rpt_Ex</apexClass>
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
@@ -2806,6 +2818,56 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>CareMeridian_Contract__c.Other_Ex1_Details__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Other_Ex1__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Other_Ex2_Details__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Other_Ex2__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Other_Ex3_Details__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Other_Ex3__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Other_Ex4_Details__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Other_Ex4__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Other_Ex5_Details__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Other_Ex5__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>CareMeridian_Contract__c.Other_Ex_Details__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -2967,6 +3029,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>CareMeridian_Contract__c.Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Term_Begin_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -3901,6 +3968,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Credential_Profile__c.Order__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Credential_Profile__c.PBI__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -3932,6 +4004,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Credential_Profile__c.Required_for_Resident_Non_Relative__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Profile__c.Section_Order__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Profile__c.Section__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -9518,6 +9600,11 @@
         <editable>false</editable>
         <field>Progress_Note__c.Date_of_Service__c</field>
         <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Progress_Note__c.Days_Created_past_DOS__c</field>
+        <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
@@ -16873,6 +16960,14 @@
     <pageAccesses>
         <apexPage>ForgotPasswordConfirm</apexPage>
         <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>IFCS_Active_MoreThanSixMonths_RPT</apexPage>
+        <enabled>false</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>IFCS_PBS_Count_Rpt</apexPage>
+        <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
         <apexPage>IdeasHome</apexPage>

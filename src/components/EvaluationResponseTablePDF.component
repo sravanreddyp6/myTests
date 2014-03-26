@@ -12,14 +12,15 @@
     <apex:attribute name="isPdf" description="Boolean describing whether or not this is for a PDF rendering"
         type="Boolean" required="false" default="false" />
 
-    <apex:pageBlockSection columns="1" title="{!type}">
-    
-        <apex:pageBlockTable value="{!responses}" var="response" id="responseTable" border="1px" style="text-align:center;th padding:10px;">
+    <apex:pageBlockSection columns="1" title="{!type}" >
+    	<apex:outputText value="None" rendered="{!responses.size==0 && isPDF}" />
+        <apex:pageBlockTable value="{!responses}" var="response" id="responseTable" border="1px" style="text-align:center;th padding:10px;" rendered="{! (responses.size > 0 && isPDF) || !isPDF }">
                 <apex:repeat value="{!columnsToFetch}" var="column">
                     <apex:column value="{!response[column]}" style="padding:10px;margin:10px;text-align:center;" />
                 </apex:repeat>    
         </apex:pageBlockTable>
 
     </apex:pageBlockSection>
-
+    
+   
 </apex:component>

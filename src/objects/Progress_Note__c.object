@@ -1185,6 +1185,21 @@
         <type>Date</type>
     </fields>
     <fields>
+        <fullName>Days_Created_past_DOS__c</fullName>
+        <description># of days after service that the note was created</description>
+        <externalId>false</externalId>
+        <formula>datevalue(CreatedDate) - Date_of_Service__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label># Days Created past DOS</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Dev_Impl_Home_Based_Support_Plan__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
@@ -1618,7 +1633,11 @@
         <fullName>Location_Type_AZ_Report_Map__c</fullName>
         <description>This field is used in the AZ Billing Report.</description>
         <externalId>false</externalId>
-        <formula>IF(ISPICKVAL(Service_Location__c, &apos;Home&apos;), &apos;12&apos;, IF(ISPICKVAL(Service_Location__c, &apos;Office&apos;), &apos;11&apos;, &apos;99&apos;))</formula>
+        <formula>CASE (  Service_Location__c,
+        &apos;Home&apos;,&apos;12&apos;,
+        &apos;Office&apos;,&apos;11&apos;,
+        &apos;Community Mental Health Center&apos;,&apos;53&apos;,
+        &apos;99&apos;)</formula>
         <label>Location / Type</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
@@ -2525,6 +2544,10 @@ If this is selected, please fill out the appropriate check boxes to the right.</
                 <default>false</default>
             </picklistValues>
             <picklistValues>
+                <fullName>Community Mental Health Center</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
                 <fullName>Other</fullName>
                 <default>false</default>
             </picklistValues>
@@ -3041,11 +3064,9 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <columns>CREATEDBY_USER</columns>
         <columns>UPDATEDBY_USER</columns>
         <columns>Status__c</columns>
-        <columns>Approval_Status__c</columns>
         <columns>Program__c</columns>
         <columns>Action_Plan__c</columns>
-        <columns>OWNER.LAST_NAME</columns>
-        <columns>Disregard_Note__c</columns>
+        <columns>Plan__c</columns>
         <filterScope>Everything</filterScope>
         <filters>
             <field>RECORDTYPE</field>
@@ -3054,12 +3075,14 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         </filters>
         <label>FL-My Team&apos;s Notes</label>
         <sharedTo>
+            <group>AccessHack_JeannieKing_NcRockAndRaleigh</group>
             <group>Admins</group>
             <group>All_TMN</group>
-            <roleAndSubordinates>FL_Broward_Plantation</roleAndSubordinates>
-            <roleAndSubordinates>FL_Broward_Plantation_Clinical_Users</roleAndSubordinates>
-            <roleAndSubordinates>FL_Miami_Dade</roleAndSubordinates>
-            <roleAndSubordinates>FL_Miami_Dade_Clinical_Users</roleAndSubordinates>
+            <group>Clinical_Force_NC_Goldsboro</group>
+            <group>Clinical_Force_NC_IFCS_Five_County</group>
+            <group>Clinical_Force_NC_IFCS_Triangle</group>
+            <group>Clinical_Force_NC_Raleigh</group>
+            <group>NC_users</group>
         </sharedTo>
     </listViews>
     <listViews>
@@ -3509,6 +3532,10 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <picklist>Service_Location__c</picklist>
             <values>
                 <fullName>Community</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Community Mental Health Center</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -4089,6 +4116,10 @@ If this is selected, please fill out the appropriate check boxes to the right.</
                 <default>false</default>
             </values>
             <values>
+                <fullName>Community Mental Health Center</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Home</fullName>
                 <default>false</default>
             </values>
@@ -4640,6 +4671,10 @@ If this is selected, please fill out the appropriate check boxes to the right.</
                 <default>false</default>
             </values>
             <values>
+                <fullName>Community Mental Health Center</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Home</fullName>
                 <default>false</default>
             </values>
@@ -5179,6 +5214,10 @@ If this is selected, please fill out the appropriate check boxes to the right.</
                 <default>false</default>
             </values>
             <values>
+                <fullName>Community Mental Health Center</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Home</fullName>
                 <default>false</default>
             </values>
@@ -5714,6 +5753,10 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <picklist>Service_Location__c</picklist>
             <values>
                 <fullName>Community</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Community Mental Health Center</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -6268,6 +6311,10 @@ If this is selected, please fill out the appropriate check boxes to the right.</
                 <default>false</default>
             </values>
             <values>
+                <fullName>Community Mental Health Center</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Home</fullName>
                 <default>false</default>
             </values>
@@ -6815,6 +6862,10 @@ If this is selected, please fill out the appropriate check boxes to the right.</
                 <default>false</default>
             </values>
             <values>
+                <fullName>Community Mental Health Center</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Home</fullName>
                 <default>false</default>
             </values>
@@ -7355,6 +7406,10 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <picklist>Service_Location__c</picklist>
             <values>
                 <fullName>Community</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Community Mental Health Center</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -7901,6 +7956,10 @@ If this is selected, please fill out the appropriate check boxes to the right.</
                 <default>false</default>
             </values>
             <values>
+                <fullName>Community Mental Health Center</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Home</fullName>
                 <default>false</default>
             </values>
@@ -8416,6 +8475,10 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <picklist>Service_Location__c</picklist>
             <values>
                 <fullName>Community</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Community Mental Health Center</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -8970,6 +9033,10 @@ If this is selected, please fill out the appropriate check boxes to the right.</
                 <default>false</default>
             </values>
             <values>
+                <fullName>Community Mental Health Center</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Home</fullName>
                 <default>false</default>
             </values>
@@ -9506,6 +9573,10 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <picklist>Service_Location__c</picklist>
             <values>
                 <fullName>Community</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Community Mental Health Center</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -10049,6 +10120,10 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <picklist>Service_Location__c</picklist>
             <values>
                 <fullName>Community</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Community Mental Health Center</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -10599,6 +10674,10 @@ If this is selected, please fill out the appropriate check boxes to the right.</
                 <default>false</default>
             </values>
             <values>
+                <fullName>Community Mental Health Center</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Home</fullName>
                 <default>false</default>
             </values>
@@ -11142,6 +11221,10 @@ If this is selected, please fill out the appropriate check boxes to the right.</
                 <default>false</default>
             </values>
             <values>
+                <fullName>Community Mental Health Center</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Home</fullName>
                 <default>false</default>
             </values>
@@ -11682,6 +11765,10 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <picklist>Service_Location__c</picklist>
             <values>
                 <fullName>Community</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Community Mental Health Center</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -12258,6 +12345,10 @@ If this is selected, please fill out the appropriate check boxes to the right.</
                 <default>false</default>
             </values>
             <values>
+                <fullName>Community Mental Health Center</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Home</fullName>
                 <default>false</default>
             </values>
@@ -12805,6 +12896,10 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <picklist>Service_Location__c</picklist>
             <values>
                 <fullName>Community</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Community Mental Health Center</fullName>
                 <default>false</default>
             </values>
             <values>

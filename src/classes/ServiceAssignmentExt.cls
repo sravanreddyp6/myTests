@@ -132,7 +132,7 @@ public class ServiceAssignmentExt {
                 psetFlags = false;
             } else {
                 pshowDiag = tmnUsers[0].Operating_Group__c=='Redwood' || tmnUsers[0].Operating_Group__c=='Cambridge';
-                pshowLocation =  tmnUsers[0].Operating_Group__c=='Redwood' ;
+                pshowLocation =  ( tmnUsers[0].Operating_Group__c=='Redwood' && admission.State__c != 'AZ');
                 psetFlags = true;
             }
             
@@ -1000,7 +1000,7 @@ public class ServiceAssignmentExt {
                 system.debug('What is s.RecordType.Name before the upsert?: ' + s.RecordType.Name);
                 system.debug('What is s.RecordType before the upsert?: ' + s.RecordType);
 
-                 if ( showDiagnosis ){
+                 if ( showLocation ){
 
                        // update program string from service location
                        // System.Debug('Service location is: ' + theservassign.service_location__c);
