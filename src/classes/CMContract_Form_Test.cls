@@ -29,11 +29,29 @@ private class CMContract_Form_Test {
         ApexPages.CurrentPage().getParameters().put('id',c.id);
         CMContract_Form mycontract = new CMContract_Form(sc);
         
+        mycontract.nameFilter = '*test';
+        mycontract.cityFilter = '*test';
+        mycontract.statefilter = '*test';
+        
         mycontract.myEdit();
         System.AssertEquals( mycontract.editMode, true);
         mycontract.myAddRL();
-        mycontract.save();
         mycontract.addtinnpi();
+        mycontract.cancel();
+        mycontract.showAddLocation();
+        mycontract.searchres();
+        mycontract.SearchClicked();
+        mycontract.showAddLocations();
+        mycontract.getOffsetSize();
+        mycontract.getDisablePrevious();
+        myContract.getDisableNext();
+        mycontract.First();
+        mycontract.Next();
+        mycontract.Last();
+        mycontract.Previous();
+        mycontract.save();
+        
+        
         
         map<string, CMContract_Form.clsRateLevel> mrl = mycontract.getmapratelevel();
         for ( String rlkey : mrl.keyset() ) {

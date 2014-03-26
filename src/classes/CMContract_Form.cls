@@ -325,11 +325,12 @@ public class CMContract_Form {
                         System.debug('The RecordType :' +rtInfo.getName() + ' and the id: ' + rtInfo.getRecordTypeId() +' is available');
                         if(rtInfo.getName()=='NeuroRestorative Contracts'){
                             isNeuro=True;
+                           
                         }else{
-                            isNeuro=False;
+                            isNeuro=False;    
                         }
-                    
-                        
+    //Assigns the record type to the record and hence the pick list values can be controlled.    
+                        myContract.RecordTypeId = rtInfo.getRecordTypeId();
                     }
                 }
             }
