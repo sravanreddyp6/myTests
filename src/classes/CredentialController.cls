@@ -5,6 +5,7 @@ public class CredentialController {
     private List<Credential_Record__c> allRecordsAtConstruction {get;set;}
     public TMN_Contact__c theTmnContact {get;set;}
     public String baseUrl { get; set; }
+    public Boolean editMode { get; set; }
        
     public CredentialController() {
             allRecords = [SELECT Name, Requested_Date__c, Documented_Date__c, Received_Date__c, Expiration_Date__c, Note__c,
@@ -36,6 +37,16 @@ public class CredentialController {
             theTmnContact = [ SELECT Full_Name__c FROM TMN_Contact__c WHERE Id = :contactID ];
             
             baseUrl = URL.getSalesforceBaseUrl().toExternalForm();
+    
+    		String mode = ApexPages.currentPage().getParameters().get('mode');
+    		
+    		if(mode=='Edit') {
+    			editMode = true;
+    		}
+    		else {
+    			editMode = false;
+    		}
+    
     }
     
     public PageReference SaveCreds() {
@@ -75,14 +86,21 @@ public class CredentialController {
     	
     	update recordsToUpdate;
     	
-    	PageReference myPageRef = new PageReference('/apex/MentorViewAll?id=' + contactID);
+    	PageReference myPageRef = new PageReference('/apex/Credential?contactId=' + contactID);
+    	myPageRef.setRedirect(true);
     	return myPageRef;
     	
     }
     
     public PageReference CancelCreds() {
-    	PageReference cancelPageRef = new PageReference('/apex/MentorViewAll?id=' + contactID);
+    	PageReference cancelPageRef = new PageReference('/apex/Credential?contactId=' + contactID);
     	cancelPageRef.setRedirect(true);
     	return cancelPageRef;
+    }
+    
+    public PageReference GoEditMode() {
+		PageReference editModePageRef = new PageReference('/apex/Credential?contactId=' + contactID + '&mode=Edit');
+		editModePageRef.setRedirect(true);
+		return editModePageRef;
     }   
 }

@@ -166,7 +166,7 @@
                         <apex:actionSupport event="onchange" action="{!changeHouseholdMemberType}" rerender="householdMemberDialogMainBlock" />
                     </apex:inputField>
                     <apex:inputField value="{!currentHouseholdMember.Gender__c}" rendered="{!currentHouseholdMember.Related_Party_Type__c != 'Pet'}" />
-                    <apex:inputField value="{!currentHouseholdMember.Marital_Status__c}" rendered="{!currentHouseholdMember.Related_Party_Type__c != 'Pet'}" />
+                    <apex:inputField value="{!currentHouseholdMember.Marital_Status__c}" rendered="{!currentHouseholdMember.Related_Party_Type__c != 'Pet'}" required="true" />
                     <apex:inputField value="{!currentHouseholdMember.Primary_Phone__c}" />
                     <apex:inputField value="{!currentHouseholdMember.Secondary_Phone__c}" />
                     <apex:inputField value="{!currentHouseholdMember.Email__c}" />
