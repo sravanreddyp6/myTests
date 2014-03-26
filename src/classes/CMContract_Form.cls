@@ -154,6 +154,7 @@ public class CMContract_Form {
     public void First() {
         OffsetSize =0;
         //return null;
+        searchRes();
     }
     public void Last() {
         Integer tmp=(counttotalrecords/QueryLimit);
@@ -163,17 +164,20 @@ public class CMContract_Form {
             OffsetSize = (tmp)*QueryLimit;
         }
         //return null;
+        searchRes();
     }
     public void Next() {
         system.debug('Before-OffsetSize--->'+OffsetSize);
         OffsetSize += QueryLimit;
         system.debug('After-OffsetSize--->'+OffsetSize);
+        searchRes();
         //return null;
     }
 
     public void Previous() {
         OffsetSize -= QueryLimit;
         //return null;
+        searchRes();
     }
 
     public void searchRes(){
