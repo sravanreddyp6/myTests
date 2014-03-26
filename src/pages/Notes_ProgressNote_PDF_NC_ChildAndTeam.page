@@ -1,0 +1,142 @@
+<apex:page standardController="Progress_Note__c" extensions="ProgressNoteExtension" renderAs="pdf">
+<head>
+<style type="text/css">
+.main{
+   width: 100%
+}
+.mainCenter {
+    text-align:center;
+    font-size:17pt;
+    padding-bottom: 10px;
+    width: 100%;
+}
+.leftMain{
+    padding-left: 3px;
+    width: 100%;
+    border-style:solid;
+    border-width:1px;
+}
+.rightMain{
+    padding-left: 3px;
+    width: 100%;
+    border-style:solid;
+    border-width:1px;
+}
+.center {
+    text-align:center;
+    font-size: 16px;
+    width: 100%;
+}
+.right{
+    text-align: right;
+    width: 100%;
+}
+.medTxtBold {
+    font-size: 12pt;
+    font-weight: bold;
+}
+.medTxtBold.center {
+    font-size: 12pt;
+    font-weight: bold;
+    text-align:center;
+}
+.smTxt{
+    font-size: 9pt;
+}
+.medTxt{
+    font-size: 12pt;
+    }
+.myTB{
+    width: 100%;
+    padding: 7px;
+} 
+</style>
+</head>
+<body>
+<div class="mainCenter">NC MENTOR</div>
+<table class="main">
+<tr>
+<td width="50%">
+<table class="leftMain">
+    <tr><td class="medTxt">CLIENT NAME:&nbsp;<apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Name}"/></td></tr>
+    <tr><td class="medTxt">RECORD NUMBER:&nbsp;<apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Avatar_ID__c}"/></td></tr>
+    <tr><td class="medTxt">MEDICAID NUMBER:&nbsp;<apex:outputLabel value="{!medicaidIDClear}"/></td></tr>
+</table>
+</td>
+<td width="50%">
+<table class="rightMain">
+    <tr><td class="medTxt" style="padding-top:12px">TYPE OF CONTACT:&nbsp;<apex:outputField value="{!Progress_Note__c.Type_of_Contact__c}"/></td> </tr>    
+    <tr><td class="medTxt" style="padding-bottom:12px">LOCATION OF SERVICE:&nbsp;<apex:outputField value="{!Progress_Note__c.Service_Location__c}"/></td></tr>    
+</table>
+</td>
+</tr>
+</table>
+<br/>
+<div class="center" style="border-top-style:solid;padding-top:5px"><b>CHILD AND FAMILY TEAM SERVICE NOTICE</b></div>
+<div class="center" style="margin-bottom:10px"><apex:outputField styleClass="istbCB" value="{!Progress_Note__c.Service_Assignment__r.Service_Line__c}"/></div>
+<table class="center">
+    <tr>
+    <td style="width:50%">Date:&nbsp;<apex:outputField value="{!Progress_Note__c.Start_Time__c}"/></td>
+    <td style="width:50%">Duration:&nbsp;<apex:outputField value="{!Progress_Note__c.Total_Time__c}"/></td>
+    </tr>
+</table>
+<table width="100%">
+    <tr><td class="medTxt">Goals Addressed <i>(Enter exact words from PCP):</i></td></tr>
+    <tr><td><apex:include pageName="progressnote_actionplan_embed_include"/></td></tr>
+    <tr><td class="medTxt">Intervention/Activity:</td></tr>
+    <tr><td><apex:outputField value="{!Progress_Note__c.Interventions__c}"/><br/></td></tr>
+    <tr><td class="medTxt">Progress Towards Goals/Effectiveness of Interventions (Include Child and Family Team Recommendations):</td></tr>
+    <tr><td><apex:outputField value="{!Progress_Note__c.Progress__c}"/><br/></td></tr>
+</table>
+<table class="myTB" style="page-break-before:always">
+    <tr>
+    <td class="medTxtBold">Rev 02/13/12</td>
+    <td class="medTxtBold" align="right">CHILD AND FAMILY TEAM</td>
+    </tr>
+    <tr><td class="medTxtBold">SERVICE NOTE</td></tr>
+</table>
+<table class="myTB">
+    <tr><td align="center" class="medTxtBold">NC MENTOR</td></tr>
+    <tr><td align="center" class="medTxtBold">CHILD AND FAMILY TEAM</td></tr>
+</table>
+<table class="innerTb" width="100%">
+    <tr class="medTxt">
+     <td>CLIENT NAME:&nbsp;<apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Name}"/></td> 
+     <td align="right">RECORD #:&nbsp;<apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Other_ID__c}"/></td></tr>
+     <div align="right">MEDICAID #:&nbsp;<apex:outputLabel value="{!Progress_Note__c.Person_Being_Served__r.Medicaid_ID__c}"/></div>
+</table>
+<br/>
+<div class="lg" align="center" style="border-style:solid">Signatures of Child and Family Team Members Present and Acknowledgement of Confidentiality of Client Information</div>
+<div><p>In connection with my activities as a memeber of this Child and Family team, I agree to hold all information I may have access to 
+about clients or former clients confidential and will not divulge any information to unauthorized person. 
+I understand that the divulging of confidential information to unauthorized persons will make me subject to civil and/or criminal action
+in accordance with G.S 122C, APSM 45-1, 42 CFR, Part 2 and HIPAA Privacy Rules, Parts 160 and 164</p></div>
+<table class="main">
+   <tr>
+      <td width="50%">
+        <table width="100%"><tr><td>SIGNATURES</td></tr>
+         <tr><td><hr style="margin-bottom:20px;margin-top:30px"/></td></tr>
+         <tr><td><hr style="margin-bottom:20px;margin-top:10px"/></td></tr>
+         <tr><td><hr style="margin-bottom:20px;margin-top:10px"/></td></tr>
+         <tr><td><hr style="margin-bottom:20px;margin-top:10px"/></td></tr>
+        </table>
+        </td>
+        <td width="50%">
+        <table width="100%"><tr><td align="right">AGENCY or RELATION</td></tr>
+         <tr><td><hr style="margin-bottom:20px;margin-top:30px"/></td></tr>
+         <tr><td><hr style="margin-bottom:20px;margin-top:10px"/></td></tr>
+         <tr><td><hr style="margin-bottom:20px;margin-top:10px"/></td></tr>
+         <tr><td><hr style="margin-bottom:20px;margin-top:10px"/></td></tr>
+        </table>
+       </td>
+    </tr>
+ </table>
+<div><b>*Signature of QP Staff</b>____________________________________________________</div><br/>
+<div class="medTxt"><u>***For professionals, signature and credentials, degree or licensure required. <br/>For paraprofessions, signature and position required.***</u></div><br/>
+<div class="sm" align="center" style="color:rgb(128,128,128)">Created By:&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedBy.Name}"/>,&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedBy.Title}"/></div>
+<div class="sm" align="center" style="color:rgb(128,128,128)">Created Date:&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedDate}"/><apex:outputLabel rendered="{!Progress_Note__c.Is_Note_Late__c == 'Yes'}"  > - LATE ENTRY</apex:outputLabel></div>
+<div class="sm" align="center" style="color:rgb(128,128,128)">Latest release of form: 8/13/12</div>
+
+
+</body>
+</apex:page>

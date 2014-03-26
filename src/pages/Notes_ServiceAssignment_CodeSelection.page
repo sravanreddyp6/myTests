@@ -1,0 +1,93 @@
+<apex:page standardController="Service_Assignment__c" extensions="Notes_ServiceAssignment_CodeSelection" >
+<style>
+    .col{float: left; width: 350px; padding-left:10px;}
+</style>
+<apex:pageMessages ></apex:pageMessages>
+<apex:form id="myFRM" >
+ <apex:actionStatus id="Performing">
+                <apex:facet name="start">
+                    <div class="waitingSearchDiv" id="el_loading"
+                        style="background-color: #fbfbfb; height: 100%; opacity: 0.6; width: 100%;">
+                        <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /><br/>
+                        <!-- <span class="waitingDescription">Performing action, please Wait...</span> -->
+                    </div>
+                </apex:facet>
+                <apex:facet name="stop"></apex:facet>
+    </apex:actionStatus>
+<apex:pageBlock mode="mainDetail">           
+    <apex:outputPanel layout="block" styleClass="col" > 
+            <apex:pageBlockSection columns="1" >
+                <apex:selectList size="1" label="Program" value="{!Service_Assignment__c.Program__c}">
+                    <apex:actionSupport event="onchange" reRender="myFRM" status="Performing" action="{!quicksave}"/>
+                    <apex:selectOptions value="{!MyPrograms}"/>            
+                </apex:selectList>        
+                <!-- rendered="{!IF(SelectedProgram != '',True,False)}" -->
+                <apex:selectList size="1" label="Location" value="{!Service_Assignment__c.Location_Region__c}" >
+                    <apex:actionSupport event="onchange" reRender="myFRM" status="Performing"  action="{!quicksave}"/>
+                    <apex:selectOptions value="{!MyLocations}"/>
+                </apex:selectList>
+                                
+                <apex:selectList size="1" label="Service Line" value="{!Service_Assignment__c.Service_Line__c}" >
+                    <apex:actionSupport event="onchange" reRender="myFRM" status="Performing"  action="{!quicksave}"/>
+                    <apex:selectOptions value="{!MyServiceLines}"/>
+                </apex:selectList>  
+                      
+            </apex:pageBlockSection>
+           <!---->
+            <apex:pageBlockTable value="{!MyServiceCodes}" var="local">
+                <apex:column >
+                    <apex:commandButton value="Add" action="{!CreateCodeJO}" reRender="myFRM"  status="Performing">
+                        <apex:param assignTo="{!SelectedCodeID }" name="SelectedCodeID" value="{!local.id}"/>
+                    </apex:commandButton>
+                </apex:column>
+
+                <apex:column headerValue="Available Service Codes" value="{!local.Service_Value__c}"/> 
+                <apex:column headerValue="Start Date">
+                	<apex:outputText value="{0, date, MM/dd/yyyy}">
+                		<apex:param value="{!local.Start_Date__c}" /> 
+                	</apex:outputText>
+                </apex:column>
+                <apex:column headerValue="End Date" >
+                          <apex:outputText value="{0, date, MM/dd/yyyy}">
+                          <apex:param value="{!local.End_Date__c}" />
+                         </apex:outputText>
+    
+                <!-- used to inspect source code to get the ID of the record being displayed, display should be none;-->
+                    <apex:outputPanel style="display: none;">{!local.id}</apex:outputPanel> 
+                </apex:column>                
+                                  
+            </apex:pageBlockTable>  
+
+
+         
+    </apex:outputPanel> 
+
+    <apex:outputPanel layout="block" styleClass="col" > 
+            <apex:pageBlockTable value="{!CurrentCodes}" var="Code">
+                <apex:column headerValue="Selected Service Codes" value="{!Code.Code_Selection_txt__c}">
+                </apex:column>  
+                <apex:column headerValue="Start Date">
+                <apex:outputText value="{0, date, MM/dd/yyyy}">
+                	<apex:param value="{!Code.Service_Code__r.Start_Date__c}" />
+               	</apex:outputText>
+                </apex:column>
+                <apex:column headerValue="End Date" >
+                <apex:outputText value="{0, date, MM/dd/yyyy}">
+                	<apex:param value="{!Code.Service_Code__r.End_Date__c}" />
+                </apex:outputText>
+     
+                <!-- used to inspect source code to get the ID of the record being displayed, display should be none;-->
+                    <apex:outputPanel style="display: none;">Service Code ID {!Code.Service_Code__r.id}</apex:outputPanel> 
+                    <apex:outputPanel style="display: none;">JO ID {!Code.id}</apex:outputPanel> 
+                    
+                </apex:column>                                 
+                <apex:column >
+                    <apex:commandButton value="Remove" action="{!DeleteCodeJO}" reRender="myFRM" status="Performing">
+                        <apex:param assignTo="{!SelectedJoID}" name="SelectedJoID" value="{!Code.id}"/>
+                    </apex:commandButton> 
+                </apex:column>
+            </apex:pageBlockTable>  
+    </apex:outputPanel>     
+</apex:pageBlock>     
+</apex:form>
+</apex:page>
