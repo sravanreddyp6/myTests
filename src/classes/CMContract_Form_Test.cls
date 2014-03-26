@@ -20,8 +20,41 @@ private class CMContract_Form_Test {
         c.Payment_Deadline__c = '30 Days';
         c.Resubmission_Deadline__c = '30 Days';
         insert c;
-        
         System.Debug('INSERTED: ' + c.Id);
+        
+        Service_Location__c sl = new Service_Location__c();
+        sl.Name = '99999';
+        sl.City__c = 'test city';
+        sl.FacilityID__c = 20;
+        sl.Program__c = 'test program';
+        sl.Setting__c = 'test setting';
+        sl.State__c = 'ts';
+        sl.ProgramID__c = '999999';
+        sl.UniqueID__c = '999999';
+        sl.Alias__c = '99999';
+        
+        insert sl;
+        
+        Service_Location__c sl2 = new Service_Location__c();
+        sl2.Name = '888888';
+        sl2.City__c = 'test city';
+        sl2.FacilityID__c = 20;
+        sl2.Program__c = 'test program';
+        sl2.Setting__c = 'test setting';
+        sl2.State__c = 'ts';
+        sl2.ProgramID__c = '888888';
+        sl2.UniqueID__c = '888888';
+        sl2.Alias__c = '888888';
+        
+        insert sl2;
+        
+        List<Service_Location__c> slocs = new List <Service_Location__c>();
+        slocs.add(sl);
+        
+        Contract_ServiceLocation_JO__c csl = new Contract_ServiceLocation_JO__c();
+        csl.Service_Location__c = sl.id;
+        csl.Contract__c = c.id;
+        insert csl;   
         
         ApexPages.StandardController sc = new ApexPages.StandardController(c);
         PageReference pageRef = Page.CMContract_Form;
@@ -29,16 +62,23 @@ private class CMContract_Form_Test {
         ApexPages.CurrentPage().getParameters().put('id',c.id);
         CMContract_Form mycontract = new CMContract_Form(sc);
         
-        mycontract.nameFilter = '*test';
-        mycontract.cityFilter = '*test';
-        mycontract.statefilter = '*test';
-        
+        mycontract.nameFilter  = '*99999';
+        mycontract.cityFilter  = '*test city';
+        mycontract.statefilter = '*ts';
+        mycontract.paramSvcLocId = sl.id;
+        mycontract.paramSvcLocId = sl2.id;
         mycontract.myEdit();
         System.AssertEquals( mycontract.editMode, true);
         mycontract.myAddRL();
         mycontract.addtinnpi();
         mycontract.cancel();
+        mycontract.myEdit();
         mycontract.showAddLocation();
+        
+        mycontract.nameFilter  = '*99999';
+        mycontract.cityFilter  = '*test city';
+        mycontract.statefilter = '*ts';
+        
         mycontract.searchres();
         mycontract.SearchClicked();
         mycontract.showAddLocations();
@@ -50,7 +90,10 @@ private class CMContract_Form_Test {
         mycontract.Last();
         mycontract.Previous();
         mycontract.save();
+        mycontract.RemoveItem();
         
+      system.assertEquals(1,mycontract.locations.size());
+      system.assertEquals(0,mycontract.Attachments.size());
         
         
         map<string, CMContract_Form.clsRateLevel> mrl = mycontract.getmapratelevel();
