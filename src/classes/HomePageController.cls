@@ -100,17 +100,25 @@ public with sharing class HomePageController{
          for(TMN_User__c tmn:tmnUsers){
              if(tmn.Operating_Group__c=='Cambridge'){
                  oSchema4 = TMN_Contract__c.sObjectType.getDescribe();
-             }else if(tmn.Operating_Group__c=='CareMeridian'){
+             }else if(tmn.Operating_Group__c=='CareMeridian' || tmn.Operating_Group__c=='Care Meridian'){
                  oSchema4 = CareMeridian_Contract__c.sObjectType.getDescribe();
              }else if(tmn.Operating_Group__c=='NeuroRestorative' || tmn.Operating_Group__c=='Redwood'){
                 oSchema4 = Redwood_Contract__c.sObjectType.getDescribe();
+             }else{
+             	oSchema4=null;
              }
          
          }
+     
         
-         ContractCreate = oSchema4.IsCreateable();
-         ContractView = oSchema4.isAccessible(); 
-        
+         if(oSchema4!=null){
+          ContractCreate = oSchema4.IsCreateable();
+          ContractView = oSchema4.isAccessible(); 
+         }else{
+          ContractCreate = false;
+          ContractView = false; 
+         }
+          
          //Doc object
          Schema.DescribeSObjectResult oSchema5 = Document__c.sObjectType.getDescribe();
          DocCreate = oSchema5.IsCreateable();
