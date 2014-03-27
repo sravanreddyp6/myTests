@@ -1438,6 +1438,20 @@ Text(Round( Inquiry_Progress_percent__c,2)*100) &amp; &quot;%&quot;</formula>
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Number_of_days_since_last_activity__c</fullName>
+        <externalId>false</externalId>
+        <formula>today() -  Date_of_Inquiry__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Number of days since last activity</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>OIG_Results__c</fullName>
         <description>OIG Results</description>
         <externalId>false</externalId>
