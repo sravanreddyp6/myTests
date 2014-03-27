@@ -3,8 +3,7 @@ public class CMContract_Form {
      class cSearchedServiceLocationResults {
          public Service_Location__c sl {get; set;}
          public Boolean selected {get; set;}
-  
-         
+     
          public cSearchedServiceLocationResults(Service_Location__c psl) {
              sl = psl;
              selected = false;
