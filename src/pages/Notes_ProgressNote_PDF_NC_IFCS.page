@@ -22,14 +22,10 @@
     }   
 </style>
 </head>
+<body>
 <table class="myTB">
-  <td><center><apex:image url="{!URLFOR($Resource.NC_IFCS_Image)}"/></center></td>
-</table>
-<table class="myTB">
-    <td><center><apex:outputField value="{!Progress_Note__c.Service_Assignment__r.Location_Region__c}"/></center></td>
-</table>
-<table class="myTB" cellspacing="0" cellpadding="0" >
-    <td><center>NC Division of Mental Health, Developmental Disabilities and Substance Abuse Services</center></td>
+  <tr><td align="center" style="font-size:15pt">NC MENTOR</td></tr>
+  <tr><td align="center">Intensive In-Home Service Note</td></tr>
 </table>
 <table class="myTB">            
     <tr><td class="BoldLabelLg">Client Name:&nbsp;<apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Name}"/></td>
@@ -132,4 +128,5 @@
 <div class="sm" align="center" style="color:rgb(128,128,128)">Created By:&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedBy.Name}"/>,&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedBy.Title}"/></div>
     <div class="sm" align="center" style="color:rgb(128,128,128)">Created Date:&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedDate}"/><apex:outputLabel rendered="{!Progress_Note__c.Is_Note_Late__c == 'Yes'}"  > - LATE ENTRY</apex:outputLabel></div>
 <div class="sm" align="center" style="color:rgb(128,128,128)">Latest release of form: 8/13/12</div>
+</body>
 </apex:page>
