@@ -37,7 +37,7 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
 <apex:outputPanel id="everything">
 <apex:pageMessages ></apex:pageMessages>
 <apex:form >
-<apex:pageBlock title="FAD Assessment" >
+<apex:pageBlock title="FAD Assessment Summary" >
     <apex:pageBlockButtons >
         <div style="float: right" >
             <apex:image value="/img/lock_small.gif" alt="Locked" width="20" height="20" title="Record is Locked" rendered="{!Assessment__c.Status__c =='Locked'}" />         
@@ -61,7 +61,7 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
                                 status="myStatus"/>                                        
         
             <apex:commandButton action="{!mySave}" 
-                                value="Save" 
+                                value="Save"  id="confirmBtn"
                                 rendered="{!mode='edit'}" 
                                 reRender="everything" 
                                 status="myStatus"/>
@@ -119,7 +119,7 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['PBS_Could_Not_complete'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel layout="block" >
-                <apex:inputCheckbox value="{!mapRes['PBS_Could_Not_complete'].Yes_No__c}" onclick="toggleOptions(this, 'PBS_CNC2');"/>  
+                <apex:inputCheckbox value="{!mapRes['PBS_Could_Not_complete'].Yes_No__c}" onclick="toggleOptions(this, 'PBS_CNC2', 'pbs_question');"/>  
                 &nbsp;
                 <span id="PBS_CNC2" style="{!if(mapRes['PBS_Could_Not_complete'].Yes_No__c,'','display:none;')}">
                     Reason:&nbsp;<apex:inputField id="PBS_CNC" value="{!mapRes['PBS_Could_Not_complete_reason'].Rating__c}"/>
@@ -129,49 +129,49 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['PBS_Problem_Solving'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:inputField value="{!mapRes['PBS_Problem_Solving'].Score__c}"/>    
+                <apex:inputField styleClass="pbs_question" value="{!mapRes['PBS_Problem_Solving'].Score__c}"/>    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['PBS_Communication'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:inputField value="{!mapRes['PBS_Communication'].Score__c}"/>    
+                <apex:inputField styleClass="pbs_question" value="{!mapRes['PBS_Communication'].Score__c}"/>    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['PBS_Roles'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:inputField value="{!mapRes['PBS_Roles'].Score__c}"/>    
+                <apex:inputField styleClass="pbs_question" value="{!mapRes['PBS_Roles'].Score__c}"/>    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['PBS_Affective_Responses'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:inputField value="{!mapRes['PBS_Affective_Responses'].Score__c}"/>    
+                <apex:inputField styleClass="pbs_question" value="{!mapRes['PBS_Affective_Responses'].Score__c}"/>    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['PBS_Affective_Involvement'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:inputField value="{!mapRes['PBS_Affective_Involvement'].Score__c}"/>    
+                <apex:inputField styleClass="pbs_question" value="{!mapRes['PBS_Affective_Involvement'].Score__c}"/>    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['PBS_Behavior_Control'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:inputField value="{!mapRes['PBS_Behavior_Control'].Score__c}"/>    
+                <apex:inputField styleClass="pbs_question" value="{!mapRes['PBS_Behavior_Control'].Score__c}"/>    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['PBS_General_Functioning'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:inputField value="{!mapRes['PBS_General_Functioning'].Score__c}"/>    
+                <apex:inputField styleClass="pbs_question" value="{!mapRes['PBS_General_Functioning'].Score__c}"/>    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['PBS_Not_Using_Fad_Highest_Concern'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:inputField value="{!mapRes['PBS_Not_Using_Fad_Highest_Concern'].Response__c}" styleClass="txtBox"/>    
+                <apex:inputField value="{!mapRes['PBS_Not_Using_Fad_Highest_Concern'].Response__c}" styleClass="txtBox pbs_question"/>    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem> 
     </apex:pageBlockSection>
@@ -247,7 +247,7 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['CG_Could_Not_complete'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:inputCheckbox value="{!mapRes['CG_Could_Not_complete'].Yes_No__c}"  onclick="toggleOptions(this, 'CG_CNC2');"/>
+                <apex:inputCheckbox value="{!mapRes['CG_Could_Not_complete'].Yes_No__c}"  onclick="toggleOptions(this, 'CG_CNC2', 'cg_question');"/>
                 <span id="CG_CNC2" style="{!if(mapRes['CG_Could_Not_complete'].Yes_No__c,'','display:none;')}">
                     Reason:&nbsp;<apex:inputField value="{!mapRes['CG_Could_Not_complete_reason'].Rating__c}"/>
                 </span>                     
@@ -266,50 +266,50 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['CG_Problem_Solving'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:inputField value="{!mapRes['CG_Problem_Solving'].Score__c}"/>    
+                <apex:inputField styleClass="cg_question" value="{!mapRes['CG_Problem_Solving'].Score__c}"/>    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['CG_Communication'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:inputField value="{!mapRes['CG_Communication'].Score__c}"/>    
+                <apex:inputField styleClass="cg_question" value="{!mapRes['CG_Communication'].Score__c}"/>    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['CG_Roles'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:inputField value="{!mapRes['CG_Roles'].Score__c}"/>    
+                <apex:inputField styleClass="cg_question" value="{!mapRes['CG_Roles'].Score__c}"/>    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['CG_Affective_Responses'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:inputField value="{!mapRes['CG_Affective_Responses'].Score__c}"/>    
+                <apex:inputField styleClass="cg_question" value="{!mapRes['CG_Affective_Responses'].Score__c}"/>    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['CG_Affective_Involvement'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:inputField value="{!mapRes['CG_Affective_Involvement'].Score__c}"/>    
+                <apex:inputField styleClass="cg_question" value="{!mapRes['CG_Affective_Involvement'].Score__c}"/>    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['CG_Behavior_Control'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:inputField value="{!mapRes['CG_Behavior_Control'].Score__c}"/>    
+                <apex:inputField styleClass="cg_question" value="{!mapRes['CG_Behavior_Control'].Score__c}"/>    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['CG_General_Functioning'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:inputField value="{!mapRes['CG_General_Functioning'].Score__c}"/>    
+                <apex:inputField styleClass="cg_question" value="{!mapRes['CG_General_Functioning'].Score__c}"/>    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['CG_Not_Using_Fad_Highest_Concern'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
                 <apex:inputField value="{!mapRes['CG_Not_Using_Fad_Highest_Concern'].Response__c}" 
-                                    styleClass="txtBox"/>    
+                                    styleClass="txtBox cg_question"/>    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>    
     </apex:pageBlockSection>
@@ -411,13 +411,16 @@ function scrollWindow()
 
 jQuery.noConflict();
 var j$ = jQuery.noConflict();
-function toggleOptions( rb, divopt ) {
-    if ( j$(rb).prop('checked')  )
-       // j$('input[id$=PBS_CNC]').val() ='test';
+function toggleOptions( rb, divopt, dis_class ) {
+    if ( j$(rb).prop('checked')  ){       
         document.getElementById(divopt).style.display = 'inline';
-      //j$( "[id$='PBS_CNC']" ).val('Foo');
-    else
+        j$('.'+ dis_class ).prop( "disabled", true ); 
+        j$('.'+ dis_class ).prop( "value", "");     
+      }
+    else{    
         document.getElementById( divopt).style.display = 'none';
+        j$('.'+ dis_class ).prop( "disabled", false);        
+    }
 };
 function toggleById(id, ms){
     j$(document.getElementById(id)).toggle(ms);

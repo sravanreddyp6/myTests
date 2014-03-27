@@ -712,12 +712,13 @@ END: Uncomment to have the element collapsed by default -->
 
 <!-- Start FAD Assessments -->
 <a name="Assessments_fad" id="assess_fad"></a>
-<apex:pageBlock id="Assessments_FAD" title="FAD Assessments" rendered="{! !editSA && Service_Assignment__c.Program__c ='IFCS' && CONTAINS(Service_Assignment__c.Service_Line__c, 'FCT')}" >
+<apex:pageBlock id="Assessments_FAD" title="FAD Assessment Summarys" rendered="{! !editSA && Service_Assignment__c.Program__c ='IFCS' && CONTAINS(Service_Assignment__c.Service_Line__c, 'FCT')}" >
     <div class="pbHeaderButton">
 <!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
-        <apex:commandButton action="{!createFadAssess}" value="New FAD Assessment"/>
+        <apex:commandButton action="{!createFadAssess}" value="New FAD Assessment Summary"/>
     </div>
-    <apex:pageBlockTable value="{!Assessments_Fad}" var="assess">
+    <apex:outputText value="No FAD Assessment Summarys to display" rendered="{!(Assessments_Fad.size=0)}" />
+    <apex:pageBlockTable value="{!Assessments_Fad}" var="assess" rendered="{!(Assessments_Fad.size!=0)}">
         <apex:column headerValue="Action"  styleClass="editcol">
             <a href="/apex/Assessment_FAD_Form?id={!assess.ID}&edit=1">Edit</a>
         </apex:column>

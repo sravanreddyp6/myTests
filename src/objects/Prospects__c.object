@@ -3823,7 +3823,7 @@ TEXT( Im_intersted_in_supporting__c )
         <filters>
             <field>Outreach_Source__c</field>
             <operation>equals</operation>
-            <value>Care.com</value>
+            <value>Care.com - National</value>
         </filters>
         <label>Care.com Prospects</label>
     </listViews>
@@ -3968,7 +3968,7 @@ TEXT( Im_intersted_in_supporting__c )
         <filters>
             <field>OWNER.LAST_NAME</field>
             <operation>equals</operation>
-            <value>Willoughby</value>
+            <value>rogers</value>
         </filters>
         <filters>
             <field>Status__c</field>
@@ -4173,7 +4173,7 @@ ISNULL(Home_Study_Completed_Date__c))</errorConditionFormula>
     </validationRules>
     <validationRules>
         <fullName>Mentor_All_DMV_Records_Received</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 All_DMV_Records_Received__c =False
 ),True, False)</errorConditionFormula>
@@ -4191,7 +4191,7 @@ NOT(ISPICKVAL( Application_Review_Status__c ,&quot;Approved&quot;)))
     </validationRules>
     <validationRules>
         <fullName>Mentor_Auto_Insure_Rec</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 All_Auto_Insurance_Received__c =False
 ),True, False)</errorConditionFormula>
@@ -4200,7 +4200,7 @@ All_Auto_Insurance_Received__c =False
     </validationRules>
     <validationRules>
         <fullName>Mentor_Auto_Registration_Received</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 All_Auto_Registration_Received__c =False
 ),True, False)</errorConditionFormula>
@@ -4209,7 +4209,7 @@ All_Auto_Registration_Received__c =False
     </validationRules>
     <validationRules>
         <fullName>Mentor_Background_Check_Results</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 NOT(ISPICKVAL( Background_Check_Results__c ,&quot;Pass&quot;)))
 ,True, False)</errorConditionFormula>
@@ -4218,7 +4218,7 @@ NOT(ISPICKVAL( Background_Check_Results__c ,&quot;Pass&quot;)))
     </validationRules>
     <validationRules>
         <fullName>Mentor_Drivers_License_Received</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 All_Drivers_License_Received__c =False
 ),True, False)</errorConditionFormula>
@@ -4236,7 +4236,7 @@ NOT(ISPICKVAL( Final_Review__c ,&quot;Approved&quot;)))
     </validationRules>
     <validationRules>
         <fullName>Mentor_Fire_Safety_Check</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 NOT(ISPICKVAL( Fire_Safety_Check__c ,&quot;Pass&quot;)))
 ,True, False)</errorConditionFormula>
@@ -4254,7 +4254,7 @@ NOT(ISPICKVAL( Fire_Safety_Check__c ,&quot;Pass&quot;)))
     </validationRules>
     <validationRules>
         <fullName>Mentor_Health_Status_Statement</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 NOT(ISPICKVAL( Health_Status_Statement_Results__c ,&quot;Pass&quot;)))
 ,True, False)</errorConditionFormula>
@@ -4263,7 +4263,7 @@ NOT(ISPICKVAL( Health_Status_Statement_Results__c ,&quot;Pass&quot;)))
     </validationRules>
     <validationRules>
         <fullName>Mentor_Home_Renter_Insurance</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 Home_Renter_Insurance__c =False
 ),True, False)</errorConditionFormula>
@@ -4272,7 +4272,7 @@ Home_Renter_Insurance__c =False
     </validationRules>
     <validationRules>
         <fullName>Mentor_Home_Study</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 NOT(ISPICKVAL( Home_Study_Results__c ,&quot;Pass&quot;)))
 ,True, False)</errorConditionFormula>
@@ -4281,7 +4281,7 @@ NOT(ISPICKVAL( Home_Study_Results__c ,&quot;Pass&quot;)))
     </validationRules>
     <validationRules>
         <fullName>Mentor_OIG_Results</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 NOT(ISPICKVAL( OIG_Results__c ,&quot;Pass&quot;)))
 ,True, False)</errorConditionFormula>
@@ -4290,7 +4290,7 @@ NOT(ISPICKVAL( OIG_Results__c ,&quot;Pass&quot;)))
     </validationRules>
     <validationRules>
         <fullName>Mentor_Physical_House_Inspection</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 NOT(ISPICKVAL( Physical_House_Inspection__c ,&quot;Pass&quot;)))
 ,True, False)</errorConditionFormula>
@@ -4299,7 +4299,7 @@ NOT(ISPICKVAL( Physical_House_Inspection__c ,&quot;Pass&quot;)))
     </validationRules>
     <validationRules>
         <fullName>Mentor_Pre_Service</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 NOT(ISPICKVAL( Pre_Service_Results__c ,&quot;Pass&quot;)))
 ,True, False)</errorConditionFormula>
@@ -4325,7 +4325,7 @@ ISNULL( Provider_Agreement_Signature_Date__c )
     </validationRules>
     <validationRules>
         <fullName>Mentor_References_Primary</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 NOT(ISPICKVAL( References_Primary__c ,&quot;Approved&quot;)))
 ,True, False)</errorConditionFormula>
@@ -4379,7 +4379,7 @@ $Profile.Id !=&apos;00eU0000000RHex&apos;</errorConditionFormula>
     </validationRules>
     <validationRules>
         <fullName>Status_Mentor_Dynamic_Background</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(Text(Status__c)&lt;&gt;&quot;Mentor&quot;,False,
 IF(OR(ISPICKVAL( Background_Check_Results_Other__c ,&quot;Pass&quot;),ISPICKVAL( Background_Check_Results_Other__c ,&quot;Does Not Apply&quot;)),False,True)
 
@@ -4390,7 +4390,7 @@ IF(OR(ISPICKVAL( Background_Check_Results_Other__c ,&quot;Pass&quot;),ISPICKVAL(
     </validationRules>
     <validationRules>
         <fullName>Status_Mentor_Dynamic_Health</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(Text(Status__c)&lt;&gt;&quot;Mentor&quot;,False, 
 IF(OR(ISPICKVAL(  Health_Status_Statement_Results_Other__c ,&quot;Pass&quot;),ISPICKVAL(  Health_Status_Statement_Results_Other__c ,&quot;Does Not Apply&quot;)),False,True) 
 
@@ -4401,7 +4401,7 @@ IF(OR(ISPICKVAL(  Health_Status_Statement_Results_Other__c ,&quot;Pass&quot;),IS
     </validationRules>
     <validationRules>
         <fullName>Status_Mentor_Dynamic_Pet</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(Text(Status__c)&lt;&gt;&quot;Mentor&quot;,False, 
 IF(OR(ISPICKVAL(  Pet_Vaccination_and_Licenses__c ,&quot;Pass&quot;),ISPICKVAL(  Pet_Vaccination_and_Licenses__c ,&quot;Does Not Apply&quot;)),False,True) 
 
@@ -4412,7 +4412,7 @@ IF(OR(ISPICKVAL(  Pet_Vaccination_and_Licenses__c ,&quot;Pass&quot;),ISPICKVAL( 
     </validationRules>
     <validationRules>
         <fullName>Status_Mentor_Dynamic_Pool</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(Text(Status__c)&lt;&gt;&quot;Mentor&quot;,False, 
 IF(OR(ISPICKVAL(  Pool_Water_Body_Assessment__c ,&quot;Pass&quot;),ISPICKVAL(  Pool_Water_Body_Assessment__c ,&quot;Does Not Apply&quot;)),False,True) 
 
@@ -4423,7 +4423,7 @@ IF(OR(ISPICKVAL(  Pool_Water_Body_Assessment__c ,&quot;Pass&quot;),ISPICKVAL(  P
     </validationRules>
     <validationRules>
         <fullName>Status_Mentor_Dynamic_Ref</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(Text(Status__c)&lt;&gt;&quot;Mentor&quot;,False, 
 IF(OR(ISPICKVAL(  References_All_Other__c ,&quot;Approved&quot;),ISPICKVAL(  References_All_Other__c ,&quot;Does Not Apply&quot;)),False,True) 
 

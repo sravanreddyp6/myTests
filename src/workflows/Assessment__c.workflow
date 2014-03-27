@@ -12,25 +12,25 @@ IF(TEXT(Status__c) !=&apos;Inactive Draft&apos;,  TEXT(Approval_Date__c), TEXT(S
         <protected>false</protected>
     </fieldUpdates>
     <fieldUpdates>
-        <fullName>Update_Assessment_Name_FAD</fullName>
+        <fullName>Update_Assessment_Name_FAD_Summary</fullName>
         <field>Name</field>
         <formula>&quot;FAD - &quot; &amp;
 Admission__r.Person_Being_Served__r.FirstName &amp; &quot; &quot; &amp; Admission__r.Person_Being_Served__r.Account.LastName &amp; &quot; - &quot;&amp;
 TEXT(Phase__c) &amp; &quot; - &quot; &amp; 
 TEXT(Status__c)</formula>
-        <name>Update Assessment Name - FAD</name>
+        <name>Update Assessment Name - FAD Summary</name>
         <notifyAssignee>false</notifyAssignee>
         <operation>Formula</operation>
         <protected>false</protected>
     </fieldUpdates>
     <rules>
-        <fullName>Update Name - FAD</fullName>
+        <fullName>Update Name - FAD Summary</fullName>
         <actions>
-            <name>Update_Assessment_Name_FAD</name>
+            <name>Update_Assessment_Name_FAD_Summary</name>
             <type>FieldUpdate</type>
         </actions>
         <active>true</active>
-        <formula>ISPICKVAL(Type__c, &apos;FAD&apos;)</formula>
+        <formula>ISPICKVAL(Type__c, &apos;FAD Summary&apos;)</formula>
         <triggerType>onAllChanges</triggerType>
     </rules>
     <rules>

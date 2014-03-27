@@ -14,7 +14,6 @@ public with sharing class Assessment_FAD_Form_Ex {
     public Assessment_FAD_Form_Ex(ApexPages.StandardController controller) {
         assess = new assessment__c ();
         assess = (Assessment__c) controller.getRecord();
-        assess.Type__c = 'FAD';
         mode ='view';
         if(ApexPages.currentPage().getParameters().get('edit') == '1'){
             mode = 'edit';
@@ -24,7 +23,7 @@ public with sharing class Assessment_FAD_Form_Ex {
             mode = 'edit';
         }
         
-        for(Assessment_Question__c aq: [select id, Dev_Name__c, Question_Title__c from Assessment_Question__c Where Question_Domain__r.Assessment_Type2__c = 'FAD']){        
+        for(Assessment_Question__c aq: [select id, Dev_Name__c, Question_Title__c from Assessment_Question__c Where Question_Domain__r.Assessment_Type2__c = 'FAD Summary']){        
             mapQs.put(aq.Dev_Name__c, aq);
             Assessment_Response__c tmpAR = new Assessment_Response__c();
             mapRes.put(aq.Dev_Name__c, tmpAR );
