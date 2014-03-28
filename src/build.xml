@@ -1,0 +1,136 @@
+<project name="Salesforce Ant Tasks" default="checkdeployInt" basedir="." xmlns:sf="antlib:com.salesforce">
+
+    <property file="/usr/share/ant/lib/build.properties"/>
+    <property environment="env"/>
+
+    <taskdef resource="com/salesforce/antlib.xml" classpath="ant-salesforce.jar" />
+
+	<!-- CODE DEPLOYMENT -->
+        <!-- deploy code to sandboxav -->
+    <target name="deployAV">
+      <sf:deploy username="${sf.usernameav}" password="${sf.passwordav}" serverurl="${sf.serverurltest}" maxPoll="100" deployRoot="/HG_REPO/Adam_Dev/esd/src">
+      </sf:deploy>
+    </target>
+
+	<!-- deploy code to train -->
+    <target name="deployTrain">
+      <sf:deploy username="${sf.usernametrain}" password="${sf.passwordtrain}" serverurl="${sf.serverurltest}" maxPoll="100" deployRoot="/HG_REPO/Adam_Dev/esd/src">
+      </sf:deploy>
+    </target>
+	
+	<!-- deploy code to test -->
+    <target name="deployTestbox">
+      <sf:deploy username="${sf.usernametest}" password="${sf.passwordtest}" serverurl="${sf.serverurltest}" maxPoll="100" deployRoot="/HG_REPO/Adam_Dev/esd/src">
+      </sf:deploy>
+    </target>
+	
+	<!-- deploy code to citest -->
+    <target name="deployCItest">
+      <sf:deploy username="${sf.usernamecitest}" password="${sf.passwordcitest}" serverurl="${sf.serverurltest}" maxPoll="100" deployRoot="/HG_REPO/Adam_Dev/esd/src">
+      </sf:deploy>
+    </target>
+	
+	<!-- deploy code to integration -->
+    <target name="deployInt">
+      <sf:deploy username="${sf.usernameint}" password="${sf.passwordint}" serverurl="${sf.serverurltest}" maxPoll="100" deployRoot="/HG_REPO/Adam_Dev/esd/src">
+      </sf:deploy>
+    </target>
+	
+	<!-- deploy code to staging -->
+    <target name="deployStage">
+      <sf:deploy username="${sf.usernamestage}" password="${sf.passwordstage}" serverurl="${sf.serverurltest}" maxPoll="100" deployRoot="/HG_REPO/Adam_Dev/esd/src">
+      </sf:deploy>
+    </target>
+	
+	<!-- deploy code to production -->
+    <target name="deployProd">
+      <sf:deploy username="${sf.usernameprod}" password="${sf.passwordprod}" serverurl="${sf.serverurlprod}" maxPoll="100" deployRoot="/HG_REPO/Adam_Dev/esd/src" logType="Detail">
+      </sf:deploy>
+    </target>
+	
+	<!-- DEPLOYMENT CHECK -->
+	<!-- check deploy to sandboxav -->
+    <target name="checkdeployAV">
+      <sf:deploy username="${sf.usernameav}" password="${sf.passwordav}" serverurl="${sf.serverurltest}" maxPoll="100" deployRoot="/HG_REPO/Adam_DEV/esd/src" checkOnly="true" logType="Detail"/>
+    </target>
+
+	<!-- check deploy to train -->
+    <target name="checkdeployTrain">
+      <sf:deploy username="${sf.usernametrain}" password="${sf.passwordtrain}" serverurl="${sf.serverurltest}" maxPoll="100" deployRoot="/HG_REPO/Adam_Dev/esd/src" checkOnly="true" logType="Detail"/>
+    </target>
+	
+	<!-- check deploy to test -->
+    <target name="checkdeployTestbox">
+      <sf:deploy username="${sf.usernametest}" password="${sf.passwordtest}" serverurl="${sf.serverurltest}" maxPoll="100" deployRoot="/HG_REPO/Adam_Dev/esd/src" checkOnly="true" logType="Detail"/>
+    </target>
+	
+	<!-- check deploy to citest -->
+    <target name="checkdeployCItest">
+      <sf:deploy username="${sf.usernamecitest}" password="${sf.passwordcitest}" serverurl="${sf.serverurltest}" maxPoll="100" deployRoot="/HG_REPO/Adam_Dev/esd/src" checkOnly="true" logType="Detail"/>
+    </target>	
+	
+	<!-- check deploy to integration -->
+    <target name="checkdeployInt">
+      <sf:deploy username="${sf.usernameint}" password="${sf.passwordint}" serverurl="${sf.serverurltest}" maxPoll="100" deployRoot="/HG_REPO/Adam_Dev/esd/src" checkOnly="true" logType="Detail"/>
+    </target>
+	
+	<!-- check deploy to staging -->
+    <target name="checkdeployStage">
+      <sf:deploy username="${sf.usernamestage}" password="${sf.passwordstage}" serverurl="${sf.serverurltest}" maxPoll="100" deployRoot="/HG_REPO/Adam_Dev/esd/src" checkOnly="true" logType="Detail"/>
+    </target>
+	
+	<!-- check deploy to production -->
+    <target name="checkdeployProd">
+      <sf:deploy username="${sf.usernameprod}" password="${sf.passwordprod}" serverurl="${sf.serverurlprod}" maxPoll="100" deployRoot="/HG_REPO/Adam_Dev/esd/src" checkOnly="true" logType="Detail"/> 
+    </target>
+	
+	<!-- DEPLOYMENT CHECK WITH TESTS -->
+	<!-- check deploy to sandboxav -->
+    <target name="testAV">
+      <sf:deploy username="${sf.usernameav}" password="${sf.passwordav}" serverurl="${sf.serverurltest}" maxPoll="100" deployRoot="/HG_REPO/Adam_Dev/esd/src" checkOnly="true" runALLTests="true" logType="Detail"/>
+    </target>
+
+	<!-- check deploy to train -->
+    <target name="testTrain">
+      <sf:deploy username="${sf.usernametrain}" password="${sf.passwordtrain}" serverurl="${sf.serverurltest}" maxPoll="100" deployRoot="/HG_REPO/Adam_Dev/esd/src" checkOnly="true" runALLTests="true" logType="Detail"/>
+    </target>
+	
+	<!-- check deploy to test -->
+    <target name="testTestbox">
+      <sf:deploy username="${sf.usernametest}" password="${sf.passwordtest}" serverurl="${sf.serverurltest}" maxPoll="100" deployRoot="/HG_REPO/Adam_Dev/esd/src" checkOnly="true" runALLTests="true" logType="Detail"/>
+    </target>
+	
+	<!-- check deploy to citest -->
+    <target name="testCItest">
+      <sf:deploy username="${sf.usernamecitest}" password="${sf.passwordcitest}" serverurl="${sf.serverurltest}" maxPoll="100" deployRoot="/HG_REPO/Adam_Dev/esd/src" checkOnly="true" runALLTests="true" logType="Detail"/>
+    </target>	
+	
+	<!-- check deploy to integration -->
+    <target name="testInt">
+      <sf:deploy username="${sf.usernameint}" password="${sf.passwordint}" serverurl="${sf.serverurltest}" maxPoll="100" deployRoot="/HG_REPO/Adam_Dev/esd/src" checkOnly="true" runALLTests="true" logType="Detail"/>
+    </target>
+	
+	<!-- check deploy to staging -->
+    <target name="testStage">
+      <sf:deploy username="${sf.usernamestage}" password="${sf.passwordstage}" serverurl="${sf.serverurltest}" maxPoll="100" deployRoot="/HG_REPO/Adam_Dev/esd/src" checkOnly="true" runALLTests="true" logType="Detail"/>
+    </target>
+	
+	<!-- check deploy to production -->
+    <target name="testProd">
+      <sf:deploy username="${sf.usernameprod}" password="${sf.passwordprod}" serverurl="${sf.serverurlprod}" maxPoll="100" deployRoot="/HG_REPO/Adam_Dev/esd/src" checkOnly="true" logType="Detail"/> 
+    </target>
+
+	<!-- INTEGRATION CODE RECONCILIATION DEPLOYMENT -->
+    <!-- deploy code to Integration -->
+    <target name="deployIntegration">
+      <sf:deploy username="${sf.usernameint}" password="${sf.passwordint}" serverurl="${sf.serverurltest}" maxPoll="100" deployRoot="/HG_REPO/Adam_Dev/esd/src">
+      </sf:deploy>
+    </target>
+
+	<!-- INTEGRATION CODE RECONCILIATION DEPLOYMENT CHECK -->
+	<!-- check deploy to integration -->
+    <target name="checkdeployIntegration">
+      <sf:deploy username="${sf.usernameint}" password="${sf.passwordint}" serverurl="${sf.serverurltest}" maxPoll="100" deployRoot="/HG_REPO/Adam_Dev/esd/src" checkOnly="true" logType="Detail"/>
+    </target>
+
+</project>
