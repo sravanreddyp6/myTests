@@ -217,6 +217,21 @@
         <triggerType>onCreateOrTriggeringUpdate</triggerType>
     </rules>
     <rules>
+        <fullName>PMC - Set MENTOR Status</fullName>
+        <actions>
+            <name>Update_Status_to_Mentor</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Prospects__c.Provider_Agreement_Signature_Date__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>Provider Agreement Signature date != null
+PMC - 31</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
         <fullName>Prospect TY Email Region</fullName>
         <actions>
             <name>Region</name>
