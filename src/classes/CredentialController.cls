@@ -6,6 +6,7 @@ public class CredentialController {
     public TMN_Contact__c theTmnContact {get;set;}
     public String baseUrl { get; set; }
     public Boolean editMode { get; set; }
+    public List<CredentialSection> credSectionList { get; set; }
        
     class CredentialSection {
     	
@@ -31,12 +32,12 @@ public class CredentialController {
                 Credential_Profile__r.Applies_Conviction_Past_5_Federal__c, Conviction_Past_5_Years_Federal__c, 
                 Credential_Profile__r.Applies_FBI_Full_Disclosure__c, FBI_Full_Disclosure_Required__c, Credential_Profile__r.Help_Text__c,
                 Outcome_of_Clearance__c, Credential_Profile__r.Applies_Outcome_of_Clearance__c,
-                Credential_Profile__r.Section, Credential_Profile__r.Section_Order__c, Credential_Profile__r.Order__c
+                Credential_Profile__r.Section__c, Credential_Profile__r.Section_Order__c, Credential_Profile__r.Order__c
                 FROM Credential_Record__c WHERE TMN_Contact__c = :contactID ORDER BY Credential_Profile__r.Name];
             
             Set<String> sectionNames = new Set<String>();
             for(Credential_Record__c cR: allRecords) {
-            	sectionNames.add(cR.Section_Name__c);
+            	sectionNames.add(cR.Credential_Profile__r.Section__c);
             }
             
 
