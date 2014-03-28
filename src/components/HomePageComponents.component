@@ -1,0 +1,173 @@
+<apex:component controller="HomePageController">
+<apex:stylesheet value="{!URLFOR($Resource.Unsemantic, 'stylesheets/unsemantic-grid-responsive.css')}" />
+<style type="text/css">
+    .grid-container {
+      margin-left: 0;
+      margin-right: 0;
+      max-width: none;
+      padding: 0;
+    }
+
+    .block {
+      background-color: #7AC143;
+      border-radius: 8px 8px 8px 8px;
+      padding: 4px;
+      margin-bottom: 12px;
+    }
+
+    .block-title {
+      color: #002C59;
+      padding: 0 4px;
+      font-size: 1.3em;
+    }
+
+    .block-inner {
+      background-color: #ffffff;
+      border-radius: 8px 8px 8px 8px;
+      padding: 6px 6px 6px 6px;
+      margin-top: 4px;
+      height: 440px;
+    }
+    
+      .block-inner ul {
+      margin-left: 5px;
+      margin-right: 0px;
+      padding-left: 10px;
+      padding-right: 0px;
+    }
+
+    .block-inner ul ul {
+      margin-left: 0;
+      padding-left: 0;
+    }
+
+
+</style>
+<script>
+    j$ = jQuery.noConflict();
+
+    function showHideList(obj,test) {
+    var objt = obj;
+    var testt = test;
+ 
+    if(objt=='Referrals' && testt=='links'){
+      var text1='ref';
+    }else if(objt=='Referrals' && testt=='reports'){
+      var text1='refrpt';
+    }
+     if(objt=='Person Being Served' && testt=='links'){
+      var text1='PBS';
+     }else if(objt=='Person Being Served' && testt=='reports'){
+      var text1='PBSrpt';
+    }
+    if(objt=='TMN Contacts' && testt=='links'){
+      var text1='TMN';
+     }else if(objt=='TMN Contacts' && testt=='reports'){
+      var text1='TMNrpt';
+    }
+    if(objt=='Contract Management' && testt=='links'){
+     var text1='con';
+    }else if(objt=='Contract Management' && testt=='reports'){
+      var text1='conrpt';
+    }
+    if(objt=='Documents' && testt=='links'){
+      var text1='docs';
+    }else if(objt=='Documents' && testt=='reports'){
+      var text1='docsrpt';
+    }
+   
+      j$('#' + text1).slideToggle();
+    }
+  </script>
+  <script type="text/javascript">
+  
+    
+    j$(document).ready(function() {
+      j$('ul#accordion a.heading').click(function() {
+        j$(this).css('outline','none');
+        if(j$(this).parent().hasClass('current')) {
+          j$(this).siblings('ul').slideUp('slow',function() {
+            j$(this).parent().removeClass('current');
+            j$.scrollTo('#accordion',1000);
+          });
+        } else {
+          j$('ul#accordion li.current ul').slideUp('slow',function() {
+            j$(this).parent().removeClass('current');
+          });
+          j$(this).siblings('ul').slideToggle('slow',function() {
+            j$(this).parent().toggleClass('current');
+          });
+          j$.scrollTo('#accordion',1000);
+        }
+        return false;
+      });
+    });
+  </script>
+<apex:attribute name="objectName" type="object" description="this is the object name" required="true" />
+    
+    <apex:outputPanel layout="block" styleClass="grid-20 mobile-grid-100"> 
+    
+  
+          <apex:outputPanel layout="block" styleClass="block" rendered="{!(if(objectName=='Referrals',RefView,if(objectName=='Person Being Served',PBSView,if(objectName=='TMN Contacts',TMNView,if(objectName=='Contract Management',ContractView,if(objectName=='Documents',DocView,false))))))}">
+                 <!-- <apex:outputPanel layout="block" styleClass="block-title">
+                  I would like to access...
+                </apex:outputPanel> -->
+                <apex:outputPanel layout="block" styleClass="block-inner">
+                <ul>
+                     <li class="current"><a class="heading" onclick="showHideList('{!objectName}','links');"><apex:outputPanel layout="block" styleClass="block-title">{!objectName} </apex:outputPanel></a>
+                      <ul id="{!if(objectName=='Referrals','ref',if(objectName=='Person Being Served','PBS',if(objectName=='TMN Contacts','TMN',if(objectName=='Contract Management','con','docs'))))}">
+                      <apex:outputPanel rendered="{!objectName=='Referrals'}">
+                             <apex:outputText rendered="{!(RefCreate==true)}"><li><a href="/apex/referral">Create New Referral</a></li></apex:outputText>
+                <li><a href="/apex/ReferralSearch">Search Referrals</a></li>
+                <li><a href="/{!referralPrefix}?fcf={!ReferralViews['all']}">View All Referrals</a></li>
+              <li><a href="/{!referralPrefix}?fcf={!ReferralViews['my']}">View My Referrals</a></li>
+                   </apex:outputPanel>
+                            <apex:outputPanel rendered="{!objectName=='Person Being Served'}">
+                             <apex:outputText rendered="{!(PBSCreate==true)}"><li><a href="{!URLFOR($Action.Account.New)}">Add New Person Being Served</a></li></apex:outputText>
+               <li><a href="/apex/PersonsBeingServedListView?filterId={!personsBeingServedViews['recent']}">My Recently Viewed Persons Being Served</a></li>
+               
+                   </apex:outputPanel>
+                   <apex:outputPanel rendered="{!objectName=='TMN Contacts'}">
+                            <apex:outputText rendered="{!(TMNCreate==true)}"><li><a href="/apex/MentorEdit?retURL=https%3A%2F%2Fc.cs18.visual.force.com%2Fapex%2FTmnContactListView%3Fsfdc.tabName%3D01r11000000CmMy&scontrolCaching=1&sfdc.override=1">Create New Contact</a></li></apex:outputText>
+               <li><a href="/apex/TmnContactListView?j_id0%3Aj_id3%3Afcf={!(TMNViews['my'])}">My Recently Viewed Contacts</a></li>
+              
+                   </apex:outputPanel>
+                   <apex:outputPanel rendered="{!objectName=='Contract Management'}">
+                             <apex:outputText rendered="{!(ContractCreate==true)}">
+                 <li><a href="/apex/EditDetailsContract?retURL=https%3A%2F%2Fc.cs18.visual.force.com%2Fapex%2FTabContract">Create New Contract</a></li> 
+               </apex:outputText>
+                <li><a href="/apex/TabContract">View All Contracts</a></li>
+                   </apex:outputPanel>
+                   <apex:outputPanel rendered="{!objectName=='Documents'}">
+                             <apex:outputText rendered="{!(DocCreate==true)}"><li><a href="/apex/Document_Edit?save_new=1">Create New Document</a></li></apex:outputText>
+              <li><a href="/apex/DocumentListView">View All Documents</a></li>
+              </apex:outputPanel>
+                        </ul>
+                    </li>
+                     <apex:outputPanel rendered="{!objectName!='TMN Contacts'}">
+                    <li><a class="heading" onclick="showHideList('{!objectName}','reports');"><apex:outputPanel layout="block" styleClass="block-title"> Reports </apex:outputPanel></a>
+                    
+                        <ul id="{!if(objectName=='Referrals','refrpt',if(objectName=='Person Being Served','PBSrpt',if(objectName=='TMN Contacts','TMNrpt',if(objectName=='Contract Management','conrpt','docsrpt'))))}"> 
+                            <apex:repeat value="{!(if(objectName=='Referrals',refrportlst,if(objectName=='Person Being Served',PBSrportlst,if(objectName=='Contract Management',contractrportlst,docrportlst))))}" var="report"> 
+                                  <li>
+                                  <apex:outputLink value="{!'/' + report.id}" target="_blank" title="View this Report" >{!report.name}</apex:outputLink> 
+                                  </li>
+                              </apex:repeat> 
+                              <apex:outputPanel rendered="{!objectName=='Person Being Served'}">
+                                  <apex:repeat value="{!VFReportlst}" var="VFReport"> 
+                                    <li>
+                                      <apex:outputLink value="{!'/apex/' + VFReport.link__c }" target="_blank" title="View this Report">{!VFReport.Name__c}</apex:outputLink>
+                                    </li>
+                                  </apex:repeat>
+                              </apex:outputPanel>
+                        </ul>
+                    </li>
+                    </apex:outputPanel>
+                    
+                </ul>
+                 </apex:outputPanel>
+          </apex:outputPanel>
+    </apex:outputPanel>
+  
+ 
+</apex:component>
