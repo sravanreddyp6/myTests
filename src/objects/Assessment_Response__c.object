@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>ASSESSMENT  - Individual score valiues for a person&apos;s assessmemt</description>
+    <enableActivities>false</enableActivities>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>true</enableReports>
+    <fieldSets>
+        <fullName>Custom_Questions</fullName>
+        <description>Used to clone Assessment responses dynamically</description>
+        <displayedFields>
+            <field>Description_of_Risk__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Plan_to_reduce_Risk__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <label>Custom Questions</label>
+    </fieldSets>
+    <fields>
+        <fullName>Assessment_Domain_Result__c</fullName>
+        <externalId>false</externalId>
+        <label>Assessment Domain Result</label>
+        <referenceTo>Assessment_Domain_Result__c</referenceTo>
+        <relationshipLabel>Assessment Response</relationshipLabel>
+        <relationshipName>Assessment_Response</relationshipName>
+        <relationshipOrder>1</relationshipOrder>
+        <reparentableMasterDetail>true</reparentableMasterDetail>
+        <trackTrending>false</trackTrending>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Assessment__c</fullName>
+        <description>Relationship to Assessment Junction Object</description>
+        <externalId>false</externalId>
+        <label>Assessment</label>
+        <referenceTo>Assessment__c</referenceTo>
+        <relationshipLabel>Assessment Response</relationshipLabel>
+        <relationshipName>Assessment_Response</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <trackTrending>false</trackTrending>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Color__c</fullName>
+        <externalId>false</externalId>
+        <label>Color</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Description_of_Risk__c</fullName>
+        <externalId>false</externalId>
+        <label>Description of Risk</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Plan_to_reduce_Risk__c</fullName>
+        <externalId>false</externalId>
+        <label>Plan to Reduce Risk</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Question__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Question</label>
+        <referenceTo>Assessment_Question__c</referenceTo>
+        <relationshipLabel>Assessment Response</relationshipLabel>
+        <relationshipName>Question</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Rating__c</fullName>
+        <description>Rating / Score entered by user</description>
+        <externalId>false</externalId>
+        <label>Rating</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Response__c</fullName>
+        <externalId>false</externalId>
+        <label>Response</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>ScoreOld__c</fullName>
+        <externalId>false</externalId>
+        <formula>CASE( Rating__c , &apos;0&apos;, 0, &apos;1&apos;, 1, &apos;2&apos;, 2, &apos;3&apos;, 6, 0)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Score Old</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Score__c</fullName>
+        <externalId>false</externalId>
+        <label>Score</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Unique_Check__c</fullName>
+        <caseSensitive>true</caseSensitive>
+        <description>A field for confirming that no duplicate entries are saved for assessments.</description>
+        <externalId>false</externalId>
+        <label>Unique Check</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>true</unique>
+    </fields>
+    <fields>
+        <fullName>Yes_No__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Yes/No</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <label>Assessment Response</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Rating__c</columns>
+        <columns>Assessment__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <listViews>
+        <fullName>All1</fullName>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <displayFormat>{0}</displayFormat>
+        <label>AssessmentResponseID</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Assessment Response</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ControlledByParent</sharingModel>
+    <validationRules>
+        <fullName>AssessmentApproved</fullName>
+        <active>true</active>
+        <description>A validation rule to prevent changes to assessments when they have been approved.</description>
+        <errorConditionFormula>ISPICKVAL( Assessment__r.Approval_Status__c , &apos;Approved&apos;)</errorConditionFormula>
+        <errorMessage>This assessment has already been submitted and cannot be edited.  For assistance, please contact a system administrator.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>AssessmentLocked</fullName>
+        <active>true</active>
+        <description>A validation rule to prevent changes to assessment responses when the assessment has been locked.</description>
+        <errorConditionFormula>Assessment__r.Locked__c</errorConditionFormula>
+        <errorMessage>Assessment Response values cannot be inserted or updated when the Assessment is in a locked state.  Please contact your supervisor and request that the assessment be unlocked if you need to make changes.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>RISK_Plan_to_reduce_Risk</fullName>
+        <active>true</active>
+        <errorConditionFormula>Rating__c = &apos;Presents a Risk&apos; &amp;&amp;  
+ISBLANK(  Plan_to_reduce_Risk__c ) &amp;&amp;
+LOWER(TEXT( Assessment__r.Status__c )) = &apos;locked&apos;</errorConditionFormula>
+        <errorDisplayField>Plan_to_reduce_Risk__c</errorDisplayField>
+        <errorMessage>Plan to reduce Risk must be filled out</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Risk_Description_of_Risk</fullName>
+        <active>true</active>
+        <errorConditionFormula>Rating__c = &apos;Presents a Risk&apos; &amp;&amp;  
+ISBLANK( Description_of_Risk__c ) &amp;&amp;
+LOWER(TEXT( Assessment__r.Status__c )) = &apos;locked&apos;</errorConditionFormula>
+        <errorDisplayField>Description_of_Risk__c</errorDisplayField>
+        <errorMessage>Description of Risk must be filled out</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Submitted</fullName>
+        <active>true</active>
+        <description>A rule to lock an assessment upon submission for approval.</description>
+        <errorConditionFormula>Assessment__r.Submitted__c</errorConditionFormula>
+        <errorMessage>This assessment has been submitted for approval and cannot be edited.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>test</fullName>
+        <active>false</active>
+        <errorConditionFormula>Rating__c = &apos;2&apos;</errorConditionFormula>
+        <errorMessage>nooo</errorMessage>
+    </validationRules>
+</CustomObject>
