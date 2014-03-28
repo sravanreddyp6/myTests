@@ -9,6 +9,12 @@
     .dialogLoadingSpinner {
         margin-left: 5px;
     }
+    .ForceLikeLabels {
+        font-family: Arial,Helvetica,sans-serif;
+        color: #222;
+        font-weight: bold;
+        font-size: 91%;
+    }
     </style>
     <script>
     jQuery.noConflict();
@@ -69,9 +75,9 @@
                 <apex:outputField value="{!TMN_Contact__c.Email__c}" />
             </apex:pageBlockSection>
             <apex:pageBlockSection title="Marketing Info" columns="2">
-            	<apex:outputField value="{!TMN_Contact__c.How_did_you_hear_about_us__c}" />
-            	<apex:outputField value="{!TMN_Contact__c.How_did_you_hear_Other_Describe__c}" />
-            	<apex:outputField value="{!TMN_Contact__c.Referral_Type__c}" />
+                <apex:outputField value="{!TMN_Contact__c.How_did_you_hear_about_us__c}" />
+                <apex:outputField value="{!TMN_Contact__c.How_did_you_hear_Other_Describe__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Referral_Type__c}" />
             </apex:pageBlockSection>
             <apex:pageBlockSection title="Mentor Status" columns="2">
                 <apex:outputField value="{!TMN_Contact__c.Disregarded__c}" />
@@ -97,9 +103,9 @@
                 <apex:outputField value="{!TMN_Contact__c.Most_Recent_Recertification_Date__c}" />
             </apex:pageBlockSection>
             <apex:pageBlockSection title="System Info">
-            	<apex:outputField value="{!TMN_Contact__c.OwnerId}" />
-            	<apex:outputText label="Created By" value="{!TMN_Contact__c.CreatedBy.Name}, {!TMN_Contact__c.CreatedDate}" />
-            	<apex:outputText label="Last Modified By" value="{!TMN_Contact__c.LastModifiedBy.Name}, {!TMN_Contact__c.LastModifiedDate}" />
+                <apex:outputField value="{!TMN_Contact__c.OwnerId}" />
+                <apex:outputText label="Created By" value="{!TMN_Contact__c.CreatedBy.Name}, {!TMN_Contact__c.CreatedDate}" />
+                <apex:outputText label="Last Modified By" value="{!TMN_Contact__c.LastModifiedBy.Name}, {!TMN_Contact__c.LastModifiedDate}" />
             </apex:pageBlockSection>
             <a id="householdMembers" ></a>
             <apex:pageBlockSection title="Household Members" columns="1">
@@ -161,12 +167,25 @@
                     </apex:pageBlockSectionItem>
                 </apex:pageBlockSection>
                 <apex:pageBlockSection columns="2">
-                    <apex:inputField value="{!currentHouseholdMember.Date_of_Birth__c}" />
-                    <apex:inputField value="{!currentHouseholdMember.Related_Party_Type__c}" required="true">
-                        <apex:actionSupport event="onchange" action="{!changeHouseholdMemberType}" rerender="householdMemberDialogMainBlock" />
-                    </apex:inputField>
+                    <apex:inputField value="{!currentHouseholdMember.Date_of_Birth__c}" rendered="{!currentHouseholdMember.Related_Party_Type__c != 'Pet'}"/>
+                    
+                    <apex:pageBlockSectionItem >
+                     <apex:outputLabel value="Type of Relationship" for="TypeOfRel" />
+                         <apex:actionRegion >
+                         
+                          <apex:inputField id="TypeOfRel" value="{!currentHouseholdMember.Related_Party_Type__c}" required="true">
+                         
+                            <apex:actionSupport event="onchange" action="{!changeHouseholdMemberType}" rerender="householdMemberDialogMainBlock" />
+                        </apex:inputField>
+                     </apex:actionRegion>
+                     </apex:pageBlockSectionItem>
                     <apex:inputField value="{!currentHouseholdMember.Gender__c}" rendered="{!currentHouseholdMember.Related_Party_Type__c != 'Pet'}" />
-                    <apex:inputField value="{!currentHouseholdMember.Marital_Status__c}" rendered="{!currentHouseholdMember.Related_Party_Type__c != 'Pet'}" />
+                    <apex:pageBlockSectionItem rendered="{!currentHouseholdMember.Related_Party_Type__c != 'Pet'}">
+                        <apex:outputLabel value="Marital Status" for="Marital"/>
+                        <apex:actionRegion >
+                         <apex:inputField id="Marital" label="Marital Status" value="{!currentHouseholdMember.Marital_Status__c}" required="{!currentHouseholdMember.Related_Party_Type__c != 'Pet'}"/>
+                        </apex:actionRegion>
+                    </apex:pageBlockSectionItem>
                     <apex:inputField value="{!currentHouseholdMember.Primary_Phone__c}" />
                     <apex:inputField value="{!currentHouseholdMember.Secondary_Phone__c}" />
                     <apex:inputField value="{!currentHouseholdMember.Email__c}" />
