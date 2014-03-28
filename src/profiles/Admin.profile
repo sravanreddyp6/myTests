@@ -15861,9 +15861,6 @@
         <layout>Credential_Profile__c-Credential Profile Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Credential_Record__c-Credential Layout</layout>
-    </layoutAssignments>
-    <layoutAssignments>
         <layout>Diagnosis__c-Diagnosis Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
