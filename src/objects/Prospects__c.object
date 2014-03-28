@@ -797,6 +797,15 @@
         <visibleLines>4</visibleLines>
     </fields>
     <fields>
+        <fullName>File_Submitted_for_Approval__c</fullName>
+        <externalId>false</externalId>
+        <label>File Submitted for Approval</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
         <fullName>Final_Review__c</fullName>
         <description>Final Review</description>
         <externalId>false</externalId>
@@ -3301,9 +3310,7 @@ kpi_Home_Study__c</formula>
     <fields>
         <fullName>div_class_reviewfinal__c</fullName>
         <externalId>false</externalId>
-        <formula>IF(Text( Final_Review__c )=&quot;Approved&quot;,    zGreenChk__c, zRedX__c  ) &amp; &quot; Final Review &quot;
-&amp;
-IF(ISNULL(  Provider_Agreement_Signature_Date__c   ),  zRedX__c,  zGreenChk__c ) &amp;&quot;  Provider Agreement Signature Date &quot;</formula>
+        <formula>IF(ISNULL(  Provider_Agreement_Signature_Date__c   ),  zRedX__c,  zGreenChk__c ) &amp;&quot;  Provider Agreement Signature Date &quot;</formula>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Last Steps</label>
         <required>false</required>
@@ -4128,13 +4135,6 @@ $Profile.Id !=&apos;00eU0000000RHex&apos;</errorConditionFormula>
         <errorMessage>Date of Inquiry cannot be modified.</errorMessage>
     </validationRules>
     <validationRules>
-        <fullName>Final_Review_Approved_after_Screening</fullName>
-        <active>true</active>
-        <errorConditionFormula>AND( ISPICKVAL(Final_Review__c, &quot;Approved&quot;), Screening_Progress_Percent__c &lt;&gt; 1.0)</errorConditionFormula>
-        <errorDisplayField>Final_Review__c</errorDisplayField>
-        <errorMessage>Cannot mark as &quot;Approved&quot; until all screening milestones are complete.</errorMessage>
-    </validationRules>
-    <validationRules>
         <fullName>First_Contact_Date_Notes_Required</fullName>
         <active>true</active>
         <errorConditionFormula>AND(NOT(ISNULL( First_Contact_Date__c )), ISBLANK( First_Contact_Attempt_Notes__c),  $User.ProfileId &lt;&gt; &apos;00eU0000000myCw&apos; )</errorConditionFormula>
@@ -4238,15 +4238,6 @@ All_Drivers_License_Received__c =False
 ),True, False)</errorConditionFormula>
         <errorDisplayField>All_Drivers_License_Received__c</errorDisplayField>
         <errorMessage>All Driver&apos;s Licenses must be received before the status &apos;Mentor&apos; can be applied</errorMessage>
-    </validationRules>
-    <validationRules>
-        <fullName>Mentor_Final_Review</fullName>
-        <active>true</active>
-        <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
-NOT(ISPICKVAL( Final_Review__c ,&quot;Approved&quot;)))
-,True, False)</errorConditionFormula>
-        <errorDisplayField>Final_Review__c</errorDisplayField>
-        <errorMessage>Mentor Final Review must be marked as Approved before the status &apos;Mentor&apos; can be applied</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Mentor_Fire_Safety_Check</fullName>
@@ -4445,6 +4436,13 @@ IF(OR(ISPICKVAL(  References_All_Other__c ,&quot;Approved&quot;),ISPICKVAL(  Ref
 )</errorConditionFormula>
         <errorDisplayField>References_All_Other__c</errorDisplayField>
         <errorMessage>Approved or Does NOT Apply must be marked before the status &apos;Mentor&apos; can be applied</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Status_Mentor_FileSubmittedApproval</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL(Status__c, &apos;Mentor&apos;) &amp;&amp; ISNULL( File_Submitted_for_Approval__c )</errorConditionFormula>
+        <errorDisplayField>File_Submitted_for_Approval__c</errorDisplayField>
+        <errorMessage>File Submitted for Approval is required when the Status equals &apos;Mentor&apos;</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Status_Null</fullName>
