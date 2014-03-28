@@ -7,6 +7,18 @@ public class CredentialController {
     public String baseUrl { get; set; }
     public Boolean editMode { get; set; }
        
+    class CredentialSection {
+    	
+    	public List<Credential_Record__c> creds { get;set; }
+    	
+    	public CredentialSection(String sectionName, Integer sectionOrder, List<Credential_Record__c> credRecs) {
+    		
+    		creds = credRecs;
+    		
+    	}
+    	
+    }
+    
     public CredentialController() {
             allRecords = [SELECT Name, Requested_Date__c, Documented_Date__c, Received_Date__c, Expiration_Date__c, Note__c,
             	Credential_Profile__r.Name, Credential_Profile__r.Applies_Requested_Date__c, Credential_Profile__r.Applies_Documented_Date__c, Credential_Profile__r.Applies_Received_Date__c, 
@@ -18,8 +30,23 @@ public class CredentialController {
                 Credential_Profile__r.Applies_Type_of_Conviction_Federal__c,
                 Credential_Profile__r.Applies_Conviction_Past_5_Federal__c, Conviction_Past_5_Years_Federal__c, 
                 Credential_Profile__r.Applies_FBI_Full_Disclosure__c, FBI_Full_Disclosure_Required__c, Credential_Profile__r.Help_Text__c,
-                Outcome_of_Clearance__c, Credential_Profile__r.Applies_Outcome_of_Clearance__c
+                Outcome_of_Clearance__c, Credential_Profile__r.Applies_Outcome_of_Clearance__c,
+                Credential_Profile__r.Section, Credential_Profile__r.Section_Order__c, Credential_Profile__r.Order__c
                 FROM Credential_Record__c WHERE TMN_Contact__c = :contactID ORDER BY Credential_Profile__r.Name];
+            
+            Set<String> sectionNames = new Set<String>();
+            for(Credential_Record__c cR: allRecords) {
+            	sectionNames.add(cR.Section_Name__c);
+            }
+            
+
+            for(Credential_Record__c cR: allRecords) {
+            	for(String s : sectionNames) {
+            		if(s==cR.Credential_Profile__r.Section__c) {
+            			
+            		}
+            	}
+    		}
                 
             allRecordsAtConstruction = [SELECT Name, Requested_Date__c, Documented_Date__c, Received_Date__c, Expiration_Date__c, Note__c,
             	Credential_Profile__r.Name, Credential_Profile__r.Applies_Requested_Date__c, Credential_Profile__r.Applies_Documented_Date__c, Credential_Profile__r.Applies_Received_Date__c, 
