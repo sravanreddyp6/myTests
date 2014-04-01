@@ -7,16 +7,42 @@ public class CredentialController {
     public String baseUrl { get; set; }
     public Boolean editMode { get; set; }
     public List<CredentialSection> credSectionList { get; set; }
+
+	class CredentialRecordWrapper implements Comparable {
+		
+		public Credential_Record__c cred { get; set; }
+		
+		public CredentialRecordWrapper(Credential_Record__c c) {
+			cred = c;
+		}
+		
+		public Integer compareTo(Object compareTo) {
+			CredentialRecordWrapper compareToCredRecWrapper = (CredentialRecordWrapper)compareTo;
+			if (cred.Credential_Profile__r.Order__c==compareToCredRecWrapper.cred.Credential_Profile__r.Order__c) return 0;
+			if (cred.Credential_Profile__r.Order__c > compareToCredRecWrapper.cred.Credential_Profile__r.Order__c) return 1;
+			return -1;
+		}
+		
+	}
        
-    class CredentialSection {
+    class CredentialSection implements Comparable {
     	
     	public List<Credential_Record__c> creds { get;set; }
+    	public String sectionName { get; set; }
+    	public Integer sectionOrder { get; set; }
     	
-    	public CredentialSection(String sectionName, Integer sectionOrder, List<Credential_Record__c> credRecs) {
-    		
+    	public CredentialSection(String theSectionName, Integer theSectionOrder, List<Credential_Record__c> credRecs) {
     		creds = credRecs;
-    		
+    		sectionName = theSectionName;
+    		sectionOrder = theSectionOrder;
     	}
+
+		public Integer compareTo(Object compareTo) {
+		    CredentialSection compareToCredSection = (CredentialSection)compareTo;
+		    if (sectionOrder == compareToCredSection.sectionOrder) return 0;
+		    if (sectionOrder > compareToCredSection.sectionOrder) return 1;
+		    return -1;        
+		}
     	
     }
     
@@ -40,14 +66,34 @@ public class CredentialController {
             	sectionNames.add(cR.Credential_Profile__r.Section__c);
             }
             
-
-            for(Credential_Record__c cR: allRecords) {
-            	for(String s : sectionNames) {
+			credSectionList = new List<CredentialSection>();
+			
+            for(String s : sectionNames) {
+            	Integer thisSectionOrder = 0;
+            	List<Credential_Record__c> thisCredList = new List<Credential_Record__c>();
+            	for(Credential_Record__c cR: allRecords) {
             		if(s==cR.Credential_Profile__r.Section__c) {
-            			
+            			thisCredList.add(cR);
+            			thisSectionOrder = cR.Credential_Profile__r.Section_Order__c.intValue();
             		}
             	}
+            	
+            	List<CredentialRecordWrapper> listCredRecWraps = new List<CredentialRecordWrapper>();            	
+            	for(Credential_Record__c cR : thisCredList) {
+            		listCredRecWraps.add(new CredentialRecordWrapper(cR));
+            	}
+            	
+            	listCredRecWraps.sort();
+            	
+            	List<Credential_Record__c> sortedCredList = new List<Credential_Record__c>();
+            	for(CredentialRecordWrapper cRW : listCredRecWraps) {
+            		sortedCredList.add(cRW.cred);
+            	}
+
+            	credSectionList.add(new CredentialSection(s, thisSectionOrder, sortedCredList));           	
     		}
+    		
+    		credSectionList.sort();
                 
             allRecordsAtConstruction = [SELECT Name, Requested_Date__c, Documented_Date__c, Received_Date__c, Expiration_Date__c, Note__c,
             	Credential_Profile__r.Name, Credential_Profile__r.Applies_Requested_Date__c, Credential_Profile__r.Applies_Documented_Date__c, Credential_Profile__r.Applies_Received_Date__c, 
