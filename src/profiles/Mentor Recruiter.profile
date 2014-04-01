@@ -9960,7 +9960,7 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Prospects__c.File_Submitted_for_Approval__c</field>
         <readable>true</readable>
     </fieldPermissions>
