@@ -60,6 +60,7 @@ public with sharing class PersonsBeingServedListController {
         // if an account ID is passed in on the url, change the basic query
         argID = ApexPages.CurrentPage().getParameters().get('id');
         if ( argID != null) { 
+        	system.debug('***********argid'+argID);
         	NEWQUERY  = 'SELECT ID, FirstName, LastName, Owner.ID, Owner.Name, PersonContactId From Account WHERE RecordTypeID=:PBS_REC_TYPE_ID and ID=:argID';
         	//this.filterId = this.con.getFilterId();
     	}
