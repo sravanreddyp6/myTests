@@ -1068,6 +1068,8 @@ function stopRKey(evt) {
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
         <apex:outputField value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
         <apex:outputField value="{!Referral__c.Evaluated_By_External__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
+        <apex:outputField value="{!Referral__c.Evaluated_By_Internal_Other__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
+        <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
         <apex:outputField label="Evaluated By (NeuroRestorative Legacy)" value="{!Referral__c.Neuro_Evaluated_By__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
@@ -1203,10 +1205,8 @@ function stopRKey(evt) {
          <apex:pageBlockSectionItem >
              <hr />
          </apex:pageBlockSectionItem>
-         <apex:pageBlockSectionItem >
-             <apex:outputText value="Juvenile Services Info" style="font-weight:bold;" />
-         </apex:pageBlockSectionItem>
-         <apex:pageBlockSectionItem />
+         </apex:pageBlockSection>
+         <apex:pageBlockSection title="Juvenile Services Info" rendered="{!referralRecordType=='Cambridge Florida' || referralRecordType=='Cambridge Maryland'}">
          <apex:outputField value="{!Referral__c.Previous_Juvenile_Services_Involvement__c}" />
          <apex:pageBlockSectionItem />
          <apex:outputField value="{!Referral__c.Current_Juvenile_Services_Involvement__c}" />
@@ -1441,11 +1441,11 @@ function stopRKey(evt) {
 
         <!--Flavor Specific fields-->
 
-        <apex:outputField label="Primary Diagnosis" value="{!Referral__c.Primary_Diagnosis__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
-        <apex:pageBlockSectionItem rendered="{!referralRecordType='CareMeridian'}"/>
+        <apex:outputField label="Primary Diagnosis" value="{!Referral__c.Primary_Diagnosis__c}" rendered="{!OR(referralRecordType=='CareMeridian',referralRecordType=='Wisconsin' )}"/>
+        <apex:pageBlockSectionItem rendered="{!OR(referralRecordType=='CareMeridian',referralRecordType=='Wisconsin' )}"/>
 
-        <apex:outputField value="{!Referral__c.Secondary_Diagnosis__c}" rendered="{!OR(ReferralRecordType == 'California',referralRecordType=='CareMeridian')}" />
-        <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}"/>
+        <apex:outputField value="{!Referral__c.Secondary_Diagnosis__c}" rendered="{!OR(ReferralRecordType == 'California',referralRecordType=='CareMeridian', referralRecordType == 'Wisconsin')}" />
+        <apex:pageBlockSectionItem rendered="{!OR(referralRecordType=='CareMeridian',referralRecordType=='Wisconsin' )}"/>
 
         <apex:outputField value="{!Referral__c.Level_of_Disability__c}" rendered="{!AND(ReferralRecordType == 'California',referralRecordType!='CareMeridian')}" />
 

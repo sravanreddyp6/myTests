@@ -70,6 +70,16 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Dev_Name__c</fullName>
+        <externalId>false</externalId>
+        <label>Dev Name</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Excluded_States__c</fullName>
         <description>In these states (comma separated). this question is not displayed in the assessment form.</description>
         <externalId>false</externalId>
@@ -137,17 +147,13 @@
     <listViews>
         <fullName>All</fullName>
         <columns>NAME</columns>
+        <columns>Dev_Name__c</columns>
+        <columns>Question_Number__c</columns>
         <columns>Question_Description__c</columns>
         <columns>Question_Domain__c</columns>
-        <columns>Question_Number__c</columns>
         <columns>Question_Title__c</columns>
         <columns>Assessment_Type__c</columns>
         <filterScope>Everything</filterScope>
-        <filters>
-            <field>Assessment_Type__c</field>
-            <operation>equals</operation>
-            <value>a0cU0000004gLRF</value>
-        </filters>
         <label>All</label>
     </listViews>
     <nameField>
