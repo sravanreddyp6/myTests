@@ -4212,7 +4212,9 @@ ISBLANK( Outreach_Source__c )</errorConditionFormula>
         <active>true</active>
         <errorConditionFormula>ISPICKVAL(How_did_you_hear_about_us__c, &quot;Referred by someone&quot;) 
 &amp;&amp;
-ISPICKVAL( Referral_Type__c ,&quot;&quot;)</errorConditionFormula>
+ISPICKVAL( Referral_Type__c ,&quot;&quot;)
+&amp;&amp;
+Entry_Point__c == &quot;Employee&quot;</errorConditionFormula>
         <errorDisplayField>Referral_Type__c</errorDisplayField>
         <errorMessage>Please select a Referral Type</errorMessage>
     </validationRules>
