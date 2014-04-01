@@ -4240,6 +4240,15 @@ All_Drivers_License_Received__c =False
         <errorMessage>All Driver&apos;s Licenses must be received before the status &apos;Mentor&apos; can be applied</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>Mentor_Final_Review</fullName>
+        <active>false</active>
+        <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
+NOT(ISPICKVAL( Final_Review__c ,&quot;Approved&quot;)))
+,True, False)</errorConditionFormula>
+        <errorDisplayField>Final_Review__c</errorDisplayField>
+        <errorMessage>Mentor Final Review must be marked as Approved before the status &apos;Mentor&apos; can be applied</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>Mentor_Fire_Safety_Check</fullName>
         <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
