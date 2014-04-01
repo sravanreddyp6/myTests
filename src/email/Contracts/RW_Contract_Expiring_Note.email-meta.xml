@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <name>RW_Contract_Expiring_Note</name>
+    <style>none</style>
+    <subject>A contract ({!Redwood_Contract__c.Name}) is near it&apos;s termination date</subject>
+    <textOnly>The contract {!Redwood_Contract__c.Name} will expire in {!Redwood_Contract__c.DaysRemaining__c} days on {!Redwood_Contract__c.Termination_Date__c}.
+
+Click below to view the record - {!Redwood_Contract__c.Link}</textOnly>
+    <type>custom</type>
+</EmailTemplate>
