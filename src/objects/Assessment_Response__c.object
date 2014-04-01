@@ -145,6 +145,15 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Response__c</fullName>
+        <externalId>false</externalId>
+        <label>Response</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
         <fullName>ScoreOld__c</fullName>
         <externalId>false</externalId>
         <formula>CASE( Rating__c , &apos;0&apos;, 0, &apos;1&apos;, 1, &apos;2&apos;, 2, &apos;3&apos;, 6, 0)</formula>
@@ -163,7 +172,7 @@
         <label>Score</label>
         <precision>18</precision>
         <required>false</required>
-        <scale>0</scale>
+        <scale>2</scale>
         <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
@@ -180,12 +189,25 @@
         <type>Text</type>
         <unique>true</unique>
     </fields>
+    <fields>
+        <fullName>Yes_No__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Yes/No</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
     <label>Assessment Response</label>
     <listViews>
         <fullName>All</fullName>
         <columns>NAME</columns>
         <columns>Rating__c</columns>
         <columns>Assessment__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <listViews>
+        <fullName>All1</fullName>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>

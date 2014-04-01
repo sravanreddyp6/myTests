@@ -199,28 +199,18 @@ function validate() {
         var col1indent2 = col1 + 40;
         var col1indent3 = col1 + 80;
 
-        //Fill Image
-        var c=document.getElementById("EsignInfo");
-        var ctx=c.getContext("2d");
-        var img=document.getElementById("myPage:ifcsimg"); // id of the img element
-        ctx.drawImage(img,width/2 - 120,10); // 10,10 is the offset you want the image at
-        
-        // Fill Text
-        line += 70;
-        context.lineWidth = 1;
+		// CTEAE-63 - remove IFCS Logo.  Just have text as in other NC notes
+		context.lineWidth = 1;
         context.fillStyle = "#000000";
         context.lineStyle = "#000000";
-        context.font = "14px sans-serif";
+        context.font = "18px sans-serif";
         line += 2;
-        //
-        var text = "{!Progress_Note__c.Service_Assignment__r.Location_Region__c}";
-        context.textAlign="center";
-        context.fillText(text, (width / 2), line += (fontsize));
+        var text = "NC MENTOR";
 
-        line += 2;
+        metrics = context.measureText(text);
+        context.fillText(text, (width / 2) - (metrics.width / 2), line += (fontsize));
+                
         context.font = "14px sans-serif";
-        var text = "NC Division of Mental Health, Developmental Disabilities and Substance Abuse Services";
-        context.fillText(text, (width / 2) , line += (fontsize));
 
         line += 22;
         context.moveTo(0, line);

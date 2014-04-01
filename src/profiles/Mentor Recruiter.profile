@@ -210,6 +210,10 @@
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>Assessment_FAD_Form_Ex</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>Assessment_RiskForm</apexClass>
         <enabled>false</enabled>
     </classAccesses>
@@ -283,6 +287,10 @@
     </classAccesses>
     <classAccesses>
         <apexClass>CareMeridianEvaluationViewTest</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>ChangePasswordController</apexClass>
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
@@ -414,6 +422,10 @@
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>FAD_Assessment_Form</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>FeedCommentValidation</apexClass>
         <enabled>false</enabled>
     </classAccesses>
@@ -430,6 +442,10 @@
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>ForgotPasswordController</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>GenericHistoryComponentController</apexClass>
         <enabled>false</enabled>
     </classAccesses>
@@ -443,6 +459,18 @@
     </classAccesses>
     <classAccesses>
         <apexClass>GuardianTriggeredActions</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>IFCS_Active_MoreThanSixMonths_RPT_EX</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>IFCS_PBS_Count_Rpt_Ex</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>MyProfilePageController</apexClass>
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
@@ -787,6 +815,14 @@
     </classAccesses>
     <classAccesses>
         <apexClass>Shift_Note_Basic_Test</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>SiteLoginController</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>SiteRegisterController</apexClass>
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
@@ -1810,6 +1846,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Assessment_Domain__c.Assessment_Type2__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Assessment_Domain__c.Assessment_Type__c</field>
         <readable>false</readable>
     </fieldPermissions>
@@ -1889,6 +1930,11 @@
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>Assessment_Question__c.Dev_Name__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>Assessment_Question__c.Excluded_States__c</field>
         <readable>true</readable>
@@ -1955,6 +2001,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Assessment_Response__c.Response__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Assessment_Response__c.ScoreOld__c</field>
         <readable>false</readable>
     </fieldPermissions>
@@ -1966,6 +2017,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Assessment_Response__c.Unique_Check__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Assessment_Response__c.Yes_No__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -2044,9 +2100,9 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Assessment__c.Assessment_Type__c</field>
-        <readable>false</readable>
+        <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
@@ -2084,6 +2140,11 @@
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>Assessment__c.Phase__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>Assessment__c.Previous__c</field>
         <readable>true</readable>
@@ -2101,6 +2162,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Assessment__c.Score__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Assessment__c.Service_Assignment__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -2132,6 +2198,11 @@
         <editable>true</editable>
         <field>Assessment__c.TFC_Family_Vistas__c</field>
         <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Assessment__c.Type__c</field>
+        <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
@@ -2940,11 +3011,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>CareMeridian_Contract__c.Type_of_Change__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>CareMeridian_Contract__c.Wound_Vac_Details__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -3135,6 +3201,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Contact.Current_Medications__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Contact.Department</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -3159,9 +3230,39 @@
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.Family_Annual_Income__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
         <field>Contact.Family_Member_Other__c</field>
         <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.Family_Military_Involvement_Branch__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.Family_Military_Involvement__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.Family_Native_American_Ancestry__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.Family_Native_American_Tribe__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.Family_Prior_Military_Involvement_Date__c</field>
+        <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
@@ -3380,6 +3481,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Contact.Race__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Contact.ReportsToId</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -3455,27 +3561,12 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>ContentVersion.Control__c</field>
-        <readable>false</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
         <field>ContentVersion.Department__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
         <field>ContentVersion.Publish_To__c</field>
-        <readable>false</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>ContentVersion.Regulatory__c</field>
-        <readable>false</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>ContentVersion.Review_Date__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -9870,6 +9961,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Prospects__c.File_Submitted_for_Approval__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Prospects__c.Final_Review__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -10044,6 +10140,11 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>Prospects__c.Number_of_days_since_last_activity__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>Prospects__c.OIG_Results__c</field>
         <readable>true</readable>
@@ -10164,7 +10265,7 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>true</editable>
+        <editable>false</editable>
         <field>Prospects__c.Provider_Agreement_Signature_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -11109,6 +11210,16 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>Referral__c.Adjudicated_offense_status__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Referral__c.Adjudicated_offenses__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>Referral__c.Admission_Location__c</field>
         <readable>true</readable>
@@ -11385,6 +11496,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Referral__c.Discrimination_Reason__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Referral__c.Drug_Possession_Distribution__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -11462,6 +11578,11 @@
         <editable>true</editable>
         <field>Referral__c.Felony__c</field>
         <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Referral__c.Felony_ies__c</field>
+        <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
@@ -11585,6 +11706,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Referral__c.Is_Reunification_Process__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Referral__c.Law_Enforcement_Involvement__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -11672,6 +11798,16 @@
         <editable>true</editable>
         <field>Referral__c.Military_Status__c</field>
         <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Referral__c.Misdemeanor__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Referral__c.Misdemeanor_s__c</field>
+        <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
@@ -12075,11 +12211,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Referral__c.Referrer_Address__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Referral__c.Referrer_City__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -12096,6 +12227,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Referral__c.Referrer_State__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Referral__c.Referrer_Street__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -15003,10 +15139,6 @@
         <layout>ContentVersion-General</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ContentVersion-General</layout>
-        <recordType>ContentVersion.Form</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
         <layout>ContentVersion-IT Systems</layout>
         <recordType>ContentVersion.ESD</recordType>
     </layoutAssignments>
@@ -15725,6 +15857,10 @@
         <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
+        <apexPage>Assessment_FAD_Form</apexPage>
+        <enabled>false</enabled>
+    </pageAccesses>
+    <pageAccesses>
         <apexPage>Assessment_RiskForm</apexPage>
         <enabled>false</enabled>
     </pageAccesses>
@@ -15833,6 +15969,14 @@
         <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
+        <apexPage>FAD_Assessment_Form</apexPage>
+        <enabled>false</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>FAD_Form</apexPage>
+        <enabled>false</enabled>
+    </pageAccesses>
+    <pageAccesses>
         <apexPage>FieldMapContracts</apexPage>
         <enabled>true</enabled>
     </pageAccesses>
@@ -15846,6 +15990,14 @@
     </pageAccesses>
     <pageAccesses>
         <apexPage>ForgotPasswordConfirm</apexPage>
+        <enabled>false</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>IFCS_Active_MoreThanSixMonths_RPT</apexPage>
+        <enabled>false</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>IFCS_PBS_Count_Rpt</apexPage>
         <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
@@ -16269,7 +16421,7 @@
         <visible>false</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
-        <default>true</default>
+        <default>false</default>
         <recordType>ContentVersion.Application_Help_Doc</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -16282,11 +16434,6 @@
         <default>false</default>
         <recordType>ContentVersion.ESD</recordType>
         <visible>true</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <default>false</default>
-        <recordType>ContentVersion.Form</recordType>
-        <visible>false</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>false</default>
@@ -16600,6 +16747,7 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
+        <personAccountDefault>true</personAccountDefault>
         <recordType>Project__c.Growth_Goal</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -16745,6 +16893,7 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
+        <personAccountDefault>true</personAccountDefault>
         <recordType>Task.PMC_Tasks</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -16758,6 +16907,10 @@
         <recordType>Task.Referral_Tasks</recordType>
         <visible>false</visible>
     </recordTypeVisibilities>
+    <tabVisibilities>
+        <tab>Action_Plan_Action__c</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
     <tabVisibilities>
         <tab>Ad_Placement_Event_Specific__c</tab>
         <visibility>DefaultOn</visibility>
@@ -16784,6 +16937,10 @@
     </tabVisibilities>
     <tabVisibilities>
         <tab>Media_Outlet__c</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>ProgressNote_ActionPlanChildren_mjo__c</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <tabVisibilities>

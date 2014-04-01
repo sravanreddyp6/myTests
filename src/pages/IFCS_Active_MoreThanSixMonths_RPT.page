@@ -1,4 +1,4 @@
-<apex:page Controller="IFCS_Active_MoreThanSixMonths_RPT_EX" readOnly="true" sidebar="false" >
+<apex:page Controller="IFCS_Active_MoreThanSixMonths_RPT_EX" readOnly="true" sidebar="false" docType="html-5.0" >
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:includeScript value="{!$Resource.jquery}"/>
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
@@ -75,24 +75,28 @@ document.onkeypress = stopRKey;
 }
 .timecol{
 }
+.header{
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px;
+}
 </style>
-<apex:sectionHeader title="Active Persons Being Served Open Over 6 Months Report"/>
+<div class="header">Active Persons Being Served Open Over 6 Months Report</div>
 <apex:pageMessages id="msg"></apex:pageMessages>
-<apex:form >
+<apex:form id="frm" >
     <apex:pageBlock title="Filters" >
         <apex:pageBlockButtons location="bottom" >
             <apex:commandButton value="Run" action="{!runreport}" reRender="dataTable, msg" status="myStatus"/>
         </apex:pageBlockButtons>
         <apex:pageBlockSection >
         
-        
-        <apex:inputText id="start_date" 
+        <apex:input id="start_date" 
                         size="10" 
                         onfocus="DatePicker.pickDate(false, this , false);" 
                         styleClass="datepicker" 
                         label="Start Date"  
                         value="{!fStartDate}"
-                        required="true" />
+                        required="true"/>
         </apex:pageBlockSection>
    </apex:pageBlock>
 </apex:form>   

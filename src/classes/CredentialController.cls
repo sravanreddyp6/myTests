@@ -5,7 +5,47 @@ public class CredentialController {
     private List<Credential_Record__c> allRecordsAtConstruction {get;set;}
     public TMN_Contact__c theTmnContact {get;set;}
     public String baseUrl { get; set; }
+    public Boolean editMode { get; set; }
+    public List<CredentialSection> credSectionList { get; set; }
+
+	class CredentialRecordWrapper implements Comparable {
+		
+		public Credential_Record__c cred { get; set; }
+		
+		public CredentialRecordWrapper(Credential_Record__c c) {
+			cred = c;
+		}
+		
+		public Integer compareTo(Object compareTo) {
+			CredentialRecordWrapper compareToCredRecWrapper = (CredentialRecordWrapper)compareTo;
+			if (cred.Credential_Profile__r.Order__c==compareToCredRecWrapper.cred.Credential_Profile__r.Order__c) return 0;
+			if (cred.Credential_Profile__r.Order__c > compareToCredRecWrapper.cred.Credential_Profile__r.Order__c) return 1;
+			return -1;
+		}
+		
+	}
        
+    class CredentialSection implements Comparable {
+    	
+    	public List<Credential_Record__c> creds { get;set; }
+    	public String sectionName { get; set; }
+    	public Integer sectionOrder { get; set; }
+    	
+    	public CredentialSection(String theSectionName, Integer theSectionOrder, List<Credential_Record__c> credRecs) {
+    		creds = credRecs;
+    		sectionName = theSectionName;
+    		sectionOrder = theSectionOrder;
+    	}
+
+		public Integer compareTo(Object compareTo) {
+		    CredentialSection compareToCredSection = (CredentialSection)compareTo;
+		    if (sectionOrder == compareToCredSection.sectionOrder) return 0;
+		    if (sectionOrder > compareToCredSection.sectionOrder) return 1;
+		    return -1;        
+		}
+    	
+    }
+    
     public CredentialController() {
             allRecords = [SELECT Name, Requested_Date__c, Documented_Date__c, Received_Date__c, Expiration_Date__c, Note__c,
             	Credential_Profile__r.Name, Credential_Profile__r.Applies_Requested_Date__c, Credential_Profile__r.Applies_Documented_Date__c, Credential_Profile__r.Applies_Received_Date__c, 
@@ -17,8 +57,43 @@ public class CredentialController {
                 Credential_Profile__r.Applies_Type_of_Conviction_Federal__c,
                 Credential_Profile__r.Applies_Conviction_Past_5_Federal__c, Conviction_Past_5_Years_Federal__c, 
                 Credential_Profile__r.Applies_FBI_Full_Disclosure__c, FBI_Full_Disclosure_Required__c, Credential_Profile__r.Help_Text__c,
-                Outcome_of_Clearance__c, Credential_Profile__r.Applies_Outcome_of_Clearance__c
+                Outcome_of_Clearance__c, Credential_Profile__r.Applies_Outcome_of_Clearance__c,
+                Credential_Profile__r.Section__c, Credential_Profile__r.Section_Order__c, Credential_Profile__r.Order__c
                 FROM Credential_Record__c WHERE TMN_Contact__c = :contactID ORDER BY Credential_Profile__r.Name];
+            
+            Set<String> sectionNames = new Set<String>();
+            for(Credential_Record__c cR: allRecords) {
+            	sectionNames.add(cR.Credential_Profile__r.Section__c);
+            }
+            
+			credSectionList = new List<CredentialSection>();
+			
+            for(String s : sectionNames) {
+            	Integer thisSectionOrder = 0;
+            	List<Credential_Record__c> thisCredList = new List<Credential_Record__c>();
+            	for(Credential_Record__c cR: allRecords) {
+            		if(s==cR.Credential_Profile__r.Section__c) {
+            			thisCredList.add(cR);
+            			thisSectionOrder = cR.Credential_Profile__r.Section_Order__c.intValue();
+            		}
+            	}
+            	
+            	List<CredentialRecordWrapper> listCredRecWraps = new List<CredentialRecordWrapper>();            	
+            	for(Credential_Record__c cR : thisCredList) {
+            		listCredRecWraps.add(new CredentialRecordWrapper(cR));
+            	}
+            	
+            	listCredRecWraps.sort();
+            	
+            	List<Credential_Record__c> sortedCredList = new List<Credential_Record__c>();
+            	for(CredentialRecordWrapper cRW : listCredRecWraps) {
+            		sortedCredList.add(cRW.cred);
+            	}
+
+            	credSectionList.add(new CredentialSection(s, thisSectionOrder, sortedCredList));           	
+    		}
+    		
+    		credSectionList.sort();
                 
             allRecordsAtConstruction = [SELECT Name, Requested_Date__c, Documented_Date__c, Received_Date__c, Expiration_Date__c, Note__c,
             	Credential_Profile__r.Name, Credential_Profile__r.Applies_Requested_Date__c, Credential_Profile__r.Applies_Documented_Date__c, Credential_Profile__r.Applies_Received_Date__c, 
@@ -36,6 +111,16 @@ public class CredentialController {
             theTmnContact = [ SELECT Full_Name__c FROM TMN_Contact__c WHERE Id = :contactID ];
             
             baseUrl = URL.getSalesforceBaseUrl().toExternalForm();
+    
+    		String mode = ApexPages.currentPage().getParameters().get('mode');
+    		
+    		if(mode=='Edit') {
+    			editMode = true;
+    		}
+    		else {
+    			editMode = false;
+    		}
+    
     }
     
     public PageReference SaveCreds() {
@@ -75,14 +160,21 @@ public class CredentialController {
     	
     	update recordsToUpdate;
     	
-    	PageReference myPageRef = new PageReference('/apex/MentorViewAll?id=' + contactID);
+    	PageReference myPageRef = new PageReference('/apex/Credential?contactId=' + contactID);
+    	myPageRef.setRedirect(true);
     	return myPageRef;
     	
     }
     
     public PageReference CancelCreds() {
-    	PageReference cancelPageRef = new PageReference('/apex/MentorViewAll?id=' + contactID);
+    	PageReference cancelPageRef = new PageReference('/apex/Credential?contactId=' + contactID);
     	cancelPageRef.setRedirect(true);
     	return cancelPageRef;
+    }
+    
+    public PageReference GoEditMode() {
+		PageReference editModePageRef = new PageReference('/apex/Credential?contactId=' + contactID + '&mode=Edit');
+		editModePageRef.setRedirect(true);
+		return editModePageRef;
     }   
 }
