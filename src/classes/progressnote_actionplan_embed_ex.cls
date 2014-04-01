@@ -1,4 +1,7 @@
 public with sharing class progressnote_actionplan_embed_ex {
+	
+	public Boolean bHasObj { get; set; }
+	
     public pagereference myUpdate(){
     ProgressNote_ActionPlanChildren_mjo__c childJO =  new ProgressNote_ActionPlanChildren_mjo__c();
     childJO.progress_note__c = note.id;
@@ -46,6 +49,8 @@ public with sharing class progressnote_actionplan_embed_ex {
       //  controller.AddFields (new List<String> {'Service_Assignment__c', 'Admission__c', 'Action_Plan__c'});
         note = (Progress_Note__c )controller.getRecord();
         
+        bHasObj = false;
+        
         List<string> okstatus = new list<string>();
         okstatus.add ('In Progress');
         okstatus.add ('Revised');
@@ -81,6 +86,10 @@ public with sharing class progressnote_actionplan_embed_ex {
                 
                 MapItemInNote.put(item.Goal__c, true);
                 MapItemInNote.put(item.Objective__c, true);
+                // CTEAE-67 - indicate whether there's an objective so we can suppress objective heading on output
+                if ( item.Objective__c != null)
+                	bHasObj = true;
+                	
                 refChildMap.put(item.Goal__c,item);
                 refChildMap.put(item.Objective__c,item);
             }     
