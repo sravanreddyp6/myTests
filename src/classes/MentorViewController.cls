@@ -1,7 +1,10 @@
 public with sharing class MentorViewController {
     public TMN_Contact__c contact { get; set; }
     public TMN_Contact__c currentHouseholdMember { get; set; }
+    public TMN_Contact__c firstname { get; set; }
     public Id currentHouseholdMemberId { get; set; }
+    public Boolean Ages {get;set;}
+    
     public string baseUrl {
     	get {
     		String aBaseUrl = URL.getSalesforceBaseUrl().toExternalForm();
@@ -36,7 +39,8 @@ public with sharing class MentorViewController {
     }
 
     public void showAddHouseholdMember() {
-        Id relatedPartyRecordTypeId;
+    	Ages = true;
+    	Id relatedPartyRecordTypeId;
         for (RecordType rt: contactRecordTypes) {
             if (rt.Name == 'Household Member') {
                 relatedPartyRecordTypeId = rt.Id;
@@ -50,6 +54,8 @@ public with sharing class MentorViewController {
     }
 
     public void showEditHouseholdMember() {
+    	Ages = true;
+    	
         this.currentHouseholdMember = [
             SELECT Id, Name, Full_Name__c, First_Name__c, Middle_Initial__c,
                    Last_Name__c, Primary_Phone__c, Secondary_Phone__c,
@@ -73,6 +79,18 @@ public with sharing class MentorViewController {
         if (currentHouseholdMember.Related_Party_Type__c == 'Pet') {
             currentHouseholdMember.Gender__c = '';
             currentHouseholdMember.Marital_Status__c = '';
+            
+            currentHouseholdMember.Date_of_Birth__c = null;
+            Ages = true;
         }
+    }
+    public void Agecal(){
+     	if(currentHouseholdMember.Date_of_Birth__c!=null && date.today().year()-currentHouseholdMember.Date_of_Birth__c.year()<18){
+	    	 	Ages = false;
+	   	}
+	    else{
+	    		Ages = true;
+	    	}
+	    	
     }
 }
