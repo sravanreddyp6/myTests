@@ -1270,6 +1270,9 @@ document.onkeypress = stopRKey;
         <apex:inputField value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Evaluated_By_Source__c == 'Internal'}" />
         <apex:inputField value="{!Referral__c.Evaluated_By_External__c}" html-disabled="true" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Evaluated_By_Source__c != 'External'}" />
         <apex:inputField value="{!Referral__c.Evaluated_By_External__c}" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Evaluated_By_Source__c == 'External'}" />
+        <apex:inputField value="{!Referral__c.Evaluated_By_Internal_Other__c}" html-disabled="true" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Evaluated_By_Source__c != 'Internal'}" />
+        <apex:inputField value="{!Referral__c.Evaluated_By_Internal_Other__c}" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Evaluated_By_Source__c == 'Internal'}" />
+		<apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
         <apex:inputField label="Evaluated By (NeuroRestorative Legacy)" value="{!Referral__c.Neuro_Evaluated_By__c}" html-disabled="true" rendered="{!referralRecordType=='NeuroRestorative'}" />
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
