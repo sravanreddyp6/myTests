@@ -96,6 +96,8 @@ public class ServiceAssignmentExt {
         canCreateSummary = oSchema.IsCreateable();
     }
 
+	public Boolean episodeReq { get { return (admission.State__c == 'AZ' || admission.state__c == 'NC');} set; }
+	
     public List<Action_Plan__c> getActivePlan(){
     
         return [Select id From Action_Plan__c where Action_Plan__c.Service_Assignment__c = :currentRecord.id AND Status__c = 'Active Final' Limit 1];
@@ -249,7 +251,7 @@ public class ServiceAssignmentExt {
                 pageHeader = 'Service Assignment Detail';
                 newSA = false;
                 theServAssign = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
-                            End_Date__c, External_ID__c, Location_Region__c, Outcomes__c, Person_Being_Served__c, Phase__c, Phase_of_Treatment__c, Program__c,
+                            End_Date__c, Episode__c, External_ID__c, Location_Region__c, Outcomes__c, Person_Being_Served__c, Phase__c, Phase_of_Treatment__c, Program__c,
                             Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
                             Start_Date__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
                             Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c,
@@ -257,7 +259,7 @@ public class ServiceAssignmentExt {
                                 FROM Service_Assignment__c
                                 WHERE Id = :controller.getid()];
                 initialRecord = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
-                            End_Date__c, External_ID__c, Location_Region__c, Outcomes__c, Person_Being_Served__c, Phase__c, Phase_of_Treatment__c, Program__c,
+                            End_Date__c, Episode__c, External_ID__c, Location_Region__c, Outcomes__c, Person_Being_Served__c, Phase__c, Phase_of_Treatment__c, Program__c,
                             Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
                             Start_Date__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
                             Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c,
@@ -891,18 +893,24 @@ public class ServiceAssignmentExt {
 
     public void saveServiceCodeSelections() {
 
-        List<ServiceAssignment_ServiceCode_JO__c> alreadySavedCodeXrefs = [ SELECT Service_Code__c FROM ServiceAssignment_ServiceCode_JO__c WHERE Service_Assignment__r.Id = :currentId ];
+        List<ServiceAssignment_ServiceCode_JO__c> alreadySavedCodeXrefs = [ SELECT Service_Code__c FROM ServiceAssignment_ServiceCode_JO__c WHERE Service_Assignment__c = :currentId ];
         List<ServiceAssignment_ServiceCode_JO__c> servCodeXrefsToSave = new List<ServiceAssignment_ServiceCode_JO__c>();
         List<ServiceAssignment_ServiceCode_JO__c> servCodeXrefsToDelete = new List<ServiceAssignment_ServiceCode_JO__c>();
-
+		System.Debug( alreadySavedCodeXrefs);
+		
+		Boolean okToSave;
         for(Service_Code__c sc : SelectedCodes.values()) {
-            Boolean okToSave = true;
+            okToSave = true;
+	
+			// CTEAE-75 - correct issue with compare to already saved service code id, not JO id
             for(ServiceAssignment_ServiceCode_JO__c alreadySaved : alreadySavedCodeXrefs) {
-                if(sc.Id==alreadySaved.Id){
+                if(sc.Id==alreadySaved.Service_Code__c){
                     okToSave = false;
+                    break;
                 }
             }
-            if(okToSave == true) {
+            
+            if(okToSave) {
                 ServiceAssignment_ServiceCode_JO__c servCodeXrefToSave = new ServiceAssignment_ServiceCode_JO__c(
                     Service_Code__c = sc.Id,
                     Service_Assignment__c = theServAssign.Id
