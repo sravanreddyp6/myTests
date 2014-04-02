@@ -4135,6 +4135,14 @@ $Profile.Id !=&apos;00eU0000000RHex&apos;</errorConditionFormula>
         <errorMessage>Date of Inquiry cannot be modified.</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>FirstContact_vs_DateOfInquiry</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISBLANK(First_Contact_Date__c)  &amp;&amp;
+(  (TODAY()-Date_of_Inquiry__c )&gt;7)</errorConditionFormula>
+        <errorDisplayField>First_Contact_Date__c</errorDisplayField>
+        <errorMessage>First Contact Attempted is required within 7 Days of the Date of Inquiry</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>First_Contact_Date_Notes_Required</fullName>
         <active>true</active>
         <errorConditionFormula>AND(NOT(ISNULL( First_Contact_Date__c )), ISBLANK( First_Contact_Attempt_Notes__c),  $User.ProfileId &lt;&gt; &apos;00eU0000000myCw&apos; )</errorConditionFormula>
@@ -4289,6 +4297,15 @@ NOT(ISPICKVAL( Fire_Safety_Check__c ,&quot;Pass&quot;)))
 ,True, False)</errorConditionFormula>
         <errorDisplayField>Fire_Safety_Check__c</errorDisplayField>
         <errorMessage>Mentor Fire Safety Check must be marked as Pass before the status &apos;Mentor&apos; can be applied</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Mentor_FirstName</fullName>
+        <active>true</active>
+        <errorConditionFormula>Text(Status__c)==&quot;Mentor&quot;
+&amp;&amp;
+ First_Name__c ==&quot;&quot;</errorConditionFormula>
+        <errorDisplayField>First_Name__c</errorDisplayField>
+        <errorMessage>First Name is required when &apos;Mentor&apos; Status is selected</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Mentor_First_Contact</fullName>
