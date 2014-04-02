@@ -1,9 +1,8 @@
 <apex:page controller="ProspectInsert3" showHeader="false" sidebar="false">
 <style>
 .myForm {
-    width:535px;
-    height:610px;
-    background-color: #feeac7;
+    width:557px;
+    background-color: #edf0eb;
     -moz-border-radius: 15px;
     -webkit-border-radius: 15px;
     -khtml-border-radius: 15px;
@@ -14,12 +13,9 @@
     padding: 20px;  
     margin-left: 5px;
 }
-myp {
-    margin: 15px 0;
-}
 
 .smallfont {
-font-size:11px;
+font-size:10px;
 }
 span.secure-form {
     position: relative;
@@ -43,91 +39,81 @@ span.secure-form {
 }
 .mylabel{
     width:80px;
-    color: #5F4723;
+    color: #333333;
     font-size: 14px;
-    font-family: HelveticaNeueLTStd45Light;
-    font-weight: bold;
 }
-.myHeaderLG{
-font-size: 32px;
-color: #6A991A;
-font-weight: 100;
-font-family: Constantia,"Lucida Bright",Lucidabright,"Lucida Serif",Lucida,"DejaVu Serif","Bitstream Vera Serif","Liberation Serif",Georgia,serif;
-}
+
 .myHeaderSM{
-font-family: 'HelveticaNeueLTStd45Light';
+/*font-family: 'HelveticaNeueLTStd45Light';*/
 font-size: 14px;
-color: #5F4723;
+color: #333333;
 }
+.myHeaderStart { font-size: 18px; color:#669900}
 .myinput{width: 150px;}
 .myinputDD{ width: 250px;}
-.myTxtArea{width: 95%; height: 150px; }
-.r1{height: 40px;}
+.myTxtArea{width: 95%; height: 50px; }
+.requiredBlock { display:none}
+.r1{height: 30px;}
 .ender{position:absolute;}
+.red { color:red}
 </style>
-<img src="http://b.collective-media.net/seg/aarp/mentor2" width="1" height="1" /> 
+<!-- <img src="http://b.collective-media.net/seg/aarp/mentor2" width="1" height="1" />--> 
 <apex:form styleClass="myForm" >
-<apex:outputPanel layout="block" styleClass="myHeaderLG">
-Learn More 
 
-</apex:outputPanel>
-<br/>
 <apex:outputPanel layout="block" styleClass="myHeaderSM" >
-To learn more about becoming a Mentor, please fill out this form and one of our staff members will contact you within three business days.
+<span class="myHeaderStart">To learn more about becoming a Mentor,</span> please fill out this form and one of our staff members will contact you within three business days.
 </apex:outputPanel>
 <br/>
 <apex:pageBlock mode="mainDetail">
     <apex:panelGrid columns="4" rules="groups" style="width:100%;" rowClasses="r1" cellpadding="3" >
-        <apex:outputLabel styleClass="mylabel"> First Name:</apex:outputLabel>
+        <apex:outputLabel styleClass="mylabel"><span class="red">*</span>First Name:</apex:outputLabel>
         <apex:inputField required="true" styleClass="myinput" value="{!myProspect.First_Name__c}"/>
 
-        <apex:outputLabel styleClass="mylabel"> Last Name:</apex:outputLabel>
+        <apex:outputLabel styleClass="mylabel"><span class="red">*</span>Last Name:</apex:outputLabel>
         <apex:inputField required="true" styleClass="myinput" value="{!myProspect.Name}"/>
 
-        <apex:outputLabel styleClass="mylabel">Phone: </apex:outputLabel>
+        <apex:outputLabel styleClass="mylabel"><span class="red">*</span>Phone: </apex:outputLabel>
         <apex:inputField styleClass="myinput" required="true" label="Phone" value="{!myProspect.Primary_Phone__c}"/>
 
-        <apex:outputLabel styleClass="mylabel">Email: </apex:outputLabel>
+        <apex:outputLabel styleClass="mylabel"><span class="red">*</span>Email: </apex:outputLabel>
         <apex:inputField styleClass="myinput" required="true" value="{!myProspect.Email__c}"/>
 
-        <apex:outputLabel styleClass="mylabel">State:</apex:outputLabel>
+        <apex:outputLabel styleClass="mylabel"><span class="red">*</span>State:</apex:outputLabel>
        <apex:inputField styleClass="myinput" required="true" value="{!myProspect.State__c}"/>
 
-        <apex:outputLabel styleClass="mylabel">Zip:</apex:outputLabel>
+        <apex:outputLabel styleClass="mylabel"><span class="red">*</span>Zip:</apex:outputLabel>
         <apex:inputField styleClass="myinput" required="true" value="{!myProspect.Zip__c}"/>
 </apex:panelGrid>
 <apex:panelGrid columns="2" style="width:100%;" cellspacing="3" rowClasses="r2, r1">
-        <apex:outputLabel styleClass="mylabel inline wide"> How did you hear about us?</apex:outputLabel>
-        <apex:outputLabel styleClass="mylabel inline wide">Im interested in supporting:</apex:outputLabel>
+        <apex:outputLabel styleClass="mylabel inline wide"><span class="red">*</span>How did you hear about us?</apex:outputLabel>
+        <apex:outputLabel styleClass="mylabel inline wide"><span class="red">*</span>I'm interested in supporting:</apex:outputLabel>
         
         <apex:inputField styleClass="myinputDD" required="true" value="{!myProspect.How_did_you_hear_about_us__c}"/>
         <apex:inputField styleClass="myinputDD" required="true" value="{!myProspect.Im_intersted_in_supporting__c}"/>
 
-
-</apex:panelGrid>  
+</apex:panelGrid> 
+	<div style="text-align:right; width:100%"><span class="red">*</span>= Required Fields</div>
+	 
     <apex:outputLabel styleClass="mylabel">Comments:</apex:outputLabel><br/>
     <apex:inputField styleClass="myTxtArea" value="{!myProspect.Prospect_Comments__c}"/>
   
     <br/>
     <br/>
     
-    <div class="fullblock smallfont mydiv">
-        <apex:inputField value="{!myProspect.Email_Opt_In__c}"/>
-        Please check here if you would like to receive occasional updates from The MENTOR Network.
-        <br/>
+    <div class="smallfont" style="width:75%;float:left">
+ 		<table style="width:100%">
+ 		<tr><td style="padding:0px;vertical-align:top">  
+        <apex:inputField value="{!myProspect.Email_Opt_In__c}"  />
+		</td><td>Please check here if you would like to receive occasional updates from The MENTOR Network.
         Your information will remain private. The MENTOR Network will not sell or share your information.
+        </td>
+        </Tr>
+        </table>
     </div>
+    <div style="float:right"><apex:commandButton action="{!SubmitMADAH}" style="border: none; background: none;" image="{!URLFOR($Resource.PMCShortForm, 'submit.png')}"/></div>
     
     <br/>
-    
-    <apex:outputPanel layout="block" style="width: 100%; text-align:center; ">
-        <apex:commandButton action="{!SubmitMADAH}" style="border: none; background: none;" image="{!URLFOR($Resource.PMCShortForm, 'submit.jpg')}"/>
-    </apex:outputPanel>
-    
-    <div class="mydiv ender">
-    <br/>
-        <p class="myp"><span id="form-legend"> </span> = Required Fields</p>
-    </div>
+
     
 </apex:pageBlock>    
 </apex:form>
