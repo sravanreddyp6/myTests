@@ -4291,6 +4291,15 @@ NOT(ISPICKVAL( Fire_Safety_Check__c ,&quot;Pass&quot;)))
         <errorMessage>Mentor Fire Safety Check must be marked as Pass before the status &apos;Mentor&apos; can be applied</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>Mentor_FirstName</fullName>
+        <active>true</active>
+        <errorConditionFormula>Text(Status__c)==&quot;Mentor&quot;
+&amp;&amp;
+ First_Name__c ==&quot;&quot;</errorConditionFormula>
+        <errorDisplayField>First_Name__c</errorDisplayField>
+        <errorMessage>First Name is required when &apos;Mentor&apos; Status is selected</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>Mentor_First_Contact</fullName>
         <active>false</active>
         <description>checks to make sure the field first contact date has been filled out</description>
