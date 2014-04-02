@@ -1,0 +1,86 @@
+<apex:component controller="SkillSummaryTableForm">
+    <apex:attribute name="not_met_objective_count" description="Count of succesful trials"
+        type="integer" assignTo="{!NotMetObjectiveCount}"/>
+    <apex:attribute name="met_objective_count" description="Count of unsuccessful trials"
+        type="integer" assignTo="{!MetObjectiveCount}"/>
+    <apex:attribute name="occurrences" description="Count of occurrences"
+        type="integer" assignTo="{!OccurrencesCount}"/>
+    <apex:attribute name="effective_date" description="beginning of trial period"
+        type="date" assignTo="{!EffectiveDate}"/>
+    <apex:attribute name="target_date" description="end of trial period"
+        type="date" assignTo="{!TargetDate}"/>
+    <apex:attribute name="recommendation" description="recommendation"
+        type="string" assignTo="{!RecommendationText}"/>
+    <apex:attribute name="comment" description="Comment"
+        type="string" assignTo="{!CommentText}"/>
+    <apex:outputPanel styleClass="skillSummary" layout="block">
+        <table class="sstable" style="width:736px;">
+                    <tbody class="sstbody">
+                <tr>
+                    <apex:variable var="temp" value="0" rendered="{!!isNull(EffectiveDate) && isDurationOver1Month}">
+                        <th style="width:75px;">Start</th>
+                    </apex:variable>
+                    <apex:variable var="temp" value="0" rendered="{!!isNull(EffectiveDate) && !isDurationOver1Month}">
+                        <th style="width:159px;">Time Period</th>
+                    </apex:variable>
+                    <apex:variable var="temp" value="0" rendered="{!isDurationOver1Month}">
+                        <th style="width:75px;">Duration</th>
+                    </apex:variable>
+                    <apex:variable var="temp" value="0" rendered="{!HasSkillData}">
+                        <th style="width:100px;">Programs Run</th>
+                        <th style="width:100px;">Met Obj.</th>
+                        <th style="width:100px;">Did not Meet Obj.</th>
+                        <th style="width:100px;">% Obj. Met</th>
+                    </apex:variable>
+                    <apex:variable var="temp" value="0" rendered="{!!isNull(OccurrencesCount)}">
+                        <th colspan="4" style="width:436px;">Occurrences</th>
+                    </apex:variable>
+                    <apex:variable var="temp" value="0" rendered="{!!HasSkillData && isNull(OccurrencesCount)}">
+                        <th style="width:100px;"></th><th style="width:100px;"></th><th style="width:100px;"></th><th style="width:100px;"></th>
+                    </apex:variable>
+                    <apex:variable var="temp" value="0" rendered="{!!isNull(RecommendationText)}">
+                        <th style="width:120px;">Recommendation</th>
+                    </apex:variable>
+                    <apex:variable var="temp" value="0" rendered="{!isNull(RecommendationText)}">
+                        <th style="width:120px;"></th>
+                    </apex:variable>
+                </tr>
+                <tr>
+                    <apex:variable var="temp1" value="0" rendered="{!!isNull(EffectiveDate) && isDurationOver1Month}">
+                        <td><apex:outputText value="{0,date,MMM yyyy}"><apex:param value="{!EffectiveDate}"/></apex:outputText></td>
+                    </apex:variable>
+                    <apex:variable var="temp1" value="0" rendered="{!!isNull(EffectiveDate) && !isDurationOver1Month}">
+                        <td><apex:outputText value="{0,date,MMM yyyy}"><apex:param value="{!EffectiveDate}"/></apex:outputText></td>
+                    </apex:variable>
+                    <apex:variable var="temp" value="0" rendered="{!isDurationOver1Month}">
+                        <td>{!Duration}</td>
+                    </apex:variable>
+                    <apex:variable var="temp" value="0" rendered="{!HasSkillData}">
+                        <td>{!TotalTrials}</td>
+                        <td>{!MetObjectiveCount}</td>
+                        <td>{!NotMetObjectiveCount}</td>
+                        <td>{!PercentMet}</td>
+                    </apex:variable>
+                    <apex:variable var="temp" value="0" rendered="{!!isNull(OccurrencesCount)}">
+                        <td colspan="4">{!OccurrencesCount}</td>
+                    </apex:variable>
+                    <apex:variable var="temp" value="0" rendered="{!!HasSkillData && isNull(OccurrencesCount)}">
+                        <td></td><td></td><td></td><td></td>
+                    </apex:variable>
+                    <apex:variable var="temp" value="0" rendered="{!!isNull(RecommendationText)}">
+                        <td>{!RecommendationText}</td>
+                    </apex:variable>
+                    <apex:variable var="temp" value="0" rendered="{!isNull(RecommendationText)}">
+                        <td></td>
+                    </apex:variable>
+                </tr>
+                <apex:variable var="temp" value="0" rendered="{!!isNull(CommentText)}">
+                    <tr>
+                        <td colspan="10" class="objectivecomment"><span style="font-weight:bold;">Comment:&nbsp;</span>{!CommentText}</td>
+                    </tr>
+                </apex:variable>
+            </tbody>
+        </table>
+    </apex:outputPanel>
+
+</apex:component>
