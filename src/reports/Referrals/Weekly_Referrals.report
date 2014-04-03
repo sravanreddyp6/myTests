@@ -13,9 +13,6 @@
         <field>Referral__c$Referral_Date__c</field>
     </columns>
     <columns>
-        <field>Referral__c$Evaluated_By__c</field>
-    </columns>
-    <columns>
         <field>Referral__c$Primary_Requested_Location__c</field>
     </columns>
     <columns>
@@ -46,7 +43,7 @@
         <field>Referral__c$Assigned_Users__c</field>
     </columns>
     <format>Tabular</format>
-    <name>Daily Referrals</name>
+    <name>Weekly Referrals</name>
     <params>
         <name>co</name>
         <value>1</value>
@@ -58,6 +55,6 @@
     <sortOrder>Asc</sortOrder>
     <timeFrameFilter>
         <dateColumn>Referral__c$Referral_Date__c</dateColumn>
-        <interval>INTERVAL_TODAY</interval>
+        <interval>INTERVAL_THISWEEK</interval>
     </timeFrameFilter>
 </Report>

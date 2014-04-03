@@ -21,12 +21,12 @@
                     }
                     $targetEl.prop('disabled', disabled);
                     $targetEl.prop('required', !disabled);
-					if(!disabled){
-						$targetEl.css('border-left', 'solid 3px #C00');
-                	}
-                	else {
-                		$targetEl.css('border-left', '0px');
-                	}
+                    if(!disabled){
+                        $targetEl.css('border-left', 'solid 3px #C00');
+                    }
+                    else {
+                        $targetEl.css('border-left', '0px');
+                    }
                 });
 
             });
@@ -49,12 +49,12 @@
                     }
                     $targetEl.prop('disabled', disabled);
                     $targetEl.prop('required', !disabled);
-					if(!disabled){
-						$targetEl.css('border-left', 'solid 3px #C00');
-                	}
-                	else {
-                		$targetEl.css('border-left', '0px');
-                	}
+                    if(!disabled){
+                        $targetEl.css('border-left', 'solid 3px #C00');
+                    }
+                    else {
+                        $targetEl.css('border-left', '0px');
+                    }
                 });
 
             });
@@ -94,9 +94,9 @@
         
         // START: Josh, try at Set up onchange field dependency
         $('body').on('change', '[data-enablepicklist]', function(event) {
-        	var $this = $(this);
-        	var targetEls2 = $this.data('enablepicklist').split(',');
-        	$.each(targetEls2, function (index, targetEl2) {
+            var $this = $(this);
+            var targetEls2 = $this.data('enablepicklist').split(',');
+            $.each(targetEls2, function (index, targetEl2) {
                 var $targetEl2 = $(document.getElementById(targetEl2));
                 var disabled = true;
                 var borderString = '0px';
@@ -109,7 +109,7 @@
                 $targetEl2.css('border-left', borderString);
                 if (disabled) {
                     $targetEl2.val('');
-                }        		
+                }               
             });
             // Events bubble up the DOM tree, so we stop the bubbling here to
             // stop the browser from doing unnecessary work.
@@ -139,30 +139,33 @@
     </script>
     <apex:pageMessages />
     <apex:form >
-    	<apex:actionFunction name="rerenderCheckbox" rerender="actionDate" />
+        <apex:actionFunction name="rerenderCheckbox" rerender="actionDate" />
         <apex:pageBlock >
             <apex:pageBlockSection title="Demographics">
                 <apex:pageBlockSectionItem >
                     <apex:outputText value="Name"/>
-                    <apex:outputPanel styleClass="nowrap">
-                        <apex:inputText label="" value="{!TMN_Contact__c.First_Name__c}" />&nbsp;&nbsp;
-                        <apex:inputText label="" value="{!TMN_Contact__c.Middle_Initial__c}"  size="1"/>&nbsp;&nbsp;
-                        <apex:inputText label="" value="{!TMN_Contact__c.Last_Name__c}" />
+                   <!-- <apex:outputPanel styleClass="nowrap"> -->
+                     <apex:outputPanel styleClass="requiredInput" layout="block">
+                       <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:inputText label="" value="{!TMN_Contact__c.First_Name__c}" required="true" />
+                        <apex:inputText label="" value="{!TMN_Contact__c.Middle_Initial__c}"  size="1"/>
+                        <apex:inputText label="" value="{!TMN_Contact__c.Last_Name__c}" required="true" />
                     </apex:outputPanel>
+                  <!--  </apex:outputPanel> -->
                 </apex:pageBlockSectionItem>
                 <apex:inputField value="{!TMN_Contact__c.Chessie_ID__c}" />
 
-                <apex:inputField value="{!TMN_Contact__c.Date_of_Birth__c}" />
-                <apex:inputField value="{!TMN_Contact__c.Gender__c}" />
+                <apex:inputField value="{!TMN_Contact__c.Date_of_Birth__c}" required="true" />
+                <apex:inputField value="{!TMN_Contact__c.Gender__c}" required="true" />
 
                 <apex:inputField value="{!TMN_Contact__c.Age__c}" />
                 <apex:inputField value="{!TMN_Contact__c.Marital_Status__c}" />
 
                 <apex:inputField value="{!TMN_Contact__c.Race__c}" />
-                <apex:inputField value="{!TMN_Contact__c.Hispanic_Heritage__c}" />
+                <apex:inputField value="{!TMN_Contact__c.Hispanic_Heritage__c}" required="true" />
 
-                <apex:inputField value="{!TMN_Contact__c.DHR_CPA_Race_1__c}" />
-                <apex:inputField value="{!TMN_Contact__c.DHR_CPA_Race_2__c}" />
+                <apex:inputField value="{!TMN_Contact__c.DHR_CPA_Race_1__c}" required="true" />
+                <apex:inputField value="{!TMN_Contact__c.DHR_CPA_Race_2__c}" required="true" />
             </apex:pageBlockSection>
             <apex:pageBlockSection title="Contact Information">
                 <apex:inputField value="{!TMN_Contact__c.Street_1__c}" />
@@ -180,10 +183,10 @@
                 <apex:inputField value="{!TMN_Contact__c.Email__c}" />
             </apex:pageBlockSection>
             <apex:pageBlockSection title="Marketing Info" columns="2">
-            	<apex:inputField value="{!TMN_Contact__c.How_did_you_hear_about_us__c}" 
-            		html-data-enablepicklist="{!$Component.howDidYouHearOtherDesc}"/>
-            	<apex:inputField value="{!TMN_Contact__c.How_did_you_hear_Other_Describe__c}" id="howDidYouHearOtherDesc" />
-            	<apex:inputField value="{!TMN_Contact__c.Referral_Type__c}" />
+                <apex:inputField value="{!TMN_Contact__c.How_did_you_hear_about_us__c}" 
+                    html-data-enablepicklist="{!$Component.howDidYouHearOtherDesc}"/>
+                <apex:inputField value="{!TMN_Contact__c.How_did_you_hear_Other_Describe__c}" id="howDidYouHearOtherDesc" />
+                <apex:inputField value="{!TMN_Contact__c.Referral_Type__c}" />
             </apex:pageBlockSection>
             <apex:pageBlockSection title="Mentor Status" columns="2">
                 <apex:inputField value="{!TMN_Contact__c.Disregarded__c}" />
@@ -222,9 +225,9 @@
                 <apex:inputField value="{!TMN_Contact__c.Most_Recent_Recertification_Date__c}" />
             </apex:pageBlockSection>
             <apex:pageBlockSection title="System Info" columns="2">
-            	<apex:inputField value="{!TMN_Contact__c.OwnerId}" />
-            	<apex:outputText label="Created By" value="{!TMN_Contact__c.CreatedBy.Name}, {!TMN_Contact__c.CreatedDate}" />
-            	<apex:outputText label="Last Modified By" value="{!TMN_Contact__c.LastModifiedBy.Name}, {!TMN_Contact__c.LastModifiedDate}" />
+                <apex:inputField value="{!TMN_Contact__c.OwnerId}" />
+                <apex:outputText label="Created By" value="{!TMN_Contact__c.CreatedBy.Name}, {!TMN_Contact__c.CreatedDate}" />
+                <apex:outputText label="Last Modified By" value="{!TMN_Contact__c.LastModifiedBy.Name}, {!TMN_Contact__c.LastModifiedDate}" />
             </apex:pageBlockSection>
             <apex:pageBlockButtons >
                 <apex:commandButton action="{!save}" onclick="return enableDisabledFields();" value="Save" />
