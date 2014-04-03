@@ -41,10 +41,10 @@ private class HomePageSearchControllerTest {
         return testPBR;
     }
   public static User user1(){
-  	Profile profile = [SELECT Id FROM Profile WHERE Name='ESD General' LIMIT 1 ];
-  	 User testUser1 = new User(
-          	Alias = 'standt', 
-          	Email='standarduser@testorg.com', 
+    Profile profile = [SELECT Id FROM Profile WHERE Name='ESD General' LIMIT 1 ];
+     User testUser1 = new User(
+            Alias = 'standt', 
+            Email='standarduser@testorg.com', 
             EmailEncodingKey='UTF-8', 
             LastName='Testing', 
             LanguageLocaleKey='en_US', 
@@ -52,45 +52,45 @@ private class HomePageSearchControllerTest {
             ProfileId = profile.Id, 
             TimeZoneSidKey='America/Los_Angeles', 
             UserName='alpha@testorg.com'
-		);
-	insert testuser1;
-	return testuser1;	
+        );
+    insert testuser1;
+    return testuser1;   
   }
   public static TMN_Contact__c TMNContact(String Fname,String LName){
-  	
-  	TMN_Contact__c tmnaccnt = new TMN_Contact__c(
-  								RecordTypeId = [SELECT Id FROM RecordType WHERE SobjectType='TMN_Contact__c' limit 1].Id,
-								OwnerId = user1().Id,
-								First_Name__c = Fname,
-								Last_Name__c = LName,
-								Related_Party_Type__c = 'Co-Applicant',
-								Email__c = 'test@testuser.com',
-								Date_of_Birth__c = date.newinstance(1990, 2, 17)
-					);
+    
+    TMN_Contact__c tmnaccnt = new TMN_Contact__c(
+                                RecordTypeId = [SELECT Id FROM RecordType WHERE SobjectType='TMN_Contact__c' limit 1].Id,
+                                OwnerId = user1().Id,
+                                First_Name__c = Fname,
+                                Last_Name__c = LName,
+                                Related_Party_Type__c = 'Co-Applicant',
+                                Email__c = 'test@testuser.com',
+                                Date_of_Birth__c = date.newinstance(1990, 2, 17)
+                    );
     insert tmnaccnt;
-  	List<TMN_Contact__c> testtmn = [select Id,Name,First_Name__c,Last_Name__c,Full_Name__c,Age__c,State__c from TMN_Contact__c];
-  	return testtmn[0];
+    List<TMN_Contact__c> testtmn = [select Id,Name,First_Name__c,Last_Name__c,Full_Name__c,Age__c,State__c from TMN_Contact__c];
+    return testtmn[0];
   }
   public static Contact newContact(String Fname,String Lname){
-  	Contact cnt = new Contact(
-  	                      FirstName = Fname,
-  	                      LastName = Lname,
-  	                      
-  	                      Birthdate = date.newinstance(1990, 2, 17)
-  	                    );
-  	insert cnt;
-  	List<Contact> testcnt = [select Id,Name,FirstName,LastName,Age__c from Contact limit 1];
-  	return testcnt[0];
+    Contact cnt = new Contact(
+                          FirstName = Fname,
+                          LastName = Lname,
+                          
+                          Birthdate = date.newinstance(1990, 2, 17)
+                        );
+    insert cnt;
+    List<Contact> testcnt = [select Id,Name,FirstName,LastName,Age__c from Contact limit 1];
+    return testcnt[0];
   }
   
   public static Admission__c newAdmission(Account acnt) {
         Admission__c adm = new Admission__c(
                            State__c = 'Maine',
                            Name = 'TEST ADM',
-			               Person_Being_Served__c = acnt.Id,
-			              Effective_Date__c = date.today()-1,
-			               Network_Offering__c = 'IDD',
-			               Discharged_Date__c = date.Today()+1
+                           Person_Being_Served__c = acnt.Id,
+                          Effective_Date__c = date.today()-1,
+                           Network_Offering__c = 'IDD',
+                           Discharged_Date__c = date.Today()+1
         );
         insert adm;
         
@@ -98,9 +98,9 @@ private class HomePageSearchControllerTest {
         return adm1[0];
     }
     static testMethod void myUnitTest() {
-    	
         
-    	Test.startTest();
+        
+        Test.startTest();
         HomePageSearchController con = new HomePageSearchController();
         con.FirstNM = 'TestFirst';
         con.LastNM = 'TestLast';
@@ -111,13 +111,14 @@ private class HomePageSearchControllerTest {
         Account acnt = newAccount(con.FirstNM,con.LastNM);
         Contact cnt1 = newContact(con.FirstNM,con.LastNM);
        // String adm3 = newAdmission(acnt).State__c;
+       System.assertNotEquals('', con.TMNView.get('my'));
         con.getTotalList();
         Test.stopTest();
     }
     static testMethod void test1(){
-    	
-    	Test.startTest();
-    	User testUser1 = Referral_CreateTestData.createTestUser('testU','ReferralTestUser@tmn.com.test','Test','Test','Redwood');
+        
+        Test.startTest();
+        User testUser1 = Referral_CreateTestData.createTestUser('testU','ReferralTestUser@tmn.com.test','Test','Test','Redwood');
         Person_Being_Referred__c pbr1 = createPersonBeingReferred('Test','Test',25, null);
         Referral__c ref1 = Referral_CreateTestData.createReferral('Generic', 'New', 'Test123', pbr1);
         TMN_Contact__c tmn1 = TMNContact('Test','Test');
@@ -126,9 +127,10 @@ private class HomePageSearchControllerTest {
         HomePageSearchController con1 = new HomePageSearchController();
         con1.FirstNM = 'TestFirst';
         con1.LastNM = '';
-        
+        System.assertNotEquals('', con1.TMNView.get('my'));
        // String adm3 = newAdmission(acnt).State__c;
         con1.getTotalList();
+        
         Test.stopTest();
      
     }
@@ -145,6 +147,7 @@ private class HomePageSearchControllerTest {
         HomePageSearchController con2 = new HomePageSearchController();
         con2.FirstNM = '';
         con2.LastNM = 'TestLast';
+        System.assertNotEquals('', con2.TMNView.get('my'));
         con2.getTotalList();
         Test.stopTest();
     }
