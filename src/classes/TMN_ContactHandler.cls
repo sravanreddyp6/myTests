@@ -235,9 +235,35 @@ public with sharing class TMN_ContactHandler {
         // I think this will break if we ever get an update of a list of TMN_Contact__c records that includes both mentors and non-mentors, if the non-mentors are household members
         // of any of the submitted mentors.  If we start getting errors around the same member being added to a list multiple times, come back to this and extract the .add calls
         // from the nested for loops, etc.  J. Gilliam, 2/24/14.
-		for(TMN_Contact__c t : updatedObjects) {
+		for(TMN_Contact__c t : updatedObjects) {			
 			for(Mentor_Tracking_Report_Record__c mentor : dhrReportRecordsForMentors) {
 				if(t.Id==mentor.TMN_Contact__c) {
+					
+					// START: CMMT-34; Add a boolean to indicate whether or not the Chessie_ID value for a Mentor has changed. J. Gilliam, 4/3/14
+					Boolean updateChessieIds = false;
+					for(TMN_Contact__c old : oldObjects) {
+						if(t.Chessie_ID__c!=old.Chessie_ID__c) {
+							updateChessieIds = true;
+						}
+					}
+					// END: CMMT-34; Add a boolean to indicate whether or not the Chessie_ID value for a Mentor has changed. J. Gilliam, 4/3/14
+					
+					// START:  CMMT-34; If the Mentor's Chessie ID HAS changed, update the Mentor_Tracking_Report_Record__c records for both
+					// 			the Mentor and any existing household members.  J. Gilliam 4/3/14
+					if(updateChessieIds) {
+						mentor.Chessie_ID_for_Household__c = t.Chessie_ID__c;
+						List<Mentor_Tracking_Report_Record__c> dhrReportUpdatesThisHouseholdLoop3 = new List<Mentor_Tracking_Report_Record__c>();	
+						for(Mentor_Tracking_Report_Record__c householdMember : dhrReportRecordsForMentorsHouseholdMembers) {
+							if(t.Id==householdMember.Mentor__c) {
+								householdMember.Chessie_ID_for_Household__c = t.Chessie_ID__c;
+								dhrReportUpdatesThisHouseholdLoop3.add(householdMember);
+							}
+						}
+						update dhrReportUpdatesThisHouseholdLoop3;						
+					}
+					// END: CMMT-34; If the Mentor's Chessie ID HAS changed, update the Mentor_Tracking_Report_Record__c records for both
+					// 			the Mentor and any existing household members.  J. Gilliam, 4/3/14 
+					
 					if(t.Inactive__c==true) {
 						System.debug('t.Inactive__C==true');
 						if(mentor.Status__c!='Closed') {
