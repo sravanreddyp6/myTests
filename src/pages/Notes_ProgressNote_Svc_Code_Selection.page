@@ -1,4 +1,4 @@
-<apex:page standardController="Progress_Note__c" extensions="Notes_ProgressNote_Svc_Code_Selection" >
+<apex:page standardController="Progress_Note__c" extensions="Notes_ProgressNote_Svc_Code_Selection" showheader="false" sidebar="false">
 
 <apex:variable var="Final" value="{!IF(Progress_Note__c.Status__c='Final',True,False)}"/>
 <apex:variable var="Pending" value="{!IF(Progress_Note__c.Approval_Status__c='Pending',True,False)}"/>
@@ -13,25 +13,32 @@
                             </div>
                         </apex:facet>
                         <apex:facet name="stop"></apex:facet>
-                    </apex:actionStatus>    
-          <apex:pageBlockSection title="Service Code and Authorization" collapsible="false" >
-
-
+                    </apex:actionStatus>
+                    
+                        
+          <apex:pageBlockSection title="Service Code" collapsible="false" columns="2">
 
           <apex:selectList size="1" title="Service Code" value="{!Progress_Note__c.Service_Code__c}" rendered="{!!Final}" disabled="{!Pending}">
                 <apex:selectOptions value="{!Codes}"></apex:selectOptions>
                 <apex:actionSupport event="onchange" reRender="myFrm" status="myStatus" action="{!quicksave}"/>
             </apex:selectList>
-            
-          <apex:selectList size="1" title="Authorization" value="{!Progress_Note__c.Authorization__c}"  rendered="{!!Final}" disabled="{!Pending}">
+          
+          <apex:pageBLockSectionItem rendered="{!!Final && Progress_Note__c.Admission__r.State__c != 'NC' && Progress_Note__c.Admission__r.State__c != 'AZ'}">
+          <apex:outputLabel for="auth" value="Authorization" />
+          <apex:selectList size="1" id="auth" value="{!Progress_Note__c.Authorization__c}"  rendered="{!!Final}" disabled="{!Pending}">
                 
             <apex:selectOptions value="{!Auths}"></apex:selectOptions>
                     <apex:actionSupport event="onchange" reRender="myFrm" status="myStatus" action="{!quicksave}"/>
             </apex:selectList>
-            <apex:outputField label="Service Code" value="{!Progress_Note__c.Service_Code__r.Service_Value__c}"  rendered="{!Final}"/>
-            <apex:outputField label="Authorization" value="{!Progress_Note__c.Authorization__r.Display_Name__c}"  rendered="{!Final}"/>            
+            </apex:pageBLockSectionItem>
+            
+            <apex:outputField id="svccode" value="{!Progress_Note__c.Service_Code__r.Service_Value__c}"  rendered="{!Final}"/>
+            <apex:outputPanel rendered="{! Progress_note__c.Admission__r.state__C != 'NC' && Final}" >
+            <apex:outputLabel for="authdisp" value="Authorization" />
+            <apex:outputField id="authdisp" label="Authorization" value="{!Progress_Note__c.Authorization__r.Display_Name__c}"  />
             <apex:pageBlockSectionItem />         
             <apex:outputField label="Payor Name" value="{!Progress_Note__c.Authorization__r.Payer_Name__c}" />
+            </apex:outputPanel>
         </apex:pageBlockSection>
     </apex:pageBlock>
 </apex:form>
