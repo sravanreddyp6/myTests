@@ -174,13 +174,13 @@ table#persons_table.dataTable {
                     <apex:repeat value="{!TotalList}" var="acct">
                       <tr>
                             <td>   <apex:outputText rendered="{!(acct.Type=='Person Being Referred')}">
-                                             <a href="/apex/ReferralSearch?referralNumber={!acct.Names}" data-record-id="{!acct}">{!(acct.FullName)}</a>
+                                             <a href="/apex/ReferralSearch?firstName={!acct.firstname}&&lastName={!acct.lastname}" data-record-id="{!acct}">{!(acct.lastname)}, {!(acct.firstname)}</a>
                                    </apex:outputText>
                                    <apex:outputText rendered="{!(acct.Type=='Person Being Served')}">
-                                             <a href="/apex/PersonsBeingServedListView?id={!acct.recordId}" data-record-id="{!acct}">{!(acct.FullName)}</a>
+                                             <a href="/apex/PersonsBeingServedListView?id={!acct.recordId}" data-record-id="{!acct}">{!(acct.lastname)}, {!(acct.firstname)}</a>
                                     </apex:outputText>
                                      <apex:outputText rendered="{!(acct.Type=='Mentor')}">
-                                             <a href="/apex/TmnContactListView?j_id0%3Aj_id3%3Afcf=00B11000000Q4YH" data-record-id="{!acct}">{!(acct.FullName)}</a>
+                                             <a href="/apex/TmnContactListView?j_id0%3Aj_id3%3Afcf=00B11000000Q4YH" data-record-id="{!acct}">{!(acct.lastname)}, {!(acct.firstname)}</a>
                                    </apex:outputText>
                            </td>
                                 <td>{!acct.Age}</td>

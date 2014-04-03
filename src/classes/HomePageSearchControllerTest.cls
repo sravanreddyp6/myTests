@@ -83,13 +83,14 @@ private class HomePageSearchControllerTest {
   	return testcnt[0];
   }
   
-  public static Admission__c newAdmission(Contact cnt1) {
+  public static Admission__c newAdmission(Account acnt) {
         Admission__c adm = new Admission__c(
-                           State__c = 'ME',
+                           State__c = 'Maine',
                            Name = 'TEST ADM',
-			               Person_Being_Served__c = cnt1.Id,
-			               Effective_Date__c = date.today(),
-			               Network_Offering__c = 'ARY'
+			               Person_Being_Served__c = acnt.Id,
+			              Effective_Date__c = date.today()-1,
+			               Network_Offering__c = 'IDD',
+			               Discharged_Date__c = date.Today()+1
         );
         insert adm;
         
@@ -109,8 +110,42 @@ private class HomePageSearchControllerTest {
         TMN_Contact__c tmn = TMNContact(con.FirstNM,con.LastNM);
         Account acnt = newAccount(con.FirstNM,con.LastNM);
         Contact cnt1 = newContact(con.FirstNM,con.LastNM);
-        String adm3 = newAdmission(cnt1).State__c;
+       // String adm3 = newAdmission(acnt).State__c;
         con.getTotalList();
+        Test.stopTest();
+    }
+    static testMethod void test1(){
+    	
+    	Test.startTest();
+    	User testUser1 = Referral_CreateTestData.createTestUser('testU','ReferralTestUser@tmn.com.test','Test','Test','Redwood');
+        Person_Being_Referred__c pbr1 = createPersonBeingReferred('Test','Test',25, null);
+        Referral__c ref1 = Referral_CreateTestData.createReferral('Generic', 'New', 'Test123', pbr1);
+        TMN_Contact__c tmn1 = TMNContact('Test','Test');
+        Account acnt1 = newAccount('Test','Test');
+        Contact cnt2 = newContact('Test','Test');
+        HomePageSearchController con1 = new HomePageSearchController();
+        con1.FirstNM = 'TestFirst';
+        con1.LastNM = '';
+        
+       // String adm3 = newAdmission(acnt).State__c;
+        con1.getTotalList();
+        Test.stopTest();
+     
+    }
+    static testMethod void test2(){
+       Test.startTest();
+      
+        User testUser2 = Referral_CreateTestData.createTestUser('testU','ReferralTestUser@tmn.com.test','Test','Test','Redwood');
+        Person_Being_Referred__c pbr2 = createPersonBeingReferred('Test','Test',25, null);
+        Referral__c ref2 = Referral_CreateTestData.createReferral('Generic', 'New', 'Test123', pbr2);
+        TMN_Contact__c tmn2 = TMNContact('Test','Test');
+        Account acnt2 = newAccount('Test','Test');
+        Contact cnt3 = newContact('Test','Test');
+       // String adm3 = newAdmission(acnt).State__c;
+        HomePageSearchController con2 = new HomePageSearchController();
+        con2.FirstNM = '';
+        con2.LastNM = 'TestLast';
+        con2.getTotalList();
         Test.stopTest();
     }
 }
