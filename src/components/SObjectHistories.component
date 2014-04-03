@@ -1,0 +1,23 @@
+<apex:component controller="SObjectHistoriesController">
+    <apex:attribute name="object" description="The SObject from which we fetch the field histories" type="sObject" required="true" assignTo="{!item}" />
+    <apex:attribute name="title" description="The title for the page block" type="string" default="Object History" /> 
+    <apex:pageBlock title="{!title}" >
+        <apex:pageBlockTable value="{!Histories}" var="hist" rendered="{!(Histories.size>0)}">
+            <apex:column headerValue="Date">
+                <apex:outputText value="{0, date, MM/dd/yyyy h:mm a}">
+                    <apex:param value="{!hist.createddate}" />
+                </apex:outputText>
+            </apex:column>
+            <apex:column headerValue="User" value="{!hist.CreatedBy}"/>
+            <apex:column headerValue="Action">
+                <apex:outputText rendered="{!(hist.field!='created')}">Changed <b>{!fieldMap[LOWER(hist.field)]}</b> 
+                    <apex:outputPanel rendered="{! !AND(hist.newvalue =='', hist.oldvalue=='')}">
+                        from <b>{!hist.oldvalue}</b> to <b>{!hist.newvalue}</b>
+                    </apex:outputPanel>
+                </apex:outputText>
+                <apex:outputText rendered="{!(hist.field='created')}">Created.</apex:outputText>
+            </apex:column>
+        </apex:pageBlockTable>
+        <apex:outputText value="No record to display" rendered="{!(Histories.size=0)}" />
+    </apex:pageBlock>
+</apex:component>
