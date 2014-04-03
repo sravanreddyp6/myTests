@@ -3,6 +3,7 @@ public with sharing class HomePageSearchController{
     //declaring variables
    public String FirstNM{get;set;}
    public String LastNM{get;set;}
+   public String ViewId{get;set;}
    public List<wrapper> AppWrapper = new List<wrapper>();
 
  // constructor
@@ -10,6 +11,31 @@ public with sharing class HomePageSearchController{
     FirstNM = ApexPages.currentPage().getParameters().get('FirstNM');
     LastNM = ApexPages.currentPage().getParameters().get('LastNM');
  }
+ public Map<String, String> TMNView {
+    get {
+        if (TMNView != null) {
+            return TMNView;
+        }
+        TMNView = new Map<String, String>();
+        String query4 = 'SELECT ID FROM TMN_Contact__c';
+        ApexPages.StandardSetController con4 = new ApexPages.StandardSetController(Database.getQueryLocator(query4));
+       
+        SelectOption[] options4 = con4.getListViewOptions();
+       
+        for (SelectOption option4 : options4) {
+            
+     
+            
+             if (option4.getLabel().toLowerCase().indexOf('my')!=-1) {
+                TMNView.put('my', option4.getValue().substring(0,15));
+            } 
+        }
+        
+      
+        return TMNView;
+    }
+    set;
+  }
    //wrapper return method
     public List<wrapper> getTotalList(){
          String firstNames;
@@ -22,6 +48,7 @@ public with sharing class HomePageSearchController{
          String conQuery = 'select Id,Name,FirstName,LastName,Age__c,Account.First_Name_SoundEx_Key__c,Account.Last_Name_SoundEx_Key__c,Account.BillingState,(select Person_Being_Served__r.Name,Person_Being_Served__c,State__c from Episodes__r) from Contact where '; 
          String pbrQuery = 'select Id,Name,First_Name__c,First_Name_SoundEx_Key__c,Last_Name__c,Last_Name_SoundEx_Key__c,Full_Name__c,Age__c,State__c,(select Name,State_for_Preferred_Service__c,Name_PBR__c,Person_Being_Referred__r.Name,Person_Being_Referred__c from Referrals__r) from Person_Being_Referred__c where ';
          String tmnQuery = 'select Id,Name,First_Name__c,First_Name_SoundEx_Key__c,Last_Name__c,Last_Name_SoundEx_Key__c,Full_Name__c,Age__c,State__c from TMN_Contact__c where ';
+         
         if(FirstNM!=null && LastNM!=null && FirstNM!='' && LastNM!=''){
         	 FirstNMe = SoundEx.ToSoundEx(FirstNM);
         	 LastNMe = SoundEx.ToSoundEx(LastNM);
