@@ -30,6 +30,9 @@ public with sharing class TMN_ContactHandler {
         			Required_for_Pet__c, Optional_for_Pet__c, Needed_for_Under_18__c, Needed_for_18_Over__c FROM Credential_Profile__c ];
        System.debug('credList holds: ' + credList);
        
+       // CMMT-34: Get the Chessie_ID__c values for the TMN_Contact__c records in this insert set.
+       List<TMN_Contact__c> thesePersonsWithMentorsChessieIds = [ SELECT Mentor__r.Chessie_ID__c FROM TMN_Contact__c WHERE Id = :thesePersons ];
+       
        // Loop through the person records that were just created, and determine which Credential_Profile__c records matter for them, based on the TMN_Contact__c        
 		for (TMN_Contact__c p : thesePersons) {
        		System.debug('The persons loop in PersonHandler.cls is executing...');
@@ -41,14 +44,6 @@ public with sharing class TMN_ContactHandler {
        			Status__c = 'New'
        		);
        		
-
-       		
-       		
-			if(p.Disregarded__c!=true) {
-       			insert thisContactsReptRec;
-       		}
-       		
-			
 			string thisPersonsRecordTypeName;
 
    			for(Schema.RecordTypeInfo sPrts : personRecordTypes) {
@@ -59,6 +54,32 @@ public with sharing class TMN_ContactHandler {
    					thisPersonsRecordTypeName = sPrts.Name;
    				}
    			}
+
+   			// CMMT-34	
+   			// Assign an initial value for this person's Chessie ID to be displayed in his/her MSR report record.
+   			// J. Gilliam, 4/2/14
+   			System.debug('What is thisPersonsRecordTypeName: ' + thisPersonsRecordTypeName);
+   			System.debug('What is p.Mentor__c: ' + p.Mentor__c);
+   			System.debug('What is p.Mentor__r.Chessie_ID__c' + p.Mentor__r.Chessie_ID__c);      		
+       		if(thisPersonsRecordTypeName=='Mentor') {
+       			thisContactsReptRec.Chessie_ID_for_Household__c = p.Chessie_ID__c;
+       		}
+       		else if(thisPersonsRecordTypeName=='Household Member') {
+       			for(TMN_Contact__c t : thesePersonsWithMentorsChessieIds) {
+       				if(p.Id==t.Id) {
+       					thisContactsReptRec.Chessie_ID_for_Household__c = t.Mentor__r.Chessie_ID__c;
+       				}
+       			}
+       		}
+       		       		
+			if(p.Disregarded__c!=true) {
+       			insert thisContactsReptRec;
+       		}
+       		
+			
+
+   			
+
 
        		// Initialize a list variable for the credential records we'll eventually insert for each person.
        		List<Credential_Record__c> credRecs = new List<Credential_Record__c>();
