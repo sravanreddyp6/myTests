@@ -1043,6 +1043,9 @@ function stopRKey(evt) {
             <apex:outputLabel styleClass="ref_loc_head" value="Street" />&nbsp;
             <apex:outputText value="{!Referral__c.Referrer_Street__c}"  id="Perm_Street"/>&nbsp;
             <br/>
+            <apex:outputLabel styleClass="ref_loc_head" value="Street 2" />&nbsp;
+            <apex:outputText value="{!Referral__c.Referrer_Street_2__c}"  id="Perm_Street2"/>&nbsp;
+            <br/>            
             <apex:outputLabel styleClass="ref_loc_head" value="City" />&nbsp;          
             <apex:outputText value="{!Referral__c.Referrer_City__c}"  id="Perm_City"/>&nbsp;
             <apex:outputLabel styleClass="ref_loc_head" value="State" />&nbsp;
@@ -1809,7 +1812,7 @@ function stopRKey(evt) {
           />
           <apex:outputField value="{!Referral__c.Mobility__c}"
             rendered="{!ReferralRecordType = 'Arizona' ||
-            			ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Iowa' ||
                         ReferralRecordType = 'Illinois' ||
                         ReferralRecordType = 'Minnesota' ||
@@ -1896,7 +1899,7 @@ function stopRKey(evt) {
           />
           <apex:outputField value="{!Referral__c.Accessible_Housing_Needed__c}"
             rendered="{!ReferralRecordType = 'Iowa' ||
-            			ReferralRecordType = 'California' ||
+                        ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Illinois' ||
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'North Dakota' ||
@@ -1984,7 +1987,7 @@ function stopRKey(evt) {
           />
           <apex:outputField value="{!Referral__c.Accessible_Vehicle_Needed__c}"
             rendered="{!ReferralRecordType = 'California' ||
-            			ReferralRecordType = 'Iowa' ||
+                        ReferralRecordType = 'Iowa' ||
                         ReferralRecordType = 'Illinois' ||
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'North Dakota' ||

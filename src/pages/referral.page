@@ -270,6 +270,7 @@ document.onkeypress = stopRKey;
       var fax = '';
       if (element.checked) {
           street1 = j$('input[id$=Ref_Perm_Street]').val();
+          street2 = j$('input[id$=Ref_Perm_Street2]').val();
           city = j$('input[id$=Ref_Perm_City]').val();
           state = j$('select[id$=Ref_Perm_State]').val();
           zip = j$('input[id$=Ref_Perm_Zip]').val();
@@ -1229,11 +1230,15 @@ document.onkeypress = stopRKey;
           <apex:outputPanel styleClass="nowrap@">
             <apex:outputLabel value="Street" style="width: 10px;" />&nbsp;
             <apex:inputText value="{!Referral__c.Referrer_Street__c}"  id="Ref_Perm_Street"/>&nbsp;
-            <br/>   
+            <br/>  
+            <apex:outputLabel value="Street 2" style="width: 10px;" />&nbsp;
+            <apex:inputText value="{!Referral__c.Referrer_Street_2__c}"  id="Ref_Perm_Street2"/>&nbsp;
+            <br/>              
             <apex:outputLabel value="City"  style="width: 10px;" />&nbsp; &nbsp; &nbsp;
             <apex:inputText value="{!Referral__c.Referrer_City__c}"  id="Ref_Perm_City"/>&nbsp;
             <apex:outputLabel value="State" />&nbsp;
             <apex:inputField value="{!Referral__c.Referrer_State__c}"  id="Ref_Perm_State"/>&nbsp;
+            <br/>
             <apex:outputLabel value="Zip" />&nbsp;
             <apex:inputText value="{!Referral__c.Referrer_Zip__c}" style="width: 42px;"  id="Ref_Perm_Zip"/>
           </apex:outputPanel>
@@ -1712,7 +1717,11 @@ document.onkeypress = stopRKey;
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}">
              <apex:outputText value="Current Location"/>
              <apex:outputPanel >
-                 <input id="NR_usePermanent" type="checkbox" value="1" onchange="copyPermanentNeuro(this);"/>&nbsp; <apex:outputLabel for="NR_usePermanent">Same as Facility</apex:outputLabel> 
+             
+                 <input name="which_address" id="NR_usePermanent" type="radio" value="1" onchange="copyPermanentNeuro(this);"/>&nbsp; <apex:outputLabel for="NR_usePermanent">Same as Facility</apex:outputLabel> 
+                 <br/>
+                 <input name="which_address" id="NR_useContact" type="radio" value="1" onchange="copyPermanent(this);"/>&nbsp; <apex:outputLabel for="NR_usePermanent2">Same as Permanent</apex:outputLabel> 
+             
              </apex:outputPanel>
          </apex:pageBlockSectionItem>
         <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota', ReferralRecordType != 'CareMeridian')}"/>

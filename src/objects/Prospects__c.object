@@ -4135,6 +4135,14 @@ $Profile.Id !=&apos;00eU0000000RHex&apos;</errorConditionFormula>
         <errorMessage>Date of Inquiry cannot be modified.</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>FirstContact_vs_DateOfInquiry</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISBLANK(First_Contact_Date__c)  &amp;&amp;
+(  (TODAY()-Date_of_Inquiry__c )&gt;7)</errorConditionFormula>
+        <errorDisplayField>First_Contact_Date__c</errorDisplayField>
+        <errorMessage>First Contact Attempted is required within 7 Days of the Date of Inquiry</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>First_Contact_Date_Notes_Required</fullName>
         <active>true</active>
         <errorConditionFormula>AND(NOT(ISNULL( First_Contact_Date__c )), ISBLANK( First_Contact_Attempt_Notes__c),  $User.ProfileId &lt;&gt; &apos;00eU0000000myCw&apos; )</errorConditionFormula>
@@ -4184,6 +4192,39 @@ ISNULL( Health_Status_Statement_Received__c ))</errorConditionFormula>
 ISNULL(Home_Study_Completed_Date__c))</errorConditionFormula>
         <errorDisplayField>Home_Study_Completed_Date__c</errorDisplayField>
         <errorMessage>Home Study Completed Date must be entered when Home Study Results is Pass or Fail</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>HowDidYouHear_AdCamp_AdPlace_Null</fullName>
+        <active>true</active>
+        <errorConditionFormula>NOT(ISPICKVAL(How_did_you_hear_about_us__c, &quot;Referred by someone&quot;)) 
+&amp;&amp;
+NOT(ISPICKVAL(How_did_you_hear_about_us__c,&quot;&quot;))
+&amp;&amp;
+ISBLANK(  Outreach_Event__c )</errorConditionFormula>
+        <errorDisplayField>Outreach_Event__c</errorDisplayField>
+        <errorMessage>Please add an Ad Placement/Event Specifics</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>HowDidYouHear_AdCamp_Null</fullName>
+        <active>true</active>
+        <errorConditionFormula>NOT(ISPICKVAL(How_did_you_hear_about_us__c, &quot;Referred by someone&quot;)) 
+&amp;&amp;
+NOT(ISPICKVAL(How_did_you_hear_about_us__c,&quot;&quot;))
+&amp;&amp;
+ISBLANK( Outreach_Source__c )</errorConditionFormula>
+        <errorDisplayField>Outreach_Source__c</errorDisplayField>
+        <errorMessage>Please add an Ad Campaign/Event Type</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>HowDidYouHear_RefBySomeone_Null</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL(How_did_you_hear_about_us__c, &quot;Referred by someone&quot;) 
+&amp;&amp;
+ISPICKVAL( Referral_Type__c ,&quot;&quot;)
+&amp;&amp;
+Entry_Point__c == &quot;Employee&quot;</errorConditionFormula>
+        <errorDisplayField>Referral_Type__c</errorDisplayField>
+        <errorMessage>Please select a Referral Type</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Mentor_All_DMV_Records_Received</fullName>
@@ -4240,6 +4281,15 @@ All_Drivers_License_Received__c =False
         <errorMessage>All Driver&apos;s Licenses must be received before the status &apos;Mentor&apos; can be applied</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>Mentor_Final_Review</fullName>
+        <active>false</active>
+        <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
+NOT(ISPICKVAL( Final_Review__c ,&quot;Approved&quot;)))
+,True, False)</errorConditionFormula>
+        <errorDisplayField>Final_Review__c</errorDisplayField>
+        <errorMessage>Mentor Final Review must be marked as Approved before the status &apos;Mentor&apos; can be applied</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>Mentor_Fire_Safety_Check</fullName>
         <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
@@ -4249,8 +4299,17 @@ NOT(ISPICKVAL( Fire_Safety_Check__c ,&quot;Pass&quot;)))
         <errorMessage>Mentor Fire Safety Check must be marked as Pass before the status &apos;Mentor&apos; can be applied</errorMessage>
     </validationRules>
     <validationRules>
-        <fullName>Mentor_First_Contact</fullName>
+        <fullName>Mentor_FirstName</fullName>
         <active>true</active>
+        <errorConditionFormula>Text(Status__c)==&quot;Mentor&quot;
+&amp;&amp;
+ First_Name__c ==&quot;&quot;</errorConditionFormula>
+        <errorDisplayField>First_Name__c</errorDisplayField>
+        <errorMessage>First Name is required when &apos;Mentor&apos; Status is selected</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Mentor_First_Contact</fullName>
+        <active>false</active>
         <description>checks to make sure the field first contact date has been filled out</description>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;, ISNULL(First_Contact_Date__c))
 ,True, False)</errorConditionFormula>
@@ -4442,7 +4501,7 @@ IF(OR(ISPICKVAL(  References_All_Other__c ,&quot;Approved&quot;),ISPICKVAL(  Ref
         <active>true</active>
         <errorConditionFormula>ISPICKVAL(Status__c, &apos;Mentor&apos;) &amp;&amp; ISNULL( File_Submitted_for_Approval__c )</errorConditionFormula>
         <errorDisplayField>File_Submitted_for_Approval__c</errorDisplayField>
-        <errorMessage>File Submitted for Approval is required when the Status equals &apos;Mentor&apos;</errorMessage>
+        <errorMessage>Date File Submitted for Approval must be entered before the status &apos;Mentor&apos; can be applied</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Status_Null</fullName>

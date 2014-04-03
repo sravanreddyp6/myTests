@@ -36,6 +36,7 @@
         }
     });
     </script>
+    
     <apex:form id="wholeForm">
         <apex:actionFunction name="showAddHouseholdMember" action="{!showAddHouseholdMember}" status="loadingHouseholdMemberStatus" rerender="householdMemberDialogMainBlock" oncomplete="openModalDialog('{!$Component.householdMemberDialog}', 'Add Household Member', '{!$Component.wholeForm}');" immediate="true" />
         <apex:actionFunction name="showEditHouseholdMember" action="{!showEditHouseholdMember}" status="loadinghouseholdMemberStatus" rerender="householdMemberDialogMainBlock" oncomplete="openModalDialog('{!$Component.householdMemberDialog}', 'Edit Household Member', '{!$Component.wholeForm}');" immediate="true">
@@ -160,33 +161,44 @@
                     <apex:pageBlockSectionItem >
                         <apex:outputText value="Name"/>
                         <apex:outputPanel styleClass="nowrap">
-                            <apex:inputField label="" value="{!currentHouseholdMember.First_Name__c}" />&nbsp;&nbsp;
+                        <apex:inputField id="firname" label="" value="{!currentHouseholdMember.First_Name__c}" />&nbsp;&nbsp; 
+                        
                             <apex:inputField label="" value="{!currentHouseholdMember.Middle_Initial__c}" style="width:20px;" />&nbsp;&nbsp;
                             <apex:inputField label="" value="{!currentHouseholdMember.Last_Name__c}" />
                         </apex:outputPanel>
                     </apex:pageBlockSectionItem>
                 </apex:pageBlockSection>
-                <apex:pageBlockSection columns="2">
-                    <apex:inputField value="{!currentHouseholdMember.Date_of_Birth__c}" rendered="{!currentHouseholdMember.Related_Party_Type__c != 'Pet'}"/>
-                    
-                    <apex:pageBlockSectionItem >
-                     <apex:outputLabel value="Type of Relationship" for="TypeOfRel" />
-                         <apex:actionRegion >
-                         
-                          <apex:inputField id="TypeOfRel" value="{!currentHouseholdMember.Related_Party_Type__c}" required="true">
-                         
-                            <apex:actionSupport event="onchange" action="{!changeHouseholdMemberType}" rerender="householdMemberDialogMainBlock" />
-                        </apex:inputField>
-                     </apex:actionRegion>
-                     </apex:pageBlockSectionItem>
+                <apex:pageBlockSection id="pagerefresh" columns="2" >
+         
+                          <apex:pageBlockSectionItem rendered="{!currentHouseholdMember.Related_Party_Type__c != 'Pet'}">
+                               <apex:outputLabel value="Date of Birth" for="dob"/>
+                                  <apex:actionRegion >
+                                          <apex:inputField id="dob" value="{!currentHouseholdMember.Date_of_Birth__c}">
+                                       
+                                                <apex:actionSupport event="onchange" action="{!Agecal}" rerender="pagerefresh" />
+                                          </apex:inputField>
+                                    </apex:actionRegion> 
+                            </apex:pageBlockSectionItem> 
+                            <apex:pageBlockSectionItem >
+                                <apex:outputLabel value="Type of Relationship" for="TypeOfRel" />
+                                        <apex:actionRegion >
+                                             
+                                              <apex:inputField id="TypeOfRel" value="{!currentHouseholdMember.Related_Party_Type__c}" required="true">
+                                             
+                                           <apex:actionSupport event="onchange" action="{!changeHouseholdMemberType}" rerender="pagerefresh" />
+                                            </apex:inputField>
+                                        </apex:actionRegion>
+                                 </apex:pageBlockSectionItem>
                     <apex:inputField value="{!currentHouseholdMember.Gender__c}" rendered="{!currentHouseholdMember.Related_Party_Type__c != 'Pet'}" />
                     <apex:pageBlockSectionItem rendered="{!currentHouseholdMember.Related_Party_Type__c != 'Pet'}">
                         <apex:outputLabel value="Marital Status" for="Marital"/>
                         <apex:actionRegion >
-                         <apex:inputField id="Marital" label="Marital Status" value="{!currentHouseholdMember.Marital_Status__c}" required="{!currentHouseholdMember.Related_Party_Type__c != 'Pet'}"/>
+                         <apex:inputField id="Marital" label="Marital Status" value="{!currentHouseholdMember.Marital_Status__c}" required="{!(currentHouseholdMember.Related_Party_Type__c != 'Pet' && Ages!=false)}"/>
                         </apex:actionRegion>
                     </apex:pageBlockSectionItem>
-                    <apex:inputField value="{!currentHouseholdMember.Primary_Phone__c}" />
+                    </apex:PageBlockSection>
+                    <apex:PageBlockSection >
+                    <apex:inputField value="{!currentHouseholdMember.Primary_Phone__c}"/>
                     <apex:inputField value="{!currentHouseholdMember.Secondary_Phone__c}" />
                     <apex:inputField value="{!currentHouseholdMember.Email__c}" />
                     <apex:inputField value="{!currentHouseholdMember.No_Longer_In_Home__c}" />
