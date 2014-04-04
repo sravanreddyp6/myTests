@@ -734,6 +734,16 @@ document.onkeypress = stopRKey;
             <apex:inputField value="{!fundingSource.Precert_Required__c}" />
             <apex:pageBlockSectionItem />
 
+			<apex:outputText value="Acute Rehab" styleClass="modalSubheader" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.ARU_Day_Total__c}" />
+            <apex:inputField value="{!fundingSource.ARU_Days_Used__c}" />
+            
+            <apex:outputText value="Home Health" styleClass="modalSubheader" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.HH_Visits_Total__c}" />
+            <apex:inputField value="{!fundingSource.HH_Visits_Used__c}" />
+            
             <apex:outputText value="DME" styleClass="modalSubheader" />
             <apex:pageBlockSectionItem />
             <apex:inputText value="{!fundingSource.DME_Benefits__c}" label="DME Benefits" />
