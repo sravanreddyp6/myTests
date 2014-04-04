@@ -438,6 +438,12 @@ public with sharing class referrals_Controller{
             Name = pbrLastName + 'Eval' + DateTime.Now().format('MMddyy')
         );
         insert eval;
+        
+        // ERC-93 - fill evaluated by field on Referral with current user
+        TMN_User__c curruser = [ select id from tmn_user__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];
+        referralRecord.evaluated_by_internal__c = curruser.id;
+        update referralRecord;
+        
         return new PageReference('/' + eval.Id + '/e');
     }
 
