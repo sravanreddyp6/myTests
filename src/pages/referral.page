@@ -342,7 +342,6 @@ document.onkeypress = stopRKey;
     </apex:actionRegion>
     <apex:actionFunction name="locationLookup" action="{!resetSearchItems}" rerender="block,table" oncomplete="j$('input[id$=nameFilter]').val(j$('input[id$=locationEntry_ServiceLocation]').val());openModalDialog('searchDialog', 'span', 'Search Service Location','custom-lookup-dialog');return false;"/>
     <apex:actionFunction name="locationLookup2" action="{!resetSearchItems2}" rerender="block2,table2" oncomplete="j$('input[id$=nameFilter2]').val(j$('input[id$=sl]').val());openModalDialog('searchDialog2', 'span', 'Search Service Location','custom-lookup-dialog');return false;"/>
-    <apex:actionFunction name="unsetStatusHelperFiels" action="{!unsetStatusHelperFiels}" rerender="ReferralStatus" oncomplete="unsetAdditionalFields(j$('select[id$=referralStatus]').val());"/>
 
     <apex:pageMessages id="msgs"/>
 
@@ -1182,9 +1181,14 @@ document.onkeypress = stopRKey;
         <apex:inputField value="{!Referral__c.How_did_referral_come_in__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
         <apex:inputField value="{!Referral__c.Referral_Date__c}"  required="true"/>
         <!--apex:inputField value="{!ReferralRecordType}" onchange="setReferralRecordType();" required="true"/-->
-        <apex:inputField id="referralStatus" value="{!Referral__c.Referral_Status__c}" onchange="unsetStatusHelperFiels();" required="true">
-          <!--<apex:actionSupport event="onchange" rerender="ReferralStatus" oncomplete="unsetStatusHelperFiels();//unsetAdditionalFields(j$('select[id$=referralStatus]').val());"/>-->
+        <apex:pageblocksectionitem >
+        <apex:outputlabel for="referralStatus" value="Referral Status" />
+        <apex:actionregion >
+        	<apex:inputField id="referralStatus" value="{!Referral__c.Referral_Status__c}" required="true">
+        	<apex:actionSupport event="onchange" action="{!unsetStatusHelperFiels}" rerender="ReferralStatus" oncomplete="unsetAdditionalFields(j$('select[id$=referralStatus]').val());" />
         </apex:inputField>
+        </apex:actionregion>
+        </apex:pageblocksectionitem>
         <apex:inputField value="{!Referral__c.UCI_Number__c}" rendered="{!ReferralRecordType=='California'}"/>
 
             <apex:pageBlockSectionItem />

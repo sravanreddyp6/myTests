@@ -498,6 +498,7 @@ public with sharing class referrals_Controller{
     }
   /**********************************************************/
   public void unsetStatusHelperFiels(){
+  	
       if(referralrecord.referral_status__c != 'Closed'){
           referralrecord.close_date__c=null;
           referralrecord.close_reason__c='';
