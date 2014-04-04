@@ -28,88 +28,90 @@ private class DhrReportSubmitTEST {
 
         List<TMN_Contact__c> tmnContactListForInsert = new List<TMN_Contact__c>();
         TMN_Contact__c myTmnContact = new TMN_Contact__c(
-        	First_Name__c = 'Test',
-        	Last_Name__c = 'Mentor',
-        	Chessie_Id__c = '12345',
-        	Date_of_Birth__c = Date.newInstance(1977,5,4),
-        	Marital_Status__c = 'Married',
-        	Race__c = 'Multi-Racial',
-        	Street_1__c = '123 Whatever St.',
-        	Street_2__c = 'Apt. 1A',
-        	City__c = 'Louisville',
-        	State__c = 'KY',
-        	Primary_Phone__c = '502-618-1548',
-        	Secondary_Phone__c = '919-333-1425',
-        	Active__c = true,
-        	Active_Date__c = Date.newInstance(2014,2,1)
+            First_Name__c = 'Test',
+            Last_Name__c = 'Mentor',
+            Chessie_Id__c = '12345',
+            Date_of_Birth__c = Date.newInstance(1977,5,4),
+            Marital_Status__c = 'Married',
+            Race__c = 'Multi-Racial',
+            Street_1__c = '123 Whatever St.',
+            Street_2__c = 'Apt. 1A',
+            City__c = 'Louisville',
+            State__c = 'KY',
+            Primary_Phone__c = '502-618-1548',
+            Secondary_Phone__c = '919-333-1425',
+            Active__c = true,
+            Active_Date__c = Date.newInstance(2014,2,1)
         );
         //tmnContactListForInsert.add(myTmnContact);
         insert myTmnContact;
         
         List<RecordType> allTmnContactRecordTypes = [ SELECT DeveloperName FROM RecordType WHERE SObjectType = 'TMN_Contact__c' ];
         for(RecordType rT : allTmnContactRecordTypes) {
-        	System.debug('rT.DeveloperName: ' + rT.DeveloperName);
+            System.debug('rT.DeveloperName: ' + rT.DeveloperName);
         }
         
         RecordType householdMemberRecordType = [ SELECT Id, DeveloperName FROM RecordType WHERE SObjectType = 'TMN_Contact__c' AND DeveloperName = 'Household_Member' LIMIT 1 ];
         System.debug('householdMemberRecordType.DeveloperName: ' + householdMemberRecordType.DeveloperName);
         
         TMN_Contact__c myCoApplicant = new TMN_Contact__c(
-        	RecordTypeId = householdMemberRecordType.Id,
-        	Related_Party_Type__c = 'Co-Applicant',
-        	Mentor__c = myTmnContact.Id,
-        	First_Name__c = 'Test',
-        	Last_Name__c = 'Co Applicant',
-        	Chessie_Id__c = '12346',
-        	Date_of_Birth__c = Date.newInstance(1978,12,16),
-        	Marital_Status__c = 'Married',
-        	Race__c = 'Multi-Racial',
-        	Street_1__c = '123 Whatever St.',
-        	Street_2__c = 'Apt. 1A',
-        	City__c = 'Louisville',
-        	State__c = 'KY',
-        	Primary_Phone__c = '502-555-5555',
-        	Secondary_Phone__c = '502-555-5556',
-        	Email__c = 'test@test.com'      	
+            RecordTypeId = householdMemberRecordType.Id,
+            Related_Party_Type__c = 'Co-Applicant',
+            Mentor__c = myTmnContact.Id,
+            First_Name__c = 'Test',
+            Last_Name__c = 'Co Applicant',
+            Chessie_Id__c = '12346',
+            Date_of_Birth__c = Date.newInstance(1978,12,16),
+            Marital_Status__c = 'Married',
+            Race__c = 'Multi-Racial',
+            Street_1__c = '123 Whatever St.',
+            Street_2__c = 'Apt. 1A',
+            City__c = 'Louisville',
+            State__c = 'KY',
+            Primary_Phone__c = '502-555-5555',
+            Secondary_Phone__c = '502-555-5556',
+            Email__c = 'test@test.com'          
         );
-		tmnContactListForInsert.add(myCoApplicant);
-		
-		insert tmnContactListForInsert; 
+        tmnContactListForInsert.add(myCoApplicant);
+        
+        insert tmnContactListForInsert; 
 
-		Mentor_Tracking_Report_Record__c myMtrr = [ SELECT Id FROM Mentor_Tracking_Report_Record__c WHERE TMN_Contact__c = :myTmnContact.Id LIMIT 1 ];
-		myMtrr.Submitted_At_Least_Once__c = false;
-		myMtrr.Status__c = 'New';
-		update myMtrr;
+        Mentor_Tracking_Report_Record__c myMtrr = [ SELECT Id FROM Mentor_Tracking_Report_Record__c WHERE TMN_Contact__c = :myTmnContact.Id LIMIT 1 ];
+        myMtrr.Submitted_At_Least_Once__c = false;
+        myMtrr.Status__c = 'New';
+        update myMtrr;
 
-		DhrReportSubmit controller = new DhrReportSubmit();
-		String nextPage = controller.SubmitDhr().getUrl();
-		
-		System.assertEquals('/apex/TmnContactListView', nextPage);
-		
-		nextPage = controller.Cancel().getUrl();
-		System.assertEquals('/apex/TmnContactListView', nextPage);
-		
-		myMtrr.Status__c = 'Update';
-		update myMtrr;		
+        DhrReportSubmit controller = new DhrReportSubmit();
+        controller.showhistory();
+        controller.clearhistory();
+        String nextPage = controller.SubmitDhr().getUrl();
+        
+        System.assertEquals('/apex/TmnContactListView', nextPage);
+        
+        nextPage = controller.Cancel().getUrl();
+        System.assertEquals('/apex/TmnContactListView', nextPage);
+        
+        myMtrr.Status__c = 'Update';
+        update myMtrr;      
 
-		DhrReportSubmit controller2 = new DhrReportSubmit();
-		nextPage = controller2.SubmitDhr().getUrl();
-		
-		System.assertEquals('/apex/TmnContactListView', nextPage);
-		
-		nextPage = controller2.Cancel().getUrl();
-		System.assertEquals('/apex/TmnContactListView', nextPage);
+        DhrReportSubmit controller2 = new DhrReportSubmit();
+        nextPage = controller2.SubmitDhr().getUrl();
+        
+        System.assertEquals('/apex/TmnContactListView', nextPage);
+        
+        nextPage = controller2.Cancel().getUrl();
+        System.assertEquals('/apex/TmnContactListView', nextPage);
 
-		myMtrr.Status__c = 'Closed';
-		update myMtrr;
+        myMtrr.Status__c = 'Closed';
+        update myMtrr;
 
-		DhrReportSubmit controller3 = new DhrReportSubmit();
-		nextPage = controller3.SubmitDhr().getUrl();
-		
-		System.assertEquals('/apex/TmnContactListView', nextPage);
-		
-		nextPage = controller3.Cancel().getUrl();
-		System.assertEquals('/apex/TmnContactListView', nextPage);
-		      
+        DhrReportSubmit controller3 = new DhrReportSubmit();
+        nextPage = controller3.SubmitDhr().getUrl();
+        
+        System.assertEquals('/apex/TmnContactListView', nextPage);
+        
+        nextPage = controller3.Cancel().getUrl();
+        System.assertEquals('/apex/TmnContactListView', nextPage);
+              
     }
 }

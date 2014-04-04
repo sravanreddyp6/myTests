@@ -70,15 +70,15 @@ h3{
 
 }
 .level2{
-	padding: 0px;
-	font-size: 13px;
-	//overflow:hidden;
+    padding: 0px;
+    font-size: 13px;
+    //overflow:hidden;
 }
 .table2{
-	width: 100%;
-	border-collapse:collapse;
-	table-layout: fixed;
-	
+    width: 100%;
+    border-collapse:collapse;
+    table-layout: fixed;
+    
 
 }
 
@@ -170,7 +170,7 @@ h3{
                 <apex:pageBlockSectionItem rendered="{!isNeuro}" >
                     <apex:outputLabel >TIN-NPI</apex:outputLabel>
                     <apex:outputPanel layout="block" style="width: 399px;">
-                         {!SUBSTITUTE(CareMeridian_Contract__c.TIN_NPI__c,';', ', ')}
+                         {!SUBSTITUTE(CareMeridian_Contract__c.TIN_NPI__c,';', '; ')}
                     </apex:outputPanel>
                 </Apex:pageBlockSectionItem>
                 
@@ -178,34 +178,34 @@ h3{
                 
                 <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
                  
-        <apex:variable var="t" value="" rendered="{!isNeuro}">
- 		<table border="1" cellpadding="0" class="table2" cellspacing="0" colspan="0">
-			<tr>
-				<th class="level2" width="8%">Alias</th>
-				<th class="level2" width="10%">Service Value</th>
-				<th class="level2" width="20%">Setting</th>
-				<th class="level2" Width="25%">Program</th>
-				<th class="level2">Address</th>
-				<th class="level2" width="12%">Last Modified Date</th>
-			</tr>
-	
-		<apex:repeat var="location" value="{!locations}">
-	
-			<tr>
-				<td class="level2" width="8%">{!location.Service_Location__r.Name}</td>
-				<td class="level2" width="10%">{!location.Service_Location_Service_Value__c}</td>
-				<td class="level2" width="20%">{!location.Service_Location__r.Setting__c}</td>
-				<td width="25%" class="level2">{!SUBSTITUTE(location.Service_Location_Program__c,'-',' - ')}</td>
-				<td class="level2">{!location.Service_Location_Street__c}<br/>
+        <apex:variable var="t" value="" rendered="{!AND(isNeuro,locations.size!=0)}">
+        <table border="1" cellpadding="0" class="table2" cellspacing="0" colspan="0">
+            <tr>
+                <th class="level2" width="8%">Alias</th>
+                <th class="level2" width="10%">Service Value</th>
+                <th class="level2" width="20%">Setting</th>
+                <th class="level2" Width="25%">Program</th>
+                <th class="level2">Address</th>
+                <th class="level2" width="12%">Last Modified Date</th>
+            </tr>
+    
+        <apex:repeat var="location" value="{!locations}">
+    
+            <tr>
+                <td class="level2" width="8%">{!location.Service_Location__r.Name}</td>
+                <td class="level2" width="10%">{!location.Service_Location_Service_Value__c}</td>
+                <td class="level2" width="20%">{!location.Service_Location__r.Setting__c}</td>
+                <td width="25%" class="level2">{!SUBSTITUTE(location.Service_Location_Program__c,'-',' - ')}</td>
+                <td class="level2">{!location.Service_Location_Street__c}<br/>
                     {!location.Service_Location_City__c}<br/>
                     {!location.Service_Location_State__c}<br/>
                     {!location.Service_Location_Zip__c}<br/></td>
                 <td class="level2" width="12%">{!location.LastModifiedDate} </td>
-			</tr>
-	
-		</apex:repeat>
-		</table>     
-		</apex:variable> 
+            </tr>
+    
+        </apex:repeat>
+        </table>     
+        </apex:variable> 
        </apex:pageBlockSection>            
             
             <apex:pageBlockSection title="Timeframe" columns="1"   >
@@ -219,9 +219,9 @@ h3{
             </apex:pageBlockSection>         
             
             <apex:pageblockSection title="Reimbursement Details" columns="1" rendered="{!isNeuro}">
-            	<apex:outputField styleclass="mytxtarea" value="{!CareMeridian_Contract__c.Reimbursement_Details__c}"/>
+                <apex:outputField styleclass="mytxtarea" value="{!CareMeridian_Contract__c.Reimbursement_Details__c}"/>
             </apex:pageblockSection>
-            	   
+                   
             
             <apex:pageBlockSection title="Billing Guidelines" columns="1"   rendered="{!AND(!isNeuro,NOT(onlyRL))}">
                 <apex:outputField value="{!CareMeridian_Contract__c.Fee_Schedule__c}"/>
@@ -246,11 +246,13 @@ h3{
         <td class="level">     
         </td> 
         <td class="level">      
-        </td>  
+        </td>
+        <apex:Variable value="" var="x" rendered="{!isNeuro}"> 
         <td class="level">  
         </td> 
         <td class="level"> 
         </td>     
+        </apex:variable>
         <td class="level">
             <apex:outputLabel styleClass="mylbl" rendered="{!!isNeuro}" >Bed Holds</apex:outputLabel>
             <apex:outputLabel styleClass="mylbl" rendered="{!isNeuro}">Bed Holds (%)</apex:outputLabel>            
@@ -275,13 +277,15 @@ h3{
         </td> 
         <td>
             <apex:outputField value="{!CareMeridian_Contract__c.Level_5_Name__c}"  />
-        </td>  
+        </td>
+         <apex:Variable value="" var="z" rendered="{!isNeuro}">   
         <td>
             <apex:outputField value="{!CareMeridian_Contract__c.Level_6_Name__c}" rendered="{!isNeuro}"  />
         </td> 
         <td>
             <apex:outputField value="{!CareMeridian_Contract__c.Level_7_Name__c}" rendered="{!isNeuro}"/>
-        </td>    
+        </td>
+        </apex:variable>    
         <td>
 
         </td>                                                
@@ -311,13 +315,15 @@ h3{
         <td>
             <apex:outputField value="{!CareMeridian_Contract__c.Billed_Rate_Level_5__c}" rendered="{!!isNeuro}"  />
             <apex:outputField value="{!CareMeridian_Contract__c.BilledRate_Level_5__c}"  rendered="{!isNeuro}"/>
-        </td>     
+        </td>  
+        <apex:Variable value="" var="y" rendered="{!isNeuro}">   
         <td>
             <apex:outputField value="{!CareMeridian_Contract__c.BilledRate_Level_6__c}" rendered="{!isNeuro}"/>
         </td>
         <td>
             <apex:outputField value="{!CareMeridian_Contract__c.BilledRate_Level_7__c}" rendered="{!isNeuro}"/>
         </td>  
+        </apex:variable>
         <td>
             <apex:outputField value="{!CareMeridian_Contract__c.Billed_Rate_Bed_Holds__c}" />
         </td>                                                
@@ -343,18 +349,20 @@ h3{
         <td>
             <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Level_5__c}"  />
         </td>  
+        <apex:Variable value="" var="w" rendered="{!isNeuro}"> 
         <td>
             <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Level_6__c}" rendered="{!isNeuro}"/>
         </td> 
         <td>
             <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Level_7__c}" rendered="{!isNeuro}"/>
         </td>    
+        </apex:variable>
         <td>
             <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Bed_Holds__c}"  />
         </td>                                                
     </tr>      
-	<apex:variable var="n" value="" rendered="{!isNeuro}">
-	<tr>
+    <apex:variable var="n" value="" rendered="{!isNeuro}">
+    <tr>
         <td  class="detailrow">
             <apex:outputLabel styleClass="mydtl">Reimbursement Rate - % of Charges</apex:outputLabel>
         </td>  
@@ -383,7 +391,7 @@ h3{
             <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_Bed_Holds__c}" />
         </td>                                                
     </tr>      
-	</apex:variable>
+    </apex:variable>
 <apex:repeat value="{!MapRateLevelKeys}" var="RL" >
 <tr>
     <td class="detailrow">
