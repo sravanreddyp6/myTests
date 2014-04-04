@@ -813,8 +813,19 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
         }
     
     }
-    // ennd CTEAE - 34
-      system.debug('DOUGDOUG - in saveREF');
+    // end CTEAE - 34
+    
+    // ERNS-8 - when trying to close/admit Neuro referral, check for required fields
+    if ( referralRecordType == 'NeuroRestorative') {
+    	
+    	if ( referralRecord.referral_status__c == 'Closed' && referralRecord.close_reason__c =='Admitted') {
+    		if (!checkNRRequiredCloseAdmitFields()) 
+    			return null;
+    	}
+    }
+    
+    
+    system.debug('in saveREF');
     Id refId;
 
     try {
@@ -894,6 +905,48 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
 
     return ApexPages.hasMessages() ? null : getRefresh();
   }
+
+  //ERNS-8 - check for required fields upon attempt to close/admit
+  private Boolean checkNRRequiredCloseAdmitFields() {
+  	
+  	Boolean hasError = false, hasError2 = false;
+	hasError = checkForBlankFields( personBeingRefRecord, 'Person_Being_Referred__c', new list<string>{'first_name__c','last_name__c','date_of_birth__c','gender__c','race__c', 'marital_status__c', 'street_1__c', 'city__c', 'state__c', 'zip_code__c', 'phone__c', 'email_address__c'}, 'A value for {0} is required to close/admit');
+	hasError2 = checkForBlankFields( referralRecord, 'Referral__c', new list<string>{'referral_status__c', 'referral_source_type__c','agency_name__c','referral_name__c', 'evaluated_by_internal__c', 'legal_guardian_status__c','referral_date__c','how_did_they_learn__c','billing_id__c', 'date_of_injury__c','cause_of_injury_pick__c','current_location__c','previous_brain_injury__c','did_alcohol_contribute_to_injury__c','did_drug_use_contribute_to_injury__c'}, 'A value for {0} is required to close/admit');
+	system.debug('checkNRRequiredCloseAdmitFields result: ' + (!hasError && !hasError2));	
+	return ( !hasError && !hasError2 );
+	
+  }
+  
+  private Boolean checkforBlankFields ( sobject obj, string classname, List<string> fieldlist, string errMsgFmtString ) {
+ 
+ 	Boolean blankfield = false;
+ 	List<Schema.DescribeSObjectResult> describelist = Schema.describeSObjects(new List<string>{classname});
+		
+	if (describelist.size() == 0){
+		return false;
+	}
+		
+	Schema.DescribeSObjectResult info = describelist[0];
+		
+	Map<string,Schema.SObjectField> fmap = info.fields.getmap();
+ 	
+  	for ( string f : fieldlist ) {
+  		
+  		if ( String.IsBlank ( String.valueOf( obj.get(f)))) {
+
+		 	ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,String.Format( errMsgFmtString, new string[] {fmap.get(f).getDescribe().getlabel()})); 
+			ApexPages.addMessage(myMsg);
+  			
+  			//thisPage.addError( String.Format( errMsgFmtString, new string[] {fmap.get(f).getDescribe().getlabel()}));
+  			blankfield = true;
+  			
+  		}
+  			
+  	}
+  	system.debug('checkforBlankFields result: ' + blankfield);
+  	return blankfield;
+  }
+    
 
   public void createRelParties() {
     if (relParties != null && this.personBeingRefRecord.Id != null) {
