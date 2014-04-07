@@ -10,6 +10,8 @@ public with sharing class Assessment_FAD_Form_Ex {
      
     public map<string, Assessment_Response__c> mapRes = new map<string, Assessment_Response__c>();
     public map<string, Assessment_Response__c> getmapRes(){ return mapRes;}
+    
+    public User curU = [select id, UserRoleId from user where id =:UserInfo.getUserId()];
         
     public Assessment_FAD_Form_Ex(ApexPages.StandardController controller) {
         assess = new assessment__c ();
@@ -198,5 +200,77 @@ public with sharing class Assessment_FAD_Form_Ex {
         return null;
         
              
-    }       
+    } 
+    Map<String, UserRole> roleMap  = new Map<String, UserRole>();
+    public boolean IsLogedHigherRole{ set;}
+    public boolean getIsLogedHigherRole(){
+        rolemap.clear();
+        roleMap = new Map<String, UserRole>([SELECT Id, Name, parentRoleId FROM UserRole]); 
+        User curU = [select id, UserRoleId from user where id =:UserInfo.getUserId()];
+        User theOwner = [select id, UserRoleID from user where id=:assess.ownerID];
+        Boolean resVal = false;
+    
+    if(curU.UserRoleId == roleMap.get(theOwner.UserRoleID).parentRoleId){ return true;}
+    
+    resVal = traverseRoleHierarchy(curU.UserRoleId, theOwner.UserRoleID , roleMap.get(theOwner.UserRoleId).parentRoleId);
+    
+    
+        return resVal ;
+    }
+    
+            public Boolean traverseRoleHierarchy(String uManagerRoleId, String uRoleId, String uParentRoleId)
+            {
+                if(roleMap!=null && roleMap.containsKey(uParentRoleId))
+                {
+                    UserRole uRole = roleMap.get(uParentRoleId);
+                    if( uManagerRoleId == uParentRoleId || uManagerRoleId == uRole.ParentRoleId)
+                        return true;
+                    else
+                    {
+                        return traverseRoleHierarchy( uManagerRoleId, uParentRoleId, uRole.ParentRoleId);                   
+                    }
+                }
+                
+                return false;
+            }    
+    public boolean canSubmit{set;}        
+    public boolean getCanSubmit(){
+    //currently used to define who can disgregard as well
+    List<PermissionSetAssignment> userperms = [ select id, permissionset.name, assigneeid from PermissionSetAssignment where assigneeid = :UserInfo.getUserId()]; 
+                for ( PermissionSetAssignment p : userperms ) {
+                        
+                        // user can only update if in one of these three permission sets
+                        
+                        
+                        if (
+                                p.PermissionSet.Name.Contains('ESD_Notes_Organizer')) {
+                                System.Debug('User is allowed.');
+                                return true;    
+                                }
+                }
+                return false;        
+
+    
+    }
+    
+    public boolean canUnlock{set;}        
+    public boolean getcanUnlock(){
+    //currently used to define who can disgregard as well
+    List<PermissionSetAssignment> userperms = [ select id, permissionset.name, assigneeid from PermissionSetAssignment where assigneeid = :UserInfo.getUserId()]; 
+                for ( PermissionSetAssignment p : userperms ) {
+                        
+                        // user can only update if in one of these three permission sets
+                        
+                        
+                        if (
+                                p.PermissionSet.Name.Contains('ESD_Notes_Supervisor')) {
+                                System.Debug('User is allowed.');
+                                return true;    
+                                }
+                }
+                return false;        
+
+    
+    }    
+          
 }

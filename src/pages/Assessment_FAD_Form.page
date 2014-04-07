@@ -4,7 +4,7 @@
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
     <apex:stylesheet value="{!if ($CurrentPage.parameters.pdf !='1', $Resource.mentoresdcss, $Resource.mentoresdprint)}" />
     <script>function setFocusOnLoad() {}</script>
-    
+ 
 <style>
     body .bPageBlock[id*=main_detail] {
         margin-bottom: 5px;
@@ -41,24 +41,24 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
 <apex:pageBlock title="FAD Assessment Summary" >
     <apex:pageBlockButtons >
         <div style="float: right" >
-            <apex:image value="/img/lock_small.gif" alt="Locked" width="20" height="20" title="Record is Locked" rendered="{!Assessment__c.Status__c =='Locked'}" />         
+                   
         <!--
         -->
             <apex:commandButton action="{!myUnlock}" 
                                 value="Unlock" 
-                                rendered="{!mode='view' && Assessment__c.Status__c =='Locked' && $User.Id != Assessment__c.ownerid}" 
+                                rendered="{!mode='view' && Assessment__c.Status__c =='Locked' && canUnlock}" 
                                 reRender="everything" 
                                 status="myStatus"/>
                                 
             <apex:commandButton action="{!myDisregard}" 
                                 value="Disregard" 
-                                rendered="{!mode='view'}" 
+                                rendered="{!mode='view' && !Assessment__c.Disregard__c && CanSubmit}" 
                                 reRender="everything" 
                                 status="myStatus"/>                                 
                                 
             <apex:commandButton action="{!myLock}" 
                                 value="Submit" 
-                                rendered="{!mode='view' && Assessment__c.Status__c =='Open'}" 
+                                rendered="{!mode='view' && Assessment__c.Status__c =='Open' && CanSubmit}" 
                                 reRender="everything" 
                                 status="myStatus"/>                                        
         
@@ -80,7 +80,7 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
                                 value="Cancel" 
                                 rendered="{!$CurrentPage.parameters.isnew =='1' && mode='edit'}" 
                                 immediate="true"/>                                 
-                                
+        <apex:image value="/img/lock_small.gif" alt="Locked" width="20" height="20" title="Record is Locked" rendered="{!Assessment__c.Status__c =='Locked'}" />                         
         </div>
     </apex:pageBlockButtons>
 <!-- edit -->    
