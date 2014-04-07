@@ -15,9 +15,9 @@
     <a href="/apex/PersonsBeingServedListView">Persons Being Served</a>&nbsp;>&nbsp;
     <apex:outputLink rendered="{!parentPage != 'PBS'}" value="/apex/PersonBeingServedEditnew?id={!con.Id}">{!con.FirstName} {!con.LastName}</apex:outputLink><apex:outputText value="{!con.FirstName} {!con.LastName}" rendered="{!parentPage == 'PBS'}" />
     <apex:outputPanel id="admlink" rendered="{!parentPage != 'PBS'}">&nbsp;>&nbsp;<apex:outputLink rendered="{!parentPage!= 'Admission'}" value="/{!admId}">Admission</apex:outputLink><apex:outputText rendered="{!parentPage == 'Admission'}" value="Admission" /></apex:outputPanel>
-    <apex:outputText id="asmtlink" rendered="{!parentPage == 'Assessment' && asmtType != 'FAD' }" value="> {!asmtType} Assessment" />
-    <apex:outputPanel id="svcassignlink" rendered="{! parentPage == 'ActionPlan' || parentPage = 'SkillsTracking' || parentPage = 'ActionSummaryReport' || parentPage = 'ShiftNote' || parentPage = 'BehaviorTracking' || parentPage='GoalObjRpt' || parentPage=='Assessment' }">&nbsp;>&nbsp;<a href="/{!servAssignId}">Service Assignment</a></apex:outputPanel>
-    <apex:outputText id="asmtlink2" rendered="{!parentPage == 'Assessment' && asmtType == 'FAD' }" value="> {!asmtType} Assessment" />
+    <apex:outputText id="asmtlink" rendered="{!parentPage == 'Assessment' &&  !BEGINS(asmtType, 'FAD' )}" value=" > {!asmtType} Assessment" />
+    <apex:outputPanel id="svcassignlink" rendered="{! parentPage == 'ActionPlan' || parentPage = 'SkillsTracking' || parentPage = 'ActionSummaryReport' || parentPage = 'ShiftNote' || parentPage = 'BehaviorTracking' || parentPage='GoalObjRpt' || ( parentPage=='Assessment' && BEGINS(asmtType, 'FAD'))}">&nbsp;>&nbsp;<a href="/{!servAssignId}">Service Assignment</a></apex:outputPanel>
+    <apex:outputText id="asmtlink2" rendered="{!parentPage == 'Assessment' &&  BEGINS(asmtType, 'FAD') }" value=" > {! IF( CONTAINS(asmtType, 'Summary'), asmtType, asmtType + ' Assessment')}" />
     <apex:outputPanel id="planlink" rendered="{! parentPage == 'SkillsTracking' || parentPage == 'BehaviorTracking' || ( parentPage == 'ShiftNote' && planID != null)}">&nbsp;>&nbsp;<a href="/{!apId}">Action Plan</a></apex:outputPanel>
     <apex:outputText id="planlinkplan" rendered="{!parentPage == 'ActionPlan'}" value=" > Action Plan" />
     <apex:outputText id="goalobj" rendered="{!parentPage == 'GoalObjRpt'}" value=" > Goal/Objective Documentation Report" />
