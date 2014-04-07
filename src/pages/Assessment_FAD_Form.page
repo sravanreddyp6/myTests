@@ -4,6 +4,7 @@
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
     <apex:stylesheet value="{!if ($CurrentPage.parameters.pdf !='1', $Resource.mentoresdcss, $Resource.mentoresdprint)}" />
     <script>function setFocusOnLoad() {}</script>
+    
 <style>
     body .bPageBlock[id*=main_detail] {
         margin-bottom: 5px;
@@ -45,7 +46,7 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         -->
             <apex:commandButton action="{!myUnlock}" 
                                 value="Unlock" 
-                                rendered="{!mode='view' && Assessment__c.Status__c =='Locked'}" 
+                                rendered="{!mode='view' && Assessment__c.Status__c =='Locked' && $User.Id != Assessment__c.ownerid}" 
                                 reRender="everything" 
                                 status="myStatus"/>
                                 
