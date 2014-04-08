@@ -114,6 +114,9 @@ public class ServiceAssignmentExt {
         assess.Admission__c = admission.id;
         assess.Service_Assignment__c = theServAssign.Id;
         assess.Status__c = 'Open';
+        if(referral.referral_date__c != null){
+            assess.referral_date__c = referral.referral_date__c;
+        }
         insert assess;
         PageReference ref =  new PageReference('/apex/Assessment_FAD_Form?id='+assess.id + '&edit=1&isnew=1');
             

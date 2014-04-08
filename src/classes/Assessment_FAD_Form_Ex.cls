@@ -95,6 +95,10 @@ public with sharing class Assessment_FAD_Form_Ex {
 
     public PageReference myLock(){
         boolean hasError = false;
+        if(assess.phase__c == 'Initial' && assess.referral_date__c ==null){
+            assess.referral_date__c.addError('Referral Date is required before you can submit this assessment');
+            hasError = true;
+        }
         if(mapRes.get('CG_Could_Not_complete').Yes_No__c && mapRes.get('CG_Could_Not_complete_reason').Rating__c == null){
             mapRes.get('CG_Could_Not_complete_reason').Rating__c.addError('Please provide a reason the Caregiver could not complete all questions');
             hasError = true;   

@@ -46,19 +46,19 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         -->
             <apex:commandButton action="{!myUnlock}" 
                                 value="Unlock" 
-                                rendered="{!mode='view' && Assessment__c.Status__c =='Locked' && canUnlock}" 
+                                rendered="{!mode='view' && Assessment__c.Status__c =='Locked' && Assessment__c.Service_assignment__r.Status__c =='Active' && canUnlock}" 
                                 reRender="everything" 
                                 status="myStatus"/>
                                 
             <apex:commandButton action="{!myDisregard}" 
                                 value="Disregard" 
-                                rendered="{!mode='view' && !Assessment__c.Disregard__c && CanSubmit}" 
+                                rendered="{!mode='view' && !Assessment__c.Disregard__c && Assessment__c.Service_assignment__r.Status__c =='Active' && CanSubmit}" 
                                 reRender="everything" 
                                 status="myStatus"/>                                 
                                 
             <apex:commandButton action="{!myLock}" 
                                 value="Submit" 
-                                rendered="{!mode='view' && Assessment__c.Status__c =='Open' && CanSubmit}" 
+                                rendered="{!mode='view' && Assessment__c.Status__c =='Open' && Assessment__c.Service_assignment__r.Status__c =='Active' && CanSubmit}" 
                                 reRender="everything" 
                                 status="myStatus"/>                                        
         
@@ -89,21 +89,18 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         <apex:outputField value="{!Assessment__c.AccountPerson__c}"/>
         
         <apex:inputField required="true" value="{!Assessment__c.Phase__c}">
-            <apex:actionSupport reRender="previous_CG" event="onchange" action="{!myCG_is_same_as_other_assessment}"  />
+            <apex:actionSupport reRender="previous_CG, refDate" event="onchange" action="{!myCG_is_same_as_other_assessment}"  />
         </apex:inputField>
-        
-        <!--
-        <apex:selectList size="1" value="{!Assessment__c.Phase__c}" required="true">
-            <apex:selectOption itemLabel="--None--" itemValue="" ></apex:selectOption>
-            <apex:selectOption itemLabel="Initial" itemValue="Initial" ></apex:selectOption>
-            <apex:selectOption itemLabel="3 Month" itemValue="3 Month"></apex:selectOption>
-            <apex:selectOption itemLabel="Final" itemValue="Final"></apex:selectOption>
-            <apex:actionSupport reRender="previous_CG" event="onchange" action="{!myCG_is_same_as_other_assessment}"  />
-        </apex:selectList>
-        -->
         <apex:outputField value="{!Assessment__c.Service_Assignment__c}"/>
         <apex:outputField value="{!Assessment__c.Status__c}"/>
         <apex:outputField value="{!Assessment__c.Disregard__c}"/>
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel > Referral Date</apex:outputPanel>
+            <apex:outputPanel id="refDate">
+                <apex:inputField value="{!Assessment__c.Referral_Date__c}" rendered="{!Assessment__c.Phase__c =='Initial'}" />
+                <apex:outputField value="{!Assessment__c.Referral_Date__c}" rendered="{!Assessment__c.Phase__c !='Initial'}"/>
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem>
     </apex:pageBlockSection>
 <!-- view -->    
     <apex:pageBlockSection rendered="{!mode='view'}" >
@@ -113,6 +110,7 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         <apex:outputField value="{!Assessment__c.Service_Assignment__c}"/>
         <apex:outputField value="{!Assessment__c.Status__c}"/>
         <apex:outputField value="{!Assessment__c.Disregard__c}"/>
+        <apex:outputField value="{!Assessment__c.Referral_Date__c}"/>
     </apex:pageBlockSection> 
     
 <hr/>      
