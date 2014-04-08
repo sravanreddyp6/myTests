@@ -346,9 +346,12 @@ function hidedio(dio, dio2){
                                         </apex:pageblockSection>
                                     
                                         <apex:pageblockSection title="Results..." columns="1" id="table">
-                                            <apex:pageblockTable value="{!searchedServiceLocationResults}" var="r">
+                                            <apex:pageblockTable value="{!IF(!selAllLocsParam,searchedServiceLocationResults,searchedServiceLocationResultsAll)}" var="r">
                                                 <apex:column >
                                                     <apex:inputCheckbox value="{!r.selected}"/>
+                                                </apex:column>
+                                                <apex:column headerValue="Alias">
+                                                    <apex:outputText >{!r.sl.Name}</apex:outputText>
                                                 </apex:column>
                                                 <apex:column headerValue="Program">
                                                     <apex:outputText >{!r.sl.Program__c}</apex:outputText>
@@ -362,17 +365,18 @@ function hidedio(dio, dio2){
                                                 <apex:column headerValue="Phone">
                                                     <apex:outputText >{!r.sl.Phone__c}</apex:outputText>
                                                 </apex:column>
-                                                <apex:column headerValue="Street">
-                                                    <apex:outputText >{!r.sl.Street__c}</apex:outputText>
+                                                <apex:column headerValue="Address">
+                                                    <c:AddressDisplay Street1="{!r.sl.Street__c}"
+                                                                        city="{!r.sl.City__c}"
+                                                                        State="{!r.sl.State__c}"
+                                                                        Zip="{!r.sl.Zip__c}"/>
+                                                   
                                                 </apex:column>
-                                                <apex:column headerValue="City">
-                                                    <apex:outputText >{!r.sl.City__c}</apex:outputText>
+                                                <apex:column headervalue="TIN">
+                                                    <apex:outputText >{!r.sl.TIN__c}</apex:outputText>
                                                 </apex:column>
-                                                <apex:column headerValue="State">
-                                                    <apex:outputText >{!r.sl.State__c}</apex:outputText>
-                                                </apex:column>
-                                                <apex:column headerValue="Zip">
-                                                    <apex:outputText >{!r.sl.Zip__c}</apex:outputText>
+                                                <apex:column headervalue="NPI">
+                                                    <apex:outputText >{!r.sl.NPI__c}</apex:outputText>
                                                 </apex:column>
                                             </apex:pageblockTable>                                                                                                
                                         </apex:pageblockSection>                                    
@@ -384,9 +388,9 @@ function hidedio(dio, dio2){
                         </apex:facet>
                     </apex:actionStatus>
                 </apex:outputPanel>                            
-                <apex:PageBlockTable value="{!locations}" var="location" id="refreshContractLocs">
+                <apex:PageBlockTable value="{!locations}" var="location" id="refreshContractLocs" ColumnsWidth="2%,3%,10%,10%,20%,15%,10%,20%,10%">
                     <apex:column headerValue="Action" >
-                            <apex:commandLink value="Delete" action="{!RemoveItem}" reRender="refreshContractLocs" status="st">
+                            <apex:commandLink value="Del" action="{!RemoveItem}" reRender="refreshContractLocs" status="st">
                                 <apex:param value="{!location.Service_Location__r.id}" name="p1" assignTo="{!paramSvcLocId}"/>
                             </apex:commandLink>
                             <apex:actionstatus id="st">
@@ -398,15 +402,18 @@ function hidedio(dio, dio2){
                     <apex:Column Value="{!location.Service_Location__r.Name}"/>
                     <apex:Column Value="{!location.Service_Location_Service_Value__c}"/>
                     <apex:column value="{!location.Service_Location__r.Setting__c}"/>
-                    <apex:column value="{!location.Service_Location_Program__c}"/>
+                    <apex:column headerValue="Program"> 
+                        {!SUBSTITUTE(location.Service_Location_Program__c,'-',' - ')}
+                    </apex:column>
                     <apex:Column headerValue="Address">
                         <c:AddressDisplay Street1="{!location.Service_Location_Street__c}"
                                 City="{!location.Service_Location_City__c}"
                                 State="{!location.Service_Location_State__c}"
                                 Zip="{!location.Service_Location_Zip__c}"/>
                     </apex:Column>
-                    <apex:Column Value="{!location.LastModifiedDate}"/>
-                    
+                    <apex:Column Value="{!location.TIN__c}"/>
+                    <apex:column Value="{!location.NPI__c}"/> 
+                    <apex:column Value="{!location.LastModifiedDate}"/> 
                 </apex:PageBlockTable> 
             </apex:PageblockSection>
             
@@ -432,6 +439,8 @@ function hidedio(dio, dio2){
                                 State="{!selLoc.sl.State__c}"
                                 Zip="{!selLoc.sl.Zip__c}"/>
                     </apex:Column>
+                    <apex:column value="{!selLoc.sl.TIN__c}"/>
+                    <apex:column value="{!selLoc.sl.NPI__c}"/>
                     
                 </apex:PageBlockTable> 
             </apex:PageblockSection>
