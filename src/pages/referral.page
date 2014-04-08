@@ -90,6 +90,15 @@ function stopRKey(evt) {
 
 document.onkeypress = stopRKey;
 
+// ERNS-7 enable the diagnosis effective date when diagnosis is chosen
+function enableDiagEff() {
+	if ( j$('[id$=diagIdrop]').val() != '') {
+		j$('input[id$=diageffdate').removeAttr('disabled');
+	} else {
+		j$('input[id$=diageffdate]').val('');
+		j$('input[id$=diageffdate]').attr('disabled', 'disabled')
+	}
+}
   function validateRelatedParty() {
     var errors = '';
     j$('#relatedPartyErrors').html(errors);
@@ -1690,12 +1699,12 @@ document.onkeypress = stopRKey;
 
         <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_I__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />
         <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian', referralRecordType != 'NeuroRestorative')}"/>
-        <apex:inputField value="{!Referral__c.Diagnosis_I__c}" label="Primary Diagnosis" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
+        <apex:inputField id="diagIdrop" value="{!Referral__c.Diagnosis_I__c}" label="Primary Diagnosis" rendered="{!ReferralRecordType == 'NeuroRestorative'}" onchange="enableDiagEff();"/>
         <apex:inputField value="{!Referral__c.Date_of_Injury__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota',referralRecordType=='CareMeridian')}" />
 
         <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_II__c}"  rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />
         <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian')}"/>
-		<apex:inputField value="{!Referral__c.Diagnosis_II_Multi__c}" label="Secondary Diagnosis" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
+		<apex:inputField id="diageffdate" value="{!Referral__c.Diagnosis_Effective_Date__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" html-disabled="true"/>
         
         
         <apex:inputField value="{!Referral__c.Cause_of_Injury__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" />
