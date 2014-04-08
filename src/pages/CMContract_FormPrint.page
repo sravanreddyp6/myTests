@@ -181,26 +181,30 @@ h3{
         <apex:variable var="t" value="" rendered="{!AND(isNeuro,locations.size!=0)}">
         <table border="1" cellpadding="0" class="table2" cellspacing="0" colspan="0">
             <tr>
-                <th class="level2" width="8%">Alias</th>
+                <th class="level2" Width="7%">Alias</th>
                 <th class="level2" width="10%">Service Value</th>
-                <th class="level2" width="20%">Setting</th>
-                <th class="level2" Width="25%">Program</th>
-                <th class="level2">Address</th>
-                <th class="level2" width="12%">Last Modified Date</th>
+                <th class="level2" width="10%">Setting</th>
+                <th class="level2" width="30%">Program</th>
+                <th class="level2" width="15%">Address</th>
+                <th class="level2" width="10%">TIN</th>
+                <th class="level2" width="15%">NPI</th> 
+                
             </tr>
     
         <apex:repeat var="location" value="{!locations}">
     
             <tr>
-                <td class="level2" width="8%">{!location.Service_Location__r.Name}</td>
+                <td class="level2" Width="7%">{!location.Service_Location__r.Name}</td>
                 <td class="level2" width="10%">{!location.Service_Location_Service_Value__c}</td>
-                <td class="level2" width="20%">{!location.Service_Location__r.Setting__c}</td>
-                <td width="25%" class="level2">{!SUBSTITUTE(location.Service_Location_Program__c,'-',' - ')}</td>
-                <td class="level2">{!location.Service_Location_Street__c}<br/>
+                <td class="level2" width="10%">{!SUBSTITUTE(location.Service_Location__r.Setting__c,'/',' / ')}</td>
+                <td class="level2" width="30%">{!SUBSTITUTE(location.Service_Location_Program__c,'-',' - ')}</td>
+                <td class="level2" width="15%">{!location.Service_Location_Street__c}<br/>
                     {!location.Service_Location_City__c}<br/>
                     {!location.Service_Location_State__c}<br/>
                     {!location.Service_Location_Zip__c}<br/></td>
-                <td class="level2" width="12%">{!location.LastModifiedDate} </td>
+                <td class="level2" width="10%">{!location.TIN__c}</td>
+                <td class="level2" width="15%">{!location.NPI__c}</td>
+                
             </tr>
     
         </apex:repeat>
