@@ -918,7 +918,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
   	
   	Boolean hasError = false, hasError2 = false;
 	hasError = checkForBlankFields( personBeingRefRecord, 'Person_Being_Referred__c', new list<string>{'first_name__c','last_name__c','date_of_birth__c','gender__c','race__c', 'marital_status__c', 'street_1__c', 'city__c', 'state__c', 'zip_code__c', 'phone__c', 'email_address__c'}, 'A value for {0} is required to close/admit');
-	hasError2 = checkForBlankFields( referralRecord, 'Referral__c', new list<string>{'referral_status__c', 'referral_source_type__c','agency_name__c','referral_name__c', 'evaluated_by_internal__c', 'legal_guardian_status__c','referral_date__c','how_did_they_learn__c','billing_id__c', 'date_of_injury__c','cause_of_injury_pick__c','current_location__c','previous_brain_injury__c','did_alcohol_contribute_to_injury__c','did_drug_use_contribute_to_injury__c'}, 'A value for {0} is required to close/admit');
+	hasError2 = checkForBlankFields( referralRecord, 'Referral__c', new list<string>{'referral_status__c', 'referral_source_type__c','agency_name__c','referral_name__c', 'evaluated_by_internal__c', 'legal_guardian_status__c','referral_date__c','how_did_they_learn__c','billing_id__c', 'date_of_injury__c','cause_of_injury_pick__c','current_location_type__c','previous_brain_injury__c','did_alcohol_contribute_to_injury__c','did_drug_use_contribute_to_injury__c'}, 'A value for {0} is required to close/admit');
 	system.debug('checkNRRequiredCloseAdmitFields result: ' + (!hasError && !hasError2));	
 	return ( !hasError && !hasError2 );
 	
