@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>TMN_User__c.First_Name__c</field>
+    </columns>
+    <columns>
+        <field>TMN_User__c.Last_Name__c</field>
+    </columns>
+    <columns>
+        <field>CUST_NAME</field>
+    </columns>
+    <columns>
+        <field>TMN_User__c.Employee_Number__c</field>
+    </columns>
+    <columns>
+        <field>TMN_User__c.Compliance_Link__c</field>
+    </columns>
+    <columns>
+        <field>TMN_User__c.Email__c</field>
+    </columns>
+    <description>Compliance Survey Links report based off of the TMN Users object</description>
+    <filter>
+        <criteriaItems>
+            <column>TMN_User__c.Job_Status__c</column>
+            <operator>equals</operator>
+            <value>Active</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>TMN_User__c.Pay_Basis__c</column>
+            <operator>equals</operator>
+            <value>Salaried</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>TMN_User__c.Email__c</column>
+            <operator>contains</operator>
+            <value>thementornetwork.com,caremeridian.com,neurorestorative.com</value>
+        </criteriaItems>
+    </filter>
+    <format>Tabular</format>
+    <name>Compliance Survey Links</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>CustomEntity$TMN_User__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <timeFrameFilter>
+        <dateColumn>TMN_User__c.Hire_Date__c</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>
