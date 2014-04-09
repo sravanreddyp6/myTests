@@ -4200,7 +4200,9 @@ ISNULL(Home_Study_Completed_Date__c))</errorConditionFormula>
 &amp;&amp;
 NOT(ISPICKVAL(How_did_you_hear_about_us__c,&quot;&quot;))
 &amp;&amp;
-ISBLANK(  Outreach_Event__c )</errorConditionFormula>
+ISBLANK(  Outreach_Event__c )
+&amp;&amp;
+Entry_Point__c ==&apos;Employee&apos;</errorConditionFormula>
         <errorDisplayField>Outreach_Event__c</errorDisplayField>
         <errorMessage>Please add an Ad Placement/Event Specifics</errorMessage>
     </validationRules>
@@ -4211,7 +4213,9 @@ ISBLANK(  Outreach_Event__c )</errorConditionFormula>
 &amp;&amp;
 NOT(ISPICKVAL(How_did_you_hear_about_us__c,&quot;&quot;))
 &amp;&amp;
-ISBLANK( Outreach_Source__c )</errorConditionFormula>
+ISBLANK( Outreach_Source__c )
+&amp;&amp;
+Entry_Point__c ==&apos;Employee&apos;</errorConditionFormula>
         <errorDisplayField>Outreach_Source__c</errorDisplayField>
         <errorMessage>Please add an Ad Campaign/Event Type</errorMessage>
     </validationRules>
