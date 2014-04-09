@@ -259,6 +259,32 @@ document.onkeypress = stopRKey;
       j$('input[id$=MN_Fax]').val(fax);
   }
 
+  function copyPermanentNeuro(element) {
+      var street1 = '';
+      var street2 = '';
+      var city = '';
+      var state = '';
+      var zip = '';
+      var phone = '';
+      var email = '';
+      var fax = '';
+      if (element.checked) {
+          street1 = j$('input[id$=Ref_Perm_Street]').val();
+          city = j$('input[id$=Ref_Perm_City]').val();
+          state = j$('select[id$=Ref_Perm_State]').val();
+          zip = j$('input[id$=Ref_Perm_Zip]').val();
+      }
+
+      j$('input[id$=MN_Street1]').val(street1);
+      j$('input[id$=Neuro_Street1]').val(street1);
+      j$('input[id$=MN_Street2]').val(street2);
+      j$('input[id$=Neuro_Street2]').val(street2);
+      j$('input[id$=MN_City]').val(city);
+      j$('select[id$=MN_State]').val(state);
+      j$('input[id$=MN_Zip]').val(zip);
+
+  }
+
   function alertOnHighRisk() {
     if (j$('[id*=redFlagged]').val() == "true") {
       alert('This referral has been flagged as High Risk. Please follow the process in your state to move forward with this referral appropriately.');
@@ -296,7 +322,7 @@ document.onkeypress = stopRKey;
     <apex:actionFunction name="saveRef" action="{!saveRef}"/>
     <apex:actionFunction name="checkRedFlags" action="{!checkRedFlags}" oncomplete="alertOnHighRisk(); saveRef(); return false;" rerender="redFlagged"/>
     <apex:actionRegion >
-        <apex:actionFunction name="setReferralRecordType" action="{!setReferralRecordType}" rerender="ReferralDetail,Funding,progConsid,ReferralServices,msgs,ReferralDetailHeader,progConsiderationsDetail" />
+        <apex:actionFunction name="setReferralRecordType" action="{!setReferralRecordType}" rerender="ReferralDetail,ReferralDetail_1,Funding,progConsid,ReferralServices,msgs,ReferralDetailHeader,referralDetailBlock,progConsid,progConsiderationsDetail,placementRiskBlock, JuvBlockSection, PlacementHxBlockSection, HxBlock"/> 
     </apex:actionRegion>
     <apex:actionRegion >
         <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" oncomplete="openModalDialog('relatedPartyModal', 'span', 'Add Related Party','none');" status="showAddRelPartyStatus" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs" />
@@ -463,7 +489,7 @@ document.onkeypress = stopRKey;
                              id="stateForPreferredService" rendered="{!OR(!ISNULL(personBeingRefRecord.Id),!ISNULL(personBeingServedRecord.Id))}">
           <apex:actionRegion >
               <apex:inputField value="{!Referral__c.State_for_Preferred_Service__c}" required="{!referralRecordType!='NeuroRestorative'}" id="sfps">
-                  <apex:actionSupport event="onchange" oncomplete="j$('select[id$=servicesRequested]').val('');setReferralRecordType();" rerender="referralDetailBlock,ReferralDetailHeader,ReferralDetail,ReferralServices,progConsid,ReferralDetail_1"/>
+                  <apex:actionSupport event="onchange" oncomplete="j$('select[id$=servicesRequested]').val('');setReferralRecordType();" rerender="placementRiskBlock, JuvBlockSection, PlacementHxBlockSection, HxBlock"/>
               </apex:inputField>
           </apex:actionRegion>
       </apex:pageblockSection>
@@ -970,7 +996,7 @@ document.onkeypress = stopRKey;
 </apex:actionRegion>
 
     <!-- Added by Kossi 06/06/13 2:00 AM -->
-
+<Apex:actionregion >
         <apex:outputPanel id="searchDialog" style="display:none">
             <apex:pageBlock id="block">
                 <apex:pageblockButtons location="top">
@@ -1034,7 +1060,8 @@ document.onkeypress = stopRKey;
                 </apex:pageblockTable>
             </apex:pageBlock>
         </apex:outputPanel>
-
+</Apex:actionregion>
+<apex:actionregion >
         <apex:outputPanel id="searchDialog2" style="display:none">
             <apex:pageBlock id="block2">
                 <apex:pageblockButtons location="top">
@@ -1098,7 +1125,7 @@ document.onkeypress = stopRKey;
                 </apex:pageblockTable>
             </apex:pageBlock>
         </apex:outputPanel>
-
+</apex:actionregion>
     <!---->
 
     <!--Activities Modal-->
@@ -1198,16 +1225,20 @@ document.onkeypress = stopRKey;
         <apex:inputField value="{!Referral__c.Financial_Status__c}" rendered="{!ReferralRecordType == 'CareMeridian'}" />
         <apex:inputField value="{!Referral__c.Clinical_Evaluation_Status__c}" rendered="{!ReferralRecordType == 'CareMeridian'}" />
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}">
-          <apex:outputText value="City"/>
+          <apex:outputText value="Location"/>
           <apex:outputPanel styleClass="nowrap@">
-            <apex:inputText value="{!Referral__c.Referrer_City__c}"  id="Perm_City"/>&nbsp;
+            <apex:outputLabel value="Street" style="width: 10px;" />&nbsp;
+            <apex:inputText value="{!Referral__c.Referrer_Street__c}"  id="Ref_Perm_Street"/>&nbsp;
+            <br/>   
+            <apex:outputLabel value="City"  style="width: 10px;" />&nbsp; &nbsp; &nbsp;
+            <apex:inputText value="{!Referral__c.Referrer_City__c}"  id="Ref_Perm_City"/>&nbsp;
             <apex:outputLabel value="State" />&nbsp;
-            <apex:inputField value="{!Referral__c.Referrer_State__c}"  id="Perm_State"/>&nbsp;
+            <apex:inputField value="{!Referral__c.Referrer_State__c}"  id="Ref_Perm_State"/>&nbsp;
             <apex:outputLabel value="Zip" />&nbsp;
-            <apex:inputText value="{!Referral__c.Referrer_Zip__c}" style="width: 42px;"  id="Perm_Zip"/>
+            <apex:inputText value="{!Referral__c.Referrer_Zip__c}" style="width: 42px;"  id="Ref_Perm_Zip"/>
           </apex:outputPanel>
         </apex:pageBlockSectionItem>
-        <apex:inputField value="{!Referral__c.Referrer_Address__c}" rendered="{!ReferralRecordType=='Cambridge Florida' || ReferralRecordType=='Cambridge Maryland'}"/>
+        <apex:inputField value="{!Referral__c.Referrer_Street__c}" rendered="{!ReferralRecordType=='Cambridge Florida' || ReferralRecordType=='Cambridge Maryland'}"/>
         <apex:inputField value="{!Referral__c.Referrer_Email__c}" rendered="{!ReferralRecordType=='NeuroRestorative' || ReferralRecordType=='Cambridge Florida' || ReferralRecordType=='Cambridge Maryland'}"/>
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative' || isCambridge}"/>
         <apex:inputField value="{!Referral__c.Billing_ID__c}" rendered="{!isCambridge}" />
@@ -1216,8 +1247,9 @@ document.onkeypress = stopRKey;
         <apex:inputField value="{!Referral__c.Case_Manager_Name__c}" />
         <apex:inputField value="{!Referral__c.Case_Manager_Phone__c}" />
         <!--apex:inputField value="{!Referral__c.Evaluation_Date__c}" rendered="{!referralRecordType=='CareMeridian'}"/-->
-        <apex:inputField value="{!Referral__c.Evaluated_By__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
-
+        
+            
+            
 <!--  START NEURO EvalBy and RefBy SECTION -->
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
@@ -1263,7 +1295,9 @@ document.onkeypress = stopRKey;
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
 <!--  END NEURO EvalBy and RefBy SECTION -->
 
+
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}"/>
+        <apex:inputField label="Evaluated By" value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
 
         <apex:inputField value="{!Referral__c.Current_Location__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
         <apex:inputField value="{!Referral__c.Current_Location_Type__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
@@ -1323,7 +1357,7 @@ document.onkeypress = stopRKey;
        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}"/>
      </apex:pageBlockSection>
     <apex:actionRegion >
-     <apex:pageBlockSection title="Placement Risk" rendered="{!referralRecordType=='Cambridge Florida' || referralRecordType=='Cambridge Maryland'}">
+     <apex:pageBlockSection title="Placement Risk" id="placementRiskBlock" rendered="{!referralRecordType=='Cambridge Florida' || referralRecordType=='Cambridge Maryland'}">
          <apex:inputField label="Is the person at risk of an out of home placement?" value="{!Referral__c.Risk_of_Out_of_Home_Placement__c}">
              <apex:actionStatus id="statusPlaceRisk">
                  <apex:facet name="start">
@@ -1333,8 +1367,9 @@ document.onkeypress = stopRKey;
                  </apex:facet>
                  <apex:facet name="stop"></apex:facet>
              </apex:actionStatus>
-             <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusPlaceRisk" />
+             <apex:actionSupport event="onchange" rerender="placementRiskBlock" status="statusPlaceRisk" />
          </apex:inputField>
+         
          <apex:inputField label="How great is the risk?" value="{!Referral__c.Risk_Level__c}" html-disabled="true" rendered="{!Referral__c.Risk_of_Out_of_Home_Placement__c!='Yes'}" />
          <apex:inputField label="How great is the risk?" value="{!Referral__c.Risk_Level__c}" rendered="{!Referral__c.Risk_of_Out_of_Home_Placement__c=='Yes'}" />
          <apex:inputField label="Select the type of placement that would be most likely to occur, should an out of home placement be required:" value="{!Referral__c.Placement_Type_Risk__c}" html-disabled="true" rendered="{!Referral__c.Risk_of_Out_of_Home_Placement__c!='Yes'}" />
@@ -1347,13 +1382,13 @@ document.onkeypress = stopRKey;
                  </apex:facet>
                  <apex:facet name="stop"></apex:facet>
              </apex:actionStatus>
-             <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusPlaceTypeRisk" />
+             <apex:actionSupport event="onchange" rerender="placementRiskBlock" status="statusPlaceTypeRisk" />
          </apex:inputField>
          <apex:inputField label="Other (specify)" value="{!Referral__c.Other_Placement_Type_Desc__c}" html-disabled="true" rendered="{!Referral__c.Placement_Type_Risk__c!='Other (specify)'}" />
          <apex:inputField label="Other (specify)" value="{!Referral__c.Other_Placement_Type_Desc__c}" rendered="{!Referral__c.Placement_Type_Risk__c=='Other (specify)'}" />
      </apex:pageBlockSection>
    </apex:actionRegion>
-   <apex:actionRegion >
+   
      <apex:pageBlockSection id="PlacementHxBlockSection" title="Placement History" rendered="{!referralRecordType=='Cambridge Florida' || referralRecordType=='Cambridge Maryland'}">
          <apex:inputField label="Does the person have a history of placements (past or current)?" value="{!Referral__c.Placement_History__c}">
              <apex:actionStatus id="statusPlaceHx">
@@ -1455,29 +1490,59 @@ document.onkeypress = stopRKey;
          </apex:inputField>
          <apex:inputField value="{!Referral__c.Placement_Past_Other_Describe__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || Referral__c.Placement_Other_Count__c == null || Referral__c.Placement_Other_Count__c == 0}" />
          <apex:inputField value="{!Referral__c.Placement_Past_Other_Describe__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Other_Count__c != null && Referral__c.Placement_Other_Count__c > 0}" />
-         <apex:pageBlockSectionItem >
-             <hr />
+         
+         </apex:pageBlockSection>
+         
+ 		<apex:pageBlockSection id="JuvBlockSection" title="Juvenile Services Info" rendered="{!referralRecordType=='Cambridge Florida' || referralRecordType=='Cambridge Maryland'}">
+ 
+ 		<apex:pageBlockSectionItem >
+		 <apex:outputlabel for="previnvolvecb" value="Previous Juvenile Services Involvement?" />
+         <apex:actionregion >
+         <apex:inputField value="{!Referral__c.Previous_Juvenile_Services_Involvement__c}" id="previnvolvecb" >
+         
+             <apex:actionStatus id="statusPrevJuv">
+                 <apex:facet name="start">
+                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                     </div>
+                 </apex:facet>
+                 <apex:facet name="stop"></apex:facet>
+             </apex:actionStatus>
+             <apex:actionSupport event="onchange" rerender="HxBlock,moreHxBlock" status="statusPrevJuv" />
+         </apex:inputField>
+		</apex:actionregion>
+		</apex:pageBlockSectionItem>
+		 <apex:pageblockSectionItem />
+		 <apex:pageBlockSectionItem >
+         <apex:outputlabel for="currinvolvecb" value="Current Juvenile Services Involvement?" />
+         <apex:actionregion >
+         <apex:inputField value="{!Referral__c.Current_Juvenile_Services_Involvement__c}" id="currinvolveb2" >
+         
+             <apex:actionStatus id="statusCurrJuv">
+                 <apex:facet name="start">
+                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                     </div>
+                 </apex:facet>
+                 <apex:facet name="stop"></apex:facet>
+             </apex:actionStatus>
+             <apex:actionSupport event="onchange" rerender="HxBlock,moreHxBlock" status="statusCurrJuv" />
+         </apex:inputField>
+		</apex:actionregion>
          </apex:pageBlockSectionItem>
-         <apex:pageBlockSectionItem >
-             <hr />
-         </apex:pageBlockSectionItem>
-         <apex:pageBlockSectionItem >
-             <apex:outputText value="Juvenile Services Info" style="font-weight:bold;" />
-         </apex:pageBlockSectionItem>
+         <apex:pageblockSectionItem />
+         </apex:pageBlockSection>
+		<apex:pageBlockSection id="HxBlock" rendered="{!referralRecordType=='Cambridge Florida' || referralRecordType=='Cambridge Maryland'}">
+          
+         <apex:inputField label="Current Charges" value="{!Referral__c.Current_Charges__c}" html-disabled="true" rendered="{!Referral__c.Current_Juvenile_Services_Involvement__c!='Yes' }" style="width:95%;" />
+         <apex:inputField label="Current Charges" value="{!Referral__c.Current_Charges__c}" rendered="{!Referral__c.Current_Juvenile_Services_Involvement__c=='Yes' }" style="width:95%;" required="{!Referral__c.Current_Juvenile_Services_Involvement__c == 'Yes'}"/>
          <apex:pageBlockSectionItem />
-         <apex:inputField value="{!Referral__c.Previous_Juvenile_Services_Involvement__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
-         <apex:inputField value="{!Referral__c.Previous_Juvenile_Services_Involvement__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
-         <apex:pageBlockSectionItem />
-         <apex:inputField value="{!Referral__c.Current_Juvenile_Services_Involvement__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
-         <apex:inputField value="{!Referral__c.Current_Juvenile_Services_Involvement__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
-         <apex:pageBlockSectionItem />
-          <apex:pageBlockSectionItem />
-          <apex:pageBlockSectionItem />
-         <apex:inputField label="Current Charges" value="{!Referral__c.Current_Charges__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" style="width:95%;" />
-         <apex:inputField label="Current Charges" value="{!Referral__c.Current_Charges__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" style="width:95%;" />
-         <apex:pageBlockSectionItem />
-         <apex:inputField label="Is this charge considered a misdemeanor?" value="{!Referral__c.Misdemeanor__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
-         <apex:inputField label="Is this charge considered a misdemeanor?" value="{!Referral__c.Misdemeanor__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}">
+         
+         <apex:inputField label="Is this charge considered a misdemeanor?" value="{!Referral__c.Misdemeanor__c}" html-disabled="true" rendered="{!Referral__c.Current_Juvenile_Services_Involvement__c!='Yes'}" />
+         <apex:pageBlockSectionItem rendered="{!Referral__c.Current_Juvenile_Services_Involvement__c=='Yes' }" >
+         <apex:outputLabel for="misdemeanor" value="Is this charge considered a misdemeanor?" /> 
+         <apex:actionRegion >
+         <apex:inputField id="misdemeanor" value="{!Referral__c.Misdemeanor__c}" rendered="{!Referral__c.Current_Juvenile_Services_Involvement__c=='Yes' }" required="{!Referral__c.Current_Juvenile_Services_Involvement__c=='Yes' }">
              <apex:actionStatus id="statusMis">
                  <apex:facet name="start">
                      <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
@@ -1486,10 +1551,17 @@ document.onkeypress = stopRKey;
                  </apex:facet>
                  <apex:facet name="stop"></apex:facet>
              </apex:actionStatus>
-             <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusMis" />
+             <apex:actionSupport event="onchange" rerender="moreHxBlock" status="statusMis" />
          </apex:inputField>
-         <apex:inputField label="Is this charge considered a felony?" value="{!Referral__c.Felony__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
-         <apex:inputField label="Is this charge considered a felony?" value="{!Referral__c.Felony__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}">
+         </apex:actionRegion>
+         </apex:pageBlockSectionItem>
+         
+         <apex:inputField label="Is this charge considered a felony?" value="{!Referral__c.Felony__c}" html-disabled="true" rendered="{!Referral__c.Current_Juvenile_Services_Involvement__c!='Yes' }" />
+         <apex:pageBlockSectionItem rendered="{!Referral__c.Current_Juvenile_Services_Involvement__c=='Yes' }" >
+         <apex:outputLabel for="felony"  value="Is this charge considered a felony?" /> 
+         <apex:actionregion >
+         
+         <apex:inputField id="felony" value="{!Referral__c.Felony__c}" required="{!Referral__c.Current_Juvenile_Services_Involvement__c=='Yes'}">
              <apex:actionStatus id="statusFel">
                  <apex:facet name="start">
                      <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
@@ -1498,26 +1570,31 @@ document.onkeypress = stopRKey;
                  </apex:facet>
                  <apex:facet name="stop"></apex:facet>
              </apex:actionStatus>
-             <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusFel" />
+             <apex:actionSupport event="onchange" rerender="moreHxBlock" status="statusFel" />
          </apex:inputField>
+         </apex:actionregion>
+         </apex:pageBlockSectionItem>
+         
+</apex:pageBlockSection>
+<apex:pageBlockSection id="moreHxBlock" rendered="{!referralRecordType=='Cambridge Florida' || referralRecordType=='Cambridge Maryland'}">
 
 
-         <apex:inputField label="Is this client considered pre-court with charges pending?" value="{!Referral__c.Pre_Court__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || (Referral__c.Felony__c!='Yes' && Referral__c.Misdemeanor__c!='Yes')}" />
-         <apex:inputField label="Is this client considered pre-court with charges pending?" value="{!Referral__c.Pre_Court__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && (Referral__c.Felony__c=='Yes' || Referral__c.Misdemeanor__c=='Yes')}" />
+         <apex:inputField label="Is this client considered pre-court with charges pending?" value="{!Referral__c.Pre_Court__c}" html-disabled="true" rendered="{! Referral__c.Current_Juvenile_Services_Involvement__c!='Yes' || (Referral__c.Felony__c!='Yes' && Referral__c.Misdemeanor__c!='Yes')}"/>
+         
+         <apex:inputField label="Is this client considered pre-court with charges pending?" value="{!Referral__c.Pre_Court__c}" rendered="{! Referral__c.Current_Juvenile_Services_Involvement__c=='Yes' && (Referral__c.Felony__c=='Yes' || Referral__c.Misdemeanor__c=='Yes')}" required="{! Referral__c.Current_Juvenile_Services_Involvement__c=='Yes' && (Referral__c.Felony__c=='Yes' || Referral__c.Misdemeanor__c=='Yes')}"/>
 
-         <apex:inputField value="{!Referral__c.Adjudicated_Delinquent__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || (Referral__c.Felony__c!='Yes' && Referral__c.Misdemeanor__c!='Yes')}" />
-         <apex:inputField value="{!Referral__c.Adjudicated_Delinquent__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && (Referral__c.Felony__c=='Yes' || Referral__c.Misdemeanor__c=='Yes')}" />
+         <apex:inputField value="{!Referral__c.Adjudicated_Delinquent__c}" html-disabled="true" rendered="{! Referral__c.Current_Juvenile_Services_Involvement__c!='Yes' || (Referral__c.Felony__c!='Yes' && Referral__c.Misdemeanor__c!='Yes')}"/>
+         <apex:inputField id="delinquent" value="{!Referral__c.Adjudicated_Delinquent__c}" rendered="{! Referral__c.Current_Juvenile_Services_Involvement__c=='Yes' && (Referral__c.Felony__c=='Yes' || Referral__c.Misdemeanor__c=='Yes')}" required="{! Referral__c.Current_Juvenile_Services_Involvement__c=='Yes' && (Referral__c.Felony__c=='Yes' || Referral__c.Misdemeanor__c=='Yes')}"/>
 
-         <apex:inputField value="{!Referral__c.Probation__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || (Referral__c.Felony__c!='Yes' && Referral__c.Misdemeanor__c!='Yes')}" />
-         <apex:inputField value="{!Referral__c.Probation__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && (Referral__c.Felony__c=='Yes' || Referral__c.Misdemeanor__c=='Yes')}" />
+         <apex:inputField value="{!Referral__c.Probation__c}" html-disabled="true" rendered="{! Referral__c.Current_Juvenile_Services_Involvement__c!='Yes' || (Referral__c.Felony__c!='Yes' && Referral__c.Misdemeanor__c!='Yes')}"/>
+         <apex:inputField id="probation" value="{!Referral__c.Probation__c}" rendered="{! Referral__c.Current_Juvenile_Services_Involvement__c=='Yes' && (Referral__c.Felony__c=='Yes' || Referral__c.Misdemeanor__c=='Yes')}" required="{! Referral__c.Current_Juvenile_Services_Involvement__c=='Yes' && (Referral__c.Felony__c=='Yes' || Referral__c.Misdemeanor__c=='Yes')}"/>
 
-         <apex:inputField label="Is this client receiving after care supervision?" value="{!Referral__c.After_Care__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || (Referral__c.Felony__c!='Yes' && Referral__c.Misdemeanor__c!='Yes')}" />
-         <apex:inputField label="Is this client receiving after care supervision?" value="{!Referral__c.After_Care__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && (Referral__c.Felony__c=='Yes' || Referral__c.Misdemeanor__c=='Yes')}" />
-
-         <apex:inputField value="{!Referral__c.Repeat_Offender__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || (Referral__c.Felony__c!='Yes' && Referral__c.Misdemeanor__c!='Yes')}" />
-         <apex:inputField value="{!Referral__c.Repeat_Offender__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && (Referral__c.Felony__c=='Yes' || Referral__c.Misdemeanor__c=='Yes')}" />
+         <apex:inputField label="Is this client receiving after care supervision?" value="{!Referral__c.After_Care__c}" html-disabled="true" rendered="{! Referral__c.Current_Juvenile_Services_Involvement__c!='Yes' || (Referral__c.Felony__c!='Yes' && Referral__c.Misdemeanor__c!='Yes')}"/>
+         <apex:inputField id="supervised" label="Is this client receiving after care supervision?" value="{!Referral__c.After_Care__c}" rendered="{! Referral__c.Current_Juvenile_Services_Involvement__c=='Yes' && (Referral__c.Felony__c=='Yes' || Referral__c.Misdemeanor__c=='Yes')}" required="{! Referral__c.Current_Juvenile_Services_Involvement__c=='Yes' && (Referral__c.Felony__c=='Yes' || Referral__c.Misdemeanor__c=='Yes')}"/>
+         <apex:inputField value="{!Referral__c.Repeat_Offender__c}" html-disabled="true" rendered="{! Referral__c.Current_Juvenile_Services_Involvement__c!='Yes' || (Referral__c.Felony__c!='Yes' && Referral__c.Misdemeanor__c!='Yes')}"/>
+         <apex:inputField id="offender" value="{!Referral__c.Repeat_Offender__c}" rendered="{! Referral__c.Current_Juvenile_Services_Involvement__c=='Yes' && (Referral__c.Felony__c=='Yes' || Referral__c.Misdemeanor__c=='Yes')}" required="{! Referral__c.Current_Juvenile_Services_Involvement__c=='Yes' && (Referral__c.Felony__c=='Yes' || Referral__c.Misdemeanor__c=='Yes')}"/>
      </apex:pageBlockSection>
-    </apex:actionRegion>
+     
      <apex:pageBlockSection showHeader="false" columns="2" collapsible="false" id="ReferralStatus">
        <apex:inputField id="closeDate" value="{!Referral__c.Close_Date__c}" rendered="{!Referral__c.Referral_Status__c=='Closed'}"/>
        <apex:inputField id="closeReason" value="{!Referral__c.Close_Reason__c}" rendered="{!Referral__c.Referral_Status__c=='Closed'}"/>
@@ -1618,7 +1695,7 @@ document.onkeypress = stopRKey;
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}">
              <apex:outputText value="Current Location"/>
              <apex:outputPanel >
-                 <input id="MN_usePermanent" type="checkbox" value="1" onchange="copyPermanent(this);"/>&nbsp;Same as Permanent
+                 <input id="NR_usePermanent" type="checkbox" value="1" onchange="copyPermanentNeuro(this);"/>&nbsp; <apex:outputLabel for="NR_usePermanent">Same as Facility</apex:outputLabel> 
              </apex:outputPanel>
          </apex:pageBlockSectionItem>
         <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota', ReferralRecordType != 'CareMeridian')}"/>
@@ -1749,11 +1826,11 @@ document.onkeypress = stopRKey;
 
         <!--Flavor Specific fields-->
 
-        <apex:inputField value="{!Referral__c.Primary_Diagnosis__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
-        <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}"/>
+        <apex:inputField value="{!Referral__c.Primary_Diagnosis__c}" rendered="{! OR(referralRecordType=='CareMeridian',referralRecordType=='Wisconsin' ) }"/>
+        <apex:pageBlockSectionItem rendered="{!OR(referralRecordType=='CareMeridian',referralRecordType=='Wisconsin' )}"/>
 
-        <apex:inputField value="{!Referral__c.Secondary_Diagnosis__c}" rendered="{!OR(ReferralRecordType == 'California',referralRecordType=='CareMeridian')}" />
-        <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}"/>
+        <apex:inputField value="{!Referral__c.Secondary_Diagnosis__c}" rendered="{!OR(ReferralRecordType == 'California',referralRecordType=='CareMeridian', referralRecordType=='Wisconsin')}" />
+        <apex:pageBlockSectionItem rendered="{!OR(referralRecordType=='CareMeridian',referralRecordType=='Wisconsin' )}"/>
 
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'California'}"/>
         <apex:inputField value="{!Referral__c.Level_of_Disability__c}" rendered="{!ReferralRecordType == 'California'}" />
