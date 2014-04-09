@@ -4,6 +4,9 @@
 		<field>USER_ID</field>
 	</columns>
 	<columns>
+		<field>User.State__c</field>
+	</columns>
+	<columns>
 		<field>FIRST_NAME</field>
 	</columns>
 	<columns>
@@ -21,6 +24,8 @@
 	<columns>
 		<field>LAST_LOGIN</field>
 	</columns>
+	<description>List of users with Recruiter Profile by Operating Group
+		and State (Includes Role and Last Login)</description>
 	<filter>
 		<criteriaItems>
 			<column>User.ProfileName__c</column>
@@ -28,8 +33,13 @@
 			<value>Mentor Recruiter,Mentor Recruiter Manager</value>
 		</criteriaItems>
 	</filter>
-	<format>Tabular</format>
-	<name>User Role Report</name>
+	<format>Summary</format>
+	<groupingsDown>
+		<dateGranularity>Day</dateGranularity>
+		<field>User.Operating_Group__c</field>
+		<sortOrder>Asc</sortOrder>
+	</groupingsDown>
+	<name>Recruiter User List</name>
 	<params>
 		<name>active</name>
 		<value>active</value>
@@ -40,8 +50,8 @@
 	</params>
 	<reportType>User</reportType>
 	<showDetails>true</showDetails>
-	<sortColumn>LAST_LOGIN</sortColumn>
-	<sortOrder>Desc</sortOrder>
+	<sortColumn>User.State__c</sortColumn>
+	<sortOrder>Asc</sortOrder>
 	<timeFrameFilter>
 		<dateColumn>LAST_LOGIN</dateColumn>
 		<interval>INTERVAL_CUSTOM</interval>
