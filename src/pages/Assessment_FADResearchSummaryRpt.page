@@ -1,4 +1,4 @@
-<apex:page controller="Assessment_FADResearchSummaryRpt_cnt" docType="html-5.0" sidebar="false">
+<apex:page controller="Assessment_FADResearchSummaryRpt_cnt" docType="html-5.0" sidebar="false" readOnly="true">
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:includeScript value="{!$Resource.jquery}"/>
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
@@ -13,17 +13,92 @@
     }
 
 </style>
+<style>
+.thinking{
+    opacity:0.8;
+    background-color:#ccc;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}
 
+.thinkingwheel{
+    position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+}
+#mytbl tr:nth-child(even)       { background-color:#eee; }
+#mytbl tr:nth-child(odd)      { //background-color:#fff; }
+
+#mytbl td{
+    font-size: 12px;
+    padding: 3px;
+}
+.headRow{
+   // background-color: white !important;
+    font-weight: bold;
+    border-bottom: 1px #dbdbdb solid;
+ //   width: 15%;
+    padding: 7px !important;
+
+}
+
+#mytbl{
+    border: 1px solid #dbdbdb;
+    border-top: none;
+    padding: 0px;
+    margin-top: -9px;
+    margin-bottom: 7px;
+
+}
+.sorting{
+    background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_both.png')}') no-repeat center right;
+}
+.sorting_asc{
+    background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_asc.png')}') no-repeat center right;
+}
+.sorting_desc{
+    background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_desc.png')}') no-repeat center right;
+}
+.txtcol{
+    
+}
+.timecol{
+}
+.mytbl{
+
+    border: 1px #dbdbdb solid;
+    width: 250px;
+    margin-left: 40%;
+}
+.tblheader{
+    background-color: #99ccff;
+    border-bottom: 1px #dbdbdb solid;
+
+}
+.tblrow{
+
+    border-bottom: 1px #dbdbdb solid;
+    border-right: 1px #dbdbdb solid;
+}
+.header{
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px;
+}
+</style>
 <script>
     function setFocusOnLoad() {}
 </script>
 <apex:form id="frm" >
+<apex:commandButton value="Run" action="{!runreport}" reRender="dataTable, msg" status="myStatus"/>
     <apex:pageBlock title="Filters" >
         <apex:pageBlockButtons location="bottom" >
-            <apex:commandButton value="Run" action="{!runreport}" reRender="dataTable, msg" status="myStatus"/>
+            
         </apex:pageBlockButtons>
         <apex:pageBlockSection >
-        
+        <!--
         <apex:input id="start_date" 
                         size="10" 
                         onfocus="DatePicker.pickDate(false, this , false);" 
@@ -31,18 +106,19 @@
                         label="Start Date"  
                         value="{!fStartDate}"
                         required="true"/>
+                        -->
         </apex:pageBlockSection>
    </apex:pageBlock>
 </apex:form>
 
 
-<apex:outputPanel layout="block" id="dataTable" style="width: 6000px;">   
+<apex:outputPanel layout="block" id="dataTable" style="width: 7000px;">   
    <apex:pageBlock title="Results">
         <apex:pageBlockButtons > 
             <div style="float: right"><input class="btn" type="button" onclick="tableToExcel('mytbl', 'W3C Example Table')" value="Export to Excel"/></div>
         </apex:pageBlockButtons>  
 
-        <table  cellpadding="0" cellspacing="0">
+        <table id="mytbl" cellpadding="0" cellspacing="0">
             <thead class="headRow">
                 <tr class="headRow">
                     <td style="width: 120px;"  class="headRow">Last Name</td>
