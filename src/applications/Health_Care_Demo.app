@@ -2,6 +2,7 @@
 <CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
     <defaultLandingTab>standard-home</defaultLandingTab>
     <label>Health Care Protocol</label>
+    <logo>SharedDocuments/MENTOR_png.png</logo>
     <tab>standard-Chatter</tab>
     <tab>standard-Workspace</tab>
     <tab>standard-ContentSearch</tab>
