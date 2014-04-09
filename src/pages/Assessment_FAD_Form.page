@@ -101,6 +101,9 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
                 <apex:outputField value="{!Assessment__c.Referral_Date__c}" rendered="{!Assessment__c.Phase__c !='Initial'}"/>
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>
+        <apex:inputField value="{!Assessment__c.OwnerID}" rendered="{!IsLogedHigherRole || Assessment__c.OwnerID= $User.Id}"/>
+        <apex:outputField value="{!Assessment__c.OwnerID}" rendered="{!NOT(IsLogedHigherRole)}"/>
+        
     </apex:pageBlockSection>
 <!-- view -->    
     <apex:pageBlockSection rendered="{!mode='view'}" >
@@ -111,6 +114,8 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         <apex:outputField value="{!Assessment__c.Status__c}"/>
         <apex:outputField value="{!Assessment__c.Disregard__c}"/>
         <apex:outputField value="{!Assessment__c.Referral_Date__c}"/>
+        <apex:outputField value="{!Assessment__c.OwnerID}"/>
+        
     </apex:pageBlockSection> 
     
 <hr/>      
