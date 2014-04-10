@@ -114,7 +114,7 @@ public class ServiceAssignmentExt {
         assess.Admission__c = admission.id;
         assess.Service_Assignment__c = theServAssign.Id;
         assess.Status__c = 'Open';
-        if(referral.referral_date__c != null){
+        if(referral != null && referral.referral_date__c != null){
             assess.referral_date__c = referral.referral_date__c;
         }
         insert assess;
