@@ -101,8 +101,7 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
                 <apex:inputField value="{!Assessment__c.Referral_Date__c}" id="ref_date_field" styleClass="ref_date_field" />
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>
-        <apex:inputField value="{!Assessment__c.OwnerID}" rendered="{!IsLogedHigherRole || Assessment__c.OwnerID= $User.Id}"/>
-        <apex:outputField value="{!Assessment__c.OwnerID}" rendered="{!NOT(IsLogedHigherRole) && Assessment__c.OwnerID != $User.Id}"/>
+        <apex:outputField value="{!Assessment__c.OwnerID}" />
         
     </apex:pageBlockSection>
 <!-- view -->    
@@ -114,7 +113,14 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         <apex:outputField value="{!Assessment__c.Status__c}"/>
         <apex:outputField value="{!Assessment__c.Disregard__c}"/>
         <apex:outputField value="{!Assessment__c.Referral_Date__c}"/>
-        <apex:outputField value="{!Assessment__c.OwnerID}"/>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Owner</apex:outputLabel>
+            <apex:outputPanel >
+                <apex:outputField value="{!Assessment__c.OwnerID}"/>&nbsp;
+                <apex:outputLink value="/{!Assessment__c.id}/a?retURL={!Assessment__c.id}" rendered="{!IsLogedHigherRole || Assessment__c.OwnerID= $User.Id}">[Change Owner]</apex:outputLink>
+            </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        
         
     </apex:pageBlockSection> 
     
