@@ -199,13 +199,13 @@
         <a href="/007">View All</a> <br /> <br />
        <apex:pageBlockTable value="{!populateTasks}" var="tsk" id="PageBT">
           <apex:column >
-              <a href="/{!tsk.Id}/e?close=1&retURL=/apex/ReferralHome">X</a>
+              <a href="/{!tsk.Id}/e?close=1&retURL=/apex/Home">X</a>
           </apex:column>
-          <apex:column headerValue="Date">{!tsk.ActivityDate}</apex:column>
-           <apex:column headerValue="Subject"><a href="/{!tsk.Id}?retURL=/apex/ReferralHome">{!tsk.Subject}</a></apex:column>
-           <!-- <apex:column headerValue="Priority">{!tsk.Priority}</apex:column>
-            <apex:column headerValue="Status">{!tsk.Status}</apex:column> -->
-            <apex:column headerValue="Due Date">{!tsk.ActivityDate}</apex:column> 
+          <apex:column headerValue="Created"><apex:outputText value=" {!tsk.CreatedDate}" /></apex:column>
+           <apex:column headerValue="Subject"><a href="/{!tsk.Id}?retURL=/apex/Home">{!tsk.Subject}</a></apex:column>
+           <apex:column headerValue="Priority">{!tsk.Priority}</apex:column>
+            <apex:column headerValue="Status">{!tsk.Status}</apex:column> 
+            <apex:column headerValue="Due Date"><apex:outputText value=" {!tsk.ActivityDate}" /></apex:column> 
             <apex:column headerValue="Name"><a href="/{!tsk.WhoId}">{!tsk.Who.Name}</a></apex:column>
             <apex:column headerValue="Related To"><a href="/{!tsk.WhatId}">{!tsk.What.Name}</a></apex:column>
         </apex:pageBlockTable>   
