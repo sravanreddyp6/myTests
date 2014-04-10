@@ -417,7 +417,7 @@ public with sharing class HomePageController{
  // We can put the page instantiation into a try/catch block and return appropriately
  // We can remove this function when the bug is fixed.
  Boolean canSeeReport( ID reportid ) {
- 	
+ 	return true;
  	// tests to see whether user can view report
  	try {
  		PageReference pr = new PageReference( '/' + string.valueof( reportID));
