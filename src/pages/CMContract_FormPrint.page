@@ -1,11 +1,11 @@
 <apex:page standardController="CareMeridian_Contract__c" extensions="CMContract_Form" renderAs="pdf" standardStylesheets="false" applyBodyTag="false" >
-<apex:variable value="width: 150px;  padding: 5px; height: 100%;" var="istyle"/>
+<apex:variable value="width: 350px;  padding: 5px; height: 100%;" var="istyle"/>
 <apex:variable value="{!$CurrentPage.parameters.onlyRL = '1'}" var="onlyRL"/>
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 <head>
 <style type="text/css">
 .mycols{
-    width: 200px;
+    width: 800px;
 
 }
 .data2Col{
@@ -22,6 +22,7 @@ a{
 }
 .exs td{
     vertical-align: top;
+    
 
 }
 .mytxtarea{
@@ -54,10 +55,10 @@ h3{
 }
 .mylbl{
  font-weight: bold;
- font-size: 12px;  
+ font-size: 13px;  
 
  padding: 4px;
- 
+ Width: 12px;
 
 }
 .hrow{
@@ -66,7 +67,7 @@ h3{
 }
 .level{
   //  background-color: #ccccff;
-  width:12%;
+  width:8%;
 
 }
 .level2{
@@ -93,6 +94,7 @@ h3{
 // border-bottom: 1px solid #cccccc !important;
  padding: 1px;
  font-size:13px;
+ 
 }
 .mycols{
 
@@ -101,10 +103,11 @@ h3{
 .exdets{
     
  //   background-color: #cccccc;
-    border-top: 1px solid #cc99cc;
+    border-top: 1px solid #e5c0e5;
     margin: 3px;
     padding: 3px;
-    width: 100px;
+    width: 650px;
+    font-size: 13px;
     
 
 }
@@ -150,10 +153,10 @@ h3{
             <apex:pageBlockSection title="Information " columns="1">
 
                 <apex:outputField value="{!CareMeridian_Contract__c.Contract_Type__c}" rendered="{! !onlyRL}" />
-                <apex:outputField value="{!CareMeridian_Contract__c.Guarantor__c}" rendered="{!isNeuro}"/>
-                <apex:outputField value="{!CareMeridian_Contract__c.Plan_Type__c}" style="padding: 15px;" rendered="{! !onlyRL}" />
+                <apex:outputField value="{!CareMeridian_Contract__c.Guarantor__c}" rendered="{!isNeuro}" />
+                <apex:outputField value="{!CareMeridian_Contract__c.Plan_Type__c}" style="padding: 15px;" rendered="{! !onlyRL}"/>
                 <apex:outputField value="{!CareMeridian_Contract__c.Name}"  style="padding: 150px;"/>
-                <apex:outputField value="{!CareMeridian_Contract__c.Business_Line__c}" rendered="{!!isNeuro}"/>
+                <apex:outputField value="{!CareMeridian_Contract__c.Business_Line__c}" rendered="{!!isNeuro}" style="font-size:11px;"/>
                 <apex:outputField styleClass="mytxtarea" value="{!CareMeridian_Contract__c.Description__c}" rendered="{! !onlyRL}"/>   
             </apex:pageBlockSection>
                         
@@ -238,7 +241,7 @@ h3{
                 <apex:outputPanel id="theRLs">
 <table style="width: 100%;" cellspacing="0" border="1">
     <tr>
-        <td width="20%" class="detail" >
+        <td width="40%" class="detail" >
             <apex:outputLabel styleClass="mylbl">Details</apex:outputLabel>
         </td>  
         <td class="level">
@@ -267,27 +270,27 @@ h3{
         <td  class="detailrow" >
             <apex:outputLabel styleClass="mydtl">Level Name</apex:outputLabel>
         </td>  
-        <td> 
+        <td class="detailrow"> 
             <apex:outputField value="{!CareMeridian_Contract__c.Level_1_Name__c}"  />            
         </td> 
-        <td>
+        <td class="detailrow">
             <apex:outputField value="{!CareMeridian_Contract__c.Level_2_Name__c}"   />
         </td> 
-        <td>
+        <td class="detailrow">
             <apex:outputField value="{!CareMeridian_Contract__c.Level_3_Name__c}"   />
         </td> 
-        <td>
+        <td class="detailrow">
             <apex:outputField value="{!CareMeridian_Contract__c.Level_4_Name__c}"   />
         </td> 
-        <td>
+        <td class="detailrow">
             <apex:outputField value="{!CareMeridian_Contract__c.Level_5_Name__c}"  />
         </td>
          <apex:Variable value="" var="z" rendered="{!isNeuro}">   
-        <td>
-            <apex:outputField value="{!CareMeridian_Contract__c.Level_6_Name__c}" rendered="{!isNeuro}"  />
+        <td class="detailrow">
+            <apex:outputField value="{!CareMeridian_Contract__c.Level_6_Name__c}"  />
         </td> 
-        <td>
-            <apex:outputField value="{!CareMeridian_Contract__c.Level_7_Name__c}" rendered="{!isNeuro}"/>
+        <td class="detailrow">
+            <apex:outputField value="{!CareMeridian_Contract__c.Level_7_Name__c}" />
         </td>
         </apex:variable>    
         <td>
@@ -300,35 +303,35 @@ h3{
         <td  class="detailrow" >
             <apex:outputLabel styleClass="mydtl">Billed Rate</apex:outputLabel>
         </td>  
-        <td> 
+        <td class="detailrow"> 
             <apex:outputField value="{!CareMeridian_Contract__c.Billed_Rate_Level_1__c}" rendered="{!!isNeuro}" />  
             <apex:outputField value="{!CareMeridian_Contract__c.BilledRate_Level_1__c}"  rendered="{!isNeuro}"/>          
         </td> 
-        <td>
-            <apex:outputField value="{!CareMeridian_Contract__c.Billed_Rate_Level_2__c}" rendered="{!!isNeuro}"  />
+        <td class="detailrow">
+            <apex:outputField value="{!CareMeridian_Contract__c.Billed_Rate_Level_2__c}" rendered="{!!isNeuro}" />
             <apex:outputField value="{!CareMeridian_Contract__c.BilledRate_Level_2__c}"  rendered="{!isNeuro}"/>
         </td> 
-        <td>
-            <apex:outputField value="{!CareMeridian_Contract__c.Billed_Rate_Level_3__c}" rendered="{!!isNeuro}"  />
+        <td class="detailrow">
+            <apex:outputField value="{!CareMeridian_Contract__c.Billed_Rate_Level_3__c}" rendered="{!!isNeuro}" />
             <apex:outputField value="{!CareMeridian_Contract__c.BilledRate_Level_3__c}"  rendered="{!isNeuro}"/>
         </td> 
-        <td>
+        <td class="detailrow">
             <apex:outputField value="{!CareMeridian_Contract__c.Billed_Rate_Level_4__c}" rendered="{!!isNeuro}"  />
             <apex:outputField value="{!CareMeridian_Contract__c.BilledRate_Level_4__c}"  rendered="{!isNeuro}"/>
         </td> 
-        <td>
+        <td class="detailrow">
             <apex:outputField value="{!CareMeridian_Contract__c.Billed_Rate_Level_5__c}" rendered="{!!isNeuro}"  />
             <apex:outputField value="{!CareMeridian_Contract__c.BilledRate_Level_5__c}"  rendered="{!isNeuro}"/>
         </td>  
         <apex:Variable value="" var="y" rendered="{!isNeuro}">   
-        <td>
-            <apex:outputField value="{!CareMeridian_Contract__c.BilledRate_Level_6__c}" rendered="{!isNeuro}"/>
+        <td class="detailrow">
+            <apex:outputField value="{!CareMeridian_Contract__c.BilledRate_Level_6__c}" />
         </td>
-        <td>
-            <apex:outputField value="{!CareMeridian_Contract__c.BilledRate_Level_7__c}" rendered="{!isNeuro}"/>
+        <td class="detailrow">
+            <apex:outputField value="{!CareMeridian_Contract__c.BilledRate_Level_7__c}" />
         </td>  
         </apex:variable>
-        <td>
+        <td class="detailrow">
             <apex:outputField value="{!CareMeridian_Contract__c.Billed_Rate_Bed_Holds__c}" />
         </td>                                                
     </tr>
@@ -338,30 +341,30 @@ h3{
             <apex:outputLabel styleClass="mydtl" rendered="{!!isNeuro}">Reimbursement Rate</apex:outputLabel>
             <apex:outputLabel styleClass="mydtl" rendered="{!isNeuro}">Reimbursement Rate - $ Fixed</apex:outputLabel>
         </td>  
-        <td>
+        <td class="detailrow">
             <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Level_1__c}"   />            
         </td> 
-        <td>
+        <td class="detailrow">
             <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Level_2__c}"   />
         </td> 
-        <td>
+        <td class="detailrow">
             <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Level_3__c}"  />
         </td> 
-        <td>
+        <td class="detailrow">
             <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Level_4__c}"  />
         </td> 
-        <td>
+        <td class="detailrow">
             <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Level_5__c}"  />
         </td>  
         <apex:Variable value="" var="w" rendered="{!isNeuro}"> 
-        <td>
-            <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Level_6__c}" rendered="{!isNeuro}"/>
+        <td class="detailrow">
+            <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Level_6__c}" />
         </td> 
-        <td>
-            <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Level_7__c}" rendered="{!isNeuro}"/>
+        <td class="detailrow">
+            <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Level_7__c}"/>
         </td>    
         </apex:variable>
-        <td>
+        <td class="detailrow">
             <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Bed_Holds__c}"  />
         </td>                                                
     </tr>      
@@ -370,28 +373,28 @@ h3{
         <td  class="detailrow">
             <apex:outputLabel styleClass="mydtl">Reimbursement Rate - % of Charges</apex:outputLabel>
         </td>  
-        <td>
+        <td class="detailrow">
             <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_1__c}"/>            
         </td> 
-        <td>
+        <td class="detailrow">
             <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_2__c}"/>
         </td> 
-        <td>
+        <td class="detailrow">
             <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_3__c}"/>
         </td> 
-        <td>
+        <td class="detailrow">
             <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_4__c}" />
         </td> 
-        <td>
+        <td class="detailrow">
             <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_5__c}" />
         </td>  
-        <td>
+        <td class="detailrow">
             <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_6__c}" />
         </td> 
-        <td>
+        <td class="detailrow">
             <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_7__c}" />
         </td>    
-        <td>
+        <td class="detailrow">
             <apex:outputField value="{!CareMeridian_Contract__c.Reimbursement_Rate_Charges_Bed_Holds__c}" />
         </td>                                                
     </tr>      
@@ -407,22 +410,24 @@ h3{
     <td>
         <apex:outputField value="{!MapRateLevel[RL].theRL.Level_2__c}" />
     </td>
-    <td>
+    <td >
         <apex:outputField value="{!MapRateLevel[RL].theRL.Level_3__c}" />
     </td>
-    <td>
+    <td >
         <apex:outputField value="{!MapRateLevel[RL].theRL.Level_4__c}" />
     </td>                
-    <td>
+    <td >
         <apex:outputField value="{!MapRateLevel[RL].theRL.Level_5__c}"  />
     </td>
-    <td>
-        <apex:outputField value="{!MapRateLevel[RL].theRL.Level_6__c}"  rendered="{!isNeuro}" />
+    <apex:variable value="" var="nj" rendered="{!isNeuro}">
+    <td >
+        <apex:outputField value="{!MapRateLevel[RL].theRL.Level_6__c}"/>
     </td>
-    <td>
-        <apex:outputField value="{!MapRateLevel[RL].theRL.Level_7__c}" rendered="{!isNeuro}" />
+    <td >
+        <apex:outputField value="{!MapRateLevel[RL].theRL.Level_7__c}"/>
     </td>
-    <td>
+    </apex:Variable>
+    <td >
         <apex:outputField value="{!MapRateLevel[RL].theRL.Bed_Holds__c}" />
     </td>
 </tr>
@@ -435,23 +440,23 @@ h3{
              
             <apex:pageBlockSection title="Exclusions" columns="1"  >
                
-                <apex:outputPanel styleClass="exs" layout="block">
-
-                    <apex:panelGrid columns="4" style="width:100%;" columnClasses="mycols" cellspacing="0" cellpadding="0" border="1"   >
+                <apex:outputPanel styleClass="exs" layout="block" >
+                        
+                    <apex:panelGrid columns="1" style="width:100%;" columnClasses="mycols" cellspacing="0" cellpadding="0" border="1"   >
                         <apex:panelGroup rendered="{!CareMeridian_Contract__c.Physician_Visits__c}" >
-                            <apex:outputPanel layout="block" styleClass="exwrapper"  style="{!istyle}">
+                            <apex:outputPanel layout="block" styleClass="exwrapper" style="{!istyle}">
                                 <apex:outputField value="{!CareMeridian_Contract__c.Physician_Visits__c}"/>
                                 <apex:outputLabel styleClass="mylbl" >{!$ObjectType.CareMeridian_Contract__c.fields.Physician_Visits__c.label}</apex:outputLabel>
                                 <br/>
                                 <apex:outputPanel layout="block" styleClass="exdets">
-                                    <apex:outputField value="{!CareMeridian_Contract__c.Physician_Visits_Details__c}" />
+                                  <apex:outputField value="{!CareMeridian_Contract__c.Physician_Visits_Details__c}" />  
                                 </apex:outputPanel>
                             </apex:outputPanel>
                         </apex:panelGroup>                        
                         <apex:panelGroup rendered="{!CareMeridian_Contract__c.Non_CareMeridian_Radiology_Services__c}">
-                            <apex:outputPanel layout="block" styleClass="exwrapper" style="{!istyle}">
+                            <apex:outputPanel layout="block" styleClass="exwrapper" style="{!istyle}" >
                                 <apex:outputField value="{!CareMeridian_Contract__c.Non_CareMeridian_Radiology_Services__c}" />
-                                <apex:outputLabel styleClass="mylbl" >{!$ObjectType.CareMeridian_Contract__c.fields.Non_CareMeridian_Radiology_Services__c.label}</apex:outputLabel>
+                                <apex:outputLabel styleClass="mylbl">{!$ObjectType.CareMeridian_Contract__c.fields.Non_CareMeridian_Radiology_Services__c.label}</apex:outputLabel>
                                 <br/>
                                 <apex:outputPanel layout="block" styleClass="exdets">
                                     <apex:outputField value="{!CareMeridian_Contract__c.Non_CareMeridian_Radiology_Services_Detl__c}" />    
