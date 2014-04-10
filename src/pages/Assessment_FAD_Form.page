@@ -4,7 +4,7 @@
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
     <apex:stylesheet value="{!if ($CurrentPage.parameters.pdf !='1', $Resource.mentoresdcss, $Resource.mentoresdprint)}" />
     <script>function setFocusOnLoad() {}</script>
- 
+
 <style>
     body .bPageBlock[id*=main_detail] {
         margin-bottom: 5px;
@@ -37,8 +37,8 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
 <br/>
 <apex:outputPanel id="everything">
 <apex:pageMessages ></apex:pageMessages>
-<apex:form >
-<apex:pageBlock title="FAD Assessment Summary" >
+<apex:form id="myfrm" >
+<apex:pageBlock title="FAD Assessment Summary" id="mainblock" >
     <apex:pageBlockButtons >
         <div style="float: right" >
                    
@@ -70,8 +70,9 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
             <apex:commandButton action="{!myEdit}" 
                                 value="Edit" 
                                 rendered="{!mode='view' && Assessment__c.Status__c =='Open'}" 
-                                reRender="everything" 
-                                status="myStatus"/>
+                                reRender="everything, scripts" 
+                                status="myStatus" 
+                                oncomplete="toggleOptionsbyStyle('pbs_cnc_cb', 'PBS_CNC2', 'pbs_question'); toggleOptionsbyStyle('cg_cnc_cb', 'CG_CNC2', 'cg_question'); toggleRefDate();"/>
             <apex:commandButton action="{!cancel}" 
                                 value="Cancel" 
                                 rendered="{!$CurrentPage.parameters.isnew !='1' && mode='edit'}" 
@@ -84,21 +85,20 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         </div>
     </apex:pageBlockButtons>
 <!-- edit -->    
-    <apex:pageBlockSection rendered="{!mode='edit'}" >
+    <apex:pageBlockSection rendered="{!mode='edit'}" id="details_edit"  >
         <apex:inputField label="Date of Admistration" required="true"  value="{!Assessment__c.Assessment_Date__c}"/>
-        <apex:outputField value="{!Assessment__c.AccountPerson__c}"/>
+        <apex:outputField label="Person Being Served" value="{!Assessment__c.AccountPerson__c}"/>
         
-        <apex:inputField required="true" value="{!Assessment__c.Phase__c}">
-            <apex:actionSupport reRender="previous_CG, refDate" event="onchange" action="{!myCG_is_same_as_other_assessment}"  />
+        <apex:inputField required="true" value="{!Assessment__c.Phase__c}" id="phase" styleClass="phasefield">
+            <apex:actionSupport reRender="previous_CG, refDate" event="onchange" action="{!myCG_is_same_as_other_assessment}" oncomplete="toggleRefDate();"  />
         </apex:inputField>
         <apex:outputField value="{!Assessment__c.Service_Assignment__c}"/>
         <apex:outputField value="{!Assessment__c.Status__c}"/>
         <apex:outputField value="{!Assessment__c.Disregard__c}"/>
-        <apex:pageBlockSectionItem >
+        <apex:pageBlockSectionItem id="ref_date_item" >
             <apex:outputPanel > Referral Date</apex:outputPanel>
-            <apex:outputPanel id="refDate">
-                <apex:inputField value="{!Assessment__c.Referral_Date__c}" rendered="{!Assessment__c.Phase__c =='Initial'}" />
-                <apex:outputField value="{!Assessment__c.Referral_Date__c}" rendered="{!Assessment__c.Phase__c !='Initial'}"/>
+            <apex:outputPanel >
+                <apex:inputField value="{!Assessment__c.Referral_Date__c}" id="ref_date_field" styleClass="ref_date_field" />
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>
         <apex:inputField value="{!Assessment__c.OwnerID}" rendered="{!IsLogedHigherRole || Assessment__c.OwnerID= $User.Id}"/>
@@ -108,7 +108,7 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
 <!-- view -->    
     <apex:pageBlockSection rendered="{!mode='view'}" >
         <apex:outputField label="Date of Admistration"  value="{!Assessment__c.Assessment_Date__c}"/>
-        <apex:outputField value="{!Assessment__c.AccountPerson__c}"/>
+        <apex:outputField label="Person Being Served" value="{!Assessment__c.AccountPerson__c}"/>
         <apex:outputField value="{!Assessment__c.Phase__c}"/>
         <apex:outputField value="{!Assessment__c.Service_Assignment__c}"/>
         <apex:outputField value="{!Assessment__c.Status__c}"/>
@@ -120,11 +120,11 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
     
 <hr/>      
 <!-- PBS edit -->
-    <apex:pageBlockSection columns="1" title="Person Being Served" collapsible="false" rendered="{!mode='edit'}">
-        <apex:pageBlockSectionItem >
+    <apex:pageBlockSection columns="1" id="pbs_edit_sec" title="Person Being Served" collapsible="false" rendered="{!mode='edit'}">
+        <apex:pageBlockSectionItem id="pbs_item" >
             <apex:outputPanel >{!mapQs['PBS_Could_Not_complete'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel layout="block" >
-                <apex:inputCheckbox value="{!mapRes['PBS_Could_Not_complete'].Yes_No__c}" onclick="toggleOptions(this, 'PBS_CNC2', 'pbs_question');"/>  
+                <apex:inputCheckbox value="{!mapRes['PBS_Could_Not_complete'].Yes_No__c}" onclick="toggleOptions(this, 'PBS_CNC2', 'pbs_question');" id="pbs_cnc_cb" styleClass="pbs_cnc_cb"/>  
                 &nbsp;
                 <span id="PBS_CNC2" style="{!if(mapRes['PBS_Could_Not_complete'].Yes_No__c,'','display:none;')}">
                     Reason:&nbsp;<apex:inputField id="PBS_CNC" value="{!mapRes['PBS_Could_Not_complete_reason'].Rating__c}"/>
@@ -252,7 +252,7 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['CG_Could_Not_complete'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:inputCheckbox value="{!mapRes['CG_Could_Not_complete'].Yes_No__c}"  onclick="toggleOptions(this, 'CG_CNC2', 'cg_question');"/>
+                <apex:inputCheckbox value="{!mapRes['CG_Could_Not_complete'].Yes_No__c}"  onclick="toggleOptions(this, 'CG_CNC2', 'cg_question');" styleClass="cg_cnc_cb" id="cg_cnc_cb"/>
                 <span id="CG_CNC2" style="{!if(mapRes['CG_Could_Not_complete'].Yes_No__c,'','display:none;')}">
                     Reason:&nbsp;<apex:inputField value="{!mapRes['CG_Could_Not_complete_reason'].Rating__c}"/>
                 </span>                     
@@ -407,6 +407,8 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
 </apex:actionStatus>
 
 </apex:outputPanel>
+<apex:outputPanel id="scripts">
+
 
 <script>
 function scrollWindow()
@@ -417,7 +419,7 @@ function scrollWindow()
 jQuery.noConflict();
 var j$ = jQuery.noConflict();
 function toggleOptions( rb, divopt, dis_class ) {
-    if ( j$(rb).prop('checked')  ){       
+    if ( j$(rb).prop('checked') ){       
         document.getElementById(divopt).style.display = 'inline';
         j$('.'+ dis_class ).prop( "disabled", true ); 
         j$('.'+ dis_class ).prop( "value", "");     
@@ -426,10 +428,37 @@ function toggleOptions( rb, divopt, dis_class ) {
         document.getElementById( divopt).style.display = 'none';
         j$('.'+ dis_class ).prop( "disabled", false);        
     }
+   // alert(j$('.pbs_cnc_cb').prop('checked'));
+};
+
+function toggleOptionsbyStyle( rb, divopt, dis_class ) {
+    if ( j$('.'+ rb).prop('checked') ){       
+        document.getElementById(divopt).style.display = 'inline';
+        j$('.'+ dis_class ).prop( "disabled", true ); 
+        j$('.'+ dis_class ).prop( "value", "");     
+      }
+    else{    
+        document.getElementById( divopt).style.display = 'none';
+        j$('.'+ dis_class ).prop( "disabled", false);        
+    }
+   // alert(j$('.pbs_cnc_cb').prop('checked'));
+};
+function toggleRefDate(  ) {
+//alert('h');
+j$('.ref_date_field' ).prop( "disabled", true);
+    if ( j$('.phasefield').val()=='Initial' ){       
+        j$('.ref_date_field' ).prop( "disabled", false);     
+      }
+    else{    
+        j$('.ref_date_field' ).prop( "disabled", true);        
+}
 };
 function toggleById(id, ms){
     j$(document.getElementById(id)).toggle(ms);
 };
 </script>
-
+</apex:outputPanel>
+{!$Component.myfrm.mainblock.details_edit.phase}
+<br/>
+{!$Component.myfrm.mainblock.details_edit.ref_date_item.ref_date_field}
 </apex:page>
