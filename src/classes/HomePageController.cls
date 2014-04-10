@@ -357,7 +357,7 @@ public with sharing class HomePageController{
   public void mineTasks(){
     system.debug('came here');
    Id userId = UserInfo.getUserId();
-    String query ='select id, subject,WhatId,What.Name,WhoId,Who.Name,status,RecordTypeId, ActivityDate, Priority from Task where OwnerId=:userId and status!=\'Completed\'';
+    String query ='select id, subject,WhatId,What.Name,WhoId,Who.Name,status,RecordTypeId, ActivityDate, Priority, CreatedDate from Task where OwnerId=:userId and status!=\'Completed\'';
     system.debug('*********viewstsk'+viewstsk);
             if(viewstsk==null || viewstsk=='All Open'){
                 query+=' order by ActivityDate desc, Priority limit 25';
