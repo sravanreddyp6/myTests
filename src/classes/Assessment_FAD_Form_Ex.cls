@@ -73,6 +73,12 @@ public with sharing class Assessment_FAD_Form_Ex {
                 return null;
             
             }
+            if(!mapRes.get('CG_Could_Not_complete').Yes_No__c){
+                mapRes.get('CG_Could_Not_complete_reason').rating__c = null;
+            }
+            if(!mapRes.get('PBS_Could_Not_complete').Yes_No__c){
+                mapRes.get('PBS_Could_Not_complete_reason').rating__c = null;
+            }            
             upsert mapRes.values();
             upsert Assess;
         
