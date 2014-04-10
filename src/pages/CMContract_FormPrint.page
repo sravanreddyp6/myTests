@@ -1,9 +1,21 @@
-<apex:page standardController="CareMeridian_Contract__c" extensions="CMContract_Form" renderAs="pdf" standardStylesheets="false" applyBodyTag="false" >
+<apex:page standardController="CareMeridian_Contract__c" extensions="CMContract_Form" renderAs="PDF" standardStylesheets="false" applyBodyTag="false" >
 <apex:variable value="width: 350px;  padding: 5px; height: 100%;" var="istyle"/>
 <apex:variable value="{!$CurrentPage.parameters.onlyRL = '1'}" var="onlyRL"/>
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 <head>
 <style type="text/css">
+.data2Col{
+font-size: 13px !important;
+
+}
+.labelCol{
+font-size: 13px !important;
+
+}
+
+.pbSubheader{
+font-size: 14px !important;
+}
 .mycols{
     width: 800px;
 
