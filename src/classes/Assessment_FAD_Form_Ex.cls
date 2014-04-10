@@ -172,7 +172,7 @@ public with sharing class Assessment_FAD_Form_Ex {
             hasError = true;
         }                        
         if(mapRes.get('CG_is_same_as_other_assessment').Rating__c == null && assess.Phase__c !='Initial' ){
-            mapRes.get('CG_is_same_as_other_assessment').Rating__c.addError('Caregiver - Did they caregiver who completed the initial FAD assessment also complete this 3-month or final assessment');
+            mapRes.get('CG_is_same_as_other_assessment').Rating__c.addError('Caregiver - Did the caregiver who completed the initial FAD assessment also complete this 3-month or final assessment? is required.');
             hasError = true;
         }        
         
