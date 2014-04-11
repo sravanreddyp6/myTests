@@ -3,9 +3,7 @@
     tabStyle="Get_Started__tab" readOnly="true">
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
-    <apex:includeScript value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
-    <apex:stylesheet value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.css')}" />
     
     <style>
 #table_filter h1 {
@@ -164,16 +162,17 @@ table#persons_table.dataTable {
             <table id="persons_table">
                 <thead>
                     <tr>
-                        <td style="width: 25%">Full Name</td>
-                        <td style="width: 30%">Age</td>
-                        <td style="width: 37%">State</td>
-                        <td style="width: 40%">Type</td>
+                        <td style="width: 40%">Full Name</td>
+                        <td style="width: 10%; text-align: center">Age</td>
+                        <td style="width: 20%">State</td>
+                        <td style="width: 30%">Type</td>
                     </tr>
                 </thead>
                 <tbody>
                     <apex:repeat value="{!TotalList}" var="acct">
                       <tr>
-                            <td>   <apex:outputText rendered="{!(acct.Type=='Person Being Referred')}">
+                            <td>
+									<apex:outputText rendered="{!(acct.Type=='Person Being Referred')}">
                                              <a href="/apex/ReferralSearch?firstName={!acct.firstname}&&lastName={!acct.lastname}" data-record-id="{!acct}">{!(acct.lastname)}, {!(acct.firstname)}</a>
                                    </apex:outputText>
                                    <apex:outputText rendered="{!(acct.Type=='Person Being Served')}">
@@ -183,7 +182,7 @@ table#persons_table.dataTable {
                                              <a href="/apex/TmnContactListView?j_id0%3Aj_id3%3Afcf={!(TMNView['my'])}" data-record-id="{!acct}">{!(acct.lastname)}, {!(acct.firstname)}</a>
                                    </apex:outputText>
                            </td>
-                                <td>{!acct.Age}</td>
+                                <td style="text-align:right;padding-right:4%">{!acct.Age}</td>
                                 <td>{!acct.State}</td>
                                 <td>{!acct.Type}</td>
                                     </tr>
