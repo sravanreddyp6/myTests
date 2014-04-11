@@ -60,7 +60,8 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
                                 value="Submit" 
                                 rendered="{!mode='view' && Assessment__c.Status__c =='Open' && Assessment__c.Service_assignment__r.Status__c =='Active' && CanSubmit}" 
                                 reRender="everything" 
-                                status="myStatus"/>                                        
+                                status="myStatus"
+                                oncomplete="toggleOptionsbyStyle('pbs_cnc_cb', 'PBS_CNC2', 'pbs_question'); toggleOptionsbyStyle('cg_cnc_cb', 'CG_CNC2', 'cg_question'); toggleRefDate();"/>                                        
         
             <apex:commandButton action="{!mySave}" 
                                 value="Save"  id="confirmBtn"
