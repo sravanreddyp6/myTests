@@ -4123,7 +4123,7 @@ $Profile.Id !=&apos;00eU0000000RHex&apos;</errorConditionFormula>
     <validationRules>
         <fullName>Contact_Made_Required_Status_Change</fullName>
         <active>true</active>
-        <errorConditionFormula>AND(OR(ISPICKVAL( Status__c, &quot;Mentor&quot;), NOT(ISNULL(Provider_Agreement_Signature_Date__c))), ISNULL(Contact_Made__c),  $Profile.Name &lt;&gt; &apos;System Administrator&apos;)</errorConditionFormula>
+        <errorConditionFormula>AND(OR(ISPICKVAL( Status__c, &quot;Mentor&quot;)), ISNULL(Contact_Made__c),  $Profile.Name &lt;&gt; &apos;System Administrator&apos;)</errorConditionFormula>
         <errorDisplayField>Contact_Made__c</errorDisplayField>
         <errorMessage>Contact made is required before Status can be changed to &quot;Mentor&quot;</errorMessage>
     </validationRules>
