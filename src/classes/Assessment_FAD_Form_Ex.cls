@@ -40,6 +40,12 @@ public with sharing class Assessment_FAD_Form_Ex {
         mapAvalPhases.put('Final',true);
         
     }
+    
+    public Related_Party__c[] getRelParty (){
+    
+        return [select NAME from Related_Party__c Where Person_Being_Served__c = :Assess.Service_Assignment__r.Person_Being_Served__c AND Type__c = 'Caregiver' Order By CreatedDate DESC Limit 1 ];
+    }  
+    
     public PageReference myCG_is_same_as_other_assessment(){
         if(assess.Phase__c =='Initial'){
         

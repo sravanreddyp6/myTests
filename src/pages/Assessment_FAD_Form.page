@@ -4,7 +4,9 @@
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
     <apex:stylesheet value="{!if ($CurrentPage.parameters.pdf !='1', $Resource.mentoresdcss, $Resource.mentoresdprint)}" />
     <script>function setFocusOnLoad() {}</script>
-
+<apex:outputPanel style="display: none;">
+    {!Assessment__c.Service_Assignment__r.Person_Being_Served__c}
+</apex:outputPanel>    
 <style>
     body .bPageBlock[id*=main_detail] {
         margin-bottom: 5px;
@@ -48,13 +50,17 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
                                 value="Unlock" 
                                 rendered="{!mode='view' && Assessment__c.Status__c =='Locked' && Assessment__c.Service_assignment__r.Status__c =='Active' && canUnlock}" 
                                 reRender="everything" 
-                                status="myStatus"/>
+                                status="myStatus"
+                                oncomplete="toggleOptionsbyStyle('pbs_cnc_cb', 'PBS_CNC2', 'pbs_question'); toggleOptionsbyStyle('cg_cnc_cb', 'CG_CNC2', 'cg_question'); toggleRefDate();"
+                                />
                                 
             <apex:commandButton action="{!myDisregard}" 
                                 value="Disregard" 
                                 rendered="{!mode='view' && !Assessment__c.Disregard__c && Assessment__c.Service_assignment__r.Status__c =='Active' && CanSubmit}" 
                                 reRender="everything" 
-                                status="myStatus"/>                                 
+                                status="myStatus"
+                                oncomplete="toggleOptionsbyStyle('pbs_cnc_cb', 'PBS_CNC2', 'pbs_question'); toggleOptionsbyStyle('cg_cnc_cb', 'CG_CNC2', 'cg_question'); toggleRefDate();"
+                                />                                 
                                 
             <apex:commandButton action="{!myLock}" 
                                 value="Submit" 
@@ -67,7 +73,9 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
                                 value="Save"  id="confirmBtn"
                                 rendered="{!mode='edit'}" 
                                 reRender="everything" 
-                                status="myStatus"/>
+                                status="myStatus"
+                                oncomplete="toggleOptionsbyStyle('pbs_cnc_cb', 'PBS_CNC2', 'pbs_question'); toggleOptionsbyStyle('cg_cnc_cb', 'CG_CNC2', 'cg_question'); toggleRefDate();"
+                                />
             <apex:commandButton action="{!myEdit}" 
                                 value="Edit" 
                                 rendered="{!mode='view' && Assessment__c.Status__c =='Open'}" 
@@ -253,7 +261,9 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         <apex:pageBlockSectionItem >
             <apex:outputPanel >Primary Caregiver</apex:outputPanel>            
             <apex:outputPanel >
-                TBD        
+                <apex:outputPanel rendered="{!RelParty.size ==1}">
+                    {!RelParty[0].name}
+                </apex:outputPanel>      
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>    
         <apex:pageBlockSectionItem >
@@ -330,7 +340,9 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         <apex:pageBlockSectionItem >
             <apex:outputPanel >Primary Caregiver</apex:outputPanel>            
             <apex:outputPanel >
-                TBD        
+                <apex:outputPanel rendered="{!RelParty.size ==1}">
+                    {!RelParty[0].name}
+                </apex:outputPanel>                        
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>     
         <apex:pageBlockSectionItem >

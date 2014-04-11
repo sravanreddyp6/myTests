@@ -9,9 +9,7 @@
 <style>
     .headRow{
        width: 250px;     
-    
     }
-
 </style>
 <style>
 .thinking{
@@ -194,11 +192,17 @@
                 <tr >
                     <td style="width: 120px;"  class="dataRow">{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Service_Assignment__r.person_being_served__r.LastName }</td>
                     <td  class="dataRow">{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Service_Assignment__r.person_being_served__r.FirstName}</td>
-                    <td  class="dataRow">Region Name</td>
-                    <td  class="dataRow">Primary FCS</td>
-                    <td  class="dataRow">CrmitID</td>
-                    <td  class="dataRow">ApplicationID</td>
-                    <td  class="dataRow"><apex:outputField value="{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Assessment_Date__c} " rendered="{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Assessment_Date__c != null}"/> </td>
+                    <td  class="dataRow"></td>
+                    <td  class="dataRow"></td>
+                    <td  class="dataRow"></td>
+                    <td  class="dataRow"></td>
+                    <td  class="dataRow">
+                        <apex:outputLink rendered="{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Assessment_Date__c != null}"
+                         value="/{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__c}">
+                            <apex:outputField value="{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Assessment_Date__c} " 
+                                /> 
+                        </apex:outputLink>    
+                    </td>
                     <td  class="dataRow">{!mapResults['InitialPBS_Affective_Involvement'+item].Score__c}</td>
                     <td  class="dataRow">{!mapResults['InitialPBS_Affective_Responses'+item].Score__c}</td>
                     <td  class="dataRow">{!mapResults['InitialPBS_Behavior_Control'+item].Score__c}</td>
@@ -206,7 +210,12 @@
                     <td  class="dataRow">{!mapResults['InitialPBS_General_Functioning'+item].Score__c}</td>
                     <td  class="dataRow">{!mapResults['InitialPBS_Problem_Solving'+item].Score__c}</td>
                     <td  class="dataRow">{!mapResults['InitialPBS_Roles'+item].Score__c}</td>
-                     <td  class="dataRow"><apex:outputField value="{!mapResults['3 MonthPBS_Could_Not_complete'+item].assessment__r.Assessment_Date__c} " rendered="{!mapResults['3 MonthPBS_Could_Not_complete'+item].assessment__r.Assessment_Date__c !=null}"/></td>
+                     <td  class="dataRow">
+                         <apex:outputLink rendered="{!mapResults['3 MonthPBS_Could_Not_complete'+item].assessment__r.Assessment_Date__c !=null}" 
+                          value="/{!mapResults['3 MonthPBS_Could_Not_complete'+item].assessment__c}">
+                             <apex:outputField value="{!mapResults['3 MonthPBS_Could_Not_complete'+item].assessment__r.Assessment_Date__c} " />
+                         </apex:outputLink> 
+                     </td>
                      <td  class="dataRow">{!mapResults['3 MonthPBS_Affective_Involvement'+item].Score__c}</td>
                      <td  class="dataRow">{!mapResults['3 MonthPBS_Affective_Responses'+item].Score__c}</td>
                      <td  class="dataRow">{!mapResults['3 MonthPBS_Behavior_Control'+item].Score__c}</td>
@@ -214,7 +223,13 @@
                      <td  class="dataRow">{!mapResults['3 MonthPBS_General_Functioning'+item].Score__c}</td>
                      <td  class="dataRow">{!mapResults['3 MonthPBS_Problem_Solving'+item].Score__c}</td>
                      <td  class="dataRow">{!mapResults['3 MonthPBS_Roles'+item].Score__c}</td>
-                    <td  class="dataRow"><apex:outputField value="{!mapResults['FinalPBS_Could_Not_complete'+item].assessment__r.Assessment_Date__c} " rendered="{!mapResults['FinalPBS_Could_Not_complete'+item].assessment__r.Assessment_Date__c != null}"/></td>
+                    <td  class="dataRow">
+                        <apex:outputLink rendered="{!mapResults['FinalPBS_Could_Not_complete'+item].assessment__r.Assessment_Date__c != null}"
+                         value="/{!mapResults['FinalPBS_Could_Not_complete'+item].assessment__c}">
+                            <apex:outputField value="{!mapResults['FinalPBS_Could_Not_complete'+item].assessment__r.Assessment_Date__c} "/>
+                        </apex:outputLink> 
+                    </td>
+                        
                     <td  class="dataRow">{!mapResults['FinalPBS_Affective_Involvement'+item].Score__c}</td>
                     <td  class="dataRow">{!mapResults['FinalPBS_Affective_Responses'+item].Score__c}</td>
                     <td  class="dataRow">{!mapResults['FinalPBS_Behavior_Control'+item].Score__c}</td>
@@ -223,7 +238,13 @@
                     <td  class="dataRow">{!mapResults['FinalPBS_Problem_Solving'+item].Score__c}</td>
                     <td  class="dataRow">{!mapResults['FinalPBS_Roles'+item].Score__c}</td>
                     
-                    <td  class="dataRow"><apex:outputField value="{!mapResults['InitialCG_Could_Not_complete'+item].assessment__r.Assessment_Date__c} " rendered="{!mapResults['InitialCG_Could_Not_complete'+item].assessment__r.Assessment_Date__c != null}"/> </td>
+                    <td  class="dataRow">
+                        <apex:outputLink rendered="{!mapResults['InitialCG_Could_Not_complete'+item].assessment__r.Assessment_Date__c != null}"
+                             value="/{!mapResults['InitialCG_Could_Not_complete'+item].assessment__c}">
+                                <apex:outputField value="{!mapResults['InitialCG_Could_Not_complete'+item].assessment__r.Assessment_Date__c} " 
+                                /> 
+                        </apex:outputLink> 
+                    </td>
                     <td  class="dataRow">{!mapResults['InitialCG_Affective_Involvement'+item].Score__c}</td>
                     <td  class="dataRow">{!mapResults['InitialCG_Affective_Responses'+item].Score__c}</td>
                     <td  class="dataRow">{!mapResults['InitialCG_Behavior_Control'+item].Score__c}</td>
@@ -231,7 +252,12 @@
                     <td  class="dataRow">{!mapResults['InitialCG_General_Functioning'+item].Score__c}</td>
                     <td  class="dataRow">{!mapResults['InitialCG_Problem_Solving'+item].Score__c}</td>
                     <td  class="dataRow">{!mapResults['InitialCG_Roles'+item].Score__c}</td>
-                     <td  class="dataRow"><apex:outputField value="{!mapResults['3 MonthCG_Could_Not_complete'+item].assessment__r.Assessment_Date__c} " rendered="{!mapResults['3 MonthCG_Could_Not_complete'+item].assessment__r.Assessment_Date__c !=null}"/></td>
+                     <td  class="dataRow">
+                         <apex:outputLink rendered="{!mapResults['3 MonthCG_Could_Not_complete'+item].assessment__r.Assessment_Date__c !=null}" 
+                          value="/{!mapResults['3 MonthCG_Could_Not_complete'+item].assessment__c}">
+                             <apex:outputField value="{!mapResults['3 MonthCG_Could_Not_complete'+item].assessment__r.Assessment_Date__c} " />
+                         </apex:outputLink>                      
+                     </td>
                      <td  class="dataRow">{!mapResults['3 MonthCG_Affective_Involvement'+item].Score__c}</td>
                      <td  class="dataRow">{!mapResults['3 MonthCG_Affective_Responses'+item].Score__c}</td>
                      <td  class="dataRow">{!mapResults['3 MonthCG_Behavior_Control'+item].Score__c}</td>
@@ -239,7 +265,12 @@
                      <td  class="dataRow">{!mapResults['3 MonthCG_General_Functioning'+item].Score__c}</td>
                      <td  class="dataRow">{!mapResults['3 MonthCG_Problem_Solving'+item].Score__c}</td>
                      <td  class="dataRow">{!mapResults['3 MonthCG_Roles'+item].Score__c}</td>
-                    <td  class="dataRow"><apex:outputField value="{!mapResults['FinalCG_Could_Not_complete'+item].assessment__r.Assessment_Date__c} " rendered="{!mapResults['FinalCG_Could_Not_complete'+item].assessment__r.Assessment_Date__c != null}"/></td>
+                    <td  class="dataRow">
+                        <apex:outputLink rendered="{!mapResults['FinalCG_Could_Not_complete'+item].assessment__r.Assessment_Date__c != null}"
+                         value="/{!mapResults['FinalCG_Could_Not_complete'+item].assessment__c}">
+                            <apex:outputField value="{!mapResults['FinalCG_Could_Not_complete'+item].assessment__r.Assessment_Date__c} "/>
+                        </apex:outputLink>                     
+                    </td>
                     <td  class="dataRow">{!mapResults['FinalCG_Affective_Involvement'+item].Score__c}</td>
                     <td  class="dataRow">{!mapResults['FinalCG_Affective_Responses'+item].Score__c}</td>
                     <td  class="dataRow">{!mapResults['FinalCG_Behavior_Control'+item].Score__c}</td>
@@ -248,9 +279,9 @@
                     <td  class="dataRow">{!mapResults['FinalCG_Problem_Solving'+item].Score__c}</td>
                     <td  class="dataRow">{!mapResults['FinalCG_Roles'+item].Score__c}</td>
                     
-                    <td  class="dataRow">Initial CG Name</td>
-                    <td  class="dataRow">3 Month CG Name</td>
-                    <td  class="dataRow">Final CG Name</td>
+                    <td  class="dataRow"></td>
+                    <td  class="dataRow"></td>
+                    <td  class="dataRow"></td>
                     
                     <td  class="dataRow">
                         <apex:outputField value="{!mapResults['InitialPBS_Could_Not_complete'+item].Yes_No__c}" />
