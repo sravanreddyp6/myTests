@@ -8,6 +8,8 @@ public with sharing class TMN_ContactHandler {
 
     public void OnBeforeInsert(TMN_Contact__c[] newObjects){
         // EXECUTE BEFORE INSERT LOGIC
+         SoundExTriggerUtil util= new SoundExTriggerUtil();
+         util.generateKeys(newObjects);		
     }
 
     public void OnAfterInsert(TMN_Contact__c[] newObjects){
@@ -28,6 +30,9 @@ public with sharing class TMN_ContactHandler {
         			Required_for_Pet__c, Optional_for_Pet__c, Needed_for_Under_18__c, Needed_for_18_Over__c FROM Credential_Profile__c ];
        System.debug('credList holds: ' + credList);
        
+       // CMMT-34: Get the Chessie_ID__c values for the TMN_Contact__c records in this insert set.
+       List<TMN_Contact__c> thesePersonsWithMentorsChessieIds = [ SELECT Mentor__r.Chessie_ID__c FROM TMN_Contact__c WHERE Id = :thesePersons ];
+       
        // Loop through the person records that were just created, and determine which Credential_Profile__c records matter for them, based on the TMN_Contact__c        
 		for (TMN_Contact__c p : thesePersons) {
        		System.debug('The persons loop in PersonHandler.cls is executing...');
@@ -39,14 +44,6 @@ public with sharing class TMN_ContactHandler {
        			Status__c = 'New'
        		);
        		
-
-       		
-       		
-			if(p.Disregarded__c!=true) {
-       			insert thisContactsReptRec;
-       		}
-       		
-			
 			string thisPersonsRecordTypeName;
 
    			for(Schema.RecordTypeInfo sPrts : personRecordTypes) {
@@ -57,6 +54,32 @@ public with sharing class TMN_ContactHandler {
    					thisPersonsRecordTypeName = sPrts.Name;
    				}
    			}
+
+   			// CMMT-34	
+   			// Assign an initial value for this person's Chessie ID to be displayed in his/her MSR report record.
+   			// J. Gilliam, 4/2/14
+   			System.debug('What is thisPersonsRecordTypeName: ' + thisPersonsRecordTypeName);
+   			System.debug('What is p.Mentor__c: ' + p.Mentor__c);
+   			System.debug('What is p.Mentor__r.Chessie_ID__c' + p.Mentor__r.Chessie_ID__c);      		
+       		if(thisPersonsRecordTypeName=='Mentor') {
+       			thisContactsReptRec.Chessie_ID_for_Household__c = p.Chessie_ID__c;
+       		}
+       		else if(thisPersonsRecordTypeName=='Household Member') {
+       			for(TMN_Contact__c t : thesePersonsWithMentorsChessieIds) {
+       				if(p.Id==t.Id) {
+       					thisContactsReptRec.Chessie_ID_for_Household__c = t.Mentor__r.Chessie_ID__c;
+       				}
+       			}
+       		}
+       		       		
+			if(p.Disregarded__c!=true) {
+       			insert thisContactsReptRec;
+       		}
+       		
+			
+
+   			
+
 
        		// Initialize a list variable for the credential records we'll eventually insert for each person.
        		List<Credential_Record__c> credRecs = new List<Credential_Record__c>();
@@ -140,6 +163,8 @@ public with sharing class TMN_ContactHandler {
 
     public void OnBeforeUpdate(TMN_Contact__c[] oldObjects, TMN_Contact__c[] updatedObjects, Map<Id,TMN_Contact__c> newObjMap){
         // BEFORE UPDATE LOGIC 	
+         SoundExTriggerUtil util= new SoundExTriggerUtil();
+    	 util.generateKeys(updatedObjects);
     }
 
     public void OnAfterUpdate(TMN_Contact__c[] oldObjects, TMN_Contact__c[] updatedObjects, Map<Id,TMN_Contact__c> newObjMap){
@@ -210,9 +235,35 @@ public with sharing class TMN_ContactHandler {
         // I think this will break if we ever get an update of a list of TMN_Contact__c records that includes both mentors and non-mentors, if the non-mentors are household members
         // of any of the submitted mentors.  If we start getting errors around the same member being added to a list multiple times, come back to this and extract the .add calls
         // from the nested for loops, etc.  J. Gilliam, 2/24/14.
-		for(TMN_Contact__c t : updatedObjects) {
+		for(TMN_Contact__c t : updatedObjects) {			
 			for(Mentor_Tracking_Report_Record__c mentor : dhrReportRecordsForMentors) {
 				if(t.Id==mentor.TMN_Contact__c) {
+					
+					// START: CMMT-34; Add a boolean to indicate whether or not the Chessie_ID value for a Mentor has changed. J. Gilliam, 4/3/14
+					Boolean updateChessieIds = false;
+					for(TMN_Contact__c old : oldObjects) {
+						if(t.Chessie_ID__c!=old.Chessie_ID__c) {
+							updateChessieIds = true;
+						}
+					}
+					// END: CMMT-34; Add a boolean to indicate whether or not the Chessie_ID value for a Mentor has changed. J. Gilliam, 4/3/14
+					
+					// START:  CMMT-34; If the Mentor's Chessie ID HAS changed, update the Mentor_Tracking_Report_Record__c records for both
+					// 			the Mentor and any existing household members.  J. Gilliam 4/3/14
+					if(updateChessieIds) {
+						mentor.Chessie_ID_for_Household__c = t.Chessie_ID__c;
+						List<Mentor_Tracking_Report_Record__c> dhrReportUpdatesThisHouseholdLoop3 = new List<Mentor_Tracking_Report_Record__c>();	
+						for(Mentor_Tracking_Report_Record__c householdMember : dhrReportRecordsForMentorsHouseholdMembers) {
+							if(t.Id==householdMember.Mentor__c) {
+								householdMember.Chessie_ID_for_Household__c = t.Chessie_ID__c;
+								dhrReportUpdatesThisHouseholdLoop3.add(householdMember);
+							}
+						}
+						update dhrReportUpdatesThisHouseholdLoop3;						
+					}
+					// END: CMMT-34; If the Mentor's Chessie ID HAS changed, update the Mentor_Tracking_Report_Record__c records for both
+					// 			the Mentor and any existing household members.  J. Gilliam, 4/3/14 
+					
 					if(t.Inactive__c==true) {
 						System.debug('t.Inactive__C==true');
 						if(mentor.Status__c!='Closed') {
