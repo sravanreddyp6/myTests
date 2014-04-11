@@ -45,16 +45,16 @@ public with sharing class HomePageSearchController{
          String types;
          Id recordId;
          String FirstNMe,LastNMe;
-         String conQuery = 'select Id,Name,FirstName,LastName,Age__c,Account.First_Name_SoundEx_Key__c,Account.Last_Name_SoundEx_Key__c,Account.BillingState,(select Person_Being_Served__r.Name,Person_Being_Served__c,State__c from Episodes__r) from Contact where '; 
+         String conQuery = 'select Id,Name,FirstName,LastName,Age__c,Account.First_Name_SoundEx_Key__c,Account.Last_Name_SoundEx_Key__c,MailingState,(select Person_Being_Served__r.Name,Person_Being_Served__c,State__c from Episodes__r) from Contact where '; 
          String pbrQuery = 'select Id,Name,First_Name__c,First_Name_SoundEx_Key__c,Last_Name__c,Last_Name_SoundEx_Key__c,Full_Name__c,Age__c,State__c,(select Name,State_for_Preferred_Service__c,Name_PBR__c,Person_Being_Referred__r.Name,Person_Being_Referred__c from Referrals__r) from Person_Being_Referred__c where ';
          String tmnQuery = 'select Id,Name,First_Name__c,First_Name_SoundEx_Key__c,Last_Name__c,Last_Name_SoundEx_Key__c,Full_Name__c,Age__c,State__c from TMN_Contact__c where ';
          
         if(FirstNM!=null && LastNM!=null && FirstNM!='' && LastNM!=''){
-        	 FirstNMe = SoundEx.ToSoundEx(FirstNM);
-        	 LastNMe = SoundEx.ToSoundEx(LastNM);
-        	 conQuery+='Account.First_Name_SoundEx_Key__c=:FirstNMe or Account.Last_Name_SoundEx_Key__c=:LastNMe';
-        	 pbrQuery+='First_Name_SoundEx_Key__c =:FirstNMe or Last_Name_SoundEx_Key__c =:LastNMe';
-        	 tmnQuery+='First_Name_SoundEx_Key__c =:FirstNMe or Last_Name_SoundEx_Key__c =:LastNMe';
+             FirstNMe = SoundEx.ToSoundEx(FirstNM);
+             LastNMe = SoundEx.ToSoundEx(LastNM);
+             conQuery+='Account.First_Name_SoundEx_Key__c=:FirstNMe and Account.Last_Name_SoundEx_Key__c=:LastNMe';
+             pbrQuery+='First_Name_SoundEx_Key__c =:FirstNMe and Last_Name_SoundEx_Key__c =:LastNMe';
+             tmnQuery+='First_Name_SoundEx_Key__c =:FirstNMe and Last_Name_SoundEx_Key__c =:LastNMe';
         }else if(FirstNM!=null && (LastNM==null || LastNM=='') && FIrstNM!=''){
           FirstNMe = SoundEx.ToSoundEx(FirstNM);
           conQuery+='Account.First_Name_SoundEx_Key__c=:FirstNMe';
@@ -67,25 +67,28 @@ public with sharing class HomePageSearchController{
            tmnQuery+='Last_Name_SoundEx_Key__c =:LastNMe';
          }
       // person being served     
-
+    system.debug( conQuery );
+    
       for(Contact cnt:database.Query(conQuery)){
         
              firstNames = cnt.FirstName;
              LastNames = cnt.LastName;
              age = String.valueof(cnt.Age__c);
              for(Admission__c adm:cnt.Episodes__r){
-                if(adm.Person_Being_Served__c==cnt.AccountId && adm.State__c!=null){
-                    state = adm.State__c;
+                if( adm.State__c!=null){
+                
+                    // convert state code to name
+                    state = Utility.getStateNameFromCode( adm.State__c );
                 }
                 else{
-                    state = cnt.Account.BillingState;
+                    state = cnt.MailingState;
                 }
              }
              
               types = 'Person Being Served';
               recordId = cnt.AccountId;
               
-                AppWrapper.add(new wrapper(firstNames,LastNames,age,state,types,recordId));
+              AppWrapper.add(new wrapper(firstNames,LastNames,age,state,types,recordId));
          
        }
        
