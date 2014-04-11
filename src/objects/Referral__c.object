@@ -2205,6 +2205,15 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Has_Evaluation__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>whether or not evaluation exists for this referral</description>
+        <externalId>false</externalId>
+        <label>Has Evaluation</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>Has_Pets__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
@@ -7307,6 +7316,31 @@
         <unique>false</unique>
     </fields>
     <label>Referral</label>
+    <listViews>
+        <fullName>Active_with_Evaluations</fullName>
+        <columns>Referral_Name__c</columns>
+        <columns>NAME</columns>
+        <columns>Evaluated_By__c</columns>
+        <columns>Evaluation_Date__c</columns>
+        <columns>Admission_Location__c</columns>
+        <columns>Anticipated_Admission_Date__c</columns>
+        <columns>Referral_Status__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Referral_Status__c</field>
+            <operation>equals</operation>
+            <value>New,Active,On Hold</value>
+        </filters>
+        <filters>
+            <field>Has_Evaluation__c</field>
+            <operation>equals</operation>
+            <value>1</value>
+        </filters>
+        <label>Active with Evaluations</label>
+        <sharedTo>
+            <role>Care_Meridian</role>
+        </sharedTo>
+    </listViews>
     <listViews>
         <fullName>All</fullName>
         <columns>NAME</columns>
