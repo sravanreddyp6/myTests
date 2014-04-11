@@ -5,6 +5,9 @@ public with sharing class Assessment_FADResearchSummaryRpt_cnt {
     public list<string> repeatList= new list<string>();
     public list<string> getrepeatList (){ return repeatList;}    
 
+    public map<string, Related_Party__c> mapRelParty = new map<string, Related_Party__c>();
+    public map<string, Related_Party__c> getmapRelParty(){ return mapRelParty;}
+
     public Date fStartDate{get{return fStartDate;} set;}
     
     public PageReference runReport(){
@@ -15,6 +18,7 @@ public with sharing class Assessment_FADResearchSummaryRpt_cnt {
         List<Assessment_Response__c> tmpAR = new list<Assessment_Response__c>();
         tmpar = [select id, Question__r.Dev_Name__c, assessment__r.Service_Assignment__r.person_being_served__c, Assessment__c, 
                         assessment__r.Service_Assignment__r.admission__r.Effective_Date__c,
+                        assessment__r.Service_Assignment__r.Location_Region__c,
                         assessment__r.Assessment_Date__c,
                         assessment__r.Service_Assignment__r.person_being_served__r.LastName,
                         assessment__r.Service_Assignment__r.person_being_served__r.FirstName,
@@ -50,14 +54,18 @@ public with sharing class Assessment_FADResearchSummaryRpt_cnt {
             
             
             }
-            
+            set<id> PBSid = new set<id>();
             for(Assessment_Response__c AR: tmpAR){
                 saScope.add(ar.assessment__r.Service_Assignment__c);
                 mapResults.put(ar.assessment__r.Phase__c + ar.Question__r.Dev_Name__c + ar.assessment__r.Service_Assignment__c,AR);
-                
-
+                Related_Party__c tmpRP = new Related_Party__c();
+                mapRelParty.put(ar.assessment__r.Service_Assignment__r.person_being_served__c, tmpRP);
+                PBSid.add(ar.assessment__r.Service_Assignment__r.person_being_served__c);
             }
-        
+            for(Related_Party__c rl: 
+                [select NAME, person_being_served__c from Related_Party__c Where Person_Being_Served__c in :PBSid AND Type__c = 'Caregiver' Order By CreatedDate ASC]){
+                mapRelParty.put(rl.person_being_served__c, rl); 
+            }
         
         return null;
     }
