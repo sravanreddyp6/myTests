@@ -17173,11 +17173,7 @@ return elArray;
 
 
 var errors = []; 
-var alerts = [];
-// CTEAE-78 - remove Auth check for NC and AZ
-/* 
-var authorization_types = [&quot;NC - Child and Family Team&quot;,&quot;NC - IIH&quot;,&quot;NC - IMAPP&quot;,&quot;NC - OPT&quot;]; 
-*/
+var alerts = []; 
 if( {! ISPICKVAL(Progress_Note__c.Status__c,&apos;Final&apos;)} ){ 
 alert(&apos;This Progress Note has already been Finalized&apos;); 
 } 
@@ -17201,12 +17197,17 @@ errors.push(&apos;You must select a &quot;Service Code&quot; before continuing.&
 
 var recordTypeQuery = sforce.connection.query(&quot;SELECT Id, Name, DeveloperName from RecordType where id = &apos;&quot; + records[0].RecordTypeId + &quot;&apos;&quot;); 
 curRtype = recordTypeQuery.getArray(&quot;records&quot;); 
-//alert(curRtype[0].Name); 
-// CTEAE-78 - remove check for Auth 
-/*if(records[0].Authorization__c == null &amp;&amp; authorization_types.indexOf(curRtype[0].Name) != -1){ 
-alerts.push(&apos;WARNING! You currently &apos; + &quot;don&apos;t&quot; + &apos; have anything selected for &quot;Authorization&quot;. If you would like to continue without selecting anything for &quot;Authorization&quot;, click the &quot;Finalize&quot; button again. If you have errors from other missing information, those will have to be corrected before continuing.&apos;); 
+
+// CTEAE-51 require auth for AVATAR but not AZ notes
+var PBSQuery = sforce.connection.query(&quot;SELECT Id, Avatar_Source_System__c from Contact where id = &apos;{!Progress_Note__c.Person_Being_ServedId__c}&apos;&quot;); 
+var billingsystem = PBSQuery.getArray(&quot;records&quot;)[0].Avatar_Source_System__c;
+
+var admission_state = &apos;{! Progress_Note__c.Admission_State__c }&apos;;
+if(records[0].Authorization__c == null &amp;&amp; 
+billingsystem == &apos;AVATAR&apos; &amp;&amp; admission_state != &apos;AZ&apos;)
+{ 
+errors.push(&apos;A Progress Note cannot be finalized without an Authorization.  Please select an Authorization from the list.  If no authorizations are available, you may need to finalize this note later.&apos;); 
 } 
-*/
 
 //Check to see if there is a signature on file
 if (curRtype[0].DeveloperName == &apos;AZ_OPT&apos; &amp;&amp; {! Progress_Note__c.Signature_on_File__c != &apos;Y&apos;}) {
@@ -17236,17 +17237,23 @@ stg = true;
 } 
 var ServiceAssignment = &apos;{!JSENCODE(Progress_Note__c.Service_Assignment__c)}&apos;; 
 //alert(&apos;{!Progress_Note__c.Service_Assignment__c}&apos;); 
-if(!stg &amp;&amp; ServiceAssignment.search(&quot;Asmt Only&quot;) == -1){ 
+if(!stg &amp;&amp; ServiceAssignment.search(&quot;Asmt Only&quot;) == -1
+&amp;&amp; curRtype[0].DeveloperName != &apos;IN_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;MA_FCT&apos;
+&amp;&amp; curRtype[0].DeveloperName != &apos;MD_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;OH_FCT&apos;){ 
 errors.push(&apos;You must select a &quot;Goal&quot; before continuing.&apos;); 
 } 
 if({!ISBLANK( Progress_Note__c.Action_Plan__c )} &amp;&amp; ServiceAssignment.search(&quot;Asmt Only&quot;) == -1){ 
 errors.push(&apos;You must select a &quot;Plan&quot; before continuing.&apos;); 
 } 
 
-if({!ISBLANK(Progress_Note__c.Interventions__c)}){ 
+if({!ISBLANK(Progress_Note__c.Interventions__c)}
+&amp;&amp; curRtype[0].DeveloperName != &apos;IN_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;MA_FCT&apos;
+&amp;&amp; curRtype[0].DeveloperName != &apos;MD_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;OH_FCT&apos;){ 
 errors.push(&apos;You must populate the &quot;Intervention&quot; field before continuing.&apos;); 
 } 
-if({!ISBLANK(Progress_Note__c.Progress__c)}){ 
+if({!ISBLANK(Progress_Note__c.Progress__c)}
+&amp;&amp; curRtype[0].DeveloperName != &apos;IN_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;MA_FCT&apos;
+&amp;&amp; curRtype[0].DeveloperName != &apos;MD_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;OH_FCT&apos;){ 
 errors.push(&apos;You must populate the &quot;Progress&quot; field before continuing.&apos;); 
 } 
 } 
