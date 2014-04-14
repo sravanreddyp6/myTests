@@ -1,48 +1,6 @@
 <apex:component controller="HomePageController">
 <apex:stylesheet value="{!URLFOR($Resource.Unsemantic, 'stylesheets/unsemantic-grid-responsive.css')}" />
-<style type="text/css">
-    .grid-container {
-      margin-left: 0;
-      margin-right: 0;
-      max-width: none;
-      padding: 0;
-    }
 
-    .block {
-      background-color: #7AC143;
-      border-radius: 8px 8px 8px 8px;
-      padding: 4px;
-      margin-bottom: 12px;
-    }
-
-    .block-title {
-      color: #002C59;
-      padding: 0 4px;
-      font-size: 1.3em;
-    }
-
-    .block-inner {
-      background-color: #ffffff;
-      border-radius: 8px 8px 8px 8px;
-      padding: 6px 6px 6px 6px;
-      margin-top: 4px;
-      height: 440px;
-    }
-    
-      .block-inner ul {
-      margin-left: 5px;
-      margin-right: 0px;
-      padding-left: 10px;
-      padding-right: 0px;
-    }
-
-    .block-inner ul ul {
-      margin-left: 0;
-      padding-left: 0;
-    }
-
-
-</style>
 <script>
     j$ = jQuery.noConflict();
 
@@ -79,39 +37,12 @@
       j$('#' + text1).slideToggle();
     }
   </script>
-  <script type="text/javascript">
-  
-    
-    j$(document).ready(function() {
-      j$('ul#accordion a.heading').click(function() {
-        j$(this).css('outline','none');
-        if(j$(this).parent().hasClass('current')) {
-          j$(this).siblings('ul').slideUp('slow',function() {
-            j$(this).parent().removeClass('current');
-            j$.scrollTo('#accordion',1000);
-          });
-        } else {
-          j$('ul#accordion li.current ul').slideUp('slow',function() {
-            j$(this).parent().removeClass('current');
-          });
-          j$(this).siblings('ul').slideToggle('slow',function() {
-            j$(this).parent().toggleClass('current');
-          });
-          j$.scrollTo('#accordion',1000);
-        }
-        return false;
-      });
-    });
-  </script>
-<apex:attribute name="objectName" type="object" description="this is the object name" required="true" />
+  <apex:attribute name="objectName" type="object" description="this is the object name" required="true" />
     
     <apex:outputPanel layout="block" styleClass="grid-20 mobile-grid-100"> 
-    
   
           <apex:outputPanel layout="block" styleClass="block" rendered="{!(if(objectName=='Referrals',RefView,if(objectName=='Person Being Served',PBSView,if(objectName=='TMN Contacts',TMNView,if(objectName=='Contract Management',ContractView,if(objectName=='Documents',DocView,false))))))}">
-                 <!-- <apex:outputPanel layout="block" styleClass="block-title">
-                  I would like to access...
-                </apex:outputPanel> -->
+           
                 <apex:outputPanel layout="block" styleClass="block-inner">
                 <ul>
                      <li class="current"><a class="heading" onclick="showHideList('{!objectName}','links');"><apex:outputPanel layout="block" styleClass="block-title">{!objectName} </apex:outputPanel></a>
