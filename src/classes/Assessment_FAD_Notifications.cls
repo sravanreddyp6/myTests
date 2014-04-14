@@ -15,7 +15,7 @@ global class Assessment_FAD_Notifications implements Database.Batchable<sObject>
         SAs = (Service_Assignment__c[])scope;
         date d1 = system.today().addDays(-10);
         List<Assessment__c> assess;
-        SAs = [select Id, Phase_1_Start_Date__c, Person_Being_Served__r.FirstName, 
+        SAs = [select Id, Phase_1_Start_Date__c, Person_Being_Served__r.FirstName, Person_Being_Served__r.LastName, 
                     Person_Being_Served__r.OwnerId, Person_Being_Served__r.Owner.Name 
                         from Service_Assignment__c 
                         Where Program__c = 'IFCS' 
