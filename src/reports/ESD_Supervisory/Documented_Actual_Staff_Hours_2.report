@@ -1,33 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <aggregates>
+        <calculatedFormula>Progress_Note__c.Total_Time__c:SUM</calculatedFormula>
+        <datatype>number</datatype>
+        <developerName>FORMULA1</developerName>
+        <isActive>false</isActive>
+        <isCrossBlock>false</isCrossBlock>
+        <masterLabel>Time Total</masterLabel>
+        <scale>0</scale>
+    </aggregates>
     <buckets>
-        <bucketType>picklist</bucketType>
+        <bucketType>number</bucketType>
         <developerName>BucketField_12474719</developerName>
         <masterLabel>Phase</masterLabel>
         <nullTreatment>n</nullTreatment>
-        <sourceColumnName>Contact.Service_Assignment__r$Phase_of_Treatment__c</sourceColumnName>
+        <sourceColumnName>Contact.Service_Assignment__r$Phase__c</sourceColumnName>
         <useOther>false</useOther>
         <values>
             <sourceValues>
-                <sourceValue>Phase 1</sourceValue>
+                <to>0</to>
+            </sourceValues>
+            <value>No Phase</value>
+        </values>
+        <values>
+            <sourceValues>
+                <from>0</from>
+                <to>1</to>
             </sourceValues>
             <value>J</value>
         </values>
         <values>
             <sourceValues>
-                <sourceValue>Phase 2</sourceValue>
+                <from>1</from>
+                <to>2</to>
             </sourceValues>
             <value>R</value>
         </values>
         <values>
             <sourceValues>
-                <sourceValue>Phase 3</sourceValue>
+                <from>2</from>
+                <to>3</to>
             </sourceValues>
             <value>VC</value>
         </values>
         <values>
             <sourceValues>
-                <sourceValue>Phase 4</sourceValue>
+                <from>3</from>
             </sourceValues>
             <value>G</value>
         </values>
@@ -52,7 +70,12 @@
     <format>Summary</format>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>
-        <field>Contact$Owner</field>
+        <field>Contact.Service_Assignment__r$Service_Assignment_Number__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>Contact.Service_Assignment__r.Progress_Notes__r$Owner</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
     <name>Documented Actual Staff Hours</name>
