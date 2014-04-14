@@ -13,9 +13,13 @@
     }
 
     .block {
-      background-color: #7AC143;
-      border-radius: 8px 8px 8px 8px;
-      padding: 4px;
+      border-width: 12px 4px;
+      border-style: solid;
+      border-color: #7AC143;
+      -webkit-border-radius: 8px;
+	  -moz-border-radius: 8px;
+	  border-radius: 8px;
+      padding: 0px;
       margin-bottom: 12px;
      
     }
@@ -28,25 +32,35 @@
 
     .block-inner {
       background-color: #ffffff;
-      border-radius: 8px 8px 8px 8px;
       padding: 6px 6px 6px 6px;
-      margin-top: 4px;
+      border:1px solid white;
+      border-radius: 8px;
       
     }
 
     .block-inner ul {
-      margin-left: 5px;
-      margin-right: 0px;
-      padding-left: 10px;
-      padding-right: 0px;
+      margin: 0px !important;
+      padding: 0px;
+      list-style-type: none;
+    }
+    .block-inner ul li {
+    	padding-top:3px;
+    	margin:3px;
     }
 
-    .block-inner ul ul {
+    .block-inner ul li ul {
       margin-left: 0;
       padding-left: 0;
+      list-style-type:disc;
+      list-style:inside;
     }
 
-
+	.block-inner ul li ul li {
+		margin-left:20px;
+		margin-bottom:0px;
+		margin-top:0px;
+		list-style-position:outside;
+	}
 
     #accordion, #accordion ul {
       padding-left: 0;
@@ -67,37 +81,6 @@
     a.heading:hover {
       cursor: pointer;
     }
-
-    .news-item {
-      border-bottom: 1px solid #002C59;
-      margin-bottom: 6px;
-      padding-bottom: 2px;
-      display: block;
-    }
-
-    .news-item-last {
-      border-bottom: none;
-      margin-bottom: 0;
-      padding-bottom: 0;
-    }
-
-    .news-item-date {
-      font-weight: bold;
-    }
-
-    .news-item-creator {
-      font-style: italic;
-    }
-
-    .news-item-body {
-      margin-top: 2px;
-    }
-
-    .news-item-more {
-      text-decoration: none;
-      color: #015BA7;
-    }
-
     .taskbutton {
       background-color: #002C59;
       color: #ffffff;
@@ -170,19 +153,8 @@
   <c:HomePageComponents objectName="Documents" />  
   </apex:outputPanel>
   
-   <apex:pageBlock title="Approvals">
-       <a href="/04i">View All</a> <br /> <br />
-        <apex:pageBlockTable value="{!ListApprovals}" var="app">
-            <apex:column headerValue="Action"><a href="/{!app.TAction}/e?et=REASSIGN&retURL=%2Fhome%2Fhome.jsp"> Reassign</a> | <a href="/p/process/ProcessInstanceWorkitemWizardStageManager?id={!app.TAction}"> Approve / Reject</a></apex:column>
-            <apex:column headerValue="Related To"><a href="/{!app.TRelated}">{!app.TobjName}</a></apex:column>
-            <apex:column headerValue="Type">{!app.TType}</apex:column>
-            <apex:column headerValue="Most Recent Approvers"><a href="/{!app.MostRecent}">{!app.LMName}</a></apex:column>
-            <apex:column headerValue="Date Submitted">{!app.cDate}</apex:column>
-        </apex:pageBlockTable>    
-    </apex:pageBlock>
   
-  
-      <apex:pageBlock title="My Tasks">
+      <apex:pageBlock title="My Tasks" >
       
       <apex:pageBlockButtons location="Top">
        <apex:panelGrid columns="3">
@@ -210,6 +182,20 @@
             <apex:column headerValue="Related To"><a href="/{!tsk.WhatId}">{!tsk.What.Name}</a></apex:column>
         </apex:pageBlockTable>   
     </apex:pageBlock> 
+ 
+   <apex:pageBlock title="Approvals">
+       <a href="/04i">View All</a> <br /> <br />
+        <apex:pageBlockTable value="{!ListApprovals}" var="app">
+            <apex:column headerValue="Action"><a href="/{!app.TAction}/e?et=REASSIGN&retURL=%2Fhome%2Fhome.jsp"> Reassign</a> | <a href="/p/process/ProcessInstanceWorkitemWizardStageManager?id={!app.TAction}"> Approve / Reject</a></apex:column>
+            <apex:column headerValue="Related To"><a href="/{!app.TRelated}">{!app.TobjName}</a></apex:column>
+            <apex:column headerValue="Type">{!app.TType}</apex:column>
+            <apex:column headerValue="Most Recent Approvers"><a href="/{!app.MostRecent}">{!app.LMName}</a></apex:column>
+            <apex:column headerValue="Date Submitted">{!app.cDate}</apex:column>
+        </apex:pageBlockTable>    
+    </apex:pageBlock>
+  
+ 
+ 
   </apex:form>
   
   <script>
@@ -229,8 +215,27 @@
        
   <script type="text/javascript">
   
-    
+  
+  	
+  	
     j$(document).ready(function() {
+    
+     var setSize = function () {  //define a function with the code you want to call    
+    	// resize all boxes to same height
+    	var maxheight=0;
+    	j$( ".block-inner" ).each( function( index, element) {
+    		if ( this.clientHeight > maxheight )
+    			maxheight = this.clientHeight;
+    	});
+    	
+    	j$(".block").css("height", maxheight);
+    	j$(".block").clientHeight = maxheight;
+    
+  		 };
+   
+   		j$(window).resize(setSize);
+   		setSize();  
+    
       j$('ul#accordion a.heading').click(function() {
         j$(this).css('outline','none');
         if(j$(this).parent().hasClass('current')) {
