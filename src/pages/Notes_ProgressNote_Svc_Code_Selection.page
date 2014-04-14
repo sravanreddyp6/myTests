@@ -1,0 +1,45 @@
+<apex:page standardController="Progress_Note__c" extensions="Notes_ProgressNote_Svc_Code_Selection" showheader="false" sidebar="false">
+
+<apex:variable var="Final" value="{!IF(Progress_Note__c.Status__c='Final',True,False)}"/>
+<apex:variable var="Pending" value="{!IF(Progress_Note__c.Approval_Status__c='Pending',True,False)}"/>
+<apex:form id="myFrm" >
+<apex:pageMessages ></apex:pageMessages>
+
+    <apex:pageBlock mode="mainDetail" >
+                    <apex:actionStatus id="myStatus">
+                        <apex:facet name="start">
+                            <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                                <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Saving... <span class="waitingDescription"></span>
+                            </div>
+                        </apex:facet>
+                        <apex:facet name="stop"></apex:facet>
+                    </apex:actionStatus>
+                    
+                        
+          <apex:pageBlockSection title="Service Code" collapsible="false" columns="2">
+
+          <apex:selectList size="1" title="Service Code" value="{!Progress_Note__c.Service_Code__c}" rendered="{!!Final}" disabled="{!Pending}">
+                <apex:selectOptions value="{!Codes}"></apex:selectOptions>
+                <apex:actionSupport event="onchange" reRender="myFrm" status="myStatus" action="{!quicksave}"/>
+            </apex:selectList>
+          
+          <apex:pageBLockSectionItem rendered="{!!Final && Progress_Note__c.Admission__r.State__c != 'NC' && Progress_Note__c.Admission__r.State__c != 'AZ'}">
+          <apex:outputLabel for="auth" value="Authorization" />
+          <apex:selectList size="1" id="auth" value="{!Progress_Note__c.Authorization__c}"  rendered="{!!Final}" disabled="{!Pending}">
+                
+            <apex:selectOptions value="{!Auths}"></apex:selectOptions>
+                    <apex:actionSupport event="onchange" reRender="myFrm" status="myStatus" action="{!quicksave}"/>
+            </apex:selectList>
+            </apex:pageBLockSectionItem>
+            
+            <apex:outputField id="svccode" value="{!Progress_Note__c.Service_Code__r.Service_Value__c}"  rendered="{!Final}"/>
+            <apex:outputPanel rendered="{! Progress_note__c.Admission__r.state__C != 'NC' && Final}" >
+            <apex:outputLabel for="authdisp" value="Authorization" />
+            <apex:outputField id="authdisp" label="Authorization" value="{!Progress_Note__c.Authorization__r.Display_Name__c}"  />
+            <apex:pageBlockSectionItem />         
+            <apex:outputField label="Payor Name" value="{!Progress_Note__c.Authorization__r.Payer_Name__c}" />
+            </apex:outputPanel>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+</apex:form>
+</apex:page>
