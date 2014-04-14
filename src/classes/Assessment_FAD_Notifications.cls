@@ -20,8 +20,6 @@ global class Assessment_FAD_Notifications implements Database.Batchable<sObject>
                         from Service_Assignment__c 
                         Where Program__c = 'IFCS' 
                          AND 
-                        Status__c = 'Active' 
-                         AND 
                         Service_Line__c like '%FCT%'
                          AND
                         Phase_1_Start_Date__c = :d1 ];
@@ -95,8 +93,6 @@ global class Assessment_FAD_Notifications implements Database.Batchable<sObject>
                     Person_Being_Served__r.OwnerId, Person_Being_Served__r.Owner.Name 
                         from Service_Assignment__c 
                         Where Program__c = 'IFCS' 
-                         AND 
-                        Status__c = 'Active' 
                          AND 
                         Service_Line__c like '%FCT%'
                          AND
