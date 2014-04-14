@@ -114,7 +114,7 @@
 {!mapresults}
 -->
 <apex:outputPanel layout="block" id="dataTable" style="width: 7000px;">   
-   <apex:pageBlock title="Results">
+   <apex:pageBlock title="FAD Research Summary Report.">
         <apex:pageBlockButtons > 
             <div style="float: right"><input class="btn" type="button" onclick="tableToExcel('mytbl', 'W3C Example Table')" value="Export to Excel"/></div>
         </apex:pageBlockButtons>  
@@ -286,38 +286,39 @@
                     <td  class="dataRow">{!CGname}</td>
                     
                     <td  class="dataRow">
-                        <apex:outputField value="{!mapResults['InitialPBS_Could_Not_complete'+item].Yes_No__c}" />
+                        {!if(mapResults['InitialPBS_Could_Not_complete'+item].Yes_No__c,'Yes - ', 'No')}
+                        
                         <apex:outputPanel >
                             {!mapResults['InitialPBS_Could_Not_complete_reason'+item].Rating__c}
                         </apex:outputPanel>
                     </td>
                     <td  class="dataRow">
-                        <apex:outputField value="{!mapResults['3 MonthPBS_Could_Not_complete'+item].Yes_No__c}" />
+                        {!if(mapResults['3 MonthPBS_Could_Not_complete'+item].Yes_No__c,'Yes - ', 'No')}
                         <apex:outputPanel >
                             {!mapResults['3 MonthPBS_Could_Not_complete_reason'+item].Rating__c}
                         </apex:outputPanel>                    
                     </td>
                     <td  class="dataRow">
-                        <apex:outputField value="{!mapResults['FinalPBS_Could_Not_complete'+item].Yes_No__c}" />
+                        {!if(mapResults['FinalPBS_Could_Not_complete'+item].Yes_No__c,'Yes - ', 'No')}
                         <apex:outputPanel >
                             {!mapResults['FinalPBS_Could_Not_complete_reason'+item].Rating__c}
                         </apex:outputPanel>                    
                     </td>
                     
                     <td  class="dataRow">
-                        <apex:outputField value="{!mapResults['InitialCG_Could_Not_complete'+item].Yes_No__c}" />
+                        {!if(mapResults['InitialCG_Could_Not_complete'+item].Yes_No__c,'Yes - ', 'No')}
                         <apex:outputPanel >
                             {!mapResults['InitialCG_Could_Not_complete_reason'+item].Rating__c}
                         </apex:outputPanel>
                     </td>
                     <td  class="dataRow">
-                        <apex:outputField value="{!mapResults['3 MonthCG_Could_Not_complete'+item].Yes_No__c}" />
+                        {!if(mapResults['3 MonthCG_Could_Not_complete'+item].Yes_No__c,'Yes - ', 'No')}
                         <apex:outputPanel >
                             {!mapResults['3 MonthCG_Could_Not_complete_reason'+item].Rating__c}
                         </apex:outputPanel>                    
                     </td>
                     <td  class="dataRow">
-                        <apex:outputField value="{!mapResults['FinalCG_Could_Not_complete'+item].Yes_No__c}" />
+                        {!if(mapResults['FinalCG_Could_Not_complete'+item].Yes_No__c,'Yes - ', 'No')}
                         <apex:outputPanel >
                             {!mapResults['FinalCG_Could_Not_complete_reason'+item].Rating__c}
                         </apex:outputPanel>                    
