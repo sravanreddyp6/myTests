@@ -107,6 +107,15 @@ public with sharing class Assessment_FAD_Form_Ex {
 
     public PageReference myLock(){
         boolean hasError = false;
+        list<assessment__c> oldAssess = new list<assessment__c>();
+        
+        oldassess = [select id from assessment__c where Service_Assignment__c = :assess.service_assignment__c AND Disregard__c = false AND Phase__c = :assess.phase__c AND id != :assess.id];
+        
+        if (oldassess.size() > 0){
+            assess.phase__c.adderror('An assessment with this service assignment and phase has already been created');
+            hasError = true;
+        
+        }        
         if(assess.phase__c == 'Initial' && assess.referral_date__c ==null){
             assess.referral_date__c.addError('Referral Date is required before you can submit this assessment');
             hasError = true;
