@@ -179,12 +179,7 @@ function hidedio(dio, dio2){
 
 
 <apex:form id="myFrm" >
-
-    <apex:actionRegion >
-        <apex:actionFunction name="showAddLocation" action="{!showAddLocation}" rerender="locations,locationEntry,msgs" oncomplete="openModalDialog('ReferralLocationModal', 'span', 'Add Location','referral-location'); " status="AddLocationStatus" />
-   </apex:actionRegion>
-    
-    
+   
  <apex:outputPanel rendered="{!editMode}" >
     <style>
     
@@ -210,13 +205,8 @@ function hidedio(dio, dio2){
                     <apex:commandButton onclick="window.open('/apex/CMContract_Form?oldid={!CareMeridian_Contract__c.id}', '_self'); return false;" value="Renew / Amend" reRender="nothing" rendered="{!!editMode  && !hasnextcontract}"/>
                     <apex:commandButton onclick="window.open('/apex/CMContract_Form?oldid={!CareMeridian_Contract__c.id}&isClone=1', '_self'); return false;" value="Clone" reRender="nothing" rendered="{!!editMode }"/>
                 </apex:outputPanel><!--javascript:showdio('dialog','dialog2'); -->
-                <apex:commandButton onclick="window.open('/apex/CMContract_FormPrint?Id={!CareMeridian_Contract__c.Id}', '_blank'); return false;" value="Print" rendered="{! !editMode}"/>
+                <apex:commandButton value="Print"  onclick="window.open('/apex/CMContract_FormPrint?Id={!CareMeridian_Contract__c.Id}', '_blank'); return false;" rendered="{! !editMode}"/>
             </apex:pageBlockButtons>
-
-            <!-- START -->
-           
-            
-            <!-- END -->
 
             
             <apex:pageBlockSection title="Information" columns="1" rendered="{!editMode}">
@@ -275,7 +265,9 @@ function hidedio(dio, dio2){
                 <apex:outputField value="{!CareMeridian_Contract__c.Service_Line__c}"/>  
             </apex:pageBlockSection>     
             
-            <!-- Code Placeholder for ADD LOCATION -->                  
+            <!-- Code Placeholder for ADD LOCATION -->  
+            <!--  START --->
+            <apex:actionRegion >                
             <apex:PageBlockSection columns="1" rendered="{!isNeuro}" >
                 <apex:outputPanel id="refreshServiceLocationPanel">
                     <apex:CommandButton value="Add Location"
@@ -385,9 +377,13 @@ function hidedio(dio, dio2){
 
 
                             </apex:pageblockSection>
+                            
+                           
                         </apex:facet>
                     </apex:actionStatus>
-                </apex:outputPanel>                            
+                     
+                </apex:outputPanel> 
+                                           
                 <apex:PageBlockTable value="{!locations}" var="location" id="refreshContractLocs" ColumnsWidth="2%,3%,10%,10%,20%,15%,10%,20%,10%">
                     <apex:column headerValue="Action" >
                             <apex:commandLink value="Del" action="{!RemoveItem}" reRender="refreshContractLocs" status="st">
@@ -417,6 +413,7 @@ function hidedio(dio, dio2){
                 </apex:PageBlockTable> 
             </apex:PageblockSection>
             
+            
             <apex:PageblockSection id="refreshOnlyLocs" columns="1" title="Locations added need to be saved against the contract..." rendered="{!AND(isNeuro,editMode)}">
                 <apex:PageBlockTable value="{!selectedsLocs}" var="selLoc" >
                     <apex:column headerValue="Action" >
@@ -444,6 +441,8 @@ function hidedio(dio, dio2){
                     
                 </apex:PageBlockTable> 
             </apex:PageblockSection>
+            </apex:actionRegion>
+                    <!-- END -->
             
             <apex:pageBlockSection title="Timeframe" columns="2" rendered="{!AND(editMode,!isNeuro)}" >
                 <apex:inputField value="{!CareMeridian_Contract__c.Start_Date__c}" /> 

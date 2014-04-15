@@ -209,7 +209,7 @@ public class CMContract_Form {
         isSearchClicked=true;
         tmpResults=null;
         searchedServiceLocationResults=null;
-        String qs1='select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c, TIN__c, NPI__c from service_location__c where ';
+        String qs1='select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c, TIN__c, NPI__c FROM service_location__c where ';
         string qs = '';
     
         //if(!((nameFilter=='' || nameFilter==null)&&(cityFilter=='' || cityFilter==null)&&(stateFilter=='' || stateFilter==null))){
@@ -267,12 +267,12 @@ public class CMContract_Form {
             searchedServiceLocationResultsList=new List<cSearchedServiceLocationResults>();
             searchedServiceLocationResultsListAll=new List<cSearchedServiceLocationResults>();                        
             if(tmpResults!=null){
-                for(service_location__c sloc : [SELECT Name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c, TIN__c, NPI__c  
+                for(service_location__c sloc : [SELECT Name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c, TIN__c, NPI__c    
                                                 FROM service_location__c WHERE id in :tmpResults order by name limit :QueryLimit offset :OffsetSize]) {
                     searchedServiceLocationResultsList.add(new cSearchedServiceLocationResults(sloc));
                 }
                 
-                for(service_location__c sloc : [SELECT Name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c, TIN__c, NPI__c 
+                for(service_location__c sloc : [SELECT Name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c, TIN__c, NPI__c   
                                                 FROM service_location__c WHERE id in :tmpResults order by Name]) {
                     searchedServiceLocationResultsListAll.add(new cSearchedServiceLocationResults(sloc));
                 }
@@ -323,7 +323,7 @@ public class CMContract_Form {
         {return cmRL;}
     */
     public CMContract_Form(ApexPages.StandardController controller) {
-
+       
         myContract = (CareMeridian_Contract__c)controller.getRecord();
         changeTypes = new List<SelectOption>();
         selectedTypes = new List<String>();      
@@ -377,12 +377,16 @@ public class CMContract_Form {
                    isNeuro=True;              
             
         } else {
-            rectype = [SELECT ID, RecordTypeID, RecordType.DeveloperName FROM CareMeridian_Contract__c WHERE id=:myContract.id];
+            string file;
+            rectype = [SELECT ID, Name, RecordTypeID, RecordType.DeveloperName FROM CareMeridian_Contract__c WHERE id=:myContract.id];
             
             system.debug(rectype.RecordType.DeveloperName);
             
             if (rectype.RecordType.DeveloperName =='NeuroRestorative_Contracts'){
                 isNeuro=True;
+                file = 'NR '+rectype.Name+'.pdf';
+                // Assigns the Name of the contract to the NEURO PDF dynamically
+                 Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename='+file);
                 if(ApexPages.CurrentPage().getparameters().get('id')!=null){
                     locations=[SELECT ID, Service_Location__r.Name, Name, service_location__c,Service_Location_Service_Value__c, Service_Location__r.Setting__c, Service_Location_Program__c,Service_Location_Street__c,Service_Location_City__c,
                                             Service_Location_State__c, Service_Location_Zip__c, LastModifiedDate, TIN__c, NPI__c FROM Contract_ServiceLocation_JO__c WHERE Contract__c=:ApexPages.CurrentPage().getparameters().get('id')];
@@ -394,6 +398,9 @@ public class CMContract_Form {
 
            if (rectype.RecordType.DeveloperName =='CareMeridian_Contracts'){
                isNeuro=False;
+                file = 'CM '+rectype.Name+'.pdf';
+                //Assigns the name of the Contract to the CM COntract PDF Dynamically
+                Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename='+file);
            }
             isRev = true;   // want to enter type of change on every update other than brand new contract
            if ( !String.isBlank( myContract.Type_of_Change__c ))
@@ -438,10 +445,14 @@ public class CMContract_Form {
                     
                     if(ApexPages.currentPage().getParameters().get('RecordType') == null){
                     oldrectype = [SELECT ID, RecordTypeID, RecordType.DeveloperName FROM CareMeridian_Contract__c WHERE id=:oldId];
-                        if (oldrectype.RecordType.DeveloperName =='NeuroRestorative_Contracts')
+                        if (oldrectype.RecordType.DeveloperName =='NeuroRestorative_Contracts'){
                         isNeuro=True;
-                        if (oldrectype.RecordType.DeveloperName =='CareMeridian_Contracts')
+                        // Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename=NeuroRestorativeContracts.pdf');
+                             }
+                        if (oldrectype.RecordType.DeveloperName =='CareMeridian_Contracts'){
                         isNeuro=False;
+                       // Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename=CMContracts.pdf');
+                        }
                 }        
         
         }
@@ -644,6 +655,7 @@ public class CMContract_Form {
     return null;
     
  }
+ 
  
   public boolean isSearchClicked{get;set;}
  public void showAddLocation() {
