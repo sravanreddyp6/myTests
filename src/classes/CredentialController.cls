@@ -49,7 +49,7 @@ public class CredentialController {
     public CredentialController() {
             allRecords = [SELECT Name, Requested_Date__c, Documented_Date__c, Received_Date__c, Expiration_Date__c, Note__c,
             	Credential_Profile__r.Name, Credential_Profile__r.Applies_Requested_Date__c, Credential_Profile__r.Applies_Documented_Date__c, Credential_Profile__r.Applies_Received_Date__c, 
-                Credential_Profile__r.Applies_Expiration_Date__c, Credential_Profile__r.Applies_Note__c, Credential_Profile__r.OLM_Requirement__c,
+                Credential_Profile__r.Applies_Expiration_Date__c, Credential_Profile__r.Applies_Note__c, Credential_Profile__r.OLM_Requirement__c, Credential_Profile__r.NPA_Requirement__c,
                 Credential_Profile__r.Applies_CPS_Full_Disclosure__c, CPS_Full_Disclosure_Required__c, Credential_Profile__r.Applies_State_Conviction__c,
                 State_Conviction__c, Type_of_Conviction_State__c, Credential_Profile__r.Applies_Type_of_Conviction_State__c,
                 Credential_Profile__r.Applies_Conviction_Past_5_State__c, Conviction_Past_5_Years_State__c,
@@ -97,7 +97,7 @@ public class CredentialController {
                 
             allRecordsAtConstruction = [SELECT Name, Requested_Date__c, Documented_Date__c, Received_Date__c, Expiration_Date__c, Note__c,
             	Credential_Profile__r.Name, Credential_Profile__r.Applies_Requested_Date__c, Credential_Profile__r.Applies_Documented_Date__c, Credential_Profile__r.Applies_Received_Date__c, 
-                Credential_Profile__r.Applies_Expiration_Date__c, Credential_Profile__r.Applies_Note__c, Credential_Profile__r.OLM_Requirement__c,
+                Credential_Profile__r.Applies_Expiration_Date__c, Credential_Profile__r.Applies_Note__c, Credential_Profile__r.OLM_Requirement__c, Credential_Profile__r.NPA_Requirement__c,
                 Credential_Profile__r.Applies_CPS_Full_Disclosure__c, CPS_Full_Disclosure_Required__c, Credential_Profile__r.Applies_State_Conviction__c,
                 State_Conviction__c, Type_of_Conviction_State__c, Credential_Profile__r.Applies_Type_of_Conviction_State__c,
                 Credential_Profile__r.Applies_Conviction_Past_5_State__c, Conviction_Past_5_Years_State__c,
