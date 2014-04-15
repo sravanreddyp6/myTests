@@ -59,8 +59,8 @@ trigger ServiceAssignment_FAD_Notes on Service_Assignment__c (before update) {
                     mail.setHtmlBody('Hello ' +
                     theSA.Person_Being_Served__r.Owner.Name + ','+ 
                     '<br/>A FAD Assessment Summary is due for ' + 
-                    theSA.Person_Being_Served__r.FirstName + ' ' + theSA.Person_Being_Served__r.LastName + '<br/>' +
-                    '. Please click on the link below to access the Person Being Served\'s record. <br/>' +
+                    theSA.Person_Being_Served__r.FirstName + ' ' + theSA.Person_Being_Served__r.LastName + '.<br/>' +
+                    'Please click on the link below to access the Person Being Served\'s record. <br/>' +
                      '<a href="'+ 
                      System.Url.getSalesforceBaseUrl().toExternalForm()+ 
                      '/' +
