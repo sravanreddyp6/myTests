@@ -1,0 +1,51 @@
+<apex:page standardController="Assessment__c" extensions="AssessmentControllerExtension">
+<script>
+function openWin(url){
+ window.open(url);
+} 
+</script> 
+<apex:pageMessages />
+
+<apex:outputPanel id="AssmtDetail">
+<apex:detail subject="{!Assessment__c.ID}" relatedList="true" />
+</apex:outputPanel>
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /></span>
+    </apex:facet>  
+    <apex:facet name="stop"></apex:facet>         
+</apex:actionStatus>
+<apex:outputPanel layout="block" style="text-align:center;">
+<apex:form >
+    <!-- The following rendered="false" reference to the Assessment__c.Admission__r.Id field is NECESSARY
+        because it brings that field into context for this VF page and makes it possible for the PageReference
+        in the AssessmentControllerExtension Unlock method (etc.) to pass user back to admission page. J.Gilliam, 12/14/12. -->
+    <apex:outputField value="{!Assessment__c.Admission__r.Id}" rendered="false" />
+        <!-- The following rendered="false" reference to the Assessment__c.OwnerId field is NECESSARY
+        because it brings that field into context for this VF page and makes it possible for the IsUnlockAllowed method
+        to reference the OwnerId field. J.Gilliam, 2/6/12. -->
+    <apex:outputField value="{!Assessment__c.OwnerId}" rendered="false" />
+    
+    <apex:commandButton value="Edit" action="{!edit}" />
+    <apex:commandButton value="View Assessment" action="/apex/AssessmentForm?id={!Assessment__c.Id}" />
+    <apex:commandButton value="Print Assessment" onclick="openWin('/apex/PDF_Assessment_CANS_Scoresheet?id={!Assessment__c.Id}')" />
+    <apex:commandButton value="Return to Admission" action="/{!Assessment__c.Admission__r.Id}" />
+    <apex:commandButton value="Submit Assessment" action="{!SaveAndLock}" rendered="{!!Assessment__c.Locked__c}" status="myStatus" />
+    <apex:commandButton value="Unlock" action="{!Unlock}" rendered="{!Assessment__c.Locked__c && unlockAllowed}" status="myStatus" />
+    <apex:commandButton value="Disregard" action="{!setDisregard}" rendered="{!disregardAllowed}" status="myStatus"/>
+</apex:form>
+</apex:outputPanel>
+<!--<apex:relatedList list="OpenActivities" />-->
+<apex:include pageName="{!$Page.Assessmentform2}"/>
+<!--<apex:outputLink value="/{!Assessment__c.Admission__r.Id}" >TEST</apex:outputLink>-->
+<apex:outputPanel layout="block" style="text-align:center;">
+<apex:form >
+    <apex:pageMessages id="pageErrors"></apex:pageMessages>
+    <apex:commandButton value="Return to Admission" action="/{!Assessment__c.Admission__r.Id}" />
+    <apex:commandButton value="Submit Assessment" action="{!SaveAndLock}" rendered="{!!Assessment__c.Locked__c}" status="myStatus" />
+    <apex:commandButton value="Unlock" action="{!Unlock}" rendered="{!Assessment__c.Locked__c && unlockAllowed}" status="myStatus" />
+    <apex:commandButton value="Disregard" action="{!setDisregard}" rendered="{!disregardAllowed}" status="myStatus"/>
+</apex:form>
+</apex:outputPanel>
+
+</apex:page>
