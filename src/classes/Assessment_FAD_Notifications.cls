@@ -90,7 +90,7 @@ global class Assessment_FAD_Notifications implements Database.Batchable<sObject>
         //30 day
         d1 = system.today().addDays(-80);
         SAs = [select Id, Phase_1_Start_Date__c, Person_Being_Served__r.FirstName, 
-                    Person_Being_Served__r.OwnerId, Person_Being_Served__r.Owner.Name 
+                    Person_Being_Served__r.OwnerId, Person_Being_Served__r.Owner.Name , Person_Being_Served__r.LastName
                         from Service_Assignment__c 
                         Where Program__c = 'IFCS' 
                          AND 
