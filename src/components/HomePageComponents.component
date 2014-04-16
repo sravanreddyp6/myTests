@@ -75,11 +75,11 @@
               </apex:outputPanel>
                         </ul>
                     </li>
-                     <apex:outputPanel rendered="{!objectName!='TMN Contacts'}">
+                     
                     <li><a class="heading" onclick="showHideList('{!objectName}','reports');"><apex:outputPanel layout="block" styleClass="block-title"> Reports </apex:outputPanel></a>
                     
                         <ul id="{!if(objectName=='Referrals','refrpt',if(objectName=='Person Being Served','PBSrpt',if(objectName=='TMN Contacts','TMNrpt',if(objectName=='Contract Management','conrpt','docsrpt'))))}"> 
-                            <apex:repeat value="{!(if(objectName=='Referrals',refrportlst,if(objectName=='Person Being Served',PBSrportlst,if(objectName=='Contract Management',contractrportlst,docrportlst))))}" var="report"> 
+                            <apex:repeat value="{!(if(objectName=='Referrals',refrportlst,if(objectName=='Person Being Served',PBSrportlst,if(objectName=='TMN Contacts',credrportlst, if(objectName=='Contract Management',contractrportlst, docrportlst)))))}" var="report"> 
                                   <li>
                                   <apex:outputLink value="{!'/' + report.id}" target="_blank" title="View this Report" >{!report.name}</apex:outputLink> 
                                   </li>
@@ -93,7 +93,7 @@
                               </apex:outputPanel>
                         </ul>
                     </li>
-                    </apex:outputPanel>
+                    
                     
                 </ul>
                  </apex:outputPanel>
