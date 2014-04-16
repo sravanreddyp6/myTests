@@ -15,6 +15,7 @@ public with sharing class HomePageController{
       public List<Report> refrportlst{get;set;}
       public List<Report> PBSrportlst{get;set;}
       public List<Report> contractrportlst{get;set;}
+      public List<Report> credrportlst{get;set;}
       public List<Report> docrportlst{get;set;}
       public List<Task> populateTasks{get;set;}
       public List<VF_Reports__c> VFReportlst{get;set;}
@@ -30,13 +31,14 @@ public with sharing class HomePageController{
       public boolean DocCreate{get;set;}
       public boolean DocView{get;set;}
       public boolean Refresh=false;
-      
+
+	  //report folders      
       public String RefId;
-      public String RedCntrctId;
       public String ESDbillingId;
       public String ESDActivityId;
       public String ESDSupyId;
-      public String CareCntrctId;
+      public String CntrctId;
+      public String CredId;
       public String TypObj;
       
       
@@ -100,9 +102,9 @@ public with sharing class HomePageController{
          for(TMN_User__c tmn:tmnUsers){
              if(tmn.Operating_Group__c=='Cambridge'){
                  oSchema4 = TMN_Contract__c.sObjectType.getDescribe();
-             }else if(tmn.Operating_Group__c=='CareMeridian' || tmn.Operating_Group__c=='Care Meridian'){
+             }else if(tmn.Operating_Group__c=='CareMeridian' || tmn.Operating_Group__c=='Care Meridian' || tmn.Operating_Group__c=='NeuroRestorative' ){
                  oSchema4 = CareMeridian_Contract__c.sObjectType.getDescribe();
-             }else if(tmn.Operating_Group__c=='NeuroRestorative' || tmn.Operating_Group__c=='Redwood'){
+             }else if(tmn.Operating_Group__c=='Redwood'){
                 oSchema4 = Redwood_Contract__c.sObjectType.getDescribe();
              }else{
              	oSchema4=null;
@@ -260,7 +262,7 @@ public with sharing class HomePageController{
   }
    
    public List<Report> reports() {
-   	      String ESDAct,ref,Care,ESDbill,ESDsup,Red;
+   	      String ESDAct='',ref,Care,ESDbill,ESDsup,Red;
           VF_Reports__c vf = VF_Reports__c.getInstance();
           VFReportlst = [SELECT Name,Id,Name__c,Description__c,link__c from VF_Reports__c];
           for(Folder tmp:[SELECT AccessType,Id,IsReadonly,Name,DeveloperName,Type FROM Folder WHERE Type = 'Report']){
@@ -268,10 +270,17 @@ public with sharing class HomePageController{
               if(tmp.DeveloperName=='Referrals'){
                 RefId = tmp.Id;
                  
-                }else if(tmp.DeveloperName=='CareMeridian_Contracts'){
-                    CareCntrctId = tmp.Id;
-                 
-                }else if(tmp.DeveloperName=='ESD_Activity'){
+                }else if(tmp.DeveloperName=='CareMeridian_Contracts' && operatinggroup == 'Care Meridian'){
+                    CntrctId = tmp.Id;
+                }
+                else if(tmp.DeveloperName=='Redwood_Contracts' && operatinggroup == 'Redwood'){
+                    CntrctId = tmp.Id;
+                 }         
+                 else if ( tmp.DeveloperName == 'Contract_Reports' && operatinggroup == 'Cambridge')
+                 	CntrctId = tmp.Id;
+                 else if ( tmp.DeveloperName == 'Redwood_Contracts' && operatinggroup == 'Redwood')
+                 	CntrctId = tmp.Id;
+                else if(tmp.DeveloperName=='ESD_Activity'){
                     ESDActivityId = tmp.Id;
                     ESDAct = 'ESDAct';
                  }
@@ -281,35 +290,35 @@ public with sharing class HomePageController{
                  else if(tmp.DeveloperName=='ESD_Supervisory'){
                     ESDSupyId = tmp.Id;
                  }
-                 else if(tmp.DeveloperName=='Redwood_Contracts'){
-                    RedCntrctId = tmp.Id;
-                 }         
+                 else if ( tmp.DeveloperName == 'Credentialing')
+                 	CredID = tmp.Id;
             }
             
             refrportlst = new List<Report>();
-            for(Report rpt:report(RefId,ref)){
+            for(Report rpt:report(RefId, null)){
             	if ( canSeeReport( rpt.Id ))
                 	refrportlst.add(rpt);
             }
             
             contractrportlst = new List<Report>();
-            for(Report rpt:report(RedCntrctId,Red)){
+            for(Report rpt:report(CntrctId, null)){
             	if ( canSeeReport( rpt.Id ))
                 	contractrportlst.add(rpt);
             }
             
             
-            docrportlst = new List<Report>();
-            for(Report rpt:report(ESDActivityId,ESDAct)){
+            credrportlst = new List<Report>();
+            for(Report rpt:report(CredId,null)){
             	if ( canSeeReport( rpt.Id ))
+                	credrportlst.add(rpt);
+            }
+
+			docrportlst = new List<Report>();
+			for(Report rpt:report(ESDActivityId,'Docs')){
+             	if ( canSeeReport( rpt.Id))
                 	docrportlst.add(rpt);
             }
-            
-            for(Report rpt:report(CareCntrctId,Care)){
-            	if ( canSeeReport( rpt.Id ))
-                	contractrportlst.add(rpt);
-            }
-            
+			            
             PBSrportlst = new List<Report>();
             for(Report rpt:report(ESDActivityId,ESDAct)){
              	if ( canSeeReport( rpt.Id))
@@ -331,10 +340,12 @@ public with sharing class HomePageController{
  public List<Report> report(Id ownId,String ReportText){
  	String query = 'SELECT Name, Id,OwnerId, description, DeveloperName, SystemModstamp FROM report where OwnerId=:ownId';
  	if(ReportText!=null && ReportText=='ESDAct'){
- 		query+=' and description like \'%#notes%\' order by name'; 
- 	}else{
- 		query+= ' order by name';
+ 		query+=' and description like \'%#notes%\'' ;
+ 	} else if (ReportText != null && ReportText=='Docs') {
+ 		query+=' and (description like \'%Case Document%\' or description like \'%Fidelity Document%\')';
  	}
+ 	
+ 	query+= ' order by name';
  	
  	List<Report> tempreport = database.query(query);
  	return tempreport;
