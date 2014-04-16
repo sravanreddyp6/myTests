@@ -96,13 +96,33 @@ public class ServiceAssignmentExt {
         canCreateSummary = oSchema.IsCreateable();
     }
 
-	public Boolean episodeReq { get { return (admission.State__c == 'AZ' || admission.state__c == 'NC');} set; }
-	
+        public Boolean episodeReq { get { return (admission.State__c == 'AZ' || admission.state__c == 'NC');} set; }
+        
     public List<Action_Plan__c> getActivePlan(){
     
         return [Select id From Action_Plan__c where Action_Plan__c.Service_Assignment__c = :currentRecord.id AND Status__c = 'Active Final' Limit 1];
     }
 
+    public List<Assessment__c> getAssessments_Fad(){
+        
+        return [select id, Name, Assessment_Date__c, Phase__c, Status__c, Disregard__c from Assessment__c where Type__c = 'FAD Summary' AND Service_Assignment__c = :theServAssign.Id Order By Assessment_Date__c DESC];
+    }
+    
+    public PageReference createFadAssess(){
+        Assessment__c assess = new Assessment__c ();
+        assess.type__c = 'FAD Summary';
+        assess.Admission__c = admission.id;
+        assess.Service_Assignment__c = theServAssign.Id;
+        assess.Status__c = 'Open';
+        if(referral != null && referral.referral_date__c != null){
+            assess.referral_date__c = referral.referral_date__c;
+        }
+        insert assess;
+        PageReference ref =  new PageReference('/apex/Assessment_FAD_Form?id='+assess.id + '&edit=1&isnew=1');
+            
+        return ref;
+    }
+    
     private Boolean pshowDiag, pshowLocation; 
     private static Boolean psetFlags = false;
     public Boolean showDiagnosis { get {
@@ -258,7 +278,7 @@ public class ServiceAssignmentExt {
                             Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, referral__c, service_location__c
                                 FROM Service_Assignment__c
                                 WHERE Id = :controller.getid()];
-                initialRecord = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
+                initialRecord = [SELECT Id,  Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
                             End_Date__c, Episode__c, External_ID__c, Location_Region__c, Outcomes__c, Person_Being_Served__c, Phase__c, Phase_of_Treatment__c, Program__c,
                             Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
                             Start_Date__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
@@ -896,13 +916,13 @@ public class ServiceAssignmentExt {
         List<ServiceAssignment_ServiceCode_JO__c> alreadySavedCodeXrefs = [ SELECT Service_Code__c FROM ServiceAssignment_ServiceCode_JO__c WHERE Service_Assignment__c = :currentId ];
         List<ServiceAssignment_ServiceCode_JO__c> servCodeXrefsToSave = new List<ServiceAssignment_ServiceCode_JO__c>();
         List<ServiceAssignment_ServiceCode_JO__c> servCodeXrefsToDelete = new List<ServiceAssignment_ServiceCode_JO__c>();
-		System.Debug( alreadySavedCodeXrefs);
-		
-		Boolean okToSave;
+                System.Debug( alreadySavedCodeXrefs);
+                
+                Boolean okToSave;
         for(Service_Code__c sc : SelectedCodes.values()) {
             okToSave = true;
-	
-			// CTEAE-75 - correct issue with compare to already saved service code id, not JO id
+        
+                        // CTEAE-75 - correct issue with compare to already saved service code id, not JO id
             for(ServiceAssignment_ServiceCode_JO__c alreadySaved : alreadySavedCodeXrefs) {
                 if(sc.Id==alreadySaved.Service_Code__c){
                     okToSave = false;
