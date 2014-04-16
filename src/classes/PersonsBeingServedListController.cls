@@ -3,7 +3,9 @@ public with sharing class PersonsBeingServedListController {
     private final String ASSESSMENT_ONLY_REC_TYPE_ID = [select Id from RecordType where (DeveloperName='Assessment_Only') and (SobjectType='Service_Assignment__c') Limit 1].Id;
 
     private final String BASIC_QUERY = 'SELECT ID, FirstName, LastName, Owner.ID, Owner.Name, PersonContactId From Account WHERE RecordTypeID=:PBS_REC_TYPE_ID';
-
+	private string NEWQUERY;
+	private ID argID;
+	
     public String letterToStart { get; set; }
     public Admission__c[] admissions { get; set; }
     // A list of contact IDs that are available in this View.
@@ -52,8 +54,21 @@ public with sharing class PersonsBeingServedListController {
     public ApexPages.StandardSetController con { get; set; }
     public PersonsBeingServedListController() {
         System.debug('Inside constructor');
+        
+        NEWQUERY = BASIC_QUERY;
+        
+        // if an account ID is passed in on the url, change the basic query
+        argID = ApexPages.CurrentPage().getParameters().get('id');
+        if ( argID != null) { 
+        	system.debug('***********argid'+argID);
+        	NEWQUERY  = 'SELECT ID, FirstName, LastName, Owner.ID, Owner.Name, PersonContactId From Account WHERE RecordTypeID=:PBS_REC_TYPE_ID and ID=:argID';
+        	//this.filterId = this.con.getFilterId();
+    	}
+
+		System.Debug( 'Incoming account id: ' + argID );
+		
         // We call this here simply to get the filterId of the View
-        this.con = new ApexPages.StandardSetController(Database.getQueryLocator(BASIC_QUERY));
+        this.con = new ApexPages.StandardSetController(Database.getQueryLocator(NEWQUERY));
         String inputFilterId = ApexPages.CurrentPage().getParameters().get('filterId');
         // Kick off updateCon here
         String newThisWeekFilterId = '';
@@ -101,17 +116,27 @@ public with sharing class PersonsBeingServedListController {
         admissionIdToServiceAssignment = new Map<String, List<Service_Assignment__c>>();
         admissionIdToServiceAssignmentSize = new Map<String, Integer>();
 
+
         if (this.con!=null) {
             oldFilterId = this.con.getFilterId();
         }
-        this.con = new ApexPages.StandardSetController(Database.getQueryLocator(BASIC_QUERY));
+        
+        this.con = new ApexPages.StandardSetController(Database.getQueryLocator(NEWQUERY));
         // Make sure setPageSize is called BEFORE setFilterId, otherwise it
         // won't work!
-        this.con.setPageSize(2000);
-        if (oldFilterId!=null) {
-            this.con.setFilterId(oldFilterId);
+        if ( argID == null ) {
+        
+        	this.con.setPageSize(2000);
+        	if (oldFilterId!=null) {
+	            this.con.setFilterId(oldFilterId);
+        	}
+        } else {
+        	this.con.setPageSize(1);
+        	this.con.setFilterId(null);
         }
-
+        	
+	
+		
         // We have to make sure that all the records are fetched, regardless of
         // pagination
         Account[] accts = new Account[] {};

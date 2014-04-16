@@ -61,14 +61,19 @@ public with sharing class Notes_ProgressNote_Create_Flavor_PDF {
             else if(thePN.RecordType.DeveloperName=='PA_FBS_Progress_Note'){
                 pageRef = new PageReference('/apex/Notes_ProgressNote_PDF_PA_FBS');
             }
+            else if(thePN.RecordType.DeveloperName=='IN_FCT' || thePN.RecordType.DeveloperName=='MA_FCT' 
+            		|| thePN.RecordType.DeveloperName=='MD_FCT' || thePN.RecordType.DeveloperName=='OH_FCT') {
+            	
+            	return new PageReference('/apex/Notes_ProgressNote_Create_Audit_pdf?id='+thePN.id);
+            }
             else{ // fix this - it causes an endless redirect loop that errors out
                 pageRef = new PageReference('/'+thePN.id);
             }
             
-            pageRef.getParameters().put('id', thePN.id);
-            pageRef.getParameters().put('id2', thePN.Person_Being_Served__r.Medicaid_ID__c);	// this is required so we can unmask the field on PDF
+	        pageRef.getParameters().put('id', thePN.id);
+	        pageRef.getParameters().put('id2', thePN.Person_Being_Served__r.Medicaid_ID__c);	// this is required so we can unmask the field on PDF
             
-            Attachment attachmentPDF = new Attachment();
+            Attachment attachmentPDF = new Attachment();           
             attachmentPDF.parentId = thePN.id;
             attachmentPDF.Name = 'State Template (no signature) - ' + thePN.Person_Being_Served__r.Name + ' - ' + thePN.RecordType.Name +' - (' + date.today().month() + '-' + date.today().day() + '-' + date.today().year() + ').pdf';
             if(Test.isrunningtest()==false){ 
@@ -77,19 +82,17 @@ public with sharing class Notes_ProgressNote_Create_Flavor_PDF {
             else{
                 Blob testBlob = Blob.valueOf('FLAVOR PDF BODY CONTENTS');
                 attachmentPDF.body = testBlob;
-            }  
+            }     
        // PageReference gotoPage = new PageReference('/');          
 
            System.Debug('What is in thePN.No_Approval_Needed__c WHEN I NEED IT?: ' + thePN.No_Approval_Needed__c);
            
-                if(thePN.No_Approval_Needed__c){
-                    insert attachmentPDF;
-                    return new PageReference('/apex/Notes_ProgressNote_Create_Audit_pdf?id='+thePN.id);
-                }
-                else{                    
-                    insert attachmentPDF;
-                    return new PageReference('/apex/Notes_ProgressNote_Create_Audit_pdf?id='+thePN.id);
-                }            
+           
+			// Cleaned up the if/else we had here that was doing the same thing for the true and false case based on 
+			// value of field No_Approval_Needed__c.  J. Gilliam, 3/26/14.          
+           	insert attachmentPDF;
+           	return new PageReference('/apex/Notes_ProgressNote_Create_Audit_pdf?id='+thePN.id);
+            
             
         }catch(DMLException e){
             thePN.addError(e.getMessage());
