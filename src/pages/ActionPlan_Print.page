@@ -1,0 +1,220 @@
+<apex:page standardController="Action_Plan__c" 
+    extensions="ActionPlan_form" 
+    sidebar="false" 
+    standardStylesheets="false" 
+    showHeader="false" 
+     applyBodyTag="false"
+        contentType="application/msWord#Plan-{!Action_Plan__c.name}.doc" 
+    renderAs="{!if($CurrentPage.parameters.pdf='1', 'pdf','')}"         
+>
+ 
+    <!--
+    
+    
+    -->
+<head>
+<style>
+.dateFormat{ display: none;}
+.thinking{
+    opacity:0.8;
+    background-color:#ccc;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}
+.lblaction{
+    padding-left: 22px;
+}
+.lblobj{
+    padding-left: 11px;
+}
+.lblgoal{
+    padding-left: 0px;
+}
+.mylbl{
+    font-weight: bold;
+}
+.txtarea{
+    width: 95%;
+}
+.mytbl{
+    width: 100%;
+    margin-bottom:10px;
+    margin-top:10px
+}
+
+.mytbl:nth-child(odd) {
+    background-color:#ccf;
+}
+
+.mytbl:nth-child(even) {
+    background-color:#fff;
+}
+
+.leftcol{
+    width: 150px;
+}
+.innerLabel{
+    
+    font-weight: bold;
+    text-align: right;
+    font-size: 14px;
+}
+.innerData{
+    width: 200px;
+}
+
+.hbbg{
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}
+.tmnHelpText{ font-size: 10px; display: none;}
+.fixedBtn { width:100px; }
+td{
+    vertical-align: top;
+
+}
+
+</style>
+</head>
+<!-- required for the controler to get the fields in scope-->
+<apex:outputPanel style="display: none;">
+    <apex:outputField value="{!Action_Plan__c.Previous_Action_Plan__c}"/>
+    <apex:outputField value="{!Action_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}"/>
+</apex:outputPanel>
+
+<apex:image url="{!URLFOR($Resource.TMNLogo)}" rendered="{! $CurrentPage.parameters.pdf='1'}"/>
+<br/>
+<center><h1>Action Plan </h1></center>  
+
+        <apex:panelGrid columns="4" style="width: 100%;">
+            <apex:outputPanel >
+                {!$ObjectType.Action_Plan__c.fields.Name.Label}
+            </apex:outputPanel>
+        <apex:outputField value="{!Action_Plan__c.name}"/>
+            <apex:outputPanel >
+                {!$ObjectType.Service_Assignment__c.fields.Admission__c.Label}
+            </apex:outputPanel>            
+        <apex:outputField value="{!Action_Plan__c.Service_Assignment__r.Admission__c}"/>
+            <apex:outputPanel >
+                {!$ObjectType.Action_Plan__c.fields.Service_Assignment__c.Label}
+            </apex:outputPanel>            
+        <apex:outputField value="{!Action_Plan__c.Service_Assignment__c}"/>   
+            <apex:outputPanel >
+                {!$ObjectType.Action_Plan__c.fields.External_Plan__c.Label}
+            </apex:outputPanel> 
+        <apex:outputField value="{!Action_Plan__c.External_Plan__c}"/> 
+            <apex:outputPanel >
+                {!$ObjectType.Action_Plan__c.fields.Effective_Date__c.Label}
+            </apex:outputPanel>                     
+        <apex:outputField value="{!Action_Plan__c.Effective_Date__c}"/>
+            <apex:outputPanel >
+                {!$ObjectType.Action_Plan__c.fields.Target_Date__c.Label}
+            </apex:outputPanel>         
+        <apex:outputField value="{!Action_Plan__c.Target_Date__c}"/>
+            <apex:outputPanel >
+                {!$ObjectType.Action_Plan__c.fields.Date_Service_Started__c.Label}
+            </apex:outputPanel>             
+        <apex:outputField value="{!Action_Plan__c.Date_Service_Started__c}"/>
+            <apex:outputPanel >
+                {!$ObjectType.Action_Plan__c.fields.Status__c.Label}
+            </apex:outputPanel>         
+        <apex:outputField value="{!Action_Plan__c.Status__c}"/> 
+            <apex:outputPanel >
+                {!$ObjectType.Action_Plan__c.fields.Baseline__c.Label}
+            </apex:outputPanel>         
+        <apex:outputField value="{!Action_Plan__c.Baseline__c}"/>                         
+        </apex:panelGrid>    
+        
+        <br/>
+
+<apex:outputPanel id="goalwrapper" layout="none">
+    <apex:repeat value="{!planStuff}" var="g">
+    
+    <table class="mytbl">
+    <tr>
+        <td class="leftcol" width="150px" >        
+            <apex:outputLabel ><b>Goal</b></apex:outputLabel>       
+        </td>                
+        <td>
+            <!--
+            <apex:outputLabel styleClass="tmnHelpText" >What does this Person Being Served want to achieve?<br /></apex:outputLabel>
+            -->
+            <apex:outputPanel layout="block" style="padding-bottom:20px">
+                <apex:outputField value="{!planStuff[g].theGoal.Description__c}"  /> 
+            </apex:outputPanel> 
+            
+        </td>            
+    </tr>            
+        
+        
+            <apex:repeat value="{!planStuff[g].GoalObjs}" var="o" >
+    <tr>
+                    <td>
+                        <apex:outputLabel ><b>Objective</b></apex:outputLabel>
+                    </td>                    
+                    <td>
+                        <!--
+                        <apex:outputLabel styleClass="tmnHelpText" >What measurable achievements will demonstrate this Person Being Served’s progress towards this goal?<br /></apex:outputLabel>       
+                        -->
+                        <apex:outputPanel layout="block" id="theObj" style="padding-bottom:20px; width: 100%;">
+                            <apex:outputField value="{!planStuff[g].GoalObjs[o].theObj.Description__c}"/> 
+                            
+                            <apex:panelGrid columns="4" style="width:100%" rules="groups" columnClasses="innerLabel, innerData">
+                                                                        
+                                <apex:outputPanel layout="block" styleClass="innerLabel" > Effective Date</apex:outputPanel>
+                                <apex:outputField value="{!planStuff[g].GoalObjs[o].theObj.Effective_Date__c}" />  
+                                
+                                <apex:outputPanel layout="block" styleClass="innerLabel" > Status</apex:outputPanel>  
+                                <apex:outputField value="{!planStuff[g].GoalObjs[o].theObj.Status__c}"  />  
+                                                                
+                                <apex:outputPanel layout="block" styleClass="innerLabel" > Target Date</apex:outputPanel>
+                                <apex:outputField value="{!planStuff[g].GoalObjs[o].theObj.Target_End_Date__c}" />           
+                                
+                                <apex:outputPanel layout="block" styleClass="innerLabel" > Type</apex:outputPanel> 
+                                <apex:outputField value="{!planStuff[g].GoalObjs[o].theObj.Type__c}" />                                 
+                                                    
+                            </apex:panelGrid> 
+                                                
+                        </apex:outputPanel>
+                    </td>
+    </tr>                
+                    <apex:repeat value="{!planStuff[g].GoalObjs[o].ObjActs}" var="a" id="actsthe">
+    <tr>
+                            <td>
+                            <apex:outputLabel ><b>Action</b></apex:outputLabel>                
+                                
+                            </td> 
+                            <td>
+                            
+                            <!--
+                                <apex:outputPanel layout="block" styleClass="tmnHelpText" >How will staff support this Person Being Served to meet the objective?<br/></apex:outputPanel>     
+                            -->
+                                <apex:outputPanel layout="block" id="theAction" style="padding-bottom:20px">
+                                    <apex:outputField value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Description__c}"/>  
+                                </apex:outputPanel>
+                            </td>
+    </tr>                    
+                </apex:repeat> <!-- end action-->
+        </apex:repeat> <!-- end obj -->
+        </table>
+    </apex:repeat><!--end goal-->
+    </apex:outputPanel>
+<div id="planend">
+
+</div> 
+
+
+
+    
+
+   
+
+</apex:page>
