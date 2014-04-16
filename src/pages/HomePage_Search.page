@@ -1,0 +1,365 @@
+<apex:page title="Home Page Search"
+    controller="HomePageSearchController" standardStylesheets="true" sidebar="false"  
+    tabStyle="Get_Started__tab" readOnly="true">
+    <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.css')}" />
+    
+    <style>
+#table_filter h1 {
+    font-size: 14px;
+    display: inline-block;
+    margin: 10px 10px 10px 0;
+}
+
+input#table_filter_box {
+    padding-top: 1px;
+}
+
+[id *=view_filter] {
+    margin-bottom: 10px;
+}
+
+[id *=view_filter] select {
+    margin-right: 5px;
+}
+
+[id *=view_filter] a {
+    color: #015BA7;
+    text-decoration: none;
+}
+
+[id *=view_filter] a:hover {
+    color: #015BA7;
+}
+
+table#persons_table {
+    border-collapse: collapse;
+    border: 1px solid;
+    width: 100%;
+}
+
+table#persons_table thead,table#persons_table thead td {
+    border: 1px solid;
+}
+
+table#persons_table thead tr {
+    background-color: #F2F3F3;
+}
+
+table#persons_table thead td {
+    font-weight: bold;
+    background-color: #ededed;
+}
+
+table#persons_table tbody tr:hover {
+    background-color: #E3F3FF;
+}
+
+table#persons_table td {
+    padding: 6px 10px;
+}
+
+div#table_start_filter {
+    padding: 5px 10px;
+}
+
+div#table_start_filter a {
+    text-decoration: none;
+    padding: 6px 6px 5px 5px;
+}
+
+div#table_start_filter a.active {
+    background-color: #C6E1FF;
+    font-weight: bold;
+}
+
+[id *=table_commands] {
+    float: right;
+}
+
+.paginate_disabled_previous,.paginate_disabled_next,.paginate_enabled_previous,.paginate_enabled_next
+    {
+    padding: 0 5px;
+}
+
+.paginate_disabled_previous:hover,.paginate_disabled_next:hover,.paginate_enabled_previous:hover,.paginate_enabled_next:hover
+    {
+    cursor: pointer;
+    color: blue;
+}
+
+[id *=table_div] {
+    min-width: 800px; /* Make sure the table is not too small */
+}
+
+table#persons_table.dataTable {
+    border-bottom: 0;
+}
+
+#persons_table_wrapper .bottom {
+    border: 1px solid;
+    border-top: 0;
+    padding-bottom: 5px;
+}
+
+.dataTables_paginate {
+    display: inline-block;
+    position: relative;
+    left: 150px;
+}
+
+.dataTables_record_info {
+    display: inline-block;
+}
+
+#persons_table_info {
+    display: inline-block;
+    float: left;
+    margin-left: 50px;
+}
+
+.dataTables_page_info {
+    display: inline-block;
+    position: relative;
+    left: 600px;
+}
+#loading_modal {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    /* IE Hack */
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale, src='{!URLFOR($Resource.TransparentBG)}');
+    background-image:url({!URLFOR($Resource.TransparentBG)});    
+    z-index: 99999;
+    text-align: center;
+}
+[id*=table_block] {
+    position: relative;  /* In order for loading model to be absolute positioned */
+}
+
+</style>
+    <apex:pageBlock id="table_block">
+            <div id="table_start_filter" >
+                Browse by Name 
+                <a href="#" data-filter='[A]'>A</a>&nbsp;|&nbsp;<a href="#" data-filter='[B]'>B</a>&nbsp;|&nbsp;
+                <a href="#" data-filter='[C]'>C</a>&nbsp;|&nbsp;<a href="#" data-filter='[D]'>D</a>&nbsp;|&nbsp;
+                <a href="#" data-filter='[E]'>E</a>&nbsp;|&nbsp;<a href="#" data-filter='[F]'>F</a>&nbsp;|&nbsp;
+                <a href="#" data-filter='[G]'>G</a>&nbsp;|&nbsp;<a href="#" data-filter='[H]'>H</a>&nbsp;|&nbsp;
+                <a href="#" data-filter='[I]'>I</a>&nbsp;|&nbsp;<a href="#" data-filter='[J]'>J</a>&nbsp;|&nbsp;
+                <a href="#" data-filter='[K]'>K</a>&nbsp;|&nbsp;<a href="#" data-filter='[L]'>L</a>&nbsp;|&nbsp;
+                <a href="#" data-filter='[M]'>M</a>&nbsp;|&nbsp;<a href="#" data-filter='[N]'>N</a>&nbsp;|&nbsp;
+                <a href="#" data-filter='[O]'>O</a>&nbsp;|&nbsp;<a href="#" data-filter='[P]'>P</a>&nbsp;|&nbsp;
+                <a href="#" data-filter='[Q]'>Q</a>&nbsp;|&nbsp;<a href="#" data-filter='[R]'>R</a>&nbsp;|&nbsp;
+                <a href="#" data-filter='[S]'>S</a>&nbsp;|&nbsp;<a href="#" data-filter='[T]'>T</a>&nbsp;|&nbsp;
+                <a href="#" data-filter='[U]'>U</a>&nbsp;|&nbsp;<a href="#" data-filter='[V]'>V</a>&nbsp;|&nbsp;
+                <a href="#" data-filter='[W]'>W</a>&nbsp;|&nbsp;<a href="#" data-filter='[XYZ]'>XYZ</a>&nbsp;|&nbsp;
+                <a href="#" class="active" data-filter='.'>All</a>
+            </div>
+            
+        <apex:outputPanel layout="block" id="table_div">
+            
+            <table id="persons_table">
+                <thead>
+                    <tr>
+                        <td style="width: 25%">Full Name</td>
+                        <td style="width: 30%">Age</td>
+                        <td style="width: 37%">State</td>
+                        <td style="width: 40%">Type</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <apex:repeat value="{!TotalList}" var="acct">
+                      <tr>
+                            <td>   <apex:outputText rendered="{!(acct.Type=='Person Being Referred')}">
+                                             <a href="/apex/ReferralSearch?firstName={!acct.firstname}&&lastName={!acct.lastname}" data-record-id="{!acct}">{!(acct.lastname)}, {!(acct.firstname)}</a>
+                                   </apex:outputText>
+                                   <apex:outputText rendered="{!(acct.Type=='Person Being Served')}">
+                                             <a href="/apex/PersonsBeingServedListView?id={!acct.recordId}" data-record-id="{!acct}">{!(acct.lastname)}, {!(acct.firstname)}</a>
+                                    </apex:outputText>
+                                     <apex:outputText rendered="{!(acct.Type=='Mentor')}">
+                                             <a href="/apex/TmnContactListView?j_id0%3Aj_id3%3Afcf={!(TMNView['my'])}" data-record-id="{!acct}">{!(acct.lastname)}, {!(acct.firstname)}</a>
+                                   </apex:outputText>
+                           </td>
+                                <td>{!acct.Age}</td>
+                                <td>{!acct.State}</td>
+                                <td>{!acct.Type}</td>
+                                    </tr>
+                        </apex:repeat>
+                </tbody>
+            </table>
+        </apex:outputPanel>
+    </apex:pageBlock>
+   
+    <script type="text/javascript">
+    $j = jQuery.noConflict();
+    function checkUndefined(field) {
+        if (field !== undefined) {
+            return field;
+        }
+        return "-";
+    }
+   function refreshDataTable() {
+        
+        // Have to make this var global in order for filter to work
+        table = $j("#persons_table").dataTable({
+            "bProcessing": true,
+            "bAutoWidth": false,
+            "sDom": '<"top">t<"bottom"rpi><"clear">',
+            "sPaginationType": "four_button",
+            "iDisplayLength": 25,
+            "fnInfoCallback": function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
+                var info = this.fnPagingInfo();
+                if (iEnd == 0) {
+                    iStart = 0; // Otherwise it displays as 1 - 0 of ...
+                }
+                return "<div class='dataTables_record_info'>" + iStart + " - " + iEnd + " of " + iTotal + "</div><div class='dataTables_page_info'>Page " + info.iPage +" of "+ info.iTotalPages + '</div>';
+            },
+            "fnInitComplete": function () {
+                //filterByStatus(this);
+                //$j("#loading_modal").css("display", "none");
+            },
+            "oLanguage": {
+                 "sInfo": "_START_ - _END_ of _TOTAL_",
+                 "sZeroRecords": "No records to display",
+                 "sInfoEmpty": "No Records",
+                 "oPaginate": {
+                     "sFirst": "<<",
+                     "sLast": ">>",
+                     "sNext": "Next >",
+                     "sPrevious": "< Previous"
+                }
+            },
+            "aoColumns": [
+                null, // Full Name
+                null, // Age
+                null, // State
+                null // Type
+               ]
+        });
+        table.fnSort( [ [0,'asc'] ] );
+        //$j("#table_filter_box").keyup();
+       
+    }
+    
+    $j(document).ready(function() {
+        refreshDataTable();       
+        $j('body').on('click', '#table_start_filter a', function (event) {
+            //$j('#table_filter_box').val('');  // Remove the text in filter box
+            //table.fnFilter('');  // Clear the global filter
+            var regex = '^' + $j(event.target).data('filter');
+            table.fnFilter(regex, 0, true);
+            $j('#table_start_filter a.active').removeClass('active');
+            $j(event.target).addClass('active');
+            return false;
+        });
+    });
+    
+    (function ($) {
+        $.fn.dataTableExt.oPagination.four_button = {
+            "fnInit": function ( oSettings, nPaging, fnCallbackDraw )
+            {
+                nFirst = document.createElement( 'span' );
+                nPrevious = document.createElement( 'span' );
+                nNext = document.createElement( 'span' );
+                nLast = document.createElement( 'span' );
+                  
+                nFirst.appendChild( document.createTextNode( oSettings.oLanguage.oPaginate.sFirst ) );
+                nPrevious.appendChild( document.createTextNode( oSettings.oLanguage.oPaginate.sPrevious ) );
+                nNext.appendChild( document.createTextNode( oSettings.oLanguage.oPaginate.sNext ) );
+                nLast.appendChild( document.createTextNode( oSettings.oLanguage.oPaginate.sLast ) );
+                  
+                nFirst.className = "paginate_button first";
+                nPrevious.className = "paginate_button previous";
+                nNext.className="paginate_button next";
+                nLast.className = "paginate_button last";
+                  
+                nPaging.appendChild( nFirst );
+                nPaging.appendChild( nPrevious );
+                nPaging.appendChild( nNext );
+                nPaging.appendChild( nLast );
+                  
+                $(nFirst).click( function () {
+                    oSettings.oApi._fnPageChange( oSettings, "first" );
+                    fnCallbackDraw( oSettings );
+                } );
+                  
+                $(nPrevious).click( function() {
+                    oSettings.oApi._fnPageChange( oSettings, "previous" );
+                    fnCallbackDraw( oSettings );
+                } );
+                  
+                $(nNext).click( function() {
+                    oSettings.oApi._fnPageChange( oSettings, "next" );
+                    fnCallbackDraw( oSettings );
+                } );
+                  
+                $(nLast).click( function() {
+                    oSettings.oApi._fnPageChange( oSettings, "last" );
+                    fnCallbackDraw( oSettings );
+                } );
+                  
+                /* Disallow text selection */
+                $(nFirst).bind( 'selectstart', function () { return false; } );
+                $(nPrevious).bind( 'selectstart', function () { return false; } );
+                $(nNext).bind( 'selectstart', function () { return false; } );
+                $(nLast).bind( 'selectstart', function () { return false; } );
+            },
+             
+             
+            "fnUpdate": function ( oSettings, fnCallbackDraw )
+            {
+                if ( !oSettings.aanFeatures.p )
+                {
+                    return;
+                }
+                  
+                /* Loop over each instance of the pager */
+                var an = oSettings.aanFeatures.p;
+                for ( var i=0, iLen=an.length ; i<iLen ; i++ )
+                {
+                    var buttons = an[i].getElementsByTagName('span');
+                    if ( oSettings._iDisplayStart === 0 )
+                    {
+                        buttons[0].className = "paginate_disabled_previous";
+                        buttons[1].className = "paginate_disabled_previous";
+                    }
+                    else
+                    {
+                        buttons[0].className = "paginate_enabled_previous";
+                        buttons[1].className = "paginate_enabled_previous";
+                    }
+                      
+                    if ( oSettings.fnDisplayEnd() == oSettings.fnRecordsDisplay() )
+                    {
+                        buttons[2].className = "paginate_disabled_next";
+                        buttons[3].className = "paginate_disabled_next";
+                    }
+                    else
+                    {
+                        buttons[2].className = "paginate_enabled_next";
+                        buttons[3].className = "paginate_enabled_next";
+                    }
+                }
+            }
+        };
+        $.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings )
+        {
+            return {
+                "iStart":         oSettings._iDisplayStart,
+                "iEnd":           oSettings.fnDisplayEnd(),
+                "iLength":        oSettings._iDisplayLength,
+                "iTotal":         oSettings.fnRecordsTotal(),
+                "iFilteredTotal": oSettings.fnRecordsDisplay(),
+                "iPage":          oSettings.fnRecordsDisplay() === 0 ?
+                    0 : Math.ceil( (oSettings._iDisplayStart+1) / oSettings._iDisplayLength ),
+                "iTotalPages":    oSettings.fnRecordsTotal() === 0 ?
+                    0 : Math.ceil( oSettings.fnRecordsDisplay() / oSettings._iDisplayLength )
+            };
+        };
+    } ($j))
+    </script>
+
+</apex:page>
