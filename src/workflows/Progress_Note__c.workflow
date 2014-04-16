@@ -37,6 +37,16 @@
         <protected>false</protected>
     </fieldUpdates>
     <fieldUpdates>
+        <fullName>Set_FCT_Phase</fullName>
+        <description>At note creation, set this number field to the value of the current phase of FCT treatment, so there is a record of what the phase of treatment was at note creation.</description>
+        <field>FCT_Phase_at_Note_Creation__c</field>
+        <formula>Service_Assignment__r.Phase__c</formula>
+        <name>Set FCT Phase</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+    </fieldUpdates>
+    <fieldUpdates>
         <fullName>Set_In_Progress_Overall_Status</fullName>
         <field>Status__c</field>
         <literalValue>In Progress</literalValue>
@@ -193,6 +203,16 @@
         <active>true</active>
         <formula>AND(  Interventions__c &lt;&gt; LastModifiedById)</formula>
         <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Set Phase for FCT Note</fullName>
+        <actions>
+            <name>Set_FCT_Phase</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>1=1</formula>
+        <triggerType>onCreateOnly</triggerType>
     </rules>
     <rules>
         <fullName>Submit For Approval Reminder</fullName>
