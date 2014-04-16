@@ -797,6 +797,15 @@
         <visibleLines>4</visibleLines>
     </fields>
     <fields>
+        <fullName>File_Submitted_for_Approval__c</fullName>
+        <externalId>false</externalId>
+        <label>File Submitted for Approval</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
         <fullName>Final_Review__c</fullName>
         <description>Final Review</description>
         <externalId>false</externalId>
@@ -1436,6 +1445,20 @@ Text(Round( Inquiry_Progress_percent__c,2)*100) &amp; &quot;%&quot;</formula>
         <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Number_of_days_since_last_activity__c</fullName>
+        <externalId>false</externalId>
+        <formula>today() -  Date_of_Inquiry__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Number of days since last activity</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>OIG_Results__c</fullName>
@@ -3287,9 +3310,7 @@ kpi_Home_Study__c</formula>
     <fields>
         <fullName>div_class_reviewfinal__c</fullName>
         <externalId>false</externalId>
-        <formula>IF(Text( Final_Review__c )=&quot;Approved&quot;,    zGreenChk__c, zRedX__c  ) &amp; &quot; Final Review &quot;
-&amp;
-IF(ISNULL(  Provider_Agreement_Signature_Date__c   ),  zRedX__c,  zGreenChk__c ) &amp;&quot;  Provider Agreement Signature Date &quot;</formula>
+        <formula>IF(ISNULL(  Provider_Agreement_Signature_Date__c   ),  zRedX__c,  zGreenChk__c ) &amp;&quot;  Provider Agreement Signature Date &quot;</formula>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Last Steps</label>
         <required>false</required>
@@ -3823,7 +3844,7 @@ TEXT( Im_intersted_in_supporting__c )
         <filters>
             <field>Outreach_Source__c</field>
             <operation>equals</operation>
-            <value>Care.com</value>
+            <value>Care.com - National</value>
         </filters>
         <label>Care.com Prospects</label>
     </listViews>
@@ -3968,7 +3989,7 @@ TEXT( Im_intersted_in_supporting__c )
         <filters>
             <field>OWNER.LAST_NAME</field>
             <operation>equals</operation>
-            <value>Willoughby</value>
+            <value>rogers</value>
         </filters>
         <filters>
             <field>Status__c</field>
@@ -4102,7 +4123,7 @@ $Profile.Id !=&apos;00eU0000000RHex&apos;</errorConditionFormula>
     <validationRules>
         <fullName>Contact_Made_Required_Status_Change</fullName>
         <active>true</active>
-        <errorConditionFormula>AND(OR(ISPICKVAL( Status__c, &quot;Mentor&quot;), NOT(ISNULL(Provider_Agreement_Signature_Date__c))), ISNULL(Contact_Made__c),  $Profile.Name &lt;&gt; &apos;System Administrator&apos;)</errorConditionFormula>
+        <errorConditionFormula>AND(OR(ISPICKVAL( Status__c, &quot;Mentor&quot;)), ISNULL(Contact_Made__c),  $Profile.Name &lt;&gt; &apos;System Administrator&apos;)</errorConditionFormula>
         <errorDisplayField>Contact_Made__c</errorDisplayField>
         <errorMessage>Contact made is required before Status can be changed to &quot;Mentor&quot;</errorMessage>
     </validationRules>
@@ -4114,11 +4135,12 @@ $Profile.Id !=&apos;00eU0000000RHex&apos;</errorConditionFormula>
         <errorMessage>Date of Inquiry cannot be modified.</errorMessage>
     </validationRules>
     <validationRules>
-        <fullName>Final_Review_Approved_after_Screening</fullName>
+        <fullName>FirstContact_vs_DateOfInquiry</fullName>
         <active>true</active>
-        <errorConditionFormula>AND( ISPICKVAL(Final_Review__c, &quot;Approved&quot;), Screening_Progress_Percent__c &lt;&gt; 1.0)</errorConditionFormula>
-        <errorDisplayField>Final_Review__c</errorDisplayField>
-        <errorMessage>Cannot mark as &quot;Approved&quot; until all screening milestones are complete.</errorMessage>
+        <errorConditionFormula>ISBLANK(First_Contact_Date__c)  &amp;&amp;
+(  (TODAY()-Date_of_Inquiry__c )&gt;7)</errorConditionFormula>
+        <errorDisplayField>First_Contact_Date__c</errorDisplayField>
+        <errorMessage>First Contact Attempted is required within 7 Days of the Date of Inquiry</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>First_Contact_Date_Notes_Required</fullName>
@@ -4172,8 +4194,45 @@ ISNULL(Home_Study_Completed_Date__c))</errorConditionFormula>
         <errorMessage>Home Study Completed Date must be entered when Home Study Results is Pass or Fail</errorMessage>
     </validationRules>
     <validationRules>
-        <fullName>Mentor_All_DMV_Records_Received</fullName>
+        <fullName>HowDidYouHear_AdCamp_AdPlace_Null</fullName>
         <active>true</active>
+        <errorConditionFormula>NOT(ISPICKVAL(How_did_you_hear_about_us__c, &quot;Referred by someone&quot;)) 
+&amp;&amp;
+NOT(ISPICKVAL(How_did_you_hear_about_us__c,&quot;&quot;))
+&amp;&amp;
+ISBLANK(  Outreach_Event__c )
+&amp;&amp;
+Entry_Point__c ==&apos;Employee&apos;</errorConditionFormula>
+        <errorDisplayField>Outreach_Event__c</errorDisplayField>
+        <errorMessage>Please add an Ad Placement/Event Specifics</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>HowDidYouHear_AdCamp_Null</fullName>
+        <active>true</active>
+        <errorConditionFormula>NOT(ISPICKVAL(How_did_you_hear_about_us__c, &quot;Referred by someone&quot;)) 
+&amp;&amp;
+NOT(ISPICKVAL(How_did_you_hear_about_us__c,&quot;&quot;))
+&amp;&amp;
+ISBLANK( Outreach_Source__c )
+&amp;&amp;
+Entry_Point__c ==&apos;Employee&apos;</errorConditionFormula>
+        <errorDisplayField>Outreach_Source__c</errorDisplayField>
+        <errorMessage>Please add an Ad Campaign/Event Type</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>HowDidYouHear_RefBySomeone_Null</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL(How_did_you_hear_about_us__c, &quot;Referred by someone&quot;) 
+&amp;&amp;
+ISPICKVAL( Referral_Type__c ,&quot;&quot;)
+&amp;&amp;
+Entry_Point__c == &quot;Employee&quot;</errorConditionFormula>
+        <errorDisplayField>Referral_Type__c</errorDisplayField>
+        <errorMessage>Please select a Referral Type</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Mentor_All_DMV_Records_Received</fullName>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 All_DMV_Records_Received__c =False
 ),True, False)</errorConditionFormula>
@@ -4191,7 +4250,7 @@ NOT(ISPICKVAL( Application_Review_Status__c ,&quot;Approved&quot;)))
     </validationRules>
     <validationRules>
         <fullName>Mentor_Auto_Insure_Rec</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 All_Auto_Insurance_Received__c =False
 ),True, False)</errorConditionFormula>
@@ -4200,7 +4259,7 @@ All_Auto_Insurance_Received__c =False
     </validationRules>
     <validationRules>
         <fullName>Mentor_Auto_Registration_Received</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 All_Auto_Registration_Received__c =False
 ),True, False)</errorConditionFormula>
@@ -4209,7 +4268,7 @@ All_Auto_Registration_Received__c =False
     </validationRules>
     <validationRules>
         <fullName>Mentor_Background_Check_Results</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 NOT(ISPICKVAL( Background_Check_Results__c ,&quot;Pass&quot;)))
 ,True, False)</errorConditionFormula>
@@ -4218,7 +4277,7 @@ NOT(ISPICKVAL( Background_Check_Results__c ,&quot;Pass&quot;)))
     </validationRules>
     <validationRules>
         <fullName>Mentor_Drivers_License_Received</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 All_Drivers_License_Received__c =False
 ),True, False)</errorConditionFormula>
@@ -4227,7 +4286,7 @@ All_Drivers_License_Received__c =False
     </validationRules>
     <validationRules>
         <fullName>Mentor_Final_Review</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 NOT(ISPICKVAL( Final_Review__c ,&quot;Approved&quot;)))
 ,True, False)</errorConditionFormula>
@@ -4236,7 +4295,7 @@ NOT(ISPICKVAL( Final_Review__c ,&quot;Approved&quot;)))
     </validationRules>
     <validationRules>
         <fullName>Mentor_Fire_Safety_Check</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 NOT(ISPICKVAL( Fire_Safety_Check__c ,&quot;Pass&quot;)))
 ,True, False)</errorConditionFormula>
@@ -4244,8 +4303,17 @@ NOT(ISPICKVAL( Fire_Safety_Check__c ,&quot;Pass&quot;)))
         <errorMessage>Mentor Fire Safety Check must be marked as Pass before the status &apos;Mentor&apos; can be applied</errorMessage>
     </validationRules>
     <validationRules>
-        <fullName>Mentor_First_Contact</fullName>
+        <fullName>Mentor_FirstName</fullName>
         <active>true</active>
+        <errorConditionFormula>Text(Status__c)==&quot;Mentor&quot;
+&amp;&amp;
+ First_Name__c ==&quot;&quot;</errorConditionFormula>
+        <errorDisplayField>First_Name__c</errorDisplayField>
+        <errorMessage>First Name is required when &apos;Mentor&apos; Status is selected</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Mentor_First_Contact</fullName>
+        <active>false</active>
         <description>checks to make sure the field first contact date has been filled out</description>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;, ISNULL(First_Contact_Date__c))
 ,True, False)</errorConditionFormula>
@@ -4254,7 +4322,7 @@ NOT(ISPICKVAL( Fire_Safety_Check__c ,&quot;Pass&quot;)))
     </validationRules>
     <validationRules>
         <fullName>Mentor_Health_Status_Statement</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 NOT(ISPICKVAL( Health_Status_Statement_Results__c ,&quot;Pass&quot;)))
 ,True, False)</errorConditionFormula>
@@ -4263,7 +4331,7 @@ NOT(ISPICKVAL( Health_Status_Statement_Results__c ,&quot;Pass&quot;)))
     </validationRules>
     <validationRules>
         <fullName>Mentor_Home_Renter_Insurance</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 Home_Renter_Insurance__c =False
 ),True, False)</errorConditionFormula>
@@ -4272,7 +4340,7 @@ Home_Renter_Insurance__c =False
     </validationRules>
     <validationRules>
         <fullName>Mentor_Home_Study</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 NOT(ISPICKVAL( Home_Study_Results__c ,&quot;Pass&quot;)))
 ,True, False)</errorConditionFormula>
@@ -4281,7 +4349,7 @@ NOT(ISPICKVAL( Home_Study_Results__c ,&quot;Pass&quot;)))
     </validationRules>
     <validationRules>
         <fullName>Mentor_OIG_Results</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 NOT(ISPICKVAL( OIG_Results__c ,&quot;Pass&quot;)))
 ,True, False)</errorConditionFormula>
@@ -4290,7 +4358,7 @@ NOT(ISPICKVAL( OIG_Results__c ,&quot;Pass&quot;)))
     </validationRules>
     <validationRules>
         <fullName>Mentor_Physical_House_Inspection</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 NOT(ISPICKVAL( Physical_House_Inspection__c ,&quot;Pass&quot;)))
 ,True, False)</errorConditionFormula>
@@ -4299,7 +4367,7 @@ NOT(ISPICKVAL( Physical_House_Inspection__c ,&quot;Pass&quot;)))
     </validationRules>
     <validationRules>
         <fullName>Mentor_Pre_Service</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 NOT(ISPICKVAL( Pre_Service_Results__c ,&quot;Pass&quot;)))
 ,True, False)</errorConditionFormula>
@@ -4321,11 +4389,11 @@ NOT(ISPICKVAL( Pre_Service_Results__c ,&quot;Pass&quot;)))
 ISNULL( Provider_Agreement_Signature_Date__c )
 ),True, False)</errorConditionFormula>
         <errorDisplayField>Provider_Agreement_Signature_Date__c</errorDisplayField>
-        <errorMessage>is require before the status &apos;Mentor&apos; can be applied</errorMessage>
+        <errorMessage>Provider Agreement Signature Date is required before the status &apos;Mentor&apos; can be applied</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Mentor_References_Primary</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 NOT(ISPICKVAL( References_Primary__c ,&quot;Approved&quot;)))
 ,True, False)</errorConditionFormula>
@@ -4379,7 +4447,7 @@ $Profile.Id !=&apos;00eU0000000RHex&apos;</errorConditionFormula>
     </validationRules>
     <validationRules>
         <fullName>Status_Mentor_Dynamic_Background</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(Text(Status__c)&lt;&gt;&quot;Mentor&quot;,False,
 IF(OR(ISPICKVAL( Background_Check_Results_Other__c ,&quot;Pass&quot;),ISPICKVAL( Background_Check_Results_Other__c ,&quot;Does Not Apply&quot;)),False,True)
 
@@ -4390,7 +4458,7 @@ IF(OR(ISPICKVAL( Background_Check_Results_Other__c ,&quot;Pass&quot;),ISPICKVAL(
     </validationRules>
     <validationRules>
         <fullName>Status_Mentor_Dynamic_Health</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(Text(Status__c)&lt;&gt;&quot;Mentor&quot;,False, 
 IF(OR(ISPICKVAL(  Health_Status_Statement_Results_Other__c ,&quot;Pass&quot;),ISPICKVAL(  Health_Status_Statement_Results_Other__c ,&quot;Does Not Apply&quot;)),False,True) 
 
@@ -4401,7 +4469,7 @@ IF(OR(ISPICKVAL(  Health_Status_Statement_Results_Other__c ,&quot;Pass&quot;),IS
     </validationRules>
     <validationRules>
         <fullName>Status_Mentor_Dynamic_Pet</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(Text(Status__c)&lt;&gt;&quot;Mentor&quot;,False, 
 IF(OR(ISPICKVAL(  Pet_Vaccination_and_Licenses__c ,&quot;Pass&quot;),ISPICKVAL(  Pet_Vaccination_and_Licenses__c ,&quot;Does Not Apply&quot;)),False,True) 
 
@@ -4412,7 +4480,7 @@ IF(OR(ISPICKVAL(  Pet_Vaccination_and_Licenses__c ,&quot;Pass&quot;),ISPICKVAL( 
     </validationRules>
     <validationRules>
         <fullName>Status_Mentor_Dynamic_Pool</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(Text(Status__c)&lt;&gt;&quot;Mentor&quot;,False, 
 IF(OR(ISPICKVAL(  Pool_Water_Body_Assessment__c ,&quot;Pass&quot;),ISPICKVAL(  Pool_Water_Body_Assessment__c ,&quot;Does Not Apply&quot;)),False,True) 
 
@@ -4423,7 +4491,7 @@ IF(OR(ISPICKVAL(  Pool_Water_Body_Assessment__c ,&quot;Pass&quot;),ISPICKVAL(  P
     </validationRules>
     <validationRules>
         <fullName>Status_Mentor_Dynamic_Ref</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>IF(Text(Status__c)&lt;&gt;&quot;Mentor&quot;,False, 
 IF(OR(ISPICKVAL(  References_All_Other__c ,&quot;Approved&quot;),ISPICKVAL(  References_All_Other__c ,&quot;Does Not Apply&quot;)),False,True) 
 
@@ -4431,6 +4499,13 @@ IF(OR(ISPICKVAL(  References_All_Other__c ,&quot;Approved&quot;),ISPICKVAL(  Ref
 )</errorConditionFormula>
         <errorDisplayField>References_All_Other__c</errorDisplayField>
         <errorMessage>Approved or Does NOT Apply must be marked before the status &apos;Mentor&apos; can be applied</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Status_Mentor_FileSubmittedApproval</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL(Status__c, &apos;Mentor&apos;) &amp;&amp; ISNULL( File_Submitted_for_Approval__c )</errorConditionFormula>
+        <errorDisplayField>File_Submitted_for_Approval__c</errorDisplayField>
+        <errorMessage>Date File Submitted for Approval must be entered before the status &apos;Mentor&apos; can be applied</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Status_Null</fullName>

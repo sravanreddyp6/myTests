@@ -5,7 +5,7 @@ after update, before delete, before insert, before update) {
 
     /* Before Insert */
     if(Trigger.isInsert && Trigger.isBefore){
-        handler.OnBeforeInsert(Trigger.new);
+       handler.OnBeforeInsert(Trigger.new);
     }
     /* After Insert */
     else if(Trigger.isInsert && Trigger.isAfter){
@@ -13,7 +13,7 @@ after update, before delete, before insert, before update) {
     }
     /* Before Update */
     else if(Trigger.isUpdate && Trigger.isBefore){
-        handler.OnBeforeUpdate(Trigger.old, Trigger.new, Trigger.newMap);
+       handler.OnBeforeUpdate(Trigger.old, Trigger.new, Trigger.newMap);
     }
     /* After Update */
     else if(Trigger.isUpdate && Trigger.isAfter){
