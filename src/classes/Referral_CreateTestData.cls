@@ -151,7 +151,7 @@ public static Id getAccountRecordType(){
         Service_Location__c loc = new Service_Location__c(Alias__c = alias, UniqueID__c = alias, FacilityID__c=1,ProgramID__c=alias, Program__c=alias);
         insert loc;
         Service_Location__c testLoc = [SELECT Id, Name, CreatedDate, UniqueID__c, FacilityID__c, Alias__c, ProgramID__c, Program__c, Street__c, City__c, 
-                                       State__c, Zip__c, Phone__c, Service_Value__c, Setting__c from service_location__c];
+                                       State__c, Zip__c, Phone__c, Service_Value__c, Setting__c from service_location__c where id = :loc.Id];
         return testLoc;
     }
     
