@@ -42,6 +42,16 @@
         <template>PMC/Final_Review_Marked_Approved_by_Manager</template>
     </alerts>
     <alerts>
+        <fullName>PMC_no_activity_message</fullName>
+        <description>PMC no activity message</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderType>DefaultWorkflowUser</senderType>
+        <template>PMC/PMC_NO_Activity</template>
+    </alerts>
+    <alerts>
         <fullName>Region</fullName>
         <description>Region</description>
         <protected>false</protected>
@@ -207,6 +217,21 @@
         <triggerType>onCreateOrTriggeringUpdate</triggerType>
     </rules>
     <rules>
+        <fullName>PMC - Set MENTOR Status</fullName>
+        <actions>
+            <name>Update_Status_to_Mentor</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Prospects__c.Provider_Agreement_Signature_Date__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>Provider Agreement Signature date != null
+PMC - 31</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
         <fullName>Prospect TY Email Region</fullName>
         <actions>
             <name>Region</name>
@@ -285,6 +310,66 @@
         </criteriaItems>
         <description>Prospect TY email State Unserved</description>
         <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>Prospect no Activity - Status 30 Day</fullName>
+        <active>true</active>
+        <description>PMC-32</description>
+        <formula>ISPICKVAL(Status__c, &apos;30 Day&apos;) &amp;&amp;  Number_of_days_since_last_activity__c  &gt;= 30</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>PMC_no_activity_message</name>
+                <type>Alert</type>
+            </actions>
+            <timeLength>0</timeLength>
+            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+    <rules>
+        <fullName>Prospect no Activity - Status 7 Day</fullName>
+        <active>true</active>
+        <description>PMC-32</description>
+        <formula>ISPICKVAL(Status__c, &apos;7 Day&apos;) &amp;&amp;  Number_of_days_since_last_activity__c  &gt;= 7</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>PMC_no_activity_message</name>
+                <type>Alert</type>
+            </actions>
+            <timeLength>0</timeLength>
+            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+    <rules>
+        <fullName>Prospect no Activity - Status Active</fullName>
+        <active>true</active>
+        <description>PMC-32</description>
+        <formula>ISPICKVAL(Status__c, &apos;Active&apos;) &amp;&amp;  Number_of_days_since_last_activity__c  &gt;= 30</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>PMC_no_activity_message</name>
+                <type>Alert</type>
+            </actions>
+            <timeLength>0</timeLength>
+            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+    <rules>
+        <fullName>Prospect no Activity - Status Review</fullName>
+        <active>true</active>
+        <description>PMC-32</description>
+        <formula>ISPICKVAL(Status__c, &apos;Review&apos;) &amp;&amp;  Number_of_days_since_last_activity__c  &gt;= 14</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>PMC_no_activity_message</name>
+                <type>Alert</type>
+            </actions>
+            <timeLength>0</timeLength>
+            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
     </rules>
     <rules>
         <fullName>Send Owner Email Notification</fullName>

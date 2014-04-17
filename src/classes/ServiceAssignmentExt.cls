@@ -117,6 +117,26 @@ public class ServiceAssignmentExt {
         return [Select id From Action_Plan__c where Action_Plan__c.Service_Assignment__c = :currentRecord.id AND Status__c = 'Active Final' Limit 1];
     }
 
+    public List<Assessment__c> getAssessments_Fad(){
+        
+        return [select id, Name, Assessment_Date__c, Phase__c, Status__c, Disregard__c from Assessment__c where Type__c = 'FAD Summary' AND Service_Assignment__c = :theServAssign.Id Order By Assessment_Date__c DESC];
+    }
+    
+    public PageReference createFadAssess(){
+        Assessment__c assess = new Assessment__c ();
+        assess.type__c = 'FAD Summary';
+        assess.Admission__c = admission.id;
+        assess.Service_Assignment__c = theServAssign.Id;
+        assess.Status__c = 'Open';
+        if(referral != null && referral.referral_date__c != null){
+            assess.referral_date__c = referral.referral_date__c;
+        }
+        insert assess;
+        PageReference ref =  new PageReference('/apex/Assessment_FAD_Form?id='+assess.id + '&edit=1&isnew=1');
+            
+        return ref;
+    }
+    
     private Boolean pshowDiag, pshowLocation;
     private string popGroup; 
     private static Boolean psetFlags = false;
@@ -297,6 +317,7 @@ public class ServiceAssignmentExt {
         System.debug('recordType BEFORE LoadData: ' + recordType);
         System.debug('AssessmentOnly BEFORE LoadData: ' + AssessmentOnly);
 		System.debug('Start date:' + effDate);
+
 
         LoadData(theServAssign);
 
