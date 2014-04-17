@@ -25,10 +25,10 @@ public with sharing class AssessmentHandler {
         		if(assmt.AccountPerson__c==a.Id) {
         			// Get the right queue to put the Assessment in.
         			// What state is the user from?  What state is the client being inserted into?
-        			if(a.PersonMailingState=='Arizona') {
+        			if(a.Owner_Role__c.contains('AZ')) {
         				acctIdToClinicalLeadQueueName.put(a.Id,'ClinicalLeads_AZ');
         			}
-        			else if(a.PersonMailingState=='California') {
+        			else if(a.Owner_Role__c.contains('CA')) {
         				acctIdToClinicalLeadQueueName.put(a.Id,'ClinicalLeads_CA_San_Diego');
         			}
         			else {

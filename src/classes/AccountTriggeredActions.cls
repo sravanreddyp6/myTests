@@ -32,6 +32,12 @@ public with sharing class AccountTriggeredActions {
     public void OnBeforeUpdate(Account[] oldObjects, Account[] updatedObjects, Map<Id,Account> newObjMap, Map<Id, Account> oldObjMap){
         // BEFORE UPDATE LOGIC
         
+        Map<Id,String> acctIdToClinicalLeadQueueName = new Map<Id,String>();
+        
+        List<Group> allQueues = Database.Query('SELECT Id, DeveloperName FROM Group WHERE Type = \'Queue\'');
+        
+        List<Assessment__c> allAssmtsForTheseAccounts = [ SELECT Id, AccountPerson__c, AccountPerson__r.Id FROM Assessment__c WHERE AccountPerson__c = :updatedObjects ];
+        
  		for(Account x : updatedObjects ){
 			
 			for(Account oA : oldObjects) {
@@ -46,17 +52,27 @@ public with sharing class AccountTriggeredActions {
 					
 					// SECURITY CHANGES:  Assessment__c Objective__c
 					// 1. Get Assessment__c records that are children of these accounts.
-					List<Assessment__c> assmtList = [ SELECT Id FROM Assessment__c WHERE AccountPerson__c = :x.Id ];
-					// 2. Get the queue for the state that the owner works in.
-					String queueDevName = 'ClinicalLeads_CA_San_Diego';
-					Group theClinicalQueue = Database.Query('SELECT Id, DeveloperName FROM Group WHERE Type = \'Queue\' AND DeveloperName = \'' + queueDevName + '\' LIMIT 1');
+					List<Assessment__c> thisAcctsAssessments = new List<Assessment__c>();
+					for(Assessment__c assmt : allAssmtsForTheseAccounts) {
+						if(x.Id==assmt.AccountPerson__r.Id) {
+							thisAcctsAssessments.add(assmt);
+						}
+					}
+					// 2. Get the queue that matches this object's restrictiveness needs and the account owner's role        			
+        			Group theClinicalQueue;
+        			for(Group g : allQueues) {
+        				if(g.DeveloperName.contains(x.Owner_Role__c) && g.DeveloperName.contains('ClinicalLeads')) {
+        					theClinicalQueue = g;
+        				}
+        			}
+
 					System.debug('Assessment Queue Dev Name: ' + theClinicalQueue.DeveloperName);
 					// 3. Loop through the assessments, and assign their ownership to the "correct queue" that matches up with the move
 					// for the PBS owner.  Is that by state of the owner?
-					for(Assessment__c a : assmtList) {
+					for(Assessment__c a : thisAcctsAssessments) {
 						a.OwnerId = theClinicalQueue.Id;
 					}
-					update assmtList;
+					update thisAcctsAssessments;
 				}
 			}
 			
