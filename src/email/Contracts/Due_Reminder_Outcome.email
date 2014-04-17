@@ -1,0 +1,105 @@
+<messaging:emailTemplate subject="Critical Indicator reminder for the contract ({!relatedTo.Name})" recipientType="User" relatedToType="TMN_Contract__c" >
+<messaging:plainTextEmailBody >
+HTML is unsuppored
+</messaging:plainTextEmailBody>
+
+<messaging:htmlEmailBody > 
+<apex:outputLabel styleClass="title"><b>Outcome Requirements</b></apex:outputLabel>
+<table class="table">   
+    <tr class="r2">
+ 
+        <td colspan="2">
+            Due On: &nbsp; <apex:outputField label="" value="{!relatedTo.Due_Date_Outcome_Requirements__c}"/>
+        </td>
+    </tr>
+    <tr>        
+        <td >
+            &nbsp;<apex:outputField label="" styleClass="txtArea" value="{!relatedTo.OutcomeRequirementsDetail__c}"/> 
+        </td>
+    
+    </tr>
+</table>
+
+<table class="table">
+    <tr class="header">
+        <td class="header" colspan="2">
+            <b>Details</b>
+        </td>        
+    </tr>
+    
+    <tr class="r1">
+        <td class="detQ">
+            <apex:outputLabel styleClass="clQuestion">    Name </apex:outputLabel>
+        </td>
+        <td>
+            {!relatedTo.Name} 
+        </td>
+    </tr>
+    
+    <tr class="r2">
+        <td  class="detQ" >
+            <apex:outputLabel styleClass="clQuestion">Number </apex:outputLabel>
+        </td>
+        <td >
+            {!relatedTo.Contract_Number__c} 
+        </td>
+    </tr>
+    
+    <tr class="r1">
+        <td class="detQ">
+            <apex:outputLabel styleClass="clQuestion">Description </apex:outputLabel>
+        </td>
+        <td>
+            {!relatedTo.Description__c} 
+        </td>
+    </tr>
+    
+    <tr class="r2">
+        <td class="detQ">
+            <apex:outputLabel styleClass="clQuestion">Status </apex:outputLabel>
+        </td>
+        <td>
+            {!relatedTo.Status__c} 
+        </td>
+    </tr>
+    
+    <tr class="r1">
+        <td class="detQ">
+            <apex:outputLabel styleClass="clQuestion">Legal Entity </apex:outputLabel>
+        </td>
+        <td>
+            {!relatedTo.LegalEntity__c} 
+        </td>
+    </tr>
+    
+    <tr class="r2">
+        <td class="detQ">
+            <apex:outputLabel styleClass="clQuestion">State </apex:outputLabel>
+        </td>
+        <td>
+            {!relatedTo.State__c} 
+        </td>
+    </tr>
+    
+    <tr class="r1">
+        <td class="detQ">
+            <apex:outputLabel styleClass="clQuestion">Region/Office/Program Name </apex:outputLabel>
+        </td>
+        <td>
+            {!relatedTo.MentorRegionOfficeProgramName__c}
+        </td>
+    </tr>
+    
+    <tr class="r2">
+        <td class="detQ">
+            <apex:outputLabel styleClass="clQuestion">Service Line </apex:outputLabel>
+        </td>
+        <td>
+            {!relatedTo.Service_Line__c} 
+        </td>
+    </tr>
+    
+</table>
+</messaging:htmlEmailBody>
+
+</messaging:emailTemplate>
