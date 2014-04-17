@@ -2803,14 +2803,15 @@ If this is selected, please fill out the appropriate check boxes to the right.</
     </fields>
     <fields>
         <fullName>Staff_Name__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
         <label>Staff Name</label>
-        <length>255</length>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Progress_Notes</relationshipName>
         <required>false</required>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
+        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Start_Time_Only__c</fullName>
