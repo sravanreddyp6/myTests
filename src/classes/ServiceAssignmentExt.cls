@@ -23,6 +23,7 @@ public class ServiceAssignmentExt {
     public static Boolean showdiagModal { get; set; }
     public string diagEditId {get; set; }
     public Service_Location__c serviceLocation { get; set; }
+    
 
     // Get/set info for contracts
     public List<TMN_Contract__c> contractsForThisServAssignsState { get; set; }
@@ -46,7 +47,9 @@ public class ServiceAssignmentExt {
     public Set<ID> SelectedCodeIDs = new Set<ID>();
     public Map<Id,Service_Code__c> SelectedCodes { get; set; }
     public Map<Id,Service_Code__c> AvailableCodes { get; set; }
+    public String currentModel { get; set; }
     public String currentProgram { get; set; }
+    public string currentProgramID { get; set { currentProgramID = value; loadAvailableCodesbyID(); }}
     public String currentLocation { get; set; }
     public String currentServiceLine { get; set; }
     //for adding new JOs
@@ -69,6 +72,16 @@ public class ServiceAssignmentExt {
     public Integer numDocsExpected { get; set; }
     public Integer phaseToSave { get; set; }
 
+	// to support program effective dates
+	public Date effDate{ get; set;}
+	public void setEffectiveDate( ) {
+		// support for the action function on front end - just sets effDate from param
+		// need to re-assess current program, location, service code
+		//currentProgram = currentLocation = currentServiceLine = '';
+		//loadProgramList();
+		loadAvailableCodesbyID();
+		system.debug( currentProgram + ',' + currentLocation + ',' + currentServiceLine);
+	}
         // Fidelity Document Properties / Info
     public List<ServiceAssignment_Document_JO__c> sadjos { get; set; }
     public Boolean hasFidDocs { get; set; }
@@ -96,14 +109,16 @@ public class ServiceAssignmentExt {
         canCreateSummary = oSchema.IsCreateable();
     }
 
-	public Boolean episodeReq { get { return (admission.State__c == 'AZ' || admission.state__c == 'NC');} set; }
+	public Boolean episodeReq { get { return (admission.state__c == 'NC');} set; }
+	public Boolean modelReq { get { return (pOpGroup == 'Cambridge');} set; }
 	
     public List<Action_Plan__c> getActivePlan(){
     
         return [Select id From Action_Plan__c where Action_Plan__c.Service_Assignment__c = :currentRecord.id AND Status__c = 'Active Final' Limit 1];
     }
 
-    private Boolean pshowDiag, pshowLocation; 
+    private Boolean pshowDiag, pshowLocation;
+    private string popGroup; 
     private static Boolean psetFlags = false;
     public Boolean showDiagnosis { get {
             if (! psetFlags ) {
@@ -123,7 +138,8 @@ public class ServiceAssignmentExt {
             
             pshowDiag = true;
             pshowLocation = false;
-        
+        	pOpGroup = '';
+        	
             System.Debug('getting showDiagnosis with SF account = ' + pbsOwner);
             TMN_User__c[] tmnUsers = [
                 SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:pbsOwner LIMIT 1
@@ -133,8 +149,10 @@ public class ServiceAssignmentExt {
                 pshowLocation = false;
                 psetFlags = false;
             } else {
-                pshowDiag = tmnUsers[0].Operating_Group__c=='Redwood' || tmnUsers[0].Operating_Group__c=='Cambridge';
-                pshowLocation =  ( tmnUsers[0].Operating_Group__c=='Redwood' && admission.State__c != 'AZ');
+            	pOpGroup = tmnUsers[0].Operating_Group__c;
+                pshowDiag = pOpGroup =='Redwood' || pOpGroup =='Cambridge';
+                pshowLocation =  ( pOpGroup =='Redwood' && admission.State__c != 'AZ');
+                
                 psetFlags = true;
             }
             
@@ -245,13 +263,15 @@ public class ServiceAssignmentExt {
                 initialRecord.Person_Being_Served__c = admission.Person_Being_Served__c;
                 initialRecord.RecordTypeId = theRecordType.Id;
                 pbsOwner = admission.Person_Being_Served__r.OwnerId;
-
+                if (effDate == null)
+					effDate = initialRecord.Start_date__c;
+				
         }
         else {
                 pageHeader = 'Service Assignment Detail';
                 newSA = false;
                 theServAssign = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
-                            End_Date__c, Episode__c, External_ID__c, Location_Region__c, Outcomes__c, Person_Being_Served__c, Phase__c, Phase_of_Treatment__c, Program__c,
+                            End_Date__c, Episode__c, External_ID__c, Location_Region__c, Model__c, Outcomes__c, Person_Being_Served__c, Phase__c, Phase_of_Treatment__c, Program__c,
                             Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
                             Start_Date__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
                             Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c,
@@ -259,7 +279,7 @@ public class ServiceAssignmentExt {
                                 FROM Service_Assignment__c
                                 WHERE Id = :controller.getid()];
                 initialRecord = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
-                            End_Date__c, Episode__c, External_ID__c, Location_Region__c, Outcomes__c, Person_Being_Served__c, Phase__c, Phase_of_Treatment__c, Program__c,
+                            End_Date__c, Episode__c, External_ID__c, Location_Region__c, Model__c, Outcomes__c, Person_Being_Served__c, Phase__c, Phase_of_Treatment__c, Program__c,
                             Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
                             Start_Date__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
                             Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c,
@@ -271,12 +291,12 @@ public class ServiceAssignmentExt {
                 recordType = theServAssign.RecordType.Name;
                 recordTypeId = theServAssign.RecordTypeId;
                 pbsOwner = theServAssign.Person_Being_Served__r.OwnerId;
-
+				effDate = theServAssign.Start_date__c;
         }
 
         System.debug('recordType BEFORE LoadData: ' + recordType);
         System.debug('AssessmentOnly BEFORE LoadData: ' + AssessmentOnly);
-
+		System.debug('Start date:' + effDate);
 
         LoadData(theServAssign);
 
@@ -673,7 +693,7 @@ public class ServiceAssignmentExt {
     public void LoadData(Service_Assignment__c localRecord){
        currentID = localRecord.Id;
        if(newSA==false) {
-            currentRecord = [Select Program__c, RecordType.Name, Service_Line__c, Admission__r.State__c, Location_Region__c, service_location__c  From Service_Assignment__c Where Id = :currentID Limit 1];
+            currentRecord = [Select start_date__c, Model__c, Program_code__c, Program__c, RecordType.Name, Service_Line__c, Admission__r.State__c, Location_Region__c, service_location__c  From Service_Assignment__c Where Id = :currentID Limit 1];
             currentState = currentRecord.Admission__r.State__c;
        }
        else {
@@ -691,7 +711,7 @@ public class ServiceAssignmentExt {
 
        SelectedCodes = new Map<Id,Service_Code__c>();
 
-        for(Service_Code__c local : [SELECT Id, Service_Value__c, Start_Date__c, End_Date__c FROM Service_Code__c WHERE
+        for(Service_Code__c local : [SELECT Id, program_code__c, Service_Value__c, Start_Date__c, End_Date__c FROM Service_Code__c WHERE
                                         Id IN (SELECT Service_Code__c FROM ServiceAssignment_ServiceCode_JO__c WHERE
                                                 Service_Assignment__r.Id = :currentId) ORDER BY Service_Value__c]){
 
@@ -699,27 +719,17 @@ public class ServiceAssignmentExt {
             SelectedCodes.put(local.Id,local);
         }
 
+	   currentModel = currentRecord.Model__c;
        currentProgram = currentRecord.Program__c;
        currentLocation = currentRecord.Location_Region__c;
        currentServiceLine = currentRecord.Service_Line__c;
-       loadAvailableCodes();
+       currentProgramID = currentRecord.Program_Code__c;
+       effDate = currentRecord.Start_date__c;
+       loadAvailableCodesbyID();
 
        servCodeIdsForXrefsToDelete = new Set<Id>();
-
-       Set<String> tmpProgs = new Set<String>();
-
-           for(Service_Code__c local : [Select Program__c From Service_Code__c where state__c = :currentState ]){
-               tmpProgs.Add(Local.Program__c);
-           }
-
-           SelectOption SOtmp = new SelectOption('', '--None--');
-           MyPrograms.Add(SOtmp);
-
-            for(String local : tmpProgs){
-                SelectOption SO = new SelectOption(local, local);
-                MyPrograms.Add(SO);
-            }
-
+	   loadProgramList();
+		
                 if ( theservassign.referral__c != null)
             referral = [ select id, name, referral_date__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from referral__c where id= :theservassign.referral__c ];
         else
@@ -747,12 +757,57 @@ public class ServiceAssignmentExt {
         notes = [select name, id, Start_Time__c, End_time__c, createddate, createdby.name, action_plan__r.Name, Action_plan__c from Progress_Note__c where Service_Assignment__c = :currentID Order by CreatedDate DESC Limit 10];
         diagnoses = [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__c = :currentID];
         }
-        if ( currentrecord.Service_Location__c != null)
+        if ( currentrecord.Service_Location__c != null) {
             serviceLocation = [ select ID, Name, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c from Service_Location__c where ID = :currentrecord.Service_Location__c];
-
+			currentProgramId = serviceLocation.programID__c;
+        }
 
     }
 
+public void loadProgramList() {
+	       Set<String> tmpProgs = new Set<String>();
+			// 03/28/14 - make sure only pulling programs that are valid as of SA start date
+			if (effDate != null ) {
+				system.debug( 'Effective date is: ' + effDate);
+	           for(Service_Code__c local : [Select Program__c From Service_Code__c where state__c = :currentState and start_date__c <= :effdate and (end_date__c > :effdate or end_date__c = null )]){
+    	           tmpProgs.Add(Local.Program__c);
+        	   }
+			}
+			
+			MyPrograms.clear();
+           SelectOption SOtmp = new SelectOption('', '--None--');
+           MyPrograms.Add(SOtmp);
+
+            for(String local : tmpProgs){
+                SelectOption SO = new SelectOption(local, local);
+                MyPrograms.Add(SO);
+            }
+
+	
+}
+
+	public void loadAvailableCodesbyID() {
+      List<Service_Code__c> listAvailableCodes = new List<Service_Code__c>();
+       AvailableCodes = new Map<Id,Service_Code__c>();
+       system.debug( 'loading codes by: ' + currentprogramID + ', effdate: ' + effdate);
+        listAvailableCodes = [SELECT Id, Service_Code__c, Service_Value__c, Start_Date__c, End_Date__c, Program__c From Service_Code__c
+            WHERE Program_code__c = :currentProgramID
+                AND
+                start_date__c <= :effDate and ( end_date__c > :effDate or end_date__c = null )
+                AND
+            Assessment_Only__c = :AssessmentOnly
+                AND
+            id NOT IN :SelectedCodeIDs
+                AND
+            state__c = :currentState
+            ORDER BY Service_Value__c];
+
+       for(Service_Code__c sc : listAvailableCodes) {
+        AvailableCodes.put(sc.Id,sc);
+       }
+
+	
+	}
     public void loadAvailableCodes () {
        List<Service_Code__c> listAvailableCodes = new List<Service_Code__c>();
        AvailableCodes = new Map<Id,Service_Code__c>();
@@ -760,7 +815,7 @@ public class ServiceAssignmentExt {
         listAvailableCodes = [SELECT Id, Service_Code__c, Service_Value__c, Start_Date__c, End_Date__c, Program__c From Service_Code__c
             WHERE Program__c = :currentProgram
                 AND
-                isActive__c = 1
+                start_date__c <= :effDate and ( end_date__c > :effDate or end_date__c = null )
                 AND
             Service_Line__c = :currentServiceLine
                 AND
@@ -779,6 +834,28 @@ public class ServiceAssignmentExt {
 
     }
 
+	// CTEAE-86 change for NC
+	public void changeToModel() {
+		
+		currentModel = theServAssign.Model__c;
+		
+		// set program based on value in model table
+		if ( currentModel == 'FCT')
+			currentProgram = 'IFCS';
+		else if ( currentModel == 'Family Vistas Intensive In Home')
+			currentProgram = 'Family Vistas - IIH';
+		else
+			currentProgram = currentModel;
+		
+		System.Debug('model is: ' + currentModel);
+		theServAssign.Program__c = currentProgram;
+	}
+	
+	public void setServiceLocation( ) {
+			//theServAssign.service_location__c = newalias;
+			system.debug( 'inside setservicelocation');
+	}
+	
     public void changeToProgramLocationServiceLine() {
         for(Id s : SelectedCodes.keySet()) {
             servCodeIdsForXrefsToDelete.add(s);
@@ -792,16 +869,20 @@ public class ServiceAssignmentExt {
     public List<SelectOption> getMyLocations (){
         List<SelectOption> theLocations = new List<SelectOption>();
         Service_Assignment__c stateOfServAssign = theServAssign;
+        
         Set<String> tmpLocs = new Set<String>();
         SelectOption SOtmp = new SelectOption('', '--None--');
         theLocations.Add(SOtmp);
 
+		system.debug('inside get locations ' + currentProgram + ',' + currentSTate + ',' + effDate );
                 for(Service_Code__c local : [Select Location__c From Service_Code__c
                            Where Program__c = :currentProgram
                                AND
                            Assessment_Only__c = :AssessmentOnly
                            AND
-                                state__c = :currentState]
+                                state__c = :currentState
+                           AND
+                           		start_date__c <= :effDate and ( end_date__c > :effDate or end_date__c = null)]
                     ){
 
                        tmpLocs.Add(Local.Location__c);
@@ -826,6 +907,8 @@ public class ServiceAssignmentExt {
         theServiceLines.Add(SOtmp);
         Set<String> tmpLocs = new Set<String>();
 
+		system.debug('inside get service lines ' + currentProgram + ',' + currentLocation + ',' + currentSTate + ',' + effDate );
+
         for(Service_Code__c local : [Select Location__c, Service_Line__c, Program__c From Service_Code__c
                                         Where Program__c = :currentProgram
                                             AND
@@ -833,7 +916,11 @@ public class ServiceAssignmentExt {
                                             AND
                                         Assessment_Only__c = :AssessmentOnly
                                         AND
-                                                                state__c = :currentState            ]){
+                                           state__c = :currentState     
+										AND 
+											start_date__c <= :effDate and ( end_date__c > :effDate or end_date__c = null)
+
+	      ]){
            tmpLocs.Add(local.Service_Line__c);
         }
         for(String local : tmpLocs){
@@ -931,25 +1018,6 @@ public class ServiceAssignmentExt {
            editSA = true;
     }
 
-//    public PageReference CreateSummary() {
-//        Action_Summary__c report = new Action_Summary__c();
-//        report.Service_Assignment__c = theServAssign.id;
-//        report.Start_Date__c = Date.today().toStartofMonth();
-//        report.End_Date__c = report.Start_Date__c.Addmonths(1);
-//        insert report;
-//        return new PageReference('/apex/ActionSummaryReport?id=' + report.id);
-//    }
-
-//    public PageReference newActionSummary() {
-//        return new PageReference('/apex/ActionSummaryCreate');
-//    }
-
-//    public List<Action_Summary__c> getSummaries(){
-//        return [select status__c, name
-//                  from Action_Summary__c
-//                 where Service_Assignment__c = :currentrecord.id];
-//    }
-
 
     public PageReference ResetPage() {
 
@@ -989,9 +1057,6 @@ public class ServiceAssignmentExt {
 
         try {
             Service_Assignment__c s = theServAssign;
-            s.Program__c = currentProgram;
-            s.Location_Region__c = currentLocation;
-            s.Service_Line__c = currentServiceLine;
 
             System.debug('What is phaseToSave: ' + phaseToSave);
             System.debug('What is s.Phase__c pre-save: ' + s.Phase__c);
@@ -1007,33 +1072,28 @@ public class ServiceAssignmentExt {
             else {
                 system.debug('What is s.RecordType.Name before the upsert?: ' + s.RecordType.Name);
                 system.debug('What is s.RecordType before the upsert?: ' + s.RecordType);
+            
+                // CTEAE-86 - revision to naming
+                s.Model__c = currentModel;
+				s.Program__c = currentProgram;
+				
+                if ( theServAssign.Service_Location__c != null && String.valueOf(theServAssign.Service_Location__c) != '') {
 
-                 if ( showLocation ){
-
-                       // update program string from service location
-                       // System.Debug('Service location is: ' + theservassign.service_location__c);
-                        if ( theServAssign.Service_Location__c != null && String.valueOf(theServAssign.Service_Location__c) != '') {
-
-                                Service_Location__c sl = [select id, alias__c, city__c, program__c, service_value__c from service_location__c where id = :theServAssign.Service_Location__c];
-                                if (sl != null ) {
-                                        s.Program_Detail__c = sl.program__c;
-                                        s.Program__c = sl.Alias__c;
-                                        s.Location_Region__c = ''; //sl.City__c;
-                                        integer dashpos = sl.Service_Value__c.indexOf('-');
+					Service_Location__c sl = [select id, alias__c, city__c, program__c, service_value__c from service_location__c where id = :theServAssign.Service_Location__c];
+                    if (sl != null ) {
+                    	s.Program_Detail__c = sl.program__c;
+                    	if ( currentModel == null )
+							s.Program__c = sl.Alias__c;
+							
+                        s.Location_Region__c = ''; //sl.City__c;
+                        integer dashpos = sl.Service_Value__c.indexOf('-');
                                         
-                                        if (dashpos > -1 ) 
-                                            s.Service_Line__c = (sl.Service_Value__c).substring(dashpos+1);
-                                        else
-                                            s.Service_Line__c = sl.Service_Value__c;
-                                }
-                        }
-                } else {
-                        s.Program__c = currentProgram;
-                        s.Location_Region__c = currentLocation;
-                        s.Service_Line__c = currentServiceLine;
-                }
-
-
+                        if (dashpos > -1 ) 
+                        	s.Service_Line__c = (sl.Service_Value__c).substring(dashpos+1);
+                        else
+                        	s.Service_Line__c = sl.Service_Value__c;
+                    }
+               	}
 
                 upsert s;
 
@@ -1047,7 +1107,7 @@ public class ServiceAssignmentExt {
 
                 editSA = false;
                 theServAssign = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
-                            End_Date__c, External_ID__c, Location_Region__c, Outcomes__c, Person_Being_Served__c, Phase__c, Phase_of_Treatment__c, Program__c,
+                            End_Date__c, External_ID__c, Location_Region__c, Model__c, Outcomes__c, Person_Being_Served__c, Phase__c, Phase_of_Treatment__c, Program__c,
                             Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
                             Start_Date__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
                             Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c,
@@ -1123,7 +1183,7 @@ public class ServiceAssignmentExt {
 
  @RemoteAction
     public static Service_Location__c loadServiceLocation(string locationId) {
-        Service_Location__c loc = [ select ID, Name, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c from Service_Location__c where ID = :locationId];
+        Service_Location__c loc = [ select ID, Name, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c, Service_Value__c from Service_Location__c where ID = :locationId];
         return loc;
     }
 
