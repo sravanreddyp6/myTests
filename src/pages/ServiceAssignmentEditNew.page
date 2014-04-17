@@ -66,7 +66,7 @@
         <apex:outputField value="{!theServAssign.Status__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Status__c}" rendered="{!editSA}"  />
         <apex:outputField value="{!theServAssign.Start_Date__c}" rendered="{!!editSA}"  />
-        <apex:inputField value="{!theServAssign.Start_Date__c}" id="startdate" rendered="{!editSA}" onblur="setEffectiveDate( this.value);" />
+        <apex:inputField value="{!theServAssign.Start_Date__c}" required="true" id="startdate" rendered="{!editSA}" onblur="setEffectiveDate( this.value);" />
         <apex:outputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!editSA}"  />
         <apex:outputField value="{!theServAssign.End_Date__c}" rendered="{!!editSA}"  />
@@ -84,9 +84,8 @@
         </apex:inputField>
         </apex:actionregion>
         </apex:pageblocksectionitem>
-        
+     
     </apex:pageBlockSection>
-  
 
     <apex:pageBlockSection id="AOServAssignDetail" columns="1" collapsible="false" title="Service Assignment Detail" rendered="{!AssessmentOnly}">
         <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!!editSA}" />
@@ -751,6 +750,28 @@ END: Uncomment to have the element collapsed by default -->
     </apex:pageBlockSection>
     </apex:pageBlock>
 
+<!-- Start FAD Assessments -->
+<a name="Assessments_fad" id="assess_fad"></a>
+<apex:pageBlock id="Assessments_FAD" title="FAD Assessment Summaries" rendered="{! !editSA && Service_Assignment__c.Program__c ='IFCS' && CONTAINS(Service_Assignment__c.Service_Line__c, 'FCT')}" >
+    <div class="pbHeaderButton">
+<!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
+        <apex:commandButton action="{!createFadAssess}" value="New FAD Assessment Summary"/>
+    </div>
+    <apex:outputText value="No FAD Assessment Summarys to display" rendered="{!(Assessments_Fad.size=0)}" />
+    <apex:pageBlockTable value="{!Assessments_Fad}" var="assess" rendered="{!(Assessments_Fad.size!=0)}">
+        <apex:column headerValue="Action"  styleClass="editcol">
+            <a href="/apex/Assessment_FAD_Form?id={!assess.ID}&edit=1">Edit</a>
+        </apex:column>
+        <apex:column headerValue="Name" >
+            <a href="/apex/Assessment_FAD_Form?id={!assess.ID}">{!assess.name}</a>
+        </apex:column>        
+        <apex:column value="{!Assess.Assessment_Date__c}" headerValue="Date of Admistration"/>
+        <apex:column value="{!Assess.Phase__c}" />
+        <apex:column value="{!Assess.Status__c}" />
+        <apex:column value="{!Assess.Disregard__c }" />
+    </apex:pageBlockTable>
+</apex:pageBlock>
+<!-- end FAD Assessments -->
  <apex:pageBlock title="Referral Detail" rendered="{!referral != null }">
  <apex:pageBlockSection columns="2" title="Originating Referral" collapsible="false">
  <apex:pageBlockSectionItem >
@@ -849,7 +870,7 @@ function validateDiagnosis() {
         errors += '<li>Effective Date is a required field.</li>';
     }
 
-    j$('#diagnosisErrors').html(errors);
+    $j('#diagnosisErrors').html(errors);
     return (errors == '');
   }
 

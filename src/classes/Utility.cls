@@ -279,4 +279,12 @@ public without sharing class Utility {
     	}
     }
     
+    public static string getStateNameFromCode ( String statecode ) {
+    	if (String.IsEmpty( statecode))
+    		return statecode;
+    	else
+    		return REVERSED_STATE_MAP.get(statecode);
+    		
+    		
+    }
 }

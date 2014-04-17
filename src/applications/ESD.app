@@ -10,4 +10,5 @@
     <tab>Assessment__c</tab>
     <tab>TMN_Contacts</tab>
     <tab>standard-report</tab>
+    <tab>ESD_Home</tab>
 </CustomApplication>
