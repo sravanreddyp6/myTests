@@ -302,7 +302,7 @@
                  </apex:facet>
                  </apex:actionStatus>
             </apex:outputPanel>
-            <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(currentProgram!='',currentLocation!='',currentServiceLine!='')}">
+            <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(effDate!= null,currentProgramID!='')}" >
                 <apex:actionStatus id="removeStatus">
                      <apex:facet name="start">
                         <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
@@ -870,7 +870,7 @@ function validateDiagnosis() {
         errors += '<li>Effective Date is a required field.</li>';
     }
 
-    $j('#diagnosisErrors').html(errors);
+    j$('#diagnosisErrors').html(errors);
     return (errors == '');
   }
 
