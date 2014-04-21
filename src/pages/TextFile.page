@@ -1,0 +1,11 @@
+<apex:page controller="TextFileController" sidebar="false" action="{!fetch}" contentType="text/plain/#emp.txt" cache="false">
+Custom Objects:
+<apex:repeat value="{!customObjs}" var="x">
+{!x}
+</apex:repeat>
+
+Standard / Salesforce Generated Objects:
+<apex:repeat value="{!standardObjs}" var="x">
+{!x}
+</apex:repeat>
+</apex:page>

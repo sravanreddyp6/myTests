@@ -41,7 +41,7 @@ public with sharing class AccountTriggeredActions {
  		for(Account x : updatedObjects ){
 			
 			for(Account oA : oldObjects) {
-				if(x.OwnerId!=oA.OwnerId) {
+				if(x.Id==oA.Id && x.OwnerId!=oA.OwnerId) {
 					// SECURITY CHANGES:  Kick off update of any Lookup child object records so that ownership for those child records
 					// is changed to the owner of the appropriate queue.  The fact that the Account record
 					// moved to a new owner PROBABLY MOST OFTEN will NOT require a change to new queues for the 
