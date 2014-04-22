@@ -15,10 +15,12 @@ public with sharing class Notes_ProgressNote_Svc_Code_Selection {
         SelectOption SOtmp = new SelectOption('', '--None--');
         Codes.Add(SOtmp);
         
+        	// CTEAE-88 look at note start date for effective service codes
             for(Service_code__c local : 
             		[SELECT Id, Service_Code__c, Service_Value__c From Service_Code__c
             		where id in (select service_code__c from ServiceAssignment_ServiceCode_Jo__c where service_assignment__c = :currentRecord.Service_Assignment__c)
-            		and isActive__c = 1])
+            		and start_date__c <= :Date.valueOf(CurrentRecord.Start_Time__c) and (end_date__c = null or end_date__c >= :Date.valueOf(CurrentRecord.Start_Time__c))  
+            		])
             {                                   
                 SelectOption SO = new SelectOption(local.ID, local.Service_Value__c);
                 Codes.Add(SO);
