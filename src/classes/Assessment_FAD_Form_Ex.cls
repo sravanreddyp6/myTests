@@ -18,11 +18,11 @@ public with sharing class Assessment_FAD_Form_Ex {
         assess = (Assessment__c) controller.getRecord();
         mode ='view';
         if(ApexPages.currentPage().getParameters().get('edit') == '1'){
-            mode = 'edit';
+            myEdit();
         }
         
         if(ApexPages.currentPage().getParameters().get('isnew') == '1'){
-            mode = 'edit';
+            myEdit();
         }
         
         for(Assessment_Question__c aq: [select id, Dev_Name__c, Question_Title__c from Assessment_Question__c Where Question_Domain__r.Assessment_Type2__c = 'FAD Summary']){        
@@ -92,7 +92,7 @@ public with sharing class Assessment_FAD_Form_Ex {
     
         } catch (DMLException e) {
                 ApexPages.addMessages(e);
-                mode = 'edit';
+                myEdit();
                 return null;
         }  
         PageReference ref =  new PageReference('/'+this.assess.id); 
@@ -101,7 +101,10 @@ public with sharing class Assessment_FAD_Form_Ex {
     
     
     public PageReference myEdit(){
-        mode = 'edit';
+        if(!assess.locked__c){
+            mode = 'edit';
+        
+        }
         return null;   
     }       
 
