@@ -80,7 +80,7 @@
         <apex:outputLabel value="Model" for="modelfield" />
         <apex:actionregion >
         <apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" >
-       		 <apex:actionsupport event="onchange" action="{!changeToModel}" rerender="ContractAssoc, ProgAssoc" />
+             <apex:actionsupport event="onchange" action="{!changeToModel}" rerender="ContractAssoc, ProgAssoc" />
         </apex:inputField>
         </apex:actionregion>
         </apex:pageblocksectionitem>
@@ -106,7 +106,7 @@
         <apex:outputLabel value="Model" for="modelfield" />
         <apex:actionregion >
         <apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" >
-       		 <apex:actionsupport event="onchange" action="{!changeToModel}" rerender="ContractAssoc, ProgAssoc" />
+             <apex:actionsupport event="onchange" action="{!changeToModel}" rerender="ContractAssoc, ProgAssoc" />
         </apex:inputField>
         </apex:actionregion>
         </apex:pageblocksectionitem>
@@ -223,7 +223,7 @@
     </apex:pageBlockSection>
     <hr />
     <apex:pageBlock title="Location of Service">
-	<apex:pageBlockSection columns="2" id="locationDisplay" collapsible="false">
+    <apex:pageBlockSection columns="2" id="locationDisplay" collapsible="false">
           <apex:pageBlockSectionItem rendered="{!editSA}" >
               <apex:outputLabel value="Alias" />
               <apex:actionregion >
@@ -242,13 +242,13 @@
                                 Zip="{!serviceLocation.Zip__c}"/>
           </apex:pageBlockSectionItem>
           <apex:outputField value="{!serviceLocation.Phone__c}" />
-	          <apex:outputPanel style="display:none">
-	          <apex:actionregion >
-	          <apex:inputText id="currentProgramID" value="{!currentProgramID}" >
-	          <apex:actionsupport event="onchange" action="{!loadAvailableCodesByID}" rerender="ServCodeSelect" />
-	          </apex:inputText>
-	          </apex:actionregion>
-	          </apex:outputPanel>
+              <apex:outputPanel style="display:none">
+              <apex:actionregion >
+              <apex:inputText id="currentProgramID" value="{!currentProgramID}" >
+              <apex:actionsupport event="onchange" action="{!loadAvailableCodesByID}" rerender="ServCodeSelect" />
+              </apex:inputText>
+              </apex:actionregion>
+              </apex:outputPanel>
           
 </apex:pageBlockSection>
 </apex:pageBlock>
@@ -261,7 +261,7 @@
                              id="ServCodeSelect"
                              rendered="{!!showLocation}">
 
-				
+                
               <apex:outputPanel layout="block" styleClass="col" rendered="{! effDate= null || currentProgramID=''}">
                   You must select a Location of Service and Start Date before you can select a Service Code.
               </apex:outputPanel>
@@ -329,7 +329,7 @@
 
                             </apex:column>
                             <apex:column >
-                            	<apex:actionregion >
+                                <apex:actionregion >
                                 <apex:commandButton value="Remove" action="{!RemoveCode}" reRender="ServCodeSelect" status="removeStatus" rendered="{!editSA}">
                                     <apex:param assignTo="{!SelectedCodeId}" name="SelectedCodeId" value="{!SelectedCodes[Code].Id}" />
                                     <apex:param assignTo="{!SelectedCodeKey}" name="SelectedCodeKey" value="{!Code}" />
@@ -437,10 +437,10 @@ END: Uncomment to have the element collapsed by default -->
                                     </apex:actionSupport>
                                     <apex:selectOptions value="{!MyLocations}"/>
                                 </apex:selectList>
-							</apex:actionRegion>
-							</apex:pageBlockSectionItem>
-							
-							<apex:pageBlockSectionItem >
+                            </apex:actionRegion>
+                            </apex:pageBlockSectionItem>
+                            
+                            <apex:pageBlockSectionItem >
                             <apex:outputLabel for="ServiceLineSelect" value="Service Line" />
                             <apex:actionRegion >
                                 <apex:selectList size="1" id="ServiceLineSelect" label="Service Line" value="{!currentServiceLine}">
@@ -490,7 +490,7 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:facet name="stop">
                     <apex:pageBlockTable value="{!AvailableCodes}" var="aCodes">
                         <apex:column >
-                        	<apex:actionregion >
+                            <apex:actionregion >
                             <apex:commandButton value="Add" action="{!AddCode}" reRender="ServCodeSelect"  status="addStatus" rendered="{!editSA}">
                                 <apex:param assignTo="{!SelectedCodeID}" name="SelectedCodeID" value="{!AvailableCodes[aCodes].Id}"/>
                             </apex:commandButton>
@@ -544,7 +544,7 @@ END: Uncomment to have the element collapsed by default -->
 
                             </apex:column>
                             <apex:column >
-                            	<apex:actionregion >
+                                <apex:actionregion >
                                 <apex:commandButton value="Remove" action="{!RemoveCode}" reRender="ServCodeSelect" status="removeStatus" rendered="{!editSA}">
                                     <apex:param assignTo="{!SelectedCodeId}" name="SelectedCodeId" value="{!SelectedCodes[Code].Id}" />
                                     <apex:param assignTo="{!SelectedCodeKey}" name="SelectedCodeKey" value="{!Code}" />
@@ -752,7 +752,7 @@ END: Uncomment to have the element collapsed by default -->
 
 <!-- Start FAD Assessments -->
 <a name="Assessments_fad" id="assess_fad"></a>
-<apex:pageBlock id="Assessments_FAD" title="FAD Assessment Summaries" rendered="{! !editSA && Service_Assignment__c.Program__c ='IFCS' && CONTAINS(Service_Assignment__c.Service_Line__c, 'FCT')}" >
+<apex:pageBlock id="Assessments_FAD" title="FAD Assessment Summaries" rendered="{! !editSA && Service_Assignment__c.Model__c ='FCT' }" >
     <div class="pbHeaderButton">
 <!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
         <apex:commandButton action="{!createFadAssess}" value="New FAD Assessment Summary"/>
@@ -1000,26 +1000,26 @@ document.onkeypress = stopRKey;
 
 j$(document).ready(function() {
 if (j$('input[id$=lookupElement_lkid]')) 
-	j$('input[id$=lookupElement_lkid]').change(function() {
-  		saveLocation();
-	});
+    j$('input[id$=lookupElement_lkid]').change(function() {
+        saveLocation();
+    });
 });
 
 
 function saveLocation() {
 
-	ServiceAssignmentExt.loadServiceLocation(j$('input[id$=lookupElement_lkid]').val(),
-	function(result, event){
+    ServiceAssignmentExt.loadServiceLocation(j$('input[id$=lookupElement_lkid]').val(),
+    function(result, event){
             if (event.status) {
             /*
-				var dashpos = result.Service_Value__c.indexOf('-');
-				var sl = '';
-				if (dashpos > -1 ) 
-                	sl = (result.Service_Value__c).substring(dashpos+1);
-				else
-                	sl = result.Service_Value__c;
+                var dashpos = result.Service_Value__c.indexOf('-');
+                var sl = '';
+                if (dashpos > -1 ) 
+                    sl = (result.Service_Value__c).substring(dashpos+1);
+                else
+                    sl = result.Service_Value__c;
                                             
-            	j$('[id$=ProgramField]').val(result.Program__c);
+                j$('[id$=ProgramField]').val(result.Program__c);
                 j$('[id$=LocationField]').val(result.City__c);
                 j$('[id$=ServiceLineField]').val(sl);
               */  
@@ -1029,7 +1029,7 @@ function saveLocation() {
           },
           {escape: true}
         );
-		
+        
     }
 
 
