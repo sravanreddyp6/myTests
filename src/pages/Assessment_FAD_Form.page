@@ -6,6 +6,7 @@
     <script>function setFocusOnLoad() {}</script>
 <apex:outputPanel style="display: none;">
     {!Assessment__c.Service_Assignment__r.Person_Being_Served__c}
+    {!Assessment__c.Locked__c}
 </apex:outputPanel>    
 <style>
     body .bPageBlock[id*=main_detail] {
@@ -188,12 +189,6 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
                 <apex:inputField styleClass="pbs_question" value="{!mapRes['PBS_General_Functioning'].Score__c}"/>    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>
-        <apex:pageBlockSectionItem >
-            <apex:outputPanel >{!mapQs['PBS_Not_Using_Fad_Highest_Concern'].Question_Title__c}</apex:outputPanel>            
-            <apex:outputPanel >
-                <apex:inputField value="{!mapRes['PBS_Not_Using_Fad_Highest_Concern'].Response__c}" styleClass="txtBox pbs_question"/>    
-            </apex:outputPanel>        
-        </apex:pageBlockSectionItem> 
     </apex:pageBlockSection>
 
 <!-- PBS view-->
@@ -245,12 +240,6 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
             <apex:outputPanel >{!mapQs['PBS_General_Functioning'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
                 <apex:outputField value="{!mapRes['PBS_General_Functioning'].Score__c}"/>    
-            </apex:outputPanel>        
-        </apex:pageBlockSectionItem>
-        <apex:pageBlockSectionItem >
-            <apex:outputPanel >{!mapQs['PBS_Not_Using_Fad_Highest_Concern'].Question_Title__c}</apex:outputPanel>            
-            <apex:outputPanel >
-                <apex:outputField value="{!mapRes['PBS_Not_Using_Fad_Highest_Concern'].Response__c}"/>    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem> 
     </apex:pageBlockSection>
@@ -326,13 +315,6 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
             <apex:outputPanel >
                 <apex:inputField styleClass="cg_question" value="{!mapRes['CG_General_Functioning'].Score__c}"/>    
             </apex:outputPanel>        
-        </apex:pageBlockSectionItem>
-        <apex:pageBlockSectionItem >
-            <apex:outputPanel >{!mapQs['CG_Not_Using_Fad_Highest_Concern'].Question_Title__c}</apex:outputPanel>            
-            <apex:outputPanel >
-                <apex:inputField value="{!mapRes['CG_Not_Using_Fad_Highest_Concern'].Response__c}" 
-                                    styleClass="txtBox cg_question"/>    
-            </apex:outputPanel>        
         </apex:pageBlockSectionItem>    
     </apex:pageBlockSection>
 <!-- CG view --> 
@@ -399,13 +381,7 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
             <apex:outputPanel >
                 <apex:outputField value="{!mapRes['CG_General_Functioning'].Score__c}"/>    
             </apex:outputPanel>        
-        </apex:pageBlockSectionItem>
-        <apex:pageBlockSectionItem >
-            <apex:outputPanel >{!mapQs['CG_Not_Using_Fad_Highest_Concern'].Question_Title__c}</apex:outputPanel>            
-            <apex:outputPanel >
-                <apex:outputField value="{!mapRes['CG_Not_Using_Fad_Highest_Concern'].Response__c}"/>    
-            </apex:outputPanel>        
-        </apex:pageBlockSectionItem>    
+        </apex:pageBlockSectionItem>   
     </apex:pageBlockSection>   
 </apex:pageBlock>
 </apex:form>
