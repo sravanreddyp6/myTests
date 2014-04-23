@@ -3130,10 +3130,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
                 <fullName>Family</fullName>
                 <default>false</default>
             </picklistValues>
-            <picklistValues>
-                <fullName>Wraparound</fullName>
-                <default>false</default>
-            </picklistValues>
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
@@ -17146,14 +17142,25 @@ errors.push(&apos;You must select a &quot;Service Code&quot; before continuing.&
 var recordTypeQuery = sforce.connection.query(&quot;SELECT Id, Name, DeveloperName from RecordType where id = &apos;&quot; + records[0].RecordTypeId + &quot;&apos;&quot;); 
 curRtype = recordTypeQuery.getArray(&quot;records&quot;); 
 
-
-//Check to see if there is a &quot;FCT Phase of Treatment&quot; value
-var fct = &apos;{!Progress_Note__c.FCT_Phase_at_Note_Creation__c}&apos;;
-if ((curRtype[0].DeveloperName == &apos;IN_FCT&apos;) &amp;&amp; ( fct != null)) 
-{
+// WVPN-21
+// Make the following fields required on finalization
+if (curRtype[0].DeveloperName == &apos;IN_FCT&apos;) {
+var value = &apos;{!Progress_Note__c.FCT_Phase_at_Note_Creation__c}&apos;;
+ if (value == &apos;&apos;){
     errors.push(&apos;You must select a &quot;FCT Phase of Treatment&quot; before continuing.&apos;);
+   }
+ value = &apos;{!Progress_Note__c.People_Present__c}&apos;;
+ if (value == &apos;&apos;){
+    errors.push(&apos;You must select a &quot;People Present&quot; before continuing.&apos;);
+   }
+ value = &apos;{!Progress_Note__c.Staff_Name__c}&apos;;
+ if (value == &apos;&apos;){
+    errors.push(&apos;You must select the &quot;Staff Name&quot; before continuing.&apos;); 
+   }
+ if({!ISPICKVAL(Progress_Note__c.Area_Family_Functioning__c,&apos;&apos;)}){ 
+    errors.push(&apos;You must select the &quot;Area of Family Functioning&quot; before continuing.&apos;); 
+   }
 }
-
 
 /*
 // CTEAE-78 - remove check for Auth 
