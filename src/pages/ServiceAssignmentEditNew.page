@@ -43,8 +43,9 @@
         <apex:param name="editid" value="" assignTo="{!diagEditId}" />
     </apex:actionFunction>
     <apex:actionFunction name="showAddLocation" action="{!showAddLocation}" immediate="true" rerender="serviceLocationEntry,locationDisplay, msgs" oncomplete="openDialog('serviceLocationModal', 'span', 'Add/Edit Location'); "/>
-    <apex:actionFunction name="setEffectiveDate" action="{!setEffectiveDate}" rerender="ProgAssocViewNEW, ProgAssoc,ProgramSelect,ServCodeSelect"  immediate="true">
-        <apex:param name="edate" value="" assignTo="{!effDate}" />
+    <apex:actionFunction name="setEffectiveDate" action="{!setEffectiveDate}" rerender="ProgAssocViewNEW, ProgAssoc,ProgramSelect,ServCodeSelect"  immediate="true" >
+    <apex:param name="effstart" value="" assignTo="{!effDate}" />
+    <apex:param name="effend" value="" assignTo="{!effEnd}" />
     </apex:actionFunction>
 
  <!--  STANDARD SERVICE ASSIGNMENT BLOCK  -->
@@ -66,11 +67,11 @@
         <apex:outputField value="{!theServAssign.Status__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Status__c}" rendered="{!editSA}"  />
         <apex:outputField value="{!theServAssign.Start_Date__c}" rendered="{!!editSA}"  />
-        <apex:inputField value="{!theServAssign.Start_Date__c}" required="true" id="startdate" rendered="{!editSA}" onblur="setEffectiveDate( this.value);" />
+        <apex:inputField value="{!theServAssign.Start_Date__c}" required="true" id="startdate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
         <apex:outputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!editSA}"  />
         <apex:outputField value="{!theServAssign.End_Date__c}" rendered="{!!editSA}"  />
-        <apex:inputField value="{!theServAssign.End_Date__c}" rendered="{!editSA}"  />
+        <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
         <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}"  />
         <apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA}"  />
@@ -95,18 +96,18 @@
         <apex:outputField value="{!theServAssign.Status__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Status__c}" rendered="{!editSA}"  />
         <apex:outputField value="{!theServAssign.Start_Date__c}" rendered="{!!editSA}"  />
-        <apex:inputField value="{!theServAssign.Start_Date__c}" id="startdate" rendered="{!editSA}" onblur="setEffectiveDate( this.value);" />
+        <apex:inputField value="{!theServAssign.Start_Date__c}" id="startdate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
         <apex:outputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!editSA}"  />
         <apex:outputField value="{!theServAssign.End_Date__c}" rendered="{!!editSA}"  />
-        <apex:inputField value="{!theServAssign.End_Date__c}" rendered="{!editSA}"  />
+        <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}"  onblur="changeEffectiveDates();" />
         <apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA}"  />
         <apex:pageblocksectionitem rendered="{!editSA}"  >
         <apex:outputLabel value="Model" for="modelfield" />
         <apex:actionregion >
         <apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" >
-       		 <apex:actionsupport event="onchange" action="{!changeToModel}" rerender="ContractAssoc, ProgAssoc" />
+             <apex:actionsupport event="onchange" action="{!changeToModel}" rerender="ContractAssoc, ProgAssoc" />
         </apex:inputField>
         </apex:actionregion>
         </apex:pageblocksectionitem>
@@ -223,7 +224,7 @@
     </apex:pageBlockSection>
     
     <hr />
-	<apex:pageBlockSection title="Location of Service" columns="2" id="locationDisplay" collapsible="false">
+    <apex:pageBlockSection title="Location of Service" columns="2" id="locationDisplay" collapsible="false">
           <apex:pageBlockSectionItem rendered="{!editSA}" >
               <apex:outputLabel value="Alias" />
               <apex:actionregion >
@@ -242,16 +243,16 @@
                                 Zip="{!serviceLocation.Zip__c}"/>
           </apex:pageBlockSectionItem>
           <apex:outputField value="{!serviceLocation.Phone__c}" />
-	          <apex:outputPanel style="display:none">
-	          <apex:actionregion >
-	          <apex:inputText id="currentProgramID" value="{!currentProgramID}" >
-	          <apex:actionsupport event="onchange" action="{!loadAvailableCodesByID}" rerender="ServCodeSelect" />
-	          </apex:inputText>
-	          </apex:actionregion>
-	          </apex:outputPanel>
+              <apex:outputPanel style="display:none">
+              <apex:actionregion >
+              <apex:inputText id="currentProgramID" value="{!currentProgramID}" >
+              <apex:actionsupport event="onchange" action="{!loadAvailableCodesByID}" rerender="ServCodeSelect" />
+              </apex:inputText>
+              </apex:actionregion>
+              </apex:outputPanel>
           
 </apex:pageBlockSection>
-
+<apex:outputpanel rendered="{!showCodes}"><hr /></apex:outputpanel>
     <apex:pageBlockSection title="Service Code Selection"
                              showHeader="true"
                              columns="2"
@@ -259,7 +260,6 @@
                              id="ServCodeSelect"
                              rendered="{!showCodes}">
 
-				<hr />
               <apex:outputPanel layout="block" styleClass="col" rendered="{! effDate= null || currentProgramID=''}">
                   You must select a Location of Service and Start Date before you can select a Service Code.
               </apex:outputPanel>
@@ -327,7 +327,7 @@
 
                             </apex:column>
                             <apex:column >
-                            	<apex:actionregion >
+                                <apex:actionregion >
                                 <apex:commandButton value="Remove" action="{!RemoveCode}" reRender="ServCodeSelect" status="removeStatus" rendered="{!editSA}">
                                     <apex:param assignTo="{!SelectedCodeId}" name="SelectedCodeId" value="{!SelectedCodes[Code].Id}" />
                                     <apex:param assignTo="{!SelectedCodeKey}" name="SelectedCodeKey" value="{!Code}" />
@@ -435,10 +435,10 @@ END: Uncomment to have the element collapsed by default -->
                                     </apex:actionSupport>
                                     <apex:selectOptions value="{!MyLocations}"/>
                                 </apex:selectList>
-							</apex:actionRegion>
-							</apex:pageBlockSectionItem>
-							
-							<apex:pageBlockSectionItem >
+                            </apex:actionRegion>
+                            </apex:pageBlockSectionItem>
+                            
+                            <apex:pageBlockSectionItem >
                             <apex:outputLabel for="ServiceLineSelect" value="Service Line" />
                             <apex:actionRegion >
                                 <apex:selectList size="1" id="ServiceLineSelect" label="Service Line" value="{!currentServiceLine}">
@@ -464,15 +464,14 @@ END: Uncomment to have the element collapsed by default -->
 
 
     </apex:pageBlockSection>
-    
+    <apex:outputpanel rendered="{!showCodes}"><hr /></apex:outputpanel>
+
     <apex:pageBlockSection title="Service Code Selection"
                              showHeader="true"
                              columns="2"
                              collapsible="true"
                              id="ServCodeSelect"
                              rendered="{!showCodes}">
-              
-              <hr />
               <apex:outputPanel layout="block" styleClass="col" rendered="{!OR(currentProgram=='',currentLocation=='',currentServiceLine=='')}">
                   You must select a Program, Location, and Service Line for this Service Assignment before you can select a Service Code.
               </apex:outputPanel>
@@ -486,7 +485,7 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:facet name="stop">
                     <apex:pageBlockTable value="{!AvailableCodes}" var="aCodes">
                         <apex:column >
-                        	<apex:actionregion >
+                            <apex:actionregion >
                             <apex:commandButton value="Add" action="{!AddCode}" reRender="ServCodeSelect"  status="addStatus" rendered="{!editSA}">
                                 <apex:param assignTo="{!SelectedCodeID}" name="SelectedCodeID" value="{!AvailableCodes[aCodes].Id}"/>
                             </apex:commandButton>
@@ -540,7 +539,7 @@ END: Uncomment to have the element collapsed by default -->
 
                             </apex:column>
                             <apex:column >
-                            	<apex:actionregion >
+                                <apex:actionregion >
                                 <apex:commandButton value="Remove" action="{!RemoveCode}" reRender="ServCodeSelect" status="removeStatus" rendered="{!editSA}">
                                     <apex:param assignTo="{!SelectedCodeId}" name="SelectedCodeId" value="{!SelectedCodes[Code].Id}" />
                                     <apex:param assignTo="{!SelectedCodeKey}" name="SelectedCodeKey" value="{!Code}" />
@@ -996,26 +995,26 @@ document.onkeypress = stopRKey;
 
 j$(document).ready(function() {
 if (j$('input[id$=lookupElement_lkid]')) 
-	j$('input[id$=lookupElement_lkid]').change(function() {
-  		saveLocation();
-	});
+    j$('input[id$=lookupElement_lkid]').change(function() {
+        saveLocation();
+    });
 });
 
 
 function saveLocation() {
 
-	ServiceAssignmentExt.loadServiceLocation(j$('input[id$=lookupElement_lkid]').val(),
-	function(result, event){
+    ServiceAssignmentExt.loadServiceLocation(j$('input[id$=lookupElement_lkid]').val(),
+    function(result, event){
             if (event.status) {
             /*
-				var dashpos = result.Service_Value__c.indexOf('-');
-				var sl = '';
-				if (dashpos > -1 ) 
-                	sl = (result.Service_Value__c).substring(dashpos+1);
-				else
-                	sl = result.Service_Value__c;
+                var dashpos = result.Service_Value__c.indexOf('-');
+                var sl = '';
+                if (dashpos > -1 ) 
+                    sl = (result.Service_Value__c).substring(dashpos+1);
+                else
+                    sl = result.Service_Value__c;
                                             
-            	j$('[id$=ProgramField]').val(result.Program__c);
+                j$('[id$=ProgramField]').val(result.Program__c);
                 j$('[id$=LocationField]').val(result.City__c);
                 j$('[id$=ServiceLineField]').val(sl);
               */  
@@ -1025,9 +1024,17 @@ function saveLocation() {
           },
           {escape: true}
         );
-		
+        
     }
 
+
+	function changeEffectiveDates() {
+		var sd = j$('input[id$=startdate]').val();
+		var ed = j$('input[id$=enddate]').val();
+		
+		setEffectiveDate( sd, ed );
+	
+	}
 
 </script>
 
