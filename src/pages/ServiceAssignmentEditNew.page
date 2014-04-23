@@ -66,7 +66,7 @@
         <apex:outputField value="{!theServAssign.Status__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Status__c}" rendered="{!editSA}"  />
         <apex:outputField value="{!theServAssign.Start_Date__c}" rendered="{!!editSA}"  />
-        <apex:inputField value="{!theServAssign.Start_Date__c}" id="startdate" rendered="{!editSA}" onblur="setEffectiveDate( this.value);" />
+        <apex:inputField value="{!theServAssign.Start_Date__c}" required="true" id="startdate" rendered="{!editSA}" onblur="setEffectiveDate( this.value);" />
         <apex:outputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!editSA}"  />
         <apex:outputField value="{!theServAssign.End_Date__c}" rendered="{!!editSA}"  />
@@ -75,8 +75,8 @@
         <apex:inputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}"  />
         <apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA}"  required="{!episodeReq}"/>
-        <apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA}" />
-        <apex:pageblocksectionitem rendered="{!editSA}"  >
+        <apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation}" />
+        <apex:pageblocksectionitem rendered="{!editSA && !showLocation}"  >
         <apex:outputLabel value="Model" for="modelfield" />
         <apex:actionregion >
         <apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" >
@@ -111,6 +111,7 @@
         </apex:inputField>
         </apex:actionregion>
         </apex:pageblocksectionitem>
+        <br />
     </apex:pageBlockSection>
     
 
@@ -132,13 +133,13 @@
             
     </apex:pageBlockSection>
     
-    <hr />
     <apex:pageBlockSection title="Program Association"
                              showHeader="true"
                              columns="1"
                              collapsible="false"
                              id="ProgAssocViewNEW"
                              rendered="{!!editSA && !showLocation}" >
+    <hr />
                 <apex:outputText id="saProgram" value="{!theServAssign.Program__c}" />
         <apex:outputPanel id="ProgAssocPanelView2NEW" layout="block" styleClass="col" rendered="{!!editSA && !showLocation }" >
             <apex:pageBlockTable value="{!programRows}" var="pR" id="ProgramAssocTableNEW" rendered="{!theServAssign.Program__c=='IFCS'}">
@@ -220,11 +221,11 @@
                 </apex:pageBlockTable>
              </apex:outputPanel>
 
-
+ 
     </apex:pageBlockSection>
+    
     <hr />
-    <apex:pageBlock title="Location of Service">
-	<apex:pageBlockSection columns="2" id="locationDisplay" collapsible="false">
+	<apex:pageBlockSection title="Location of Service" columns="2" id="locationDisplay" collapsible="false">
           <apex:pageBlockSectionItem rendered="{!editSA}" >
               <apex:outputLabel value="Alias" />
               <apex:actionregion >
@@ -252,7 +253,6 @@
 	          </apex:outputPanel>
           
 </apex:pageBlockSection>
-</apex:pageBlock>
 
     <apex:outputPanel rendered="{!!showLocation}" ><hr /></apex:outputPanel>    
     <apex:pageBlockSection title="Service Code Selection"
@@ -303,7 +303,7 @@
                  </apex:facet>
                  </apex:actionStatus>
             </apex:outputPanel>
-            <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(currentProgram!='',currentLocation!='',currentServiceLine!='')}">
+            <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(effDate!= null,currentProgramID!='')}">
                 <apex:actionStatus id="removeStatus">
                      <apex:facet name="start">
                         <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">

@@ -121,7 +121,7 @@ public class ServAssignFidelityChecklistExt  {
                                 WHERE Service_Assignment__c = :fetchedServAssign.Id 
                                         AND Document__r.Type__c = 'Fidelity Document'
                                         AND Document__c IN (SELECT Document__c FROM Program_Document_Xref__c WHERE Program__c = :fetchedServAssign.Program__c)
-                                        AND Document__c IN (SELECT Document__c FROM Program_Document_Xref__c WHERE Service_Line__c = :fetchedServAssign.Service_Line__c)
+                                       // AND Document__c IN (SELECT Document__c FROM Program_Document_Xref__c WHERE Service_Line__c = :fetchedServAssign.Service_Line__c)
                                 ORDER BY Document__r.Phase_Or_Level__c, Document__r.Order__c ];
        
         docIds = new List<Id>();
