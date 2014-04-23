@@ -264,6 +264,17 @@
                         <apex:inputField value="{!Evaluation__c.Number_of_Children_at_Home__c}" />
                         <apex:inputField value="{!Evaluation__c.Employed__c}" id="employed" html-data-rules="{&quot;1&quot;: &quot;{!$Component.employmentStatus}&quot;}" />
                         <apex:pageBlockSectionItem />
+                        <!-- Added by Sravan -->
+                        <apex:inputField value="{!Evaluation__c.EmploymentFT__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.EmploymentPT__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.EmploymentRetired__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.EmploymentDisabled__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.EmploymentUnknown__c}" />
+                        <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Employment_Status__c}" id="employmentStatus" />
                     </apex:pageBlockSection>
                     <apex:pageBlockSection columns="2">
@@ -320,6 +331,8 @@
                     <apex:pageBlockSection columns="1">
                         <apex:inputField value="{!Evaluation__c.PMH__c}" />
                         <apex:inputField value="{!Evaluation__c.Precautions__c}" />
+                        <!-- Added by Sravan for Evaluation Enhancement -->
+                        <apex:inputField value="{!Evaluation__c.NKDA__c}" />
                     </apex:pageBlockSection>
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" />
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Surgery Detail" formId="{!$Component.wholePage}" uniqueId="surgery" />
