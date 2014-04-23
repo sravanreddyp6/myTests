@@ -74,13 +74,9 @@ public class ServiceAssignmentExt {
 
 	// to support program effective dates
 	public Date effDate{ get; set;}
+	public Date effEnd { get; set;}
 	public void setEffectiveDate( ) {
-		// support for the action function on front end - just sets effDate from param
-		// need to re-assess current program, location, service code
-		//currentProgram = currentLocation = currentServiceLine = '';
-		//loadProgramList();
 		loadAvailableCodesbyID();
-		system.debug( currentProgram + ',' + currentLocation + ',' + currentServiceLine);
 	}
         // Fidelity Document Properties / Info
     public List<ServiceAssignment_Document_JO__c> sadjos { get; set; }
@@ -289,8 +285,11 @@ public class ServiceAssignmentExt {
                 initialRecord.Person_Being_Served__c = admission.Person_Being_Served__c;
                 initialRecord.RecordTypeId = theRecordType.Id;
                 pbsOwner = admission.Person_Being_Served__r.OwnerId;
-                if (effDate == null)
+                if (effDate == null) {
 					effDate = initialRecord.Start_date__c;
+                }
+                if (effEnd == null )
+                	effEnd = initialRecord.End_date__c;
 				
         }
         else {
@@ -318,11 +317,13 @@ public class ServiceAssignmentExt {
                 recordTypeId = theServAssign.RecordTypeId;
                 pbsOwner = theServAssign.Person_Being_Served__r.OwnerId;
 				effDate = theServAssign.Start_date__c;
+				effEnd = theServAssign.End_date__c;
         }
 
         System.debug('recordType BEFORE LoadData: ' + recordType);
         System.debug('AssessmentOnly BEFORE LoadData: ' + AssessmentOnly);
-		System.debug('Start date:' + effDate);
+		System.debug('Start date:' + effDate + ', End date:' + effEnd);
+		
 
 
         LoadData(theServAssign);
@@ -720,7 +721,7 @@ public class ServiceAssignmentExt {
     public void LoadData(Service_Assignment__c localRecord){
        currentID = localRecord.Id;
        if(newSA==false) {
-            currentRecord = [Select start_date__c, Model__c, Program_code__c, Program__c, RecordType.Name, Service_Line__c, Admission__r.State__c, Location_Region__c, service_location__c  From Service_Assignment__c Where Id = :currentID Limit 1];
+            currentRecord = [Select start_date__c, end_date__c, Model__c, Program_code__c, Program__c, RecordType.Name, Service_Line__c, Admission__r.State__c, Location_Region__c, service_location__c  From Service_Assignment__c Where Id = :currentID Limit 1];
             currentState = currentRecord.Admission__r.State__c;
        }
        else {
@@ -752,6 +753,7 @@ public class ServiceAssignmentExt {
        currentServiceLine = currentRecord.Service_Line__c;
        currentProgramID = currentRecord.Program_Code__c;
        effDate = currentRecord.Start_date__c;
+       effEnd = currentRecord.End_date__c;
        loadAvailableCodesbyID();
 
        servCodeIdsForXrefsToDelete = new Set<Id>();
@@ -796,7 +798,7 @@ public void loadProgramList() {
 			// 03/28/14 - make sure only pulling programs that are valid as of SA start date
 			if (effDate != null ) {
 				system.debug( 'Effective date is: ' + effDate);
-	           for(Service_Code__c local : [Select Program__c From Service_Code__c where state__c = :currentState and start_date__c <= :effdate and (end_date__c > :effdate or end_date__c = null )]){
+	           for(Service_Code__c local : [Select Program__c From Service_Code__c where state__c = :currentState and (end_date__c > :effdate or end_date__c = null ) ]){
     	           tmpProgs.Add(Local.Program__c);
         	   }
 			}
@@ -814,13 +816,21 @@ public void loadProgramList() {
 }
 
 	public void loadAvailableCodesbyID() {
-      List<Service_Code__c> listAvailableCodes = new List<Service_Code__c>();
+		
+		Date SAStart = effDate;
+		Date SAEnd = effEnd;
+		if ( SAEnd == null )
+			SAEnd = Date.newInstance( SAStart.Year() + 1, 1, 1);
+			
+      	List<Service_Code__c> listAvailableCodes = new List<Service_Code__c>();
        AvailableCodes = new Map<Id,Service_Code__c>();
-       system.debug( 'loading codes by: ' + currentprogramID + ', effdate: ' + effdate);
+       system.debug( 'loading codes by: ' + currentprogramID + ', effdate: ' + SAStart  + ', effend: ' + SAEnd + ', asmt:' + AssessmentOnly +', state: ' + currentState );
         listAvailableCodes = [SELECT Id, Service_Code__c, Service_Value__c, Start_Date__c, End_Date__c, Program__c From Service_Code__c
             WHERE Program_code__c = :currentProgramID
                 AND
-                start_date__c <= :effDate and ( end_date__c > :effDate or end_date__c = null )
+                ( end_date__c > :SAStart or end_date__c = null )
+                AND
+                	start_date__c <= :SAEnd
                 AND
             Assessment_Only__c = :AssessmentOnly
                 AND
