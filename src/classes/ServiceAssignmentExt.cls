@@ -137,7 +137,7 @@ public class ServiceAssignmentExt {
         return ref;
     }
     
-    private Boolean pshowDiag, pshowLocation;
+    private Boolean pshowDiag, pshowLocation, pshowCodes;
     private string popGroup; 
     private static Boolean psetFlags = false;
     public Boolean showDiagnosis { get {
@@ -145,6 +145,12 @@ public class ServiceAssignmentExt {
                 psetFlags = setShowFlags();
             }
             return pshowDiag;
+    }}
+    public Boolean showCodes { get {
+            if (! psetFlags ) {
+                psetFlags = setShowFlags();
+            }
+            return pshowCodes;
     }}
     public Boolean showLocation { get {
             if (! psetFlags ) {
@@ -172,7 +178,7 @@ public class ServiceAssignmentExt {
             	pOpGroup = tmnUsers[0].Operating_Group__c;
                 pshowDiag = pOpGroup =='Redwood' || pOpGroup =='Cambridge';
                 pshowLocation =  ( pOpGroup =='Redwood' ); // CTEAE-86 && admission.State__c != 'AZ');
-                
+                pshowCodes = ( pOpGroup != 'Redwood' || admission.State__c == 'AZ');
                 psetFlags = true;
             }
             
