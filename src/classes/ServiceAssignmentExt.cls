@@ -171,7 +171,7 @@ public class ServiceAssignmentExt {
             } else {
             	pOpGroup = tmnUsers[0].Operating_Group__c;
                 pshowDiag = pOpGroup =='Redwood' || pOpGroup =='Cambridge';
-                pshowLocation =  ( pOpGroup =='Redwood' && admission.State__c != 'AZ');
+                pshowLocation =  ( pOpGroup =='Redwood' ); // CTEAE-86 && admission.State__c != 'AZ');
                 
                 psetFlags = true;
             }
