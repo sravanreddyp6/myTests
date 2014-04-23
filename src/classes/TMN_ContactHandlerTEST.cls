@@ -22,12 +22,15 @@
 @isTest
 private class TMN_ContactHandlerTEST {
 
+    static User testUser1 { get; set; }
+    static User testUser2 { get; set; }
+    
     static testMethod void myUnitTest() {
 
 		Profile profile = [SELECT Id FROM Profile WHERE Name='ESD General' LIMIT 1 ];
 
 		List<User> userList = new List<User>();
-		User testUser1 = new User(
+		testUser1 = new User(
           	Alias = 'standt', 
           	Email='standarduser@testorg.com', 
             EmailEncodingKey='UTF-8', 
@@ -38,7 +41,7 @@ private class TMN_ContactHandlerTEST {
             TimeZoneSidKey='America/Los_Angeles', 
             UserName='alpha@testorg.com'
 		);
-		User testUser2 = new User(
+		testUser2 = new User(
           	Alias = 'standt2', 
           	Email='standarduser2@testorg.com', 
             EmailEncodingKey='UTF-8', 
@@ -53,6 +56,251 @@ private class TMN_ContactHandlerTEST {
 		userList.add(testUser2);
 		insert userList;
 
+		User usr = [Select id from User where Id = :UserInfo.getUserId()];
+ 
+	     System.RunAs(usr)
+	     {
+	        Test.startTest();
+	         myFunc2();
+	         Test.stopTest();
+	     }
+		
+
+		
+		List<Credential_Profile__c> testCreds = [ SELECT Id, Name, Required_for_Mentor__c, Required_for_Co_Applicant__c, Required_for_Foster_Parent_Relative__c,
+																Required_for_Foster_Parent_Child__c, Required_for_Resident_Non_Relative__c, Required_for_Pet__c FROM Credential_Profile__c ];
+		integer countReqForMentor = 0;
+		integer countReqForCoApp = 0;
+		integer countReqForFpRelative = 0;
+		integer countReqForFpChild = 0;
+		integer countReqForResNonRel = 0;
+		integer countReqForPet = 0;
+		
+		for(Credential_Profile__c testCred : testCreds) {
+			if(testCred.Required_for_Mentor__c==true) {
+				countReqForMentor++;
+			}
+			if(testCred.Required_for_Co_Applicant__c==true) {
+				countReqForCoApp++;
+			}
+			if(testCred.Required_for_Foster_Parent_Relative__c==true) {
+				countReqForFpRelative++;
+			}
+			if(testCred.Required_for_Foster_Parent_Child__c==true) {
+				countReqForFpChild++;
+			}
+			if(testCred.Required_for_Resident_Non_Relative__c==true) {
+				countReqForResNonRel++;
+			}
+			if(testCred.Required_for_Pet__c==true) {
+				countReqForPet++;
+			}
+		}
+		
+		System.debug('countReqForMentor: ' + countReqForMentor);
+		System.debug('countReqForCoApp: ' + countReqForCoApp);
+		System.debug('countReqForFpRelative: ' + countReqForFpRelative);
+		System.debug('countReqForFpChild: ' + countReqForFpChild);
+		System.debug('countReqForResNonRel: ' + countReqForResNonRel);
+		System.debug('countReqForPet: ' + countReqForPet);	
+		
+				
+		List<RecordType> rts = [ SELECT Id, Name FROM RecordType WHERE SobjectType='TMN_Contact__c' ];
+		
+		Schema.DescribeSObjectResult personSchemaInfo = TMN_Contact__c.SObjectType.getDescribe();
+		List<Schema.RecordTypeInfo> personRecordTypes = personSchemaInfo.getRecordTypeInfos();
+		
+		List<Schema.PicklistEntry> rpTypes = TMN_Contact__c.Related_Party_Type__c.getDescribe().getPicklistValues();
+		for(Schema.PicklistEntry rpType : rpTypes) {
+			System.debug('rpType values from schema: ' + rpType);
+		}
+
+		List<TMN_Contact__c> newPersons = new List<TMN_Contact__c>();
+
+		for(RecordType rt : rts) {
+			if(rt.Name=='Mentor') {
+				TMN_Contact__c myNewPerson = new TMN_Contact__c(
+					RecordTypeId = rt.Id,
+					OwnerId = testUser1.Id
+				);
+				newPersons.add(myNewPerson);
+			}
+			else if(rt.Name=='Household Member') {
+				TMN_Contact__c myNewPersonCoApp = new TMN_Contact__c(
+					RecordTypeId = rt.Id,
+					Related_Party_Type__c = 'Co-Applicant',
+					Email__c = 'test@test.com',
+					OwnerId = testUser1.Id 
+				);
+				newPersons.add(myNewPersonCoApp);
+				
+				TMN_Contact__c myNewPersonFpRel = new TMN_Contact__c(
+					RecordTypeId = rt.Id,
+					Related_Party_Type__c = 'Foster Parent\'s Relative',
+					Date_of_Birth__c = date.newInstance(1977,5,4),
+					OwnerId = testUser1.Id 
+				);
+				newPersons.add(myNewPersonFpRel);
+
+				TMN_Contact__c myNewPersonFpRel2 = new TMN_Contact__c(
+					RecordTypeId = rt.Id,
+					Related_Party_Type__c = 'Foster Parent\'s Relative',
+					Date_of_Birth__c = date.newInstance(2010,5,4),
+					OwnerId = testUser1.Id 
+				);
+				newPersons.add(myNewPersonFpRel2);
+				
+				TMN_Contact__c myNewPersonFpChild = new TMN_Contact__c(
+					RecordTypeId = rt.Id,
+					Related_Party_Type__c = 'Foster Parent\'s Child',
+					Date_of_Birth__c = date.newInstance(1977,5,4),
+					OwnerId = testUser1.Id 
+				);
+				newPersons.add(myNewPersonFpChild);
+
+				TMN_Contact__c myNewPersonFpChild2 = new TMN_Contact__c(
+					RecordTypeId = rt.Id,
+					Related_Party_Type__c = 'Foster Parent\'s Child',
+					Date_of_Birth__c = date.newInstance(2010,5,4),
+					OwnerId = testUser1.Id 
+				);
+				newPersons.add(myNewPersonFpChild2);
+				
+				TMN_Contact__c myNewPersonResNonRel = new TMN_Contact__c(
+					RecordTypeId = rt.Id,
+					Related_Party_Type__c = 'Resident-Non Relative',
+					Date_of_Birth__c = date.newInstance(1977,5,4),
+					OwnerId = testUser1.Id 
+				);
+				newPersons.add(myNewPersonResNonRel);
+				
+				TMN_Contact__c myNewPersonResNonRel2 = new TMN_Contact__c(
+					RecordTypeId = rt.Id,
+					Related_Party_Type__c = 'Resident-Non Relative',
+					Date_of_Birth__c = date.newInstance(2010,5,4)
+				);
+				newPersons.add(myNewPersonResNonRel2);
+								
+				TMN_Contact__c myNewPersonPet = new TMN_Contact__c(
+					RecordTypeId = rt.Id,
+					Related_Party_Type__c = 'Pet',
+					OwnerId = testUser1.Id 
+				);
+				newPersons.add(myNewPersonPet);				
+			}
+			else {
+				// No other types should occur...
+			}
+			//insert myNewPerson;
+			//System.debug('The Person\'s ID is: ' + myNewPerson.Id);
+			//System.debug('The Person\'s Record Type ID is: ' + myNewPerson.RecordTypeId);
+		} 
+		insert newPersons;      
+
+		List<Credential_Record__c> credRecs = [ SELECT Id, Name, TMN_Contact__r.Id FROM Credential_Record__c WHERE TMN_Contact__c = :newPersons ];
+
+		List<TMN_Contact__c> myPersons = [ SELECT Id, Name, RecordTypeId, Related_Party_Type__c FROM TMN_Contact__c ];
+		for(TMN_Contact__c p : myPersons) {
+			System.debug('newP7ersons loops is executing...');
+			System.debug('The Person\'s Record Type ID is: ' + p.RecordTypeId);
+			
+			
+			string thisPersonsRecordTypeName;
+			for(Schema.RecordTypeInfo sPrts : personRecordTypes) {
+   				if(p.RecordTypeId==sPrts.RecordTypeId) {
+   					thisPersonsRecordTypeName = sPrts.Name;
+   				}
+   			}
+			
+			integer credRecCounter = 0;
+			for(Credential_Record__c c : credRecs) {
+				if(p.Id==c.TMN_Contact__r.Id) {
+					System.debug('Person: ' + p.Id + '; Credential Record added: ' + c.Name);
+					credRecCounter++;
+				}
+			}
+			System.debug('Credential Records inserted for this person: ' + credRecCounter);
+			if(thisPersonsRecordTypeName=='Mentor') {
+				System.debug('Credential Records expected for this person: ' + countReqForMentor);
+				System.assertEquals(credRecCounter,countReqForMentor,'ERROR: The count of credential records inserted for the Mentor record type does not match the expected count');
+			}
+			else if(thisPersonsRecordTypeName=='Related Party') {
+				if(p.Related_Party_Type__c=='Co-Applicant') {
+					System.debug('Credential Records expected for this person: ' + countReqForCoApp);
+					System.assertEquals(credRecCounter,countReqForCoApp,'ERROR: The count of credential records inserted for the Related Party record type, Co-Applicant Related_Party_Type__c, does not match the expected count');
+				}
+				if(p.Related_Party_Type__c=='Foster Parent\'s Relative') {
+					System.debug('Credential Records expected for this person: ' + countReqForFpRelative);
+					System.assertEquals(credRecCounter,countReqForFpRelative,'ERROR: The count of credential records inserted for the Related Party record type, Foster Parent Relative Related_Party_Type__c, does not match the expected count');
+				}
+				if(p.Related_Party_Type__c=='Foster Parent\'s Child') {
+					System.debug('Credential Records expected for this person: ' + countReqForFpChild);
+					System.assertEquals(credRecCounter,countReqForFpChild,'ERROR: The count of credential records inserted for the Related Party record type, Foster Parent Child Related_Party_Type__c, does not match the expected count');
+				}
+				if(p.Related_Party_Type__c=='Resident-Non Relative') {
+					System.debug('Credential Records expected for this person: ' + countReqForResNonRel);
+					System.assertEquals(credRecCounter,countReqForResNonRel,'ERROR: The count of credential records inserted for the Related Party record type, Resident-Non Relative Related_Party_Type__c, does not match the expected count');
+				}
+				if(p.Related_Party_Type__c=='Pet') {
+					System.debug('Credential Records expected for this person: ' + countReqForPet);
+					System.assertEquals(credRecCounter,countReqForPet,'ERROR: The count of credential records inserted for the Related Party record type, Pet Related_Party_Type__c, does not match the expected count');
+				}
+			}
+			else if(thisPersonsRecordTypeName=='Master') {
+				// DO NOTHING
+			}
+			else {
+				System.debug('RECORD TYPE WAS NOT ACCOUNTED FOR!');
+			}
+			
+		}
+		
+		List<TMN_Contact__c> tmnContactsToUpdate = new List<TMN_Contact__c>();
+		
+		TMN_Contact__c mentorPerson	= [ SELECT Id, Date_of_Birth__c FROM TMN_Contact__c WHERE RecordType.Name = 'Mentor' LIMIT 1 ];		
+		mentorPerson.Date_of_Birth__c = date.newInstance(1977,6,20);
+		mentorPerson.Inactive__c = true;
+		
+		TMN_Contact__c coAppPerson = [ SELECT Id, Date_of_Birth__c FROM TMN_Contact__c WHERE RecordType.Name = 'Household Member' AND Related_Party_Type__c = 'Co-Applicant' LIMIT 1 ];
+		coAppPerson.Date_of_Birth__c = date.newInstance(1978,12,16);
+		coAppPerson.Mentor__c = mentorPerson.Id;
+		coAppPerson.Inactive__c = true;
+		update coAppPerson;
+
+		update mentorPerson;
+		delete mentorPerson;
+		undelete mentorPerson;
+		
+		Mentor_Tracking_Report_Record__c mentorsMtrr = [ SELECT Id FROM Mentor_Tracking_Report_Record__c WHERE TMN_Contact__c = :mentorPerson.Id ];
+		mentorsMtrr.Status__c = 'Closed';
+		update mentorsMtrr;
+		
+		Mentor_Tracking_Report_Record__c coAppsMtrr = [ SELECT Id FROM Mentor_Tracking_Report_Record__c WHERE TMN_Contact__c = :coAppPerson.Id ];
+		coAppsMtrr.Status__c = 'Closed';
+		update coAppsMtrr;		
+		
+		List<TMN_Contact__c> tmnContactsForUpdate = new List<TMN_Contact__c>();
+		List<Mentor_Tracking_Report_Record__c> mtrrsForUpdate = new List<Mentor_Tracking_Report_Record__c>();
+		mentorPerson.Active__c = true;
+		tmnContactsForUpdate.add(mentorPerson);
+		mentorsMtrr.Status__c = 'Closed';
+		mtrrsForUpdate.add(mentorsMtrr);
+		
+		update tmnContactsForUpdate;
+		update mtrrsForUpdate;
+		
+		mentorPerson.OwnerId = testUser2.Id;
+		update mentorPerson;
+		 
+		
+		TMN_ContactHandler myObj = new TMN_ContactHandler(true);
+		System.assert(myObj.IsTriggerContext==true,'IsTriggerContext does not return true as expected.');		
+
+    }
+    
+    @future
+	static void myFunc2()
+	{
 		PermissionSet credOnlyFullPermSet = [ SELECT Id FROM PermissionSet WHERE Name = 'ESD_Credentials_Only_Full' LIMIT 1 ];
 
 		List<PermissionSetAssignment> permSetAssignsToInsert = new List<PermissionSetAssignment>();
@@ -67,6 +315,7 @@ private class TMN_ContactHandlerTEST {
 			PermissionSetId = credOnlyFullPermSet.Id			
 		);
 		permSetAssignsToInsert.add(myPermSetAssignment2);
+
 		insert permSetAssignsToInsert;
 
 		List<Credential_Profile__c> testCredentialProfiles = new List<Credential_Profile__c>();
@@ -599,237 +848,9 @@ private class TMN_ContactHandlerTEST {
 			Optional_for_Mentor__c=true
 		);
 		testCredentialProfiles.add(ssaTfcExceptionPacket);
-				
-		insert testCredentialProfiles;
-		
-		List<Credential_Profile__c> testCreds = [ SELECT Id, Name, Required_for_Mentor__c, Required_for_Co_Applicant__c, Required_for_Foster_Parent_Relative__c,
-																Required_for_Foster_Parent_Child__c, Required_for_Resident_Non_Relative__c, Required_for_Pet__c FROM Credential_Profile__c ];
-		integer countReqForMentor = 0;
-		integer countReqForCoApp = 0;
-		integer countReqForFpRelative = 0;
-		integer countReqForFpChild = 0;
-		integer countReqForResNonRel = 0;
-		integer countReqForPet = 0;
-		
-		for(Credential_Profile__c testCred : testCreds) {
-			if(testCred.Required_for_Mentor__c==true) {
-				countReqForMentor++;
-			}
-			if(testCred.Required_for_Co_Applicant__c==true) {
-				countReqForCoApp++;
-			}
-			if(testCred.Required_for_Foster_Parent_Relative__c==true) {
-				countReqForFpRelative++;
-			}
-			if(testCred.Required_for_Foster_Parent_Child__c==true) {
-				countReqForFpChild++;
-			}
-			if(testCred.Required_for_Resident_Non_Relative__c==true) {
-				countReqForResNonRel++;
-			}
-			if(testCred.Required_for_Pet__c==true) {
-				countReqForPet++;
-			}
-		}
-		
-		System.debug('countReqForMentor: ' + countReqForMentor);
-		System.debug('countReqForCoApp: ' + countReqForCoApp);
-		System.debug('countReqForFpRelative: ' + countReqForFpRelative);
-		System.debug('countReqForFpChild: ' + countReqForFpChild);
-		System.debug('countReqForResNonRel: ' + countReqForResNonRel);
-		System.debug('countReqForPet: ' + countReqForPet);	
-		
-				
-		List<RecordType> rts = [ SELECT Id, Name FROM RecordType WHERE SobjectType='TMN_Contact__c' ];
-		
-		Schema.DescribeSObjectResult personSchemaInfo = TMN_Contact__c.SObjectType.getDescribe();
-		List<Schema.RecordTypeInfo> personRecordTypes = personSchemaInfo.getRecordTypeInfos();
-		
-		List<Schema.PicklistEntry> rpTypes = TMN_Contact__c.Related_Party_Type__c.getDescribe().getPicklistValues();
-		for(Schema.PicklistEntry rpType : rpTypes) {
-			System.debug('rpType values from schema: ' + rpType);
-		}
 
-		List<TMN_Contact__c> newPersons = new List<TMN_Contact__c>();
-
-		for(RecordType rt : rts) {
-			if(rt.Name=='Mentor') {
-				TMN_Contact__c myNewPerson = new TMN_Contact__c(
-					RecordTypeId = rt.Id,
-					OwnerId = testUser1.Id
-				);
-				newPersons.add(myNewPerson);
-			}
-			else if(rt.Name=='Household Member') {
-				TMN_Contact__c myNewPersonCoApp = new TMN_Contact__c(
-					RecordTypeId = rt.Id,
-					Related_Party_Type__c = 'Co-Applicant',
-					Email__c = 'test@test.com',
-					OwnerId = testUser1.Id 
-				);
-				newPersons.add(myNewPersonCoApp);
-				
-				TMN_Contact__c myNewPersonFpRel = new TMN_Contact__c(
-					RecordTypeId = rt.Id,
-					Related_Party_Type__c = 'Foster Parent\'s Relative',
-					Date_of_Birth__c = date.newInstance(1977,5,4),
-					OwnerId = testUser1.Id 
-				);
-				newPersons.add(myNewPersonFpRel);
-
-				TMN_Contact__c myNewPersonFpRel2 = new TMN_Contact__c(
-					RecordTypeId = rt.Id,
-					Related_Party_Type__c = 'Foster Parent\'s Relative',
-					Date_of_Birth__c = date.newInstance(2010,5,4),
-					OwnerId = testUser1.Id 
-				);
-				newPersons.add(myNewPersonFpRel2);
-				
-				TMN_Contact__c myNewPersonFpChild = new TMN_Contact__c(
-					RecordTypeId = rt.Id,
-					Related_Party_Type__c = 'Foster Parent\'s Child',
-					Date_of_Birth__c = date.newInstance(1977,5,4),
-					OwnerId = testUser1.Id 
-				);
-				newPersons.add(myNewPersonFpChild);
-
-				TMN_Contact__c myNewPersonFpChild2 = new TMN_Contact__c(
-					RecordTypeId = rt.Id,
-					Related_Party_Type__c = 'Foster Parent\'s Child',
-					Date_of_Birth__c = date.newInstance(2010,5,4),
-					OwnerId = testUser1.Id 
-				);
-				newPersons.add(myNewPersonFpChild2);
-				
-				TMN_Contact__c myNewPersonResNonRel = new TMN_Contact__c(
-					RecordTypeId = rt.Id,
-					Related_Party_Type__c = 'Resident-Non Relative',
-					Date_of_Birth__c = date.newInstance(1977,5,4),
-					OwnerId = testUser1.Id 
-				);
-				newPersons.add(myNewPersonResNonRel);
-				
-				TMN_Contact__c myNewPersonResNonRel2 = new TMN_Contact__c(
-					RecordTypeId = rt.Id,
-					Related_Party_Type__c = 'Resident-Non Relative',
-					Date_of_Birth__c = date.newInstance(2010,5,4)
-				);
-				newPersons.add(myNewPersonResNonRel2);
-								
-				TMN_Contact__c myNewPersonPet = new TMN_Contact__c(
-					RecordTypeId = rt.Id,
-					Related_Party_Type__c = 'Pet',
-					OwnerId = testUser1.Id 
-				);
-				newPersons.add(myNewPersonPet);				
-			}
-			else {
-				// No other types should occur...
-			}
-			//insert myNewPerson;
-			//System.debug('The Person\'s ID is: ' + myNewPerson.Id);
-			//System.debug('The Person\'s Record Type ID is: ' + myNewPerson.RecordTypeId);
-		} 
-		insert newPersons;      
-
-		List<Credential_Record__c> credRecs = [ SELECT Id, Name, TMN_Contact__r.Id FROM Credential_Record__c WHERE TMN_Contact__c = :newPersons ];
-
-		List<TMN_Contact__c> myPersons = [ SELECT Id, Name, RecordTypeId, Related_Party_Type__c FROM TMN_Contact__c ];
-		for(TMN_Contact__c p : myPersons) {
-			System.debug('newP7ersons loops is executing...');
-			System.debug('The Person\'s Record Type ID is: ' + p.RecordTypeId);
-			
-			
-			string thisPersonsRecordTypeName;
-			for(Schema.RecordTypeInfo sPrts : personRecordTypes) {
-   				if(p.RecordTypeId==sPrts.RecordTypeId) {
-   					thisPersonsRecordTypeName = sPrts.Name;
-   				}
-   			}
-			
-			integer credRecCounter = 0;
-			for(Credential_Record__c c : credRecs) {
-				if(p.Id==c.TMN_Contact__r.Id) {
-					System.debug('Person: ' + p.Id + '; Credential Record added: ' + c.Name);
-					credRecCounter++;
-				}
-			}
-			System.debug('Credential Records inserted for this person: ' + credRecCounter);
-			if(thisPersonsRecordTypeName=='Mentor') {
-				System.debug('Credential Records expected for this person: ' + countReqForMentor);
-				System.assertEquals(credRecCounter,countReqForMentor,'ERROR: The count of credential records inserted for the Mentor record type does not match the expected count');
-			}
-			else if(thisPersonsRecordTypeName=='Related Party') {
-				if(p.Related_Party_Type__c=='Co-Applicant') {
-					System.debug('Credential Records expected for this person: ' + countReqForCoApp);
-					System.assertEquals(credRecCounter,countReqForCoApp,'ERROR: The count of credential records inserted for the Related Party record type, Co-Applicant Related_Party_Type__c, does not match the expected count');
-				}
-				if(p.Related_Party_Type__c=='Foster Parent\'s Relative') {
-					System.debug('Credential Records expected for this person: ' + countReqForFpRelative);
-					System.assertEquals(credRecCounter,countReqForFpRelative,'ERROR: The count of credential records inserted for the Related Party record type, Foster Parent Relative Related_Party_Type__c, does not match the expected count');
-				}
-				if(p.Related_Party_Type__c=='Foster Parent\'s Child') {
-					System.debug('Credential Records expected for this person: ' + countReqForFpChild);
-					System.assertEquals(credRecCounter,countReqForFpChild,'ERROR: The count of credential records inserted for the Related Party record type, Foster Parent Child Related_Party_Type__c, does not match the expected count');
-				}
-				if(p.Related_Party_Type__c=='Resident-Non Relative') {
-					System.debug('Credential Records expected for this person: ' + countReqForResNonRel);
-					System.assertEquals(credRecCounter,countReqForResNonRel,'ERROR: The count of credential records inserted for the Related Party record type, Resident-Non Relative Related_Party_Type__c, does not match the expected count');
-				}
-				if(p.Related_Party_Type__c=='Pet') {
-					System.debug('Credential Records expected for this person: ' + countReqForPet);
-					System.assertEquals(credRecCounter,countReqForPet,'ERROR: The count of credential records inserted for the Related Party record type, Pet Related_Party_Type__c, does not match the expected count');
-				}
-			}
-			else if(thisPersonsRecordTypeName=='Master') {
-				// DO NOTHING
-			}
-			else {
-				System.debug('RECORD TYPE WAS NOT ACCOUNTED FOR!');
-			}
-			
-		}
-		
-		List<TMN_Contact__c> tmnContactsToUpdate = new List<TMN_Contact__c>();
-		
-		TMN_Contact__c mentorPerson	= [ SELECT Id, Date_of_Birth__c FROM TMN_Contact__c WHERE RecordType.Name = 'Mentor' LIMIT 1 ];		
-		mentorPerson.Date_of_Birth__c = date.newInstance(1977,6,20);
-		mentorPerson.Inactive__c = true;
-		
-		TMN_Contact__c coAppPerson = [ SELECT Id, Date_of_Birth__c FROM TMN_Contact__c WHERE RecordType.Name = 'Household Member' AND Related_Party_Type__c = 'Co-Applicant' LIMIT 1 ];
-		coAppPerson.Date_of_Birth__c = date.newInstance(1978,12,16);
-		coAppPerson.Mentor__c = mentorPerson.Id;
-		coAppPerson.Inactive__c = true;
-		update coAppPerson;
-
-		update mentorPerson;
-		delete mentorPerson;
-		undelete mentorPerson;
-		
-		Mentor_Tracking_Report_Record__c mentorsMtrr = [ SELECT Id FROM Mentor_Tracking_Report_Record__c WHERE TMN_Contact__c = :mentorPerson.Id ];
-		mentorsMtrr.Status__c = 'Closed';
-		update mentorsMtrr;
-		
-		Mentor_Tracking_Report_Record__c coAppsMtrr = [ SELECT Id FROM Mentor_Tracking_Report_Record__c WHERE TMN_Contact__c = :coAppPerson.Id ];
-		coAppsMtrr.Status__c = 'Closed';
-		update coAppsMtrr;		
-		
-		List<TMN_Contact__c> tmnContactsForUpdate = new List<TMN_Contact__c>();
-		List<Mentor_Tracking_Report_Record__c> mtrrsForUpdate = new List<Mentor_Tracking_Report_Record__c>();
-		mentorPerson.Active__c = true;
-		tmnContactsForUpdate.add(mentorPerson);
-		mentorsMtrr.Status__c = 'Closed';
-		mtrrsForUpdate.add(mentorsMtrr);
-		
-		update tmnContactsForUpdate;
-		update mtrrsForUpdate;
-		
-		mentorPerson.OwnerId = testUser2.Id;
-		update mentorPerson;
-		 
-		
-		TMN_ContactHandler myObj = new TMN_ContactHandler(true);
-		System.assert(myObj.IsTriggerContext==true,'IsTriggerContext does not return true as expected.');		
-
-    }
+	   insert testCredentialProfiles;
+	   
+	}
+    
 }
