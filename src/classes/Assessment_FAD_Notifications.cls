@@ -92,8 +92,6 @@ global class Assessment_FAD_Notifications implements Database.Batchable<sObject>
                         from Service_Assignment__c 
                         Where Program__c = 'IFCS' 
                          AND 
-                        Service_Line__c like '%FCT%'
-                         AND
                         Phase_1_Start_Date__c = :d1 ];
         assess = [select id, Service_Assignment__c, Phase__c From Assessment__c Where Service_Assignment__c IN :SAs AND Disregard__c = false];
         //Initial Check
