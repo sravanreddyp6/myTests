@@ -820,7 +820,7 @@ public void loadProgramList() {
 		Date SAStart = effDate;
 		Date SAEnd = effEnd;
 		if ( SAEnd == null )
-			SAEnd = Date.newInstance( SAStart.Year() + 1, 1, 1);
+			SAEnd = Date.newInstance( SAStart.Year() + 10, 1, 1);
 			
       	List<Service_Code__c> listAvailableCodes = new List<Service_Code__c>();
        AvailableCodes = new Map<Id,Service_Code__c>();
