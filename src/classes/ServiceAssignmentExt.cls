@@ -751,20 +751,20 @@ public class ServiceAssignmentExt {
        currentProgram = currentRecord.Program__c;
        currentLocation = currentRecord.Location_Region__c;
        currentServiceLine = currentRecord.Service_Line__c;
-       currentProgramID = currentRecord.Program_Code__c;
        effDate = currentRecord.Start_date__c;
        effEnd = currentRecord.End_date__c;
-       loadAvailableCodesbyID();
+       currentProgramID = currentRecord.Program_Code__c;
+//       loadAvailableCodesbyID(); - this is called by setting currentProgramID
 
        servCodeIdsForXrefsToDelete = new Set<Id>();
-	   loadProgramList();
+	   //loadProgramList();
 		
-                if ( theservassign.referral__c != null)
+         if ( theservassign.referral__c != null)
             referral = [ select id, name, referral_date__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from referral__c where id= :theservassign.referral__c ];
         else
             referral = null;
 
-         if (!newSA) {
+  if (!newSA) {
         admission = [ SELECT Id, Name, State__c, Person_Being_Served__c FROM Admission__c WHERE Id = :theServAssign.Admission__c ];
         plans = [select name, id, createddate, status__c, effective_date__c, target_date__c from Action_Plan__c where Service_Assignment__c = :currentID Order by CreatedDate DESC];
         for(Action_Plan__c aplan: plans){
@@ -773,7 +773,7 @@ public class ServiceAssignmentExt {
                         break;
                 }
         }
-             if (null != activePlan){
+        if (null != activePlan){
                  skillws = [select Action_Plan__r.Name, Start_Date__c
                             from Action_Plan_Worksheet__c
                             where RecordType.Name = 'Weekly Skill Result'
