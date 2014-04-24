@@ -638,7 +638,7 @@ public class ServiceAssignmentExt {
                         WHERE
                             Document__r.Type__c = 'Fidelity Document'
                             AND Program__c = :theServAssign.Program__c
-                            AND Service_Line__c = :theServAssign.Service_Line__c
+                            //AND Service_Line__c = :theServAssign.Service_Line__c
                             ORDER BY Document__r.Phase_or_Level__c, Document__r.Order__c ];
 
             for(Program_Document_Xref__c p : pdxs) {
@@ -819,11 +819,15 @@ public void loadProgramList() {
 		
 		Date SAStart = effDate;
 		Date SAEnd = effEnd;
-		if ( SAEnd == null )
+		if ( SAEnd == null && SAStart != null)
 			SAEnd = Date.newInstance( SAStart.Year() + 10, 1, 1);
 			
       	List<Service_Code__c> listAvailableCodes = new List<Service_Code__c>();
        AvailableCodes = new Map<Id,Service_Code__c>();
+       
+       if ( effDate == null )
+       	return;
+       	
        system.debug( 'loading codes by: ' + currentprogramID + ', effdate: ' + SAStart  + ', effend: ' + SAEnd + ', asmt:' + AssessmentOnly +', state: ' + currentState );
         listAvailableCodes = [SELECT Id, Service_Code__c, Service_Value__c, Start_Date__c, End_Date__c, Program__c From Service_Code__c
             WHERE Program_code__c = :currentProgramID
