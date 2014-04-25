@@ -53,6 +53,14 @@
         	padding-right:10px;
         }
         
+	.mycols{
+	width: 15%;
+    padding-left: 25px;
+    cellspacing: 15px;
+    
+	}
+
+        
     </style>
     <script>
         function setFocusOnLoad() {}  // Overwrite VF function to focus on the 1st field
@@ -227,7 +235,11 @@
         	
         	return nextTab;
         	}
+        	    	     	
     </script>
+ 
+    
+    
     <div class="breadcrumb">
         <a href="/">Home</a> > <a href="/{!Evaluation__c.Referral__c}">Referral: {!Evaluation__c.Referral__r.Name}</a> > <a href="/{!Evaluation__c.Id}">Evaluation: {!Evaluation__c.Name}</a>
     </div>
@@ -323,10 +335,36 @@
                         <apex:inputField value="{!Evaluation__c.Primary_Diagnosis__c}" />
                         <apex:inputField value="{!Evaluation__c.Date_of_Injury_Onset__c}" />
                         <apex:inputField value="{!Evaluation__c.Secondary_Diagnosis__c}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.Height__c}" />
                         <apex:inputField value="{!Evaluation__c.Bariatric_Equipment__c}" />
-                        <apex:inputField value="{!Evaluation__c.Weight__c}" />
+                        </apex:pageBlockSection>
+                        <apex:pageBlockSection columns="2">
+                        	<apex:outputPanel >
+                        	<apex:outputlabel for="wt" style="font-weight: Bold; color: #4A4A56; font-size: 10px; margin-left: 145px;">{!$ObjectType.Evaluation__c.Fields.Weight__c.label}</apex:outputlabel>
+                        	<apex:inputField id="wt" value="{!Evaluation__c.Weight__c}" style="margin-left: 25px;" html-disabled="True"/>
+                        </apex:outputPanel>
+                        <apex:outputPanel >
+                        	<apex:outputLabel value="Weight at Admission" style="font-weight: Bold; color: #4A4A56; font-size: 10px;"/>
+                        	<apex:inputField id="lbs" value="{!Evaluation__c.Weightlbs__c}" style="margin-left: 25px; width: 60px; !important;"/>
+                        	<apex:outputLabel for="lbs" style="font-weight:Bold; ">{!$ObjectType.Evaluation__c.Fields.Weightlbs__c.label}</apex:outputLabel>
+                        	<apex:inputField id="oz" value="{!Evaluation__c.Weightoz__c}" style="Margin-left: 25px; width:60px;"/>
+                        	<apex:outputLabel for="oz" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Weightoz__c.label}</apex:outputLabel>
+                        	<pre/>
+                        	<apex:inputField id="kg" value="{!Evaluation__c.WeightKg__c}" style="margin-left: 180px; width: 60px;" html-data-formula="($lbs*2)"/>
+                        	<apex:outputLabel for="kg" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.WeightKg__c.label}</apex:outputLabel>
+                        </apex:outputPanel>  
+                        </apex:pageBlockSection>
+                        <apex:pageBlockSection columns="2" > 
+                        <apex:outputPanel >
+                        	<apex:outputlabel for="ht" style="font-weight: Bold; color: #4A4A56; font-size: 10px; margin-left: 145px;">{!$ObjectType.Evaluation__c.Fields.Height__c.label}</apex:outputlabel>
+                        	<apex:inputField id="ht" value="{!Evaluation__c.Height__c}" style="margin-left: 25px;" html-disabled="True"/>
+                        </apex:outputPanel>
+                        <apex:outputPanel >
+                        	<apex:outputLabel value="Height at Admission" style="font-weight: Bold; color: #4A4A56; font-size: 10px;"/>
+                        	<apex:inputField id="ft" value="{!Evaluation__c.HeightFt__c}" style="margin-left: 25px;"/>
+                        	<apex:outputLabel for="ft" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.HeightFt__c.label}</apex:outputLabel>
+                        	<apex:inputField id="in" value="{!Evaluation__c.HeightInches__c}" style="Margin-left: 25px;"/>
+                        	<apex:outputLabel for="in" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.HeightInches__c.label}</apex:outputLabel>
+                        </apex:outputPanel>   		  
                     </apex:pageBlockSection>
                     <apex:pageBlockSection columns="1">
                         <apex:inputField value="{!Evaluation__c.PMH__c}" />
