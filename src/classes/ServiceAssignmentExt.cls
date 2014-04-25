@@ -262,7 +262,7 @@ public class ServiceAssignmentExt {
 // START: CONSTRUCTOR
     public ServiceAssignmentExt(ApexPages.StandardController controller) {
 
-        if(ApexPages.currentPage().getParameters().get('save_new')=='1'){
+        if( ApexPages.currentPage() != null && ApexPages.currentPage().getParameters().get('save_new')=='1'){
                 pageHeader = 'Add a Service Assignment';
                 newSA = true;
                 editSA = true;
@@ -1175,8 +1175,8 @@ public void loadProgramList() {
                 }
 
                 newSA = false;
-                ApexPages.Message myMessage = new ApexPages.Message(ApexPages.Severity.INFO, 'Service Assignment Saved!');
-                ApexPages.addMessage(myMessage);
+               // ApexPages.Message myMessage = new ApexPages.Message(ApexPages.Severity.INFO, 'Service Assignment Saved!');
+               // ApexPages.addMessage(myMessage);
 
                 //return null;
                 PageReference backToServAssignPage = new PageReference('/apex/ServiceAssignmentEditNew?id=' + theServAssign.Id);
