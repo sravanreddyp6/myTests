@@ -2,6 +2,8 @@
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:includeScript Value="{!URLFOR($Resource.JQueryCalx,'jquery-calx-master/jquery-calx-1.1.9.js')}"/>
+    <apex:includeScript Value="{!URLFOR($Resource.JQueryCalx,'jquery-calx-master/jquery-calx-1.1.9.min.js')}"/>
     <apex:includeScript value="{!$Resource.AnnotoriousDev}"/>
     <apex:includeScript value="{!$Resource.AnotoJS}"/>
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
@@ -65,6 +67,7 @@
     <script>
         function setFocusOnLoad() {}  // Overwrite VF function to focus on the 1st field
         jQuery.noConflict();
+        
         jQuery(document).ready(function ($) {
             handleSliderChange = function (inputIdToUpdate) {
                 // Closure is so much fun :)
@@ -237,7 +240,12 @@
         	}
         	    	     	
     </script>
- 
+ 	<Script>
+ 	 $('#j_id0:wholePage:j_id48:j_id98:kg').calx();
+ 	 if(('#j_id0:wholePage:j_id48:j_id98:kg').content===null){return FALSE;}
+     $('#j_id0:wholePage:j_id48:j_id98:lbs').calx();
+     if('#j_id0:wholePage:j_id48:j_id98:lbs'.content === null){return FALSE;}
+ 	</Script>
     
     
     <div class="breadcrumb">
@@ -349,7 +357,7 @@
                         	<apex:inputField id="oz" value="{!Evaluation__c.Weightoz__c}" style="Margin-left: 25px; width:60px;"/>
                         	<apex:outputLabel for="oz" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Weightoz__c.label}</apex:outputLabel>
                         	<pre/>
-                        	<apex:inputField id="kg" value="{!Evaluation__c.WeightKg__c}" style="margin-left: 180px; width: 60px;" html-data-formula="($lbs*2)"/>
+                        	<apex:inputField id="kg" value="{!Evaluation__c.WeightKg__c}" style="margin-left: 180px; width: 60px;" html-data-formula="($j_id0:wholePage:j_id48:j_id98:lbs*2)"/>
                         	<apex:outputLabel for="kg" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.WeightKg__c.label}</apex:outputLabel>
                         </apex:outputPanel>  
                         </apex:pageBlockSection>
@@ -388,17 +396,39 @@
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Micro Detail" formId="{!$Component.wholePage}" uniqueId="micro" />
                     <apex:pageBlockSection columns="1">
                         <apex:inputField value="{!Evaluation__c.Isolation__c}" label="Requires Isolation"
-                            html-data-rules="{&quot;1&quot;: &quot;{!$Component.isolationType}&quot;}" />
-                        <apex:inputField value="{!Evaluation__c.Isolation_Type__c}" id="isolationType" />
+                            html-data-rules="{&quot;1&quot;: &quot;{!$Component.isolationType2}&quot;}" />
+                        <apex:outPutField value="{!Evaluation__c.Isolation_Type__c}" id="isolationType" />
+                        <apex:inputField value="{!Evaluation__c.DiagnosisIsolation_Type__c}" id="isolationType2" /> 
                     </apex:pageBlockSection>
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Radiology Detail" formId="{!$Component.wholePage}" uniqueId="radiology" />
-                    <apex:pageBlockSection columns="1">
+                    <apex:pageBlockSection columns="2">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="IV Type" />
+                            <apex:outputText value="" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.PICC__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Central__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.HepLock__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.PCA__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.pcaRx}&quot;, &quot;{!$Component.pcaRate}&quot;]}" />
+                        <apex:inputField value="{!Evaluation__c.PCA_Rx__c}" id="pcaRx" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.PCA_Rate__c}" id="pcaRate" />
+                        <apex:inputField value="{!Evaluation__c.MARs_Attached__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.recentChanges}&quot;}" />
+                        <apex:inputField value="{!Evaluation__c.Recent_Changes__c}" id="recentChanges" />
+                    </apex:pageBlockSection>
+                    	 <apex:pageBlockSection columns="1">
+                        <apex:inputTextArea value="{!Evaluation__c.MAR_Comments__c}" cols="80" />
+                        <!--  apex:inputField value="{!Evaluation__c.MAR_Section_Completed__c}" /-->
                         <apex:inputTextArea value="{!Evaluation__c.Diagnostics_Comments__c}" cols="80" />
                         <apex:inputField value="{!Evaluation__c.Diagnostics_Section_Completed__c}" />
                     </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:tab>
-            <apex:tab label="MAR" name="marTab" ontabenter="changeTab('marTab'); return false;" styleClass="{!IF(Evaluation__c.MAR_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+            <!--  apex:tab label="MAR" name="marTab" ontabenter="changeTab('marTab'); return false;" styleClass="{!IF(Evaluation__c.MAR_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
                     <apex:pageBlockSection columns="2">
                         <apex:pageBlockSectionItem >
@@ -421,10 +451,10 @@
                     </apex:pageBlockSection>
                     <apex:pageBlockSection columns="1">
                         <apex:inputTextArea value="{!Evaluation__c.MAR_Comments__c}" cols="80" />
-                        <apex:inputField value="{!Evaluation__c.MAR_Section_Completed__c}" />
+                        
                     </apex:pageBlockSection>
                 </apex:pageBlock>
-            </apex:tab>
+            </apex:tab-->
             <apex:tab label="Cardiopulmonary" name="cardioTab" ontabenter="changeTab('cardioTab'); return false;" styleClass="{!IF(Evaluation__c.Cardio_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
                     <apex:pageBlockSection columns="3">
@@ -466,7 +496,7 @@
                         <apex:inputField value="{!Evaluation__c.Treatments_Other_Comments__c}" id="treatmentsOtherComments" label="Specify Other" />
                         <apex:inputField value="{!Evaluation__c.Decannulated_Placement_Date__c}" id="decanPlacementDate" />
                         <apex:inputField value="{!Evaluation__c.Ventilator_Results__c}" id="ventilatorResults" />
-                        <apex:inputField value="{!Evaluation__c.Suctioning__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.suctioningType}&quot;, &quot;{!$Component.suctioningFrequency}&quot;, &quot;{!$Component.sputumQuantity}&quot;, &quot;{!$Component.sputumAppearance}&quot;]}" />
+                        <apex:inputField value="{!Evaluation__c.Suctioning__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.suctioningType}&quot;, &quot;{!$Component.suctioningFrequency}&quot;, &quot;{!$Component.sputumQuantity}&quot;, &quot;{!$Component.sputumAppearance}&quot;,&quot;{!$Component.sputumColor}&quot;,&quot;{!$Component.thick}&quot;,&quot;{!$Component.thin}&quot;,&quot;{!$Component.frothy}&quot;,&quot;{!$Component.sticky}&quot;,&quot;{!$Component.creamy}&quot;, &quot;{!$Component.odor}&quot;]}" />
                         <apex:pageBlockSectionItem />
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Suctioning_Type__c}" id="suctioningType" />
@@ -478,7 +508,31 @@
                         <apex:inputField value="{!Evaluation__c.Sputum_Quantity__c}" id="sputumQuantity" />
                         <apex:pageBlockSectionItem />
                         <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.Sputum_Appearance__c}" id="sputumAppearance" />
+                        <apex:outputField value="{!Evaluation__c.Sputum_Appearance__c}" id="sputumAppearance" />
+                        <apex:pageBlockSectionItem />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Sputum_Color__c}" id="sputumColor" />
+                        <apex:pageBlockSectionItem />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputText value="Sputum Consistency" id="sputumConsistency" />
+                        <apex:pageBlockSectionItem />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField Value="{!Evaluation__c.Thick__c}" id="thick" />
+                        <apex:pageBlockSectionItem />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Thin__c}" id="thin" />
+                        <apex:pageBlockSectionItem />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Frothy__c}" id="frothy" />
+                        <apex:pageBlockSectionItem />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Sticky__c}" id="sticky" />
+                        <apex:pageBlockSectionItem />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Creamy__c}" id="creamy" />
+                        <apex:pageBlockSectionItem />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Odor__c}" id="odor" />
                     </apex:pageBlockSection>
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="ABG Detail" formId="{!$Component.wholePage}" uniqueId="abg" />
                     <apex:pageBlockSection columns="1">
