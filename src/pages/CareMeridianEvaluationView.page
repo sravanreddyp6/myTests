@@ -190,15 +190,37 @@
                     <apex:pageBlockSection columns="1">
                         <apex:outputField value="{!Evaluation__c.Isolation__c}" label="Requires Isolation" />
                         <apex:outputField value="{!Evaluation__c.Isolation_Type__c}" />
+                        <apex:outPutField value="{!Evaluation__c.DiagnosisIsolation_Type__c}" />
                     </apex:pageBlockSection>
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Radiology Detail" formId="{!$Component.wholePage}" uniqueId="radiology" />
-                    <apex:pageBlockSection columns="1">
+                    <apex:PageBlockSection Columns="2">
+                    	<apex:pageBlockSectionItem >
+                            <apex:outputText value="IV Type" />
+                            <apex:outputText value="" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.PICC__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Central__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.HepLock__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.PCA__c}" />
+                        <apex:outputField value="{!Evaluation__c.PCA_Rx__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.PCA_Rate__c}" />
+                        <apex:outputField value="{!Evaluation__c.MARs_Attached__c}" />
+                        <apex:outputField value="{!Evaluation__c.Recent_Changes__c}" />
+                    </apex:pageBlockSection>  
+                   <apex:pageBlockSection columns="1">
+                        <apex:outputField value="{!Evaluation__c.MAR_Comments__c}" />
+                        <!--  apex:outputField value="{!Evaluation__c.MAR_Section_Completed__c}" /-->
                         <apex:outputField value="{!Evaluation__c.Diagnostics_Comments__c}" />
                         <apex:outputField value="{!Evaluation__c.Diagnostics_Section_Completed__c}" />
                     </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:tab>
-            <apex:tab label="MAR" name="marTab" styleClass="{!IF(Evaluation__c.MAR_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+            <!--  apex:tab label="MAR" name="marTab" styleClass="{!IF(Evaluation__c.MAR_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
                     <apex:pageBlockSection columns="2">
                         <apex:pageBlockSectionItem >
@@ -224,7 +246,7 @@
                         <apex:outputField value="{!Evaluation__c.MAR_Section_Completed__c}" />
                     </apex:pageBlockSection>
                 </apex:pageBlock>
-            </apex:tab>
+            </apex:tab-->
             <apex:tab label="Cardiopulmonary" name="cardioTab" styleClass="{!IF(Evaluation__c.Cardio_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
                     <apex:pageBlockSection columns="3">
