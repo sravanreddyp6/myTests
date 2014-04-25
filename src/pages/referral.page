@@ -1239,7 +1239,13 @@ function enableDiagEff() {
                     </apex:actionRegion>
                 </apex:pageBlockSectionItem>
 
-        <apex:inputField value="{!Referral__c.Agency_Name__c}" label="Referral Source" />
+        <!-- ERC-97: Start -->
+        <!-- <apex:inputField value="{!Referral__c.Agency_Name__c}" label="Referral Source" /> -->
+        <apex:pageBlockSectionItem helpText="{!$ObjectType.Referral__c.fields.Agency_Name__c.InlineHelpText}">
+        	<apex:outputlabel for="referralSource" value="Referral Source" />
+			<apex:inputField id="referralSource" value="{!Referral__c.Agency_Name__c}" />
+			</apex:pageBlockSectionItem>
+		<!-- ERC-97: End --> 
         <apex:inputField value="{!Referral__c.How_did_they_learn__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" />
 
         <apex:pageBlockSectionItem rendered="{! ReferralRecordType == 'CareMeridian'}"  />
