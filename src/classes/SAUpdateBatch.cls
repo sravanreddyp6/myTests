@@ -47,7 +47,7 @@ global class SAUpdateBatch implements Database.Batchable<sObject> {
                 progid = '010897001';
         }
         
-        if (sa.Program__c = 'Phoenix')
+        if (sa.Program__c == 'Phoenix')
                 progid = '122874001';
         
         if (progid != '' ) {
