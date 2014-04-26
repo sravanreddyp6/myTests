@@ -841,7 +841,7 @@ public void loadProgramList() {
             id NOT IN :SelectedCodeIDs
                 AND
             state__c = :currentState
-            ORDER BY Service_Value__c];
+            ORDER BY start_date__c desc, Service_Value__c];
 
        for(Service_Code__c sc : listAvailableCodes) {
         AvailableCodes.put(sc.Id,sc);
@@ -1142,10 +1142,13 @@ public void loadProgramList() {
                     createDiagnoses();
                 
                 if (!showLocation) {
-                    saveServiceCodeSelections();
                     saveContractSelections();
                 }
 
+				if (showCodes || !showLocation) {
+					saveServiceCodeSelections();
+				}
+				
                 editSA = false;
                 theServAssign = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
                             End_Date__c, External_ID__c, Location_Region__c, Model__c, Outcomes__c, Person_Being_Served__c, Phase__c, Phase_of_Treatment__c, Program__c,
