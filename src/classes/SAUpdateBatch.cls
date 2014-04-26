@@ -47,6 +47,9 @@ global class SAUpdateBatch implements Database.Batchable<sObject> {
                 progid = '010897001';
         }
         
+        if (sa.Program__c = 'Phoenix')
+                progid = '122874001';
+        
         if (progid != '' ) {
 	        sl = [select id, alias__c, city__c, program__c, service_value__c from service_location__c where programid__c = :progid];
 	        if ( sl != null ) {
