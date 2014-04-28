@@ -30,24 +30,30 @@ private class CredentialControllerTEST {
         Credential_Profile__c HealthInspection_Profile = new Credential_Profile__c(
         	Name = 'Health Inspection',
         	Required_for_Mentor__c = true,
-        	PBI__c = true,
+        	OLM_Requirement__c = true,
         	Applies_Requested_Date__c = true,
         	Applies_Received_Date__c = true,
         	Applies_Note__c = true,
         	Applies_Documented_Date__c = true,
-        	DHR_Scope__c = 'Household'
+        	DHR_Scope__c = 'Household',
+        	Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 1
         );
         credProfsToInsert.add(HealthInspection_Profile);
         
         Credential_Profile__c HealthInspectionD2M_Profile = new Credential_Profile__c(
         	Name = 'Health Inspection-Due to Move',
         	Optional_for_Mentor__c = true,
-        	PBI__c = true,
+        	OLM_Requirement__c = true,
         	Applies_Requested_Date__c = true,
         	Applies_Received_Date__c = true,
         	Applies_Note__c = true,
         	Applies_Documented_Date__c = true,
-        	DHR_Scope__c = 'Household'
+        	DHR_Scope__c = 'Household',
+        	Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 2
         );
         credProfsToInsert.add(HealthInspectionD2M_Profile);        
   
@@ -60,11 +66,14 @@ private class CredentialControllerTEST {
         	Required_for_Resident_Non_Relative__c = true,
         	Needed_for_Under_18__c = true,
         	Needed_for_18_Over__c = true,
-        	PBI__c = true,
+        	OLM_Requirement__c = true,
         	Applies_Received_Date__c = true,
         	Applies_Note__c = true,
         	Applies_Documented_Date__c = true,
-        	DHR_Scope__c = 'Self'
+        	DHR_Scope__c = 'Self',
+        	Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 3
         );
         credProfsToInsert.add(MedExam_Profile);  
 
@@ -76,14 +85,17 @@ private class CredentialControllerTEST {
         	Required_for_Foster_Parent_Child__c = true,
         	Required_for_Resident_Non_Relative__c = true,
         	Needed_for_18_Over__c = true,
-        	PBI__c = true,
+        	OLM_Requirement__c = true,
         	Applies_Requested_Date__c = true,
         	Applies_Received_Date__c = true,
         	Applies_Note__c = true,
         	Applies_CPS_Full_Disclosure__c = true,
         	Applies_Documented_Date__c = true,
         	Applies_Outcome_of_Clearance__c = true,
-        	DHR_Scope__c = 'Self Adult, Mentor Minors'
+        	DHR_Scope__c = 'Self Adult, Mentor Minors',
+        	Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 4
         );
         credProfsToInsert.add(CPS_Clearance_Profile);
   
@@ -100,7 +112,10 @@ private class CredentialControllerTEST {
         	Applies_Note__c = true,
         	Applies_Documented_Date__c = true,
         	Applies_Outcome_of_Clearance__c = true,
-        	DHR_Scope__c = 'Self Adult, Mentor Minors'
+        	DHR_Scope__c = 'Self Adult, Mentor Minors',
+        	Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 5
         );
         credProfsToInsert.add(CPS_FullDisc_Profile);  
 
@@ -112,7 +127,7 @@ private class CredentialControllerTEST {
         	Required_for_Foster_Parent_Child__c = true,
         	Required_for_Resident_Non_Relative__c = true,
         	Needed_for_18_Over__c = true,
-        	PBI__c = true,
+        	OLM_Requirement__c = true,
         	Applies_Requested_Date__c = true,
         	Applies_Received_Date__c = true,
         	Applies_Note__c = true,
@@ -121,7 +136,10 @@ private class CredentialControllerTEST {
         	Applies_Federal_Conviction__c = true,
         	Applies_FBI_Full_Disclosure__c = true,
         	Applies_Documented_Date__c = true,
-        	DHR_Scope__c = 'Self Adult, Mentor Minors'
+        	DHR_Scope__c = 'Self Adult, Mentor Minors',
+        	Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 6
         );
         credProfsToInsert.add(FBI_Crim_Hx_Profile);
 
@@ -140,7 +158,10 @@ private class CredentialControllerTEST {
         	Applies_Type_of_Conviction_Federal__c = true,
         	Applies_Federal_Conviction__c = true,
         	Applies_Documented_Date__c = true,
-        	DHR_Scope__c = 'Self Adult, Mentor Minors'
+        	DHR_Scope__c = 'Self Adult, Mentor Minors',
+        	Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 7
         );
         credProfsToInsert.add(FBI_Full_Disc_Profile);
 
@@ -152,7 +173,7 @@ private class CredentialControllerTEST {
         	Required_for_Foster_Parent_Child__c = true,
         	Required_for_Resident_Non_Relative__c = true,
         	Needed_for_18_Over__c = true,
-        	PBI__c = true,
+        	OLM_Requirement__c = true,
         	Applies_Requested_Date__c = true,
         	Applies_Received_Date__c = true,
         	Applies_Note__c = true,
@@ -160,7 +181,10 @@ private class CredentialControllerTEST {
         	Applies_Type_of_Conviction_State__c = true,
         	Applies_State_Conviction__c = true,
         	Applies_Documented_Date__c = true,
-        	DHR_Scope__c = 'Self Adult, Mentor Minors'
+        	DHR_Scope__c = 'Self Adult, Mentor Minors',
+        	Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 8
         );
         credProfsToInsert.add(State_Crim_Hx_Profile);  
 
@@ -177,11 +201,11 @@ private class CredentialControllerTEST {
 		CredentialController controller = new CredentialController();
 		String nextPage = controller.CancelCreds().getUrl();
 		
-		System.assertEquals('/apex/MentorViewAll?id=' + tmnContact.Id, nextPage);
+		System.assertEquals('/apex/Credential?contactId=' + tmnContact.Id, nextPage);
 		
 		nextPage = controller.SaveCreds().getUrl();
 
-		System.assertEquals('/apex/MentorViewAll?id=' + tmnContact.Id, nextPage);
+		System.assertEquals('/apex/Credential?contactId=' + tmnContact.Id, nextPage);
 
     }
 }

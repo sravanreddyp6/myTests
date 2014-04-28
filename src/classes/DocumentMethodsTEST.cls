@@ -802,9 +802,9 @@ private class DocumentMethodsTEST {
         Test.setCurrentPageReference(doceditpr);
         ApexPages.currentPage().getParameters().put('id', caseDoc.Id );
         DocumentController2 doceditctrl = new DocumentController2( sc );
-		doceditctrl.updateLocations();
+		//doceditctrl.updateLocations();
 		doceditctrl.updateProgramsAndContracts();
-		doceditctrl.updateServiceLines();
+		//doceditctrl.updateServiceLines();
 		doceditctrl.getContractsAndXrefs();
 		
 		caseDoc.Type__c = 'Fidelity Document';
