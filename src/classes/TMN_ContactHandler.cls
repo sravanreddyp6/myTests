@@ -8,6 +8,8 @@ public with sharing class TMN_ContactHandler {
 
     public void OnBeforeInsert(TMN_Contact__c[] newObjects){
         // EXECUTE BEFORE INSERT LOGIC
+         SoundExTriggerUtil util= new SoundExTriggerUtil();
+         util.generateKeys(newObjects);		
     }
 
     public void OnAfterInsert(TMN_Contact__c[] newObjects){
@@ -140,6 +142,8 @@ public with sharing class TMN_ContactHandler {
 
     public void OnBeforeUpdate(TMN_Contact__c[] oldObjects, TMN_Contact__c[] updatedObjects, Map<Id,TMN_Contact__c> newObjMap){
         // BEFORE UPDATE LOGIC 	
+         SoundExTriggerUtil util= new SoundExTriggerUtil();
+    	 util.generateKeys(updatedObjects);
     }
 
     public void OnAfterUpdate(TMN_Contact__c[] oldObjects, TMN_Contact__c[] updatedObjects, Map<Id,TMN_Contact__c> newObjMap){
