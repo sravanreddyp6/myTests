@@ -1375,6 +1375,19 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>FCT_Phase_String_At_Note_Creation__c</fullName>
+        <description>This field &quot;translates&quot; the numeric value in field &quot;FCT_Phase_at_Note_Creation__c on the Progress_Note-_c object into a string representing an IFCS / FCT phase.  In theory, the value in &quot;FCT_Phase_at_Note_Creation__c&quot; COULD be a phase of ANY treatment model.  This field, though, converts numeric values 1 - 4 to their related FCT phase, and leaves a blank for all other values.</description>
+        <externalId>false</externalId>
+        <formula>IF(  FCT_Phase_at_Note_Creation__c  = 1, &apos;1 - Joining and Assessing&apos;, IF( FCT_Phase_at_Note_Creation__c  = 2, &apos;2 - Restructuring&apos;, IF(FCT_Phase_at_Note_Creation__c  = 3, &apos;3 - Value Change&apos;, IF( FCT_Phase_at_Note_Creation__c  = 4, &apos;4 - Generalization&apos;,&apos;&apos;))))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>FCT Phase at Note Creation</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>FCT_Phase_at_Note_Creation__c</fullName>
         <externalId>false</externalId>
         <label>FCT Phase at Note Creation</label>
@@ -6695,6 +6708,33 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Collateral_Contact__c</picklist>
+            <values>
+                <fullName>Biological Parent</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Case MGR%2E</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Case Worker</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Client%27s School</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Juvenile Justice Case MGR%2E</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Communication__c</picklist>
             <values>
                 <fullName>Normal</fullName>
@@ -6898,6 +6938,32 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Code_Modifier_1__c</picklist>
+            <values>
+                <fullName>GT</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HE</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HQ</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Code_Modifier_2__c</picklist>
+            <values>
+                <fullName>99</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>UK</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7106,6 +7172,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Phone</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type_of_Service__c</picklist>
+            <values>
+                <fullName>Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
