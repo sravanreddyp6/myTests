@@ -262,10 +262,10 @@
                         <apex:outputField value="{!Evaluation__c.Trach_Placement_Date__c}" />
                         <apex:outputField value="{!Evaluation__c.FIO2__c}" />
                         <apex:outputField value="{!Evaluation__c.Mask__c}" />
-                        <apex:outputField value="{!Evaluation__c.Trach_Type__c}" />
+                        <!--  apex:outputField value="{!Evaluation__c.Trach_Type__c}" /-->
                         <apex:outputField value="{!Evaluation__c.PEEP__c}" />
                         <apex:outputField value="{!Evaluation__c.T_Piece__c}" />
-                        <apex:outputField value="{!Evaluation__c.Trach_Size__c}" />
+                        <!-- apex:outputField value="{!Evaluation__c.Trach_Size__c}" /-->
                         <apex:outputField value="{!Evaluation__c.TV__c}" />
                         <apex:outputField value="{!Evaluation__c.Mist_Cooled__c}" />
                         <apex:outputField value="{!Evaluation__c.Cuffed__c}" />
@@ -301,6 +301,30 @@
                         <apex:pageBlockSectionItem />
                         <apex:pageBlockSectionItem />
                         <apex:outputField value="{!Evaluation__c.Sputum_Appearance__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Sputum_Color__c}"  />
+                        <apex:pageBlockSectionItem />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputText value="Sputum Consistency" />
+                        <apex:pageBlockSectionItem />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField Value="{!Evaluation__c.Thick__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Thin__c}"  />
+                        <apex:pageBlockSectionItem />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Frothy__c}"  />
+                        <apex:pageBlockSectionItem />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Sticky__c}"  />
+                        <apex:pageBlockSectionItem />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Creamy__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Odor__c}" />
                     </apex:pageBlockSection>
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="ABG Detail" formId="{!$Component.wholePage}" uniqueId="abg" />
                     <apex:pageBlockSection columns="1">
