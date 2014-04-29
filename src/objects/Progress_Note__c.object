@@ -1375,6 +1375,19 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>FCT_Phase_String_At_Note_Creation__c</fullName>
+        <description>This field &quot;translates&quot; the numeric value in field &quot;FCT_Phase_at_Note_Creation__c on the Progress_Note-_c object into a string representing an IFCS / FCT phase.  In theory, the value in &quot;FCT_Phase_at_Note_Creation__c&quot; COULD be a phase of ANY treatment model.  This field, though, converts numeric values 1 - 4 to their related FCT phase, and leaves a blank for all other values.</description>
+        <externalId>false</externalId>
+        <formula>IF(  FCT_Phase_at_Note_Creation__c  = 1, &apos;1 - Joining and Assessing&apos;, IF( FCT_Phase_at_Note_Creation__c  = 2, &apos;2 - Restructuring&apos;, IF(FCT_Phase_at_Note_Creation__c  = 3, &apos;3 - Value Change&apos;, IF( FCT_Phase_at_Note_Creation__c  = 4, &apos;4 - Generalization&apos;,&apos;&apos;))))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>FCT Phase at Note Creation</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>FCT_Phase_at_Note_Creation__c</fullName>
         <externalId>false</externalId>
         <label>FCT Phase at Note Creation</label>
@@ -1864,6 +1877,17 @@
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Mileage__c</fullName>
+        <externalId>false</externalId>
+        <label>Mileage</label>
+        <precision>7</precision>
+        <required>false</required>
+        <scale>1</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Mod_1__c</fullName>
@@ -2588,6 +2612,29 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Service_Code_Modifier_3__c</fullName>
+        <externalId>false</externalId>
+        <label>Service Code Modifier 3</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Item 1</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Item 2</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Item 3</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Service_Code__c</fullName>
         <deleteConstraint>Restrict</deleteConstraint>
         <externalId>false</externalId>
@@ -2789,6 +2836,19 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Staff_Credentials_Current__c</fullName>
+        <description>This formula field always has the current value of the staff name&apos;s title. This is NOT the value that we want on the OH-FCT page layout as we&apos;re trying to get the title of the person as to the closest time when they created the note.</description>
+        <externalId>false</externalId>
+        <formula>Staff_Name__r.Title</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Staff Credentials Current</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Staff_Credentials__c</fullName>
@@ -3128,10 +3188,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </picklistValues>
             <picklistValues>
                 <fullName>Family</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -3704,6 +3760,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>Item 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -3932,10 +4003,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -4342,6 +4409,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>Item 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -4570,10 +4652,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -4980,6 +5058,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>Item 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -5208,10 +5301,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -5618,6 +5707,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>Item 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -5846,10 +5950,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -6230,6 +6330,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>Item 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -6448,8 +6563,626 @@ If this is selected, please fill out the appropriate check boxes to the right.</
                 <fullName>Individual</fullName>
                 <default>false</default>
             </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>MA_Progress_Note</fullName>
+        <active>true</active>
+        <description>Use this record type for Persons in MA for Therapeutic Mentoring service type.</description>
+        <label>MA - Face to Face</label>
+        <picklistValues>
+            <picklist>Appearance__c</picklist>
             <values>
-                <fullName>Wraparound</fullName>
+                <fullName>Casually Dressed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Disheveled</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Well Groomed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Approval_Status__c</picklist>
+            <values>
+                <fullName>Approved</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bypass</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Needs Refinement</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Submitted</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Pending</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Recalled by User</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Area_Family_Functioning__c</picklist>
+            <values>
+                <fullName>Affective Involvement</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Affective Responsiveness</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Behavior Control</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Communication</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Problem Solving</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Role Performance</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Behavior_Functioning__c</picklist>
+            <values>
+                <fullName>No Significant Changes Reported or Observed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Notable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Behavior__c</picklist>
+            <values>
+                <fullName>Agitated</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Calm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Cooperative</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Fidgety</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Silly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Uncooperative</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Child_Transported_Today__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Code__c</picklist>
+            <values>
+                <fullName>11</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>12</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>21</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>99</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Collateral_Contact__c</picklist>
+            <values>
+                <fullName>Biological Parent</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Case MGR%2E</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Case Worker</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Client%27s School</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Juvenile Justice Case MGR%2E</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Communication__c</picklist>
+            <values>
+                <fullName>Normal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Quiet</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Talkative</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>DYFS_Contacted__c</picklist>
+            <values>
+                <fullName>Case Worker</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hotline</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Eye_Contact__c</picklist>
+            <values>
+                <fullName>Fair</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Good</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Poor</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Level_of_Participation__c</picklist>
+            <values>
+                <fullName>Easily engaged</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Refused</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Resistant</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Condition__c</picklist>
+            <values>
+                <fullName>No Significant Changes Reported or Observed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Notable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medication_Informant__c</picklist>
+            <values>
+                <fullName>Assessed Medication Supply</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Reported by Consumer</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Reported by Other</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Mood_Affect__c</picklist>
+            <values>
+                <fullName>No Significant Changes Reported or Observed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Notable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Mood__c</picklist>
+            <values>
+                <fullName>Anxious</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Happy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sad</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>New_Issues_Presented__c</picklist>
+            <values>
+                <fullName>CA Updated Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>New Issue Resolved</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>None Reported</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Phases_of_Service_Delivery__c</picklist>
+            <values>
+                <fullName>Phase 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Phase 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Phase 3</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Phase 4</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Procedure_Code_MA__c</picklist>
+            <values>
+                <fullName>H2019-HN</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>H2019-HO</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Purpose_Nature_of_Service__c</picklist>
+            <values>
+                <fullName>Care Coordination</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Collateral Contacts</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Member Outreach</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Member Transportation by Staff</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Telephone Crisis Response</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Risk_Factors__c</picklist>
+            <values>
+                <fullName>DENIED</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hx of</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Code_Modifier_1__c</picklist>
+            <values>
+                <fullName>GT</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HE</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HQ</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Code_Modifier_2__c</picklist>
+            <values>
+                <fullName>99</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>UK</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>Item 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Frequency__c</picklist>
+            <values>
+                <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monthly %28TFC%29</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Location__c</picklist>
+            <values>
+                <fullName>Community</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Community Mental Health Center</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Office</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>School</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Region_del__c</picklist>
+            <values>
+                <fullName>Central Region</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Cleveland Region</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Piedmont Region</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Triad Region</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Triangle Region</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>West Piedmont Region</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Winston Salem Region</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Signs_of_Decompensation__c</picklist>
+            <values>
+                <fullName>No signs of decomposition</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not able to assess at this time</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Status__c</picklist>
+            <values>
+                <fullName>Final</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>In Progress</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Substance_Abuse__c</picklist>
+            <values>
+                <fullName>NA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Significant Changes Reported or Observed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Notable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Taking_Medication_as_Prescribed__c</picklist>
+            <values>
+                <fullName>Not able to assess at this time</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not taking medication as prescribed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes taking medication as prescribed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Thought_Process_Orientation__c</picklist>
+            <values>
+                <fullName>No Significant Changes Reported or Observed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Notable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Thought_Process__c</picklist>
+            <values>
+                <fullName>Illogical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Logical</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type_of_Activity__c</picklist>
+            <values>
+                <fullName>Caregiver Education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Case Management Activities</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PCP-Development %28I%26O%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skill Building</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Therapy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly Team Meeting</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type_of_Contact__c</picklist>
+            <values>
+                <fullName>Face-To-Face</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Phone</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type_of_Service__c</picklist>
+            <values>
+                <fullName>Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -6856,6 +7589,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>Item 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -7084,10 +7832,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7467,6 +8211,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>Item 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -7695,10 +8454,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -8079,6 +8834,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>Item 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -8303,10 +9073,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -8687,6 +9453,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>Item 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -8907,10 +9688,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -9291,6 +10068,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>Item 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -9511,10 +10303,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -9895,6 +10683,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>Item 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -10091,10 +10894,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -10474,6 +11273,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>Item 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -10702,10 +11516,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11086,6 +11896,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>Item 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -11302,10 +12127,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11712,6 +12533,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>Item 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -11940,10 +12776,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12324,6 +13156,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>Item 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -12544,10 +13391,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12928,6 +13771,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>Item 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -13152,10 +14010,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -13536,6 +14390,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>Item 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -13756,10 +14625,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -14140,6 +15005,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>Item 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -14360,10 +15240,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -14744,6 +15620,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>Item 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -14968,10 +15859,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -15378,6 +16265,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>Item 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -15606,10 +16508,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -15989,6 +16887,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>Item 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Item 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -16217,10 +17130,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -16603,6 +17512,26 @@ errors.push(&apos;You must select a &quot;Service Code&quot; before continuing.&
 var recordTypeQuery = sforce.connection.query(&quot;SELECT Id, Name, DeveloperName from RecordType where id = &apos;&quot; + records[0].RecordTypeId + &quot;&apos;&quot;); 
 curRtype = recordTypeQuery.getArray(&quot;records&quot;); 
 
+// WVPN-21
+// Make the following fields required on finalization
+if (curRtype[0].DeveloperName == &apos;IN_FCT&apos;) {
+var value = &apos;{!Progress_Note__c.FCT_Phase_at_Note_Creation__c}&apos;;
+ if (value == &apos;&apos;){
+    errors.push(&apos;You must select a &quot;FCT Phase of Treatment&quot; before continuing.&apos;);
+   }
+ value = &apos;{!Progress_Note__c.People_Present__c}&apos;;
+ if (value == &apos;&apos;){
+    errors.push(&apos;You must select a &quot;People Present&quot; before continuing.&apos;);
+   }
+ value = &apos;{!Progress_Note__c.Staff_Name__c}&apos;;
+ if (value == &apos;&apos;){
+    errors.push(&apos;You must select the &quot;Staff Name&quot; before continuing.&apos;); 
+   }
+ if({!ISPICKVAL(Progress_Note__c.Area_Family_Functioning__c,&apos;&apos;)}){ 
+    errors.push(&apos;You must select the &quot;Area of Family Functioning&quot; before continuing.&apos;); 
+   }
+}
+
 /*
 // CTEAE-78 - remove check for Auth 
 // CTEAE-51 require auth for AVATAR but not AZ notes
@@ -16664,6 +17593,22 @@ if({!ISBLANK(Progress_Note__c.Progress__c)}
 &amp;&amp; curRtype[0].DeveloperName != &apos;MD_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;OH_FCT&apos;){ 
 errors.push(&apos;You must populate the &quot;Progress&quot; field before continuing.&apos;); 
 } 
+
+// WVPN-19 : Start
+if({!ISBLANK(Progress_Note__c.Diagnostic_Code__c)}
+&amp;&amp; curRtype[0].DeveloperName == &apos;OH_FCT&apos;){ 
+errors.push(&apos;You must populate the &quot;Diagnostic Code&quot; field before continuing.&apos;); 
+} 
+if({!ISBLANK(Progress_Note__c.Staff_Name__c)}
+&amp;&amp; curRtype[0].DeveloperName == &apos;OH_FCT&apos;){ 
+errors.push(&apos;You must populate the &quot;Staff Name&quot; field before continuing.&apos;); 
+} 
+if({!ISBLANK(Progress_Note__c.Staff_Credentials__c)}
+&amp;&amp; curRtype[0].DeveloperName == &apos;OH_FCT&apos;){ 
+errors.push(&apos;You must populate the &quot;Staff Credentials&quot; field before continuing.&apos;); 
+} 
+// WVPN-19 : End
+
 } 
 if(errors.length &lt;= 0){ 
 if(alerts.length &gt; 0){ 
