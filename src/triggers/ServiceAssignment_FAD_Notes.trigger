@@ -2,8 +2,8 @@ trigger ServiceAssignment_FAD_Notes on Service_Assignment__c (before update) {
  boolean HasRecordInScope = false;
  List<Service_Assignment__c> ScopedSAs = new List<Service_Assignment__c>();
  for (Service_Assignment__c SA : Trigger.new) {
-     IF(SA.Program__c != null && SA.Service_Line__c != null){
-         if(SA.Program__c == 'IFCS' && SA.Service_Line__c.Contains('FCT') ){
+     IF(SA.Program__c != null){
+         if(SA.Program__c == 'IFCS' ){
            // 
             HasRecordInScope = true;
             ScopedSAs.add(SA);

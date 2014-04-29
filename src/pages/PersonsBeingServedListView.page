@@ -329,7 +329,8 @@ table#persons_table.dataTable {
                                             View Current Worksheets
                                             
                                         </apex:outputLink>
-                                        <apex:variable value="{!jo.Service_Assignment__r.Admission__r.State__c == 'MN' || jo.Service_Assignment__r.Admission__r.State__c == 'IN' || jo.Service_Assignment__r.Admission__r.State__c == 'CA'}" 
+                                        <!-- WVPN-18: Used seeWorksheets variable to distinguish between Redwood IN and Cambridge IN.  If Redwood, seeWorksheets is set to true as of the date of this note.  J. Gilliam, 04-21-14 -->
+                                        <apex:variable value="{!jo.Service_Assignment__r.Admission__r.State__c == 'MN' || (jo.Service_Assignment__r.Admission__r.State__c == 'IN' && seeWorksheets == true) || jo.Service_Assignment__r.Admission__r.State__c == 'CA'}" 
                                                         var="HideNoteLink"/>                                                                                                             
                                         
                                         <apex:outputLink styleClass="servicelink" value="/{!jo.Service_Assignment__r.Id}#Notes"

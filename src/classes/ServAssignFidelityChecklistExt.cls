@@ -110,7 +110,7 @@ public class ServAssignFidelityChecklistExt  {
         // A list to hold documents...
         List<Document__c> someDocs = new List<Document__c>();
         
-        Service_Assignment__c fetchedServAssign = [ SELECT Id, Name, Program__c, Service_Line__c FROM Service_Assignment__c WHERE Id = :theServAssign.Id LIMIT 1 ]; 
+        Service_Assignment__c fetchedServAssign = [ SELECT Id, Name, Program__c, Admission__r.state__c, Service_Line__c FROM Service_Assignment__c WHERE Id = :theServAssign.Id LIMIT 1 ]; 
     
         // Select all cross-references between Contracts and this Service Assignment.
         servAssignDocXrefs = [ SELECT Id, Name, Document__c, Document_Name__c, File_Status__c, Relative_Due_Date_Units__c, Relative_Due_Date_UOM__c, 
@@ -120,8 +120,9 @@ public class ServAssignFidelityChecklistExt  {
                                 FROM ServiceAssignment_Document_JO__c 
                                 WHERE Service_Assignment__c = :fetchedServAssign.Id 
                                         AND Document__r.Type__c = 'Fidelity Document'
+                                        AND Document__r.State__c = :fetchedServAssign.Admission__r.state__c
                                         AND Document__c IN (SELECT Document__c FROM Program_Document_Xref__c WHERE Program__c = :fetchedServAssign.Program__c)
-                                        AND Document__c IN (SELECT Document__c FROM Program_Document_Xref__c WHERE Service_Line__c = :fetchedServAssign.Service_Line__c)
+                                       // AND Document__c IN (SELECT Document__c FROM Program_Document_Xref__c WHERE Service_Line__c = :fetchedServAssign.Service_Line__c)
                                 ORDER BY Document__r.Phase_Or_Level__c, Document__r.Order__c ];
        
         docIds = new List<Id>();

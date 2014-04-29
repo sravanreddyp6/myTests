@@ -7,6 +7,8 @@ public class referral_Controller2_Test{
         Related_Party__c rp = Referral_CreateTestData.createRelatedParty('Test', 'Other', pbr);
         Referral__c ref = Referral_CreateTestData.createReferral('Generic', 'New', 'Test123', pbr);
         ref.Person_Being_Served__c = null;
+        Contact pbs = new Contact(LastName='Last Test', FirstName= 'Test First', Birthdate = Date.Today());
+        insert pbs;
         Referral_Location__c loc = Referral_CreateTestData.createReferralLocation(testLoc.Name, '', 'New', testUser, ref );
         Agency_Involved_With_Individual__c agency = Referral_CreateTestData.createAgencyInvolved('Test Agency', 'Test Reason', ref);
         Funding_Source__c fund = Referral_CreateTestData.createFundingSource('Generic', 'Medicare', '123456', 'Pending Approval',
@@ -63,18 +65,43 @@ public class referral_Controller2_Test{
         system.assertEquals(2, controller.locations.size());
         System.assertEquals(0, controller.Attachments.size());
         System.assertEquals('', controller.OperatingGroup);
-        controller.addEvaluation();
-
-        controller.redirectToEdit();
-        controller.redirectToSearch();
-        controller.redirectToConversion();
-
+         
         ref.oldPBR__c = pbr.id;
         ref.person_being_referred__c = null;
 
         update ref;
-
+        
         controller.unlinkPBR();
+        
+        ref.oldPBS__c = pbs.id;
+        ref.person_being_served__c = null;
+        update ref;
+        
+        controller.unlinkPBS();
+        
+        testUser.Operating_Group__c = 'Care meridian';
+        update testUser;
+        
+        Tmn_user__c tmnUser = [SELECT ID, Operating_group__c FROM Tmn_user__c WHERE salesforce_user_account__c = :testUser.Id][0];
+        tmnUser.operating_group__c = 'Care meridian';
+        update tmnUser;
+        system.runas(testUser){
+            //sc = new ApexPages.StandardController(ref);
+           // controller = new referral_Controller2(sc);
+            controller.addEvaluation();
+        }
+        
+        controller.redirectToEdit();
+        controller.redirectToSearch();
+        controller.redirectToConversion();
+        
+
+      /*  ref.oldPBR__c = pbr.id;
+        ref.person_being_referred__c = null;
+
+        update ref;
+
+        controller.unlinkPBR();*/
 
         Referral__c rf = Referral_CreateTestData.createReferral('Generic', 'New', 'Test1235', pbr);
         rf.person_being_referred__c = null;

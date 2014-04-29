@@ -20,6 +20,8 @@ public with sharing class Assessment_FADResearchSummaryRpt_cnt {
                         assessment__r.Service_Assignment__r.admission__r.Effective_Date__c,
                         assessment__r.Service_Assignment__r.Location_Region__c,
                         assessment__r.Assessment_Date__c,
+                        assessment__r.Service_Assignment__r.Phase_1_Start_Date__c,
+                        assessment__r.Service_Assignment__r.person_being_served__r.Birthdate,
                         assessment__r.Service_Assignment__r.person_being_served__r.LastName,
                         assessment__r.Service_Assignment__r.person_being_served__r.FirstName,
                         Rating__c, Score__c, Yes_No__c, assessment_response__c.assessment__r.Phase__c, 
@@ -66,6 +68,9 @@ public with sharing class Assessment_FADResearchSummaryRpt_cnt {
                 [select NAME, person_being_served__c from Related_Party__c Where Person_Being_Served__c in :PBSid AND Type__c = 'Caregiver' Order By CreatedDate ASC]){
                 mapRelParty.put(rl.person_being_served__c, rl); 
             }
+            
+            related_party__c tmpR = new related_party__c();
+            mapRelParty.put(null, tmpR ); 
         
         return null;
     }

@@ -124,6 +124,8 @@
                 <tr class="headRow">
                     <td style="width: 120px;"  class="headRow">Last Name</td>
                     <td  class="headRow">First Name</td>
+                    <td  class="headRow">Date of Birth</td>
+                    <td  class="headRow">Phase 1 Start Date</td>
                     <td  class="headRow">Region Name</td>
                     <td  class="headRow">Primary FCS</td>
                     <td  class="headRow">CrmitID</td>
@@ -194,7 +196,17 @@
                 <tr >
                     <td style="width: 120px;"  class="dataRow">{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Service_Assignment__r.person_being_served__r.LastName }</td>
                     <td  class="dataRow">{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Service_Assignment__r.person_being_served__r.FirstName}</td>
-                    <td  class="dataRow">{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Service_Assignment__r.Location_Region__c}</td>
+                    <td  class="dataRow">
+                        <apex:outputPanel rendered="{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Service_Assignment__r.person_being_served__r.Birthdate != null}">
+                            <apex:outputField value="{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Service_Assignment__r.person_being_served__r.Birthdate}" />
+                        </apex:outputPanel>
+                    </td>
+                    <td  class="dataRow">
+                        <apex:outputPanel rendered="{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Service_Assignment__r.Phase_1_Start_Date__c != null}">
+                            <apex:outputField value="{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Service_Assignment__r.Phase_1_Start_Date__c}" />
+                        </apex:outputPanel>
+                    </td>
+                    <td  class="dataRow">{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Service_Assignment__r.Location_Region__c}</td>                    
                     <td  class="dataRow"></td>
                     <td  class="dataRow"></td>
                     <td  class="dataRow"></td>

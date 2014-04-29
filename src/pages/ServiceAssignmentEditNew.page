@@ -20,12 +20,13 @@
 </style>
 <c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" servAssignId="{!theServAssign.Id}" parentPage="ServAssign" servAssignNew="{!newSA}" admId="{!admissionId}"  />
 <script>
-    $j = jQuery.noConflict();
+    j$ = jQuery.noConflict();
 
     function SetHiddenPhase(thePhase)
     {
-        $j('input[id$=phaseToSave]').val(thePhase);
+        j$('input[id$=phaseToSave]').val(thePhase);
     }
+
 
 </script>
 <apex:pagemessages id="msgs" />
@@ -42,9 +43,13 @@
         <apex:param name="editid" value="" assignTo="{!diagEditId}" />
     </apex:actionFunction>
     <apex:actionFunction name="showAddLocation" action="{!showAddLocation}" immediate="true" rerender="serviceLocationEntry,locationDisplay, msgs" oncomplete="openDialog('serviceLocationModal', 'span', 'Add/Edit Location'); "/>
+    <apex:actionFunction name="setEffectiveDate" action="{!setEffectiveDate}" rerender="ProgAssocViewNEW, ProgAssoc,ProgramSelect,ServCodeSelect"  immediate="true" >
+    <apex:param name="effstart" value="" assignTo="{!effDate}" />
+    <apex:param name="effend" value="" assignTo="{!effEnd}" />
+    </apex:actionFunction>
 
  <!--  STANDARD SERVICE ASSIGNMENT BLOCK  -->
-     <apex:pageBlock mode="detail" title="Service Assignment{!if(editSA==true,' Edit','')}" rendered="{!!AssessmentOnly}">
+     <apex:pageBlock mode="detail" title="Service Assignment{!if(editSA==true,' Edit','')}" >
 
       <div class="pbHeaderButton">
           <apex:commandButton value="Edit" action="{!EditServAssign}" rendered="{!!editSA && canEditSA}" />
@@ -54,7 +59,7 @@
           &nbsp;
           <apex:commandButton value="Cancel" immediate="true" action="{!CancelServAssignEditNew}" rendered="{!editSA}" />
       </div>
-    <apex:pageBlockSection id="ServAssignDetail" columns="1" collapsible="false" title="Service Assignment Detail">
+    <apex:pageBlockSection id="ServAssignDetail" columns="1" collapsible="false" title="Service Assignment Detail" rendered="{!!AssessmentOnly}">
         <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!!editSA}" />
         <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!editSA}" />
         <apex:outputField value="{!theServAssign.Name}" rendered="{!!editSA}" />
@@ -62,26 +67,59 @@
         <apex:outputField value="{!theServAssign.Status__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Status__c}" rendered="{!editSA}"  />
         <apex:outputField value="{!theServAssign.Start_Date__c}" rendered="{!!editSA}"  />
-        <apex:inputField value="{!theServAssign.Start_Date__c}" required="true" rendered="{!editSA}"  />
+        <apex:inputField value="{!theServAssign.Start_Date__c}" required="true" id="startdate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
         <apex:outputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!editSA}"  />
         <apex:outputField value="{!theServAssign.End_Date__c}" rendered="{!!editSA}"  />
-        <apex:inputField value="{!theServAssign.End_Date__c}" rendered="{!editSA}"  />
+        <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
         <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}"  />
         <apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA}"  required="{!episodeReq}"/>
+        <apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation}" />
+        <apex:pageblocksectionitem rendered="{!editSA && !showLocation}"  >
+        <apex:outputLabel value="Model" for="modelfield" />
+        <apex:actionregion >
+        <apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" >
+             <apex:actionsupport event="onchange" action="{!changeToModel}" rerender="ContractAssoc, ProgAssoc" />
+        </apex:inputField>
+        </apex:actionregion>
+        </apex:pageblocksectionitem>
      
     </apex:pageBlockSection>
 
-        
+    <apex:pageBlockSection id="AOServAssignDetail" columns="1" collapsible="false" title="Service Assignment Detail" rendered="{!AssessmentOnly}">
+        <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!!editSA}" />
+        <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!editSA}" />
+        <apex:outputField value="{!theServAssign.Name}" rendered="{!!editSA}" />
+        <apex:outputField value="{!theServAssign.Name}" rendered="{!editSA}" />
+        <apex:outputField value="{!theServAssign.Status__c}" rendered="{!!editSA}"  />
+        <apex:inputField value="{!theServAssign.Status__c}" rendered="{!editSA}"  />
+        <apex:outputField value="{!theServAssign.Start_Date__c}" rendered="{!!editSA}"  />
+        <apex:inputField value="{!theServAssign.Start_Date__c}" id="startdate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
+        <apex:outputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!!editSA}"  />
+        <apex:inputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!editSA}"  />
+        <apex:outputField value="{!theServAssign.End_Date__c}" rendered="{!!editSA}"  />
+        <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}"  onblur="changeEffectiveDates();" />
+        <apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA}"  />
+        <apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA}"  />
+        <apex:pageblocksectionitem rendered="{!editSA}"  >
+        <apex:outputLabel value="Model" for="modelfield" />
+        <apex:actionregion >
+        <apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" >
+             <apex:actionsupport event="onchange" action="{!changeToModel}" rerender="ContractAssoc, ProgAssoc" />
+        </apex:inputField>
+        </apex:actionregion>
+        </apex:pageblocksectionitem>
+    </apex:pageBlockSection>
+    
 
-    <apex:pageBlockSection title="Contract Association"
+    <apex:pageBlockSection title="Contract Association" 
                              showHeader="true"
                              columns="3"
                              collapsible="false"
                              id="ContractAssoc"
-                             rendered="{!!showLocation}">
+                             rendered="{!!showLocation && !AssessmentOnly}">
             <apex:pageBlockTable value="{!contractRows}" var="c" id="ContractTable">
                 <apex:column headerValue="Select" >
                     <apex:inputCheckbox value="{!c.selectedContract}" disabled="{!!editSA}">
@@ -94,24 +132,22 @@
             
     </apex:pageBlockSection>
     
-    <hr />
     <apex:pageBlockSection title="Program Association"
                              showHeader="true"
                              columns="1"
                              collapsible="false"
                              id="ProgAssocViewNEW"
                              rendered="{!!editSA && !showLocation}" >
-                <apex:outputText value="{!theServAssign.Program__c}" />
-                <apex:outputText value="{!theServAssign.Location_Region__c}" />
-                <apex:outputText value="{!theServAssign.Service_Line__c}" />
+    <hr />
+                <apex:outputText id="saProgram" value="{!theServAssign.Program__c}" />
         <apex:outputPanel id="ProgAssocPanelView2NEW" layout="block" styleClass="col" rendered="{!!editSA && !showLocation }" >
             <apex:pageBlockTable value="{!programRows}" var="pR" id="ProgramAssocTableNEW" rendered="{!theServAssign.Program__c=='IFCS'}">
                 <apex:column headerValue="{!IF(editSA,'Select','Selected')}">
                     <apex:outputPanel rendered="{!(pR.paPhase<>999 && pR.paPhase==theServAssign.Phase__c)}">
-                        <input type="radio" name="phaseRadio" checked="checked" disabled="true" />
+                        <input type="radio" name="phaseRadio" checked="checked" disabled="disabled" />
                     </apex:outputPanel>
                     <apex:outputPanel rendered="{!(pR.paPhase<>999 && pR.paPhase<>theServAssign.Phase__c)}">
-                        <input type="radio" name="phaseRadio" disabled="true" />
+                        <input type="radio" name="phaseRadio" disabled="disabled" />
                     </apex:outputPanel>
                 </apex:column>
                 <apex:column headerValue="Phase of Treatment">
@@ -141,6 +177,7 @@
                              collapsible="false"
                              id="ProgAssoc"
                              rendered="{!editSA && !showLocation}">
+                        
             <apex:outputPanel id="ProgAssocPanelEdit" layout="block" styleClass="col" rendered="{!editSA}" >
                 <apex:actionStatus id="myStatus">
                         <apex:facet name="start">
@@ -148,38 +185,9 @@
                                 <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
                             </div>
                         </apex:facet>
+                        
                         <apex:facet name="stop">
-                            <apex:pageBlockSection columns="1" >
-                                <apex:selectList size="1" id="ProgramSelect" label="Program" value="{!currentProgram}">
-                                    <apex:actionSupport event="onchange" action="{!changeToProgramLocationServiceLine}" reRender="LocationSelect,ServiceLineSelect,ServCodeSelect" status="myStatus">
-                                        <apex:param assignTo="{!currentLocation}" value="" />
-                                        <apex:param assignTo="{!currentServiceLine}" value="" />
-                                    </apex:actionSupport>
-                                    <apex:selectOptions value="{!MyPrograms}"/>
-                                </apex:selectList>
-                                <!-- rendered="{!IF(SelectedProgram != '',True,False)}" -->
-                                <apex:selectList size="1" id="LocationSelect" label="Location" value="{!currentLocation}">
-                                    <apex:actionSupport event="onchange" action="{!changeToProgramLocationServiceLine}" reRender="ServiceLineSelect,ServCodeSelect"  status="myStatus">
-                                        <apex:param assignTo="{!currentProgram}" value="{!currentProgram}" />
-                                        <apex:param assignTo="{!currentServiceLine}" value="" />
-                                    </apex:actionSupport>
-                                    <apex:selectOptions value="{!MyLocations}"/>
-                                </apex:selectList>
-
-                                <apex:selectList size="1" id="ServiceLineSelect" label="Service Line" value="{!currentServiceLine}">
-                                    <apex:actionSupport event="onchange" action="{!changeToProgramLocationServiceLine}" reRender="ServiceLineSelect,ServCodeSelect" status="myStatus">
-                                        <apex:param assignTo="{!currentProgram}" value="{!currentProgram}" />
-                                        <apex:param assignTo="{!currentLocation}" value="{!currentLocation}" />
-                                    </apex:actionSupport>
-                                    <apex:selectOptions value="{!MyServiceLines}"/>
-                                </apex:selectList>
-                           <!--
-                                <apex:selectList size="1" id="PhaseSelect" label="Phase" value="{!theServAssign.Phase__c}" rendered="{!!newSa}">
-                                    <apex:actionSupport event="onchange" rerender="ProgAssocPanelView2" />
-                                    <apex:selectOptions value="{!phaseSelectOptions}" />
-                                </apex:selectList>
-                           -->
-                            </apex:pageBlockSection>
+                            
                         </apex:facet>
                 </apex:actionStatus>
                 <apex:pageBlockTable value="{!programRows}" var="pR" id="ProgramAssocTableNEW" rendered="{!theServAssign.Program__c=='IFCS'}">
@@ -212,21 +220,50 @@
                 </apex:pageBlockTable>
              </apex:outputPanel>
 
-
+ 
     </apex:pageBlockSection>
     
-    <apex:outputPanel rendered="{!!showLocation}" ><hr /></apex:outputPanel>    
+    <hr />
+    <apex:pageBlockSection title="Location of Service" columns="2" id="locationDisplay" collapsible="false">
+          <apex:pageBlockSectionItem rendered="{!editSA}" >
+              <apex:outputLabel value="Alias" />
+              <apex:actionregion >
+          <c:CustomLookup id="sl" formID="myFRM" uniqueId="searchLocation" type="Service_Location__c" parentId="{!theServAssign.Service_Location__c}"
+                    parentName="{!serviceLocation.Name}" filters="name,city__c,state__c"
+                    return="ID, program__c,setting__c,service_value__c,phone__c,street__c,city__c,state__c,zip__c" />
+</apex:actionregion>
+                    </apex:pageBlockSectionItem>
+                    
+          <apex:outputField value="{!serviceLocation.Name}" rendered="{!!editSA}"/>
+          <apex:outputField value="{!serviceLocation.Setting__c}"/>
+          <apex:pageBlockSectionItem id="locationaddr" >
+              <apex:outputLabel value="Address" /><c:AddressDisplay Street1="{!serviceLocation.Street__c}"
+                                City="{!serviceLocation.City__c}"
+                                State="{!serviceLocation.State__c}"
+                                Zip="{!serviceLocation.Zip__c}"/>
+          </apex:pageBlockSectionItem>
+          <apex:outputField value="{!serviceLocation.Phone__c}" />
+              <apex:outputPanel style="display:none">
+              <apex:actionregion >
+              <apex:inputText id="currentProgramID" value="{!currentProgramID}" >
+              <apex:actionsupport event="onchange" action="{!loadAvailableCodesByID}" rerender="ServCodeSelect" />
+              </apex:inputText>
+              </apex:actionregion>
+              </apex:outputPanel>
+          
+</apex:pageBlockSection>
+<apex:outputpanel rendered="{!showCodes}"><hr /></apex:outputpanel>
     <apex:pageBlockSection title="Service Code Selection"
                              showHeader="true"
                              columns="2"
                              collapsible="false"
                              id="ServCodeSelect"
-                             rendered="{!!showLocation}">
-                         
-              <apex:outputPanel layout="block" styleClass="col" rendered="{!OR(currentProgram=='',currentLocation=='',currentServiceLine=='')}">
-                  You must select a Program, Location, and Service Line for this Service Assignment before you can select a Service Code.
+                             rendered="{!showCodes}">
+
+              <apex:outputPanel layout="block" styleClass="col" rendered="{! effDate= null || currentProgramID=''}">
+                  You must select a Location of Service and Start Date before you can select a Service Code.
               </apex:outputPanel>
-              <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(currentProgram!='',currentLocation!='',currentServiceLine!='')}" >
+              <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(effDate!= null,currentProgramID!='')}" >
                 <apex:actionStatus id="addStatus">
                      <apex:facet name="start">
                         <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
@@ -236,9 +273,11 @@
                     <apex:facet name="stop">
                     <apex:pageBlockTable value="{!AvailableCodes}" var="aCodes" >
                         <apex:column >
+                        <apex:actionregion >
                             <apex:commandButton value="Add" action="{!AddCode}" reRender="ServCodeSelect"  status="addStatus" rendered="{!editSA}">
                                 <apex:param assignTo="{!SelectedCodeID}" name="SelectedCodeID" value="{!AvailableCodes[aCodes].Id}"/>
                             </apex:commandButton>
+                            </apex:actionregion>
                         </apex:column>
 
                         <apex:column headerValue="Available Service Codes" value="{!AvailableCodes[aCodes].Service_Value__c}"/>
@@ -261,7 +300,7 @@
                  </apex:facet>
                  </apex:actionStatus>
             </apex:outputPanel>
-            <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(currentProgram!='',currentLocation!='',currentServiceLine!='')}">
+            <apex:outputPanel layout="block" styleClass="col" rendered="{!AND(effDate!= null,currentProgramID!='')}">
                 <apex:actionStatus id="removeStatus">
                      <apex:facet name="start">
                         <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
@@ -288,10 +327,12 @@
 
                             </apex:column>
                             <apex:column >
+                                <apex:actionregion >
                                 <apex:commandButton value="Remove" action="{!RemoveCode}" reRender="ServCodeSelect" status="removeStatus" rendered="{!editSA}">
                                     <apex:param assignTo="{!SelectedCodeId}" name="SelectedCodeId" value="{!SelectedCodes[Code].Id}" />
                                     <apex:param assignTo="{!SelectedCodeKey}" name="SelectedCodeKey" value="{!Code}" />
                                 </apex:commandButton>
+                                </apex:actionregion>
                             </apex:column>
                         </apex:pageBlockTable>
                     </apex:facet>
@@ -329,18 +370,8 @@ END: Uncomment to have the element collapsed by default -->
 
 </apex:pageBlock>
  <!--  END STANDARD SERVICE ASSIGNMENT BLOCK  -->
-  <!--  ASSESSMENT-ONLY SERVICE ASSIGNMENT BLOCK  -->
-<apex:pageBlock mode="detail" title="Service Assignment{!if(editSA==true,' Edit','')}" rendered="{!AssessmentOnly}">
-
-      <div class="pbHeaderButton">
-          <apex:commandButton value="Edit" action="{!EditServAssign}" rendered="{!!editSA}" />
-          <apex:commandButton value="Save" action="{!SaveServAssign}" rendered="{!editSA}" rerender="myFRM" />
-          &nbsp;
-          <apex:commandButton value="Reset" action="{!ResetPage}" rendered="{!editSA}" />
-          &nbsp;
-          <apex:commandButton value="Cancel" immediate="true" action="{!CancelServAssignEditNew}" rendered="{!editSA}" />
-      </div>
-    <apex:pageBlockSection id="AOServAssignDetail" columns="1" collapsible="false" title="Service Assignment Detail">
+ <apex:pageBlock rendered="false">
+<apex:pageBlockSection id="AOServAssignDetail" columns="1" collapsible="false" title="Service Assignment Detail" rendered="{!AssessmentOnly}">
         <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!!editSA}" />
         <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!editSA}" />
         <apex:outputField value="{!theServAssign.Name}" rendered="{!!editSA}" />
@@ -356,7 +387,6 @@ END: Uncomment to have the element collapsed by default -->
         <apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA}"  />
     </apex:pageBlockSection>
-
     <hr />
     <apex:pageBlockSection title="Program Association"
                              showHeader="true"
@@ -381,6 +411,9 @@ END: Uncomment to have the element collapsed by default -->
                         </apex:facet>
                         <apex:facet name="stop">
                             <apex:pageBlockSection columns="1" >
+                            <apex:pageBlockSectionItem >
+                            <apex:outputLabel for="ProgramSelect" value="Program" />
+                            <apex:actionRegion >
                                 <apex:selectList size="1" id="ProgramSelect" label="Program" value="{!currentProgram}">
                                     <apex:actionSupport event="onchange" action="{!changeToProgramLocationServiceLine}" reRender="LocationSelect,ServiceLineSelect,ServCodeSelect" status="myStatus">
                                         <apex:param assignTo="{!currentLocation}" value="" />
@@ -388,40 +421,57 @@ END: Uncomment to have the element collapsed by default -->
                                     </apex:actionSupport>
                                     <apex:selectOptions value="{!MyPrograms}"/>
                                 </apex:selectList>
+                                </apex:actionRegion>
+                            </apex:pageBlockSectionItem>
+                                
                                 <!-- rendered="{!IF(SelectedProgram != '',True,False)}" -->
+                            <apex:pageBlockSectionItem >
+                            <apex:outputLabel for="LocationSelect" value="Location" />
+                            <apex:actionRegion >
                                 <apex:selectList size="1" id="LocationSelect" label="Location" value="{!currentLocation}">
-                                    <apex:actionSupport event="onchange" action="{!changeToProgramLocationServiceLine}" reRender="ServiceLineSelect,ServCodeSelect"  status="myStatus">
+                                    <apex:actionSupport event="onchange" action="{!changeToProgramLocationServiceLine}" reRender="ServiceLineSelect,ServCodeSelect"  immediate="true" status="myStatus">
                                         <apex:param assignTo="{!currentProgram}" value="{!currentProgram}" />
                                         <apex:param assignTo="{!currentServiceLine}" value="" />
                                     </apex:actionSupport>
                                     <apex:selectOptions value="{!MyLocations}"/>
                                 </apex:selectList>
-
+                            </apex:actionRegion>
+                            </apex:pageBlockSectionItem>
+                            
+                            <apex:pageBlockSectionItem >
+                            <apex:outputLabel for="ServiceLineSelect" value="Service Line" />
+                            <apex:actionRegion >
                                 <apex:selectList size="1" id="ServiceLineSelect" label="Service Line" value="{!currentServiceLine}">
-                                    <apex:actionSupport event="onchange" action="{!changeToProgramLocationServiceLine}" reRender="ServiceLineSelect,ServCodeSelect" status="myStatus">
+                                    <apex:actionSupport event="onchange" action="{!changeToProgramLocationServiceLine}" reRender="ServCodeSelect" status="myStatus">
                                         <apex:param assignTo="{!currentProgram}" value="{!currentProgram}" />
                                         <apex:param assignTo="{!currentLocation}" value="{!currentLocation}" />
                                     </apex:actionSupport>
                                     <apex:selectOptions value="{!MyServiceLines}"/>
                                 </apex:selectList>
-
-                            </apex:pageBlockSection>
+                           </apex:actionRegion>
+                           </apex:pageBlockSectionItem>
+                            
+                           <!--
+                                <apex:selectList size="1" id="PhaseSelect" label="Phase" value="{!theServAssign.Phase__c}" rendered="{!!newSa}">
+                                    <apex:actionSupport event="onchange" rerender="ProgAssocPanelView2" />
+                                    <apex:selectOptions value="{!phaseSelectOptions}" />
+                                </apex:selectList>
+                           -->
+                           </apex:pageBlockSection>
                         </apex:facet>
                 </apex:actionStatus>
              </apex:outputPanel>
 
 
     </apex:pageBlockSection>
-    <apex:outputPanel rendered="{!!showLocation}">
-        <hr />
-    </apex:outputPanel>
-    
+    <apex:outputpanel rendered="{!showCodes}"><hr /></apex:outputpanel>
+
     <apex:pageBlockSection title="Service Code Selection"
                              showHeader="true"
                              columns="2"
                              collapsible="true"
                              id="ServCodeSelect"
-                             rendered="{!!showLocation}">
+                             rendered="{!showCodes}">
               <apex:outputPanel layout="block" styleClass="col" rendered="{!OR(currentProgram=='',currentLocation=='',currentServiceLine=='')}">
                   You must select a Program, Location, and Service Line for this Service Assignment before you can select a Service Code.
               </apex:outputPanel>
@@ -435,9 +485,11 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:facet name="stop">
                     <apex:pageBlockTable value="{!AvailableCodes}" var="aCodes">
                         <apex:column >
+                            <apex:actionregion >
                             <apex:commandButton value="Add" action="{!AddCode}" reRender="ServCodeSelect"  status="addStatus" rendered="{!editSA}">
                                 <apex:param assignTo="{!SelectedCodeID}" name="SelectedCodeID" value="{!AvailableCodes[aCodes].Id}"/>
                             </apex:commandButton>
+                            </apex:actionregion>
                         </apex:column>
 
                         <apex:column headerValue="Available Service Codes" value="{!AvailableCodes[aCodes].Service_Value__c}"/>
@@ -487,10 +539,12 @@ END: Uncomment to have the element collapsed by default -->
 
                             </apex:column>
                             <apex:column >
+                                <apex:actionregion >
                                 <apex:commandButton value="Remove" action="{!RemoveCode}" reRender="ServCodeSelect" status="removeStatus" rendered="{!editSA}">
                                     <apex:param assignTo="{!SelectedCodeId}" name="SelectedCodeId" value="{!SelectedCodes[Code].Id}" />
                                     <apex:param assignTo="{!SelectedCodeKey}" name="SelectedCodeKey" value="{!Code}" />
                                 </apex:commandButton>
+                                </apex:actionregion>
                             </apex:column>
                         </apex:pageBlockTable>
                     </apex:facet>
@@ -523,29 +577,7 @@ END: Uncomment to have the element collapsed by default -->
 
 </apex:pageBlock>
 
-<apex:pageBlock title="Location of Service" rendered="{!showLocation}">
-<apex:pageBlockSection columns="2"
-                             id="locationDisplay" collapsible="false">
-          <apex:pageBlockSectionItem rendered="{!editSA}" >
-              <apex:outputLabel value="Alias" />
-          <c:CustomLookup id="sl" formID="myFRM" uniqueId="searchLocation" type="Service_Location__c" parentId="{!theServAssign.Service_Location__c}"
-                    parentName="{!serviceLocation.Name}" filters="name,city__c,state__c"
-                    return="program__c,setting__c,service_value__c,phone__c,street__c,city__c,state__c,zip__c"/>
-                    </apex:pageBlockSectionItem>
-          <apex:outputField value="{!serviceLocation.Name}" rendered="{!!editSA}"/>
-          <apex:outputField value="{!serviceLocation.Setting__c}"/>
-          <apex:pageBlockSectionItem >
-              <apex:outputLabel value="Address" /><c:AddressDisplay Street1="{!serviceLocation.Street__c}"
-                                City="{!serviceLocation.City__c}"
-                                State="{!serviceLocation.State__c}"
-                                Zip="{!serviceLocation.Zip__c}"/>
-          </apex:pageBlockSectionItem>
-          <apex:outputField value="{!serviceLocation.Phone__c}" />
 
-
-
-      </apex:pageBlockSection>
-      </apex:pageBlock>
 
       <!--Diagnosis Section -->
 
@@ -623,7 +655,7 @@ END: Uncomment to have the element collapsed by default -->
   <a name="SkillWorksheet" id="SkillWorksheetAnchor" ></a>
     <apex:pageBlock id="SkillWorksheet" title="Active Skill Worksheets" rendered="{! showWorksheetBlocks && vfVarCanAccessWS}">
     <div class="pbHeaderButton">
-        <apex:outputPanel onclick="$j('[id *=newswsbtn]').toggle();"  styleclass="btn">New Skill Worksheet</apex:outputPanel>
+        <apex:outputPanel onclick="j$('[id *=newswsbtn]').toggle();"  styleclass="btn">New Skill Worksheet</apex:outputPanel>
 
     </div>
                 <apex:outputPanel id="newswsbtn" layout="block" style="display: none; border: 1px solid black;width:600px;-webkit-columns:120px 4;columns:150px 4" >
@@ -655,7 +687,7 @@ END: Uncomment to have the element collapsed by default -->
   <a name="BehaviorWorksheet" id="BehaviorWorksheetAnchor" ></a>
     <apex:pageBlock id="BehaviorWorksheet" title="Active Behavior Worksheets" rendered="{! showWorksheetBlocks && vfVarCanAccessWS}">
     <div class="pbHeaderButton">
-        <apex:outputPanel layout="panel" onclick="$j('[id *=newbwsbtn]').toggle();" styleclass="btn">New Behavior Worksheet</apex:outputPanel>
+        <apex:outputPanel layout="panel" onclick="j$('[id *=newbwsbtn]').toggle();" styleclass="btn">New Behavior Worksheet</apex:outputPanel>
 
     </div>
         <apex:outputPanel id="newbwsbtn" layout="block" style="display: none; border: 1px solid black;width:600px;-webkit-columns:120px 4;columns:150px 4" >
@@ -715,7 +747,7 @@ END: Uncomment to have the element collapsed by default -->
 
 <!-- Start FAD Assessments -->
 <a name="Assessments_fad" id="assess_fad"></a>
-<apex:pageBlock id="Assessments_FAD" title="FAD Assessment Summaries" rendered="{! !editSA && Service_Assignment__c.Program__c ='IFCS' && CONTAINS(Service_Assignment__c.Service_Line__c, 'FCT')}" >
+<apex:pageBlock id="Assessments_FAD" title="FAD Assessment Summaries" rendered="{! !editSA && Service_Assignment__c.Program__c ='IFCS' }" >
     <div class="pbHeaderButton">
 <!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
         <apex:commandButton action="{!createFadAssess}" value="New FAD Assessment Summary"/>
@@ -783,7 +815,7 @@ END: Uncomment to have the element collapsed by default -->
         <apex:pageblockButtons location="bottom">
           <apex:commandButton value="Save" onClick="diagnosisSave(true); return false;" />
           <apex:commandButton value="Save & New" onClick="diagnosisSave(false);return false;" />
-          <apex:commandButton value="Cancel" onClick="closeDialog('diagnosisModal', 'span'); $j('#diagnosisErrors').html('');return false;" />
+          <apex:commandButton value="Cancel" onClick="closeDialog('diagnosisModal', 'span'); j$('#diagnosisErrors').html('');return false;" />
         </apex:pageblockButtons>
         <apex:facet name="header">
           <p><strong>Add a diagnosis below:</strong></p>
@@ -817,7 +849,7 @@ END: Uncomment to have the element collapsed by default -->
 <c:GenericHistoryComponent myObject="{!Service_Assignment__c}" rendered="{!!editSA && newSA==false}" />
 
 <script type="text/javascript">
-$j(setFocus);
+j$(setFocus);
 function setFocus() {
               document.getElementById("hiddenElementId").focus();
 }
@@ -827,41 +859,41 @@ function RefreshPage() {
 
 function validateDiagnosis() {
     var errors = '';
-    $j('#diagnosisErrors').html(errors);
+    j$('#diagnosisErrors').html(errors);
 
-    if ($j('input[id$=diagnosisEntry_EffDate]').val() == '') {
+    if (j$('input[id$=diagnosisEntry_EffDate]').val() == '') {
         errors += '<li>Effective Date is a required field.</li>';
     }
 
-    $j('#diagnosisErrors').html(errors);
+    j$('#diagnosisErrors').html(errors);
     return (errors == '');
   }
 
   //copies diagnosis fields from dialog for postback
   function diagnosisSave(isClose) {
     if (validateDiagnosis()) {
-      $j('input[id$=diagId]').val($j('input[id$=diagnosisEntry_Id]').val());
-      $j('input[id$=diagEffDate]').val($j('input[id$=diagnosisEntry_EffDate]').val());
-      $j('input[id$=diagAxisI]').val($j('input[id$=diagnosisEntry_AxisI]').val());
-      $j('input[id$=diagPrimaryDiagnosis]').val($j('input[id$=diagnosisEntry_PrimaryDiag]').val());
-      $j('input[id$=diagAxisII]').val($j('input[id$=diagnosisEntry_AxisII]').val());
-      $j('input[id$=diagSecondaryDiagnosis]').val($j('input[id$=diagnosisEntry_SecondaryDiag]').val());
-      $j('input[id$=diagAxisIII]').val($j('input[id$=diagnosisEntry_AxisIII]').val());
-      $j('input[id$=diagLevelofDisability]').val($j('input[id$=diagnosisEntry_LevelofDisability]').val());
-      $j('input[id$=diagAxisIV]').val($j('input[id$=diagnosisEntry_AxisIV]').val());
-      $j('input[id$=diagComments]').val($j('textarea[id$=diagnosisEntry_Comments]').val());
+      j$('input[id$=diagId]').val(j$('input[id$=diagnosisEntry_Id]').val());
+      j$('input[id$=diagEffDate]').val(j$('input[id$=diagnosisEntry_EffDate]').val());
+      j$('input[id$=diagAxisI]').val(j$('input[id$=diagnosisEntry_AxisI]').val());
+      j$('input[id$=diagPrimaryDiagnosis]').val(j$('input[id$=diagnosisEntry_PrimaryDiag]').val());
+      j$('input[id$=diagAxisII]').val(j$('input[id$=diagnosisEntry_AxisII]').val());
+      j$('input[id$=diagSecondaryDiagnosis]').val(j$('input[id$=diagnosisEntry_SecondaryDiag]').val());
+      j$('input[id$=diagAxisIII]').val(j$('input[id$=diagnosisEntry_AxisIII]').val());
+      j$('input[id$=diagLevelofDisability]').val(j$('input[id$=diagnosisEntry_LevelofDisability]').val());
+      j$('input[id$=diagAxisIV]').val(j$('input[id$=diagnosisEntry_AxisIV]').val());
+      j$('input[id$=diagComments]').val(j$('textarea[id$=diagnosisEntry_Comments]').val());
 
       saveDiagnosis();
-      $j('input[id$=diagnosisEntry_Id]').val('');
-      $j('input[id$=diagnosisEntry_EffDate]').val('');
-      $j('input[id$=diagnosisEntry_AxisI]').val('');
-      $j('input[id$=diagnosisEntry_AxisII]').val('');
-      $j('input[id$=diagnosisEntry_AxisIII]').val('');
-      $j('input[id$=diagnosisEntry_AxisIV]').val('');
-      $j('input[id$=diagnosisEntry_PrimaryDiag]').val('')
-      $j('input[id$=diagnosisEntry_SecondaryDiag]').val('')
-      $j('input[id$=diagnosisEntry_LevelofDisability]').val('')
-      $j('textarea[id$=diagnosisEntry_Comments]').val('')
+      j$('input[id$=diagnosisEntry_Id]').val('');
+      j$('input[id$=diagnosisEntry_EffDate]').val('');
+      j$('input[id$=diagnosisEntry_AxisI]').val('');
+      j$('input[id$=diagnosisEntry_AxisII]').val('');
+      j$('input[id$=diagnosisEntry_AxisIII]').val('');
+      j$('input[id$=diagnosisEntry_AxisIV]').val('');
+      j$('input[id$=diagnosisEntry_PrimaryDiag]').val('')
+      j$('input[id$=diagnosisEntry_SecondaryDiag]').val('')
+      j$('input[id$=diagnosisEntry_LevelofDisability]').val('')
+      j$('textarea[id$=diagnosisEntry_Comments]').val('')
 
       if (isClose) {
           closeDialog('diagnosisModal', 'span');
@@ -905,17 +937,17 @@ function validateDiagnosis() {
                 strDate += mins;
                 strDate += ' ' + ampm;
 
-                $j('[id$=diagnosisEntry_Id]').val(result.Id);
-                $j('input[id$=diagnosisEntry_EffDate]').val(strDate);
-                        $j('input[id$=diagnosisEntry_AxisI]').val(result.Axis_I__c);
-                        $j('input[id$=diagnosisEntry_AxisII]').val(result.Axis_II__c);
-                        $j('input[id$=diagnosisEntry_AxisIII]').val(result.Axis_III__c);
-                        $j('input[id$=diagnosisEntry_AxisIV]').val(result.Axis_IV__c);
-                        $j('input[id$=diagnosisEntry_AxisV]').val(result.Axis_V__c);
-                        $j('input[id$=diagnosisEntry_PrimaryDiag]').val(result.Primary_Diagnosis__c)
-                        $j('input[id$=diagnosisEntry_SecondaryDiag]').val(result.Secondary_Diagnosis__c)
-                        $j('input[id$=diagnosisEntry_LevelofDisability]').val(result.Level_of_Diability__c)
-                        $j('textarea[id$=diagnosisEntry_Comments]').val(result.Comments__c)
+                j$('[id$=diagnosisEntry_Id]').val(result.Id);
+                j$('input[id$=diagnosisEntry_EffDate]').val(strDate);
+                        j$('input[id$=diagnosisEntry_AxisI]').val(result.Axis_I__c);
+                        j$('input[id$=diagnosisEntry_AxisII]').val(result.Axis_II__c);
+                        j$('input[id$=diagnosisEntry_AxisIII]').val(result.Axis_III__c);
+                        j$('input[id$=diagnosisEntry_AxisIV]').val(result.Axis_IV__c);
+                        j$('input[id$=diagnosisEntry_AxisV]').val(result.Axis_V__c);
+                        j$('input[id$=diagnosisEntry_PrimaryDiag]').val(result.Primary_Diagnosis__c)
+                        j$('input[id$=diagnosisEntry_SecondaryDiag]').val(result.Secondary_Diagnosis__c)
+                        j$('input[id$=diagnosisEntry_LevelofDisability]').val(result.Level_of_Diability__c)
+                        j$('textarea[id$=diagnosisEntry_Comments]').val(result.Comments__c)
 
             } else { alert ('Error loading diagnosis to edit.');  }
           },
@@ -942,27 +974,67 @@ document.onkeypress = stopRKey;
   {
    selector = tagType + '[id$=' + dialogId + ']';
 
-    if ($j(selector).dialog("isOpen")!==true) {
-        $j(selector).dialog({dialogClass: dClass,
+    if (j$(selector).dialog("isOpen")!==true) {
+        j$(selector).dialog({dialogClass: dClass,
                              title:titleString,
                              modal:true,
                              width:800,
                              closeOnEscape:false
                            })
                   .parent()
-                  .appendTo($j('form[id$=myFRM]'));
-    $j(selector).parent().find('a.ui-dialog-titlebar-close').remove();
+                  .appendTo(j$('form[id$=myFRM]'));
+    j$(selector).parent().find('a.ui-dialog-titlebar-close').remove();
    }
   }
   function closeDialog(dialogId, tagType)
   {
    selector = tagType + '[id$=' + dialogId + ']';
 
-   $j(selector).dialog('destroy');
+   j$(selector).dialog('destroy');
   }
 
+j$(document).ready(function() {
+if (j$('input[id$=lookupElement_lkid]')) 
+    j$('input[id$=lookupElement_lkid]').change(function() {
+        saveLocation();
+    });
+});
 
 
+function saveLocation() {
+
+    ServiceAssignmentExt.loadServiceLocation(j$('input[id$=lookupElement_lkid]').val(),
+    function(result, event){
+            if (event.status) {
+            /*
+                var dashpos = result.Service_Value__c.indexOf('-');
+                var sl = '';
+                if (dashpos > -1 ) 
+                    sl = (result.Service_Value__c).substring(dashpos+1);
+                else
+                    sl = result.Service_Value__c;
+                                            
+                j$('[id$=ProgramField]').val(result.Program__c);
+                j$('[id$=LocationField]').val(result.City__c);
+                j$('[id$=ServiceLineField]').val(sl);
+              */  
+                j$('input[id$=currentProgramID]').val( result.ProgramID__c);
+                j$('input[id$=currentProgramID]').change();
+            }
+          },
+          {escape: true}
+        );
+        
+    }
+
+
+	function changeEffectiveDates() {
+		var sd = j$('input[id$=startdate]').val();
+		var ed = j$('input[id$=enddate]').val();
+		
+		setEffectiveDate( sd, ed );
+	
+	}
 
 </script>
 
