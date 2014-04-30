@@ -520,7 +520,7 @@
                         <apex:inputField value="{!Evaluation__c.Treatments_Other_Comments__c}" id="treatmentsOtherComments" label="Specify Other" />
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Weaning_Trial__c}" id="weaningTrial" />
-                        <apex:inputField value="{!Evaluation__c.Suctioning__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.suctioningType}&quot;, &quot;{!$Component.suctioningFrequency}&quot;, &quot;{!$Component.sputumQuantity}&quot;, &quot;{!$Component.sputumAppearance}&quot;,&quot;{!$Component.sputumColor}&quot;,&quot;{!$Component.thick}&quot;,&quot;{!$Component.thin}&quot;,&quot;{!$Component.frothy}&quot;,&quot;{!$Component.sticky}&quot;,&quot;{!$Component.creamy}&quot;, &quot;{!$Component.odor}&quot;]}" />
+                        <apex:inputField value="{!Evaluation__c.Suctioning__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.suctioningType}&quot;, &quot;{!$Component.suctioningFrequency}&quot;, &quot;{!$Component.sputumQuantity}&quot;, &quot;{!$Component.sputumAppearance}&quot;,&quot;{!$Component.sputumColor}&quot;,{!$Component.bloodTinged}&quot;,&quot;{!$Component.thick}&quot;,&quot;{!$Component.thin}&quot;,&quot;{!$Component.frothy}&quot;,&quot;{!$Component.sticky}&quot;,&quot;{!$Component.creamy}&quot;, &quot;{!$Component.odor}&quot;]}" />
                        	<apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Ventilator_Results__c}" id="ventilatorResults" />
                         <apex:inputField value="{!Evaluation__c.Suctioning_Type__c}" id="suctioningType" />
@@ -536,6 +536,9 @@
                         <apex:pageBlockSectionItem />
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Sputum_Color__c}" id="sputumColor" />
+                        <apex:pageBlockSectionItem />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Blood_Tinged__c}" id="bloodTinged"/>
                         <apex:pageBlockSectionItem />
                         <apex:pageBlockSectionItem />
                         <apex:outputText value="Sputum Consistency" id="sputumConsistency" />
