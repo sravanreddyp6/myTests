@@ -11,7 +11,7 @@
       margin-left: 5px;
     }
     #fundingMessages {
-      margin-bottom: 10px
+      margin-bottom: 10px;
     }
     #fundingMessages .error {
       color: red;
@@ -135,6 +135,7 @@ function stopRKey(evt) {
             errors += '<li>Invalid date range or format. Correct date format: {m,mm}/{d,dd}/yyyy</li>';
         }
     }
+    
     j$('#activityErrors').html(errors);
     return (errors == '');
   }
@@ -155,6 +156,16 @@ function stopRKey(evt) {
             returnval=true
     }
         return returnval
+  }
+  
+  function checkZipCode(value) {
+      var errors = '';
+      var validformat = /^\d{5}$|^\d{5}-\d{4}$/       
+      if (!validformat.test(value)) {
+          errors += '<li class="error">Please enter zip code in the format: XXXXX or XXXXX-XXXX</li>';
+          j$('#fundingMessages').html(errors);      
+      }     
+      return (errors == '');      
   }
 
  //copies relatedParty fields from dialog for postback
@@ -188,8 +199,14 @@ function stopRKey(evt) {
   fundingSourceSave = function (isClose) {
     // We cant use Visualforce functions/variables in a Static Resource JS file,
     // so we have to pass it in here.
-    closeFundingSource = isClose;
-    fundingSourceSaveHelper('{!JSENCODE(ReferralRecordType)}');
+    if (checkZipCode(j$('input[id$=Claims_Submission_Zip]').val()) == false) {
+        isClose = false;        
+        fundingSourceScrollToTop(false);
+    }    
+    else {
+        closeFundingSource = isClose;
+        fundingSourceSaveHelper('{!JSENCODE(ReferralRecordType)}');
+    }    
   }
 
   //copies Agency fields from dialog for postback
@@ -625,7 +642,7 @@ function stopRKey(evt) {
 
  <!-- Add Funding Source modal. -->
     <apex:outputPanel id="FundingSourceModal" style="display:none">
-      <div id='fundingMessages' ></div>
+      <div id='fundingMessages'></div>
       <apex:pageBlock title="Add Funding Source" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative'}">
         <apex:pageBlockSection columns="1" id="fundingSourceEntry">
             <apex:inputField value="{!fundingSource.Funding_Source__c}" id="fundingEntry_Source"/>
@@ -701,6 +718,7 @@ function stopRKey(evt) {
             <apex:inputField value="{!fundingSource.Additional_Coverage__c}" id="additionalCoverage" />
             <apex:inputTextarea value="{!fundingSource.Additional_Coverage_Comments__c}" id="additionalCoverageDetail" label="" cols="80" />
         </apex:pageBlockSection>
+               
         <apex:pageBlockSection columns="2" rendered="{!ReferralRecordType == 'CareMeridian'}">
             <apex:outputText value="Benefit Information" styleClass="modalSubheader" />
             <apex:pageBlockSectionItem />
@@ -729,17 +747,7 @@ function stopRKey(evt) {
             <apex:inputField value="{!fundingSource.SNF_Days_Used__c}" />
             <apex:inputField value="{!fundingSource.Precert_Required__c}" />
             <apex:pageBlockSectionItem />
-            
-			<apex:outputText value="Acute Rehab" styleClass="modalSubheader" />
-            <apex:pageBlockSectionItem />
-            <apex:inputField value="{!fundingSource.ARU_Day_Total__c}" />
-            <apex:inputField value="{!fundingSource.ARU_Days_Used__c}" />
-            
-            <apex:outputText value="Home Health" styleClass="modalSubheader" />
-            <apex:pageBlockSectionItem />
-            <apex:inputField value="{!fundingSource.HH_Visits_Total__c}" />
-            <apex:inputField value="{!fundingSource.HH_Visits_Used__c}" />
-            
+
             <apex:outputText value="DME" styleClass="modalSubheader" />
             <apex:pageBlockSectionItem />
             <apex:inputText value="{!fundingSource.DME_Benefits__c}" />
@@ -758,7 +766,7 @@ function stopRKey(evt) {
             <apex:inputField value="{!fundingSource.SNF_Phone__c}" label="Precert Company Phone" />
             <apex:inputField value="{!fundingSource.SNF_Fax__c}" label="Fax" />
             <apex:pageBlockSectionItem />
-
+            
             <apex:outputText value="Claims Submission" styleClass="modalSubheader" />
             <apex:pageBlockSectionItem />
             <apex:inputField value="{!fundingSource.Claims_Submission_Company__c}" label="Company" />
@@ -771,7 +779,7 @@ function stopRKey(evt) {
             <apex:inputField value="{!fundingSource.Claims_Submission_Fax__c}" label="Fax" />
             <apex:inputField value="{!fundingSource.Claims_Submission_State__c}" label="State" />
             <apex:pageBlockSectionItem />
-            <apex:inputField value="{!fundingSource.Claims_Submission_Zip__c}" label="Zip" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Zip__c}" id="Claims_Submission_Zip" label="Zip" />        
         </apex:pageBlockSection>
         <apex:pageBlockSection columns="2" rendered="{!ReferralRecordType == 'NeuroRestorative'}">
             <apex:outputText value="Benefit Information" styleClass="modalSubheader" />
@@ -812,7 +820,7 @@ function stopRKey(evt) {
             <apex:inputField value="{!fundingSource.Claims_Submission_Fax__c}" label="Fax" />
             <apex:inputField value="{!fundingSource.Claims_Submission_State__c}" label="State" />
             <apex:pageBlockSectionItem />
-            <apex:inputField value="{!fundingSource.Claims_Submission_Zip__c}" label="Zip" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Zip__c}" id="Claims_Submission_Zip" label="Zip" />
         </apex:pageBlockSection>
       </apex:pageBlock>
       <apex:pageBlock title="Red Flags" id="fundingSourceRedFlagsEntry" rendered="{!ReferralRecordType == 'CareMeridian' || ReferralRecordType == 'NeuroRestorative'}">
@@ -946,7 +954,7 @@ function stopRKey(evt) {
       </apex:pageBlock>
       <apex:pageBlock >
         <apex:pageblockButtons location="bottom">
-          <apex:commandButton value="Save" onclick="fundingSourceSave(true); return false;"/ >
+          <apex:commandButton value="Save" onclick="fundingSourceSave(true);return false;"/ >
           <apex:commandButton value="Save & New" onclick="fundingSourceSave(false); return false;"/ >
           <apex:commandButton value="Cancel" onclick="closeModalDialog('FundingSourceModal', 'span');j$('#fundingErrors').html('');return false;" />
           <apex:actionStatus id="saveFundingSourceStatus">
@@ -1053,9 +1061,6 @@ function stopRKey(evt) {
             <apex:outputLabel styleClass="ref_loc_head" value="Street" />&nbsp;
             <apex:outputText value="{!Referral__c.Referrer_Street__c}"  id="Perm_Street"/>&nbsp;
             <br/>
-            <apex:outputLabel styleClass="ref_loc_head" value="Street 2" />&nbsp;
-            <apex:outputText value="{!Referral__c.Referrer_Street_2__c}"  id="Perm_Street2"/>&nbsp;
-            <br/>            
             <apex:outputLabel styleClass="ref_loc_head" value="City" />&nbsp;          
             <apex:outputText value="{!Referral__c.Referrer_City__c}"  id="Perm_City"/>&nbsp;
             <apex:outputLabel styleClass="ref_loc_head" value="State" />&nbsp;
@@ -1081,7 +1086,9 @@ function stopRKey(evt) {
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
         <apex:outputField value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
         <apex:outputField value="{!Referral__c.Evaluated_By_External__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
-        <apex:outputField value="{!Referral__c.Evaluated_By_Internal_Other__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
+        <apex:outputField label="Evaluated By (NeuroRestorative Legacy)" value="{!Referral__c.Neuro_Evaluated_By__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
+        <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+        <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
 
         <apex:outputField value="{!Referral__c.Referral_Provided_By_Source__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
@@ -1311,45 +1318,32 @@ function stopRKey(evt) {
         <apex:outputText label="Diagnosis" rendered="{!OR(ReferralRecordType == 'Wisconsin',ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
         <apex:outputText label="Brain Injury Detail" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Wisconsin'}"/>
+        <!--apex:pageBlockSectionItem rendered="{!ReferralRecordType != 'Minnesota'}"/-->
 
-        <!--Left -->
-        <apex:outputField value="{!Referral__c.Axis_I__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />
-        <apex:outputField value="{!Referral__c.Diagnosis_I__c}" label="Primary Diagnosis" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
-        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',referralRecordType != 'CareMeridian', referralRecordType != 'NeuroRestorative') }" />
+        <!--Left --><apex:outputField value="{!Referral__c.Axis_I__c}" rendered="{!ReferralRecordType != 'CareMeridian'}" />
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota',referralRecordType != 'CareMeridian')}"/>
         <apex:outputField value="{!Referral__c.Date_of_Injury__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota',referralRecordType=='CareMeridian')}" />
         <!--apex:pageBlockSectionItem rendered="{!ReferralRecordType != 'Minnesota'}"/-->
 
 
-        <!--Left --><apex:outputField value="{!Referral__c.Axis_II__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />
-        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',referralRecordType != 'CareMeridian', referralRecordType != 'NeuroRestorative')}"/>
-        <apex:outputField value="{!Referral__c.Diagnosis_Effective_Date__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
-        
+        <!--Left --><apex:outputField value="{!Referral__c.Axis_II__c}" rendered="{!ReferralRecordType != 'CareMeridian'}" />
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota',referralRecordType != 'CareMeridian')}"/>
+        <!--apex:pageBlockSectionItem rendered="{!ReferralRecordType != 'Minnesota'}"/-->
+        <apex:outputField value="{!Referral__c.Type_of_Injury__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
         <apex:outputField value="{!Referral__c.Cause_of_Injury__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" />
 
-        <!--Left --><apex:outputField value="{!Referral__c.Axis_III__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />
+        <!--Left --><apex:outputField value="{!Referral__c.Axis_III__c}" rendered="{!ReferralRecordType != 'CareMeridian'}" />
         <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian')}"/>
-        <apex:pageBlocksectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}">
-        <apex:outputLabel value="Cause of Injury" for="causepick" />
-        <apex:outputPanel >
-        <apex:outputField id="causepick" value="{!Referral__c.Cause_of_Injury_pick__c}" label="Cause of Injury" />
-        <apex:outputtext value=": {0}" rendered="{!Referral__c.Cause_of_Injury_pick__c == 'Other'}"  >
-        <apex:param value="{!Referral__c.Cause_of_Injury_Other__c}" />
-        </apex:outputtext>
-        </apex:outputPanel>
-        
-        </apex:pageBlocksectionItem>
-        
-        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}"/>
-        
+        <apex:outputField value="{!Referral__c.Cause_of_Injury__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
         <apex:outputField value="{!Referral__c.Current_Location__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" />
 
-        <!--Left --><apex:outputField value="{!Referral__c.Axis_IV__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />
+        <!--Left --><apex:outputField value="{!Referral__c.Axis_IV__c}" rendered="{!ReferralRecordType != 'CareMeridian'}" />
         <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota', ReferralRecordType != 'CareMeridian')}"/>
         <apex:outputField value="{!Referral__c.Current_Location__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
         <apex:outputField value="{!Referral__c.Street_1__c}" rendered="{!AND(OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota'),referralRecordType!='CareMeridian')}" />
 
-        <!--Left --><apex:outputField value="{!Referral__c.Axis_V__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />
-        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota')}"/>
+        <!--Left --><apex:outputField value="{!Referral__c.Axis_V__c}" rendered="{!ReferralRecordType != 'CareMeridian'}" />
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota')}"/>
         <apex:outputField value="{!Referral__c.Street_1__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
         <apex:outputField value="{!Referral__c.Street_2__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" />
 
@@ -1822,7 +1816,7 @@ function stopRKey(evt) {
           />
           <apex:outputField value="{!Referral__c.Mobility__c}"
             rendered="{!ReferralRecordType = 'Arizona' ||
-                        ReferralRecordType = 'California' ||
+            			ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Iowa' ||
                         ReferralRecordType = 'Illinois' ||
                         ReferralRecordType = 'Minnesota' ||
@@ -1909,7 +1903,7 @@ function stopRKey(evt) {
           />
           <apex:outputField value="{!Referral__c.Accessible_Housing_Needed__c}"
             rendered="{!ReferralRecordType = 'Iowa' ||
-                        ReferralRecordType = 'California' ||
+            			ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Illinois' ||
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'North Dakota' ||
@@ -1997,7 +1991,7 @@ function stopRKey(evt) {
           />
           <apex:outputField value="{!Referral__c.Accessible_Vehicle_Needed__c}"
             rendered="{!ReferralRecordType = 'California' ||
-                        ReferralRecordType = 'Iowa' ||
+            			ReferralRecordType = 'Iowa' ||
                         ReferralRecordType = 'Illinois' ||
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'North Dakota' ||
