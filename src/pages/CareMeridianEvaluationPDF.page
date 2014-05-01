@@ -37,14 +37,14 @@
     
     <style type="text/css" media="print">
                 @page {
-                	@top-center {
+                    @top-center {
                             content: element(header);
                         }
-                	@bottom-left {
+                    @bottom-left {
                            content: element(footer);
                         }
                      }
-				div.header {
+                div.header {
                         padding: 10px;
                         align:right;
                         width:100%;
@@ -68,7 +68,7 @@
 
 
     <apex:pageMessages id="pageMessages" />
-    	<div style="width:100%; text-align:right" class="header"><b>Patient Name:&nbsp;</b><apex:outputText value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Full_Name__c}" /><b>, Page</b> <span class="pagenumber"/><b> of </b><span class="pagecount"/></div>
+        <div style="width:100%; text-align:right" class="header"><b>Patient Name:&nbsp;</b><apex:outputText value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Full_Name__c}" /><b>, Page</b> <span class="pagenumber"/><b> of </b><span class="pagecount"/></div>
     <apex:form id="wholePage">
 <apex:outputpanel rendered="false">
 <apex:inputhidden value="{!Evaluation__c.Employed__c}" />
@@ -119,10 +119,10 @@
 <apex:inputhidden value="{!Evaluation__c.Trach_Placement_Date__c}" />
 <apex:inputhidden value="{!Evaluation__c.FIO2__c}" />
 <apex:inputhidden value="{!Evaluation__c.Mask__c}" />
-<apex:inputhidden value="{!Evaluation__c.Trach_Type__c}" />
+<apex:inputhidden value="{!Evaluation__c.Trach_Type_Other__c}" />
 <apex:inputhidden value="{!Evaluation__c.PEEP__c}" />
 <apex:inputhidden value="{!Evaluation__c.T_Piece__c}" />
-<apex:inputhidden value="{!Evaluation__c.Trach_Size__c}" />
+<apex:inputhidden value="{!Evaluation__c.Trach_Size_Other__c}" />
 <apex:inputhidden value="{!Evaluation__c.TV__c}" />
 <apex:inputhidden value="{!Evaluation__c.Mist_Cooled__c}" />
 <apex:inputhidden value="{!Evaluation__c.Cuffed__c}" />
@@ -323,7 +323,7 @@
             </tr>
             <tr>
                <td>
-  	             <apex:dynamiccomponent id="NumChildHomeField" componentValue="{!ctlmap['number_of_children_at_home__c']}" />
+                 <apex:dynamiccomponent id="NumChildHomeField" componentValue="{!ctlmap['number_of_children_at_home__c']}" />
                </td>
                <td>
                 <apex:dynamiccomponent id="employed" componentValue="{!ctlmap['employed__c']}"/>                     
@@ -336,7 +336,7 @@
            </tr>
            <tr>
              <td>
-             	<apex:dynamiccomponent id="CodeStatusField" componentValue="{!ctlmap['code_status__c']}"/>                     
+                <apex:dynamiccomponent id="CodeStatusField" componentValue="{!ctlmap['code_status__c']}"/>                     
                
              </td>
              <td>
@@ -377,7 +377,7 @@
   </table>
 
    <apex:pageBlockSection columns="1" title="Related Party">
-   	   <apex:outputText value="None" rendered="{!relatedParties.size == 0}" />
+       <apex:outputText value="None" rendered="{!relatedParties.size == 0}" />
        <apex:pageBlockTable value="{!relatedParties}" var="relatedParty" id="relatedPartyTable" border="1" rendered="{!relatedParties.size > 0}">
            <apex:column value="{!relatedParty.Type__c}"/>
            <apex:column value="{!relatedParty.Name}"/>
@@ -419,7 +419,7 @@
           </tr>
           <tr>
               <td>
-				  <apex:dynamiccomponent id="PMHField" componentValue="{!ctlmap['pmh__c']}" />
+                  <apex:dynamiccomponent id="PMHField" componentValue="{!ctlmap['pmh__c']}" />
               </td>
               <td>
                   <apex:dynamiccomponent id="PrecautionsField" componentValue="{!ctlmap['precautions__c']}" />
@@ -430,7 +430,7 @@
       <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Surgery Detail" formId="{!$Component.wholePage}" uniqueId="surgery" isPdf="true" />
       <br />
       <apex:pageBlockSection columns="1">
-      	<apex:dynamiccomponent id="ClinicalCourseField" componentValue="{!ctlmap['clinical_course__c']}" />
+        <apex:dynamiccomponent id="ClinicalCourseField" componentValue="{!ctlmap['clinical_course__c']}" />
         <apex:dynamiccomponent id="detailscomp" componentValue="{!ctlmap['details_section_completed__c']}" />
       </apex:pageBlockSection>
   </apex:pageBlock>
@@ -451,8 +451,8 @@
         <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Radiology Detail" formId="{!$Component.wholePage}" uniqueId="radiology" isPdf="true" />
         <br />
         <apex:pageBlockSection columns="1">
-        	<apex:dynamiccomponent id="commentsfield" componentValue="{!ctlmap['diagnostics_comments__c']}" />
-        	<apex:dynamiccomponent componentValue="{!ctlmap['diagnostics_section_completed__c']}" />
+            <apex:dynamiccomponent id="commentsfield" componentValue="{!ctlmap['diagnostics_comments__c']}" />
+            <apex:dynamiccomponent componentValue="{!ctlmap['diagnostics_section_completed__c']}" />
         </apex:pageBlockSection>
     </apex:pageBlock>
 <hr />
@@ -473,11 +473,11 @@
         <apex:dynamiccomponent id="pca" componentValue="{! ctlmap['pca__c']}" /><br />
 </td>
 <td>
-		<br/>
-		<br/>
-		<br/>
-		<apex:dynamiccomponent id="pcarx" componentValue="{!ctlmap['pca_rx__c']}" /><br/>
-		<apex:dynamiccomponent id="pcarate" componentValue="{!ctlmap['pca_rate__c']}" /><br/>
+        <br/>
+        <br/>
+        <br/>
+        <apex:dynamiccomponent id="pcarx" componentValue="{!ctlmap['pca_rx__c']}" /><br/>
+        <apex:dynamiccomponent id="pcarate" componentValue="{!ctlmap['pca_rate__c']}" /><br/>
 </td>
 </tr>
 </table>
@@ -488,8 +488,8 @@
         </tr>
         </table>
 <br />
-		<apex:dynamiccomponent id="marcomments" componentvalue="{!ctlmap['mar_comments__c']}" /><br />
-		<apex:dynamiccomponent id="marcompleted" componentvalue="{!ctlmap['mar_section_completed__c']}" />
+        <apex:dynamiccomponent id="marcomments" componentvalue="{!ctlmap['mar_comments__c']}" /><br />
+        <apex:dynamiccomponent id="marcompleted" componentvalue="{!ctlmap['mar_section_completed__c']}" />
 </apex:pageBlock>
 <hr />
 
@@ -583,7 +583,7 @@
     <tr>
     <td width="50%" style="vertical-align:top">
             
-    	<apex:dynamiccomponent componentvalue="{!ctlmap['dialysis__c']}" /><br/>
+        <apex:dynamiccomponent componentvalue="{!ctlmap['dialysis__c']}" /><br/>
         <apex:dynamiccomponent componentvalue="{!ctlmap['dialysis_type__c']}" /><br/>
         <apex:dynamiccomponent componentvalue="{!ctlmap['dialysis_type_details__c']}" /><br/>
         <apex:dynamiccomponent componentvalue="{!ctlmap['dialysis_onset__c']}"  /><br/>
@@ -618,8 +618,8 @@
     </tr>
     </table>        
     <hr />
-	Nutrition<br/>
-	<apex:dynamiccomponent componentvalue="{!ctlmap['nutrition_route__c']}" />
+    Nutrition<br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['nutrition_route__c']}" />
     <hr />
     
         <apex:dynamiccomponent componentvalue="{!ctlmap['nutrition_comments__c']}" /><br/>
@@ -635,7 +635,7 @@
         <apex:dynamiccomponent componentvalue="{!ctlmap['rash__c']}" />
     </td>
     <td width="50%" style="vertical-align:top">
-    	<br />
+        <br />
         <apex:dynamiccomponent componentvalue="{!ctlmap['rash_description__c']}" /><br />
         <apex:dynamiccomponent componentvalue="{!ctlmap['rash_location__c']}" />
     </td>
@@ -656,7 +656,7 @@
     </tr>
     </table>
     
-    <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Decubiti Detail" formId="{!$Component.wholePage}" uniqueId="decubiti" isPdf="true" />
+    <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="PressureUlcer Detail" formId="{!$Component.wholePage}" uniqueId="decubiti" isPdf="true" />
     <br />
     <table style="width:80%">
     <tr>
@@ -725,9 +725,9 @@
 </tr>
 <tr>
 <td style="vertical-align:top">
-	<apex:dynamiccomponent componentvalue="{!ctlmap['oriented_x_1__c']}" /><br/>
-	<apex:dynamiccomponent componentvalue="{!ctlmap['oriented_x_2__c']}" /><br/>
-	<apex:dynamiccomponent componentvalue="{!ctlmap['oriented_x_3__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['oriented_x_1__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['oriented_x_2__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['oriented_x_3__c']}" /><br/>
 </td>
 <td>
         <apex:dynamiccomponent componentvalue="{!ctlmap['alert__c']}" /><br />
@@ -745,15 +745,15 @@
 </tr>
 <tr>
 <td>
-	<apex:dynamiccomponent componentvalue="{!ctlmap['verbal_stim__c']}" /><br/>
-    	<apex:dynamiccomponent componentvalue="{!ctlmap['auditory_stim__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['verbal_stim__c']}" /><br/>
+        <apex:dynamiccomponent componentvalue="{!ctlmap['auditory_stim__c']}" /><br/>
         <apex:dynamiccomponent componentvalue="{!ctlmap['tactile_stim__c']}" /><br />
         <apex:dynamiccomponent componentvalue="{!ctlmap['responds_to_pain__c']}" /><br />
 </td>
 <td style="vertical-align:top">
-	<apex:dynamiccomponent componentvalue="{!ctlmap['glasgow_coma_score_current__c']}" /><br/>
-	<apex:dynamiccomponent componentvalue="{!ctlmap['glasgow_coma_score_emergency_dept__c']}" /><br/>
-	<apex:dynamiccomponent componentvalue="{!ctlmap['rancho_level__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['glasgow_coma_score_current__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['glasgow_coma_score_emergency_dept__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['rancho_level__c']}" /><br/>
 </td>
 </tr>
 </table>
@@ -766,16 +766,16 @@
 </tr>
 <tr>
 <td>
-	<apex:dynamiccomponent componentvalue="{!ctlmap['one_step__c']}" /><br/>
-    	<apex:dynamiccomponent componentvalue="{!ctlmap['two_step__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['one_step__c']}" /><br/>
+        <apex:dynamiccomponent componentvalue="{!ctlmap['two_step__c']}" /><br/>
         <apex:dynamiccomponent componentvalue="{!ctlmap['complex__c']}" /><br />
         <apex:dynamiccomponent componentvalue="{!ctlmap['delayed__c']}" /><br />
 </td>
 <td style="vertical-align:top">
-	<apex:dynamiccomponent componentvalue="{!ctlmap['cooperative__c']}" /><br/>
-	<apex:dynamiccomponent componentvalue="{!ctlmap['impulsive__c']}" /><br/>
-	<apex:dynamiccomponent componentvalue="{!ctlmap['inappropriate__c']}" /><br/>
-	<apex:dynamiccomponent componentvalue="{!ctlmap['agitated__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['cooperative__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['impulsive__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['inappropriate__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['agitated__c']}" /><br/>
 </td>
 </tr>
 </table>   
@@ -787,19 +787,19 @@
 </tr>
 <tr>
 <td>
-	<apex:dynamiccomponent componentvalue="{!ctlmap['bed_alarm__c']}" /><br/>
-    	<apex:dynamiccomponent componentvalue="{!ctlmap['restraints__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['bed_alarm__c']}" /><br/>
+        <apex:dynamiccomponent componentvalue="{!ctlmap['restraints__c']}" /><br/>
         <apex:dynamiccomponent componentvalue="{!ctlmap['type_of_restraints__c']}" /><br />
         <apex:dynamiccomponent componentvalue="{!ctlmap['one_to_one_sitter__c']}" /><br />
         <apex:dynamiccomponent componentvalue="{!ctlmap['supervision_level_comments__c']}" /><br />
 </td>
 <td style="vertical-align:top">
-	<apex:dynamiccomponent componentvalue="{!ctlmap['awareness_of_deficits__c']}" /><br/>
-	<apex:dynamiccomponent componentvalue="{!ctlmap['safety_awareness__c']}" /><br/>
-	<apex:dynamiccomponent componentvalue="{!ctlmap['initiation__c']}" /><br/>
-	<apex:dynamiccomponent componentvalue="{!ctlmap['receptive_language__c']}" /><br/>
-	<apex:dynamiccomponent componentvalue="{!ctlmap['verbal_expression__c']}" /><br />
-	<apex:dynamiccomponent componentvalue="{!ctlmap['speech_intelligibility__c']}" /><br />
+    <apex:dynamiccomponent componentvalue="{!ctlmap['awareness_of_deficits__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['safety_awareness__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['initiation__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['receptive_language__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['verbal_expression__c']}" /><br />
+    <apex:dynamiccomponent componentvalue="{!ctlmap['speech_intelligibility__c']}" /><br />
 </td>
 </tr>
 </table>   
@@ -811,12 +811,12 @@
 </tr>
 <tr>
 <td>
-	<apex:dynamiccomponent componentvalue="{!ctlmap['hand_dominance__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['hand_dominance__c']}" /><br/>
     <apex:dynamiccomponent componentvalue="{!ctlmap['visual_perceptual__c']}" /><br/>
 </td>
 <td style="vertical-align:top">
-	<apex:dynamiccomponent componentvalue="{!ctlmap['expressive__c']}" /><br/>
-	<apex:dynamiccomponent componentvalue="{!ctlmap['receptive__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['expressive__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['receptive__c']}" /><br/>
 </td>
 </tr>
 </table>  
@@ -828,19 +828,19 @@
 </tr>
 <tr>
 <td style="vertical-align:top">
-	<apex:dynamiccomponent componentvalue="{!ctlmap['impaired_acuity_r__c']}" /><br/>
-    	<apex:dynamiccomponent componentvalue="{!ctlmap['impaired_acuity_l__c']}" /><br/>
-    	<apex:dynamiccomponent componentvalue="{!ctlmap['neglect_r__c']}" /><br/>
-    	<apex:dynamiccomponent componentvalue="{!ctlmap['neglect_l__c']}" /><br/>
-    	
+    <apex:dynamiccomponent componentvalue="{!ctlmap['impaired_acuity_r__c']}" /><br/>
+        <apex:dynamiccomponent componentvalue="{!ctlmap['impaired_acuity_l__c']}" /><br/>
+        <apex:dynamiccomponent componentvalue="{!ctlmap['neglect_r__c']}" /><br/>
+        <apex:dynamiccomponent componentvalue="{!ctlmap['neglect_l__c']}" /><br/>
+        
 </td>
 <td style="vertical-align:top">
-	<apex:dynamiccomponent componentvalue="{!ctlmap['glasses_for_reading__c']}" /><br/>
-	<apex:dynamiccomponent componentvalue="{!ctlmap['glasses_for_distance__c']}" /><br/>
-	<apex:dynamiccomponent componentvalue="{!ctlmap['glasses_for_multi_focal_use__c']}" /><br/>
-	<apex:dynamiccomponent componentvalue="{!ctlmap['diplopia__c']}" /><br/>
-	<apex:dynamiccomponent componentvalue="{!ctlmap['tracking_r__c']}" /><br/>
-	<apex:dynamiccomponent componentvalue="{!ctlmap['tracking_l__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['glasses_for_reading__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['glasses_for_distance__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['glasses_for_multi_focal_use__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['diplopia__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['tracking_r__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['tracking_l__c']}" /><br/>
 </td>
 </tr>
 </table>  
@@ -919,12 +919,12 @@
      
      <hr />
     <table style="width:80%">
-	<tr>
-	<td style="width:50%">Prosthetics/Orthodics</td>
-	<td></td>
-	</tr>
-	<tr>
-	<td style="vertical-align:top">
+    <tr>
+    <td style="width:50%">Prosthetics/Orthodics</td>
+    <td></td>
+    </tr>
+    <tr>
+    <td style="vertical-align:top">
          <apex:dynamiccomponent componentvalue="{!ctlmap['cast__c']}" /><br />
          <apex:dynamiccomponent componentvalue="{!ctlmap['cast_location__c']}" /><br />
          <apex:dynamiccomponent componentvalue="{!ctlmap['cast_type__c']}" /><br />
@@ -972,23 +972,23 @@
         <apex:dynamiccomponent componentvalue="{!ctlmap['prior_level_of_functioning__c']}" /><br />
     <hr />
     <table style="width:80%">
-	<tr>
-	<td style="width:50%;vertical-align:top">
-		<apex:dynamiccomponent componentvalue="{!ctlmap['therapy_ordered__c']}" /><br />
-	    <apex:dynamiccomponent componentvalue="{!ctlmap['therapy_ordered_pt__c']}" /><br />
+    <tr>
+    <td style="width:50%;vertical-align:top">
+        <apex:dynamiccomponent componentvalue="{!ctlmap['therapy_ordered__c']}" /><br />
+        <apex:dynamiccomponent componentvalue="{!ctlmap['therapy_ordered_pt__c']}" /><br />
         <apex:dynamiccomponent componentvalue="{!ctlmap['therapy_ordered_ot__c']}" /><br />
         <apex:dynamiccomponent componentvalue="{!ctlmap['therapy_ordered_st__c']}" /><br />
         <apex:dynamiccomponent componentvalue="{!ctlmap['therapy_ordered_neuro_psy__c']}" /><br />
     
-	</td>
-	<td style="vertical-align:top">Current Gait/Mobility<br/>	
-	    <apex:dynamiccomponent componentvalue="{!ctlmap['wheel_chair__c']}" /><br />
+    </td>
+    <td style="vertical-align:top">Current Gait/Mobility<br/>   
+        <apex:dynamiccomponent componentvalue="{!ctlmap['wheel_chair__c']}" /><br />
         <apex:dynamiccomponent componentvalue="{!ctlmap['front_wheeled_walker__c']}" /><br />
         <apex:dynamiccomponent componentvalue="{!ctlmap['current_gait_mobility_other__c']}" /><br />
         <apex:dynamiccomponent componentvalue="{!ctlmap['current_gait_mobility_other_comments__c']}" /><br />
     
-	</td>
-	</tr>
+    </td>
+    </tr>
     </table>    
     
     <hr />
@@ -1073,14 +1073,14 @@
              
       </td>
       <td style="vertical-align:top">
-      	Environmental Barriers<br />
+        Environmental Barriers<br />
          <apex:dynamiccomponent componentvalue="{!ctlmap['stairs__c']}" /><br/>
          <apex:dynamiccomponent componentvalue="{!ctlmap['number_of_stairs__c']}" /><br/>
          <apex:dynamiccomponent componentvalue="{!ctlmap['location_of_stairs__c']}" /><br/>
          <apex:dynamiccomponent componentvalue="{!ctlmap['elevator__c']}" /><br/>
          <apex:dynamiccomponent componentvalue="{!ctlmap['living_with__c']}" /><br/>
          <apex:dynamiccomponent componentvalue="{!ctlmap['living_with_employment_status__c']}" /><br/>
-      	
+        
       </td>
       </tr>
       </table>
@@ -1099,7 +1099,7 @@
      
          <apex:outputText value="{!Evaluation__c.Discharge_Plan_Comments__c}" style="padding:10px;" />
          <apex:outputField value="{!Evaluation__c.Evaluation_Date__c}" style="padding:10px;" />
-   		 <apex:dynamiccomponent componentvalue="{!ctlmap['discharge_section_completed__c']}" />      
+         <apex:dynamiccomponent componentvalue="{!ctlmap['discharge_section_completed__c']}" />      
 
      </apex:pageBlockSection>
  </apex:pageBlock>
