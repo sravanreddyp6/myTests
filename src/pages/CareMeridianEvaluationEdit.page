@@ -580,11 +580,11 @@
                             <apex:outputText value="" />
                         </apex:pageBlockSectionItem>
                         <apex:inputField value="{!Evaluation__c.Elimination_Bladder_Continent__c}"
-                            label="Continent"
-                            html-data-rules="{&quot;0&quot;: &quot;{!$Component.eliminationBladderNoContinentDetails}&quot;}" />
+                            label="InContinent"
+                            html-data-rules="{&quot;1&quot;: &quot;{!$Component.eliminationBladderNoContinentDetails}&quot;}" />
                         <apex:inputField value="{!Evaluation__c.Elimination_Bowel_Continent__c}"
-                            label="Continent"
-                            html-data-rules="{&quot;0&quot;: &quot;{!$Component.eliminationBowelNoContinentAppliance}&quot;}" />
+                            label="InContinent"
+                            html-data-rules="{&quot;1&quot;: &quot;{!$Component.eliminationBowelNoContinentAppliance}&quot;}" />
                         <!-- For multipicklist fields, we need to call enableDisableField directly, because the change
                              event is not fired programmatically. -->
                         <apex:inputField value="{!Evaluation__c.Elimination_Bladder_No_Continent_Details__c}"
@@ -608,17 +608,14 @@
                     <hr />
                     <apex:pageBlockSection columns="2">
                         <apex:inputField value="{!Evaluation__c.Dialysis__c}"
-                            html-data-rules="{&quot;1&quot;: [&quot;{!$Component.dialysisType}&quot;, &quot;{!$Component.dialysisTypeDetails}&quot;, &quot;{!$Component.dialysisOnset}&quot;, &quot;{!$Component.dialysisDaysOfTheWeek}&quot;]}" />
-                        <apex:pageBlockSectionItem >
-                            <apex:outputText value="Shunt/Permacath" />
-                            <apex:outputText value="" />
-                        </apex:pageBlockSectionItem>
+                            html-data-rules="{&quot;1&quot;: [&quot;{!$Component.dialysisType}&quot;, &quot;{!$Component.dialysisTypeDetails}&quot;, &quot;{!$Component.dialysisOnset}&quot;, &quot;{!$Component.dialysisDaysOfTheWeek}&quot;]}" /> 
+                        <apex:InputField value="{!Evaluation__c.Shunt_Permacath__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.shuntDatePlaced}&quot;, &quot;{!$Component.shuntLocation}&quot;, &quot;{!$Component.shuntPreviousProvider}&quot;]}" />   
                         <apex:inputField value="{!Evaluation__c.Dialysis_Type__c}" id="dialysisType" />
-                        <apex:inputField value="{!Evaluation__c.Shunt_Permacath_Date_Placed__c}" label="Date Placed" />
+                        <apex:inputField value="{!Evaluation__c.Shunt_Permacath_Date_Placed__c}" label="Date Placed" id="shuntDatePlaced"/>
                         <apex:inputField value="{!Evaluation__c.Dialysis_Type_Details__c}" id="dialysisTypeDetails" />
-                        <apex:inputField value="{!Evaluation__c.Shunt_Permacath_Location__c}" label="Location" />
+                        <apex:inputField value="{!Evaluation__c.Shunt_Permacath_Location__c}" label="Location" id="shuntLocation" />
                         <apex:inputField value="{!Evaluation__c.Dialysis_Onset__c}" id="dialysisOnset" label="Onset" />
-                        <apex:inputField value="{!Evaluation__c.Shunt_Permacath_Previous_Provider__c}" label="Previous Provider" />
+                        <apex:inputField value="{!Evaluation__c.Shunt_Permacath_Previous_Provider__c}" label="Previous Provider" id="shuntPreviousProvider" />
                         <apex:inputField value="{!Evaluation__c.Dialysis_Days_of_the_Week__c}" id="dialysisDaysOfTheWeek" label="Days of the Week" />
                         <apex:pageBlockSectionItem />
                     </apex:pageBlockSection>
@@ -632,7 +629,7 @@
                         <apex:inputField value="{!Evaluation__c.Tube_Feed_Formula__c}" label="Formula" />
                         <apex:inputField value="{!Evaluation__c.Swallowing_Problems__c}"
                             html-data-rules="{&quot;1&quot;: [&quot;{!$Component.dysphagia}&quot;, &quot;{!$Component.aspiration}&quot;, &quot;{!$Component.mbsDate}&quot;, &quot;{!$Component.swallowingProblemsResults}&quot;]}" />
-                        <apex:inputField value="{!Evaluation__c.Tube_Feed_Rate__c}" label="Rate" />
+                        <apex:inputField value="{!Evaluation__c.Tube_Feed_Rate__c}"  />
                         <apex:inputField value="{!Evaluation__c.Dysphagia__c}" id="dysphagia" />
                         <apex:inputField value="{!Evaluation__c.Tube_Feed_PO_Type__c}" label="PO Type" />
                         <apex:inputField value="{!Evaluation__c.Aspiration__c}" id="aspiration" />
@@ -722,7 +719,7 @@
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Burns_Area__c}" id="burnsArea" />
                     </apex:pageBlockSection>
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Decubiti Detail" formId="{!$Component.wholePage}" uniqueId="decubiti" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="PressureUlcer Detail" formId="{!$Component.wholePage}" uniqueId="decubiti" />
                     <apex:pageBlockSection columns="2">
                         <apex:inputField value="{!Evaluation__c.Wound_Vac__c}"
                             html-data-rules="{&quot;1&quot;: [&quot;{!$Component.woundVacFrequency}&quot;, &quot;{!$Component.woundVacDuration}&quot;]}" />
@@ -788,6 +785,8 @@
                         <apex:inputField value="{!Evaluation__c.Tactile_Stim__c}" />
                         <apex:inputField value="{!Evaluation__c.Rancho_Level__c}" />
                         <apex:inputField value="{!Evaluation__c.Responds_To_Pain__c}" label="Pain" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Visual__c}"/>
                     </apex:pageBlockSection>
                     <hr />
                     <apex:pageBlockSection columns="2">
@@ -809,6 +808,10 @@
                         <apex:inputField value="{!Evaluation__c.Agitated__c}" />
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Combative__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Neurological_Confused__c}"/>
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Unresponsive__c}"/>
                     </apex:pageBlockSection>
                     <hr />
                     <apex:pageBlockSection columns="2">
@@ -951,14 +954,20 @@
                             html-data-rules="{&quot;1&quot;: [&quot;{!$Component.castLocation}&quot;, &quot;{!$Component.castType}&quot;, &quot;{!$Component.patientToBringCast}&quot;, &quot;{!$Component.castOrdered}&quot;, &quot;{!$Component.castSchedule}&quot;]}" />
                         <apex:inputField value="{!Evaluation__c.Traction__c}"
                             html-data-rules="{&quot;1&quot;: [&quot;{!$Component.tractionLocation}&quot;, &quot;{!$Component.tractionType}&quot;, &quot;{!$Component.tractionWeight}&quot;, &quot;{!$Component.tractionPinCare}&quot;]}" />
-                        <apex:inputField value="{!Evaluation__c.Cast_Location__c}" id="castLocation" label="Location" />
+                        <apex:inputField value="{!Evaluation__c.Ortho_Cast_Location__c}" id="castLocation" label="Location" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.OthercastLocation}&quot;}" />
+                       
                         <apex:inputField value="{!Evaluation__c.Traction_Location__c}" id="tractionLocation" label="Location" />
-                        <apex:inputField value="{!Evaluation__c.Cast_Type__c}" id="castType" label="Type" />
+                         <apex:inputField value="{!Evaluation__c.Cast_Location__c}" id="OthercastLocation" label="Location (other)" />
+                        
                         <apex:inputField value="{!Evaluation__c.Traction_Type__c}" id="tractionType" label="Type" />
-                        <apex:inputField value="{!Evaluation__c.Patient_to_Bring_Cast__c}" id="patientToBringCast" label="Patient to Bring" />
+                        <apex:inputField value="{!Evaluation__c.Cast_Type__c}" id="castType" label="Type" />
+                        
                         <apex:inputField value="{!Evaluation__c.Traction_Weight__c}" id="tractionWeight" label="Weight" />
-                        <apex:inputField value="{!Evaluation__c.Cast_Ordered__c}" id="castOrdered" label="Ordered" />
+                        <apex:inputField value="{!Evaluation__c.Patient_to_Bring_Cast__c}" id="patientToBringCast" label="Patient to Bring" />
+                       
                         <apex:inputField value="{!Evaluation__c.Traction_Pin_Care__c}" id="tractionPinCare" label="Pin Care" />
+                         <apex:inputField value="{!Evaluation__c.Cast_Ordered__c}" id="castOrdered" label="Ordered" />
+                         <apex:PageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Cast_Schedule__c}" id="castSchedule" label="Schedule" />
                     </apex:pageBlockSection>
                     <hr />
@@ -997,7 +1006,7 @@
                         <apex:inputField value="{!Evaluation__c.Therapy_Ordered__c}"
                             html-data-rules="{&quot;1&quot;: [&quot;{!$Component.pt}&quot;, &quot;{!$Component.ot}&quot;, &quot;{!$Component.st}&quot;, &quot;{!$Component.neuroPsy}&quot;]}" />
                         <apex:pageBlockSectionItem >
-                            <apex:outputText value="Current Gait/Mobility" />
+                            <apex:outputText value="Mobility Devices" />
                             <apex:outputText value="" />
                         </apex:pageBlockSectionItem>
                         <apex:inputField value="{!Evaluation__c.Therapy_Ordered_PT__c}" id="pt" label="PT" />
@@ -1005,8 +1014,11 @@
                         <apex:inputField value="{!Evaluation__c.Therapy_Ordered_OT__c}" id="ot" label="OT" />
                         <apex:inputField value="{!Evaluation__c.Front_Wheeled_Walker__c}" />
                         <apex:inputField value="{!Evaluation__c.Therapy_Ordered_ST__c}" id="st" label="ST" />
-                        <apex:inputField value="{!Evaluation__c.Current_Gait_Mobility_Other__c}" label="Other" html-data-rules="{&quot;1&quot;: &quot;{!$Component.currentGaitMobilityOther}&quot;}" />
+                        <apex:inputField value="{!Evaluation__c.Rehab_Cane__c}"/>
+                       
                         <apex:inputField value="{!Evaluation__c.Therapy_Ordered_Neuro_Psy__c}" id="neuroPsy" label="Neuro Psy" />
+                         <apex:inputField value="{!Evaluation__c.Current_Gait_Mobility_Other__c}" label="Other" html-data-rules="{&quot;1&quot;: &quot;{!$Component.currentGaitMobilityOther}&quot;}" />
+                         <apex:PageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Current_Gait_Mobility_Other_Comments__c}" id="currentGaitMobilityOther" label="Specify Other" />
                     </apex:pageBlockSection>
                     <hr />
@@ -1126,19 +1138,29 @@
                             <apex:outputText value="Environmental Barriers" />
                             <apex:outputText value="" />
                         </apex:pageBlockSectionItem>
-                        <apex:inputField value="{!Evaluation__c.Physician__c}" />
+                        <apex:inputField value="{!Evaluation__c.Discharge_Physician__c}"/>
                         <apex:inputField value="{!Evaluation__c.Stairs__c}"
                             html-data-rules="{&quot;1&quot;: [&quot;{!$Component.numberOfStairs}&quot;, &quot;{!$Component.locationOfStairs}&quot;]}" />
-                        <apex:inputField value="{!Evaluation__c.Nursing__c}" />
+                        <apex:inputField value="{!Evaluation__c.Physician__c}" />
                         <apex:inputField value="{!Evaluation__c.Number_of_Stairs__c}" id="numberOfStairs" />
-                        <apex:inputField value="{!Evaluation__c.OT__c}" />
+                        <apex:inputField value="{!Evaluation__c.Discharge_Nursing__c}"/>
                         <apex:inputField value="{!Evaluation__c.Location_of_Stairs__c}" id="locationOfStairs" />
-                        <apex:inputField value="{!Evaluation__c.PT__c}" />
-                        <apex:inputField value="{!Evaluation__c.Elevator__c}" />
-                        <apex:inputField value="{!Evaluation__c.ST__c}" />
-                        <apex:inputField value="{!Evaluation__c.Living_With__c}" />
-                        <apex:inputField value="{!Evaluation__c.Treatment_Plan_Other__c}" label="Other" />
+                        <apex:inputField value="{!Evaluation__c.Nursing__c}" />
+                        <apex:inputField value="{!Evaluation__c.Elevator__c}" /> 
+                        <apex:inputField value="{!Evaluation__c.Discharge_OT__c}"/>
+                        <apex:inputField value="{!Evaluation__c.Living_With__c}" /> 
+                        <apex:inputField value="{!Evaluation__c.OT__c}" />
                         <apex:inputField value="{!Evaluation__c.Living_With_Employment_Status__c}" />
+                        <apex:inputField Value="{!Evaluation__c.Discharge_PT__c}"/>
+                        <apex:PageBlockSection /> 
+                        <apex:inputField value="{!Evaluation__c.PT__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Discharge_ST__c}"/>
+                        <apex:PageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.ST__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Treatment_Plan_Other__c}" label="Other" />
+                        <apex:PageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Interdisciplinary__c}" />
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.ELOS__c}" />
