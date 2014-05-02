@@ -137,30 +137,30 @@ public with sharing class Shift_Note_Basic {
                 }
                 // if it has been inserted and then was unchecked in this session we must delete that jo record
                 if(childrenScope.containskey(clsG.theGoal.id) && !clsG.inNote ){
-                	system.debug('removing goal: ' + clsG.theGoal.id);
+                    system.debug('removing goal: ' + clsG.theGoal.id);
                     deleteJO.add(childrenScope.get(clsG.theGoal.id)); 
                 }
                 
-	            for(clsPlan_Obj clsO : clsG.objs.values()){
-	            	
-	            	
-	            	// RBO-277 - do not add an objective whose parent goal is not also checked
-	                if(clsO.inNote && clsG.inNote && !childrenScope.containskey(clsO.theObj.id)){
-	                    ProgressNote_ActionPlanChildren_mjo__c tmpObjJoin = new ProgressNote_ActionPlanChildren_mjo__c();
-	                    tmpObjJoin.Progress_Note__c = note.id;
-	                    tmpObjJoin.Objective__c = clsO.theObj.id;
-	                    insertJO.add(tmpObjJoin);                        
-	                }
-	                // delete the objective if it had been selected and is no longer 
-	                if(childrenScope.containskey(clsO.theObj.id) && !clsO.inNote ){
-	                    deleteJO.add(childrenScope.get(clsO.theObj.id)); 
-	                }
-	                
-	                // delete any objectives if the parent goal has been deleted
-	                if(!clsG.inNote && childrenScope.containskey(clsO.theObj.id)) {
-	                	system.debug('removing obj: ' + clsO.theObj.id );
-	                    deleteJO.add(childrenScope.get(clsO.theObj.id));
-	                }                          
+                for(clsPlan_Obj clsO : clsG.objs.values()){
+                    
+                    
+                    // RBO-277 - do not add an objective whose parent goal is not also checked
+                    if(clsO.inNote && clsG.inNote && !childrenScope.containskey(clsO.theObj.id)){
+                        ProgressNote_ActionPlanChildren_mjo__c tmpObjJoin = new ProgressNote_ActionPlanChildren_mjo__c();
+                        tmpObjJoin.Progress_Note__c = note.id;
+                        tmpObjJoin.Objective__c = clsO.theObj.id;
+                        insertJO.add(tmpObjJoin);                        
+                    }
+                    // delete the objective if it had been selected and is no longer 
+                    if(childrenScope.containskey(clsO.theObj.id) && !clsO.inNote ){
+                        deleteJO.add(childrenScope.get(clsO.theObj.id)); 
+                    }
+                    
+                    // delete any objectives if the parent goal has been deleted
+                    if(!clsG.inNote && childrenScope.containskey(clsO.theObj.id)) {
+                        system.debug('removing obj: ' + clsO.theObj.id );
+                        deleteJO.add(childrenScope.get(clsO.theObj.id));
+                    }                          
                     
                     }
             
@@ -220,8 +220,11 @@ public with sharing class Shift_Note_Basic {
         try{
 
             
-            PageReference Note_Pdf_ref = new PageReference('/');
-            Note_Pdf_ref = new PageReference('/apex/Notes_ShiftNote_Pdf');
+            //PageReference Note_Pdf_ref = new PageReference('/');
+         // RBO-285: Commented out the new PageReference() setting of Note_Pdf_ref and used Page.[Page Name] instead, per
+         //          work-around for Spring '14 bug (https://success.salesforce.com/issues_view?id=a1p30000000T3HFAA0).
+            //PageReference Note_Pdf_ref = new PageReference('/apex/Notes_ShiftNote_Pdf');
+            PageReference Note_Pdf_ref = Page.Notes_ShiftNote_Pdf;           
             Note_Pdf_ref.getParameters().put('id', note.id);
             Attachment attachmentPDF = new Attachment();
             attachmentPDF.parentId = note.id;
@@ -240,7 +243,13 @@ public with sharing class Shift_Note_Basic {
                 note.addError(e.getMessage());
                 note.no_approval_needed__c = false;
             }      
-        
+//            catch (Exception e) {
+//            if(!note.No_approval_Needed__c){
+//                return new PageReference('/p/process/Submit?retURL=%2F'+note.id+'&id='+note.id);
+//            }
+//            update note;
+//            return new PageReference('/'+note.id);
+//            }
         return null;
     }
 }

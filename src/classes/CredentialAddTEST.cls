@@ -23,6 +23,22 @@
 private class CredentialAddTEST {
 
     static testMethod void myUnitTest() {
+    	
+    	Credential_Profile__c HealthInspection_Profile = new Credential_Profile__c(
+        	Name = 'Health Inspection',
+        	Required_for_Mentor__c = true,
+        	OLM_Requirement__c = true,
+        	Applies_Requested_Date__c = true,
+        	Applies_Received_Date__c = true,
+        	Applies_Note__c = true,
+        	Applies_Documented_Date__c = true,
+        	DHR_Scope__c = 'Household',
+        	Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 1
+        );
+        insert HealthInspection_Profile;
+    	
         PageReference credAdd = Page.CredentialAdd;
         Test.setCurrentPage(credAdd);
         
@@ -35,6 +51,8 @@ private class CredentialAddTEST {
         ApexPages.currentPage().getParameters().put('contactid', tmnContact.Id);
 
 		CredentialAdd controller = new CredentialAdd();
+		controller.selectedCredId = HealthInspection_Profile.Id;
+		
 		String nextPage = controller.CancelCredAdd().getUrl();
 		
 		System.assertEquals('/apex/Credential?contactid=' + tmnContact.Id, nextPage);
