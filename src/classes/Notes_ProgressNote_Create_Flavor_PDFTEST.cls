@@ -123,8 +123,7 @@ private class Notes_ProgressNote_Create_Flavor_PDFTEST {
 		    System.Debug('pnsToInsertCounter = ' + pnsToInsertCounter);
 		    
 		    System.Assert(listAtchmnts.size()>0,'There are no attachments!');
-		    
-		    System.Assert(listAtchmnts.size() == pnsToInsertCounter, 'The number of attachments inserted does not equal the number of record types!');
+		    System.Assert(listAtchmnts.size() == (pnsToInsertCounter - 4), 'The number of attachments inserted does not equal the number of record types!');
 		    
 		    
 		    ApexPages.StandardController sc = new ApexPages.StandardController( pnsToInsert[0]);

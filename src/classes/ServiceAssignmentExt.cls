@@ -74,13 +74,9 @@ public class ServiceAssignmentExt {
 
 	// to support program effective dates
 	public Date effDate{ get; set;}
+	public Date effEnd { get; set;}
 	public void setEffectiveDate( ) {
-		// support for the action function on front end - just sets effDate from param
-		// need to re-assess current program, location, service code
-		//currentProgram = currentLocation = currentServiceLine = '';
-		//loadProgramList();
 		loadAvailableCodesbyID();
-		system.debug( currentProgram + ',' + currentLocation + ',' + currentServiceLine);
 	}
         // Fidelity Document Properties / Info
     public List<ServiceAssignment_Document_JO__c> sadjos { get; set; }
@@ -137,7 +133,7 @@ public class ServiceAssignmentExt {
         return ref;
     }
     
-    private Boolean pshowDiag, pshowLocation;
+    private Boolean pshowDiag, pshowLocation, pshowCodes;
     private string popGroup; 
     private static Boolean psetFlags = false;
     public Boolean showDiagnosis { get {
@@ -145,6 +141,12 @@ public class ServiceAssignmentExt {
                 psetFlags = setShowFlags();
             }
             return pshowDiag;
+    }}
+    public Boolean showCodes { get {
+            if (! psetFlags ) {
+                psetFlags = setShowFlags();
+            }
+            return pshowCodes;
     }}
     public Boolean showLocation { get {
             if (! psetFlags ) {
@@ -171,8 +173,8 @@ public class ServiceAssignmentExt {
             } else {
             	pOpGroup = tmnUsers[0].Operating_Group__c;
                 pshowDiag = pOpGroup =='Redwood' || pOpGroup =='Cambridge';
-                pshowLocation =  ( pOpGroup =='Redwood' && admission.State__c != 'AZ');
-                
+                pshowLocation =  ( pOpGroup =='Redwood' ); // CTEAE-86 && admission.State__c != 'AZ');
+                pshowCodes = ( pOpGroup != 'Redwood' || admission.State__c == 'AZ');
                 psetFlags = true;
             }
             
@@ -260,7 +262,7 @@ public class ServiceAssignmentExt {
 // START: CONSTRUCTOR
     public ServiceAssignmentExt(ApexPages.StandardController controller) {
 
-        if(ApexPages.currentPage().getParameters().get('save_new')=='1'){
+        if( ApexPages.currentPage() != null && ApexPages.currentPage().getParameters().get('save_new')=='1'){
                 pageHeader = 'Add a Service Assignment';
                 newSA = true;
                 editSA = true;
@@ -283,8 +285,11 @@ public class ServiceAssignmentExt {
                 initialRecord.Person_Being_Served__c = admission.Person_Being_Served__c;
                 initialRecord.RecordTypeId = theRecordType.Id;
                 pbsOwner = admission.Person_Being_Served__r.OwnerId;
-                if (effDate == null)
+                if (effDate == null) {
 					effDate = initialRecord.Start_date__c;
+                }
+                if (effEnd == null )
+                	effEnd = initialRecord.End_date__c;
 				
         }
         else {
@@ -312,11 +317,13 @@ public class ServiceAssignmentExt {
                 recordTypeId = theServAssign.RecordTypeId;
                 pbsOwner = theServAssign.Person_Being_Served__r.OwnerId;
 				effDate = theServAssign.Start_date__c;
+				effEnd = theServAssign.End_date__c;
         }
 
         System.debug('recordType BEFORE LoadData: ' + recordType);
         System.debug('AssessmentOnly BEFORE LoadData: ' + AssessmentOnly);
-		System.debug('Start date:' + effDate);
+		System.debug('Start date:' + effDate + ', End date:' + effEnd);
+		
 
 
         LoadData(theServAssign);
@@ -631,7 +638,7 @@ public class ServiceAssignmentExt {
                         WHERE
                             Document__r.Type__c = 'Fidelity Document'
                             AND Program__c = :theServAssign.Program__c
-                            AND Service_Line__c = :theServAssign.Service_Line__c
+                            //AND Service_Line__c = :theServAssign.Service_Line__c
                             ORDER BY Document__r.Phase_or_Level__c, Document__r.Order__c ];
 
             for(Program_Document_Xref__c p : pdxs) {
@@ -714,7 +721,7 @@ public class ServiceAssignmentExt {
     public void LoadData(Service_Assignment__c localRecord){
        currentID = localRecord.Id;
        if(newSA==false) {
-            currentRecord = [Select start_date__c, Model__c, Program_code__c, Program__c, RecordType.Name, Service_Line__c, Admission__r.State__c, Location_Region__c, service_location__c  From Service_Assignment__c Where Id = :currentID Limit 1];
+            currentRecord = [Select start_date__c, end_date__c, Model__c, Program_code__c, Program__c, RecordType.Name, Service_Line__c, Admission__r.State__c, Location_Region__c, service_location__c  From Service_Assignment__c Where Id = :currentID Limit 1];
             currentState = currentRecord.Admission__r.State__c;
        }
        else {
@@ -744,19 +751,20 @@ public class ServiceAssignmentExt {
        currentProgram = currentRecord.Program__c;
        currentLocation = currentRecord.Location_Region__c;
        currentServiceLine = currentRecord.Service_Line__c;
-       currentProgramID = currentRecord.Program_Code__c;
        effDate = currentRecord.Start_date__c;
-       loadAvailableCodesbyID();
+       effEnd = currentRecord.End_date__c;
+       currentProgramID = currentRecord.Program_Code__c;
+//       loadAvailableCodesbyID(); - this is called by setting currentProgramID
 
        servCodeIdsForXrefsToDelete = new Set<Id>();
-	   loadProgramList();
+	   //loadProgramList();
 		
-                if ( theservassign.referral__c != null)
+         if ( theservassign.referral__c != null)
             referral = [ select id, name, referral_date__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from referral__c where id= :theservassign.referral__c ];
         else
             referral = null;
 
-         if (!newSA) {
+  if (!newSA) {
         admission = [ SELECT Id, Name, State__c, Person_Being_Served__c FROM Admission__c WHERE Id = :theServAssign.Admission__c ];
         plans = [select name, id, createddate, status__c, effective_date__c, target_date__c from Action_Plan__c where Service_Assignment__c = :currentID Order by CreatedDate DESC];
         for(Action_Plan__c aplan: plans){
@@ -765,7 +773,7 @@ public class ServiceAssignmentExt {
                         break;
                 }
         }
-             if (null != activePlan){
+        if (null != activePlan){
                  skillws = [select Action_Plan__r.Name, Start_Date__c
                             from Action_Plan_Worksheet__c
                             where RecordType.Name = 'Weekly Skill Result'
@@ -790,7 +798,7 @@ public void loadProgramList() {
 			// 03/28/14 - make sure only pulling programs that are valid as of SA start date
 			if (effDate != null ) {
 				system.debug( 'Effective date is: ' + effDate);
-	           for(Service_Code__c local : [Select Program__c From Service_Code__c where state__c = :currentState and start_date__c <= :effdate and (end_date__c > :effdate or end_date__c = null )]){
+	           for(Service_Code__c local : [Select Program__c From Service_Code__c where state__c = :currentState and (end_date__c > :effdate or end_date__c = null ) ]){
     	           tmpProgs.Add(Local.Program__c);
         	   }
 			}
@@ -808,20 +816,32 @@ public void loadProgramList() {
 }
 
 	public void loadAvailableCodesbyID() {
-      List<Service_Code__c> listAvailableCodes = new List<Service_Code__c>();
+		
+		Date SAStart = effDate;
+		Date SAEnd = effEnd;
+		if ( SAEnd == null && SAStart != null)
+			SAEnd = Date.newInstance( SAStart.Year() + 10, 1, 1);
+			
+      	List<Service_Code__c> listAvailableCodes = new List<Service_Code__c>();
        AvailableCodes = new Map<Id,Service_Code__c>();
-       system.debug( 'loading codes by: ' + currentprogramID + ', effdate: ' + effdate);
+       
+       if ( effDate == null )
+       	return;
+       	
+       system.debug( 'loading codes by: ' + currentprogramID + ', effdate: ' + SAStart  + ', effend: ' + SAEnd + ', asmt:' + AssessmentOnly +', state: ' + currentState );
         listAvailableCodes = [SELECT Id, Service_Code__c, Service_Value__c, Start_Date__c, End_Date__c, Program__c From Service_Code__c
             WHERE Program_code__c = :currentProgramID
                 AND
-                start_date__c <= :effDate and ( end_date__c > :effDate or end_date__c = null )
+                ( end_date__c > :SAStart or end_date__c = null )
+                AND
+                	start_date__c <= :SAEnd
                 AND
             Assessment_Only__c = :AssessmentOnly
                 AND
             id NOT IN :SelectedCodeIDs
                 AND
             state__c = :currentState
-            ORDER BY Service_Value__c];
+            ORDER BY start_date__c desc, Service_Value__c];
 
        for(Service_Code__c sc : listAvailableCodes) {
         AvailableCodes.put(sc.Id,sc);
@@ -1122,10 +1142,13 @@ public void loadProgramList() {
                     createDiagnoses();
                 
                 if (!showLocation) {
-                    saveServiceCodeSelections();
                     saveContractSelections();
                 }
 
+				if (showCodes || !showLocation) {
+					saveServiceCodeSelections();
+				}
+				
                 editSA = false;
                 theServAssign = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
                             End_Date__c, External_ID__c, Location_Region__c, Model__c, Outcomes__c, Person_Being_Served__c, Phase__c, Phase_of_Treatment__c, Program__c,
@@ -1155,8 +1178,8 @@ public void loadProgramList() {
                 }
 
                 newSA = false;
-                ApexPages.Message myMessage = new ApexPages.Message(ApexPages.Severity.INFO, 'Service Assignment Saved!');
-                ApexPages.addMessage(myMessage);
+               // ApexPages.Message myMessage = new ApexPages.Message(ApexPages.Severity.INFO, 'Service Assignment Saved!');
+               // ApexPages.addMessage(myMessage);
 
                 //return null;
                 PageReference backToServAssignPage = new PageReference('/apex/ServiceAssignmentEditNew?id=' + theServAssign.Id);

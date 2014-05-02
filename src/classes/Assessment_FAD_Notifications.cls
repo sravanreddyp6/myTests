@@ -15,14 +15,26 @@ global class Assessment_FAD_Notifications implements Database.Batchable<sObject>
         SAs = (Service_Assignment__c[])scope;
         date d1 = system.today().addDays(-10);
         List<Assessment__c> assess;
+        set<id> saids = new set<id>();
+        
+        for(Service_Assignment__c theSA: SAs){
+            saids.add(theSA.id);
+        }
+        /*
         SAs = [select Id, Phase_1_Start_Date__c, Person_Being_Served__r.FirstName, Person_Being_Served__r.LastName, 
                     Person_Being_Served__r.OwnerId, Person_Being_Served__r.Owner.Name 
                         from Service_Assignment__c 
                         Where Program__c = 'IFCS' 
-                         AND 
-                        Service_Line__c like '%FCT%'
                          AND
                         Phase_1_Start_Date__c = :d1 ];
+                        
+                        */                       
+        SAs = [select Id, Phase_1_Start_Date__c, Person_Being_Served__r.FirstName, Person_Being_Served__r.LastName, 
+                    Person_Being_Served__r.OwnerId, Person_Being_Served__r.Owner.Name 
+                        from Service_Assignment__c 
+                        Where ID in :saids
+                         AND
+                        Phase_1_Start_Date__c = :d1 ];                        
         assess = [select id, Service_Assignment__c, Phase__c From Assessment__c Where Service_Assignment__c IN :SAs AND Disregard__c = false];
         //Initial Check
         for(Service_Assignment__c theSA: SAs){
@@ -92,10 +104,8 @@ global class Assessment_FAD_Notifications implements Database.Batchable<sObject>
         SAs = [select Id, Phase_1_Start_Date__c, Person_Being_Served__r.FirstName, 
                     Person_Being_Served__r.OwnerId, Person_Being_Served__r.Owner.Name , Person_Being_Served__r.LastName
                         from Service_Assignment__c 
-                        Where Program__c = 'IFCS' 
+                        Where ID in :saids 
                          AND 
-                        Service_Line__c like '%FCT%'
-                         AND
                         Phase_1_Start_Date__c = :d1 ];
         assess = [select id, Service_Assignment__c, Phase__c From Assessment__c Where Service_Assignment__c IN :SAs AND Disregard__c = false];
         //Initial Check
@@ -130,7 +140,7 @@ global class Assessment_FAD_Notifications implements Database.Batchable<sObject>
                 // Optionally append the salesforce.com email signature to the email. 
                 // The email address of the user executing the Apex Code will be used.             
                 mail.setUseSignature(false);      
-                mail.setSubject('A 30 Day FAD Assessment is due');
+                mail.setSubject('A 3 Month FAD Assessment is due');
                 mail.setHtmlBody('Hello ' +
                 theSA.Person_Being_Served__r.Owner.Name + ','+ 
                 '<br/>A FAD Assessment Summary is due for ' + 

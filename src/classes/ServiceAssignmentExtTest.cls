@@ -167,10 +167,16 @@ private class ServiceAssignmentExtTest {
 //		controller.EditServAssign();
 		controller.loadAvailableCodes();
 		controller.saveContractSelections();
-		controller.changeToProgramLocationServiceLine();
-		controller.getMyLocations();
+		controller.showAddLocation();
+//		controller.changeToProgramLocationServiceLine();
+//		controller.getMyLocations();
 		controller.getMyPrograms();
-		controller.getMyServiceLines();
+		
+		ServAssign.Model__c = 'FCT';
+		controller.changeToModel();
+		System.Assert( ServAssign.Program__c == 'IFCS');
+		
+//		controller.getMyServiceLines();
 		controller.getCurrentCodes();
 		controller.SelectedCodeID = servCode.Id;
 		controller.RemoveCode();
@@ -180,10 +186,13 @@ private class ServiceAssignmentExtTest {
 		controller.loadProgramDocXrefs();
         
         system.assert(!controller.showWorksheetBlocks);
+		System.Assert( controller.canCreateWorksheet);
 
 		System.currentPageReference().getParameters().put('save_new', '');
 		sc = new ApexPages.StandardController( ServAssign );
 		controller = new ServiceAssignmentExt( sc );
+		
+		PageReference planpg = controller.NewPlan();
 
     }
     
