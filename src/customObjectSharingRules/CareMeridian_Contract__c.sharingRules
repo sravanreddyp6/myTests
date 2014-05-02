@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectSharingRules xmlns="http://soap.sforce.com/2006/04/metadata">
+    <criteriaBasedRules>
+        <fullName>CareMerdian_Rule</fullName>
+        <sharedTo>
+            <roleAndSubordinates>Care_Meridian</roleAndSubordinates>
+        </sharedTo>
+        <criteriaItems>
+            <field>RecordTypeId</field>
+            <operation>equals</operation>
+            <value>CareMeridian Contracts</value>
+        </criteriaItems>
+        <accessLevel>Edit</accessLevel>
+        <description>This rule will share the CareMeridian Contracts (Record type = CareMeridian) with Role and Subordinates CareMeridian.</description>
+        <name>CareMerdian Rule</name>
+    </criteriaBasedRules>
+    <criteriaBasedRules>
+        <fullName>NeuroRestorative_Role</fullName>
+        <sharedTo>
+            <roleAndSubordinates>NeuroRestorative</roleAndSubordinates>
+        </sharedTo>
+        <criteriaItems>
+            <field>RecordTypeId</field>
+            <operation>equals</operation>
+            <value>NeuroRestorative Contracts</value>
+        </criteriaItems>
+        <accessLevel>Edit</accessLevel>
+        <description>This rule will Share the NeuroRestorative Contracts (Record type = NeuroRestorative) with Role and Sub-ordinates NeuroRestorative.</description>
+        <name>NeuroRestorative Role</name>
+    </criteriaBasedRules>
+</CustomObjectSharingRules>

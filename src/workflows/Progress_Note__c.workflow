@@ -220,8 +220,8 @@
             <type>FieldUpdate</type>
         </actions>
         <active>true</active>
-        <formula>1=1</formula>
-        <triggerType>onCreateOnly</triggerType>
+        <formula>ISNULL(FCT_Phase_String_At_Note_Creation__c)  || FCT_Phase_at_Note_Creation__c = 0</formula>
+        <triggerType>onAllChanges</triggerType>
     </rules>
     <rules>
         <fullName>Set Staff Credentials</fullName>

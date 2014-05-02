@@ -34,14 +34,16 @@ public with sharing class ServAssignFidelityChecklistExtTest {
             Status__c = 'Active',
             Program__c = 'IFCS',
             Service_Line__c = 'Intensive In Home - FCT',
-            Phase__c = 1
+            Phase__c = 1,
+            Model__c = 'FCT'
         );
         insert sa;
 
         Document__c doc = new Document__c(
             Type__c = 'Fidelity Document',
             Order__c = 1,
-            Phase_or_Level__c = 1
+            Phase_or_Level__c = 1,
+            state__c = 'NC'
         );
         insert doc;
 

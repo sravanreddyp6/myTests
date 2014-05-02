@@ -1449,7 +1449,7 @@ Text(Round( Inquiry_Progress_percent__c,2)*100) &amp; &quot;%&quot;</formula>
     <fields>
         <fullName>Number_of_days_since_last_activity__c</fullName>
         <externalId>false</externalId>
-        <formula>today() -  Date_of_Inquiry__c</formula>
+        <formula>today() -   DATEVALUE( LastModifiedDate )</formula>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Number of days since last activity</label>
         <precision>18</precision>
