@@ -153,17 +153,6 @@
         <type>Lookup</type>
     </fields>
     <fields>
-        <fullName>Alias__c</fullName>
-        <externalId>false</externalId>
-        <label>Alias</label>
-        <length>255</length>
-        <required>false</required>
-        <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
-    </fields>
-    <fields>
         <fullName>Appearance__c</fullName>
         <externalId>false</externalId>
         <label>Appearance</label>
@@ -1459,10 +1448,21 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Funding_Source2__c</fullName>
+        <externalId>false</externalId>
+        <formula>Person_Being_Served__r.Other_ID_Description__c</formula>
+        <label>Funding Source</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Funding_Source_Number__c</fullName>
         <externalId>false</externalId>
+        <formula>Person_Being_Served__r.Other_ID__c</formula>
         <label>Funding Source Number</label>
-        <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
@@ -1886,6 +1886,7 @@
         <required>false</required>
         <scale>1</scale>
         <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -2340,6 +2341,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Primary_Diagnosis__c</fullName>
+        <externalId>false</externalId>
+        <label>Primary Diagnosis</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Procedure_Code_MA__c</fullName>
         <externalId>false</externalId>
         <label>Procedure Code</label>
@@ -2557,6 +2569,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Secondary_Diagnosis__c</fullName>
+        <externalId>false</externalId>
+        <label>Secondary Diagnosis</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Service_Assignment__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
@@ -2617,15 +2640,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <label>Service Code Modifier 3</label>
         <picklist>
             <picklistValues>
-                <fullName>Item 1</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Item 2</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Item 3</fullName>
+                <fullName>HR</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -3762,15 +3777,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <picklistValues>
             <picklist>Service_Code_Modifier_3__c</picklist>
             <values>
-                <fullName>Item 1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 3</fullName>
+                <fullName>HR</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -4411,15 +4418,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <picklistValues>
             <picklist>Service_Code_Modifier_3__c</picklist>
             <values>
-                <fullName>Item 1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 3</fullName>
+                <fullName>HR</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -5060,15 +5059,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <picklistValues>
             <picklist>Service_Code_Modifier_3__c</picklist>
             <values>
-                <fullName>Item 1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 3</fullName>
+                <fullName>HR</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -5709,15 +5700,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <picklistValues>
             <picklist>Service_Code_Modifier_3__c</picklist>
             <values>
-                <fullName>Item 1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 3</fullName>
+                <fullName>HR</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -6332,15 +6315,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <picklistValues>
             <picklist>Service_Code_Modifier_3__c</picklist>
             <values>
-                <fullName>Item 1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 3</fullName>
+                <fullName>HR</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -6970,15 +6945,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <picklistValues>
             <picklist>Service_Code_Modifier_3__c</picklist>
             <values>
-                <fullName>Item 1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 3</fullName>
+                <fullName>HR</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7591,15 +7558,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <picklistValues>
             <picklist>Service_Code_Modifier_3__c</picklist>
             <values>
-                <fullName>Item 1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 3</fullName>
+                <fullName>HR</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -8213,15 +8172,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <picklistValues>
             <picklist>Service_Code_Modifier_3__c</picklist>
             <values>
-                <fullName>Item 1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 3</fullName>
+                <fullName>HR</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -8836,15 +8787,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <picklistValues>
             <picklist>Service_Code_Modifier_3__c</picklist>
             <values>
-                <fullName>Item 1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 3</fullName>
+                <fullName>HR</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -9455,15 +9398,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <picklistValues>
             <picklist>Service_Code_Modifier_3__c</picklist>
             <values>
-                <fullName>Item 1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 3</fullName>
+                <fullName>HR</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -10070,15 +10005,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <picklistValues>
             <picklist>Service_Code_Modifier_3__c</picklist>
             <values>
-                <fullName>Item 1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 3</fullName>
+                <fullName>HR</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -10685,15 +10612,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <picklistValues>
             <picklist>Service_Code_Modifier_3__c</picklist>
             <values>
-                <fullName>Item 1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 3</fullName>
+                <fullName>HR</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11275,15 +11194,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <picklistValues>
             <picklist>Service_Code_Modifier_3__c</picklist>
             <values>
-                <fullName>Item 1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 3</fullName>
+                <fullName>HR</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11898,15 +11809,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <picklistValues>
             <picklist>Service_Code_Modifier_3__c</picklist>
             <values>
-                <fullName>Item 1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 3</fullName>
+                <fullName>HR</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12535,15 +12438,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <picklistValues>
             <picklist>Service_Code_Modifier_3__c</picklist>
             <values>
-                <fullName>Item 1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 3</fullName>
+                <fullName>HR</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -13158,15 +13053,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <picklistValues>
             <picklist>Service_Code_Modifier_3__c</picklist>
             <values>
-                <fullName>Item 1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 3</fullName>
+                <fullName>HR</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -13773,15 +13660,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <picklistValues>
             <picklist>Service_Code_Modifier_3__c</picklist>
             <values>
-                <fullName>Item 1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 3</fullName>
+                <fullName>HR</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -14392,15 +14271,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <picklistValues>
             <picklist>Service_Code_Modifier_3__c</picklist>
             <values>
-                <fullName>Item 1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 3</fullName>
+                <fullName>HR</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -15007,15 +14878,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <picklistValues>
             <picklist>Service_Code_Modifier_3__c</picklist>
             <values>
-                <fullName>Item 1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 3</fullName>
+                <fullName>HR</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -15622,15 +15485,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <picklistValues>
             <picklist>Service_Code_Modifier_3__c</picklist>
             <values>
-                <fullName>Item 1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 3</fullName>
+                <fullName>HR</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -16267,15 +16122,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <picklistValues>
             <picklist>Service_Code_Modifier_3__c</picklist>
             <values>
-                <fullName>Item 1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 3</fullName>
+                <fullName>HR</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -16889,15 +16736,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <picklistValues>
             <picklist>Service_Code_Modifier_3__c</picklist>
             <values>
-                <fullName>Item 1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Item 3</fullName>
+                <fullName>HR</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -17595,7 +17434,7 @@ errors.push(&apos;You must populate the &quot;Progress&quot; field before contin
 } 
 
 // WVPN-19 : Start
-if({!ISBLANK(Progress_Note__c.Diagnostic_Code__c)}
+if({!ISBLANK(Progress_Note__c.Primary_Diagnosis__c)}
 &amp;&amp; curRtype[0].DeveloperName == &apos;OH_FCT&apos;){ 
 errors.push(&apos;You must populate the &quot;Diagnostic Code&quot; field before continuing.&apos;); 
 } 
