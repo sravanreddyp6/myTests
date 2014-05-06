@@ -1,0 +1,7 @@
+<!-- This page is here because we need to route Mentor and non-mentors differently
+     (controlled by the action attribute of the page). I (Dang) tried to
+     include this action inside the MentorView page itself, but that leads to
+     an internal server error on SF (maybe because they can't handle circular
+     dependency?) so now the 2 pages are separate.
+-->
+<apex:page standardController="TMN_Contact__c" extensions="MentorViewAllController" action="{!routeRequest}" />
