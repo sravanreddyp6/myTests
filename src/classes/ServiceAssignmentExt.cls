@@ -639,6 +639,7 @@ public class ServiceAssignmentExt {
                             Document__r.Type__c = 'Fidelity Document'
                             AND Program__c = :theServAssign.Program__c
                             //AND Service_Line__c = :theServAssign.Service_Line__c
+                            //AND Document__r.State__c = :currentState
                             ORDER BY Document__r.Phase_or_Level__c, Document__r.Order__c ];
 
             for(Program_Document_Xref__c p : pdxs) {
