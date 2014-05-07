@@ -13,7 +13,7 @@
     }
     .editcol{
         width: 50px;
-    }
+    };a
     .datecol{
         width: 250px;
     }
@@ -53,11 +53,24 @@
 
       <div class="pbHeaderButton">
           <apex:commandButton value="Edit" action="{!EditServAssign}" rendered="{!!editSA && canEditSA}" />
-          <apex:commandButton value="Save" action="{!SaveServAssign}" rendered="{!editSA}" />
+          <apex:actionStatus id="SaveStatus1" >
+		 <apex:facet name="stop">
+		 <apex:outputPanel id="buttons">
+          <apex:commandButton value="Save" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1, myFRM, msgs" rendered="{!editSA}"/>
           &nbsp;
-          <apex:commandButton value="Reset" action="{!ResetPage}" rendered="{!editSA}" />
+         <apex:commandButton value="Reset" action="{!ResetPage}" status="SaveStatus1" rerender="savestatus1, myFRM" rendered="{!editSA}" immediate="true"/>
           &nbsp;
           <apex:commandButton value="Cancel" immediate="true" action="{!CancelServAssignEditNew}" rendered="{!editSA}" />
+
+</apex:outputPanel>
+</apex:facet>
+<apex:facet name="start">
+<apex:outputPanel >
+<apex:image value="/img/loading.gif" style="height: 15px;"/>
+<apex:commandButton value="Processing..." status="SaveStatus1" rendered="{!editSA}" disabled="true"/>
+</apex:outputPanel>
+</apex:facet>
+</apex:actionStatus>
       </div>
     <apex:pageBlockSection id="ServAssignDetail" columns="1" collapsible="false" title="Service Assignment Detail" rendered="{!!AssessmentOnly}">
         <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!!editSA}" />
@@ -348,16 +361,12 @@
         <apex:outputPanel >
             <apex:outputLabel value="Created By" for="CreatedByLink" style="font-size: 75%;font-family: 'Arial','Helvetica',sans-serif; font-weight:bold;" />&nbsp;&nbsp;<apex:outputLink id="CreatedByLink" value="/{!Service_Assignment__c.CreatedBy.Id}">{!Service_Assignment__c.CreatedBy.Name}</apex:outputLink>
             <apex:outputText value=", " rendered="{!Service_Assignment__c.CreatedDate!=null}" />
-            <apex:outputText value="{0,date,MM'/'dd'/'yyyy' 'h':'mm' 'a}">
-                <apex:param value="{!Service_Assignment__c.CreatedDate}" />
-            </apex:outputText>
+            <apex:outputText value=" {!Service_Assignment__c.CreatedDate}" />
         </apex:outputPanel>
         <apex:outputPanel >
             <apex:outputLabel style="font-size: 75%;font-family: 'Arial','Helvetica',sans-serif; font-weight:bold;" value="Last Modified By" for="LastModifiedByLink" />&nbsp;&nbsp;<apex:outputLink id="LastModifiedByLink" value="/{!Service_Assignment__c.LastModifiedBy.Id}">{!Service_Assignment__c.LastModifiedBy.Name}</apex:outputLink>
             <apex:outputText value=", " rendered="{!Service_Assignment__c.LastModifiedDate!=null}" />
-            <apex:outputText value="{0,date,MM'/'dd'/'yyyy' 'h':'mm' 'a}">
-                <apex:param value="{!Service_Assignment__c.LastModifiedDate}" />
-            </apex:outputText>
+            <apex:outputText value=" {!Service_Assignment__c.LastModifiedDate}" />
         </apex:outputPanel>
     </apex:pageBlockSection>
 
@@ -562,16 +571,12 @@ END: Uncomment to have the element collapsed by default -->
         <apex:outputPanel >
             <apex:outputLabel value="Created By" for="CreatedByLink" style="font-size: 75%;font-family: 'Arial','Helvetica',sans-serif; font-weight:bold;" />&nbsp;&nbsp;<apex:outputLink id="CreatedByLink" value="/{!Service_Assignment__c.CreatedBy.Id}">{!Service_Assignment__c.CreatedBy.Name}</apex:outputLink>
             <apex:outputText value=", " rendered="{!Service_Assignment__c.CreatedDate!=null}" />
-            <apex:outputText value="{0,date,MM'/'dd'/'yyyy' 'h':'mm' 'a}">
-                <apex:param value="{!Service_Assignment__c.CreatedDate}" />
-            </apex:outputText>
+            <apex:outputText value=" {!Service_Assignment__c.CreatedDate}" />
         </apex:outputPanel>
         <apex:outputPanel >
             <apex:outputLabel style="font-size: 75%;font-family: 'Arial','Helvetica',sans-serif; font-weight:bold;" value="Last Modified By" for="LastModifiedByLink" />&nbsp;&nbsp;<apex:outputLink id="LastModifiedByLink" value="/{!Service_Assignment__c.LastModifiedBy.Id}">{!Service_Assignment__c.LastModifiedBy.Name}</apex:outputLink>
             <apex:outputText value=", " rendered="{!Service_Assignment__c.LastModifiedDate!=null}" />
-            <apex:outputText value="{0,date,MM'/'dd'/'yyyy' 'h':'mm' 'a}">
-                <apex:param value="{!Service_Assignment__c.LastModifiedDate}" />
-            </apex:outputText>
+            <apex:outputText value=" {!Service_Assignment__c.LastModifiedDate}" />
         </apex:outputPanel>
     </apex:pageBlockSection>
 
@@ -777,19 +782,14 @@ END: Uncomment to have the element collapsed by default -->
      <apex:pageBlockSectionItem >
     <apex:outputLabel value="Created By" />
     <apex:outputPanel layout="none">
-    <apex:outputField value="{!referral.CreatedById}"  />, <apex:outputText value="{0,date, MM/dd/yyyy hh:mm:ss a}">
-       <apex:param value="{!referral.CreatedDate}" />
-    </apex:outputText>
+    <apex:outputField value="{!referral.CreatedById}"  />, <apex:outputText value=" {!referral.CreatedDate}"/>
     </apex:outputPanel>
     </apex:pageBlockSectionItem>
 
      <apex:pageBlockSectionItem >
     <apex:outputLabel value="Last Modified By" />
     <apex:outputPanel layout="none">
-     <apex:outputField value="{!referral.LastModifiedById}"  />, <apex:outputText value="{0,date, MM/dd/yyyy hh:mm:ss a}">
-       <apex:param value="{!referral.LastModifiedDate}" />
-    </apex:outputText>
-
+     <apex:outputField value="{!referral.LastModifiedById}"  />, <apex:outputText value=" {!referral.LastModifiedDate}" />
     </apex:outputPanel>
     </apex:pageBlockSectionItem>
 
@@ -856,6 +856,7 @@ function setFocus() {
 function RefreshPage() {
     window.location.reload();
 }
+
 
 function validateDiagnosis() {
     var errors = '';
