@@ -5,7 +5,10 @@
  Description    : Extension Controller for Referrals
 *******************************************************************************/
 
+
 public with sharing class referral_Controller2 {
+
+  public class FundingSourceDecimalException extends Exception {}
 
   public String OperatingGroup{
       get{
@@ -33,6 +36,8 @@ public with sharing class referral_Controller2 {
   public String referralLocationName { get; set; }
   public Map<Id, Boolean> editableTasks { get; set; }
   public Boolean isCambridge { get; set; }
+  
+     
     public List<Attachment> Attachments{
         get{
 
@@ -384,7 +389,7 @@ public with sharing class referral_Controller2 {
     }
     query = query.substring(0, query.length() - 2);
     query += ' FROM Funding_Source__c WHERE Id=\'' + fundingSource.Id + '\' ORDER BY Type_of_Coverage__c LIMIT 1';
-    fundingSource = Database.query(query);
+    fundingSource = Database.query(query);       
   }
 
   public void saveFundingSource() {
@@ -395,7 +400,15 @@ public with sharing class referral_Controller2 {
     if (String.valueOf(this.fundingSource.Id) == '') {
         this.fundingSource.Id = null;
     }
-    upsert this.fundingSource;
+    
+    try {
+        upsert this.fundingSource;
+    }
+    catch (Exception e) {
+    	 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+        'Please enter zip code in the format: XXXXX or XXXXX-XXXX'));
+    }
+   	
     populateFundingSources();
     this.fundingSource = new Funding_Source__c();
     this.fundingSource.RecordTypeId = Utility.getFundingSourceRecordTypeFromReferral(this.ReferralRecord);
