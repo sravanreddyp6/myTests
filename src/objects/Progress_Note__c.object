@@ -5,10 +5,6 @@
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
-        <actionName>CancelEdit</actionName>
-        <type>Default</type>
-    </actionOverrides>
-    <actionOverrides>
         <actionName>Clone</actionName>
         <type>Default</type>
     </actionOverrides>
@@ -23,19 +19,11 @@
         <type>Visualforce</type>
     </actionOverrides>
     <actionOverrides>
-        <actionName>Follow</actionName>
-        <type>Default</type>
-    </actionOverrides>
-    <actionOverrides>
         <actionName>List</actionName>
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
         <actionName>New</actionName>
-        <type>Default</type>
-    </actionOverrides>
-    <actionOverrides>
-        <actionName>SaveEdit</actionName>
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
@@ -48,7 +36,6 @@
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
         <type>Visualforce</type>
     </actionOverrides>
-    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
     <description>NOTES Progress Notes are the notes taken for a Person Being Served on their progress towards meeting the goals on a Plan. Progress Notes are Master-detail to Plans.</description>
     <enableActivities>true</enableActivities>
@@ -102,7 +89,6 @@
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -112,7 +98,6 @@
         <externalId>false</externalId>
         <label>Abuse Disclosure</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -125,7 +110,6 @@
         <relationshipName>Progress_Notes</relationshipName>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -135,7 +119,6 @@
         <label>Admission State</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -149,8 +132,17 @@
         <relationshipName>Progress_Notes</relationshipName>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Alias__c</fullName>
+        <externalId>false</externalId>
+        <label>Alias</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Appearance__c</fullName>
@@ -172,7 +164,6 @@
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -183,7 +174,6 @@
         <label>Approval Comment</label>
         <required>false</required>
         <trackHistory>true</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>TextArea</type>
     </fields>
     <fields>
@@ -192,7 +182,6 @@
         <label>Approval Status Date</label>
         <required>false</required>
         <trackHistory>true</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
     <fields>
@@ -227,7 +216,6 @@
             <sorted>false</sorted>
         </picklist>
         <trackHistory>true</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -262,7 +250,6 @@
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -271,7 +258,6 @@
         <externalId>false</externalId>
         <label>Assessing</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -281,7 +267,6 @@
         <label>Assessment</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>10</visibleLines>
     </fields>
@@ -293,7 +278,6 @@
         <label>Auth_End_Date</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
     <fields>
@@ -304,7 +288,6 @@
         <label>Auth Episode Number</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -316,7 +299,6 @@
         <label>Service Code</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -331,7 +313,6 @@
         <relationshipName>Progress_Notes</relationshipName>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -340,7 +321,6 @@
         <externalId>false</externalId>
         <label>Behavior &amp; Anger Mgt. Techniques</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -359,7 +339,6 @@
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -394,7 +373,6 @@
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -404,7 +382,6 @@
         <label>Billing ID</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -418,7 +395,6 @@
         <label>Billing Report Concatenation</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -430,7 +406,6 @@
         <label>Medical Diagnosis 2</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -442,7 +417,6 @@
         <label>Modifiers</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -454,7 +428,6 @@
         <label># of Clients</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -466,7 +439,6 @@
         <label>Billable (Inhibit Billing)</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -478,7 +450,6 @@
         <label>Co-Practitioner</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -490,7 +461,6 @@
         <label>Second Co Staff Member</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -502,7 +472,6 @@
         <label>Referring Practitioner</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -514,7 +483,6 @@
         <label>Referring Provider</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -526,7 +494,6 @@
         <label>Medical Diagnosis 1</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -538,7 +505,6 @@
         <label>Units of Service</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -550,7 +516,6 @@
         <label>Group #</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -560,7 +525,6 @@
         <externalId>false</externalId>
         <label>Called Client/Family, left voice message</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -569,7 +533,6 @@
         <externalId>false</externalId>
         <label>Called Client/Family, phone disconnected</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -578,7 +541,6 @@
         <externalId>false</externalId>
         <label>Called collateral, left voice message</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -588,7 +550,6 @@
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -600,7 +561,6 @@
         <required>false</required>
         <scale>0</scale>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -610,7 +570,6 @@
         <externalId>false</externalId>
         <label>Care Coordination</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -619,7 +578,6 @@
         <label>Change in Behavior/Functioning</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>2</visibleLines>
     </fields>
@@ -629,7 +587,6 @@
         <label>Change in Medical Condition</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>2</visibleLines>
     </fields>
@@ -639,7 +596,6 @@
         <label>Change in Substance Abuse</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>2</visibleLines>
     </fields>
@@ -649,7 +605,6 @@
         <label>Change in Thought Process/Orientation</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>2</visibleLines>
     </fields>
@@ -659,7 +614,6 @@
         <label>Changes in Person&apos;s Mood/Affect</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>TextArea</type>
     </fields>
     <fields>
@@ -678,7 +632,6 @@
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -687,7 +640,6 @@
         <externalId>false</externalId>
         <label>Child and Family Team Meeting</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -696,7 +648,6 @@
         <externalId>false</externalId>
         <label>Client/Family home but refusing service</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -705,7 +656,6 @@
         <externalId>false</externalId>
         <label>Client/Family not home left note on door</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -714,7 +664,6 @@
         <externalId>false</externalId>
         <label>Client placed in Substance Abuse program</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -723,7 +672,6 @@
         <externalId>false</externalId>
         <label>Client placed in detention</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -732,7 +680,6 @@
         <externalId>false</externalId>
         <label>Client placed in group home</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -741,7 +688,6 @@
         <externalId>false</externalId>
         <label>Client placed in hospital</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -750,7 +696,6 @@
         <externalId>false</externalId>
         <label>Co-Therapist (unable to bill)</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -777,7 +722,6 @@
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -814,7 +758,6 @@
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -825,7 +768,6 @@
         <required>false</required>
         <scale>0</scale>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -835,7 +777,6 @@
         <externalId>false</externalId>
         <label>Collateral Contacts</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -845,7 +786,6 @@
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -873,7 +813,6 @@
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -882,7 +821,6 @@
         <externalId>false</externalId>
         <label>Community</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -891,7 +829,6 @@
         <externalId>false</externalId>
         <label>Coordinating</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -902,7 +839,6 @@
         <label>Practitioner ID</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -914,7 +850,6 @@
         <label>Created by Employee ID</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -926,7 +861,6 @@
         <label>Created by Title</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -936,7 +870,6 @@
         <externalId>false</externalId>
         <label>Crisis Management</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -945,7 +878,6 @@
         <externalId>false</externalId>
         <label>Crisis Screen</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -954,7 +886,6 @@
         <label>Current Issues/Behaviors</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>3</visibleLines>
     </fields>
@@ -965,7 +896,6 @@
         <label>Curriculum Planning for Upcoming Session</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>4</visibleLines>
     </fields>
@@ -977,7 +907,6 @@
         <label>Curriculum Progress Assessment</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>4</visibleLines>
     </fields>
@@ -987,7 +916,6 @@
         <externalId>false</externalId>
         <label>Cutting Bx</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -997,7 +925,6 @@
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1007,7 +934,6 @@
         <label>DYFS Contacted Date</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
     <fields>
@@ -1030,7 +956,6 @@
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -1039,7 +964,6 @@
         <externalId>false</externalId>
         <label>Danger To Self (Attempt)</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1048,7 +972,6 @@
         <externalId>false</externalId>
         <label>Danger to None</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1057,7 +980,6 @@
         <externalId>false</externalId>
         <label>Danger to Others (Attempt)</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1066,7 +988,6 @@
         <externalId>false</externalId>
         <label>Danger to Others (Ideation)</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1075,7 +996,6 @@
         <externalId>false</externalId>
         <label>Danger to Others (Intent)</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1084,7 +1004,6 @@
         <externalId>false</externalId>
         <label>Danger to Others (Plan)</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1093,7 +1012,6 @@
         <externalId>false</externalId>
         <label>Danger to Property (Attempt)</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1102,7 +1020,6 @@
         <externalId>false</externalId>
         <label>Danger to Property (Intent)</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1111,7 +1028,6 @@
         <externalId>false</externalId>
         <label>Danger to Property (Plan)</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1120,7 +1036,6 @@
         <externalId>false</externalId>
         <label>Danger to Proprety (Ideation)</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1129,7 +1044,6 @@
         <externalId>false</externalId>
         <label>Danger to Self (Ideation)</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1138,7 +1052,6 @@
         <externalId>false</externalId>
         <label>Danger to Self (Intent)</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1147,7 +1060,6 @@
         <externalId>false</externalId>
         <label>Danger to Self (Plan)</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1158,7 +1070,6 @@
         <label>Date Service Started on Plan</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
     <fields>
@@ -1169,7 +1080,6 @@
         <length>8</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1181,7 +1091,6 @@
         <label>Date of Service</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
     <fields>
@@ -1195,7 +1104,6 @@
         <required>false</required>
         <scale>0</scale>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -1205,7 +1113,6 @@
         <externalId>false</externalId>
         <label>Dev. &amp; Impl. Home Based Support Plan</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1215,7 +1122,6 @@
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1229,7 +1135,6 @@
         <required>false</required>
         <scale>0</scale>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -1241,7 +1146,6 @@
         <label>Direct vs Indirect</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1251,7 +1155,6 @@
         <label>Discharge planning/barriers to discharge</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>5</visibleLines>
     </fields>
@@ -1262,7 +1165,6 @@
         <externalId>false</externalId>
         <label>Disregard Note</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1274,7 +1176,6 @@
         <required>false</required>
         <scale>0</scale>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -1285,7 +1186,6 @@
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1295,7 +1195,6 @@
         <externalId>false</externalId>
         <label>Empowerment/Skills Building</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1306,7 +1205,6 @@
         <length>8</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1319,7 +1217,6 @@
         <label>End Time</label>
         <required>true</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>DateTime</type>
     </fields>
     <fields>
@@ -1342,7 +1239,6 @@
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -1351,7 +1247,6 @@
         <externalId>false</externalId>
         <label>FCT Check Off</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1360,7 +1255,6 @@
         <externalId>false</externalId>
         <label>FCT Fidelity Measure</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1372,7 +1266,6 @@
         <label>FCT Phase at Note Creation</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1384,7 +1277,6 @@
         <required>false</required>
         <scale>0</scale>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -1396,7 +1288,6 @@
         <required>false</required>
         <scale>0</scale>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -1406,7 +1297,6 @@
         <externalId>false</externalId>
         <label>Fam. Session</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1415,7 +1305,6 @@
         <externalId>false</externalId>
         <label>Family Assessment Evaluation</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1424,7 +1313,6 @@
         <externalId>false</externalId>
         <label>Family Life Cycle</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1433,7 +1321,6 @@
         <externalId>false</externalId>
         <label>Field Support</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1443,7 +1330,6 @@
         <label>First Name</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1454,7 +1340,6 @@
         <label>Funding Source</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1465,7 +1350,6 @@
         <label>Funding Source Number</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1478,7 +1362,6 @@
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1488,7 +1371,6 @@
         <externalId>false</externalId>
         <label>Generalization</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1498,7 +1380,6 @@
         <label>Guardian Name</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1508,7 +1389,6 @@
         <externalId>false</externalId>
         <label>H/I</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1517,7 +1397,6 @@
         <externalId>false</externalId>
         <label>Healthcare/Medical Note</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1527,7 +1406,6 @@
         <externalId>false</externalId>
         <label>Home</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1537,7 +1415,6 @@
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1548,7 +1425,6 @@
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1558,7 +1434,6 @@
         <externalId>false</externalId>
         <label>Individual Session</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1568,7 +1443,6 @@
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1578,7 +1452,6 @@
         <externalId>false</externalId>
         <label>Intensive Family Therapy</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1587,7 +1460,6 @@
         <label>Interventions</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>10</visibleLines>
     </fields>
@@ -1599,7 +1471,6 @@
         <label>Is Note Late?</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1609,7 +1480,6 @@
         <label>Issue/Behavior Worked on Last Session</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>3</visibleLines>
     </fields>
@@ -1620,7 +1490,6 @@
         <label>Issue/behavior in relation to Plan</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>3</visibleLines>
     </fields>
@@ -1631,7 +1500,6 @@
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1642,7 +1510,6 @@
         <label>Last Name</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1652,7 +1519,6 @@
         <externalId>false</externalId>
         <label>Late Entry</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1675,7 +1541,6 @@
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -1684,7 +1549,6 @@
         <externalId>false</externalId>
         <label>Linking</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1699,7 +1563,6 @@
         <label>Location / Type</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1711,7 +1574,6 @@
         <label>Location / Type</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1722,7 +1584,6 @@
         <label>Location</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1732,7 +1593,6 @@
         <externalId>false</externalId>
         <label>Locked</label>
         <trackHistory>true</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1742,7 +1602,6 @@
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1753,7 +1612,6 @@
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1764,7 +1622,6 @@
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1774,7 +1631,6 @@
         <label>Long-term Goals</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>3</visibleLines>
     </fields>
@@ -1785,7 +1641,6 @@
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1805,7 +1660,6 @@
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -1833,7 +1687,6 @@
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -1844,7 +1697,6 @@
         <required>false</required>
         <scale>0</scale>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -1854,7 +1706,6 @@
         <externalId>false</externalId>
         <label>Member Outreach</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1865,7 +1716,6 @@
         <required>false</required>
         <scale>0</scale>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -1875,19 +1725,16 @@
         <externalId>false</externalId>
         <label>Member Transportation by Staff</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
         <fullName>Mileage__c</fullName>
         <externalId>false</externalId>
         <label>Mileage</label>
-        <precision>7</precision>
+        <length>8</length>
         <required>false</required>
-        <scale>1</scale>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>Number</type>
+        <type>Text</type>
         <unique>false</unique>
     </fields>
     <fields>
@@ -1897,7 +1744,6 @@
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1908,7 +1754,6 @@
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1919,7 +1764,6 @@
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1930,7 +1774,6 @@
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1940,7 +1783,6 @@
         <externalId>false</externalId>
         <label>Monitoring</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -1950,7 +1792,6 @@
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -1970,7 +1811,6 @@
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -1980,7 +1820,6 @@
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -2012,7 +1851,6 @@
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -2022,7 +1860,6 @@
         <label>Narrative Summary / Comments - Next Week</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>4</visibleLines>
     </fields>
@@ -2033,7 +1870,6 @@
         <label>Narrative Summary / Comments - Prev Week</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>3</visibleLines>
     </fields>
@@ -2043,7 +1879,6 @@
         <label>Narrative</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>5</visibleLines>
     </fields>
@@ -2067,7 +1902,6 @@
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -2077,7 +1911,6 @@
         <label>Next Appt. Date / Time</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>DateTime</type>
     </fields>
     <fields>
@@ -2088,7 +1921,6 @@
         <inlineHelpText>Check this field if this progress note can be self-approved.</inlineHelpText>
         <label>No Approval Needed</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -2097,7 +1929,6 @@
         <externalId>false</externalId>
         <label>No Show</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -2109,7 +1940,6 @@
 If this is selected, please fill out the appropriate check boxes to the right.</inlineHelpText>
         <label>Non-Payable Outcome</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -2120,7 +1950,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <label>Notes For Next Visit</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>10</visibleLines>
     </fields>
@@ -2132,7 +1961,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <required>false</required>
         <scale>0</scale>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -2143,7 +1971,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <externalId>false</externalId>
         <label>Office</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -2155,7 +1982,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -2165,7 +1991,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <label>Other Concerns</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>4</visibleLines>
     </fields>
@@ -2176,7 +2001,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -2187,7 +2011,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -2198,7 +2021,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -2209,7 +2031,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <label>Outcome of Interventions</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>TextArea</type>
     </fields>
     <fields>
@@ -2220,7 +2041,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <label>People Present</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>4</visibleLines>
     </fields>
@@ -2234,7 +2054,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <relationshipName>Progress_Notes</relationshipName>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -2244,7 +2063,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <label>Person&apos;s Response to Interventions</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>3</visibleLines>
     </fields>
@@ -2273,7 +2091,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -2286,7 +2103,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <relationshipName>Progress_Notes</relationshipName>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -2295,7 +2111,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <externalId>false</externalId>
         <label>Planning</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -2304,7 +2119,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <externalId>false</externalId>
         <label>Police Contacted</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -2314,7 +2128,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -2325,7 +2138,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -2336,7 +2148,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -2347,7 +2158,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -2367,7 +2177,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -2377,7 +2186,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -2389,7 +2197,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <label>Program Code</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -2401,7 +2208,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <label>Program Detail</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -2412,7 +2218,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <label>Program</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -2422,7 +2227,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <externalId>true</externalId>
         <label>Progress Note Number</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>AutoNumber</type>
     </fields>
     <fields>
@@ -2433,7 +2237,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <label>Progress</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>10</visibleLines>
     </fields>
@@ -2443,7 +2246,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <externalId>false</externalId>
         <label>Psychoeducation</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -2474,7 +2276,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>MultiselectPicklist</type>
         <visibleLines>4</visibleLines>
     </fields>
@@ -2485,7 +2286,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <inlineHelpText>Default Check Box means this service is Billable, if this service is NOT Billable please Uncheck the box</inlineHelpText>
         <label>Purpose/Service is Billable</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -2494,7 +2294,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <label>Purpose of Contact</label>
         <length>32000</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>10</visibleLines>
     </fields>
@@ -2504,7 +2303,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <externalId>false</externalId>
         <label>Ran Away</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -2513,7 +2311,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <label>Risk Assessment Comments</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>10</visibleLines>
     </fields>
@@ -2537,7 +2334,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -2546,7 +2342,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <externalId>false</externalId>
         <label>S/I</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -2555,7 +2350,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <externalId>false</externalId>
         <label>School Suspension</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -2565,7 +2359,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <externalId>false</externalId>
         <label>School</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -2575,7 +2368,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -2589,7 +2381,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <relationshipName>Progress_Notes</relationshipName>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -2612,7 +2403,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -2631,7 +2421,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -2646,7 +2435,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -2659,7 +2447,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <relationshipName>Progress_Notes</relationshipName>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -2678,7 +2465,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -2730,7 +2516,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -2741,7 +2526,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <label>Service Location (other)</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>TextArea</type>
     </fields>
     <fields>
@@ -2781,7 +2565,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -2790,7 +2573,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <label>Short Term Goals Placeholder</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>5</visibleLines>
     </fields>
@@ -2802,7 +2584,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <label>Signature Required</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -2814,7 +2595,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <length>1</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -2838,7 +2618,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -2848,7 +2627,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <label>Skills transferred to consultee</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>3</visibleLines>
     </fields>
@@ -2861,7 +2639,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <label>Staff Credentials Current</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -2872,7 +2649,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -2885,7 +2661,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <relationshipName>Progress_Notes</relationshipName>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -2896,7 +2671,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <length>8</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -2909,7 +2683,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <label>Start Time</label>
         <required>true</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>DateTime</type>
     </fields>
     <fields>
@@ -2928,7 +2701,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <sorted>false</sorted>
         </picklist>
         <trackHistory>true</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -2937,7 +2709,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <externalId>false</externalId>
         <label>Structured Family Assessment</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -2960,7 +2731,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -2969,7 +2739,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <externalId>false</externalId>
         <label>Substance Use/Abuse</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -2992,7 +2761,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -3003,7 +2771,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <required>false</required>
         <scale>0</scale>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -3013,7 +2780,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <externalId>false</externalId>
         <label>Telephone Crisis Response</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -3022,7 +2788,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <externalId>false</externalId>
         <label>Therapeutic Mentoring</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -3041,7 +2806,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -3060,7 +2824,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -3072,7 +2835,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <required>false</required>
         <scale>0</scale>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -3088,7 +2850,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <required>false</required>
         <scale>0</scale>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -3101,7 +2862,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <required>false</required>
         <scale>2</scale>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -3113,7 +2873,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <label>Type (Hidden)</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -3157,7 +2916,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -3189,7 +2947,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -3208,7 +2965,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
@@ -3219,7 +2975,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <required>false</required>
         <scale>2</scale>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -3230,7 +2985,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -3240,7 +2994,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <externalId>false</externalId>
         <label>Violent Bx</label>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <label>Progress Note</label>
@@ -17029,6 +16782,30 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <description>Locked__c</description>
         <errorConditionFormula>AND(Locked__c, NOT(ISCHANGED(Signature_on_File__c)), NOT( $User.Alias = &apos;inte&apos;))</errorConditionFormula>
         <errorMessage>This Progress Note has been locked, it can not be edited.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Mileage_Numeric</fullName>
+        <active>true</active>
+        <errorConditionFormula>NOT(
+  OR(
+     LEN(Mileage__c)=0, 
+     ISNUMBER(Mileage__c)
+    )
+  )</errorConditionFormula>
+        <errorDisplayField>Mileage__c</errorDisplayField>
+        <errorMessage>Please enter only numeric values.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Mileage_OneDecimals</fullName>
+        <active>true</active>
+        <errorConditionFormula>IF(ISNUMBER(Mileage__c), NOT(
+  OR(
+     LEN(Mileage__c)=0, 
+     REGEX(Mileage__c, &quot;[0-9]+(\\.[0-9]?)?&quot;)
+    )
+  ), false)</errorConditionFormula>
+        <errorDisplayField>Mileage__c</errorDisplayField>
+        <errorMessage>Please enter only one digit decimal.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>NC_IFCS_Non_Payable_Check</fullName>
