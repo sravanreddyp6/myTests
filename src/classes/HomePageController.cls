@@ -168,7 +168,7 @@ public with sharing class HomePageController{
             return personsBeingServedViews;
         }
         personsBeingServedViews = new Map<String, String>();
-        String query = 'SELECT ID FROM Account';
+        String query = 'SELECT ID FROM Account limit 100';	// 05/06/14 - set limit to prevent governor limit overrun
         ApexPages.StandardSetController con = new ApexPages.StandardSetController(Database.getQueryLocator(query));
         SelectOption[] options = con.getListViewOptions();
         for (SelectOption option : options) {
@@ -194,7 +194,7 @@ public with sharing class HomePageController{
             return ReferralViews;
         }
         ReferralViews = new Map<String, String>();
-        String query2 = 'SELECT ID FROM Referral__c';
+        String query2 = 'SELECT ID FROM Referral__c  limit 100'; // 05/06/14 - set limit to prevent governor limit overrun
         ApexPages.StandardSetController con2 = new ApexPages.StandardSetController(Database.getQueryLocator(query2));
         SelectOption[] options2 = con2.getListViewOptions();
         for (SelectOption option2 : options2) {
@@ -216,7 +216,7 @@ public with sharing class HomePageController{
             return DocViews;
         }
         DocViews = new Map<String, String>();
-        String query1 = 'SELECT ID FROM Document__c';
+        String query1 = 'SELECT ID FROM Document__c  limit 100'; // 05/06/14 - set limit to prevent governor limit overrun
         ApexPages.StandardSetController con1 = new ApexPages.StandardSetController(Database.getQueryLocator(query1));
        
         SelectOption[] options1 = con1.getListViewOptions();
@@ -241,7 +241,7 @@ public with sharing class HomePageController{
             return TMNViews;
         }
         TMNViews = new Map<String, String>();
-        String query4 = 'SELECT ID FROM TMN_Contact__c';
+        String query4 = 'SELECT ID FROM TMN_Contact__c  limit 100'; // 05/06/14 - set limit to prevent governor limit overrun
         ApexPages.StandardSetController con4 = new ApexPages.StandardSetController(Database.getQueryLocator(query4));
        
         SelectOption[] options4 = con4.getListViewOptions();

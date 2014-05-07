@@ -385,6 +385,8 @@ public class CMContract_Form {
             if (rectype.RecordType.DeveloperName =='NeuroRestorative_Contracts'){
                 isNeuro=True;
                 file = 'NR '+rectype.Name+'.pdf';
+                file = file.replaceAll('[|,||\\,||"||:|~|!|@|#|$|%|^|&|*|_|+|=|<|>|?|\\(|\\)|\\{|\\}|\\;|\\\'"]', ' ');
+               
                 // Assigns the Name of the contract to the NEURO PDF dynamically
                  Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename='+file);
                 if(ApexPages.CurrentPage().getparameters().get('id')!=null){
@@ -399,6 +401,7 @@ public class CMContract_Form {
            if (rectype.RecordType.DeveloperName =='CareMeridian_Contracts'){
                isNeuro=False;
                 file = 'CM '+rectype.Name+'.pdf';
+                file = file.replaceAll('[|,||\\,||"||:|~|!|@|#|$|%|^|&|*|_|+|=|<|>|?|\\(|\\)|\\{|\\}|\\;|\\\'"]', ' ');
                 //Assigns the name of the Contract to the CM COntract PDF Dynamically
                 Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename='+file);
            }
