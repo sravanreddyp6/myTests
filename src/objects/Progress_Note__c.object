@@ -1882,12 +1882,11 @@
         <fullName>Mileage__c</fullName>
         <externalId>false</externalId>
         <label>Mileage</label>
-        <precision>7</precision>
+        <length>8</length>
         <required>false</required>
-        <scale>1</scale>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
-        <type>Number</type>
+        <type>Text</type>
         <unique>false</unique>
     </fields>
     <fields>
@@ -17029,6 +17028,30 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <description>Locked__c</description>
         <errorConditionFormula>AND(Locked__c, NOT(ISCHANGED(Signature_on_File__c)), NOT( $User.Alias = &apos;inte&apos;))</errorConditionFormula>
         <errorMessage>This Progress Note has been locked, it can not be edited.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Mileage_Numeric</fullName>
+        <active>true</active>
+        <errorConditionFormula>NOT(
+  OR(
+     LEN(Mileage__c)=0, 
+     ISNUMBER(Mileage__c)
+    )
+  )</errorConditionFormula>
+        <errorDisplayField>Mileage__c</errorDisplayField>
+        <errorMessage>Please enter only numeric values.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Mileage_OneDecimals</fullName>
+        <active>true</active>
+        <errorConditionFormula>IF(ISNUMBER(Mileage__c), NOT(
+  OR(
+     LEN(Mileage__c)=0, 
+     REGEX(Mileage__c, &quot;[0-9]+(\\.[0-9]?)?&quot;)
+    )
+  ), false)</errorConditionFormula>
+        <errorDisplayField>Mileage__c</errorDisplayField>
+        <errorMessage>Please enter only one digit decimal.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>NC_IFCS_Non_Payable_Check</fullName>
