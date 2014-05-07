@@ -23,7 +23,7 @@
                 <apex:actionSupport event="onchange" reRender="myFrm" status="myStatus" action="{!quicksave}"/>
             </apex:selectList>
           
-          <apex:pageBLockSectionItem rendered="{!!Final && Progress_Note__c.Admission__r.State__c != 'NC' && Progress_Note__c.Admission__r.State__c != 'AZ'}">
+          <apex:pageBLockSectionItem rendered="{!!Final && Progress_Note__c.Admission__r.State__c != 'NC' && Progress_Note__c.Admission__r.State__c != 'AZ' && Progress_Note__c.Admission__r.State__c != 'IN' && Progress_Note__c.Admission__r.State__c != 'MA' && Progress_Note__c.Admission__r.State__c != 'MD' && Progress_Note__c.Admission__r.State__c != 'OH'}">
           <apex:outputLabel for="auth" value="Authorization" />
           <apex:selectList size="1" id="auth" value="{!Progress_Note__c.Authorization__c}"  rendered="{!!Final}" disabled="{!Pending}">
                 
