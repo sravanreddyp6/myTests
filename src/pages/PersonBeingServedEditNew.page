@@ -114,11 +114,6 @@ function stopRKey(evt) {
           {escape: true}
         );
       }
-      
-    function NCStateValidation() {
-        alert( j$('input[id$=relatedPartyEntry_Id]').val())
-    }
-          
 </script>
 
 
@@ -186,15 +181,15 @@ function stopRKey(evt) {
                              columns="2"
                              collapsible="true"   
                              id="pbsOutputFundingSection" >
-
+    
     <apex:repeat value="{!$ObjectType.Contact.FieldSets.Funding_Information}" var="f">
 
         <apex:outputField value="{!Contact[f]}"  rendered="{! NOT(pbsEditModeOn) && (f != 'UCI_ID__c')}" />
         <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn && (f != 'UCI_ID__c')}" required="{!OR(f.required, f.dbrequired)}"/>
-	
+
         <apex:outputField value="{!Contact[f]}"  rendered="{! NOT(pbsEditModeOn) && (f == 'UCI_ID__c') && (Contact.MailingStateCode == 'CA')}" />
         <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn && (f != 'UCI_ID__c') &&  (Contact.MailingStateCode == 'CA')}" required="{!OR(f.required, f.dbrequired)}"/>
-
+    
     </apex:repeat>
     </apex:pageBlockSection>      
     
