@@ -106,6 +106,7 @@
 <apex:inputhidden value="{!Evaluation__c.Details_Section_Completed__c}" />
 <apex:inputhidden value="{!Evaluation__c.Isolation__c}" />
 <apex:inputhidden value="{!Evaluation__c.Isolation_Type__c}" />
+<apex:inputhidden value="{!Evaluation__c.DiagnosisIsolation_Type__c}" />
 <apex:inputhidden value="{!Evaluation__c.Diagnostics_Comments__c}" />
 <apex:inputhidden value="{!Evaluation__c.Diagnostics_Section_Completed__c}" />
 <apex:inputhidden value="{!Evaluation__c.PICC__c}" />
@@ -345,10 +346,32 @@
            <tr>
               <td>
                <apex:dynamiccomponent id="employmentStatus" componentValue="{!ctlmap['employment_status__c']}"/>
+                </td>
+           </tr>           
+           <tr>
+              <td>    
                <apex:dynamiccomponent id="EmploymentFT" componentValue="{!ctlmap['employmentft__c']}"/>
+              </td>
+           </tr>
+           <tr>
+              <td>               
                <apex:dynamiccomponent id="EmploymentPT" componentValue="{!ctlmap['employmentpt__c']}"/>
+              </td>
+           </tr>
+           
+           <tr>
+              <td>           
                <apex:dynamiccomponent id="EmploymentRetired" componentValue="{!ctlmap['employmentretired__c']}"/>
+              </td>
+           </tr>
+           
+           <tr>
+              <td>
                <apex:dynamiccomponent id="EmploymentDisabled" componentValue="{!ctlmap['employmentdisabled__c']}"/>
+              </td>
+           </tr>
+           <tr>
+              <td>           
                <apex:dynamiccomponent id="EmploymentUnknown" componentValue="{!ctlmap['employmentunknown__c']}"/>
               </td>
            </tr>
@@ -430,14 +453,22 @@
           <tr>
               <td>
                   <apex:dynamiccomponent id="HeightField" componentValue="{!ctlmap['height__c']}" />
-                  <apex:dynamiccomponent id="HeightFtField" componentValue="{!ctlmap['heightft__c']}" />
-				  <apex:dynamiccomponent id="HeightInchesField" componentValue="{!ctlmap['heightinches__c']}" />                  
-              </td>                         
+                  <table>
+	                  <tr>
+    		              <td><apex:dynamiccomponent id="HeightFtField" componentValue="{!ctlmap['heightft__c']}" /></td>
+						  <td><apex:dynamiccomponent id="HeightInchesField" componentValue="{!ctlmap['heightinches__c']}" /></td>
+	                  </tr>
+                  </table>
+              </td>                     
               <td>
                   <apex:dynamiccomponent id="WeightField" componentValue="{!ctlmap['weight__c']}" />
-                  <apex:dynamiccomponent id="WeightlbsField" componentValue="{!ctlmap['weightlbs__c']}" />
-                  <apex:dynamiccomponent id="WeightozField" componentValue="{!ctlmap['weightoz__c']}" />
-                  <apex:dynamiccomponent id="WeightkgField" componentValue="{!ctlmap['weightkg__c']}" />
+                  <table>
+	                  <tr>
+    		              <td><apex:dynamiccomponent id="WeightlbsField" componentValue="{!ctlmap['weightlbs__c']}" /></td>
+						  <td><apex:dynamiccomponent id="WeightozField" componentValue="{!ctlmap['weightoz__c']}" /></td>
+						  <td><apex:dynamiccomponent id="WeightkgField" componentValue="{!ctlmap['weightkg__c']}" /></td>
+	                  </tr>
+                  </table>
               </td>
           </tr>
           <tr>
@@ -474,10 +505,52 @@
         <apex:pageBlockSection columns="1">
             <apex:dynamiccomponent id="isolationfield" componentValue="{!ctlmap['isolation__c']}" />
             <apex:dynamiccomponent id="isolationtypefield" componentValue="{!ctlmap['isolation_type__c']}" />
+            <apex:dynamiccomponent id="DiagnosisIsolationType" componentValue="{!ctlmap['diagnosisisolation_type__c']}" />
         </apex:pageBlockSection>
         
         <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Radiology Detail" formId="{!$Component.wholePage}" uniqueId="radiology" isPdf="true" />
         <br />
+        
+		<table style="width:80%" title="IV Type">
+			<tr>
+				<td> <apex:outputLabel id="IV_Type" for="IV_Type" value="IV Type" style="margin:10px;font-weight:bold;" /></td>
+			</tr>
+			<tr>
+				<td><apex:dynamiccomponent id="picc" componentValue="{!ctlmap['picc__c']}" />
+				</td>
+			</tr>
+			<tr>
+				<td><apex:dynamiccomponent id="central" componentValue="{!ctlmap['central__c']}" />
+				</td>
+			</tr>
+			<tr>
+				<td><apex:dynamiccomponent id="heplock" componentValue="{! ctlmap['heplock__c']}" />
+				</td>
+			</tr>
+			<tr>
+				<td><apex:dynamiccomponent id="pca" componentValue="{! ctlmap['pca__c']}" />
+				</td>
+				<td><apex:dynamiccomponent id="pcarx" componentValue="{!ctlmap['pca_rx__c']}" />
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><apex:dynamiccomponent id="pcarate" componentValue="{!ctlmap['pca_rate__c']}" />
+				</td>
+			</tr>
+			<tr>
+				<td><apex:dynamiccomponent id="mars" componentValue="{!ctlmap['mars_attached__c']}" />
+				</td>
+				<td><apex:dynamiccomponent id="recentchanges" componentValue="{!ctlmap['recent_changes__c']}" />
+				</td>
+			</tr>
+			<tr>
+				<td><apex:dynamiccomponent id="marcomments" componentvalue="{!ctlmap['mar_comments__c']}" />
+				</td>
+			</tr>
+		</table>
+		<br />
+        
         <apex:pageBlockSection columns="1">
             <apex:dynamiccomponent id="commentsfield" componentValue="{!ctlmap['diagnostics_comments__c']}" />
             <apex:dynamiccomponent componentValue="{!ctlmap['diagnostics_section_completed__c']}" />
