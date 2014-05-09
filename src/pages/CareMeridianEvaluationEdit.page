@@ -218,9 +218,9 @@
         	if ( currTab == 'detailsTab' || currTab == '')
         		nextTab = 'diagnosticTab';
         	else if( currTab == 'diagnosticTab') 
-        		nextTab =  'marTab';
-        	else if ( currTab == 'marTab' )
-        		nextTab = 	'cardioTab';
+        		nextTab =  'cardioTab';
+        	//else if ( currTab == 'marTab' ) 
+        		//nextTab = 	'cardioTab';
         	else if ( currTab== 'cardioTab')
         		nextTab = 'nutritionTab';
         	else if ( currTab == 'nutritionTab')
@@ -240,11 +240,62 @@
         	}
         	    	     	
     </script>
- 	<Script>
- 	 $('$Component.wholePage').calx();
- 	 
-     
- 	</Script>
+
+
+	<script type="text/javascript">
+	   
+           var lbs;
+           var oz;
+           var kg;
+      
+         function calculate(formField,type){
+          
+           if(type=='lbs'){              
+               var total=getlbsValue() + getOzValue();  
+              // $('[id$=kg]').val(total);                  
+               document.getElementById('j_id0:wholePage:j_id48:j_id93:kg').value = total;
+           }
+           
+           if(type=='oz'){
+               var total=getlbsValue() + getOzValue();
+              // $('[id$=kg]').val(total);  
+               document.getElementById('j_id0:wholePage:j_id48:j_id93:kg').value = total;
+           }
+           
+           if(type=='kg'){
+           		kg = document.getElementById('j_id0:wholePage:j_id48:j_id93:kg').value;
+               //kg=$('[id$=kg]').val();  
+               	var kgtolbs = kg*2.2046;
+              // $('[id$=lbs]').val(kgtolbs);  
+               //$('[id$=oz]').val('0.0');  
+               
+           	document.getElementById('j_id0:wholePage:j_id48:j_id93:lbs').value = kgtolbs;
+           	document.getElementById('j_id0:wholePage:j_id48:j_id93:oz').value = '0.0';
+           }
+        }
+        
+        function getlbsValue(){
+        	lbs = document.getElementById('j_id0:wholePage:j_id48:j_id93:lbs').value;
+             //lbs=$('[id$=lbs]').val();
+             var lbtokgs = 0;
+             if(lbs!=null && lbs!='')
+                 lbtokgs = lbs*0.453592;
+             return lbtokgs;
+        
+        }
+        function getOzValue(){
+        	oz = document.getElementById('j_id0:wholePage:j_id48:j_id93:oz').value;
+             //oz=$('[id$=oz]').val();
+             var oztokg=0;
+             if(oz!=null && oz!='')
+                 oztokg = oz*0.0283495;
+             return oztokg;
+        
+        }
+        
+        
+        
+     </script>
     
     
     <div class="breadcrumb">
@@ -345,12 +396,12 @@
                         <apex:outputField id="wt" value="{!Evaluation__c.Weight__c}" />
                         <apex:outputPanel >
                         	<apex:outputLabel value="Weight at Admission" style="font-weight: Bold; color: #4A4A56; font-size: 10px;"/>
-                        	<apex:inputField id="lbs" value="{!Evaluation__c.Weightlbs__c}" style="margin-left: 25px; width: 60px; !important;"/>
+                        	<apex:inputField id="lbs" value="{!Evaluation__c.Weightlbs__c}" style="margin-left: 25px; width: 60px; !important;" onkeyup="return calculate(this,'lbs');"/>
                         	<apex:outputLabel for="lbs" style="font-weight:Bold; ">{!$ObjectType.Evaluation__c.Fields.Weightlbs__c.label}</apex:outputLabel>
-                        	<apex:inputField id="oz" value="{!Evaluation__c.Weightoz__c}" style="Margin-left: 25px; width:60px;"/>
+                        	<apex:inputField id="oz" value="{!Evaluation__c.Weightoz__c}" style="Margin-left: 25px; width:60px;" onkeyup="return calculate(this,'oz');"/>
                         	<apex:outputLabel for="oz" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Weightoz__c.label}</apex:outputLabel>
                         	<pre/>
-                        	<apex:inputField id="kg" value="{!Evaluation__c.WeightKg__c}" style="margin-left: 180px; width: 60px;" html-data-formula="{&quot;Other&quot;: &quot;{!$Component.lbs}&quot;}"/>
+                        	<apex:inputField id="kg" value="{!Evaluation__c.WeightKg__c}" style="margin-left: 180px; width: 60px;" onkeyup="return calculate(this,'kg');"/>
                         	<apex:outputLabel for="kg" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.WeightKg__c.label}</apex:outputLabel>
                         </apex:outputPanel>  
                         <apex:outputField id="ht" value="{!Evaluation__c.Height__c}" />
