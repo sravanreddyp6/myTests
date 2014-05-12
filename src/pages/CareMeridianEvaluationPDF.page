@@ -313,14 +313,19 @@
 <apex:inputhidden value="{!Evaluation__c.Rehab_Section_Completed__c}" />
 <apex:inputhidden value="{!Evaluation__c.Psycho_Social_Comments__c}" />
 <apex:inputhidden value="{!Evaluation__c.Psycho_Social_Section_Completed__c}" />
+<apex:inputhidden value="{!Evaluation__c.Discharge_Physician__c}" />
 <apex:inputhidden value="{!Evaluation__c.Physician__c}" />
 <apex:inputhidden value="{!Evaluation__c.Stairs__c}" />
+<apex:inputhidden value="{!Evaluation__c.Discharge_Nursing__c}" />
 <apex:inputhidden value="{!Evaluation__c.Nursing__c}" />
 <apex:inputhidden value="{!Evaluation__c.Number_of_Stairs__c}" />
+<apex:inputhidden value="{!Evaluation__c.Discharge_OT__c}" />
 <apex:inputhidden value="{!Evaluation__c.OT__c}" />
 <apex:inputhidden value="{!Evaluation__c.Location_of_Stairs__c}" />
+<apex:inputhidden value="{!Evaluation__c.Discharge_PT__c}" />
 <apex:inputhidden value="{!Evaluation__c.PT__c}" />
 <apex:inputhidden value="{!Evaluation__c.Elevator__c}" />
+<apex:inputhidden value="{!Evaluation__c.Discharge_ST__c}" />
 <apex:inputhidden value="{!Evaluation__c.ST__c}" />
 <apex:inputhidden value="{!Evaluation__c.Living_With__c}" />
 <apex:inputhidden value="{!Evaluation__c.Treatment_Plan_Other__c}" />
@@ -1178,10 +1183,15 @@
      <tr>
      <td style="width:50%; vertical-align:top">
              Treatment Plan<br/>
+         <apex:dynamiccomponent componentvalue="{!ctlmap['discharge_physician__c']}" /><br/>
          <apex:dynamiccomponent componentvalue="{!ctlmap['physician__c']}" /><br/>
+		 <apex:dynamiccomponent componentvalue="{!ctlmap['discharge_nursing__c']}" /><br/>         
          <apex:dynamiccomponent componentvalue="{!ctlmap['nursing__c']}" /><br/>
+		 <apex:dynamiccomponent componentvalue="{!ctlmap['discharge_ot__c']}" /><br/>         
          <apex:dynamiccomponent componentvalue="{!ctlmap['ot__c']}" /><br/>
+		 <apex:dynamiccomponent componentvalue="{!ctlmap['discharge_pt__c']}" /><br/>         
          <apex:dynamiccomponent componentvalue="{!ctlmap['pt__c']}" /><br/>
+         <apex:dynamiccomponent componentvalue="{!ctlmap['discharge_st__c']}" /><br/>         
          <apex:dynamiccomponent componentvalue="{!ctlmap['st__c']}" /><br/>
          <apex:dynamiccomponent componentvalue="{!ctlmap['treatment_plan_other__c']}" /><br/>
          <apex:dynamiccomponent componentvalue="{!ctlmap['interdisciplinary__c']}" /><br/>
