@@ -2,8 +2,6 @@
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
-    <apex:includeScript Value="{!URLFOR($Resource.JQueryCalx,'jquery-calx-master/jquery-calx-1.1.9.js')}"/>
-    <apex:includeScript Value="{!URLFOR($Resource.JQueryCalx,'jquery-calx-master/jquery-calx-1.1.9.min.js')}"/>
     <apex:includeScript value="{!$Resource.AnnotoriousDev}"/>
     <apex:includeScript value="{!$Resource.AnotoJS}"/>
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
@@ -247,36 +245,31 @@
            var lbs;
            var oz;
            var kg;
+           
+          j$=jQuery.noConflict();
       
          function calculate(formField,type){
           
            if(type=='lbs'){              
                var total=getlbsValue() + getOzValue();  
-              // $('[id$=kg]').val(total);                  
-               document.getElementById('j_id0:wholePage:j_id48:j_id93:kg').value = total;
+               j$('[id$=kg]').val(total);                  
            }
            
            if(type=='oz'){
                var total=getlbsValue() + getOzValue();
-              // $('[id$=kg]').val(total);  
-               document.getElementById('j_id0:wholePage:j_id48:j_id93:kg').value = total;
+               j$('[id$=kg]').val(total);  
            }
            
            if(type=='kg'){
-           		kg = document.getElementById('j_id0:wholePage:j_id48:j_id93:kg').value;
-               //kg=$('[id$=kg]').val();  
-               	var kgtolbs = kg*2.2046;
-              // $('[id$=lbs]').val(kgtolbs);  
-               //$('[id$=oz]').val('0.0');  
-               
-           	document.getElementById('j_id0:wholePage:j_id48:j_id93:lbs').value = kgtolbs;
-           	document.getElementById('j_id0:wholePage:j_id48:j_id93:oz').value = '0.0';
+               kg=j$('[id$=kg]').val();  
+               var kgtolbs = kg*2.2046;
+               j$('[id$=lbs]').val(kgtolbs);  					
+               j$('[id$=oz]').val('0.0');  
            }
         }
         
         function getlbsValue(){
-        	lbs = document.getElementById('j_id0:wholePage:j_id48:j_id93:lbs').value;
-             //lbs=$('[id$=lbs]').val();
+             lbs=j$('[id$=lbs]').val();
              var lbtokgs = 0;
              if(lbs!=null && lbs!='')
                  lbtokgs = lbs*0.453592;
@@ -284,8 +277,7 @@
         
         }
         function getOzValue(){
-        	oz = document.getElementById('j_id0:wholePage:j_id48:j_id93:oz').value;
-             //oz=$('[id$=oz]').val();
+             oz=j$('[id$=oz]').val();
              var oztokg=0;
              if(oz!=null && oz!='')
                  oztokg = oz*0.0283495;
