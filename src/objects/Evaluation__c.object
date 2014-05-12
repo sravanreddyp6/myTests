@@ -55,6 +55,19 @@
     <enableHistory>false</enableHistory>
     <enableReports>true</enableReports>
     <fields>
+        <fullName>Admission__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>This field is used to link Admission with Evaluation to serve the purpose of Creating Nurses Assessment.</description>
+        <externalId>false</externalId>
+        <label>Admission</label>
+        <referenceTo>Admission__c</referenceTo>
+        <relationshipLabel>Evaluations</relationshipLabel>
+        <relationshipName>Evaluations</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
         <fullName>Advanced_Directives_Attached__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
@@ -3083,16 +3096,15 @@
     </fields>
     <fields>
         <fullName>Referral__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
         <label>Referral</label>
         <referenceTo>Referral__c</referenceTo>
         <relationshipLabel>Evaluations</relationshipLabel>
         <relationshipName>Evaluations</relationshipName>
-        <relationshipOrder>0</relationshipOrder>
-        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <required>false</required>
         <trackTrending>false</trackTrending>
-        <type>MasterDetail</type>
-        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Rehab_Cane__c</fullName>
@@ -6627,5 +6639,5 @@
         </picklistValues>
     </recordTypes>
     <searchLayouts/>
-    <sharingModel>ControlledByParent</sharingModel>
+    <sharingModel>ReadWrite</sharingModel>
 </CustomObject>
