@@ -1,3 +1,43 @@
-<apex:page >
-
+<apex:page standardcontroller="Evaluation__c">
+ <apex:form >
+   <apex:tabPanel id="wholeTabPanel" >
+	<apex:tab label="Details" name="detailsTab">
+                <apex:pageBlock >
+                    <apex:pageBlockSection columns="2">
+                        <apex:outputField value="{!Evaluation__c.Number_of_Children__c}" />
+                        <apex:outputField value="{!Evaluation__c.Occupation__c}" />
+                        <apex:outputField value="{!Evaluation__c.Number_of_Children_at_Home__c}" />
+                        <apex:outputField value="{!Evaluation__c.Employed__c}" id="employed" />
+                        <apex:pageBlockSectionItem />
+                        <!-- Added by Sravan -->
+                        <apex:outputField value="{!Evaluation__c.EmploymentFT__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.EmploymentPT__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.EmploymentRetired__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.EmploymentDisabled__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.EmploymentUnknown__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Employment_Status__c}" id="employmentStatus" />
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection columns="2">
+                        <apex:outputField value="{!Evaluation__c.Code_Status__c}" />
+                        <apex:outputField value="{!Evaluation__c.Advanced_Directives__c}" />
+                        <apex:outputField value="{!Evaluation__c.Code_Status_Other__c}" label="Specify Other" />
+                        <apex:outputField value="{!Evaluation__c.Advanced_Directives_Attached__c}" />
+                        <apex:outputField value="{!Evaluation__c.Power_of_Attorney__c}" />
+                        <apex:outputField value="{!Evaluation__c.Referral__r.Agency_Name__c}" label="Referral Source" />
+                        <apex:outputField value="{!Evaluation__c.PoA_Name__c}" />
+                        <apex:outputField value="{!Evaluation__c.Referral__r.Case_Manager_Name__c}" />
+                        <apex:outputField value="{!Evaluation__c.PoA_Type__c}" />
+                    </apex:pageBlockSection>
+                    
+                    
+                
+                </apex:pageBlock>
+            </apex:tab>
+            </apex:tabPanel>
+         </apex:form>
 </apex:page>
