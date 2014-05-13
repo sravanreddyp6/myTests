@@ -142,7 +142,7 @@ public with sharing class AdmissionViewExtension {
         String pbsLastName = this.admission.person_being_served__r.LastName;
         if(pbsLastName == null) pbsLastName = '';
         Evaluation__c nurseEval = new Evaluation__c();
-        nurseEVal.Name = pbsLastName + 'Assessment' + DateTime.Now().format('MMddyy');
+        nurseEVal.Name = pbsLastName + 'eval' + DateTime.Now().format('MMddyy');
         nurseEval.RecordTypeId = '012J0000000DCMU';
         nurseEval.Admission__c = this.admission.Id; 
         
@@ -158,7 +158,7 @@ public with sharing class AdmissionViewExtension {
     		
     		if(evaluations == null){
     			
-    			evaluations = [SELECT ID,Name, LastModifiedDate FROM Evaluation__c WHERE Admission__c = :this.admission.Id];
+    			evaluations = [SELECT ID, Name, LastModifiedDate FROM Evaluation__c WHERE Admission__c = :this.admission.Id];
     		}
     		return evaluations;
     	}
