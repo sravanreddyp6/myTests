@@ -74,7 +74,7 @@
             <apex:commandButton rendered="{!(assessmentTypes['Risk'] && riskAssessments.size=0 && canCreateAsmt ) && !showCans}" action="{!createRiskAssess}" value="New Risk Assessment" />
             <apex:commandButton onclick="window.open('/{!Risk_Overview}?pv0={!Admission__c.Name}','_self'); return false;" rendered="{!(assessmentTypes['Risk'] && riskAssessments.size!=0 )}" value="Acknowledgment Overview" />
             <!-- Added by Sravan for Nurses Assessment -->
-            <apex:commandButton rendered="{!(ShowNurseAssesment) && (evaluations == null)}" action="{!addNurAssessment}" value="Nurses Assessment" />
+            <apex:commandButton rendered="{!(ShowNurseAssesment) && (evaluations == null || evaluations.size = 0)}" action="{!addNurAssessment}" value="Nurses Assessment" />
         </div>
         <apex:outputPanel rendered="{!(cansAssessments.size>0)}">
             <h1 style="display: block; margin-bottom: 30px;">CANS Assessments</h1>
@@ -106,13 +106,13 @@
              <h1 style="display: block; margin-bottom: 30px;">Nurses Assessments</h1>
           <apex:pageBlockTable styleclass="pcBody-list" value="{!evaluations}" var="evs">
               <apex:Column headerValue="Name">
-              	<apex:outputLink value="/{!evs.Id}">{!evs.Name}</apex:outputLink>
+              	<apex:outputLink value="/apex/NursingEvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
               </apex:Column>
               <apex:Column value="{!evs.LastModifiedDate}"/>
           </apex:pageBlockTable>
         </apex:outputPanel>
        
-        <apex:outputText value="No records to display" rendered="{!(admission.Assessments__r == null || admission.Assessments__r.size=0) && (evaluations == null)}" />
+        <apex:outputText value="No records to display" rendered="{!(admission.Assessments__r == null || admission.Assessments__r.size=0) && (evaluations.size=0 || evaluations == null)}" />
         </apex:pageBlock>
  <apex:pageBlock title="Service Assignments" >
         <div class="pbHeaderButton">
