@@ -1,43 +1,108 @@
-<apex:page standardcontroller="Evaluation__c">
- <apex:form >
-   <apex:tabPanel id="wholeTabPanel" >
-	<apex:tab label="Details" name="detailsTab">
+<apex:page standardcontroller="Evaluation__c" extensions="NursingEvaluationViewController">
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
+   
+    <style>
+        hr {
+            color: #ECECEC;
+            background-color: #ECECEC;
+            margin-bottom: 20px;
+            margin-top: 20px;
+            border: none;
+            height: 5px;
+        }
+        .evaluationTabHeader .sectionCompleted {
+            background-image: url("{!URLFOR($Resource.EvaluationResources, 'greencheck.png')}");
+            background-repeat: no-repeat;
+            padding-top: 22px;
+        }
+        .evaluationTabHeader .sectionNotCompleted {
+            background-image: url("{!URLFOR($Resource.EvaluationResources, 'whitecheck.png')}");
+            background-repeat: no-repeat;
+            padding-top: 22px;
+        }
+    </style>
+	
+ 	<apex:form id="wholePage">
+ 	<apex:pageMessages id="pageMessages"/>
+    	<apex:tabPanel id="wholeTabPanel" value="{!selectedTab}" styleClass="evaluationTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
+    		<apex:tab label="Details" name="detailsTab" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
                     <apex:pageBlockSection columns="2">
-                        <apex:outputField value="{!Evaluation__c.Number_of_Children__c}" />
-                        <apex:outputField value="{!Evaluation__c.Occupation__c}" />
-                        <apex:outputField value="{!Evaluation__c.Number_of_Children_at_Home__c}" />
-                        <apex:outputField value="{!Evaluation__c.Employed__c}" id="employed" />
-                        <apex:pageBlockSectionItem />
-                        <!-- Added by Sravan -->
-                        <apex:outputField value="{!Evaluation__c.EmploymentFT__c}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.EmploymentPT__c}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.EmploymentRetired__c}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.EmploymentDisabled__c}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.EmploymentUnknown__c}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Employment_Status__c}" id="employmentStatus" />
-                    </apex:pageBlockSection>
-                    <apex:pageBlockSection columns="2">
+                        <apex:outputField value="{!Evaluation__c.Admission__r.Person_Being_Served__r.Name}"/>
+                        <apex:outputField value="{!Evaluation__c.Admission__r.Person_Being_Served__r.Birthdate}"/>
                         <apex:outputField value="{!Evaluation__c.Code_Status__c}" />
-                        <apex:outputField value="{!Evaluation__c.Advanced_Directives__c}" />
-                        <apex:outputField value="{!Evaluation__c.Code_Status_Other__c}" label="Specify Other" />
-                        <apex:outputField value="{!Evaluation__c.Advanced_Directives_Attached__c}" />
-                        <apex:outputField value="{!Evaluation__c.Power_of_Attorney__c}" />
-                        <apex:outputField value="{!Evaluation__c.Referral__r.Agency_Name__c}" label="Referral Source" />
-                        <apex:outputField value="{!Evaluation__c.PoA_Name__c}" />
-                        <apex:outputField value="{!Evaluation__c.Referral__r.Case_Manager_Name__c}" />
-                        <apex:outputField value="{!Evaluation__c.PoA_Type__c}" />
+                         <apex:outputField value="{!Evaluation__c.Advanced_Directives__c}" />
+                         <apex:outputField value="{!Evaluation__c.Code_Status_Other__c}" label="Specify Other" />
+                          <apex:outputField value="{!Evaluation__c.Advanced_Directives_Attached__c}" /> 
                     </apex:pageBlockSection>
-                    
-                    
-                
+                    <apex:pageBlockSection columns="1" title="Related Party">
+                    	<apex:actionFunction name="showAddRelatedParty" action="{!showAddRelatedParty}" status="loadingRelatedPartyStatus" rerender="relatedPartyDialogMainBlock" oncomplete="openModalDialog('{!$Component.relatedPartyDialog}', 'Add Related Party', '{!$Component.wholePage}');" />
+                    	<apex:actionFunction name="showEditRelatedParty" action="{!showEditRelatedParty}" status="loadingRelatedPartyStatus" rerender="relatedPartyDialogMainBlock" oncomplete="openModalDialog('{!$Component.relatedPartyDialog}', 'Edit Related Party', '{!$Component.wholePage}');">
+                        	<apex:param name="currentRelatedPartyId" assignTo="{!currentRelatedPartyId}" value="" />
+                        </apex:actionFunction>
+                        
+                        <apex:outputPanel layout="none">
+                        	<apex:commandButton value="Add Related Party" onclick="showAddRelatedParty(); return false;" />
+                        	<apex:actionStatus id="loadingRelatedPartyStatus">
+                        		<apex:facet name="start">
+                        		  <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                        		</apex:facet>
+                        		<apex:facet name="stop" />
+                            </apex:actionStatus>
+                          </apex:outputPanel>
+                    	  <apex:pageBlockTable value="{!relatedParties}" var="relatedParty" id="relatedPartyTable">
+                    	  	 	<apex:column headerValue="{!IF(relatedParties.size>0, 'Action', '')}" width="50px">
+                    	  	 		<apex:commandLink onclick="showEditRelatedParty('{!relatedParty.Id}'); return false;" value="Edit" />
+                    	  		 </apex:column>
+                    	  	 	<apex:column value="{!relatedParty.Type__c}"/>
+                            	<apex:column value="{!relatedParty.Name}"/>
+                            	<apex:column value="{!relatedParty.Address__c}"/>
+                           	    <apex:column value="{!relatedParty.Email__c}"/>
+                                <apex:column value="{!relatedParty.Phone__c}"/>
+                                <apex:column value="{!relatedParty.Phone_1_Type__c}"/>
+                                <apex:column value="{!relatedParty.Phone_2__c}"/>
+                                <apex:column value="{!relatedParty.Phone_2_Type__c}"/>
+                                <apex:column value="{!relatedParty.Comments__c}"/>
+                         </apex:pageBlockTable>
+                      </apex:pageBlockSection>    
                 </apex:pageBlock>
             </apex:tab>
-            </apex:tabPanel>
-         </apex:form>
+         </apex:tabPanel>
+         <apex:outputPanel id="relatedPartyDialog" style="display:none">
+         	<apex:pageBlock title="Add/Edit Related Party" id="relatedPartyDialogMainBlock">
+         		<apex:pageBlockButtons location="bottom">
+         			<apex:actionFunction name="saveRelatedParty" action="{!saveRelatedParty}" reRender="relatedPartyTable,relatedPartyDialogMainBlock,relatedPartyDialogErrors" status="saveRelatedPartyStatus" oncomplete="afterSave('{!$Component.relatedPartyDialog}', request.options.parameters.keepDialogOpen, showAddRelatedParty);">
+         				<apex:param name="keepDialogOpen" value="" />
+         			</apex:actionFunction>
+         			<apex:commandButton value="Save" onclick="saveRelatedParty(false); return false;" />
+         			<apex:commandButton value="Save & New" onClick="saveRelatedParty(true); return false;" />
+         			<apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.relatedPartyDialog}'); return false;" />
+         			<apex:actionStatus id="saveRelatedPartyStatus">
+         				<apex:facet name="start">
+         					<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+         				</apex:facet>
+         				<apex:facet name="stop" />
+         			</apex:actionStatus>
+         			</apex:pageBlockButtons>
+         			<apex:pageMessages id="relatedPartyDialogErrors" />
+         			<apex:pageBlockSection columns="2">
+         				<apex:outputField value="{!currentRelatedParty.Name}" />
+                    <apex:outputField value="{!currentRelatedParty.Type__c}" />
+                    <apex:outputField value="{!currentRelatedParty.Address__c}" />
+                    <apex:outputField value="{!currentRelatedParty.Email__c}" />
+                    <apex:outputField value="{!currentRelatedParty.Phone__c}" />
+                    <apex:outputField value="{!currentRelatedParty.Phone_1_Type__c}" />
+                    <apex:outputField value="{!currentRelatedParty.Phone_2__c}" />
+                    <apex:outputField value="{!currentRelatedParty.Phone_2_Type__c}" />
+                </apex:pageBlockSection>
+                <apex:PageBlockSection columns="1">
+                	<apex:outputField value="{!currentRelatedParty.Comments__c}" style="width: 90%" />
+                </apex:PageBlockSection>
+              </apex:pageBlock>
+            </apex:outputPanel>
+     </apex:form>
 </apex:page>
