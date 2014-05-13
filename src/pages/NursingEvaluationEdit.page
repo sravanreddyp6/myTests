@@ -1,12 +1,12 @@
 <apex:page standardController="Evaluation__c" extensions="NursingEvaluationEditController">
-    <style>
-     [id$=skinBodyFooter] {
-            clear: both;
-        }
-        [id$=bodyMapOtherComments] {
-            clear: both;
-        }
-        .thinking{
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>   
+	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}"/>
+	<style>
+		.thinking{
             opacity:0.8;
             background-color:#ccc;
             position:fixed;
@@ -19,7 +19,7 @@
         .thinkingwheel{
             position:absolute; left:40%; top:48%; background-color: white; border: 2px solid gray; padding: 2px;
         }
-        hr {
+        .hr {
             color: #ECECEC;
             background-color: #ECECEC;
             margin-bottom: 20px;
@@ -37,66 +37,118 @@
             background-repeat: no-repeat;
             padding-top: 22px;
         }
-        
         .sectionNotCompletedLink, .sectionCompletedLink {
             vertical-align:bottom !important;
             background-position: center top;
             padding-left:10px;
             padding-right:10px;
         }
+    	.mycols{
+    		width: 15%;
+   		    padding-left: 25px;
+   		   cellspacing: 15px;
+    	}
+	</style>
+	<script>
+	 function setFocusOnLoad() {}  // Overwrite VF function to focus on the 1st field
+        jQuery.noConflict();
         
-    .mycols{
-    width: 15%;
-    padding-left: 25px;
-    cellspacing: 15px;
-    
-    }
-</style>
-
-<apex:form >
-
-    <apex:pageBlock >
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Vitals Detail" formId="{!$Component.wholePage}" uniqueId="vitals" />
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Lab Detail" formId="{!$Component.wholePage}" uniqueId="lab" />
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Chem Detail" formId="{!$Component.wholePage}" uniqueId="chem" />
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Micro Detail" formId="{!$Component.wholePage}" uniqueId="micro" />
-                    <apex:pageBlockSection columns="1">
-                        <apex:inputField value="{!Evaluation__c.Isolation__c}" label="Requires Isolation"
-                            html-data-rules="{&quot;1&quot;: &quot;{!$Component.isolationType}&quot;}" />
-                        <apex:outPutField value="{!Evaluation__c.Isolation_Type__c}" />
-                        <apex:inputField value="{!Evaluation__c.DiagnosisIsolation_Type__c}" id="isolationType" /> 
-                    </apex:pageBlockSection>
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Radiology Detail" formId="{!$Component.wholePage}" uniqueId="radiology" />
-                    <apex:pageBlockSection columns="2">
-                        <apex:pageBlockSectionItem >
-                            <apex:outputText value="IV Type" />
-                            <apex:outputText value="" />
-                        </apex:pageBlockSectionItem>
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.PICC__c}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.Central__c}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.HepLock__c}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.PCA__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.pcaRx}&quot;, &quot;{!$Component.pcaRate}&quot;]}" />
-                        <apex:inputField value="{!Evaluation__c.PCA_Rx__c}" id="pcaRx" />
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.PCA_Rate__c}" id="pcaRate" />
-                        <apex:inputField value="{!Evaluation__c.MARs_Attached__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.recentChanges}&quot;}" />
-                        <apex:inputField value="{!Evaluation__c.Recent_Changes__c}" id="recentChanges" />
-                    </apex:pageBlockSection>
-                         <apex:pageBlockSection columns="1">
-                        <apex:inputTextArea value="{!Evaluation__c.MAR_Comments__c}" cols="80" />
-                        <!--  apex:inputField value="{!Evaluation__c.MAR_Section_Completed__c}" /-->
-                        <apex:inputTextArea value="{!Evaluation__c.Diagnostics_Comments__c}" cols="80" />
-                        <apex:inputField value="{!Evaluation__c.Diagnostics_Section_Completed__c}" />
-                    </apex:pageBlockSection>
-                </apex:pageBlock>
-
-
-</apex:form>
-
-
-
+        
+	 function getNextTab( currTab ) {
+            var nextTab = currTab;
+            
+            if ( currTab == 'detailsTab' || currTab == '')
+                nextTab = 'diagnosticTab';
+            else if( currTab == 'diagnosticTab') 
+                nextTab =  'cardioTab';
+            //else if ( currTab == 'marTab' ) 
+                //nextTab =     'cardioTab';
+            else if ( currTab== 'cardioTab')
+                nextTab = 'nutritionTab';
+            else if ( currTab == 'nutritionTab')
+                nextTab = 'skinBodyTab';
+            else if ( currTab == 'skinBodyTab')
+                nextTab = 'neuroTab';
+            else if ( currTab == 'neuroTab')
+                nextTab = 'orthoTab';
+            else if ( currTab == 'orthoTab')
+                nextTab = 'rehabTab';
+            else if ( currTab == 'rehabTab') 
+                nextTab = 'psychoSocialTab';
+            else if ( currTab == 'psychoSocialTab')
+                nextTab = 'dischargePlanTab';
+            
+            return nextTab;
+            }	
+	</script>
+	
+	<apex:form id="wholePage">
+		<apex:pageMessages id="pageMessages" />
+		<apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); removeSpacer()" reRender="pageMessages, wholeTabPanel, buttons">
+			<apex:param name="nextTab" assignTo="{!nextTab}" value="" />
+		</apex:actionFunction>
+		<apex:tabPanel value="{!selectedTab}" id="wholeTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">	
+			<apex:tab label="Details" name="detailsTab" ontabenter="changeTab('detailsTab); return false;" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+				<apex:pageBlock >
+				
+				</apex:pageBlock>
+			</apex:tab>
+			
+			<apex:tab label="Diagnostics" name="diagnosticsTab" ontabenter="changeTab('diagnosticTab'); return false;" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+				<apex:pageBlock >
+				
+				</apex:pageBlock>
+			</apex:tab>
+			
+			
+			<apex:tab label="Cardiopulmonary" name="cardioTab" onTabenter="changeTab(''cardioTab); return false;" styleClass="{!IF(Evaluation__c.Cardio_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+				<apex:pageBlock >
+				
+				</apex:pageBlock>
+			</apex:tab>
+			
+			<apex:tab label="GU/GI/Nutrition" name="nutritionTab" ontabenter="changeTab('nutritionTab'); return false;" styleClass="{!IF(Evaluation__c.Nutrition_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+				<apex:pageBlock >
+				
+				</apex:pageBlock>
+			</apex:tab>
+			
+			<apex:tab label="Skin/Body" name="skinBodyTab" ontabenter="changeTab('skinBodyTab'); return false;" styleClass="{!IF(Evaluation__c.Skin_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+				<apex:pageBlock >
+				
+				</apex:pageBlock>
+			</apex:tab>
+			
+			<apex:tab label="Neurological" name="neuroTab" ontabenter="changeTab('neuroTab'); return false;" styleClass="{!IF(Evaluation__c.Neuro_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+				<apex:pageBlock >
+				
+			    </apex:pageBlock>
+			 </apex:tab>
+			 
+			 <apex:tab label="Ortho" name="orthoTab" ontabenter="changeTab('orthoTab'); return false;" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+			 	<apex:pageBlock >
+			 	
+			 	</apex:pageBlock>
+			 </apex:tab>
+			 
+			<apex:tab label="Rehab" name="rehabTab" ontabenter="changeTab('rehabTab'); return false;" styleClass="{!IF(Evaluation__c.Rehab_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+			 	<apex:pageBlock >
+			 	
+			 	
+			 	</apex:pageBlock>
+			 </apex:tab>
+			 
+			 <apex:tab label="Psycho/Social" name="psychoSocialTab" ontabenter="changeTab('psychoSocialTab'); return false;" styleClass="{!IF(Evaluation__c.Psycho_Social_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+			 	<apex:pageBlock >
+			 	
+			 	</apex:pageBlock>
+			 </apex:tab>
+			 
+			 <apex:tab label="Discharge Plan" name="dischargePlanTab" ontabenter="changeTab('dischargePlanTab'); return false;" styleClass="{!IF(Evaluation__c.Discharge_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+			 	<apex:pageBlock >
+			 	
+			 	</apex:pageBlock>
+			 </apex:tab>
+		</apex:tabPanel>
+	</apex:form>			
 </apex:page>
