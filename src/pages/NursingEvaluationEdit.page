@@ -1,6 +1,6 @@
-<apex:page standardController="Evaluation__c">
-	<style>
-	 [id$=skinBodyFooter] {
+<apex:page standardController="Evaluation__c" extensions="NursingEvaluationEditController">
+    <style>
+     [id$=skinBodyFooter] {
             clear: both;
         }
         [id$=bodyMapOtherComments] {
@@ -39,23 +39,23 @@
         }
         
         .sectionNotCompletedLink, .sectionCompletedLink {
-        	vertical-align:bottom !important;
-        	background-position: center top;
-        	padding-left:10px;
-        	padding-right:10px;
+            vertical-align:bottom !important;
+            background-position: center top;
+            padding-left:10px;
+            padding-right:10px;
         }
         
-	.mycols{
-	width: 15%;
+    .mycols{
+    width: 15%;
     padding-left: 25px;
     cellspacing: 15px;
     
-	}
+    }
 </style>
 
 <apex:form >
 
-	<apex:pageBlock >
+    <apex:pageBlock >
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Vitals Detail" formId="{!$Component.wholePage}" uniqueId="vitals" />
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Lab Detail" formId="{!$Component.wholePage}" uniqueId="lab" />
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Chem Detail" formId="{!$Component.wholePage}" uniqueId="chem" />
@@ -86,7 +86,7 @@
                         <apex:inputField value="{!Evaluation__c.MARs_Attached__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.recentChanges}&quot;}" />
                         <apex:inputField value="{!Evaluation__c.Recent_Changes__c}" id="recentChanges" />
                     </apex:pageBlockSection>
-                    	 <apex:pageBlockSection columns="1">
+                         <apex:pageBlockSection columns="1">
                         <apex:inputTextArea value="{!Evaluation__c.MAR_Comments__c}" cols="80" />
                         <!--  apex:inputField value="{!Evaluation__c.MAR_Section_Completed__c}" /-->
                         <apex:inputTextArea value="{!Evaluation__c.Diagnostics_Comments__c}" cols="80" />
