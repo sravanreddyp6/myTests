@@ -8,7 +8,7 @@ public with sharing class NursingEvaluationEditController {
             return [
                 SELECT ID, Name, Type__c, Address__c, Email__c, Phone__c, Phone_1_Type__c,
                        Phone_2__c, Phone_2_Type__c, Comments__c
-                FROM Related_Party__c WHERE Person_Being_served__c=:this.evaluation.Admission__r.Person_Being_Served__r.Id
+                FROM Related_Party__c WHERE Person_Being_served__c=:this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Id
             ];
         }
     }

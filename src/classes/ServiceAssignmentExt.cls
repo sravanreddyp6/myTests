@@ -133,7 +133,7 @@ public class ServiceAssignmentExt {
         return ref;
     }
     
-    private Boolean pshowDiag, pshowLocation, pshowCodes;
+    private Boolean pshowDiag, pshowLocation, pshowCodes, pshowNurseAssessment;
     private string popGroup; 
     private static Boolean psetFlags = false;
     public Boolean showDiagnosis { get {
@@ -155,6 +155,13 @@ public class ServiceAssignmentExt {
             return pshowLocation;
     }}
     
+    public Boolean showNurseAssessment{get {
+    		if(!psetFlags){
+    			psetFlags = setShowFlags();
+    		}
+    		return pshowNurseAssessment;
+    }}
+    
     private Boolean setShowFlags() {    
         if (! psetFlags) {
             
@@ -170,11 +177,13 @@ public class ServiceAssignmentExt {
                 pshowDiag = false;
                 pshowLocation = false;
                 psetFlags = false;
+                pshowNurseAssessment = false;
             } else {
             	pOpGroup = tmnUsers[0].Operating_Group__c;
                 pshowDiag = pOpGroup =='Redwood' || pOpGroup =='Cambridge';
                 pshowLocation =  ( pOpGroup =='Redwood' ); // CTEAE-86 && admission.State__c != 'AZ');
                 pshowCodes = ( pOpGroup != 'Redwood' || admission.State__c == 'AZ');
+                pshowNurseAssessment = pOpGroup == 'Care Meridian';
                 psetFlags = true;
             }
             
@@ -268,7 +277,7 @@ public class ServiceAssignmentExt {
                 editSA = true;
                 theServAssign = new Service_Assignment__c();
                 initialRecord = new Service_Assignment__c();
-                admission = [ SELECT Id, Name, State__c, Person_Being_Served__c, person_being_served__r.ownerid FROM Admission__c WHERE Id = :ApexPages.currentPage().getParameters().get('admissionID') ];
+                admission = [ SELECT Id, Name, State__c, Person_Being_Served__c,person_being_served__r.LastName, person_being_served__r.ownerid FROM Admission__c WHERE Id = :ApexPages.currentPage().getParameters().get('admissionID') ];
                 admissionId = admission.Id;
                 theServAssign.Admission__c = admission.Id;
                 theServAssign.Name = 'TBD - Autofilled';
@@ -296,6 +305,14 @@ public class ServiceAssignmentExt {
                 pageHeader = 'Service Assignment Detail';
                 newSA = false;
                 theServAssign = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
+                            End_Date__c, Episode__c, External_ID__c, Location_Region__c, Model__c, Outcomes__c, Person_Being_Served__c,Admission__r.Person_Being_Served__r.LastName, Phase__c, Phase_of_Treatment__c, Program__c,
+                            Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
+                            Start_Date__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
+                            Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c,
+                            Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, referral__c, service_location__c
+                                FROM Service_Assignment__c
+                                WHERE Id = :controller.getid()];
+                initialRecord = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,Admission__r.Person_Being_Served__r.LastName,
                             End_Date__c, Episode__c, External_ID__c, Location_Region__c, Model__c, Outcomes__c, Person_Being_Served__c, Phase__c, Phase_of_Treatment__c, Program__c,
                             Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
                             Start_Date__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
@@ -303,15 +320,7 @@ public class ServiceAssignmentExt {
                             Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, referral__c, service_location__c
                                 FROM Service_Assignment__c
                                 WHERE Id = :controller.getid()];
-                initialRecord = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
-                            End_Date__c, Episode__c, External_ID__c, Location_Region__c, Model__c, Outcomes__c, Person_Being_Served__c, Phase__c, Phase_of_Treatment__c, Program__c,
-                            Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
-                            Start_Date__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
-                            Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c,
-                            Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, referral__c, service_location__c
-                                FROM Service_Assignment__c
-                                WHERE Id = :controller.getid()];
-                admission = [ SELECT Id, Name, State__c, Person_Being_Served__c FROM Admission__c WHERE Id = :theServAssign.Admission__c ];
+                admission = [ SELECT Id, Name, State__c, Person_Being_Served__c, Person_Being_Served__r.LastName FROM Admission__c WHERE Id = :theServAssign.Admission__c ];
                 admissionId = admission.Id;
                 recordType = theServAssign.RecordType.Name;
                 recordTypeId = theServAssign.RecordTypeId;
@@ -766,7 +775,7 @@ public class ServiceAssignmentExt {
             referral = null;
 
   if (!newSA) {
-        admission = [ SELECT Id, Name, State__c, Person_Being_Served__c FROM Admission__c WHERE Id = :theServAssign.Admission__c ];
+        admission = [ SELECT Id, Name, State__c, Person_Being_Served__c, Person_being_served__r.LastName FROM Admission__c WHERE Id = :theServAssign.Admission__c ];
         plans = [select name, id, createddate, status__c, effective_date__c, target_date__c from Action_Plan__c where Service_Assignment__c = :currentID Order by CreatedDate DESC];
         for(Action_Plan__c aplan: plans){
                 if (aplan.Status__c == 'Active Final'){
@@ -1215,6 +1224,33 @@ public void loadProgramList() {
         ref.getparameters().put('retURL','/apex/ServiceAssignmentEditNew?id='+this.currentRecord.Id);
         return ref;
 
+    }
+    
+    //Added to show Nurses Assessments from Evaluation__c object
+    public List<Evaluation__c> evaluations{
+        get{
+            
+            if(evaluations == null){
+                
+                evaluations = [SELECT ID, Name, LastModifiedDate FROM Evaluation__c WHERE ServiceAssignment__c = :theServAssign.Id];
+            }
+            return evaluations;
+        }
+       set;
+   }
+   
+   public PageReference addNurAssessment(){
+        String pbsLastName = theServAssign.Admission__r.Person_Being_Served__r.LastName;
+        if(pbsLastName == null) pbsLastName = '';
+        Evaluation__c nurseEval = new Evaluation__c();
+        nurseEVal.Name = pbsLastName + 'eval' + DateTime.Now().format('MMddyy');
+        nurseEval.RecordTypeId = '012J0000000DCMU';
+        nurseEval.ServiceAssignment__c = theServAssign.Id; 
+        
+        insert nurseEval;
+      
+        return new PageReference ('/apex/NursingEvaluationView?id='+nurseEval.id);
+            
     }
 
 

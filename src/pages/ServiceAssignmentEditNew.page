@@ -715,6 +715,19 @@ END: Uncomment to have the element collapsed by default -->
 
     </apex:pageBlockSection>
     </apex:pageBlock>
+    <apex:pageBlock title="Nurses Assessment" rendered="{!showNurseAssessment && !editSA}">
+    		<div class="pbHeaderButton">
+    			<apex:CommandButton value="Nurses Assessment" rendered="{!evaluations == null || evaluations.size =0}" action="{!addNurAssessment}"/>
+    		</div>
+    		<apex:pageBlockTable styleclass="pcBody-list" value="{!evaluations}" var="evs" rendered="{!evaluations.size>0}">
+    			<apex:column headerValue="Name">
+    				<apex:outputLink value="/apex/NursingEvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
+    			</apex:column>
+    			<apex:Column value="{!evs.LastModifiedDate}"/>
+    		</apex:pageBlockTable>
+    	<apex:outputText value="No Records to display" rendered="{!evaluations.size=0 || evaluations == null}" />
+    </apex:pageBlock>
+      
   <!--  Notes section -->
   <a name="Notes" id="Notes"></a>
     <apex:pageBlock id="Notes" title="Notes" rendered="{! !editSA}" >

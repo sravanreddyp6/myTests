@@ -28,6 +28,9 @@
 	
  	<apex:form id="wholePage">
  	<apex:pageMessages id="pageMessages"/>
+ 	<apex:outputPanel rendered="false">
+ 		<Apex:inputhidden value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Id}"/>
+ 	</apex:outputPanel>
     	<apex:tabPanel id="wholeTabPanel" value="{!selectedTab}" styleClass="evaluationTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
     		<apex:tab label="Details" name="detailsTab" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >

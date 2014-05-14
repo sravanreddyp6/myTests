@@ -11,29 +11,6 @@ public with sharing class AdmissionViewExtension {
     public boolean canCreateSvc{ get; set;}
     public boolean canCreateAdm{ get; set;}
     public boolean canCreatePlan{ get; set;}
-    public boolean ShowNurseAssesment {
-        get{
-            return TMNUser == null ? false : TMNUser.Operating_Group__c == 'Care Meridian';
-        } }
-    private TMN_User__c TMNUser_internal;
-    private boolean TMNUser_set = false;
-    private TMN_User__c TMNUser{
-        get{
-            if (!TMNUser_set){
-            TMN_User__c [] users = [
-                SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c = :this.Admission.Person_Being_Served__r.OwnerId LIMIT 1
-            ];
-            if (users.size()== 0){
-                TMNUser_internal = null; 
-            }else {
-                TMNUser_internal = users[0]; 
-            }
-            TMNUser_set = true;
-         }
-          
-         return TMNUser_internal;            
-   }}  
-   
     private void setisEditor() {
         List<UserRecordAccess> acls = [SELECT RecordId, HasEditAccess
                 FROM UserRecordAccess WHERE UserId = :UserInfo.getUserId() AND RecordId = :this.admission.Id ];
@@ -138,31 +115,5 @@ public with sharing class AdmissionViewExtension {
     
     }    
     
-    public PageReference addNurAssessment(){
-        String pbsLastName = this.admission.person_being_served__r.LastName;
-        if(pbsLastName == null) pbsLastName = '';
-        Evaluation__c nurseEval = new Evaluation__c();
-        nurseEVal.Name = pbsLastName + 'eval' + DateTime.Now().format('MMddyy');
-        nurseEval.RecordTypeId = '012J0000000DCMU';
-        nurseEval.Admission__c = this.admission.Id; 
-        
-        insert nurseEval;
-      
-        return new PageReference ('/apex/NursingEvaluationView?id='+nurseEval.id);
-        
-        
-        
-    }
-    public List<Evaluation__c> evaluations{
-    	get{
-    		
-    		if(evaluations == null){
-    			
-    			evaluations = [SELECT ID, Name, LastModifiedDate FROM Evaluation__c WHERE Admission__c = :this.admission.Id];
-    		}
-    		return evaluations;
-    	}
-       set;
-   }
     
 }

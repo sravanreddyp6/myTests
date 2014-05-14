@@ -7,7 +7,7 @@ public with sharing class NursingEvaluationViewController {
             return [
                 SELECT ID, Name, Type__c, Address__c, Email__c, Phone__c, Phone_1_Type__c,
                        Phone_2__c, Phone_2_Type__c, Comments__c
-                FROM Related_Party__c WHERE Person_Being_Served__c = :this.evaluation.Admission__r.Person_Being_Served__r.Id
+                FROM Related_Party__c WHERE Person_Being_Served__c = :this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Id
             ];
         }
     }
@@ -31,7 +31,7 @@ public with sharing class NursingEvaluationViewController {
     
     public void showAddRelatedParty() {
         this.currentRelatedParty = new Related_Party__c();
-        this.currentRelatedParty.Person_Being_Served__c = this.evaluation.Admission__r.Person_Being_Served__r.Id;
+        this.currentRelatedParty.Person_Being_Served__c = this.evaluation.ServiceAssignment__r.Person_Being_Served__r.Id;
         this.currentRelatedParty.RecordTypeId = '012U0000000Dj0Y';//Need to make it Dynamic 
     }
 
