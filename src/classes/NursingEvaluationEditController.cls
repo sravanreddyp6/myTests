@@ -19,18 +19,46 @@ public with sharing class NursingEvaluationEditController {
         }
     }
     
+    
     public Related_Party__c currentRelatedParty { get; set; }
     public Id currentRelatedPartyId { get; set; }
-    
+   // public Contact pbs { get; set; }
     
     public NursingEvaluationEditController(ApexPages.StandardController stdcontroller) {
     	this.stdController = stdController;
     	evaluation = (Evaluation__c) stdController.getRecord();
+    	currentRelatedParty = new Related_Party__c();
     	if (ApexPages.currentPage().getParameters().get('tab') != null) {
             selectedTab = ApexPages.currentPage().getParameters().get('tab');
         }
 
     }
+    
+    public void showAddRelatedParty()  {
+    	this.currentRelatedParty = new Related_Party__c();
+    	this.currentRelatedParty.Person_Being_Served__c = this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__c;
+    	this.currentRelatedParty.RecordTypeId = '012U0000000Dj0Y';
+    	 	
+    }
+    
+    public void showEditRelatedParty() {
+    	this.currentRelatedParty = [
+    		SELECT ID, Name, Type__c, Address__c, Email__c, Phone__c, Phone_1_Type__c,
+                   Phone_2__c, Phone_2_Type__c, Comments__c
+            FROM Related_Party__c WHERE ID=:currentRelatedPartyId 
+    	];
+    		
+    }
+    public void saveRelatedParty() {
+        try {
+            System.debug('currentRelatedParty: ' + currentRelatedParty);
+            upsert currentRelatedParty;
+        } catch (DMLException ex) {
+            // SF will automatically create a PageMessage Error here, so we don't
+            // have to do anything
+        }
+    }
+    
       public PageReference save() {
         return this.save(false);
     }
@@ -65,7 +93,7 @@ public with sharing class NursingEvaluationEditController {
 
         }
         update this.evaluation;
-        //update this.pbr;
+        //update this.pbs;
         //return stdController.view();
         return new PageReference('/apex/CareMeridianEvaluationView?id=' + evaluation.Id + '&tab=' + selectedTab);
     }
