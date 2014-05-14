@@ -83,25 +83,28 @@
 	</script>
 	
 	<apex:form id="wholePage">
+	<apex:outputPanel rendered="false">
+		<apex:inputhidden value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Id}"/>
+	</apex:outputPanel>
 		<apex:pageMessages id="pageMessages" />
 		<apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); removeSpacer()" reRender="pageMessages, wholeTabPanel, buttons">
 			<apex:param name="nextTab" assignTo="{!nextTab}" value="" />
 		</apex:actionFunction>
 		<apex:tabPanel value="{!selectedTab}" id="wholeTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">	
-			<apex:tab label="Details" name="detailsTab" ontabenter="changeTab('detailsTab); return false;" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+			<apex:tab label="Details" name="detailsTab" ontabenter="changeTab('detailsTab'); return false;" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
 				
 				</apex:pageBlock>
 			</apex:tab>
 			
-			<apex:tab label="Diagnostics" name="diagnosticsTab" ontabenter="changeTab('diagnosticTab'); return false;" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+			<apex:tab label="Diagnostics" name="diagnosticTab" ontabenter="changeTab('diagnosticTab'); return false;" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
 				
 				</apex:pageBlock>
 			</apex:tab>
 			
 			
-			<apex:tab label="Cardiopulmonary" name="cardioTab" onTabenter="changeTab(''cardioTab); return false;" styleClass="{!IF(Evaluation__c.Cardio_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+			<apex:tab label="Cardiopulmonary" name="cardioTab" onTabenter="changeTab('cardioTab'); return false;" styleClass="{!IF(Evaluation__c.Cardio_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
 				
 				</apex:pageBlock>

@@ -55,19 +55,6 @@
     <enableHistory>false</enableHistory>
     <enableReports>true</enableReports>
     <fields>
-        <fullName>Admission__c</fullName>
-        <deleteConstraint>SetNull</deleteConstraint>
-        <description>This field is used to link Admission with Evaluation to serve the purpose of Creating Nurses Assessment.</description>
-        <externalId>false</externalId>
-        <label>Admission</label>
-        <referenceTo>Admission__c</referenceTo>
-        <relationshipLabel>Evaluations</relationshipLabel>
-        <relationshipName>Evaluations</relationshipName>
-        <required>false</required>
-        <trackTrending>false</trackTrending>
-        <type>Lookup</type>
-    </fields>
-    <fields>
         <fullName>Advanced_Directives_Attached__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
@@ -3234,6 +3221,18 @@
         <label>Sensation Not Tested</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>ServiceAssignment__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Service Assignment</label>
+        <referenceTo>Service_Assignment__c</referenceTo>
+        <relationshipLabel>Evaluations</relationshipLabel>
+        <relationshipName>Evaluations</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Shunt_Permacath_Date_Placed__c</fullName>
