@@ -35,8 +35,8 @@
     		<apex:tab label="Details" name="detailsTab" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
                     <apex:pageBlockSection columns="2">
-                        <apex:outputField value="{!Evaluation__c.Admission__r.Person_Being_Served__r.Name}"/>
-                        <apex:outputField value="{!Evaluation__c.Admission__r.Person_Being_Served__r.Birthdate}"/>
+                        <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Name}"/>
+                        <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Birthdate}"/>
                         <apex:outputField value="{!Evaluation__c.Code_Status__c}" />
                          <apex:outputField value="{!Evaluation__c.Advanced_Directives__c}" />
                          <apex:outputField value="{!Evaluation__c.Code_Status_Other__c}" label="Specify Other" />

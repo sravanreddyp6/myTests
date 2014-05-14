@@ -17,7 +17,7 @@ public with sharing class NursingEvaluationViewController {
             return System.URL.getSalesforceBaseURL().toExternalForm();
         }
     }
-     
+  
     public Related_Party__c currentRelatedParty { get; set; }
     public Id currentRelatedPartyId { get; set; }
     
