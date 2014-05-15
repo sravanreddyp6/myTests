@@ -33,9 +33,8 @@ static testMethod void myUnitTest() {
     
 */    
 }
-    
+/*    
      private static Action_Plan__c createData(){
-/*   COMMENTED OUT 5/15/14 BY J. GILLIAM TO GET US THROUGH MAY DEPLOYMENT
     String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
         
         Account Accnt = new Account(
@@ -115,7 +114,7 @@ static testMethod void myUnitTest() {
         
         );
         insert jo;
-        return ap;
-    */    
+        return ap;   
     }
+*/
 }
