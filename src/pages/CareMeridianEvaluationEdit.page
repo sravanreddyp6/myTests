@@ -213,7 +213,7 @@
         function getNextTab( currTab ) {
         	var nextTab = currTab;
         	
-        	if ( currTab == 'detailsTab' || currTab == '')
+        	if ( currTab == 'demographicsTab' || currTab == '')
         		nextTab = 'diagnosticTab';
         	else if( currTab == 'diagnosticTab') 
         		nextTab =  'cardioTab';
@@ -314,7 +314,7 @@
             <apex:param name="nextTab" assignTo="{!nextTab}" value="" />
         </apex:actionFunction>
         <apex:tabPanel value="{!selectedTab}" id="wholeTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
-            <apex:tab label="Details" name="detailsTab" ontabenter="changeTab('detailsTab'); return false;" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+            <apex:tab label="Demographics" name="demographicsTab" ontabenter="changeTab('demographicsTab'); return false;" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
                     <apex:pageBlockSection columns="2">
                         <apex:outputField value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Full_Name__c}" />
@@ -612,10 +612,10 @@
                             <apex:outputText value="" />
                         </apex:pageBlockSectionItem>
                         <apex:inputField value="{!Evaluation__c.Elimination_Bladder_Continent__c}"
-                            label="InContinent"
+                            label="Incontinent"
                             html-data-rules="{&quot;1&quot;: &quot;{!$Component.eliminationBladderNoContinentDetails}&quot;}" />
                         <apex:inputField value="{!Evaluation__c.Elimination_Bowel_Continent__c}"
-                            label="InContinent"
+                            label="Incontinent"
                             html-data-rules="{&quot;1&quot;: &quot;{!$Component.eliminationBowelNoContinentAppliance}&quot;}" />
                         <!-- For multipicklist fields, we need to call enableDisableField directly, because the change
                              event is not fired programmatically. -->
@@ -751,7 +751,7 @@
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Burns_Area__c}" id="burnsArea" />
                     </apex:pageBlockSection>
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="PressureUlcer Detail" formId="{!$Component.wholePage}" uniqueId="decubiti" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Pressure Ulcer Detail" formId="{!$Component.wholePage}" uniqueId="decubiti" />
                     <apex:pageBlockSection columns="2">
                         <apex:inputField value="{!Evaluation__c.Wound_Vac__c}"
                             html-data-rules="{&quot;1&quot;: [&quot;{!$Component.woundVacFrequency}&quot;, &quot;{!$Component.woundVacDuration}&quot;]}" />
@@ -1230,7 +1230,7 @@
  <table style="border:1px solid black;height:38px;background-color:#E3E6EF;">
  <tr>
  <td class="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompletedLink', 'sectionNotCompletedLink')}">
-       <a id="detailsLink" onclick="changeTab('detailsTab'); return false;" class="tabLink {! IF(OR(selectedTab == 'detailsTab', selectedTab == ''), 'tabLinkActive','' )} ">Details</a>
+       <a id="detailsLink" onclick="changeTab('demographicsTab'); return false;" class="tabLink {! IF(OR(selectedTab == 'demographicsTab', selectedTab == ''), 'tabLinkActive','' )} ">Details</a>
 </td>
 <td class="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompletedLink', 'sectionNotCompletedLink')}">  
        <a id="diagnosticLink" onclick="changeTab('diagnosticTab'); return false;" class="tabLink {! IF(selectedTab == 'diagnosticTab', 'tabLinkActive','' )}" >Diagnostics</a>
