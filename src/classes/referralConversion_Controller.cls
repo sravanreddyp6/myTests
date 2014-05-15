@@ -546,6 +546,34 @@ public with sharing class referralConversion_Controller {
         );
         insert newDiag;
     }
+    //Nurses Evaluation Creation - Sravan 5/15/2014
+    if(refCurr.RecordTypeId=='012U0000000Dhni'){
+   List <Evaluation__c> refEval = [SELECT ID, NAME FROM Evaluation__c WHERE Referral__c =:refCurr.Id LIMIT 1]; //using List to avoid System.Query Exception
+    
+    system.debug('SSSSSSSSSSSIIIIIIIIIIIIIZZZZZZEEEEEE'+refEval.size());
+    	if(refEval.isEmpty()){
+    		string pbslastName =  this.referralRecord.Name_PBR__c; //newSA.Admission__r.Person_Being_Served__r.LastName;
+    		if(pbslastName == null) pbslastName = '';
+                Evaluation__c nurseEval = new Evaluation__c(
+    										ServiceAssignment__c = newSA.id,
+    										Name= pbslastName +'NursesAssessment'+ DateTime.Now().format('MMddyy'),
+    										RecordtypeId = '012J0000000DCMU'
+    		
+    		);
+    		insert nurseEval;
+    	}
+    	else{
+    		
+    		Evaluation__c nurEval = new Evaluation__c(
+    										ServiceAssignment__c = newSA.id,
+    										RecordtypeId = '012J0000000DCMU',
+    										Name = refEval[0].Name
+    										
+    		);	
+    		
+    		insert nurEval;
+    	} 
+    }
     
     // link the funding sources that were on the referral
     Contact pbsmed = [select id, medicaid_id__c from contact where id = :idPBS ];
