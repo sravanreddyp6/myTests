@@ -59,7 +59,7 @@
         </apex:outputPanel>
         <apex:pageMessages id="pageMessages" />
         <apex:tabPanel id="wholeTabPanel" value="{!selectedTab}" styleClass="evaluationTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
-            <apex:tab label="Details" name="detailsTab" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+            <apex:tab label="Demographics" name="demographicsTab" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
                     <apex:pageBlockSection columns="2">
                         <apex:outputField value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Full_Name__c}" />
@@ -355,8 +355,8 @@
                             <apex:outputText value="Elimination - Bowel" />
                             <apex:outputText value="" />
                         </apex:pageBlockSectionItem>
-                        <apex:outputField value="{!Evaluation__c.Elimination_Bladder_Continent__c}" label="InContinent" />
-                        <apex:outputField value="{!Evaluation__c.Elimination_Bowel_Continent__c}" label="InContinent" />
+                        <apex:outputField value="{!Evaluation__c.Elimination_Bladder_Continent__c}" label="Incontinent" />
+                        <apex:outputField value="{!Evaluation__c.Elimination_Bowel_Continent__c}" label="Incontinent" />
                         <apex:outputField value="{!Evaluation__c.Elimination_Bladder_No_Continent_Details__c}" label="Details" />
                         <apex:outputField value="{!Evaluation__c.Elimination_Bowel_No_Continent_Appliance__c}" label="Appliance" />
                         <apex:outputField value="{!Evaluation__c.If_ICP_Q__c}" />
@@ -481,7 +481,7 @@
                         <apex:pageBlockSectionItem />
                         <apex:outputField value="{!Evaluation__c.Burns_Area__c}" />
                     </apex:pageBlockSection>
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="PressureUlcer Detail" formId="{!$Component.wholePage}" uniqueId="decubiti" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Pressure Ulcer Detail" formId="{!$Component.wholePage}" uniqueId="decubiti" />
                     <apex:pageBlockSection columns="2">
                         <apex:outputField value="{!Evaluation__c.Wound_Vac__c}" />
                         <apex:outputField value="{!Evaluation__c.Wound_Vac_Frequency__c}" />
