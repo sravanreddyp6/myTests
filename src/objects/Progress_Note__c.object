@@ -16767,13 +16767,13 @@ var value = &apos;{!Progress_Note__c.FCT_Phase_at_Note_Creation__c}&apos;;
  if (value == &apos;&apos;){
     errors.push(&apos;You must select a &quot;FCT Phase of Treatment&quot; before continuing.&apos;);
    }
- value = &apos;{!Progress_Note__c.People_Present__c}&apos;;
- if (value == &apos;&apos;){
-    errors.push(&apos;You must select a &quot;People Present&quot; before continuing.&apos;);
+ 
+ if ({!ISBLANK(Progress_Note__c.People_Present__c)}){
+    errors.push(&apos;You must enter a value in &quot;People Present&quot; before continuing.&apos;);
    }
  value = &apos;{!Progress_Note__c.Staff_Name__c}&apos;;
  if (value == &apos;&apos;){
-    errors.push(&apos;You must select the &quot;Staff Name&quot; before continuing.&apos;); 
+    errors.push(&apos;You must select a value for &quot;Staff Name&quot; before continuing.&apos;); 
    }
  if({!ISPICKVAL(Progress_Note__c.Area_Family_Functioning__c,&apos;&apos;)}){ 
     errors.push(&apos;You must select the &quot;Area of Family Functioning&quot; before continuing.&apos;); 
