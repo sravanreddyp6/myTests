@@ -82,7 +82,7 @@ public with sharing class CareMeridianEvaluationViewController {
     	
     	PageReference returnURL;
     	
-    	if(evaluation.RecordTypeId == '012J0000000DCMU') 
+    	if(evaluation.RecordTypeId == Utility.getEValuationRecordType('NursesAssessment')) 
     	returnURL = new PageReference ('/apex/NursingEvaluationView?id='+evaluation.id);
     	system.debug('UUUUUUUUUUUUUURRRRRRRRRRRRRRRRRRRRLLLLLLLLLLLLLLLLLLL'+returnURL);
     	

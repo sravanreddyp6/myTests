@@ -1244,7 +1244,7 @@ public void loadProgramList() {
         if(pbsLastName == null) pbsLastName = '';
         Evaluation__c nurseEval = new Evaluation__c();
         nurseEVal.Name = pbsLastName + 'eval' + DateTime.Now().format('MMddyy');
-        nurseEval.RecordTypeId = '012J0000000DCMU';
+        nurseEval.RecordTypeId = Utility.getEValuationRecordType('NursesAssessment');
         nurseEval.ServiceAssignment__c = theServAssign.Id; 
         
         insert nurseEval;

@@ -270,6 +270,10 @@ public without sharing class Utility {
         return Schema.SObjectType.Evaluation_Response__c.getRecordTypeInfosByName().get(recordTypeName).recordTypeId;
     }
     
+    public static Id getEValuationRecordType(String recordTypeName){
+    	return Schema.SObjectType.Evaluation__c.getRecordTypeInfosByName().get(recordTypeName).recordTypeId;
+    }
+    
     public static string getStateCodeFromName ( String statename ) {
     	System.Debug(' getting state code for: ' + statename );
     	if (String.IsEmpty( statename ) )
