@@ -96,6 +96,15 @@
         <reevaluateOnChange>true</reevaluateOnChange>
     </fieldUpdates>
     <fieldUpdates>
+        <fullName>Staff_Credentials_Field_Update</fullName>
+        <field>Staff_Credentials__c</field>
+        <formula>Staff_Credentials_Current__c</formula>
+        <name>Staff Credentials Field Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+    </fieldUpdates>
+    <fieldUpdates>
         <fullName>Update_Approval_Date</fullName>
         <field>Approval_Status_Date__c</field>
         <formula>TODAY()</formula>
@@ -211,8 +220,18 @@
             <type>FieldUpdate</type>
         </actions>
         <active>true</active>
-        <formula>1=1</formula>
-        <triggerType>onCreateOnly</triggerType>
+        <formula>ISNULL(FCT_Phase_String_At_Note_Creation__c) || FCT_Phase_at_Note_Creation__c = 0 || ISNULL(FCT_Phase_at_Note_Creation__c)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Set Staff Credentials</fullName>
+        <actions>
+            <name>Staff_Credentials_Field_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>ISCHANGED(Staff_Name__c)</formula>
+        <triggerType>onAllChanges</triggerType>
     </rules>
     <rules>
         <fullName>Submit For Approval Reminder</fullName>

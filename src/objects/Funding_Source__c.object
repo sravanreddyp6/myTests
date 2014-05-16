@@ -553,11 +553,10 @@
         <fullName>Claims_Submission_Zip__c</fullName>
         <externalId>false</externalId>
         <label>Claims Submission Zip</label>
-        <precision>18</precision>
+        <length>18</length>
         <required>false</required>
-        <scale>0</scale>
         <trackTrending>false</trackTrending>
-        <type>Number</type>
+        <type>Text</type>
         <unique>false</unique>
     </fields>
     <fields>
@@ -8659,6 +8658,13 @@
         <errorConditionFormula>AND(ISPICKVAL(Month_to_Month__c, &apos;Yes&apos;), Basis__c == &apos;&apos;)</errorConditionFormula>
         <errorDisplayField>Basis__c</errorDisplayField>
         <errorMessage>Basis is Required if Month to Month is Yes</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Claims_Submission_Zip_Validation</fullName>
+        <active>true</active>
+        <errorConditionFormula>NOT(REGEX(Claims_Submission_Zip__c, &quot;\\d{5}(-\\d{4})?&quot;)) &amp;&amp; NOT(ISBLANK(Claims_Submission_Zip__c))</errorConditionFormula>
+        <errorDisplayField>Claims_Submission_Zip__c</errorDisplayField>
+        <errorMessage>Please enter zip code in the format: XXXXX or XXXXX-XXXX</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Cont_Pmnt_Required_if_Ind_Plan_Yes</fullName>
