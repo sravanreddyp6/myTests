@@ -47,18 +47,18 @@
         }
         
         .sectionNotCompletedLink, .sectionCompletedLink {
-        	vertical-align:bottom !important;
-        	background-position: center top;
-        	padding-left:10px;
-        	padding-right:10px;
+            vertical-align:bottom !important;
+            background-position: center top;
+            padding-left:10px;
+            padding-right:10px;
         }
         
-	.mycols{
-	width: 15%;
+    .mycols{
+    width: 15%;
     padding-left: 25px;
     cellspacing: 15px;
     
-	}
+    }
 
         
     </style>
@@ -211,37 +211,37 @@
         });
         
         function getNextTab( currTab ) {
-        	var nextTab = currTab;
-        	
-        	if ( currTab == 'demographicsTab' || currTab == '')
-        		nextTab = 'diagnosticTab';
-        	else if( currTab == 'diagnosticTab') 
-        		nextTab =  'cardioTab';
-        	//else if ( currTab == 'marTab' ) 
-        		//nextTab = 	'cardioTab';
-        	else if ( currTab== 'cardioTab')
-        		nextTab = 'nutritionTab';
-        	else if ( currTab == 'nutritionTab')
-        		nextTab = 'skinBodyTab';
-        	else if ( currTab == 'skinBodyTab')
-        		nextTab = 'neuroTab';
-        	else if ( currTab == 'neuroTab')
-        		nextTab = 'orthoTab';
-        	else if ( currTab == 'orthoTab')
-        		nextTab = 'rehabTab';
-        	else if ( currTab == 'rehabTab') 
-        		nextTab = 'psychoSocialTab';
-        	else if ( currTab == 'psychoSocialTab')
-        		nextTab = 'dischargePlanTab';
-        	
-        	return nextTab;
-        	}
-        	    	     	
+            var nextTab = currTab;
+            
+            if ( currTab == 'demographicsTab' || currTab == '')
+                nextTab = 'diagnosticTab';
+            else if( currTab == 'diagnosticTab') 
+                nextTab =  'cardioTab';
+            //else if ( currTab == 'marTab' ) 
+                //nextTab =     'cardioTab';
+            else if ( currTab== 'cardioTab')
+                nextTab = 'nutritionTab';
+            else if ( currTab == 'nutritionTab')
+                nextTab = 'skinBodyTab';
+            else if ( currTab == 'skinBodyTab')
+                nextTab = 'neuroTab';
+            else if ( currTab == 'neuroTab')
+                nextTab = 'orthoTab';
+            else if ( currTab == 'orthoTab')
+                nextTab = 'rehabTab';
+            else if ( currTab == 'rehabTab') 
+                nextTab = 'psychoSocialTab';
+            else if ( currTab == 'psychoSocialTab')
+                nextTab = 'dischargePlanTab';
+            
+            return nextTab;
+            }
+                            
     </script>
 
 
-	<script type="text/javascript">
-	   
+    <script type="text/javascript">
+       
            var lbs;
            var oz;
            var kg;
@@ -263,7 +263,7 @@
            if(type=='kg'){
                kg=j$('[id$=kg]').val();  
                var kgtolbs = kg*2.2046;
-               j$('[id$=lbs]').val(kgtolbs);  					
+               j$('[id$=lbs]').val(kgtolbs);                    
                j$('[id$=oz]').val('0.0');  
            }
         }
@@ -310,9 +310,11 @@
             </apex:actionRegion>
         </apex:outputPanel>
         <apex:pageMessages id="pageMessages" />
-        <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); removeSpacer()" rerender="pageMessages, wholeTabPanel, buttons">
+        <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); removeSpacer()" rerender="pageMessages, wholeTabPanel, buttons" focus="hiddenElementId" reRender="hiddenElementId">
             <apex:param name="nextTab" assignTo="{!nextTab}" value="" />
         </apex:actionFunction>
+        <!-- To set focus on Top -->
+        <input id="hiddenElementId" type="hidden" />
         <apex:tabPanel value="{!selectedTab}" id="wholeTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
             <apex:tab label="Demographics" name="demographicsTab" ontabenter="changeTab('demographicsTab'); return false;" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
@@ -387,23 +389,23 @@
                         <apex:inputField value="{!Evaluation__c.Bariatric_Equipment__c}" />
                         <apex:outputField id="wt" value="{!Evaluation__c.Weight__c}" />
                         <apex:outputPanel >
-                        	<apex:outputLabel value="Weight at Admission" style="font-weight: Bold; color: #4A4A56; font-size: 10px;"/>
-                        	<apex:inputField id="lbs" value="{!Evaluation__c.Weightlbs__c}" style="margin-left: 25px; width: 60px; !important;" onkeyup="return calculate(this,'lbs');"/>
-                        	<apex:outputLabel for="lbs" style="font-weight:Bold; ">{!$ObjectType.Evaluation__c.Fields.Weightlbs__c.label}</apex:outputLabel>
-                        	<apex:inputField id="oz" value="{!Evaluation__c.Weightoz__c}" style="Margin-left: 25px; width:60px;" onkeyup="return calculate(this,'oz');"/>
-                        	<apex:outputLabel for="oz" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Weightoz__c.label}</apex:outputLabel>
-                        	<pre/>
-                        	<apex:inputField id="kg" value="{!Evaluation__c.WeightKg__c}" style="margin-left: 180px; width: 60px;" onkeyup="return calculate(this,'kg');"/>
-                        	<apex:outputLabel for="kg" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.WeightKg__c.label}</apex:outputLabel>
+                            <apex:outputLabel value="Weight at Admission" style="font-weight: Bold; color: #4A4A56; font-size: 10px;"/>
+                            <apex:inputField id="lbs" value="{!Evaluation__c.Weightlbs__c}" style="margin-left: 25px; width: 60px; !important;" onkeyup="return calculate(this,'lbs');"/>
+                            <apex:outputLabel for="lbs" style="font-weight:Bold; ">{!$ObjectType.Evaluation__c.Fields.Weightlbs__c.label}</apex:outputLabel>
+                            <apex:inputField id="oz" value="{!Evaluation__c.Weightoz__c}" style="Margin-left: 25px; width:60px;" onkeyup="return calculate(this,'oz');"/>
+                            <apex:outputLabel for="oz" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Weightoz__c.label}</apex:outputLabel>
+                            <pre/>
+                            <apex:inputField id="kg" value="{!Evaluation__c.WeightKg__c}" style="margin-left: 180px; width: 60px;" onkeyup="return calculate(this,'kg');"/>
+                            <apex:outputLabel for="kg" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.WeightKg__c.label}</apex:outputLabel>
                         </apex:outputPanel>  
                         <apex:outputField id="ht" value="{!Evaluation__c.Height__c}" />
                         <apex:outputPanel >
-                        	<apex:outputLabel value="Height at Admission" style="font-weight: Bold; color: #4A4A56; font-size: 10px;"/>
-                        	<apex:inputField id="ft" value="{!Evaluation__c.HeightFt__c}" style="margin-left: 25px;"/>
-                        	<apex:outputLabel for="ft" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.HeightFt__c.label}</apex:outputLabel>
-                        	<apex:inputField id="in" value="{!Evaluation__c.HeightInches__c}" style="Margin-left: 25px;"/>
-                        	<apex:outputLabel for="in" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.HeightInches__c.label}</apex:outputLabel>
-                        </apex:outputPanel>   		  
+                            <apex:outputLabel value="Height at Admission" style="font-weight: Bold; color: #4A4A56; font-size: 10px;"/>
+                            <apex:inputField id="ft" value="{!Evaluation__c.HeightFt__c}" style="margin-left: 25px;"/>
+                            <apex:outputLabel for="ft" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.HeightFt__c.label}</apex:outputLabel>
+                            <apex:inputField id="in" value="{!Evaluation__c.HeightInches__c}" style="Margin-left: 25px;"/>
+                            <apex:outputLabel for="in" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.HeightInches__c.label}</apex:outputLabel>
+                        </apex:outputPanel>           
                     </apex:pageBlockSection>
                     <apex:pageBlockSection columns="1">
                         <apex:inputField value="{!Evaluation__c.PMH__c}" />
@@ -451,7 +453,7 @@
                         <apex:inputField value="{!Evaluation__c.MARs_Attached__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.recentChanges}&quot;}" />
                         <apex:inputField value="{!Evaluation__c.Recent_Changes__c}" id="recentChanges" />
                     </apex:pageBlockSection>
-                    	 <apex:pageBlockSection columns="1">
+                         <apex:pageBlockSection columns="1">
                         <apex:inputTextArea value="{!Evaluation__c.MAR_Comments__c}" cols="80" />
                         <!--  apex:inputField value="{!Evaluation__c.MAR_Section_Completed__c}" /-->
                         <apex:inputTextArea value="{!Evaluation__c.Diagnostics_Comments__c}" cols="80" />
@@ -494,10 +496,10 @@
                         <apex:inputField value="{!Evaluation__c.O2__c}"  html-data-rules="{&quot;1&quot;: [&quot;{!$Component.litersMin}&quot;, &quot;{!$Component.o2Type}&quot;, &quot;{!$Component.nasalCannula}&quot;, &quot;{!$Component.mask}&quot;, &quot;{!$Component.tPiece}&quot;, &quot;{!$Component.mistCooled}&quot;, &quot;{!$Component.mistHeated}&quot;]}"/>
                         <apex:inputField value="{!Evaluation__c.Will_be_DC_d_prior_to_transfer__c}" id="DcPriorToTransfer" />
                         <apex:outputPanel >
-                        	<apex:outputLabel for="ventilatorType" style="color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.Ventilator_Type__c.label}</apex:outputLabel>
-                       		<apex:inputField value="{!Evaluation__c.Ventilator_Type__c}" id="ventilatorType" style="margin-left:10px;" html-data-rules="{&quot;Intermittent&quot;: &quot;{!$Component.interSchedule}&quot;}"/>
-                        	<apex:outputLabel for="interSchedule" style="margin-left:15px; color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.If_Intermittent_Schedule__c.label}</apex:outputLabel>
-                       		<apex:inputField value="{!Evaluation__c.If_Intermittent_Schedule__c}" id="interSchedule" style="margin-left:10px;"/>
+                            <apex:outputLabel for="ventilatorType" style="color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.Ventilator_Type__c.label}</apex:outputLabel>
+                            <apex:inputField value="{!Evaluation__c.Ventilator_Type__c}" id="ventilatorType" style="margin-left:10px;" html-data-rules="{&quot;Intermittent&quot;: &quot;{!$Component.interSchedule}&quot;}"/>
+                            <apex:outputLabel for="interSchedule" style="margin-left:15px; color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.If_Intermittent_Schedule__c.label}</apex:outputLabel>
+                            <apex:inputField value="{!Evaluation__c.If_Intermittent_Schedule__c}" id="interSchedule" style="margin-left:10px;"/>
                         </apex:outputPanel> 
                         <apex:inputField value="{!Evaluation__c.O2_Type__c}" id="o2Type"/>                   
                         <apex:inputField value="{!Evaluation__c.Trach__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.trachPlacementDate}&quot;, &quot;{!$Component.trachType}&quot;, &quot;{!$Component.trachSize}&quot;, &quot;{!$Component.cuffed}&quot;, &quot;{!$Component.pmv}&quot;]}" />
@@ -530,10 +532,10 @@
                         <apex:inputField value="{!Evaluation__c.PS__c}" id="ps" />
                         <!--  apex:inputField value="{!Evaluation__c.Mist_Heated__c}" id="mistHeated" /-->
                         <apex:outputPanel >
-                        	<apex:outputLabel for="mist" style="color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.Mist__c.label}</apex:outputLabel>
-                        	<apex:inputField value="{!Evaluation__c.Mist__c}" id="mist" style="margin-left:10px;" html-data-rules="{&quot;1&quot;: &quot;{!$Component.mistType}&quot;}"/>
-                        	<apex:outputLabel for="mistType" style="margin-left:15px; color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.Mist_Type__c.label}</apex:outputLabel>
-                       	    <apex:inputField value="{!Evaluation__c.Mist_Type__c}" id="mistType" style="margin-left:10px;"/> 
+                            <apex:outputLabel for="mist" style="color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.Mist__c.label}</apex:outputLabel>
+                            <apex:inputField value="{!Evaluation__c.Mist__c}" id="mist" style="margin-left:10px;" html-data-rules="{&quot;1&quot;: &quot;{!$Component.mistType}&quot;}"/>
+                            <apex:outputLabel for="mistType" style="margin-left:15px; color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.Mist_Type__c.label}</apex:outputLabel>
+                            <apex:inputField value="{!Evaluation__c.Mist_Type__c}" id="mistType" style="margin-left:10px;"/> 
                         </apex:outputPanel>
                         <apex:inputField value="{!Evaluation__c.Trach_Plugged__c}" />
                         <apex:inputField value="{!Evaluation__c.CPAP__c}" id="cpap" />
@@ -553,7 +555,7 @@
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Weaning_Trial__c}" id="weaningTrial" />
                         <apex:inputField value="{!Evaluation__c.Suctioning__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.suctioningType}&quot;,&quot;{!$Component.suctioningFrequency}&quot;, &quot;{!$Component.sputumQuantity}&quot;, &quot;{!$Component.sputumAppearance}&quot;, &quot;{!$Component.sputumColor}&quot;, &quot;{!$Component.bloodTinged}&quot;, &quot;{!$Component.thick}&quot;, &quot;{!$Component.thin}&quot;, &quot;{!$Component.frothy}&quot;, &quot;{!$Component.sticky}&quot;, &quot;{!$Component.creamy}&quot;, &quot;{!$Component.odor}&quot;]}"/>
-                       	<apex:pageBlockSectionItem />
+                        <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Ventilator_Results__c}" id="ventilatorResults" />
                         <apex:inputField value="{!Evaluation__c.Suctioning_Type__c}" id="suctioningType" />
                         <apex:pageBlockSectionItem />
