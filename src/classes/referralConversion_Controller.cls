@@ -14,6 +14,15 @@ public with sharing class referralConversion_Controller {
   public String Program{ get; set;}
   public string Location{ get; set;}
   public string ServiceLine { get; set; }
+  public String ReferralRecordType{
+  	get{
+  		if(this.referralRecord.RecordTypeId!=null){
+  			referralRecordtype = Utility.getRecordTypeForReferral(Id.valueOf(this.referralRecord.RecordTypeId));
+  		}
+  		return referralRecordType;
+  	}
+  	set;
+  }
   
   public referralConversion_Controller(ApexPages.standardController ctl){
 
@@ -547,7 +556,7 @@ public with sharing class referralConversion_Controller {
         insert newDiag;
     }
     //Nurses Evaluation Creation - Sravan 5/15/2014
-   if(this.referralRecord.RecordType.DeveloperName == 'CareMeridian_R'){
+   if(referralRecordType.startsWith('CareMeridian')){
    List <Evaluation__c> refEval = [SELECT ID, NAME FROM Evaluation__c WHERE Referral__c =:refCurr.Id LIMIT 1]; //using List to avoid System.Query Exception when no records are returned
     
     system.debug('SSSSSSSSSSSIIIIIIIIIIIIIZZZZZZEEEEEE'+refEval.size());
@@ -557,7 +566,7 @@ public with sharing class referralConversion_Controller {
                 Evaluation__c nurseEval = new Evaluation__c(
     										ServiceAssignment__c = newSA.id,
     										Name= pbslastName +'NursesAssessment'+ DateTime.Now().format('MMddyy'),
-    										RecordtypeId = '012J0000000DCMU'
+    										RecordtypeId = Utility.getEvaluationRecordType('NursesAssessment')
     		
     		);
     		insert nurseEval;
@@ -565,7 +574,7 @@ public with sharing class referralConversion_Controller {
     	else{
     		Evaluation__c nurEval = new Evaluation__c(
     										ServiceAssignment__c = newSA.id,
-    										RecordtypeId = '012J0000000DCMU',
+    										RecordtypeId = Utility.getEvaluationRecordType('NursesAssessment'),
     										Name = refEval[0].Name
     										
     		);	
@@ -586,9 +595,8 @@ public with sharing class referralConversion_Controller {
     		 //query += refCurr.Id;
     		// query +=
     		 
-    		 nurEval = Database.query(query);
-    		 
-    		 update nurEval;
+    		 refEval = Database.query(query);
+    		
     		
     		
     	} 
