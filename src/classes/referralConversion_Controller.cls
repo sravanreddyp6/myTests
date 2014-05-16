@@ -547,8 +547,8 @@ public with sharing class referralConversion_Controller {
         insert newDiag;
     }
     //Nurses Evaluation Creation - Sravan 5/15/2014
-    if(refCurr.RecordTypeId=='012U0000000Dhni'){
-   List <Evaluation__c> refEval = [SELECT ID, NAME FROM Evaluation__c WHERE Referral__c =:refCurr.Id LIMIT 1]; //using List to avoid System.Query Exception
+   if(this.referralRecord.RecordType.DeveloperName == 'CareMeridian_R'){
+   List <Evaluation__c> refEval = [SELECT ID, NAME FROM Evaluation__c WHERE Referral__c =:refCurr.Id LIMIT 1]; //using List to avoid System.Query Exception when no records are returned
     
     system.debug('SSSSSSSSSSSIIIIIIIIIIIIIZZZZZZEEEEEE'+refEval.size());
     	if(refEval.isEmpty()){
