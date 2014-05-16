@@ -563,7 +563,6 @@ public with sharing class referralConversion_Controller {
     		insert nurseEval;
     	}
     	else{
-    		
     		Evaluation__c nurEval = new Evaluation__c(
     										ServiceAssignment__c = newSA.id,
     										RecordtypeId = '012J0000000DCMU',
@@ -572,6 +571,26 @@ public with sharing class referralConversion_Controller {
     		);	
     		
     		insert nurEval;
+    		
+    		id evalID = refEval[0].id;
+    	//	system.debug('IIIIIIIIIIIIIIDDDDDDDDDDD>>>>>>'+evalID);
+    	//	Evaluation__c nursesAsses = new Evaluation__c();
+    		String query = 'SELECT ';
+    		FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment;
+    		
+    		for(Schema.FieldSetMember f : copyFields.getFields()) {
+    			query += f.getFieldPath() + ', ';
+    				
+    		}
+    		 query += 'Name FROM Evaluation__c WHERE ID =:evalID';
+    		 //query += refCurr.Id;
+    		// query +=
+    		 
+    		 nurEval = Database.query(query);
+    		 
+    		 update nurEval;
+    		
+    		
     	} 
     }
     

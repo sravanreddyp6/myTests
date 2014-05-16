@@ -86,16 +86,16 @@ public with sharing class CareMeridianEvaluationEditController {
     }
     
     public pageReference reDirect() {
-    	
-    	PageReference returnURL;
-    	
-    	if(this.evaluation.RecordTypeId == '012J0000000DCMU') 
-    	returnURL = new PageReference ('/apex/NursingEvaluationEdit?id='+evaluation.id);
-    	system.debug('UUUUUUUUUUUUUURRRRRRRRRRRRRRRRRRRRLLLLLLLLLLLLLLLLLLL'+returnURL);
-    	
-    	return returnURL;
-    	
-    	
+        
+        PageReference returnURL;
+        
+        if(this.evaluation.RecordTypeId == '012J0000000DCMU') 
+        returnURL = new PageReference ('/apex/NursingEvaluationEdit?id='+evaluation.id);
+        system.debug('UUUUUUUUUUUUUURRRRRRRRRRRRRRRRRRRRLLLLLLLLLLLLLLLLLLL'+returnURL);
+        
+        return returnURL;
+        
+        
     
     }
 
