@@ -153,17 +153,6 @@
         <type>Lookup</type>
     </fields>
     <fields>
-        <fullName>Alias__c</fullName>
-        <externalId>false</externalId>
-        <label>Alias</label>
-        <length>255</length>
-        <required>false</required>
-        <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
-    </fields>
-    <fields>
         <fullName>Appearance__c</fullName>
         <externalId>false</externalId>
         <label>Appearance</label>
@@ -1375,6 +1364,19 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>FCT_Phase_String_At_Note_Creation__c</fullName>
+        <description>This field &quot;translates&quot; the numeric value in field &quot;FCT_Phase_at_Note_Creation__c on the Progress_Note-_c object into a string representing an IFCS / FCT phase.  In theory, the value in &quot;FCT_Phase_at_Note_Creation__c&quot; COULD be a phase of ANY treatment model.  This field, though, converts numeric values 1 - 4 to their related FCT phase, and leaves a blank for all other values.</description>
+        <externalId>false</externalId>
+        <formula>IF(  FCT_Phase_at_Note_Creation__c  = 1, &apos;1 - Joining and Assessing&apos;, IF( FCT_Phase_at_Note_Creation__c  = 2, &apos;2 - Restructuring&apos;, IF(FCT_Phase_at_Note_Creation__c  = 3, &apos;3 - Value Change&apos;, IF( FCT_Phase_at_Note_Creation__c  = 4, &apos;4 - Generalization&apos;,&apos;&apos;))))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>FCT Phase at Note Creation</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>FCT_Phase_at_Note_Creation__c</fullName>
         <externalId>false</externalId>
         <label>FCT Phase at Note Creation</label>
@@ -1446,10 +1448,21 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Funding_Source2__c</fullName>
+        <externalId>false</externalId>
+        <formula>Person_Being_Served__r.Other_ID_Description__c</formula>
+        <label>Funding Source</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Funding_Source_Number__c</fullName>
         <externalId>false</externalId>
+        <formula>Person_Being_Served__r.Other_ID__c</formula>
         <label>Funding Source Number</label>
-        <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
@@ -1864,6 +1877,17 @@
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Mileage__c</fullName>
+        <externalId>false</externalId>
+        <label>Mileage</label>
+        <length>8</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Mod_1__c</fullName>
@@ -2316,6 +2340,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Primary_Diagnosis__c</fullName>
+        <externalId>false</externalId>
+        <label>Primary Diagnosis</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Procedure_Code_MA__c</fullName>
         <externalId>false</externalId>
         <label>Procedure Code</label>
@@ -2533,6 +2568,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Secondary_Diagnosis__c</fullName>
+        <externalId>false</externalId>
+        <label>Secondary Diagnosis</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Service_Assignment__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
@@ -2579,6 +2625,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </picklistValues>
             <picklistValues>
                 <fullName>UK</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Service_Code_Modifier_3__c</fullName>
+        <externalId>false</externalId>
+        <label>Service Code Modifier 3</label>
+        <picklist>
+            <picklistValues>
+                <fullName>HR</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -2789,6 +2850,19 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Staff_Credentials_Current__c</fullName>
+        <description>This formula field always has the current value of the staff name&apos;s title. This is NOT the value that we want on the OH-FCT page layout as we&apos;re trying to get the title of the person as to the closest time when they created the note.</description>
+        <externalId>false</externalId>
+        <formula>Staff_Name__r.Title</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Staff Credentials Current</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Staff_Credentials__c</fullName>
@@ -3128,10 +3202,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </picklistValues>
             <picklistValues>
                 <fullName>Family</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -3704,6 +3774,13 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -3932,10 +4009,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -4342,6 +4415,13 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -4570,10 +4650,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -4980,6 +5056,13 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -5208,10 +5291,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -5618,6 +5697,13 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -5846,10 +5932,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -6230,6 +6312,13 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -6446,10 +6535,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -6856,6 +6941,13 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -7084,10 +7176,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7467,6 +7555,13 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -7695,10 +7790,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -8079,6 +8170,13 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -8303,10 +8401,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -8687,6 +8781,13 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -8907,10 +9008,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -9291,6 +9388,13 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -9511,10 +9615,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -9895,6 +9995,13 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -10091,10 +10198,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -10474,6 +10577,13 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -10702,10 +10812,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11086,6 +11192,13 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -11302,10 +11415,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11712,6 +11821,13 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -11940,10 +12056,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12324,6 +12436,13 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -12544,10 +12663,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12928,6 +13043,13 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -13152,10 +13274,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -13536,6 +13654,13 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -13756,10 +13881,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -14140,6 +14261,13 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -14360,10 +14488,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -14744,6 +14868,13 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -14968,10 +15099,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -15378,6 +15505,13 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -15606,10 +15740,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Individual</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Wraparound</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -15989,6 +16119,13 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Frequency__c</picklist>
             <values>
                 <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
@@ -16219,10 +16356,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
                 <fullName>Individual</fullName>
                 <default>false</default>
             </values>
-            <values>
-                <fullName>Wraparound</fullName>
-                <default>false</default>
-            </values>
         </picklistValues>
     </recordTypes>
     <searchLayouts>
@@ -16281,6 +16414,30 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <description>Locked__c</description>
         <errorConditionFormula>AND(Locked__c, NOT(ISCHANGED(Signature_on_File__c)), NOT( $User.Alias = &apos;inte&apos;))</errorConditionFormula>
         <errorMessage>This Progress Note has been locked, it can not be edited.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Mileage_Numeric</fullName>
+        <active>true</active>
+        <errorConditionFormula>NOT(
+  OR(
+     LEN(Mileage__c)=0, 
+     ISNUMBER(Mileage__c)
+    )
+  )</errorConditionFormula>
+        <errorDisplayField>Mileage__c</errorDisplayField>
+        <errorMessage>Please enter only numeric values.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Mileage_OneDecimals</fullName>
+        <active>true</active>
+        <errorConditionFormula>IF(ISNUMBER(Mileage__c), NOT(
+  OR(
+     LEN(Mileage__c)=0, 
+     REGEX(Mileage__c, &quot;[0-9]+(\\.[0-9]?)?&quot;)
+    )
+  ), false)</errorConditionFormula>
+        <errorDisplayField>Mileage__c</errorDisplayField>
+        <errorMessage>Please enter only one digit after the decimal.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>NC_IFCS_Non_Payable_Check</fullName>
@@ -16603,6 +16760,26 @@ errors.push(&apos;You must select a &quot;Service Code&quot; before continuing.&
 var recordTypeQuery = sforce.connection.query(&quot;SELECT Id, Name, DeveloperName from RecordType where id = &apos;&quot; + records[0].RecordTypeId + &quot;&apos;&quot;); 
 curRtype = recordTypeQuery.getArray(&quot;records&quot;); 
 
+// WVPN-21
+// Make the following fields required on finalization
+if (curRtype[0].DeveloperName == &apos;IN_FCT&apos;) {
+var value = &apos;{!Progress_Note__c.FCT_Phase_at_Note_Creation__c}&apos;;
+ if (value == &apos;&apos;){
+    errors.push(&apos;You must select a &quot;FCT Phase of Treatment&quot; before continuing.&apos;);
+   }
+ value = &apos;{!Progress_Note__c.People_Present__c}&apos;;
+ if (value == &apos;&apos;){
+    errors.push(&apos;You must select a &quot;People Present&quot; before continuing.&apos;);
+   }
+ value = &apos;{!Progress_Note__c.Staff_Name__c}&apos;;
+ if (value == &apos;&apos;){
+    errors.push(&apos;You must select the &quot;Staff Name&quot; before continuing.&apos;); 
+   }
+ if({!ISPICKVAL(Progress_Note__c.Area_Family_Functioning__c,&apos;&apos;)}){ 
+    errors.push(&apos;You must select the &quot;Area of Family Functioning&quot; before continuing.&apos;); 
+   }
+}
+
 /*
 // CTEAE-78 - remove check for Auth 
 // CTEAE-51 require auth for AVATAR but not AZ notes
@@ -16664,6 +16841,22 @@ if({!ISBLANK(Progress_Note__c.Progress__c)}
 &amp;&amp; curRtype[0].DeveloperName != &apos;MD_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;OH_FCT&apos;){ 
 errors.push(&apos;You must populate the &quot;Progress&quot; field before continuing.&apos;); 
 } 
+
+// WVPN-19 : Start
+if({!ISBLANK(Progress_Note__c.Primary_Diagnosis__c)}
+&amp;&amp; curRtype[0].DeveloperName == &apos;OH_FCT&apos;){ 
+errors.push(&apos;You must populate the &quot;Diagnostic Code&quot; field before continuing.&apos;); 
+} 
+if({!ISBLANK(Progress_Note__c.Staff_Name__c)}
+&amp;&amp; curRtype[0].DeveloperName == &apos;OH_FCT&apos;){ 
+errors.push(&apos;You must populate the &quot;Staff Name&quot; field before continuing.&apos;); 
+} 
+if({!ISBLANK(Progress_Note__c.Staff_Credentials__c)}
+&amp;&amp; curRtype[0].DeveloperName == &apos;OH_FCT&apos;){ 
+errors.push(&apos;You must populate the &quot;Staff Credentials&quot; field before continuing.&apos;); 
+} 
+// WVPN-19 : End
+
 } 
 if(errors.length &lt;= 0){ 
 if(alerts.length &gt; 0){ 
