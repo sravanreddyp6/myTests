@@ -186,7 +186,8 @@ function hidedio(dio, dio2){
 </head>
 <apex:outputPanel id="frmwrapper">
 
-
+   <chatter:feedWithFollowers entityId="{!CareMeridian_Contract__c.id}" rendered="{! !editMode}"/>
+   
 <apex:form id="myFrm" >
    
  <apex:outputPanel rendered="{!editMode}" >
@@ -199,7 +200,7 @@ function hidedio(dio, dio2){
     </style>
 
 </apex:outputPanel>   
-    <chatter:feedWithFollowers entityId="{!CareMeridian_Contract__c.id}" rendered="{! !editMode}"/>
+ 
 <apex:pageMessages ></apex:pageMessages>
         
 
