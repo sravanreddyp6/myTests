@@ -559,31 +559,20 @@ public with sharing class referralConversion_Controller {
    if(referralRecordType.startsWith('CareMeridian')){
    List <Evaluation__c> refEval = [SELECT ID, NAME FROM Evaluation__c WHERE Referral__c =:refCurr.Id LIMIT 1]; //using List to avoid System.Query Exception when no records are returned
     
-    system.debug('SSSSSSSSSSSIIIIIIIIIIIIIZZZZZZEEEEEE'+refEval.size());
     	if(refEval.isEmpty()){
     		string pbslastName =  this.referralRecord.Name_PBR__c; //newSA.Admission__r.Person_Being_Served__r.LastName;
     		if(pbslastName == null) pbslastName = '';
                 Evaluation__c nurseEval = new Evaluation__c(
     										ServiceAssignment__c = newSA.id,
-    										Name= pbslastName +'NursesAssessment'+ DateTime.Now().format('MMddyy'),
+    										Name = pbslastName +'NursesAssessment'+ DateTime.Now().format('MMddyy'),
     										RecordtypeId = Utility.getEvaluationRecordType('NursesAssessment')
     		
     		);
     		insert nurseEval;
     	}
     	else{
-    		/*Evaluation__c nurEval = new Evaluation__c(
-    										ServiceAssignment__c = newSA.id,
-    										RecordtypeId = Utility.getEvaluationRecordType('NursesAssessment'),
-    										Name = refEval[0].Name
-    										
-    		);	
-    		
-    		insert nurEval;*/
-    		
     		id evalID = refEval[0].id;
-    	//	system.debug('IIIIIIIIIIIIIIDDDDDDDDDDD>>>>>>'+evalID);
-    	//	Evaluation__c nursesAsses = new Evaluation__c();
+    		String asmtName = 'NursesAssessment'+ DateTime.Now().format('MMddyy');
     		String query = 'SELECT ';
     		FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment;
     		
@@ -591,12 +580,9 @@ public with sharing class referralConversion_Controller {
     			query += f.getFieldPath() + ', ';
     				
     		}
-    		 query += 'Name FROM Evaluation__c WHERE ID =:evalID';
-    		 //query += refCurr.Id;
-    		// query +=
-    		 
-    		 refEval = Database.query(query);
-    		 system.debug('REFEVALREFEVAL>>>'+refEval);
+    		 query += 'FROM Evaluation__c WHERE ID =:evalID';
+    		// refEval = Database.query(query);
+    		// system.debug('REFEVALREFEVAL>>>'+refEval);
     		 
     		 SObject refEval1=database.query(query);
     		 string evaluationObj='Evaluation__c';
@@ -606,9 +592,9 @@ public with sharing class referralConversion_Controller {
              dynObjectEvaluationRecord.put(f.getfieldPath(), refEval1.get(f.getfieldPath()));     
                     
             }
-			dynObjectEvaluationRecord.put('RecordTypeID',Utility.getEvaluationRecordType('NursesAssessment'));
-			dynObjectEvaluationRecord.put('ServiceAssignment__c',newSA.id);
-			
+			dynObjectEvaluationRecord.put('RecordTypeID', Utility.getEvaluationRecordType('NursesAssessment'));
+			dynObjectEvaluationRecord.put('ServiceAssignment__c', newSA.id);
+			dynObjectEvaluationRecord.put('Name',asmtName );
         insert dynObjectEvaluationRecord;
     	} 
     }
