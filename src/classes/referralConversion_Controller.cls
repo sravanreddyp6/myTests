@@ -560,7 +560,7 @@ public with sharing class referralConversion_Controller {
    List <Evaluation__c> refEval = [SELECT ID, NAME FROM Evaluation__c WHERE Referral__c =:refCurr.Id LIMIT 1]; //using List to avoid System.Query Exception when no records are returned
     
     	if(refEval.isEmpty()){
-    		string pbslastName =  this.referralRecord.Name_PBR__c; //newSA.Admission__r.Person_Being_Served__r.LastName;
+    		string pbslastName =  this.referralRecord.Name_PBR__c.Substringbefore(','); //newSA.Admission__r.Person_Being_Served__r.LastName;
     		if(pbslastName == null) pbslastName = '';
                 Evaluation__c nurseEval = new Evaluation__c(
     										ServiceAssignment__c = newSA.id,
@@ -572,7 +572,7 @@ public with sharing class referralConversion_Controller {
     	}
     	else{
     		id evalID = refEval[0].id;
-    		String asmtName = 'NursesAssessment'+ DateTime.Now().format('MMddyy');
+    		String asmtName = refEval[0].Name.length()>10 ? refEval[0].Name.Substringbefore('Eval')+'NursesAssessment'+ DateTime.Now().format('MMddyy') : 'NursesAssessment'+ DateTime.Now().format('MMddyy');
     		String query = 'SELECT ';
     		FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment;
     		
@@ -580,7 +580,7 @@ public with sharing class referralConversion_Controller {
     			query += f.getFieldPath() + ', ';
     				
     		}
-    		 query += 'FROM Evaluation__c WHERE ID =:evalID';
+    		 query += 'Name FROM Evaluation__c WHERE ID =:evalID';
     		// refEval = Database.query(query);
     		// system.debug('REFEVALREFEVAL>>>'+refEval);
     		 
@@ -595,6 +595,7 @@ public with sharing class referralConversion_Controller {
 			dynObjectEvaluationRecord.put('RecordTypeID', Utility.getEvaluationRecordType('NursesAssessment'));
 			dynObjectEvaluationRecord.put('ServiceAssignment__c', newSA.id);
 			dynObjectEvaluationRecord.put('Name',asmtName );
+			
         insert dynObjectEvaluationRecord;
     	} 
     }
