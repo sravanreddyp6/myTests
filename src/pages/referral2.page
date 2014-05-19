@@ -1261,11 +1261,11 @@ function stopRKey(evt) {
 
      <apex:pageBlockSection title="Anticipated Admission Location Information" columns="1" collapsible="false" id="LocationInfo">
        <apex:outputField value="{!Referral__c.Anticipated_Admission_Date__c}" />
-       <apex:outputField value="{!Referral__c.Service_Location__c}" rendered="{!referralRecordType!='CareMeridian'}"/>
-         <apex:outputField value="{!Referral__c.Service_Location_Service_Value__c}" rendered="{!referralRecordType!='CareMeridian'}"/>
-         <apex:outputField value="{!Referral__c.Service_Location_Setting__c}" rendered="{!referralRecordType!='CareMeridian'}"/>
-       <apex:outputField value="{!Referral__c.Service_Location_Street__c}" rendered="{!referralRecordType!='CareMeridian'}"/>
-       <apex:pageBlockSectionItem rendered="{!referralRecordType!='CareMeridian'}">
+       <apex:outputField value="{!Referral__c.Service_Location__c}" />
+         <apex:outputField value="{!Referral__c.Service_Location_Service_Value__c}" />
+         <apex:outputField value="{!Referral__c.Service_Location_Setting__c}" />
+       <apex:outputField value="{!Referral__c.Service_Location_Street__c}" />
+       <apex:pageBlockSectionItem >
           <apex:outputText value="City"/>
           <apex:outputPanel styleClass="nowrap">
             <apex:outputText value="{!Referral__c.Service_Location_City__c}" />&nbsp;
@@ -1275,8 +1275,6 @@ function stopRKey(evt) {
             <apex:outputText value="{!Referral__c.Service_Location_Zip__c}" style="width: 42px;" />
           </apex:outputPanel>
         </apex:pageBlockSectionItem>
-
-        <apex:outputField value="{!Referral__c.Admission_Location__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
 
      </apex:pageBlockSection>
 
