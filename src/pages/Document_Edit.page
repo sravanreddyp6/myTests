@@ -87,16 +87,16 @@ $( document ).ready(function() {
       <!--<apex:outputPanel id="DocInfo" layout="block" rendered="true" >-->
         <apex:pageBlockSection title="Document Detail" collapsible="false">
                 <apex:inputField value="{!myDoc.Name}" id="DocumentNameField" style="width:400px;" />
-                <apex:selectList id="StateField" label="State"  size="1" value="{!currentState}">
+                <apex:selectList id="DocumentTypeField" label="Document Type" size="1" value="{!docType}">
+                    <apex:actionSupport event="onchange" rerender="DocDetailForm,CaseDocContracts,CaseDocContractsB,CaseDocPrograms,CaseDocRelativeDueDate" action="{!updateProgramsAndContracts}" status="MyStatus" />
+                    <apex:selectOptions value="{!docTypeSelectOptions}" />
+                </apex:selectList>
+                <apex:selectList id="StateField" label="State"  size="1" value="{!currentState}" rendered="{!docType!=null && docType!='' && docType!='--None--' && docType!='Fidelity Document'}">
                     <apex:actionSupport event="onchange"  rerender="DocDetailForm,CaseDocContracts,CaseDocPrograms,CaseDocRelativeDueDate" action="{!updateProgramsAndContracts}" status="MyStatus" />
                     <apex:selectOptions value="{!stateSelectOptions}" />
                 </apex:selectList>
-                        <apex:selectList id="DocumentTypeField" label="Document Type" size="1" value="{!docType}" rendered="{!currentState!=null && currentState!='' && currentState!='--None--'}">
-                            <apex:actionSupport event="onchange" rerender="DocDetailForm,CaseDocContracts,CaseDocContractsB,CaseDocPrograms,CaseDocRelativeDueDate" action="{!updateProgramsAndContracts}" status="MyStatus" />
-                            <apex:selectOptions value="{!docTypeSelectOptions}" />
-                        </apex:selectList>
-                        </apex:pageBlockSection>
-          <apex:pageBlockSection id="CaseDocContracts" title="For Persons Served by These Contracts" collapsible="false" rendered="{!docType=='Case Document'}" columns="1">
+          </apex:pageBlockSection>
+          <apex:pageBlockSection id="CaseDocContracts" title="For Persons Served by These Contracts" collapsible="false" rendered="{!docType=='Case Document' && currentState!=null && currentState!='' && currentState!='--None--'}" columns="1">
                 <apex:pageBlockTable value="{!displayedContracts}" var="con" rowclasses="row-odd, row-even">
                    <apex:column headerValue="Contract Name" value="{!con.data.Name}" rendered="{!IF(con.data.State__c==currentState||con=='',true,false)}" />
                    <apex:column headerValue="Selected" rendered="{!IF(con.data.State__c==currentState||con=='',true,false)}">
@@ -106,7 +106,7 @@ $( document ).ready(function() {
                 </apex:pageBlockTable>
                 
           </apex:pageBlockSection>
-          <apex:pageBlockSection id="CaseDocPrograms" title="For Persons Served by These Programs" collapsible="false" rendered="{!docType=='Case Document'}" columns="1">             
+          <apex:pageBlockSection id="CaseDocPrograms" title="For Persons Served by These Programs" collapsible="false" rendered="{!docType=='Case Document' && currentState!=null && currentState!='' && currentState!='--None--'}" columns="1">             
                <apex:pageBlockTable value="{!displayedPrograms}" var="p" rowclasses="row-odd, row-even">                       
                        <apex:column headerValue="Program Name" value="{!p.programName}" rendered="{!IF(p.programState==currentState||p.programState=='',true,false)}" />
                        <apex:column headerValue="Selected" rendered="{!IF(p.programState==currentState||p.programState=='',true,false)}">
@@ -115,7 +115,7 @@ $( document ).ready(function() {
                </apex:pageBlockTable>
                
            </apex:pageBlockSection>
-           <apex:pageBlockSection id="CaseDocRelativeDueDate" rendered="{!docType=='Case Document'}" title="Document Display Rules" collapsible="false" columns="1">
+           <apex:pageBlockSection id="CaseDocRelativeDueDate" rendered="{!docType=='Case Document' && currentState!=null && currentState!='' && currentState!='--None--'}" title="Document Display Rules" collapsible="false" columns="1">
                     <apex:inputField value="{!myDoc.Relative_Due_Date_Units__c}"/>
                     
                     <apex:inputField value="{!myDoc.Relative_Due_Date_UOM__c}"/>
@@ -125,7 +125,7 @@ $( document ).ready(function() {
                     <apex:inputField value="{!myDoc.Auto_Include__c}"/>
                
                 </apex:pageBlockSection>
-            <apex:pageBlockSection id="FidDoc" rendered="{!docType=='Fidelity Document' && currentState!=null && currentState!='' && currentState!='--None--'}" title="Document Display Rules" collapsible="false" columns="1"> 
+            <apex:pageBlockSection id="FidDoc" rendered="{!docType=='Fidelity Document'}" title="Document Display Rules" collapsible="false" columns="1"> 
                         <apex:pageBlockSection id="FidCheckPageBlock"  columns="1">
 
                 <!--<div id="FidelityDocument" class="doctype" style="display:none">-->
@@ -143,7 +143,7 @@ $( document ).ready(function() {
     
                 <!--<div id="RequiredFrom" class="requiredFromInfo" style="display:none">-->
 
-                <apex:pageBlockSection rendered="{!docType=='Case Document' || docType=='Fidelity Document' && (docType=='Fidelity Document' && currentState!=null && currentState!='' && currentState!='--None--')}">
+                <apex:pageBlockSection rendered="{!(docType=='Case Document' && currentState!=null && currentState!='' && currentState!='--None--') || docType=='Fidelity Document'}">
                     <apex:inputField value="{!myDoc.Required_From_Date__c}"/>
                     <apex:inputField value="{!myDoc.Required_To_Date__c}"/>
                     <apex:inputField id="ActiveCheckbox" value="{!myDoc.Active__c}"/>  
