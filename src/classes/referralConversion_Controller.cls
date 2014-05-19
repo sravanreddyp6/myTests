@@ -572,14 +572,14 @@ public with sharing class referralConversion_Controller {
     		insert nurseEval;
     	}
     	else{
-    		Evaluation__c nurEval = new Evaluation__c(
+    		/*Evaluation__c nurEval = new Evaluation__c(
     										ServiceAssignment__c = newSA.id,
     										RecordtypeId = Utility.getEvaluationRecordType('NursesAssessment'),
     										Name = refEval[0].Name
     										
     		);	
     		
-    		insert nurEval;
+    		insert nurEval;*/
     		
     		id evalID = refEval[0].id;
     	//	system.debug('IIIIIIIIIIIIIIDDDDDDDDDDD>>>>>>'+evalID);
@@ -596,9 +596,20 @@ public with sharing class referralConversion_Controller {
     		// query +=
     		 
     		 refEval = Database.query(query);
-    		
-    		
-    		
+    		 system.debug('REFEVALREFEVAL>>>'+refEval);
+    		 
+    		 SObject refEval1=database.query(query);
+    		 string evaluationObj='Evaluation__c';
+       		 sObject dynObjectEvaluationRecord= Schema.getGlobalDescribe().get(evaluationObj).newSObject() ;
+        
+        	 for(Schema.FieldSetMember f : copyFields.getFields()) {
+             dynObjectEvaluationRecord.put(f.getfieldPath(), refEval1.get(f.getfieldPath()));     
+                    
+            }
+			dynObjectEvaluationRecord.put('RecordTypeID',Utility.getEvaluationRecordType('NursesAssessment'));
+			dynObjectEvaluationRecord.put('ServiceAssignment__c',newSA.id);
+			
+        insert dynObjectEvaluationRecord;
     	} 
     }
     
