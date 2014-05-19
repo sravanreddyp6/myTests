@@ -220,7 +220,7 @@
             <type>FieldUpdate</type>
         </actions>
         <active>true</active>
-        <formula>ISNULL(FCT_Phase_String_At_Note_Creation__c)  || FCT_Phase_at_Note_Creation__c = 0</formula>
+        <formula>ISNULL(FCT_Phase_String_At_Note_Creation__c) || FCT_Phase_at_Note_Creation__c = 0 || ISNULL(FCT_Phase_at_Note_Creation__c)</formula>
         <triggerType>onAllChanges</triggerType>
     </rules>
     <rules>

@@ -4,6 +4,11 @@ public with sharing class referrals_Controller{
  Created By     : Mark Klinski (Appirio)
  Created Date   : 4/23/13
  Description    : Extension Controller for Referrals
+ Modification   : 05/09/2014
+ Mod By			: Shaun Wood
+ Mod Reason		: Adding this comment only so this class can get deployed again in the May release. 
+ 				: This will allow the code that was commented out for the release to be commented back in.
+ 				: Please see ticket SHAUN-21 for reference.
 *******************************************************************************/
 
 //public with sharing class referrals_Controller {

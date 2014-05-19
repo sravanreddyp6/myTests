@@ -8662,7 +8662,7 @@
     <validationRules>
         <fullName>Claims_Submission_Zip_Validation</fullName>
         <active>true</active>
-        <errorConditionFormula>NOT(REGEX(Claims_Submission_Zip__c, &quot;\\d{5}(-\\d{4})?&quot;))</errorConditionFormula>
+        <errorConditionFormula>NOT(REGEX(Claims_Submission_Zip__c, &quot;\\d{5}(-\\d{4})?&quot;)) &amp;&amp; NOT(ISBLANK(Claims_Submission_Zip__c))</errorConditionFormula>
         <errorDisplayField>Claims_Submission_Zip__c</errorDisplayField>
         <errorMessage>Please enter zip code in the format: XXXXX or XXXXX-XXXX</errorMessage>
     </validationRules>
