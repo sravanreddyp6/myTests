@@ -1652,7 +1652,7 @@ function enableDiagEff() {
        <apex:inputField value="{!Referral__c.Anticipated_Admission_Date__c}" />
        <apex:inputHidden id="sl_lkid" value="{!Referral__c.Service_Location__c}" />
        <!-- Added by Kossi 06/06/13 2:00 AM -->
-            <apex:pageBlockSectionItem rendered="{!referralRecordType!='CareMeridian'}">
+            <apex:pageBlockSectionItem >
             <apex:outputLabel value="Alias"/>
             <apex:pageBlockSectionItem >
                 <apex:inputText id="sl" value="{!searchedServiceLocationName2}" size="20"/><a onClick="locationLookup2();"><img valign="bottom" src="/s.gif" alt="Service Location Lookup (New Window)" class="lookupIcon"
@@ -1662,7 +1662,6 @@ function enableDiagEff() {
                                     title="Service Location Lookup (New Window)"/></a>
             </apex:pageBlockSectionItem>
             </apex:pageBlockSectionItem>
-            <apex:inputField value="{!Referral__c.Admission_Location__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
 
             <!--apex:inputHidden id="locationEntry_ServiceLocation_lkid" value="{!searchedServiceLocationId}"/-->
             <!---->
