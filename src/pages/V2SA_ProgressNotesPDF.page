@@ -1,0 +1,19 @@
+<apex:page standardController="Progress_Note__c" extensions="Notes_ProgressNote_GetFieldsAudit_PDF" readOnly="true" sidebar="false" showHeader="false"   renderAs="pdf"> <!-- renderAs="pdf" -->
+    <style>
+    .pbBottomButtons, #topButtonRow {display: none;}
+    </style>
+    <apex:detail inlineEdit="false" title="false" relatedList="false"/>
+    
+    <h2 style="font-size: 1.2em;">Short Term Goals</h2>
+    <apex:include pageName="{!$Page.V2SA_ProgressNotesEmbed_include}"/>
+   
+   <apex:outputPanel rendered="{! !ISNULL(Progress_Note__c.Service_Code__c)}">
+    <h2 style="font-size: 1.2em;">Service Code </h2>
+     <apex:outputField label="Service Code" value="{!PN.Service_Code__r.Service_Value__c}"/>  
+   </apex:outputPanel>  
+     <br/>    
+    <apex:outputPanel rendered="{! !ISNULL(Progress_Note__c.Authorization__c)}">       
+        <h2 style="font-size: 1.2em;">Authorization</h2>
+        <apex:outputField label="Authorization" value="{!PN.Authorization__r.Display_Name__c}"  /> 
+    </apex:outputPanel>
+</apex:page>
