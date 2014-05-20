@@ -1,0 +1,299 @@
+<apex:page standardController="Evaluation__c" extensions="NursingEvaluationEditController">
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>   
+	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}"/>
+	<style>
+		.thinking{
+            opacity:0.8;
+            background-color:#ccc;
+            position:fixed;
+            width:100%;
+            height:100%;
+            top:0px;
+            left:0px;
+            z-index:1000;
+        }
+        .thinkingwheel{
+            position:absolute; left:40%; top:48%; background-color: white; border: 2px solid gray; padding: 2px;
+        }
+        .hr {
+            color: #ECECEC;
+            background-color: #ECECEC;
+            margin-bottom: 20px;
+            margin-top: 20px;
+            border: none;
+            height: 5px;
+        }
+        .evaluationTabHeader .sectionCompleted, .sectionCompletedLink {
+            background-image: url("{!URLFOR($Resource.EvaluationResources, 'greencheck.png')}");
+            background-repeat: no-repeat;
+            padding-top: 22px;
+        }
+        .evaluationTabHeader .sectionNotCompleted, .sectionNotCompletedLink {
+            background-image: url("{!URLFOR($Resource.EvaluationResources, 'whitecheck.png')}");
+            background-repeat: no-repeat;
+            padding-top: 22px;
+        }
+        .sectionNotCompletedLink, .sectionCompletedLink {
+            vertical-align:bottom !important;
+            background-position: center top;
+            padding-left:10px;
+            padding-right:10px;
+        }
+    	.mycols{
+    		width: 15%;
+   		    padding-left: 25px;
+   		   cellspacing: 15px;
+    	}
+	</style>
+	<script>
+	 function setFocusOnLoad() {}  // Overwrite VF function to focus on the 1st field
+        jQuery.noConflict();
+        
+        
+	 function getNextTab( currTab ) {
+            var nextTab = currTab;
+            
+            if ( currTab == 'detailsTab' || currTab == '')
+                nextTab = 'diagnosticTab';
+            else if( currTab == 'diagnosticTab') 
+                nextTab =  'cardioTab';
+            //else if ( currTab == 'marTab' ) 
+                //nextTab =     'cardioTab';
+            else if ( currTab== 'cardioTab')
+                nextTab = 'nutritionTab';
+            else if ( currTab == 'nutritionTab')
+                nextTab = 'skinBodyTab';
+            else if ( currTab == 'skinBodyTab')
+                nextTab = 'neuroTab';
+            else if ( currTab == 'neuroTab')
+                nextTab = 'orthoTab';
+            else if ( currTab == 'orthoTab')
+                nextTab = 'rehabTab';
+            else if ( currTab == 'rehabTab') 
+                nextTab = 'psychoSocialTab';
+            else if ( currTab == 'psychoSocialTab')
+                nextTab = 'dischargePlanTab';
+            
+            return nextTab;
+            }	
+	</script>
+	  <script type="text/javascript">
+       
+           var lbs;
+           var oz;
+           var kg;
+           
+          j$=jQuery.noConflict();
+      
+         function calculate(formField,type){
+          
+           if(type=='lbs'){              
+               var total=getlbsValue() + getOzValue();  
+               j$('[id$=kg]').val(total);                  
+           }
+           
+           if(type=='oz'){
+               var total=getlbsValue() + getOzValue();
+               j$('[id$=kg]').val(total);  
+           }
+           
+           if(type=='kg'){
+               kg=j$('[id$=kg]').val();  
+               var kgtolbs = kg*2.2046;
+               j$('[id$=lbs]').val(kgtolbs);                    
+               j$('[id$=oz]').val('0.0');  
+           }
+        }
+        
+        function getlbsValue(){
+             lbs=j$('[id$=lbs]').val();
+             var lbtokgs = 0;
+             if(lbs!=null && lbs!='')
+                 lbtokgs = lbs*0.453592;
+             return lbtokgs;
+        
+        }
+        function getOzValue(){
+             oz=j$('[id$=oz]').val();
+             var oztokg=0;
+             if(oz!=null && oz!='')
+                 oztokg = oz*0.0283495;
+             return oztokg;
+        
+        }
+        
+        
+        
+     </script>
+     
+	<apex:form id="wholePage">
+	<apex:outputPanel rendered="false">
+		<apex:inputhidden value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Id}"/>
+	</apex:outputPanel>
+		<apex:pageMessages id="pageMessages" />
+		<apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); removeSpacer()" reRender="pageMessages, wholeTabPanel, buttons">
+			<apex:param name="nextTab" assignTo="{!nextTab}" value="" />
+		</apex:actionFunction>
+		<apex:tabPanel value="{!selectedTab}" id="wholeTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">	
+			<apex:tab label="Details" name="detailsTab" ontabenter="changeTab('detailsTab'); return false;" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+				<apex:pageBlock >
+					<apex:pageBlockSection columns="2">
+						<apex:outPutField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Name}"/>
+						<apex:inputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.BirthDate}"/>
+						<apex:inputField value="{!Evaluation__c.EmploymentFT__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.EmploymentPT__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.EmploymentRetired__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.EmploymentDisabled__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.EmploymentUnknown__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Employment_Status__c}" id="employmentStatus" />
+					</apex:pageBlockSection>
+					<apex:pageBlockSection columns="1" title="Related Party">
+                        <apex:actionFunction name="showAddRelatedParty" action="{!showAddRelatedParty}" status="loadingRelatedPartyStatus" rerender="relatedPartyDialogMainBlock" oncomplete="openModalDialog('{!$Component.relatedPartyDialog}', 'Add Related Party', '{!$Component.wholePage}');" />
+                        <apex:actionFunction name="showEditRelatedParty" action="{!showEditRelatedParty}" status="loadingRelatedPartyStatus" rerender="relatedPartyDialogMainBlock" oncomplete="openModalDialog('{!$Component.relatedPartyDialog}', 'Edit Related Party', '{!$Component.wholePage}');">
+                            <apex:param name="currentRelatedPartyId" assignTo="{!currentRelatedPartyId}" value="" />
+                        </apex:actionFunction>
+                        
+						 <apex:outputPanel layout="none">
+                            <apex:commandButton value="Add Related Party" onclick="showAddRelatedParty(); return false;" />
+                            <apex:actionStatus id="loadingRelatedPartyStatus">
+                                <apex:facet name="start">
+                                  <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                                </apex:facet>
+                                <apex:facet name="stop" />
+                            </apex:actionStatus>
+                        </apex:outputPanel>
+                        <apex:pageBlockTable value="{!relatedParties}" var="relatedParty" id="relatedPartyTable">
+                            <apex:column headerValue="{!IF(relatedParties.size>0, 'Action', '')}" width="50px">
+                                <apex:commandLink onclick="showEditRelatedParty('{!relatedParty.Id}'); return false;" value="Edit" />
+                            </apex:column>
+                            <apex:column value="{!relatedParty.Type__c}"/>
+                            <apex:column value="{!relatedParty.Name}"/>
+                            <apex:column value="{!relatedParty.Address__c}"/>
+                            <apex:column value="{!relatedParty.Email__c}"/>
+                            <apex:column value="{!relatedParty.Phone__c}"/>
+                            <apex:column value="{!relatedParty.Phone_1_Type__c}"/>
+                            <apex:column value="{!relatedParty.Phone_2__c}"/>
+                            <apex:column value="{!relatedParty.Phone_2_Type__c}"/>
+                            <apex:column value="{!relatedParty.Comments__c}"/>
+                        </apex:pageBlockTable>
+                    </apex:pageBlockSection>
+				</apex:pageBlock>
+			</apex:tab>
+			
+			<apex:tab label="Diagnostics" name="diagnosticTab" ontabenter="changeTab('diagnosticTab'); return false;" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+				<apex:pageBlock >
+				
+				</apex:pageBlock>
+			</apex:tab>
+			
+			
+			<apex:tab label="Cardiopulmonary" name="cardioTab" onTabenter="changeTab('cardioTab'); return false;" styleClass="{!IF(Evaluation__c.Cardio_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+				<apex:pageBlock >
+				
+				</apex:pageBlock>
+			</apex:tab>
+			
+			<apex:tab label="GU/GI/Nutrition" name="nutritionTab" ontabenter="changeTab('nutritionTab'); return false;" styleClass="{!IF(Evaluation__c.Nutrition_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+				<apex:pageBlock >
+				
+				</apex:pageBlock>
+			</apex:tab>
+			
+			<apex:tab label="Skin/Body" name="skinBodyTab" ontabenter="changeTab('skinBodyTab'); return false;" styleClass="{!IF(Evaluation__c.Skin_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+				<apex:pageBlock >
+				
+				</apex:pageBlock>
+			</apex:tab>
+			
+			<apex:tab label="Neurological" name="neuroTab" ontabenter="changeTab('neuroTab'); return false;" styleClass="{!IF(Evaluation__c.Neuro_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+				<apex:pageBlock >
+				
+			    </apex:pageBlock>
+			 </apex:tab>
+			 
+			 <apex:tab label="Ortho" name="orthoTab" ontabenter="changeTab('orthoTab'); return false;" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+			 	<apex:pageBlock >
+			 	
+			 	</apex:pageBlock>
+			 </apex:tab>
+			 
+			<apex:tab label="Rehab" name="rehabTab" ontabenter="changeTab('rehabTab'); return false;" styleClass="{!IF(Evaluation__c.Rehab_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+			 	<apex:pageBlock >
+			 	
+			 	
+			 	</apex:pageBlock>
+			 </apex:tab>
+			 
+			 <apex:tab label="Psycho/Social" name="psychoSocialTab" ontabenter="changeTab('psychoSocialTab'); return false;" styleClass="{!IF(Evaluation__c.Psycho_Social_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+			 	<apex:pageBlock >
+			 	
+			 	</apex:pageBlock>
+			 </apex:tab>
+			 
+			 <apex:tab label="Discharge Plan" name="dischargePlanTab" ontabenter="changeTab('dischargePlanTab'); return false;" styleClass="{!IF(Evaluation__c.Discharge_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+			 	<apex:pageBlock >
+			 	
+			 	</apex:pageBlock>
+			 </apex:tab>
+		</apex:tabPanel>
+		
+		<apex:pageBlock id="buttons">
+			<apex:pageBlockButtons location="bottom">
+				<apex:commandButton Value="Save & Continue" onClick="changeTab(getNextTab('{!selectedTab}')); return false;" rendered="{!selectedTab != 'dischargePlanTab'}" />
+				<apex:commandButton value="Save" action="{!save}" />
+				<apex:commandButton value="cancel" onClick="window.location='apex/NursingEvaluationView?id={!Evaluation__c.Id}&tab={!selectedTab}'; return false;"/>
+			</apex:pageBlockButtons>
+		</apex:pageBlock>
+		<apex:outputPanel id="relatedPartyDialog" style="display:none">
+            <apex:pageBlock title="Add/Edit Related Party" id="relatedPartyDialogMainBlock">
+                <apex:pageblockButtons location="bottom">
+                   <apex:actionFunction name="saveRelatedParty" action="{!saveRelatedParty}" rerender="relatedPartyTable,relatedPartyDialogMainBlock,relatedPartyDialogErrors" status="saveRelatedPartyStatus" oncomplete="afterSave('{!$Component.relatedPartyDialog}', request.options.parameters.keepDialogOpen, showAddRelatedParty);">
+                        <apex:param name="keepDialogOpen" value="" />
+                    </apex:actionFunction>
+                    <apex:commandButton value="Save" onClick="saveRelatedParty(false); return false;" />
+                    <apex:commandButton value="Save & New" onClick="saveRelatedParty(true); return false;" />
+                    <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.relatedPartyDialog}'); return false;" />
+                    <apex:actionStatus id="saveRelatedPartyStatus">
+                        <apex:facet name="start">
+                            <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                        </apex:facet>
+                        <apex:facet name="stop" />
+                    </apex:actionStatus>
+                </apex:pageblockButtons>
+                <apex:pageMessages id="relatedPartyDialogErrors" />
+                <apex:pageBlockSection columns="2">
+                    <apex:inputField value="{!currentRelatedParty.Name}" />
+                    <apex:inputField value="{!currentRelatedParty.Type__c}" />
+                    <apex:inputField value="{!currentRelatedParty.Address__c}" />
+                    <apex:inputField value="{!currentRelatedParty.Email__c}" />
+                    <apex:inputField value="{!currentRelatedParty.Phone__c}" />
+                    <apex:inputField value="{!currentRelatedParty.Phone_1_Type__c}" />
+                    <apex:inputField value="{!currentRelatedParty.Phone_2__c}" />
+                    <apex:inputField value="{!currentRelatedParty.Phone_2_Type__c}" />
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="1">
+                    <apex:inputField value="{!currentRelatedParty.Comments__c}" style="width: 90%;" />
+                </apex:pageBlockSection>
+           	</apex:pageBlock>
+         </apex:outputPanel>
+	</apex:form>
+	<apex:actionStatus id="pageProcessing" >
+        <apex:facet name="start">
+            <div class="thinking">
+                <div class="thinkingwheel">
+                    <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Saving &amp; Processing...</span>
+                </div>
+            </div>
+        </apex:facet>
+        <apex:facet name="stop" />
+    </apex:actionStatus>				
+</apex:page>
