@@ -77,10 +77,15 @@ private class ChatRetentionTest2 {
           
            //insert fc3;
     	
-    	ChatterRetention myobj = new ChatterRetention('Select f.Type, f.CommentCount, f.Body, f.Title, f.Id, f.CreatedById, f.ParentId, f.LastModifiedDate, f.CreatedDate From FeedItem f');
-        ID batchprocessid = Database.executeBatch(myobj, 200);
-        
-        
+		  datetime ninetyDays;
+	  	  ninetyDays = DateTime.now().AddDays(1);
+	  	String ninetyString = ninetydays.format('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'');
+	  	
+	  	  system.debug('ninetyDays time is: ' + ninetyDays);
+	  
+        	String query = 'Select Type, CommentCount, ContentType, Body, Title, Id, CreatedById, ParentId, LastModifiedDate, CreatedDate from FeedItem where LastModifiedDate < '  + ninetyString;
+        	system.debug( query);
+            ID batchprocessid = Database.executeBatch(new ChatterRetention(query), 200);
         
     }
 }

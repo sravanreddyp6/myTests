@@ -10,23 +10,8 @@ global class ChatterRetention implements Database.Batchable<sObject>{
    }
 
    global void execute(Database.BatchableContext BC, List<sObject> scope){
-	  FeedItem[] AllFeedItems = (FeedItem[])scope;
-	  datetime ninetyDays;
-	  if (Test.isrunningtest()==true)
-	  {
-	  	ninetyDays = DateTime.now().AddDays(1);
-	  }
-	  else
-	  {
-	    ninetyDays = DateTime.now().AddDays(-90);
-	  }
-	  
-	  // Feed Items updated more than 90 days ago
-	  List<FeedItem> AllFeedItemsList = [Select Type, CommentCount, ContentType, Body, Title, Id, CreatedById, ParentId, LastModifiedDate, CreatedDate from FeedItem where LastModifiedDate < :ninetyDays];
-	  
-	  system.debug('ninetyDays time is: ' + ninetyDays);
-	  system.debug('number of AllFeedItemList Items:' + AllFeedItemsList.size());
-	  system.debug( 'DATA---------------' + allfeeditemslist);
+	  FeedItem[] AllFeedItemsList = (FeedItem[])scope;
+
 	  
 	  set <string> userids = new set<string>();
 	  map<id, user> u = new map<id, user>();
