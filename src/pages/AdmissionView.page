@@ -73,7 +73,6 @@
             <apex:commandButton rendered="{!(assessmentTypes['CANS'] &&  canCreateAsmt )&& showCans }" onclick="window.open('/apex/assessment_CANSdetail?admission={!admission.ID}&type={!CANsID}', '_self'); return false;" value="New CANS Assessment" />&nbsp;&nbsp;
             <apex:commandButton rendered="{!(assessmentTypes['Risk'] && riskAssessments.size=0 && canCreateAsmt ) && !showCans}" action="{!createRiskAssess}" value="New Risk Assessment" />
             <apex:commandButton onclick="window.open('/{!Risk_Overview}?pv0={!Admission__c.Name}','_self'); return false;" rendered="{!(assessmentTypes['Risk'] && riskAssessments.size!=0 )}" value="Acknowledgment Overview" />
-            
         </div>
         <apex:outputPanel rendered="{!(cansAssessments.size>0)}">
             <h1 style="display: block; margin-bottom: 30px;">CANS Assessments</h1>

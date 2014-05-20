@@ -84,6 +84,20 @@ public with sharing class CareMeridianEvaluationEditController {
             // have to do anything
         }
     }
+    
+    public pageReference reDirect() {
+        
+        PageReference returnURL;
+        
+        if(this.evaluation.RecordTypeId == Utility.getEValuationRecordType('NursesAssessment')) 
+        returnURL = new PageReference ('/apex/NursingEvaluationEdit?id='+evaluation.id);
+        system.debug('UUUUUUUUUUUUUURRRRRRRRRRRRRRRRRRRRLLLLLLLLLLLLLLLLLLL'+returnURL);
+        
+        return returnURL;
+        
+        
+    
+    }
 
     @RemoteAction
     public static Evaluation_Response__c addOrModifyAnnotation(ID annotationId, String source, Decimal x, Decimal y, Decimal Width, Decimal Height, String Shape, String Text, String evaluationId) {
