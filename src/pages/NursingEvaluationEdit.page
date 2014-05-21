@@ -191,7 +191,6 @@
            var kg;
            
           j$=jQuery.noConflict();
-      
          function calculate(formField,type){
           
            if(type=='lbs'){              
@@ -226,6 +225,8 @@
              if(oz!=null && oz!='')
                  oztokg = oz*0.0283495;
              return oztokg;
+        
+        
         
         }
         
@@ -432,8 +433,12 @@
                          <apex:pageBlockSectionItem />
                          <apex:pageBlockSectionItem />
                          <apex:inputField value="{!Evaluation__c.Odor__c}" id="odor" />  
-                          
+                         <apex:selectCheckboxes value="{!selectedSounds}" >
+                         		<apex:selectOptions value="{!breatheSounds}" />
+                         		</apex:selectCheckboxes>
+                         		<apex:inputhidden value="{!Evaluation__c.Breathe_Sounds__c}"/>
 					</apex:pageBlockSection>
+					
 					<apex:pageBlockSection Columns="1">
 						<apex:inputTextArea value="{!Evaluation__c.Cardio_Comments__c}" cols="80"/>
 						<apex:inputField value="{!Evaluation__c.Cardio_Section_Completed__c}" />
