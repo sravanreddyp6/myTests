@@ -190,6 +190,46 @@
         <label>NursingAssessment</label>
     </fieldSets>
     <fields>
+        <fullName>Accompanied_By__c</fullName>
+        <externalId>false</externalId>
+        <label>Accompanied By</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Admit_Date_Time__c</fullName>
+        <externalId>false</externalId>
+        <label>Admit Date/Time</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Admit_Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Admit Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Admission</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Re-Admission</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Return from bedhold</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Advanced_Directives_Attached__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
@@ -3993,6 +4033,16 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Transported_By__c</fullName>
+        <externalId>false</externalId>
+        <label>Transported By</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Treatment_Plan_Other__c</fullName>
         <externalId>false</externalId>
         <label>Treatment Plan Other</label>
@@ -4372,6 +4422,21 @@
         <active>true</active>
         <description>This record type is used for CareMeridian Evaluations on Referral object.</description>
         <label>CareMeridian</label>
+        <picklistValues>
+            <picklist>Admit_Status__c</picklist>
+            <values>
+                <fullName>Admission</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Re-Admission</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Return from bedhold</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
         <picklistValues>
             <picklist>Awareness_of_Deficits__c</picklist>
             <values>
@@ -5658,6 +5723,21 @@
         <active>true</active>
         <description>This record type is used for Nurses Assessment Evaluations on PersonBeingServed.</description>
         <label>NursesAssessment</label>
+        <picklistValues>
+            <picklist>Admit_Status__c</picklist>
+            <values>
+                <fullName>Admission</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Re-Admission</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Return from bedhold</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
         <picklistValues>
             <picklist>Awareness_of_Deficits__c</picklist>
             <values>
