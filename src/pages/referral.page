@@ -9,7 +9,7 @@
       margin-left: 5px;
     }
     #fundingMessages {
-      margin-bottom: 10px
+      margin-bottom: 10px;
     }
     #fundingMessages .error {
       color: red;
@@ -75,6 +75,7 @@
     .thinkingwheel{
         position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
     }
+    .whitenoise { color:white; }
   </style>
 
   <script type="text/javascript">
@@ -180,11 +181,31 @@ function enableDiagEff() {
     }
   }
 
-  fundingSourceSave = function (isClose) {
+	fundingSourceSave = function (isClose) {
     // We cant use Visualforce functions/variables in a Static Resource JS file,
     // so we have to pass it in here.
-    closeFundingSource = isClose;
-    fundingSourceSaveHelper('{!JSENCODE(ReferralRecordType)}');
+    if (checkZipCode(j$('input[id$=Claims_Submission_Zip]').val()) == false) {
+        isClose = false;        
+        fundingSourceScrollToTop(false);
+    }    
+    else {
+        closeFundingSource = isClose;
+        fundingSourceSaveHelper('{!JSENCODE(ReferralRecordType)}');
+    }    
+  }
+  
+  // ERC-96: Adding this for front end validation.
+  // Claims_Submission_Zip is now a text field instead of number field.
+  function checkZipCode(value) {
+      var errors = '';
+      var validformat = /^\d{5}$|^\d{5}-\d{4}$/    
+      	
+      // if it contains a value and doesn't match regex then error
+      if (!validformat.test(value) && value.trim() ) {
+          errors += '<li class="error">Please enter zip code in the format: XXXXX or XXXXX-XXXX</li>';
+          j$('#fundingMessages').html(errors);      
+      }     
+      return (errors == '');      
   }
 
   //copies Agency fields from dialog for postback
@@ -332,7 +353,7 @@ function enableDiagEff() {
     <apex:actionFunction name="saveRef" action="{!saveRef}"/>
     <apex:actionFunction name="checkRedFlags" action="{!checkRedFlags}" oncomplete="alertOnHighRisk(); saveRef(); return false;" rerender="redFlagged"/>
     <apex:actionRegion >
-        <apex:actionFunction name="setReferralRecordType" action="{!setReferralRecordType}" rerender="ReferralDetail,ReferralDetail_1,Funding,progConsid,ReferralServices,msgs,ReferralDetailHeader,referralDetailBlock,progConsid,progConsiderationsDetail,placementRiskBlock, JuvBlockSection, PlacementHxBlockSection, HxBlock"/> 
+        <apex:actionFunction name="setReferralRecordType" action="{!setReferralRecordType}" rerender="ReferralDetail,ReferralDetail_1,Funding,progConsid,ReferralServices,msgs,ReferralDetailHeader,referralDetailBlock,progConsid,progConsiderationsDetail,placementRiskBlock, JuvBlockSection, PlacementHxBlockSection, HxBlock, refTypeHidden"/> 
     </apex:actionRegion>
     <apex:actionRegion >
         <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" oncomplete="openModalDialog('relatedPartyModal', 'span', 'Add Related Party','none');" status="showAddRelPartyStatus" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs" />
@@ -637,7 +658,7 @@ function enableDiagEff() {
     <apex:outputPanel id="FundingSourceModal" style="display:none">
 
         <apex:actionFunction name="saveFundingSource" status="saveFundingSourceStatus" action="{!saveFundingSource}" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialog('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceAuthorizationDetailEntry,fundingSourceEntry,msgs"/>
-
+   		
       <div id='fundingMessages' ></div>
       <apex:pageBlock title="Add Funding Source" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative'}">
         <apex:pageBlockSection columns="1" id="fundingSourceEntry">
@@ -784,7 +805,7 @@ function enableDiagEff() {
             <apex:inputField value="{!fundingSource.Claims_Submission_Fax__c}" label="Fax" />
             <apex:inputField value="{!fundingSource.Claims_Submission_State__c}" label="State" />
             <apex:pageBlockSectionItem />
-            <apex:inputField value="{!fundingSource.Claims_Submission_Zip__c}" label="Zip" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Zip__c}" id="Claims_Submission_Zip" label="Zip" />
         </apex:pageBlockSection>
         <apex:pageBlockSection columns="2" rendered="{!ReferralRecordType == 'NeuroRestorative'}">
             <apex:outputText value="Benefit Information" styleClass="modalSubheader" />
@@ -825,7 +846,7 @@ function enableDiagEff() {
             <apex:inputField value="{!fundingSource.Claims_Submission_Fax__c}" label="Fax" />
             <apex:inputField value="{!fundingSource.Claims_Submission_State__c}" label="State" />
             <apex:pageBlockSectionItem />
-            <apex:inputField value="{!fundingSource.Claims_Submission_Zip__c}" label="Zip" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Zip__c}" id="Claims_Submission_Zip" label="Zip" />
         </apex:pageBlockSection>
       </apex:pageBlock>
       <apex:pageBlock title="Red Flags" id="fundingSourceRedFlagsEntry" rendered="{!ReferralRecordType == 'CareMeridian' || ReferralRecordType == 'NeuroRestorative'}">
@@ -1015,7 +1036,7 @@ function enableDiagEff() {
 </apex:actionRegion>
 
     <!-- Added by Kossi 06/06/13 2:00 AM -->
-<Apex:actionregion >
+<apex:actionregion >
         <apex:outputPanel id="searchDialog" style="display:none">
             <apex:pageBlock id="block">
                 <apex:pageblockButtons location="top">
@@ -1079,7 +1100,7 @@ function enableDiagEff() {
                 </apex:pageblockTable>
             </apex:pageBlock>
         </apex:outputPanel>
-</Apex:actionregion>
+</apex:actionregion>
 <apex:actionregion >
         <apex:outputPanel id="searchDialog2" style="display:none">
             <apex:pageBlock id="block2">
@@ -2895,4 +2916,6 @@ function enableDiagEff() {
     </apex:facet>
     <apex:facet name="stop"> </apex:facet>
 </apex:actionStatus>
+<div style="text-align:right; width:100%"><apex:outputpanel styleclass="whitenoise" id="refTypeHidden">{!referralRecordType}</apex:outputpanel></div>
+
 </apex:page>
