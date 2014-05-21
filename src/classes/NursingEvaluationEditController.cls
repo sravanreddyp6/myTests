@@ -3,6 +3,11 @@ public with sharing class NursingEvaluationEditController {
 	public ApexPages.standardController stdController;
     public String selectedTab { get; set; }
     public String nextTab { get; set; }
+    
+    public List<SelectOption>breatheSounds ;
+    public List<string>selectedSounds {get ; set;}
+   
+    
     public Related_Party__c[] relatedParties { set;
         get {
             return [
@@ -18,8 +23,6 @@ public with sharing class NursingEvaluationEditController {
             return System.URL.getSalesforceBaseURL().toExternalForm();
         }
     }
-    
-    
     public Related_Party__c currentRelatedParty { get; set; }
     public Id currentRelatedPartyId { get; set; }
    // public Contact pbs { get; set; }
@@ -31,7 +34,10 @@ public with sharing class NursingEvaluationEditController {
     	if (ApexPages.currentPage().getParameters().get('tab') != null) {
             selectedTab = ApexPages.currentPage().getParameters().get('tab');
         }
-
+		breatheSounds = new List<SelectOption>();
+		selectedSounds = new List<String>();
+		if(!String.isBlank(this.evaluation.Breathe_sounds__c))
+		selectedSounds = this.evaluation.Breathe_Sounds__c.split(';');
     }
     
     public void showAddRelatedParty()  {
@@ -89,6 +95,18 @@ public with sharing class NursingEvaluationEditController {
         // All the validation goes here, partitioned by page. We can't do
         // object-level validation, because if there are 2 errors on 2 pages,
         // the user won't be able to save at all.
+       
+        String strtypes = '';
+        for (String s : selectedSounds)
+        	strtypes += s +';';
+        	
+        	if (strtypes != ''){
+        		strtypes = strtypes.Substring(0, strtypes.length() -1);
+        		this.evaluation.Breathe_Sounds__c = strtypes;
+        	}
+        	else
+        	this.evaluation.Breathe_Sounds__c ='';
+        	
         if (submitted || selectedTab == 'detailsTab' || selectedTab == null) {
 
         }
@@ -98,5 +116,16 @@ public with sharing class NursingEvaluationEditController {
         return new PageReference('/apex/CareMeridianEvaluationView?id=' + evaluation.Id + '&tab=' + selectedTab);
     }
     
-
+   public List<SelectOption> getbreatheSounds(){
+   		List<SelectOption> options = new List<selectOption>();
+   		 Schema.DescribeFieldResult changeType = Evaluation__c.Breathe_Sounds__c.getDescribe();
+   		 for (Schema.PicklistEntry a : changeType.getPickListValues())
+            options.add(new SelectOption(a.getLabel(), a.getValue())); 
+            
+            return options;
+   		
+   	
+   
+   		
+   }
 }
