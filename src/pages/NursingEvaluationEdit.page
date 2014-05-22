@@ -413,17 +413,22 @@
                          <apex:pageBlockSectionItem />
                          <apex:pageBlockSectionItem />
                          <apex:inputField value="{!Evaluation__c.Thin__c}" id="thin" />
-                         <apex:pageBlockSectionItem />
+                       	 <apex:outputText value="Breath Sounds" style="margin-left: 30px;" />
                          <apex:pageBlockSectionItem />
                          <apex:pageBlockSectionItem />
                          <apex:pageBlockSectionItem />
                          <apex:inputField value="{!Evaluation__c.Frothy__c}" id="frothy" />
-                         <apex:pageBlockSectionItem />
+                         <apex:selectCheckboxes value="{!selectedSounds}" id="checkOther" >
+                         		<apex:selectOptions value="{!breatheSounds}" />
+                         </apex:selectCheckboxes>
                          <apex:pageBlockSectionItem />
                          <apex:pageBlockSectionItem />
                          <apex:pageBlockSectionItem />
                          <apex:inputField value="{!Evaluation__c.Sticky__c}" id="sticky" />
-                         <apex:pageBlockSectionItem />
+                         <apex:pageBlockSectionItem helpText="{!$ObjectType.Evaluation__c.Fields.Breathe_Sound_Other__c.inlineHelpText}">
+                         <apex:outputLabel for="breatheSoundOther" value="if Other" />
+                         <apex:inputField value="{!Evaluation__c.Breathe_Sound_Other__c}" id="breatheSoundOther" label="if Other" />
+                         </apex:pageBlockSectionItem>
                          <apex:pageBlockSectionItem />
                          <apex:pageBlockSectionItem />
                          <apex:pageBlockSectionItem />
@@ -432,13 +437,10 @@
                          <apex:pageBlockSectionItem />
                          <apex:pageBlockSectionItem />
                          <apex:pageBlockSectionItem />
-                         <apex:inputField value="{!Evaluation__c.Odor__c}" id="odor" />  
-                         <apex:selectCheckboxes value="{!selectedSounds}" >
-                         		<apex:selectOptions value="{!breatheSounds}" />
-                         		</apex:selectCheckboxes>
-                         		<apex:inputhidden value="{!Evaluation__c.Breathe_Sounds__c}"/>
+                         <apex:inputField value="{!Evaluation__c.Odor__c}" id="odor" />
+                         <apex:inputhidden value="{!Evaluation__c.Breathe_Sounds__c}"/>  
 					</apex:pageBlockSection>
-					
+					<hr/>
 					<apex:pageBlockSection Columns="1">
 						<apex:inputTextArea value="{!Evaluation__c.Cardio_Comments__c}" cols="80"/>
 						<apex:inputField value="{!Evaluation__c.Cardio_Section_Completed__c}" />
@@ -448,7 +450,49 @@
 			
 			<apex:tab label="GU/GI/Nutrition" name="nutritionTab" ontabenter="changeTab('nutritionTab'); return false;" styleClass="{!IF(Evaluation__c.Nutrition_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
-				
+					<apex:pageBlockSection columns="2">
+						<apex:pageBlocksectionItem >
+							<apex:outputText value="Elimination - Bladder" />
+							<apex:outputText value="" />
+						</apex:pageBlocksectionItem>
+						 <apex:pageBlockSectionItem >
+                            <apex:outputText value="Elimination - Bowel" />
+                            <apex:outputText value="" />
+                        </apex:pageBlockSectionItem>	
+						<apex:inputField value="{!Evaluation__c.Elimination_Bladder_Continent__c}"
+                            label="Incontinent"
+                            html-data-rules="{&quot;1&quot;: &quot;{!$Component.eliminationBladderNoContinentDetails}&quot;, &quot;0&quot;: &quot;{!$Component.ageAppropriate}&quot;}" />
+                            
+                        <apex:inputField value="{!Evaluation__c.Elimination_Bowel_Continent__c}"
+                            label="Incontinent"
+                            html-data-rules="{&quot;1&quot;: &quot;{!$Component.eliminationBowelNoContinentAppliance}&quot;}" />  
+                        <apex:inputField value="{!Evaluation__c.Elimination_Bladder_No_Continent_Details__c}"
+                            id="eliminationBladderNoContinentDetails"
+                            onchange="enableDisableField(document.getElementById('{!$Component.eliminationBladderNoContinentDetails}'));"
+                            label="Details" html-data-rules="{&quot;ICP&quot;: &quot;{!$Component.ifICPQ}&quot;}" />
+                        <!-- For multipicklist fields, we need to call enableDisableField directly, because the change
+                             event is not fired programmatically. -->
+                        <apex:inputField value="{!Evaluation__c.Elimination_Bowel_No_Continent_Appliance__c}"
+                            id="eliminationBowelNoContinentAppliance" label="Appliance"
+                            onchange="enableDisableField(document.getElementById('{!$Component.eliminationBowelNoContinentAppliance}'));"
+                            html-data-rules="{&quot;Other&quot;: &quot;{!$Component.eliminationBowelNoApplianceOther}&quot;}" />
+                        <apex:inputField value="{!Evaluation__c.Indwelling_Suprapubic_type_size__c}" label="If Indwelling/Suprapubic, Type/size" id="sizeindwelling" />
+                        <apex:pageBlocksectionItem />
+                        <apex:inputField value="{!Evaluation__c.Indwelling_Suprapubic_Date__c}" label="If Indwelling/Suprapubic, Date" id="dateindwelling" />
+                        <apex:pageBlocksectionitem />
+                        <apex:inputField value="{!Evaluation__c.Indwelling_Suprapubic_Date_Unknown__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.If_ICP_Q__c}" id="ifICPQ" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.ICP_Describe__c}" label="If ICP,Describe Program" id="icpDescribe" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Incontinent_Age_Appropriate__c}" label="Age Appropriate" id="ageAppropriate" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.toiletTrain}&quot;}"/>
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.InContinent_Child_toilet_training__c}" label="Has Child begun toilet training" id="toiletTrain" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.trainingDescribe}&quot;}"/>
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Incontinent_toilet_training_describe__c}" label="Describe(Process, Equipment, timing etc.,)" id="trainingDescribe"/>
+                        <apex:pageBlockSectionItem />
+                      </apex:pageBlockSection>
 				</apex:pageBlock>
 			</apex:tab>
 			
