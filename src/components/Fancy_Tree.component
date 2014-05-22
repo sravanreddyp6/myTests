@@ -1,0 +1,114 @@
+<apex:component selfClosing="true" controller="Fancy_Tree">
+    <apex:attribute name="TreeString" assignTo="{!TreeStr}" required="true" type="string" description="the Json String of the tree"/> 
+    <apex:attribute name="SelectedKeysString" assignTo="{!SelectedKeys}" type="string" description="a string for the selected keys to be stored"/> 
+    <apex:attribute name="mode" type="string" default="3" description="mode of the tree"/>
+    <apex:attribute name="debug" type="boolean" default="false" description="show extra divs to sees of selections"/>
+    <apex:attribute name="ID_PageSideStorage" type="string" description="Id of the element the the tree will push selected keys to"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+
+
+        <!--<apex:inputText value="{!TreeStr}" id="myHiddenField"/>
+        <apex:inputText value="{!SelectedKeys}" />{!SelectedKeys}
+        <apex:commandButton value="Process" onclick="setVar(); return false;" />    
+    
+    -->
+<apex:stylesheet value="{!URLFOR($Resource.fancytree, 'skin-win7/ui.fancytree.css')}" />
+<apex:includescript value="{!URLFOR($Resource.fancytree, 'jquery.fancytree.js')}" />
+<style>
+     .debug_off{display: none;}
+     
+     .debug_on{display: block;}
+</style>
+    <script type="text/javascript">
+    
+    var treeData = [
+        {!TreeStr}     
+    ];
+      
+    
+    $(function(){
+    
+    $("#tree3").fancytree({
+//          extensions: ["select"],
+            checkbox: true,
+            selectMode: {!mode},
+            source: treeData,
+            select: function(event, data) {
+                // Get a list of all selected nodes, and convert to a key array:
+                var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
+                    return node.key;
+                });
+                $("#echoSelection3").text(selKeys.join(", "));
+                $('[id$={!ID_PageSideStorage}]').val(selKeys.join(","));
+                // Get a list of all selected TOP nodes
+                var selRootNodes = data.tree.getSelectedNodes(true);
+                // ... and convert to a key array:
+                var selRootKeys = $.map(selRootNodes, function(node){
+                    return node.key;
+                });
+                $("#echoSelectionRootKeys3").text(selRootKeys.join(", "));
+                $("#echoSelectionRoots3").text(selRootNodes.join(", "));
+            },
+            dblclick: function(event, data) {
+                data.node.toggleSelected();
+            },
+            keydown: function(event, data) {
+                if( event.which === 32 ) {
+                    data.node.toggleSelected();
+                    return false;
+                }
+            },
+            // The following options are only required, if we have more than one tree on one page:
+//              initId: "treeData",
+            cookieId: "fancytree-Cb3",
+            idPrefix: "fancytree-Cb3-"
+        });
+        $("#btnToggleSelect").click(function(){
+            $("#tree3").fancytree("getRootNode").visit(function(node){
+                node.toggleSelected();
+            });
+            return false;
+        });
+        $("#btnDeselectAll").click(function(){
+            $("#tree3").fancytree("getTree").visit(function(node){
+                node.setSelected(false);
+            });
+            return false;
+        });
+        $("#btnSelectAll").click(function(){
+            $("#tree3").fancytree("getTree").visit(function(node){
+                node.setSelected(true);
+            });
+            return false;
+        });
+    });
+    
+    </script>
+    
+<div id="tree3"></div>
+
+    <div class="{!if(debug, 'debug_on','debug_off')}">Selected keys: <span id="echoSelection3">-</span></div>
+    <div class="{!if(debug, 'debug_on','debug_off')}">Selected root keys: <span id="echoSelectionRootKeys3">-</span></div>
+    <div class="{!if(debug, 'debug_on','debug_off')}">Selected root nodes: <span id="echoSelectionRoots3">-</span></div>
+
+<script>
+
+</script>
+
+
+
+<p/>
+<p/>
+
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <div  class="thinking">
+            <div class="thinkingwheel">
+                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp;Processing...</span>
+            </div>
+        </div>
+    </apex:facet>  
+    <apex:facet name="stop"></apex:facet>         
+</apex:actionStatus>    
+</apex:component>
