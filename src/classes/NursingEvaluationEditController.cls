@@ -113,18 +113,19 @@ public with sharing class NursingEvaluationEditController {
         update this.evaluation;
         //update this.pbs;
         //return stdController.view();
-        return new PageReference('/apex/CareMeridianEvaluationView?id=' + evaluation.Id + '&tab=' + selectedTab);
+        return new PageReference('/apex/NursingEvaluationView?id=' + evaluation.Id + '&tab=' + selectedTab);
     }
     
    public List<SelectOption> getbreatheSounds(){
-   		List<SelectOption> options = new List<selectOption>();
+   		/*List<SelectOption> options = new List<selectOption>();
    		 Schema.DescribeFieldResult changeType = Evaluation__c.Breathe_Sounds__c.getDescribe();
    		 for (Schema.PicklistEntry a : changeType.getPickListValues())
             options.add(new SelectOption(a.getLabel(), a.getValue())); 
             
-            return options;
+            return options;*/
    		
-   	
+   		List<Selectoption> breatheSound = Utility.getPicklistValues(evaluation, 'Breathe_Sounds__c');
+   		return breatheSound; 
    
    		
    }
