@@ -10,7 +10,7 @@
         <field>Progress_Note__c.Program_Code__c</field>
     </columns>
     <columns>
-        <field>Progress_Note__c.Created_By__c</field>
+        <field>Progress_Note__c.Staff_Employee_ID__c</field>
     </columns>
     <columns>
         <field>Progress_Note__c.Billing_ID__c</field>
@@ -28,7 +28,7 @@
         <field>Progress_Note__c.Total_Time__c</field>
     </columns>
     <columns>
-        <field>Progress_Note__c.Location_Type__c</field>
+        <field>Progress_Note__c.Location_Type_AZ_Report_Map__c</field>
     </columns>
     <columns>
         <field>Progress_Note__c.BlankUnits__c</field>
@@ -64,9 +64,6 @@
         <field>Progress_Note__c.End_Time_Only__c</field>
     </columns>
     <columns>
-        <field>Progress_Note__c.Days_Created_past_DOS__c</field>
-    </columns>
-    <columns>
         <field>Progress_Note__c.Primary_Care_Provider_Name__c</field>
     </columns>
     <columns>
@@ -88,6 +85,9 @@
         <field>Progress_Note__c.Program_Detail__c</field>
     </columns>
     <columns>
+        <field>Progress_Note__c.Approval_Status_Date__c</field>
+    </columns>
+    <columns>
         <field>Progress_Note__c.Purpose_Service_is_Billable__c</field>
     </columns>
     <columns>
@@ -101,13 +101,23 @@
             <value></value>
         </criteriaItems>
         <criteriaItems>
+            <column>Progress_Note__c.Purpose_Service_is_Billable__c</column>
+            <operator>equals</operator>
+            <value>1</value>
+        </criteriaItems>
+        <criteriaItems>
             <column>Progress_Note__c.Status__c</column>
             <operator>equals</operator>
             <value>Final</value>
         </criteriaItems>
+        <criteriaItems>
+            <column>Progress_Note__c.Admission_State__c</column>
+            <operator>equals</operator>
+            <value>MA</value>
+        </criteriaItems>
     </filter>
     <format>Tabular</format>
-    <name>Avatar Billing Report</name>
+    <name>MA AVATAR Billing Report</name>
     <params>
         <name>co</name>
         <value>1</value>

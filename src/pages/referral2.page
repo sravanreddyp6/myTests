@@ -1167,6 +1167,16 @@ function stopRKey(evt) {
          <apex:outputField value="{!Referral__c.Reason_Category_Physical_Environment__c}" />
          <apex:outputField value="{!Referral__c.Reason_Category_Behavioral_Problems__c}" />
      </apex:pageBlockSection>
+     
+     <!-- START: CTEAE-106, MA Referral Flavor Fields -->
+     <apex:pageBlockSection rendered="{!ReferralRecordType=='Cambridge Massachusetts'}">
+    	<apex:outputField id="IccCarePlanSubmittedField" value="{!Referral__c.ICC_Care_Plan_Submitted__c}" label="If the referral is from the ICC has the care plan been submitted to the insurance company in order for us to obtain an authorization for services?" />
+    	<apex:outputField value="{!Referral__c.Grade__c}" />
+    	<apex:outputField value="{!Referral__c.If_Yes_What_kind__c}" label="Describe Any Household Pets" />
+    	<apex:outputField value="{!Referral__c.Goals_from_the_Referral_Source__c}" />
+     </apex:pageBlockSection>
+     <!-- END: CTEAE-106, MA Referral Flavor Fields -->
+     
      <apex:pageBlockSection showHeader="false" columns="1" collapsible="false" id="ReferralDetail_1">
        <apex:outputField value="{!Referral__c.Reason_for_Referral__c}" style="width: 90%;" />
        <apex:outputField value="{!Referral__c.Update_Notes__c}" style="width: 90%;" />
@@ -1280,11 +1290,11 @@ function stopRKey(evt) {
 
      <apex:pageBlockSection title="Anticipated Admission Location Information" columns="1" collapsible="false" id="LocationInfo">
        <apex:outputField value="{!Referral__c.Anticipated_Admission_Date__c}" />
-       <apex:outputField value="{!Referral__c.Service_Location__c}" rendered="{!referralRecordType!='CareMeridian'}"/>
-         <apex:outputField value="{!Referral__c.Service_Location_Service_Value__c}" rendered="{!referralRecordType!='CareMeridian'}"/>
-         <apex:outputField value="{!Referral__c.Service_Location_Setting__c}" rendered="{!referralRecordType!='CareMeridian'}"/>
-       <apex:outputField value="{!Referral__c.Service_Location_Street__c}" rendered="{!referralRecordType!='CareMeridian'}"/>
-       <apex:pageBlockSectionItem rendered="{!referralRecordType!='CareMeridian'}">
+       <apex:outputField value="{!Referral__c.Service_Location__c}" />
+         <apex:outputField value="{!Referral__c.Service_Location_Service_Value__c}" />
+         <apex:outputField value="{!Referral__c.Service_Location_Setting__c}" />
+       <apex:outputField value="{!Referral__c.Service_Location_Street__c}" />
+       <apex:pageBlockSectionItem >
           <apex:outputText value="City"/>
           <apex:outputPanel styleClass="nowrap">
             <apex:outputText value="{!Referral__c.Service_Location_City__c}" />&nbsp;
@@ -1294,8 +1304,6 @@ function stopRKey(evt) {
             <apex:outputText value="{!Referral__c.Service_Location_Zip__c}" style="width: 42px;" />
           </apex:outputPanel>
         </apex:pageBlockSectionItem>
-
-        <apex:outputField value="{!Referral__c.Admission_Location__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
 
      </apex:pageBlockSection>
 
@@ -2429,6 +2437,22 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Animal_Cruelty__c}"
             rendered="{!ReferralRecordType = 'Cambridge Georgia'}"
           />
+          
+          <!-- START:  CTEAE-107, OH referral flavor fields added to Programming Considerations -->
+          <!-- Row 6,  Col 4 -->
+          <apex:outputField value="{!Referral__c.Victim_of_Domestic_Violence__c}" rendered="{!ReferralRecordType = 'Cambridge Ohio'}" />
+          <!-- Row 7,  Col 1 -->
+          <apex:outputField value="{!Referral__c.Parental_Disability__c}" rendered="{!ReferralRecordType = 'Cambridge Ohio'}" />
+          <!-- Row 7, Col 2-4 filler -->
+          	<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Ohio'}" />
+          	<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Ohio'}" />
+          	<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Ohio'}" />
+          <!-- END:  CTEAE-107, OH referral flavor fields added to Programming Considerations -->
+          	<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Massachusetts'}" />
+          <!-- START: CTEAE-106, MA referral flavor, spacing for Diagnosis Programming Considerations -->
+          
+          <!-- END: CTEAE-106, MA referral flavor, spacing for Diagnosis Programming Considerations -->
+          
           <!-- This section is standard among the operating groups, so wwe keep them in one place -->
           <apex:outputText rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}">
             <h1>Diagnosis Programming Considerations</h1> <hr />

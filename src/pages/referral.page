@@ -1403,6 +1403,16 @@ function enableDiagEff() {
          <apex:inputField value="{!Referral__c.Reason_Category_Physical_Environment__c}" />
          <apex:inputField value="{!Referral__c.Reason_Category_Behavioral_Problems__c}" />
      </apex:pageBlockSection>
+     
+     <!-- START: CTEAE-106, MA Referral Flavor Fields -->
+     <apex:pageBlockSection rendered="{!ReferralRecordType=='Cambridge Massachusetts'}">
+    	<apex:inputField id="IccCarePlanSubmittedField" value="{!Referral__c.ICC_Care_Plan_Submitted__c}" label="If the referral is from the ICC has the care plan been submitted to the insurance company in order for us to obtain an authorization for services?" />
+    	<apex:inputField value="{!Referral__c.Grade__c}" />
+    	<apex:inputField value="{!Referral__c.If_Yes_What_kind__c}" label="Describe Any Household Pets" />
+    	<apex:inputField value="{!Referral__c.Goals_from_the_Referral_Source__c}" />
+     </apex:pageBlockSection>
+     <!-- END: CTEAE-106, MA Referral Flavor Fields -->
+     
      <apex:pageBlockSection showHeader="false" columns="1" collapsible="false" id="ReferralDetail_1">
        <apex:inputField value="{!Referral__c.Reason_for_Referral__c}" style="width: 90%;" />
        <apex:inputTextarea value="{!Referral__c.Update_Notes__c}" style="width: 90%;" />
@@ -1663,7 +1673,7 @@ function enableDiagEff() {
        <apex:inputField value="{!Referral__c.Anticipated_Admission_Date__c}" />
        <apex:inputHidden id="sl_lkid" value="{!Referral__c.Service_Location__c}" />
        <!-- Added by Kossi 06/06/13 2:00 AM -->
-            <apex:pageBlockSectionItem rendered="{!referralRecordType!='CareMeridian'}">
+            <apex:pageBlockSectionItem >
             <apex:outputLabel value="Alias"/>
             <apex:pageBlockSectionItem >
                 <apex:inputText id="sl" value="{!searchedServiceLocationName2}" size="20"/><a onClick="locationLookup2();"><img valign="bottom" src="/s.gif" alt="Service Location Lookup (New Window)" class="lookupIcon"
@@ -1673,7 +1683,6 @@ function enableDiagEff() {
                                     title="Service Location Lookup (New Window)"/></a>
             </apex:pageBlockSectionItem>
             </apex:pageBlockSectionItem>
-            <apex:inputField value="{!Referral__c.Admission_Location__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
 
             <!--apex:inputHidden id="locationEntry_ServiceLocation_lkid" value="{!searchedServiceLocationId}"/-->
             <!---->
@@ -2828,6 +2837,7 @@ function enableDiagEff() {
                         ReferralRecordType = 'Cambridge Maryland'}"
           />
           -->
+          
 
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Cambridge Florida' ||
                         ReferralRecordType == 'Cambridge Maryland'}">
@@ -2878,6 +2888,22 @@ function enableDiagEff() {
           <apex:inputField value="{!Referral__c.Animal_Cruelty__c}"
             rendered="{!ReferralRecordType = 'Cambridge Georgia'}"
           />
+          
+          <!-- START:  CTEAE-107, OH referral flavor fields added to Programming Considerations -->
+          <!-- Row 6,  Col 4 -->
+          <apex:inputField value="{!Referral__c.Victim_of_Domestic_Violence__c}" rendered="{!ReferralRecordType = 'Cambridge Ohio'}" />
+          <!-- Row 7,  Col 1 -->
+          <apex:inputField value="{!Referral__c.Parental_Disability__c}" rendered="{!ReferralRecordType = 'Cambridge Ohio'}" />
+          <!-- Row 7, Col 2-4 filler -->
+          	<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Ohio'}" />
+          	<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Ohio'}" />
+          	<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Ohio'}" />
+          <!-- END:  CTEAE-107, OH referral flavor fields added to Programming Considerations -->
+          
+          <!-- START:  CTEAE-107, OH referral flavor fields added to Programming Considerations -->
+          	<apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Massachusetts'}" />	
+          <!-- END:  CTEAE-107, OH referral flavor fields added to Programming Considerations -->
+          
           <!-- This section is standard among the operating groups, so wwe keep them in one place -->
           <apex:outputText rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}">
             <h1>Diagnosis Programming Considerations</h1> <hr />
