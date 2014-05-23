@@ -6,6 +6,8 @@ public with sharing class NursingEvaluationEditController {
     
     public List<SelectOption>breatheSounds ;
     public List<string>selectedSounds {get ; set;}
+    public List<selectoption>urinaryIssues;
+    public List<string> urinarySelected {get; set;}
    
     
     public Related_Party__c[] relatedParties { set;
@@ -36,6 +38,8 @@ public with sharing class NursingEvaluationEditController {
         }
 		breatheSounds = new List<SelectOption>();
 		selectedSounds = new List<String>();
+		urinarySelected = new List<string>();
+		urinaryIssues = new List<Selectoption>();
 		if(!String.isBlank(this.evaluation.Breathe_sounds__c))
 		selectedSounds = this.evaluation.Breathe_Sounds__c.split(';');
     }
@@ -128,5 +132,9 @@ public with sharing class NursingEvaluationEditController {
    		return breatheSound; 
    
    		
+   }
+   public List<SelectOption> geturinaryIssues(){
+   		List<Selectoption> urinaryIssue = Utility.getPicklistValues(evaluation, 'Urinary_Issues__c');
+   		return urinaryIssue; 	
    }
 }
