@@ -1397,6 +1397,16 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Duration_of_Incontinence__c</fullName>
+        <externalId>false</externalId>
+        <label>Duration of Incontinence</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Dysphagia__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
@@ -2168,6 +2178,14 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Incontinent_Last_Void__c</fullName>
+        <externalId>false</externalId>
+        <label>Incontinent Last Void</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
         <fullName>Incontinent_toilet_training_describe__c</fullName>
         <externalId>false</externalId>
         <label>Incontinent toilet training describe</label>
@@ -2629,6 +2647,24 @@
         <label>Neurological Section Complete</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Neurogenic_Bladder__c</fullName>
+        <externalId>false</externalId>
+        <label>Neurogenic Bladder</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Neurological_Confused__c</fullName>
@@ -3110,6 +3146,24 @@
         <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Perception_of_Need_to_Void__c</fullName>
+        <externalId>false</externalId>
+        <label>Perception of Need to Void</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Present</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Absent</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Peripheral_Pulses_Describe__c</fullName>
@@ -5681,6 +5735,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Neurogenic_Bladder__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Nutrition_Route__c</picklist>
             <values>
                 <fullName>Bottle</fullName>
@@ -5787,6 +5852,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Perception_of_Need_to_Void__c</picklist>
+            <values>
+                <fullName>Absent</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Present</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7090,6 +7166,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Neurogenic_Bladder__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Nutrition_Route__c</picklist>
             <values>
                 <fullName>Bottle</fullName>
@@ -7196,6 +7283,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Perception_of_Need_to_Void__c</picklist>
+            <values>
+                <fullName>Absent</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Present</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
