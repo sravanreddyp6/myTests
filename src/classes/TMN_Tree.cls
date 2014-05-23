@@ -1,0 +1,149 @@
+public class TMN_Tree{
+//Declarations
+    public node root{get; set;}
+    public string Fancy_Tree_JSon_String {get{return BuildJSonString(root.nodes);} set;}
+    public boolean autoExpand{ get; set;}
+//construct    
+    public TMN_Tree(){
+        root = new node('root','root');
+        autoExpand = true; 
+    }
+//Node Class
+        public class node{
+        //Declarations            
+            public list<node> nodes {get; set;}
+            public string key {get; set;}
+            public string title {get; set;}
+            
+            //fancy tree settings            
+            public boolean isSelected {get; set;}
+            public boolean isUnselectable {get; set;} 
+            public boolean isFolder {get; set;}
+            public boolean isExpand {get; set;}
+            public boolean isActivate {get; set;}
+            public boolean hideCheckbox {get; set;}
+            //end fancy tree settings
+            //this is a placeholder for any record in force, using it requires field name to be looked up via maps.
+            //<apex:inputField value="{!r.myrecord['Catalog_Element__c']}" />
+            public sobject myrecord { get; set;}
+            //custom supported Objects - used for increased code readibility 
+            public Clinical_Catalog_Tree_Node__c CatTreeNode {get; set;}
+            public Clinical_Catalog_Element__c CatTreeEley {get; set;}
+            
+            //end Custom objects
+        //construct
+            public node(string k, string t){
+                 
+                nodes = new list<node>();   
+                key = k;
+                title = t;
+                isunselectable = false;
+                isfolder = false;
+                isexpand = true;
+                isactivate = true;
+                isselected = false;
+                hideCheckbox = false;
+                CatTreeNode = new Clinical_Catalog_Tree_Node__c ();
+                CatTreeEley = new Clinical_Catalog_Element__c ();
+                            
+            }
+        //end construct
+        //custom getters
+            public map<string, integer> getnode_keys (){
+                map<string, integer> keys = new map<string, integer>();
+                keys.clear();
+                for(Integer i = 0; i < nodes.size(); i++){                                
+                    keys.put(nodes.get(i).key, i);
+                }
+                
+                return null;
+            }
+            public integer getNode_Key(string key){
+                integer myint = -1;
+                for(Integer i = 0; i < nodes.size(); i++){                                
+                    if(nodes.get(i).key == key){myint = i;}
+                }        
+                return myint;
+            } 
+            //end custom getters   
+        
+        } 
+//End Node Class    
+//Custom Methods    
+    //use in the controller of the page using the custom compentent
+    //pass it selected keys to have them applied to the class
+    public void inputSelectedKeys(list<string> keys, boolean ForceDeSelect){
+        checkSelectedKeys(keys, root.Nodes, ForceDeSelect);
+    }
+    
+    private void checkSelectedKeys(list<string> keys, list<tmn_tree.node> theNodes, boolean ForceDeSelect){
+        for(node n: theNodes){
+                //if appendond only is set to false
+                if(ForceDeSelect){
+                    n.isSelected = false;
+                }         
+            for(string k: keys){
+           
+                if (n.key == k){
+                    n.isSelected = true;
+                } 
+          
+            
+            }
+            if(n.nodes.size() >0){
+                checkSelectedKeys(keys, n.nodes, ForceDeSelect);
+            }  
+        }
+    
+    
+    }    
+       
+   //the JSon string used to send to the a component for rendering 
+    public string BuildJSonString(list<tmn_tree.node> theNodes){
+        string str = '';
+        for(node n: theNodes){
+            str += '{title: "';
+            str += n.Title;
+            str += '", ';
+
+            str += 'expanded: ';
+            str += n.isExpand;
+            str += ', ';
+
+            str += 'hideCheckbox: ';
+            str += n.hideCheckbox;
+            str += ', ';            
+                        
+            str += 'folder: ';
+            str += n.isFolder;
+            str += ', ';
+            
+            str += 'activate: ';
+            str += n.isActivate;
+            str += ', ';            
+
+            str += 'selected: ';
+            str += n.isSelected;
+            str += ', ';
+            
+            str += 'unselectable: ';
+            str += n.isUnselectable;
+            str += ', ';  
+                      
+            str += 'key: "';
+            str += n.key;
+            str += '", ';
+            
+            str += 'children: ['; 
+            //get children 
+            if(n.nodes.size() >0){
+                str += BuildJSonString(n.nodes);
+            }
+            //end 
+            str += ']},';
+        
+        }  
+        return str;
+    }
+//End Custom Methods
+}
