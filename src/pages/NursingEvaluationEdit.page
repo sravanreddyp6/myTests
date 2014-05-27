@@ -551,12 +551,27 @@
                      	<apex:inputField value="{!Evaluation__c.Last_BM__c}" />  
                      </apex:pageBlockSection> 
                     <hr />
-                    <apex:pageBlockSection columns="1">
+                    <apex:pageBlockSection columns="2">
                         <apex:pageBlockSectionItem >
                             <apex:outputText value="Nutrition" />
                             <apex:outputText value="" />
                         </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Tube Feed" />
+                            <apex:outputText value="" />
+                        </apex:pageBlockSectionItem>
                         <apex:inputField value="{!Evaluation__c.Nutrition_Route__c}" label="Feeding Type"/>
+                        <apex:inputField value="{!Evaluation__c.Tube_Feed_Formula__c}" label="Formula" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Tube_Feed_Rate__c}"  />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Tube_Feed_PO_Type__c}" label="PO Type" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Tube_Feed_Texture__c}" label="PO Texture" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Fluid_Intake__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Lipids__c}" />
                     </apex:pageBlockSection>
                     <hr /> 
                     
