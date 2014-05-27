@@ -7,7 +7,9 @@ public with sharing class NursingEvaluationEditController {
     public List<SelectOption>breatheSounds ;
     public List<string>selectedSounds {get ; set;}
     public List<selectoption>urinaryIssues;
-    public List<string> urinarySelected {get; set;}
+    public List<string>selectedIssues {get; set;}
+    public List<SelectOption>urineClarities ;
+    public List<string>selectedClarities {get; set;}
    
     
     public Related_Party__c[] relatedParties { set;
@@ -38,10 +40,19 @@ public with sharing class NursingEvaluationEditController {
         }
 		breatheSounds = new List<SelectOption>();
 		selectedSounds = new List<String>();
-		urinarySelected = new List<string>();
 		urinaryIssues = new List<Selectoption>();
+		selectedIssues = new List<string>();
+		urineClarities = new List<selectOption>();
+		selectedClarities = new List<string>();
+		
 		if(!String.isBlank(this.evaluation.Breathe_sounds__c))
 		selectedSounds = this.evaluation.Breathe_Sounds__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Urinary_Issues__c))
+		selectedIssues = this.evaluation.Urinary_Issues__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Urine_Clarity__c))
+		selectedClarities = this.evaluation.Urine_Clarity__c.split(';');
     }
     
     public void showAddRelatedParty()  {
@@ -100,6 +111,8 @@ public with sharing class NursingEvaluationEditController {
         // object-level validation, because if there are 2 errors on 2 pages,
         // the user won't be able to save at all.
        
+       
+       //for breathe sounds multi-select
         String strtypes = '';
         for (String s : selectedSounds)
         	strtypes += s +';';
@@ -110,6 +123,28 @@ public with sharing class NursingEvaluationEditController {
         	}
         	else
         	this.evaluation.Breathe_Sounds__c ='';
+      //for Urinary Issues mUlti-Picklist  	
+        string uritypes ='';
+        for(String u: selectedIssues)
+        uritypes += u+';';
+        
+        	if(uritypes !=''){
+        		uritypes = uritypes.Substring (0,uritypes.length() -1);
+        		this.evaluation.Urinary_Issues__c = uritypes;
+        		
+        	}
+        	else
+        	this.evaluation.Urinary_Issues__c ='';
+     //for Urine Clarity Multi-picklist   	
+        string clr ='';
+        for(string c: selectedClarities)
+        clr += c+';';
+        	if(clr!=''){
+        		clr =clr.Substring(0,clr.length()-1);
+        		this.evaluation.Urine_Clarity__c = clr;
+        	}
+        	else
+        	this.evaluation.Urine_Clarity__c ='';
         	
         if (submitted || selectedTab == 'detailsTab' || selectedTab == null) {
 
@@ -121,20 +156,17 @@ public with sharing class NursingEvaluationEditController {
     }
     
    public List<SelectOption> getbreatheSounds(){
-   		/*List<SelectOption> options = new List<selectOption>();
-   		 Schema.DescribeFieldResult changeType = Evaluation__c.Breathe_Sounds__c.getDescribe();
-   		 for (Schema.PicklistEntry a : changeType.getPickListValues())
-            options.add(new SelectOption(a.getLabel(), a.getValue())); 
-            
-            return options;*/
-   		
    		List<Selectoption> breatheSound = Utility.getPicklistValues(evaluation, 'Breathe_Sounds__c');
    		return breatheSound; 
-   
    		
    }
    public List<SelectOption> geturinaryIssues(){
    		List<Selectoption> urinaryIssue = Utility.getPicklistValues(evaluation, 'Urinary_Issues__c');
-   		return urinaryIssue; 	
+   		return urinaryIssue; 
+   			
+   }
+   public List<selectoption> geturineClarities(){
+   		List<Selectoption> urineClarity = Utility.getPicklistValues(evaluation, 'Urine_Clarity__c');
+   		return urineClarity; 
    }
 }
