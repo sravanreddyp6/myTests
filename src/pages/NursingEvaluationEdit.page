@@ -243,7 +243,11 @@
 		<apex:inputhidden value="{!Evaluation__c.Breathe_Sounds__c}"/> 
 		<apex:inputhidden value="{!Evaluation__c.Urine_Clarity__c}" />
 		<apex:inputhidden value="{!Evaluation__c.Tongue__c}" />
-		
+		<apex:inputhidden value="{!Evaluation__c.Gums__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Cheeks__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Lips__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Saliva__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Dentures_Type__c}" />
 	</apex:outputPanel>
 		<apex:pageMessages id="pageMessages" />
 		<apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); removeSpacer()" reRender="pageMessages, wholeTabPanel, buttons">
@@ -610,12 +614,59 @@
                             <apex:outputText value="Tongue" />
                             <apex:outputText value="" />
                         </apex:pageBlockSectionItem>
-                        <apex:pageBlockSectionItem />
-                        <apex:selectCheckboxes value="{!selectedTongues}" style="margin-left: 50px;" layout="pageDirection" >
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Gums" />
+                            <apex:outputText value="" />
+                        </apex:pageBlockSectionItem>
+                        <apex:selectCheckboxes value="{!selectedTongues}" style="margin-left: 50px;"  >
                         	<apex:selectOptions value="{!tongueValues}"/>
                         </apex:selectCheckboxes>
+                        <apex:selectCheckboxes value="{!selectedGums}" style="margin-left: 50px;"  >
+                        	<apex:selectOptions value="{!gumValues}"/>
+                        </apex:selectCheckboxes>
+                        <apex:inputField value="{!Evaluation__c.Tongue_Sores_Describe__c}" label="If Sores, Describe" id="tongueSores" />
+                        <apex:inputField value="{!Evaluation__c.Gums_Sores_Describe__c}" label="If Sores, Describe" id="gumsSores" />
+                        
+                        
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Cheeks" />
+                            <apex:outputText value="" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Lips" />
+                            <apex:outputText value="" />
+                        </apex:pageBlockSectionItem>
+                        <apex:selectCheckboxes value="{!selectedCheeks}" style="margin-left: 50px;"  >
+                        	<apex:selectOptions value="{!cheekValues}"/>
+                        </apex:selectCheckboxes>
+                        <apex:selectCheckboxes value="{!selectedLips}" style="margin-left: 50px;"  >
+                        	<apex:selectOptions value="{!lipValues}"/>
+                        </apex:selectCheckboxes>
+                        <apex:inputField value="{!Evaluation__c.Cheeks_Sores_Describe__c}" label="If Sores, Describe" id="cheekSores" />
+                        <apex:inputField value="{!Evaluation__c.Lips_Sores_Describe__c}" label="If Sores, Describe" id="lipSores" />
                         <apex:pageBlockSectionItem />
-                    	
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField Value="{!Evaluation__c.Breath__c}" />
+                        <apex:inputField value="{!Evaluation__c.Dentures__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.usageDetails}&quot;}" />
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Saliva" />
+                            <apex:outputText value="" />
+                        </apex:pageBlockSectionItem>
+                        
+                        <apex:outputText value="If Yes, Dentures Type" styleClass="labelCol" style="margin-left: 170px;"/>
+                            
+                        
+                        <apex:selectCheckboxes value="{!selectedSaliva}" style="margin-left: 50px;"  >
+                        	<apex:selectOptions value="{!salivaValues}"/>
+                        </apex:selectCheckboxes>
+                        <apex:selectCheckboxes value="{!selectedDentures}" style="margin-left: 165px;" >
+                        	<apex:selectOptions value="{!dentureValues}"/>
+                        </apex:selectCheckboxes>
+                     	<apex:pageBlockSectionItem />
+                     	<apex:inputField value="{!Evaluation__c.Dentures_Usage_Details__c}" label="Usage Details" id="usageDetails" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.usageOther}&quot;}"/>
+                     	<apex:pageBlockSectionItem />
+                     	<apex:inputField value="{!Evaluation__c.Denture_Usage_Other__c}" label="if Other, Describe" id="usageOther" />
+                     	
                    	</apex:pageBlockSection>
 				</apex:pageBlock>
 			</apex:tab>
