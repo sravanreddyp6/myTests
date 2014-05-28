@@ -248,6 +248,7 @@
 		<apex:inputhidden value="{!Evaluation__c.Lips__c}" />
 		<apex:inputhidden value="{!Evaluation__c.Saliva__c}" />
 		<apex:inputhidden value="{!Evaluation__c.Dentures_Type__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Abdomen__c}" />
 	</apex:outputPanel>
 		<apex:pageMessages id="pageMessages" />
 		<apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); removeSpacer()" reRender="pageMessages, wholeTabPanel, buttons">
@@ -662,11 +663,58 @@
                         <apex:selectCheckboxes value="{!selectedDentures}" style="margin-left: 165px;" >
                         	<apex:selectOptions value="{!dentureValues}"/>
                         </apex:selectCheckboxes>
-                     	<apex:pageBlockSectionItem />
+                     	<apex:inputField value="{!Evaluation__c.Jaw_Wires__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.wireCutters}&quot;}" />
                      	<apex:inputField value="{!Evaluation__c.Dentures_Usage_Details__c}" label="Usage Details" id="usageDetails" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.usageOther}&quot;}"/>
-                     	<apex:pageBlockSectionItem />
+                     	<apex:inputField value="{!Evaluation__c.Wire_Cutters_at_Bedside__c}" id="wireCutters" />
                      	<apex:inputField value="{!Evaluation__c.Denture_Usage_Other__c}" label="if Other, Describe" id="usageOther" />
-                     	
+                     	<apex:inputField value="{!Evaluation__c.Other_Dental_Appliance__c}" />
+                     	 <apex:pageBlockSectionItem >
+                            <apex:outputText value="PEDS" />
+                            <apex:outputText value="" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.PEDS_Teething__c}" label="Teething"/>
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.PEDS_History_of_Tonsils__c}" label="History of Tonsils" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.tonsilDescribe}&quot;}"/>
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.PEDS_Tonsil_History_Describe__c}" label="If Yes, Describe Tonsil History" id="tonsilDescribe" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.PEDS_Pacifier__c}" label="Pacifier" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.pacifierUsage}&quot;}"/>
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.PEDS_Pacifier_Type_Usage__c}" label="if Yes, Type & usage" id="pacifierUsage" />
+                   	</apex:pageBlockSection>
+                   	<hr />
+                   	<apex:pageBlockSection Columns="2">
+                   		<apex:pageBlockSectionItem >
+                            <apex:outputText value="Bowel Sounds" />
+                            <apex:outputText value="" />
+                        </apex:pageBlockSectionItem>
+                   		<apex:pageBlockSectionItem >
+                            <apex:outputText value="Abdomen" />
+                            <apex:outputText value="" />
+                        </apex:pageBlockSectionItem>
+                   		<apex:inputField value="{!Evaluation__c.RUQ__c}" html-data-rules="{&quot;Abnormal&quot;: &quot;{!$Component.ruqDescribe}&quot;}" />
+                   		 <apex:selectCheckboxes value="{!selectedAbdomen}" style="margin-left: 150px;"  >
+                        	<apex:selectOptions value="{!AbdomenValues}"/>
+                        </apex:selectCheckboxes>
+                   		<apex:inputField value="{!Evaluation__c.RUQ_Describe__c}" label="if Abnormal, Describe" id="ruqDescribe" />
+                   		<apex:pageBlockSectionItem />
+                   		<apex:inputField value="{!Evaluation__c.LUQ__c}" html-data-rules="{&quot;Abnormal&quot;: &quot;{!$Component.luqDescribe}&quot;}" />
+                   		<apex:pageBlockSectionItem />
+                   		<apex:inputField value="{!Evaluation__c.LUQ_Describe__c}" label="if Abnormal, Describe" id="luqDescribe" />
+                   		<apex:pageBlockSectionItem />
+                   		<apex:inputField value="{!Evaluation__c.RLQ__c}"  html-data-rules="{&quot;Abnormal&quot;: &quot;{!$Component.rlqDescribe}&quot;}" /> 
+                   		<apex:pageBlockSectionItem />
+                   		<apex:inputField value="{!Evaluation__c.RLQ_Describe__c}" label="if Abnormal, Describe" id="rlqDescribe" />
+                   		<apex:pageBlockSectionItem />
+                   		<apex:inputField Value="{!Evaluation__c.LLQ__c}" html-data-rules="{&quot;Abnormal&quot;: &quot;{!$Component.llqDescribe}&quot;}" />
+                   		<apex:pageBlockSectionItem />
+                   		<apex:inputField value="{!Evaluation__c.LLQ_Describe__c}" label="if Abnormal, Describe" id="llqDescribe" />
+                   	</apex:pageBlockSection>
+                   	<hr />
+                   	<apex:pageBlockSection Columns="1">
+                   		<apex:inputTextArea value="{!Evaluation__c.Nutrition_Comments__c}" cols="80" />
+                   		<apex:inputField value="{!Evaluation__c.Nutrition_Section_Completed__c}" />
                    	</apex:pageBlockSection>
 				</apex:pageBlock>
 			</apex:tab>
@@ -704,7 +752,19 @@
 			 
 			 <apex:tab label="Discharge Plan" name="dischargePlanTab" ontabenter="changeTab('dischargePlanTab'); return false;" styleClass="{!IF(Evaluation__c.Discharge_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 			 	<apex:pageBlock >
-			 	
+			 		<apex:pageBlocksection columns="1">
+			 			<apex:inputField value="{!Evaluation__c.Discharge_Info_From__c}" />
+			 			<!-- For multipicklist fields, we need to call enableDisableField directly, because the change
+                             event is not fired programmatically. -->
+                        <apex:inputField value="{!Evaluation__c.Prior_Living_Situation__c}" id="priorLivingSituation"
+                            onchange="enableDisableField(document.getElementById('{!$Component.priorLivingSituation}'));"
+                            html-data-rules="{&quot;Other&quot;: &quot;{!$Component.priorLivingSituationOther}&quot;}" />
+			 			<apex:inputField value="{!Evaluation__c.Prior_Living_Situation_Other__c}" id="priorLivingSituationOther"/>
+			 			<apex:inputTextArea value="{!Evaluation__c.Barriers_to_DC__c}" cols="80" />
+			 			<apex:inputField value="{!Evaluation__c.DC_Plan__c}" />
+			 			<apex:inputTextArea value="{!Evaluation__c.Discharge_Plan_Comments__c}"  cols="80"/>
+			 			<apex:inputField value="{!Evaluation__c.Discharge_Section_Completed__c}" />
+			 		</apex:pageBlocksection>
 			 	</apex:pageBlock>
 			 </apex:tab>
 		</apex:tabPanel>

@@ -190,6 +190,33 @@
         <label>NursingAssessment</label>
     </fieldSets>
     <fields>
+        <fullName>Abdomen__c</fullName>
+        <externalId>false</externalId>
+        <label>Abdomen</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Rigid</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Firm</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Soft</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Distended</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>MultiselectPicklist</type>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
         <fullName>Accompanied_By__c</fullName>
         <externalId>false</externalId>
         <label>Accompanied By</label>
@@ -422,6 +449,15 @@
         <label>Bariatric Equipment</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Barriers_to_DC__c</fullName>
+        <externalId>false</externalId>
+        <label>Barriers to DC</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
     </fields>
     <fields>
         <fullName>Bed_Alarm__c</fullName>
@@ -862,6 +898,48 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>DC_Plan__c</fullName>
+        <externalId>false</externalId>
+        <label>DC Plan</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Home</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>B &amp; C</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Intermediate Care</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Acute Rehab</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>SNF</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Sub-Acute</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Acute Hospital</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>DME_Needs__c</fullName>
         <externalId>false</externalId>
         <label>DME Needs</label>
@@ -1139,6 +1217,36 @@
         <label>Diplopia</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Discharge_Info_From__c</fullName>
+        <externalId>false</externalId>
+        <label>Discharge Info From</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Resident</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Spouse</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Parent</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Child</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Discharge_Nursing__c</fullName>
@@ -2686,6 +2794,34 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>LLQ_Describe__c</fullName>
+        <externalId>false</externalId>
+        <label>LLQ Describe</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>LLQ__c</fullName>
+        <externalId>false</externalId>
+        <label>LLQ</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Normal</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Abnormal</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>LL_Teeth_Condition__c</fullName>
         <externalId>false</externalId>
         <label>LL Teeth Condition</label>
@@ -2726,6 +2862,34 @@
         <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>LUQ_Describe__c</fullName>
+        <externalId>false</externalId>
+        <label>LUQ Describe</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>LUQ__c</fullName>
+        <externalId>false</externalId>
+        <label>LUQ</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Normal</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Abnormal</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>L_Lower_ROM__c</fullName>
@@ -4016,6 +4180,34 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>RLQ_Describe__c</fullName>
+        <externalId>false</externalId>
+        <label>RLQ Describe</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>RLQ__c</fullName>
+        <externalId>false</externalId>
+        <label>RLQ</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Normal</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Abnormal</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>ROM_Comments__c</fullName>
         <externalId>false</externalId>
         <label>ROM Comments</label>
@@ -4054,6 +4246,34 @@
             </picklistValues>
             <picklistValues>
                 <fullName>Limited</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>RUQ_Describe__c</fullName>
+        <externalId>false</externalId>
+        <label>RUQ Describe</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>RUQ__c</fullName>
+        <externalId>false</externalId>
+        <label>RUQ</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Normal</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Abnormal</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -4556,16 +4776,6 @@
         <type>Picklist</type>
     </fields>
     <fields>
-        <fullName>Sores_Describe__c</fullName>
-        <externalId>false</externalId>
-        <label>Sores Describe</label>
-        <length>255</length>
-        <required>false</required>
-        <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
-    </fields>
-    <fields>
         <fullName>Specialty_Bed_Type__c</fullName>
         <externalId>false</externalId>
         <label>Specialty Bed Type</label>
@@ -4874,6 +5084,16 @@
         <label>Tone Not Tested</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Tongue_Sores_Describe__c</fullName>
+        <externalId>false</externalId>
+        <label>Tongue Sores Describe</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Tongue__c</fullName>
@@ -5728,6 +5948,25 @@
         <description>This record type is used for CareMeridian Evaluations on Referral object.</description>
         <label>CareMeridian</label>
         <picklistValues>
+            <picklist>Abdomen__c</picklist>
+            <values>
+                <fullName>Distended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Firm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rigid</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Soft</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admit_Status__c</picklist>
             <values>
                 <fullName>Admission</fullName>
@@ -5882,6 +6121,41 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>DC_Plan__c</picklist>
+            <values>
+                <fullName>Acute Hospital</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Acute Rehab</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>B %26 C</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Intermediate Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SNF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sub-Acute</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Dentures_Type__c</picklist>
             <values>
                 <fullName>Full</fullName>
@@ -5995,6 +6269,29 @@
             </values>
             <values>
                 <fullName>New</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Discharge_Info_From__c</picklist>
+            <values>
+                <fullName>Child</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Parent</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Resident</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Spouse</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -6717,6 +7014,28 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>LLQ__c</picklist>
+            <values>
+                <fullName>Abnormal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Normal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>LUQ__c</picklist>
+            <values>
+                <fullName>Abnormal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Normal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>L_Lower_ROM__c</picklist>
             <values>
                 <fullName>Impaired</fullName>
@@ -7136,6 +7455,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>RLQ__c</picklist>
+            <values>
+                <fullName>Abnormal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Normal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>ROM__c</picklist>
             <values>
                 <fullName>Full</fullName>
@@ -7143,6 +7473,17 @@
             </values>
             <values>
                 <fullName>Limited</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>RUQ__c</picklist>
+            <values>
+                <fullName>Abnormal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Normal</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7638,6 +7979,25 @@
         <description>This record type is used for Nurses Assessment Evaluations on PersonBeingServed.</description>
         <label>NursesAssessment</label>
         <picklistValues>
+            <picklist>Abdomen__c</picklist>
+            <values>
+                <fullName>Distended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Firm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rigid</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Soft</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Admit_Status__c</picklist>
             <values>
                 <fullName>Admission</fullName>
@@ -7792,6 +8152,41 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>DC_Plan__c</picklist>
+            <values>
+                <fullName>Acute Hospital</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Acute Rehab</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>B %26 C</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Intermediate Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SNF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sub-Acute</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Dentures_Type__c</picklist>
             <values>
                 <fullName>Full</fullName>
@@ -7905,6 +8300,29 @@
             </values>
             <values>
                 <fullName>New</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Discharge_Info_From__c</picklist>
+            <values>
+                <fullName>Child</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Parent</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Resident</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Spouse</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -8587,6 +9005,28 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>LLQ__c</picklist>
+            <values>
+                <fullName>Abnormal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Normal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>LUQ__c</picklist>
+            <values>
+                <fullName>Abnormal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Normal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>L_Lower_ROM__c</picklist>
             <values>
                 <fullName>Impaired</fullName>
@@ -9006,6 +9446,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>RLQ__c</picklist>
+            <values>
+                <fullName>Abnormal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Normal</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>ROM__c</picklist>
             <values>
                 <fullName>Full</fullName>
@@ -9013,6 +9464,17 @@
             </values>
             <values>
                 <fullName>Limited</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>RUQ__c</picklist>
+            <values>
+                <fullName>Abnormal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Normal</fullName>
                 <default>false</default>
             </values>
         </picklistValues>

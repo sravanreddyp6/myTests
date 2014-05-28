@@ -22,6 +22,8 @@ public with sharing class NursingEvaluationEditController {
     public List<string>selectedSaliva {get;set;}
     public List<selectOption>dentureValues ;
     public List<string>selectedDentures {get;set;}
+    public List<selectOption>abdomenValues ;
+    public List<string>selectedAbdomen {get;set;}
    
     
     public Related_Party__c[] relatedParties { set;
@@ -68,6 +70,8 @@ public with sharing class NursingEvaluationEditController {
 		selectedSaliva = new List<String>();
 		dentureValues = new List<SelectOption>();
 		selectedDentures = new List<String>();
+		abdomenValues = new List<SelectOption>();
+		selectedAbdomen = new List<String>();
 		
 		if(!String.isBlank(this.evaluation.Breathe_sounds__c))
 		selectedSounds = this.evaluation.Breathe_Sounds__c.split(';');
@@ -95,6 +99,9 @@ public with sharing class NursingEvaluationEditController {
 		
 		if(!String.isBlank(this.evaluation.Dentures_Type__c))
 		selectedDentures = this.evaluation.Dentures_Type__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Abdomen__c))
+		selectedAbdomen = this.evaluation.Abdomen__c.split(';');
     }
     
     public void showAddRelatedParty()  {
@@ -258,6 +265,16 @@ public with sharing class NursingEvaluationEditController {
   			else
   			this.evaluation.Dentures_Type__c = '';
   			
+  // For Abdomen Multi-Picklist
+  		string abd ='';
+  		for(string ab: selectedAbdomen)
+  		abd += ab+';';
+  			if(abd!=''){
+  				abd= abd.Substring(0,abd.length()-1);
+  				this.evaluation.Abdomen__C = abd;
+  			}
+  			else
+  			this.evaluation.Abdomen__c = '';
    			     	
         if (submitted || selectedTab == 'detailsTab' || selectedTab == null) {
 
@@ -311,6 +328,11 @@ public with sharing class NursingEvaluationEditController {
    public List<selectoption> getdentureValues(){
    		List<Selectoption> dentureValue = Utility.getPicklistValues(evaluation, 'Dentures_Type__c');
    		return dentureValue; 
+   }
+   
+   public List<selectoption> getabdomenValues(){
+   		List<Selectoption> abdomenValue = Utility.getPicklistValues(evaluation, 'Abdomen__c');
+   		return abdomenValue; 
    }
    
    
