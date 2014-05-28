@@ -242,6 +242,7 @@
 		<apex:inputhidden value="{!Evaluation__c.Urinary_Issues__c}" />
 		<apex:inputhidden value="{!Evaluation__c.Breathe_Sounds__c}"/> 
 		<apex:inputhidden value="{!Evaluation__c.Urine_Clarity__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Tongue__c}" />
 		
 	</apex:outputPanel>
 		<apex:pageMessages id="pageMessages" />
@@ -574,7 +575,48 @@
                         <apex:inputField value="{!Evaluation__c.Lipids__c}" />
                     </apex:pageBlockSection>
                     <hr /> 
-                    
+                    <apex:pageBlockSection columns="2">
+                    	<apex:pageBlockSectionItem >
+                            <apex:outputText value="Teeth - UR Quadrant" />
+                            <apex:outputText value="" />
+                        </apex:pageBlockSectionItem>
+                    	<apex:pageBlockSectionItem >
+                            <apex:outputText value="Teeth - LR Quadrant" />
+                            <apex:outputText value="" />
+                        </apex:pageBlockSectionItem>
+                    	<apex:inputField value="{!Evaluation__c.UR_of_Teeth_Present__c}" />
+                    	<apex:inputField value="{!Evaluation__c.LR_of_Teeth_Present__c}" />
+                    	<apex:inputField value="{!Evaluation__c.UR_Teeth_Condition__c}" />
+                    	<apex:inputField value="{!Evaluation__c.LR_Teeth_Condition__c}" />
+                    	<apex:pageBlockSectionItem />
+                    	<apex:pageBlockSectionItem />
+                    	<apex:pageBlockSectionItem >
+                            <apex:outputText value="Teeth - UL Quadrant" />
+                            <apex:outputText value="" />
+                        </apex:pageBlockSectionItem>
+
+                    	<apex:pageBlockSectionItem >
+                            <apex:outputText value="Teeth - LL Quadrant" />
+                            <apex:outputText value="" />
+                        </apex:pageBlockSectionItem>
+                    	<apex:inputField value="{!Evaluation__c.UL_of_Teeth_Present__c}" />
+                   	    <apex:inputField value="{!Evaluation__c.LL_of_Teeth_Present__c}" />
+                    	<apex:inputField value="{!Evaluation__c.UL_Teeth_Condition__c}" />
+                    	<apex:inputField value="{!Evaluation__c.LL_Teeth_Condition__c}" />
+                    	<apex:pageBlockSectionItem />
+                    	<apex:pageBlockSectionItem />
+                    	
+                    	<apex:pageBlockSectionItem >
+                            <apex:outputText value="Tongue" />
+                            <apex:outputText value="" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem />
+                        <apex:selectCheckboxes value="{!selectedTongues}" style="margin-left: 50px;" layout="pageDirection" >
+                        	<apex:selectOptions value="{!tongueValues}"/>
+                        </apex:selectCheckboxes>
+                        <apex:pageBlockSectionItem />
+                    	
+                   	</apex:pageBlockSection>
 				</apex:pageBlock>
 			</apex:tab>
 			

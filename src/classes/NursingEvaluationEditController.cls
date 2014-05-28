@@ -10,6 +10,8 @@ public with sharing class NursingEvaluationEditController {
     public List<string>selectedIssues {get; set;}
     public List<SelectOption>urineClarities ;
     public List<string>selectedClarities {get; set;}
+    public List<selectOption>tongueValues ;
+    public List<string>selectedTongues {get;set;}
    
     
     public Related_Party__c[] relatedParties { set;
@@ -44,6 +46,8 @@ public with sharing class NursingEvaluationEditController {
 		selectedIssues = new List<string>();
 		urineClarities = new List<selectOption>();
 		selectedClarities = new List<string>();
+		tongueValues = new List<SelectOption>();
+		selectedTongues = new List<String>();
 		
 		if(!String.isBlank(this.evaluation.Breathe_sounds__c))
 		selectedSounds = this.evaluation.Breathe_Sounds__c.split(';');
@@ -53,6 +57,9 @@ public with sharing class NursingEvaluationEditController {
 		
 		if(!String.isBlank(this.evaluation.Urine_Clarity__c))
 		selectedClarities = this.evaluation.Urine_Clarity__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Tongue__c))
+		selectedTongues = this.evaluation.Tongue__c.split(';');
     }
     
     public void showAddRelatedParty()  {
@@ -145,6 +152,16 @@ public with sharing class NursingEvaluationEditController {
         	}
         	else
         	this.evaluation.Urine_Clarity__c ='';
+    // for Tongue Multi-Picklist
+    	string tng = '';
+    	for (string t: selectedTongues)
+    	tng += t+';';
+    		if(tng!=''){
+    			tng = tng.Substring(0,tng.length()-1);
+    			this.evaluation.Tongue__c = tng;
+    		}
+    		else
+    		this.evaluation.Tongue__c = '';
         	
         if (submitted || selectedTab == 'detailsTab' || selectedTab == null) {
 
@@ -169,4 +186,10 @@ public with sharing class NursingEvaluationEditController {
    		List<Selectoption> urineClarity = Utility.getPicklistValues(evaluation, 'Urine_Clarity__c');
    		return urineClarity; 
    }
+   
+   public List<selectoption> gettongueValues(){
+   		List<Selectoption> tongueValue = Utility.getPicklistValues(evaluation, 'Tongue__c');
+   		return tongueValue; 
+   }
+   
 }
