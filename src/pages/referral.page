@@ -2859,16 +2859,13 @@ function enableDiagEff() {
           />
           <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Wisconsin'}" />
           <!-- Row 9, Col 4 -->
-          <apex:inputField value="{!Referral__c.If_Yes_Level__c}"
-            rendered="{!isCambridge}"
-          />
+          <apex:inputField value="{!Referral__c.If_Yes_Level__c}" rendered="{!isCambridge}" />
           <apex:inputField value="{!Referral__c.Safety_Measures_Required__c}" label="Restrictive measures or rights restrictions will need to be implemented to safely support this individual"
             rendered="{!ReferralRecordType = 'Wisconsin'}"
           />
           <!-- Row 10, Col 1 -->
-          <apex:inputField value="{!Referral__c.Access_to_Public_Transportation__c}"
-            rendered="{!isCambridge}"
-          />
+          <apex:inputField value="{!Referral__c.Access_to_Public_Transportation__c}"  rendered="{!isCambridge}"  />
+          
           <!-- Row 10, Col 2 -->
           <apex:inputField value="{!Referral__c.Legal_History__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
