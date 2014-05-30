@@ -187,6 +187,7 @@
 <apex:inputhidden value="{!Evaluation__c.Dialysis_Type_Details__c}" />
 <apex:inputhidden value="{!Evaluation__c.Dialysis_Onset__c}"  />
 <apex:inputhidden value="{!Evaluation__c.Dialysis_Days_of_the_Week__c}" />
+<apex:inputhidden value="{!Evaluation__c.Shunt_Permacath__c}" />
 <apex:inputhidden value="{!Evaluation__c.Shunt_Permacath_Date_Placed__c}" />
 <apex:inputhidden value="{!Evaluation__c.Tube_Feed_Formula__c}" />
 <apex:inputhidden value="{!Evaluation__c.Tube_Feed_Rate__c}" />
@@ -309,6 +310,7 @@
 <apex:inputhidden value="{!Evaluation__c.Current_Gait_Mobility_Other_Comments__c}" />
 <apex:inputhidden value="{!Evaluation__c.Out_of_Bed_Tolerance__c}" />
 <apex:inputhidden value="{!Evaluation__c.DME_Needs__c}" />
+<apex:inputhidden value="{!Evaluation__c.Distance_Details__c}" />
 <apex:inputhidden value="{!Evaluation__c.Rehab_Comments__c}" />
 <apex:inputhidden value="{!Evaluation__c.Rehab_Section_Completed__c}" />
 <apex:inputhidden value="{!Evaluation__c.Psycho_Social_Comments__c}" />
@@ -336,7 +338,7 @@
 </apex:outputpanel>
 
 <h1 style="text-align:center;">PRE-ADMISSION EVALUATION FORM</h1>
-<apex:pageBlock title="Referral Details" >
+<apex:pageBlock title="Demographics" >
       
       <table style="width:100%">
           <tr>
@@ -585,82 +587,112 @@
         <apex:dynamiccomponent componentvalue="{!ctlmap['telemetry__c']}" />
         <apex:dynamiccomponent componentvalue="{!ctlmap['ventilator__c']}" />
         <apex:dynamiccomponent componentvalue="{!ctlmap['o2__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['o2_type__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['will_be_dc_d_prior_to_transfer__c']}" />        
+
+        <apex:dynamiccomponent componentvalue="{!ctlmap['will_be_dc_d_prior_to_transfer__c']}" />
         <apex:dynamiccomponent componentvalue="{!ctlmap['ventilator_type__c']}" />
-		<apex:dynamiccomponent componentvalue="{!ctlmap['if_intermittent_schedule__c']}" />
-		<apex:dynamiccomponent componentvalue="{!ctlmap['ventilator_other__c']}" />        
-        <apex:dynamiccomponent componentvalue="{!ctlmap['ventilator_mode__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['liters_min__c']}" />
+        <apex:dynamiccomponent componentvalue="{!ctlmap['o2_type__c']}" />
+
         <apex:dynamiccomponent componentvalue="{!ctlmap['trach__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['ventilator_rate__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['nasal_cannula__c']}" />
+		<apex:dynamiccomponent componentvalue="{!ctlmap['if_intermittent_schedule__c']}" />
+        <apex:dynamiccomponent componentvalue="{!ctlmap['liters_min__c']}" />
+        
         <apex:dynamiccomponent componentvalue="{!ctlmap['trach_placement_date__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['fio2__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['mask__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['mask_type__c']}" />        
+        <apex:dynamiccomponent componentvalue="{!ctlmap['ventilator_mode__c']}" />
+		<apex:dynamiccomponent componentvalue="{!ctlmap['nasal_cannula__c']}" />
+		
         <apex:dynamiccomponent componentvalue="{!ctlmap['trach_type__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['trach_type_other__c']}" />        
-        <apex:dynamiccomponent componentvalue="{!ctlmap['peep__c']}" />
+        <apex:dynamiccomponent componentvalue="{!ctlmap['ventilator_rate__c']}" />
+        <apex:dynamiccomponent componentvalue="{!ctlmap['mask__c']}" />
+        
+        <apex:dynamiccomponent componentvalue="{!ctlmap['trach_type_other__c']}" />
+        <apex:dynamiccomponent componentvalue="{!ctlmap['fio2__c']}" />
+        <apex:dynamiccomponent componentvalue="{!ctlmap['mask_type__c']}" />
+        
+        <apex:dynamiccomponent componentvalue="{!ctlmap['trach_size__c']}" />        
+        <apex:dynamiccomponent componentvalue="{!ctlmap['peep__c']}" />        
         <apex:dynamiccomponent componentvalue="{!ctlmap['t_piece__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['trach_size__c']}" />
+        
         <apex:dynamiccomponent componentvalue="{!ctlmap['trach_size_other__c']}" />
         <apex:dynamiccomponent componentvalue="{!ctlmap['tv__c']}" />
         <apex:dynamiccomponent componentvalue="{!ctlmap['mist__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['mist_type__c']}" />
+        
         <apex:dynamiccomponent componentvalue="{!ctlmap['cuffed__c']}" />
         <apex:dynamiccomponent componentvalue="{!ctlmap['ps__c']}" />
+        <apex:dynamiccomponent componentvalue="{!ctlmap['mist_type__c']}" />
+        
         <apex:dynamiccomponent componentvalue="{!ctlmap['pmv__c']}" />
         <apex:dynamiccomponent componentvalue="{!ctlmap['cpap__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['treatments__c']}" />
+		<apex:dynamiccomponent componentvalue="{!ctlmap['treatments__c']}" />
+        
         <apex:dynamiccomponent componentvalue="{!ctlmap['trach_plugged__c']}" />
         <apex:dynamiccomponent componentvalue="{!ctlmap['bipap__c']}" />
         <apex:dynamiccomponent componentvalue="{!ctlmap['hhn__c']}" />
+        
         <apex:dynamiccomponent componentvalue="{!ctlmap['trach_plugged_initiated__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['bipap_rate__c']}" />
+        <apex:dynamiccomponent componentvalue="{!ctlmap['ventilator_other__c']}" />        
         <apex:dynamiccomponent componentvalue="{!ctlmap['ippb__c']}" />
+        
         <apex:dynamiccomponent componentvalue="{!ctlmap['trach_plugged_duration__c']}" />
+		<apex:dynamiccomponent componentvalue="{!ctlmap['bipap_rate__c']}" />
+		<apex:dynamiccomponent componentvalue="{!ctlmap['treatments_other__c']}" />
+
+		<apex:dynamiccomponent componentvalue="{!ctlmap['decannulated__c']}" />
         <apex:dynamiccomponent componentvalue="{!ctlmap['patient_to_bring_bipap__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['treatments_other__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['decannulated__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['weaning_trial__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['treatments_other_comments__c']}"  />
+        <apex:dynamiccomponent componentvalue="{!ctlmap['treatments_other_comments__c']}"  />        
+        
         <apex:dynamiccomponent componentvalue="{!ctlmap['decannulated_placement_date__c']}" />
+        <apex:dynamiccomponent componentvalue="{!ctlmap['weaning_trial__c']}" />
+		<apex:dynamiccomponent componentvalue="{!ctlmap['suctioning__c']}" />
+
+		<apex:pageBlockSectionItem />
         <apex:dynamiccomponent componentvalue="{!ctlmap['ventilator_results__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['suctioning__c']}" />
-        <apex:pageBlockSectionItem />
-        <apex:pageBlockSectionItem />
         <apex:dynamiccomponent componentvalue="{!ctlmap['suctioning_type__c']}" />
+                
         <apex:pageBlockSectionItem />
         <apex:pageBlockSectionItem />
         <apex:dynamiccomponent componentvalue="{!ctlmap['suctioning_frequency__c']}" />
+        
         <apex:pageBlockSectionItem />
         <apex:pageBlockSectionItem />
         <apex:dynamiccomponent componentvalue="{!ctlmap['sputum_quantity__c']}" />
+        
         <apex:pageBlockSectionItem />
         <apex:pageBlockSectionItem />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['sputum_appearance__c']}" />        
+        <apex:dynamiccomponent componentvalue="{!ctlmap['sputum_appearance__c']}" />
+
+        <apex:pageBlockSectionItem />
+        <apex:pageBlockSectionItem />
         <apex:dynamiccomponent componentvalue="{!ctlmap['sputum_color__c']}" />
+        
+        <apex:pageBlockSectionItem />
+        <apex:pageBlockSectionItem />
 		<apex:dynamiccomponent componentvalue="{!ctlmap['blood_tinged__c']}" />
         
-		<apex:outputLabel id="SputumConsistency" for="SputumConsistency" value="Sputum Consistency" style="margin:10px;font-weight:bold;" />
+        <apex:pageBlockSectionItem />
+        <apex:pageBlockSectionItem />
+        <apex:outputLabel id="SputumConsistency" for="SputumConsistency" value="Sputum Consistency" style="margin:10px;font-weight:bold;" />
+        
 		<apex:pageBlockSectionItem />
         <apex:pageBlockSectionItem />        
 		<apex:dynamiccomponent componentValue="{!ctlmap['thick__c']}" />
+		
 		<apex:pageBlockSectionItem />
         <apex:pageBlockSectionItem />		
 		<apex:dynamiccomponent componentValue="{!ctlmap['thin__c']}" />
+		
 		<apex:pageBlockSectionItem />
         <apex:pageBlockSectionItem />		
 		<apex:dynamiccomponent componentValue="{!ctlmap['frothy__c']}" />
+		
 		<apex:pageBlockSectionItem />
         <apex:pageBlockSectionItem />		
 		<apex:dynamiccomponent componentValue="{!ctlmap['sticky__c']}" />
+		
 		<apex:pageBlockSectionItem />
         <apex:pageBlockSectionItem />		
 		<apex:dynamiccomponent componentValue="{!ctlmap['odor__c']}" />
-
     </apex:pageBlockSection>
+    
     <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="ABG Detail" formId="{!$Component.wholePage}" uniqueId="abg" isPdf="true" />
     <br />
         <apex:dynamiccomponent componentvalue="{!ctlmap['cardio_comments__c']}" /><br />
@@ -703,7 +735,8 @@
         <apex:dynamiccomponent componentvalue="{!ctlmap['dialysis_onset__c']}"  /><br/>
         <apex:dynamiccomponent componentvalue="{!ctlmap['dialysis_days_of_the_week__c']}" />
     </td>
-    <td style="vertical-align:top">Shunt/Permacath<br/>
+    <td style="vertical-align:top">
+    <apex:dynamiccomponent componentvalue="{!ctlmap['shunt_permacath__c']}" /><br/>
     <apex:dynamiccomponent componentvalue="{!ctlmap['shunt_permacath_date_placed__c']}" />
     <apex:outputField value="{!Evaluation__c.Shunt_Permacath_Location__c}" label="Location" />
     <apex:outputField value="{!Evaluation__c.Shunt_Permacath_Previous_Provider__c}" label="Previous Provider" />
@@ -930,12 +963,12 @@
 </tr>
 <tr>
 <td>
-    <apex:dynamiccomponent componentvalue="{!ctlmap['hand_dominance__c']}" /><br/>
-    <apex:dynamiccomponent componentvalue="{!ctlmap['visual_perceptual__c']}" /><br/>
-</td>
-<td style="vertical-align:top">
     <apex:dynamiccomponent componentvalue="{!ctlmap['expressive__c']}" /><br/>
     <apex:dynamiccomponent componentvalue="{!ctlmap['receptive__c']}" /><br/>
+</td>
+<td style="vertical-align:top">
+    <apex:dynamiccomponent componentvalue="{!ctlmap['hand_dominance__c']}" /><br/>
+    <apex:dynamiccomponent componentvalue="{!ctlmap['visual_perceptual__c']}" /><br/>
 </td>
 </tr>
 </table>  
@@ -951,15 +984,14 @@
         <apex:dynamiccomponent componentvalue="{!ctlmap['impaired_acuity_l__c']}" /><br/>
         <apex:dynamiccomponent componentvalue="{!ctlmap['neglect_r__c']}" /><br/>
         <apex:dynamiccomponent componentvalue="{!ctlmap['neglect_l__c']}" /><br/>
-        
+	    <apex:dynamiccomponent componentvalue="{!ctlmap['diplopia__c']}" /><br/>
+	    <apex:dynamiccomponent componentvalue="{!ctlmap['tracking_r__c']}" /><br/>
+	    <apex:dynamiccomponent componentvalue="{!ctlmap['tracking_l__c']}" /><br/>
 </td>
 <td style="vertical-align:top">
     <apex:dynamiccomponent componentvalue="{!ctlmap['glasses_for_reading__c']}" /><br/>
     <apex:dynamiccomponent componentvalue="{!ctlmap['glasses_for_distance__c']}" /><br/>
     <apex:dynamiccomponent componentvalue="{!ctlmap['glasses_for_multi_focal_use__c']}" /><br/>
-    <apex:dynamiccomponent componentvalue="{!ctlmap['diplopia__c']}" /><br/>
-    <apex:dynamiccomponent componentvalue="{!ctlmap['tracking_r__c']}" /><br/>
-    <apex:dynamiccomponent componentvalue="{!ctlmap['tracking_l__c']}" /><br/>
 </td>
 </tr>
 </table>  
@@ -1120,15 +1152,15 @@
     
     <hr />
     <apex:pageblocksection html-style="width:80%" columns="2">
-    <apex:pageblocksectionitem />
-    
         <apex:outputField value="{!Evaluation__c.Bed_Mobility__c}" rendered="{!Evaluation__c.Bed_Mobility__c!=''}" style="padding:10px" />
         <apex:outputText label="Bed Mobility" value="Unknown" rendered="{!Evaluation__c.Bed_Mobility__c==''}" /><br />
         <apex:outputField value="{!Evaluation__c.Transfers__c}" rendered="{!Evaluation__c.Transfers__c!=''}" />
-        <apex:outputText label="Transfers" value="Unknown" rendered="{!Evaluation__c.Transfers__c==''}" /><br />
-        <apex:outputField value="{!Evaluation__c.WC_Gait__c}" rendered="{!Evaluation__c.WC_Gait__c!=''}" />
-        <apex:outputText label="W/C Gait" value="Unknown" rendered="{!Evaluation__c.WC_Gait__c==''}" /><br />
-        <apex:outputField value="{!Evaluation__c.Feeding__c}" rendered="{!Evaluation__c.Feeding__c!=''}" />
+        <apex:outputText label="Transfers" value="Unknown" rendered="{!Evaluation__c.Transfers__c==''}" /><br />	
+		<apex:outputField value="{!Evaluation__c.WC_Gait__c}" rendered="{!Evaluation__c.WC_Gait__c!=''}" />	
+		<apex:outputText label="W/C Gait" value="Unknown" rendered="{!Evaluation__c.WC_Gait__c==''}" />
+		<apex:outputField value="{!Evaluation__c.Distance_Details__c}" />
+		<apex:outputText label="" value="" rendered="true" /><br />		
+	    <apex:outputField value="{!Evaluation__c.Feeding__c}" rendered="{!Evaluation__c.Feeding__c!=''}" />
         <apex:outputText label="Feeding" value="Unknown" rendered="{!Evaluation__c.Feeding__c==''}" /><br />
         <apex:outputField value="{!Evaluation__c.Hygiene__c}" rendered="{!Evaluation__c.Hygiene__c!=''}" />
         <apex:outputText label="Hygiene" value="Unknown" rendered="{!Evaluation__c.Hygiene__c==''}" /><br />
