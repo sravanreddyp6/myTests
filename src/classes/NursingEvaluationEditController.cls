@@ -24,6 +24,20 @@ public with sharing class NursingEvaluationEditController {
     public List<string>selectedDentures {get;set;}
     public List<selectOption>abdomenValues ;
     public List<string>selectedAbdomen {get;set;}
+    public List<selectOption>hallValues ;
+    public List<string>selectedHalls {get;set;}
+    public List<selectOption>beliefValues ;
+    public List<string>selectedBeliefs {get;set;}
+    public List<selectOption>learningValues ;
+    public List<string>selectedLearning {get;set;}
+    public List<selectOption>copingValues ;
+    public List<string>selectedCoping {get;set;}
+    public List<selectOption>communicationValues ;
+    public List<string>selectedCommunications {get;set;}
+    public List<selectOption>barrierValues ;
+    public List<string>selectedBarriers {get;set;}
+    public List<selectOption>needValues ;
+    public List<string>selectedNeeds {get;set;}
    
     
     public Related_Party__c[] relatedParties { set;
@@ -72,6 +86,20 @@ public with sharing class NursingEvaluationEditController {
 		selectedDentures = new List<String>();
 		abdomenValues = new List<SelectOption>();
 		selectedAbdomen = new List<String>();
+		hallValues = new List<selectOption>();
+		selectedHalls = new List<String>();
+		beliefValues = new List<selectOption>();
+		selectedBeliefs = new List<String>();
+		learningValues = new List<selectOption>();
+		selectedLearning = new List<String>();
+		copingValues = new List<selectOption>();
+		selectedCoping = new List<String>();
+		communicationValues = new List<selectOption>();
+		selectedCommunications = new List<String>();
+		barrierValues = new List<selectOption>();
+		selectedBarriers = new List<String>();
+		needValues = new List<selectOption>();
+		selectedNeeds = new List<String>();
 		
 		if(!String.isBlank(this.evaluation.Breathe_sounds__c))
 		selectedSounds = this.evaluation.Breathe_Sounds__c.split(';');
@@ -102,6 +130,27 @@ public with sharing class NursingEvaluationEditController {
 		
 		if(!String.isBlank(this.evaluation.Abdomen__c))
 		selectedAbdomen = this.evaluation.Abdomen__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Hallucination_Types__c))
+		selectedHalls = this.evaluation.Hallucination_Types__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Typeof_Spiritual_belief_Effects__c))
+		selectedBeliefs = this.evaluation.Typeof_Spiritual_belief_Effects__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Preferred_Method_of_Learning__c))
+		selectedLearning = this.evaluation.Preferred_Method_of_Learning__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Resident_Demonstrating_Issues__c))
+		selectedCoping = this.evaluation.Resident_Demonstrating_Issues__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Resident_s_Communication_Status__c))
+		selectedCommunications = this.evaluation.Resident_s_Communication_Status__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Resident_s_Emotional_Barriers__c))
+		selectedBarriers = this.evaluation.Resident_s_Emotional_Barriers__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Resident_s_Learning_needs_related_to__c))
+		selectedNeeds = this.evaluation.Resident_s_Learning_needs_related_to__c.split(';');
     }
     
     public void showAddRelatedParty()  {
@@ -275,7 +324,85 @@ public with sharing class NursingEvaluationEditController {
   			}
   			else
   			this.evaluation.Abdomen__c = '';
-   			     	
+  			
+  // For Hallucination Multi-Picklist
+  		string hal ='';
+  		for(string h: selectedHalls)
+  		hal += h+';';
+  			if(hal!=''){
+  				hal = hal.Substring(0,hal.length()-1);
+  				this.evaluation.Hallucination_Types__c = hal;
+  			}
+  			else
+  			this.evaluation.Hallucination_Types__c ='';
+  			
+   // For Spiritual Belief Effects Multi-picklist
+   		string blf = '';
+   		for(string bf: selectedBeliefs)
+   		blf += bf+';';
+   			if(blf!=''){
+   				blf= blf.Substring(0,blf.length()-1);
+   				this.evaluation.Typeof_Spiritual_belief_Effects__c = blf;
+   			}
+   			else
+   			this.evaluation.Typeof_Spiritual_belief_Effects__c ='';
+   			
+   // For Preferred Method of Learning Multi-Picklist
+   		string pml ='';
+   		for(string lm: selectedLearning)
+   		pml += lm+';';
+   			if(pml!=''){
+   				pml= pml.Substring(0,pml.length()-1);
+   				this.evaluation.Preferred_Method_of_Learning__c = pml;
+   			}
+   			else
+   			this.evaluation.Preferred_Method_of_Learning__c ='';
+   			
+   // For Resident Coping Well Multi-Picklist
+   		string cpg ='';
+   		for(string cp: selectedCoping)
+   		cpg += cp+';';
+   			if(cpg!=''){
+   				cpg = cpg.Substring(0,cpg.length()-1);
+   				this.evaluation.Resident_Demonstrating_Issues__c = cpg;
+   			} 
+   			else
+   			this.evaluation.Resident_Demonstrating_Issues__c ='';
+   			
+  // For Resident's Communication Status Multi-Picklist
+  		string cmc = '';
+  		for(string cm: selectedCommunications)
+  		cmc += cm+';';
+  			if(cmc!=''){
+  				cmc = cmc.Substring(0,cmc.length()-1);
+  				this.evaluation.Resident_s_Communication_Status__c = cmc;
+  			}
+  			else
+  			this.evaluation.Resident_s_Communication_Status__c = '';
+  			
+ // For Resident's Emotional Barriers Multi-picklist
+ 		string emb = '';
+ 		for(string eb: selectedBarriers)
+ 		emb += eb+';';
+ 			if(emb!=''){
+ 				emb = emb.Substring(0,emb.length()-1);
+ 				this.evaluation.Resident_s_Emotional_Barriers__c = emb;
+ 			}
+ 			else
+ 			this.evaluation.Resident_s_Emotional_Barriers__c ='';
+ 		
+ // For Resident's Learning Needs multi-picklist
+ 		string lrn ='';
+ 		for(string ln: selectedNeeds)
+ 		lrn += ln+';';
+ 			if(lrn!=''){
+ 				lrn = lrn.Substring(0,lrn.length()-1);
+ 				this.evaluation.Resident_s_Learning_needs_related_to__c = lrn;
+ 			}
+ 			else
+ 			this.evaluation.Resident_s_Learning_needs_related_to__c ='';
+ 			
+   					     	
         if (submitted || selectedTab == 'detailsTab' || selectedTab == null) {
 
         }
@@ -335,5 +462,38 @@ public with sharing class NursingEvaluationEditController {
    		return abdomenValue; 
    }
    
+   public List<selectoption> gethallValues(){
+   		List<Selectoption> hallValue = Utility.getPicklistValues(evaluation, 'Hallucination_Types__c');
+   		return hallValue; 
+   }
    
+   public List<selectoption> getbeliefValues(){
+   		List<Selectoption> beliefValue = Utility.getPicklistValues(evaluation, 'Typeof_Spiritual_belief_Effects__c');
+   		return beliefValue; 
+   }
+   
+   public List<selectoption> getlearningValues(){
+   		List<Selectoption> learningValue = Utility.getPicklistValues(evaluation, 'Preferred_Method_of_Learning__c');
+   		return learningValue; 
+   }
+   
+   public List<selectoption> getcopingValues(){
+   		List<Selectoption> copingValue = Utility.getPicklistValues(evaluation, 'Resident_Demonstrating_Issues__c');
+   		return copingValue; 
+   }
+   
+   public List<selectoption> getcommunicationValues(){
+   		List<Selectoption> communicationValue = Utility.getPicklistValues(evaluation, 'Resident_s_Communication_Status__c');
+   		return communicationValue; 
+   }
+   
+   public List<selectoption> getbarrierValues(){
+   		List<Selectoption> barrierValue = Utility.getPicklistValues(evaluation, 'Resident_s_Emotional_Barriers__c');
+   		return barrierValue; 
+   }
+   
+   public List<selectoption> getneedValues(){
+   		List<Selectoption> needValue = Utility.getPicklistValues(evaluation, 'Resident_s_Learning_needs_related_to__c');
+   		return needValue; 
+   }
 }
