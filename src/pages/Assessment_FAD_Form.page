@@ -96,7 +96,7 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
     </apex:pageBlockButtons>
 <!-- edit -->    
     <apex:pageBlockSection rendered="{!mode='edit'}" id="details_edit"  >
-        <apex:inputField label="Date of Admistration" required="true"  value="{!Assessment__c.Assessment_Date__c}"/>
+        <apex:inputField label="Date of Administration" required="true"  value="{!Assessment__c.Assessment_Date__c}"/>
         <apex:outputField label="Person Being Served" value="{!Assessment__c.AccountPerson__c}"/>
         
         <apex:inputField required="true" value="{!Assessment__c.Phase__c}" id="phase" styleClass="phasefield">
@@ -116,7 +116,7 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
     </apex:pageBlockSection>
 <!-- view -->    
     <apex:pageBlockSection rendered="{!mode='view'}" >
-        <apex:outputField label="Date of Admistration"  value="{!Assessment__c.Assessment_Date__c}"/>
+        <apex:outputField label="Date of Administration"  value="{!Assessment__c.Assessment_Date__c}"/>
         <apex:outputField label="Person Being Served" value="{!Assessment__c.AccountPerson__c}"/>
         <apex:outputField value="{!Assessment__c.Phase__c}"/>
         <apex:outputField value="{!Assessment__c.Service_Assignment__c}"/>
