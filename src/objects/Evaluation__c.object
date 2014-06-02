@@ -504,6 +504,14 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Bed_Craddle__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Bed Craddle</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>Bed_Mobility__c</fullName>
         <externalId>false</externalId>
         <label>Bed Mobility</label>
@@ -1917,6 +1925,14 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Elastic_Hose__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Elastic Hose</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>Elevator__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
@@ -2921,6 +2937,14 @@
         </picklist>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Hand_Rolls__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Hand Rolls</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
     </fields>
     <fields>
         <fullName>Harm_Date_and_Time_Reported__c</fullName>
@@ -4443,6 +4467,16 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Other_Special_Equipment_Details__c</fullName>
+        <externalId>false</externalId>
+        <label>Other Special Equipment Details</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Out_of_Bed_Tolerance__c</fullName>
         <externalId>false</externalId>
         <label>Out of Bed Tolerance</label>
@@ -4451,6 +4485,14 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Overhead_Trapaze__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Overhead Trapaze</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
     </fields>
     <fields>
         <fullName>PCA_Rate__c</fullName>
@@ -5518,12 +5560,66 @@
         <visibleLines>3</visibleLines>
     </fields>
     <fields>
+        <fullName>Rehab_Equipment_Other_Details__c</fullName>
+        <externalId>false</externalId>
+        <label>Rehab Equipment Other Details</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Rehab_Equipment_Other__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Rehab Equipment Other</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Rehab_Other_Equipment_Needed__c</fullName>
+        <externalId>false</externalId>
+        <label>Rehab Other Equipment Needed</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Rehab_Section_Completed__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
         <label>Rehab Section Complete</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Rehab_WFLs__c</fullName>
+        <externalId>false</externalId>
+        <label>Rehab WFLs</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Religious_Preference_Details__c</fullName>
@@ -9607,6 +9703,28 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Rehab_Other_Equipment_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Rehab_WFLs__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Religious_Preference_Details__c</picklist>
             <values>
                 <fullName>Avatar</fullName>
@@ -12398,6 +12516,28 @@
             </values>
             <values>
                 <fullName>Intact</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Rehab_Other_Equipment_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Rehab_WFLs__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>

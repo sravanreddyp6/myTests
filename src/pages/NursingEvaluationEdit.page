@@ -256,6 +256,11 @@
 		<apex:inputhidden value="{!Evaluation__c.Resident_s_Communication_Status__c}" />
 		<apex:inputhidden value="{!Evaluation__c.Resident_s_Emotional_Barriers__c}" />
 		<apex:inputhidden value="{!Evaluation__c.Resident_s_Learning_needs_related_to__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Rancho_level_Resident_Orientation__c}" />
+		<apex:inputhidden value="{! Evaluation__c.Oriented_to_the_Following__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Family_Member_s_Emotional_Barriers__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Family_Communication_Status__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Family_Member_s_Learning_related_to__c}" />
 	</apex:outputPanel>
 		<apex:pageMessages id="pageMessages" />
 		<apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); removeSpacer()" reRender="pageMessages, wholeTabPanel, buttons">
@@ -743,7 +748,34 @@
 			 
 			<apex:tab label="Rehab" name="rehabTab" ontabenter="changeTab('rehabTab'); return false;" styleClass="{!IF(Evaluation__c.Rehab_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 			 	<apex:pageBlock >
-			 	
+			 		<apex:pageBlockSection >
+			 			<apex:inputField value="{!Evaluation__c.Rehab_WFLs__c}" label="WFLs" />
+			 		</apex:pageBlockSection>
+			 		<hr />
+			 		<apex:pageBlockSection columns="3">
+			 			 <apex:inputField value="{!Evaluation__c.Therapy_Ordered__c}"
+                            html-data-rules="{&quot;1&quot;: [&quot;{!$Component.pt}&quot;, &quot;{!$Component.ot}&quot;, &quot;{!$Component.st}&quot;]}" />
+                         <apex:outputText value="Mobility Devices" styleClass="labelCol" />
+                         <apex:inputField value="{!Evaluation__c.Rehab_Other_Equipment_Needed__c}" label="Other Speial Equipment Needed" />
+                         <apex:inputField value="{!Evaluation__c.Therapy_Ordered_PT__c}" id="pt" label="PT" />
+                         <apex:inputField value="{!Evaluation__c.Wheel_Chair__c}" />
+                         <apex:inputField value="{!Evaluation__c.Elastic_Hose__c}" />
+                         <apex:inputField value="{!Evaluation__c.Therapy_Ordered_OT__c}" id="ot" label="OT" />
+                         <apex:inputField value="{!Evaluation__c.Front_Wheeled_Walker__c}" />
+                         <apex:inputField value="{!Evaluation__c.Hand_Rolls__c}" />  
+                         <apex:inputField value="{!Evaluation__c.Therapy_Ordered_ST__c}" id="st" label="ST" />
+			 			 <apex:inputField value="{!Evaluation__c.Rehab_Cane__c}"/>
+			 			 <apex:inputField value="{!Evaluation__c.Bed_Craddle__c}" /> 
+			 			 <apex:pageBlockSectionItem />
+			 			 <apex:inputField value="{!Evaluation__c.Current_Gait_Mobility_Other__c}" label="Other" html-data-rules="{&quot;1&quot;: &quot;{!$Component.currentGaitMobilityOther}&quot;}" />
+			 			 <apex:inputField value="{!Evaluation__c.Overhead_Trapaze__c}" /> 
+			 			 <apex:pageBlockSectionItem />
+			 			 <apex:inputField value="{!Evaluation__c.Current_Gait_Mobility_Other_Comments__c}" id="currentGaitMobilityOther" label="Specify Other" />
+			 			 <apex:inputField Value="{!Evaluation__c.Rehab_Equipment_Other__c}" label="Other" html-data-rules="{&quot;1&quot;: &quot;{!$Component.otherEquipment}&quot;}"/>
+			 			 <apex:pageBlockSectionItem />
+			 			 <apex:pageBlockSectionItem />
+			 			 <apex:inputField value="{!Evaluation__c.Rehab_Equipment_Other_Details__c}" label="Other Special Ewuipment Details" id="otherEquipment"/>
+			 		</apex:pageBlockSection>
 			 	
 			 	</apex:pageBlock>
 			 </apex:tab>
@@ -832,7 +864,7 @@
 			 			<apex:inputField value="{!Evaluation__c.Can_he_she_hear__c}" />
 			 			<apex:pageBlockSectionItem >
 			 				<apex:outputText value="Resident's Emotional Barriers/Recent Changes in Life" styleClass="labelCol" />
-			 				<apex:selectCheckboxes value="{!selectedBarriers}" layout="pageDirection">
+			 				<apex:selectCheckboxes value="{!selectedBarriers}">
 			 					<apex:selectoptions value="{!barrierValues}" />
 			 				</apex:selectCheckboxes>
 			 			</apex:pageBlockSectionItem>
@@ -856,12 +888,75 @@
 			 			</apex:pageBlockSectionItem>
 			 			<apex:inputField value="{!Evaluation__c.Resident_s_communication_Status_Other__c}" label="Other"/>
 			 			<apex:inputField value="{!Evaluation__c.Residents_Learning_relate_to_other__c}" label="Other" />
-			 			
-			 			
-			 			
-			 			
-			 			
-			 		
+			 		</apex:pageBlockSection>
+			 		<apex:pageBlockSection columns="2" title="Family/Significant Other Relationships" collapsible="false">
+			 			<apex:inputField value="{!Evaluation__c.Members_Visit__c}" />
+			 			<apex:inputField value="{!Evaluation__c.Representative_present_at_Admission__c}" label="Is family/SO/Authorized Representative present at admission" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.representativeName}&quot;}"/>
+			 			<apex:inputField value="{!Evaluation__c.Closest_Relationship_with__c}" />
+			 			<apex:inputField value="{!Evaluation__c.Name_of_Representative_present__c}" label="if Yes, Name" id="representativeName" />
+			 			<apex:pageBlockSectionItem />
+			 			<apex:inputField value="{!Evaluation__c.Given_Explanation_in_plan_of_Care__c}" label="Given explanation of Infection Control/Safety Precautions?" />
+			 			<apex:pageBlockSectionItem />
+			 			<apex:inputField value="{!Evaluation__c.Given_explanation_of_Infection_Control__c}" label="Given explanation of Infection Control/Safety Precautions?" />
+			 			<apex:pageBlockSectionItem />
+			 			<apex:inputField value="{!Evaluation__c.Teaching_Instructions_were_discussed__c}" label="Teaching instructions were discussed?" />
+			 			<apex:pageBlockSectionItem />
+			 			<apex:inputField value="{!Evaluation__c.Assessed_for_Readiness_to_Learn__c}" label="Assessed for Readiness to Learn on admission" />
+			 			<apex:outputText value="If Rancho Level is>2 or LOC is Alert/Delayed/Lethargic" styleClass="labelCol"/>
+			 			<apex:inputField value="{!Evaluation__c.Ready_for_Teaching_and_Learning__c}" label="Ready for Teaching and Learning?" />
+			 			<apex:pageBlockSectionItem >
+			 				<apex:outputText value="Resident Oriented to the following" styleClass="labelCol" />
+			 				<apex:selectCheckboxes value="{!selectedOrientations}" layout="pageDirection">
+			 					<apex:selectOptions value="{!orientationValues}" />
+			 				</apex:selectCheckboxes>
+			 			</apex:pageBlockSectionItem>
+			 			<apex:pageBlockSectionItem >
+			 				<apex:outputText value="Oriented to the Following" styleClass="labelCol" />
+			 				<apex:selectCheckBoxes value="{!selectedOrients}" layout="pageDirection">
+			 					<apex:selectOptions value="{!orientValues}" />
+			 				</apex:selectCheckBoxes>
+			 			</apex:pageBlockSectionItem>
+			 		</apex:pageBlockSection>
+			 		<hr />
+			 		<apex:pageBlockSection columns="2" title="Family Member's Learning Abilities" Collapsible="false">
+			 			<apex:inputField value="{!Evaluation__c.Family_Member_Education_Participation__c}" label="Family Member Can Participate in Education" />
+			 			<apex:inputField value="{!Evaluation__c.Family_Member_s_Readiness_To_Learn__c}" />
+			 			<apex:inputField value="{!Evaluation__c.Family_Member_Education_Level__c}" />
+			 			<apex:inputField value="{!Evaluation__c.Family_Member_s_Religious_Influences__c}" />
+			 			<apex:inputField value="{!Evaluation__c.Family_Mem_Physical_cognitive_Barriers__c}" label="Family Member's Physical/Cognitive barriers"/>
+			 			<apex:inputField value="{!Evaluation__c.Family_Member_s_Cultural_Influences__c}" />
+			 			<apex:inputField value="{!Evaluation__c.Family_he_She_hear__c}" label="Can She/he hear?" />
+			 			<apex:pageBlockSectionItem >
+			 				<apex:outputText value="Family Member's Emotional Barriers/Recent Changes in Life" styleClass="labelCol" />
+			 				<apex:selectCheckboxes value="{!selectedFambarriers}">
+			 					<apex:selectOptions value="{!fambarrierValues}" />
+			 				</apex:selectCheckboxes>
+			 			</apex:pageBlockSectionItem>
+			 			<apex:inputField value="{!Evaluation__c.Family_he_She_read__c}" label="Can He/She Read?" />
+			 			<apex:inputField value="{!Evaluation__c.Family_Emotional_Barrier_Other__c}" label="Other" />
+			 			<apex:inputField value="{!Evaluation__c.Family_he_she_Write__c}" label="Can He/She Write?" />
+			 			<apex:inputField value="{!Evaluation__c.Family_Member_s_knowledge_on_Disease__c}" label="Family Member's Existing Knowledge of Disease" />
+			 			<apex:inputField value="{!Evaluation__c.Family_Member_s_Vision__c}" />
+			 			<apex:pageBlockSectionItem />
+			 			<apex:pageblockSectionItem >
+			 				<apex:outputtext value="Family Member's Communication Status" styleClass="labelCol" />
+			 				<apex:selectCheckboxes value="{!selectedFamcommunications}" layout="pageDirection">
+			 					<apex:selectoptions value="{!famcommunicationValues}"/>
+			 				</apex:selectCheckboxes> 
+			 			</apex:pageblockSectionItem>
+			 			<apex:pageblockSectionItem >
+			 				<apex:outputtext value="Family Member's Learning Needs Related to" styleClass="labelCol" />
+			 				<apex:selectCheckboxes value="{!selectedFamlearnings}" layout="pageDirection">
+			 					<apex:selectoptions value="{!famlearningValues}"/>
+			 				</apex:selectCheckboxes> 
+			 			</apex:pageblockSectionItem>
+			 			<apex:inputField value="{!Evaluation__c.Family_Commu_Status_other__c}" label="Other" />
+			 			<apex:inputField value="{!Evaluation__c.Family_Members_Learning_Other__c}" label="Other" />
+			 		</apex:pageBlockSection>
+			 		<hr />
+			 		<apex:pageBlockSection Columns="1">
+			 			<apex:inputtextArea value="{!Evaluation__c.Psycho_Social_Comments__c}" cols="80" />
+			 			<apex:inputField value="{!Evaluation__c.Psycho_Social_Section_Completed__c}" />
 			 		</apex:pageBlockSection>
 			 	</apex:pageBlock>
 			 </apex:tab>
@@ -881,14 +976,6 @@
 			 			<apex:inputTextArea value="{!Evaluation__c.Discharge_Plan_Comments__c}"  cols="80"/>
 			 			<apex:inputField value="{!Evaluation__c.Discharge_Section_Completed__c}" />
 			 		</apex:pageBlocksection>
-			 		<apex:pageBlockSection columns="2" title="Family/Significant Other Relationships" collapsible="false">
-			 			<apex:inputField value="{!Evaluation__c.Members_Visit__c}" />
-			 			<apex:pageBlockSectionItem />
-			 			<apex:inputField value="{!Evaluation__c.Closest_Relationship_with__c}" />
-			 			<apex:pageBlockSectionItem />
-			 			
-			 		
-			 		</apex:pageBlockSection>
 			 	</apex:pageBlock>
 			 </apex:tab>
 		</apex:tabPanel>
