@@ -261,6 +261,7 @@
 		<apex:inputhidden value="{!Evaluation__c.Family_Member_s_Emotional_Barriers__c}" />
 		<apex:inputhidden value="{!Evaluation__c.Family_Communication_Status__c}" />
 		<apex:inputhidden value="{!Evaluation__c.Family_Member_s_Learning_related_to__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Diagnostics_GYN_Experiences__c}" />
 	</apex:outputPanel>
 		<apex:pageMessages id="pageMessages" />
 		<apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); removeSpacer()" reRender="pageMessages, wholeTabPanel, buttons">
@@ -354,6 +355,81 @@
 				<apex:pageBlock >
 					<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Vitals Detail" formId="{!$Component.wholePage}" uniqueId="vitals" />
 					<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Orthostatic BP" formId="{!$Component.wholePage}" uniqueId="orthostatic" />
+					<apex:pageBlockSection columns="2" >
+						<apex:outputText value="GYN" styleClass="labelCol" style="margin-left: 3cm;"/>
+						<apex:outputText value="Immunization History" styleClass="labelCol" style="margin-left: 3cm;"/>
+						<apex:inputField value="{!Evaluation__c.Date_of_Last_menstrual_Period__c}" />
+						<apex:inputField value="{!Evaluation__c.Pneumococcal__c}"  html-data-rules="{&quot;1&quot;: [&quot;{!$Component.pneumoExplain}&quot;, &quot;{!$Component.pneumoWhere}&quot;]}"/>
+						<apex:inputField value="{!Evaluation__c.Frequency_of_menstrual_cycles__c}" />
+						<apex:inputField value="{!Evaluation__c.Pneumococcal_Text__c}" label="Explain" id="pneumoExplain"/>
+						<apex:inputField value="{!Evaluation__c.Date_of_last_pap__c}" />
+						<apex:inputField value="{!Evaluation__c.Pneumococcal_Where_and_when__c}" label="where and when" id="pneumoWhere"/>
+						<apex:inputField value="{!Evaluation__c.Date_of_last_mamogram__c}" />
+						<apex:inputField value="{!Evaluation__c.Influenza__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.influExplain}&quot;, &quot;{!$Component.influWhere}&quot;]}" />
+						<apex:pageBlockSectionitem >
+							<apex:outputText value="Have you experienced any of the following:" styleClass="labelCol" />
+							<apex:selectCheckboxes value="{!selectedExperiences}" layout="pageDirection">
+								<apex:selectOptions value="{!experienceValues}" />
+							</apex:selectCheckboxes>
+						</apex:pageBlockSectionItem>
+						<apex:inputField value="{!Evaluation__c.Influenza_Text__c}" label="Explain" id="influExplain" />
+						<apex:pageBlockSectionItem />
+						<apex:inputField value="{!Evaluation__c.Influenza_where_and_when__c}" label="where and when" id="influWhere" />
+						<apex:inputField value="{!Evaluation__c.Diabetic__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.glucoseReading}&quot;}"/>
+						<apex:inputField value="{!Evaluation__c.TDAP__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.tdapExplain}&quot;, &quot;{!$Component.tdapWhere}&quot;]}" />
+						<apex:inputField value="{!Evaluation__c.If_yes_Glucose_meter_Reading__c}"  id="glucoseReading"/>
+						<apex:inputField value="{!Evaluation__c.TDAP_Text__c}" label="Explain" id="tdapExplain" />
+						<apex:pageBlockSectionItem />
+						<apex:inputField value="{!Evaluation__c.TDAP_Where_and_When__c}" label="where and when" id="tdapWhere" />
+						<apex:pageBlockSectionItem />
+						<apex:inputField value="{!Evaluation__c.Immunization_N_A__c}" label="N/A" />
+					</apex:pageBlockSection>
+					<apex:pageBlockSection columns="1" title="Pediatric Immunization History" collapsible="True" >
+						<apex:pageBlockSectionItem >
+							<a href="/apex/uploader?parentid={!evaluation.id}">Add/Remove</a>
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockTable value="{!attachments}" var="a" rendered="{!(attachments.size>0)}" >
+							<apex:column headerValue="Attachment Name"><a href= "/{!a.Id}">{!a.Name}</a></apex:column>
+						</apex:pageBlockTable>
+						<apex:outputText value="No pediatric Immunization History to Display" rendered="{!(attachments.size=0)}" />
+						<apex:pageBlockSectionItem />
+						<apex:inputField value="{!Evaluation__c.Vaccination_Info_Sheet_Provided__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.vaccinationPneumo}&quot;, &quot;{!$Component.vaccinationFlu}&quot;]}" />
+						<apex:inputField value="{!Evaluation__c.Vaccination_Pneumococcal__c}" label="Pneumococcal" id="vaccinationPneumo" />
+						<apex:inputField value="{!Evaluation__c.Vaccination_Flu__c}" label="Flu" id="vaccinationFlu" />
+					</apex:pageBlockSection>
+					<hr />
+					<apex:pageBlockSection Columns="1" >
+						<apex:inputField value="{!Evaluation__c.Isolation__c}" label="Requires Isolation" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.isolationType}&quot;, &quot;{!$Component.isolationReason}&quot;]}" />
+						<apex:inputField value="{!Evaluation__c.DiagnosisIsolation_Type__c}" id="isolationType" />
+						<apex:inputField value="{!Evaluation__c.Isolation_Reason_and_Site__c}" id="isolationReason" />
+					</apex:pageBlockSection>
+					<hr />
+					<apex:pageBlockSection columns="2">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="IV Type" />
+                            <apex:outputText value="" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.PICC__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Central__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.HepLock__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.PCA__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.pcaRx}&quot;, &quot;{!$Component.pcaRate}&quot;]}" />
+                        <apex:inputField value="{!Evaluation__c.PCA_Rx__c}" id="pcaRx" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.PCA_Rate__c}" id="pcaRate" />
+                        <apex:inputField value="{!Evaluation__c.MARs_Attached__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.recentChanges}&quot;}" />
+                        <apex:inputField value="{!Evaluation__c.Recent_Changes__c}" id="recentChanges" />
+                    </apex:pageBlockSection>
+                    <hr />
+                         <apex:pageBlockSection columns="1">
+                        <apex:inputTextArea value="{!Evaluation__c.MAR_Comments__c}" cols="80" />
+                        <!--  apex:inputField value="{!Evaluation__c.MAR_Section_Completed__c}" /-->
+                        <apex:inputTextArea value="{!Evaluation__c.Diagnostics_Comments__c}" cols="80" />
+                        <apex:inputField value="{!Evaluation__c.Diagnostics_Section_Completed__c}" />
+                    </apex:pageBlockSection>
 				</apex:pageBlock>
 			</apex:tab>
 			

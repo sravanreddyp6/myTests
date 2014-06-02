@@ -48,6 +48,8 @@ public with sharing class NursingEvaluationEditController {
     public List<string>selectedFamcommunications {get;set;}
     public List<selectOption>famlearningValues ;
     public List<string>selectedFamlearnings {get;set;}
+     public List<selectOption>experienceValues ;
+    public List<string>selectedExperiences {get;set;}
     
     public List<String> sliderOptions { set;
         get {
@@ -59,6 +61,17 @@ public with sharing class NursingEvaluationEditController {
             }
             return sliderOptions;
         }
+    }
+    
+    public List<Attachment> Attachments{
+        get{
+            
+            if(Attachments==null){
+                Attachments= [select Id, ParentId, Name, Description from Attachment where parentId=:ApexPages.CurrentPage().getparameters().get('id')];
+            }
+            return Attachments;
+        }
+        set;
     }
     
     public Related_Party__c[] relatedParties { set;
@@ -131,6 +144,8 @@ public with sharing class NursingEvaluationEditController {
 		selectedFamcommunications = new List<String>();
 		famlearningValues = new List<selectOption>();
 		selectedFamlearnings = new List<String>();
+		experienceValues = new List<selectOption>();
+		selectedExperiences = new List<String>();
 		
 		if(!String.isBlank(this.evaluation.Breathe_sounds__c))
 		selectedSounds = this.evaluation.Breathe_Sounds__c.split(';');
@@ -197,6 +212,9 @@ public with sharing class NursingEvaluationEditController {
 		
 		if(!String.isBlank(this.evaluation.Family_Member_s_Learning_related_to__c))
 		selectedFamlearnings = this.evaluation.Family_Member_s_Learning_related_to__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Diagnostics_GYN_Experiences__c))
+		selectedExperiences = this.evaluation.Diagnostics_GYN_Experiences__c.split(';');
 		
     }
     
@@ -506,6 +524,17 @@ public with sharing class NursingEvaluationEditController {
 			else
 			this.evaluation.Family_Member_s_Learning_related_to__c ='';
 			
+// For Diagnostics GYN Experiences Multi-Picklist
+		string exp = '';
+		for(string ex: selectedExperiences)
+		exp += ex+';';
+			if(exp!=''){
+				exp = exp.Substring(0,exp.length()-1);
+				this.evaluation.Diagnostics_GYN_Experiences__c = exp;
+			}
+			else
+			this.evaluation.Diagnostics_GYN_Experiences__c ='';
+			
    					     	
         if (submitted || selectedTab == 'detailsTab' || selectedTab == null) {
 
@@ -624,6 +653,11 @@ public with sharing class NursingEvaluationEditController {
    public List<selectoption> getfamlearningValues(){
    		List<Selectoption> famlearningValue = Utility.getPicklistValues(evaluation, 'Family_Member_s_Learning_related_to__c');
    		return famlearningValue; 
+   } 
+   
+   public List<selectoption> getexperienceValues(){
+   		List<Selectoption> experienceValue = Utility.getPicklistValues(evaluation, 'Diagnostics_GYN_Experiences__c');
+   		return experienceValue; 
    } 
 
 }

@@ -114,9 +114,7 @@
          <apex:tab label="Diagnostics" name="diagnosticTab" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
          	<apex:pageBlock >
          		<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Vitals Detail" formId="{!$Component.wholePage}" uniqueId="Vitals" />
-         		<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Lab Detail" formId="{!$Component.wholePage}" uniqueId="lab" />
-                <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Chem Detail" formId="{!$Component.wholePage}" uniqueId="chem" />
-                <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Micro Detail" formId="{!$Component.wholePage}" uniqueId="micro" />
+         		<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Orthostatic BP" formId="{!$Component.wholePage}" uniqueId="orthostatic" />
          	 </apex:pageBlock>
          </apex:tab>
          
