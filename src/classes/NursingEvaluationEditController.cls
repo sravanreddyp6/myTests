@@ -38,7 +38,16 @@ public with sharing class NursingEvaluationEditController {
     public List<string>selectedBarriers {get;set;}
     public List<selectOption>needValues ;
     public List<string>selectedNeeds {get;set;}
-   
+    public List<selectOption>orientValues ;
+    public List<string>selectedOrients {get;set;}
+    public List<selectOption>orientationValues ;
+    public List<string>selectedOrientations {get;set;}
+    public List<selectOption>fambarrierValues ;
+    public List<string>selectedFambarriers {get;set;}
+    public List<selectOption>famcommunicationValues ;
+    public List<string>selectedFamcommunications {get;set;}
+    public List<selectOption>famlearningValues ;
+    public List<string>selectedFamlearnings {get;set;}
     
     public Related_Party__c[] relatedParties { set;
         get {
@@ -100,6 +109,16 @@ public with sharing class NursingEvaluationEditController {
 		selectedBarriers = new List<String>();
 		needValues = new List<selectOption>();
 		selectedNeeds = new List<String>();
+		orientValues = new List<selectOption>();
+		selectedOrients = new List<String>();
+		orientationValues = new List<selectOption>();
+		selectedOrientations = new List<String>();
+		fambarrierValues = new List<selectOption>();
+		selectedFambarriers = new List<String>();
+		famcommunicationValues = new List<selectOption>();
+		selectedFamcommunications = new List<String>();
+		famlearningValues = new List<selectOption>();
+		selectedFamlearnings = new List<String>();
 		
 		if(!String.isBlank(this.evaluation.Breathe_sounds__c))
 		selectedSounds = this.evaluation.Breathe_Sounds__c.split(';');
@@ -151,6 +170,22 @@ public with sharing class NursingEvaluationEditController {
 		
 		if(!String.isBlank(this.evaluation.Resident_s_Learning_needs_related_to__c))
 		selectedNeeds = this.evaluation.Resident_s_Learning_needs_related_to__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Oriented_to_the_Following__c))
+		selectedOrients = this.evaluation.Oriented_to_the_Following__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Rancho_level_Resident_Orientation__c))
+		selectedOrientations = this.evaluation.Rancho_level_Resident_Orientation__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Family_Member_s_Emotional_Barriers__c))
+		selectedfambarriers = this.evaluation.Family_Member_s_Emotional_Barriers__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Family_Communication_Status__c))
+		selectedFamcommunications = this.evaluation.Family_Communication_Status__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Family_Member_s_Learning_related_to__c))
+		selectedFamlearnings = this.evaluation.Family_Member_s_Learning_related_to__c.split(';');
+		
     }
     
     public void showAddRelatedParty()  {
@@ -401,7 +436,64 @@ public with sharing class NursingEvaluationEditController {
  			}
  			else
  			this.evaluation.Resident_s_Learning_needs_related_to__c ='';
+
+// For Oriented to te following Multi-Picklist
+		string ori ='';
+		for(string ri: selectedOrients)
+		ori += ri+';';
+			if(ori!=''){
+				ori = ori.Substring(0,ori.length()-1);
+				this.evaluation.Oriented_to_the_Following__c = ori;
+			}
+			else
+			this.evaluation.Oriented_to_the_Following__c ='';
  			
+ // For Rancho level Orientation Multi-picklist
+ 		string rlo ='';
+ 		for(string lo: selectedOrientations)
+ 		rlo += lo+';';
+ 			if(rlo!=''){
+ 				rlo = rlo.Substring(0,rlo.length()-1);
+ 				this.evaluation.Rancho_level_Resident_Orientation__c = rlo;
+ 			}		
+ 			else
+ 			this.evaluation.Rancho_level_Resident_Orientation__c = '';
+ 			
+ 			
+// For Family Member's emotional Barriers Multi-Picklist
+		string fmb = '';
+		for(string mb: selectedFambarriers)
+		fmb += mb+';';
+			if(fmb!=''){
+				fmb = fmb.Substring(0,fmb.length()-1);
+				this.evaluation.Family_Member_s_Emotional_Barriers__c = fmb;
+			}
+ 			else
+ 			this.evaluation.Family_Member_s_Emotional_Barriers__c ='';
+ 			
+ 			
+// For Family Communication Status Multi-Picklist
+		string fmc ='';
+		for(string mc: selectedFamcommunications)
+		fmc += mc+';';
+			if(fmc!=''){
+				fmc = fmc.Substring(0,fmc.length()-1);
+				this.evaluation.Family_Communication_Status__c = fmc;
+			}
+			else
+			this.evaluation.Family_Communication_Status__c ='';
+			
+// For FamilyMember's learning related to Multi-Picklist
+		string fsr = '';
+		for(string fr: selectedFamlearnings)
+		fsr += fr+';';
+			if(fsr!=''){
+				fsr = fsr.Substring(0,fsr.length()-1);
+				this.evaluation.Family_Member_s_Learning_related_to__c = fsr;
+			}
+			else
+			this.evaluation.Family_Member_s_Learning_related_to__c ='';
+			
    					     	
         if (submitted || selectedTab == 'detailsTab' || selectedTab == null) {
 
@@ -496,4 +588,30 @@ public with sharing class NursingEvaluationEditController {
    		List<Selectoption> needValue = Utility.getPicklistValues(evaluation, 'Resident_s_Learning_needs_related_to__c');
    		return needValue; 
    }
+   
+   public List<selectoption> getorientValues(){
+   		List<Selectoption> orientValue = Utility.getPicklistValues(evaluation, 'Oriented_to_the_Following__c');
+   		return orientValue; 
+   }
+   
+   public List<selectoption> getorientationValues(){
+   		List<Selectoption> orientationValue = Utility.getPicklistValues(evaluation, 'Rancho_level_Resident_Orientation__c');
+   		return orientationValue; 
+   }
+   
+   public List<selectoption> getfambarrierValues(){
+   		List<Selectoption> fambarrierValue = Utility.getPicklistValues(evaluation, 'Family_Member_s_Emotional_Barriers__c');
+   		return fambarrierValue; 
+   }
+   
+   public List<selectoption> getfamcommunicationValues(){
+   		List<Selectoption> famcommunicationValue = Utility.getPicklistValues(evaluation, 'Family_Communication_Status__c');
+   		return famcommunicationValue; 
+   } 
+   
+   public List<selectoption> getfamlearningValues(){
+   		List<Selectoption> famlearningValue = Utility.getPicklistValues(evaluation, 'Family_Member_s_Learning_related_to__c');
+   		return famlearningValue; 
+   } 
+
 }
