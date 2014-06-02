@@ -3976,6 +3976,21 @@ TEXT( Im_intersted_in_supporting__c )
         <label>My - Review</label>
     </listViews>
     <listViews>
+        <fullName>Prospects_by_Owner4</fullName>
+        <columns>NAME</columns>
+        <columns>First_Name__c</columns>
+        <columns>Date_of_Inquiry__c</columns>
+        <columns>Program__c</columns>
+        <columns>LAST_ACTIVITY</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>OWNER.LAST_NAME</field>
+            <operation>equals</operation>
+            <value>whalen</value>
+        </filters>
+        <label>Prospects by Owner</label>
+    </listViews>
+    <listViews>
         <fullName>Prospects_by_Owner_2</fullName>
         <columns>OWNER.FIRST_NAME</columns>
         <columns>OWNER.LAST_NAME</columns>
@@ -4133,6 +4148,13 @@ $Profile.Id !=&apos;00eU0000000RHex&apos;</errorConditionFormula>
         <description>Allow edits of  Date of Inquiry for Manual records only; Make sure that Web Entries are permitted.</description>
         <errorConditionFormula>AND(ISCHANGED( Date_of_Inquiry__c ), NOT(ISNEW()), Entry_Point__c = &quot;Web&quot;)</errorConditionFormula>
         <errorMessage>Date of Inquiry cannot be modified.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Final_Review_Approved_after_Screening</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND( ISPICKVAL(Final_Review__c, &quot;Approved&quot;), Screening_Progress_Percent__c &lt;&gt; 1.0)</errorConditionFormula>
+        <errorDisplayField>Final_Review__c</errorDisplayField>
+        <errorMessage>Cannot mark as &quot;Approved&quot; until all screening milestones are complete.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>FirstContact_vs_DateOfInquiry</fullName>

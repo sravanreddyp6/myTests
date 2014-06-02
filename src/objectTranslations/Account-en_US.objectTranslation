@@ -735,11 +735,31 @@
             <translation><!-- Reseller --></translation>
         </picklistValues>
     </fields>
+    <layouts>
+        <layout>Person Account Layout</layout>
+        <layoutType>PersonAccount</layoutType>
+        <sections>
+            <label><!-- Guardian Information --></label>
+            <section>Guardian Information</section>
+        </sections>
+        <sections>
+            <label><!-- New Section --></label>
+            <section>New Section</section>
+        </sections>
+        <sections>
+            <label><!-- Referring Providers --></label>
+            <section>Referring Providers</section>
+        </sections>
+    </layouts>
     <recordTypes>
         <label><!-- Person Account --></label>
         <name>Person_Account</name>
     </recordTypes>
     <startsWith>Consonant</startsWith>
+    <validationRules>
+        <errorMessage><!-- The Other ID and Other ID Description fields must be filled in for a person being served with a Mailing State of North Carolina. --></errorMessage>
+        <name>Other_ID_Filled_In_For_NC_PBS</name>
+    </validationRules>
     <validationRules>
         <errorMessage><!-- State is required. --></errorMessage>
         <name>Req_Mailing_Address_State</name>
