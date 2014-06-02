@@ -1,4 +1,4 @@
-<apex:page standardController="Service_Assignment__c" extensions="ServiceAssignmentExt" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab" showheader="true">
+<apex:page standardController="Service_Assignment__c" extensions="ServiceAssignmentExt, ServiceAssignmentClosureApproval" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab" showheader="true">
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:stylesheet value="{!$Resource.pbscardcss}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
@@ -59,6 +59,8 @@
           <apex:commandButton value="Save" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1, myFRM, msgs" rendered="{!editSA}"/>
           &nbsp;
          <apex:commandButton value="Reset" action="{!ResetPage}" status="SaveStatus1" rerender="savestatus1, myFRM" rendered="{!editSA}" immediate="true"/>
+          &nbsp;
+          <apex:commandButton value="Close" action="{!submitAndProcessApprovalRequest}" status="SaveStatus1" />
           &nbsp;
           <apex:commandButton value="Cancel" immediate="true" action="{!CancelServAssignEditNew}" rendered="{!editSA}" />
 
