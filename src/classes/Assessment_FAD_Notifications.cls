@@ -13,7 +13,7 @@ global class Assessment_FAD_Notifications implements Database.Batchable<sObject>
    global void execute(Database.BatchableContext BC, List<sObject> scope){
   // Service_Assignment__c[]List<Service_Assignment__c> All
         SAs = (Service_Assignment__c[])scope;
-        date d1 = system.today().addDays(-10);
+        date d1 = system.today().addDays(-7);
         List<Assessment__c> assess;
         set<id> saids = new set<id>();
         
