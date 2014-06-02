@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <aggregates>
+        <calculatedFormula>RowCount</calculatedFormula>
+        <datatype>number</datatype>
+        <description>The number of expected Fidelity Document events</description>
+        <developerName>FORMULA1</developerName>
+        <isActive>true</isActive>
+        <isCrossBlock>false</isCrossBlock>
+        <masterLabel># Docs Expected</masterLabel>
+        <scale>0</scale>
+    </aggregates>
+    <aggregates>
+        <calculatedFormula>ServiceAssignment_Document_JO__c.Document_Filed__c:SUM</calculatedFormula>
+        <datatype>number</datatype>
+        <description>Fidelity Documents Filed</description>
+        <developerName>FORMULA2</developerName>
+        <isActive>true</isActive>
+        <isCrossBlock>false</isCrossBlock>
+        <masterLabel># Docs Filed</masterLabel>
+        <scale>0</scale>
+    </aggregates>
+    <aggregates>
+        <calculatedFormula>ServiceAssignment_Document_JO__c.Document_Waived__c:SUM</calculatedFormula>
+        <datatype>number</datatype>
+        <description>Fidelity Documents Waived</description>
+        <developerName>FORMULA3</developerName>
+        <isActive>true</isActive>
+        <isCrossBlock>false</isCrossBlock>
+        <masterLabel># Docs Waived</masterLabel>
+        <scale>0</scale>
+    </aggregates>
+    <aggregates>
+        <calculatedFormula>ServiceAssignment_Document_JO__c.Document_NotFiled__c:SUM</calculatedFormula>
+        <datatype>number</datatype>
+        <description>Documents Not Filed</description>
+        <developerName>FORMULA4</developerName>
+        <isActive>true</isActive>
+        <isCrossBlock>false</isCrossBlock>
+        <masterLabel># Docs Not Filed</masterLabel>
+        <scale>0</scale>
+    </aggregates>
+    <aggregates>
+        <calculatedFormula>((ServiceAssignment_Document_JO__c.Document_Filed__c:SUM + ServiceAssignment_Document_JO__c.Document_Waived__c:SUM)  /  RowCount) * 100</calculatedFormula>
+        <datatype>number</datatype>
+        <description>Percentage Complete</description>
+        <developerName>FORMULA5</developerName>
+        <isActive>true</isActive>
+        <isCrossBlock>false</isCrossBlock>
+        <masterLabel>% Complete</masterLabel>
+        <scale>2</scale>
+    </aggregates>
+    <columns>
+        <field>Admission__c.Service_Agreements__r$Program__c</field>
+    </columns>
+    <columns>
+        <field>Admission__c.Service_Agreements__r$Location_Region__c</field>
+    </columns>
+    <columns>
+        <field>Admission__c.Service_Agreements__r$Start_Date__c</field>
+    </columns>
+    <columns>
+        <field>Admission__c.Service_Agreements__r$Days_in_Treatment__c</field>
+    </columns>
+    <columns>
+        <field>Admission__c.Service_Agreements__r.ServiceAssignment_Document_JOs__r$Document_Name__c</field>
+    </columns>
+    <columns>
+        <field>Admission__c.Service_Agreements__r.ServiceAssignment_Document_JOs__r$Document_Order__c</field>
+    </columns>
+    <columns>
+        <field>Admission__c.Service_Agreements__r.ServiceAssignment_Document_JOs__r$File_Status__c</field>
+    </columns>
+    <description>A report on Fidelity Document status, with checklist and phase completion percentages by Service Assignment.</description>
+    <filter>
+        <criteriaItems>
+            <column>Admission__c.Service_Agreements__r.ServiceAssignment_Document_JOs__r$Document_Type__c</column>
+            <operator>equals</operator>
+            <value>Fidelity Document</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Admission__c.Service_Agreements__r$Status__c</column>
+            <operator>equals</operator>
+            <value>Active</value>
+        </criteriaItems>
+    </filter>
+    <format>Summary</format>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>Admission__c.Service_Agreements__r$Person_Being_Served__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>Admission__c.Service_Agreements__r$Name</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>Admission__c.Service_Agreements__r.ServiceAssignment_Document_JOs__r$Document_Phase_or_Level__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>Fidelity Checklist Data</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>Case_Documents__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <sortColumn>Admission__c.Service_Agreements__r.ServiceAssignment_Document_JOs__r$Document_Order__c</sortColumn>
+    <sortOrder>Asc</sortOrder>
+    <timeFrameFilter>
+        <dateColumn>Admission__c$CreatedDate</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>
