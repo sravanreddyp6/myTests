@@ -49,6 +49,18 @@ public with sharing class NursingEvaluationEditController {
     public List<selectOption>famlearningValues ;
     public List<string>selectedFamlearnings {get;set;}
     
+    public List<String> sliderOptions { set;
+        get {
+            if (sliderOptions == null) {
+                sliderOptions = new String[] {
+                    '', 'Impaired', 'WFLs', 'Therapist to Determine',
+                    'N/A'
+                };
+            }
+            return sliderOptions;
+        }
+    }
+    
     public Related_Party__c[] relatedParties { set;
         get {
             return [

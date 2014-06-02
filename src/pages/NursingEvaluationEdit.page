@@ -19,7 +19,7 @@
         .thinkingwheel{
             position:absolute; left:40%; top:48%; background-color: white; border: 2px solid gray; padding: 2px;
         }
-        .hr {
+         hr {
             color: #ECECEC;
             background-color: #ECECEC;
             margin-bottom: 20px;
@@ -755,28 +755,101 @@
 			 		<apex:pageBlockSection columns="3">
 			 			 <apex:inputField value="{!Evaluation__c.Therapy_Ordered__c}"
                             html-data-rules="{&quot;1&quot;: [&quot;{!$Component.pt}&quot;, &quot;{!$Component.ot}&quot;, &quot;{!$Component.st}&quot;]}" />
-                         <apex:outputText value="Mobility Devices" styleClass="labelCol" />
-                         <apex:inputField value="{!Evaluation__c.Rehab_Other_Equipment_Needed__c}" label="Other Speial Equipment Needed" />
+                         <apex:pageBlockSectionItem >
+                         	<apex:outputText value="Mobility Devices" styleClass="labelCol" />
+                         	<apex:outputText value=""  />
+                         </apex:pageBlockSectionItem>
+                         <apex:inputField value="{!Evaluation__c.Rehab_Other_Equipment_Needed__c}" label="Other Speial Equipment Needed" html-data-rules="{&quot;Yes&quot;: [&quot;{!$Component.elasticHose}&quot;, &quot;{!$Component.handRolls}&quot;, &quot;{!$Component.bedCraddle}&quot;, &quot;{!$Component.overheadTrapaze}&quot;, &quot;{!$Component.rehabOther}&quot;]}" />
                          <apex:inputField value="{!Evaluation__c.Therapy_Ordered_PT__c}" id="pt" label="PT" />
                          <apex:inputField value="{!Evaluation__c.Wheel_Chair__c}" />
-                         <apex:inputField value="{!Evaluation__c.Elastic_Hose__c}" />
+                         <apex:inputField value="{!Evaluation__c.Elastic_Hose__c}" id="elasticHose"/>
                          <apex:inputField value="{!Evaluation__c.Therapy_Ordered_OT__c}" id="ot" label="OT" />
                          <apex:inputField value="{!Evaluation__c.Front_Wheeled_Walker__c}" />
-                         <apex:inputField value="{!Evaluation__c.Hand_Rolls__c}" />  
+                         <apex:inputField value="{!Evaluation__c.Hand_Rolls__c}" id="handRolls"/>  
                          <apex:inputField value="{!Evaluation__c.Therapy_Ordered_ST__c}" id="st" label="ST" />
 			 			 <apex:inputField value="{!Evaluation__c.Rehab_Cane__c}"/>
-			 			 <apex:inputField value="{!Evaluation__c.Bed_Craddle__c}" /> 
+			 			 <apex:inputField value="{!Evaluation__c.Bed_Craddle__c}" id="bedCraddle"/> 
 			 			 <apex:pageBlockSectionItem />
 			 			 <apex:inputField value="{!Evaluation__c.Current_Gait_Mobility_Other__c}" label="Other" html-data-rules="{&quot;1&quot;: &quot;{!$Component.currentGaitMobilityOther}&quot;}" />
-			 			 <apex:inputField value="{!Evaluation__c.Overhead_Trapaze__c}" /> 
+			 			 <apex:inputField value="{!Evaluation__c.Overhead_Trapaze__c}" id="overheadTrapaze"/> 
 			 			 <apex:pageBlockSectionItem />
 			 			 <apex:inputField value="{!Evaluation__c.Current_Gait_Mobility_Other_Comments__c}" id="currentGaitMobilityOther" label="Specify Other" />
-			 			 <apex:inputField Value="{!Evaluation__c.Rehab_Equipment_Other__c}" label="Other" html-data-rules="{&quot;1&quot;: &quot;{!$Component.otherEquipment}&quot;}"/>
+			 			 <apex:inputField Value="{!Evaluation__c.Rehab_Equipment_Other__c}" label="Other" id="rehabOther" html-data-rules="{&quot;1&quot;: &quot;{!$Component.otherEquipment}&quot;}"/>
 			 			 <apex:pageBlockSectionItem />
 			 			 <apex:pageBlockSectionItem />
-			 			 <apex:inputField value="{!Evaluation__c.Rehab_Equipment_Other_Details__c}" label="Other Special Ewuipment Details" id="otherEquipment"/>
+			 			 <apex:inputField value="{!Evaluation__c.Rehab_Equipment_Other_Details__c}" label="Other Special Equipment Details" id="otherEquipment"/>
 			 		</apex:pageBlockSection>
-			 	
+			 		<hr />
+			 		<apex:inputHidden value="{!Evaluation__c.Bed_Mobility__c}" id="bedMobility" />
+                    <apex:inputHidden value="{!Evaluation__c.Transfers__c}" id="transfers" />
+                    <apex:inputHidden value="{!Evaluation__c.WC_Gait__c}" id="wcGait" />
+                    <apex:inputHidden value="{!Evaluation__c.Gait__c}" id="nursesGait" />
+                    <apex:inputHidden value="{!Evaluation__c.Feeding__c}" id="feeding" />
+                    <apex:inputHidden value="{!Evaluation__c.Hygiene__c}" id="hygiene" />
+                    <apex:inputHidden value="{!Evaluation__c.Dressing_UE__c}" id="dressingUE" />
+                    <apex:inputHidden value="{!Evaluation__c.Dressing_LE__c}" id="dressingLE" />
+                    <apex:pageBlockSection columns="2" >
+                    	<apex:pageBlockSectionItem >
+                    		<apex:outputText value="" />
+                    		<apex:outputPanel layout="none" >
+                    			<table style="text-align: center; ">
+                    				<tr>
+                    					<td style="padding-right: 5px;"> Unknown </td>
+                    					<td style="padding: 0 35px;">Impaired </td>
+                    					<td style="padding: 0 20px;">WFLs</td>
+                    					<td style="padding: 0 5px;">Therapist to Determine</td>
+                                    	<td style="padding: 0 5px;">N/A</td>
+                                	</tr>
+                                </table>
+                               </apex:outputPanel>
+                              </apex:pageBlockSectionItem>
+                              <apex:pageBlockSectionItem />
+                              <apex:pageBlockSectionItem >
+                            	<apex:outputText value="Bed Mobility" />
+                            	<c:Slider onChange="handleSliderChange('{!$Component.bedMobility}')" options="{!sliderOptions}" initial="{!Evaluation__c.Bed_Mobility__c}" />
+                       		 </apex:pageBlockSectionItem>
+                    		 <apex:pageBlockSectionItem />
+                    		 <apex:pageBlockSectionItem >
+                            	<apex:outputText value="Transfers" />
+                            	<c:Slider onChange="handleSliderChange('{!$Component.transfers}')" options="{!sliderOptions}" initial="{!Evaluation__c.Transfers__c}" />
+                      		  </apex:pageBlockSectionItem>
+                        	  <apex:pageBlockSectionItem />
+                              <apex:pageBlockSectionItem >
+                            	<apex:outputText value="W/C" />
+                            	<c:Slider onChange="handleSliderChange('{!$Component.wcGait}')" options="{!sliderOptions}" initial="{!Evaluation__c.WC_Gait__c}" />
+                       		  </apex:pageBlockSectionItem>
+                       		  <apex:pageBlockSectionItem />
+                       		  <apex:pageBlockSectionItem >
+                       		  	<apex:outputText value="Gait" />
+                       		  	<c:Slider onChange="handlerSliderChange('{!$Component.nursesGait}')" options="{!sliderOptions}" initial="{!Evaluation__c.Gait__c}" />
+                       		  </apex:pageBlockSectionItem>
+                       		  <apex:pageBlocksectionItem />
+                        	 <apex:pageBlockSectionItem >
+                            	<apex:outputText value="Feeding" />
+                            	<c:Slider onChange="handleSliderChange('{!$Component.feeding}')" options="{!sliderOptions}" initial="{!Evaluation__c.Feeding__c}" />
+                        	 </apex:pageBlockSectionItem>
+                        	 <apex:pageBlockSectionItem />
+                        	 <apex:pageBlockSectionItem >
+                            	<apex:outputText value="Hygiene" />
+                            	<c:Slider onChange="handleSliderChange('{!$Component.hygiene}')" options="{!sliderOptions}" initial="{!Evaluation__c.Hygiene__c}" />
+                        	 </apex:pageBlockSectionItem>
+                        	 <apex:pageBlockSectionItem />
+                        	 <apex:pageBlockSectionItem >
+                            	<apex:outputText value="Dressing UE" />
+                            	<c:Slider onChange="handleSliderChange('{!$Component.dressingUE}')" options="{!sliderOptions}" initial="{!Evaluation__c.Dressing_UE__c}" />
+                        	 </apex:pageBlockSectionItem>
+                       	     <apex:pageBlockSectionItem />
+                        	 <apex:pageBlockSectionItem >
+                            	<apex:outputText value="Dressing LE" />
+                            	<c:Slider onChange="handleSliderChange('{!$Component.dressingLE}')" options="{!sliderOptions}" initial="{!Evaluation__c.Dressing_LE__c}" />
+                        	 </apex:pageBlockSectionItem>
+                        	 <apex:pageBlockSectionItem />
+                    	 </apex:pageBlockSection>
+                    	 <hr />
+                    	 <apex:pageBlockSection columns="1" >
+                    	 	 <apex:inputTextArea value="{!Evaluation__c.Rehab_Comments__c}" cols="80" />
+                    	 	 <apex:inputField value="{!Evaluation__c.Rehab_Section_Completed__c}" />
+                    	</apex:pageBlockSection>
 			 	</apex:pageBlock>
 			 </apex:tab>
 			 
@@ -973,6 +1046,9 @@
 			 			<apex:inputField value="{!Evaluation__c.Prior_Living_Situation_Other__c}" id="priorLivingSituationOther"/>
 			 			<apex:inputTextArea value="{!Evaluation__c.Barriers_to_DC__c}" cols="80" />
 			 			<apex:inputField value="{!Evaluation__c.DC_Plan__c}" />
+			 			</apex:pageBlockSection>
+			 			<hr />
+			 			<apex:pageBlockSection columns="1" >
 			 			<apex:inputTextArea value="{!Evaluation__c.Discharge_Plan_Comments__c}"  cols="80"/>
 			 			<apex:inputField value="{!Evaluation__c.Discharge_Section_Completed__c}" />
 			 		</apex:pageBlocksection>
