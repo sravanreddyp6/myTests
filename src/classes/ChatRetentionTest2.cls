@@ -1,4 +1,4 @@
-@isTest(SeeAllData=true)
+@isTest
 private class ChatRetentionTest2 {
 
     static testMethod void myUnitTest() {
