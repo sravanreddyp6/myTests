@@ -1,10 +1,10 @@
 public with sharing class Assessment_FAD_Form_Ex {
     public Assessment__c assess { get; set; }
-    public string mode {get; set;}
+    public string mode {get; set;} 
     
     public map<string, boolean> mapAvalPhases = new map<string, boolean>();
     public map<string, boolean> getmapAvalPhases(){ return mapAvalPhases;}
-    
+        
     public map<string, assessment_Question__c> mapQs = new map<string, assessment_Question__c>();
     public map<string, assessment_Question__c> getMapQs(){ return mapQs;}
      
@@ -12,7 +12,9 @@ public with sharing class Assessment_FAD_Form_Ex {
     public map<string, Assessment_Response__c> getmapRes(){ return mapRes;}
     
     public User curU = [select id, UserRoleId from user where id =:UserInfo.getUserId()];
-        
+    
+    public list<Related_Party__c> curOtherChilren {get; set;}
+             
     public Assessment_FAD_Form_Ex(ApexPages.StandardController controller) {
         assess = new assessment__c ();
         assess = (Assessment__c) controller.getRecord();
@@ -39,18 +41,24 @@ public with sharing class Assessment_FAD_Form_Ex {
         mapAvalPhases.put('3 Month',true);
         mapAvalPhases.put('Final',true);
         
+        curOtherChilren = new list<Related_Party__c>();
+        
+        curOtherChilren = [select Name, Age__c, Assessment__c, Gender__c, Received_FCT_services_before__c, Relationship_to_Person_Being_Served__c, Relationship_to_Person_Being_Served_Othe__c from Related_Party__c Where Assessment__c = :assess.id];
+        
+        
     }
-    
-    public Related_Party__c[] getRelParty (){
-    
-        return [select NAME from Related_Party__c Where Person_Being_Served__c = :Assess.Service_Assignment__r.Person_Being_Served__c AND Type__c = 'Caregiver' Order By CreatedDate DESC Limit 1 ];
-    }  
+     
     
     public PageReference myCG_is_same_as_other_assessment(){
         if(assess.Phase__c =='Initial'){
-        
-        mapRes.get('CG_is_same_as_other_assessment').Rating__c = null;
+            mapRes.get('CG_is_same_as_other_assessment').Rating__c = null;
         }
+        return null;
+    }
+    public PageReference AddOtherChild(){
+        Related_Party__c tmp = new Related_Party__c ();
+        tmp.Assessment__c = assess.id;
+        curOtherChilren.add(tmp); 
         return null;
     }
     public PageReference myDisregard(){
@@ -87,7 +95,7 @@ public with sharing class Assessment_FAD_Form_Ex {
             }            
             upsert mapRes.values();
             upsert Assess;
-        
+            upsert curOtherChilren;
         
     
         } catch (DMLException e) {
@@ -113,6 +121,96 @@ public with sharing class Assessment_FAD_Form_Ex {
         list<assessment__c> oldAssess = new list<assessment__c>();
         
         oldassess = [select id from assessment__c where Service_Assignment__c = :assess.service_assignment__c AND Disregard__c = false AND Phase__c = :assess.phase__c AND id != :assess.id];
+//new rules
+        if(mapRes.get('Caregiver_Who_Completed_Assessment').Rating__c == null){
+            mapRes.get('Caregiver_Who_Completed_Assessment').Rating__c.addError('Please identify which caregiver completed this assessment.');
+            hasError = true;   
+        }
+        if(mapRes.get('PC_Name').Rating__c == null){
+            mapRes.get('PC_Name').Rating__c.addError('Please enter the name of the Primary Caregiver at the time of this FAD Assessment.');
+            hasError = true;   
+        }    
+        if(mapRes.get('PC_Relationship_to_PBS').Rating__c == null){
+            mapRes.get('PC_Relationship_to_PBS').Rating__c.addError('Please select the Primary Caregiver\'s relationship to the Person Being Served at the time of this FAD Assessment.');
+            hasError = true;   
+        }
+        set<string> ForceOther = new set<string>();
+        ForceOther.add('Other Female Relative');
+        ForceOther.add('Other Male Relative');
+        ForceOther.add('Other');
+        
+        if(mapRes.get('PC_Relationship_to_PBS_Other').Rating__c == null && ForceOther.contains(mapRes.get('PC_Relationship_to_PBS').Rating__c) ){
+            mapRes.get('PC_Relationship_to_PBS_Other').Rating__c.addError('Please specify the Primary Caregiver\'s relationship to the Person Being Served at the time of this FAD Assessment.');
+            hasError = true;   
+        } 
+        else{mapRes.get('PC_Relationship_to_PBS_Other').Rating__c = null;}       
+        if(!mapRes.get('SC_No_SC').Yes_No__c && mapRes.get('SC_Relationship_to_PBS_Other').Rating__c == null && ForceOther.contains(mapRes.get('SC_Relationship_to_PBS').Rating__c) ){
+            mapRes.get('SC_Relationship_to_PBS_Other').Rating__c.addError('Please specify the Secondary Caregiver\'s relationship to the Person Being Served at the time of this FAD Assessment.');
+            hasError = true;   
+        } 
+        else{mapRes.get('SC_Relationship_to_PBS_Other').Rating__c = null;}
+        if(!mapRes.get('SC_No_SC').Yes_No__c && mapRes.get('SC_Name').Rating__c == null){
+            mapRes.get('SC_Name').Rating__c.addError('Please select the name of the Secondary Caregiver at the time of this FAD Assessment or select "No secondary caregiver"');
+            hasError = true;   
+        }        
+        if(!mapRes.get('SC_No_SC').Yes_No__c && mapRes.get('SC_Relationship_to_PBS').Rating__c == null){
+            mapRes.get('SC_Relationship_to_PBS').Rating__c.addError('Please select the Secondary Caregiver\'s relationship to the Person Being Served at the time of this FAD Assessment.');
+            hasError = true;   
+        }         
+        
+        
+        if(assess.phase__c == 'Initial' || assess.phase__c == 'Final'){
+            if(mapRes.get('PC_Highest_Edu').Rating__c == null){
+                mapRes.get('PC_Highest_Edu').Rating__c.addError('Please select a value for Primary Caregiver\'s Highest Education Completed at the time of this FAD Assessment.');
+                hasError = true;   
+            }    
+            
+            if(mapRes.get('PC_Employment').Rating__c == null){
+                mapRes.get('PC_Employment').Rating__c.addError('Please select a value for Primary Caregiver\'s Employment at the time of this FAD Assessment.');
+                hasError = true;   
+            }  
+            if(mapRes.get('PC_Employment').Rating__c == 'Employed' && mapRes.get('PC_Occupation').Rating__c == null){
+                mapRes.get('PC_Occupation').Rating__c.addError('Please provide the Primary Caregiver\'s occupation at the time of this FAD Assessment.');
+                hasError = true;   
+            }                             
+            if(mapRes.get('PC_Received_FCT_before').Rating__c ==  null){
+                mapRes.get('PC_Received_FCT_before').Rating__c.addError('Please select a value for Primary Caregiver Received FCT services before?');
+                hasError = true;   
+            } 
+            if(mapRes.get('SC_Highest_Edu').Rating__c == null){
+                mapRes.get('SC_Highest_Edu').Rating__c.addError('Please select a value for Secondary Caregiver\'s Highest Education Completed at the time of this FAD Assessment.');
+                hasError = true;   
+            }    
+            
+            if(mapRes.get('SC_Employment').Rating__c == null){
+                mapRes.get('SC_Employment').Rating__c.addError('Please select a value for Secondary Caregiver\'s Employment at the time of this FAD Assessment.');
+                hasError = true;   
+            }  
+            if(mapRes.get('SC_Employment').Rating__c == 'Employed' && mapRes.get('SC_Occupation').Rating__c == null){
+                mapRes.get('SC_Occupation').Rating__c.addError('Please provide the Secondary Caregiver\'s occupation at the time of this FAD Assessment.');
+                hasError = true;   
+            }                             
+            if(mapRes.get('SC_Received_FCT_before').Rating__c ==  null){
+                mapRes.get('SC_Received_FCT_before').Rating__c.addError('Please select a value for Secondary Caregiver Received FCT services before?');
+                hasError = true;   
+            }             
+            
+            if(assess.Family_Annual_Income__c ==null){
+                assess.Family_Annual_Income__c.addError('Please select a value for Family Annual Income.');
+            }         
+        }
+        for(Related_Party__c item :curOtherChilren ){
+            if(item.Relationship_to_Person_Being_Served__c =='Other' && item.Relationship_to_Person_Being_Served_Othe__c ==null){
+                item.Relationship_to_Person_Being_Served_Othe__c.addError('Please specify the Other relationship to the Person Being Served.');
+            }
+        
+        }
+        if(mapRes.get('SC_No_SC').Yes_No__c && mapRes.get('Caregiver_Who_Completed_Assessment').Rating__c == 'Secondary'){
+            mapRes.get('SC_No_SC').Yes_No__c.addError('If the secondary caregiver has completed this assessment, provide the secondary caregiver details.');
+        
+        }             
+//end new rules
+
         
         if (oldassess.size() > 0){
             assess.phase__c.adderror('An assessment with this service assignment and phase has already been created');
@@ -201,6 +299,7 @@ public with sharing class Assessment_FAD_Form_Ex {
         }
         assess.Status__c = 'Locked';
         update assess;
+        
         return null;   
     }  
     public PageReference myUnlock(){
@@ -300,5 +399,61 @@ public with sharing class Assessment_FAD_Form_Ex {
 
     
     }    
-          
+     public List<SelectOption> getPC_Rel_To_PBS() {
+        List<SelectOption> options = new List<SelectOption>();
+        options.add(new SelectOption('','--None--'));         
+        options.add(new SelectOption('Self/Cares for Self - is an adult client','Self/Cares for Self - is an adult client'));
+        options.add(new SelectOption('Biological Mother','Biological Mother'));
+        options.add(new SelectOption('Biological Father','Biological Father'));
+        options.add(new SelectOption('Foster Mother','Foster Mother'));
+        options.add(new SelectOption('Foster Father','Foster Father'));
+        options.add(new SelectOption('Adoptive Mother','Adoptive Mother'));
+        options.add(new SelectOption('Adoptive Father','Adoptive Father'));
+        options.add(new SelectOption('Step-Mother','Step-Mother'));
+        options.add(new SelectOption('Step-Father','Step-Father'));
+        options.add(new SelectOption('Other Female Relative','Other Female Relative'));
+        options.add(new SelectOption('Other Male Relative','Other Male Relative')); 
+        options.add(new SelectOption('Family Friend','Family Friend'));
+        options.add(new SelectOption('Client\'s Friend','Client\'s Friend'));  
+        options.add(new SelectOption('Child of client','Child of client'));
+        options.add(new SelectOption('Other','Other'));
+        options.add(new SelectOption('CANADA','Canada'));
+        options.add(new SelectOption('Unknown','Unknown'));                                         
+        return options;
+    }
+    public List<SelectOption> getPhoneTypes() {
+        List<SelectOption> options = new List<SelectOption>();
+        options.add(new SelectOption('','--None--'));         
+        options.add(new SelectOption('Home','Home'));
+        options.add(new SelectOption('Work','Work'));
+        options.add(new SelectOption('Cell','Cell'));
+        options.add(new SelectOption('Fax','Fax'));                                        
+        return options;
+    }   
+    public List<SelectOption> getEduTypes() {
+        List<SelectOption> options = new List<SelectOption>();
+        options.add(new SelectOption('','--None--'));         
+        options.add(new SelectOption('No School','No School'));
+        options.add(new SelectOption('Grammar/Middle School','Grammar/Middle School'));
+        options.add(new SelectOption('Some High School','Some High School'));
+        options.add(new SelectOption('High School Diploma/GED','High School Diploma/GED'));  
+        options.add(new SelectOption('Some College','Some College'));
+        options.add(new SelectOption('Vocational/Technical/Associates Degree','Vocational/Technical/Associates Degree'));  
+        options.add(new SelectOption('Bachelors Degree','Bachelors Degree'));
+        options.add(new SelectOption('Masters Degree','Masters Degree'));  
+        options.add(new SelectOption('PhD/MD','PhD/MD'));
+        options.add(new SelectOption('Unknown','Unknown'));                                                                
+        return options;
+    }    
+    
+    public List<SelectOption> getEmploTypes() {
+        List<SelectOption> options = new List<SelectOption>();
+        options.add(new SelectOption('','--None--'));         
+        options.add(new SelectOption('Unemployed','Unemployed'));
+        options.add(new SelectOption('Employed','Employed'));
+        options.add(new SelectOption('Retired','Retired'));
+        options.add(new SelectOption('Disabled','Disabled'));  
+        options.add(new SelectOption('Unknown','Unknown'));                                                           
+        return options;
+    }         
 }
