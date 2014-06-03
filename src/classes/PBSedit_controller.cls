@@ -205,6 +205,12 @@ public void showAddRelParty() {
         return theId;
     }
 
+	// START: CTEAE-39
+	public void showAddSibling() {
+		
+	}
+	// END: CTEAE-39
+
 public pageReference cancelPBSController(){
     
     pbsEditModeOn=false;
