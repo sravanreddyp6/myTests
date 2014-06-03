@@ -1,7 +1,21 @@
 public class TMN_Tree{
 //Declarations
+
+    String TEMPLATE_STR = '{0}title:"{1}", expanded:{2}, hideCheckbox:{3}, folder:{4}, activate:{5}, selected:{6}, unselectable:{7}, key: "{8}", OTHER: "{9}",{10}'; 
+                             // {'{', n.Title, n.isExpand, n.hideCheckbox, n.isFolder, n.isActivate, n.isSelected, n.isUnselectable, n.key, n.CatTreeNode.Catalog_Element__r.id, 'children: ['};
+
     public node root{get; set;}
     public string Fancy_Tree_JSon_String {get{return BuildJSonString(root.nodes);} set;}
+
+    public string GetSelectedNodeStr {
+    	get{ string str=''; 
+    		str = BuildSelectedNodeStr(root.nodes);
+    		if (str.length()>0) {
+                str = str.substring(0, (str.length()-1));
+    		}
+            return str;}
+            set;}
+        
     public boolean autoExpand{ get; set;}
 //construct    
     public TMN_Tree(){
@@ -97,44 +111,63 @@ public class TMN_Tree{
     
     
     }    
+    
+    public String ToString(Boolean Value){
+     /* string representation of a Boolean value */
+     if (Value)
+       return 'true';
+     else
+       return 'false';
+    }
+  
        
    //the JSon string used to send to the a component for rendering 
     public string BuildJSonString(list<tmn_tree.node> theNodes){
         string str = '';
+        String[] arguments;
+                
         for(node n: theNodes){
-            str += '{title: "';
-            str += n.Title;
-            str += '", ';
+        	        	
+//		            str += '{title: "';
+//		            str += n.Title;
+//		            str += '", ';
+//		
+//		            str += 'expanded: ';
+//		            str += n.isExpand;
+//		            str += ', ';
+//		
+//		            str += 'hideCheckbox: ';
+//		            str += n.hideCheckbox;
+//		            str += ', ';            
+//		                        
+//		            str += 'folder: ';
+//		            str += n.isFolder;
+//		            str += ', ';
+//		            
+//		            str += 'activate: ';
+//		            str += n.isActivate;
+//		            str += ', ';            
+//		
+//		            str += 'selected: ';
+//		            str += n.isSelected;
+//		            str += ', ';
+//		            
+//		            str += 'unselectable: ';
+//		            str += n.isUnselectable;
+//		            str += ', ';  
+//		                      
+//		            str += 'key: "';
+//		            str += n.key;
+//		            str += '", ';
+//		            
+//		            str += 'OTHER: "';
+//		            str += n.CatTreeNode.Catalog_Element__r.id;
+//		            str += '", ';            
+		            
+//		            str += 'children: ['; 
 
-            str += 'expanded: ';
-            str += n.isExpand;
-            str += ', ';
-
-            str += 'hideCheckbox: ';
-            str += n.hideCheckbox;
-            str += ', ';            
-                        
-            str += 'folder: ';
-            str += n.isFolder;
-            str += ', ';
-            
-            str += 'activate: ';
-            str += n.isActivate;
-            str += ', ';            
-
-            str += 'selected: ';
-            str += n.isSelected;
-            str += ', ';
-            
-            str += 'unselectable: ';
-            str += n.isUnselectable;
-            str += ', ';  
-                      
-            str += 'key: "';
-            str += n.key;
-            str += '", ';
-            
-            str += 'children: ['; 
+            arguments = new String[] {'{', n.Title, ToString(n.isExpand), ToString(n.hideCheckbox), ToString(n.isFolder), ToString(n.isActivate), ToString(n.isSelected), ToString(n.isUnselectable), n.key, n.CatTreeNode.Catalog_Element__r.id, 'children: ['};
+            str += String.format(TEMPLATE_STR, arguments);
             //get children 
             if(n.nodes.size() >0){
                 str += BuildJSonString(n.nodes);
@@ -146,4 +179,21 @@ public class TMN_Tree{
         return str;
     }
 //End Custom Methods
+
+   //get the comma separated list of selected items 
+    public string BuildSelectedNodeStr(list<tmn_tree.node> theNodes){
+        string str = '';
+        for(node n: theNodes){
+        	if (n.isSelected){  
+                str += n.key + ',';
+                // str += ',';
+            }
+            //get children
+            if(n.nodes.size() >0){
+                str += BuildSelectedNodeStr(n.nodes);
+            }            
+        }
+        return str;
+    }
+
 }

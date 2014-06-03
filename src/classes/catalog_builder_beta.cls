@@ -35,6 +35,7 @@ public with sharing class catalog_builder_beta {
     }
     public pageReference newEley(){
         curEley = new Clinical_Catalog_Element__c ();
+        curEley.Status__c = 'Active';
         return null;
     }    
 public pageReference upsertEley(){
@@ -55,24 +56,14 @@ public pageReference upsertEley(){
             newNode.ID_Objective__c = 0;
             newNode.ID_Action__c = 0;
             NewNodes.add(newNode); 
-
     }
     
-    
-    
-    
-    
-    
-    
-    
-        
         //import the keys the fancy tree gave us
         list<string> items = new list<string>();
+       system.debug('The keys to upsert: ' + selectedKeys);
         items = selectedKeys.split(',');        
         formTree.inputSelectedKeys(items, true);  
         //loop over goals  
-        
-        
         
         for(TMN_Tree.node n :formTree.root.nodes){
                 //check for pre-exsiting join
@@ -172,6 +163,7 @@ public list<Clinical_Catalog_Tree_Node__c > updateSelected(id eID){
             string thisEleType = n.Catalog_Element__r.type__c;
             string thisID = n.name;
             string thisTitle = n.Catalog_Element__r.description__c;
+            
             if(thisEleType == 'Goal'){
                 TMN_Tree.node g_node= new TMN_Tree.node(thisID , thisTitle );
                 g_node.CatTreeNode = n;
@@ -192,48 +184,30 @@ public list<Clinical_Catalog_Tree_Node__c > updateSelected(id eID){
                 goalID = thisID ;
             }
         
-                if(thisEleType == 'Objective'){
-                    TMN_Tree.node o_node= new TMN_Tree.node(thisID , thisTitle );
-                    o_node.CatTreeNode = n;
-                    if(curEleyType =='Action' ){
-                        for(Clinical_Catalog_Tree_Node__c selectedN: curActive ){
-                            if((n.ID_Goal__c == selectedN.ID_Goal__c)&&(n.ID_Objective__c == selectedN.ID_Objective__c)){
+            if(thisEleType == 'Objective'){
+                TMN_Tree.node o_node= new TMN_Tree.node(thisID , thisTitle );
+                o_node.CatTreeNode = n;
+                if(curEleyType =='Action' ){
+                    for(Clinical_Catalog_Tree_Node__c selectedN: curActive ){
+                        if((n.ID_Goal__c == selectedN.ID_Goal__c)&&(n.ID_Objective__c == selectedN.ID_Objective__c)){
                                 o_node.CatTreeNode = selectedN;
                                 o_node.isSelected = true;
                             }
                         }
-                    }                    
-                    integer g_key = allGoals.root.getNode_Key(goalID );
-                    formTree.root.nodes.get(g_key).nodes.add(o_node);
-                    objID = thisID ;
-                }             
-        }      
-    
-    
-    
+                 }                    
+                 integer g_key = allGoals.root.getNode_Key(goalID );
+                 formTree.root.nodes.get(g_key).nodes.add(o_node);
+                 objID = thisID ;
+            }
+        }              
+        selectedKeys = formTree.GetSelectedNodeStr;
         return null;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     
     public void refresh(){
         allGoals = new TMN_Tree();
-        
-        
+  
         nodes = [select id, name, Catalog_Element__c, Catalog_Element__r.name, Catalog_Element__r.type__c, Catalog_Element__r.description__c, ID_Goal__c, ID_Objective__c, ID_Action__c  from Clinical_Catalog_Tree_Node__c Where Catalog__r.id =:myCatalog.id Order By ID_Goal__c , ID_Objective__c , ID_Action__c ];
         string goalID ='';
         string objID ='';
@@ -241,35 +215,32 @@ public list<Clinical_Catalog_Tree_Node__c > updateSelected(id eID){
             string curEleType = n.Catalog_Element__r.type__c;
             string curID = n.name;
             string title = n.Catalog_Element__r.description__c;
+            
             if(curEleType == 'Goal'){
                 TMN_Tree.node g_node= new TMN_Tree.node(curID, title);
                 g_node.CatTreeNode = n;
+                g_node.isFolder = true;
                 allGoals.root.nodes.add(g_node);
                 goalID =curID;
             }
         
-                if(curEleType == 'Objective'){
-                    TMN_Tree.node o_node= new TMN_Tree.node(curID, title);
-                    o_node.CatTreeNode = n;
-                    integer g_key = allGoals.root.getNode_Key(goalID );
-                    allGoals.root.nodes.get(g_key).nodes.add(o_node);
-                    objID =curID;
-                }
+            if(curEleType == 'Objective'){
+                TMN_Tree.node o_node= new TMN_Tree.node(curID, title);
+                o_node.CatTreeNode = n;
+                integer g_key = allGoals.root.getNode_Key(goalID );
+                allGoals.root.nodes.get(g_key).nodes.add(o_node);
+                objID =curID;
+            }
             
-                    if(curEleType == 'Action'){                
-                        TMN_Tree.node a_node= new TMN_Tree.node(curID, title);
-                        a_node.CatTreeNode = n;
-                        integer g_key = allGoals.root.getNode_Key(goalID );
-                        integer o_key = allGoals.root.nodes.get(g_key).getNode_Key(objID);
-                        if(o_key != -1){
-                            allGoals.root.nodes.get(g_key).nodes.get(o_key).nodes.add(a_node);
-                        }
-                    }
-                            
-        }      
-    
+            if(curEleType == 'Action'){                
+                TMN_Tree.node a_node= new TMN_Tree.node(curID, title);
+                a_node.CatTreeNode = n;
+                integer g_key = allGoals.root.getNode_Key(goalID );
+                integer o_key = allGoals.root.nodes.get(g_key).getNode_Key(objID);
+                if(o_key != -1){
+                    allGoals.root.nodes.get(g_key).nodes.get(o_key).nodes.add(a_node);
+                }
+            }                          
+        }       
     }
-    
-
-
 }

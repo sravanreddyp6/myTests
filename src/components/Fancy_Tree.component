@@ -1,6 +1,10 @@
 <apex:component selfClosing="true" controller="Fancy_Tree">
+
+    <apex:attribute name="TreeID" assignTo="{!TreeName}" required="true" type="string" description="the id of the fancy tree"/>
     <apex:attribute name="TreeString" assignTo="{!TreeStr}" required="true" type="string" description="the Json String of the tree"/> 
     <apex:attribute name="SelectedKeysString" assignTo="{!SelectedKeys}" type="string" description="a string for the selected keys to be stored"/> 
+    <apex:attribute name="checkbox" type="boolean" default="true" description="Checkbox to select items from tree"/>
+    <apex:attribute name="selectActionSignature" type="string" description="The signature of the function to call on select of tree node"/>
     <apex:attribute name="mode" type="string" default="3" description="mode of the tree"/>
     <apex:attribute name="debug" type="boolean" default="false" description="show extra divs to sees of selections"/>
     <apex:attribute name="ID_PageSideStorage" type="string" description="Id of the element the the tree will push selected keys to"/>
@@ -21,37 +25,37 @@
      .debug_on{display: block;}
 </style>
     <script type="text/javascript">
+    j$ = jQuery.noConflict();
     
-    var treeData = [
-        {!TreeStr}     
-    ];
-      
+    var treeData = [{!TreeStr}];
     
-    $(function(){
-    
-    $("#tree3").fancytree({
+    j$(function(){    
+    j$('[id*={!TreeName}]').fancytree({
 //          extensions: ["select"],
-            checkbox: true,
+            checkbox: {!checkbox},
             selectMode: {!mode},
             source: treeData,
             select: function(event, data) {
                 // Get a list of all selected nodes, and convert to a key array:
-                var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
+                var selKeys = j$.map(data.tree.getSelectedNodes(), function(node){
                     return node.key;
                 });
-                $("#echoSelection3").text(selKeys.join(", "));
-                $('[id$={!ID_PageSideStorage}]').val(selKeys.join(","));
+                j$('[id*=echoSelection3]').text(selKeys.join(", "));
+                j$('[id*={!ID_PageSideStorage}]').val(selKeys.join(","));
                 // Get a list of all selected TOP nodes
                 var selRootNodes = data.tree.getSelectedNodes(true);
                 // ... and convert to a key array:
-                var selRootKeys = $.map(selRootNodes, function(node){
+                var selRootKeys = j$.map(selRootNodes, function(node){
                     return node.key;
                 });
-                $("#echoSelectionRootKeys3").text(selRootKeys.join(", "));
-                $("#echoSelectionRoots3").text(selRootNodes.join(", "));
+                j$('[id*=echoSelectionRootKeys3]').text(selRootKeys.join(", "));
+                j$('[id*=echoSelectionRoots3]').text(selRootNodes.join(", "));
             },
-            dblclick: function(event, data) {
-                data.node.toggleSelected();
+//            dblclick: function(event, data) {
+//                data.node.toggleSelected();
+//            },
+            activate: function(event, data) {
+                {!selectActionSignature}               
             },
             keydown: function(event, data) {
                 if( event.which === 32 ) {
@@ -64,39 +68,33 @@
             cookieId: "fancytree-Cb3",
             idPrefix: "fancytree-Cb3-"
         });
-        $("#btnToggleSelect").click(function(){
-            $("#tree3").fancytree("getRootNode").visit(function(node){
-                node.toggleSelected();
-            });
-            return false;
-        });
-        $("#btnDeselectAll").click(function(){
-            $("#tree3").fancytree("getTree").visit(function(node){
-                node.setSelected(false);
-            });
-            return false;
-        });
-        $("#btnSelectAll").click(function(){
-            $("#tree3").fancytree("getTree").visit(function(node){
-                node.setSelected(true);
-            });
-            return false;
-        });
-    });
-    
+//        j$("#btnToggleSelect").click(function(){
+//            j$('[id*={!TreeName}]').fancytree("getRootNode").visit(function(node){
+//                node.toggleSelected();
+//            });
+//            return false;
+//        });
+//        j$("#btnDeselectAll").click(function(){
+//            j$('[id*={!TreeName}]').fancytree("getTree").visit(function(node){
+//                node.setSelected(false);
+//            });
+//            return false;
+//        });
+//        j$("#btnSelectAll").click(function(){
+//            j$('[id*={!TreeName}]').fancytree("getTree").visit(function(node){
+//                node.setSelected(true);
+//            });
+//            return false;
+//        });
+    });    
     </script>
+
     
-<div id="tree3"></div>
-
-    <div class="{!if(debug, 'debug_on','debug_off')}">Selected keys: <span id="echoSelection3">-</span></div>
-    <div class="{!if(debug, 'debug_on','debug_off')}">Selected root keys: <span id="echoSelectionRootKeys3">-</span></div>
-    <div class="{!if(debug, 'debug_on','debug_off')}">Selected root nodes: <span id="echoSelectionRoots3">-</span></div>
-    <div class="{!if(debug, 'debug_on','debug_off')}">JSon String <br/> {!TreeStr} </div>
-<script>
-
-</script>
-
-
+<!-- <div id="{!TreeName}"></div> -->
+     <div class="{!if(debug, 'debug_on','debug_off')}">Selected keys: <span id="echoSelection3">-</span></div> 
+     <div class="{!if(debug, 'debug_on','debug_off')}">Selected root keys: <span id="echoSelectionRootKeys3">-</span></div> 
+     <div class="{!if(debug, 'debug_on','debug_off')}">Selected root nodes: <span id="echoSelectionRoots3">-</span></div> 
+     <div class="{!if(debug, 'debug_on','debug_off')}">JSon String <br/> {!TreeStr} </div> 
 
 <p/>
 <p/>
