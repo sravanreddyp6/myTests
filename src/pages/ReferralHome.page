@@ -1,0 +1,248 @@
+<apex:page controller="REF_HomePageController"
+           sidebar="false">
+  <apex:stylesheet value="{!URLFOR($Resource.Unsemantic, 'stylesheets/unsemantic-grid-responsive.css')}" />
+  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+
+
+  <style type="text/css">
+    .grid-container {
+      margin-left: 0;
+      margin-right: 0;
+      max-width: none;
+      padding: 0;
+    }
+
+    .block {
+      background-color: #7AC143;
+      border-radius: 8px 8px 8px 8px;
+      padding: 4px;
+      margin-bottom: 12px;
+    }
+
+    .block-title {
+      color: #002C59;
+      padding: 0 4px;
+      font-size: 1.5em;
+    }
+
+    .block-inner {
+      background-color: #ffffff;
+      border-radius: 8px 8px 8px 8px;
+      padding: 6px 6px 6px 6px;
+      margin-top: 4px;
+    }
+
+    .block-inner ul {
+      margin-left: 5px;
+      margin-right: 0px;
+      padding-left: 10px;
+      padding-right: 0px;
+    }
+
+    .block-inner ul ul {
+      margin-left: 0;
+      padding-left: 0;
+    }
+
+
+
+    #accordion, #accordion ul {
+      padding-left: 0;
+    }
+
+    #accordion li ul {
+      display: none;
+    }
+
+    #accordion li.current ul {
+      display: block;
+    }
+
+    #accordion a.heading {
+      display: block;
+    }
+
+    .news-item {
+      border-bottom: 1px solid #002C59;
+      margin-bottom: 6px;
+      padding-bottom: 2px;
+      display: block;
+    }
+
+    .news-item-last {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .news-item-date {
+      font-weight: bold;
+    }
+
+    .news-item-creator {
+      font-style: italic;
+    }
+
+    .news-item-body {
+      margin-top: 2px;
+    }
+
+    .news-item-more {
+      text-decoration: none;
+      color: #015BA7;
+    }
+
+    .taskbutton {
+      background-color: #002C59;
+      color: #ffffff;
+      font-weight: bold;
+      text-align: center;
+      border-radius: 8px 8px 8px 8px;
+      padding: 6px 6px 6px 6px;
+      margin-top: 4px;
+      display: block;
+      text-decoration: none;
+    }
+
+    a.taskbutton:hover {
+      text-decoration: none;
+    }
+
+
+  </style>
+
+  <script>
+    j$ = jQuery.noConflict();
+               
+    function showHideList(id) {
+      j$('#' + id).slideToggle();
+    }
+  </script>
+               
+  <apex:outputPanel layout="block" styleClass="grid-container">
+
+    <apex:outputPanel layout="block" styleClass="grid-25 mobile-grid-100">
+      <apex:outputPanel layout="block" styleClass="block">
+        <apex:outputPanel layout="block" styleClass="block-title">
+          I would like to access...
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="block-inner">
+          <ul id="accordion-DISABLED">
+            <li class="current"><a  class="heading" onclick="showHideList('myReferrals');">My Referrals</a>
+              <ul id="myReferrals">
+                <li><a href="/apex/referral">Create New Referral</a></li>
+                <li><a href="/apex/ReferralSearch">Search Referrals</a></li>
+                <li><a href="/{!referralPrefix}">View My Referrals</a></li>
+              </ul>
+            </li>
+            <li><a class="heading" onclick="showHideList('referralReports');">Referral Reports</a>
+              <ul id="referralReports">
+                <apex:repeat value="{!refReports}" var="refReport">
+                  <li>
+                    <apex:outputLink value="/{!refReport.ReportID__c}">
+                      {!refReport.Name}
+                    </apex:outputLink>
+                  </li>
+                </apex:repeat>
+              </ul>
+            </li>
+            <!-- <li><a  class="heading">My Schedule (coming soon)</a></li>
+            <li><a  class="heading">Referral Training Documents (coming soon)</a></li> -->
+          </ul>
+        </apex:outputPanel>
+      </apex:outputPanel>
+    </apex:outputPanel>
+<!-- 
+    <apex:outputPanel layout="block" styleClass="grid-25 mobile-grid-50">
+      <apex:outputPanel layout="block" styleClass="block">
+        <apex:outputPanel layout="block" styleClass="block-title">
+          {!GroupChatterLabel}
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="block-inner">
+          <apex:variable var="newsItemIndex" value="{!1}"/>
+          <apex:repeat value="{!listGroupChatter}" var="eSDNewsItem">
+            <apex:outputPanel layout="block" styleClass="news-item {!IF(newsItemIndex == listESDNewsCount, 'news-item-last', '')}">
+              <apex:outputLink value="/{!eSDNewsItem.Id}">
+                <apex:outputText styleClass="news-item-date" value="{0, date, MM/dd/yyyy hh:mm aaa}">
+                  <apex:param value="{!eSDNewsItem.CreatedDate}"/>
+                </apex:outputText>
+              </apex:outputLink>
+              <br/>
+              <apex:outputText styleClass="news-item-creator" value="{!eSDNewsItem.CreatedBy.Name}"/><br/>
+              <apex:outputText styleClass="news-item-body" value="{!IF(LEN(eSDNewsItem.Body) > 200, LEFT(eSDNewsItem.Body, 200) + '...', eSDNewsItem.Body)}"/>
+
+              <apex:outputLink value="/{!eSDNewsItem.Id}" rendered="{!LEN(eSDNewsItem.Body) > 200}" styleClass="news-item-more">
+                More
+              </apex:outputLink>
+            </apex:outputPanel>
+            <apex:variable var="newsItemIndex" value="{!(newsItemIndex + 1)}"/>
+          </apex:repeat>
+        </apex:outputPanel>
+      </apex:outputPanel>
+    </apex:outputPanel>
+
+    <apex:outputPanel layout="block" styleClass="grid-25 mobile-grid-50">
+      <apex:outputPanel layout="block" styleClass="block">
+        <apex:outputPanel layout="block" styleClass="block-title">
+          ESD News
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="block-inner">
+          <apex:variable var="newsItemIndex" value="{!1}"/>
+          <apex:repeat value="{!listESDNews}" var="eSDNewsItem">
+            <apex:outputPanel layout="block" styleClass="news-item {!IF(newsItemIndex == listESDNewsCount, 'news-item-last', '')}">
+              <apex:outputLink value="/{!eSDNewsItem.Id}">
+                <apex:outputText styleClass="news-item-date" value="{0, date, MM/dd/yyyy hh:mm aaa}">
+                  <apex:param value="{!eSDNewsItem.CreatedDate}"/>
+                </apex:outputText>
+              </apex:outputLink>
+              <br/>
+              <apex:outputText styleClass="news-item-creator" value="{!eSDNewsItem.CreatedBy.Name}"/><br/>
+              <apex:outputText styleClass="news-item-body" value="{!IF(LEN(eSDNewsItem.Body) > 200, LEFT(eSDNewsItem.Body, 200) + '...', eSDNewsItem.Body)}"/>
+
+              <apex:outputLink value="/{!eSDNewsItem.Id}" rendered="{!LEN(eSDNewsItem.Body) > 200}" styleClass="news-item-more">
+                More
+              </apex:outputLink>
+            </apex:outputPanel>
+            <apex:variable var="newsItemIndex" value="{!(newsItemIndex + 1)}"/>
+          </apex:repeat>
+        </apex:outputPanel>
+      </apex:outputPanel>
+    </apex:outputPanel> -->
+  </apex:outputPanel>
+  
+      <apex:pageBlock title="My Tasks">
+
+        <apex:pageBlockTable value="{!myTasks}" var="tsk">
+          <apex:column >
+              <a href="/{!tsk.Id}/e?close=1&retURL=/apex/ReferralHome">X</a>
+          </apex:column>
+            <apex:column headerValue="Subject"><a href="/{!tsk.Id}?retURL=/apex/ReferralHome">{!tsk.Subject}</a></apex:column>
+            <apex:column headerValue="Priority">{!tsk.Priority}</apex:column>
+            <apex:column headerValue="Status">{!tsk.Status}</apex:column>
+            <apex:column headerValue="Due Date">{!tsk.ActivityDate}</apex:column>
+        </apex:pageBlockTable>    
+    </apex:pageBlock>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $('ul#accordion a.heading').click(function() {
+        $(this).css('outline','none');
+        if($(this).parent().hasClass('current')) {
+          $(this).siblings('ul').slideUp('slow',function() {
+            $(this).parent().removeClass('current');
+            $.scrollTo('#accordion',1000);
+          });
+        } else {
+          $('ul#accordion li.current ul').slideUp('slow',function() {
+            $(this).parent().removeClass('current');
+          });
+          $(this).siblings('ul').slideToggle('slow',function() {
+            $(this).parent().toggleClass('current');
+          });
+          $.scrollTo('#accordion',1000);
+        }
+        return false;
+      });
+    });
+  </script>
+</apex:page>
