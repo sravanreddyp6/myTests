@@ -6,7 +6,7 @@
     <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
    
     <style>
-        hr {
+        .hr {
             color: #ECECEC;
             background-color: #ECECEC;
             margin-bottom: 20px;
@@ -31,8 +31,35 @@
  	<apex:form id="wholePage">
  	<apex:pageMessages id="pageMessages"/>
  	<apex:outputPanel rendered="false">
- 		<Apex:inputhidden value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Id}"/>
- 	</apex:outputPanel>
+		<apex:inputhidden value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Id}"/>
+		<apex:inputhidden value="{!Evaluation__c.Urinary_Issues__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Breathe_Sounds__c}"/> 
+		<apex:inputhidden value="{!Evaluation__c.Urine_Clarity__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Tongue__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Gums__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Cheeks__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Lips__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Saliva__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Dentures_Type__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Abdomen__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Hallucination_Types__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Typeof_Spiritual_belief_Effects__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Preferred_Method_of_Learning__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Resident_Demonstrating_Issues__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Resident_s_Communication_Status__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Resident_s_Emotional_Barriers__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Resident_s_Learning_needs_related_to__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Rancho_level_Resident_Orientation__c}" />
+		<apex:inputhidden value="{! Evaluation__c.Oriented_to_the_Following__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Family_Member_s_Emotional_Barriers__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Family_Communication_Status__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Family_Member_s_Learning_related_to__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Diagnostics_GYN_Experiences__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Orthopedic_diagnostic_types__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Orthodics_Types__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Orthopedic_Medications__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Prosthetic_Types__c}" />
+	</apex:outputPanel>
     	<apex:tabPanel id="wholeTabPanel" value="{!selectedTab}" styleClass="evaluationTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
     		<apex:tab label="Details" name="detailsTab" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
@@ -115,6 +142,81 @@
          	<apex:pageBlock >
          		<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Vitals Detail" formId="{!$Component.wholePage}" uniqueId="Vitals" />
          		<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Orthostatic BP" formId="{!$Component.wholePage}" uniqueId="orthostatic" />
+         		<apex:pageBlockSection columns="2" >
+						<apex:outputText value="GYN" styleClass="labelCol" style="margin-left: 3cm;"/>
+						<apex:outputText value="Immunization History" styleClass="labelCol" style="margin-left: 3cm;"/>
+						<apex:outputField value="{!Evaluation__c.Date_of_Last_menstrual_Period__c}" />
+						<apex:outputField value="{!Evaluation__c.Pneumococcal__c}"  />
+						<apex:outputField value="{!Evaluation__c.Frequency_of_menstrual_cycles__c}" />
+						<apex:outputField value="{!Evaluation__c.Pneumococcal_Text__c}" label="Explain" />
+						<apex:outputField value="{!Evaluation__c.Date_of_last_pap__c}" />
+						<apex:outputField value="{!Evaluation__c.Pneumococcal_Where_and_when__c}" label="where and when" />
+						<apex:outputField value="{!Evaluation__c.Date_of_last_mamogram__c}" />
+						<apex:outputField value="{!Evaluation__c.Influenza__c}"  />
+						<apex:pageBlockSectionitem >
+							<apex:outputText value="Have you experienced any of the following:" styleClass="labelCol" />
+							<apex:selectCheckboxes value="{!selectedExperiences}" layout="pageDirection" disabled="True" >
+								<apex:selectOptions value="{!experienceValues}" />
+							</apex:selectCheckboxes>
+						</apex:pageBlockSectionItem>
+						<apex:outputField value="{!Evaluation__c.Influenza_Text__c}" label="Explain" />
+						<apex:pageBlockSectionItem />
+						<apex:outputField value="{!Evaluation__c.Influenza_where_and_when__c}" label="where and when"  />
+						<apex:outputField value="{!Evaluation__c.Diabetic__c}" />
+						<apex:outputField value="{!Evaluation__c.TDAP__c}"  />
+						<apex:outputField value="{!Evaluation__c.If_yes_Glucose_meter_Reading__c}"  />
+						<apex:outputField value="{!Evaluation__c.TDAP_Text__c}" label="Explain"  />
+						<apex:pageBlockSectionItem />
+						<apex:outputField value="{!Evaluation__c.TDAP_Where_and_When__c}" label="where and when"  />
+						<apex:pageBlockSectionItem />
+						<apex:outputField value="{!Evaluation__c.Immunization_N_A__c}" label="N/A" />
+					</apex:pageBlockSection>
+					<apex:pageBlockSection columns="1" title="Pediatric Immunization History" collapsible="True" >
+						<apex:pageBlockSectionItem >
+							<a href="/apex/uploader?parentid={!evaluation.id}">Add/Remove</a>
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockTable value="{!attachments}" var="a" rendered="{!(attachments.size>0)}" >
+							<apex:column headerValue="Attachment Name"><a href= "/{!a.Id}">{!a.Name}</a></apex:column>
+						</apex:pageBlockTable>
+						<apex:outputText value="No pediatric Immunization History to Display" rendered="{!(attachments.size=0)}" />
+						<apex:pageBlockSectionItem />
+						<apex:outputField value="{!Evaluation__c.Vaccination_Info_Sheet_Provided__c}" />
+						<apex:outputField value="{!Evaluation__c.Vaccination_Pneumococcal__c}" label="Pneumococcal"  />
+						<apex:outputField value="{!Evaluation__c.Vaccination_Flu__c}" label="Flu"  />
+					</apex:pageBlockSection>
+					<hr />
+					<apex:pageBlockSection Columns="1" >
+						<apex:outputField value="{!Evaluation__c.Isolation__c}" label="Requires Isolation"  />
+						<apex:outputField value="{!Evaluation__c.DiagnosisIsolation_Type__c}"  />
+						<apex:outputField value="{!Evaluation__c.Isolation_Reason_and_Site__c}"  />
+					</apex:pageBlockSection>
+					<hr />
+					<apex:pageBlockSection columns="2">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="IV Type" />
+                            <apex:outputText value="" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.PICC__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Central__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.HepLock__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.PCA__c}"  />
+                        <apex:outputField value="{!Evaluation__c.PCA_Rx__c}"  />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.PCA_Rate__c}"  />
+                        <apex:outputField value="{!Evaluation__c.MARs_Attached__c}"  />
+                        <apex:outputField value="{!Evaluation__c.Recent_Changes__c}"  />
+                    </apex:pageBlockSection>
+                    <hr />
+                         <apex:pageBlockSection columns="1">
+                        <apex:outputText value="{!Evaluation__c.MAR_Comments__c}"  />
+                        <!--  apex:inputField value="{!Evaluation__c.MAR_Section_Completed__c}" /-->
+                        <apex:outputText value="{!Evaluation__c.Diagnostics_Comments__c}"  />
+                        <apex:outputField value="{!Evaluation__c.Diagnostics_Section_Completed__c}" />
+                    </apex:pageBlockSection>
          	 </apex:pageBlock>
          </apex:tab>
          

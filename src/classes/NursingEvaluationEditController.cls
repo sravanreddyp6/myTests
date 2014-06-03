@@ -71,13 +71,39 @@ public with sharing class NursingEvaluationEditController {
         }
     }
     
-    public List<Attachment> Attachments{
+    public Evaluation_Response__c[] annotations { set;
+        get {
+            return [
+                SELECT ID, Annotation_Height__c, Annotation_Width__c,
+                       Annotation_X__c, Annotation_Y__c, Annotation_Source__c,
+                       Annotation_Shape__c, Annotation_Text__c
+                FROM Evaluation_Response__c WHERE Evaluation__c=:evaluation.Id
+                 AND RecordType.Name='Annotation'
+            ];
+        }
+    }
+    
+    public String bodyMapUrl { get {
+        Attachment[] attachments = [
+            SELECT Id FROM Attachment
+            WHERE ParentId=:evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__c
+              AND Name='BodyMarkup.png'
+        ];
+        if (attachments.size() > 0) {
+            return '/servlet/servlet.FileDownload?file=' + attachments[0].Id;
+        }
+        return null;
+    } }
+    
+   public String serializedAnnotations { get; set; }
+    
+    public List<Attachment> immuneAttachments{
         get{
             
-            if(Attachments==null){
-                Attachments= [select Id, ParentId, Name, Description from Attachment where parentId=:ApexPages.CurrentPage().getparameters().get('id')];
+            if(immuneAttachments==null){
+                immuneAttachments= [select Id, ParentId, Name, Description from Attachment where parentId=:ApexPages.CurrentPage().getparameters().get('id')];
             }
-            return Attachments;
+            return immuneAttachments;
         }
         set;
     }
@@ -104,6 +130,7 @@ public with sharing class NursingEvaluationEditController {
     public NursingEvaluationEditController(ApexPages.StandardController stdcontroller) {
     	this.stdController = stdController;
     	evaluation = (Evaluation__c) stdController.getRecord();
+    	serializedAnnotations = JSON.serialize(annotations);
     	currentRelatedParty = new Related_Party__c();
     	if (ApexPages.currentPage().getParameters().get('tab') != null) {
             selectedTab = ApexPages.currentPage().getParameters().get('tab');
@@ -754,6 +781,39 @@ public with sharing class NursingEvaluationEditController {
    public List<selectoption> getorthodicsValues(){
    		List<Selectoption> orthodicsValue = Utility.getPicklistValues(evaluation, 'Orthodics_Types__c');
    		return orthodicsValue; 
-   } 
+   }
+   
+   @RemoteAction
+    public static Evaluation_Response__c addOrModifyAnnotation(ID annotationId, String source, Decimal x, Decimal y, Decimal Width, Decimal Height, String Shape, String Text, String evaluationId) {
+        Evaluation_Response__c annotation;
+        if (annotationId!=null) {
+            annotation = [
+                SELECT ID FROM Evaluation_Response__c WHERE ID=:annotationId
+            ];
+        } else {
+            annotation = new Evaluation_Response__c();
+            annotation.Evaluation__c = evaluationId;
+            annotation.RecordTypeId = Utility.getEvaluationResponseRecordType('Annotation');
+        }
+        annotation.Annotation_Height__c = Height;
+        annotation.Annotation_Width__c = Width;
+        annotation.Annotation_X__c = x;
+        annotation.Annotation_Y__c = y;
+        annotation.Annotation_Source__c = Source;
+        annotation.Annotation_Shape__c = Shape;
+        annotation.Annotation_Text__c = Text;
+        System.debug('Annotation to upsert: ' + annotation);
+        upsert annotation;
+        return annotation;
+    }
+    
+    @RemoteAction
+    public static void deleteAnnotation(ID annotationId) {
+        delete [
+            SELECT ID FROM Evaluation_Response__c WHERE ID=:annotationId
+        ];
+    }
+    
+     
 
 }

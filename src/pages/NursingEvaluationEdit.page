@@ -1,11 +1,19 @@
 <apex:page standardController="Evaluation__c" docType="html-5.0" extensions="NursingEvaluationEditController">
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
-    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>   
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/> 
+    <apex:includeScript value="{!$Resource.AnnotoriousDev}"/>
+    <apex:includeScript value="{!$Resource.AnotoJS}"/>  
 	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
     <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
     <apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}"/>
 	<style>
+		[id$=skinBodyFooter] {
+            clear: both;
+        }
+        [id$=bodyMapOtherComments] {
+            clear: both;
+        }
 		.thinking{
             opacity:0.8;
             background-color:#ccc;
@@ -62,6 +70,52 @@
                     $inputToUpdate.val(value);
                 };
             };
+            
+             var addOrModifyAnnotation = function (annotation, isNew) {
+                if (isNew) {
+                    if (annotation.Id !== undefined) {
+                        return;  // So that annotations added at initial page loads are not duplicated
+                    };
+                    annotation.Id = null;
+                }
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.NursingEvaluationEditController.addOrModifyAnnotation}',
+                    annotation.Id,
+                    annotation.src,
+                    annotation.shapes[0].geometry.x,
+                    annotation.shapes[0].geometry.y,
+                    annotation.shapes[0].geometry.width,
+                    annotation.shapes[0].geometry.height,
+                    annotation.shapes[0].type,
+                    annotation.text,
+                    '{!Evaluation__c.Id}',
+                    function (result, event) {
+                        if (event.status) {
+                            annotation.Id = result.Id;
+                        } else {
+                            alert("Failed to update annotation! Error: " + event.message);
+                        }
+                    }
+                );
+            };
+            anno.addHandler('onAnnotationCreated', function (annotation) {
+                addOrModifyAnnotation(annotation, true);
+            });
+            anno.addHandler('onAnnotationUpdated', function (annotation) {
+                addOrModifyAnnotation(annotation, false);
+            });
+            anno.addHandler("onAnnotationRemoved", function (annotation) {
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.NursingEvaluationEditController.deleteAnnotation}',
+                    annotation.Id,
+                    function (result, event) {
+                        if (!event.status) {
+                            alert("Failed to delete annotation! Error: " + event.message);
+                            anno.addAnnotation(annotation);
+                        }
+                    }
+                );
+            });
         
         String.prototype.endsWith = function (suffix) {
                 return this.indexOf(suffix, this.length - suffix.length) !== -1;
@@ -389,13 +443,10 @@
 						<apex:inputField value="{!Evaluation__c.Immunization_N_A__c}" label="N/A" />
 					</apex:pageBlockSection>
 					<apex:pageBlockSection columns="1" title="Pediatric Immunization History" collapsible="True" >
-						<apex:pageBlockSectionItem >
-							<a href="/apex/uploader?parentid={!evaluation.id}">Add/Remove</a>
-						</apex:pageBlockSectionItem>
-						<apex:pageBlockTable value="{!attachments}" var="a" rendered="{!(attachments.size>0)}" >
+						<apex:pageBlockTable value="{!immuneAttachments}" var="a" rendered="{!(immuneAttachments.size>0)}" >
 							<apex:column headerValue="Attachment Name"><a href= "/{!a.Id}">{!a.Name}</a></apex:column>
 						</apex:pageBlockTable>
-						<apex:outputText value="No pediatric Immunization History to Display" rendered="{!(attachments.size=0)}" />
+						<apex:outputText value="No pediatric Immunization History to Display" rendered="{!(immuneAttachments.size=0)}" />
 						<apex:pageBlockSectionItem />
 						<apex:inputField value="{!Evaluation__c.Vaccination_Info_Sheet_Provided__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.vaccinationPneumo}&quot;, &quot;{!$Component.vaccinationFlu}&quot;]}" />
 						<apex:inputField value="{!Evaluation__c.Vaccination_Pneumococcal__c}" label="Pneumococcal" id="vaccinationPneumo" />
@@ -809,10 +860,107 @@
 				</apex:pageBlock>
 			</apex:tab>
 			
-			<apex:tab label="Skin/Body" name="skinBodyTab" ontabenter="changeTab('skinBodyTab'); return false;" styleClass="{!IF(Evaluation__c.Skin_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+			<apex:tab label="Skin/Body" name="skinBodyTab" ontabenter="changeTab('skinBodyTab'); return false;" styleClass="{!IF(Evaluation__c.Skin_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
+				<script>
+				 jQuery(document).ready(function ($) {
+                    anno.reset();
+                    var el = $('#bodyMap').get(0);
+                    if (el) {
+                        anno.makeAnnotatable(el);
+                    }
+                    var $el = $(el);
+                    <apex:repeat value="{!annotations}" var="annotation">
+                    anno.addAnnotation({
+                        Id: "{!annotation.Id}",
+                        src: $("#bodyMap").prop("src"),
+                        text: "{!JSENCODE(annotation.Annotation_Text__c)}",
+                        shapes: [{
+                            type: "{!JSENCODE(annotation.Annotation_Shape__c)}",
+                            geometry: {
+                                x: {!annotation.Annotation_X__c},
+                                y: {!annotation.Annotation_Y__c},
+                                width: {!annotation.Annotation_Width__c},
+                                height: {!annotation.Annotation_Height__c}
+                            }
+                        }]
+                    });
+                    </apex:repeat>
+                    var createAnnotationElements = function (annotations) {
+                        $('.annotation-number').remove();
+                        $('table#annotations tr').remove();
+                        $.each(annotations, function (index, annotation) {
+                            var $divEl = $("<div class='annotation-number' style='pointer-events:none; position: absolute; text-align: center; left: " + annotation.shapes[0].geometry.x * 100 + "%; width: " + annotation.shapes[0].geometry.width * 100 + "%; top: " + annotation.shapes[0].geometry.y * 100 + "%; height: " + annotation.shapes[0].geometry.height * 100 + "%;'></div>");
+                            $el.parent().append($divEl);
+                            var $textEl = $("<span style='line-height: " + $divEl.height() + "px; color: red; font-size: 1.5em;'>" + (index + 1) + "</span>");
+                            $divEl.append($textEl);
+                            $("table#annotations tbody").append("<tr><td>" + (index + 1) + "</td><td>" + annotation.text + "</td></tr>");
+                        });
+                    }
+                    createAnnotationElements(anno.getAnnotations());
+                    anno.addHandler('onAnnotationCreated', function (annotation) {
+                        createAnnotationElements(anno.getAnnotations());
+                    });
+                    anno.addHandler('onAnnotationUpdated', function (annotation) {
+                        createAnnotationElements(anno.getAnnotations());
+                    });
+                    anno.addHandler('onAnnotationRemoved', function (annotation) {
+                        createAnnotationElements(anno.getAnnotations());
+                    });
+                });
+                </script>
+                
 				<apex:pageBlock >
-					
-				</apex:pageBlock>
+					<apex:pageblockSection columns="1" >
+						<apex:inputField value="{!Evaluation__c.Intact__c}" />
+					</apex:pageblockSection>
+					<hr />
+					<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" />
+					<apex:pageBlockSection columns="1" >
+						<apex:inputField value="{!Evaluation__c.History_of_Pressure_Ulcers_Flap_Surge__c}" html-data-rules="{&quot;Yes&quot;: [&quot;{!$Component.ulcersurgeryDescribe}&quot;]}" />
+						<apex:inputField value="{!Evaluation__c.Pressure_Ulcer_Flap_Surgery_describe__c}" label="Describe" id="ulcersurgeryDescribe" />
+					</apex:pageBlockSection>
+					<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Pressure Ulcer Detail" formId="{!$Component.wholePage}" uniqueId="decubiti" />
+					<apex:pageBlockSection columns="2" >
+						<apex:outputText value="General Skin Condition" styleClass="labelCol" style="margin-left: 2cm;" />
+						<apex:pageBlockSectionItem />
+						<apex:inputField value="{!Evaluation__c.Skin_Color__c}" label="Color" />
+						<apex:inputField value="{!Evaluation__c.Wound_Vac__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.woundVacFrequency}&quot;, &quot;{!$Component.woundVacDuration}&quot;]}" />
+						<apex:inputField value="{!Evaluation__c.Skin_Temperature__c}" label="Temperature" />
+						<apex:inputField value="{!Evaluation__c.Wound_Vac_Frequency__c}" id="woundVacFrequency" />
+						<apex:inputField value="{!Evaluation__c.Skin_Moisture__c}" label="Mositure" />
+						<apex:inputField value="{!Evaluation__c.Wound_Vac_Duration__c}" id="woundVacDuration" />
+						<apex:inputField value="{!Evaluation__c.Skin_Turgor__c}" label="Turgor" />
+						<apex:inputField value="{!Evaluation__c.Specialty_Bed__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.specialtyBedType}&quot;}" />
+						<apex:inputField value="{!Evaluation__c.Skin_Edema__c}" label="Edema" html-data-rules="{&quot;Yes&quot;: [&quot;{!$Component.edemaLocation}&quot;]}" />
+						<apex:inputField value="{!Evaluation__c.Specialty_Bed_Type__c}" id="specialtyBedType" />
+						<apex:inputField value="{!Evaluation__c.Skin_Edema_Location__c}" label="Edema Location" id="edemaLocation" />
+						<apex:pageBlockSectionItem />
+						<apex:inputField value="{!Evaluation__c.Skin_Behavior__c}" label="Behavior" />
+						<apex:pageBlockSectionItem />
+						<apex:inputField value="{!Evaluation__c.Peripheral_Capillary_Refill_Location__c}" />
+						<apex:pageBlockSectionItem />
+						<apex:inputField Value="{!Evaluation__c.Peripheral_Capillary_Refill_of_Seconds__c}" />
+					</apex:pageBlockSection>
+					<hr />
+					 <h2 style="display: block; margin: 10px;">Body Map</h2>
+                    <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
+                        <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!IF(bodyMapUrl=null, baseUrl + URLFOR($Resource.WholeBodyNoGrid), bodyMapUrl)}" id="bodyMap" />
+                    </div>
+                    <div style="margin-left: 420px; height: 298px; overflow: auto;">
+                        <table id="annotations">
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <apex:pageBlockSection columns="1" id="bodyMapOtherComments">
+                        <apex:inputTextArea value="{!Evaluation__c.Body_Map_Comments__c}" label="Other Body Map Comments" cols="80" rows="7" />
+                    </apex:pageBlockSection>
+                    <hr />
+                    <apex:pageBlockSection columns="1" id="skinBodyFooter">
+                        <apex:inputTextArea value="{!Evaluation__c.Skin_Body_Comments__c}" cols="80" />
+                        <apex:inputField value="{!Evaluation__c.Skin_Section_Completed__c}" />
+                    </apex:pageBlockSection>
+                </apex:pageBlock> 
 			</apex:tab>
 			
 			<apex:tab label="Neurological" name="neuroTab" ontabenter="changeTab('neuroTab'); return false;" styleClass="{!IF(Evaluation__c.Neuro_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
