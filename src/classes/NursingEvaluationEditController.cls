@@ -48,8 +48,16 @@ public with sharing class NursingEvaluationEditController {
     public List<string>selectedFamcommunications {get;set;}
     public List<selectOption>famlearningValues ;
     public List<string>selectedFamlearnings {get;set;}
-     public List<selectOption>experienceValues ;
+    public List<selectOption>experienceValues ;
     public List<string>selectedExperiences {get;set;}
+    public List<selectOption>diagnosisValues ;
+    public List<string>selectedDiagnosis {get;set;}
+    public List<selectOption>medicationValues ;
+    public List<string>selectedMedications {get;set;}
+    public List<selectOption>prostheticValues ;
+    public List<string>selectedProsthetics {get;set;}
+    public List<selectOption>orthodicsValues ;
+    public List<string>selectedOrthodics {get;set;}
     
     public List<String> sliderOptions { set;
         get {
@@ -146,6 +154,16 @@ public with sharing class NursingEvaluationEditController {
 		selectedFamlearnings = new List<String>();
 		experienceValues = new List<selectOption>();
 		selectedExperiences = new List<String>();
+		diagnosisValues = new List<selectOption>();
+		selectedDiagnosis = new List<String>();
+		medicationValues = new List<selectOption>();
+		selectedMedications = new List<String>();
+		prostheticValues = new List<selectOption>();
+		selectedProsthetics = new List<String>();
+		orthodicsValues = new List<selectOption>();
+		selectedOrthodics = new List<String>();
+		
+		
 		
 		if(!String.isBlank(this.evaluation.Breathe_sounds__c))
 		selectedSounds = this.evaluation.Breathe_Sounds__c.split(';');
@@ -215,6 +233,19 @@ public with sharing class NursingEvaluationEditController {
 		
 		if(!String.isBlank(this.evaluation.Diagnostics_GYN_Experiences__c))
 		selectedExperiences = this.evaluation.Diagnostics_GYN_Experiences__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Orthopedic_diagnostic_types__c))
+		selectedDiagnosis = this.evaluation.Orthopedic_diagnostic_types__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Orthopedic_Medications__c))
+		selectedMedications = this.evaluation.Orthopedic_Medications__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Prosthetic_Types__c))
+		selectedProsthetics = this.evaluation.Prosthetic_Types__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Orthodics_Types__c))
+		selectedOrthodics = this.evaluation.Orthodics_Types__c.split(';');
+		
 		
     }
     
@@ -535,6 +566,51 @@ public with sharing class NursingEvaluationEditController {
 			else
 			this.evaluation.Diagnostics_GYN_Experiences__c ='';
 			
+			
+// For Orthopedic Diagnosis Multi-Picklist
+		string diag ='';
+		for(string dg: selectedDiagnosis)
+		diag += dg+';';
+			if(diag!=''){
+				diag = diag.Substring(0,diag.length()-1);
+				this.evaluation.Orthopedic_diagnostic_types__c = diag;
+				
+			}
+			else
+			this.evaluation.Orthopedic_diagnostic_types__c = '';
+			
+// For Orthopedic Medications Multi-picklist
+		string medic ='';
+		for(string mdc: selectedMedications)
+		medic += mdc+';';
+			if(medic!=''){
+				medic = medic.Substring(0,medic.length()-1);
+				this.evaluation.Orthopedic_Medications__c = medic;
+			}
+			else
+			this.evaluation.Orthopedic_Medications__c = '';
+			
+// For Prosthetic Type Multi-picklist
+		string pros ='';
+		for(string ps: selectedProsthetics)
+		pros += ps+';';
+			if(pros!=''){
+				pros = pros.Substring(0,pros.length()-1);
+				this.evaluation.Prosthetics__c = pros;
+			}
+			else
+			this.evaluation.Prosthetics__c ='';
+			
+// For Orthodics Types Multi-picklist
+		string orth='';
+		for(string ot: selectedOrthodics)
+		orth += ot+';';
+			if(orth!=''){
+				orth = orth.Substring(0,orth.length()-1);
+				this.evaluation.Orthodics_Types__c = orth;
+			}
+			else
+			this.evaluation.Orthodics_Types__c ='';
    					     	
         if (submitted || selectedTab == 'detailsTab' || selectedTab == null) {
 
@@ -658,6 +734,26 @@ public with sharing class NursingEvaluationEditController {
    public List<selectoption> getexperienceValues(){
    		List<Selectoption> experienceValue = Utility.getPicklistValues(evaluation, 'Diagnostics_GYN_Experiences__c');
    		return experienceValue; 
+   } 
+   
+   public List<selectoption> getdiagnosisValues(){
+   		List<Selectoption> diagnosisValue = Utility.getPicklistValues(evaluation, 'Orthopedic_diagnostic_types__c');
+   		return diagnosisValue; 
+   } 
+   
+   public List<selectoption> getmedicationValues(){
+   		List<Selectoption> medicationValue = Utility.getPicklistValues(evaluation, 'Orthopedic_Medications__c');
+   		return medicationValue; 
+   } 
+   
+   public List<selectoption> getprostheticValues(){
+   		List<Selectoption> prostheticValue = Utility.getPicklistValues(evaluation, 'Prosthetic_Types__c');
+   		return prostheticValue; 
+   } 
+   
+   public List<selectoption> getorthodicsValues(){
+   		List<Selectoption> orthodicsValue = Utility.getPicklistValues(evaluation, 'Orthodics_Types__c');
+   		return orthodicsValue; 
    } 
 
 }

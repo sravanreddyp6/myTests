@@ -262,6 +262,10 @@
 		<apex:inputhidden value="{!Evaluation__c.Family_Communication_Status__c}" />
 		<apex:inputhidden value="{!Evaluation__c.Family_Member_s_Learning_related_to__c}" />
 		<apex:inputhidden value="{!Evaluation__c.Diagnostics_GYN_Experiences__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Orthopedic_diagnostic_types__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Orthodics_Types__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Orthopedic_Medications__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Prosthetic_Types__c}" />
 	</apex:outputPanel>
 		<apex:pageMessages id="pageMessages" />
 		<apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); removeSpacer()" reRender="pageMessages, wholeTabPanel, buttons">
@@ -807,7 +811,7 @@
 			
 			<apex:tab label="Skin/Body" name="skinBodyTab" ontabenter="changeTab('skinBodyTab'); return false;" styleClass="{!IF(Evaluation__c.Skin_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
-				
+					
 				</apex:pageBlock>
 			</apex:tab>
 			
@@ -819,7 +823,61 @@
 			 
 			 <apex:tab label="Ortho" name="orthoTab" ontabenter="changeTab('orthoTab'); return false;" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 			 	<apex:pageBlock >
-			 	
+			 		<apex:pageBlockSection columns="2">
+						<apex:pageBlockSectionItem >
+							<apex:outputText value="Does patient have a diagnosis of any of the following" styleClass="labelCol" />
+							<apex:selectCheckboxes value="{!selectedDiagnosis}" layout="pageDirection" >
+								<apex:selectOptions value="{!diagnosisValues}" />
+							</apex:selectCheckboxes>
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem >
+							<apex:outputText value="Is the Individual taking any of the following medications?" styleClass="labelCol" />
+							<apex:selectCheckboxes value="{!selectedMedications}" layout="pageDirection" >
+								<apex:selectOptions value="{!medicationValues}" />
+							</apex:selectCheckboxes>
+						</apex:pageBlockSectionItem>
+						<apex:inputField value="{!Evaluation__c.Weight_Bearing_Precautions__c}" label="Weight Bearing" />
+						<apex:pageBlockSectionItem />
+						<apex:inputField value="{!Evaluation__c.Prosthetics__c}" />
+						<apex:inputField value="{!Evaluation__c.Orthodics__c}" />
+						<apex:pageBlockSectionItem >
+							<apex:selectCheckboxes value="{!selectedProsthetics}" layout="pageDirection" style="margin-left: 5cm;">
+								<apex:selectOptions value="{!prostheticValues}" />
+							</apex:selectCheckboxes>
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem >
+							<apex:selectCheckBoxes value="{!selectedOrthodics}" layout="pageDirection" style="margin-left: 5cm;">
+								<apex:selectOptions value="{!orthodicsValues}" />
+							</apex:selectCheckBoxes>
+						</apex:pageBlockSectionItem>
+						<apex:inputField value="{!Evaluation__c.Prosthetics_Other__c}" label="Other" />
+						<apex:inputField value="{!Evaluation__c.Orthodics_Other__c}" label="Other" />
+					</apex:pageBlockSection>
+					<hr />
+					<apex:pageBlockSection columns="2" >
+						<apex:inputField value="{!Evaluation__c.Cast__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.castLocation}&quot;]}"  />
+						<apex:outputText value="ROM Limitations" styleClass="labelCol" style="margin-left: 2cm;"/>
+						<apex:inputField value="{!Evaluation__c.Ortho_Cast_Location__c}" id="castLocation" label="Location" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.OthercastLocation}&quot;}" />
+						<apex:inputField value="{!Evaluation__c.Neck__c}" />
+						<apex:inputField value="{!Evaluation__c.Cast_Location__c}" id="OthercastLocation" label="Location (other)" />
+						<apex:inputField value="{!Evaluation__c.RUE__c}" />
+						<apex:inputField value="{!Evaluation__c.Traction__c}"  html-data-rules="{&quot;1&quot;: [&quot;{!$Component.tractionLocation}&quot;, &quot;{!$Component.tractionType}&quot;, &quot;{!$Component.tractionWeight}&quot;]}" />
+						<apex:inputField value="{!Evaluation__c.LUE__c}" />
+						<apex:inputField value="{!Evaluation__c.Traction_Location__c}" id="tractionLocation" label="Location" />
+						<apex:inputField value="{!Evaluation__c.Trunk__c}" />
+						<apex:inputField value="{!Evaluation__c.Traction_Type__c}" id="tractionType" label="Type" />
+						<apex:inputField value="{!Evaluation__c.RLE__c}" />
+						<apex:inputField value="{!Evaluation__c.External_Devices__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.externalDevicesLocation}&quot;, &quot;{!$Component.externalDevicesType}&quot;, &quot;{!$Component.externalDevicesPinCare}&quot;]}"/>
+						<apex:inputField value="{!Evaluation__c.LLE__c}" />
+						<apex:inputField value="{!Evaluation__c.External_Devices_Location__c}" id="externalDevicesLocation" label="Location" />
+						<apex:pageBlockSectionItem />
+						<apex:inputField value="{!Evaluation__c.External_Devices_Type__c}" id="externalDevicesType" label="Type" />
+					</apex:pageBlockSection>
+			 		<hr />
+			 		<apex:pageBlockSection columns="1">
+                        <apex:inputTextArea value="{!Evaluation__c.Ortho_Comments__c}" cols="80" />
+                        <apex:inputField value="{!Evaluation__c.Ortho_Section_Completed__c}" />
+                    </apex:pageBlockSection>
 			 	</apex:pageBlock>
 			 </apex:tab>
 			 
