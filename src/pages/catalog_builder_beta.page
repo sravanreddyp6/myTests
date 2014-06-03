@@ -16,7 +16,7 @@
     }
     .txtArea{
         width: 320px;
-    
+        height: 60px;    
     } 
     /*   
     .frmLCol{
@@ -37,51 +37,63 @@
     <apex:outputField value="{!Clinical_Catalog__c.id}"/>
 </apex:outputPanel>
 <apex:form >
-
-<apex:outputPanel layout="block" styleClass="lcol">
-<apex:pageBlock >
-    <apex:pageBlockButtons >
-        <apex:commandButton action="{!newEley}" value="New Component" reRender="eleyForm" status="myStatus"/>
-    </apex:pageBlockButtons>
-<apex:repeat value="{!allGoals.root.nodes}" var="g">
-{!g.CatTreeNode.Catalog_Element__r.Description__c}
-                &nbsp; &nbsp; &nbsp;
-                <apex:actionRegion >
-                    <apex:commandLink value="edit" action="{!editEley}" reRender="eleyForm" status="myStatus">
-                        <apex:param name="eleyID" assignTo="{!eleyID}" value="{!g.CatTreeNode.Catalog_Element__r.id}"/>
-                    </apex:commandLink>
-                </apex:actionRegion>
-<br/>
-    <apex:repeat value="{!g.nodes}" var="o">
-        &nbsp; &nbsp; 
-        {!o.CatTreeNode.Catalog_Element__r.Description__c}
-                    &nbsp; &nbsp; &nbsp;
-                    <apex:actionRegion >
-                        <apex:commandLink value="edit" action="{!editEley}" reRender="eleyForm" status="myStatus">
-                            <apex:param name="eleyID" assignTo="{!eleyID}" value="{!o.CatTreeNode.Catalog_Element__r.id}"/>
-                        </apex:commandLink>
-                    </apex:actionRegion>        
-        <br/>
-            <apex:repeat value="{!o.nodes}" var="a">
-                &nbsp; &nbsp; &nbsp; &nbsp;
-                {!a.CatTreeNode.Catalog_Element__r.Description__c}
-                        &nbsp; &nbsp; &nbsp;
-                        <apex:actionRegion >
-                            <apex:commandLink value="edit" action="{!editEley}" reRender="eleyForm, relatedTo" status="myStatus">
-                                <apex:param name="eleyID" assignTo="{!eleyID}" value="{!a.CatTreeNode.Catalog_Element__r.id}"/>
-                            </apex:commandLink>
-                        </apex:actionRegion>                
-                <br/>
-            </apex:repeat>
-    </apex:repeat>
-</apex:repeat>
-</apex:pageBlock>
-</apex:outputPanel><!-- end left col -->
-
-</apex:form>
-<apex:form >
-
+ <apex:actionFunction action="{!editEley}" name="methodOneInJavascript" rerender="eleyForm, relatedTo">
+     <apex:param name="firstParam" assignTo="{!eleyID}" value="" />
+ </apex:actionFunction>
 <apex:outputPanel layout="block" styleClass="rcol">
+<!-- <apex:pageBlock > -->
+<!--     <apex:pageBlockButtons > -->
+<!--         <apex:commandButton action="{!newEley}" value="New Component" reRender="eleyForm" status="myStatus"/> -->
+<!--     </apex:pageBlockButtons> -->
+<!-- <apex:repeat value="{!allGoals.root.nodes}" var="g"> -->
+<!-- {!g.CatTreeNode.Catalog_Element__r.Description__c} -->
+<!--                 &nbsp; &nbsp; &nbsp; -->
+<!--                 <apex:actionRegion > -->
+<!--                     <apex:commandLink value="edit" action="{!editEley}" reRender="eleyForm, fullTree" status="myStatus"> -->
+<!--                         <apex:param name="eleyID" assignTo="{!eleyID}" value="{!g.CatTreeNode.Catalog_Element__r.id}"/> -->
+<!--                     </apex:commandLink> -->
+<!--                 </apex:actionRegion> -->
+<!-- <br/> -->
+<!--     <apex:repeat value="{!g.nodes}" var="o"> -->
+<!--         &nbsp; &nbsp;  -->
+<!--         {!o.CatTreeNode.Catalog_Element__r.Description__c} -->
+<!--                     &nbsp; &nbsp; &nbsp; -->
+<!--                     <apex:actionRegion > -->
+<!--                         <apex:commandLink value="edit" action="{!editEley}" reRender="eleyForm, fullTree" status="myStatus"> -->
+<!--                             <apex:param name="eleyID" assignTo="{!eleyID}" value="{!o.CatTreeNode.Catalog_Element__r.id}"/> -->
+<!--                         </apex:commandLink> -->
+<!--                     </apex:actionRegion>         -->
+<!--         <br/> -->
+<!--             <apex:repeat value="{!o.nodes}" var="a"> -->
+<!--                 &nbsp; &nbsp; &nbsp; &nbsp; -->
+<!--                 {!a.CatTreeNode.Catalog_Element__r.Description__c} -->
+<!--                         &nbsp; &nbsp; &nbsp; -->
+<!--                         <apex:actionRegion > -->
+<!--                             <apex:commandLink value="edit" action="{!editEley}" reRender="eleyForm, relatedTo, fullTree" status="myStatus"> -->
+<!--                                 <apex:param name="eleyID" assignTo="{!eleyID}" value="{!a.CatTreeNode.Catalog_Element__r.id}"/> -->
+<!--                             </apex:commandLink> -->
+<!--                         </apex:actionRegion>                 -->
+<!--                 <br/> -->
+<!--             </apex:repeat> -->
+<!--     </apex:repeat> -->
+<!-- </apex:repeat> -->
+<!-- </apex:pageBlock> -->
+
+    <apex:pageBlock id="fullTree">    
+        <apex:pageBlockButtons >
+            <apex:commandButton action="{!newEley}" value="New Component" reRender="eleyForm" status="myStatus"/>
+        </apex:pageBlockButtons>    
+        <apex:outputPanel id="tree2" layout="block" >
+            <apex:outputlabel > Please select a component to edit:</apex:outputlabel>
+            <c:Fancy_Tree TreeString="{!allGoals.Fancy_Tree_JSon_String}" mode="1" checkbox="false" selectActionSignature="methodOneInJavascript(data.node.data.OTHER);" ID_PageSideStorage="fullTreeKeys" TreeID="tree2" debug="false" />    
+        </apex:outputPanel>                
+    </apex:pageBlock>
+</apex:outputPanel><!-- end left col -->
+</apex:form>
+
+
+<apex:form >
+<apex:outputPanel layout="block" styleClass="lcol">
 <apex:pageBlock id="eleyForm" title="Component" >
     <apex:pageBlockButtons >
         <apex:commandButton action="{!upsertEley}" value="Save" reRender="page" status="myStatus"/> 
@@ -118,8 +130,8 @@
                     <apex:outputLabel rendered="{!CurEley.Type__c =='Objective'}">Select Goals</apex:outputLabel> 
                     <apex:outputLabel rendered="{!CurEley.Type__c =='Action'}">Select Objectives</apex:outputLabel>
                 </apex:outputLabel>
-                <apex:outputPanel layout="block">
-                    <c:Fancy_Tree TreeString="{!formTree.Fancy_Tree_JSon_String}" mode="2" ID_PageSideStorage="myKeys" debug="false" />
+                <apex:outputPanel id="tree3" layout="block">
+                    <c:Fancy_Tree TreeString="{!formTree.Fancy_Tree_JSon_String}" mode="2" ID_PageSideStorage="myKeys" TreeID="tree3" debug="false" />
                     <apex:inputHidden value="{!selectedKeys}" id="myKeys"/>       
                 </apex:outputPanel>
     </apex:outputPanel>               
@@ -131,8 +143,5 @@
 </apex:outputPanel><!-- end right col -->
 </apex:form>
 </apex:outputPanel>
-
-
-<apex:form ></apex:form>
 
 </apex:page>
