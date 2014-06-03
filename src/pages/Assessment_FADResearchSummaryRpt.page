@@ -1,0 +1,388 @@
+<apex:page controller="Assessment_FADResearchSummaryRpt_cnt" docType="html-5.0" sidebar="false" readOnly="true">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!$Resource.jquery}"/>
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables_themeroller.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables.css')}"/>
+<style>
+    .headRow{
+       width: 250px;     
+    }
+</style>
+<style>
+.thinking{
+    opacity:0.8;
+    background-color:#ccc;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}
+
+.thinkingwheel{
+    position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+}
+#mytbl tr:nth-child(even)       { background-color:#eee; }
+#mytbl tr:nth-child(odd)      { //background-color:#fff; }
+
+#mytbl td{
+    font-size: 12px;
+    padding: 3px;
+}
+.headRow{
+   // background-color: white !important;
+    font-weight: bold;
+    border-bottom: 2px #dbdbdb solid;
+ //   width: 15%;
+    padding: 7px !important;
+
+}
+.dataRow{
+    border-bottom: 1px #dbdbdb solid;
+}
+#mytbl{
+    border: 1px solid #dbdbdb;
+    border-top: none;
+    padding: 0px;
+    margin-top: -9px;
+    margin-bottom: 7px;
+
+}
+.sorting{
+    background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_both.png')}') no-repeat center right;
+}
+.sorting_asc{
+    background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_asc.png')}') no-repeat center right;
+}
+.sorting_desc{
+    background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_desc.png')}') no-repeat center right;
+}
+.txtcol{
+    
+}
+.timecol{
+}
+.mytbl{
+
+    border: 1px #dbdbdb solid;
+    width: 250px;
+    margin-left: 40%;
+}
+.tblheader{
+    background-color: #99ccff;
+    border-bottom: 1px #dbdbdb solid;
+
+}
+.tblrow{
+
+    border-bottom: 1px #dbdbdb solid;
+    border-right: 1px #dbdbdb solid;
+}
+.header{
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px;
+}
+</style>
+<script>
+    function setFocusOnLoad() {}
+</script>
+<apex:form id="frm" >
+<apex:commandButton value="Refresh" action="{!runreport}" reRender="dataTable, msg" status="myStatus"/>
+    <apex:pageBlock title="Filters" rendered="false">
+        <apex:pageBlockButtons location="bottom" >
+            
+        </apex:pageBlockButtons>
+        <apex:pageBlockSection >
+        <!--
+        <apex:input id="start_date" 
+                        size="10" 
+                        onfocus="DatePicker.pickDate(false, this , false);" 
+                        styleClass="datepicker" 
+                        label="Start Date"  
+                        value="{!fStartDate}"
+                        required="true"/>
+                        -->
+        </apex:pageBlockSection>
+   </apex:pageBlock>
+</apex:form>
+<!--
+{!mapresults}
+-->
+<apex:outputPanel layout="block" id="dataTable" style="width: 7000px;">   
+   <apex:pageBlock title="FAD Research Summary Report.">
+        <apex:pageBlockButtons > 
+            <div style="float: right"><input class="btn" type="button" onclick="tableToExcel('mytbl', 'W3C Example Table')" value="Export to Excel"/></div>
+        </apex:pageBlockButtons>  
+
+        <table id="mytbl" cellpadding="0" cellspacing="0">
+            <thead class="headRow">
+                <tr class="headRow">
+                    <td style="width: 120px;"  class="headRow">Last Name</td>
+                    <td  class="headRow">First Name</td>
+                    <td  class="headRow">Date of Birth</td>
+                    <td  class="headRow">Phase 1 Start Date</td>
+                    <td  class="headRow">Region Name</td>
+                    <td  class="headRow">Primary FCS</td>
+                    <td  class="headRow">CrmitID</td>
+                    <td  class="headRow">ApplicationID</td>
+                    <td  class="headRow">Initial Client DOA (Date of Administration)</td>
+                    <td  class="headRow">Initial Client AI</td>
+                    <td  class="headRow">Initial Client AR</td>
+                    <td  class="headRow">Initial Client BC</td>
+                    <td  class="headRow">Initial Client C</td>
+                    <td  class="headRow">Initial Client GF</td>
+                    <td  class="headRow">Initial Client PS</td>
+                    <td  class="headRow">Initial Client R</td>
+                    <td  class="headRow">3 Month Client DOA</td>
+                    <td  class="headRow">3 Month Client AI</td>
+                    <td  class="headRow">3 Month Client AR</td>
+                    <td  class="headRow">3 Month Client BC</td>
+                    <td  class="headRow">3 Month Client C</td>
+                    <td  class="headRow">3 Month Client GF</td>
+                    <td  class="headRow">3 Month Client PS</td>
+                    <td  class="headRow">3 Month Client R</td>
+                    <td  class="headRow">Final Client DOA</td>
+                    <td  class="headRow">Final Client AI</td>
+                    <td  class="headRow">Final Client AR</td>
+                    <td  class="headRow">Final Client BC</td>
+                    <td  class="headRow">Final Client C</td>
+                    <td  class="headRow">Final Client GF</td>
+                    <td  class="headRow">Final Client PS</td>
+                    <td  class="headRow">Final Client R</td>
+                    <td  class="headRow">Initial CG  (Caregiver) DOA</td>
+                    <td  class="headRow">Initiial CG AI</td>
+                    <td  class="headRow">Initial CG AR</td>
+                    <td  class="headRow">Initial CG BC</td>
+                    <td  class="headRow">Initial CG C</td>
+                    <td  class="headRow">Initial CG GF</td>
+                    <td  class="headRow">Initial CG PS</td>
+                    <td  class="headRow">Initial CG R</td>
+                    <td  class="headRow">3 Month CG DOA</td>
+                    <td  class="headRow">3 Month CG AI</td>
+                    <td  class="headRow">3 Month CG AR</td>
+                    <td  class="headRow">3 Month CG BC</td>
+                    <td  class="headRow">3 Month CG C</td>
+                    <td  class="headRow">3 Month CG GF</td>
+                    <td  class="headRow">3 Month CG PS</td>
+                    <td  class="headRow">3 Month CG R</td>
+                    <td  class="headRow">Final CG DOA</td>
+                    <td  class="headRow">Final CG AI</td>
+                    <td  class="headRow">Final CG AR</td>
+                    <td  class="headRow">Final CG BC</td>
+                    <td  class="headRow">Final CG C</td>
+                    <td  class="headRow">Final CG GF</td>
+                    <td  class="headRow">Final CG PS</td>
+                    <td  class="headRow">Final CG R</td>
+                    <td  class="headRow">Initial CG Name</td>
+                    <td  class="headRow">3 Month CG Name</td>
+                    <td  class="headRow">Final CG Name</td>
+                    <td  class="headRow">PBS Could Not Complete Initial</td>
+                    <td  class="headRow">PBS Could Not Complete 3 Month</td>
+                    <td  class="headRow">PBS Could Not Complete Final</td>
+                    <td  class="headRow">CG Could Not Complete Initial</td>
+                    <td  class="headRow">CG Could Not Complete 3 Month</td>
+                    <td  class="headRow">CG Could Not Complete Final</td> 
+                </tr>
+            </thead>
+
+            <apex:repeat value="{!RepeatList}" var="item">
+            <apex:variable value="{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Service_Assignment__r.person_being_served__c}" var="CG"/>
+            <apex:variable value="{!mapRelParty[CG].Name}" var="CGname"/>
+                <tr >
+                    <td style="width: 120px;"  class="dataRow">{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Service_Assignment__r.person_being_served__r.LastName }</td>
+                    <td  class="dataRow">{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Service_Assignment__r.person_being_served__r.FirstName}</td>
+                    <td  class="dataRow">
+                        <apex:outputPanel rendered="{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Service_Assignment__r.person_being_served__r.Birthdate != null}">
+                            <apex:outputField value="{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Service_Assignment__r.person_being_served__r.Birthdate}" />
+                        </apex:outputPanel>
+                    </td>
+                    <td  class="dataRow">
+                        <apex:outputPanel rendered="{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Service_Assignment__r.Phase_1_Start_Date__c != null}">
+                            <apex:outputField value="{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Service_Assignment__r.Phase_1_Start_Date__c}" />
+                        </apex:outputPanel>
+                    </td>
+                    <td  class="dataRow">{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Service_Assignment__r.Program_Detail__c}</td>                    
+                    <td  class="dataRow"></td>
+                    <td  class="dataRow"></td>
+                    <td  class="dataRow"></td>
+                    <td  class="dataRow">
+                        <apex:outputLink rendered="{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Assessment_Date__c != null}"
+                         value="/{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__c}">
+                            <apex:outputField value="{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Assessment_Date__c} " 
+                                /> 
+                        </apex:outputLink>    
+                    </td>
+                    <td  class="dataRow">{!mapResults['InitialPBS_Affective_Involvement'+item].Score__c}</td>
+                    <td  class="dataRow">{!mapResults['InitialPBS_Affective_Responses'+item].Score__c}</td>
+                    <td  class="dataRow">{!mapResults['InitialPBS_Behavior_Control'+item].Score__c}</td>
+                    <td  class="dataRow">{!mapResults['InitialPBS_Communication'+item].Score__c}</td>
+                    <td  class="dataRow">{!mapResults['InitialPBS_General_Functioning'+item].Score__c}</td>
+                    <td  class="dataRow">{!mapResults['InitialPBS_Problem_Solving'+item].Score__c}</td>
+                    <td  class="dataRow">{!mapResults['InitialPBS_Roles'+item].Score__c}</td>
+                     <td  class="dataRow">
+                         <apex:outputLink rendered="{!mapResults['3 MonthPBS_Could_Not_complete'+item].assessment__r.Assessment_Date__c !=null}" 
+                          value="/{!mapResults['3 MonthPBS_Could_Not_complete'+item].assessment__c}">
+                             <apex:outputField value="{!mapResults['3 MonthPBS_Could_Not_complete'+item].assessment__r.Assessment_Date__c} " />
+                         </apex:outputLink> 
+                     </td>
+                     <td  class="dataRow">{!mapResults['3 MonthPBS_Affective_Involvement'+item].Score__c}</td>
+                     <td  class="dataRow">{!mapResults['3 MonthPBS_Affective_Responses'+item].Score__c}</td>
+                     <td  class="dataRow">{!mapResults['3 MonthPBS_Behavior_Control'+item].Score__c}</td>
+                     <td  class="dataRow">{!mapResults['3 MonthPBS_Communication'+item].Score__c}</td>
+                     <td  class="dataRow">{!mapResults['3 MonthPBS_General_Functioning'+item].Score__c}</td>
+                     <td  class="dataRow">{!mapResults['3 MonthPBS_Problem_Solving'+item].Score__c}</td>
+                     <td  class="dataRow">{!mapResults['3 MonthPBS_Roles'+item].Score__c}</td>
+                    <td  class="dataRow">
+                        <apex:outputLink rendered="{!mapResults['FinalPBS_Could_Not_complete'+item].assessment__r.Assessment_Date__c != null}"
+                         value="/{!mapResults['FinalPBS_Could_Not_complete'+item].assessment__c}">
+                            <apex:outputField value="{!mapResults['FinalPBS_Could_Not_complete'+item].assessment__r.Assessment_Date__c} "/>
+                        </apex:outputLink> 
+                    </td>
+                        
+                    <td  class="dataRow">{!mapResults['FinalPBS_Affective_Involvement'+item].Score__c}</td>
+                    <td  class="dataRow">{!mapResults['FinalPBS_Affective_Responses'+item].Score__c}</td>
+                    <td  class="dataRow">{!mapResults['FinalPBS_Behavior_Control'+item].Score__c}</td>
+                    <td  class="dataRow">{!mapResults['FinalPBS_Communication'+item].Score__c}</td>
+                    <td  class="dataRow">{!mapResults['FinalPBS_General_Functioning'+item].Score__c}</td>
+                    <td  class="dataRow">{!mapResults['FinalPBS_Problem_Solving'+item].Score__c}</td>
+                    <td  class="dataRow">{!mapResults['FinalPBS_Roles'+item].Score__c}</td>
+                    
+                    <td  class="dataRow">
+                        <apex:outputLink rendered="{!mapResults['InitialCG_Could_Not_complete'+item].assessment__r.Assessment_Date__c != null}"
+                             value="/{!mapResults['InitialCG_Could_Not_complete'+item].assessment__c}">
+                                <apex:outputField value="{!mapResults['InitialCG_Could_Not_complete'+item].assessment__r.Assessment_Date__c} " 
+                                /> 
+                        </apex:outputLink> 
+                    </td>
+                    <td  class="dataRow">{!mapResults['InitialCG_Affective_Involvement'+item].Score__c}</td>
+                    <td  class="dataRow">{!mapResults['InitialCG_Affective_Responses'+item].Score__c}</td>
+                    <td  class="dataRow">{!mapResults['InitialCG_Behavior_Control'+item].Score__c}</td>
+                    <td  class="dataRow">{!mapResults['InitialCG_Communication'+item].Score__c}</td>
+                    <td  class="dataRow">{!mapResults['InitialCG_General_Functioning'+item].Score__c}</td>
+                    <td  class="dataRow">{!mapResults['InitialCG_Problem_Solving'+item].Score__c}</td>
+                    <td  class="dataRow">{!mapResults['InitialCG_Roles'+item].Score__c}</td>
+                     <td  class="dataRow">
+                         <apex:outputLink rendered="{!mapResults['3 MonthCG_Could_Not_complete'+item].assessment__r.Assessment_Date__c !=null}" 
+                          value="/{!mapResults['3 MonthCG_Could_Not_complete'+item].assessment__c}">
+                             <apex:outputField value="{!mapResults['3 MonthCG_Could_Not_complete'+item].assessment__r.Assessment_Date__c} " />
+                         </apex:outputLink>                      
+                     </td>
+                     <td  class="dataRow">{!mapResults['3 MonthCG_Affective_Involvement'+item].Score__c}</td>
+                     <td  class="dataRow">{!mapResults['3 MonthCG_Affective_Responses'+item].Score__c}</td>
+                     <td  class="dataRow">{!mapResults['3 MonthCG_Behavior_Control'+item].Score__c}</td>
+                     <td  class="dataRow">{!mapResults['3 MonthCG_Communication'+item].Score__c}</td>
+                     <td  class="dataRow">{!mapResults['3 MonthCG_General_Functioning'+item].Score__c}</td>
+                     <td  class="dataRow">{!mapResults['3 MonthCG_Problem_Solving'+item].Score__c}</td>
+                     <td  class="dataRow">{!mapResults['3 MonthCG_Roles'+item].Score__c}</td>
+                    <td  class="dataRow">
+                        <apex:outputLink rendered="{!mapResults['FinalCG_Could_Not_complete'+item].assessment__r.Assessment_Date__c != null}"
+                         value="/{!mapResults['FinalCG_Could_Not_complete'+item].assessment__c}">
+                            <apex:outputField value="{!mapResults['FinalCG_Could_Not_complete'+item].assessment__r.Assessment_Date__c} "/>
+                        </apex:outputLink>                     
+                    </td>
+                    <td  class="dataRow">{!mapResults['FinalCG_Affective_Involvement'+item].Score__c}</td>
+                    <td  class="dataRow">{!mapResults['FinalCG_Affective_Responses'+item].Score__c}</td>
+                    <td  class="dataRow">{!mapResults['FinalCG_Behavior_Control'+item].Score__c}</td>
+                    <td  class="dataRow">{!mapResults['FinalCG_Communication'+item].Score__c}</td>
+                    <td  class="dataRow">{!mapResults['FinalCG_General_Functioning'+item].Score__c}</td>
+                    <td  class="dataRow">{!mapResults['FinalCG_Problem_Solving'+item].Score__c}</td>
+                    <td  class="dataRow">{!mapResults['FinalCG_Roles'+item].Score__c}</td>
+                    
+                    <td  class="dataRow">{!CGname}</td>
+                    <td  class="dataRow">{!CGname}</td>
+                    <td  class="dataRow">{!CGname}</td>
+                    
+                    <td  class="dataRow">
+                        {!if(mapResults['InitialPBS_Could_Not_complete'+item].Yes_No__c,'Yes - ', 'No')}
+                        
+                        <apex:outputPanel >
+                            {!mapResults['InitialPBS_Could_Not_complete_reason'+item].Rating__c}
+                        </apex:outputPanel>
+                    </td>
+                    <td  class="dataRow">
+                        {!if(mapResults['3 MonthPBS_Could_Not_complete'+item].Yes_No__c,'Yes - ', 'No')}
+                        <apex:outputPanel >
+                            {!mapResults['3 MonthPBS_Could_Not_complete_reason'+item].Rating__c}
+                        </apex:outputPanel>                    
+                    </td>
+                    <td  class="dataRow">
+                        {!if(mapResults['FinalPBS_Could_Not_complete'+item].Yes_No__c,'Yes - ', 'No')}
+                        <apex:outputPanel >
+                            {!mapResults['FinalPBS_Could_Not_complete_reason'+item].Rating__c}
+                        </apex:outputPanel>                    
+                    </td>
+                    
+                    <td  class="dataRow">
+                        {!if(mapResults['InitialCG_Could_Not_complete'+item].Yes_No__c,'Yes - ', 'No')}
+                        <apex:outputPanel >
+                            {!mapResults['InitialCG_Could_Not_complete_reason'+item].Rating__c}
+                        </apex:outputPanel>
+                    </td>
+                    <td  class="dataRow">
+                        {!if(mapResults['3 MonthCG_Could_Not_complete'+item].Yes_No__c,'Yes - ', 'No')}
+                        <apex:outputPanel >
+                            {!mapResults['3 MonthCG_Could_Not_complete_reason'+item].Rating__c}
+                        </apex:outputPanel>                    
+                    </td>
+                    <td  class="dataRow">
+                        {!if(mapResults['FinalCG_Could_Not_complete'+item].Yes_No__c,'Yes - ', 'No')}
+                        <apex:outputPanel >
+                            {!mapResults['FinalCG_Could_Not_complete_reason'+item].Rating__c}
+                        </apex:outputPanel>                    
+                    </td>
+                </tr>
+            </apex:repeat>
+
+
+</table>
+
+
+
+
+    </apex:pageBlock> 
+
+
+
+
+
+
+
+
+
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <div  class="thinking">
+            <div class="thinkingwheel">    
+                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+            </div>
+        </div>   
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus> 
+<script>
+j$ = jQuery.noConflict();
+function createtbl(){
+    j$('#mytbl').dataTable({"bPaginate": false, "bFilter": false});
+}
+j$(document).ready(function(){
+    createtbl();
+});
+var tableToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+  return function(table, name) {
+    if (!table.nodeType) table = document.getElementById(table)
+    var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+    window.location.href = uri + base64(format(template, ctx))
+  }
+})()
+</script>
+</apex:outputPanel> 
+</apex:page>
