@@ -22,6 +22,7 @@ public with sharing class Assessment_FADResearchSummaryRpt_cnt {
                         assessment__r.Assessment_Date__c,
                         assessment__r.Service_Assignment__r.Phase_1_Start_Date__c,
                         assessment__r.Service_Assignment__r.person_being_served__r.Birthdate,
+                        assessment__r.Service_Assignment__r.person_being_served__r.owner.name,
                         assessment__r.Service_Assignment__r.person_being_served__r.LastName,
                         assessment__r.Service_Assignment__r.person_being_served__r.FirstName,
                         Rating__c, Score__c, Yes_No__c, assessment_response__c.assessment__r.Phase__c, 
