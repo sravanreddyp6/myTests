@@ -72,7 +72,7 @@ global class Assessment_FAD_Notifications implements Database.Batchable<sObject>
                 mail.setHtmlBody('Hello ' +
                 theSA.Person_Being_Served__r.Owner.Name + ','+ 
                 '<br/>A FAD Assessment Summary is due for ' + 
-                theSA.Person_Being_Served__r.FirstName + ' ' + theSA.Person_Being_Served__r.LastName + '.<br/>' +
+                theSA.Person_Being_Served__r.FirstName + ' ' + theSA.Person_Being_Served__r.LastName.substring(0,1) + '.<br/>' +
                 'Please click on the link below to access the Person Being Served\'s record. <br/>' +
                  '<a href="'+ 
                  System.Url.getSalesforceBaseUrl().toExternalForm()+ 
@@ -99,7 +99,7 @@ global class Assessment_FAD_Notifications implements Database.Batchable<sObject>
         
         
         
-        //30 day
+        //3 month
         d1 = system.today().addDays(-80);
         SAs = [select Id, Phase_1_Start_Date__c, Person_Being_Served__r.FirstName, 
                     Person_Being_Served__r.OwnerId, Person_Being_Served__r.Owner.Name , Person_Being_Served__r.LastName
@@ -144,7 +144,7 @@ global class Assessment_FAD_Notifications implements Database.Batchable<sObject>
                 mail.setHtmlBody('Hello ' +
                 theSA.Person_Being_Served__r.Owner.Name + ','+ 
                 '<br/>A FAD Assessment Summary is due for ' + 
-                theSA.Person_Being_Served__r.FirstName + ' ' + theSA.Person_Being_Served__r.LastName + '. <br/>' +
+                theSA.Person_Being_Served__r.FirstName + ' ' + theSA.Person_Being_Served__r.LastName.substring(0,1) + '. <br/>' +
                 'Please click on the link below to access the Person Being Served\'s record. <br/>' +
                  '<a href="'+ 
                  System.Url.getSalesforceBaseUrl().toExternalForm()+ 
@@ -166,7 +166,76 @@ global class Assessment_FAD_Notifications implements Database.Batchable<sObject>
                 
                 Messaging.sendEmail(regularNoticeEmails); 
             }  
-        }           
+        }  
+        
+        
+        d1 = system.today().addDays(-160);
+        SAs = [select Id, Phase_1_Start_Date__c, Person_Being_Served__r.FirstName, 
+                    Person_Being_Served__r.OwnerId, Person_Being_Served__r.Owner.Name , Person_Being_Served__r.LastName
+                        from Service_Assignment__c 
+                        Where ID in :saids 
+                         AND 
+                        Phase_1_Start_Date__c = :d1 ];
+        assess = [select id, Service_Assignment__c, Phase__c From Assessment__c Where Service_Assignment__c IN :SAs AND Disregard__c = false];
+        //Initial Check
+        for(Service_Assignment__c theSA: SAs){
+            boolean addMail = true;
+            for(Assessment__c a: assess){
+                IF(a.Service_Assignment__c == theSA.id && a.Phase__c == 'Final'){
+                    addMail = false;
+                }
+            
+            }
+            
+            if(addMail){
+                Messaging.reserveSingleEmailCapacity(1);
+                Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+                
+                // Set receiver of email to a User Id for a Salesforce user; the owner of the assessment for
+                // which we are sending a notification.  
+                //
+                mail.setTargetObjectId(theSA.Person_Being_Served__r.OwnerId);
+                
+                // Specify the address used when the recipients reply to the email.                 
+                mail.setReplyTo('notifications@thementornetwork.com');
+                
+                
+                // Specify the name used as the display name.      
+                mail.setSenderDisplayName('MENTOR Assessment Notification');
+                       
+                // Set to True if you want to BCC yourself on the email.    
+                mail.setBccSender(false);
+                        
+                // Optionally append the salesforce.com email signature to the email. 
+                // The email address of the user executing the Apex Code will be used.             
+                mail.setUseSignature(false);      
+                mail.setSubject('A Final FAD Assessment may be due');
+                mail.setHtmlBody('Hello ' +
+                theSA.Person_Being_Served__r.Owner.Name + ','+ 
+                '<br/>A Final FAD Assessment Summary may be due for  ' + 
+                theSA.Person_Being_Served__r.FirstName + ' ' + theSA.Person_Being_Served__r.LastName.substring(0,1) + ' if discharge is planned soon. <br/>' +
+                'Please click on the link below to access the Person Being Served\'s record. <br/>' +
+                 '<a href="'+ 
+                 System.Url.getSalesforceBaseUrl().toExternalForm()+ 
+                 '/' +
+                 theSA.id + '">Click Here</a>'
+                 
+                 );
+                
+                
+                mail.setSaveAsActivity(false);
+                
+                // Send the email you have created.
+                // PLEASE NOTE:  It is IMPORTANT that we use this method of making one call to regularNoticeEmails.add()
+                // because there is a limit on the number of email calls that can be made per execution of the batch.
+                // I believe that limit is 10 calls.  Calling the method ONCE for a list of single emails only counts
+                // as one call, but gets multiple messages sent.
+                List<Messaging.SingleEmailMessage> regularNoticeEmails = new List<Messaging.SingleEmailMessage>();
+                regularNoticeEmails.add(mail); 
+                
+                Messaging.sendEmail(regularNoticeEmails); 
+            }  
+        }                        
         
   }
   
