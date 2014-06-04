@@ -623,10 +623,10 @@ public with sharing class NursingEvaluationEditController {
 		pros += ps+';';
 			if(pros!=''){
 				pros = pros.Substring(0,pros.length()-1);
-				this.evaluation.Prosthetics__c = pros;
+				this.evaluation.Prosthetic_Types__c = pros;
 			}
 			else
-			this.evaluation.Prosthetics__c ='';
+			this.evaluation.Prosthetic_Types__c='';
 			
 // For Orthodics Types Multi-picklist
 		string orth='';

@@ -654,19 +654,21 @@
                         <apex:pageBlockSectionitem />
                         <apex:inputField value="{!Evaluation__c.Perception_of_Need_to_Void__c}" />
                         <apex:pageBlockSectionItem />
-                        <apex:outputText value="Urinary Issues" style="margin-left: 120px;" styleclass="labelCol" />
-                        <apex:pageBlockSectionItem />
-                        <apex:selectCheckboxes value="{!selectedIssues}"  layout="pageDirection" style="margin-left: 200px;" >
+                        <apex:pageBlockSectionItem >
+                        <apex:outputText value="Urinary Issues"  styleclass="labelCol" />
+                        <apex:selectCheckboxes value="{!selectedIssues}"  layout="pageDirection" >
                          		<apex:selectOptions value="{!urinaryIssues}" />
                          </apex:selectCheckboxes>
+                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Urine_Color__c}" />
                         <apex:pageBlockSectionItem />
-                        <apex:outputText value="Urine Clarity" styleClass="labelCol" style="margin-left: 125px;" />
-                        <apex:pageBlockSectionItem />
-                        <apex:selectCheckboxes value="{!selectedClarities}" style="margin-left: 120px;">
+                        <apex:pageBlockSectionItem >
+                        <apex:outputText value="Urine Clarity" styleClass="labelCol" />
+                        <apex:selectCheckboxes value="{!selectedClarities}" layout="pageDirection" >
                         		<apex:selectOptions value="{!urineClarities}" />
                         </apex:selectCheckboxes>
+                        </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem />
                         <apex:pageBlockSectionItem helpText="{!$ObjectType.Evaluation__c.Fields.Urine_Clarity_Other__c.inlineHelpText}">
                         <apex:outputLabel for="urineClarityOther" value="if Other" />
@@ -702,14 +704,8 @@
                      </apex:pageBlockSection> 
                     <hr />
                     <apex:pageBlockSection columns="2">
-                        <apex:pageBlockSectionItem >
-                            <apex:outputText value="Nutrition" />
-                            <apex:outputText value="" />
-                        </apex:pageBlockSectionItem>
-                        <apex:pageBlockSectionItem >
-                            <apex:outputText value="Tube Feed" />
-                            <apex:outputText value="" />
-                        </apex:pageBlockSectionItem>
+                        <apex:outputText value="Nutrition" styleClass="labelCol" style="margin-left: 3cm;"/>
+                        <apex:outputText value="Tube Feed" styleClass="labelCol" style="margin-left: 3cm;" />
                         <apex:inputField value="{!Evaluation__c.Nutrition_Route__c}" label="Feeding Type"/>
                         <apex:inputField value="{!Evaluation__c.Tube_Feed_Formula__c}" label="Formula" />
                         <apex:pageBlockSectionItem />
@@ -725,68 +721,48 @@
                     </apex:pageBlockSection>
                     <hr /> 
                     <apex:pageBlockSection columns="2">
-                    	<apex:pageBlockSectionItem >
-                            <apex:outputText value="Teeth - UR Quadrant" />
-                            <apex:outputText value="" />
-                        </apex:pageBlockSectionItem>
-                    	<apex:pageBlockSectionItem >
-                            <apex:outputText value="Teeth - LR Quadrant" />
-                            <apex:outputText value="" />
-                        </apex:pageBlockSectionItem>
+                        <apex:outputText value="Teeth - UR Quadrant" styleClass="labelCol" style="margin-left: 2cm;"/>
+                        <apex:outputText value="Teeth - LR Quadrant" styleClass="labelCol" style="margin-left: 2cm;" />
                     	<apex:inputField value="{!Evaluation__c.UR_of_Teeth_Present__c}" />
                     	<apex:inputField value="{!Evaluation__c.LR_of_Teeth_Present__c}" />
                     	<apex:inputField value="{!Evaluation__c.UR_Teeth_Condition__c}" />
                     	<apex:inputField value="{!Evaluation__c.LR_Teeth_Condition__c}" />
                     	<apex:pageBlockSectionItem />
                     	<apex:pageBlockSectionItem />
-                    	<apex:pageBlockSectionItem >
-                            <apex:outputText value="Teeth - UL Quadrant" />
-                            <apex:outputText value="" />
-                        </apex:pageBlockSectionItem>
-
-                    	<apex:pageBlockSectionItem >
-                            <apex:outputText value="Teeth - LL Quadrant" />
-                            <apex:outputText value="" />
-                        </apex:pageBlockSectionItem>
+                    	<apex:outputText value="Teeth - UL Quadrant" styleClass="labelCol" style="margin-left: 2cm;"/>
+                        <apex:outputText value="Teeth - LL Quadrant" styleClass="labelCol" style="margin-left: 2cm;" />
                     	<apex:inputField value="{!Evaluation__c.UL_of_Teeth_Present__c}" />
                    	    <apex:inputField value="{!Evaluation__c.LL_of_Teeth_Present__c}" />
                     	<apex:inputField value="{!Evaluation__c.UL_Teeth_Condition__c}" />
                     	<apex:inputField value="{!Evaluation__c.LL_Teeth_Condition__c}" />
                     	<apex:pageBlockSectionItem />
                     	<apex:pageBlockSectionItem />
-                    	
                     	<apex:pageBlockSectionItem >
-                            <apex:outputText value="Tongue" />
-                            <apex:outputText value="" />
+                    		<apex:outputText value="Tongue" styleClass="labelCol" />
+                        	<apex:selectCheckboxes value="{!selectedTongues}" layout="pageDirection" >
+                        		<apex:selectOptions value="{!tongueValues}"/>
+                        	</apex:selectCheckboxes>
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem >
-                            <apex:outputText value="Gums" />
-                            <apex:outputText value="" />
+                        	<apex:outputText value="Gums" styleClass="labelCol" />
+                        	<apex:selectCheckboxes value="{!selectedGums}" layout="pageDirection">
+                        		<apex:selectOptions value="{!gumValues}"/>
+                        	</apex:selectCheckboxes>
                         </apex:pageBlockSectionItem>
-                        <apex:selectCheckboxes value="{!selectedTongues}" style="margin-left: 50px;"  >
-                        	<apex:selectOptions value="{!tongueValues}"/>
-                        </apex:selectCheckboxes>
-                        <apex:selectCheckboxes value="{!selectedGums}" style="margin-left: 50px;"  >
-                        	<apex:selectOptions value="{!gumValues}"/>
-                        </apex:selectCheckboxes>
                         <apex:inputField value="{!Evaluation__c.Tongue_Sores_Describe__c}" label="If Sores, Describe" id="tongueSores" />
                         <apex:inputField value="{!Evaluation__c.Gums_Sores_Describe__c}" label="If Sores, Describe" id="gumsSores" />
-                        
-                        
                         <apex:pageBlockSectionItem >
-                            <apex:outputText value="Cheeks" />
-                            <apex:outputText value="" />
+                        	<apex:outputText value="Cheeks" styleCLass="labelCol"/>
+                        	<apex:selectCheckboxes value="{!selectedCheeks}" layout="pageDirection" >
+                        		<apex:selectOptions value="{!cheekValues}"/>
+                        	</apex:selectCheckboxes>
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem >
-                            <apex:outputText value="Lips" />
-                            <apex:outputText value="" />
-                        </apex:pageBlockSectionItem>
-                        <apex:selectCheckboxes value="{!selectedCheeks}" style="margin-left: 50px;"  >
-                        	<apex:selectOptions value="{!cheekValues}"/>
-                        </apex:selectCheckboxes>
-                        <apex:selectCheckboxes value="{!selectedLips}" style="margin-left: 50px;"  >
+                        <apex:outputText value="Lips" styleClass="labelCol" />
+                        <apex:selectCheckboxes value="{!selectedLips}" layout="pageDirection" >
                         	<apex:selectOptions value="{!lipValues}"/>
                         </apex:selectCheckboxes>
+                        </apex:pageBlockSectionItem>
                         <apex:inputField value="{!Evaluation__c.Cheeks_Sores_Describe__c}" label="If Sores, Describe" id="cheekSores" />
                         <apex:inputField value="{!Evaluation__c.Lips_Sores_Describe__c}" label="If Sores, Describe" id="lipSores" />
                         <apex:pageBlockSectionItem />
@@ -794,25 +770,25 @@
                         <apex:inputField Value="{!Evaluation__c.Breath__c}" />
                         <apex:inputField value="{!Evaluation__c.Dentures__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.usageDetails}&quot;}" />
                         <apex:pageBlockSectionItem >
-                            <apex:outputText value="Saliva" />
-                            <apex:outputText value="" />
+                        	<apex:outputText value="Saliva" styleClass="labelCol" />
+                        	<apex:selectCheckboxes value="{!selectedSaliva}" layout="pageDirection" >
+                        		<apex:selectOptions value="{!salivaValues}"/>
+                        	</apex:selectCheckboxes>
                         </apex:pageBlockSectionItem>
-                        <apex:outputText value="If Yes, Dentures Type" styleClass="labelCol" style="margin-left: 170px;"/>
-                        <apex:selectCheckboxes value="{!selectedSaliva}" style="margin-left: 50px;"  >
-                        	<apex:selectOptions value="{!salivaValues}"/>
-                        </apex:selectCheckboxes>
-                        <apex:selectCheckboxes value="{!selectedDentures}" style="margin-left: 165px;" >
-                        	<apex:selectOptions value="{!dentureValues}"/>
-                        </apex:selectCheckboxes>
+                        <apex:pageBlockSectionItem >
+                        	<apex:outputText value="if Yes, Denture Type" styleClass="labelCol" />
+                        	<apex:selectCheckboxes value="{!selectedDentures}" layout="pageDirection" >
+                        		<apex:selectOptions value="{!dentureValues}"/>
+                        	</apex:selectCheckboxes>
+                        </apex:pageBlockSectionItem>
                      	<apex:inputField value="{!Evaluation__c.Jaw_Wires__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.wireCutters}&quot;}" />
                      	<apex:inputField value="{!Evaluation__c.Dentures_Usage_Details__c}" label="Usage Details" id="usageDetails" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.usageOther}&quot;}"/>
                      	<apex:inputField value="{!Evaluation__c.Wire_Cutters_at_Bedside__c}" id="wireCutters" />
                      	<apex:inputField value="{!Evaluation__c.Denture_Usage_Other__c}" label="if Other, Describe" id="usageOther" />
                      	<apex:inputField value="{!Evaluation__c.Other_Dental_Appliance__c}" />
-                     	 <apex:pageBlockSectionItem >
-                            <apex:outputText value="PEDS" />
-                            <apex:outputText value="" />
-                        </apex:pageBlockSectionItem>
+                     	<apex:pageBlockSectionItem />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputText value="PEDS" styleClass="labelCol" style="margin-left: 2cm;"/>
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.PEDS_Teething__c}" label="Teething"/>
                         <apex:pageBlockSectionItem />
@@ -826,18 +802,15 @@
                    	</apex:pageBlockSection>
                    	<hr />
                    	<apex:pageBlockSection Columns="2">
+                   		<apex:outputText value="Bowel Sounds" styleClass="labelCol" style="margin-left: 2cm;" />
                    		<apex:pageBlockSectionItem >
-                            <apex:outputText value="Bowel Sounds" />
-                            <apex:outputText value="" />
-                        </apex:pageBlockSectionItem>
-                   		<apex:pageBlockSectionItem >
-                            <apex:outputText value="Abdomen" />
-                            <apex:outputText value="" />
+                   			<apex:outputText value="Abdomen" styleClass="labelCol" />
+                   		 	<apex:selectCheckboxes value="{!selectedAbdomen}"  >
+                        		<apex:selectOptions value="{!AbdomenValues}"/>
+                        	</apex:selectCheckboxes>
                         </apex:pageBlockSectionItem>
                    		<apex:inputField value="{!Evaluation__c.RUQ__c}" html-data-rules="{&quot;Abnormal&quot;: &quot;{!$Component.ruqDescribe}&quot;}" />
-                   		 <apex:selectCheckboxes value="{!selectedAbdomen}" style="margin-left: 150px;"  >
-                        	<apex:selectOptions value="{!AbdomenValues}"/>
-                        </apex:selectCheckboxes>
+                   		<apex:pageBlockSectionItem />
                    		<apex:inputField value="{!Evaluation__c.RUQ_Describe__c}" label="if Abnormal, Describe" id="ruqDescribe" />
                    		<apex:pageBlockSectionItem />
                    		<apex:inputField value="{!Evaluation__c.LUQ__c}" html-data-rules="{&quot;Abnormal&quot;: &quot;{!$Component.luqDescribe}&quot;}" />

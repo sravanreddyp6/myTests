@@ -77,19 +77,43 @@ public with sharing class NursingEvaluationViewController {
             }
             return sliderOptions;
         }
+    }  
+    public Evaluation_Response__c[] annotations { set;
+        get {
+            return [
+                SELECT ID, Annotation_Height__c, Annotation_Width__c,
+                       Annotation_X__c, Annotation_Y__c, Annotation_Source__c,
+                       Annotation_Shape__c, Annotation_Text__c
+                FROM Evaluation_Response__c WHERE Evaluation__c=:evaluation.Id
+                 AND RecordType.Name='Annotation'
+            ];
+        }
     }
     
-    public List<Attachment> Attachments{
+     public String bodyMapUrl { get {
+        Attachment[] attachments = [
+            SELECT Id FROM Attachment
+            WHERE ParentId=:evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__c
+              AND Name='BodyMarkup.png'
+        ];
+        if (attachments.size() > 0) {
+            return '/servlet/servlet.FileDownload?file=' + attachments[0].Id;
+        }
+        return null;
+    } }
+    
+    public String serializedAnnotations { get; set; }
+    
+    public List<Attachment> immuneAttachments{
         get{
             
-            if(Attachments==null){
-                Attachments= [select Id, ParentId, Name, Description from Attachment where parentId=:ApexPages.CurrentPage().getparameters().get('id')];
+            if(immuneAttachments==null){
+               immuneAttachments= [select Id, ParentId, Name, Description from Attachment where parentId=:ApexPages.CurrentPage().getparameters().get('id')];
             }
-            return Attachments;
+            return immuneAttachments;
         }
         set;
     }
-    
     
     public String baseUrl {
         get {
@@ -105,6 +129,8 @@ public with sharing class NursingEvaluationViewController {
         //putting all fields in context
         Map<String, Schema.Sobjectfield> fieldMap = Schema.SobjectType.Evaluation__c.fields.getMap();
         evaluation = (Evaluation__c) stdController.getRecord();
+        serializedAnnotations = JSON.serialize(annotations);
+        currentRelatedParty = new Related_Party__c();
         selectedTab = ApexPages.currentPage().getParameters().get('tab');
         
         breatheSounds = new List<SelectOption>();
