@@ -207,7 +207,7 @@
                         </apex:outputPanel>
                     </td>
                     <td  class="dataRow">{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Service_Assignment__r.Location_Region__c}</td>                    
-                    <td  class="dataRow"></td>
+                    <td  class="dataRow">{!mapResults['InitialPBS_Could_Not_complete'+item].assessment__r.Service_Assignment__r.person_being_served__r.owner.name}</td>
                     <td  class="dataRow"></td>
                     <td  class="dataRow"></td>
                     <td  class="dataRow">
@@ -307,42 +307,53 @@
                     </td>
                     
                     <td  class="dataRow">
-                        {!if(mapResults['InitialPBS_Could_Not_complete'+item].Yes_No__c,'Yes - ', '')}
-                        
-                        <apex:outputPanel >
-                            {!mapResults['InitialPBS_Could_Not_complete_reason'+item].Rating__c}
+                        <apex:outputPanel rendered="{!mapResults['InitialPBS_Could_Not_complete'+item].id != null}" >
+                            {!if(mapResults['InitialPBS_Could_Not_complete'+item].Yes_No__c,'Yes - ', 'No')}                        
+                            <apex:outputPanel >
+                                {!mapResults['InitialPBS_Could_Not_complete_reason'+item].Rating__c}
+                            </apex:outputPanel>
                         </apex:outputPanel>
                     </td>
                     <td  class="dataRow">
-                        {!if(mapResults['3 MonthPBS_Could_Not_complete'+item].Yes_No__c,'Yes - ', '')}
-                        <apex:outputPanel >
-                            {!mapResults['3 MonthPBS_Could_Not_complete_reason'+item].Rating__c}
-                        </apex:outputPanel>                    
+                        <apex:outputPanel rendered="{!mapResults['3 MonthPBS_Could_Not_complete'+item].id != null}" >
+                            {!if(mapResults['3 MonthPBS_Could_Not_complete'+item].Yes_No__c,'Yes - ', 'No')}
+                            <apex:outputPanel >
+                                {!mapResults['3 MonthPBS_Could_Not_complete_reason'+item].Rating__c}
+                            </apex:outputPanel> 
+                        </apex:outputPanel>                   
                     </td>
                     <td  class="dataRow">
-                        {!if(mapResults['FinalPBS_Could_Not_complete'+item].Yes_No__c,'Yes - ', '')}
-                        <apex:outputPanel >
-                            {!mapResults['FinalPBS_Could_Not_complete_reason'+item].Rating__c}
-                        </apex:outputPanel>                    
+                        <apex:outputPanel rendered="{!mapResults['FinalPBS_Could_Not_complete'+item].id != null}">
+                            {!if(mapResults['FinalPBS_Could_Not_complete'+item].Yes_No__c,'Yes - ', 'No')}
+                            <apex:outputPanel >
+                                {!mapResults['FinalPBS_Could_Not_complete_reason'+item].Rating__c}
+                            </apex:outputPanel>    
+                        </apex:outputPanel>                
                     </td>
                     
                     <td  class="dataRow">
-                        {!if(mapResults['InitialCG_Could_Not_complete'+item].Yes_No__c,'Yes - ', '')}
-                        <apex:outputPanel >
-                            {!mapResults['InitialCG_Could_Not_complete_reason'+item].Rating__c}
-                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!mapResults['InitialCG_Could_Not_complete'+item].id != null}">
+                            {!if(mapResults['InitialCG_Could_Not_complete'+item].Yes_No__c,'Yes - ', 'No')}
+                            <apex:outputPanel >
+                                {!mapResults['InitialCG_Could_Not_complete_reason'+item].Rating__c}
+                            </apex:outputPanel>
+                       </apex:outputPanel> 
                     </td>
                     <td  class="dataRow">
-                        {!if(mapResults['3 MonthCG_Could_Not_complete'+item].Yes_No__c,'Yes - ', '')}
-                        <apex:outputPanel >
-                            {!mapResults['3 MonthCG_Could_Not_complete_reason'+item].Rating__c}
-                        </apex:outputPanel>                    
+                        <apex:outputPanel rendered="{!mapResults['3 MonthCG_Could_Not_complete'+item].id != null}" >
+                            {!if(mapResults['3 MonthCG_Could_Not_complete'+item].Yes_No__c,'Yes - ', 'No')}
+                            <apex:outputPanel >
+                                {!mapResults['3 MonthCG_Could_Not_complete_reason'+item].Rating__c}
+                            </apex:outputPanel>  
+                        </apex:outputPanel>                  
                     </td>
                     <td  class="dataRow">
-                        {!if(mapResults['FinalCG_Could_Not_complete'+item].Yes_No__c,'Yes - ', '')}
-                        <apex:outputPanel >
-                            {!mapResults['FinalCG_Could_Not_complete_reason'+item].Rating__c}
-                        </apex:outputPanel>                    
+                        <apex:outputPanel rendered="{!mapResults['FinalCG_Could_Not_complete'+item].id != null}">
+                            {!if(mapResults['FinalCG_Could_Not_complete'+item].Yes_No__c,'Yes - ', 'No')}
+                            <apex:outputPanel >
+                                {!mapResults['FinalCG_Could_Not_complete_reason'+item].Rating__c}
+                            </apex:outputPanel> 
+                       </apex:outputPanel>                    
                     </td>
                 </tr>
             </apex:repeat>
