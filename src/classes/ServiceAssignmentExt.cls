@@ -1,60 +1,5 @@
 public class ServiceAssignmentExt {
-    public PageReference createFadAssess(){
-        list<Assessment__c> oldAssess = new list<Assessment__c>();
-        oldAssess = [select id from assessment__c where type__c ='FAD Summary' AND Service_Assignment__c = :theServAssign.id Order By CreatedDate Desc limit 1];
-    
-        Assessment__c assess = new Assessment__c ();
-        assess.type__c = 'FAD Summary';
-        assess.Admission__c = admission.id;
-        assess.Service_Assignment__c = theServAssign.Id;
-        assess.Status__c = 'Open';
-        if(referral != null && referral.referral_date__c != null){
-            assess.referral_date__c = referral.referral_date__c;
-        }
-        insert assess;
-        
-        if(oldAssess.size() > 0){
-            map<string, Assessment_Response__c> oldARs = new map<string, Assessment_Response__c>();        
-            set<string> QuestionsToCopy = new set<string>();
-                QuestionsToCopy.add('PC_Name');
-                QuestionsToCopy.add('PC_Address');
-                QuestionsToCopy.add('PC_Phone_1');
-                QuestionsToCopy.add('PC_Phone_2');
-                QuestionsToCopy.add('PC_Relationship_to_PBS');
-                QuestionsToCopy.add('PC_Phone_1_Type');
-                QuestionsToCopy.add('PC_Phone_2_Type');
-                QuestionsToCopy.add('SC_No_SC');
-                QuestionsToCopy.add('SC_Name');
-                QuestionsToCopy.add('SC_Address');
-                QuestionsToCopy.add('SC_Phone_1');
-                QuestionsToCopy.add('SC_Phone_2');
-                QuestionsToCopy.add('SC_Relationship_to_PBS');
-                QuestionsToCopy.add('SC_Email');
-                QuestionsToCopy.add('SC_Phone_1_Type');
-                QuestionsToCopy.add('SC_Phone_2_Type');
-                QuestionsToCopy.add('PC_Relationship_to_PBS_Other');
-                QuestionsToCopy.add('Caregiver_Who_Completed_Assessment');
-                QuestionsToCopy.add('SC_Relationship_to_PBS_Other');
-            for(Assessment_Response__c item :[select id, name, Question__r.dev_name__c, score__c, rating__c, yes_no__c, response__c from Assessment_Response__c where assessment__c = :oldAssess[0].id AND Question__r.Dev_Name__c in :QuestionsToCopy]){
-                oldARs.put(item.Question__r.dev_name__c,item);            
-            }
-            list<Assessment_Response__c> newRes= [select id, name, Question__r.dev_name__c, score__c, rating__c, yes_no__c, response__c from Assessment_Response__c where assessment__c = :assess.id AND Question__r.Dev_Name__c in :QuestionsToCopy];
-            for(Assessment_Response__c item: newRes){
-                item.score__c = oldARs.get(item.Question__r.dev_name__c).score__c;
-                item.rating__c = oldARs.get(item.Question__r.dev_name__c).rating__c;
-                item.yes_no__c = oldARs.get(item.Question__r.dev_name__c).yes_no__c;
-                item.response__c = oldARs.get(item.Question__r.dev_name__c).response__c ;
-            
-            }
-            system.debug('here');
-            update newRes;
-            
-        }
-        
-        PageReference ref =  new PageReference('/apex/Assessment_FAD_Form?id='+assess.id + '&edit=1&isnew=1');
-            
-        return ref;
-    }
+
     
     public Service_Assignment__c theServAssign { get; set; }
 
@@ -1295,7 +1240,76 @@ public void loadProgramList() {
         return new PageReference ('/apex/NursingEvaluationView?id='+nurseEval.id);
             
     }
-
+    
+    public PageReference createFadAssess(){
+        list<Assessment__c> oldAssess = new list<Assessment__c>();
+        oldAssess = [select id from assessment__c where type__c ='FAD Summary' AND Service_Assignment__c = :theServAssign.id Order By CreatedDate Desc limit 1];
+    
+        Assessment__c assess = new Assessment__c ();
+        assess.type__c = 'FAD Summary';
+        assess.Admission__c = admission.id;
+        assess.Service_Assignment__c = theServAssign.Id;
+        assess.Status__c = 'Open';
+        if(referral != null && referral.referral_date__c != null){
+            assess.referral_date__c = referral.referral_date__c;
+        }
+        insert assess;
+        
+        if(oldAssess.size() > 0){
+            map<string, Assessment_Response__c> oldARs = new map<string, Assessment_Response__c>();        
+            set<string> QuestionsToCopy = new set<string>();
+                QuestionsToCopy.add('PC_Name');
+                QuestionsToCopy.add('PC_Address');
+                QuestionsToCopy.add('PC_Phone_1');
+                QuestionsToCopy.add('PC_Phone_2');
+                QuestionsToCopy.add('PC_Relationship_to_PBS');
+                QuestionsToCopy.add('PC_Phone_1_Type');
+                QuestionsToCopy.add('PC_Phone_2_Type');
+                QuestionsToCopy.add('SC_No_SC');
+                QuestionsToCopy.add('SC_Name');
+                QuestionsToCopy.add('SC_Address');
+                QuestionsToCopy.add('SC_Phone_1');
+                QuestionsToCopy.add('SC_Phone_2');
+                QuestionsToCopy.add('SC_Relationship_to_PBS');
+                QuestionsToCopy.add('SC_Email');
+                QuestionsToCopy.add('SC_Phone_1_Type');
+                QuestionsToCopy.add('SC_Phone_2_Type');
+                QuestionsToCopy.add('PC_Relationship_to_PBS_Other');
+                QuestionsToCopy.add('Caregiver_Who_Completed_Assessment');
+                QuestionsToCopy.add('SC_Relationship_to_PBS_Other');
+            for(Assessment_Response__c item :[select id, name, Question__r.dev_name__c, score__c, rating__c, yes_no__c, response__c from Assessment_Response__c where assessment__c = :oldAssess[0].id AND Question__r.Dev_Name__c in :QuestionsToCopy]){
+                oldARs.put(item.Question__r.dev_name__c,item);            
+            }
+            list<Assessment_Response__c> newRes= [select id, name, Question__r.dev_name__c, score__c, rating__c, yes_no__c, response__c from Assessment_Response__c where assessment__c = :assess.id AND Question__r.Dev_Name__c in :QuestionsToCopy];
+            for(Assessment_Response__c item: newRes){
+                item.score__c = oldARs.get(item.Question__r.dev_name__c).score__c;
+                item.rating__c = oldARs.get(item.Question__r.dev_name__c).rating__c;
+                item.yes_no__c = oldARs.get(item.Question__r.dev_name__c).yes_no__c;
+                item.response__c = oldARs.get(item.Question__r.dev_name__c).response__c ;
+            
+            }
+            system.debug('here');
+            list<Related_Party__c> oldRPs = new list<Related_Party__c>();
+            oldRPS = [select name, Assessment__c, Age__c, Gender__c, Relationship_to_Person_Being_Served__c, Relationship_to_Person_Being_Served_Othe__c, Received_FCT_services_before__c from Related_Party__c where Assessment__c = :oldAssess[0].id];
+            list<Related_Party__c> newRPs = new list<Related_Party__c>();
+            
+            for(Related_Party__c item: oldRPs){
+                Related_Party__c tmp = new Related_Party__c();
+                tmp = item.clone();
+                tmp.Assessment__c = assess.id;
+                newRPs.add(tmp);           
+            
+            }
+            
+            update newRes;
+            insert newRPs;
+            
+        }
+        
+        PageReference ref =  new PageReference('/apex/Assessment_FAD_Form?id='+assess.id + '&edit=1&isnew=1');
+            
+        return ref;
+    }
 
     @RemoteAction
     public static Diagnosis__c loadDiagnosis(string diagnosisId) {
