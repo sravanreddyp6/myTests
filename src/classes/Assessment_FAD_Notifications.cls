@@ -209,11 +209,11 @@ global class Assessment_FAD_Notifications implements Database.Batchable<sObject>
                 // Optionally append the salesforce.com email signature to the email. 
                 // The email address of the user executing the Apex Code will be used.             
                 mail.setUseSignature(false);      
-                mail.setSubject('A Final FAD Assessment is due');
+                mail.setSubject('A Final FAD Assessment may be due');
                 mail.setHtmlBody('Hello ' +
                 theSA.Person_Being_Served__r.Owner.Name + ','+ 
-                '<br/>A FAD Assessment Summary is due for ' + 
-                theSA.Person_Being_Served__r.FirstName + ' ' + theSA.Person_Being_Served__r.LastName.substring(0,1) + '. <br/>' +
+                '<br/>A Final FAD Assessment Summary may be due for  ' + 
+                theSA.Person_Being_Served__r.FirstName + ' ' + theSA.Person_Being_Served__r.LastName.substring(0,1) + ' if discharge is planned soon. <br/>' +
                 'Please click on the link below to access the Person Being Served\'s record. <br/>' +
                  '<a href="'+ 
                  System.Url.getSalesforceBaseUrl().toExternalForm()+ 
