@@ -4,7 +4,7 @@
     <apex:attribute name="TreeString" assignTo="{!TreeStr}" required="true" type="string" description="the Json String of the tree"/> 
     <apex:attribute name="SelectedKeysString" assignTo="{!SelectedKeys}" type="string" description="a string for the selected keys to be stored"/> 
     <apex:attribute name="checkbox" type="boolean" default="true" description="Checkbox to select items from tree"/>
-    <apex:attribute name="selectActionSignature" type="string" description="The signature of the function to call on select of tree node"/>
+    <apex:attribute name="activateActionSignature" type="string" description="The signature of the function to call on select of tree node"/>
     <apex:attribute name="mode" type="string" default="3" description="mode of the tree"/>
     <apex:attribute name="debug" type="boolean" default="false" description="show extra divs to sees of selections"/>
     <apex:attribute name="ID_PageSideStorage" type="string" description="Id of the element the the tree will push selected keys to"/>
@@ -55,7 +55,7 @@
 //                data.node.toggleSelected();
 //            },
             activate: function(event, data) {
-                {!selectActionSignature}               
+                {!activateActionSignature}               
             },
             keydown: function(event, data) {
                 if( event.which === 32 ) {

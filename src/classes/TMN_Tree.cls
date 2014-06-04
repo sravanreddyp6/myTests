@@ -1,8 +1,8 @@
 public class TMN_Tree{
 //Declarations
 
-    String TEMPLATE_STR = '{0}title:"{1}", expanded:{2}, hideCheckbox:{3}, folder:{4}, activate:{5}, selected:{6}, unselectable:{7}, key: "{8}", OTHER: "{9}",{10}'; 
-                             // {'{', n.Title, n.isExpand, n.hideCheckbox, n.isFolder, n.isActivate, n.isSelected, n.isUnselectable, n.key, n.CatTreeNode.Catalog_Element__r.id, 'children: ['};
+    String TEMPLATE_STR = '{0}title:"{1}", expanded:{2}, hideCheckbox:{3}, folder:{4}, activate:{5}, selected:{6}, unselectable:{7}, key:"{8}", status:"{9}", {10}'; 
+                             // {'{', n.Title, n.isExpand, n.hideCheckbox, n.isFolder, n.isActivate, n.isSelected, n.isUnselectable, n.key, n.CatTreeNode.status, 'children: ['};
 
     public node root{get; set;}
     public string Fancy_Tree_JSon_String {get{return BuildJSonString(root.nodes);} set;}
@@ -28,6 +28,7 @@ public class TMN_Tree{
             public list<node> nodes {get; set;}
             public string key {get; set;}
             public string title {get; set;}
+            public string status {get; set;}
             
             //fancy tree settings            
             public boolean isSelected {get; set;}
@@ -51,6 +52,7 @@ public class TMN_Tree{
                 nodes = new list<node>();   
                 key = k;
                 title = t;
+                status = 'Active';
                 isunselectable = false;
                 isfolder = false;
                 isexpand = true;
@@ -158,15 +160,15 @@ public class TMN_Tree{
 //		                      
 //		            str += 'key: "';
 //		            str += n.key;
-//		            str += '", ';
-//		            
-//		            str += 'OTHER: "';
-//		            str += n.CatTreeNode.Catalog_Element__r.id;
-//		            str += '", ';            
+//		            str += '", ';           
+
+//                  str += 'status: "';
+//                  str += n.status;
+//                  str += '", ';
 		            
 //		            str += 'children: ['; 
 
-            arguments = new String[] {'{', n.Title, ToString(n.isExpand), ToString(n.hideCheckbox), ToString(n.isFolder), ToString(n.isActivate), ToString(n.isSelected), ToString(n.isUnselectable), n.key, n.CatTreeNode.Catalog_Element__r.id, 'children: ['};
+            arguments = new String[] {'{', n.Title, ToString(n.isExpand), ToString(n.hideCheckbox), ToString(n.isFolder), ToString(n.isActivate), ToString(n.isSelected), ToString(n.isUnselectable), n.key, n.CatTreeNode.Status__c, 'children: ['};
             str += String.format(TEMPLATE_STR, arguments);
             //get children 
             if(n.nodes.size() >0){

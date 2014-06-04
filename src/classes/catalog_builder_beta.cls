@@ -7,10 +7,12 @@ public with sharing class catalog_builder_beta {
     public TMN_Tree formTree {get; set;}
     
     public Clinical_Catalog_Element__c CurEley {get; set;}
+    public Clinical_Catalog_Tree_Node__c CurTreeNode {get; set;}
     //keys returned by the fancy tree comp are stored here
     public string selectedKeys{get; set;}
     //used on the edit link to pass the Catalog Elemnt ID
     public string eleyID {get; set;}
+    public string curTreeNodeKey {get; set;}    
     
     public Clinical_Catalog__c myCatalog {get; set;}
     
@@ -27,7 +29,14 @@ public with sharing class catalog_builder_beta {
     public pageReference upsertCatalog(){
         upsert myCatalog;
         return null;
-    }      
+    }  
+    
+    public pageReference editTreeNode(){
+    	eleyID = [select Catalog_Element__r.id from Clinical_Catalog_Tree_Node__c Where name =:curTreeNodeKey].Catalog_Element__r.id;
+    	editEley();
+    	return null;
+    }
+        
     public pageReference editEley(){
         curEley = [select name, id, Type__c, Description__c, status__c from Clinical_Catalog_Element__c Where id =:eleyID];
         refreshFormTree();
@@ -131,7 +140,7 @@ public pageReference upsertEley(){
 
 public list<Clinical_Catalog_Tree_Node__c > updateSelected(id eID){
     list<Clinical_Catalog_Tree_Node__c> tmpLst2 = new list<Clinical_Catalog_Tree_Node__c>();
-    tmpLst2 = [select id, name, ID_Goal__c, ID_Objective__c, ID_Action__c, Catalog_Element__r.name, Catalog_Element__r.type__c, Catalog_Element__r.description__c from Clinical_Catalog_Tree_Node__c Where Catalog_Element__r.id =:eid AND Catalog__c =:myCatalog.id Order By name ];
+    tmpLst2 = [select id, name, ID_Goal__c, ID_Objective__c, ID_Action__c, Catalog_Element__r.name, Catalog_Element__r.type__c, Catalog_Element__r.description__c, status__c from Clinical_Catalog_Tree_Node__c Where Catalog_Element__r.id =:eid AND Catalog__c =:myCatalog.id Order By name ];
     return tmpLst2;
 
 }
@@ -154,7 +163,7 @@ public list<Clinical_Catalog_Tree_Node__c > updateSelected(id eID){
             }
                 
         list<Clinical_Catalog_Tree_Node__c> tmpNodes = new list<Clinical_Catalog_Tree_Node__c>(); 
-        tmpNodes = [select id, name, ID_Goal__c, ID_Objective__c, ID_Action__c, Catalog_Element__r.name, Catalog_Element__r.type__c, Catalog_Element__r.description__c from Clinical_Catalog_Tree_Node__c Where Catalog_Element__r.type__c in :mytype AND Catalog__c =:myCatalog.id Order By ID_Goal__c , ID_Objective__c , ID_Action__c ];
+        tmpNodes = [select id, name, ID_Goal__c, ID_Objective__c, ID_Action__c, Catalog_Element__r.name, Catalog_Element__r.type__c, Catalog_Element__r.description__c, status__c from Clinical_Catalog_Tree_Node__c Where Catalog_Element__r.type__c in :mytype AND Catalog__c =:myCatalog.id Order By ID_Goal__c , ID_Objective__c , ID_Action__c ];
         
         
         string goalID ='';
@@ -208,7 +217,7 @@ public list<Clinical_Catalog_Tree_Node__c > updateSelected(id eID){
     public void refresh(){
         allGoals = new TMN_Tree();
   
-        nodes = [select id, name, Catalog_Element__c, Catalog_Element__r.name, Catalog_Element__r.type__c, Catalog_Element__r.description__c, ID_Goal__c, ID_Objective__c, ID_Action__c  from Clinical_Catalog_Tree_Node__c Where Catalog__r.id =:myCatalog.id Order By ID_Goal__c , ID_Objective__c , ID_Action__c ];
+        nodes = [select id, name, Catalog_Element__c, Catalog_Element__r.name, Catalog_Element__r.type__c, Catalog_Element__r.description__c, ID_Goal__c, ID_Objective__c, ID_Action__c, Status__c  from Clinical_Catalog_Tree_Node__c Where Catalog__r.id =:myCatalog.id Order By ID_Goal__c , ID_Objective__c , ID_Action__c ];
         string goalID ='';
         string objID ='';
         for(Clinical_Catalog_Tree_Node__c n: nodes){            

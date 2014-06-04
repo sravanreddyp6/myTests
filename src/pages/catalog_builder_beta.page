@@ -37,55 +37,18 @@
     <apex:outputField value="{!Clinical_Catalog__c.id}"/>
 </apex:outputPanel>
 <apex:form >
- <apex:actionFunction action="{!editEley}" name="methodOneInJavascript" rerender="eleyForm, relatedTo">
-     <apex:param name="firstParam" assignTo="{!eleyID}" value="" />
+
+ <apex:actionFunction action="{!editTreeNode}" name="triggerNodeEdit" rerender="eleyForm, relatedTo">
+     <apex:param name="firstParam" assignTo="{!curTreeNodeKey}" value="" />
  </apex:actionFunction>
 <apex:outputPanel layout="block" styleClass="rcol">
-<!-- <apex:pageBlock > -->
-<!--     <apex:pageBlockButtons > -->
-<!--         <apex:commandButton action="{!newEley}" value="New Component" reRender="eleyForm" status="myStatus"/> -->
-<!--     </apex:pageBlockButtons> -->
-<!-- <apex:repeat value="{!allGoals.root.nodes}" var="g"> -->
-<!-- {!g.CatTreeNode.Catalog_Element__r.Description__c} -->
-<!--                 &nbsp; &nbsp; &nbsp; -->
-<!--                 <apex:actionRegion > -->
-<!--                     <apex:commandLink value="edit" action="{!editEley}" reRender="eleyForm, fullTree" status="myStatus"> -->
-<!--                         <apex:param name="eleyID" assignTo="{!eleyID}" value="{!g.CatTreeNode.Catalog_Element__r.id}"/> -->
-<!--                     </apex:commandLink> -->
-<!--                 </apex:actionRegion> -->
-<!-- <br/> -->
-<!--     <apex:repeat value="{!g.nodes}" var="o"> -->
-<!--         &nbsp; &nbsp;  -->
-<!--         {!o.CatTreeNode.Catalog_Element__r.Description__c} -->
-<!--                     &nbsp; &nbsp; &nbsp; -->
-<!--                     <apex:actionRegion > -->
-<!--                         <apex:commandLink value="edit" action="{!editEley}" reRender="eleyForm, fullTree" status="myStatus"> -->
-<!--                             <apex:param name="eleyID" assignTo="{!eleyID}" value="{!o.CatTreeNode.Catalog_Element__r.id}"/> -->
-<!--                         </apex:commandLink> -->
-<!--                     </apex:actionRegion>         -->
-<!--         <br/> -->
-<!--             <apex:repeat value="{!o.nodes}" var="a"> -->
-<!--                 &nbsp; &nbsp; &nbsp; &nbsp; -->
-<!--                 {!a.CatTreeNode.Catalog_Element__r.Description__c} -->
-<!--                         &nbsp; &nbsp; &nbsp; -->
-<!--                         <apex:actionRegion > -->
-<!--                             <apex:commandLink value="edit" action="{!editEley}" reRender="eleyForm, relatedTo, fullTree" status="myStatus"> -->
-<!--                                 <apex:param name="eleyID" assignTo="{!eleyID}" value="{!a.CatTreeNode.Catalog_Element__r.id}"/> -->
-<!--                             </apex:commandLink> -->
-<!--                         </apex:actionRegion>                 -->
-<!--                 <br/> -->
-<!--             </apex:repeat> -->
-<!--     </apex:repeat> -->
-<!-- </apex:repeat> -->
-<!-- </apex:pageBlock> -->
-
     <apex:pageBlock id="fullTree">    
         <apex:pageBlockButtons >
             <apex:commandButton action="{!newEley}" value="New Component" reRender="eleyForm" status="myStatus"/>
         </apex:pageBlockButtons>    
         <apex:outputPanel id="tree2" layout="block" >
             <apex:outputlabel > Please select a component to edit:</apex:outputlabel>
-            <c:Fancy_Tree TreeString="{!allGoals.Fancy_Tree_JSon_String}" mode="1" checkbox="false" selectActionSignature="methodOneInJavascript(data.node.data.OTHER);" ID_PageSideStorage="fullTreeKeys" TreeID="tree2" debug="false" />    
+            <c:Fancy_Tree TreeString="{!allGoals.Fancy_Tree_JSon_String}" mode="1" checkbox="false" activateActionSignature="triggerNodeEdit(data.node.key);" ID_PageSideStorage="fullTreeKeys" TreeID="tree2" debug="false" />    
         </apex:outputPanel>                
     </apex:pageBlock>
 </apex:outputPanel><!-- end left col -->
