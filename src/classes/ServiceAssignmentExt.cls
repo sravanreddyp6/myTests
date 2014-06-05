@@ -1,5 +1,6 @@
 public class ServiceAssignmentExt {
 
+    
     public Service_Assignment__c theServAssign { get; set; }
 
 // START:  Parent level properties with get/set methods.
@@ -72,12 +73,12 @@ public class ServiceAssignmentExt {
     public Integer numDocsExpected { get; set; }
     public Integer phaseToSave { get; set; }
 
-	// to support program effective dates
-	public Date effDate{ get; set;}
-	public Date effEnd { get; set;}
-	public void setEffectiveDate( ) {
-		loadAvailableCodesbyID();
-	}
+    // to support program effective dates
+    public Date effDate{ get; set;}
+    public Date effEnd { get; set;}
+    public void setEffectiveDate( ) {
+        loadAvailableCodesbyID();
+    }
         // Fidelity Document Properties / Info
     public List<ServiceAssignment_Document_JO__c> sadjos { get; set; }
     public Boolean hasFidDocs { get; set; }
@@ -105,9 +106,9 @@ public class ServiceAssignmentExt {
         canCreateSummary = oSchema.IsCreateable();
     }
 
-	public Boolean episodeReq { get { return (admission.state__c == 'NC');} set; }
-	public Boolean modelReq { get { return (pOpGroup == 'Cambridge');} set; }
-	
+    public Boolean episodeReq { get { return (admission.state__c == 'NC');} set; }
+    public Boolean modelReq { get { return (pOpGroup == 'Cambridge');} set; }
+    
     public List<Action_Plan__c> getActivePlan(){
     
         return [Select id From Action_Plan__c where Action_Plan__c.Service_Assignment__c = :currentRecord.id AND Status__c = 'Active Final' Limit 1];
@@ -118,20 +119,7 @@ public class ServiceAssignmentExt {
         return [select id, Name, Assessment_Date__c, Phase__c, Status__c, Disregard__c from Assessment__c where Type__c = 'FAD Summary' AND Service_Assignment__c = :theServAssign.Id Order By Assessment_Date__c DESC];
     }
     
-    public PageReference createFadAssess(){
-        Assessment__c assess = new Assessment__c ();
-        assess.type__c = 'FAD Summary';
-        assess.Admission__c = admission.id;
-        assess.Service_Assignment__c = theServAssign.Id;
-        assess.Status__c = 'Open';
-        if(referral != null && referral.referral_date__c != null){
-            assess.referral_date__c = referral.referral_date__c;
-        }
-        insert assess;
-        PageReference ref =  new PageReference('/apex/Assessment_FAD_Form?id='+assess.id + '&edit=1&isnew=1');
-            
-        return ref;
-    }
+
     
     private Boolean pshowDiag, pshowLocation, pshowCodes, pshowNurseAssessment;
     private string popGroup; 
@@ -156,10 +144,10 @@ public class ServiceAssignmentExt {
     }}
     
     public Boolean showNurseAssessment{get {
-    		if(!psetFlags){
-    			psetFlags = setShowFlags();
-    		}
-    		return pshowNurseAssessment;
+            if(!psetFlags){
+                psetFlags = setShowFlags();
+            }
+            return pshowNurseAssessment;
     }}
     
     private Boolean setShowFlags() {    
@@ -167,8 +155,8 @@ public class ServiceAssignmentExt {
             
             pshowDiag = true;
             pshowLocation = false;
-        	pOpGroup = '';
-        	
+            pOpGroup = '';
+            
             System.Debug('getting showDiagnosis with SF account = ' + pbsOwner);
             TMN_User__c[] tmnUsers = [
                 SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:pbsOwner LIMIT 1
@@ -179,7 +167,7 @@ public class ServiceAssignmentExt {
                 psetFlags = false;
                 pshowNurseAssessment = false;
             } else {
-            	pOpGroup = tmnUsers[0].Operating_Group__c;
+                pOpGroup = tmnUsers[0].Operating_Group__c;
                 pshowDiag = pOpGroup =='Redwood' || pOpGroup =='Cambridge';
                 pshowLocation =  ( pOpGroup =='Redwood' ); // CTEAE-86 && admission.State__c != 'AZ');
                 pshowCodes = ( pOpGroup != 'Redwood' || admission.State__c == 'AZ');
@@ -295,11 +283,11 @@ public class ServiceAssignmentExt {
                 initialRecord.RecordTypeId = theRecordType.Id;
                 pbsOwner = admission.Person_Being_Served__r.OwnerId;
                 if (effDate == null) {
-					effDate = initialRecord.Start_date__c;
+                    effDate = initialRecord.Start_date__c;
                 }
                 if (effEnd == null )
-                	effEnd = initialRecord.End_date__c;
-				
+                    effEnd = initialRecord.End_date__c;
+                
         }
         else {
                 pageHeader = 'Service Assignment Detail';
@@ -325,14 +313,14 @@ public class ServiceAssignmentExt {
                 recordType = theServAssign.RecordType.Name;
                 recordTypeId = theServAssign.RecordTypeId;
                 pbsOwner = theServAssign.Person_Being_Served__r.OwnerId;
-				effDate = theServAssign.Start_date__c;
-				effEnd = theServAssign.End_date__c;
+                effDate = theServAssign.Start_date__c;
+                effEnd = theServAssign.End_date__c;
         }
 
         System.debug('recordType BEFORE LoadData: ' + recordType);
         System.debug('AssessmentOnly BEFORE LoadData: ' + AssessmentOnly);
-		System.debug('Start date:' + effDate + ', End date:' + effEnd);
-		
+        System.debug('Start date:' + effDate + ', End date:' + effEnd);
+        
 
 
         LoadData(theServAssign);
@@ -757,7 +745,7 @@ public class ServiceAssignmentExt {
             SelectedCodes.put(local.Id,local);
         }
 
-	   currentModel = currentRecord.Model__c;
+       currentModel = currentRecord.Model__c;
        currentProgram = currentRecord.Program__c;
        currentLocation = currentRecord.Location_Region__c;
        currentServiceLine = currentRecord.Service_Line__c;
@@ -767,8 +755,8 @@ public class ServiceAssignmentExt {
 //       loadAvailableCodesbyID(); - this is called by setting currentProgramID
 
        servCodeIdsForXrefsToDelete = new Set<Id>();
-	   //loadProgramList();
-		
+       //loadProgramList();
+        
          if ( theservassign.referral__c != null)
             referral = [ select id, name, referral_date__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from referral__c where id= :theservassign.referral__c ];
         else
@@ -798,22 +786,22 @@ public class ServiceAssignmentExt {
         }
         if ( currentrecord.Service_Location__c != null) {
             serviceLocation = [ select ID, Name, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c from Service_Location__c where ID = :currentrecord.Service_Location__c];
-			currentProgramId = serviceLocation.programID__c;
+            currentProgramId = serviceLocation.programID__c;
         }
 
     }
 
 public void loadProgramList() {
-	       Set<String> tmpProgs = new Set<String>();
-			// 03/28/14 - make sure only pulling programs that are valid as of SA start date
-			if (effDate != null ) {
-				system.debug( 'Effective date is: ' + effDate);
-	           for(Service_Code__c local : [Select Program__c From Service_Code__c where state__c = :currentState and (end_date__c > :effdate or end_date__c = null ) ]){
-    	           tmpProgs.Add(Local.Program__c);
-        	   }
-			}
-			
-			MyPrograms.clear();
+           Set<String> tmpProgs = new Set<String>();
+            // 03/28/14 - make sure only pulling programs that are valid as of SA start date
+            if (effDate != null ) {
+                system.debug( 'Effective date is: ' + effDate);
+               for(Service_Code__c local : [Select Program__c From Service_Code__c where state__c = :currentState and (end_date__c > :effdate or end_date__c = null ) ]){
+                   tmpProgs.Add(Local.Program__c);
+               }
+            }
+            
+            MyPrograms.clear();
            SelectOption SOtmp = new SelectOption('', '--None--');
            MyPrograms.Add(SOtmp);
 
@@ -822,29 +810,29 @@ public void loadProgramList() {
                 MyPrograms.Add(SO);
             }
 
-	
+    
 }
 
-	public void loadAvailableCodesbyID() {
-		
-		Date SAStart = effDate;
-		Date SAEnd = effEnd;
-		if ( SAEnd == null && SAStart != null)
-			SAEnd = Date.newInstance( SAStart.Year() + 10, 1, 1);
-			
-      	List<Service_Code__c> listAvailableCodes = new List<Service_Code__c>();
+    public void loadAvailableCodesbyID() {
+        
+        Date SAStart = effDate;
+        Date SAEnd = effEnd;
+        if ( SAEnd == null && SAStart != null)
+            SAEnd = Date.newInstance( SAStart.Year() + 10, 1, 1);
+            
+        List<Service_Code__c> listAvailableCodes = new List<Service_Code__c>();
        AvailableCodes = new Map<Id,Service_Code__c>();
        
        if ( effDate == null )
-       	return;
-       	
+        return;
+        
        system.debug( 'loading codes by: ' + currentprogramID + ', effdate: ' + SAStart  + ', effend: ' + SAEnd + ', asmt:' + AssessmentOnly +', state: ' + currentState );
         listAvailableCodes = [SELECT Id, Service_Code__c, Service_Value__c, Start_Date__c, End_Date__c, Program__c From Service_Code__c
             WHERE Program_code__c = :currentProgramID
                 AND
                 ( end_date__c > :SAStart or end_date__c = null )
                 AND
-                	start_date__c <= :SAEnd
+                    start_date__c <= :SAEnd
                 AND
             Assessment_Only__c = :AssessmentOnly
                 AND
@@ -857,8 +845,8 @@ public void loadProgramList() {
         AvailableCodes.put(sc.Id,sc);
        }
 
-	
-	}
+    
+    }
     public void loadAvailableCodes () {
        List<Service_Code__c> listAvailableCodes = new List<Service_Code__c>();
        AvailableCodes = new Map<Id,Service_Code__c>();
@@ -885,28 +873,28 @@ public void loadProgramList() {
 
     }
 
-	// CTEAE-86 change for NC
-	public void changeToModel() {
-		
-		currentModel = theServAssign.Model__c;
-		
-		// set program based on value in model table
-		if ( currentModel == 'FCT')
-			currentProgram = 'IFCS';
-		else if ( currentModel == 'Family Vistas Intensive In Home')
-			currentProgram = 'Family Vistas - IIH';
-		else
-			currentProgram = currentModel;
-		
-		System.Debug('model is: ' + currentModel);
-		theServAssign.Program__c = currentProgram;
-	}
-	
-	public void setServiceLocation( ) {
-			//theServAssign.service_location__c = newalias;
-			system.debug( 'inside setservicelocation');
-	}
-	
+    // CTEAE-86 change for NC
+    public void changeToModel() {
+        
+        currentModel = theServAssign.Model__c;
+        
+        // set program based on value in model table
+        if ( currentModel == 'FCT')
+            currentProgram = 'IFCS';
+        else if ( currentModel == 'Family Vistas Intensive In Home')
+            currentProgram = 'Family Vistas - IIH';
+        else
+            currentProgram = currentModel;
+        
+        System.Debug('model is: ' + currentModel);
+        theServAssign.Program__c = currentProgram;
+    }
+    
+    public void setServiceLocation( ) {
+            //theServAssign.service_location__c = newalias;
+            system.debug( 'inside setservicelocation');
+    }
+    
     public void changeToProgramLocationServiceLine() {
         for(Id s : SelectedCodes.keySet()) {
             servCodeIdsForXrefsToDelete.add(s);
@@ -925,7 +913,7 @@ public void loadProgramList() {
         SelectOption SOtmp = new SelectOption('', '--None--');
         theLocations.Add(SOtmp);
 
-		system.debug('inside get locations ' + currentProgram + ',' + currentSTate + ',' + effDate );
+        system.debug('inside get locations ' + currentProgram + ',' + currentSTate + ',' + effDate );
                 for(Service_Code__c local : [Select Location__c From Service_Code__c
                            Where Program__c = :currentProgram
                                AND
@@ -933,7 +921,7 @@ public void loadProgramList() {
                            AND
                                 state__c = :currentState
                            AND
-                           		start_date__c <= :effDate and ( end_date__c > :effDate or end_date__c = null)]
+                                start_date__c <= :effDate and ( end_date__c > :effDate or end_date__c = null)]
                     ){
 
                        tmpLocs.Add(Local.Location__c);
@@ -958,7 +946,7 @@ public void loadProgramList() {
         theServiceLines.Add(SOtmp);
         Set<String> tmpLocs = new Set<String>();
 
-		system.debug('inside get service lines ' + currentProgram + ',' + currentLocation + ',' + currentSTate + ',' + effDate );
+        system.debug('inside get service lines ' + currentProgram + ',' + currentLocation + ',' + currentSTate + ',' + effDate );
 
         for(Service_Code__c local : [Select Location__c, Service_Line__c, Program__c From Service_Code__c
                                         Where Program__c = :currentProgram
@@ -968,10 +956,10 @@ public void loadProgramList() {
                                         Assessment_Only__c = :AssessmentOnly
                                         AND
                                            state__c = :currentState     
-										AND 
-											start_date__c <= :effDate and ( end_date__c > :effDate or end_date__c = null)
+                                        AND 
+                                            start_date__c <= :effDate and ( end_date__c > :effDate or end_date__c = null)
 
-	      ]){
+          ]){
            tmpLocs.Add(local.Service_Line__c);
         }
         for(String local : tmpLocs){
@@ -1034,13 +1022,13 @@ public void loadProgramList() {
         List<ServiceAssignment_ServiceCode_JO__c> alreadySavedCodeXrefs = [ SELECT Service_Code__c FROM ServiceAssignment_ServiceCode_JO__c WHERE Service_Assignment__c = :currentId ];
         List<ServiceAssignment_ServiceCode_JO__c> servCodeXrefsToSave = new List<ServiceAssignment_ServiceCode_JO__c>();
         List<ServiceAssignment_ServiceCode_JO__c> servCodeXrefsToDelete = new List<ServiceAssignment_ServiceCode_JO__c>();
-		System.Debug( alreadySavedCodeXrefs);
-		
-		Boolean okToSave;
+        System.Debug( alreadySavedCodeXrefs);
+        
+        Boolean okToSave;
         for(Service_Code__c sc : SelectedCodes.values()) {
             okToSave = true;
-	
-			// CTEAE-75 - correct issue with compare to already saved service code id, not JO id
+    
+            // CTEAE-75 - correct issue with compare to already saved service code id, not JO id
             for(ServiceAssignment_ServiceCode_JO__c alreadySaved : alreadySavedCodeXrefs) {
                 if(sc.Id==alreadySaved.Service_Code__c){
                     okToSave = false;
@@ -1126,25 +1114,25 @@ public void loadProgramList() {
             
                 // CTEAE-86 - revision to naming
                 s.Model__c = currentModel;
-				s.Program__c = currentProgram;
-				
+                s.Program__c = currentProgram;
+                
                 if ( theServAssign.Service_Location__c != null && String.valueOf(theServAssign.Service_Location__c) != '') {
 
-					Service_Location__c sl = [select id, alias__c, city__c, program__c, service_value__c from service_location__c where id = :theServAssign.Service_Location__c];
+                    Service_Location__c sl = [select id, alias__c, city__c, program__c, service_value__c from service_location__c where id = :theServAssign.Service_Location__c];
                     if (sl != null ) {
-                    	s.Program_Detail__c = sl.program__c;
-                    	if ( currentModel == null )
-							s.Program__c = sl.Alias__c;
-							
+                        s.Program_Detail__c = sl.program__c;
+                        if ( currentModel == null )
+                            s.Program__c = sl.Alias__c;
+                            
                         s.Location_Region__c = ''; //sl.City__c;
                         integer dashpos = sl.Service_Value__c.indexOf('-');
                                         
                         if (dashpos > -1 ) 
-                        	s.Service_Line__c = (sl.Service_Value__c).substring(dashpos+1);
+                            s.Service_Line__c = (sl.Service_Value__c).substring(dashpos+1);
                         else
-                        	s.Service_Line__c = sl.Service_Value__c;
+                            s.Service_Line__c = sl.Service_Value__c;
                     }
-               	}
+                }
 
                 upsert s;
 
@@ -1155,10 +1143,10 @@ public void loadProgramList() {
                     saveContractSelections();
                 }
 
-				if (showCodes || !showLocation) {
-					saveServiceCodeSelections();
-				}
-				
+                if (showCodes || !showLocation) {
+                    saveServiceCodeSelections();
+                }
+                
                 editSA = false;
                 theServAssign = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
                             End_Date__c, External_ID__c, Location_Region__c, Model__c, Outcomes__c, Person_Being_Served__c, Phase__c, Phase_of_Treatment__c, Program__c,
@@ -1252,7 +1240,76 @@ public void loadProgramList() {
         return new PageReference ('/apex/NursingEvaluationView?id='+nurseEval.id);
             
     }
-
+    
+    public PageReference createFadAssess(){
+        list<Assessment__c> oldAssess = new list<Assessment__c>();
+        oldAssess = [select id from assessment__c where type__c ='FAD Summary' AND Service_Assignment__c = :theServAssign.id Order By CreatedDate Desc limit 1];
+    
+        Assessment__c assess = new Assessment__c ();
+        assess.type__c = 'FAD Summary';
+        assess.Admission__c = admission.id;
+        assess.Service_Assignment__c = theServAssign.Id;
+        assess.Status__c = 'Open';
+        if(referral != null && referral.referral_date__c != null){
+            assess.referral_date__c = referral.referral_date__c;
+        }
+        insert assess;
+        
+        if(oldAssess.size() > 0){
+            map<string, Assessment_Response__c> oldARs = new map<string, Assessment_Response__c>();        
+            set<string> QuestionsToCopy = new set<string>();
+                QuestionsToCopy.add('PC_Name');
+                QuestionsToCopy.add('PC_Address');
+                QuestionsToCopy.add('PC_Phone_1');
+                QuestionsToCopy.add('PC_Phone_2');
+                QuestionsToCopy.add('PC_Relationship_to_PBS');
+                QuestionsToCopy.add('PC_Phone_1_Type');
+                QuestionsToCopy.add('PC_Phone_2_Type');
+                QuestionsToCopy.add('SC_No_SC');
+                QuestionsToCopy.add('SC_Name');
+                QuestionsToCopy.add('SC_Address');
+                QuestionsToCopy.add('SC_Phone_1');
+                QuestionsToCopy.add('SC_Phone_2');
+                QuestionsToCopy.add('SC_Relationship_to_PBS');
+                QuestionsToCopy.add('SC_Email');
+                QuestionsToCopy.add('SC_Phone_1_Type');
+                QuestionsToCopy.add('SC_Phone_2_Type');
+                QuestionsToCopy.add('PC_Relationship_to_PBS_Other');
+                QuestionsToCopy.add('Caregiver_Who_Completed_Assessment');
+                QuestionsToCopy.add('SC_Relationship_to_PBS_Other');
+            for(Assessment_Response__c item :[select id, name, Question__r.dev_name__c, score__c, rating__c, yes_no__c, response__c from Assessment_Response__c where assessment__c = :oldAssess[0].id AND Question__r.Dev_Name__c in :QuestionsToCopy]){
+                oldARs.put(item.Question__r.dev_name__c,item);            
+            }
+            list<Assessment_Response__c> newRes= [select id, name, Question__r.dev_name__c, score__c, rating__c, yes_no__c, response__c from Assessment_Response__c where assessment__c = :assess.id AND Question__r.Dev_Name__c in :QuestionsToCopy];
+            for(Assessment_Response__c item: newRes){
+                item.score__c = oldARs.get(item.Question__r.dev_name__c).score__c;
+                item.rating__c = oldARs.get(item.Question__r.dev_name__c).rating__c;
+                item.yes_no__c = oldARs.get(item.Question__r.dev_name__c).yes_no__c;
+                item.response__c = oldARs.get(item.Question__r.dev_name__c).response__c ;
+            
+            }
+            system.debug('here');
+            list<Related_Party__c> oldRPs = new list<Related_Party__c>();
+            oldRPS = [select name, Assessment__c, Age__c, Gender__c, Relationship_to_Person_Being_Served__c, Relationship_to_Person_Being_Served_Othe__c, Received_FCT_services_before__c from Related_Party__c where Assessment__c = :oldAssess[0].id];
+            list<Related_Party__c> newRPs = new list<Related_Party__c>();
+            
+            for(Related_Party__c item: oldRPs){
+                Related_Party__c tmp = new Related_Party__c();
+                tmp = item.clone();
+                tmp.Assessment__c = assess.id;
+                newRPs.add(tmp);           
+            
+            }
+            
+            update newRes;
+            insert newRPs;
+            
+        }
+        
+        PageReference ref =  new PageReference('/apex/Assessment_FAD_Form?id='+assess.id + '&edit=1&isnew=1');
+            
+        return ref;
+    }
 
     @RemoteAction
     public static Diagnosis__c loadDiagnosis(string diagnosisId) {
