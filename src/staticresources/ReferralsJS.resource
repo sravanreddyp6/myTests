@@ -75,7 +75,25 @@
             if ($payerCmEmail.size()>0 && $payerCmEmail.val()!='' && !validateEmail($payerCmEmail.val())) {
                 errors.push('Payer CM Email does not seem to a valid email address');
             }
-        }
+            
+            // claims submission zip
+			if ( !checkZipCode(j$('input[id$=Claims_Submission_Zip]').val())) {
+				errors.push('Please enter zip code in the format: XXXXX or XXXXX-XXXX');
+			}
+			
+			if (j$('select[id$=authtype]').length > 0 && j$('select[id$=authtype]').val() == 'Other') {
+	    		if ( j$('input[id$=otherauthtype]').val().trim() == false  ) {
+	    			errors.push ('Please describe "Other" authorization type');
+	        	}
+	        }
+	        
+	        if ( j$('input[id$=contractused_lkid]').length > 0 &&  j$('input[id$=contractused]').val().trim() && !(j$('input[id$=contractused_lkid]').val().trim())) {
+    			errors.push('Please choose a valid contract using the search icon');
+    		}
+    	
+	        
+	    }
+
         if (referralRecordType == 'NeuroRestorative') {
             // Validate email fields
             var $claimsSubmissionEmail = $('[id*=claimsSubmissionEmail]');
@@ -97,6 +115,20 @@
         }
         return errors;
     }
+    
+     // ERC-96: Adding this for front end validation.
+  // Claims_Submission_Zip is now a text field instead of number field.
+  function checkZipCode(value) {
+      var errors = '';
+      var validformat = /^\d{5}$|^\d{5}-\d{4}$/    
+      
+      // if it contains a value and doesn't match regex then error
+      return ( !(!validformat.test(value) && value.trim()) );
+          
+      }     
+  
+    
+    
     fundingSourceSaveHelper = function (referralRecordType) {
         fundingSourceClearMessages();
         var errors = validateFundingSource(referralRecordType);
