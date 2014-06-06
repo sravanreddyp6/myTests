@@ -187,12 +187,12 @@ function enableDiagEff() {
 	
     // We cant use Visualforce functions/variables in a Static Resource JS file,
     // so we have to pass it in here.
-if ( j$('input[id$=Claims_Submission_Zip]').length > 0 ) {
-    if (checkZipCode(j$('input[id$=Claims_Submission_Zip]').val()) == false) {
-        isClose = false;        
-        fundingSourceScrollToTop(false);
-    }  
-    
+	if ( j$('input[id$=Claims_Submission_Zip]').length > 0 ) {
+	    if (checkZipCode(j$('input[id$=Claims_Submission_Zip]').val()) == false) {
+	        isClose = false;        
+	        fundingSourceScrollToTop(false);
+	    }  
+    }
     if (j$('select[id$=authtype]').length > 0 && j$('select[id$=authtype]').val() == 'Other') {
 	    if ( j$('input[id$=otherauthtype]').val().trim() == false  ) {
 	    	errors += '<li class="error">Please describe "Other" authorization type</li>';
