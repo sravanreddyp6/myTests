@@ -978,6 +978,73 @@
                         <apex:inputField value="{!Evaluation__c.Depression_Patient_received_Treatment__c}" label="Has Patient received treatment?" id="depressionTreatment" />
                     </apex:pageBlockSection>
                     <hr />
+                    <apex:pageBlockSection columns="2" Title="Supervision Level" collapsible="false">
+                    	<apex:inputField value="{!Evaluation__c.Bed_Alarm__c}" />
+                    	<apex:pageBlockSectionItem />
+                    	<apex:inputField value="{!Evaluation__c.One_to_One_Sitter__c}"  html-data-rules="{&quot;1&quot;: [&quot;{!$Component.onetooneHours}&quot;]}" />
+                    	<apex:pageBlockSectionItem />
+                    	<apex:inputField value="{!Evaluation__c.one_to_One_Sitter_of_Hours_per_day__c}" label="# of hours per day" id="onetooneHours" />
+                    	<apex:pageBlockSectionItem />
+                    	<apex:inputField value="{!Evaluation__c.Low_Bed__c}" />
+                    	<apex:pageBlockSectionItem />
+                    	</apex:pageBlockSection>
+                    	<apex:pageBlockSection columns="1" title="Supportive Devices" collapsible="false">
+                    		<apex:panelGrid columns="4" width="50%" style="text-align: center; " >
+                    			<apex:outputText value="Device" StyleClass="labelCol" />
+                    			<apex:outputText value="" />
+                    			<apex:outputText value="Can Resident easily remove the device"  styleClass="labelCol"/>
+                    			<apex:outputText value="Does the device restrict Resident's freedom of Movement?" styleClass="labelCol" />
+                    			
+                    			<apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.Mitt__c.Label}" styleClass="labelCol"/>
+                    			<apex:inputField value="{!Evaluation__c.Mitt__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.mittRemoved}&quot;]}" />
+                    			<apex:inputField value="{!Evaluation__c.Mitt_Device_can_be_removed__c}" id="mittRemoved" html-data-rules="{&quot;No&quot;: [&quot;{!$Component.mittFreedom}&quot;]}" />
+                    			<apex:inputField value="{!Evaluation__c.Mitt_Device_restrict_freedom__c}" id="mittFreedom" />
+                    			
+                    			<apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.UE__c.Label}" styleClass="labelCol"/>
+                    			<apex:inputField value="{!Evaluation__c.UE__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.UERemoved}&quot;]}" />
+                    			<apex:inputField value="{!Evaluation__c.UE_Device_can_be_removed__c}" id="UERemoved" html-data-rules="{&quot;No&quot;: [&quot;{!$Component.UEFreedom}&quot;]}" />
+                    			<apex:inputField value="{!Evaluation__c.UE_Device_restrict_freedom__c}" id="UEFreedom" />
+                    			
+                    			<apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.LE__c.Label}" styleClass="labelCol"/>
+                    			<apex:inputField value="{!Evaluation__c.LE__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.LERemoved}&quot;]}" />
+                    			<apex:inputField value="{!Evaluation__c.LE_Device_can_be_removed__c}" id="LERemoved" html-data-rules="{&quot;No&quot;: [&quot;{!$Component.LEFreedom}&quot;]}" />
+                    			<apex:inputField value="{!Evaluation__c.LE_Device_restrict_freedom__c}" id="LEFreedom" />
+                    			
+                    			<apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.Chest_Restraint__c.Label}" styleClass="labelCol"/>
+                    			<apex:inputField value="{!Evaluation__c.Chest_Restraint__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.chestRemoved}&quot;]}" />
+                    			<apex:inputField value="{!Evaluation__c.Chest_restraint_can_be_removed__c}" id="chestRemoved" html-data-rules="{&quot;No&quot;: [&quot;{!$Component.chestFreedom}&quot;]}" />
+                    			<apex:inputField value="{!Evaluation__c.Chest_Restraint_restrict_Freedom__c}" id="chestFreedom" />
+                    			
+                    			<apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.Seat_Belt__c.Label}" styleClass="labelCol"/>
+                    			<apex:inputField value="{!Evaluation__c.Seat_Belt__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.seatRemoved}&quot;]}" />
+                    			<apex:inputField value="{!Evaluation__c.Seat_Belt_can_be_removed__c}" id="seatRemoved" html-data-rules="{&quot;No&quot;: [&quot;{!$Component.seatFreedom}&quot;]}" />
+                    			<apex:inputField value="{!Evaluation__c.Seat_Belt_restrict_Freedom__c}" id="seatFreedom" />
+                    			
+                    			<apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.Lap_Tray__c.Label}" styleClass="labelCol"/>
+                    			<apex:inputField value="{!Evaluation__c.Lap_Tray__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.lapRemoved}&quot;]}" />
+                    			<apex:inputField value="{!Evaluation__c.Lap_Tray_Can_be_removed__c}" id="lapRemoved" html-data-rules="{&quot;No&quot;: [&quot;{!$Component.lapFreedom}&quot;]}" />
+                    			<apex:inputField value="{!Evaluation__c.Lap_Tray_restrict_freedom__c}" id="lapFreedom" />
+                    			
+                    			<apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.Trunk_Supports__c.Label}" styleClass="labelCol"/>
+                    			<apex:inputField value="{!Evaluation__c.Trunk_Supports__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.trunkRemoved}&quot;]}" />
+                    			<apex:inputField value="{!Evaluation__c.Trunk_supports_can_be_removed__c}" id="trunkRemoved" html-data-rules="{&quot;No&quot;: [&quot;{!$Component.trunkFreedom}&quot;]}" />
+                    			<apex:inputField value="{!Evaluation__c.Trunk_supports_restrict_freedom__c}" id="trunkFreedom" />
+                    			
+                    			<apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.Enclosure_Bed__c.Label}" styleClass="labelCol"/>
+                    			<apex:inputField value="{!Evaluation__c.Enclosure_Bed__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.enclosureRemoved}&quot;]}" />
+                    			<apex:inputField value="{!Evaluation__c.Enclosure_Bed_can_be_removed__c}" id="enclosureRemoved" html-data-rules="{&quot;No&quot;: [&quot;{!$Component.enclosureFreedom}&quot;]}" />
+                    			<apex:inputField value="{!Evaluation__c.Enclosure_bed_restrict_freedom__c}" id="enclosureFreedom" />
+                    			
+                    			<apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.Side_Rails_Half_full__c.Label}" styleClass="labelCol"/>
+                    			<apex:inputField value="{!Evaluation__c.Side_Rails_Half_full__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.siderailRemoved}&quot;]}" />
+                    			<apex:inputField value="{!Evaluation__c.Side_Rails_can_be_removed__c}" id="siderailRemoved" html-data-rules="{&quot;No&quot;: [&quot;{!$Component.siderailFreedom}&quot;]}" />
+                    			<apex:inputField value="{!Evaluation__c.Side_rails_can_restrict_freedom__c}" id="siderailFreedom" />
+                    		</apex:panelGrid>
+                    		<apex:inputField value="{!Evaluation__c.Signed_Consent_for_Restraints__c}" label="Resident Signed Consent for Restraints?" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.consentDescribe}&quot;]}" />
+                    		<apex:inputField value="{!Evaluation__c.Consent_for_Restraints_Describe__c}" label="Describe" id="consentDescribe" />
+                    		<apex:inputField value="{!Evaluation__c.History_of_Falls_Last_3_Months__c}" />
+                    </apex:pageBlockSection>
+                    <hr />
 			    </apex:pageBlock>
 			 </apex:tab>
 			 <apex:tab label="Ortho" name="orthoTab" ontabenter="changeTab('orthoTab'); return false;" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
