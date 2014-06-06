@@ -2,6 +2,8 @@ public with sharing class Assessment_FAD_Form_Ex {
     public Assessment__c assess { get; set; }
     public string mode {get; set;} 
     
+    public string otherChildDisplayStyle {get; set;}
+    
     public map<string, boolean> mapAvalPhases = new map<string, boolean>();
     public map<string, boolean> getmapAvalPhases(){ return mapAvalPhases;}
         
@@ -14,11 +16,15 @@ public with sharing class Assessment_FAD_Form_Ex {
     public User curU = [select id, UserRoleId from user where id =:UserInfo.getUserId()];
     
     public list<Related_Party__c> curOtherChilren {get; set;}
+    
+    public Related_Party__c curRel_Party {get; set;}
+    public ID Rel_Party_ID {get; set;}
              
     public Assessment_FAD_Form_Ex(ApexPages.StandardController controller) {
         assess = new assessment__c ();
         assess = (Assessment__c) controller.getRecord();
         mode ='view';
+        otherChildDisplayStyle = 'none';
         if(ApexPages.currentPage().getParameters().get('edit') == '1'){
             myEdit();
         }
@@ -43,11 +49,13 @@ public with sharing class Assessment_FAD_Form_Ex {
         
         curOtherChilren = new list<Related_Party__c>();
         
-        curOtherChilren = [select Name, Age__c, Assessment__c, Gender__c, Received_FCT_services_before__c, Relationship_to_Person_Being_Served__c, Relationship_to_Person_Being_Served_Othe__c from Related_Party__c Where Assessment__c = :assess.id];
-        
+        updateCurChildren();        
+        curRel_Party  = new Related_Party__c ();
         
     }
-     
+    public void updateCurChildren(){
+                curOtherChilren = [select Name, Age__c, Assessment__c, Gender__c, Received_FCT_services_before__c, Relationship_to_Person_Being_Served__c, Relationship_to_Person_Being_Served_Othe__c from Related_Party__c Where Assessment__c = :assess.id];   
+    }     
     
     public PageReference myCG_is_same_as_other_assessment(){
         if(assess.Phase__c =='Initial'){
@@ -55,18 +63,43 @@ public with sharing class Assessment_FAD_Form_Ex {
         }
         return null;
     }
+    public PageReference editRel_Party(){
+        for(Related_Party__c item :curOtherChilren ){
+            if(item.id == Rel_Party_ID){
+                system.debug('i tried-' + item.id);
+                curRel_Party = item; 
+            }
+        }
+        return null;
+    } 
+    public PageReference SaveNew_Rel_Party(){
+        insertRelatedParty();
+        updateCurChildren(); 
+        resetRelParty();
+   
+        return null;
+    }   
+    public PageReference resetRelParty(){
+        curRel_Party  = new Related_Party__c ();
+        otherChildDisplayStyle = 'block';
+        return null; 
+    }
     public PageReference AddOtherChild(){
-        Related_Party__c tmp = new Related_Party__c ();
-        tmp.Assessment__c = assess.id;
-        curOtherChilren.add(tmp); 
+        //Related_Party__c tmp = new Related_Party__c ();
+        if(!insertRelatedParty()){
+            updateCurChildren(); 
+            otherChildDisplayStyle = 'none';
+        }
+        else{
+            otherChildDisplayStyle = 'block';
+        }
+        
         return null;
     }
     public PageReference myDisregard(){
         try{
             Assess.Disregard__c = True;
             upsert Assess;
-        
-        
     
         } catch (Exception ex) {
                 ApexPages.addMessages(ex);
@@ -75,7 +108,18 @@ public with sharing class Assessment_FAD_Form_Ex {
         mode = 'view';
         return null;   
     } 
-        
+    public boolean insertRelatedParty(){
+        curRel_Party.Assessment__c = assess.id;
+        boolean hasError = false;
+        if(curRel_Party.Relationship_to_Person_Being_Served__c =='Other' && curRel_Party.Relationship_to_Person_Being_Served_Othe__c ==null){
+            curRel_Party.Relationship_to_Person_Being_Served_Othe__c.addError('Please specify the Other relationship to the Person Being Served.');
+            hasError = true;
+        }        
+        if(!hasError){
+            upsert curRel_Party;
+        }
+        return hasError;
+    }    
     public PageReference mySave(){
         try{
             list<assessment__c> oldAssess = new list<assessment__c>();
@@ -134,11 +178,10 @@ public with sharing class Assessment_FAD_Form_Ex {
             mapRes.get('PC_Relationship_to_PBS').Rating__c.addError('Please select the Primary Caregiver\'s relationship to the Person Being Served at the time of this FAD Assessment.');
             hasError = true;   
         }
-        set<string> ForceOther = new set<string>();
-        ForceOther.add('Other Female Relative');
-        ForceOther.add('Other Male Relative');
-        ForceOther.add('Other');
-        
+            set<string> ForceOther = new set<string>();
+            ForceOther.add('Other Female Relative');
+            ForceOther.add('Other Male Relative');
+            ForceOther.add('Other');        
         if(mapRes.get('PC_Relationship_to_PBS_Other').Rating__c == null && ForceOther.contains(mapRes.get('PC_Relationship_to_PBS').Rating__c) ){
             mapRes.get('PC_Relationship_to_PBS_Other').Rating__c.addError('Please specify the Primary Caregiver\'s relationship to the Person Being Served at the time of this FAD Assessment.');
             hasError = true;   
@@ -199,12 +242,14 @@ public with sharing class Assessment_FAD_Form_Ex {
                 assess.Family_Annual_Income__c.addError('Please select a value for Family Annual Income.');
             }         
         }
+        /*
         for(Related_Party__c item :curOtherChilren ){
             if(item.Relationship_to_Person_Being_Served__c =='Other' && item.Relationship_to_Person_Being_Served_Othe__c ==null){
                 item.Relationship_to_Person_Being_Served_Othe__c.addError('Please specify the Other relationship to the Person Being Served.');
             }
         
         }
+        */
         if(mapRes.get('SC_No_SC').Yes_No__c && mapRes.get('Caregiver_Who_Completed_Assessment').Rating__c == 'Secondary'){
             mapRes.get('SC_No_SC').Yes_No__c.addError('If the secondary caregiver has completed this assessment, provide the secondary caregiver details.');
         
@@ -409,6 +454,8 @@ public with sharing class Assessment_FAD_Form_Ex {
         options.add(new SelectOption('Foster Father','Foster Father'));
         options.add(new SelectOption('Adoptive Mother','Adoptive Mother'));
         options.add(new SelectOption('Adoptive Father','Adoptive Father'));
+        options.add(new SelectOption('Grandmother','Grandmother'));
+        options.add(new SelectOption('Grandfather','Grandfather'));                
         options.add(new SelectOption('Step-Mother','Step-Mother'));
         options.add(new SelectOption('Step-Father','Step-Father'));
         options.add(new SelectOption('Other Female Relative','Other Female Relative'));
@@ -417,7 +464,6 @@ public with sharing class Assessment_FAD_Form_Ex {
         options.add(new SelectOption('Client\'s Friend','Client\'s Friend'));  
         options.add(new SelectOption('Child of client','Child of client'));
         options.add(new SelectOption('Other','Other'));
-        options.add(new SelectOption('CANADA','Canada'));
         options.add(new SelectOption('Unknown','Unknown'));                                         
         return options;
     }

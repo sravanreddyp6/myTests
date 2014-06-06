@@ -26,7 +26,7 @@
     z-index:1000;
 }    
 .thinkingwheel{
-position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+    position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
 }
 .dateFormat{
     display :none;
@@ -41,6 +41,33 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
     width: 250px;
     height: 150px;
 }
+.hbbg{
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    background-color: gray;
+    opacity: .6;
+    z-index:900;
+}
+
+.popupform{
+    position: fixed; 
+    left:33%; 
+    top:28%;
+     /*background-color: white; border: 2px solid gray; padding: 7px;*/
+    width: 450px;
+    opacity: 1;
+    z-index:950;
+
+}
+#p .labelCol{
+    width: 35% !important;
+    
+
+}
+
 </style>
 <!---->
 <c:PersonalRecord servAssignId="{!Assessment__c.Service_Assignment__c}" pbsId="{!Assessment__c.Admission__r.Person_Being_Served__c}" parentPage="Assessment" admId="{!Assessment__c.Admission__c}" asmtType="{!Assessment__c.Type__c}" asmtId="{!Assessment__c.Id}"   />
@@ -48,62 +75,81 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
 
 <apex:outputPanel id="everything">
 <apex:pageMessages ></apex:pageMessages>
+
+<div id="relPartyFrm" style="display: {!otherChildDisplayStyle};">
+<div class="hbbg">  </div>
+<div id="p" class="popupform" >
+<apex:form id="RelPartyFrm" >
+<apex:pageBlock title="Child Info" >
+    <apex:pageBlockButtons location="bottom">
+        <apex:commandButton action="{!AddOtherChild}" value="Save" reRender="everything" status="myStatus" oncomplete="checkOtherField('OC_Rel', 'OC_Other_Rel', 'Other'); return false;" />
+        <apex:commandButton action="{!SaveNew_Rel_Party}" value="Save and New" reRender="everything" status="myStatus" oncomplete="checkOtherField('OC_Rel', 'OC_Other_Rel', 'Other'); return false;" />
+        <apex:commandButton action="{!resetRelParty}" value="Cancel" oncomplete="toggleById('relPartyFrm'); return false;" reRender="nothing" immediate="true" status="myStatus"/>
+    </apex:pageBlockButtons>
+    <apex:pageBlockSection columns="1" >
+                <apex:inputField label="Name" value="{!curRel_Party .name}" required="true" />           
+                <apex:inputField label="Age" value="{!curRel_Party .Age__c}" required="true" />            
+                <apex:inputField label="Gender" value="{!curRel_Party .Gender__c}" required="true" />            
+                <apex:inputField label="Relationship to Person Being Served" styleClass="OC_Rel" value="{!curRel_Party .Relationship_to_Person_Being_Served__c}" required="true"
+                  onchange="checkOtherField('OC_Rel', 'OC_Other_Rel', 'Other');" />           
+                <apex:inputField label="Specify Other" styleClass="OC_Other_Rel" value="{!curRel_Party .Relationship_to_Person_Being_Served_Othe__c }" />            
+                <apex:inputField label="Received FCT services before" value="{!curRel_Party .Received_FCT_services_before__c}" required="true" />
+    </apex:pageblockSection>
+</apex:pageBlock>
+</apex:form>
+</div>
+</div>
+
 <apex:form id="myfrm" >
-
-
-
 <apex:pageBlock title="FAD Assessment Summary" id="mainblock" >
-
     <apex:pageBlockButtons >
         <div style="float: right" >
-                   
-        <!--
-        -->
             <apex:commandButton action="{!myUnlock}" 
                                 value="Unlock" 
                                 rendered="{!mode='view' && Assessment__c.Status__c =='Locked' && Assessment__c.Service_assignment__r.Status__c =='Active' && canUnlock}" 
                                 reRender="everything" 
                                 status="myStatus"
-                                oncomplete="toggleOptionsbyStyle('pbs_cnc_cb', 'PBS_CNC2', 'pbs_question'); toggleOptionsbyStyle('cg_cnc_cb', 'CG_CNC2', 'cg_question'); toggleRefDate(); toggleOptionsbyStyle('SC_NoSC_CB', 'holder', 'second_cg_question');"
-                                />
-                                
+                                oncomplete="checkInputs();"
+                                />                                
             <apex:commandButton action="{!myDisregard}" 
                                 value="Disregard" 
                                 rendered="{!mode='view' && !Assessment__c.Disregard__c && Assessment__c.Service_assignment__r.Status__c =='Active' && CanSubmit}" 
                                 reRender="everything" 
                                 status="myStatus"
-                                oncomplete="toggleOptionsbyStyle('pbs_cnc_cb', 'PBS_CNC2', 'pbs_question'); toggleOptionsbyStyle('cg_cnc_cb', 'CG_CNC2', 'cg_question'); toggleRefDate(); toggleOptionsbyStyle('SC_NoSC_CB', 'holder', 'second_cg_question');"
-                                />                                 
-                                
+                                oncomplete="checkInputs();"
+                                />
             <apex:commandButton action="{!myLock}" 
                                 value="Submit" 
                                 rendered="{!mode='view' && Assessment__c.Status__c =='Open' && Assessment__c.Service_assignment__r.Status__c =='Active' && CanSubmit}" 
                                 reRender="everything" 
                                 status="myStatus"
-                                oncomplete="toggleOptionsbyStyle('pbs_cnc_cb', 'PBS_CNC2', 'pbs_question'); toggleOptionsbyStyle('cg_cnc_cb', 'CG_CNC2', 'cg_question'); toggleRefDate(); toggleOptionsbyStyle('SC_NoSC_CB', 'holder', 'second_cg_question');"/>                                        
-        
+                                oncomplete="checkInputs();"
+                                /> 
             <apex:commandButton action="{!mySave}" 
                                 value="Save"  id="confirmBtn"
                                 rendered="{!mode='edit'}" 
                                 reRender="everything" 
                                 status="myStatus"
-                                oncomplete="toggleOptionsbyStyle('pbs_cnc_cb', 'PBS_CNC2', 'pbs_question'); toggleOptionsbyStyle('cg_cnc_cb', 'CG_CNC2', 'cg_question'); toggleRefDate(); toggleOptionsbyStyle('SC_NoSC_CB', 'holder', 'second_cg_question');"
+                                oncomplete="checkInputs();"
                                 />
             <apex:commandButton action="{!myEdit}" 
                                 value="Edit" 
                                 rendered="{!mode='view' && Assessment__c.Status__c =='Open'}" 
                                 reRender="everything, scripts" 
                                 status="myStatus" 
-                                oncomplete="toggleOptionsbyStyle('pbs_cnc_cb', 'PBS_CNC2', 'pbs_question'); toggleOptionsbyStyle('cg_cnc_cb', 'CG_CNC2', 'cg_question'); toggleRefDate(); toggleOptionsbyStyle('SC_NoSC_CB', 'holder', 'second_cg_question');"/>
+                                oncomplete="checkInputs();"
+                                />
             <apex:commandButton action="{!cancel}" 
                                 value="Cancel" 
                                 rendered="{!$CurrentPage.parameters.isnew !='1' && mode='edit'}" 
-                                immediate="true" />    
+                                immediate="true" 
+                                />    
             <apex:commandButton action="{!mycancel}" 
                                 value="Cancel" 
                                 rendered="{!$CurrentPage.parameters.isnew =='1' && mode='edit'}" 
-                                immediate="true"/>                                 
-        <apex:image value="/img/lock_small.gif" alt="Locked" width="20" height="20" title="Record is Locked" rendered="{!Assessment__c.Status__c =='Locked'}" />                         
+                                immediate="true"
+                                />                                 
+            <apex:image value="/img/lock_small.gif" alt="Locked" width="20" height="20" title="Record is Locked" rendered="{!Assessment__c.Status__c =='Locked'}" />                         
         </div>
     </apex:pageBlockButtons>
 <!-- edit -->    
@@ -435,10 +481,10 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['PC_Relationship_to_PBS'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:selectList size="1" value="{!mapRes['PC_Relationship_to_PBS'].Rating__c}">
+                <apex:selectList size="1" styleClass="PC_Rel" onchange="checkOtherField('PC_Rel', 'PC_Other_Rel', 'Other');" value="{!mapRes['PC_Relationship_to_PBS'].Rating__c}">
                     <apex:selectOptions value="{!PC_Rel_To_PBS}"></apex:selectOptions>
                 </apex:selectList>  
-                <apex:outputPanel >Other: <apex:inputField value="{!mapRes['PC_Relationship_to_PBS_Other'].Rating__c}"/></apex:outputPanel>                  
+                <apex:outputPanel >Specify Other: <apex:inputField styleClass="PC_Other_Rel" value="{!mapRes['PC_Relationship_to_PBS_Other'].Rating__c}"/></apex:outputPanel>                  
             </apex:outputPanel>        
         </apex:pageBlockSectionItem> 
         <apex:pageBlockSectionItem >
@@ -492,11 +538,11 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         <apex:pageBlockSectionItem rendered="{!isInitalOrFinal}"  >
             <apex:outputPanel >{!mapQs['PC_Employment'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:selectList size="1" value="{!mapRes['PC_Employment'].Rating__c}" >
+                <apex:selectList styleClass="PC_Emp" onchange="checkOtherField('PC_Emp', 'PC_Occ', 'Employed');" size="1" value="{!mapRes['PC_Employment'].Rating__c}" >
                     <apex:selectOptions value="{!EmploTypes}"></apex:selectOptions>
                 </apex:selectList>   &nbsp; &nbsp; &nbsp; 
                 <apex:outputPanel >{!mapQs['PC_Occupation'].Question_Title__c}</apex:outputPanel>&nbsp; &nbsp; &nbsp;   
-                <apex:inputField value="{!mapRes['PC_Occupation'].Rating__c}" />                    
+                <apex:inputField styleClass="PC_Occ" value="{!mapRes['PC_Occupation'].Rating__c}" />                    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem> 
         <apex:pageBlockSectionItem rendered="{!isInitalOrFinal}" >
@@ -608,10 +654,10 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['SC_Relationship_to_PBS'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:selectList styleClass="second_cg_question" size="1" value="{!mapRes['SC_Relationship_to_PBS'].Rating__c}">
+                <apex:selectList styleClass="second_cg_question SC_Rel"  onchange="checkOtherField('SC_Rel', 'SC_Other_Rel', 'Other');"  size="1" value="{!mapRes['SC_Relationship_to_PBS'].Rating__c}">
                     <apex:selectOptions value="{!PC_Rel_To_PBS}"></apex:selectOptions>
                 </apex:selectList>  
-                <apex:outputPanel >Other: <apex:inputField styleClass="second_cg_question" value="{!mapRes['SC_Relationship_to_PBS_Other'].Rating__c}"/></apex:outputPanel>       
+                <apex:outputPanel >Specify Other: <apex:inputField styleClass="second_cg_question SC_Other_Rel" value="{!mapRes['SC_Relationship_to_PBS_Other'].Rating__c}"/></apex:outputPanel>       
                                   
             </apex:outputPanel>        
         </apex:pageBlockSectionItem> 
@@ -667,11 +713,11 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         <apex:pageBlockSectionItem rendered="{!isInitalOrFinal}" >
             <apex:outputPanel >{!mapQs['SC_Employment'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:selectList styleClass="second_cg_question" size="1" value="{!mapRes['SC_Employment'].Rating__c}" >
+                <apex:selectList styleClass="second_cg_question SC_Emp" onchange="checkOtherField('SC_Emp', 'SC_Occ', 'Employed');"  size="1" value="{!mapRes['SC_Employment'].Rating__c}" >
                     <apex:selectOptions value="{!EmploTypes}"></apex:selectOptions>
                 </apex:selectList>   &nbsp; &nbsp; &nbsp; 
                 <apex:outputPanel >{!mapQs['SC_Occupation'].Question_Title__c}</apex:outputPanel>&nbsp; &nbsp; &nbsp;   
-                <apex:inputField styleClass="second_cg_question" value="{!mapRes['SC_Occupation'].Rating__c}" />                    
+                <apex:inputField styleClass="second_cg_question SC_Occ" value="{!mapRes['SC_Occupation'].Rating__c}" />                    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>          
         <apex:pageBlockSectionItem rendered="{!isInitalOrFinal}" >
@@ -687,11 +733,13 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
       
 </apex:pageBlockSection> 
 
-<apex:pageBlockSection columns="1" id="otherChildren"  rendered="{!mode='edit'}">
+<apex:pageBlockSection columns="1" id="otherChildren" rendered="false" >
     <apex:outputPanel >
     Other Children Living in Home:
-    <apex:commandButton value="Add" action="{!AddOtherChild}" style="float: right;" reRender="otherChildren" status="myStatus" immediate="true"/>
+     
     </apex:outputPanel>
+    
+    
     <apex:outputPanel >
         <apex:dataTable value="{!curOtherChilren}" var="item" width="100%" border="1" cellpadding="3">
             <apex:column headerValue="Name">
@@ -796,12 +844,19 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
       
 </apex:pageBlockSection> 
        
-<apex:pageBlockSection columns="1" rendered="{!mode='view'}">
+<apex:pageBlockSection columns="1" >
     <apex:outputPanel >
     Other Children Living in Home:
+        <apex:commandButton style="float: right;" rendered="{!mode='edit'}" action="{!resetRelParty}" value="Add" oncomplete="toggleById('relPartyFrm'); checkOtherField('OC_Rel', 'OC_Other_Rel', 'Other'); return false;" reRender="RelPartyFrm" immediate="true" status="myStatus"/> 
+
     </apex:outputPanel>
-    <apex:outputPanel >
+    <apex:outputPanel id="otherChildrenList" >
         <apex:dataTable value="{!curOtherChilren}" var="item" width="100%" border="1" cellpadding="3">
+            <apex:column headerValue="Action" rendered="{!mode = 'edit'}">
+                <apex:commandLink value="Edit" action="{!editRel_Party}" immediate="true" reRender="RelPartyFrm" oncomplete="toggleById('relPartyFrm'); checkOtherField('OC_Rel', 'OC_Other_Rel', 'Other'); return false;" status="myStatus">
+                    <apex:param assignTo="{!Rel_Party_ID}" value="{!item.id}" name="Rel_Party_ID"/>
+                </apex:commandLink>
+            </apex:column>        
             <apex:column headerValue="Name">
                 <apex:outputField value="{!item.name}" />
             </apex:column>
@@ -823,7 +878,14 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         </apex:dataTable>
     </apex:outputPanel>
     <apex:pageBlockSectionItem />
-    <apex:outputField rendered="{!isInitalOrFinal}" value="{!Assessment__c.Family_Annual_Income__c}"/> 
+
+        <apex:outputField rendered="{!isInitalOrFinal && mode='view'}" value="{!Assessment__c.Family_Annual_Income__c}"/> 
+
+
+        <apex:inputField rendered="{!isInitalOrFinal && mode='edit'}" value="{!Assessment__c.Family_Annual_Income__c}"/> 
+
+    
+    
 </apex:pageBlockSection>        
        
        
@@ -938,6 +1000,32 @@ j$('.ref_date_field' ).prop( "disabled", true);
 function toggleById(id, ms){
     j$(document.getElementById(id)).toggle(ms);
 };
+function checkOtherField(parent, otherid, mytxt){
+    if ( j$('.'+parent).val().indexOf(mytxt) == 0){ 
+        j$('.'+ otherid).prop( "disabled", false);
+    }
+    else{
+        j$('.'+ otherid).prop( "disabled", true);
+        j$('.'+ otherid).prop( "value", ""); 
+    
+    }
+   
+};
+
+function checkInputs(){
+    toggleOptionsbyStyle('pbs_cnc_cb', 'PBS_CNC2', 'pbs_question'); 
+    toggleOptionsbyStyle('cg_cnc_cb', 'CG_CNC2', 'cg_question'); 
+    toggleRefDate(); 
+    toggleOptionsbyStyle('SC_NoSC_CB', 'holder', 'second_cg_question');
+    checkOtherField('OC_Rel', 'OC_Other_Rel', 'Other'); 
+    checkOtherField('PC_Rel', 'PC_Other_Rel', 'Other');
+    checkOtherField('PC_Emp', 'PC_Occ', 'Employed');
+    checkOtherField('SC_Rel', 'SC_Other_Rel', 'Other');
+    checkOtherField('SC_Emp', 'SC_Occ', 'Employed');    
+
+
+};
+
 </script>
 </apex:outputPanel>
 
