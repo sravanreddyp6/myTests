@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <name>New Amission Notification</name>
+    <style>none</style>
+    <subject>New Admission Created</subject>
+    <textOnly>This is an automatically generated message from our ESD system.
+
+Hello {!Admission__c.CreatedBy},
+
+You have just set up an Admission record for {!Admission__c.Person_Being_Served__c} in ESD. Please also create the corresponding records in your Billing System.
+
+Thank you.</textOnly>
+    <type>custom</type>
+</EmailTemplate>
