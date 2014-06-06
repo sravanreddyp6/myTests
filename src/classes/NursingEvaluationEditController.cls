@@ -58,6 +58,8 @@ public with sharing class NursingEvaluationEditController {
     public List<string>selectedProsthetics {get;set;}
     public List<selectOption>orthodicsValues ;
     public List<string>selectedOrthodics {get;set;}
+    public List<selectOption>moodValues ;
+    public List<string>selectedMoods {get;set;}
     
     public List<String> sliderOptions { set;
         get {
@@ -189,9 +191,10 @@ public with sharing class NursingEvaluationEditController {
 		selectedProsthetics = new List<String>();
 		orthodicsValues = new List<selectOption>();
 		selectedOrthodics = new List<String>();
+		moodValues = new List<selectOption>();
+		selectedMoods = new List<String>();
 		
-		
-		
+	
 		if(!String.isBlank(this.evaluation.Breathe_sounds__c))
 		selectedSounds = this.evaluation.Breathe_Sounds__c.split(';');
 		
@@ -272,6 +275,9 @@ public with sharing class NursingEvaluationEditController {
 		
 		if(!String.isBlank(this.evaluation.Orthodics_Types__c))
 		selectedOrthodics = this.evaluation.Orthodics_Types__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Mood__c))
+		selectedMoods = this.evaluation.Mood__C.split(';');
 		
 		
     }
@@ -638,6 +644,18 @@ public with sharing class NursingEvaluationEditController {
 			}
 			else
 			this.evaluation.Orthodics_Types__c ='';
+			
+// For Mood Multi-picklist
+		string mod='';
+		for(string md: selectedMoods)
+		mod += md+';';
+			if(mod!=''){
+				mod = mod.Substring(0,mod.length()-1);
+				this.evaluation.Mood__c = mod;
+			}
+			else
+			this.evaluation.Mood__c ='';
+			
    					     	
         if (submitted || selectedTab == 'detailsTab' || selectedTab == null) {
 
@@ -781,6 +799,11 @@ public with sharing class NursingEvaluationEditController {
    public List<selectoption> getorthodicsValues(){
    		List<Selectoption> orthodicsValue = Utility.getPicklistValues(evaluation, 'Orthodics_Types__c');
    		return orthodicsValue; 
+   }
+   
+   public List<selectoption> getmoodValues(){
+   		List<Selectoption> moodValue = Utility.getPicklistValues(evaluation, 'Mood__c');
+   		return moodValue; 
    }
    
    @RemoteAction

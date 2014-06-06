@@ -320,6 +320,7 @@
 		<apex:inputhidden value="{!Evaluation__c.Orthodics_Types__c}" />
 		<apex:inputhidden value="{!Evaluation__c.Orthopedic_Medications__c}" />
 		<apex:inputhidden value="{!Evaluation__c.Prosthetic_Types__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Mood__c}" />
 	</apex:outputPanel>
 		<apex:pageMessages id="pageMessages" />
 		<apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); removeSpacer()" reRender="pageMessages, wholeTabPanel, buttons">
@@ -487,8 +488,6 @@
                     </apex:pageBlockSection>
 				</apex:pageBlock>
 			</apex:tab>
-			
-			
 			<apex:tab label="Cardiopulmonary" name="cardioTab" onTabenter="changeTab('cardioTab'); return false;" styleClass="{!IF(Evaluation__c.Cardio_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
 					<apex:pageBlockSection Columns="5">
@@ -606,7 +605,6 @@
 					</apex:pageBlockSection>
 				</apex:pageBlock>
 			</apex:tab>
-			
 			<apex:tab label="GU/GI/Nutrition" name="nutritionTab" ontabenter="changeTab('nutritionTab'); return false;" styleClass="{!IF(Evaluation__c.Nutrition_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
 					<apex:pageBlockSection columns="2">
@@ -837,7 +835,6 @@
                    	</apex:pageBlockSection>
 				</apex:pageBlock>
 			</apex:tab>
-			
 			<apex:tab label="Skin/Body" name="skinBodyTab" ontabenter="changeTab('skinBodyTab'); return false;" styleClass="{!IF(Evaluation__c.Skin_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
 				<script>
 				 jQuery(document).ready(function ($) {
@@ -886,7 +883,6 @@
                     });
                 });
                 </script>
-                
 				<apex:pageBlock >
 					<apex:pageblockSection columns="1" >
 						<apex:inputField value="{!Evaluation__c.Intact__c}" />
@@ -940,13 +936,50 @@
                     </apex:pageBlockSection>
                 </apex:pageBlock> 
 			</apex:tab>
-			
 			<apex:tab label="Neurological" name="neuroTab" ontabenter="changeTab('neuroTab'); return false;" styleClass="{!IF(Evaluation__c.Neuro_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
-				
+					<apex:pageBlockSection columns="2" >
+						<apex:inputField value="{!Evaluation__c.Level_of_Conciousness__c}" />
+						<apex:inputField value="{!Evaluation__c.Orientation__c}" />
+					</apex:pageBlockSection>
+					<hr />
+					<apex:pageBlockSection columns="2">
+                        <apex:outputText value="Responds To" styleClass="labelCol" style="margin-left: 3cm;" />
+                        <apex:outputText value="Behavior" styleClass="labelCol" style="margin-left: 3cm;" />
+                        <apex:inputField value="{!Evaluation__c.Verbal_Stim__c}" />
+                        <apex:inputField value="{!Evaluation__c.Cooperative__c}" />
+                        <apex:inputField value="{!Evaluation__c.Auditory_Stim__c}" />
+                        <apex:inputField value="{!Evaluation__c.Impulsive__c}" />
+                        <apex:inputField value="{!Evaluation__c.Tactile_Stim__c}" />
+                        <apex:inputField value="{!Evaluation__c.Inappropriate__c}" />
+                        <apex:inputField value="{!Evaluation__c.Responds_To_Pain__c}" label="Pain" />
+                        <apex:inputField value="{!Evaluation__c.Agitated__c}" />
+                        <apex:inputField value="{!Evaluation__c.Visual__c}"/>
+                        <apex:inputField value="{!Evaluation__c.Combative__c}" />
+                        <apex:inputField value="{!Evaluation__c.Rancho_Level__c}" />
+                        <apex:inputField value="{!Evaluation__c.Neurological_Confused__c}"/>
+                        <apex:inputField value="{!Evaluation__c.Seizure_History__c}" />
+                        <apex:inputField value="{!Evaluation__c.Unresponsive__c}"/>
+                        <apex:inputField value="{!Evaluation__c.VP_Shunt__c}"  html-data-rules="{&quot;Yes&quot;: [&quot;{!$Component.vpshuntDescribe}&quot;]}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.VP_Shunt_Describe__c}" id="vpshuntDescribe"/>
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Head_Circumference_cm__c}" />
+                        <apex:pageBlockSectionItem >
+                        	<apex:outputText value="Mood" styleClass="labelCol" />
+                        	<apex:selectCheckboxes value="{!selectedMoods}" layout="pageDirection">
+                        		<apex:selectOptions value="{!moodValues}" />
+                        	</apex:selectCheckboxes>
+                        </apex:pageBlockSectionItem>
+                        <apex:inputField value="{!Evaluation__c.Depression_History__c}" html-data-rules="{&quot;Yes&quot;: [&quot;{!$Component.depressionHurt}&quot;, &quot;{!$Component.depressionTreatment}&quot;]}" />
+                        <apex:inputField value="{!Evaluation__c.Desire_to_hurt_themselves__c}" label="If Sad or Flat - Has resident expressed desire to hurt themselves"  html-data-rules="{&quot;Yes&quot;: [&quot;{!$Component.plantoHarm}&quot;]}"/>
+                        <apex:inputField value="{!Evaluation__c.Depression_desire_to_hurt_themsleves__c}" label="If Yes, Does resident have a desire to hurt themselves?" id="depressionHurt"/>
+                        <apex:inputField value="{!Evaluation__c.Plan_to_Harm_themselves__c}" label="If Yes, does resident have a plan to harm themselves?" id="plantoHarm" />
+                        <apex:inputField value="{!Evaluation__c.Depression_Patient_received_Treatment__c}" label="Has Patient received treatment?" id="depressionTreatment" />
+                    </apex:pageBlockSection>
+                    <hr />
 			    </apex:pageBlock>
 			 </apex:tab>
-			 
 			 <apex:tab label="Ortho" name="orthoTab" ontabenter="changeTab('orthoTab'); return false;" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 			 	<apex:pageBlock >
 			 		<apex:pageBlockSection columns="2">
@@ -1006,8 +1039,7 @@
                     </apex:pageBlockSection>
 			 	</apex:pageBlock>
 			 </apex:tab>
-			 
-			<apex:tab label="Rehab" name="rehabTab" ontabenter="changeTab('rehabTab'); return false;" styleClass="{!IF(Evaluation__c.Rehab_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+			 <apex:tab label="Rehab" name="rehabTab" ontabenter="changeTab('rehabTab'); return false;" styleClass="{!IF(Evaluation__c.Rehab_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 			 	<apex:pageBlock >
 			 		<apex:pageBlockSection >
 			 			<apex:inputField value="{!Evaluation__c.Rehab_WFLs__c}" label="WFLs" />
@@ -1113,7 +1145,6 @@
                     	</apex:pageBlockSection>
 			 	</apex:pageBlock>
 			 </apex:tab>
-			 
 			 <apex:tab label="Psycho/Social" name="psychoSocialTab" ontabenter="changeTab('psychoSocialTab'); return false;" styleClass="{!IF(Evaluation__c.Psycho_Social_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 			 	<apex:pageBlock >
 			 		<apex:pageBlockSection columns="1">
@@ -1294,7 +1325,6 @@
 			 		</apex:pageBlockSection>
 			 	</apex:pageBlock>
 			 </apex:tab>
-			 
 			 <apex:tab label="Discharge Plan" name="dischargePlanTab" ontabenter="changeTab('dischargePlanTab'); return false;" styleClass="{!IF(Evaluation__c.Discharge_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 			 	<apex:pageBlock >
 			 		<apex:pageBlocksection columns="1">
@@ -1316,7 +1346,6 @@
 			 	</apex:pageBlock>
 			 </apex:tab>
 		</apex:tabPanel>
-		
 		<apex:pageBlock id="buttons">
 			<apex:pageBlockButtons location="bottom">
 				<apex:commandButton Value="Save & Continue" onClick="changeTab(getNextTab('{!selectedTab}')); return false;" rendered="{!selectedTab != 'dischargePlanTab'}" />
