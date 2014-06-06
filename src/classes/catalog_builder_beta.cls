@@ -16,6 +16,9 @@ public with sharing class catalog_builder_beta {
     
     public Clinical_Catalog__c myCatalog {get; set;}
     
+    
+    
+    
     public catalog_builder_beta(ApexPages.StandardController controller) {
         nodes = new list<Clinical_Catalog_Tree_Node__c>();
         myCatalog = (Clinical_Catalog__c)controller.getRecord();
@@ -33,108 +36,123 @@ public with sharing class catalog_builder_beta {
     
     public pageReference editTreeNode(){
     	eleyID = [select Catalog_Element__r.id from Clinical_Catalog_Tree_Node__c Where name =:curTreeNodeKey].Catalog_Element__r.id;
-    	editEley();
-    	return null;
-    }
-        
-    public pageReference editEley(){
-        curEley = [select name, id, Type__c, Description__c, status__c from Clinical_Catalog_Element__c Where id =:eleyID];
+        CurEley = [select name, id, Type__c, Description__c, status__c from Clinical_Catalog_Element__c Where id =:eleyID];
         refreshFormTree();
         return null;
     }
+    
     public pageReference newEley(){
-        curEley = new Clinical_Catalog_Element__c ();
-        curEley.Status__c = 'Active';
+        CurEley = new Clinical_Catalog_Element__c ();
+        CurEley.Status__c = 'Active';
         return null;
-    }    
+    }
+       
 public pageReference upsertEley(){
 
-    upsert curEley;
-    curEley = [select name, id, Type__c, Description__c, status__c from Clinical_Catalog_Element__c Where id =:curEley.id];
+    upsert CurEley;
+    CurEley = [select name, id, Type__c, Description__c, status__c from Clinical_Catalog_Element__c Where id =:CurEley.id];
     string curEleyType = CurEley.Type__c;
     
     list<Clinical_Catalog_Tree_Node__c > NewNodes = new list<Clinical_Catalog_Tree_Node__c >();
     list<Clinical_Catalog_Tree_Node__c > PurgeNodes = new list<Clinical_Catalog_Tree_Node__c >();
         
     if(curEleyType == 'Goal' && currentInsertedNodes.size() == 0){
-
-            Clinical_Catalog_Tree_Node__c newNode = new Clinical_Catalog_Tree_Node__c();
-            newNode.Catalog__c = myCatalog.id;
-            newNode.Catalog_Element__c = curEley.id;
-            newNode.ID_Goal__c = integer.valueof(curEley.name);
-            newNode.ID_Objective__c = 0;
-            newNode.ID_Action__c = 0;
-            NewNodes.add(newNode); 
+        Clinical_Catalog_Tree_Node__c newNode = new Clinical_Catalog_Tree_Node__c();
+        newNode.Catalog__c = myCatalog.id;
+        newNode.Catalog_Element__c = CurEley.id;
+        newNode.ID_Goal__c = integer.valueof(CurEley.name);
+        newNode.ID_Objective__c = 0;
+        newNode.ID_Action__c = 0;
+        NewNodes.add(newNode); 
     }
     
-        //import the keys the fancy tree gave us
-        list<string> items = new list<string>();
-       system.debug('The keys to upsert: ' + selectedKeys);
-        items = selectedKeys.split(',');        
-        formTree.inputSelectedKeys(items, true);  
-        //loop over goals  
-        
-        for(TMN_Tree.node n :formTree.root.nodes){
-                //check for pre-exsiting join
-                if(curEleyType == 'Objective'){
-                    boolean hasRecord = false;
-                    for(Clinical_Catalog_Tree_Node__c selN :currentInsertedNodes ){
-                        if(selN.name == n.CatTreeNode.name){
-                            hasRecord = true;
-                            if(!n.isSelected){ PurgeNodes .add(selN);}
-                        }
-                    }
-                    if(!hasRecord && n.isSelected){
-                            Clinical_Catalog_Tree_Node__c newNode = new Clinical_Catalog_Tree_Node__c();
-                            newNode.Catalog__c = myCatalog.id;
-                            newNode.Catalog_Element__c = curEley.id;
-                            newNode.ID_Goal__c = n.CatTreeNode.ID_Goal__c;
-                            newNode.ID_Objective__c = integer.valueof(curEley.name);
-                            newNode.ID_Action__c = 0;
-                            NewNodes.add(newNode);
-                    }
-                    
-                }
-                // loop over objectives when
-                if(curEleyType == 'Action'){
-                    for(TMN_Tree.node o :n.nodes) {
-                        boolean hasRecord = false;
-                        for(Clinical_Catalog_Tree_Node__c selN :currentInsertedNodes ){
-                            if(selN.name == o.CatTreeNode.name){
-                                hasRecord = true;
-                                if(!o.isSelected){ PurgeNodes.add(selN);}
-                            }
-                        }
-                        if(!hasRecord && o.isSelected){
-                                Clinical_Catalog_Tree_Node__c newNode = new Clinical_Catalog_Tree_Node__c();
-                                newNode.Catalog__c = myCatalog.id;
-                                newNode.Catalog_Element__c = curEley.id;
-                                newNode.ID_Goal__c = o.CatTreeNode.ID_Goal__c;
-                                newNode.ID_Objective__c = o.CatTreeNode.ID_Objective__c;
-                                newNode.ID_Action__c = integer.valueof(curEley.name);
-                                NewNodes.add(newNode);
-                        } 
-                    }               
-                }
-                
-        }
-        /*
+    //import the keys the fancy tree gave us
+    list<string> items = new list<string>();
+    items = selectedKeys.split(',');        
+    formTree.inputSelectedKeys(items, true);  
+    //loop over goals  
+    
+    for(TMN_Tree.node n :formTree.root.nodes){
+        //check for pre-exsiting join
         if(curEleyType == 'Objective'){
-        nodes = [select id, name, Catalog_Element__c, Catalog_Element__r.name, Catalog_Element__r.type__c, Catalog_Element__r.description__c, ID_Goal__c, ID_Objective__c, ID_Action__c  from Clinical_Catalog_Tree_Node__c Where Catalog__r.id =:myCatalog.id AND Catalog_Element__r.type__c = 'Action' ];
-           for(Clinical_Catalog_Tree_Node__c action :nodes){
-               for(Clinical_Catalog_Tree_Node__c purge :PurgeNodes){           
-                   if((action.ID_Goal__c == purge.ID_Goal__c)&& (action.ID_Objective__c == purge.ID_Objective__c)){
-                       PurgeNodes.add(action);
-                   }           
-               } 
-           }
+            boolean hasRecord = false;
+            for(Clinical_Catalog_Tree_Node__c selN :currentInsertedNodes ){
+                if(selN.name == n.CatTreeNode.name){
+                    hasRecord = true;
+                    if(!n.isSelected){ PurgeNodes .add(selN);}
+                }
+            }
+            if(!hasRecord && n.isSelected){
+                    Clinical_Catalog_Tree_Node__c newNode = new Clinical_Catalog_Tree_Node__c();
+                    newNode.Catalog__c = myCatalog.id;
+                    newNode.Catalog_Element__c = CurEley.id;
+                    newNode.ID_Goal__c = n.CatTreeNode.ID_Goal__c;
+                    newNode.ID_Objective__c = integer.valueof(CurEley.name);
+                    newNode.ID_Action__c = 0;
+                    NewNodes.add(newNode);
+            }
+            
         }
-        */
+        // loop over objectives when
+        if(curEleyType == 'Action'){
+            for(TMN_Tree.node o :n.nodes) {
+                boolean hasRecord = false;
+                for(Clinical_Catalog_Tree_Node__c selN :currentInsertedNodes ){
+                    if(selN.name == o.CatTreeNode.name){
+                        hasRecord = true;
+                        if(!o.isSelected){ PurgeNodes.add(selN);}
+                    }
+                }
+                if(!hasRecord && o.isSelected){
+                        Clinical_Catalog_Tree_Node__c newNode = new Clinical_Catalog_Tree_Node__c();
+                        newNode.Catalog__c = myCatalog.id;
+                        newNode.Catalog_Element__c = CurEley.id;
+                        newNode.ID_Goal__c = o.CatTreeNode.ID_Goal__c;
+                        newNode.ID_Objective__c = o.CatTreeNode.ID_Objective__c;
+                        newNode.ID_Action__c = integer.valueof(CurEley.name);
+                        NewNodes.add(newNode);
+                } 
+            }               
+        }                    
+    }    
+
+    
+    list<Clinical_Catalog_Tree_Node__c > inactivateNodes = new list<Clinical_Catalog_Tree_Node__c >();    
+    
+    if (CurEley.status__c == 'Inactive') {
+	    for (Clinical_Catalog_Tree_Node__c n :nodes){
+            if(curEleyType == 'Goal' && n.ID_Goal__c.toPlainString() == CurEley.name && n.Status__c == 'Active'){
+                inactivateNodes.add(n);
+            }
+            if(curEleyType == 'Objective' && n.ID_Objective__c.toPlainString() == CurEley.name && n.Status__c == 'Active'){
+                inactivateNodes.add(n);
+            }
+            if(curEleyType == 'Action' && n.ID_Action__c.toPlainString()== CurEley.name && n.Status__c == 'Active'){
+                inactivateNodes.add(n);
+            }            
+        }        
+        for (Clinical_Catalog_Tree_Node__c inActNd :inactivateNodes) {
+            	inActNd.Status__c = 'Inactive';
+        }
+        upsert inactivateNodes;        
+    }    
+    
+    /*
+    if(curEleyType == 'Objective'){
+    nodes = [select id, name, Catalog_Element__c, Catalog_Element__r.name, Catalog_Element__r.type__c, Catalog_Element__r.description__c, ID_Goal__c, ID_Objective__c, ID_Action__c  from Clinical_Catalog_Tree_Node__c Where Catalog__r.id =:myCatalog.id AND Catalog_Element__r.type__c = 'Action' ];
+       for(Clinical_Catalog_Tree_Node__c action :nodes){
+           for(Clinical_Catalog_Tree_Node__c purge :PurgeNodes){           
+               if((action.ID_Goal__c == purge.ID_Goal__c)&& (action.ID_Objective__c == purge.ID_Objective__c)){
+                   PurgeNodes.add(action);
+               }           
+           } 
+       }
+    }
+    */
     insert NewNodes;
     delete PurgeNodes;
     CurEley = new Clinical_Catalog_Element__c ();
     refresh();
-    
     return null;
 }
 
