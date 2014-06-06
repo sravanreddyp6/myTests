@@ -18,19 +18,19 @@
         width: 320px;
         height: 60px;    
     } 
-    /*   
-    .frmLCol{
-        float: left;
-        width:300px;
+  
+/*     .frmLCol{ */
+/*         float: left; */
+/*         width:300px; */
     
-    }
-    .frmRCol{
-        float: right;  
-        width: 250px;  
-        //border: 1px solid black;
+/*     } */
+/*     .frmRCol{ */
+/*         float: right;   */
+/*         width: 250px;   */
+/*         //border: 1px solid black; */
     
-    }
-    */
+/*     } */
+
 </style>
 <apex:outputPanel id="page">
 <apex:outputPanel id="hiddenField" style="display: none;">
@@ -38,7 +38,7 @@
 </apex:outputPanel>
 <apex:form >
 
- <apex:actionFunction action="{!editTreeNode}" name="triggerNodeEdit" rerender="eleyForm, relatedTo">
+ <apex:actionFunction action="{!editTreeNode}" name="triggerNodeEdit" rerender="eleyForm" status="myStatus">
      <apex:param name="firstParam" assignTo="{!curTreeNodeKey}" value="" />
  </apex:actionFunction>
 <apex:outputPanel layout="block" styleClass="rcol">
@@ -58,49 +58,46 @@
 <apex:form >
 <apex:outputPanel layout="block" styleClass="lcol">
 <apex:pageBlock id="eleyForm" title="Component" >
-    <apex:pageBlockButtons >
-        <apex:commandButton action="{!upsertEley}" value="Save" reRender="page" status="myStatus"/> 
-            
-    </apex:pageBlockButtons>
-<apex:pageMessages ></apex:pageMessages>    
-<apex:outputPanel layout="block" styleClass="frmLCol">   
-    <apex:pageBlock mode="maindetail">  
-      
-        <apex:pageBlockSection columns="1" >
-            <apex:variable value="{!CurEley.id ==null}" var="isNew"/>
-            
-            <apex:pageblockSectionItem rendered="{!isNew}"   >
-                <apex:outputLabel >Type</apex:outputLabel>        
-                <apex:actionRegion >
-                <apex:inputField value="{!CurEley.Type__c}" required="true"  >                
-                    <apex:actionSupport event="onchange" action="{!refreshFormTree}" reRender="relatedTo" />
-                </apex:inputField>
-                </apex:actionRegion>            
-            </apex:pageblockSectionItem>
-            <apex:outputField rendered="{! NOT(isNew)}" value="{!CurEley.Type__c}" />
-            <apex:inputField styleClass="txtArea" value="{!CurEley.Description__c}" required="true" />
-            <apex:inputField value="{!CurEley.Status__c}" required="true"/>
-        
-        </apex:pageBlockSection>
-    </apex:pageBlock>
-</apex:outputPanel>
+     <apex:pageBlockButtons >
+     <apex:commandButton action="{!upsertEley}" value="Save" reRender="page" status="myStatus"/>             
+     </apex:pageBlockButtons>        
+    <apex:pageMessages ></apex:pageMessages>    
+	<apex:outputPanel layout="block" styleClass="frmLCol">   
+	    <apex:pageBlock mode="maindetail">      
+	        <apex:pageBlockSection columns="1" >
+	            <apex:variable value="{!CurEley.id ==null}" var="isNew"/>
+	            
+	            <apex:pageblockSectionItem rendered="{!isNew}"   >
+	                <apex:outputLabel >Type</apex:outputLabel>        
+	                <apex:actionRegion >
+	                <apex:inputField value="{!CurEley.Type__c}" required="true"  >                
+	                    <apex:actionSupport event="onchange" action="{!refreshFormTree}" reRender="relatedTo" />
+	                </apex:inputField>
+	                </apex:actionRegion>            
+	            </apex:pageblockSectionItem>
+	            <apex:outputField rendered="{! NOT(isNew)}" value="{!CurEley.Type__c}" />
+	            <apex:inputField styleClass="txtArea" value="{!CurEley.Description__c}" required="true" />
+	            <apex:inputField value="{!CurEley.Status__c}" required="true"/>
+	        
+	        </apex:pageBlockSection>
+	    </apex:pageBlock>
+	</apex:outputPanel>
 
-<apex:outputPanel id="relatedTo">
-<apex:outputPanel layout="block" styleClass="frmRCol">
-    <apex:outputPanel layout="block" rendered="{!CurEley.Type__c =='Action' || CurEley.Type__c =='Objective' }">
-                <apex:outputLabel >
-                    <br/>
-                    <apex:outputLabel rendered="{!CurEley.Type__c =='Objective'}">Select Goals</apex:outputLabel> 
-                    <apex:outputLabel rendered="{!CurEley.Type__c =='Action'}">Select Objectives</apex:outputLabel>
-                </apex:outputLabel>
-                <apex:outputPanel id="tree3" layout="block">
-                    <c:Fancy_Tree TreeString="{!formTree.Fancy_Tree_JSon_String}" mode="2" ID_PageSideStorage="myKeys" TreeID="tree3" debug="false" />
-                    <apex:inputHidden value="{!selectedKeys}" id="myKeys"/>       
-                </apex:outputPanel>
-    </apex:outputPanel>               
-</apex:outputPanel>
-</apex:outputPanel>
-
+	<apex:outputPanel id="relatedTo">
+		<apex:outputPanel layout="block" styleClass="frmRCol">
+		    <apex:outputPanel layout="block" rendered="{!CurEley.Type__c =='Action' || CurEley.Type__c =='Objective' }">
+		                <apex:outputLabel >
+		                    <br/>
+		                    <apex:outputLabel rendered="{!CurEley.Type__c =='Objective'}">Select Goals</apex:outputLabel> 
+		                    <apex:outputLabel rendered="{!CurEley.Type__c =='Action'}">Select Objectives</apex:outputLabel>
+		                </apex:outputLabel>
+		                <apex:outputPanel id="tree3" layout="block">
+		                    <c:Fancy_Tree TreeString="{!formTree.Fancy_Tree_JSon_String}" mode="2" ID_PageSideStorage="myKeys" TreeID="tree3" debug="false" />
+		                    <apex:inputHidden value="{!selectedKeys}" id="myKeys"/>       
+		                </apex:outputPanel>
+		    </apex:outputPanel>               
+		</apex:outputPanel>
+	</apex:outputPanel>
 
 </apex:pageBlock>
 </apex:outputPanel><!-- end right col -->
