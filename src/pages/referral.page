@@ -192,8 +192,8 @@ if ( j$('input[id$=Claims_Submission_Zip]').length > 0 ) {
         isClose = false;        
         fundingSourceScrollToTop(false);
     }  
-}    
-    if (j$('select[id$=authtype]').val() == 'Other') {
+    
+    if (j$('select[id$=authtype]').length > 0 && j$('select[id$=authtype]').val() == 'Other') {
 	    if ( j$('input[id$=otherauthtype]').val().trim() == false  ) {
 	    	errors += '<li class="error">Please describe "Other" authorization type</li>';
 	        j$('#fundingMessages').html(errors); 
