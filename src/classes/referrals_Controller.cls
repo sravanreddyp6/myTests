@@ -773,6 +773,13 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
   public void showAddFundingSource() {
     fundingSource = new Funding_Source__c();
     fundingSource.RecordTypeId = Utility.getFundingSourceRecordTypeFromReferral(this.ReferralRecord);
+    
+    List<RecordType> cmrt = [ select id from recordtype where sobjecttype='Funding_Source__c' and developername = 'CareMeridian_FS'];
+    if (cmrt.size() > 0) {
+    	ID CMID = cmrt[0].Id;
+	    if ( fundingSource.RecordTypeId == CMID)
+    		fundingSource.Authorization_type__c = 'Initial'; // set default value that is not being honored in late render on jquery dialog
+    }
   }
 
   public void saveFundingSource() {

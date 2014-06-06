@@ -204,14 +204,28 @@ function stopRKey(evt) {
   fundingSourceSave = function (isClose) {
     // We cant use Visualforce functions/variables in a Static Resource JS file,
     // so we have to pass it in here.
-    if (checkZipCode(j$('input[id$=Claims_Submission_Zip]').val()) == false) {
-        isClose = false;        
-        fundingSourceScrollToTop(false);
-    }    
-    else {
+    // Zip is only on some flavors so check for field existence first
+   // We cant use Visualforce functions/variables in a Static Resource JS file,
+    // so we have to pass it in here.
+    var errors = '';
+	if ( j$('input[id$=Claims_Submission_Zip]').length > 0 ) {
+	    if (checkZipCode(j$('input[id$=Claims_Submission_Zip]').val()) == false) {
+	        isClose = false;        
+	        fundingSourceScrollToTop(false);
+	    }  
+    }
+    if (j$('select[id$=authtype]').length > 0 && j$('select[id$=authtype]').val() == 'Other') {
+	    if ( j$('input[id$=otherauthtype]').val().trim() == false  ) {
+	    	errors += '<li class="error">Please describe "Other" authorization type</li>';
+	        j$('#fundingMessages').html(errors); 
+	        isClose = false;        
+	        fundingSourceScrollToTop(false);
+	    }
+    }
+    if ( isClose) {
         closeFundingSource = isClose;
         fundingSourceSaveHelper('{!JSENCODE(ReferralRecordType)}');
-    }    
+    } 
   }
 
   //copies Agency fields from dialog for postback
@@ -895,8 +909,28 @@ function stopRKey(evt) {
       </apex:pageBlock>
       <apex:pageBlock title="Authorization Detail" id="fundingSourceAuthorizationDetailEntry" rendered="{!ReferralRecordType == 'CareMeridian' || ReferralRecordType == 'NeuroRestorative'}">
         <apex:pageBlockSection columns="2" rendered="{!ReferralRecordType == 'CareMeridian'}">
+        	<apex:pageBlockSectionItem >
+		        <apex:outputlabel for="authtype" value="Authorization Type" />  
+		        <apex:outputpanel >
+		        <apex:actionRegion >
+	            <apex:inputField id="authtype" value="{!fundingSource.Authorization_Type__c}" >
+	            <apex:actionSupport event="onchange" rerender="otherauthtypeblock" status="authtypestatus" />
+	            </apex:inputField>
+	            <apex:actionStatus id="authtypestatus">
+	            <apex:facet name="start">
+	              <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+	            </apex:facet>
+	            <apex:facet name="stop" />
+	            </apex:actionStatus>
+	            </apex:actionRegion>
+	            <br />
+	            <apex:outputpanel id="otherauthtypeblock">
+	            <apex:inputfield id="otherauthtype" value="{!fundingSource.Other_Authorization_Type__c}" required="{!fundingSource.Authorization_Type__c=='Other'}" rendered="{!fundingSource.Authorization_Type__c == 'Other'}"/>
+	            </apex:outputpanel>
+				</apex:outputpanel>
+            </apex:pageBlockSectionItem>
             <apex:inputField value="{!fundingSource.Status__c}" />
-            <apex:pageBlockSectionItem />
+            
             <apex:outputText value="Request" styleClass="modalSubheader" />
             <apex:pageBlockSectionItem />
             <apex:inputField value="{!fundingSource.Requested_By__c}" />
@@ -913,10 +947,13 @@ function stopRKey(evt) {
             <apex:inputField value="{!fundingSource.Given_By__c}" />
             <apex:inputField value="{!fundingSource.Representing_Received__c}" />
             <apex:inputField value="{!fundingSource.Received_Date_Time__c}" label="Date/Time Received" />
+            <apex:inputField value="{!fundingSource.Auth_given_method__c}" />
             <apex:inputField value="{!fundingSource.Authorization_Number__c}" />
+            <apex:outputText value="" /> 
             <apex:inputField value="{!fundingSource.Days_Authorized_From__c}" />
             <apex:inputField value="{!fundingSource.Days_Authorized_To__c}" />
-            <apex:inputField value="{!fundingSource.Contract_Used__c}" />
+            
+            <apex:inputField value="{!fundingSource.CM_Contract_Used_Lookup__c}" />
             <apex:inputField value="{!fundingSource.Level__c}" />
             <apex:inputField value="{!fundingSource.Justification__c}" />
             <apex:inputField value="{!fundingSource.Rate__c}" />
