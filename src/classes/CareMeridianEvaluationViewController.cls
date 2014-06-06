@@ -77,4 +77,19 @@ public with sharing class CareMeridianEvaluationViewController {
             // have to do anything
         }
     }
+    
+    public PageReference reDirect() {
+    	
+    	PageReference returnURL;
+    	
+    	if(evaluation.RecordTypeId == Utility.getEValuationRecordType('NursesAssessment')) 
+    	returnURL = new PageReference ('/apex/NursingEvaluationView?id='+evaluation.id);
+    	system.debug('UUUUUUUUUUUUUURRRRRRRRRRRRRRRRRRRRLLLLLLLLLLLLLLLLLLL'+returnURL);
+    	
+    	return returnURL;
+    	
+    	
+    
+    }
+    
 }

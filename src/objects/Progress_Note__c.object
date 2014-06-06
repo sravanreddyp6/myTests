@@ -1190,7 +1190,7 @@
         <externalId>false</externalId>
         <formula>datevalue(CreatedDate) - Date_of_Service__c</formula>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
-        <label># Days Created past DOS</label>
+        <label>Days Since Creation</label>
         <precision>18</precision>
         <required>false</required>
         <scale>0</scale>
@@ -2869,6 +2869,19 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <externalId>false</externalId>
         <label>Staff Credentials</label>
         <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Staff_Employee_ID__c</fullName>
+        <description>Employee Number from the User Object for the Staff Name selected on the Progress Note.</description>
+        <externalId>false</externalId>
+        <formula>Staff_Name__r.EmployeeNumber</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Practitioner ID</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>

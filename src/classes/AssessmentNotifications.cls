@@ -461,7 +461,7 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
                 incompleteNoticeEmails.add(mail);
                 
                 // Create a task reminder for the action.
-                Task t = new Task(Subject = a.Assessment_Type__r.Name + ' Assessment Reminder', Status = 'In Progress', Priority = 'Normal', OwnerId = a.OwnerId, Description = 'You have a ' + a.Assessment_Type__r.Name + ' assessment that is not approved at or after the 30 day mark: ' + System.Url.getSalesforceBaseUrl().toExternalForm() + '?id=' + a.Id + '&sfdc.override=1', WhoId = a.AccountPerson__r.PersonContactId, WhatId = a.AccountPerson__r.Id, ActivityDate = creDate);
+                Task t = new Task(Subject = a.Assessment_Type__r.Name + ' Assessment Reminder', Status = 'In Progress', Priority = 'Normal', OwnerId = a.OwnerId, Description = 'You have a ' + a.Assessment_Type__r.Name + ' assessment that is not approved at or after the 30 day mark: ' + System.Url.getSalesforceBaseUrl().toExternalForm() + '/' + a.Id, WhoId = a.AccountPerson__r.PersonContactId, WhatId = a.AccountPerson__r.Id, ActivityDate = creDate);
                 insert t;
                 
                 return incompleteNoticeEmails;   

@@ -122,7 +122,9 @@ function stopRKey(evt) {
   <apex:form id="FormId" >
       <apex:actionFunction name="saveRelParty" action="{!saveRelParty}" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs"/>
     <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs"/>
-  
+  	<!-- START: CTEAE-39; siblings -->
+    <apex:actionFunction name="showAddSibling" action="{!showAddSibling}" rerender="siblings,msgs"/>	
+  	<!-- END: CTEAE-39; siblings -->
   <apex:pageMessages />         
    
  <!--Person Being Served Section-->
@@ -347,6 +349,7 @@ function stopRKey(evt) {
 
       </apex:pageBlockSection>
 </apex:pageBlock>
+
     <!-- Add Related Party modal. -->
     <apex:outputPanel id="relatedPartyModal" style="display:none">
 
@@ -385,6 +388,50 @@ function stopRKey(evt) {
         </apex:pageBlockSection>
       </apex:pageBlock>
     </apex:outputPanel>
+
+<!-- START: CTEAE-39; Siblings Section -->
+    <!--Siblings Section-->
+    <a name="SIB" id="SIB"></a>
+	 
+	<apex:pageBlock id="siblingsListId">
+	        <div class="pbSubHeadButton">
+	            				<apex:commandButton onclick="window.open('/{!RelatedPartyReport}?pv0={!Contact.Name}', '_self'); return false;" value="Siblings Report" />
+	                            <apex:commandButton value="Add Sibling"
+	                              onClick="showAddSibling();openDialog('siblingModal', 'span', 'Add Sibling'); return false;" rendered="{!AND(isEditor, canEdit)}"/>
+	                              </div>
+	      <apex:pageBlockSection columns="1"
+	                             title="Siblings" id="siblings" collapsible="false">
+	        TEST
+	        <apex:pageBlockSectionItem >
+	        
+	        </apex:pageBlockSectionItem>
+	
+	      </apex:pageBlockSection>
+	</apex:pageBlock>
+	
+	<!-- Add Sibling modal. -->
+    <apex:outputPanel id="siblingModal" style="display:none">
+
+      <apex:pageBlock title="Add Sibling">
+        <apex:pageblockButtons location="bottom">
+          <input type="button" value="Save" onClick="siblingSave(true); " class="btn" />
+          <input type="button" value="Save & New" onClick="siblingSave(false);"  class="btn"/ >
+          <input type="button" value="Cancel" onClick="closeDialog('siblingModal', 'span'); j$('#siblingErrors').html('');return false;"  class="btn"/>
+        </apex:pageblockButtons>
+
+        <apex:facet name="header">
+          <p><strong>Add a sibling below:</strong></p>
+        </apex:facet>
+
+        <div id="relatedPartyErrors" style="color:red" />
+
+        <apex:pageBlockSection columns="2" id="siblingEntry">
+			TEST
+        </apex:pageBlockSection>
+      </apex:pageBlock>
+    </apex:outputPanel>
+
+<!-- END: CTEAE-39; Siblings Section --> 
     
      <!--Agencies Related to Person Section-->
     <a name="Agency" id="Agency"></a>

@@ -54,8 +54,8 @@
       <div class="pbHeaderButton">
           <apex:commandButton value="Edit" action="{!EditServAssign}" rendered="{!!editSA && canEditSA}" />
           <apex:actionStatus id="SaveStatus1" >
-		 <apex:facet name="stop">
-		 <apex:outputPanel id="buttons">
+         <apex:facet name="stop">
+         <apex:outputPanel id="buttons">
           <apex:commandButton value="Save" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1, myFRM, msgs" rendered="{!editSA}"/>
           &nbsp;
          <apex:commandButton value="Reset" action="{!ResetPage}" status="SaveStatus1" rerender="savestatus1, myFRM" rendered="{!editSA}" immediate="true"/>
@@ -720,6 +720,19 @@ END: Uncomment to have the element collapsed by default -->
 
     </apex:pageBlockSection>
     </apex:pageBlock>
+    <apex:pageBlock title="Nurses Assessment" rendered="{!showNurseAssessment && !editSA}">
+            <div class="pbHeaderButton">
+                <apex:CommandButton value="Nurses Assessment" rendered="{!evaluations == null || evaluations.size =0}" action="{!addNurAssessment}"/>
+            </div>
+            <apex:pageBlockTable styleclass="pcBody-list" value="{!evaluations}" var="evs" rendered="{!evaluations.size>0}">
+                <apex:column headerValue="Name">
+                    <apex:outputLink value="/apex/NursingEvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
+                </apex:column>
+                <apex:Column value="{!evs.LastModifiedDate}"/>
+            </apex:pageBlockTable>
+        <apex:outputText value="No Records to display" rendered="{!evaluations.size=0 || evaluations == null}" />
+    </apex:pageBlock>
+      
   <!--  Notes section -->
   <a name="Notes" id="Notes"></a>
     <apex:pageBlock id="Notes" title="Notes" rendered="{! !editSA}" >
@@ -757,7 +770,7 @@ END: Uncomment to have the element collapsed by default -->
 <!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
         <apex:commandButton action="{!createFadAssess}" value="New FAD Assessment Summary"/>
     </div>
-    <apex:outputText value="No FAD Assessment Summarys to display" rendered="{!(Assessments_Fad.size=0)}" />
+    <apex:outputText value="No FAD Assessment Summaries to display" rendered="{!(Assessments_Fad.size=0)}" />
     <apex:pageBlockTable value="{!Assessments_Fad}" var="assess" rendered="{!(Assessments_Fad.size!=0)}">
         <apex:column headerValue="Action"  styleClass="editcol">
             <a href="/apex/Assessment_FAD_Form?id={!assess.ID}&edit=1">Edit</a>
@@ -1029,13 +1042,13 @@ function saveLocation() {
     }
 
 
-	function changeEffectiveDates() {
-		var sd = j$('input[id$=startdate]').val();
-		var ed = j$('input[id$=enddate]').val();
-		
-		setEffectiveDate( sd, ed );
-	
-	}
+    function changeEffectiveDates() {
+        var sd = j$('input[id$=startdate]').val();
+        var ed = j$('input[id$=enddate]').val();
+        
+        setEffectiveDate( sd, ed );
+    
+    }
 
 </script>
 
