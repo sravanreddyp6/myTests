@@ -163,6 +163,28 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Auth_given_method__c</fullName>
+        <externalId>false</externalId>
+        <label>How Given</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Authorization_Comments__c</fullName>
         <externalId>false</externalId>
         <label>Authorization Comments</label>
@@ -197,6 +219,52 @@
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Authorization_Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Authorization Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>1:1 Sitter</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Basis__c</fullName>
@@ -253,6 +321,19 @@
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>CM_Contract_Used_Lookup__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>Lookup to CM contract object</description>
+        <externalId>false</externalId>
+        <label>Contract Used</label>
+        <referenceTo>CareMeridian_Contract__c</referenceTo>
+        <relationshipLabel>Funding Sources</relationshipLabel>
+        <relationshipName>Funding_Sources</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Call_Reference_Number__c</fullName>
@@ -1870,6 +1951,16 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Other_Authorization_Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Other Authorization Type</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Out_patient_Visit_Limit__c</fullName>
         <externalId>false</externalId>
         <label>Out-patient Visit Limit</label>
@@ -1956,7 +2047,7 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Insuarnce Indemnity</fullName>
+                <fullName>Insurance Indemnity</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -3138,6 +3229,10 @@
                 <fullName>Authorized</fullName>
                 <default>false</default>
             </picklistValues>
+            <picklistValues>
+                <fullName>Declined</fullName>
+                <default>false</default>
+            </picklistValues>
             <sorted>false</sorted>
         </picklist>
         <trackTrending>false</trackTrending>
@@ -3304,6 +3399,60 @@
         <fullName>Arizona</fullName>
         <active>true</active>
         <label>Arizona</label>
+        <picklistValues>
+            <picklist>Auth_given_method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
         <picklistValues>
             <picklist>Funding_Source__c</picklist>
             <values>
@@ -3495,6 +3644,60 @@
         <active>true</active>
         <label>California</label>
         <picklistValues>
+            <picklist>Auth_given_method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Funding_Source__c</picklist>
             <values>
                 <fullName>MediCal</fullName>
@@ -3616,6 +3819,60 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Auth_given_method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -4133,6 +4390,60 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Auth_given_method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -4838,6 +5149,60 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Auth_given_method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Benefit_Cycle__c</picklist>
             <values>
                 <fullName>Benefit Year</fullName>
@@ -5479,6 +5844,60 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Auth_given_method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Benefit_Cycle__c</picklist>
             <values>
                 <fullName>Benefit Year</fullName>
@@ -5817,15 +6236,15 @@
         <picklistValues>
             <picklist>Payer_Type__c</picklist>
             <values>
-                <fullName>Insuarnce Indemnity</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Insurance EPO</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Insurance HMO</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Insurance Indemnity</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -6037,10 +6456,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Crisis Stabilization</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>FCT-Family Centered Treatment</fullName>
                 <default>false</default>
             </values>
@@ -6058,10 +6473,6 @@
             </values>
             <values>
                 <fullName>Periodic Services</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Therapeutic Support</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -6141,6 +6552,60 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Auth_given_method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -6702,6 +7167,60 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Auth_given_method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Benefit_Cycle__c</picklist>
             <values>
                 <fullName>Benefit Year</fullName>
@@ -7036,15 +7555,15 @@
         <picklistValues>
             <picklist>Payer_Type__c</picklist>
             <values>
-                <fullName>Insuarnce Indemnity</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Insurance EPO</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Insurance HMO</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Insurance Indemnity</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -7296,6 +7815,60 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Auth_given_method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7666,15 +8239,15 @@
         <picklistValues>
             <picklist>Payer_Type__c</picklist>
             <values>
-                <fullName>Insuarnce Indemnity</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Insurance EPO</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Insurance HMO</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Insurance Indemnity</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -7822,10 +8395,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Crisis Stabilization</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>FCT-Family Centered Treatment</fullName>
                 <default>false</default>
             </values>
@@ -7843,10 +8412,6 @@
             </values>
             <values>
                 <fullName>Periodic Services</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Therapeutic Support</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7926,6 +8491,60 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Auth_given_method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -8455,6 +9074,60 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Auth_given_method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Benefit_Cycle__c</picklist>
             <values>
                 <fullName>Benefit Year</fullName>
@@ -8785,15 +9458,15 @@
         <picklistValues>
             <picklist>Payer_Type__c</picklist>
             <values>
-                <fullName>Insuarnce Indemnity</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Insurance EPO</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Insurance HMO</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Insurance Indemnity</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -9037,6 +9710,60 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Auth_given_method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -9625,6 +10352,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Declined</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Pending Approval</fullName>
                 <default>false</default>
             </values>
@@ -9686,6 +10417,60 @@
         <fullName>Generic</fullName>
         <active>true</active>
         <label>Generic</label>
+        <picklistValues>
+            <picklist>Auth_given_method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
         <picklistValues>
             <picklist>Funding_Source__c</picklist>
             <values>
@@ -9849,6 +10634,60 @@
         <active>true</active>
         <label>Illinois</label>
         <picklistValues>
+            <picklist>Auth_given_method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Funding_Source__c</picklist>
             <values>
                 <fullName>DHS</fullName>
@@ -9886,6 +10725,60 @@
         <fullName>Indiana</fullName>
         <active>true</active>
         <label>Indiana</label>
+        <picklistValues>
+            <picklist>Auth_given_method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
         <picklistValues>
             <picklist>Funding_Source__c</picklist>
             <values>
@@ -9973,6 +10866,60 @@
         <active>true</active>
         <label>Iowa</label>
         <picklistValues>
+            <picklist>Auth_given_method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Funding_Source__c</picklist>
             <values>
                 <fullName>BI Waiver</fullName>
@@ -10042,6 +10989,60 @@
         <fullName>Minnesota</fullName>
         <active>true</active>
         <label>Minnesota</label>
+        <picklistValues>
+            <picklist>Auth_given_method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
         <picklistValues>
             <picklist>Funding_Source__c</picklist>
             <values>
@@ -10140,6 +11141,60 @@
         <fullName>NeuroRestorative</fullName>
         <active>true</active>
         <label>NeuroRestorative</label>
+        <picklistValues>
+            <picklist>Auth_given_method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
         <picklistValues>
             <picklist>Benefit_Cycle__c</picklist>
             <values>
@@ -10402,15 +11457,15 @@
         <picklistValues>
             <picklist>Payer_Type__c</picklist>
             <values>
-                <fullName>Insuarnce Indemnity</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Insurance EPO</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Insurance HMO</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Insurance Indemnity</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -10584,6 +11639,60 @@
         <active>true</active>
         <label>Nevada</label>
         <picklistValues>
+            <picklist>Auth_given_method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Funding_Source__c</picklist>
             <values>
                 <fullName>CSS</fullName>
@@ -10641,6 +11750,60 @@
         <fullName>North_Dakota</fullName>
         <active>true</active>
         <label>North Dakota</label>
+        <picklistValues>
+            <picklist>Auth_given_method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
         <picklistValues>
             <picklist>Funding_Source__c</picklist>
             <values>
@@ -10715,6 +11878,60 @@
         <fullName>Ohio</fullName>
         <active>true</active>
         <label>Ohio</label>
+        <picklistValues>
+            <picklist>Auth_given_method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
         <picklistValues>
             <picklist>Funding_Source__c</picklist>
             <values>
@@ -10833,6 +12050,60 @@
         <fullName>Oregon</fullName>
         <active>true</active>
         <label>Oregon</label>
+        <picklistValues>
+            <picklist>Auth_given_method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
         <picklistValues>
             <picklist>Funding_Source__c</picklist>
             <values>
@@ -11034,6 +12305,60 @@
         <active>true</active>
         <label>West Virginia</label>
         <picklistValues>
+            <picklist>Auth_given_method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Funding_Source__c</picklist>
             <values>
                 <fullName>Medicaid</fullName>
@@ -11123,6 +12448,60 @@
         <fullName>Wisconsin</fullName>
         <active>true</active>
         <label>Wisconsin</label>
+        <picklistValues>
+            <picklist>Auth_given_method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
         <picklistValues>
             <picklist>Funding_Source__c</picklist>
             <values>
