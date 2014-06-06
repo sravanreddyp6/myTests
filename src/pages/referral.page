@@ -184,14 +184,19 @@ function enableDiagEff() {
 	fundingSourceSave = function (isClose) {
     // We cant use Visualforce functions/variables in a Static Resource JS file,
     // so we have to pass it in here.
-    if (checkZipCode(j$('input[id$=Claims_Submission_Zip]').val()) == false) {
-        isClose = false;        
-        fundingSourceScrollToTop(false);
-    }    
-    else {
-        closeFundingSource = isClose;
-        fundingSourceSaveHelper('{!JSENCODE(ReferralRecordType)}');
-    }    
+    if ( j$('input[id$=Claims_Submission_Zip]').length > 0 ) {
+	    if (checkZipCode(j$('input[id$=Claims_Submission_Zip]').val()) == false) {
+	        isClose = false;        
+	        fundingSourceScrollToTop(false);
+	    }    
+	    else {
+	        closeFundingSource = isClose;
+	        fundingSourceSaveHelper('{!JSENCODE(ReferralRecordType)}');
+	    }
+	} else {
+	        closeFundingSource = isClose;
+	        fundingSourceSaveHelper('{!JSENCODE(ReferralRecordType)}');
+	}   
   }
   
   // ERC-96: Adding this for front end validation.
