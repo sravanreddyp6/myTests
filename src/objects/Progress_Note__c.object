@@ -16476,11 +16476,11 @@ If this is selected, please fill out the appropriate check boxes to the right.</
     <validationRules>
         <fullName>Seven_Day_Late_Note_Non_Billable_NC</fullName>
         <active>true</active>
-        <description>A rule to make notes written 7 days or more after the start date non-billable by forcing an uncheck of the &quot;Purpose/Service is Billable&quot; checkbox if the state is NC / IFCS - NC.</description>
+        <description>A rule to make notes written 7 days or more after the start date non-billable by forcing an uncheck of the &quot;Purpose/Service is Billable&quot; checkbox if the state is NC.</description>
         <errorConditionFormula>IF( ISNEW() ,
-(($RecordType.Name  =  &apos;NC - Child and Family Team&apos; ||  $RecordType.Name  = &apos;NC - IFCS&apos;  ||  $RecordType.Name = &apos;NC - IIH&apos; ||  $RecordType.Name = &apos;NC - IMAPP&apos; || $RecordType.Name = &apos;NC - OPT&apos;) &amp;&amp; ((  TODAY()   -     DATEVALUE(Start_Time__c  ) ) &gt;= 7) &amp;&amp;  Purpose_Service_is_Billable__c = true)
+(($RecordType.DeveloperName  =  &apos;NC_Child_and_Family_Team&apos; ||  $RecordType.DeveloperName  = &apos;NC_IFCS_Progress_Note&apos;  ||  $RecordType.DeveloperName = &apos;NC_IIH_Progress_Note&apos; ||  $RecordType.DeveloperName = &apos;NC_IMAPP_Progress_Note&apos; || $RecordType.DeveloperName = &apos;NC_OPT_Progress_Note&apos;) &amp;&amp; ((  TODAY()   -     DATEVALUE(Start_Time__c  ) ) &gt;= 7) &amp;&amp;  Purpose_Service_is_Billable__c = true)
 ,
-(($RecordType.Name  =  &apos;NC - Child and Family Team&apos; ||  $RecordType.Name  = &apos;NC - IFCS&apos;  ||  $RecordType.Name = &apos;NC - IIH&apos; ||  $RecordType.Name = &apos;NC - IMAPP&apos; || $RecordType.Name = &apos;NC - OPT&apos;) &amp;&amp; (( DATEVALUE(CreatedDate )  -    DATEVALUE(Start_Time__c ) ) &gt;= 7) &amp;&amp;  Purpose_Service_is_Billable__c = true)
+(($RecordType.DeveloperName  =  &apos;NC_Child_and_Family_Team&apos; ||  $RecordType.DeveloperName  = &apos;NC_IFCS_Progress_Note&apos;  ||  $RecordType.DeveloperName = &apos;NC_IIH_Progress_Note&apos; ||  $RecordType.DeveloperName = &apos;NC_IMAPP_Progress_Note&apos; || $RecordType.DeveloperName = &apos;NC_OPT_Progress_Note&apos;) &amp;&amp; (( DATEVALUE(CreatedDate )  -    DATEVALUE(Start_Time__c ) ) &gt;= 7) &amp;&amp;  Purpose_Service_is_Billable__c = true)
 )</errorConditionFormula>
         <errorMessage>Notes created 7 days or more after the start date for NC / IFCS-NC must have the Purpose/Service is Billable checkbox unchecked.  Please uncheck the Purpose/Service is Billable checkbox and attempt the save again.</errorMessage>
     </validationRules>
@@ -16780,13 +16780,13 @@ var value = &apos;{!Progress_Note__c.FCT_Phase_at_Note_Creation__c}&apos;;
  if (value == &apos;&apos;){
     errors.push(&apos;You must select a &quot;FCT Phase of Treatment&quot; before continuing.&apos;);
    }
- value = &apos;{!Progress_Note__c.People_Present__c}&apos;;
- if (value == &apos;&apos;){
-    errors.push(&apos;You must select a &quot;People Present&quot; before continuing.&apos;);
+ 
+ if ({!ISBLANK(Progress_Note__c.People_Present__c)}){
+    errors.push(&apos;You must enter a value in &quot;People Present&quot; before continuing.&apos;);
    }
  value = &apos;{!Progress_Note__c.Staff_Name__c}&apos;;
  if (value == &apos;&apos;){
-    errors.push(&apos;You must select the &quot;Staff Name&quot; before continuing.&apos;); 
+    errors.push(&apos;You must select a value for &quot;Staff Name&quot; before continuing.&apos;); 
    }
  if({!ISPICKVAL(Progress_Note__c.Area_Family_Functioning__c,&apos;&apos;)}){ 
     errors.push(&apos;You must select the &quot;Area of Family Functioning&quot; before continuing.&apos;); 
