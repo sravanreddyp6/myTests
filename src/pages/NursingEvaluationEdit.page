@@ -288,7 +288,7 @@
         
      </script>
      <div class="breadcrumb">
-        <a href="/">Home</a> > <a href="/{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__c}">Person Being Served: {!Evaluation__c.ServiceAssignment__r.Person_Being_Served__r.Name}</a> > <a href="/{!Evaluation__c.ServiceAssignment__r.Admission__c}">Admission: {!Evaluation__c.ServiceAssignment__r.Admission__r.Name}</a> > <a href="/{!Evaluation__c.ServiceAssignment__c}" >ServiceAssignment : {!Evaluation__c.ServiceAssignment__r.Name}</a> > {!Evaluation__c.Name}
+        <a href="/">Home</a> > <a href="/{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__c}">{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__r.Name}</a> > <a href="/{!Evaluation__c.ServiceAssignment__r.Admission__c}">{!Evaluation__c.ServiceAssignment__r.Admission__r.Name}</a> > <a href="/{!Evaluation__c.ServiceAssignment__c}" >{!Evaluation__c.ServiceAssignment__r.Name}</a> > {!Evaluation__c.Name}
     </div>
 	<apex:form id="wholePage">
 	<apex:outputPanel rendered="false">
@@ -321,6 +321,9 @@
 		<apex:inputhidden value="{!Evaluation__c.Orthopedic_Medications__c}" />
 		<apex:inputhidden value="{!Evaluation__c.Prosthetic_Types__c}" />
 		<apex:inputhidden value="{!Evaluation__c.Mood__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Negative_Impact_on_ADLs__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Alleviating_Factors__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Manner_of_Expressing_Pain__c}" />
 	</apex:outputPanel>
 		<apex:pageMessages id="pageMessages" />
 		<apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); removeSpacer()" reRender="pageMessages, wholeTabPanel, buttons">
@@ -988,7 +991,8 @@
                     	<apex:inputField value="{!Evaluation__c.Low_Bed__c}" />
                     	<apex:pageBlockSectionItem />
                     	</apex:pageBlockSection>
-                    	<apex:pageBlockSection columns="1" title="Supportive Devices" collapsible="false">
+                    	<apex:pageBlockSection columns="1" collapsible="false">
+                    		<h2>Supportive Devices</h2>
                     		<apex:panelGrid columns="4" width="50%" style="text-align: center; " >
                     			<apex:outputText value="Device" StyleClass="labelCol" />
                     			<apex:outputText value="" />
@@ -1045,6 +1049,126 @@
                     		<apex:inputField value="{!Evaluation__c.History_of_Falls_Last_3_Months__c}" />
                     </apex:pageBlockSection>
                     <hr />
+                    <apex:pageBlockSection columns="2" >
+                    	<apex:inputField value="{!Evaluation__c.Memory__c}" />
+                    	<apex:inputField value="{!Evaluation__c.Expression__c}" />
+                    	<apex:inputField value="{!Evaluation__c.Motivation_Towards_Rehab__c}" />
+                    	<apex:inputField value="{!Evaluation__c.Expression_Other__c}" label="if Non-verbal, Other Expression"/>
+                    	<apex:inputField value="{!Evaluation__c.Awareness_of_Deficits__c}" />
+                    	<apex:inputField value="{!Evaluation__c.Able_to_make_Needs_Known__c}" />
+                    	<apex:inputField value="{!Evaluation__c.Safety_Awareness__c}" />
+                    	<apex:inputField value="{!Evaluation__c.Primary_Language__c}" />
+                    	<apex:pageBlockSectionitem />
+                    	<apex:inputField value="{!Evaluation__c.Other_Languages_Spoken__c}" />
+                    </apex:pageBlockSection>
+                    <hr />
+                    <apex:pageBlockSection columns="2" >
+                    	<apex:outputText value="Sensory" styleClass="labelCol" style="margin-left: 3cm;" />
+                    	<apex:pageBlockSectionItem />
+                    	<apex:inputField value="{!Evaluation__c.Tactile__c}" />
+                    	<apex:pageblockSectionItem />
+                    	<apex:inputField value="{!Evaluation__c.Hearing__c}" />
+                    	<apex:inputField value="{!Evaluation__c.Tracking_R__c}" />
+                    	<apex:outputText value="Hearing Aids?" style="margin-left: 3cm;" />
+                    	<apex:inputField value="{!Evaluation__c.Tracking_L__c}" />
+                    	<apex:inputField value="{!Evaluation__c.Hearing_Aid_Right__c}" label="Right" />
+                    	<apex:inputField value="{!Evaluation__c.Vision__c}" />
+                    	<apex:inputField value="{!Evaluation__c.Hearing_Aid_Left__c}" label="Left" />
+                    	<apex:inputField value="{!Evaluation__c.Blink_to_Threat_R_L__c}" />
+                    	<apex:inputField value="{!Evaluation__c.Resident_have_aid_s_at_Facility__c}" label="Does Resident Have aid(s) at the factility?" />
+                    	<apex:outputText Value="Glasses/Contacts" style="margin-left: 3cm;" />
+                    	<apex:inputField value="{!Evaluation__c.Ear_Infections__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.earinfectionHistory}&quot;]}" />
+                    	<apex:inputField value="{!Evaluation__c.Glasses_For_Reading__c}" label="For Reading" />
+                    	<apex:inputField value="{!Evaluation__c.Ear_infection_Describe__c}" label="Describe History" id="earinfectionHistory"/>
+                    	<apex:inputField value="{!Evaluation__c.Glasses_For_Distance__c}" label="For Distance" />
+                    	<apex:pageBlockSectionItem />
+                    	<apex:inputField value="{!Evaluation__c.Glasses_For_Multi_Focal_Use__c}" label="For Focal Use" />
+                    	<apex:pageBlockSectionItem />
+                    	<apex:inputField value="{!Evaluation__c.Glasses_for_other__c}" label="other" />
+                    	<apex:pageBlockSectionItem />
+                    	<apex:inputField value="{!Evaluation__c.Contacts_Type__c}" label="if Contacts, Type" />
+                    	<apex:pageBlockSectionItem />
+                    	<apex:inputField value="{!Evaluation__c.Resident_Contacts_Glasses_at_Facility__c}" label="Does resident have contacts or glasses at facility?" />
+                    </apex:pageBlockSection>
+                    <hr />
+                     <h2>Neuro/Muscular</h2>
+                    <apex:panelGrid columns="6" width="80%" style="text-align: center; ">
+                        <apex:outputText />
+                        <apex:outputText value="R Upper" />
+                        <apex:outputText value="R Lower" />
+                        <apex:outputText value="L Upper" />
+                        <apex:outputText value="L Lower" />
+                        <apex:outputText value="Comments" />
+
+                        <apex:outputText value="ROM" />
+                        <apex:inputField value="{!Evaluation__c.R_Upper_ROM__c}" label=""  style="margin-right: 0.8cm;"/>
+                        <apex:inputField value="{!Evaluation__c.R_Lower_ROM__c}" label=""  style="margin-right: 0.8cm;"/>
+                        <apex:inputField value="{!Evaluation__c.L_Upper_ROM__c}" label=""  style="margin-right: 0.8cm;"/>
+                        <apex:inputField value="{!Evaluation__c.L_Lower_ROM__c}" label=""  style="margin-right: 0.8cm;"/>
+                        <apex:inputField value="{!Evaluation__c.ROM_Comments__c}" id="ROMComments" />
+
+                        <apex:outputText value="Tone" />
+                        <apex:inputField value="{!Evaluation__c.R_Upper_Tone__c}" label="" id="rUpperTone" />
+                        <apex:inputField value="{!Evaluation__c.R_Lower_Tone__c}" label="" id="rLowerTone" />
+                        <apex:inputField value="{!Evaluation__c.L_Upper_Tone__c}" label="" id="lUpperTone" />
+                        <apex:inputField value="{!Evaluation__c.L_Lower_Tone__c}" label="" id="lLowerTone" />
+                        <apex:inputField value="{!Evaluation__c.Tone_Comments__c}" id="toneComments" />
+
+                        <apex:outputText value="Strength" />
+                        <apex:inputField value="{!Evaluation__c.R_Upper_Strength__c}" label="" id="rUpperStrength" />
+                        <apex:inputField value="{!Evaluation__c.R_Lower_Strength__c}" label="" id="rLowerStrength" />
+                        <apex:inputField value="{!Evaluation__c.L_Upper_Strength__c}" label="" id="lUpperStrength" />
+                        <apex:inputField value="{!Evaluation__c.L_Lower_Strength__c}" label="" id="lLowerStrength" />
+                        <apex:inputField value="{!Evaluation__c.Strength_Comments__c}" id="strengthComments" />
+
+                        <apex:outputText value="Sensation" />
+                        <apex:inputField value="{!Evaluation__c.R_Upper_Sensation__c}" label="" id="rUpperSensation" />
+                        <apex:inputField value="{!Evaluation__c.R_Lower_Sensation__c}" label="" id="rLowerSensation" />
+                        <apex:inputField value="{!Evaluation__c.L_Upper_Sensation__c}" label="" id="lUpperSensation" />
+                        <apex:inputField value="{!Evaluation__c.L_Lower_Sensation__c}" label="" id="lLowerSensation" />
+                        <apex:inputField value="{!Evaluation__c.Sensation_Comments__c}" id="sensationComments" />
+                    </apex:panelGrid>
+                    <hr />
+                    <apex:pageBlockSection columns="2" >
+                    	<apex:inputField value="{!Evaluation__c.Pain_History__c}" />
+                    	<apex:outputText value="Aggrivating Factors" styleClass="labelCol" style="margin-left: 3cm;"/>
+                    	<apex:inputField value="{!Evaluation__c.Pain_Level_Requiring_Intervention__c}" />
+                    	<apex:inputField value="{!Evaluation__c.Activity__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.activityDescribe}&quot;]}"/>
+                    	<apex:pageblockSectionItem />
+                    	<apex:inputField value="{!Evaluation__c.Activity_Describe__c}" label="Describe" id="activityDescribe" />
+                    	<apex:pageBlockSectionItem />
+                    	<apex:inputField value="{!Evaluation__c.Position__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.positionDescribe}&quot;]}" />
+                    	<apex:pageBlockSectionItem />
+                    	<apex:inputField value="{!Evaluation__c.Position_Describe__c}" label="Describe" id="positionDescribe"/>
+                    	<apex:pageBlockSectionItem />
+                    	<apex:inputField value="{!Evaluation__c.Time_of_Day__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.timedayDescribe}&quot;]}" />
+                    	<apex:pageBlockSectionItem />
+                    	<apex:inputField value="{!Evaluation__c.Time_of_Day_Describe__c}" label="Describe" id="timedayDescribe" />
+                    	<apex:pageBlockSectionItem />
+                    	<apex:inputField value="{!Evaluation__c.None__c}" />
+                    	<apex:pageBlocksectionItem >
+                    		<apex:outputText value="Alleviating Factors" styleClass="labelCol" />
+                    		<apex:selectCheckboxes value="{!selectedAlleviators}" layout="pageDirection">
+                    			<apex:selectoptions value="{!alleviatorValues}" />
+                    		</apex:selectCheckboxes>
+                    	</apex:pageBlocksectionItem>
+                    	<apex:pageBlocksectionItem >
+                    		<apex:outputText value="Negative Impact on ADLs" styleClass="labelCol" />
+                    		<apex:selectCheckboxes value="{!selectedAdls}" layout="pageDirection" >
+                    			<apex:selectoptions value="{!adlValues}" />
+                    		</apex:selectCheckboxes>
+                    	</apex:pageBlocksectionItem>
+                    	<apex:pageBlocksectionItem >
+                    		<apex:outputText value="Manner of Expressing Pain" styleClass="labelCol" />
+                    		<apex:selectCheckboxes value="{!selectedExpressions}" layout="pageDirection" >
+                    			<apex:selectoptions value="{!expressionValues}" />
+                    		</apex:selectCheckboxes>
+                    	</apex:pageBlocksectionItem>
+                    </apex:pageBlockSection>
+                    <hr />
+                    <apex:pageBlockSection Columns="1" >
+                    	<apex:inputField value="{!Evaluation__c.Pain_Present__c}" />
+                    </apex:pageBlockSection>
 			    </apex:pageBlock>
 			 </apex:tab>
 			 <apex:tab label="Ortho" name="orthoTab" ontabenter="changeTab('orthoTab'); return false;" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
@@ -1417,7 +1541,7 @@
 			<apex:pageBlockButtons location="bottom">
 				<apex:commandButton Value="Save & Continue" onClick="changeTab(getNextTab('{!selectedTab}')); return false;" rendered="{!selectedTab != 'dischargePlanTab'}" />
 				<apex:commandButton value="Save" action="{!save}" />
-				<apex:commandButton value="cancel" onClick="window.location='apex/NursingEvaluationView?id={!Evaluation__c.Id}&tab={!selectedTab}'; return false;"/>
+				<apex:commandButton value="Cancel" onClick="window.location='apex/NursingEvaluationView?id={!Evaluation__c.Id}&tab={!selectedTab}'; return false;"/>
 			</apex:pageBlockButtons>
 		</apex:pageBlock>
 		<apex:outputPanel id="relatedPartyDialog" style="display:none">

@@ -60,6 +60,14 @@ public with sharing class NursingEvaluationEditController {
     public List<string>selectedOrthodics {get;set;}
     public List<selectOption>moodValues ;
     public List<string>selectedMoods {get;set;}
+    public List<selectOption>alleviatorValues ;
+    public List<string>selectedAlleviators {get;set;}
+    public List<selectOption>adlValues ;
+    public List<string>selectedAdls {get;set;}
+    public List<selectOption>expressionValues ;
+    public List<string>selectedExpressions {get;set;}
+    
+    
     
     public List<String> sliderOptions { set;
         get {
@@ -193,7 +201,12 @@ public with sharing class NursingEvaluationEditController {
 		selectedOrthodics = new List<String>();
 		moodValues = new List<selectOption>();
 		selectedMoods = new List<String>();
-		
+		alleviatorValues = new List<selectOption>();
+		selectedAlleviators = new List<String>();
+		adlValues = new List<selectOption>();
+		selectedAdls = new List<String>();
+		expressionValues = new List<selectOption>();
+		selectedExpressions = new List<String>();
 	
 		if(!String.isBlank(this.evaluation.Breathe_sounds__c))
 		selectedSounds = this.evaluation.Breathe_Sounds__c.split(';');
@@ -277,8 +290,16 @@ public with sharing class NursingEvaluationEditController {
 		selectedOrthodics = this.evaluation.Orthodics_Types__c.split(';');
 		
 		if(!String.isBlank(this.evaluation.Mood__c))
-		selectedMoods = this.evaluation.Mood__C.split(';');
+		selectedMoods = this.evaluation.Mood__c.split(';');
 		
+		if(!String.isBlank(this.evaluation.Alleviating_Factors__c))
+		selectedAlleviators = this.evaluation.Alleviating_Factors__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Negative_Impact_on_ADLs__c))
+		selectedAdls = this.evaluation.Negative_Impact_on_ADLs__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Manner_of_Expressing_Pain__c))
+		selectedExpressions = this.evaluation.Manner_of_Expressing_Pain__c.split(';');
 		
     }
     
@@ -656,6 +677,38 @@ public with sharing class NursingEvaluationEditController {
 			else
 			this.evaluation.Mood__c ='';
 			
+// For Alleviating Factors Multi-picklist
+		string alv='';
+		for(string av: selectedAlleviators)
+		alv += av+';';
+			if(alv!=''){
+				alv = alv.Substring(0,alv.length()-1);
+				this.evaluation.Alleviating_Factors__c = alv;
+			}
+			else
+			this.evaluation.Alleviating_Factors__c ='';
+			
+// For Negative Impact on ADLs Multi-picklist
+		string adl='';
+		for(string ad: selectedAlleviators)
+		adl += ad+';';
+			if(adl!=''){
+				adl = adl.Substring(0,adl.length()-1);
+				this.evaluation.Negative_Impact_on_ADLs__c = adl;
+			}
+			else
+			this.evaluation.Negative_Impact_on_ADLs__c ='';
+			
+// For Manner of Expressing Pain Multi-picklist
+		string exr='';
+		for(string er: selectedExpressions)
+		exr += er+';';
+			if(exr!=''){
+				exr = exr.Substring(0,exr.length()-1);
+				this.evaluation.Manner_of_Expressing_Pain__c = exr;
+			}
+			else
+			this.evaluation.Manner_of_Expressing_Pain__c ='';						
    					     	
         if (submitted || selectedTab == 'detailsTab' || selectedTab == null) {
 
@@ -805,6 +858,22 @@ public with sharing class NursingEvaluationEditController {
    		List<Selectoption> moodValue = Utility.getPicklistValues(evaluation, 'Mood__c');
    		return moodValue; 
    }
+   
+   public List<selectoption> getalleviatorValues(){
+   		List<Selectoption> alleviatorValue = Utility.getPicklistValues(evaluation, 'Alleviating_Factors__c');
+   		return alleviatorValue; 
+   }
+   
+   public List<selectoption> getadlValues(){
+   		List<Selectoption> adlValue = Utility.getPicklistValues(evaluation, 'Negative_Impact_on_ADLs__c');
+   		return adlValue; 
+   }
+   
+   public List<selectoption> getexpressionValues(){
+   		List<Selectoption> expressionValue = Utility.getPicklistValues(evaluation, 'Manner_of_Expressing_Pain__c');
+   		return expressionValue; 
+   }
+   
    
    @RemoteAction
     public static Evaluation_Response__c addOrModifyAnnotation(ID annotationId, String source, Decimal x, Decimal y, Decimal Width, Decimal Height, String Shape, String Text, String evaluationId) {
