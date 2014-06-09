@@ -1,6 +1,5 @@
 public class ServiceAssignmentExt {
 
-    
     public Service_Assignment__c theServAssign { get; set; }
 
 // START:  Parent level properties with get/set methods.
@@ -23,6 +22,9 @@ public class ServiceAssignmentExt {
     public Boolean canEditSA { get; set; }
     public static Boolean showdiagModal { get; set; }
     public string diagEditId {get; set; }
+    public static Boolean showServAssignCloseModal { get; set; }
+    public string showServAssignCloseEditId {get; set; }
+    public string servAssignCloseEditId { get; set; }
     public Service_Location__c serviceLocation { get; set; }
     
 
@@ -73,12 +75,12 @@ public class ServiceAssignmentExt {
     public Integer numDocsExpected { get; set; }
     public Integer phaseToSave { get; set; }
 
-    // to support program effective dates
-    public Date effDate{ get; set;}
-    public Date effEnd { get; set;}
-    public void setEffectiveDate( ) {
-        loadAvailableCodesbyID();
-    }
+	// to support program effective dates
+	public Date effDate{ get; set;}
+	public Date effEnd { get; set;}
+	public void setEffectiveDate( ) {
+		loadAvailableCodesbyID();
+	}
         // Fidelity Document Properties / Info
     public List<ServiceAssignment_Document_JO__c> sadjos { get; set; }
     public Boolean hasFidDocs { get; set; }
@@ -106,9 +108,9 @@ public class ServiceAssignmentExt {
         canCreateSummary = oSchema.IsCreateable();
     }
 
-    public Boolean episodeReq { get { return (admission.state__c == 'NC');} set; }
-    public Boolean modelReq { get { return (pOpGroup == 'Cambridge');} set; }
-    
+	public Boolean episodeReq { get { return (admission.state__c == 'NC');} set; }
+	public Boolean modelReq { get { return (pOpGroup == 'Cambridge');} set; }
+	
     public List<Action_Plan__c> getActivePlan(){
     
         return [Select id From Action_Plan__c where Action_Plan__c.Service_Assignment__c = :currentRecord.id AND Status__c = 'Active Final' Limit 1];
@@ -121,7 +123,11 @@ public class ServiceAssignmentExt {
     
 
     
-    private Boolean pshowDiag, pshowLocation, pshowCodes, pshowNurseAssessment;
+    public List<Service_Assignment_Closure__c> getServAssignCloses() {
+    	return [ SELECT id, Name, IFCS_Record_Number__c FROM Service_Assignment_Closure__c WHERE Service_Assignment__c = :theServAssign.Id ];
+    }
+    
+    private Boolean pshowDiag, pshowLocation, pshowCodes, pshowServAssignClose, pshowNurseAssessment;
     private string popGroup; 
     private static Boolean psetFlags = false;
     public Boolean showDiagnosis { get {
@@ -143,6 +149,15 @@ public class ServiceAssignmentExt {
             return pshowLocation;
     }}
     
+    // START: CTEAE-125 and 125; Show Service Assignment Closure on page only if Model of Service Assignment == 'FCT'
+    public Boolean showServAssignClose { get {
+            if (! psetFlags ) {
+                psetFlags = setShowFlags();
+            }
+            return pshowServAssignClose;
+    }}
+    // END: CTEAE-125 and 125; Show Service Assignment Closure on page only if Model of Service Assignment == 'FCT'    
+    
     public Boolean showNurseAssessment{get {
             if(!psetFlags){
                 psetFlags = setShowFlags();
@@ -154,6 +169,11 @@ public class ServiceAssignmentExt {
         if (! psetFlags) {
             
             pshowDiag = true;
+            
+            // START: CTEAE-125 and 125; Show Service Assignment Closure on page only if Model of Service Assignment == 'FCT'
+            if(theServAssign.Model__c=='FCT') pshowServAssignClose = true;
+            // END: CTEAE-125 and 125; Show Service Assignment Closure on page only if Model of Service Assignment == 'FCT'
+            
             pshowLocation = false;
             pOpGroup = '';
             
@@ -238,8 +258,7 @@ public class ServiceAssignmentExt {
     this.diag= new Diagnosis__c();
     newDiagnosis = false;
   }
-
-
+  
   public void createDiagnoses() {
     if (diagnoses != null && this.theServAssign.Id != null) {
       for (Diagnosis__c dg : diagnoses ) {
@@ -1138,7 +1157,6 @@ public void loadProgramList() {
 
                 if ( showDiagnosis )
                     createDiagnoses();
-                
                 if (!showLocation) {
                     saveContractSelections();
                 }
@@ -1212,6 +1230,11 @@ public void loadProgramList() {
         ref.getparameters().put('retURL','/apex/ServiceAssignmentEditNew?id='+this.currentRecord.Id);
         return ref;
 
+    }
+    
+    public PageReference addServAssignClose() {
+    	PageReference ref = new PageReference('/apex/ServiceAssignmentClosureEditView?ServAssignId=' + theServAssign.Id + '&AdmId=' + admissionId + '&PbsId=' + theServAssign.Person_Being_Served__r.Id);
+    	return ref;
     }
     
     //Added to show Nurses Assessments from Evaluation__c object
