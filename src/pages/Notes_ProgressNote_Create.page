@@ -1,0 +1,68 @@
+<apex:page standardController="Progress_Note__c" extensions="Notes_ProgressNote_Create" action="{!redirect}">
+<apex:variable var="State" value="{!if(ISBLANK($CurrentPage.parameters.state) ,'',$CurrentPage.parameters.state)}"/>
+<style>
+.dateFormat{display: none;}
+</style>
+<script>
+function setFocusOnLoad() {};
+</script>
+
+
+
+<apex:sectionHeader title="New Progress Note"/>
+<!-- wraps the buttons<apex:repeat value="{!SA_SC_JO}" var="t">t.name</apex:repeat>-->
+<apex:pageBlock mode="mainDetail">
+    <apex:pagemessages ></apex:pagemessages>
+                    <apex:actionStatus id="myStatus">
+                        <apex:facet name="start">
+                            <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                                <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                            </div>
+                        </apex:facet>
+                        <apex:facet name="stop"></apex:facet>
+                    </apex:actionStatus>
+<apex:form id="myFRM" >
+<apex:pageBlock >
+    <apex:pageBlockButtons >
+            <apex:commandButton action="{!Save}" value="Save and Continue"  >
+            </apex:commandButton>
+            <apex:commandButton action="{!Cancel}" value="Cancel"  >
+            </apex:commandButton>        
+    </apex:pageBlockButtons>
+    
+
+        <apex:pageBlockSection columns="1" >
+    <!-- hidden fields, values will be passed in the url -->    
+            <apex:outputPanel style="display:none;">
+                <apex:selectList value="{!Progress_Note__c.Person_Being_Served__c}" size="1">
+                    <apex:selectOption itemValue="{!$CurrentPage.parameters.person}" itemLabel="Person" ></apex:selectOption>
+                </apex:selectList>
+                <apex:selectList value="{!Progress_Note__c.Action_Plan__c}" size="1">
+                    <apex:selectOption itemValue="{!$CurrentPage.parameters.plan}" itemLabel="Plan" ></apex:selectOption>
+                </apex:selectList>
+                <apex:selectList value="{!Progress_Note__c.Admission__c}" size="1">
+                    <apex:selectOption itemValue="{!$CurrentPage.parameters.admission}" itemLabel="Admisison" ></apex:selectOption>
+                </apex:selectList>
+                <apex:selectList value="{!Progress_Note__c.Service_Assignment__c}" size="1">
+                    <apex:selectOption itemValue="{!$CurrentPage.parameters.service_assignment}" itemLabel="Service Assignemnt" ></apex:selectOption>
+                </apex:selectList>            
+            </apex:outputPanel>
+    <!--end of hidden fields-->
+            <apex:outputText value="{!pbsName}" label="Person Being Served" rendered="{!!ISBlANK(pbsName)}" />
+            <apex:selectRadio id="TypeOfNoteField" required="true" layout="pageDirection" label="Type of Note" value="{!Progress_Note__c.RecordTypeId}" >
+                <apex:selectOptions value="{!rtOptions}"></apex:selectOptions>
+            </apex:selectRadio>            
+                                
+            <apex:repeat value="{!$ObjectType.Progress_Note__c.FieldSets.NewForm}" var="f"> 
+                <apex:inputField value="{!Progress_Note__c[f]}" />
+            </apex:repeat>
+            <apex:outputLabel >Required Number of Signatures (put 0 if None)</apex:outputLabel>
+            <apex:inputField required="true" value="{!Progress_Note__c.Number_of_Required_Signatures__c}"/>
+        </apex:pageBlockSection>
+
+  
+      
+</apex:pageBlock>
+</apex:form>
+</apex:pageBlock>
+</apex:page>

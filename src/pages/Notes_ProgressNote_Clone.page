@@ -1,0 +1,30 @@
+<apex:page extensions="Notes_ProgressNote_Clone" standardcontroller="Progress_Note__c" >
+<style>
+.dateFormat{display: none;}
+</style>
+<script>
+function setFocusOnLoad() {};
+</script>
+    
+<apex:sectionHeader title="Clone Progress Note"/>
+<apex:form >  
+    <apex:pageMessages ></apex:pageMessages>
+    
+        <apex:pageBlock >
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!myClone}" value="Save"/>
+                <apex:commandButton action="{!Cancel}" value="Cancel"/>
+            </apex:pageBlockButtons>
+        <apex:pageBlockSection columns="1">
+            <apex:repeat value="{!$ObjectType.Progress_Note__c.FieldSets.NewForm}" var="f"> 
+                <apex:inputField value="{!Progress_Note__c[f]}" />
+            </apex:repeat>
+        </apex:pageBlockSection>
+
+    
+    
+      
+    
+        </apex:pageBlock>
+</apex:form>     
+</apex:page>
