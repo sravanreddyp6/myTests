@@ -66,6 +66,16 @@ public with sharing class NursingEvaluationEditController {
     public List<string>selectedAdls {get;set;}
     public List<selectOption>expressionValues ;
     public List<string>selectedExpressions {get;set;}
+    public List<selectOption>paintypeValues ;
+    public List<string>selectedPaintypes {get;set;}
+    public List<selectOption>painalleviatorValues ;
+    public List<string>selectedpainAlleviators {get;set;}
+    public List<selectOption>painadlValues ;
+    public List<string>selectedpainAdls {get;set;}
+    public List<selectOption>painexpressionValues ;
+    public List<string>selectedpainExpressions {get;set;}
+    public List<selectOption>paindescriptorValues ;
+    public List<string>selectedpainDescriptors {get;set;}
     
     
     
@@ -207,6 +217,17 @@ public with sharing class NursingEvaluationEditController {
 		selectedAdls = new List<String>();
 		expressionValues = new List<selectOption>();
 		selectedExpressions = new List<String>();
+		paintypeValues = new List<selectOption>();
+		selectedPaintypes = new List<String>();
+		painalleviatorValues = new List<selectOption>();
+		selectedpainAlleviators = new List<String>();
+		painadlValues = new List<selectOption>();
+		selectedpainAdls = new List<String>();
+		painexpressionValues = new List<selectOption>();
+		selectedpainExpressions = new List<String>();
+		paindescriptorValues = new List<selectOption>();
+		selectedpainDescriptors = new List<String>();
+		
 	
 		if(!String.isBlank(this.evaluation.Breathe_sounds__c))
 		selectedSounds = this.evaluation.Breathe_Sounds__c.split(';');
@@ -300,6 +321,22 @@ public with sharing class NursingEvaluationEditController {
 		
 		if(!String.isBlank(this.evaluation.Manner_of_Expressing_Pain__c))
 		selectedExpressions = this.evaluation.Manner_of_Expressing_Pain__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Neuro_Pain_Types__c))
+		selectedPaintypes = this.evaluation.Neuro_Pain_Types__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Neuro_Pain_Alleviating_Factors__c))
+		selectedpainAlleviators = this.evaluation.Neuro_Pain_Alleviating_Factors__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Neuro_Pain_neg_Impact_on_ADLs__c))
+		selectedpainAdls = this.evaluation.Neuro_Pain_neg_Impact_on_ADLs__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Neuro_Pain_Manner_of_Exp__c))
+		selectedpainExpressions = this.evaluation.Neuro_Pain_Manner_of_Exp__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Neuro_pain_Descriptors__c))
+		selectedpainDescriptors = this.evaluation.Neuro_pain_Descriptors__c.split(';');
+		
 		
     }
     
@@ -708,7 +745,63 @@ public with sharing class NursingEvaluationEditController {
 				this.evaluation.Manner_of_Expressing_Pain__c = exr;
 			}
 			else
-			this.evaluation.Manner_of_Expressing_Pain__c ='';						
+			this.evaluation.Manner_of_Expressing_Pain__c ='';	
+			
+// For Nuero Pain type Multi-Picklist
+		string npt='';
+		for(string nt: selectedExpressions)
+		npt += nt+';';
+			if(npt!=''){
+				npt = npt.Substring(0,npt.length()-1);
+				this.evaluation.Neuro_Pain_Types__c = npt;
+			}
+			else
+			this.evaluation.Neuro_Pain_Types__c ='';	
+			
+// For Neuro Pain Alleviating Factors Multi-picklist
+		string npal='';
+		for(string npl: selectedAlleviators)
+		npal += npl+';';
+			if(npal!=''){
+				npal = npal.Substring(0,npal.length()-1);
+				this.evaluation.Neuro_Pain_Alleviating_Factors__c = npal;
+			}
+			else
+			this.evaluation.Neuro_Pain_Alleviating_Factors__c ='';
+			
+// For neuro pain Negative Impact on ADLs Multi-picklist
+		string nadl='';
+		for(string nad: selectedAlleviators)
+		nadl += nad+';';
+			if(nadl!=''){
+				nadl = nadl.Substring(0,nadl.length()-1);
+				this.evaluation.Neuro_Pain_neg_Impact_on_ADLs__c = nadl;
+			}
+			else
+			this.evaluation.Neuro_Pain_neg_Impact_on_ADLs__c ='';
+			
+// For neuro pain Manner of Expressing Pain Multi-picklist
+		string nexr='';
+		for(string ner: selectedExpressions)
+		nexr += ner+';';
+			if(nexr!=''){
+				nexr = nexr.Substring(0,nexr.length()-1);
+				this.evaluation.Neuro_Pain_Manner_of_Exp__c = nexr;
+			}
+			else
+			this.evaluation.Neuro_Pain_Manner_of_Exp__c ='';	
+			
+// For pain Descriptor Multi-picklist
+		string decr='';
+		for(string der: selectedExpressions)
+		decr += der+';';
+			if(decr!=''){
+				decr = decr.Substring(0,decr.length()-1);
+				this.evaluation.Neuro_pain_Descriptors__c = decr;
+			}
+			else
+			this.evaluation.Neuro_pain_Descriptors__c ='';	
+							
    					     	
         if (submitted || selectedTab == 'detailsTab' || selectedTab == null) {
 
@@ -873,6 +966,32 @@ public with sharing class NursingEvaluationEditController {
    		List<Selectoption> expressionValue = Utility.getPicklistValues(evaluation, 'Manner_of_Expressing_Pain__c');
    		return expressionValue; 
    }
+   
+   public List<selectoption> getpaintypeValues(){
+   		List<Selectoption> paintypeValue = Utility.getPicklistValues(evaluation, 'Neuro_Pain_Types__c');
+   		return paintypeValue; 
+   }
+   
+   public List<selectoption> getpainalleviatorValues(){
+   		List<Selectoption> painalleviatorValue = Utility.getPicklistValues(evaluation, 'Neuro_Pain_Alleviating_Factors__c');
+   		return painalleviatorValue; 
+   }
+   
+   public List<selectoption> getpainadlValues(){
+   		List<Selectoption> painadlValue = Utility.getPicklistValues(evaluation, 'Neuro_Pain_neg_Impact_on_ADLs__c');
+   		return painadlValue; 
+   }
+   
+   public List<selectoption> getpainexpressionValues(){
+   		List<Selectoption> painexpressionValue = Utility.getPicklistValues(evaluation, 'Neuro_Pain_Manner_of_Exp__c');
+   		return painexpressionValue; 
+   }
+   
+   public List<selectoption> getpaindescriptorValues(){
+   		List<Selectoption> paindescriptorValue = Utility.getPicklistValues(evaluation, 'Neuro_Pain_Manner_of_Exp__c');
+   		return paindescriptorValue; 
+   }
+   
    
    
    @RemoteAction
