@@ -5,9 +5,7 @@
     <apex:stylesheet value="{!if ($CurrentPage.parameters.pdf !='1', $Resource.mentoresdcss, $Resource.mentoresdprint)}" />
     <apex:variable value="{!Assessment__c.Phase__c =='Initial' || Assessment__c.Phase__c =='Final'}"  var="isInitalOrFinal"/>
     <script>function setFocusOnLoad() {}</script>
-<apex:outputPanel style="display: none;">
-
- 
+<apex:outputPanel style="display: none;"> 
     {!Assessment__c.Service_Assignment__r.Person_Being_Served__c}
     {!Assessment__c.Locked__c}
 </apex:outputPanel>    
