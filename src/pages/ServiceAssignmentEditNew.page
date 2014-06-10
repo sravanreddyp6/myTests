@@ -770,7 +770,7 @@ END: Uncomment to have the element collapsed by default -->
 <!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
         <apex:commandButton action="{!createFadAssess}" value="New FAD Assessment Summary"/>
     </div>
-    <apex:outputText value="No FAD Assessment Summarys to display" rendered="{!(Assessments_Fad.size=0)}" />
+    <apex:outputText value="No FAD Assessment Summaries to display" rendered="{!(Assessments_Fad.size=0)}" />
     <apex:pageBlockTable value="{!Assessments_Fad}" var="assess" rendered="{!(Assessments_Fad.size!=0)}">
         <apex:column headerValue="Action"  styleClass="editcol">
             <a href="/apex/Assessment_FAD_Form?id={!assess.ID}&edit=1">Edit</a>
