@@ -324,9 +324,14 @@
 		<apex:inputhidden value="{!Evaluation__c.Negative_Impact_on_ADLs__c}" />
 		<apex:inputhidden value="{!Evaluation__c.Alleviating_Factors__c}" />
 		<apex:inputhidden value="{!Evaluation__c.Manner_of_Expressing_Pain__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Neuro_Pain_Types__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Neuro_Pain_Alleviating_Factors__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Neuro_Pain_neg_Impact_on_ADLs__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Neuro_Pain_Manner_of_Exp__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Neuro_pain_Descriptors__c}" />
 	</apex:outputPanel>
 		<apex:pageMessages id="pageMessages" />
-		<apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); removeSpacer()" reRender="pageMessages, wholeTabPanel, buttons">
+		<apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); removeSpacer(); scrollToTop();" reRender="pageMessages, wholeTabPanel, buttons">
 			<apex:param name="nextTab" assignTo="{!nextTab}" value="" />
 		</apex:actionFunction>
 		<apex:tabPanel value="{!selectedTab}" id="wholeTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">	
@@ -1167,8 +1172,74 @@
                     </apex:pageBlockSection>
                     <hr />
                     <apex:pageBlockSection Columns="1" >
-                    	<apex:inputField value="{!Evaluation__c.Pain_Present__c}" />
+                    	<apex:outputPanel >
+	                    	<apex:outputText Value="Pain Present" styleClass="labelCol" style="margin-left: 3cm;"/>
+		                    	<apex:actionRegion id="painRegion" renderRegionOnly="false" >
+		                    		<apex:inputField value="{!Evaluation__c.Pain_Present__c}" style="margin-left: 1cm;">
+		                    		<apex:actionSupport event="onchange" reRender="painSection" />
+		                    		</apex:inputField>
+		                    	</apex:actionRegion>
+		                    	<apex:actionstatus id="st" for="painRegion" >
+		                         	<apex:facet name="start" >
+		                             		<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+		                             </apex:facet>                            
+		                        </apex:actionstatus>	
+                        </apex:outputPanel>
                     </apex:pageBlockSection>
+                   <apex:outputPanel id="painSection">
+                    <apex:pageblockSection rendered="{!Evaluation__c.Pain_Present__c == 'Yes'}" columns="2" >
+                    	<apex:outputText value="Pain Details" styleClass="labelCol" style="margin-left: 3cm;" />
+                    	<apex:outputText value="Aggravating Factors" styleClass="labelCol" style=",argin-left: 3cm;" />
+                    	<apex:inputField value="{!Evaluation__c.Neuro_Pain_Severity__c}" label="Severity" />
+                    	<apex:inputField value="{!Evaluation__c.Neuro_Pain_Activity__c}" label="Activity" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.neuropainDescribe}&quot;]}"/>
+                    	<apex:pageBlocksectionItem >
+                    		<apex:selectCheckboxes value="{!selectedPaintypes}" style="margin-left: 4cm;">
+                    			<apex:selectOptions value="{!paintypeValues}" />
+                    		</apex:selectCheckboxes>
+                    	</apex:pageBlocksectionItem>
+                    	<apex:inputField value="{!Evaluation__c.Neuro_pain_Activity_Describe__c}" label="Describe" id="neuropainDescribe" />
+                    	<apex:pageBlockSectionItem />
+                    	<apex:inputField value="{!Evaluation__c.Neuro_Pain_Position__c}" label="Position" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.neuropainpositionDescibe}&quot;]}" />
+                    	<apex:pageBlockSectionItem />
+                    	<apex:inputField value="{!Evaluation__c.Neuro_Pain_Position_Describe__c}" label="Describe" id="neuropainpositionDescibe"  />
+                    	<apex:pageBlockSectionItem />
+                    	<apex:inputField value="{!Evaluation__c.Neuro_Pain_Time_of_Day__c}" label="Time of Day"  html-data-rules="{&quot;1&quot;: [&quot;{!$Component.neuropaindayDescribe}&quot;]}"  />
+                    	<apex:pageBlockSectionItem />
+                    	<apex:inputField value="{!Evaluation__c.Neuro_pain_time_of_day_Describe__c}" label="Describe" id="neuropaindayDescribe"  />
+                    	<apex:pageBlockSectionItem />
+                    	<apex:inputField value="{!Evaluation__c.Neuro_Pain_None__c}" label="None" />
+                    	<apex:pageBlocksectionItem >
+                    		<apex:outputText value="Pain Descriptors" styleClass="labelCol" />
+                    		<apex:selectCheckboxes value="{!selectedpainDescriptors}" layout="pageDirection">
+                    			<apex:selectoptions value="{!paindescriptorValues}" />
+                    		</apex:selectCheckboxes>
+                    	</apex:pageBlocksectionItem>
+                    	<apex:pageBlocksectionItem >
+                    		<apex:outputText value="Alleviating Factors" styleClass="labelCol" />
+                    		<apex:selectCheckboxes value="{!selectedpainAlleviators}" layout="pageDirection">
+                    			<apex:selectoptions value="{!painalleviatorValues}" />
+                    		</apex:selectCheckboxes>
+                    	</apex:pageBlocksectionItem>
+                    	<apex:pageBlocksectionItem >
+                    		<apex:outputText value="Negative Impact on ADLs" styleClass="labelCol" />
+                    		<apex:selectCheckboxes value="{!selectedpainAdls}" layout="pageDirection" >
+                    			<apex:selectoptions value="{!painadlValues}" />
+                    		</apex:selectCheckboxes>
+                    	</apex:pageBlocksectionItem>
+                    	<apex:pageBlocksectionItem >
+                    		<apex:outputText value="Manner of Expressing Pain" styleClass="labelCol" />
+                    		<apex:selectCheckboxes value="{!selectedpainExpressions}" layout="pageDirection" >
+                    			<apex:selectoptions value="{!painexpressionValues}" />
+                    		</apex:selectCheckboxes>
+                    	</apex:pageBlocksectionItem>          	
+                    	
+                    </apex:pageblockSection>
+                   </apex:outputPanel>
+                   <hr />
+                   <apex:pageBlockSection columns="1" >
+                   	<apex:inputTextArea value="{!Evaluation__c.Neuro_Comments__c}" cols="80" />
+                   	<apex:inputField value="{!Evaluation__c.Neuro_Section_Completed__c}" />
+                   </apex:pageBlockSection>
 			    </apex:pageBlock>
 			 </apex:tab>
 			 <apex:tab label="Ortho" name="orthoTab" ontabenter="changeTab('orthoTab'); return false;" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
