@@ -1,0 +1,221 @@
+<apex:page standardController="Evaluation__c" extensions="NursingEvaluationViewController,FieldPrintTransform" showHeader="false" applyHTMLTag="False" renderas="PDF">
+    <head>
+    <style>
+        [id$=skinBodyFooter] {
+            clear: both;
+        }
+        hr {
+            color: #ECECEC;
+            background-color: #ECECEC;
+            margin-bottom: 20px;
+            margin-top: 20px;
+            border: none;
+            height: 3px;
+        }
+        .hrSmall {
+            height: 1px;
+            border: 0;
+            color: black;
+            background-color: black;
+        }
+        h1 { font-size:16px;}
+        h2 { font-size: 16px;}
+        h3 { font-size:13px; padding-bottom:0px; margin-bottom:0px}
+        .pbHeader {
+            font-size:2em;
+            margin-bottom:3px;
+            display:block;
+            border-bottom:3px solid black;
+            border-collapse:collapse;
+            line-height:1.25%;
+            }
+        .pbSubheader { font-size:1em; border-collapse:collapse; margin-bottom:0px !important; padding-bottom:0px !important; }
+                
+        .labelCol, .label { margin:10px;font-weight:bold;}
+        body { font-family:'Serif'; font-size:12px}
+    </style>
+    
+    <style type="text/css" media="print">
+                @page {
+                    @top-center {
+                            content: element(header);
+                        }
+                    @bottom-left {
+                           content: element(footer);
+                        }
+                     }
+                div.header {
+                        padding: 10px;
+                        align:right;
+                        width:100%;
+                        position: running(header);
+                    }
+                div.footer {
+                      display: block;
+                      padding: 5px;
+                      position: running(footer);
+               }
+              .pagenumber:before {
+                    content: counter(page);
+                }
+              .pagecount:before {
+                    content: counter(pages);
+              }
+          
+       
+      </style>
+</head>
+
+    <apex:pageMessages id="pageMessages" />
+        <div style="width:100%; text-align:right" class="header"><b>Person Being Served: &nbsp;</b><apex:outputText value="{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__r.Name}" /><b>, Page</b> <span class="pagenumber"/><b> of </b><span class="pagecount"/></div>
+
+    <apex:form id="wholePage">
+    <apex:outputpanel rendered="false">
+        <apex:inputhidden value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Id}"/>
+        <apex:inputhidden value="{!Evaluation__c.Urinary_Issues__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Breathe_Sounds__c}"/> 
+        <apex:inputhidden value="{!Evaluation__c.Urine_Clarity__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Tongue__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Gums__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Cheeks__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Lips__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Saliva__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Dentures_Type__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Abdomen__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Hallucination_Types__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Typeof_Spiritual_belief_Effects__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Preferred_Method_of_Learning__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Resident_Demonstrating_Issues__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Resident_s_Communication_Status__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Resident_s_Emotional_Barriers__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Resident_s_Learning_needs_related_to__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Rancho_level_Resident_Orientation__c}" />
+        <apex:inputhidden value="{! Evaluation__c.Oriented_to_the_Following__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Family_Member_s_Emotional_Barriers__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Family_Communication_Status__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Family_Member_s_Learning_related_to__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Diagnostics_GYN_Experiences__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Orthopedic_diagnostic_types__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Orthodics_Types__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Orthopedic_Medications__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Prosthetic_Types__c}" />
+        
+        <apex:inputhidden value="{!Evaluation__c.Admit_Status__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Transported_By__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Accompanied_By__c}"/>
+        <apex:inputhidden value="{!Evaluation__c.Admit_Date_Time__c}"/>
+        <apex:inputhidden value="{!Evaluation__c.Advanced_Directives__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Code_Status__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Advanced_Directives_Attached__c}"  />
+        <apex:inputhidden value="{!Evaluation__c.Code_Status_Other__c}"/>
+		<apex:inputhidden value="{!Evaluation__c.Height__c}" />
+		<apex:inputhidden value="{!Evaluation__c.HeightFt__c}" />
+		<apex:inputhidden value="{!Evaluation__c.HeightInches__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Weight__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Weightlbs__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Weightoz__c}" />
+		<apex:inputhidden value="{!Evaluation__c.WeightKg__c}" />        
+        <apex:inputhidden value="{!Evaluation__c.Head_Circumference_cm__c}"/>
+        <apex:inputhidden value="{!Evaluation__c.Details_Section_Completed__c}" />
+        
+    </apex:outputPanel>
+
+    <h1 style="text-align:center;">POST-ADMISSION EVALUATION FORM</h1>
+    <apex:pageBlock title="Details" >   
+      <table style="width:100%">
+          <tr>
+              <td width="50%">
+                <apex:outputLabel id="Address" value="Address" styleClass="label"/>
+                <c:AddressDisplay Street1="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.Street__c}"
+                                  City="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.City__c}"
+                                  State="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.State__c}"
+                                  Zip="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.Zip__c}"/>
+              </td><td>
+                <apex:outputLabel id="Setting" value="Setting" styleClass="label"/>
+                <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.Setting__c}"/><br/>
+                <apex:outputLabel id="Phone" value="Phone" styleClass="label" />
+                <apex:outPutField value="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.Phone__c}"/>
+              </td></tr>
+              <tr><td>
+                <apex:dynamiccomponent componentValue="{!ctlmap['admit_status__c']}" />
+              </td><td>
+                <apex:dynamiccomponent componentValue="{!ctlmap['transported_by__c']}" />
+              </td></tr>
+              
+              <tr><td>
+                <apex:dynamiccomponent componentValue="{!ctlmap['accompanied_by__c']}" />
+              </td><td>
+                <apex:dynamiccomponent componentValue="{!ctlmap['admit_date_time__c']}" />
+              </td></tr>
+              <tr><td>
+                <apex:outputLabel id="Name" value="Name" styleClass="label"/>
+                <apex:outPutField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Name}"/>
+              </td><td>
+                <apex:outputLabel id="BirthDate" value="BirthDate" styleClass="label"/>
+                <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.BirthDate}"/>
+              </td></tr>
+              <tr><td>
+                <apex:dynamiccomponent componentValue="{!ctlmap['advanced_directives__c']}" />
+              </td><td>
+                <apex:dynamiccomponent componentValue="{!ctlmap['code_status__c']}" />
+              </td></tr>
+              <tr><td>
+                <apex:dynamiccomponent componentValue="{!ctlmap['advanced_directives_attached__c']}" />
+              </td><td>
+                <apex:outputLabel id="StatusOther" value="Specify Other" styleClass="label"/>
+                <apex:outputField value="{!Evaluation__c.Code_Status_Other__c}"/>
+              </td></tr>
+        </table>
+
+	   <apex:pageBlockSection columns="1" title="Related Party">
+	       <apex:outputText value="None" rendered="{!relatedParties.size == 0}" />
+	       <apex:pageBlockTable value="{!relatedParties}" var="relatedParty" id="relatedPartyTable" border="1" rendered="{!relatedParties.size > 0}">
+	           <apex:column value="{!relatedParty.Type__c}"/>
+	           <apex:column value="{!relatedParty.Name}"/>
+	           <apex:column value="{!relatedParty.Address__c}"/>
+	           <apex:column value="{!relatedParty.Email__c}"/>
+	           <apex:column value="{!relatedParty.Phone__c}"/>
+	           <apex:column value="{!relatedParty.Phone_1_Type__c}"/>
+	           <apex:column value="{!relatedParty.Phone_2__c}"/>
+	           <apex:column value="{!relatedParty.Phone_2_Type__c}"/>
+	           <apex:column value="{!relatedParty.Comments__c}"/>
+	       </apex:pageBlockTable>
+	   </apex:pageBlockSection>
+
+      <br />
+      <table style="width:80%">
+          <tr><td>
+                  <apex:outputLabel value="Weight at Admission" styleClass="label"/>
+            <table><tr><td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['weightlbs__c']}" />
+                    </td><td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['weightoz__c']}" />
+                    </td><td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['weightkg__c']}" />
+            </td></tr></table>
+            </td><td>
+            <apex:outputLabel value="Height at Admission" styleClass="label"/>
+            <table><tr><td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['heightft__c']}" />
+                    </td><td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['heightinches__c']}" />
+            </td></tr></table>
+            </td></tr>
+          <tr><td>
+            <apex:dynamiccomponent componentValue="{!ctlmap['head_circumference_cm__c']}" />
+          </td><td></td></tr>
+      </table>
+            
+      <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" isPdf="true" />
+      <br />
+      <apex:pageBlockSection columns="1">
+        <apex:dynamiccomponent id="detailscomp" componentValue="{!ctlmap['details_section_completed__c']}" />
+      </apex:pageBlockSection>
+    </apex:pageBlock>
+<hr />
+
+
+
+
+    </apex:form>
+</apex:page>
