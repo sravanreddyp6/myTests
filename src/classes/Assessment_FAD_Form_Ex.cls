@@ -203,6 +203,7 @@ public with sharing class Assessment_FAD_Form_Ex {
         
         
         if(assess.phase__c == 'Initial' || assess.phase__c == 'Final'){
+        
             if(mapRes.get('PC_Highest_Edu').Rating__c == null){
                 mapRes.get('PC_Highest_Edu').Rating__c.addError('Please select a value for Primary Caregiver\'s Highest Education Completed at the time of this FAD Assessment.');
                 hasError = true;   
@@ -220,11 +221,13 @@ public with sharing class Assessment_FAD_Form_Ex {
                 mapRes.get('PC_Received_FCT_before').Rating__c.addError('Please select a value for Primary Caregiver Received FCT services before?');
                 hasError = true;   
             } 
-            if(mapRes.get('SC_Highest_Edu').Rating__c == null){
-                mapRes.get('SC_Highest_Edu').Rating__c.addError('Please select a value for Secondary Caregiver\'s Highest Education Completed at the time of this FAD Assessment.');
-                hasError = true;   
-            }    
+   
             if(!mapRes.get('SC_No_SC').Yes_No__c){
+                if(mapRes.get('SC_Highest_Edu').Rating__c == null){
+                    mapRes.get('SC_Highest_Edu').Rating__c.addError('Please select a value for Secondary Caregiver\'s Highest Education Completed at the time of this FAD Assessment.');
+                    hasError = true;   
+                }            
+            
                 if(mapRes.get('SC_Employment').Rating__c == null){
                     mapRes.get('SC_Employment').Rating__c.addError('Please select a value for Secondary Caregiver\'s Employment at the time of this FAD Assessment.');
                     hasError = true;   
