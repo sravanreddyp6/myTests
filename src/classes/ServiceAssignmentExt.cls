@@ -1288,6 +1288,7 @@ public void loadProgramList() {
                 QuestionsToCopy.add('PC_Relationship_to_PBS');
                 QuestionsToCopy.add('PC_Phone_1_Type');
                 QuestionsToCopy.add('PC_Phone_2_Type');
+                QuestionsToCopy.add('PC_Email');
                 QuestionsToCopy.add('SC_No_SC');
                 QuestionsToCopy.add('SC_Name');
                 QuestionsToCopy.add('SC_Address');
