@@ -243,6 +243,7 @@ public with sharing class Assessment_FAD_Form_Ex {
             }
             if(assess.Family_Annual_Income__c ==null){
                 assess.Family_Annual_Income__c.addError('Please select a value for Family Annual Income.');
+                hasError = true;  
             }         
         }
         /*
@@ -255,6 +256,7 @@ public with sharing class Assessment_FAD_Form_Ex {
         */
         if(mapRes.get('SC_No_SC').Yes_No__c && mapRes.get('Caregiver_Who_Completed_Assessment').Rating__c == 'Secondary'){
             mapRes.get('SC_No_SC').Yes_No__c.addError('Which caregiver completed this assessment?: If the secondary caregiver has completed this assessment, provide the secondary caregiver details.');
+            hasError = true;  
         
         }             
 //end new rules

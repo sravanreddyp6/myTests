@@ -169,7 +169,7 @@
         <apex:actionRegion >
         <apex:inputField required="true" value="{!Assessment__c.Phase__c}" id="phase" styleClass="phasefield">
         
-            <apex:actionSupport reRender="previous_CG, refDate, CG_AND_HH_Details" event="onchange" action="{!myCG_is_same_as_other_assessment}" oncomplete="toggleRefDate(); toggleOptionsbyStyle('SC_NoSC_CB', 'holder', 'second_cg_question');"  />
+            <apex:actionSupport reRender="previous_CG, refDate, CG_AND_HH_Details" event="onchange" action="{!myCG_is_same_as_other_assessment}" oncomplete="checkInputs();"  />
         
         </apex:inputField>
         </apex:actionRegion>
@@ -650,7 +650,7 @@
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['SC_No_SC'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:inputCheckbox value="{!mapRes['SC_No_SC'].Yes_No__c}" styleClass="SC_NoSC_CB" onclick="toggleOptions(this, 'holder', 'second_cg_question');"  rendered="{!mode='edit'}"/>   
+                <apex:inputCheckbox value="{!mapRes['SC_No_SC'].Yes_No__c}" styleClass="SC_NoSC_CB" onclick="checkInputs(); return false;"  rendered="{!mode='edit'}"/>   
                 <apex:outputField value="{!mapRes['SC_No_SC'].Yes_No__c}" rendered="{!mode='view'}"/>                   
             <span id="holder"/>
             </apex:outputPanel>
@@ -668,7 +668,7 @@
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['SC_Relationship_to_PBS'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:selectList styleClass="second_cg_question SC_Rel"  onchange="checkOtherField('SC_Rel', 'SC_Other_Rel', 'Other');"  size="1" value="{!mapRes['SC_Relationship_to_PBS'].Rating__c}">
+                <apex:selectList styleClass="second_cg_question SC_Rel"  onchange="checkInputs(); "  size="1" value="{!mapRes['SC_Relationship_to_PBS'].Rating__c}">
                     <apex:selectOptions value="{!PC_Rel_To_PBS}"></apex:selectOptions>
                 </apex:selectList>  
                 <apex:outputPanel >Specify Other: <apex:inputField styleClass="second_cg_question SC_Other_Rel" value="{!mapRes['SC_Relationship_to_PBS_Other'].Rating__c}"/></apex:outputPanel>       
@@ -998,10 +998,10 @@ function checkInputs(){
     toggleRefDate(); 
     toggleOptionsbyStyle('SC_NoSC_CB', 'holder', 'second_cg_question');
     checkOtherField('OC_Rel', 'OC_Other_Rel', 'Other'); 
-    checkOtherField('PC_Rel', 'PC_Other_Rel', 'Other');
-    checkOtherField('PC_Emp', 'PC_Occ', 'Employed');
+    checkOtherField('PC_Rel', 'PC_Other_Rel', 'Other');    
     checkOtherField('SC_Rel', 'SC_Other_Rel', 'Other');
-    checkOtherField('SC_Emp', 'SC_Occ', 'Employed');    
+    checkOtherField('SC_Emp', 'SC_Occ', 'Employed'); 
+    checkOtherField('PC_Emp', 'PC_Occ', 'Employed');   
 
 
 };
