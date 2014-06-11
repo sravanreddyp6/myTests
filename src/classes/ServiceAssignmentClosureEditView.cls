@@ -48,19 +48,23 @@ public with sharing class ServiceAssignmentClosureEditView {
 		}
 		
 		// There should only be one action plan per the assumptions in place as of development around CTEAE-125 & 126.  J. Gilliam, 
-		AggregateResult actionPlanAr = [ SELECT Id, MAX(CreatedDate) max FROM Action_Plan__c WHERE Service_Assignment__c = :theServAssignId AND Status__c = 'Active Final' GROUP BY Id LIMIT 1 ];
-		System.debug('actionPlanAr: ' + actionPlanAr);
-		Object actionPlanIdObj = actionPlanAr.get('Id');
-		Id actionPlanId = (Id)actionPlanIdObj;
-		
-		//Action_Plan__c actionPlan = [ SELECT Id FROM Action_Plan__c WHERE Service_Assignment__c = :theServAssignId AND Status__c = 'Active Final' LIMIT 1 ];
-		
-		List<Action_Plan_Goal__c> actionPlanGoals = [ SELECT Description__c FROM Action_Plan_Goal__c WHERE Action_Plan__c = :actionPlanId ];
-		
+		List<AggregateResult> actionPlanArs = [ SELECT Id, MAX(CreatedDate) max FROM Action_Plan__c WHERE Service_Assignment__c = :theServAssignId AND Status__c = 'Active Final' GROUP BY Id LIMIT 1 ];
+		System.debug('actionPlanArs: ' + actionPlanArs);
+	
 		actionPlanGoalSelectOptions = new List<SelectOption>();
-		actionPlanGoalSelectOptions.add(new SelectOption('--None--','--None--'));
-		for(Action_Plan_Goal__c apg : actionPlanGoals) {
-			actionPlanGoalSelectOptions.add(new SelectOption(apg.Description__c, apg.Description__c));
+		actionPlanGoalSelectOptions.add(new SelectOption('--None--','--None--'));	
+		
+		if(actionPlanArs.size()>0) {
+			Object actionPlanIdObj = actionPlanArs[0].get('Id');
+			Id actionPlanId = (Id)actionPlanIdObj;
+			
+			//Action_Plan__c actionPlan = [ SELECT Id FROM Action_Plan__c WHERE Service_Assignment__c = :theServAssignId AND Status__c = 'Active Final' LIMIT 1 ];
+			
+			List<Action_Plan_Goal__c> actionPlanGoals = [ SELECT Description__c FROM Action_Plan_Goal__c WHERE Action_Plan__c = :actionPlanId ];
+			
+			for(Action_Plan_Goal__c apg : actionPlanGoals) {
+				actionPlanGoalSelectOptions.add(new SelectOption(apg.Description__c, apg.Description__c));
+			}
 		}
 		
 			
