@@ -2,6 +2,7 @@ public with sharing class Assessment_FAD_Form_Ex {
     public Assessment__c assess { get; set; }
     public string mode {get; set;} 
     
+    
     public string otherChildDisplayStyle {get; set;}
     
     public map<string, boolean> mapAvalPhases = new map<string, boolean>();
