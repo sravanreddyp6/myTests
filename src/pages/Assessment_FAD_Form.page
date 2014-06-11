@@ -648,7 +648,7 @@
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['SC_No_SC'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:inputCheckbox value="{!mapRes['SC_No_SC'].Yes_No__c}" styleClass="SC_NoSC_CB" onclick="checkInputs(); return false;"  rendered="{!mode='edit'}"/>   
+                <apex:inputCheckbox value="{!mapRes['SC_No_SC'].Yes_No__c}" styleClass="SC_NoSC_CB" onclick="checkInputs();"  rendered="{!mode='edit'}"/>   
                 <apex:outputField value="{!mapRes['SC_No_SC'].Yes_No__c}" rendered="{!mode='view'}"/>                   
             <span id="holder"/>
             </apex:outputPanel>
@@ -670,7 +670,7 @@
                     <apex:selectOptions value="{!PC_Rel_To_PBS}"></apex:selectOptions>
                 </apex:selectList>  
                 <apex:outputPanel >Specify Other: <apex:inputField styleClass="second_cg_question SC_Other_Rel" value="{!mapRes['SC_Relationship_to_PBS_Other'].Rating__c}"/></apex:outputPanel>       
-                                  
+                                 
             </apex:outputPanel>        
         </apex:pageBlockSectionItem> 
         
@@ -1004,7 +1004,7 @@ function checkInputs(){
 
 };
 j$( document ).ready(function() {
-    checkInputs();
+    //checkInputs();
 });
 </script>
 </apex:outputPanel>
