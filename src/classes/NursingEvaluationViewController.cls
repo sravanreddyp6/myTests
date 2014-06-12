@@ -66,6 +66,25 @@ public with sharing class NursingEvaluationViewController {
     public List<string>selectedProsthetics {get;set;}
     public List<selectOption>orthodicsValues ;
     public List<string>selectedOrthodics {get;set;}
+    public List<selectOption>moodValues ;
+    public List<string>selectedMoods {get;set;}
+    public List<selectOption>alleviatorValues ;
+    public List<string>selectedAlleviators {get;set;}
+    public List<selectOption>adlValues ;
+    public List<string>selectedAdls {get;set;}
+    public List<selectOption>expressionValues ;
+    public List<string>selectedExpressions {get;set;}
+    public List<selectOption>paintypeValues ;
+    public List<string>selectedPaintypes {get;set;}
+    public List<selectOption>painalleviatorValues ;
+    public List<string>selectedpainAlleviators {get;set;}
+    public List<selectOption>painadlValues ;
+    public List<string>selectedpainAdls {get;set;}
+    public List<selectOption>painexpressionValues ;
+    public List<string>selectedpainExpressions {get;set;}
+    public List<selectOption>paindescriptorValues ;
+    public List<string>selectedpainDescriptors {get;set;}
+    
     
     public List<String> sliderOptions { set;
         get {
@@ -77,7 +96,20 @@ public with sharing class NursingEvaluationViewController {
             }
             return sliderOptions;
         }
-    }  
+    }
+    
+     public List<String> painsliderOptions { set;
+        get {
+            if (painsliderOptions == null) {
+                painsliderOptions = new String[] {
+                    '0', '1', '2', '3','4','5','6','7','8','9',
+                    '10'
+                };
+            }
+            return painsliderOptions;
+        }
+    }
+      
     public Evaluation_Response__c[] annotations { set;
         get {
             return [
@@ -86,6 +118,18 @@ public with sharing class NursingEvaluationViewController {
                        Annotation_Shape__c, Annotation_Text__c
                 FROM Evaluation_Response__c WHERE Evaluation__c=:evaluation.Id
                  AND RecordType.Name='Annotation'
+            ];
+        }
+    }
+    
+    public Evaluation_Response__c[] neuroAnnotations { set;
+        get {
+            return [
+                SELECT ID, Annotation_Height__c, Annotation_Width__c,
+                       Annotation_X__c, Annotation_Y__c, Annotation_Source__c,
+                       Annotation_Shape__c, Annotation_Text__c
+                FROM Evaluation_Response__c WHERE Evaluation__c=:evaluation.Id
+                 AND RecordType.Name='NeuroAnnotation'
             ];
         }
     }
@@ -187,7 +231,24 @@ public with sharing class NursingEvaluationViewController {
 		selectedProsthetics = new List<String>();
 		orthodicsValues = new List<selectOption>();
 		selectedOrthodics = new List<String>();
-		
+		moodValues = new List<selectOption>();
+		selectedMoods = new List<String>();
+		alleviatorValues = new List<selectOption>();
+		selectedAlleviators = new List<String>();
+		adlValues = new List<selectOption>();
+		selectedAdls = new List<String>();
+		expressionValues = new List<selectOption>();
+		selectedExpressions = new List<String>();
+		paintypeValues = new List<selectOption>();
+		selectedPaintypes = new List<String>();
+		painalleviatorValues = new List<selectOption>();
+		selectedpainAlleviators = new List<String>();
+		painadlValues = new List<selectOption>();
+		selectedpainAdls = new List<String>();
+		painexpressionValues = new List<selectOption>();
+		selectedpainExpressions = new List<String>();
+		paindescriptorValues = new List<selectOption>();
+		selectedpainDescriptors = new List<String>();
 		
 		
 		if(!String.isBlank(this.evaluation.Breathe_sounds__c))
@@ -271,6 +332,33 @@ public with sharing class NursingEvaluationViewController {
 		if(!String.isBlank(this.evaluation.Orthodics_Types__c))
 		selectedOrthodics = this.evaluation.Orthodics_Types__c.split(';');   
         
+        if(!String.isBlank(this.evaluation.Mood__c))
+		selectedMoods = this.evaluation.Mood__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Alleviating_Factors__c))
+		selectedAlleviators = this.evaluation.Alleviating_Factors__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Negative_Impact_on_ADLs__c))
+		selectedAdls = this.evaluation.Negative_Impact_on_ADLs__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Manner_of_Expressing_Pain__c))
+		selectedExpressions = this.evaluation.Manner_of_Expressing_Pain__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Neuro_Pain_Types__c))
+		selectedPaintypes = this.evaluation.Neuro_Pain_Types__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Neuro_Pain_Alleviating_Factors__c))
+		selectedpainAlleviators = this.evaluation.Neuro_Pain_Alleviating_Factors__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Neuro_Pain_neg_Impact_on_ADLs__c))
+		selectedpainAdls = this.evaluation.Neuro_Pain_neg_Impact_on_ADLs__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Neuro_Pain_Manner_of_Exp__c))
+		selectedpainExpressions = this.evaluation.Neuro_Pain_Manner_of_Exp__c.split(';');
+		
+		if(!String.isBlank(this.evaluation.Neuro_pain_Descriptors__c))
+		selectedpainDescriptors = this.evaluation.Neuro_pain_Descriptors__c.split(';');
+		
         
     }
     
@@ -432,5 +520,51 @@ public with sharing class NursingEvaluationViewController {
    		List<Selectoption> orthodicsValue = Utility.getPicklistValues(evaluation, 'Orthodics_Types__c');
    		return orthodicsValue; 
    } 	
+   
+    public List<selectoption> getmoodValues(){
+   		List<Selectoption> moodValue = Utility.getPicklistValues(evaluation, 'Mood__c');
+   		return moodValue; 
+   }
+   
+   public List<selectoption> getalleviatorValues(){
+   		List<Selectoption> alleviatorValue = Utility.getPicklistValues(evaluation, 'Alleviating_Factors__c');
+   		return alleviatorValue; 
+   }
+   
+   public List<selectoption> getadlValues(){
+   		List<Selectoption> adlValue = Utility.getPicklistValues(evaluation, 'Negative_Impact_on_ADLs__c');
+   		return adlValue; 
+   }
+   
+   public List<selectoption> getexpressionValues(){
+   		List<Selectoption> expressionValue = Utility.getPicklistValues(evaluation, 'Manner_of_Expressing_Pain__c');
+   		return expressionValue; 
+   }
+   
+   public List<selectoption> getpaintypeValues(){
+   		List<Selectoption> paintypeValue = Utility.getPicklistValues(evaluation, 'Neuro_Pain_Types__c');
+   		return paintypeValue; 
+   }
+   
+   public List<selectoption> getpainalleviatorValues(){
+   		List<Selectoption> painalleviatorValue = Utility.getPicklistValues(evaluation, 'Neuro_Pain_Alleviating_Factors__c');
+   		return painalleviatorValue; 
+   }
+   
+   public List<selectoption> getpainadlValues(){
+   		List<Selectoption> painadlValue = Utility.getPicklistValues(evaluation, 'Neuro_Pain_neg_Impact_on_ADLs__c');
+   		return painadlValue; 
+   }
+   
+   public List<selectoption> getpainexpressionValues(){
+   		List<Selectoption> painexpressionValue = Utility.getPicklistValues(evaluation, 'Neuro_Pain_Manner_of_Exp__c');
+   		return painexpressionValue; 
+   }
+   
+   public List<selectoption> getpaindescriptorValues(){
+   		List<Selectoption> paindescriptorValue = Utility.getPicklistValues(evaluation, 'Neuro_Pain_Manner_of_Exp__c');
+   		return paindescriptorValue; 
+   }
+   
 	
 }

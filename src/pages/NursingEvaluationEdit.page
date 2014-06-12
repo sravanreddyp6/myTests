@@ -1,4 +1,4 @@
-<apex:page standardController="Evaluation__c" docType="html-5.0" extensions="NursingEvaluationEditController">
+<apex:page standardController="Evaluation__c" extensions="NursingEvaluationEditController">
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/> 
@@ -59,7 +59,7 @@
 	</style>
 	<script>
 	 function setFocusOnLoad() {}  // Overwrite VF function to focus on the 1st field
-        jQuery.noConflict();
+       jQuery.noConflict();
         
         jQuery(document).ready(function ($) {
             handleSliderChange = function (inputIdToUpdate) {
@@ -116,7 +116,7 @@
                     }
                 );
             });
-        
+            
         String.prototype.endsWith = function (suffix) {
                 return this.indexOf(suffix, this.length - suffix.length) !== -1;
             };
@@ -190,7 +190,7 @@
                     }
                 });
             }
-     
+     		
      setUpFields = function () {
                 $('body input').on("change", function (event) {
                     enableDisableField(event.target);
@@ -244,7 +244,7 @@
            var oz;
            var kg;
            
-          j$=jQuery.noConflict();
+         j$=jQuery.noConflict();
          function calculate(formField,type){
           
            if(type=='lbs'){              
@@ -280,15 +280,12 @@
                  oztokg = oz*0.0283495;
              return oztokg;
         
-        
-        
         }
-        
-        
-        
+         
      </script>
+    
      <div class="breadcrumb">
-        <a href="/">Home</a> > <a href="/{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__c}">{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__r.Name}</a> > <a href="/{!Evaluation__c.ServiceAssignment__r.Admission__c}">{!Evaluation__c.ServiceAssignment__r.Admission__r.Name}</a> > <a href="/{!Evaluation__c.ServiceAssignment__c}" >{!Evaluation__c.ServiceAssignment__r.Name}</a> > {!Evaluation__c.Name}
+        <a href="/">Home</a> > <a href="/{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__c}">Person Being Served</a> > <a href="/{!Evaluation__c.ServiceAssignment__r.Admission__c}">Admission</a> > <a href="/{!Evaluation__c.ServiceAssignment__c}" >Service Assignment</a> > Evaluation
     </div>
 	<apex:form id="wholePage">
 	<apex:outputPanel rendered="false">
@@ -926,7 +923,7 @@
 					<hr />
 					 <h2 style="display: block; margin: 10px;">Body Map</h2>
                     <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
-                        <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!IF(bodyMapUrl=null, baseUrl + URLFOR($Resource.WholeBodyNoGrid), bodyMapUrl)}" id="bodyMap" />
+                        <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!baseUrl + URLFOR($Resource.WholeBodyNoGrid)}" id="bodyMap" />
                     </div>
                     <div style="margin-left: 420px; height: 298px; overflow: auto;">
                         <table id="annotations">
@@ -1174,9 +1171,9 @@
                     <apex:pageBlockSection Columns="1" >
                     	<apex:outputPanel >
 	                    	<apex:outputText Value="Pain Present" styleClass="labelCol" style="margin-left: 3cm;"/>
-		                    	<apex:actionRegion id="painRegion" renderRegionOnly="false" >
+		                    	<apex:actionRegion id="painRegion"  >
 		                    		<apex:inputField value="{!Evaluation__c.Pain_Present__c}" style="margin-left: 1cm;">
-		                    		<apex:actionSupport event="onchange" reRender="painSection" />
+		                    		<apex:actionSupport event="onchange" />
 		                    		</apex:inputField>
 		                    	</apex:actionRegion>
 		                    	<apex:actionstatus id="st" for="painRegion" >
@@ -1186,10 +1183,79 @@
 		                        </apex:actionstatus>	
                         </apex:outputPanel>
                     </apex:pageBlockSection>
-                   <apex:outputPanel id="painSection">
-                    <apex:pageblockSection rendered="{!Evaluation__c.Pain_Present__c == 'Yes'}" columns="2" >
+                   <apex:outputPanel id="painSection" layout="block">
+                   		<script>
+							 jQuery(document).ready(function ($) {
+			                    anno.reset();
+			                    var nel = $('#neurobodyMap').get(0);
+			                    if (nel) {
+			                        anno.makeAnnotatable(nel);
+			                    }
+			                    var $nel = $(nel);
+			                    <apex:repeat value="{!neuroAnnotations}" var="neuroannotation">
+			                    anno.addAnnotation({
+			                        Id: "{!neuroannotation.Id}",
+			                        src: $("#neurobodyMap").prop("src"),
+			                        text: "{!JSENCODE(neuroannotation.Annotation_Text__c)}",
+			                        shapes: [{
+			                            type: "{!JSENCODE(neuroannotation.Annotation_Shape__c)}",
+			                            geometry: {
+			                                x: {!neuroannotation.Annotation_X__c},
+			                                y: {!neuroannotation.Annotation_Y__c},
+			                                width: {!neuroannotation.Annotation_Width__c},
+			                                height: {!neuroannotation.Annotation_Height__c}
+			                            }
+			                        }]
+			                    });
+			                    </apex:repeat>
+			                    var neurocreateAnnotationElements = function (neuroAnnotations) {
+			                        $('.neuroannotation-number').remove();
+			                        $('table#neuroAnnotations tr').remove();
+			                        $.each(neuroAnnotations, function (index, neuroannotation) {
+			                            var $divEl = $("<div class='neuroannotation-number' style='pointer-events:none; position: absolute; text-align: center; left: " + neuroannotation.shapes[0].geometry.x * 100 + "%; width: " + neuroannotation.shapes[0].geometry.width * 100 + "%; top: " + neuroannotation.shapes[0].geometry.y * 100 + "%; height: " + neuroannotation.shapes[0].geometry.height * 100 + "%;'></div>");
+			                            $nel.parent().append($divEl);
+			                            var $textEl = $("<span style='line-height: " + $divEl.height() + "px; color: red; font-size: 1.5em;'>" + (index + 1) + "</span>");
+			                            $divEl.append($textEl);
+			                            $("table#neuroAnnotations tbody").append("<tr><td>" + (index + 1) + "</td><td>" + neuroannotation.text + "</td></tr>");
+			                        });
+			                    }
+			                    neurocreateAnnotationElements(anno.getAnnotations());
+			                    anno.addHandler('onAnnotationCreated', function (neuroannotation) {
+			                        neurocreateAnnotationElements(anno.getAnnotations());
+			                    });
+			                    anno.addHandler('onAnnotationUpdated', function (neuroannotation) {
+			                        neurocreateAnnotationElements(anno.getAnnotations());
+			                    });
+			                    anno.addHandler('onAnnotationRemoved', function (neuroannotation) {
+			                        neurocreateAnnotationElements(anno.getAnnotations());
+			                    });
+			                });
+                	</script>
+                    <apex:pageblockSection columns="2" id="painBlock">
+                    <hr />
+	                    	<h2 style="display: block; margin: 10px;">Body Map</h2>
+	                    <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
+	                        <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!baseUrl + URLFOR($Resource.NeurotabBodyNoGrid)}" id="neurobodyMap" />
+	                    </div>
+	                    <div style="margin-left: 420px; height: 298px; overflow: auto;">
+	                        <table id="neuroAnnotations">
+	                            <tbody>
+	                            </tbody>
+	                        </table>
+	                    </div>
+	                    <apex:pageBlockSectionItem />
+	                    <apex:pageBlockSectionItem >
+	                    	<apex:outputText value="Specify pain Level" styleClass="labelCol" />
+	                    	<apex:image url="{!URLFOR($Resource.Wongbakerfaces)}"  width="85%" height="85" style="margin-left: 0.75cm;"/>
+	                    </apex:pageBlockSectionItem>
+	                    <apex:inputhidden value="{!Evaluation__c.Neuro_Pain_Level__c}" id="neuropainLevel" />
+	                    <apex:pageBlockSectionItem >
+                            	<apex:outputText value="Pain Level" />
+                            	<c:Slider onChange="handleSliderChange('{!$Component.neuropainLevel}')" options="{!painsliderOptions}" initial="{!Evaluation__c.Neuro_Pain_Level__c}" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem />
                     	<apex:outputText value="Pain Details" styleClass="labelCol" style="margin-left: 3cm;" />
-                    	<apex:outputText value="Aggravating Factors" styleClass="labelCol" style=",argin-left: 3cm;" />
+                    	<apex:outputText value="Aggravating Factors" styleClass="labelCol" style="margin-left: 3cm;" />
                     	<apex:inputField value="{!Evaluation__c.Neuro_Pain_Severity__c}" label="Severity" />
                     	<apex:inputField value="{!Evaluation__c.Neuro_Pain_Activity__c}" label="Activity" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.neuropainDescribe}&quot;]}"/>
                     	<apex:pageBlocksectionItem >
@@ -1232,7 +1298,6 @@
                     			<apex:selectoptions value="{!painexpressionValues}" />
                     		</apex:selectCheckboxes>
                     	</apex:pageBlocksectionItem>          	
-                    	
                     </apex:pageblockSection>
                    </apex:outputPanel>
                    <hr />

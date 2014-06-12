@@ -91,6 +91,18 @@ public with sharing class NursingEvaluationEditController {
         }
     }
     
+    public List<String> painsliderOptions { set;
+        get {
+            if (painsliderOptions == null) {
+                painsliderOptions = new String[] {
+                    '0', '1', '2', '3','4','5','6','7','8','9',
+                    '10'
+                };
+            }
+            return painsliderOptions;
+        }
+    }
+    
     public Evaluation_Response__c[] annotations { set;
         get {
             return [
@@ -103,7 +115,19 @@ public with sharing class NursingEvaluationEditController {
         }
     }
     
-    public String bodyMapUrl { get {
+    public Evaluation_Response__c[] neuroAnnotations { set;
+        get {
+            return [
+                SELECT ID, Annotation_Height__c, Annotation_Width__c,
+                       Annotation_X__c, Annotation_Y__c, Annotation_Source__c,
+                       Annotation_Shape__c, Annotation_Text__c
+                FROM Evaluation_Response__c WHERE Evaluation__c=:evaluation.Id
+                 AND RecordType.Name='NeuroAnnotation'
+            ];
+        }
+    }
+    
+   /* public String bodyMapUrl { get {
         Attachment[] attachments = [
             SELECT Id FROM Attachment
             WHERE ParentId=:evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__c
@@ -113,9 +137,10 @@ public with sharing class NursingEvaluationEditController {
             return '/servlet/servlet.FileDownload?file=' + attachments[0].Id;
         }
         return null;
-    } }
+    } } */
     
    public String serializedAnnotations { get; set; }
+   public String neuroserializedAnnotations { get; set; }
     
     public List<Attachment> immuneAttachments{
         get{
@@ -151,6 +176,8 @@ public with sharing class NursingEvaluationEditController {
     	this.stdController = stdController;
     	evaluation = (Evaluation__c) stdController.getRecord();
     	serializedAnnotations = JSON.serialize(annotations);
+    	neuroserializedAnnotations = JSON.serialize(neuroAnnotations);
+    	
     	currentRelatedParty = new Related_Party__c();
     	if (ApexPages.currentPage().getParameters().get('tab') != null) {
             selectedTab = ApexPages.currentPage().getParameters().get('tab');
@@ -1004,7 +1031,7 @@ public with sharing class NursingEvaluationEditController {
         } else {
             annotation = new Evaluation_Response__c();
             annotation.Evaluation__c = evaluationId;
-            annotation.RecordTypeId = Utility.getEvaluationResponseRecordType('Annotation');
+            annotation.RecordTypeId = source.contains('Neurotab') ? Utility.getEvaluationResponseRecordType('NeuroAnnotation'): Utility.getEvaluationResponseRecordType('Annotation');
         }
         annotation.Annotation_Height__c = Height;
         annotation.Annotation_Width__c = Width;
@@ -1018,6 +1045,7 @@ public with sharing class NursingEvaluationEditController {
         return annotation;
     }
     
+     
     @RemoteAction
     public static void deleteAnnotation(ID annotationId) {
         delete [
