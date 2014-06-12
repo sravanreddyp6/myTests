@@ -1,4 +1,11 @@
-<apex:page controller="DocumentedActualStaffHrsRpt" sidebar="false" tabStyle="Persons_Being_Served_New__tab"  docType="html-5.0"  readOnly="true">
+<apex:page controller="DocumentedActualStaffHrsRpt" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab"  docType="html-5.0"  readOnly="true">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!$Resource.jquery}"/>
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables_themeroller.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables.css')}"/>
 
 
 <script>
