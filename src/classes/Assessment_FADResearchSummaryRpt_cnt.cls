@@ -18,7 +18,7 @@ public with sharing class Assessment_FADResearchSummaryRpt_cnt {
         List<Assessment_Response__c> tmpAR = new list<Assessment_Response__c>();
         tmpar = [select id, Question__r.Dev_Name__c, assessment__r.Service_Assignment__r.person_being_served__c, Assessment__c, 
                         assessment__r.Service_Assignment__r.admission__r.Effective_Date__c,
-                        assessment__r.Service_Assignment__r.Location_Region__c,
+                        assessment__r.Service_Assignment__r.Program_Detail__c,
                         assessment__r.Assessment_Date__c,
                         assessment__r.Service_Assignment__r.Phase_1_Start_Date__c,
                         assessment__r.Service_Assignment__r.person_being_served__r.Birthdate,
