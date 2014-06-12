@@ -43,7 +43,7 @@ trigger GetStartTimeOnly on Progress_Note__c (before update, before insert) {
        if ((Trigger.isUpdate && Trigger.oldMap.get(n.Id).End_Time__c != n.End_Time__c) || Trigger.isInsert) {
        	
        		// update end time string
-           n.End_Time_Only__c = getTimeString( n.Start_time__c); 
+           n.End_Time_Only__c = getTimeString( n.End_time__c); 
        }
        
        
