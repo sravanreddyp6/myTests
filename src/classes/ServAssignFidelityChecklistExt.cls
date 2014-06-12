@@ -112,7 +112,7 @@ public class ServAssignFidelityChecklistExt  {
         
         Service_Assignment__c fetchedServAssign = [ SELECT Id, Name, Program__c, Admission__r.state__c, Service_Line__c FROM Service_Assignment__c WHERE Id = :theServAssign.Id LIMIT 1 ]; 
     
-        // Select all cross-references between Documents and this Service Assignment for Fidelity Docs that are linked to the Program.
+        // Select all cross-references between Contracts and this Service Assignment.
         servAssignDocXrefs = [ SELECT Id, Name, Document__c, Document_Name__c, File_Status__c, Relative_Due_Date_Units__c, Relative_Due_Date_UOM__c, 
                                         Relative_Due_Date_Event__c, Relative_Due_Date_Resolved__c, Due_From_Employee__c, Due_From_Employee_Name__c, 
                                         Document__r.Type__c, Document__r.Phase_or_Level__c, Document__r.Order__c, Filed_Date_Time__c, Filed_By__c,
@@ -120,7 +120,6 @@ public class ServAssignFidelityChecklistExt  {
                                 FROM ServiceAssignment_Document_JO__c 
                                 WHERE Service_Assignment__c = :fetchedServAssign.Id 
                                         AND Document__r.Type__c = 'Fidelity Document'
-                                        //CTEAE-100: Remove respect for state from Fidelity Documents, J. Gilliam, 6/11/14
                                         //AND Document__r.State__c = :fetchedServAssign.Admission__r.state__c
                                         AND Document__c IN (SELECT Document__c FROM Program_Document_Xref__c WHERE Program__c = :fetchedServAssign.Program__c)
                                        // AND Document__c IN (SELECT Document__c FROM Program_Document_Xref__c WHERE Service_Line__c = :fetchedServAssign.Service_Line__c)

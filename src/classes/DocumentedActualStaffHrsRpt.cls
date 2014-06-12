@@ -16,7 +16,7 @@ public with sharing class DocumentedActualStaffHrsRpt {
     public List<StaffHrsInfo> getListStaffHrsInfo(){return listStaffHrsInfo;}
         
     public DocumentedActualStaffHrsRpt () {
-       // fStartDate = system.today();
+       //fStartDate = system.today();
        allCount = 0;
     } 
     
@@ -33,10 +33,13 @@ public with sharing class DocumentedActualStaffHrsRpt {
             return null;
         }
         
-        ParsedData.clear();
-        results.clear();
+        ParsedData.clear();                
         uniquePBS.clear();
         filteredResults.clear();
+        
+        Results.clear();
+        PNResults.clear();
+        listStaffHrsInfo.clear();                
         
         Results = [Select  id,     
                         Admission__r.Person_Being_Served__r.FirstName, 
@@ -54,8 +57,7 @@ public with sharing class DocumentedActualStaffHrsRpt {
                             (Start_Date__c  <= :fEndDate AND End_Date__c = null ) 
                          )
                    ];                                                                             
-
-        integer index = 0;					                            
+					                            
         for(Service_Assignment__c SA: Results){                            
             StaffHrsInfo dataRow = new StaffHrsInfo();
                                     
@@ -64,15 +66,24 @@ public with sharing class DocumentedActualStaffHrsRpt {
                         Last_Name__c,
                         Start_Time__c,
                         End_Time__c
-                        From Progress_Note__c Where Service_Assignment__c = :SA.id
+                        From Progress_Note__c Where 
+                           Service_Assignment__c = :SA.id 
+                          /*AND
+                            ( 
+                              ((SA.Start_Date__c >= :fStartDate OR SA.End_Date__c >= :fStartDate) 
+                             AND  
+                               (SA.Start_Date__c <= :fEndDate OR SA.End_Date__c <= :fEndDate) )                         
+                             OR
+                               (SA.Start_Date__c  <= :fEndDate AND SA.End_Date__c = null )
+                            ) ) */                              
                    ]; 
                         
             for(Progress_Note__c pn: PNResults){ 
                 dataRow.clinician =  pn.First_Name__c+' '+pn.Last_Name__c;
-                long totalMinutes = ((pn.End_Time__c.getTime() - pn.Start_Time__c.getTime())/1000)/60;
+                Decimal totalMinutes = ((pn.End_Time__c.getTime() - pn.Start_Time__c.getTime())/1000)/60;
             
-                dataRow.totalMinutes = String.valueOf(totalMinutes);
-                dataRow.hours = String.valueOf(totalMinutes/60);            
+                dataRow.totalMinutes = String.valueOf(totalMinutes);                
+                dataRow.hours = String.valueOf((totalMinutes/60).setscale(2));
                 dataRow.pbs = SA.Admission__r.Person_Being_Served__r.FirstName+' '+SA.Admission__r.Person_Being_Served__r.LastName;                                 
                      
                 if (SA.Phase__c == 1) {
@@ -91,7 +102,7 @@ public with sharing class DocumentedActualStaffHrsRpt {
                 listStaffHrsInfo.add(dataRow);
             }                                                                                                                                       
         }
-        allCount = 0;
+        allCount = listStaffHrsInfo.size();
         
         for(Service_Assignment__c SA: Results){
             //integer i = ParsedData.get(SA.Admission__r.State__c);            
