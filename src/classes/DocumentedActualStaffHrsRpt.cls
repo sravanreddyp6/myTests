@@ -33,10 +33,13 @@ public with sharing class DocumentedActualStaffHrsRpt {
             return null;
         }
         
-        ParsedData.clear();
-        results.clear();
+        ParsedData.clear();                
         uniquePBS.clear();
         filteredResults.clear();
+        
+        Results.clear();
+        PNResults.clear();
+        listStaffHrsInfo.clear();                
         
         Results = [Select  id,     
                         Admission__r.Person_Being_Served__r.FirstName, 
@@ -99,7 +102,7 @@ public with sharing class DocumentedActualStaffHrsRpt {
                 listStaffHrsInfo.add(dataRow);
             }                                                                                                                                       
         }
-        allCount = 0;
+        allCount = listStaffHrsInfo.size();
         
         for(Service_Assignment__c SA: Results){
             //integer i = ParsedData.get(SA.Admission__r.State__c);            
