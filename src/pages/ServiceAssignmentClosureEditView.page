@@ -59,12 +59,12 @@
 	      <div class="pbHeaderButton">
 	      	<apex:commandButton action="{!editSac}" value="Edit" rendered="{!!editMode}" />
 	      	<apex:commandButton action="{!save}" value="Save" rendered="{!editMode}" />
-			<apex:commandButton action="{!submit}" value="Approve" rendered="{!!editMode}" />
+			<apex:commandButton action="{!submit}" value="Finalize" rendered="{!!editMode}" />
 			<apex:commandButton action="{!cancel}" value="Cancel" rendered="{!editMode}" />
 	      </div>
 
 	    	<apex:pageBlockSection id="ServAssignCloseBlock">
-					<apex:outputText value="{!pbs.Name}" />
+					<apex:outputText value="{!pbs.Name}" label="Person Being Served" />
 					<apex:pageBlockSectionItem />
 					<apex:outputField value="{!adm.Name}" />
 			    	<apex:pageBlockSectionItem />
@@ -76,7 +76,15 @@
 			    	<apex:pageBlockSectionItem />
 			    	<apex:inputField value="{!Service_Assignment_Closure__c.IFCS_Record_Number__c}" rendered="{!editMode}" />
 			    	<apex:outputField value="{!Service_Assignment_Closure__c.IFCS_Record_Number__c}" rendered="{!!editMode}" />
+			    	<apex:pageBlockSectionItem />
+			    	<apex:outputField value="{!pbs.OwnerId}" label="Primary FCS" />
+			    	<apex:pageBlockSectionItem />
+			    	<apex:outputField value="{!Service_Assignment_Closure__c.Service_Assignment__r.Start_Date__c}" />			    	
 			    	
+			    	<apex:pageBlockSectionItem />
+			    	<apex:pageBlockSectionItem />
+			    	<apex:pageBlockSectionItem />
+			    				    	
 			    	<apex:pageBlockSectionItem >
 			    		<apex:outputLabel value="Final Discharge or Step-Down from FCT to other IFCS service" for="DischargeTypeField" />
 			    		<apex:outputPanel >
@@ -98,17 +106,15 @@
 				    		<apex:outputField value="{!Service_Assignment_Closure__c.Discharge_Type__c}" label="Final Discharge or Step-Down from FCT to other IFCS service" rendered="{!!editMode}" />
 			    		</apex:outputPanel>
 			    	</apex:pageBlockSectionItem>
-		    		
-	    			
-	    			<apex:pageBlockSectionItem >
-	    				<apex:outputLabel value="Final Discharge Date" />
-	    				<apex:outputPanel id="FinalDischargeDatePanel">
-	    					<apex:outputField id="FinalDischargeDateField1" value="{!Service_Assignment_Closure__c.Final_Discharge_Date__c}" rendered="{!editMode && Service_Assignment_Closure__c.Discharge_Type__c!='Final Discharge'}" />
-	    					<apex:inputField id="FinalDischargeDateField2" value="{!Service_Assignment_Closure__c.Final_Discharge_Date__c}" rendered="{!editMode && Service_Assignment_Closure__c.Discharge_Type__c=='Final Discharge'}" required="true" />
-	    					<apex:outputField id="FinalDischargeDateField3" value="{!Service_Assignment_Closure__c.Final_Discharge_Date__c}" rendered="{!!editMode}" />
-			    		</apex:outputPanel>
-			    	</apex:pageBlockSectionItem>
-
+		    			<apex:pageBlockSectionItem >
+		    				<apex:outputLabel value="Final Discharge Date" />
+		    				<apex:outputPanel id="FinalDischargeDatePanel">
+		    					<apex:outputField id="FinalDischargeDateField1" value="{!Service_Assignment_Closure__c.Final_Discharge_Date__c}" rendered="{!editMode && Service_Assignment_Closure__c.Discharge_Type__c!='Final Discharge'}" />
+		    					<apex:inputField id="FinalDischargeDateField2" value="{!Service_Assignment_Closure__c.Final_Discharge_Date__c}" rendered="{!editMode && Service_Assignment_Closure__c.Discharge_Type__c=='Final Discharge'}" required="true" />
+		    					<apex:outputField id="FinalDischargeDateField3" value="{!Service_Assignment_Closure__c.Final_Discharge_Date__c}" rendered="{!!editMode}" />
+				    		</apex:outputPanel>
+				    	</apex:pageBlockSectionItem>
+				    <apex:pageBlockSectionItem />
 	    			<apex:pageBlockSectionItem >
 	    				<apex:outputLabel value="Date of Final FCT Meeting" />			    	
 			    		<apex:outputPanel id="DateOfFinalFctPanel">
@@ -117,7 +123,9 @@
 				    		<apex:outputField id="DateofFinalFctField3" value="{!Service_Assignment_Closure__c.Date_of_Final_FCT_Meeting__c}" rendered="{!!editMode}" />
 			    		</apex:outputPanel>
 			    	</apex:pageBlockSectionItem>
-			    	
+
+			    	<apex:pageBlockSectionItem />
+			    	<apex:pageBlockSectionItem />
 			    	<apex:pageBlockSectionItem >
 			    		<apex:outputLabel value="Placement Status at Discharge" for="PlacementStatusField" />
 			    		<apex:outputPanel >
@@ -140,7 +148,6 @@
 			    		</apex:outputPanel>
 			    	</apex:pageBlockSectionItem>		    	
 			    	
-			    	
 	    			<apex:pageBlockSectionItem >
 	    				<apex:outputLabel value="Specify where" />	
 	    				<apex:outputPanel id="SpecifyWherePanel">			    	
@@ -150,6 +157,7 @@
 			    		</apex:outputPanel>
 			    	</apex:pageBlockSectionItem>
 
+					<apex:pageBlockSectionItem />
 	    			<apex:pageBlockSectionItem >
 	    				<apex:outputLabel value="Was placement at home recent but prior to services?" />	
 	    				<apex:outputPanel id="PlacementRecentPanel">				    	
@@ -159,6 +167,7 @@
 			    		</apex:outputPanel>
 			    	</apex:pageBlockSectionItem>
 			    	
+			    	<apex:pageBlockSectionItem />
 	    			<apex:pageBlockSectionItem >
 	    				<apex:outputLabel value="If an out-of-home placement occurred or was maintained, was it planned?" />	
 	    				<apex:outputPanel id="WasPlacementPlannedPanel">				    	
@@ -170,6 +179,9 @@
 			    	
 			    	<apex:inputField value="{!Service_Assignment_Closure__c.Reason_for_Discharge__c}" rendered="{!editMode}" />
 			    	<apex:outputField value="{!Service_Assignment_Closure__c.Reason_for_Discharge__c}" rendered="{!!editMode}" />
+			    </apex:pageBlockSection>	
+			<hr />
+			    <apex:pageBlockSection title="Progress in Treatment" columns="1" collapsible="false">
 			    	<apex:selectList value="{!Service_Assignment_Closure__c.Primary_Treatment_Goal__c}" size="1" rendered="{!editMode}">
 			    		<apex:selectOptions value="{!actionPlanGoalSelectOptions}" />
 			    	</apex:selectList>
@@ -178,10 +190,10 @@
 			    	<apex:outputField value="{!Service_Assignment_Closure__c.FCS_Staff_Report__c}" rendered="{!!editMode}" />
 			    	<apex:inputField value="{!Service_Assignment_Closure__c.Family_Individual_Report__c}" rendered="{!editMode}" />
 			    	<apex:outputField value="{!Service_Assignment_Closure__c.Family_Individual_Report__c}" rendered="{!!editMode}" />
-			    	<apex:inputField value="{!Service_Assignment_Closure__c.Family_Individual_Rating__c}" rendered="{!editMode}" />
-			    	<apex:outputField value="{!Service_Assignment_Closure__c.Family_Individual_Rating__c}" rendered="{!!editMode}" />
-			    	<apex:inputField value="{!Service_Assignment_Closure__c.Follow_up_Request_Received__c}" rendered="{!editMode}" />
-			    	<apex:outputField value="{!Service_Assignment_Closure__c.Follow_up_Request_Received__c}" rendered="{!!editMode}" />
+			    	<apex:inputField value="{!Service_Assignment_Closure__c.Family_Individual_Rating__c}" rendered="{!editMode}" label="Ask the family/individual to rate their overall perception of treatment" />
+			    	<apex:outputField value="{!Service_Assignment_Closure__c.Family_Individual_Rating__c}" rendered="{!!editMode}" label="Ask the family/individual to rate their overall perception of treatment" />
+			    	<apex:inputField value="{!Service_Assignment_Closure__c.Follow_up_Request_Received__c}" rendered="{!editMode}" label="Has the family received the request for follow-up contact?" />
+			    	<apex:outputField value="{!Service_Assignment_Closure__c.Follow_up_Request_Received__c}" rendered="{!!editMode}" label="Has the family received the request for follow-up contact?" />
 
 			    	<apex:pageBlockSectionItem >
 			    		<apex:outputLabel value="Aftercare Plan/Services" for="AftercarePlanServicesField" />
