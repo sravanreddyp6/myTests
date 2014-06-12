@@ -95,10 +95,10 @@
                 <apex:inputField label="Name" value="{!curRel_Party .name}" required="true" />           
                 <apex:inputField label="Age" value="{!curRel_Party .Age__c}" required="true" />            
                 <apex:inputField label="Gender" value="{!curRel_Party .Gender__c}" required="true" />            
-                <apex:inputField label="Relationship to Person Being Served" styleClass="OC_Rel" value="{!curRel_Party .Relationship_to_Person_Being_Served__c}" required="true"
+                <apex:inputField label="Relationship to Person Being Served" styleClass="OC_Rel" value="{!curRel_Party.Relationship_to_Person_Being_Served__c}" required="true"
                   onchange="checkOtherField('OC_Rel', 'OC_Other_Rel', 'Other');" />           
-                <apex:inputField label="Specify Other" styleClass="OC_Other_Rel" value="{!curRel_Party .Relationship_to_Person_Being_Served_Othe__c }" />            
-                <apex:inputField label="Received FCT services before" value="{!curRel_Party .Received_FCT_services_before__c}" required="true" />
+                <apex:inputField label="Specify Other" styleClass="OC_Other_Rel" value="{!curRel_Party.Relationship_to_Person_Being_Served_Othe__c }" />            
+                <apex:inputField label="Received FCT services before" value="{!curRel_Party.Received_FCT_services_before__c}" required="true" />
     </apex:pageblockSection>
 </apex:pageBlock>
 </apex:form>
@@ -949,7 +949,6 @@ function toggleOptions( rb, divopt, dis_class ) {
         document.getElementById( divopt).style.display = 'none';
         j$('.'+ dis_class ).prop( "disabled", false);        
     }
-   // alert(j$('.pbs_cnc_cb').prop('checked'));
 };
 
 function toggleOptionsbyStyle( rb, divopt, dis_class ) {
@@ -962,10 +961,8 @@ function toggleOptionsbyStyle( rb, divopt, dis_class ) {
         document.getElementById( divopt).style.display = 'none';
         j$('.'+ dis_class ).prop( "disabled", false);        
     }
-   // alert(j$('.pbs_cnc_cb').prop('checked'));
 };
 function toggleRefDate(  ) {
-//alert('h');
 //j$('.ref_date_field' ).prop( "disabled", true);
     if ( j$('.phasefield').val()=='Initial' ){       
         j$('.ref_date_field' ).prop( "disabled", false);     
@@ -988,6 +985,7 @@ function toggleById(id, ms){
     j$(document.getElementById(id)).toggle(ms);
 };
 function checkOtherField(parent, otherid, mytxt){
+//alert(parent + ' - ' + j$('.'+parent).val() + ' | ' + otherid + ' - ' + j$('.'+otherid).val());
     if ( j$('.'+parent).val().indexOf(mytxt) == 0){ 
         j$('.'+ otherid).prop( "disabled", false);
     }
@@ -1004,18 +1002,18 @@ function checkInputs(){
     toggleOptionsbyStyle('cg_cnc_cb', 'CG_CNC2', 'cg_question'); 
     toggleRefDate(); 
     toggleOptionsbyStyle('SC_NoSC_CB', 'holder', 'second_cg_question');
-    checkOtherField('OC_Rel', 'OC_Other_Rel', 'Other'); 
     checkOtherField('PC_Rel', 'PC_Other_Rel', 'Other');    
-    checkOtherField('SC_Rel', 'SC_Other_Rel', 'Other');
-    toggleInialFinalFields();
+    checkOtherField('SC_Rel', 'SC_Other_Rel', 'Other');    
     checkOtherField('SC_Emp', 'SC_Occ', 'Employed'); 
     checkOtherField('PC_Emp', 'PC_Occ', 'Employed');   
-
+    checkOtherField('OC_Rel', 'OC_Other_Rel', 'Other'); 
+    toggleInialFinalFields();
 
 };
 j$( document ).ready(function() {
+
     if( {!mode =='edit'}){
-    checkInputs();
+        checkInputs();
     }
 });
 </script>
