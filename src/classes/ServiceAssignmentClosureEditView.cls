@@ -33,15 +33,15 @@ public with sharing class ServiceAssignmentClosureEditView {
 				admissionID = theServAssignClose.Service_Assignment__r.Admission__c;
 			}
 			pbsId = apexpages.currentpage().getparameters().get('PbsId');
-			pbs = [ SELECT Name FROM Contact WHERE Id = :pbsId LIMIT 1 ];
+			pbs = [ SELECT Name, OwnerId FROM Contact WHERE Id = :pbsId LIMIT 1 ];
 			if(pbsId==null) {
 				pbsId = theServAssignClose.Service_Assignment__r.Person_Being_Served__c;
 			}
 		}
 		else {
-			Service_Assignment_Closure__c sac = [ SELECT Service_Assignment__c, Service_Assignment__r.Admission__c, Service_Assignment__r.Admission__r.Person_Being_Served__c FROM Service_Assignment_Closure__c WHERE Id = :theServAssignClose.Id LIMIT 1 ];
+			Service_Assignment_Closure__c sac = [ SELECT Service_Assignment__c, Service_Assignment__r.Admission__c, Service_Assignment__r.Admission__r.Person_Being_Served__c, Service_Assignment__r.Start_Date__c FROM Service_Assignment_Closure__c WHERE Id = :theServAssignClose.Id LIMIT 1 ];
 			theServAssignId = theServAssignClose.Service_Assignment__c;
-			pbs = [ SELECT Name FROM Contact WHERE Id = :sac.Service_Assignment__r.Admission__r.Person_Being_Served__c LIMIT 1 ];
+			pbs = [ SELECT Name, OwnerId FROM Contact WHERE Id = :sac.Service_Assignment__r.Admission__r.Person_Being_Served__c LIMIT 1 ];
 			pbsId = pbs.Id;
 			adm = [ SELECT Name FROM Admission__c WHERE Id = :sac.Service_Assignment__r.Admission__c LIMIT 1 ];
 			admissionId = adm.Id;
