@@ -104,6 +104,7 @@ public with sharing class ServiceAssignmentClosure_Approval {
 	            	return new PageReference('/'+theServAssignClose.id);   
 	            }
 	            else {
+	            	update theServAssignClose;
 					return new PageReference('/p/process/Submit?retURL=%2F'+theServAssignClose.Id +'&id='+theServAssignClose.id);
 	            }
 			}
@@ -113,6 +114,11 @@ public with sharing class ServiceAssignmentClosure_Approval {
 			}
 		}
 	}
+	
+	public PageReference cancelSubmission() {
+		return new PageReference('/apex/ServiceAssignmentClosureEditView?id=' + theServAssignClose.id);
+	}
+	
 
 // START:  Method for displaying error / message text in the message take on VF page.
     private void addError(String msg) {

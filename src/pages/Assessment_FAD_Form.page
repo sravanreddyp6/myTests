@@ -167,7 +167,7 @@
         <apex:actionRegion >
         <apex:inputField required="true" value="{!Assessment__c.Phase__c}" id="phase" styleClass="phasefield">
         
-            <apex:actionSupport reRender="previous_CG, refDate, CG_AND_HH_Details" event="onchange" action="{!myCG_is_same_as_other_assessment}" oncomplete="checkInputs();"  />
+            <apex:actionSupport reRender="previous_CG" event="onchange" action="{!myCG_is_same_as_other_assessment}" oncomplete="checkInputs();"  />
         
         </apex:inputField>
         </apex:actionRegion>
@@ -539,28 +539,28 @@
                 </apex:selectList>                                   
             </apex:outputPanel>        
         </apex:pageBlockSectionItem> 
-        <apex:pageBlockSectionItem rendered="{!isInitalOrFinal}" >
+        <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['PC_Highest_Edu'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:selectList size="1" value="{!mapRes['PC_Highest_Edu'].Rating__c}">
+                <apex:selectList styleClass="Int_Final_field" size="1" value="{!mapRes['PC_Highest_Edu'].Rating__c}">
                     <apex:selectOptions value="{!EduTypes}"></apex:selectOptions>
                 </apex:selectList>                                    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem> 
-        <apex:pageBlockSectionItem rendered="{!isInitalOrFinal}"  >
+        <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['PC_Employment'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:selectList styleClass="PC_Emp" onchange="checkOtherField('PC_Emp', 'PC_Occ', 'Employed');" size="1" value="{!mapRes['PC_Employment'].Rating__c}" >
+                <apex:selectList styleClass="PC_Emp Int_Final_field" onchange="checkOtherField('PC_Emp', 'PC_Occ', 'Employed');" size="1" value="{!mapRes['PC_Employment'].Rating__c}" >
                     <apex:selectOptions value="{!EmploTypes}"></apex:selectOptions>
                 </apex:selectList>   &nbsp; &nbsp; &nbsp; 
                 <apex:outputPanel >{!mapQs['PC_Occupation'].Question_Title__c}</apex:outputPanel>&nbsp; &nbsp; &nbsp;   
                 <apex:inputField styleClass="PC_Occ" value="{!mapRes['PC_Occupation'].Rating__c}" />                    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem> 
-        <apex:pageBlockSectionItem rendered="{!isInitalOrFinal}" >
+        <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['PC_Received_FCT_before'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:selectList size="1" value="{!mapRes['PC_Received_FCT_before'].Rating__c}" >
+                <apex:selectList size="1" styleClass="Int_Final_field" value="{!mapRes['PC_Received_FCT_before'].Rating__c}" >
                     <apex:selectOption itemLabel="--None--" itemValue=""></apex:selectOption>
                     <apex:selectOption itemValue="Yes" itemLabel="Yes"></apex:selectOption>
                     <apex:selectOption itemValue="No" itemLabel="No"></apex:selectOption>
@@ -619,21 +619,21 @@
                 <apex:outputField value="{!mapRes['PC_Phone_2_Type'].Rating__c}"/>                                  
             </apex:outputPanel>        
         </apex:pageBlockSectionItem> 
-        <apex:pageBlockSectionItem rendered="{!isInitalOrFinal}" >
+        <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['PC_Highest_Edu'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
                 <apex:outputField value="{!mapRes['PC_Highest_Edu'].Rating__c}"/>                                   
             </apex:outputPanel>        
         </apex:pageBlockSectionItem> 
-        <apex:pageBlockSectionItem rendered="{!isInitalOrFinal}">
+        <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['PC_Employment'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
                 <apex:outputField value="{!mapRes['PC_Employment'].Rating__c}" />   &nbsp; &nbsp; &nbsp; 
-                <apex:outputPanel >{!mapQs['PC_Occupation'].Question_Title__c}</apex:outputPanel>&nbsp; &nbsp; &nbsp;   
+                <apex:outputPanel rendered="{!mapRes['PC_Occupation'].Rating__c != null}" ><i>{!mapQs['PC_Occupation'].Question_Title__c}</i> -&nbsp;</apex:outputPanel>   
                 <apex:outputField value="{!mapRes['PC_Occupation'].Rating__c}" />                    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem> 
-        <apex:pageBlockSectionItem rendered="{!isInitalOrFinal}">
+        <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['PC_Received_FCT_before'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
                 <apex:outputField value="{!mapRes['PC_Received_FCT_before'].Rating__c}" />
@@ -648,7 +648,7 @@
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['SC_No_SC'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:inputCheckbox value="{!mapRes['SC_No_SC'].Yes_No__c}" styleClass="SC_NoSC_CB" onclick="checkInputs(); return false;"  rendered="{!mode='edit'}"/>   
+                <apex:inputCheckbox value="{!mapRes['SC_No_SC'].Yes_No__c}" styleClass="SC_NoSC_CB" onclick="checkInputs();"  rendered="{!mode='edit'}"/>   
                 <apex:outputField value="{!mapRes['SC_No_SC'].Yes_No__c}" rendered="{!mode='view'}"/>                   
             <span id="holder"/>
             </apex:outputPanel>
@@ -670,7 +670,7 @@
                     <apex:selectOptions value="{!PC_Rel_To_PBS}"></apex:selectOptions>
                 </apex:selectList>  
                 <apex:outputPanel >Specify Other: <apex:inputField styleClass="second_cg_question SC_Other_Rel" value="{!mapRes['SC_Relationship_to_PBS_Other'].Rating__c}"/></apex:outputPanel>       
-                                  
+                                 
             </apex:outputPanel>        
         </apex:pageBlockSectionItem> 
         
@@ -714,28 +714,28 @@
                 </apex:selectList>                                     
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>         
-        <apex:pageBlockSectionItem rendered="{!isInitalOrFinal}"  >
+        <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['SC_Highest_Edu'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:selectList styleClass="second_cg_question" size="1" value="{!mapRes['SC_Highest_Edu'].Rating__c}">
+                <apex:selectList styleClass="second_cg_question Int_Final_field" size="1" value="{!mapRes['SC_Highest_Edu'].Rating__c}">
                     <apex:selectOptions value="{!EduTypes}"></apex:selectOptions>
                 </apex:selectList>                                   
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>
-        <apex:pageBlockSectionItem rendered="{!isInitalOrFinal}" >
+        <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['SC_Employment'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:selectList styleClass="second_cg_question SC_Emp" onchange="checkOtherField('SC_Emp', 'SC_Occ', 'Employed');"  size="1" value="{!mapRes['SC_Employment'].Rating__c}" >
+                <apex:selectList styleClass="second_cg_question SC_Emp Int_Final_field" onchange="checkOtherField('SC_Emp', 'SC_Occ', 'Employed');"  size="1" value="{!mapRes['SC_Employment'].Rating__c}" >
                     <apex:selectOptions value="{!EmploTypes}"></apex:selectOptions>
                 </apex:selectList>   &nbsp; &nbsp; &nbsp; 
                 <apex:outputPanel >{!mapQs['SC_Occupation'].Question_Title__c}</apex:outputPanel>&nbsp; &nbsp; &nbsp;   
                 <apex:inputField styleClass="second_cg_question SC_Occ" value="{!mapRes['SC_Occupation'].Rating__c}" />                    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>          
-        <apex:pageBlockSectionItem rendered="{!isInitalOrFinal}" >
+        <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['SC_Received_FCT_before'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:selectList size="1" styleClass="second_cg_question" value="{!mapRes['SC_Received_FCT_before'].Rating__c}" >
+                <apex:selectList size="1" styleClass="second_cg_question Int_Final_field" value="{!mapRes['SC_Received_FCT_before'].Rating__c}" >
                     <apex:selectOption itemLabel="--None--" itemValue=""></apex:selectOption>
                     <apex:selectOption itemValue="Yes" itemLabel="Yes"></apex:selectOption>
                     <apex:selectOption itemValue="No" itemLabel="No"></apex:selectOption>
@@ -759,7 +759,7 @@
             <apex:outputPanel >{!mapQs['SC_Relationship_to_PBS'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
                 <apex:outputField value="{!mapRes['SC_Relationship_to_PBS'].Rating__c}"/>  
-                <apex:outputPanel rendered="{!mapRes['SC_Relationship_to_PBS_Other'].Rating__c != null}" >&nbsp;-&nbsp;<apex:inputField value="{!mapRes['SC_Relationship_to_PBS_Other'].Rating__c}"/></apex:outputPanel>                                                    
+                <apex:outputPanel rendered="{!mapRes['SC_Relationship_to_PBS_Other'].Rating__c != null}" >&nbsp;-&nbsp;<apex:outputField value="{!mapRes['SC_Relationship_to_PBS_Other'].Rating__c}"/></apex:outputPanel>                                                    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem> 
         
@@ -799,21 +799,21 @@
                 <apex:outputField value="{!mapRes['SC_Phone_2_Type'].Rating__c}"/>                                    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>         
-        <apex:pageBlockSectionItem rendered="{!isInitalOrFinal}">
+        <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['SC_Highest_Edu'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
                 <apex:outputField value="{!mapRes['SC_Highest_Edu'].Rating__c}"/>                                  
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>
-        <apex:pageBlockSectionItem rendered="{!isInitalOrFinal}">
+        <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['SC_Employment'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
                 <apex:outputField value="{!mapRes['SC_Employment'].Rating__c}" />   &nbsp; &nbsp; &nbsp; 
-                <apex:outputPanel >{!mapQs['SC_Occupation'].Question_Title__c}</apex:outputPanel>&nbsp; &nbsp; &nbsp;   
+                <apex:outputPanel rendered="{!mapRes['SC_Occupation'].Rating__c != null}"><i>{!mapQs['SC_Occupation'].Question_Title__c}</i> -&nbsp; </apex:outputPanel>  
                 <apex:outputField value="{!mapRes['SC_Occupation'].Rating__c}" />                    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>          
-        <apex:pageBlockSectionItem rendered="{!isInitalOrFinal}">
+        <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['SC_Received_FCT_before'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
                 <apex:outputField value="{!mapRes['SC_Received_FCT_before'].Rating__c}" />                   
@@ -857,10 +857,10 @@
     </apex:outputPanel>
     <apex:pageBlockSectionItem />
 
-        <apex:outputField rendered="{!isInitalOrFinal && mode='view'}" value="{!Assessment__c.Family_Annual_Income__c}"/> 
+        <apex:outputField rendered="{!mode ='view'}" value="{!Assessment__c.Family_Annual_Income__c}"/> 
 
 
-        <apex:inputField rendered="{!isInitalOrFinal && mode='edit'}" value="{!Assessment__c.Family_Annual_Income__c}"/> 
+        <apex:inputField rendered="{!mode ='edit'}" styleClass="Int_Final_field" value="{!Assessment__c.Family_Annual_Income__c}"/> 
 
     
     
@@ -966,13 +966,22 @@ function toggleOptionsbyStyle( rb, divopt, dis_class ) {
 };
 function toggleRefDate(  ) {
 //alert('h');
-j$('.ref_date_field' ).prop( "disabled", true);
+//j$('.ref_date_field' ).prop( "disabled", true);
     if ( j$('.phasefield').val()=='Initial' ){       
         j$('.ref_date_field' ).prop( "disabled", false);     
       }
     else{    
         j$('.ref_date_field' ).prop( "disabled", true);  
         j$('.ref_date_field' ).prop( "value", "");       
+}
+};
+function toggleInialFinalFields(  ) {
+    if ( j$('.phasefield').val()=='Initial' || j$('.phasefield').val()== 'Final' ){       
+        j$('.Int_Final_field' ).prop( "disabled", false);     
+      }
+    else{    
+        j$('.Int_Final_field' ).prop( "disabled", true);  
+        j$('.Int_Final_field' ).prop( "value", "");       
 }
 };
 function toggleById(id, ms){
@@ -998,13 +1007,16 @@ function checkInputs(){
     checkOtherField('OC_Rel', 'OC_Other_Rel', 'Other'); 
     checkOtherField('PC_Rel', 'PC_Other_Rel', 'Other');    
     checkOtherField('SC_Rel', 'SC_Other_Rel', 'Other');
+    toggleInialFinalFields();
     checkOtherField('SC_Emp', 'SC_Occ', 'Employed'); 
     checkOtherField('PC_Emp', 'PC_Occ', 'Employed');   
 
 
 };
 j$( document ).ready(function() {
+    if( {!mode =='edit'}){
     checkInputs();
+    }
 });
 </script>
 </apex:outputPanel>
