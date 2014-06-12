@@ -1,0 +1,44 @@
+<apex:page standardController="Service_Assignment_Closure__c" extensions="ServiceAssignmentClosure_Approval" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab" showheader="true">
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+    <apex:stylesheet value="{!if ($CurrentPage.parameters.pdf !='1', $Resource.mentoresdcss, $Resource.mentoresdprint)}" />
+    <script>function setFocusOnLoad() {}</script>
+    
+
+
+<c:PersonalRecord pbsId="{!pbsId}" admId="{!admId}" servAssignId="{!theServAssignId}" servAssignClose="{!theServAssignClose.Id}" parentPage="ServAssignCloseApproval" />
+
+<apex:pageMessages />
+<br />
+ 
+     <apex:form >
+   
+	    <apex:pageBlock id="ServAssignCloseBlock" title="Service Assignment Closure: Approval">
+	    	<apex:pageBlockSection >
+			
+				<apex:inputField value="{!theServAssignClose.No_Approval_Needed__c}">
+					<apex:actionSupport event="onclick" reRender="ServAssignCloseBlock" status="myStatus" />
+			    	<apex:actionStatus id="myStatus" >
+				    <apex:facet name="start">
+				        <div  class="thinking">
+				            <div class="thinkingwheel">
+				                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp;Processing...</span>
+				            </div>
+				        </div>
+				    </apex:facet>  
+				    <apex:facet name="stop"></apex:facet>         
+				</apex:actionStatus>                
+            	</apex:inputField>
+			
+			</apex:pageBlockSection>
+		
+			<apex:pageblockButtons id="ServAssignCloseButtons" location="bottom">
+				<apex:commandButton value="Save" />
+				<apex:commandButton value="Submit for Approval" rendered="{!!theServAssignClose.No_Approval_Needed__c}" action="{!submit}" />
+				<apex:commandButton value="Self Approve" rendered="{!theServAssignClose.No_Approval_Needed__c}" action="{!submit}" />
+			</apex:pageblockButtons>
+		</apex:pageBlock>
+	</apex:form>
+	
+</apex:page>
