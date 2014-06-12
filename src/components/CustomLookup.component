@@ -1,0 +1,125 @@
+<apex:component controller="CustomLookup" id="comp">
+  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+  
+  <style type="text/css">
+    .custom-lookup-dialog{
+        overflow-y:auto;
+        max-height:600px;
+        overflow-x:auto;
+    }
+  </style>
+  
+  <script language="javascript">
+
+   j$ = jQuery.noConflict();
+   
+   function openMD(dialogId, tagType, titleString, dClass)
+  {
+   //selector = tagType + '[id$=' + dialogId.replace(/:/g,'\\:') + ']';
+   selector = '#'+getDOMId(dialogId);
+   j$(selector).dialog({dialogClass: dClass,
+                        title:titleString,
+                        modal:true,
+                        width:800, 
+                        closeOnEscape:false
+                        })
+               .parent()
+               .appendTo(j$('form[id$={!formID}]'));
+   j$(selector).parent().find('a.ui-dialog-titlebar-close').remove();
+  }
+  function closeMD(dialogId, tagType)
+  {
+   //selector = tagType + '[id=' + dialogId + ']';
+   selector = '#'+getDOMId(dialogId);
+   j$(selector).dialog('destroy');
+  }
+  function getIdSelector(vfId){
+      var domId = vfId.replace(/:/g,'\\:');
+      var selector = '#'+domId;
+      return selector;
+  }
+  function getDOMId(vfId){
+  //j$(getIdSelector('{!$Component.comp.lookupElement}')).val()
+      var domId = vfId.replace(/:/g,'\\:');
+      return domId;
+  }
+  </script> 
+  
+  <apex:attribute name="type" required="true" type="string" assignTo="{!objectType}" description="Specifies the sObjectType of the lookup"/>
+  <apex:attribute name="filters" type="string" assignTo="{!searchFields}" description="Enter search fields API names separated by commas"/>
+  <apex:attribute name="return" type="string" assignTo="{!returnFields}" description="Enter fields to return API names separated by commas"/>
+  <apex:attribute name="formID" type="string" required="true" description="Form ID"/>
+  <apex:attribute name="parentId" type="string" required="true" description="Binding field"/>
+  <apex:attribute name="parentName" type="string" required="true" description="Lookup text field value" />
+  <apex:attribute name="uniqueId" type="string" required="true" description="Unique Component Id" />
+  
+  <apex:inputText style="display:none" value="{!parentId}" id="lookupElement_lkid" styleClass="{!uniqueId}LookupElement_lkid"/>
+  
+  <apex:inputText value="{!parentName}" id="lookupElement" styleClass="{!uniqueId}LookupElement"/>
+      <a onClick="j$('input[id$=nameFilter]').val(j$(getIdSelector('{!$Component.comp.lookupElement}')).val());
+          openMD('{!$Component.comp.searchDialog}', 'span', 'Lookup','custom-lookup-dialog'); return false;">
+                                    <img valign="bottom" src="/s.gif" alt="Custom Lookup" class="lookupIcon" 
+                                        onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" 
+                                        onmouseout="this.className = 'lookupIcon';" 
+                                        onmouseover="this.className = 'lookupIconOn';" 
+                                        title="Custom Lookup"/>
+      </a> &nbsp;
+                                    
+  
+        <apex:outputPanel id="searchDialog" style="display:none"  >
+            <apex:pageBlock id="block"> 
+                <apex:outputLabel >
+                        {!nameField.Label}
+                </apex:outputLabel> &nbsp;
+                <apex:inputText id="nameFilter" value="{!nameField.value}"/>&nbsp;&nbsp; 
+                <apex:repeat value="{!fields}" var="f">
+                    <apex:outputLabel >
+                        {!f.Label}
+                    </apex:outputLabel> &nbsp;
+                    <apex:inputText value="{!f.value}"/>&nbsp;&nbsp; 
+                </apex:repeat>
+                <apex:commandButton value="Cancel" onclick="closeMD('{!$Component.comp.searchDialog}', 'span');return false;" />
+                <apex:commandButton value="Search!" action="{!Search}" reRender="table,block" status="searchStatus"/>
+                
+                <apex:actionStatus id="searchStatus" startText=" Searching... "/>
+                <br/><br/>
+                
+                <apex:pageBlockTable value="{!searchResult}" var="r" id="table" rendered="true">
+                    <apex:column headerValue="{!$ObjectType[objectType].Fields['name'].label}">
+                        <a href="#" onClick="j$(getIdSelector('{!$Component.comp.lookupElement}')).val('{!r[$ObjectType[objectType].Fields['name'].localName]}');
+                                        j$(getIdSelector('{!$Component.comp.lookupElement_lkid}')).val('{!r[$ObjectType[objectType].Fields['id'].localName]}');
+                                        closeMD('{!$Component.comp.searchDialog}', 'span');
+                                        j$(getIdSelector('{!$Component.comp.lookupElement_lkid}')).change();
+                                        return false;"
+                                        >{!r[$ObjectType[objectType].Fields['name'].localName]}</a>
+                    </apex:column>
+                    <apex:repeat value="{!rfields}" var="f">
+                        <apex:column headerValue="{!$ObjectType[objectType].Fields[f.Name].label}">
+                            {!r[$ObjectType[objectType].Fields[f.Name].localName]}
+                        </apex:column>
+                    </apex:repeat>
+                </apex:pageBlockTable>
+               
+                <apex:pageBlockButtons id="buttons" location="bottom" >
+                    <apex:outputPanel rendered="{!IF(searchSize!=0,True,False)}">
+                        <apex:outputText ><i style="color:#696969;">{!OffsetSize+1}&nbsp;&nbsp;-&nbsp;&nbsp;{!(OffsetSize+searchSize)}&nbsp;&nbsp;of&nbsp;&nbsp;{!CountTotalRecords}</i></apex:outputText>
+                    </apex:outputPanel> 
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <apex:commandButton value="First" action="{!First}" rerender="table,block"
+                                    status="status" disabled="{!DisablePrevious}" />
+                    <apex:commandButton value="Previous" action="{!Previous}" rerender="table,block"
+                                    status="status" disabled="{!DisablePrevious}" />
+                    <apex:commandButton value="Next" action="{!Next}" reRender="table,block"
+                                    status="status" disabled="{!DisableNext}" />
+                    <apex:commandButton value="Last" action="{!Last}" rerender="table,block"
+                                    status="status" disabled="{!DisableNext}" />
+                    <apex:actionStatus id="status" startText=" Paging... "/>
+                    
+                </apex:pageBlockButtons>
+                
+            </apex:pageBlock> 
+            
+        </apex:outputPanel> 
+</apex:component>
