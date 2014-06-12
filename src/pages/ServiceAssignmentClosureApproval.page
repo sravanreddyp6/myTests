@@ -34,9 +34,9 @@
 			</apex:pageBlockSection>
 		
 			<apex:pageblockButtons id="ServAssignCloseButtons" location="bottom">
-				<apex:commandButton value="Save" />
 				<apex:commandButton value="Submit for Approval" rendered="{!!theServAssignClose.No_Approval_Needed__c}" action="{!submit}" />
-				<apex:commandButton value="Self Approve" rendered="{!theServAssignClose.No_Approval_Needed__c}" action="{!submit}" />
+				<apex:commandButton value="Mark Final" rendered="{!theServAssignClose.No_Approval_Needed__c}" action="{!submit}" />
+				<apex:commandButton value="Cancel" action="{!cancelSubmission}" />
 			</apex:pageblockButtons>
 		</apex:pageBlock>
 	</apex:form>

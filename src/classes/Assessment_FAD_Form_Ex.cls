@@ -2,6 +2,7 @@ public with sharing class Assessment_FAD_Form_Ex {
     public Assessment__c assess { get; set; }
     public string mode {get; set;} 
     
+    
     public string otherChildDisplayStyle {get; set;}
     
     public map<string, boolean> mapAvalPhases = new map<string, boolean>();
@@ -152,6 +153,7 @@ public with sharing class Assessment_FAD_Form_Ex {
     } 
     
     
+    
     public PageReference myEdit(){
         if(assess.status__c != 'locked'){
             mode = 'edit';
@@ -203,6 +205,7 @@ public with sharing class Assessment_FAD_Form_Ex {
         
         
         if(assess.phase__c == 'Initial' || assess.phase__c == 'Final'){
+        
             if(mapRes.get('PC_Highest_Edu').Rating__c == null){
                 mapRes.get('PC_Highest_Edu').Rating__c.addError('Please select a value for Primary Caregiver\'s Highest Education Completed at the time of this FAD Assessment.');
                 hasError = true;   
@@ -220,11 +223,13 @@ public with sharing class Assessment_FAD_Form_Ex {
                 mapRes.get('PC_Received_FCT_before').Rating__c.addError('Please select a value for Primary Caregiver Received FCT services before?');
                 hasError = true;   
             } 
-            if(mapRes.get('SC_Highest_Edu').Rating__c == null){
-                mapRes.get('SC_Highest_Edu').Rating__c.addError('Please select a value for Secondary Caregiver\'s Highest Education Completed at the time of this FAD Assessment.');
-                hasError = true;   
-            }    
+   
             if(!mapRes.get('SC_No_SC').Yes_No__c){
+                if(mapRes.get('SC_Highest_Edu').Rating__c == null){
+                    mapRes.get('SC_Highest_Edu').Rating__c.addError('Please select a value for Secondary Caregiver\'s Highest Education Completed at the time of this FAD Assessment.');
+                    hasError = true;   
+                }            
+            
                 if(mapRes.get('SC_Employment').Rating__c == null){
                     mapRes.get('SC_Employment').Rating__c.addError('Please select a value for Secondary Caregiver\'s Employment at the time of this FAD Assessment.');
                     hasError = true;   
@@ -240,6 +245,7 @@ public with sharing class Assessment_FAD_Form_Ex {
             }
             if(assess.Family_Annual_Income__c ==null){
                 assess.Family_Annual_Income__c.addError('Please select a value for Family Annual Income.');
+                hasError = true;  
             }         
         }
         /*
@@ -252,6 +258,7 @@ public with sharing class Assessment_FAD_Form_Ex {
         */
         if(mapRes.get('SC_No_SC').Yes_No__c && mapRes.get('Caregiver_Who_Completed_Assessment').Rating__c == 'Secondary'){
             mapRes.get('SC_No_SC').Yes_No__c.addError('Which caregiver completed this assessment?: If the secondary caregiver has completed this assessment, provide the secondary caregiver details.');
+            hasError = true;  
         
         }             
 //end new rules

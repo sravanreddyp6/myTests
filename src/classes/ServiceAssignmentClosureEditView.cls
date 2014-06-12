@@ -33,34 +33,38 @@ public with sharing class ServiceAssignmentClosureEditView {
 				admissionID = theServAssignClose.Service_Assignment__r.Admission__c;
 			}
 			pbsId = apexpages.currentpage().getparameters().get('PbsId');
-			pbs = [ SELECT Name FROM Contact WHERE Id = :pbsId LIMIT 1 ];
+			pbs = [ SELECT Name, OwnerId FROM Contact WHERE Id = :pbsId LIMIT 1 ];
 			if(pbsId==null) {
 				pbsId = theServAssignClose.Service_Assignment__r.Person_Being_Served__c;
 			}
 		}
 		else {
-			Service_Assignment_Closure__c sac = [ SELECT Service_Assignment__c, Service_Assignment__r.Admission__c, Service_Assignment__r.Admission__r.Person_Being_Served__c FROM Service_Assignment_Closure__c WHERE Id = :theServAssignClose.Id LIMIT 1 ];
+			Service_Assignment_Closure__c sac = [ SELECT Service_Assignment__c, Service_Assignment__r.Admission__c, Service_Assignment__r.Admission__r.Person_Being_Served__c, Service_Assignment__r.Start_Date__c FROM Service_Assignment_Closure__c WHERE Id = :theServAssignClose.Id LIMIT 1 ];
 			theServAssignId = theServAssignClose.Service_Assignment__c;
-			pbs = [ SELECT Name FROM Contact WHERE Id = :sac.Service_Assignment__r.Admission__r.Person_Being_Served__c LIMIT 1 ];
+			pbs = [ SELECT Name, OwnerId FROM Contact WHERE Id = :sac.Service_Assignment__r.Admission__r.Person_Being_Served__c LIMIT 1 ];
 			pbsId = pbs.Id;
 			adm = [ SELECT Name FROM Admission__c WHERE Id = :sac.Service_Assignment__r.Admission__c LIMIT 1 ];
 			admissionId = adm.Id;
 		}
 		
 		// There should only be one action plan per the assumptions in place as of development around CTEAE-125 & 126.  J. Gilliam, 
-		AggregateResult actionPlanAr = [ SELECT Id, MAX(CreatedDate) max FROM Action_Plan__c WHERE Service_Assignment__c = :theServAssignId AND Status__c = 'Active Final' GROUP BY Id LIMIT 1 ];
-		System.debug('actionPlanAr: ' + actionPlanAr);
-		Object actionPlanIdObj = actionPlanAr.get('Id');
-		Id actionPlanId = (Id)actionPlanIdObj;
-		
-		//Action_Plan__c actionPlan = [ SELECT Id FROM Action_Plan__c WHERE Service_Assignment__c = :theServAssignId AND Status__c = 'Active Final' LIMIT 1 ];
-		
-		List<Action_Plan_Goal__c> actionPlanGoals = [ SELECT Description__c FROM Action_Plan_Goal__c WHERE Action_Plan__c = :actionPlanId ];
-		
+		List<AggregateResult> actionPlanArs = [ SELECT Id, MAX(CreatedDate) max FROM Action_Plan__c WHERE Service_Assignment__c = :theServAssignId AND Status__c = 'Active Final' GROUP BY Id LIMIT 1 ];
+		System.debug('actionPlanArs: ' + actionPlanArs);
+	
 		actionPlanGoalSelectOptions = new List<SelectOption>();
-		actionPlanGoalSelectOptions.add(new SelectOption('--None--','--None--'));
-		for(Action_Plan_Goal__c apg : actionPlanGoals) {
-			actionPlanGoalSelectOptions.add(new SelectOption(apg.Description__c, apg.Description__c));
+		actionPlanGoalSelectOptions.add(new SelectOption('--None--','--None--'));	
+		
+		if(actionPlanArs.size()>0) {
+			Object actionPlanIdObj = actionPlanArs[0].get('Id');
+			Id actionPlanId = (Id)actionPlanIdObj;
+			
+			//Action_Plan__c actionPlan = [ SELECT Id FROM Action_Plan__c WHERE Service_Assignment__c = :theServAssignId AND Status__c = 'Active Final' LIMIT 1 ];
+			
+			List<Action_Plan_Goal__c> actionPlanGoals = [ SELECT Description__c FROM Action_Plan_Goal__c WHERE Action_Plan__c = :actionPlanId ];
+			
+			for(Action_Plan_Goal__c apg : actionPlanGoals) {
+				actionPlanGoalSelectOptions.add(new SelectOption(apg.Description__c, apg.Description__c));
+			}
 		}
 		
 			

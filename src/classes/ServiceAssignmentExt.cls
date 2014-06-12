@@ -124,7 +124,7 @@ public class ServiceAssignmentExt {
 
     
     public List<Service_Assignment_Closure__c> getServAssignCloses() {
-    	return [ SELECT id, Name, IFCS_Record_Number__c FROM Service_Assignment_Closure__c WHERE Service_Assignment__c = :theServAssign.Id ];
+    	return [ SELECT id, Name, IFCS_Record_Number__c, Status__c FROM Service_Assignment_Closure__c WHERE Service_Assignment__c = :theServAssign.Id ];
     }
     
     private Boolean pshowDiag, pshowLocation, pshowCodes, pshowServAssignClose, pshowNurseAssessment;
@@ -1115,6 +1115,32 @@ public void loadProgramList() {
 
         try {
             Service_Assignment__c s = theServAssign;
+			
+			// START: CTEAE-125 & 126:  Service Assignment Closures; prevent closure of FCT Service Assignments if a locked Service Assignment Closure is not presen
+			if(s.Model__c == 'FCT') {
+
+				Boolean servAssignCloseFail = false;
+				List<Service_Assignment_Closure__c> servAssignCloses = [ SELECT Name, Status__c FROM Service_Assignment_Closure__c WHERE Service_Assignment__c = :s.Id ];
+				
+				// If no Service Assignment Closures exist for an FCT Service Assignment, we should not be able to set the Service Assignment to Inactive. 
+				if(servAssignCloses.size()==0) {
+					servAssignCloseFail = true;
+				}
+				
+				for(Service_Assignment_Closure__c sac : servAssignCloses) {
+					// Assumption as of release of Service Assignment Closure feature is that only one will exist.  If a Service Assignment Closure with any status
+					// other than 'Locked' is found in this loop, we should set the boolean to true.
+					if(sac.Status__c!='Locked') {
+						servAssignCloseFail = true;
+					}
+				}
+				
+				if(s.Status__c == 'Inactive' && servAssignCloseFail) {
+					addError('An FCT Service Assignment cannot be made inactive until a Service Assignment Closure has been completed and approved for the Service Assignment.');
+					return null;
+				}
+			}
+			// END: CTEAE-125 & 126:  Service Assignment Closures; prevent closure of FCT Service Assignments if a locked Service Assignment Closure is not present.
 
             System.debug('What is phaseToSave: ' + phaseToSave);
             System.debug('What is s.Phase__c pre-save: ' + s.Phase__c);
@@ -1288,6 +1314,7 @@ public void loadProgramList() {
                 QuestionsToCopy.add('PC_Relationship_to_PBS');
                 QuestionsToCopy.add('PC_Phone_1_Type');
                 QuestionsToCopy.add('PC_Phone_2_Type');
+                QuestionsToCopy.add('PC_Email');
                 QuestionsToCopy.add('SC_No_SC');
                 QuestionsToCopy.add('SC_Name');
                 QuestionsToCopy.add('SC_Address');
