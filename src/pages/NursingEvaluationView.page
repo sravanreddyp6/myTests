@@ -1477,6 +1477,7 @@
          	<apex:pageBlockButtons location="bottom">
          		<apex:commandButton onclick="window.location='/apex/NursingEvaluationEdit?id={!Evaluation.Id}&tab={!selectedTab}'; return false;" value="Edit" />
          		<apex:commandButton onclick="window.location='/apex/NursesAssessmentEsign?id={!Evaluation__c.Id}'; return false;" value="E-Sign" rendered="{!selectedTab == 'dischargePlanTab'}" />
+         		<apex:commandButton value="Generate PDF" onclick="openWin('/apex/NursingEvaluationPDF?id={!Evaluation__c.Id}'); return false;" />
          	</apex:pageBlockButtons>
          </apex:pageBlock>
          <apex:outputPanel id="relatedPartyDialog" style="display:none">
