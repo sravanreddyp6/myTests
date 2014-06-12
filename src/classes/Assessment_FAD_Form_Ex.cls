@@ -187,13 +187,11 @@ public with sharing class Assessment_FAD_Form_Ex {
         if(mapRes.get('PC_Relationship_to_PBS_Other').Rating__c == null && ForceOther.contains(mapRes.get('PC_Relationship_to_PBS').Rating__c) ){
             mapRes.get('PC_Relationship_to_PBS_Other').Rating__c.addError('Please specify the Primary Caregiver\'s relationship to the Person Being Served at the time of this FAD Assessment.');
             hasError = true;   
-        } 
-        else{mapRes.get('PC_Relationship_to_PBS_Other').Rating__c = null;}       
+        }       
         if(!mapRes.get('SC_No_SC').Yes_No__c && mapRes.get('SC_Relationship_to_PBS_Other').Rating__c == null && ForceOther.contains(mapRes.get('SC_Relationship_to_PBS').Rating__c) ){
             mapRes.get('SC_Relationship_to_PBS_Other').Rating__c.addError('Please specify the Secondary Caregiver\'s relationship to the Person Being Served at the time of this FAD Assessment.');
             hasError = true;   
         } 
-        else{mapRes.get('SC_Relationship_to_PBS_Other').Rating__c = null;}
         if(!mapRes.get('SC_No_SC').Yes_No__c && mapRes.get('SC_Name').Rating__c == null){
             mapRes.get('SC_Name').Rating__c.addError('Please select the name of the Secondary Caregiver at the time of this FAD Assessment or select "No secondary caregiver"');
             hasError = true;   
