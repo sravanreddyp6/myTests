@@ -39,7 +39,6 @@ public with sharing class Report_KidTraksExport_Controller {
 			vendorAddressSeq = 1;
 			invoiceType = 'Regular';
 			billType = 'First Bill';
-			invoiceNumber = 12345;
 			serviceType = 'FamilyPreservation';
 			billableUnitId = authNumber; // Where can I get this in Salesforce?
 			billingCode = '10942.11610';  // Is this always the billing code?
@@ -122,10 +121,17 @@ public with sharing class Report_KidTraksExport_Controller {
     	Id theUsersId = UserInfo.getUserId();
     	theUser = [ SELECT Email, Phone FROM User WHERE Id = :theUsersId ];
     	
-    	List<Service_Location__c> programs = [ SELECT Id, Name, Program__c FROM Service_Location__c WHERE State__c = 'IN' ];
+    	List<Service_Location__c> programs = [ SELECT Id, Name, programid__c, Program__c FROM Service_Location__c WHERE State__c = 'IN'  ];
     	Set<String> uniquePrograms = new Set<String>();
+    	
+    	List<Service_code__c> codes = [select program_code__c from service_code__c where service_code__c = '10942.11610' and state__c = 'IN'];
+    	Set<String> uniquecodes = new Set<String>();
+    	for ( service_code__c sc : codes )
+    		uniquecodes.add( sc.Program_Code__c);
+    		
     	for(Service_Location__c slc : programs) {
-    		uniquePrograms.add(slc.Program__c);
+    		if ( uniquecodes.contains(slc.ProgramID__c))
+    			uniquePrograms.add(slc.Program__c);
     	}
     	
     	reportPrograms = new List<SelectOption>();
