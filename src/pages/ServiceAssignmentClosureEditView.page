@@ -171,8 +171,8 @@
 	    			<apex:pageBlockSectionItem >
 	    				<apex:outputLabel value="If an out-of-home placement occurred or was maintained, was it planned?" />	
 	    				<apex:outputPanel id="WasPlacementPlannedPanel">				    	
-					    	<apex:outputField id="WasItPlannedField1" value="{!Service_Assignment_Closure__c.Was_Out_of_Home_Placement_Planned__c}" rendered="{!editMode && Service_Assignment_Closure__c.Placement_Status_at_Discharge__c!='Placed out-of-home'}" />
-					    	<apex:inputField id="WasItPlannedField2" value="{!Service_Assignment_Closure__c.Was_Out_of_Home_Placement_Planned__c}" rendered="{!editMode && Service_Assignment_Closure__c.Placement_Status_at_Discharge__c=='Placed out-of-home'}" required="true" />
+					    	<apex:outputField id="WasItPlannedField1" value="{!Service_Assignment_Closure__c.Was_Out_of_Home_Placement_Planned__c}" rendered="{!editMode && ( Service_Assignment_Closure__c.Placement_Status_at_Discharge__c!='Placed out-of-home' && Service_Assignment_Closure__c.Placement_Status_at_Discharge__c != 'Maintained out-of-home placement')}" />
+					    	<apex:inputField id="WasItPlannedField2" value="{!Service_Assignment_Closure__c.Was_Out_of_Home_Placement_Planned__c}" rendered="{!editMode && ( Service_Assignment_Closure__c.Placement_Status_at_Discharge__c=='Placed out-of-home' ||Service_Assignment_Closure__c.Placement_Status_at_Discharge__c == 'Maintained out-of-home placement') }" required="true" />
 					    	<apex:outputField id="WasItPlannedField3" value="{!Service_Assignment_Closure__c.Was_Out_of_Home_Placement_Planned__c}" rendered="{!!editMode}" />
 			    		</apex:outputPanel>
 			    	</apex:pageBlockSectionItem>			    	
