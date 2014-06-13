@@ -43,7 +43,7 @@
         
     </style>
 	<div class="breadcrumb">
-        <a href="/">Home</a> > <a href="/{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__c}">Person Being Served: {!Evaluation__c.ServiceAssignment__r.Person_Being_Served__r.Name}</a> > <a href="/{!Evaluation__c.ServiceAssignment__r.Admission__c}">Admission: {!Evaluation__c.ServiceAssignment__r.Admission__r.Name}</a> > <a href="/{!Evaluation__c.ServiceAssignment__c}" >ServiceAssignment : {!Evaluation__c.ServiceAssignment__r.Name}</a> > {!Evaluation__c.Name}
+        <a href="/">Home</a> > <a href="/{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__c}">Person Being Served</a> > <a href="/{!Evaluation__c.ServiceAssignment__r.Admission__c}">Admission</a> > <a href="/{!Evaluation__c.ServiceAssignment__c}" >ServiceAssignment</a> > {!Evaluation__c.Name}
     </div>
  	<apex:form id="wholePage">
  	<apex:pageMessages id="pageMessages"/>
@@ -668,7 +668,7 @@
 	                                width: {!annotation.Annotation_Width__c},
 	                                height: {!annotation.Annotation_Height__c}
 	                            }
-	                        }]
+	                        }],
 	                        editable: false
 	                    });
 	                    </apex:repeat>
@@ -1042,7 +1042,7 @@
 			                    });
 			                });
                 	</script>
-	                <apex:pageblockSection rendered="{!Evaluation__c.Pain_Present__c == 'Yes'}" columns="2" >
+	                <apex:pageblockSection columns="2" >
 		                    	<h2 style="display: block; margin: 10px;">Body Map</h2>
 		                    <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
 		                        <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!IF(bodyMapUrl=null, baseUrl + URLFOR($Resource.NeurotabBodyNoGrid), bodyMapUrl)}" id="neurobodyMap" />
