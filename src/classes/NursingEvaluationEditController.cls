@@ -412,6 +412,20 @@ public with sharing class NursingEvaluationEditController {
         }
         return null;
     }
+    
+   /* public PageReference emptyPain(){
+    	system.debug('insideeeeeeeeeeee ActionFunction');
+    	// List<Evaluation_Response__c> tobedelanno = [SELECT ID FROM Evaluation_Response__c WHERE Id =:evaluation.Id AND RecordType.Name = 'NeuroAnnotation'];
+    	// system.debug('anno to delete' +tobedelanno);
+    	delete neuroAnnotations;
+    	this.evaluation.Activity__c = False;
+    	this.evaluation.Position__c = False;
+    	system.debug('stringggggggggggg'  +selectedpainDescriptors);
+    	selectedpainDescriptors = new List<String>();
+    	system.debug('afterreeedsssssss' +selectedpainDescriptors);
+    	
+    	return null;
+    }* /
 
     /**
      * This method needs to know about whether the request is ready for submission,
@@ -776,9 +790,9 @@ public with sharing class NursingEvaluationEditController {
 			
 // For Nuero Pain type Multi-Picklist
 		string npt='';
-		for(string nt: selectedExpressions)
+		for(string nt: selectedPaintypes)
 		npt += nt+';';
-			if(npt!=''){
+			if(npt!='' && this.evaluation.Pain_Present__c == 'Yes'){
 				npt = npt.Substring(0,npt.length()-1);
 				this.evaluation.Neuro_Pain_Types__c = npt;
 			}
@@ -787,9 +801,9 @@ public with sharing class NursingEvaluationEditController {
 			
 // For Neuro Pain Alleviating Factors Multi-picklist
 		string npal='';
-		for(string npl: selectedAlleviators)
+		for(string npl: selectedpainAlleviators)
 		npal += npl+';';
-			if(npal!=''){
+			if(npal!='' && this.evaluation.Pain_Present__c == 'Yes'){
 				npal = npal.Substring(0,npal.length()-1);
 				this.evaluation.Neuro_Pain_Alleviating_Factors__c = npal;
 			}
@@ -798,9 +812,9 @@ public with sharing class NursingEvaluationEditController {
 			
 // For neuro pain Negative Impact on ADLs Multi-picklist
 		string nadl='';
-		for(string nad: selectedAlleviators)
+		for(string nad: selectedpainAdls)
 		nadl += nad+';';
-			if(nadl!=''){
+			if(nadl!='' && this.evaluation.Pain_Present__c == 'Yes'){
 				nadl = nadl.Substring(0,nadl.length()-1);
 				this.evaluation.Neuro_Pain_neg_Impact_on_ADLs__c = nadl;
 			}
@@ -809,9 +823,9 @@ public with sharing class NursingEvaluationEditController {
 			
 // For neuro pain Manner of Expressing Pain Multi-picklist
 		string nexr='';
-		for(string ner: selectedExpressions)
+		for(string ner: selectedpainExpressions)
 		nexr += ner+';';
-			if(nexr!=''){
+			if(nexr!='' && this.evaluation.Pain_Present__c == 'Yes'){
 				nexr = nexr.Substring(0,nexr.length()-1);
 				this.evaluation.Neuro_Pain_Manner_of_Exp__c = nexr;
 			}
@@ -820,14 +834,18 @@ public with sharing class NursingEvaluationEditController {
 			
 // For pain Descriptor Multi-picklist
 		string decr='';
-		for(string der: selectedExpressions)
+		for(string der: selectedpainDescriptors)
 		decr += der+';';
-			if(decr!=''){
+			if(decr!='' && this.evaluation.Pain_Present__c == 'Yes'){
 				decr = decr.Substring(0,decr.length()-1);
 				this.evaluation.Neuro_pain_Descriptors__c = decr;
 			}
 			else
 			this.evaluation.Neuro_pain_Descriptors__c ='';	
+			
+			
+			if(this.evaluation.Pain_present__c != 'Yes')
+			delete neuroAnnotations;
 							
    					     	
         if (submitted || selectedTab == 'detailsTab' || selectedTab == null) {
