@@ -62,6 +62,9 @@
        jQuery.noConflict();
         
         jQuery(document).ready(function ($) {
+        
+        	alert('which is First');
+        	disablePain();
             handleSliderChange = function (inputIdToUpdate) {
                 // Closure is so much fun :)
                 var $inputToUpdate = $(document.getElementById(inputIdToUpdate));
@@ -70,7 +73,7 @@
                     $inputToUpdate.val(value);
                 };
             };
-            
+             
              var addOrModifyAnnotation = function (annotation, isNew) {
                 if (isNew) {
                     if (annotation.Id !== undefined) {
@@ -189,7 +192,9 @@
                         });
                     }
                 });
-            }
+                
+                
+            } //end "ready" function
      		
      setUpFields = function () {
                 $('body input').on("change", function (event) {
@@ -281,6 +286,20 @@
              return oztokg;
         
         }
+        
+        function disablePain(){                
+        	painval = j$('[id$=painYes]').val();
+        	if(painval == 'Yes'){
+        		j$('[id$=painSection]').show();
+        		
+        		
+        	}
+        	if(painval == 'No'){
+        		j$('[id$=painSection]').hide();
+        		
+        		}
+        
+        }
          
      </script>
     
@@ -331,6 +350,16 @@
 		<apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); removeSpacer(); scrollToTop();" reRender="pageMessages, wholeTabPanel, buttons">
 			<apex:param name="nextTab" assignTo="{!nextTab}" value="" />
 		</apex:actionFunction>
+		<!-- apex:actionFunction action="{!emptyPain}" name="emptyPain" reRender="pageMessages" status="emptyPainStatus" />
+		 <apex:actionStatus id="emptyPainStatus">
+             <apex:facet name="start">
+                 <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+             </apex:facet>
+             <apex:facet name="stop" />                   
+         </apex:actionStatus --->                   
+		
+		
+			
 		<apex:tabPanel value="{!selectedTab}" id="wholeTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">	
 			<apex:tab label="Details" name="detailsTab" ontabenter="changeTab('detailsTab'); return false;" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
@@ -1168,25 +1197,15 @@
                     	</apex:pageBlocksectionItem>
                     </apex:pageBlockSection>
                     <hr />
+                    
                     <apex:pageBlockSection Columns="1" >
-                    	<apex:outputPanel >
-	                    	<apex:outputText Value="Pain Present" styleClass="labelCol" style="margin-left: 3cm;"/>
-		                    	<apex:actionRegion id="painRegion"  >
-		                    		<apex:inputField value="{!Evaluation__c.Pain_Present__c}" style="margin-left: 1cm;">
-		                    		<apex:actionSupport event="onchange" />
-		                    		</apex:inputField>
-		                    	</apex:actionRegion>
-		                    	<apex:actionstatus id="st" for="painRegion" >
-		                         	<apex:facet name="start" >
-		                             		<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
-		                             </apex:facet>                            
-		                        </apex:actionstatus>	
-                        </apex:outputPanel>
+		            	<apex:inputField value="{!Evaluation__c.Pain_Present__c}" style="margin-left: 1cm;" id="painYes" onchange="disablePain();" />
                     </apex:pageBlockSection>
+                    
                    <apex:outputPanel id="painSection" layout="block">
                    		<script>
-							 jQuery(document).ready(function ($) {
-			                    anno.reset();
+                   			jQuery(document).ready(function ($) {
+                   			 	anno.reset();
 			                    var nel = $('#neurobodyMap').get(0);
 			                    if (nel) {
 			                        anno.makeAnnotatable(nel);
@@ -1229,9 +1248,10 @@
 			                    anno.addHandler('onAnnotationRemoved', function (neuroannotation) {
 			                        neurocreateAnnotationElements(anno.getAnnotations());
 			                    });
-			                });
-                	</script>
-                    <apex:pageblockSection columns="2" id="painBlock">
+			                 
+			               });
+                   		</script>
+                    <apex:pageblockSection columns="2" >
                     <hr />
 	                    	<h2 style="display: block; margin: 10px;">Body Map</h2>
 	                    <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
@@ -1251,7 +1271,7 @@
 	                    <apex:inputhidden value="{!Evaluation__c.Neuro_Pain_Level__c}" id="neuropainLevel" />
 	                    <apex:pageBlockSectionItem >
                             	<apex:outputText value="Pain Level" />
-                            	<c:Slider onChange="handleSliderChange('{!$Component.neuropainLevel}')" options="{!painsliderOptions}" initial="{!Evaluation__c.Neuro_Pain_Level__c}" />
+                            	<c:Slider onChange="handleSliderChange('{!$Component.neuropainLevel}')" options="{!painsliderOptions}" initial="{!Evaluation__c.Neuro_Pain_Level__c}"  />
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem />
                     	<apex:outputText value="Pain Details" styleClass="labelCol" style="margin-left: 3cm;" />
