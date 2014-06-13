@@ -1,5 +1,6 @@
 public with sharing class EvaluationHandler {
     private boolean m_isExecuting = false;
+    public List <Evaluation_Response__c> tobeDel = new List<Evaluation_Response__c>();
 
     public EvaluationHandler(boolean isExecuting){
         m_isExecuting = isExecuting;
@@ -9,6 +10,7 @@ public with sharing class EvaluationHandler {
         // EXECUTE BEFORE INSERT LOGIC
         for (Evaluation__c newObject: newObjects) {
             validateFields(newObject);
+            
         }
     }
 
@@ -28,6 +30,15 @@ public with sharing class EvaluationHandler {
             }
             eUpdated.Is_Being_Signed__c = false;
         }
+        
+       
+        /*for(Evaluation_Response__c ers : [SELECT ID FROM Evaluation_Response__c WHERE Evaluation__c IN:updatedObjects AND Evaluation__r.Pain_Present__c  = 'No' AND RecordType.Name = 'NeuroAnnotation']){
+        		tobeDel.add(ers);
+        		
+        	
+        }
+        system.debug('ersersers' + tobeDel);
+        delete tobeDel; */
     }
 
     public void OnAfterUpdate(Evaluation__c[] oldObjects, Evaluation__c[] updatedObjects, Map<Id,Evaluation__c> newObjMap){
@@ -252,12 +263,14 @@ public with sharing class EvaluationHandler {
             'rom__c' => new Map<String, String[]>{
                 'Limited' => new String[] {'rom_limited_due_to__c'}
             },
+            
             'therapy_ordered__c' => new Map<String, String[]>{
                 '1' => new String[] {
                     'therapy_ordered_pt__c', 'therapy_ordered_ot__c',
                     'therapy_ordered_st__c', 'therapy_ordered_neuro_psy__c'
                 }
             },
+            
             'current_gait_mobility_other__c' => new Map<String, String[]>{
                 '1' => new String[] {'current_gait_mobility_other_comments__c'}
             },
@@ -269,7 +282,12 @@ public with sharing class EvaluationHandler {
             },
             'discharge_to__c' => new Map<String, String[]>{
                 'Other' => new String[] {'discharge_to_other__c'}
+            },
+            
+            'Pain_Present__c' => new Map<string, String[]>{
+            	'Yes' => new String[] {'Neuro_Pain_Activity__c', 'Neuro_Pain_Position__c', 'Neuro_Pain_Time_of_Day__c','Neuro_Pain_None__c','Neuro_Pain_Position_Describe__c','Neuro_pain_time_of_day_Describe__c','Neuro_pain_Activity_Describe__c','Neuro_Pain_Severity__c','Neuro_Pain_Level__c'}
             }
+            
         };
         for (String fieldName: validationMap.keySet()) {
             String fieldStringValue;
@@ -312,4 +330,5 @@ public with sharing class EvaluationHandler {
             }
         }
     }
+    
 }
