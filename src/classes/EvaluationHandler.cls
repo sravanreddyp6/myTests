@@ -1,6 +1,7 @@
 public with sharing class EvaluationHandler {
     private boolean m_isExecuting = false;
-    public List <Evaluation_Response__c> tobeDel = new List<Evaluation_Response__c>();
+    public List <Evaluation_Response__c> tobedelAnnos = new List<Evaluation_Response__c>();
+    public List<Evaluation__c> annoEvals = new List<Evaluation__c>();
 
     public EvaluationHandler(boolean isExecuting){
         m_isExecuting = isExecuting;
@@ -30,15 +31,20 @@ public with sharing class EvaluationHandler {
             }
             eUpdated.Is_Being_Signed__c = false;
         }
-        
-       
-        /*for(Evaluation_Response__c ers : [SELECT ID FROM Evaluation_Response__c WHERE Evaluation__c IN:updatedObjects AND Evaluation__r.Pain_Present__c  = 'No' AND RecordType.Name = 'NeuroAnnotation']){
-        		tobeDel.add(ers);
-        		
-        	
+        //Logic to Delete Annotations on NeuroTab when Pain Present field's value is set to 'No' or 'None'.
+       	for(Evaluation__c anno : updatedObjects){
+       		if(anno.Pain_Present__c != 'Yes')
+       			annoEvals.add(anno);
+       			
+       	}
+       	if(annoEvals.size()>0){
+        for(Evaluation_Response__c ers : [SELECT ID FROM Evaluation_Response__c WHERE Evaluation__c IN:annoEvals AND RecordType.Name = 'NeuroAnnotation']){
+        		tobedelAnnos.add(ers); 			
         }
-        system.debug('ersersers' + tobeDel);
-        delete tobeDel; */
+       		if(tobedelAnnos.size()>0)
+        	delete tobedelAnnos; 
+       	}
+      
     }
 
     public void OnAfterUpdate(Evaluation__c[] oldObjects, Evaluation__c[] updatedObjects, Map<Id,Evaluation__c> newObjMap){
@@ -286,8 +292,11 @@ public with sharing class EvaluationHandler {
             
             'Pain_Present__c' => new Map<string, String[]>{
             	'Yes' => new String[] {'Neuro_Pain_Activity__c', 'Neuro_Pain_Position__c', 'Neuro_Pain_Time_of_Day__c','Neuro_Pain_None__c','Neuro_Pain_Position_Describe__c','Neuro_pain_time_of_day_Describe__c','Neuro_pain_Activity_Describe__c','Neuro_Pain_Severity__c','Neuro_Pain_Level__c'}
-            }
+            },
             
+            'DC_Plan__c' => new Map<string, String[]>{
+            	'Other' => new String[]{'DC_Plan_Other__c'}
+            }
         };
         for (String fieldName: validationMap.keySet()) {
             String fieldStringValue;

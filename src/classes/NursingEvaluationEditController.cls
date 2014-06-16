@@ -844,8 +844,8 @@ public with sharing class NursingEvaluationEditController {
 			this.evaluation.Neuro_pain_Descriptors__c ='';	
 			
 			
-			if(this.evaluation.Pain_present__c != 'Yes')
-			delete neuroAnnotations;
+			//if(this.evaluation.Pain_present__c != 'Yes')
+			//delete neuroAnnotations; MOVING THE LOGIC TO TRIGGER
 							
    					     	
         if (submitted || selectedTab == 'detailsTab' || selectedTab == null) {

@@ -62,7 +62,7 @@
        jQuery.noConflict();
         
         jQuery(document).ready(function ($) {
-      
+      	disablePain();
             handleSliderChange = function (inputIdToUpdate) {
                 // Closure is so much fun :)
                 var $inputToUpdate = $(document.getElementById(inputIdToUpdate));
@@ -1199,9 +1199,7 @@
                     <apex:pageBlockSection Columns="1" >
 		            	<apex:inputField value="{!Evaluation__c.Pain_Present__c}" style="margin-left: 1cm;" id="painYes" onchange="disablePain();" />
                     </apex:pageBlockSection>
-                    
-                   <apex:outputPanel id="painSection" layout="block">
-                   		<script>
+                     <script>
                    			jQuery(document).ready(function ($) {
                    			 	anno.reset();
 			                    var nel = $('#neurobodyMap').get(0);
@@ -1248,7 +1246,9 @@
 			                    });
 			                 
 			               });
-                   		</script>
+                   		</script>	
+                   <apex:outputPanel id="painSection" layout="block">
+                   		
                     <apex:pageblockSection columns="2" >
                     <hr />
 	                    	<h2 style="display: block; margin: 10px;">Body Map</h2>
@@ -1498,7 +1498,7 @@
 			 		<apex:pageBlockSection columns="2" title="Does Resident exhibit signs or relate a history of any of the following:" Collapsible="False">
 			 			<apex:inputField value="{!Evaluation__c.Alcohol_Abuse__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.alcoholAbuse}&quot;}" />
 			 			<apex:inputField value="{!Evaluation__c.Drug_Abuse__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.drugAbuse}&quot;}"/>
-			 			<apex:inputField value="{!Evaluation__c.Alcohol_Abuse_Describe__c}" label="Describe"  id="alcoholAbuse"/>
+			 			<apex:inputTextArea value="{!Evaluation__c.Alcohol_Abuse_Describe__c}" label="Describe"  id="alcoholAbuse" cols="80"/>
 			 			<apex:inputField value="{!Evaluation__c.Drug_Abuse_Describe__c}" label="Describe" id="drugAbuse"/>
 			 			<apex:inputField value="{!Evaluation__c.Sexual_Abuse__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.sexualAbuse}&quot;}" />
 			 			<apex:inputField value="{!Evaluation__c.Domestic_Abuse__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.domesticAbuse}&quot;}" />
@@ -1605,7 +1605,7 @@
 			 			<apex:inputField value="{!Evaluation__c.Closest_Relationship_with__c}" />
 			 			<apex:inputField value="{!Evaluation__c.Name_of_Representative_present__c}" label="if Yes, Name" id="representativeName" />
 			 			<apex:pageBlockSectionItem />
-			 			<apex:inputField value="{!Evaluation__c.Given_Explanation_in_plan_of_Care__c}" label="Given explanation of Infection Control/Safety Precautions?" />
+			 			<apex:inputField value="{!Evaluation__c.Given_Explanation_in_plan_of_Care__c}" label="Given explanation of/Involved in Plan of Care?" />
 			 			<apex:pageBlockSectionItem />
 			 			<apex:inputField value="{!Evaluation__c.Given_explanation_of_Infection_Control__c}" label="Given explanation of Infection Control/Safety Precautions?" />
 			 			<apex:pageBlockSectionItem />
@@ -1681,7 +1681,8 @@
                             html-data-rules="{&quot;Other&quot;: &quot;{!$Component.priorLivingSituationOther}&quot;}" />
 			 			<apex:inputField value="{!Evaluation__c.Prior_Living_Situation_Other__c}" id="priorLivingSituationOther"/>
 			 			<apex:inputTextArea value="{!Evaluation__c.Barriers_to_DC__c}" cols="80" />
-			 			<apex:inputField value="{!Evaluation__c.DC_Plan__c}" />
+			 			<apex:inputField value="{!Evaluation__c.DC_Plan__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.dcplanOther}&quot;}"/>
+			 			<apex:inputField value="{!Evaluation__c.DC_Plan_Other__c}" Label="Other" id="dcplanOther" />
 			 			</apex:pageBlockSection>
 			 			<hr />
 			 			<apex:pageBlockSection columns="1" >
@@ -1740,5 +1741,6 @@
             </div>
         </apex:facet>
         <apex:facet name="stop" />
-    </apex:actionStatus>				
+    </apex:actionStatus>
+   			
 </apex:page>
