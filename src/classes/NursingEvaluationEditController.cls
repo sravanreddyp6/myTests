@@ -1,6 +1,6 @@
 public with sharing class NursingEvaluationEditController {
-	public Evaluation__c evaluation { get; set; }
-	public ApexPages.standardController stdController;
+        public Evaluation__c evaluation { get; set; }
+        public ApexPages.standardController stdController;
     public String selectedTab { get; set; }
     public String nextTab { get; set; }
     
@@ -158,7 +158,7 @@ public with sharing class NursingEvaluationEditController {
             return [
                 SELECT ID, Name, Type__c, Address__c, Email__c, Phone__c, Phone_1_Type__c,
                        Phone_2__c, Phone_2_Type__c, Comments__c
-                FROM Related_Party__c WHERE Person_Being_served__c=:this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Id
+                FROM Related_Party__c WHERE Person_Being_served__c=:this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__c
             ];
         }
     }
@@ -173,214 +173,214 @@ public with sharing class NursingEvaluationEditController {
    // public Contact pbs { get; set; }
     
     public NursingEvaluationEditController(ApexPages.StandardController stdcontroller) {
-    	this.stdController = stdController;
-    	evaluation = (Evaluation__c) stdController.getRecord();
-    	serializedAnnotations = JSON.serialize(annotations);
-    	neuroserializedAnnotations = JSON.serialize(neuroAnnotations);
-    	
-    	currentRelatedParty = new Related_Party__c();
-    	if (ApexPages.currentPage().getParameters().get('tab') != null) {
+        this.stdController = stdController;
+        evaluation = (Evaluation__c) stdController.getRecord();
+        serializedAnnotations = JSON.serialize(annotations);
+        neuroserializedAnnotations = JSON.serialize(neuroAnnotations);
+        
+        currentRelatedParty = new Related_Party__c();
+        if (ApexPages.currentPage().getParameters().get('tab') != null) {
             selectedTab = ApexPages.currentPage().getParameters().get('tab');
         }
-		breatheSounds = new List<SelectOption>();
-		selectedSounds = new List<String>();
-		urinaryIssues = new List<Selectoption>();
-		selectedIssues = new List<string>();
-		urineClarities = new List<selectOption>();
-		selectedClarities = new List<string>();
-		tongueValues = new List<SelectOption>();
-		selectedTongues = new List<String>();
-		gumValues = new List<SelectOption>();
-		selectedGums = new List<String>();
-		cheekValues = new List<SelectOption>();
-		selectedCheeks = new List<String>();
-		lipValues = new List<SelectOption>();
-		selectedLips = new List<String>();
-		salivaValues = new List<SelectOption>();
-		selectedSaliva = new List<String>();
-		dentureValues = new List<SelectOption>();
-		selectedDentures = new List<String>();
-		abdomenValues = new List<SelectOption>();
-		selectedAbdomen = new List<String>();
-		hallValues = new List<selectOption>();
-		selectedHalls = new List<String>();
-		beliefValues = new List<selectOption>();
-		selectedBeliefs = new List<String>();
-		learningValues = new List<selectOption>();
-		selectedLearning = new List<String>();
-		copingValues = new List<selectOption>();
-		selectedCoping = new List<String>();
-		communicationValues = new List<selectOption>();
-		selectedCommunications = new List<String>();
-		barrierValues = new List<selectOption>();
-		selectedBarriers = new List<String>();
-		needValues = new List<selectOption>();
-		selectedNeeds = new List<String>();
-		orientValues = new List<selectOption>();
-		selectedOrients = new List<String>();
-		orientationValues = new List<selectOption>();
-		selectedOrientations = new List<String>();
-		fambarrierValues = new List<selectOption>();
-		selectedFambarriers = new List<String>();
-		famcommunicationValues = new List<selectOption>();
-		selectedFamcommunications = new List<String>();
-		famlearningValues = new List<selectOption>();
-		selectedFamlearnings = new List<String>();
-		experienceValues = new List<selectOption>();
-		selectedExperiences = new List<String>();
-		diagnosisValues = new List<selectOption>();
-		selectedDiagnosis = new List<String>();
-		medicationValues = new List<selectOption>();
-		selectedMedications = new List<String>();
-		prostheticValues = new List<selectOption>();
-		selectedProsthetics = new List<String>();
-		orthodicsValues = new List<selectOption>();
-		selectedOrthodics = new List<String>();
-		moodValues = new List<selectOption>();
-		selectedMoods = new List<String>();
-		alleviatorValues = new List<selectOption>();
-		selectedAlleviators = new List<String>();
-		adlValues = new List<selectOption>();
-		selectedAdls = new List<String>();
-		expressionValues = new List<selectOption>();
-		selectedExpressions = new List<String>();
-		paintypeValues = new List<selectOption>();
-		selectedPaintypes = new List<String>();
-		painalleviatorValues = new List<selectOption>();
-		selectedpainAlleviators = new List<String>();
-		painadlValues = new List<selectOption>();
-		selectedpainAdls = new List<String>();
-		painexpressionValues = new List<selectOption>();
-		selectedpainExpressions = new List<String>();
-		paindescriptorValues = new List<selectOption>();
-		selectedpainDescriptors = new List<String>();
-		
-	
-		if(!String.isBlank(this.evaluation.Breathe_sounds__c))
-		selectedSounds = this.evaluation.Breathe_Sounds__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Urinary_Issues__c))
-		selectedIssues = this.evaluation.Urinary_Issues__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Urine_Clarity__c))
-		selectedClarities = this.evaluation.Urine_Clarity__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Tongue__c))
-		selectedTongues = this.evaluation.Tongue__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Gums__c))
-		selectedGums = this.evaluation.Gums__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Cheeks__c))
-		selectedCheeks = this.evaluation.Cheeks__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Lips__c))
-		selectedLips = this.evaluation.Lips__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Saliva__c))
-		selectedSaliva = this.evaluation.Saliva__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Dentures_Type__c))
-		selectedDentures = this.evaluation.Dentures_Type__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Abdomen__c))
-		selectedAbdomen = this.evaluation.Abdomen__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Hallucination_Types__c))
-		selectedHalls = this.evaluation.Hallucination_Types__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Typeof_Spiritual_belief_Effects__c))
-		selectedBeliefs = this.evaluation.Typeof_Spiritual_belief_Effects__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Preferred_Method_of_Learning__c))
-		selectedLearning = this.evaluation.Preferred_Method_of_Learning__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Resident_Demonstrating_Issues__c))
-		selectedCoping = this.evaluation.Resident_Demonstrating_Issues__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Resident_s_Communication_Status__c))
-		selectedCommunications = this.evaluation.Resident_s_Communication_Status__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Resident_s_Emotional_Barriers__c))
-		selectedBarriers = this.evaluation.Resident_s_Emotional_Barriers__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Resident_s_Learning_needs_related_to__c))
-		selectedNeeds = this.evaluation.Resident_s_Learning_needs_related_to__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Oriented_to_the_Following__c))
-		selectedOrients = this.evaluation.Oriented_to_the_Following__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Rancho_level_Resident_Orientation__c))
-		selectedOrientations = this.evaluation.Rancho_level_Resident_Orientation__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Family_Member_s_Emotional_Barriers__c))
-		selectedfambarriers = this.evaluation.Family_Member_s_Emotional_Barriers__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Family_Communication_Status__c))
-		selectedFamcommunications = this.evaluation.Family_Communication_Status__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Family_Member_s_Learning_related_to__c))
-		selectedFamlearnings = this.evaluation.Family_Member_s_Learning_related_to__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Diagnostics_GYN_Experiences__c))
-		selectedExperiences = this.evaluation.Diagnostics_GYN_Experiences__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Orthopedic_diagnostic_types__c))
-		selectedDiagnosis = this.evaluation.Orthopedic_diagnostic_types__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Orthopedic_Medications__c))
-		selectedMedications = this.evaluation.Orthopedic_Medications__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Prosthetic_Types__c))
-		selectedProsthetics = this.evaluation.Prosthetic_Types__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Orthodics_Types__c))
-		selectedOrthodics = this.evaluation.Orthodics_Types__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Mood__c))
-		selectedMoods = this.evaluation.Mood__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Alleviating_Factors__c))
-		selectedAlleviators = this.evaluation.Alleviating_Factors__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Negative_Impact_on_ADLs__c))
-		selectedAdls = this.evaluation.Negative_Impact_on_ADLs__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Manner_of_Expressing_Pain__c))
-		selectedExpressions = this.evaluation.Manner_of_Expressing_Pain__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Neuro_Pain_Types__c))
-		selectedPaintypes = this.evaluation.Neuro_Pain_Types__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Neuro_Pain_Alleviating_Factors__c))
-		selectedpainAlleviators = this.evaluation.Neuro_Pain_Alleviating_Factors__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Neuro_Pain_neg_Impact_on_ADLs__c))
-		selectedpainAdls = this.evaluation.Neuro_Pain_neg_Impact_on_ADLs__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Neuro_Pain_Manner_of_Exp__c))
-		selectedpainExpressions = this.evaluation.Neuro_Pain_Manner_of_Exp__c.split(';');
-		
-		if(!String.isBlank(this.evaluation.Neuro_pain_Descriptors__c))
-		selectedpainDescriptors = this.evaluation.Neuro_pain_Descriptors__c.split(';');
-		
-		
+                breatheSounds = new List<SelectOption>();
+                selectedSounds = new List<String>();
+                urinaryIssues = new List<Selectoption>();
+                selectedIssues = new List<string>();
+                urineClarities = new List<selectOption>();
+                selectedClarities = new List<string>();
+                tongueValues = new List<SelectOption>();
+                selectedTongues = new List<String>();
+                gumValues = new List<SelectOption>();
+                selectedGums = new List<String>();
+                cheekValues = new List<SelectOption>();
+                selectedCheeks = new List<String>();
+                lipValues = new List<SelectOption>();
+                selectedLips = new List<String>();
+                salivaValues = new List<SelectOption>();
+                selectedSaliva = new List<String>();
+                dentureValues = new List<SelectOption>();
+                selectedDentures = new List<String>();
+                abdomenValues = new List<SelectOption>();
+                selectedAbdomen = new List<String>();
+                hallValues = new List<selectOption>();
+                selectedHalls = new List<String>();
+                beliefValues = new List<selectOption>();
+                selectedBeliefs = new List<String>();
+                learningValues = new List<selectOption>();
+                selectedLearning = new List<String>();
+                copingValues = new List<selectOption>();
+                selectedCoping = new List<String>();
+                communicationValues = new List<selectOption>();
+                selectedCommunications = new List<String>();
+                barrierValues = new List<selectOption>();
+                selectedBarriers = new List<String>();
+                needValues = new List<selectOption>();
+                selectedNeeds = new List<String>();
+                orientValues = new List<selectOption>();
+                selectedOrients = new List<String>();
+                orientationValues = new List<selectOption>();
+                selectedOrientations = new List<String>();
+                fambarrierValues = new List<selectOption>();
+                selectedFambarriers = new List<String>();
+                famcommunicationValues = new List<selectOption>();
+                selectedFamcommunications = new List<String>();
+                famlearningValues = new List<selectOption>();
+                selectedFamlearnings = new List<String>();
+                experienceValues = new List<selectOption>();
+                selectedExperiences = new List<String>();
+                diagnosisValues = new List<selectOption>();
+                selectedDiagnosis = new List<String>();
+                medicationValues = new List<selectOption>();
+                selectedMedications = new List<String>();
+                prostheticValues = new List<selectOption>();
+                selectedProsthetics = new List<String>();
+                orthodicsValues = new List<selectOption>();
+                selectedOrthodics = new List<String>();
+                moodValues = new List<selectOption>();
+                selectedMoods = new List<String>();
+                alleviatorValues = new List<selectOption>();
+                selectedAlleviators = new List<String>();
+                adlValues = new List<selectOption>();
+                selectedAdls = new List<String>();
+                expressionValues = new List<selectOption>();
+                selectedExpressions = new List<String>();
+                paintypeValues = new List<selectOption>();
+                selectedPaintypes = new List<String>();
+                painalleviatorValues = new List<selectOption>();
+                selectedpainAlleviators = new List<String>();
+                painadlValues = new List<selectOption>();
+                selectedpainAdls = new List<String>();
+                painexpressionValues = new List<selectOption>();
+                selectedpainExpressions = new List<String>();
+                paindescriptorValues = new List<selectOption>();
+                selectedpainDescriptors = new List<String>();
+                
+        
+                if(!String.isBlank(this.evaluation.Breathe_sounds__c))
+                selectedSounds = this.evaluation.Breathe_Sounds__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Urinary_Issues__c))
+                selectedIssues = this.evaluation.Urinary_Issues__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Urine_Clarity__c))
+                selectedClarities = this.evaluation.Urine_Clarity__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Tongue__c))
+                selectedTongues = this.evaluation.Tongue__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Gums__c))
+                selectedGums = this.evaluation.Gums__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Cheeks__c))
+                selectedCheeks = this.evaluation.Cheeks__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Lips__c))
+                selectedLips = this.evaluation.Lips__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Saliva__c))
+                selectedSaliva = this.evaluation.Saliva__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Dentures_Type__c))
+                selectedDentures = this.evaluation.Dentures_Type__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Abdomen__c))
+                selectedAbdomen = this.evaluation.Abdomen__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Hallucination_Types__c))
+                selectedHalls = this.evaluation.Hallucination_Types__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Typeof_Spiritual_belief_Effects__c))
+                selectedBeliefs = this.evaluation.Typeof_Spiritual_belief_Effects__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Preferred_Method_of_Learning__c))
+                selectedLearning = this.evaluation.Preferred_Method_of_Learning__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Resident_Demonstrating_Issues__c))
+                selectedCoping = this.evaluation.Resident_Demonstrating_Issues__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Resident_s_Communication_Status__c))
+                selectedCommunications = this.evaluation.Resident_s_Communication_Status__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Resident_s_Emotional_Barriers__c))
+                selectedBarriers = this.evaluation.Resident_s_Emotional_Barriers__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Resident_s_Learning_needs_related_to__c))
+                selectedNeeds = this.evaluation.Resident_s_Learning_needs_related_to__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Oriented_to_the_Following__c))
+                selectedOrients = this.evaluation.Oriented_to_the_Following__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Rancho_level_Resident_Orientation__c))
+                selectedOrientations = this.evaluation.Rancho_level_Resident_Orientation__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Family_Member_s_Emotional_Barriers__c))
+                selectedfambarriers = this.evaluation.Family_Member_s_Emotional_Barriers__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Family_Communication_Status__c))
+                selectedFamcommunications = this.evaluation.Family_Communication_Status__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Family_Member_s_Learning_related_to__c))
+                selectedFamlearnings = this.evaluation.Family_Member_s_Learning_related_to__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Diagnostics_GYN_Experiences__c))
+                selectedExperiences = this.evaluation.Diagnostics_GYN_Experiences__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Orthopedic_diagnostic_types__c))
+                selectedDiagnosis = this.evaluation.Orthopedic_diagnostic_types__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Orthopedic_Medications__c))
+                selectedMedications = this.evaluation.Orthopedic_Medications__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Prosthetic_Types__c))
+                selectedProsthetics = this.evaluation.Prosthetic_Types__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Orthodics_Types__c))
+                selectedOrthodics = this.evaluation.Orthodics_Types__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Mood__c))
+                selectedMoods = this.evaluation.Mood__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Alleviating_Factors__c))
+                selectedAlleviators = this.evaluation.Alleviating_Factors__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Negative_Impact_on_ADLs__c))
+                selectedAdls = this.evaluation.Negative_Impact_on_ADLs__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Manner_of_Expressing_Pain__c))
+                selectedExpressions = this.evaluation.Manner_of_Expressing_Pain__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Neuro_Pain_Types__c))
+                selectedPaintypes = this.evaluation.Neuro_Pain_Types__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Neuro_Pain_Alleviating_Factors__c))
+                selectedpainAlleviators = this.evaluation.Neuro_Pain_Alleviating_Factors__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Neuro_Pain_neg_Impact_on_ADLs__c))
+                selectedpainAdls = this.evaluation.Neuro_Pain_neg_Impact_on_ADLs__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Neuro_Pain_Manner_of_Exp__c))
+                selectedpainExpressions = this.evaluation.Neuro_Pain_Manner_of_Exp__c.split(';');
+                
+                if(!String.isBlank(this.evaluation.Neuro_pain_Descriptors__c))
+                selectedpainDescriptors = this.evaluation.Neuro_pain_Descriptors__c.split(';');
+                
+                
     }
     
     public void showAddRelatedParty()  {
-    	this.currentRelatedParty = new Related_Party__c();
-    	this.currentRelatedParty.Person_Being_Served__c = this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__c;
-    	this.currentRelatedParty.RecordTypeId = '012U0000000Dj0Y';
-    	 	
+        this.currentRelatedParty = new Related_Party__c();
+        this.currentRelatedParty.Person_Being_Served__c = this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__c;
+        this.currentRelatedParty.RecordTypeId = Utility.getRelatedPartyRecordType('CareMeridian');
+                
     }
     
     public void showEditRelatedParty() {
-    	this.currentRelatedParty = [
-    		SELECT ID, Name, Type__c, Address__c, Email__c, Phone__c, Phone_1_Type__c,
+        this.currentRelatedParty = [
+                SELECT ID, Name, Type__c, Address__c, Email__c, Phone__c, Phone_1_Type__c,
                    Phone_2__c, Phone_2_Type__c, Comments__c
             FROM Related_Party__c WHERE ID=:currentRelatedPartyId 
-    	];
-    		
+        ];
+                
     }
     public void saveRelatedParty() {
         try {
@@ -414,17 +414,17 @@ public with sharing class NursingEvaluationEditController {
     }
     
    /* public PageReference emptyPain(){
-    	system.debug('insideeeeeeeeeeee ActionFunction');
-    	// List<Evaluation_Response__c> tobedelanno = [SELECT ID FROM Evaluation_Response__c WHERE Id =:evaluation.Id AND RecordType.Name = 'NeuroAnnotation'];
-    	// system.debug('anno to delete' +tobedelanno);
-    	delete neuroAnnotations;
-    	this.evaluation.Activity__c = False;
-    	this.evaluation.Position__c = False;
-    	system.debug('stringggggggggggg'  +selectedpainDescriptors);
-    	selectedpainDescriptors = new List<String>();
-    	system.debug('afterreeedsssssss' +selectedpainDescriptors);
-    	
-    	return null;
+        system.debug('insideeeeeeeeeeee ActionFunction');
+        // List<Evaluation_Response__c> tobedelanno = [SELECT ID FROM Evaluation_Response__c WHERE Id =:evaluation.Id AND RecordType.Name = 'NeuroAnnotation'];
+        // system.debug('anno to delete' +tobedelanno);
+        delete neuroAnnotations;
+        this.evaluation.Activity__c = False;
+        this.evaluation.Position__c = False;
+        system.debug('stringggggggggggg'  +selectedpainDescriptors);
+        selectedpainDescriptors = new List<String>();
+        system.debug('afterreeedsssssss' +selectedpainDescriptors);
+        
+        return null;
     }* /
 
     /**
@@ -441,413 +441,413 @@ public with sharing class NursingEvaluationEditController {
        //for breathe sounds multi-select
         String strtypes = '';
         for (String s : selectedSounds)
-        	strtypes += s +';';
-        	
-        	if (strtypes != ''){
-        		strtypes = strtypes.Substring(0, strtypes.length() -1);
-        		this.evaluation.Breathe_Sounds__c = strtypes;
-        	}
-        	else
-        	this.evaluation.Breathe_Sounds__c ='';
-        	
-      //for Urinary Issues mUlti-Picklist  	
+                strtypes += s +';';
+                
+                if (strtypes != ''){
+                        strtypes = strtypes.Substring(0, strtypes.length() -1);
+                        this.evaluation.Breathe_Sounds__c = strtypes;
+                }
+                else
+                this.evaluation.Breathe_Sounds__c ='';
+                
+      //for Urinary Issues mUlti-Picklist       
         string uritypes ='';
         for(String u: selectedIssues)
         uritypes += u+';';
         
-        	if(uritypes !=''){
-        		uritypes = uritypes.Substring (0,uritypes.length() -1);
-        		this.evaluation.Urinary_Issues__c = uritypes;
-        		
-        	}
-        	else
-        	this.evaluation.Urinary_Issues__c ='';
-        	
-     //for Urine Clarity Multi-picklist   	
+                if(uritypes !=''){
+                        uritypes = uritypes.Substring (0,uritypes.length() -1);
+                        this.evaluation.Urinary_Issues__c = uritypes;
+                        
+                }
+                else
+                this.evaluation.Urinary_Issues__c ='';
+                
+     //for Urine Clarity Multi-picklist         
         string clr ='';
         for(string c: selectedClarities)
         clr += c+';';
-        	if(clr!=''){
-        		clr =clr.Substring(0,clr.length()-1);
-        		this.evaluation.Urine_Clarity__c = clr;
-        	}
-        	else
-        	this.evaluation.Urine_Clarity__c ='';
-        	
+                if(clr!=''){
+                        clr =clr.Substring(0,clr.length()-1);
+                        this.evaluation.Urine_Clarity__c = clr;
+                }
+                else
+                this.evaluation.Urine_Clarity__c ='';
+                
     // for Tongue Multi-Picklist
-    	string tng = '';
-    	for (string t: selectedTongues)
-    	tng += t+';';
-    		if(tng!=''){
-    			tng = tng.Substring(0,tng.length()-1);
-    			this.evaluation.Tongue__c = tng;
-    		}
-    		else
-    		this.evaluation.Tongue__c = '';
-    		
-    		
-   	// for Gums Multi-picklist
-   		string gms ='';
-   		for(string g : selectedGums)
-   		gms += g+';';
-   			if(gms!=''){
-   				gms = gms.SubString(0,gms.length()-1);
-   				this.evaluation.Gums__c = gms;
-   			}
-   			else
-   			this.evaluation.Gums__c = '';
-   			
-   	// for Cheeks Multi-Picklist
-   		string chk ='';
-   		for(string c: selectedCheeks)
-   		chk += c+';';
-   			if(chk!=''){
-   				chk= chk.Substring(0,chk.length()-1);
-   				this.evaluation.Cheeks__c = chk;
-   			}
-        	else
-        	this.evaluation.Cheeks__c ='';
-        	
+        string tng = '';
+        for (string t: selectedTongues)
+        tng += t+';';
+                if(tng!=''){
+                        tng = tng.Substring(0,tng.length()-1);
+                        this.evaluation.Tongue__c = tng;
+                }
+                else
+                this.evaluation.Tongue__c = '';
+                
+                
+        // for Gums Multi-picklist
+                string gms ='';
+                for(string g : selectedGums)
+                gms += g+';';
+                        if(gms!=''){
+                                gms = gms.SubString(0,gms.length()-1);
+                                this.evaluation.Gums__c = gms;
+                        }
+                        else
+                        this.evaluation.Gums__c = '';
+                        
+        // for Cheeks Multi-Picklist
+                string chk ='';
+                for(string c: selectedCheeks)
+                chk += c+';';
+                        if(chk!=''){
+                                chk= chk.Substring(0,chk.length()-1);
+                                this.evaluation.Cheeks__c = chk;
+                        }
+                else
+                this.evaluation.Cheeks__c ='';
+                
    // for lips Multi-picklist
-   		string lps ='';
-   		for(string l: selectedLips)
-   		lps += l+';';
-   			if(lps!=''){
-   				lps= lps.Substring(0,lps.length()-1);
-   				this.evaluation.Lips__c = lps;
-   			}
-   			else
-   			this.evaluation.Lips__c = '';
-   			
-   			
+                string lps ='';
+                for(string l: selectedLips)
+                lps += l+';';
+                        if(lps!=''){
+                                lps= lps.Substring(0,lps.length()-1);
+                                this.evaluation.Lips__c = lps;
+                        }
+                        else
+                        this.evaluation.Lips__c = '';
+                        
+                        
    // for Saliva Multi-Picklist
-   		string slv ='';
-   		for (string sl: selectedSaliva)
-   		slv += sl+';';
-   			if(slv!=''){
-   				slv = slv.Substring(0,slv.length()-1);
-   				this.evaluation.Saliva__c = slv;
-   			}
-   			else
-   			this.evaluation.Saliva__c = '';
-   			
+                string slv ='';
+                for (string sl: selectedSaliva)
+                slv += sl+';';
+                        if(slv!=''){
+                                slv = slv.Substring(0,slv.length()-1);
+                                this.evaluation.Saliva__c = slv;
+                        }
+                        else
+                        this.evaluation.Saliva__c = '';
+                        
   // For Denture Types Multi-pIcklist
-  		string dtp ='';
-  		for(string d:selectedDentures)
-  		dtp += d+';';
-  			if(dtp!=''){
-  				dtp= dtp.Substring(0,dtp.length()-1);
-  				this.evaluation.Dentures_Type__c = dtp;
-  			}
-  			else
-  			this.evaluation.Dentures_Type__c = '';
-  			
+                string dtp ='';
+                for(string d:selectedDentures)
+                dtp += d+';';
+                        if(dtp!=''){
+                                dtp= dtp.Substring(0,dtp.length()-1);
+                                this.evaluation.Dentures_Type__c = dtp;
+                        }
+                        else
+                        this.evaluation.Dentures_Type__c = '';
+                        
   // For Abdomen Multi-Picklist
-  		string abd ='';
-  		for(string ab: selectedAbdomen)
-  		abd += ab+';';
-  			if(abd!=''){
-  				abd= abd.Substring(0,abd.length()-1);
-  				this.evaluation.Abdomen__C = abd;
-  			}
-  			else
-  			this.evaluation.Abdomen__c = '';
-  			
+                string abd ='';
+                for(string ab: selectedAbdomen)
+                abd += ab+';';
+                        if(abd!=''){
+                                abd= abd.Substring(0,abd.length()-1);
+                                this.evaluation.Abdomen__C = abd;
+                        }
+                        else
+                        this.evaluation.Abdomen__c = '';
+                        
   // For Hallucination Multi-Picklist
-  		string hal ='';
-  		for(string h: selectedHalls)
-  		hal += h+';';
-  			if(hal!=''){
-  				hal = hal.Substring(0,hal.length()-1);
-  				this.evaluation.Hallucination_Types__c = hal;
-  			}
-  			else
-  			this.evaluation.Hallucination_Types__c ='';
-  			
+                string hal ='';
+                for(string h: selectedHalls)
+                hal += h+';';
+                        if(hal!=''){
+                                hal = hal.Substring(0,hal.length()-1);
+                                this.evaluation.Hallucination_Types__c = hal;
+                        }
+                        else
+                        this.evaluation.Hallucination_Types__c ='';
+                        
    // For Spiritual Belief Effects Multi-picklist
-   		string blf = '';
-   		for(string bf: selectedBeliefs)
-   		blf += bf+';';
-   			if(blf!=''){
-   				blf= blf.Substring(0,blf.length()-1);
-   				this.evaluation.Typeof_Spiritual_belief_Effects__c = blf;
-   			}
-   			else
-   			this.evaluation.Typeof_Spiritual_belief_Effects__c ='';
-   			
+                string blf = '';
+                for(string bf: selectedBeliefs)
+                blf += bf+';';
+                        if(blf!=''){
+                                blf= blf.Substring(0,blf.length()-1);
+                                this.evaluation.Typeof_Spiritual_belief_Effects__c = blf;
+                        }
+                        else
+                        this.evaluation.Typeof_Spiritual_belief_Effects__c ='';
+                        
    // For Preferred Method of Learning Multi-Picklist
-   		string pml ='';
-   		for(string lm: selectedLearning)
-   		pml += lm+';';
-   			if(pml!=''){
-   				pml= pml.Substring(0,pml.length()-1);
-   				this.evaluation.Preferred_Method_of_Learning__c = pml;
-   			}
-   			else
-   			this.evaluation.Preferred_Method_of_Learning__c ='';
-   			
+                string pml ='';
+                for(string lm: selectedLearning)
+                pml += lm+';';
+                        if(pml!=''){
+                                pml= pml.Substring(0,pml.length()-1);
+                                this.evaluation.Preferred_Method_of_Learning__c = pml;
+                        }
+                        else
+                        this.evaluation.Preferred_Method_of_Learning__c ='';
+                        
    // For Resident Coping Well Multi-Picklist
-   		string cpg ='';
-   		for(string cp: selectedCoping)
-   		cpg += cp+';';
-   			if(cpg!=''){
-   				cpg = cpg.Substring(0,cpg.length()-1);
-   				this.evaluation.Resident_Demonstrating_Issues__c = cpg;
-   			} 
-   			else
-   			this.evaluation.Resident_Demonstrating_Issues__c ='';
-   			
+                string cpg ='';
+                for(string cp: selectedCoping)
+                cpg += cp+';';
+                        if(cpg!=''){
+                                cpg = cpg.Substring(0,cpg.length()-1);
+                                this.evaluation.Resident_Demonstrating_Issues__c = cpg;
+                        } 
+                        else
+                        this.evaluation.Resident_Demonstrating_Issues__c ='';
+                        
   // For Resident's Communication Status Multi-Picklist
-  		string cmc = '';
-  		for(string cm: selectedCommunications)
-  		cmc += cm+';';
-  			if(cmc!=''){
-  				cmc = cmc.Substring(0,cmc.length()-1);
-  				this.evaluation.Resident_s_Communication_Status__c = cmc;
-  			}
-  			else
-  			this.evaluation.Resident_s_Communication_Status__c = '';
-  			
+                string cmc = '';
+                for(string cm: selectedCommunications)
+                cmc += cm+';';
+                        if(cmc!=''){
+                                cmc = cmc.Substring(0,cmc.length()-1);
+                                this.evaluation.Resident_s_Communication_Status__c = cmc;
+                        }
+                        else
+                        this.evaluation.Resident_s_Communication_Status__c = '';
+                        
  // For Resident's Emotional Barriers Multi-picklist
- 		string emb = '';
- 		for(string eb: selectedBarriers)
- 		emb += eb+';';
- 			if(emb!=''){
- 				emb = emb.Substring(0,emb.length()-1);
- 				this.evaluation.Resident_s_Emotional_Barriers__c = emb;
- 			}
- 			else
- 			this.evaluation.Resident_s_Emotional_Barriers__c ='';
- 		
+                string emb = '';
+                for(string eb: selectedBarriers)
+                emb += eb+';';
+                        if(emb!=''){
+                                emb = emb.Substring(0,emb.length()-1);
+                                this.evaluation.Resident_s_Emotional_Barriers__c = emb;
+                        }
+                        else
+                        this.evaluation.Resident_s_Emotional_Barriers__c ='';
+                
  // For Resident's Learning Needs multi-picklist
- 		string lrn ='';
- 		for(string ln: selectedNeeds)
- 		lrn += ln+';';
- 			if(lrn!=''){
- 				lrn = lrn.Substring(0,lrn.length()-1);
- 				this.evaluation.Resident_s_Learning_needs_related_to__c = lrn;
- 			}
- 			else
- 			this.evaluation.Resident_s_Learning_needs_related_to__c ='';
+                string lrn ='';
+                for(string ln: selectedNeeds)
+                lrn += ln+';';
+                        if(lrn!=''){
+                                lrn = lrn.Substring(0,lrn.length()-1);
+                                this.evaluation.Resident_s_Learning_needs_related_to__c = lrn;
+                        }
+                        else
+                        this.evaluation.Resident_s_Learning_needs_related_to__c ='';
 
 // For Oriented to te following Multi-Picklist
-		string ori ='';
-		for(string ri: selectedOrients)
-		ori += ri+';';
-			if(ori!=''){
-				ori = ori.Substring(0,ori.length()-1);
-				this.evaluation.Oriented_to_the_Following__c = ori;
-			}
-			else
-			this.evaluation.Oriented_to_the_Following__c ='';
- 			
+                string ori ='';
+                for(string ri: selectedOrients)
+                ori += ri+';';
+                        if(ori!=''){
+                                ori = ori.Substring(0,ori.length()-1);
+                                this.evaluation.Oriented_to_the_Following__c = ori;
+                        }
+                        else
+                        this.evaluation.Oriented_to_the_Following__c ='';
+                        
  // For Rancho level Orientation Multi-picklist
- 		string rlo ='';
- 		for(string lo: selectedOrientations)
- 		rlo += lo+';';
- 			if(rlo!=''){
- 				rlo = rlo.Substring(0,rlo.length()-1);
- 				this.evaluation.Rancho_level_Resident_Orientation__c = rlo;
- 			}		
- 			else
- 			this.evaluation.Rancho_level_Resident_Orientation__c = '';
- 			
- 			
+                string rlo ='';
+                for(string lo: selectedOrientations)
+                rlo += lo+';';
+                        if(rlo!=''){
+                                rlo = rlo.Substring(0,rlo.length()-1);
+                                this.evaluation.Rancho_level_Resident_Orientation__c = rlo;
+                        }               
+                        else
+                        this.evaluation.Rancho_level_Resident_Orientation__c = '';
+                        
+                        
 // For Family Member's emotional Barriers Multi-Picklist
-		string fmb = '';
-		for(string mb: selectedFambarriers)
-		fmb += mb+';';
-			if(fmb!=''){
-				fmb = fmb.Substring(0,fmb.length()-1);
-				this.evaluation.Family_Member_s_Emotional_Barriers__c = fmb;
-			}
- 			else
- 			this.evaluation.Family_Member_s_Emotional_Barriers__c ='';
- 			
- 			
+                string fmb = '';
+                for(string mb: selectedFambarriers)
+                fmb += mb+';';
+                        if(fmb!=''){
+                                fmb = fmb.Substring(0,fmb.length()-1);
+                                this.evaluation.Family_Member_s_Emotional_Barriers__c = fmb;
+                        }
+                        else
+                        this.evaluation.Family_Member_s_Emotional_Barriers__c ='';
+                        
+                        
 // For Family Communication Status Multi-Picklist
-		string fmc ='';
-		for(string mc: selectedFamcommunications)
-		fmc += mc+';';
-			if(fmc!=''){
-				fmc = fmc.Substring(0,fmc.length()-1);
-				this.evaluation.Family_Communication_Status__c = fmc;
-			}
-			else
-			this.evaluation.Family_Communication_Status__c ='';
-			
+                string fmc ='';
+                for(string mc: selectedFamcommunications)
+                fmc += mc+';';
+                        if(fmc!=''){
+                                fmc = fmc.Substring(0,fmc.length()-1);
+                                this.evaluation.Family_Communication_Status__c = fmc;
+                        }
+                        else
+                        this.evaluation.Family_Communication_Status__c ='';
+                        
 // For FamilyMember's learning related to Multi-Picklist
-		string fsr = '';
-		for(string fr: selectedFamlearnings)
-		fsr += fr+';';
-			if(fsr!=''){
-				fsr = fsr.Substring(0,fsr.length()-1);
-				this.evaluation.Family_Member_s_Learning_related_to__c = fsr;
-			}
-			else
-			this.evaluation.Family_Member_s_Learning_related_to__c ='';
-			
+                string fsr = '';
+                for(string fr: selectedFamlearnings)
+                fsr += fr+';';
+                        if(fsr!=''){
+                                fsr = fsr.Substring(0,fsr.length()-1);
+                                this.evaluation.Family_Member_s_Learning_related_to__c = fsr;
+                        }
+                        else
+                        this.evaluation.Family_Member_s_Learning_related_to__c ='';
+                        
 // For Diagnostics GYN Experiences Multi-Picklist
-		string exp = '';
-		for(string ex: selectedExperiences)
-		exp += ex+';';
-			if(exp!=''){
-				exp = exp.Substring(0,exp.length()-1);
-				this.evaluation.Diagnostics_GYN_Experiences__c = exp;
-			}
-			else
-			this.evaluation.Diagnostics_GYN_Experiences__c ='';
-			
-			
+                string exp = '';
+                for(string ex: selectedExperiences)
+                exp += ex+';';
+                        if(exp!=''){
+                                exp = exp.Substring(0,exp.length()-1);
+                                this.evaluation.Diagnostics_GYN_Experiences__c = exp;
+                        }
+                        else
+                        this.evaluation.Diagnostics_GYN_Experiences__c ='';
+                        
+                        
 // For Orthopedic Diagnosis Multi-Picklist
-		string diag ='';
-		for(string dg: selectedDiagnosis)
-		diag += dg+';';
-			if(diag!=''){
-				diag = diag.Substring(0,diag.length()-1);
-				this.evaluation.Orthopedic_diagnostic_types__c = diag;
-				
-			}
-			else
-			this.evaluation.Orthopedic_diagnostic_types__c = '';
-			
+                string diag ='';
+                for(string dg: selectedDiagnosis)
+                diag += dg+';';
+                        if(diag!=''){
+                                diag = diag.Substring(0,diag.length()-1);
+                                this.evaluation.Orthopedic_diagnostic_types__c = diag;
+                                
+                        }
+                        else
+                        this.evaluation.Orthopedic_diagnostic_types__c = '';
+                        
 // For Orthopedic Medications Multi-picklist
-		string medic ='';
-		for(string mdc: selectedMedications)
-		medic += mdc+';';
-			if(medic!=''){
-				medic = medic.Substring(0,medic.length()-1);
-				this.evaluation.Orthopedic_Medications__c = medic;
-			}
-			else
-			this.evaluation.Orthopedic_Medications__c = '';
-			
+                string medic ='';
+                for(string mdc: selectedMedications)
+                medic += mdc+';';
+                        if(medic!=''){
+                                medic = medic.Substring(0,medic.length()-1);
+                                this.evaluation.Orthopedic_Medications__c = medic;
+                        }
+                        else
+                        this.evaluation.Orthopedic_Medications__c = '';
+                        
 // For Prosthetic Type Multi-picklist
-		string pros ='';
-		for(string ps: selectedProsthetics)
-		pros += ps+';';
-			if(pros!=''){
-				pros = pros.Substring(0,pros.length()-1);
-				this.evaluation.Prosthetic_Types__c = pros;
-			}
-			else
-			this.evaluation.Prosthetic_Types__c='';
-			
+                string pros ='';
+                for(string ps: selectedProsthetics)
+                pros += ps+';';
+                        if(pros!=''){
+                                pros = pros.Substring(0,pros.length()-1);
+                                this.evaluation.Prosthetic_Types__c = pros;
+                        }
+                        else
+                        this.evaluation.Prosthetic_Types__c='';
+                        
 // For Orthodics Types Multi-picklist
-		string orth='';
-		for(string ot: selectedOrthodics)
-		orth += ot+';';
-			if(orth!=''){
-				orth = orth.Substring(0,orth.length()-1);
-				this.evaluation.Orthodics_Types__c = orth;
-			}
-			else
-			this.evaluation.Orthodics_Types__c ='';
-			
+                string orth='';
+                for(string ot: selectedOrthodics)
+                orth += ot+';';
+                        if(orth!=''){
+                                orth = orth.Substring(0,orth.length()-1);
+                                this.evaluation.Orthodics_Types__c = orth;
+                        }
+                        else
+                        this.evaluation.Orthodics_Types__c ='';
+                        
 // For Mood Multi-picklist
-		string mod='';
-		for(string md: selectedMoods)
-		mod += md+';';
-			if(mod!=''){
-				mod = mod.Substring(0,mod.length()-1);
-				this.evaluation.Mood__c = mod;
-			}
-			else
-			this.evaluation.Mood__c ='';
-			
+                string mod='';
+                for(string md: selectedMoods)
+                mod += md+';';
+                        if(mod!=''){
+                                mod = mod.Substring(0,mod.length()-1);
+                                this.evaluation.Mood__c = mod;
+                        }
+                        else
+                        this.evaluation.Mood__c ='';
+                        
 // For Alleviating Factors Multi-picklist
-		string alv='';
-		for(string av: selectedAlleviators)
-		alv += av+';';
-			if(alv!=''){
-				alv = alv.Substring(0,alv.length()-1);
-				this.evaluation.Alleviating_Factors__c = alv;
-			}
-			else
-			this.evaluation.Alleviating_Factors__c ='';
-			
+                string alv='';
+                for(string av: selectedAlleviators)
+                alv += av+';';
+                        if(alv!=''){
+                                alv = alv.Substring(0,alv.length()-1);
+                                this.evaluation.Alleviating_Factors__c = alv;
+                        }
+                        else
+                        this.evaluation.Alleviating_Factors__c ='';
+                        
 // For Negative Impact on ADLs Multi-picklist
-		string adl='';
-		for(string ad: selectedAlleviators)
-		adl += ad+';';
-			if(adl!=''){
-				adl = adl.Substring(0,adl.length()-1);
-				this.evaluation.Negative_Impact_on_ADLs__c = adl;
-			}
-			else
-			this.evaluation.Negative_Impact_on_ADLs__c ='';
-			
+                string adl='';
+                for(string ad: selectedAlleviators)
+                adl += ad+';';
+                        if(adl!=''){
+                                adl = adl.Substring(0,adl.length()-1);
+                                this.evaluation.Negative_Impact_on_ADLs__c = adl;
+                        }
+                        else
+                        this.evaluation.Negative_Impact_on_ADLs__c ='';
+                        
 // For Manner of Expressing Pain Multi-picklist
-		string exr='';
-		for(string er: selectedExpressions)
-		exr += er+';';
-			if(exr!=''){
-				exr = exr.Substring(0,exr.length()-1);
-				this.evaluation.Manner_of_Expressing_Pain__c = exr;
-			}
-			else
-			this.evaluation.Manner_of_Expressing_Pain__c ='';	
-			
+                string exr='';
+                for(string er: selectedExpressions)
+                exr += er+';';
+                        if(exr!=''){
+                                exr = exr.Substring(0,exr.length()-1);
+                                this.evaluation.Manner_of_Expressing_Pain__c = exr;
+                        }
+                        else
+                        this.evaluation.Manner_of_Expressing_Pain__c ='';       
+                        
 // For Nuero Pain type Multi-Picklist
-		string npt='';
-		for(string nt: selectedPaintypes)
-		npt += nt+';';
-			if(npt!='' && this.evaluation.Pain_Present__c == 'Yes'){
-				npt = npt.Substring(0,npt.length()-1);
-				this.evaluation.Neuro_Pain_Types__c = npt;
-			}
-			else
-			this.evaluation.Neuro_Pain_Types__c ='';	
-			
+                string npt='';
+                for(string nt: selectedPaintypes)
+                npt += nt+';';
+                        if(npt!='' && this.evaluation.Pain_Present__c == 'Yes'){
+                                npt = npt.Substring(0,npt.length()-1);
+                                this.evaluation.Neuro_Pain_Types__c = npt;
+                        }
+                        else
+                        this.evaluation.Neuro_Pain_Types__c ='';        
+                        
 // For Neuro Pain Alleviating Factors Multi-picklist
-		string npal='';
-		for(string npl: selectedpainAlleviators)
-		npal += npl+';';
-			if(npal!='' && this.evaluation.Pain_Present__c == 'Yes'){
-				npal = npal.Substring(0,npal.length()-1);
-				this.evaluation.Neuro_Pain_Alleviating_Factors__c = npal;
-			}
-			else
-			this.evaluation.Neuro_Pain_Alleviating_Factors__c ='';
-			
+                string npal='';
+                for(string npl: selectedpainAlleviators)
+                npal += npl+';';
+                        if(npal!='' && this.evaluation.Pain_Present__c == 'Yes'){
+                                npal = npal.Substring(0,npal.length()-1);
+                                this.evaluation.Neuro_Pain_Alleviating_Factors__c = npal;
+                        }
+                        else
+                        this.evaluation.Neuro_Pain_Alleviating_Factors__c ='';
+                        
 // For neuro pain Negative Impact on ADLs Multi-picklist
-		string nadl='';
-		for(string nad: selectedpainAdls)
-		nadl += nad+';';
-			if(nadl!='' && this.evaluation.Pain_Present__c == 'Yes'){
-				nadl = nadl.Substring(0,nadl.length()-1);
-				this.evaluation.Neuro_Pain_neg_Impact_on_ADLs__c = nadl;
-			}
-			else
-			this.evaluation.Neuro_Pain_neg_Impact_on_ADLs__c ='';
-			
+                string nadl='';
+                for(string nad: selectedpainAdls)
+                nadl += nad+';';
+                        if(nadl!='' && this.evaluation.Pain_Present__c == 'Yes'){
+                                nadl = nadl.Substring(0,nadl.length()-1);
+                                this.evaluation.Neuro_Pain_neg_Impact_on_ADLs__c = nadl;
+                        }
+                        else
+                        this.evaluation.Neuro_Pain_neg_Impact_on_ADLs__c ='';
+                        
 // For neuro pain Manner of Expressing Pain Multi-picklist
-		string nexr='';
-		for(string ner: selectedpainExpressions)
-		nexr += ner+';';
-			if(nexr!='' && this.evaluation.Pain_Present__c == 'Yes'){
-				nexr = nexr.Substring(0,nexr.length()-1);
-				this.evaluation.Neuro_Pain_Manner_of_Exp__c = nexr;
-			}
-			else
-			this.evaluation.Neuro_Pain_Manner_of_Exp__c ='';	
-			
+                string nexr='';
+                for(string ner: selectedpainExpressions)
+                nexr += ner+';';
+                        if(nexr!='' && this.evaluation.Pain_Present__c == 'Yes'){
+                                nexr = nexr.Substring(0,nexr.length()-1);
+                                this.evaluation.Neuro_Pain_Manner_of_Exp__c = nexr;
+                        }
+                        else
+                        this.evaluation.Neuro_Pain_Manner_of_Exp__c ='';        
+                        
 // For pain Descriptor Multi-picklist
-		string decr='';
-		for(string der: selectedpainDescriptors)
-		decr += der+';';
-			if(decr!='' && this.evaluation.Pain_Present__c == 'Yes'){
-				decr = decr.Substring(0,decr.length()-1);
-				this.evaluation.Neuro_pain_Descriptors__c = decr;
-			}
-			else
-			this.evaluation.Neuro_pain_Descriptors__c ='';	
-			
-			
-			//if(this.evaluation.Pain_present__c != 'Yes')
-			//delete neuroAnnotations; MOVING THE LOGIC TO TRIGGER
-							
-   					     	
+                string decr='';
+                for(string der: selectedpainDescriptors)
+                decr += der+';';
+                        if(decr!='' && this.evaluation.Pain_Present__c == 'Yes'){
+                                decr = decr.Substring(0,decr.length()-1);
+                                this.evaluation.Neuro_pain_Descriptors__c = decr;
+                        }
+                        else
+                        this.evaluation.Neuro_pain_Descriptors__c ='';  
+                        
+                        
+                        //if(this.evaluation.Pain_present__c != 'Yes')
+                        //delete neuroAnnotations; MOVING THE LOGIC TO TRIGGER
+                                                        
+                                                
         if (submitted || selectedTab == 'detailsTab' || selectedTab == null) {
 
         }
@@ -858,183 +858,183 @@ public with sharing class NursingEvaluationEditController {
     }
     
    public List<SelectOption> getbreatheSounds(){
-   		List<Selectoption> breatheSound = Utility.getPicklistValues(evaluation, 'Breathe_Sounds__c');
-   		return breatheSound; 
-   		
+                List<Selectoption> breatheSound = Utility.getPicklistValues(evaluation, 'Breathe_Sounds__c');
+                return breatheSound; 
+                
    }
    public List<SelectOption> geturinaryIssues(){
-   		List<Selectoption> urinaryIssue = Utility.getPicklistValues(evaluation, 'Urinary_Issues__c');
-   		return urinaryIssue; 
-   			
+                List<Selectoption> urinaryIssue = Utility.getPicklistValues(evaluation, 'Urinary_Issues__c');
+                return urinaryIssue; 
+                        
    }
    public List<selectoption> geturineClarities(){
-   		List<Selectoption> urineClarity = Utility.getPicklistValues(evaluation, 'Urine_Clarity__c');
-   		return urineClarity; 
+                List<Selectoption> urineClarity = Utility.getPicklistValues(evaluation, 'Urine_Clarity__c');
+                return urineClarity; 
    }
    
    public List<selectoption> gettongueValues(){
-   		List<Selectoption> tongueValue = Utility.getPicklistValues(evaluation, 'Tongue__c');
-   		return tongueValue; 
+                List<Selectoption> tongueValue = Utility.getPicklistValues(evaluation, 'Tongue__c');
+                return tongueValue; 
    }
    
     public List<selectoption> getgumValues(){
-   		List<Selectoption> gumValue = Utility.getPicklistValues(evaluation, 'Gums__c');
-   		return gumValue; 
+                List<Selectoption> gumValue = Utility.getPicklistValues(evaluation, 'Gums__c');
+                return gumValue; 
    }
    
     public List<selectoption> getcheekValues(){
-   		List<Selectoption> cheekValue = Utility.getPicklistValues(evaluation, 'Cheeks__c');
-   		return cheekValue; 
+                List<Selectoption> cheekValue = Utility.getPicklistValues(evaluation, 'Cheeks__c');
+                return cheekValue; 
    }
    
    public List<selectoption> getlipValues(){
-   		List<Selectoption> lipValue = Utility.getPicklistValues(evaluation, 'Lips__c');
-   		return lipValue; 
+                List<Selectoption> lipValue = Utility.getPicklistValues(evaluation, 'Lips__c');
+                return lipValue; 
    }
    
    public List<selectoption> getsalivaValues(){
-   		List<Selectoption> salivaValue = Utility.getPicklistValues(evaluation, 'Saliva__c');
-   		return salivaValue; 
+                List<Selectoption> salivaValue = Utility.getPicklistValues(evaluation, 'Saliva__c');
+                return salivaValue; 
    }
    
    public List<selectoption> getdentureValues(){
-   		List<Selectoption> dentureValue = Utility.getPicklistValues(evaluation, 'Dentures_Type__c');
-   		return dentureValue; 
+                List<Selectoption> dentureValue = Utility.getPicklistValues(evaluation, 'Dentures_Type__c');
+                return dentureValue; 
    }
    
    public List<selectoption> getabdomenValues(){
-   		List<Selectoption> abdomenValue = Utility.getPicklistValues(evaluation, 'Abdomen__c');
-   		return abdomenValue; 
+                List<Selectoption> abdomenValue = Utility.getPicklistValues(evaluation, 'Abdomen__c');
+                return abdomenValue; 
    }
    
    public List<selectoption> gethallValues(){
-   		List<Selectoption> hallValue = Utility.getPicklistValues(evaluation, 'Hallucination_Types__c');
-   		return hallValue; 
+                List<Selectoption> hallValue = Utility.getPicklistValues(evaluation, 'Hallucination_Types__c');
+                return hallValue; 
    }
    
    public List<selectoption> getbeliefValues(){
-   		List<Selectoption> beliefValue = Utility.getPicklistValues(evaluation, 'Typeof_Spiritual_belief_Effects__c');
-   		return beliefValue; 
+                List<Selectoption> beliefValue = Utility.getPicklistValues(evaluation, 'Typeof_Spiritual_belief_Effects__c');
+                return beliefValue; 
    }
    
    public List<selectoption> getlearningValues(){
-   		List<Selectoption> learningValue = Utility.getPicklistValues(evaluation, 'Preferred_Method_of_Learning__c');
-   		return learningValue; 
+                List<Selectoption> learningValue = Utility.getPicklistValues(evaluation, 'Preferred_Method_of_Learning__c');
+                return learningValue; 
    }
    
    public List<selectoption> getcopingValues(){
-   		List<Selectoption> copingValue = Utility.getPicklistValues(evaluation, 'Resident_Demonstrating_Issues__c');
-   		return copingValue; 
+                List<Selectoption> copingValue = Utility.getPicklistValues(evaluation, 'Resident_Demonstrating_Issues__c');
+                return copingValue; 
    }
    
    public List<selectoption> getcommunicationValues(){
-   		List<Selectoption> communicationValue = Utility.getPicklistValues(evaluation, 'Resident_s_Communication_Status__c');
-   		return communicationValue; 
+                List<Selectoption> communicationValue = Utility.getPicklistValues(evaluation, 'Resident_s_Communication_Status__c');
+                return communicationValue; 
    }
    
    public List<selectoption> getbarrierValues(){
-   		List<Selectoption> barrierValue = Utility.getPicklistValues(evaluation, 'Resident_s_Emotional_Barriers__c');
-   		return barrierValue; 
+                List<Selectoption> barrierValue = Utility.getPicklistValues(evaluation, 'Resident_s_Emotional_Barriers__c');
+                return barrierValue; 
    }
    
    public List<selectoption> getneedValues(){
-   		List<Selectoption> needValue = Utility.getPicklistValues(evaluation, 'Resident_s_Learning_needs_related_to__c');
-   		return needValue; 
+                List<Selectoption> needValue = Utility.getPicklistValues(evaluation, 'Resident_s_Learning_needs_related_to__c');
+                return needValue; 
    }
    
    public List<selectoption> getorientValues(){
-   		List<Selectoption> orientValue = Utility.getPicklistValues(evaluation, 'Oriented_to_the_Following__c');
-   		return orientValue; 
+                List<Selectoption> orientValue = Utility.getPicklistValues(evaluation, 'Oriented_to_the_Following__c');
+                return orientValue; 
    }
    
    public List<selectoption> getorientationValues(){
-   		List<Selectoption> orientationValue = Utility.getPicklistValues(evaluation, 'Rancho_level_Resident_Orientation__c');
-   		return orientationValue; 
+                List<Selectoption> orientationValue = Utility.getPicklistValues(evaluation, 'Rancho_level_Resident_Orientation__c');
+                return orientationValue; 
    }
    
    public List<selectoption> getfambarrierValues(){
-   		List<Selectoption> fambarrierValue = Utility.getPicklistValues(evaluation, 'Family_Member_s_Emotional_Barriers__c');
-   		return fambarrierValue; 
+                List<Selectoption> fambarrierValue = Utility.getPicklistValues(evaluation, 'Family_Member_s_Emotional_Barriers__c');
+                return fambarrierValue; 
    }
    
    public List<selectoption> getfamcommunicationValues(){
-   		List<Selectoption> famcommunicationValue = Utility.getPicklistValues(evaluation, 'Family_Communication_Status__c');
-   		return famcommunicationValue; 
+                List<Selectoption> famcommunicationValue = Utility.getPicklistValues(evaluation, 'Family_Communication_Status__c');
+                return famcommunicationValue; 
    } 
    
    public List<selectoption> getfamlearningValues(){
-   		List<Selectoption> famlearningValue = Utility.getPicklistValues(evaluation, 'Family_Member_s_Learning_related_to__c');
-   		return famlearningValue; 
+                List<Selectoption> famlearningValue = Utility.getPicklistValues(evaluation, 'Family_Member_s_Learning_related_to__c');
+                return famlearningValue; 
    } 
    
    public List<selectoption> getexperienceValues(){
-   		List<Selectoption> experienceValue = Utility.getPicklistValues(evaluation, 'Diagnostics_GYN_Experiences__c');
-   		return experienceValue; 
+                List<Selectoption> experienceValue = Utility.getPicklistValues(evaluation, 'Diagnostics_GYN_Experiences__c');
+                return experienceValue; 
    } 
    
    public List<selectoption> getdiagnosisValues(){
-   		List<Selectoption> diagnosisValue = Utility.getPicklistValues(evaluation, 'Orthopedic_diagnostic_types__c');
-   		return diagnosisValue; 
+                List<Selectoption> diagnosisValue = Utility.getPicklistValues(evaluation, 'Orthopedic_diagnostic_types__c');
+                return diagnosisValue; 
    } 
    
    public List<selectoption> getmedicationValues(){
-   		List<Selectoption> medicationValue = Utility.getPicklistValues(evaluation, 'Orthopedic_Medications__c');
-   		return medicationValue; 
+                List<Selectoption> medicationValue = Utility.getPicklistValues(evaluation, 'Orthopedic_Medications__c');
+                return medicationValue; 
    } 
    
    public List<selectoption> getprostheticValues(){
-   		List<Selectoption> prostheticValue = Utility.getPicklistValues(evaluation, 'Prosthetic_Types__c');
-   		return prostheticValue; 
+                List<Selectoption> prostheticValue = Utility.getPicklistValues(evaluation, 'Prosthetic_Types__c');
+                return prostheticValue; 
    } 
    
    public List<selectoption> getorthodicsValues(){
-   		List<Selectoption> orthodicsValue = Utility.getPicklistValues(evaluation, 'Orthodics_Types__c');
-   		return orthodicsValue; 
+                List<Selectoption> orthodicsValue = Utility.getPicklistValues(evaluation, 'Orthodics_Types__c');
+                return orthodicsValue; 
    }
    
    public List<selectoption> getmoodValues(){
-   		List<Selectoption> moodValue = Utility.getPicklistValues(evaluation, 'Mood__c');
-   		return moodValue; 
+                List<Selectoption> moodValue = Utility.getPicklistValues(evaluation, 'Mood__c');
+                return moodValue; 
    }
    
    public List<selectoption> getalleviatorValues(){
-   		List<Selectoption> alleviatorValue = Utility.getPicklistValues(evaluation, 'Alleviating_Factors__c');
-   		return alleviatorValue; 
+                List<Selectoption> alleviatorValue = Utility.getPicklistValues(evaluation, 'Alleviating_Factors__c');
+                return alleviatorValue; 
    }
    
    public List<selectoption> getadlValues(){
-   		List<Selectoption> adlValue = Utility.getPicklistValues(evaluation, 'Negative_Impact_on_ADLs__c');
-   		return adlValue; 
+                List<Selectoption> adlValue = Utility.getPicklistValues(evaluation, 'Negative_Impact_on_ADLs__c');
+                return adlValue; 
    }
    
    public List<selectoption> getexpressionValues(){
-   		List<Selectoption> expressionValue = Utility.getPicklistValues(evaluation, 'Manner_of_Expressing_Pain__c');
-   		return expressionValue; 
+                List<Selectoption> expressionValue = Utility.getPicklistValues(evaluation, 'Manner_of_Expressing_Pain__c');
+                return expressionValue; 
    }
    
    public List<selectoption> getpaintypeValues(){
-   		List<Selectoption> paintypeValue = Utility.getPicklistValues(evaluation, 'Neuro_Pain_Types__c');
-   		return paintypeValue; 
+                List<Selectoption> paintypeValue = Utility.getPicklistValues(evaluation, 'Neuro_Pain_Types__c');
+                return paintypeValue; 
    }
    
    public List<selectoption> getpainalleviatorValues(){
-   		List<Selectoption> painalleviatorValue = Utility.getPicklistValues(evaluation, 'Neuro_Pain_Alleviating_Factors__c');
-   		return painalleviatorValue; 
+                List<Selectoption> painalleviatorValue = Utility.getPicklistValues(evaluation, 'Neuro_Pain_Alleviating_Factors__c');
+                return painalleviatorValue; 
    }
    
    public List<selectoption> getpainadlValues(){
-   		List<Selectoption> painadlValue = Utility.getPicklistValues(evaluation, 'Neuro_Pain_neg_Impact_on_ADLs__c');
-   		return painadlValue; 
+                List<Selectoption> painadlValue = Utility.getPicklistValues(evaluation, 'Neuro_Pain_neg_Impact_on_ADLs__c');
+                return painadlValue; 
    }
    
    public List<selectoption> getpainexpressionValues(){
-   		List<Selectoption> painexpressionValue = Utility.getPicklistValues(evaluation, 'Neuro_Pain_Manner_of_Exp__c');
-   		return painexpressionValue; 
+                List<Selectoption> painexpressionValue = Utility.getPicklistValues(evaluation, 'Neuro_Pain_Manner_of_Exp__c');
+                return painexpressionValue; 
    }
    
    public List<selectoption> getpaindescriptorValues(){
-   		List<Selectoption> paindescriptorValue = Utility.getPicklistValues(evaluation, 'Neuro_Pain_Manner_of_Exp__c');
-   		return paindescriptorValue; 
+                List<Selectoption> paindescriptorValue = Utility.getPicklistValues(evaluation, 'Neuro_Pain_Manner_of_Exp__c');
+                return paindescriptorValue; 
    }
    
    

@@ -265,6 +265,11 @@ public without sharing class Utility {
           return relatedPartyRT.get('Generic').recordTypeId;
       }
     }
+    
+    public static Id getRelatedPartyRecordType(String recordTypeName) {
+        return Schema.SObjectType.Related_Party__c.getRecordTypeInfosByName().get(recordTypeName).recordTypeId;
+    }
+
 
     public static Id getEvaluationResponseRecordType(String recordTypeName) {
         return Schema.SObjectType.Evaluation_Response__c.getRecordTypeInfosByName().get(recordTypeName).recordTypeId;
