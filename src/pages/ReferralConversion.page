@@ -1,0 +1,86 @@
+<apex:page standardcontroller="Referral__c" extensions="referralConversion_Controller">
+
+ <apex:form id="referralForm">
+ 
+    <apex:pageMessages id="msgs"/>
+ 
+     <apex:pageBlock mode="view">
+      <apex:pageblockButtons location="Bottom" >
+          <apex:commandButton value="Convert to Admission" action="{!convertReferral}"/>
+          <apex:commandButton value="Edit Referral" action="{!edit}"/>
+      </apex:pageblockButtons>
+
+
+<apex:pageBlockSection title="Person Being Referred/Served"
+                             showHeader="true"
+                             columns="2"
+                             collapsible="false"
+                             id="PBSSection">
+                             
+          <apex:pageBlockSectionItem >
+          <apex:outputText value="Name"/>
+          <apex:outputPanel styleClass="nowrap">
+            <apex:outputText value="{!person.FirstName}" />&nbsp;
+            <apex:outputText value="{!person.MiddleInitial}" />&nbsp;
+            <apex:outputText value="{!person.LastName}" />
+          </apex:outputPanel>            
+          </apex:pageBlockSectionItem>
+ 		<apex:outputText label="Date of Birth" value="{!person.DateOfBirth}" />          
+ 		<apex:outputText label="Email" value="{!person.Email}" />         
+ 		<apex:outputText label="Fax" value="{!person.Fax}" />         
+ 		<apex:outputText label="Phone" value="{!person.Phone}" />         
+ 		<apex:outputText label="Street" value="{!person.Street1} {!person.Street2} " />         
+ 		<apex:outputText label="City" value="{!person.City}" />         
+ 		<apex:outputText label="State" value="{!person.State}" />         
+ 		<apex:outputText label="ZIP" value="{!person.ZipCode}" />         
+		<apex:outputText label="County" value="{!person.County}" />
+ 		<apex:outputText label="Ethnicity" value="{!person.Ethnicity}" />         
+ 		<apex:outputText label="Gender" value="{!person.Gender}" /> 
+ 		
+ 		<apex:pageBlockSectionItem >         
+ 		<apex:outputText value="Primary Language"  />
+ 		<apex:outputPanel styleclass="nowrap">
+ 		<apex:outputText value="{!person.PrimaryLanguage}" />&nbsp;&nbsp;
+ 		<apex:outputText value="Non-Verbal" rendered="{!person.NonVerbal}" />&nbsp;         
+ 		<apex:outputText value="Sign Language" rendered="{!person.SignLanguage}" />
+ 		</apex:outputPanel>
+ 		</apex:pageBlockSectionItem>
+ 		<apex:outputText label="SSN" value="{!person.SSN}" />         
+		<apex:outputText label="Marital Status" value="{!person.MaritalStatus}" />
+ 		<apex:outputText label="Legal/Guardianship Status" value="{!person.LegalGuardianship}" />
+ 		</apex:pageBlockSection>
+
+<apex:pageBlockSection title="Admission"
+                             showHeader="true"
+                             columns="2"
+                             collapsible="false"
+                             id="AdmissionSection">
+                            
+ 		<apex:outputField label="Effective Date" value="{!Referral__c.Anticipated_Admission_Date__c}" />         
+ 		<apex:outputText label="Network Offering" value="{!NetworkOffering}" />         
+		<apex:outputText label="Program" value="{!Referral__c.Service_Location_Program__c}" />         
+		<apex:outputField label="Referral Date" value="{!Referral__c.Referral_Date__c}" />         
+		<apex:outputText label="State" value="{!Referral__c.Service_Location_State__c}" />         
+		<apex:outputText label="Status" value="Active" />         
+
+</apex:pageBlockSection>
+<apex:pageBlockSection title="Service Assignment"
+                             showHeader="true"
+                             columns="2"
+                             collapsible="false"
+                             id="SASection">
+                            
+ 		<apex:outputField label="Start Date" value="{!Referral__c.Anticipated_Admission_Date__c}" />         
+ 		<apex:outputText label="Program" value="{!Program}" />         
+		<apex:outputText label="Location" value="{!Location}" />
+		<apex:outputText label="Service Line" value="{!ServiceLine}" />
+		<apex:outputText label="Status" value="Active" />      
+				
+</apex:pageBlockSection>
+
+</apex:pageBlock>
+      
+</apex:form>
+
+
+</apex:page>
