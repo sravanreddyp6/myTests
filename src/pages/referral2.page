@@ -104,11 +104,15 @@ function stopRKey(evt) {
     } else if (j$('input[id$=lookupElement_lkid]').val() =='') {
         errors += '<li>You must lookup the Alias</li>';
     }
-    if (j$('input[id$=locationEntry_User]').val() =='') {
-        errors += '<li>User Assigned is a required field.</li>';
-    } else if (j$('input[id$=locationEntry_User_lkid]').val() =='') {
-        errors += '<li>You must lookup the User</li>';
-    }
+    
+    if (j$('input[id$=locationEntry_User]').length > 0) {
+	    if (j$('input[id$=locationEntry_User]').val() =='') {
+	        errors += '<li>User Assigned is a required field.</li>';
+	    } else if (j$('input[id$=locationEntry_User_lkid]').val() =='') {
+	        errors += '<li>You must lookup the User</li>';
+	    }
+	}
+	    
     if (j$('select[id$=locationEntry_Status]').val() =='') {
         errors += '<li>Status is a required field.</li>';
     }
@@ -255,7 +259,10 @@ function stopRKey(evt) {
       if (validateLocation()) {
 
           var locID = j$('input[id$=locationEntry_Id]').val();
-          var locUser = j$('input[id$=locationEntry_User_lkid]').val();
+          var locUser = '';
+          if (j$('input[id$=locationEntry_User_lkid]').length > 0 ) 
+          	locUser = j$('input[id$=locationEntry_User_lkid]').val();
+          	
           var locServiceLocation = j$(idSelector).val();
           // j$('.searchLocationLookupElement_lkid').val();//j$('input[id$=lookupElement_lkid]').val();//'{!location.Service_Location__c}';//j$('input[id$=locationEntry_ServiceLocation_lkid]').val();
           var locStatus = j$('select[id$=locationEntry_Status]').val();
@@ -314,8 +321,10 @@ function stopRKey(evt) {
           //      alert('lookup name field value'+j$(lookupName).val());
           //      j$('input[id$=locationEntry_ServiceLocation]').val(result.Service_Location__r.Name);
                 j$('input[id$=locationEntry_Location]').val(result.Service_Location_Program__c);
-                j$('input[id$=locationEntry_User_lkid]').val(result.User_Assigned__c);
-                j$('input[id$=locationEntry_User]').val(result.User_Assigned__r.Name);
+                if (j$('input[id$=locationEntry_User_lkid]').length > 0 ) {
+                	j$('input[id$=locationEntry_User_lkid]').val(result.User_Assigned__c);
+                	j$('input[id$=locationEntry_User]').val(result.User_Assigned__r.Name);
+                }
                 j$('select[id$=locationEntry_Status]').val(result.Status__c);
 
                 openModalDialog('ReferralLocationModal', 'span', 'Add Location');
@@ -1012,7 +1021,7 @@ function stopRKey(evt) {
                     parentName="{!location.Service_Location__r.Name}" filters="name,city__c,state__c"
                     return="program__c,setting__c,service_value__c,phone__c,street__c,city__c,state__c,zip__c"/>
             </apex:pageBlockSectionItem>
-            <apex:inputField value="{!location.User_Assigned__c}" id="locationEntry_User"/>
+            <apex:inputField value="{!location.User_Assigned__c}" id="locationEntry_User" rendered="{!referralRecordType != 'CareMeridian'}"/>
             <apex:inputField value="{!location.Status__c}" id="locationEntry_Status"/>
            <apex:inputHidden value="{!location.Id}" id="locationEntry_Id"/>
 
@@ -1150,9 +1159,6 @@ function stopRKey(evt) {
         <apex:outputField value="{!Referral__c.Spirit_Person_Number__c}" rendered="{!referralRecordType=='Cambridge New Jersey'}" />
         <apex:outputField value="{!Referral__c.CHESSIE_ID__c}" rendered="{!referralRecordType=='Cambridge Maryland'}" />
         <apex:pageBlockSectionItem />
-
-        <apex:outputField value="{!Referral__c.Primary_Requested_Location__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
-        <apex:outputField value="{!Referral__c.Secondary_Location__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
 
         <apex:outputField value="{!Referral__c.Is_Information_Release_Signed__c}" rendered="{!ReferralRecordType == 'Wisconsin'}"/>
        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}"/>
@@ -1343,7 +1349,8 @@ function stopRKey(evt) {
      </apex:pageBlockSection>
 
        <apex:pageBlockSection columns="1"
-                             title="Locations Working Referral" id="locations" collapsible="false" rendered="{!AND(ReferralRecordType!='NeuroRestorative', ReferralRecordType!='CareMeridian')}">
+                             title="{! if (ReferralRecordType == 'CareMeridian', 'Requested Locations', 'Locations Working Referral')}" id="locations"
+                             collapsible="false" rendered="{!ReferralRecordType!='NeuroRestorative'}">
         <apex:pageBlockSectionItem >
           <apex:outputPanel layout="none">
             <input type="button" class="btn" value="Add Location"
@@ -1371,7 +1378,7 @@ function stopRKey(evt) {
                                 State="{!location.Service_Location_State__c}"
                                 Zip="{!location.Service_Location_Zip__c}"/>
           </apex:column>
-          <apex:column value="{!location.User_Assigned__c}"/>
+          <apex:column value="{!location.User_Assigned__c}" rendered="{! referralRecordType != 'CareMeridian'}"/>
           <apex:column value="{!location.Status__c}"/>
           <apex:column value="{!location.LastModifiedDate}"/>
         </apex:pageBlockTable>
