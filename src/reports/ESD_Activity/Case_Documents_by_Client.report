@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>Admission__c.Service_Agreements__r.ServiceAssignment_Document_JOs__r$Due_From_Employee_Name__c</field>
+    </columns>
+    <columns>
+        <field>Admission__c.Service_Agreements__r.ServiceAssignment_Document_JOs__r$Document_Name__c</field>
+    </columns>
+    <columns>
+        <field>Admission__c.Service_Agreements__r.ServiceAssignment_Document_JOs__r$Document_DueDate__c</field>
+    </columns>
+    <columns>
+        <field>Admission__c.Service_Agreements__r.ServiceAssignment_Document_JOs__r$Filed_Date_Time__c</field>
+    </columns>
+    <columns>
+        <field>Admission__c.Service_Agreements__r.ServiceAssignment_Document_JOs__r$Filed_By__c</field>
+    </columns>
+    <description>A Case Documents report showing late documents by file status grouped by Client</description>
+    <filter>
+        <criteriaItems>
+            <column>Admission__c.Service_Agreements__r$Status__c</column>
+            <operator>equals</operator>
+            <value>Active</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Admission__c.Service_Agreements__r.ServiceAssignment_Document_JOs__r$Is_Document_Late__c</column>
+            <operator>equals</operator>
+            <value>1</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Admission__c.Service_Agreements__r.ServiceAssignment_Document_JOs__r$File_Status__c</column>
+            <operator>equals</operator>
+            <value>Not Filed</value>
+        </criteriaItems>
+    </filter>
+    <format>Summary</format>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>Admission__c$Person_Being_Served__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>Case Documents by Client</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>Case_Documents__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <sortColumn>Admission__c.Service_Agreements__r.ServiceAssignment_Document_JOs__r$Document_DueDate__c</sortColumn>
+    <sortOrder>Asc</sortOrder>
+    <timeFrameFilter>
+        <dateColumn>Admission__c$CreatedDate</dateColumn>
+        <interval>INTERVAL_CURRENT</interval>
+    </timeFrameFilter>
+</Report>
