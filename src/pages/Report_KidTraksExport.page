@@ -108,7 +108,7 @@
 {!mapresults}
 -->
 
-<apex:outputPanel layout="block" id="parameterPanel" style="width: 600px;">
+<apex:outputPanel layout="block" id="parameterPanel" style="width: 800px;">
 	<apex:pageBlock title="KidTraks Export: Parameters">
 		<apex:pageBlockSection >
 	        <apex:input id="start_date" 
@@ -125,11 +125,18 @@
 				label="End Date"
 				value="{!reportEndDate}"
 				required="true"/>
-			<apex:selectList value="{!reportProgram}" size="1">
+				<apex:pageBlockSectionItem >
+			<apex:outputLabel for="program" value="Program" />
+			<apex:selectList id="program" value="{!reportProgram}" size="1">
 				<apex:selectOptions value="{!reportPrograms}" />
 			</apex:selectList>		
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem >
+			<apex:outputText value="" />
+			<apex:commandButton value="Run Report" action="{!submitParams}" />
+			</apex:pageBlockSectionItem> 
 		</apex:pageBlockSection>
-		<apex:commandButton value="Run Report" action="{!submitParams}" />
+		
 	</apex:pageBlock>
 </apex:outputPanel>
 
