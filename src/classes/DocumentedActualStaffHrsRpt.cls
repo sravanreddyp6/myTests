@@ -14,6 +14,9 @@ public with sharing class DocumentedActualStaffHrsRpt {
     
     public List<StaffHrsInfo> listStaffHrsInfo = new List<StaffHrsInfo>();
     public List<StaffHrsInfo> getListStaffHrsInfo(){return listStaffHrsInfo;}
+    
+    public List<StaffHrsInfo> finalStaffHrsInfo = new List<StaffHrsInfo>();
+    public List<StaffHrsInfo> getFinalStaffHrsInfo(){return finalStaffHrsInfo;}
         
     public DocumentedActualStaffHrsRpt () {
        //fStartDate = system.today();
@@ -43,7 +46,7 @@ public with sharing class DocumentedActualStaffHrsRpt {
         
         Results = [Select  id,     
                         Admission__r.Person_Being_Served__r.FirstName, 
-                        Admission__r.Person_Being_Served__r.LastName,
+                        Admission__r.Person_Being_Served__r.LastName,                        
                         Phase__c,                        
                         Start_Date__c,
                         End_Date__c
@@ -67,20 +70,12 @@ public with sharing class DocumentedActualStaffHrsRpt {
                         Start_Time__c,
                         End_Time__c
                         From Progress_Note__c Where 
-                           Service_Assignment__c = :SA.id 
-                          /*AND
-                            ( 
-                              ((SA.Start_Date__c >= :fStartDate OR SA.End_Date__c >= :fStartDate) 
-                             AND  
-                               (SA.Start_Date__c <= :fEndDate OR SA.End_Date__c <= :fEndDate) )                         
-                             OR
-                               (SA.Start_Date__c  <= :fEndDate AND SA.End_Date__c = null )
-                            ) ) */                              
-                   ]; 
-                        
-            for(Progress_Note__c pn: PNResults){ 
+                           Service_Assignment__c = :SA.id                          
+                   ];                           
+                                              
+            for(Progress_Note__c pn: PNResults) {              	         	                	 
                 dataRow.clinician =  pn.First_Name__c+' '+pn.Last_Name__c;
-                Decimal totalMinutes = ((pn.End_Time__c.getTime() - pn.Start_Time__c.getTime())/1000)/60;
+                Decimal totalMinutes = ((pn.End_Time__c.getTime() - pn.Start_Time__c.getTime())/60000);
             
                 dataRow.totalMinutes = String.valueOf(totalMinutes);                
                 dataRow.hours = String.valueOf((totalMinutes/60).setscale(2));
@@ -98,22 +93,34 @@ public with sharing class DocumentedActualStaffHrsRpt {
                 if (SA.Phase__c == 4) {
                     dataRow.phase = 'G'; 
                 }
-                                  
-                listStaffHrsInfo.add(dataRow);
+                
+                listStaffHrsInfo.add(dataRow);                                                      
             }                                                                                                                                       
         }
         allCount = listStaffHrsInfo.size();
+                              
+        integer index = 0;                                 
+        finalStaffHrsInfo.add(listStaffHrsInfo.get(0));
         
-        for(Service_Assignment__c SA: Results){
-            //integer i = ParsedData.get(SA.Admission__r.State__c);            
-            //i +=1;
-            if(!uniquePBS.contains(sa.Admission__r.Person_Being_Served__r.id)){
-                //ParsedData.put(SA.Admission__r.State__c, i);
-                Allcount +=1;
-                filteredResults.add(SA);
-            }
-            uniquePBS.add(sa.Admission__r.Person_Being_Served__r.id);
+        // Aggregate	    
+        for (StaffHrsInfo row : listStaffHrsInfo) {        	
+        	StaffHrsInfo tempRow = finalStaffHrsInfo.get(index);    
+        	     	       	        	        	       	                                
+            if (tempRow.clinician.equals(row.clinician) && tempRow.pbs.equals(row.pbs)) { 
+                Decimal tm = Decimal.valueOf(tempRow.totalMinutes) + Decimal.valueOf(row.totalMinutes);                 
+                tempRow.totalMinutes = String.valueOf(tm);
+                tempRow.hours = String.valueOf((tm/60).setscale(2));                                         
+                tempRow.clinician = row.clinician; 
+        	    tempRow.pbs = row.pbs;
+        	    tempRow.phase = row.phase;        	                                  	
+            }      	                	
+        	else {   
+        	    finalStaffHrsInfo.add(row);
+        	    index++;
+            }                       	        
         }
+        listStaffHrsInfo = finalStaffHrsInfo;
+        
         fStartDate = null;
         fEndDate= null;
         return null; 
