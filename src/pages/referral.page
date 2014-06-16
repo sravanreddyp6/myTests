@@ -1046,11 +1046,10 @@ function enableDiagEff() {
             </apex:pageBlockSectionItem>
 
             <apex:inputHidden id="locationEntry_ServiceLocation_lkid" value="{!searchedServiceLocationId}"/>
-            <!---->
-          <!--apex:inputField value="{!location.Service_Location__c}" id="locationEntry_ServiceLocation"/-->
-          <apex:inputField value="{!location.User_Assigned__c}" id="locationEntry_User"/>
-          <apex:inputField value="{!location.Status__c}" id="locationEntry_Status"/>
-          <apex:inputHidden value="{!location.Service_Location__c}" id="locationServiceLocation"/>
+          
+			<apex:inputField value="{!location.User_Assigned__c}" id="locationEntry_User" rendered="{! referralRecordType != 'CareMeridian'}"/>
+            <apex:inputField value="{!location.Status__c}" id="locationEntry_Status" />
+            <apex:inputHidden value="{!location.Service_Location__c}" id="locationServiceLocation"/>
         </apex:pageBlockSection>
       </apex:pageBlock>
     </apex:outputPanel>
@@ -1398,8 +1397,6 @@ function enableDiagEff() {
         <apex:inputField value="{!Referral__c.CHESSIE_ID__c}" rendered="{!referralRecordType=='Cambridge Maryland'}" />
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}"/>
 
-        <apex:inputField value="{!Referral__c.Primary_Requested_Location__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
-        <apex:inputField value="{!Referral__c.Secondary_Location__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
      </apex:pageBlockSection>
      <apex:pageBlockSection rendered="{!ReferralRecordType=='Cambridge Florida' || 
                         ReferralRecordType = 'Cambridge Massachusetts' ||
@@ -1743,8 +1740,8 @@ function enableDiagEff() {
      <apex:pageBlockSection title="Anticipated Admission Location Information" columns="1" collapsible="false" id="LocationInfo">
        <apex:inputField value="{!Referral__c.Anticipated_Admission_Date__c}" />
        <apex:inputHidden id="sl_lkid" value="{!Referral__c.Service_Location__c}" />
-       <!-- Added by Kossi 06/06/13 2:00 AM -->
-            <apex:pageBlockSectionItem >
+ 
+           <apex:pageBlockSectionItem >
             <apex:outputLabel value="Alias"/>
             <apex:pageBlockSectionItem >
                 <apex:inputText id="sl" value="{!searchedServiceLocationName2}" size="20"/><a onClick="locationLookup2();"><img valign="bottom" src="/s.gif" alt="Service Location Lookup (New Window)" class="lookupIcon"
@@ -1755,13 +1752,11 @@ function enableDiagEff() {
             </apex:pageBlockSectionItem>
             </apex:pageBlockSectionItem>
 
-            <!--apex:inputHidden id="locationEntry_ServiceLocation_lkid" value="{!searchedServiceLocationId}"/-->
-            <!---->
      </apex:pageBlockSection>
 
        <apex:pageBlockSection columns="1"
-                             title="Locations Working Referral" id="locations"
-                             rendered="{!AND(ReferralRecordType!='NeuroRestorative', ReferralRecordType!='CareMeridian')}">
+                             title="{! if (ReferralRecordType == 'CareMeridian', 'Requested Locations', 'Locations Working Referral')}" id="locations"
+                             rendered="{! ReferralRecordType!='NeuroRestorative'}">
         <apex:pageBlockSectionItem >
           <apex:outputPanel layout="none">
             <apex:commandButton value="Add Location"
@@ -1786,8 +1781,8 @@ function enableDiagEff() {
                                 State="{!location.Service_Location_State__c}"
                                 Zip="{!location.Service_Location_Zip__c}"/>
           </apex:column>
-          <apex:column value="{!location.User_Assigned__c}"/>
-          <apex:column value="{!location.Status__c}"/>
+          <apex:column value="{!location.User_Assigned__c}" rendered="{! ReferralRecordType != 'CareMeridian'}"/>
+          <apex:column value="{!location.Status__c}" />
           <apex:column value="{!location.LastModifiedDate}"/>
         </apex:pageBlockTable>
 

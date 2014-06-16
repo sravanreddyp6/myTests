@@ -1002,13 +1002,16 @@ function checkInputs(){
     toggleOptionsbyStyle('cg_cnc_cb', 'CG_CNC2', 'cg_question'); 
     toggleRefDate(); 
     
+    toggleInialFinalFields();
+    toggleOptionsbyStyle('SC_NoSC_CB', 'holder', 'second_cg_question');
+    
     checkOtherField('PC_Rel', 'PC_Other_Rel', 'Other');    
     checkOtherField('SC_Rel', 'SC_Other_Rel', 'Other');    
     checkOtherField('SC_Emp', 'SC_Occ', 'Employed'); 
     checkOtherField('PC_Emp', 'PC_Occ', 'Employed');   
-    checkOtherField('OC_Rel', 'OC_Other_Rel', 'Other'); 
-    toggleInialFinalFields();
-    toggleOptionsbyStyle('SC_NoSC_CB', 'holder', 'second_cg_question');
+    checkOtherField('OC_Rel', 'OC_Other_Rel', 'Other');    
+    
+    
 };
 j$( document ).ready(function() {
 
