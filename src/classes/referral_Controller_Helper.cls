@@ -38,14 +38,17 @@ public with sharing class referral_Controller_Helper{
     
     @RemoteAction
     public static Referral_Location__c saveReferralLocation(string locID, string locUser, string locServiceLocation, string locStatus, string referralId) {
-      Referral_Location__c loc;                                        
+      Referral_Location__c loc;     
+      if ( String.isEmpty(locUser)) {
+      	locUser  = null;
+      }                                   
       if (String.isEmpty(locID)) {
          loc = new Referral_Location__c(User_Assigned__c = locUser, Service_Location__c= locServiceLocation, Status__c=locStatus, Referral__c=referralId);
       } else {
          loc = new Referral_Location__c(User_Assigned__c = locUser, Service_Location__c= locServiceLocation, Status__c=locStatus, Referral__c=referralId, ID=locID);
       }
-      System.debug('%%%%%%%%% Kossi string locServicelocation'+locServiceLocation);
-      System.debug('%%%%%%%%% Kossi saveReferralLocation'+loc);
+      System.debug('%%%%%%%%% string locServicelocation'+locServiceLocation);
+      System.debug('%%%%%%%%% saveReferralLocation'+loc);
       upsert loc;                                  
       return loc;
    }
