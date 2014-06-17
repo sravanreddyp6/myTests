@@ -1,0 +1,252 @@
+<apex:page standardController="Service_Assignment_Closure__c" extensions="ServiceAssignmentClosureEditView" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab" showheader="true">
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+    <apex:stylesheet value="{!if ($CurrentPage.parameters.pdf !='1', $Resource.mentoresdcss, $Resource.mentoresdprint)}" />
+    
+    
+    <script type="text/javascript">
+
+	j$ = jQuery.noConflict();
+    
+    function setFocusOnLoad() {};
+    
+    function unsetFields(value){
+      if(value == 'Final Discharge' || value=='--None--' || value=='' || value==null){
+          j$('span[id$=DateofFinalFctField1]').html('');
+      }
+      if(value == 'Step-Down from FCT to other IFCS service' || value == '--None--' || value=='' || value==null){
+      	j$('span[id$=FinalDischargeDateField1]').html('');
+      }
+    }
+    
+    function unsetFields2(value) {
+      if(value=='--None--' || value=='' || value==null) {
+      	j$('span[id$=WasItPlannedField1]').html('');
+      	j$('span[id$=RecentButPriorField1]').html('');
+      }
+      if(value == 'Maintained Family Placement'){
+      	j$('span[id$=WasItPlannedField1]').html('');
+      }
+      if(value == 'Reunified with Family' || value == 'Self care/Planned independent living' || value == 'Maintained out-of-home placement') {
+      	j$('span[id$=RecentButPriorField1]').html('');
+      	j$('span[id$=WasItPlannedField1]').html('');
+      }
+      if(value == 'Placed out-of-home') {
+      	j$('span[id$=RecentButPriorField1]').html('');
+      }    	
+    }
+
+    function unsetFields3(value) {
+      if(value == 'Discharge from IFCS: Family will request support if they should need or desire it' || value == '--None--' || value=='' || value==null) {
+      	j$('span[id$=SpecifyAgencyServiceField1]').html('');
+      	j$('span[id$=ContServDelModelField1]').html('');
+      	j$('span[id$=ComparedToFctField1]').html('');
+      }  	
+    }
+    
+    </script>
+
+<c:PersonalRecord pbsId="{!pbsId}" admId="{!adm.Id}" servAssignId="{!theServAssignId}" parentPage="ServAssignClose" />
+
+<apex:pageMessages />
+<br />
+
+	<apex:form > 
+         
+	    <apex:pageBlock title="Service Assignment Closure">
+
+	      <div class="pbHeaderButton">
+	      	<apex:commandButton action="{!editSac}" value="Edit" rendered="{!!editMode}" />
+	      	<apex:commandButton action="{!save}" value="Save" rendered="{!editMode}" />
+			<apex:commandButton action="{!submit}" value="Finalize" rendered="{!!editMode}" />
+			<apex:commandButton action="{!cancel}" value="Cancel" rendered="{!editMode}" />
+	      </div>
+
+	    	<apex:pageBlockSection id="ServAssignCloseBlock">
+					<apex:outputText value="{!pbs.Name}" label="Person Being Served" />
+					<apex:pageBlockSectionItem />
+					<apex:outputField value="{!adm.Name}" />
+			    	<apex:pageBlockSectionItem />
+			    	<apex:outputField value="{!Service_Assignment_Closure__c.Service_Assignment__c}" />
+			    	<apex:pageBlockSectionItem />
+			    	<apex:outputField value="{!Service_Assignment_Closure__c.Status__c}" />
+			    	<apex:pageBlockSectionItem />
+			    	<apex:pageBlockSectionItem />
+			    	<apex:pageBlockSectionItem />
+			    	<apex:inputField value="{!Service_Assignment_Closure__c.IFCS_Record_Number__c}" rendered="{!editMode}" />
+			    	<apex:outputField value="{!Service_Assignment_Closure__c.IFCS_Record_Number__c}" rendered="{!!editMode}" />
+			    	<apex:pageBlockSectionItem />
+			    	<apex:outputField value="{!pbs.OwnerId}" label="Primary FCS" />
+			    	<apex:pageBlockSectionItem />
+			    	<apex:outputField value="{!Service_Assignment_Closure__c.Service_Assignment__r.Start_Date__c}" />			    	
+			    	
+			    	<apex:pageBlockSectionItem />
+			    	<apex:pageBlockSectionItem />
+			    	<apex:pageBlockSectionItem />
+			    				    	
+			    	<apex:pageBlockSectionItem >
+			    		<apex:outputLabel value="Final Discharge or Step-Down from FCT to other IFCS service" for="DischargeTypeField" />
+			    		<apex:outputPanel >
+				    		<apex:actionRegion >
+						    	<apex:inputField id="DischargeTypeField" value="{!Service_Assignment_Closure__c.Discharge_Type__c}" rendered="{!editMode}">
+						    		<apex:actionSupport event="onchange" status="myStatus" reRender="FinalDischargeDatePanel,DateOfFinalFctPanel" oncomplete="unsetFields(j$('select[id$=DischargeTypeField]').val());" />			    		
+						    		<apex:actionStatus id="myStatus" >
+									    <apex:facet name="start">
+									        <div  class="thinking">
+									            <div class="thinkingwheel">
+									                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp;Processing...</span>
+									            </div>
+									        </div>
+									    </apex:facet>  
+									    <apex:facet name="stop"></apex:facet>         
+									</apex:actionStatus>
+						    	</apex:inputField>
+				    		</apex:actionRegion>
+				    		<apex:outputField value="{!Service_Assignment_Closure__c.Discharge_Type__c}" label="Final Discharge or Step-Down from FCT to other IFCS service" rendered="{!!editMode}" />
+			    		</apex:outputPanel>
+			    	</apex:pageBlockSectionItem>
+		    			<apex:pageBlockSectionItem >
+		    				<apex:outputLabel value="Final Discharge Date" />
+		    				<apex:outputPanel id="FinalDischargeDatePanel">
+		    					<apex:outputField id="FinalDischargeDateField1" value="{!Service_Assignment_Closure__c.Final_Discharge_Date__c}" rendered="{!editMode && Service_Assignment_Closure__c.Discharge_Type__c!='Final Discharge'}" />
+		    					<apex:inputField id="FinalDischargeDateField2" value="{!Service_Assignment_Closure__c.Final_Discharge_Date__c}" rendered="{!editMode && Service_Assignment_Closure__c.Discharge_Type__c=='Final Discharge'}" required="true" />
+		    					<apex:outputField id="FinalDischargeDateField3" value="{!Service_Assignment_Closure__c.Final_Discharge_Date__c}" rendered="{!!editMode}" />
+				    		</apex:outputPanel>
+				    	</apex:pageBlockSectionItem>
+				    <apex:pageBlockSectionItem />
+	    			<apex:pageBlockSectionItem >
+	    				<apex:outputLabel value="Date of Final FCT Meeting" />			    	
+			    		<apex:outputPanel id="DateOfFinalFctPanel">
+				    		<apex:outputField id="DateofFinalFctField1" value="{!Service_Assignment_Closure__c.Date_of_Final_FCT_Meeting__c}" rendered="{!editMode && Service_Assignment_Closure__c.Discharge_Type__c!='Step-Down from FCT to other IFCS service'}" />
+				    		<apex:inputField id="DateofFinalFctField2" value="{!Service_Assignment_Closure__c.Date_of_Final_FCT_Meeting__c}" rendered="{!editMode && Service_Assignment_Closure__c.Discharge_Type__c=='Step-Down from FCT to other IFCS service'}" required="true" />
+				    		<apex:outputField id="DateofFinalFctField3" value="{!Service_Assignment_Closure__c.Date_of_Final_FCT_Meeting__c}" rendered="{!!editMode}" />
+			    		</apex:outputPanel>
+			    	</apex:pageBlockSectionItem>
+
+			    	<apex:pageBlockSectionItem />
+			    	<apex:pageBlockSectionItem />
+			    	<apex:pageBlockSectionItem >
+			    		<apex:outputLabel value="Placement Status at Discharge" for="PlacementStatusField" />
+			    		<apex:outputPanel >
+				    		<apex:actionRegion >
+				    			<apex:inputField id="PlacementStatusField" value="{!Service_Assignment_Closure__c.Placement_Status_at_Discharge__c}" rendered="{!editMode}">
+				    				<apex:actionSupport event="onchange" status="myStatus" reRender="SpecifyWherePanel,PlacementRecentPanel,WasPlacementPlannedPanel" oncomplete="unsetFields2(j$('select[id$=PlacementStatusField]').val());" />
+			    					<apex:actionStatus id="myStatus" >
+									    <apex:facet name="start">
+									        <div  class="thinking">
+									            <div class="thinkingwheel">
+									                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp;Processing...</span>
+									            </div>
+									        </div>
+									    </apex:facet>  
+									    <apex:facet name="stop"></apex:facet>         
+									</apex:actionStatus>
+								</apex:inputField>
+				    		</apex:actionRegion>
+			    			<apex:outputField value="{!Service_Assignment_Closure__c.Placement_Status_at_Discharge__c}" rendered="{!!editMode}" />
+			    		</apex:outputPanel>
+			    	</apex:pageBlockSectionItem>		    	
+			    	
+	    			<apex:pageBlockSectionItem >
+	    				<apex:outputLabel value="Specify where" />	
+	    				<apex:outputPanel id="SpecifyWherePanel">			    	
+			    			<apex:outputField value="{!Service_Assignment_Closure__c.Specify_Where__c}" rendered="{!editMode && (Service_Assignment_Closure__c.Placement_Status_at_Discharge__c==null || Service_Assignment_Closure__c.Placement_Status_at_Discharge__c=='--None--')}" />
+			    			<apex:inputField value="{!Service_Assignment_Closure__c.Specify_Where__c}" rendered="{!editMode && Service_Assignment_Closure__c.Placement_Status_at_Discharge__c!=null}" required="true" />
+			    			<apex:outputField value="{!Service_Assignment_Closure__c.Specify_Where__c}" rendered="{!!editMode}" />
+			    		</apex:outputPanel>
+			    	</apex:pageBlockSectionItem>
+
+					<apex:pageBlockSectionItem />
+	    			<apex:pageBlockSectionItem >
+	    				<apex:outputLabel value="Was placement at home recent but prior to services?" />	
+	    				<apex:outputPanel id="PlacementRecentPanel">				    	
+					    	<apex:outputField id="RecentButPriorField1" value="{!Service_Assignment_Closure__c.Home_Placement_Recent_but_Prior__c}" rendered="{!editMode && Service_Assignment_Closure__c.Placement_Status_at_Discharge__c!='Maintained Family Placement'}" />
+					    	<apex:inputField id="RecentButPriorField2" value="{!Service_Assignment_Closure__c.Home_Placement_Recent_but_Prior__c}" rendered="{!editMode && Service_Assignment_Closure__c.Placement_Status_at_Discharge__c=='Maintained Family Placement'}" required="true" />
+					    	<apex:outputField id="RecentButPriorField3" value="{!Service_Assignment_Closure__c.Home_Placement_Recent_but_Prior__c}" rendered="{!!editMode}" />
+			    		</apex:outputPanel>
+			    	</apex:pageBlockSectionItem>
+			    	
+			    	<apex:pageBlockSectionItem />
+	    			<apex:pageBlockSectionItem >
+	    				<apex:outputLabel value="If an out-of-home placement occurred or was maintained, was it planned?" />	
+	    				<apex:outputPanel id="WasPlacementPlannedPanel">				    	
+					    	<apex:outputField id="WasItPlannedField1" value="{!Service_Assignment_Closure__c.Was_Out_of_Home_Placement_Planned__c}" rendered="{!editMode && ( Service_Assignment_Closure__c.Placement_Status_at_Discharge__c!='Placed out-of-home' && Service_Assignment_Closure__c.Placement_Status_at_Discharge__c != 'Maintained out-of-home placement')}" />
+					    	<apex:inputField id="WasItPlannedField2" value="{!Service_Assignment_Closure__c.Was_Out_of_Home_Placement_Planned__c}" rendered="{!editMode && ( Service_Assignment_Closure__c.Placement_Status_at_Discharge__c=='Placed out-of-home' ||Service_Assignment_Closure__c.Placement_Status_at_Discharge__c == 'Maintained out-of-home placement') }" required="true" />
+					    	<apex:outputField id="WasItPlannedField3" value="{!Service_Assignment_Closure__c.Was_Out_of_Home_Placement_Planned__c}" rendered="{!!editMode}" />
+			    		</apex:outputPanel>
+			    	</apex:pageBlockSectionItem>			    	
+			    	
+			    	<apex:inputField value="{!Service_Assignment_Closure__c.Reason_for_Discharge__c}" rendered="{!editMode}" />
+			    	<apex:outputField value="{!Service_Assignment_Closure__c.Reason_for_Discharge__c}" rendered="{!!editMode}" />
+			    </apex:pageBlockSection>	
+			<hr />
+			    <apex:pageBlockSection title="Progress in Treatment" columns="1" collapsible="false">
+			    	<apex:selectList value="{!Service_Assignment_Closure__c.Primary_Treatment_Goal__c}" size="1" rendered="{!editMode}">
+			    		<apex:selectOptions value="{!actionPlanGoalSelectOptions}" />
+			    	</apex:selectList>
+			    	<apex:outputField value="{!Service_Assignment_Closure__c.Primary_Treatment_Goal__c}" rendered="{!!editMode}" />
+			    	<apex:inputField value="{!Service_Assignment_Closure__c.FCS_Staff_Report__c}" rendered="{!editMode}" />
+			    	<apex:outputField value="{!Service_Assignment_Closure__c.FCS_Staff_Report__c}" rendered="{!!editMode}" />
+			    	<apex:inputField value="{!Service_Assignment_Closure__c.Family_Individual_Report__c}" rendered="{!editMode}" />
+			    	<apex:outputField value="{!Service_Assignment_Closure__c.Family_Individual_Report__c}" rendered="{!!editMode}" />
+			    	<apex:inputField value="{!Service_Assignment_Closure__c.Family_Individual_Rating__c}" rendered="{!editMode}" label="Ask the family/individual to rate their overall perception of treatment: IFCS has improved our family life (functioning)" />
+			    	<apex:outputField value="{!Service_Assignment_Closure__c.Family_Individual_Rating__c}" rendered="{!!editMode}" label="Ask the family/individual to rate their overall perception of treatment: IFCS has improved our family life (functioning)" />
+			    	<apex:inputField value="{!Service_Assignment_Closure__c.Follow_up_Request_Received__c}" rendered="{!editMode}" label="Has the family received the request for follow-up contact?" />
+			    	<apex:outputField value="{!Service_Assignment_Closure__c.Follow_up_Request_Received__c}" rendered="{!!editMode}" label="Has the family received the request for follow-up contact?" />
+
+			    	<apex:pageBlockSectionItem >
+			    		<apex:outputLabel value="Aftercare Plan/Services" for="AftercarePlanServicesField" />
+			    		<apex:outputPanel >
+				    		<apex:actionRegion >
+				    			<apex:inputField id="AftercarePlanServicesField" value="{!Service_Assignment_Closure__c.Aftercare_Plan_Services__c}" rendered="{!editMode}">
+				    				<apex:actionSupport event="onchange" status="myStatus" reRender="SpecifyAgencyPanel,ContServDelModelPanel,ComparedToFctPanel" oncomplete="unsetFields3(j$('select[id$=AftercarePlanServicesField]').val());" />
+			    					<apex:actionStatus id="myStatus" >
+									    <apex:facet name="start">
+									        <div  class="thinking">
+									            <div class="thinkingwheel">
+									                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp;Processing...</span>
+									            </div>
+									        </div>
+									    </apex:facet>  
+									    <apex:facet name="stop"></apex:facet>         
+									</apex:actionStatus>
+								</apex:inputField>
+				    		</apex:actionRegion>
+			    		<apex:outputField value="{!Service_Assignment_Closure__c.Aftercare_Plan_Services__c}" rendered="{!!editMode}" />
+			    		</apex:outputPanel>
+			    	</apex:pageBlockSectionItem>
+			    	
+
+	    			<apex:pageBlockSectionItem >
+	    				<apex:outputLabel value="Specify agency/service" />			    	
+				    	<apex:outputPanel id="SpecifyAgencyPanel">
+				    		<apex:outputField id="SpecifyAgencyServiceField1" value="{!Service_Assignment_Closure__c.Specify_agency_service__c}" rendered="{!editMode && Service_Assignment_Closure__c.Aftercare_Plan_Services__c!='Discharge from IFCS: Referral made for after care services'}" />
+				    		<apex:inputField id="SpecifyAgencyServiceField2" value="{!Service_Assignment_Closure__c.Specify_agency_service__c}" rendered="{!editMode && Service_Assignment_Closure__c.Aftercare_Plan_Services__c=='Discharge from IFCS: Referral made for after care services'}" required="true" />
+				    		<apex:outputField id="SpecifyAgencyServiceField3" value="{!Service_Assignment_Closure__c.Specify_agency_service__c}" rendered="{!!editMode}" />
+				    	</apex:outputPanel>
+				    </apex:pageBlockSectionItem>
+
+	    			<apex:pageBlockSectionItem >
+	    				<apex:outputLabel value="If the family is continuing with another IFCS service, specify the continuing service delivery model(s)" />				    	
+				    	<apex:outputPanel id="ContServDelModelPanel">
+					    	<apex:outputField id="ContServDelModelField1" value="{!Service_Assignment_Closure__c.Continuing_Service_Delivery_Model_s__c}" rendered="{!editMode && Service_Assignment_Closure__c.Aftercare_Plan_Services__c!='Discharge from IFCS: Referral made for after care services'}" />
+					    	<apex:inputField id="ContServDelModelField2" value="{!Service_Assignment_Closure__c.Continuing_Service_Delivery_Model_s__c}" rendered="{!editMode && Service_Assignment_Closure__c.Aftercare_Plan_Services__c=='Discharge from IFCS: Referral made for after care services'}" required="true" />
+					    	<apex:outputField id="ContServDelModelField3" value="{!Service_Assignment_Closure__c.Continuing_Service_Delivery_Model_s__c}" rendered="{!!editMode}" />
+				    	</apex:outputPanel>
+				    </apex:pageBlockSectionItem>
+				    
+				    <apex:pageBlockSectionItem >
+	    				<apex:outputLabel value="Compared to FCT, aftercare services are" />
+				    	<apex:outputPanel id="ComparedToFctPanel">
+					    	<apex:outputField id="ComparedToFctField1" value="{!Service_Assignment_Closure__c.Compared_to_FCT_aftercare_services_are__c}" rendered="{!editMode && Service_Assignment_Closure__c.Aftercare_Plan_Services__c!='Discharge from IFCS: Referral made for after care services'}" />
+					    	<apex:inputField id="ComparedToFctField2" value="{!Service_Assignment_Closure__c.Compared_to_FCT_aftercare_services_are__c}" rendered="{!editMode && Service_Assignment_Closure__c.Aftercare_Plan_Services__c=='Discharge from IFCS: Referral made for after care services'}" required="true" />
+					    	<apex:outputField id="ComparedToFctField3" value="{!Service_Assignment_Closure__c.Compared_to_FCT_aftercare_services_are__c}" rendered="{!!editMode}" />
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					
+			</apex:pageBlockSection>
+	    </apex:pageBlock>
+	</apex:form>
+
+</apex:page>
