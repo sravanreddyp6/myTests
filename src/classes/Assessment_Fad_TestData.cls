@@ -8,7 +8,10 @@ public class Assessment_Fad_TestData {
                                             'PBS_Problem_Solving','PBS_Communication','PBS_Roles','PBS_Affective_Responses','PBS_Affective_Involvement',
                                             'PBS_Behavior_Control','PBS_General_Functioning','CG_Problem_Solving','CG_Communication','CG_Roles',
                                             'CG_Affective_Responses','CG_Affective_Involvement','CG_Behavior_Control','CG_General_Functioning',
-                                            'CG_is_same_as_other_assessment'};    
+                                            'CG_is_same_as_other_assessment', 'Caregiver_Who_Completed_Assessment', 'PC_Highest_Edu', 'PC_Employment',
+                                            'Caregiver_Who_Completed_Assessment', 'SC_No_SC', 'SC_Received_FCT_before', 'PC_Received_FCT_before', 'SC_Occupation', 'PC_Occupation',
+                                            'PC_Name', 'SC_Name', 'PC_Relationship_to_PBS', 'SC_Relationship_to_PBS', 'PC_Relationship_to_PBS_Other', 'SC_Relationship_to_PBS_Other',
+                                            'SC_Highest_Edu', 'PC_Highest_Edu', 'SC_Employment', 'PC_Employment'};    
 
     public static void createTestData(){
 
