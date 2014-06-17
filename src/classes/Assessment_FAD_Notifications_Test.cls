@@ -62,7 +62,7 @@ private class Assessment_FAD_Notifications_Test{
         insert Adm2;
         
         Service_Assignment__c SA1 = new Service_Assignment__c(
-        	phase_1_Start_Date__c = system.today().addDays(-10),
+            phase_1_Start_Date__c = system.today().addDays(-7),
             Admission__c = adm2.id,
             Person_Being_served__c = aContactId,
             Program__c = 'IFCS'
@@ -70,13 +70,21 @@ private class Assessment_FAD_Notifications_Test{
         );
         insert SA1;
         Service_Assignment__c SA2 = new Service_Assignment__c(
-        	phase_1_Start_Date__c = system.today().addDays(-80),
+            phase_1_Start_Date__c = system.today().addDays(-80),
             Admission__c = adm2.id,
             Person_Being_served__c = aContactId,
             Program__c = 'IFCS'
         
         );
-        insert SA2;        
+        insert SA2;   
+        Service_Assignment__c SA3 = new Service_Assignment__c(
+            phase_1_Start_Date__c = system.today().addDays(-160),
+            Admission__c = adm2.id,
+            Person_Being_served__c = aContactId,
+            Program__c = 'IFCS'
+        
+        );
+        //insert SA3;               
         Assessment_Type__c testAssmtType = new Assessment_Type__c(
             Name = 'CANS'           
         );
@@ -141,13 +149,18 @@ private class Assessment_FAD_Notifications_Test{
             TFC_Family_Vistas__c = 'No'         
         );
         insert testAssmt4;
-            
+        
         Assessment_FAD_Notifications aN3 = new Assessment_FAD_Notifications('SELECT Id, Status__c FROM Service_Assignment__c');
-                
+               
 
             ID batchprocessid = Database.executeBatch(aN3, 200);
-            //System.Debug('What is aN: ' + aN);
-            //System.Debug('What is batchprocessid: ' + batchprocessid);
+            
+        sa2.phase_1_Start_Date__c = system.today().addDays(-160); 
+            Assessment_FAD_Notifications     aN4 = new Assessment_FAD_Notifications('SELECT Id, Status__c FROM Service_Assignment__c');
+               
+
+            ID batchprocessid2 = Database.executeBatch(aN4, 200);
+
         
     }
 
