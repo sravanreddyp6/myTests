@@ -11,8 +11,16 @@ public class ServiceAssignmentValidation {
         for(Service_Assignment__c sA : newObjects) {
             sA.DocDueFromPerson__c = sA.Person_Being_Served__r.Owner.Id;
         }
+          
+          //RBO-287 HOTFix
+        /*
+         * RBO-287, 6/11/14: Commented out the following line to prevent checks for Progress Note End Dates on the new Service Assignment,
+         * which actually should never happen.  This was hitting a 100,000 record limit and throwing an error, since the "IN" filter
+         * for the Service Assignment was empty, resulting in ALL progress notes being returned.
+         *  
+         */        
             
-        ServiceAssignmentValidation.checkProgressNoteEndDates(newObjects);
+        //ServiceAssignmentValidation.checkProgressNoteEndDates(newObjects);
     }
 
     public void OnAfterInsert(Service_Assignment__c[] newObjects){
