@@ -28,7 +28,6 @@ public with sharing class allTabs {
            tmp.prefix = f.getDescribe().getKeyPrefix();
            tmp.name = f.getDescribe().getName();
            tmp.isCustom = f.getDescribe().isCustom();
-           tmp.cObjs = f.getDescribe().getChildRelationships();
            
            options.add(tmp);
        }
