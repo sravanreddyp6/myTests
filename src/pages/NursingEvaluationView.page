@@ -42,8 +42,13 @@
 	    .rowstyle { border-bottom-style:solid; border-bottom-width:1px;border-bottom-color:#E8E8E8 }
         
     </style>
-	<div class="breadcrumb">
-        <a href="/">Home</a> > <a href="/{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__c}">Person Being Served</a> > <a href="/{!Evaluation__c.ServiceAssignment__r.Admission__c}">Admission</a> > <a href="/{!Evaluation__c.ServiceAssignment__c}" >ServiceAssignment</a> > {!Evaluation__c.Name}
+	<div id="breadcrumb" class="breadcrumb">
+	<a href="/">Home</a>&nbsp;>&nbsp;
+    <a href="/apex/PersonsBeingServedListView">Persons Being Served</a>&nbsp;>&nbsp;
+    <a href="/{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__c}">{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__r.Name}</a>&nbsp;>&nbsp;
+    <a href="/{!Evaluation__c.ServiceAssignment__r.Admission__c}">Admission</a>&nbsp;>&nbsp;
+    <a href="/{!Evaluation__c.ServiceAssignment__c}" >Service Assignment</a>&nbsp;>&nbsp;
+    <apex:outputText value="Nursing Assessment" />
     </div>
  	<apex:form id="wholePage">
  	<apex:pageMessages id="pageMessages"/>
