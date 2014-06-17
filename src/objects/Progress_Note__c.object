@@ -40,7 +40,9 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>Tab</actionName>
-        <type>Default</type>
+        <content>Progress_Notes_List_View</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
@@ -1190,7 +1192,7 @@
         <externalId>false</externalId>
         <formula>datevalue(CreatedDate) - Date_of_Service__c</formula>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
-        <label># Days Created past DOS</label>
+        <label>Days Since Creation</label>
         <precision>18</precision>
         <required>false</required>
         <scale>0</scale>
@@ -2876,6 +2878,19 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Staff_Employee_ID__c</fullName>
+        <description>Employee Number from the User Object for the Staff Name selected on the Progress Note.</description>
+        <externalId>false</externalId>
+        <formula>Staff_Name__r.EmployeeNumber</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Practitioner ID</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Staff_Name__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
@@ -3323,6 +3338,44 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <columns>CREATEDBY_USER</columns>
         <filterScope>Mine</filterScope>
         <label>My Progress Notes</label>
+    </listViews>
+    <listViews>
+        <fullName>My_Progress_Notes_Unfinalized</fullName>
+        <columns>Date_of_Service_String__c</columns>
+        <columns>Total_Time__c</columns>
+        <columns>NAME</columns>
+        <columns>Auth_Service_Code__c</columns>
+        <columns>Start_Time__c</columns>
+        <columns>End_Time__c</columns>
+        <columns>Program_Detail__c</columns>
+        <columns>Approval_Status__c</columns>
+        <columns>Disregard_Note__c</columns>
+        <columns>CREATEDBY_USER</columns>
+        <columns>Created_by_Title__c</columns>
+        <filterScope>Mine</filterScope>
+        <filters>
+            <field>Status__c</field>
+            <operation>equals</operation>
+            <value>In Progress</value>
+        </filters>
+        <label>My Progress Notes-Unfinalized</label>
+        <sharedTo>
+            <roleAndSubordinates>FL_Broward_Plantation</roleAndSubordinates>
+            <roleAndSubordinates>FL_Broward_Plantation_Clinical_Users</roleAndSubordinates>
+            <roleAndSubordinates>FL_Miami_Dade</roleAndSubordinates>
+            <roleAndSubordinates>FL_Miami_Dade_Clinical_Users</roleAndSubordinates>
+            <roleAndSubordinates>NC</roleAndSubordinates>
+            <roleAndSubordinates>NCGreensboro</roleAndSubordinates>
+            <roleAndSubordinates>NCRockingham</roleAndSubordinates>
+            <roleAndSubordinates>NC_Charlotte</roleAndSubordinates>
+            <roleAndSubordinates>NC_Charlotte_Clinical_Users</roleAndSubordinates>
+            <roleAndSubordinates>NC_Greensboro_Clinical_Users</roleAndSubordinates>
+            <roleAndSubordinates>NC_Raleigh</roleAndSubordinates>
+            <roleAndSubordinates>NC_Raleigh_Clinical_Users</roleAndSubordinates>
+            <roleAndSubordinates>NC_Rockingham_Clinical_Users</roleAndSubordinates>
+            <roleAndSubordinates>NC_Wilmington</roleAndSubordinates>
+            <roleAndSubordinates>NC_Wilmington_Clinical_Users</roleAndSubordinates>
+        </sharedTo>
     </listViews>
     <listViews>
         <fullName>Progress_Note_Approval_Queue</fullName>
@@ -16366,6 +16419,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <customTabListAdditionalFields>Type_of_Contact__c</customTabListAdditionalFields>
         <customTabListAdditionalFields>Purpose_Nature_of_Service__c</customTabListAdditionalFields>
         <customTabListAdditionalFields>Plan__c</customTabListAdditionalFields>
+        <excludedStandardButtons>New</excludedStandardButtons>
         <excludedStandardButtons>ChangeOwner</excludedStandardButtons>
         <searchResultsAdditionalFields>Last_Name__c</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>Date_of_Service__c</searchResultsAdditionalFields>

@@ -36,6 +36,7 @@ public with sharing class referral_Controller2 {
   public String referralLocationName { get; set; }
   public Map<Id, Boolean> editableTasks { get; set; }
   public Boolean isCambridge { get; set; }
+  public Boolean isCareMeridian{get; set;}
   
      
     public List<Attachment> Attachments{
@@ -97,7 +98,7 @@ public with sharing class referral_Controller2 {
   		system.debug( 'Ref record type: ' + referralrecordtype );
   		system.debug(' is cambridge:' + iscambridge);
   		system.debug(' operatinggroup:' + operatinggroup);
-  		return ((operatinggroup == 'Cambridge' && isCambridge )|| (operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ));
+  		return ((operatinggroup == 'Cambridge' && isCambridge )|| (operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ) || (operatinggroup == 'CareMeridian'));
   	} set;}
     
 
@@ -150,9 +151,13 @@ public with sharing class referral_Controller2 {
 
     setIsEditor();
     isCambridge = false;
+    isCareMeridian = false;
     referralRecordType= (this.ReferralRecord.RecordTypeId != null)?Utility.getRecordTypeForReferral(Id.valueOf(this.ReferralRecord.RecordTypeId)):'';//(this.ReferralRecord.RecordType.Name!=null)?this.ReferralRecord.RecordType.Name:[select name from recordtype where id=:this.referralRecord.recordTypeId limit 1].name;
     if(referralRecordType.startsWith('Cambridge')) {
         isCambridge = true;
+    }
+    if(referralRecordType.startsWith('CareMeridian')){
+    	isCareMeridian = true;
     }
   }
 
@@ -180,6 +185,7 @@ public with sharing class referral_Controller2 {
         // ERC-93 - fill evaluated by field on Referral with current user
         TMN_User__c curruser = [ select id from tmn_user__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];
         referralRecord.evaluated_by_internal__c = curruser.id;
+        referralRecord.Has_Evaluation__c = true;
         update referralRecord;
         
         return new PageReference('/' + eval.Id + '/e');
@@ -378,6 +384,14 @@ public with sharing class referral_Controller2 {
   public void showAddFundingSource() {
     fundingSource = new Funding_Source__c();
     fundingSource.RecordTypeId = Utility.getFundingSourceRecordTypeFromReferral(this.ReferralRecord);
+    
+    List<RecordType> cmrt = [ select id from recordtype where sobjecttype='Funding_Source__c' and developername = 'CareMeridian_FS'];
+    if (cmrt.size() > 0) {
+    	ID CMID = cmrt[0].Id;
+	    if ( fundingSource.RecordTypeId == CMID)
+    		fundingSource.Authorization_type__c = 'Initial'; // set default value that is not being honored in late render on jquery dialog
+    }
+    
     fundingSource.Referral__c = this.referralRecord.Id;
   }
 
@@ -511,7 +525,8 @@ public with sharing class referral_Controller2 {
     }
 
     System.Debug( ' anticipated service location = ' +this.referralRecord.Service_Location__c );
-    if ( String.IsBlank(this.referralRecord.Service_Location_Program__c) ) {
+    //Added the And condtion to bypass the conversion error for CareMerdian Flavor - Sravan 5/15/2014.
+    if ( String.IsBlank(this.referralRecord.Service_Location_Program__c) && !isCareMeridian ) {
         messages.Add( 'Anticipated Service Location' );
         hasReq = false;
     }

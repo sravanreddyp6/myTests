@@ -447,6 +447,7 @@ public with sharing class referrals_Controller{
         // ERC-93 - fill evaluated by field on Referral with current user
         TMN_User__c curruser = [ select id from tmn_user__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];
         referralRecord.evaluated_by_internal__c = curruser.id;
+        referralRecord.Has_evaluation__c = true;
         update referralRecord;
         
         return new PageReference('/' + eval.Id + '/e');
@@ -773,6 +774,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
   public void showAddFundingSource() {
     fundingSource = new Funding_Source__c();
     fundingSource.RecordTypeId = Utility.getFundingSourceRecordTypeFromReferral(this.ReferralRecord);
+	defaultAuthTypePicklist( fundingSource );    
   }
 
   public void saveFundingSource() {
@@ -784,8 +786,18 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     this.fundingSources.add(this.fundingSource);
     this.fundingSource = new Funding_Source__c();
     fundingSource.RecordTypeId = Utility.getFundingSourceRecordTypeFromReferral(this.ReferralRecord);
+    defaultAuthTypePicklist( fundingSource );
  }
 
+ private void defaultAuthTypePicklist ( Funding_Source__c fs ) {
+ 	 List<RecordType> cmrt = [ select id from recordtype where sobjecttype='Funding_Source__c' and developername = 'CareMeridian_FS'];
+    if (cmrt.size() > 0) {
+    	ID CMID = cmrt[0].Id;
+	    if ( fs.RecordTypeId == CMID)
+    		fs.Authorization_type__c = 'Initial'; // set default value that is not being honored in late render on jquery dialog
+    }
+ }
+ 
   public void showAddRelParty() {
     relParty = new Related_Party__c();
     relParty.RecordTypeId = Utility.getRelatedPartyRecordTypeFromReferral(this.ReferralRecord);

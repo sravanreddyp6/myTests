@@ -64,6 +64,9 @@
         <field>Progress_Note__c.End_Time_Only__c</field>
     </columns>
     <columns>
+        <field>Progress_Note__c.Days_Created_past_DOS__c</field>
+    </columns>
+    <columns>
         <field>Progress_Note__c.Primary_Care_Provider_Name__c</field>
     </columns>
     <columns>
@@ -98,19 +101,9 @@
             <value></value>
         </criteriaItems>
         <criteriaItems>
-            <column>Progress_Note__c.Purpose_Service_is_Billable__c</column>
-            <operator>equals</operator>
-            <value>1</value>
-        </criteriaItems>
-        <criteriaItems>
             <column>Progress_Note__c.Status__c</column>
             <operator>equals</operator>
             <value>Final</value>
-        </criteriaItems>
-        <criteriaItems>
-            <column>FK_$Service_Assignment__c.Program__c</column>
-            <operator>notEqual</operator>
-            <value>IFCS</value>
         </criteriaItems>
     </filter>
     <format>Tabular</format>

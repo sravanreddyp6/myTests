@@ -1,5 +1,7 @@
 public with sharing class EvaluationHandler {
     private boolean m_isExecuting = false;
+    public List <Evaluation_Response__c> tobedelAnnos = new List<Evaluation_Response__c>();
+    public List<Evaluation__c> annoEvals = new List<Evaluation__c>();
 
     public EvaluationHandler(boolean isExecuting){
         m_isExecuting = isExecuting;
@@ -9,6 +11,7 @@ public with sharing class EvaluationHandler {
         // EXECUTE BEFORE INSERT LOGIC
         for (Evaluation__c newObject: newObjects) {
             validateFields(newObject);
+            
         }
     }
 
@@ -28,6 +31,20 @@ public with sharing class EvaluationHandler {
             }
             eUpdated.Is_Being_Signed__c = false;
         }
+        //Logic to Delete Annotations on NeuroTab when Pain Present field's value is set to 'No' or 'None'.
+       	for(Evaluation__c anno : updatedObjects){
+       		if(anno.Pain_Present__c != 'Yes')
+       			annoEvals.add(anno);
+       			
+       	}
+       	if(annoEvals.size()>0){
+        for(Evaluation_Response__c ers : [SELECT ID FROM Evaluation_Response__c WHERE Evaluation__c IN:annoEvals AND RecordType.Name = 'NeuroAnnotation']){
+        		tobedelAnnos.add(ers); 			
+        }
+       		if(tobedelAnnos.size()>0)
+        	delete tobedelAnnos; 
+       	}
+      
     }
 
     public void OnAfterUpdate(Evaluation__c[] oldObjects, Evaluation__c[] updatedObjects, Map<Id,Evaluation__c> newObjMap){
@@ -65,11 +82,12 @@ public with sharing class EvaluationHandler {
             'code_status__c' => new Map<String, String[]>{
                 'Other' => new String[] {'code_status_other__c'}
             },
+            
             'power_of_attorney__c' => new Map<String, String[]>{
                 '1' => new String[] {'poa_name__c', 'poa_type__c'}
             },
             'isolation__c' => new Map<String, String[]>{
-                '1' => new String[] {'isolation_type__c'}
+                '1' => new String[] {'DiagnosisIsolation_Type__c', 'Isolation_Type__c'}
             },
             'pca__c' => new Map<String, String[]>{
                 '1' => new String[] {'pca_rx__c', 'pca_rate__c'}
@@ -82,27 +100,51 @@ public with sharing class EvaluationHandler {
             },
             'ventilator__c' => new Map<String, String[]>{
                 '1' => new String[] {
-                    'ventilator_mode__c', 'ventilator_rate__c', 'fio2__c',
-                    'peep__c', 'tv__c', 'ps__c', 'cpap__c', 'bipap__c',
+                    'ventilator_mode__c','Ventilator_Type__c', 'ventilator_rate__c', 'fio2__c',
+                    'peep__c', 'tv__c', 'ps__c', 'cpap__c', 'bipap__c','Ventilator_Other__c',
                     'bipap_rate__c', 'patient_to_bring_bipap__c',
                     'weaning_trial__c', 'ventilator_results__c'
                  }
             },
+            
+            'Ventilator_Type__c' => new Map<String, String[]>{
+            	'Intermittent' => new String[]{'If_Intermittent_Schedule__c'}	
+            },
+             
             'o2__c' => new Map<String, String[]>{
                 '1' => new String[] {
-                    'liters_min__c', 'nasal_cannula__c', 'mask__c', 't_piece__c',
-                    'mist_cooled__c', 'mist_heated__c'
+                    'liters_min__c', 'nasal_cannula__c', 'mask__c','O2_Type__c', 't_piece__c',
+                    'mist_cooled__c', 'mist_heated__c', 'Mist__c'
                 }
             },
+            
+            'Mist__c' => new Map <String, String[]>{
+            	'1' => new String[] {'Mist_Type__c'}
+            },
+            
+            'Mask__c' => new Map<String,String[]>{
+            	'1' => new String[]{'Mask_Type__c'}
+            },
+            
             'telemetry__c' => new Map<String, String[]>{
                 '1' => new String[] {'will_be_dc_d_prior_to_transfer__c'}
             },
+            
             'trach__c' => new Map<String, String[]>{
                 '1' => new String[] {
                     'trach_placement_date__c', 'trach_type__c', 'trach_size__c',
                     'cuffed__c', 'pmv__c'
                 }
             },
+            'Trach_Type__c' => new Map <String, String[]>{
+            	'Other' => new String[]{'Trach_Type_Other__c'}
+            },
+            
+            'trach_size__c' => new Map<String,String[]>{
+            	'Other'=> new String []{'Trach_Size_Other__c'}
+            },
+            
+            
             'treatments_other__c' => new Map<String, String[]>{
                 '1' => new String[] {'treatments_other_comments__c'}
             },
@@ -117,24 +159,32 @@ public with sharing class EvaluationHandler {
             'suctioning__c' => new Map<String, String[]>{
                 '1' => new String[] {
                     'suctioning_type__c', 'suctioning_frequency__c',
-                    'sputum_quantity__c', 'sputum_appearance__c'
+                    'sputum_quantity__c', 'sputum_appearance__c','Sputum_Color__c', 'Blood_Tinged__c','Thick__c','Thin__c',
+                    'Frothy__c', 'Sticky__c', 'Creamy__c', 'Odor__c'
                 }
             },
             'elimination_bladder_no_continent_details__c' => new Map<String, String[]>{
                 'ICP' => new String[] {'if_icp_q__c'}
             },
             'elimination_bladder_continent__c' => new Map<String, String[]>{
-                '0' => new String[] {'elimination_bladder_no_continent_details__c'}
+                '1' => new String[] {'elimination_bladder_no_continent_details__c'}
             },
             'elimination_bowel_no_continent_appliance__c' => new Map<String, String[]>{
                 'Other' => new String[] {'elimination_bowel_no_appliance_other__c'}
             },
             'elimination_bowel_continent__c' => new Map<String, String[]>{
-                '0' => new String[] {'elimination_bowel_no_continent_appliance__c'}
+                '1' => new String[] {'elimination_bowel_no_continent_appliance__c'}
             },
             'bowel_program__c' => new Map<String, String[]>{
                 '1' => new String[] {'elimination_bowel_program_type__c'}
             },
+            
+            'Shunt_Permacath__c' => new Map <String, String[]>{
+            	'1' => new String []{'Shunt_Permacath_Date_Placed__c', 'Shunt_Permacath_Location__c',
+            						 'Shunt_Permacath_Previous_Provider__c'
+            	}
+            },
+            
             'dialysis__c' => new Map<String, String[]>{
                 '1' => new String[] {
                     'dialysis_type__c', 'dialysis_type_details__c',
@@ -190,10 +240,14 @@ public with sharing class EvaluationHandler {
             },
             'cast__c' => new Map<String, String[]>{
                 '1' => new String[] {
-                    'cast_location__c', 'cast_type__c', 'patient_to_bring_cast__c',
+                    'Ortho_Cast_Location__c', 'cast_type__c', 'patient_to_bring_cast__c',
                     'cast_ordered__c', 'cast_schedule__c'
                 }
             },
+            'Ortho_Cast_Location__c' => new Map <String, String[]>{
+            	'Other' => new String[]{'Cast_Location__c'}
+            },
+            
             'traction__c' => new Map<String, String[]>{
                 '1' => new String[] {
                     'traction_location__c', 'traction_type__c', 'traction_weight__c',
@@ -215,12 +269,14 @@ public with sharing class EvaluationHandler {
             'rom__c' => new Map<String, String[]>{
                 'Limited' => new String[] {'rom_limited_due_to__c'}
             },
+            
             'therapy_ordered__c' => new Map<String, String[]>{
                 '1' => new String[] {
                     'therapy_ordered_pt__c', 'therapy_ordered_ot__c',
                     'therapy_ordered_st__c', 'therapy_ordered_neuro_psy__c'
                 }
             },
+            
             'current_gait_mobility_other__c' => new Map<String, String[]>{
                 '1' => new String[] {'current_gait_mobility_other_comments__c'}
             },
@@ -232,6 +288,14 @@ public with sharing class EvaluationHandler {
             },
             'discharge_to__c' => new Map<String, String[]>{
                 'Other' => new String[] {'discharge_to_other__c'}
+            },
+            
+            'Pain_Present__c' => new Map<string, String[]>{
+            	'Yes' => new String[] {'Neuro_Pain_Activity__c', 'Neuro_Pain_Position__c', 'Neuro_Pain_Time_of_Day__c','Neuro_Pain_None__c','Neuro_Pain_Position_Describe__c','Neuro_pain_time_of_day_Describe__c','Neuro_pain_Activity_Describe__c','Neuro_Pain_Severity__c','Neuro_Pain_Level__c'}
+            },
+            
+            'DC_Plan__c' => new Map<string, String[]>{
+            	'Other' => new String[]{'DC_Plan_Other__c'}
             }
         };
         for (String fieldName: validationMap.keySet()) {
@@ -275,4 +339,5 @@ public with sharing class EvaluationHandler {
             }
         }
     }
+    
 }

@@ -86,7 +86,10 @@ public class DocumentController2 {
             for(String s : allStates) {
                 uniqueStates.add(s);
             }
-            for(String u : uniqueStates) {
+            List<String> uniqueStatesList = new List<String>();
+            uniqueStatesList.addAll(uniqueStates);
+            uniqueStatesList.sort();
+            for(String u : uniqueStatesList) {
                 stateSelectOptions.add(new SelectOption(u,u));
             }
             /*
