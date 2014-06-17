@@ -568,7 +568,7 @@ public with sharing class NursingEvaluationEditController {
                 string blf = '';
                 for(string bf: selectedBeliefs)
                 blf += bf+';';
-                        if(blf!=''){
+                        if(blf!=''&& this.evaluation.Beliefs_that_could_affect_Treatment__c == 'Yes'){
                                 blf= blf.Substring(0,blf.length()-1);
                                 this.evaluation.Typeof_Spiritual_belief_Effects__c = blf;
                         }
