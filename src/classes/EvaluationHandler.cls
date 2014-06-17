@@ -38,11 +38,11 @@ public with sharing class EvaluationHandler {
        			
        	}
        	if(annoEvals.size()>0){
-        for(Evaluation_Response__c ers : [SELECT ID FROM Evaluation_Response__c WHERE Evaluation__c IN:annoEvals AND RecordType.Name = 'NeuroAnnotation']){
-        		tobedelAnnos.add(ers); 			
-        }
-       		if(tobedelAnnos.size()>0)
-        	delete tobedelAnnos; 
+	        for(Evaluation_Response__c ers : [SELECT ID FROM Evaluation_Response__c WHERE Evaluation__c IN:annoEvals AND RecordType.Name = 'NeuroAnnotation']){
+	        		tobedelAnnos.add(ers); 			
+	        }
+	       		if(tobedelAnnos.size()>0)
+	        	delete tobedelAnnos; 
        	}
       
     }
@@ -296,7 +296,61 @@ public with sharing class EvaluationHandler {
             
             'DC_Plan__c' => new Map<string, String[]>{
             	'Other' => new String[]{'DC_Plan_Other__c'}
+            },
+            
+            'Alcohol_Abuse__c' => new Map<string, string[]>{
+            	'1' => new String[]{'Alcohol_Abuse_Describe__c'}
+            },
+            'Drug_Abuse__c' => new Map<string, string[]>{
+            	'1' => new String[]{'Drug_Abuse_Describe__c'}
+            },
+            
+            'Sexual_Abuse__c' => new Map<string, string[]>{
+            	'1' => new String[]{'Sexual_Abuse_Describe__c'}
+            },
+            
+            'Domestic_Abuse__c' => new Map<string, string[]>{
+            	'1' => new String[]{'Domestic_Abuse_Describe__c'}
+            },
+            
+            'Financial_Abuse__c' => new Map<string, string[]>{
+            	'1' => new String[]{'Financial_Abuse_Describe__c'}
+            },
+            
+            'Physical_Abuse__c' => new Map<string, string[]>{
+            	'1' => new String[]{'Physical_Abuse_Describe__c'}
+            },
+            
+            'Risk_to_Self__c' => new Map<string, string[]>{
+            	'1' => new String[]{'Risk_to_Self_Describe__c'}
+            },
+            
+            'Risk_to_Others__c' => new Map<string, string[]>{
+            	'1' => new String[]{'Risk_to_Others_Describe__c'}
+            },
+            
+            'Hallucinations__c' => new Map<string, string[]>{
+            	'1' => new String[]{'Hallucinations_Describe__c'}
+            },
+            
+            'Elopement_Risk__c' => new Map<string, string[]>{
+            	'1' => new String[]{'Elopement_Risk_Describe__c'}
+            },
+            
+            'Religious_Preference__c' => new Map<string, String[]>{
+            	'Yes' => new String[] {'Religious_Preference_Details__c', 'Spiritual_Care_Visits__c'}
+            },
+            
+            'Cultural_Preferences__c' => new Map<string, string[]>{
+            	'Yes' => new String[]{'Cultural_Preference_Specify__c'}
+            },
+            
+            'Beliefs_that_could_affect_Treatment__c' => new Map<string, String[]>{
+            	'Yes' => new String[] {'Other_Religious_Effect__c'}
             }
+           
+            
+            
         };
         for (String fieldName: validationMap.keySet()) {
             String fieldStringValue;
