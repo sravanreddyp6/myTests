@@ -46,7 +46,8 @@ public with sharing class DocumentedActualStaffHrsRpt {
         
         Results = [Select  id,     
                         Admission__r.Person_Being_Served__r.FirstName, 
-                        Admission__r.Person_Being_Served__r.LastName,                        
+                        Admission__r.Person_Being_Served__r.LastName,
+                        Admission__r.State__c,                        
                         Phase__c,                        
                         Start_Date__c,
                         End_Date__c
@@ -64,19 +65,30 @@ public with sharing class DocumentedActualStaffHrsRpt {
         for(Service_Assignment__c SA: Results){                            
             StaffHrsInfo dataRow = new StaffHrsInfo();
                                     
-            PNResults = [Select  id,     
+            PNResults = [Select  id,
                         First_Name__c, 
                         Last_Name__c,
+                        Owner.Name,
+                        Staff_Name__r.Name,
                         Start_Time__c,
                         End_Time__c
                         From Progress_Note__c Where 
                            Service_Assignment__c = :SA.id                          
                    ];                           
                                               
-            for(Progress_Note__c pn: PNResults) {              	         	                	 
-                dataRow.clinician =  pn.First_Name__c+' '+pn.Last_Name__c;
-                Decimal totalMinutes = ((pn.End_Time__c.getTime() - pn.Start_Time__c.getTime())/60000);
-            
+            for(Progress_Note__c pn: PNResults) {
+            	// if pseudo notes then Staff Name
+            	if ((SA.Admission__r.State__c == 'IN' ||
+            	     SA.Admission__r.State__c == 'MA' ||
+            	     SA.Admission__r.State__c == 'MD' ||
+            	     SA.Admission__r.State__c == 'OH') && 
+            	     pn.Staff_Name__r.Name != null)
+            	      dataRow.clinician = pn.Staff_Name__r.Name;            	                  	    
+            	else               	              	               	         
+            	      dataRow.clinician = pn.Owner.Name;	                
+                    //dataRow.clinician = pn.First_Name__c+' '+pn.Last_Name__c;
+                    
+                Decimal totalMinutes = ((pn.End_Time__c.getTime() - pn.Start_Time__c.getTime())/60000);            
                 dataRow.totalMinutes = String.valueOf(totalMinutes);                
                 dataRow.hours = String.valueOf((totalMinutes/60).setscale(2));
                 dataRow.pbs = SA.Admission__r.Person_Being_Served__r.FirstName+' '+SA.Admission__r.Person_Being_Served__r.LastName;                                 
@@ -109,10 +121,13 @@ public with sharing class DocumentedActualStaffHrsRpt {
             if (tempRow.clinician.equals(row.clinician) && tempRow.pbs.equals(row.pbs)) { 
                 Decimal tm = Decimal.valueOf(tempRow.totalMinutes) + Decimal.valueOf(row.totalMinutes);                 
                 tempRow.totalMinutes = String.valueOf(tm);
-                tempRow.hours = String.valueOf((tm/60).setscale(2));                                         
-                tempRow.clinician = row.clinician; 
-        	    tempRow.pbs = row.pbs;
-        	    tempRow.phase = row.phase;        	                                  	
+                tempRow.hours = String.valueOf((tm/60).setscale(2));
+                row.totalMinutes = tempRow.totalMinutes;
+                row.hours = tempRow.hours;
+                                                         
+                //tempRow.clinician = row.clinician; 
+        	    //tempRow.pbs = row.pbs;
+        	    //tempRow.phase = row.phase;        	                                  	
             }      	                	
         	else {   
         	    finalStaffHrsInfo.add(row);
