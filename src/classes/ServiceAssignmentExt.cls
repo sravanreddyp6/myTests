@@ -1269,7 +1269,7 @@ public void loadProgramList() {
             
             if(evaluations == null){
                 
-                evaluations = [SELECT ID, Name, LastModifiedDate FROM Evaluation__c WHERE ServiceAssignment__c = :theServAssign.Id];
+                evaluations = [SELECT ID, Name, LastModifiedDate, Is_Signed__c FROM Evaluation__c WHERE ServiceAssignment__c = :theServAssign.Id];
             }
             return evaluations;
         }
