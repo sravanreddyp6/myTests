@@ -80,15 +80,15 @@
 
 <apex:outputPanel id="everything">
 <apex:pageMessages ></apex:pageMessages>
-
+<apex:outputPanel id="pop_up_frm">
 <div id="relPartyFrm" style="display: {!otherChildDisplayStyle};">
 <div class="hbbg">  </div>
 <div id="p" class="popupform" >
 <apex:form id="RelPartyFrm" >
 <apex:pageBlock title="Child Info" >
     <apex:pageBlockButtons location="bottom">
-        <apex:commandButton action="{!AddOtherChild}" value="Save" reRender="everything" status="myStatus" oncomplete=" checkInputs(); return false;" />
-        <apex:commandButton action="{!SaveNew_Rel_Party}" value="Save and New" reRender="everything" status="myStatus" oncomplete=" checkInputs(); return false;" />
+        <apex:commandButton action="{!AddOtherChild}" value="Save" reRender="pop_up_frm, otherChildrenList" status="myStatus" oncomplete=" checkInputs(); return false;" />
+        <apex:commandButton action="{!SaveNew_Rel_Party}" value="Save and New" reRender="pop_up_frm, otherChildrenList" status="myStatus" oncomplete=" checkInputs(); return false;" />
         <apex:commandButton action="{!resetRelParty}" value="Cancel" oncomplete="toggleById('relPartyFrm');  checkInputs(); return false;" reRender="nothing" immediate="true" status="myStatus"/>
     </apex:pageBlockButtons>
     <apex:pageBlockSection columns="1" >
@@ -104,6 +104,7 @@
 </apex:form>
 </div>
 </div>
+</apex:outputPanel>
 
 <apex:form id="myfrm" >
 <apex:pageBlock title="FAD Assessment Summary" id="mainblock" >
