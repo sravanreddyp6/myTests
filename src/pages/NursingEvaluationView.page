@@ -92,7 +92,7 @@
 		<apex:inputhidden value="{!Evaluation__c.Neuro_pain_Descriptors__c}" />
 	</apex:outputPanel>
     	<apex:tabPanel id="wholeTabPanel" value="{!selectedTab}" styleClass="evaluationTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
-    		<apex:tab label="Details" name="detailsTab" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+    		<apex:tab label="Demographics" name="demographicsTab" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
                        <apex:pageBlockSection columns="2">
 							<apex:outputField Value="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.Alias__c}"/>
@@ -162,11 +162,15 @@
 	                        <apex:outputPanel >
 	                            <apex:outputLabel value="Height at Admission" style="font-weight: Bold; color: #4A4A56; font-size: 10px;margin-left: 85px;"/>
 	                            &nbsp;&nbsp;&nbsp;
-	                            <apex:outputField id="ft" value="{!Evaluation__c.HeightFt__c}" style="margin-left: 150px;"/>
+	                            <apex:outputField id="ft" value="{!Evaluation__c.HeightFt__c}" style="margin-left: 25px;"/>
 	                            <apex:outputLabel for="ft" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.HeightFt__c.label}</apex:outputLabel>
 	                            <span/>
-	                            <apex:outputField id="in" value="{!Evaluation__c.HeightInches__c}" style="Margin-left: 50px;"/>
+	                            <apex:outputField id="in" value="{!Evaluation__c.HeightInches__c}" style="Margin-left: 25px;"/>
 	                            <apex:outputLabel for="in" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.HeightInches__c.label}</apex:outputLabel>
+	                            <span/>
+	                            <apex:outputText value=" (or) "/>
+	                            <apex:outputField id="cm" value="{!Evaluation__c.Height_in_cms__c}" style="margin-left: 25px;"/>
+	                            <apex:outputLabel for="cm" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Height_in_cms__c.label}</apex:outputLabel>
 	                        </apex:outputPanel>           
                     </apex:pageBlockSection>  
                     <apex:pageBlockSection columns="1">

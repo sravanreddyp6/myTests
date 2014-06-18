@@ -222,7 +222,7 @@
      function getNextTab( currTab ) {
             var nextTab = currTab;
             
-            if ( currTab == 'detailsTab' || currTab == '')
+            if ( currTab == 'demographicsTab' || currTab == '')
                 nextTab = 'diagnosticTab';
             else if( currTab == 'diagnosticTab') 
                 nextTab =  'cardioTab';
@@ -253,6 +253,9 @@
            var lbs;
            var oz;
            var kg;
+           var ft;
+           var inc;
+           var cm;
            
          j$=jQuery.noConflict();
          function calculate(formField,type){
@@ -273,7 +276,30 @@
                j$('[id$=lbs]').val(kgtolbs);                    
                j$('[id$=oz]').val('0.0');  
            }
+           
+           if(type=='ft'){
+           	var htotal = getftValue() + getincValue();
+           	j$('[id$=cm]').val(htotal);
+           
+           }
+           
+           if(type=='inc'){
+           	var htotal = getftValue() + getincValue();
+           	j$('[id$=cm]').val(htotal);
+           
+           }
+           
+           if(type=='cm'){
+               cm=j$('[id$=cm]').val();  
+               var inches = cm*0.3937;
+               var inchtoft = Math.floor(inches/12);
+               var cmtoinc = Math.round(inches%12);
+               j$('[id$=ft]').val(inchtoft);                    
+               j$('[id$=inc]').val(cmtoinc);
+           
         }
+        
+      }
         
         function getlbsValue(){
              lbs=j$('[id$=lbs]').val();
@@ -289,6 +315,26 @@
              if(oz!=null && oz!='')
                  oztokg = oz*0.0283495;
              return oztokg;
+        
+        }
+        
+        function getftValue(){
+        	ft=j$('[id$=ft]').val();
+        	var fttocm = 0;
+        	if(ft!= null && ft!='')
+        		fttocm = ft*30.48;
+        	return fttocm;
+        
+        
+        }
+        
+        function getincValue(){
+        	inc=j$('[id$=inc]').val();
+        	var inctocm = 0;
+        	if(inc!= null && inc!='')
+        		inctocm = inc*2.54;
+        	return inctocm;
+        
         
         }
         
@@ -372,7 +418,7 @@
         
             
         <apex:tabPanel value="{!selectedTab}" id="wholeTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">   
-            <apex:tab label="Details" name="detailsTab" ontabenter="changeTab('detailsTab'); return false;" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+            <apex:tab label="Demographics" name="demographicsTab" ontabenter="changeTab('demographicsTab'); return false;" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
                     <apex:pageBlockSection columns="2">
                         <apex:outputField Value="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.Alias__c}"/>
@@ -435,17 +481,20 @@
                             <apex:inputField id="oz" value="{!Evaluation__c.Weightoz__c}" style="Margin-left: 25px; width:60px;" onkeyup="return calculate(this,'oz');"/>
                             <apex:outputLabel for="oz" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Weightoz__c.label}</apex:outputLabel>
                             <pre/>
-                            <apex:inputField id="kg" value="{!Evaluation__c.WeightKg__c}" style="margin-left: 180px; width: 60px;" onkeyup="return calculate(this,'kg');"/>
+                            <apex:inputField id="kg" value="{!Evaluation__c.WeightKg__c}" style="margin-left: 193px; width: 60px;" onkeyup="return calculate(this,'kg');"/>
                             <apex:outputLabel for="kg" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.WeightKg__c.label}</apex:outputLabel>
                         </apex:outputPanel> 
                         <apex:pageBlockSectionItem />  
                         <apex:outputPanel >
                             <apex:outputLabel value="Height at Admission" style="font-weight: Bold; color: #4A4A56; font-size: 10px;"/>
                              &nbsp;&nbsp;&nbsp;
-                            <apex:inputField id="ft" value="{!Evaluation__c.HeightFt__c}" style="margin-left: 25px;"/>
+                            <apex:inputField id="ft" value="{!Evaluation__c.HeightFt__c}" style="margin-left: 25px; width: 60px; !important;" onkeyup="return calculate(this,'ft');" />
                             <apex:outputLabel for="ft" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.HeightFt__c.label}</apex:outputLabel>
-                            <apex:inputField id="in" value="{!Evaluation__c.HeightInches__c}" style="Margin-left: 25px;"/>
-                            <apex:outputLabel for="in" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.HeightInches__c.label}</apex:outputLabel>
+                            <apex:inputField id="inc" value="{!Evaluation__c.HeightInches__c}" style="Margin-left: 25px; width: 60px; !important;" onKeyup="return calculate(this,'inc');" />
+                            <apex:outputLabel for="inc" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.HeightInches__c.label}</apex:outputLabel>
+                            <pre/>
+                            <apex:inputField id="cm" value="{!Evaluation__c.Height_in_cms__c}" style="margin-left: 193px; width: 60px;" onkeyup="return calculate(this,'cm');"/>
+                            <apex:outputLabel for="cm" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Height_in_cms__c.label}</apex:outputLabel>
                         </apex:outputPanel>      
                     </apex:PageBlockSection>
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" />
