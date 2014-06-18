@@ -938,21 +938,9 @@
 	                    </apex:pageBlockSection>
 	                    <hr />
 	                    <apex:pageBlockSection Columns="1" >
-	                    	<apex:outputPanel >
-		                    	<apex:outputText Value="Pain Present" styleClass="labelCol" style="margin-left: 3cm;"/>
-			                    	<apex:actionRegion id="painRegion" renderRegionOnly="false" >
-			                    		<apex:outputField value="{!Evaluation__c.Pain_Present__c}" style="margin-left: 1cm;">
-			                    		<apex:actionSupport event="onchange" reRender="painSection" />
-			                    		</apex:outputField>
-			                    	</apex:actionRegion>
-			                    	<apex:actionstatus id="st" for="painRegion" >
-			                         	<apex:facet name="start" >
-			                             		<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
-			                             </apex:facet>                            
-			                        </apex:actionstatus>	
-	                        </apex:outputPanel>
+			            <apex:outputField value="{!Evaluation__c.Pain_Present__c}" />	
 	                    </apex:pageBlockSection>
-	                   <apex:outputPanel id="painSection">
+	                   <apex:outputPanel id="painSection" >
 	                   		<script>
 							 jQuery(document).ready(function ($) {
 			                    anno.reset();
@@ -1003,7 +991,7 @@
 			                    });
 			                });
                 	</script>
-	                <apex:pageblockSection columns="2" >
+	                <apex:pageblockSection columns="2"  rendered="{!Evaluation__c.Pain_Present__c == 'Yes'}">
 		                    	<h2 style="display: block; margin: 10px;">Body Map</h2>
 		                    <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
 		                        <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!IF(bodyMapUrl=null, baseUrl + URLFOR($Resource.NeurotabBodyNoGrid), bodyMapUrl)}" id="neurobodyMap" />
@@ -1015,6 +1003,8 @@
 		                        </table>
 		                    </div>
 		                    <apex:pageBlockSectionItem />
+		                    <apex:outputField value="{!Evaluation__c.Neuro_Other_Body_Map_Comments__c}" label="Other Body Map Comments" />
+                        	<apex:pageBlockSectionItem />
 		                    <apex:pageBlockSectionItem >
 		                    	<apex:outputText value="Specify pain Level" styleClass="labelCol" />
 		                    	<apex:image url="{!URLFOR($Resource.Wongbakerfaces)}" width="85%" height="85" style="margin-left: 0.75cm;"/>
@@ -1079,8 +1069,6 @@
 	                   </apex:pageBlockSection>
          			</apex:pageBlock>
          		</apex:tab>
-         		
-         		
          		<apex:tab label="Ortho" name="orthoTab" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
          			<apex:pageBlock >
          				<apex:pageBlockSection columns="2">

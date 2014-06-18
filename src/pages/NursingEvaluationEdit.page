@@ -1310,8 +1310,7 @@
                           
                           }
                         </script>   
-                   <apex:outputPanel id="painSection" layout="block">
-                        
+                   <apex:outputPanel id="painSection" layout="block">  
                     <apex:pageblockSection columns="2" >
                     <hr />
                             <h2 style="display: block; margin: 10px;">Body Map</h2>
@@ -1324,6 +1323,8 @@
                                 </tbody>
                             </table>
                         </div>
+                        <apex:pageBlockSectionItem />
+                        <apex:inputTextArea value="{!Evaluation__c.Neuro_Other_Body_Map_Comments__c}" cols="80" label="Other Body Map Comments" rows="7"/>
                         <apex:pageBlockSectionItem />
                         <apex:pageBlockSectionItem >
                             <apex:outputText value="Specify pain Level" styleClass="labelCol" />
@@ -1575,13 +1576,13 @@
                         <apex:inputField value="{!Evaluation__c.Risk_to_Others__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.riskothersDescribe}&quot;}" />
                         <apex:inputTextArea value="{!Evaluation__c.Risk_to_Self_Describe__c}" id="riskselfDescribe" label="Describe" cols="70"/>
                         <apex:inputTextArea value="{!Evaluation__c.Risk_to_Others_Describe__c}" id="riskothersDescribe" label="Describe" cols="70"/>
-                        <apex:inputField value="{!Evaluation__c.Hallucinations__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.hallucinationDescribe}&quot;}"/>
+                        <apex:inputField value="{!Evaluation__c.Hallucinations__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.hallucinationDescribe}&quot;]}"/>
                         <apex:inputField value="{!Evaluation__c.Elopement_Risk__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.elopementDescribe}&quot;}" />
                         <apex:inputTextArea value="{!Evaluation__c.Hallucinations_Describe__c}" id="hallucinationDescribe" label="Describe" cols="70"/>
                         <apex:inputTextArea value="{!Evaluation__c.Elopement_Risk_Describe__c}" id="elopementDescribe" label="Describe" cols="70" />
                         <apex:pageBlockSectionItem >
                             <apex:outputText value="Hallucination Type" />
-                            <apex:selectCheckboxes value="{!selectedHalls}">
+                            <apex:selectCheckboxes value="{!selectedHalls}" >
                                 <apex:selectOptions value="{!hallValues}"/>
                             </apex:selectCheckboxes>
                         </apex:pageBlockSectionItem>

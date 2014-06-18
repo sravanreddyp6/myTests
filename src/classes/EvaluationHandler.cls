@@ -291,7 +291,7 @@ public with sharing class EvaluationHandler {
             },
             
             'Pain_Present__c' => new Map<string, String[]>{
-            	'Yes' => new String[] {'Neuro_Pain_Activity__c', 'Neuro_Pain_Position__c', 'Neuro_Pain_Time_of_Day__c','Neuro_Pain_None__c','Neuro_Pain_Position_Describe__c','Neuro_pain_time_of_day_Describe__c','Neuro_pain_Activity_Describe__c','Neuro_Pain_Severity__c','Neuro_Pain_Level__c'}
+            	'Yes' => new String[] {'Neuro_Pain_Activity__c', 'Neuro_Pain_Position__c', 'Neuro_Pain_Time_of_Day__c','Neuro_Pain_None__c','Neuro_Pain_Position_Describe__c','Neuro_pain_time_of_day_Describe__c','Neuro_pain_Activity_Describe__c','Neuro_Pain_Severity__c','Neuro_Pain_Level__c','Neuro_Other_Body_Map_Comments__c'}
             },
             
             'DC_Plan__c' => new Map<string, String[]>{
@@ -345,9 +345,14 @@ public with sharing class EvaluationHandler {
             	'Yes' => new String[]{'Cultural_Preference_Specify__c'}
             },
             
-            'Beliefs_that_could_affect_Treatment__c' => new Map<string, String[]>{
-            	'Yes' => new String[] {'Other_Religious_Effect__c'}
+		    'Physical_emotional_or_Financial_harm__c' => new Map<string, String[]>{
+		    	'Yes' => new String[] {'Harm_Describe__c', 'Harm_Reported_to__c','Harm_Date_and_Time_Reported__c'}
+		    },
+		    
+		    'Representative_present_at_Admission__c' => new Map<string, string[]>{
+            	'Yes' => new String[]{'Name_of_Representative_present__c'}
             }
+            
            
             
             

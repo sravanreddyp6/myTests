@@ -371,6 +371,8 @@
                         <apex:inputField value="{!Evaluation__c.Number_of_Children__c}" />
                         <apex:inputField value="{!Evaluation__c.Occupation__c}" />
                         <apex:inputField value="{!Evaluation__c.Number_of_Children_at_Home__c}" />
+                        <apex:outputText value="Employment Status" styleClass="labelCol" style="margin-left: 3cm;"/>
+                        <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Employed__c}" id="employed" />
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.EmploymentFT__c}" />
@@ -382,9 +384,9 @@
                         <apex:inputField value="{!Evaluation__c.EmploymentDisabled__c}" />
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.EmploymentUnknown__c}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Employment_Status__c}" id="employmentStatus" />
+                        <!-- apex:outputField value="{!Evaluation__c.Employment_Status__c}" id="employmentStatus" /-->
                     </apex:pageBlockSection>
+                    <hr/>
                     <apex:pageBlockSection columns="2">
                         <apex:inputField value="{!Evaluation__c.Code_Status__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.codeStatusOther}&quot;}" />
                         <apex:inputField value="{!Evaluation__c.Advanced_Directives__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.advancedDirectivesAttached}&quot;}" />

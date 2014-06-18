@@ -440,6 +440,7 @@ public with sharing class referrals_Controller{
         if (pbrLastName == null) pbrLastName = '';
         Evaluation__c eval = new Evaluation__c(
             Referral__c = referralRecord.Id,
+            RecordtypeId = Utility.getEValuationRecordType('CareMeridian'),
             Name = pbrLastName + 'Eval' + DateTime.Now().format('MMddyy')
         );
         insert eval;

@@ -571,10 +571,13 @@ public with sharing class NursingEvaluationEditController {
                         if(blf!=''&& this.evaluation.Beliefs_that_could_affect_Treatment__c == 'Yes'){
                                 blf= blf.Substring(0,blf.length()-1);
                                 this.evaluation.Typeof_Spiritual_belief_Effects__c = blf;
+                               	if(!blf.Contains('Other'))
+                               	this.evaluation.Other_Religious_Effect__c = '';
                         }
-                        else
+                        else{
                         this.evaluation.Typeof_Spiritual_belief_Effects__c ='';
-                        
+                        this.evaluation.Other_Religious_Effect__c ='';
+                        }
    // For Preferred Method of Learning Multi-Picklist
                 string pml ='';
                 for(string lm: selectedLearning)
@@ -604,9 +607,13 @@ public with sharing class NursingEvaluationEditController {
                         if(cmc!=''){
                                 cmc = cmc.Substring(0,cmc.length()-1);
                                 this.evaluation.Resident_s_Communication_Status__c = cmc;
+                                if(!cmc.Contains('Other'))
+                                this.evaluation.Resident_s_communication_Status_Other__c = '';
                         }
-                        else
+                        else{
                         this.evaluation.Resident_s_Communication_Status__c = '';
+                        this.evaluation.Resident_s_communication_Status_Other__c = '';
+                        }
                         
  // For Resident's Emotional Barriers Multi-picklist
                 string emb = '';
@@ -615,10 +622,14 @@ public with sharing class NursingEvaluationEditController {
                         if(emb!=''){
                                 emb = emb.Substring(0,emb.length()-1);
                                 this.evaluation.Resident_s_Emotional_Barriers__c = emb;
+                                if(!emb.Contains('Other'))
+                                this.evaluation.Resident_s_emotional_barrier_other__c ='';
                         }
-                        else
+                        else{
                         this.evaluation.Resident_s_Emotional_Barriers__c ='';
-                
+                        this.evaluation.Resident_s_emotional_barrier_other__c = '';
+                        
+                        }
  // For Resident's Learning Needs multi-picklist
                 string lrn ='';
                 for(string ln: selectedNeeds)
@@ -626,10 +637,14 @@ public with sharing class NursingEvaluationEditController {
                         if(lrn!=''){
                                 lrn = lrn.Substring(0,lrn.length()-1);
                                 this.evaluation.Resident_s_Learning_needs_related_to__c = lrn;
+                                if(!lrn.Contains('Other'))
+                                this.evaluation.Residents_Learning_relate_to_other__c ='';
                         }
-                        else
+                        else{
                         this.evaluation.Resident_s_Learning_needs_related_to__c ='';
-
+						this.evaluation.Residents_Learning_relate_to_other__c ='';
+						
+                        }
 // For Oriented to te following Multi-Picklist
                 string ori ='';
                 for(string ri: selectedOrients)
@@ -660,10 +675,14 @@ public with sharing class NursingEvaluationEditController {
                         if(fmb!=''){
                                 fmb = fmb.Substring(0,fmb.length()-1);
                                 this.evaluation.Family_Member_s_Emotional_Barriers__c = fmb;
+                                if(!fmb.Contains('Other'))
+                                this.evaluation.Family_Emotional_Barrier_Other__c = '';
                         }
-                        else
+                        else{
                         this.evaluation.Family_Member_s_Emotional_Barriers__c ='';
+                        this.evaluation.Family_Emotional_Barrier_Other__c = '';
                         
+                        }
                         
 // For Family Communication Status Multi-Picklist
                 string fmc ='';
@@ -672,9 +691,14 @@ public with sharing class NursingEvaluationEditController {
                         if(fmc!=''){
                                 fmc = fmc.Substring(0,fmc.length()-1);
                                 this.evaluation.Family_Communication_Status__c = fmc;
+                                if(!fmc.Contains('Other'))
+                                this.evaluation.Family_Commu_Status_other__c = '';
                         }
-                        else
+                        else{
                         this.evaluation.Family_Communication_Status__c ='';
+                        this.evaluation.Family_Commu_Status_other__c = '';
+                        
+                        }
                         
 // For FamilyMember's learning related to Multi-Picklist
                 string fsr = '';
@@ -683,9 +707,15 @@ public with sharing class NursingEvaluationEditController {
                         if(fsr!=''){
                                 fsr = fsr.Substring(0,fsr.length()-1);
                                 this.evaluation.Family_Member_s_Learning_related_to__c = fsr;
+                                if(!fsr.Contains('Other'))
+                                this.evaluation.Family_Members_Learning_Other__c = '';
                         }
-                        else
+                        else{
                         this.evaluation.Family_Member_s_Learning_related_to__c ='';
+                        this.evaluation.Family_Members_Learning_Other__c = '';
+                        
+                        }
+                        
                         
 // For Diagnostics GYN Experiences Multi-Picklist
                 string exp = '';
