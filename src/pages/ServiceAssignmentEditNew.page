@@ -725,7 +725,7 @@ END: Uncomment to have the element collapsed by default -->
     			<apex:CommandButton value="Nurses Assessment" rendered="{!evaluations == null || evaluations.size=0}" action="{!addNurAssessment}"/>
     		</div>
     		<apex:pageBlockTable styleclass="pcBody-list" value="{!evaluations}" var="evs" rendered="{!evaluations.size>0}">
-    			<apex:column headerValue="Action"><a href="/apex/NursingEvaluationEdit?id={!evs.Id}&tab=detailsTab">Edit</a></apex:column>
+    			<apex:column headerValue="Action"><a href="/apex/NursingEvaluationEdit?id={!evs.Id}&tab=demographicsTab">Edit</a></apex:column>
     			<apex:column headerValue="Name">
     				<apex:outputLink value="/apex/NursingEvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
     			</apex:column>
