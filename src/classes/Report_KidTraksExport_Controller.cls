@@ -41,7 +41,7 @@ public with sharing class Report_KidTraksExport_Controller {
 			billType = 'First Bill';
 			serviceType = 'FamilyPreservation';
 			billableUnitId = authNumber; // Where can I get this in Salesforce?
-			billingCode = '10942.11610';  // Is this always the billing code?
+			billingCode = '10942.1161';  // Is this always the billing code?
 			this.startDate = startDate; // Aggregate line IN progress notes on a given day for each IN clients
 			this.endDate = endDate; // Aggregate line IN progress notes on a given day for each IN clients
 			units = 1;
@@ -124,7 +124,7 @@ public with sharing class Report_KidTraksExport_Controller {
     	List<Service_Location__c> programs = [ SELECT Id, Name, programid__c, Program__c FROM Service_Location__c WHERE State__c = 'IN'  ];
     	Set<String> uniquePrograms = new Set<String>();
     	
-    	List<Service_code__c> codes = [select program_code__c from service_code__c where service_code__c = '10942.11610' and state__c = 'IN'];
+    	List<Service_code__c> codes = [select program_code__c from service_code__c where service_code__c = '10942.1161' and state__c = 'IN'];
     	Set<String> uniquecodes = new Set<String>();
     	for ( service_code__c sc : codes )
     		uniquecodes.add( sc.Program_Code__c);
