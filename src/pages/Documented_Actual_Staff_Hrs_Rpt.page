@@ -150,13 +150,6 @@
         </table>
    </apex:pageBlock>
 <br/>
-<apex:dataTable value="{!filteredResults }" var="item" width="100%" rendered="{!$CurrentPage.parameters.showdetails=='1'}">
-<apex:column headerValue="id">
-<apex:outputLink value="/{!item.id}" >{!item.id}</apex:outputLink>
-</apex:column>
-<apex:column value="{!item.Start_Date__c}" headerValue="start"/>
-<apex:column value="{!item.End_Date__c}" headerValue="end"/>
-</apex:dataTable>
 
 </apex:outputPanel>
 

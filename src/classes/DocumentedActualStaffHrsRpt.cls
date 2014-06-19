@@ -3,27 +3,16 @@ public with sharing class DocumentedActualStaffHrsRpt {
     public Date fStartDate{get{return fStartDate;} set;}
     public Date fEndDate{get{return fEndDate;} set;}
     
-    public List<Service_Assignment__c> Results = new List<Service_Assignment__c>();
-    public List<Service_Assignment__c> getResults(){return Results;}
-    
-    public List<Progress_Note__c> PNResults = new List<Progress_Note__c>();
-    public List<Progress_Note__c> getPNResults(){return PNResults;}
- 
-    public List<Service_Assignment__c> filteredResults = new List<Service_Assignment__c>();
-    public List<Service_Assignment__c> getfilteredResults (){return filteredResults ;}
-    
     public List<StaffHrsInfo> listStaffHrsInfo = new List<StaffHrsInfo>();
     public List<StaffHrsInfo> getListStaffHrsInfo(){return listStaffHrsInfo;}
-    
-    public List<StaffHrsInfo> finalStaffHrsInfo = new List<StaffHrsInfo>();
-    public List<StaffHrsInfo> getFinalStaffHrsInfo(){return finalStaffHrsInfo;}
+        
+    List<AggregateResult> PNResults = new List<AggregateResult>();            
         
     public DocumentedActualStaffHrsRpt () {
        //fStartDate = system.today();
        allCount = 0;
     } 
     
-    set<id> uniquePBS = new Set<id>();
     public integer allCount{get; set;}
     
     public Map<string, integer > ParsedData = new Map<string, integer >();    
@@ -37,108 +26,79 @@ public with sharing class DocumentedActualStaffHrsRpt {
         }
         
         ParsedData.clear();                
-        uniquePBS.clear();
-        filteredResults.clear();
         
-        Results.clear();
         PNResults.clear();
-        listStaffHrsInfo.clear();                
-        
-        Results = [Select  id,     
-                        Admission__r.Person_Being_Served__r.FirstName, 
-                        Admission__r.Person_Being_Served__r.LastName,
-                        Admission__r.State__c,                        
-                        Phase__c,                        
-                        Start_Date__c,
-                        End_Date__c
-                        From Service_Assignment__c
-                        Where                        
+        listStaffHrsInfo.clear();                                                                                     
+                                        
+        PNResults = [ SELECT 
+           			 	Owner.FirstName ofn,
+           			 	Owner.LastName oln,
+                      	Staff_Name__r.Name,
+         				Person_Being_Served__r.FirstName pbsfn,
+         				Person_Being_Served__r.LastName pbsln,
+         				//Service_Assignment__r.Phase__c,         				
+                       	SUM(Total_Time__c) sum                      
+                       FROM Progress_Note__c 
+                       WHERE 
                          (
-                            ((Start_Date__c >= :fStartDate OR End_Date__c >= :fStartDate) 
+                            ((Service_Assignment__r.Start_Date__c >= :fStartDate OR 
+                              Service_Assignment__r.End_Date__c >= :fStartDate) 
                            AND  
-                            (Start_Date__c <= :fEndDate OR End_Date__c <= :fEndDate) )                         
+                            (Service_Assignment__r.Start_Date__c <= :fEndDate OR 
+                             Service_Assignment__r.End_Date__c <= :fEndDate) )                         
                            OR
-                            (Start_Date__c  <= :fEndDate AND End_Date__c = null ) 
+                            (Service_Assignment__r.Start_Date__c  <= :fEndDate AND 
+                             Service_Assignment__r.End_Date__c = null ) 
                          )
-                   ];                                                                             
-					                            
-        for(Service_Assignment__c SA: Results){                            
-            StaffHrsInfo dataRow = new StaffHrsInfo();
-                                    
-            PNResults = [Select  id,
-                        First_Name__c, 
-                        Last_Name__c,
-                        Owner.Name,
-                        Staff_Name__r.Name,
-                        Start_Time__c,
-                        End_Time__c
-                        From Progress_Note__c Where 
-                           Service_Assignment__c = :SA.id                          
-                   ];                           
-                                              
-            for(Progress_Note__c pn: PNResults) {
+                       GROUP BY Owner.FirstName, Owner.LastName, Staff_Name__r.Name,
+                                Person_Being_Served__r.FirstName, Person_Being_Served__r.LastName 
+                    ];    
+                                           
+            StaffHrsInfo dataRow;
+                                                                                           
+            for(AggregateResult pn : PNResults) {     
+            	 dataRow = new StaffHrsInfo();
+            	        	            	
             	// if pseudo notes then Staff Name
-            	if ((SA.Admission__r.State__c == 'IN' ||
-            	     SA.Admission__r.State__c == 'MA' ||
-            	     SA.Admission__r.State__c == 'MD' ||
-            	     SA.Admission__r.State__c == 'OH') && 
-            	     pn.Staff_Name__r.Name != null)
-            	      dataRow.clinician = pn.Staff_Name__r.Name;            	                  	    
+            	/*if ((pn.Service_Assignment__r.Admission__r.State__c == 'IN' ||
+            	     Service_Assignment__r.Admission__r.State__c == 'MA' ||
+            	     Service_Assignment__r.Admission__r.State__c == 'MD' ||
+            	     Service_Assignment__r.Admission__r.State__c == 'OH') && 
+            	     pn.get('Staff_Name__r.Name') != null)
+            	      dataRow.clinician = (String)pn.get('Staff_Name__r.Name');            	                  	    
             	else               	              	               	         
-            	      dataRow.clinician = pn.Owner.Name;	                
-                    //dataRow.clinician = pn.First_Name__c+' '+pn.Last_Name__c;
-                    
-                Decimal totalMinutes = ((pn.End_Time__c.getTime() - pn.Start_Time__c.getTime())/60000);            
-                dataRow.totalMinutes = String.valueOf(totalMinutes);                
-                dataRow.hours = String.valueOf((totalMinutes/60).setscale(2));
-                dataRow.pbs = SA.Admission__r.Person_Being_Served__r.FirstName+' '+SA.Admission__r.Person_Being_Served__r.LastName;                                 
+            	      dataRow.clinician = (String)pn.get('Owner.FirstName') + ' ' + (String)pn.get('Owner.FirstName');
+                  
+                Integer phase = (Integer)pn.get('Service_Assignment__r.Phase__c');                                  
                      
-                if (SA.Phase__c == 1) {
+                if (phase == 1) {
                     dataRow.phase = 'J';                
                 }
-                if (SA.Phase__c == 2) {
+                if (phase == 2) {
                     dataRow.phase = 'R';
                 }
-                if (SA.Phase__c == 3) {
+                if (phase == 3) {
                     dataRow.phase = 'VC'; 
                 }
-                if (SA.Phase__c == 4) {
+                if (phase == 4) {
                     dataRow.phase = 'G'; 
-                }
+                } */
+                                                
+                dataRow.clinician = (String)pn.get('ofn') + ' ' + (String)pn.get('oln');
+                dataRow.pbs = (String)pn.get('pbsfn') + ' ' + (String)pn.get('pbsln');
                 
-                listStaffHrsInfo.add(dataRow);                                                      
-            }                                                                                                                                       
-        }
-        allCount = listStaffHrsInfo.size();
-                              
-        integer index = 0;                                 
-        finalStaffHrsInfo.add(listStaffHrsInfo.get(0));
+                Decimal totalMinutes = (Decimal)pn.get('sum'); 
+                dataRow.totalMinutes = String.valueOf(totalMinutes);   
+                dataRow.hours = String.valueOf((totalMinutes/60).setscale(2));
+                
+                System.debug(dataRow);          
+                listStaffHrsInfo.add(dataRow);                                                                                                   
+            }                                                                                                                                               
+            allCount = listStaffHrsInfo.size();
         
-        // Aggregate	    
-        for (StaffHrsInfo row : listStaffHrsInfo) {        	
-        	StaffHrsInfo tempRow = finalStaffHrsInfo.get(index);    
-        	     	       	        	        	       	                                
-            if (tempRow.clinician.equals(row.clinician) && tempRow.pbs.equals(row.pbs)) { 
-                Decimal tm = Decimal.valueOf(tempRow.totalMinutes) + Decimal.valueOf(row.totalMinutes);                 
-                tempRow.totalMinutes = String.valueOf(tm);
-                tempRow.hours = String.valueOf((tm/60).setscale(2));
-                row.totalMinutes = tempRow.totalMinutes;
-                row.hours = tempRow.hours;
-                                                         
-                //tempRow.clinician = row.clinician; 
-        	    //tempRow.pbs = row.pbs;
-        	    //tempRow.phase = row.phase;        	                                  	
-            }      	                	
-        	else {   
-        	    finalStaffHrsInfo.add(row);
-        	    index++;
-            }                       	        
-        }
-        listStaffHrsInfo = finalStaffHrsInfo;
-        
-        fStartDate = null;
-        fEndDate= null;
-        return null; 
+            fStartDate = null;
+            fEndDate= null;
+            return null; 
     }
     
     // Inner Class to store the row data detail of the report 
