@@ -286,6 +286,7 @@
         <apex:inputhidden value="{!Evaluation__c.Nutrition_Comments__c}" />
         <apex:inputhidden value="{!Evaluation__c.Nutrition_Section_Completed__c}" />
         
+        <apex:inputhidden value="{!Evaluation__c.Intact__c}" />
         <apex:inputhidden value="{!Evaluation__c.History_of_Pressure_Ulcers_Flap_Surge__c}" />
         <apex:inputhidden value="{!Evaluation__c.Pressure_Ulcer_Flap_Surgery_describe__c}" />
         <apex:inputhidden value="{!Evaluation__c.Peripheral_Capillary_Refill_Location__c}" />
@@ -1545,7 +1546,11 @@
             </tbody>
         </table>
     </div>
-    
+    <br/>
+    <apex:pageBlockSection columns="1">
+        <apex:outputField value="{!Evaluation__c.Neuro_Other_Body_Map_Comments__c}" label="Other Body Map Comments" />
+    </apex:pageBlockSection>
+        
       <apex:pageBlockSection columns="1" >
         <apex:pageBlockSectionitem >
 	        <apex:outputLabel value="Pain Level" styleClass="label"/>
