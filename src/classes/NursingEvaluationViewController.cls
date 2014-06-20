@@ -147,6 +147,7 @@ public with sharing class NursingEvaluationViewController {
     } }
     
     public String serializedAnnotations { get; set; }
+    public string neuroserializedAnnotations{get; set; }
     
     public List<Attachment> immuneAttachments{
         get{
@@ -174,6 +175,7 @@ public with sharing class NursingEvaluationViewController {
         Map<String, Schema.Sobjectfield> fieldMap = Schema.SobjectType.Evaluation__c.fields.getMap();
         evaluation = (Evaluation__c) stdController.getRecord();
         serializedAnnotations = JSON.serialize(annotations);
+        neuroserializedAnnotations = JSON.serialize(neuroAnnotations);
         currentRelatedParty = new Related_Party__c();
         selectedTab = ApexPages.currentPage().getParameters().get('tab');
         

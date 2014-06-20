@@ -76,6 +76,7 @@ public with sharing class NursingEvaluationEditController {
     public List<string>selectedpainExpressions {get;set;}
     public List<selectOption>paindescriptorValues ;
     public List<string>selectedpainDescriptors {get;set;}
+    public List<string>dummyString{get; set;}
     
     
     
@@ -254,7 +255,7 @@ public with sharing class NursingEvaluationEditController {
                 selectedpainExpressions = new List<String>();
                 paindescriptorValues = new List<selectOption>();
                 selectedpainDescriptors = new List<String>();
-                
+                dummyString = new List<String>();
         
                 if(!String.isBlank(this.evaluation.Breathe_sounds__c))
                 selectedSounds = this.evaluation.Breathe_Sounds__c.split(';');
@@ -470,9 +471,12 @@ public with sharing class NursingEvaluationEditController {
                 if(clr!=''){
                         clr =clr.Substring(0,clr.length()-1);
                         this.evaluation.Urine_Clarity__c = clr;
+                        if(!clr.Contains('Other'))
+                        this.evaluation.Urine_Clarity_Other__c = '';
                 }
                 else
                 this.evaluation.Urine_Clarity__c ='';
+                this.evaluation.Urine_Clarity_Other__c ='';
                 
     // for Tongue Multi-Picklist
         string tng = '';
@@ -481,10 +485,14 @@ public with sharing class NursingEvaluationEditController {
                 if(tng!=''){
                         tng = tng.Substring(0,tng.length()-1);
                         this.evaluation.Tongue__c = tng;
+                        if(!tng.Contains('Sores'))
+                        this.evaluation.Tongue_Sores_Describe__c ='';
                 }
-                else
+                else{
                 this.evaluation.Tongue__c = '';
+                this.evaluation.Tongue_Sores_Describe__c = '';
                 
+                }
                 
         // for Gums Multi-picklist
                 string gms ='';
@@ -493,9 +501,13 @@ public with sharing class NursingEvaluationEditController {
                         if(gms!=''){
                                 gms = gms.SubString(0,gms.length()-1);
                                 this.evaluation.Gums__c = gms;
+                                if(!gms.Contains('Sores'))
+                                this.evaluation.Gums_Sores_Describe__c ='';
                         }
-                        else
+                        else{
                         this.evaluation.Gums__c = '';
+                        this.evaluation.Gums_Sores_Describe__c = '';
+                        }
                         
         // for Cheeks Multi-Picklist
                 string chk ='';
@@ -504,10 +516,14 @@ public with sharing class NursingEvaluationEditController {
                         if(chk!=''){
                                 chk= chk.Substring(0,chk.length()-1);
                                 this.evaluation.Cheeks__c = chk;
+                                if(!chk.contains('Sores'))
+                                this.evaluation.Cheeks_Sores_Describe__c = '';
                         }
-                else
-                this.evaluation.Cheeks__c ='';
-                
+                		else{
+                		this.evaluation.Cheeks__c ='';
+                		this.evaluation.Cheeks_Sores_Describe__c = '';
+                		}
+                		
    // for lips Multi-picklist
                 string lps ='';
                 for(string l: selectedLips)
@@ -515,10 +531,13 @@ public with sharing class NursingEvaluationEditController {
                         if(lps!=''){
                                 lps= lps.Substring(0,lps.length()-1);
                                 this.evaluation.Lips__c = lps;
+                                if(!lps.Contains('Sores'))
+                                this.evaluation.Lips_Sores_Describe__c = '';
                         }
-                        else
+                        else{
                         this.evaluation.Lips__c = '';
-                        
+                        this.evaluation.Lips_Sores_Describe__c = '';
+                        }
                         
    // for Saliva Multi-Picklist
                 string slv ='';
@@ -535,7 +554,7 @@ public with sharing class NursingEvaluationEditController {
                 string dtp ='';
                 for(string d:selectedDentures)
                 dtp += d+';';
-                        if(dtp!=''){
+                        if(dtp!='' && this.evaluation.Dentures__c == 'Yes'){
                                 dtp= dtp.Substring(0,dtp.length()-1);
                                 this.evaluation.Dentures_Type__c = dtp;
                         }
@@ -557,7 +576,7 @@ public with sharing class NursingEvaluationEditController {
                 string hal ='';
                 for(string h: selectedHalls)
                 hal += h+';';
-                        if(hal!=''){
+                        if(hal!='' && this.evaluation.Hallucinations__c){
                                 hal = hal.Substring(0,hal.length()-1);
                                 this.evaluation.Hallucination_Types__c = hal;
                         }
@@ -645,6 +664,7 @@ public with sharing class NursingEvaluationEditController {
 						this.evaluation.Residents_Learning_relate_to_other__c ='';
 						
                         }
+                        
 // For Oriented to te following Multi-Picklist
                 string ori ='';
                 for(string ri: selectedOrients)
@@ -756,23 +776,31 @@ public with sharing class NursingEvaluationEditController {
                 string pros ='';
                 for(string ps: selectedProsthetics)
                 pros += ps+';';
-                        if(pros!=''){
+                        if(pros!='' && this.evaluation.Prosthetics__c == 'Yes'){
                                 pros = pros.Substring(0,pros.length()-1);
                                 this.evaluation.Prosthetic_Types__c = pros;
+                                if(!pros.Contains('Other'))
+                                this.evaluation.Prosthetics_Other__c ='';
                         }
-                        else
+                        else{
                         this.evaluation.Prosthetic_Types__c='';
+                        this.evaluation.Prosthetics_Other__c ='';
+                        }
                         
 // For Orthodics Types Multi-picklist
                 string orth='';
                 for(string ot: selectedOrthodics)
                 orth += ot+';';
-                        if(orth!=''){
+                        if(orth!='' && this.evaluation.Orthodics__c == 'Yes'){
                                 orth = orth.Substring(0,orth.length()-1);
                                 this.evaluation.Orthodics_Types__c = orth;
+                                if(!pros.Contains('Other'))
+                                this.evaluation.Orthodics_Other__c = '';
                         }
-                        else
+                        else{
                         this.evaluation.Orthodics_Types__c ='';
+                        this.evaluation.Orthodics_Other__c = '';
+                        }
                         
 // For Mood Multi-picklist
                 string mod='';
@@ -781,10 +809,18 @@ public with sharing class NursingEvaluationEditController {
                         if(mod!=''){
                                 mod = mod.Substring(0,mod.length()-1);
                                 this.evaluation.Mood__c = mod;
+                                if(!mod.Contains('Sad') && !mod.Contains('Flat')){
+                                	this.evaluation.Desire_to_hurt_themselves__c ='';
+                                	this.evaluation.Plan_to_Harm_themselves__c ='';
+                                }
+                                
                         }
-                        else
+                        else{
                         this.evaluation.Mood__c ='';
+                        this.evaluation.Desire_to_hurt_themselves__c ='';
+                        this.evaluation.Plan_to_Harm_themselves__c ='';
                         
+                        }
 // For Alleviating Factors Multi-picklist
                 string alv='';
                 for(string av: selectedAlleviators)
