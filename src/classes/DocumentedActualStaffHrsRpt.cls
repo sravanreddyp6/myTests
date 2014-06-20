@@ -29,70 +29,82 @@ public with sharing class DocumentedActualStaffHrsRpt {
         
         PNResults.clear();
         listStaffHrsInfo.clear();                                                                                     
-                                        
+        
+        List<Service_Assignment__c> SAResults = [ SELECT Id, phase__c, admission__r.state__c
+         			from Service_Assignment__c where 
+        					(
+                            ((Start_Date__c >= :fStartDate OR 
+                              End_Date__c >= :fStartDate) 
+                           AND  
+                            (Start_Date__c <= :fEndDate OR 
+                             End_Date__c <= :fEndDate) )                         
+                           OR
+                            (Start_Date__c  <= :fEndDate AND 
+                             End_Date__c = null ) 
+                         )];
+                       
+        // create a map of the service assignments
+        Map<Id, Service_Assignment__c> SAMap = new Map<ID, Service_Assignment__c>();
+        for ( Service_Assignment__c s : SAResults) {
+        	SAMap.put(s.id, s);
+        }
+                                              
         PNResults = [ SELECT 
-           			 	Owner.FirstName ofn,
-           			 	Owner.LastName oln,
-                      	Staff_Name__r.Name,
-         				Person_Being_Served__r.FirstName pbsfn,
-         				Person_Being_Served__r.LastName pbsln,
-         				//Service_Assignment__r.Phase__c,         				
-                       	SUM(Total_Time__c) sum                      
+        				service_assignment__c,
+        				Person_Being_Served__r.Name pbsname,
+           			 	Owner.Name ownname,
+                      	Staff_Name__r.Name staff,
+         				sum(Total_Time__c) sum                     
                        FROM Progress_Note__c 
                        WHERE 
-                         (
-                            ((Service_Assignment__r.Start_Date__c >= :fStartDate OR 
-                              Service_Assignment__r.End_Date__c >= :fStartDate) 
-                           AND  
-                            (Service_Assignment__r.Start_Date__c <= :fEndDate OR 
-                             Service_Assignment__r.End_Date__c <= :fEndDate) )                         
-                           OR
-                            (Service_Assignment__r.Start_Date__c  <= :fEndDate AND 
-                             Service_Assignment__r.End_Date__c = null ) 
-                         )
-                       GROUP BY Owner.FirstName, Owner.LastName, Staff_Name__r.Name,
-                                Person_Being_Served__r.FirstName, Person_Being_Served__r.LastName 
-                    ];    
+                         service_assignment__c in :SAResults
+                         and disregard_note__c = false
+                        group by
+                        	service_assignment__c,
+                        	Person_BEing_Served__r.Name,
+                        	owner.name,
+           			 		staff_name__r.name];
                                            
             StaffHrsInfo dataRow;
-                                                                                           
+            Decimal phase = 0.0;
+            Boolean bPseudo = false;
+            Service_Assignment__c pSA;                                                                   
             for(AggregateResult pn : PNResults) {     
             	 dataRow = new StaffHrsInfo();
-            	        	            	
-            	// if pseudo notes then Staff Name
-            	/*if ((pn.Service_Assignment__r.Admission__r.State__c == 'IN' ||
-            	     Service_Assignment__r.Admission__r.State__c == 'MA' ||
-            	     Service_Assignment__r.Admission__r.State__c == 'MD' ||
-            	     Service_Assignment__r.Admission__r.State__c == 'OH') && 
-            	     pn.get('Staff_Name__r.Name') != null)
-            	      dataRow.clinician = (String)pn.get('Staff_Name__r.Name');            	                  	    
-            	else               	              	               	         
-            	      dataRow.clinician = (String)pn.get('Owner.FirstName') + ' ' + (String)pn.get('Owner.FirstName');
-                  
-                Integer phase = (Integer)pn.get('Service_Assignment__r.Phase__c');                                  
-                     
-                if (phase == 1) {
-                    dataRow.phase = 'J';                
-                }
-                if (phase == 2) {
-                    dataRow.phase = 'R';
-                }
-                if (phase == 3) {
-                    dataRow.phase = 'VC'; 
-                }
-                if (phase == 4) {
-                    dataRow.phase = 'G'; 
-                } */
-                                                
-                dataRow.clinician = (String)pn.get('ofn') + ' ' + (String)pn.get('oln');
-                dataRow.pbs = (String)pn.get('pbsfn') + ' ' + (String)pn.get('pbsln');
+            	        	          
+           
+            	pSA = SAMap.get( (ID)pn.get('service_assignment__c'));        	            	
+            	bPseudo =  	pSA.Admission__r.State__c == 'IN' ||                            
+            				pSA.Admission__r.State__c == 'MA' ||
+            	     		pSA.Admission__r.State__c == 'MD' ||
+            	     		pSA.Admission__r.State__c == 'OH';
+            	     		                                
+                // if pseudo notes then Staff Name
+            	
+            	dataRow.clinician = (bPseudo && pn.get('staffname') != null) ? (String)pn.get('staffname') : (String)pn.get('ownname');
+                dataRow.pbs = (String)pn.get('pbsname');
                 
                 Decimal totalMinutes = (Decimal)pn.get('sum'); 
                 dataRow.totalMinutes = String.valueOf(totalMinutes);   
                 dataRow.hours = String.valueOf((totalMinutes/60).setscale(2));
-                
+                phase  = SAMap.get( (ID)pn.get('service_assignment__c')).phase__c;
+                     
+                if (phase == 1.0) {
+                    dataRow.phase = 'J';                
+                }
+                if (phase == 2.0) {
+                    dataRow.phase = 'R';
+                }
+                if (phase == 3.0) {
+                    dataRow.phase = 'VC'; 
+                }
+                if (phase == 4.0) {
+                    dataRow.phase = 'G'; 
+                }
                 System.debug(dataRow);          
-                listStaffHrsInfo.add(dataRow);                                                                                                   
+                listStaffHrsInfo.add(dataRow); 
+                
+                                                                                                                  
             }                                                                                                                                               
             allCount = listStaffHrsInfo.size();
         
