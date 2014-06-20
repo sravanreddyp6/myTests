@@ -62,7 +62,7 @@ public with sharing class EvaluationResponseTableController {
         String query = 'SELECT Id, ' + getNecessaryColumns(responseType) +
             ' FROM Evaluation_Response__c WHERE Evaluation__c = :evaluationId' +
             ' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) +
-            '\' ORDER BY CreatedDate';
+            '\' ORDER BY Date__c ASC NULLS LAST, CreatedDate';
         responses = Database.query(query);
     }
 

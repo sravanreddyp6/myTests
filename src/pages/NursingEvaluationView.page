@@ -178,7 +178,7 @@
                     </apex:pageBlockSection>
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" />
                     <apex:pageBlockSection columns="1">
-                    	<apex:outputField value="{!Evaluation__c.Details_Section_Completed__c}" />
+                    	<apex:outputField value="{!Evaluation__c.Details_Section_Completed__c}" label="Demographics Section Completed"/>
                     </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:tab>  
@@ -192,26 +192,30 @@
 						<apex:outputField value="{!Evaluation__c.Date_of_Last_menstrual_Period__c}" />
 						<apex:outputField value="{!Evaluation__c.Pneumococcal__c}"  />
 						<apex:outputField value="{!Evaluation__c.Frequency_of_menstrual_cycles__c}" />
-						<apex:outputField value="{!Evaluation__c.Pneumococcal_Text__c}" label="Explain" />
+						<apex:outputField value="{!Evaluation__c.Pneumococcal_Text__c}" label="Describe" />
 						<apex:outputField value="{!Evaluation__c.Date_of_last_pap__c}" />
-						<apex:outputField value="{!Evaluation__c.Pneumococcal_Where_and_when__c}" label="where and when" />
+						<apex:outputField value="{!Evaluation__c.Pneumococcal_Where_and_when__c}" label="Where and When" />
 						<apex:outputField value="{!Evaluation__c.Date_of_last_mamogram__c}" />
 						<apex:outputField value="{!Evaluation__c.Influenza__c}"  />
 						<apex:pageBlockSectionitem >
-							<apex:outputText value="Have you experienced any of the following:" styleClass="labelCol" />
+							<apex:outputText value="Have You Experienced Any of the Following:" styleClass="labelCol" />
 							<apex:selectCheckboxes value="{!selectedExperiences}" layout="pageDirection" disabled="True" >
 								<apex:selectOptions value="{!experienceValues}" />
 							</apex:selectCheckboxes>
 						</apex:pageBlockSectionItem>
-						<apex:outputField value="{!Evaluation__c.Influenza_Text__c}" label="Explain" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.Influenza_where_and_when__c}" label="where and when"  />
+						<apex:outputPanel layout="block">
+                        	<apex:outputlabel value="Describe" styleClass="labelCol" style="margin-left: 5cm;"/>
+	                        <apex:outputField value="{!Evaluation__c.Influenza_Text__c}" label="Describe" id="influExplain" />
+	                        <pre/>
+	                        <apex:outputlabel value="Where and when" styleClass="labelCol" style="margin-left: 4cm;" />
+	                        <apex:outputField value="{!Evaluation__c.Influenza_where_and_when__c}" label="Where and when" id="influWhere" />
+                        </apex:outputPanel>
 						<apex:outputField value="{!Evaluation__c.Diabetic__c}" />
 						<apex:outputField value="{!Evaluation__c.TDAP__c}"  />
 						<apex:outputField value="{!Evaluation__c.If_yes_Glucose_meter_Reading__c}"  />
-						<apex:outputField value="{!Evaluation__c.TDAP_Text__c}" label="Explain"  />
+						<apex:outputField value="{!Evaluation__c.TDAP_Text__c}" label="Describe"  />
 						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.TDAP_Where_and_When__c}" label="where and when"  />
+						<apex:outputField value="{!Evaluation__c.TDAP_Where_and_When__c}" label="Where and When"  />
 						<apex:pageBlockSectionItem />
 						<apex:outputField value="{!Evaluation__c.Immunization_N_A__c}" label="N/A" />
 					</apex:pageBlockSection>
@@ -376,10 +380,7 @@
                          	 <apex:outputText id="breathsounds" value="{!Evaluation__c.Breathe_Sounds__c & if( CONTAINS(Evaluation__c.Breathe_Sounds__c,  'Other'), ' (' & Evaluation__c.Breathe_Sound_Other__c & ')', '')}"  />
                          	 </apex:pageBlockSectionItem>
                          	 <apex:outputField value="{!Evaluation__c.Educated_Regarding_AD__c}" label="Has resident been educated regarding AD symptoms" rendered="{!Evaluation__c.Autonomic_Dysreflexia__c == 'Yes'}"  />
-                         	 <apex:outputText value="" />
-                         	 
-	                         
-	                        
+                         	 <apex:outputText value="" /> 
          			</apex:pageBlockSection>
 					<hr/>
 					<apex:pageBlockSection Columns="1">
@@ -404,19 +405,19 @@
 	                        <apex:outputField value="{!Evaluation__c.Elimination_Bladder_No_Continent_Details__c}" label="Details" />
 	                        <apex:outputField value="{!Evaluation__c.Elimination_Bowel_No_Continent_Appliance__c}" label="Appliance" />  
 	                        <apex:outputField value="{!Evaluation__c.Indwelling_Suprapubic_type_size__c}" label="If Indwelling/Suprapubic, Type/size" />
-	                        <apex:outputField value="{!Evaluation__c.Incontinent_Bowel_Age_Appropriate__c}" label="Age Appropriate" />
+	                        <apex:outputField value="{!Evaluation__c.Elimination_Bowel_No_Appliance_Other__c}" label="Specify Other" id="eliminationBowelNoApplianceOther" />
 	                        <apex:outputField value="{!Evaluation__c.Indwelling_Suprapubic_Date__c}" label="If Indwelling/Suprapubic, Date"  />
-	                        <apex:outputField value="{!Evaluation__c.Incontinent_Bowel_Child_Training__c}" label="Has Child begun toilet training" />
+	                        <apex:outputField value="{!Evaluation__c.Incontinent_Bowel_Age_Appropriate__c}" label="Age Appropriate" />
 	                        <apex:outputField value="{!Evaluation__c.Indwelling_Suprapubic_Date_Unknown__c}" />
-	                        <apex:outputField value="{!Evaluation__c.Incontinent_Bowel_ChildTraining_Describe__c}" label="Describe(Process, Equipment, timing etc.,)" />
+	                        <apex:outputField value="{!Evaluation__c.Incontinent_Bowel_Child_Training__c}" label="Has Child begun toilet training" />
 	                        <apex:outputField value="{!Evaluation__c.If_ICP_Q__c}" />
-	                        <apex:outputField value="{!Evaluation__c.Incontinent_Neurogenic_Bowel__c}" label="Neurogenic Bowel" />
+	                        <apex:outputField value="{!Evaluation__c.Incontinent_Bowel_ChildTraining_Describe__c}" label="Describe(Process, Equipment, timing etc.,)" />
 	                        <apex:outputField value="{!Evaluation__c.ICP_Describe__c}" label="If ICP,Describe Program"  />
-	                        <apex:outputField value="{!Evaluation__c.Incontinent_Neuro_Bowel_Describe__c}" label="if yes, Describe program" />
+	                        <apex:outputField value="{!Evaluation__c.Incontinent_Neurogenic_Bowel__c}" label="Neurogenic Bowel" />
 	                        <apex:outputField value="{!Evaluation__c.Incontinent_Age_Appropriate__c}" label="Age Appropriate"  />
-	                        <apex:outputField value="{!Evaluation__c.Perception_of_Need_to_Defecate__c}" />
+	                        <apex:outputField value="{!Evaluation__c.Incontinent_Neuro_Bowel_Describe__c}" label="if yes, Describe program" />
 	                        <apex:outputField value="{!Evaluation__c.InContinent_Child_toilet_training__c}" label="Has Child begun toilet training" />
-	                        <apex:pageBlockSectionItem />
+	                        <apex:outputField value="{!Evaluation__c.Perception_of_Need_to_Defecate__c}" />
 	                        <apex:outputField value="{!Evaluation__c.Incontinent_toilet_training_describe__c}" label="Describe(Process, Equipment, timing etc.,)" />
 	                        <apex:pageBlockSectionItem />
 	                        <apex:outputField value="{!Evaluation__c.Neurogenic_Bladder__c}"/>
@@ -436,6 +437,8 @@
 	                        <apex:pageBlockSectionItem />
 	                        <apex:outputField value="{!Evaluation__c.Urine_Color__c}" />
 	                        <apex:pageBlockSectionItem />
+	                        <apex:outputField value="{!Evaluation__c.Urine_Color_Other__c}" />
+	                        <apex:pageBlockSectionItem />
 	                        <apex:pageBlockSectionItem >
 	                        <apex:outputText value="Urine Clarity" styleClass="labelCol" />
 	                        <apex:selectCheckboxes value="{!selectedClarities}" layout="pageDirection" disabled="True" >
@@ -445,7 +448,7 @@
 	                        <apex:pageBlockSectionItem />
 	                        <apex:pageBlockSectionItem helpText="{!$ObjectType.Evaluation__c.Fields.Urine_Clarity_Other__c.inlineHelpText}">
 	                        <apex:outputLabel for="urineClarityOther" value="if Other" />
-	                        <apex:outputField value="{!Evaluation__c.Breathe_Sound_Other__c}"  label="if Other" />
+	                        <apex:outputField value="{!Evaluation__c.Urine_Clarity_Other__c}" id="urineClarityOther" label="if Other" />
 	                        </apex:pageBlockSectionItem>
 	                        <apex:pageblocksectionitem />
 	                        <apex:outputfield value="{!Evaluation__c.Urine_Odor__c}" />   
@@ -1134,32 +1137,30 @@
 			 			<apex:outputField value="{!Evaluation__c.Rehab_WFLs__c}" label="WFLs" />
 			 		</apex:pageBlockSection>
 			 		<hr />
-			 		<apex:pageBlockSection columns="3">
-			 			 <apex:outputField value="{!Evaluation__c.Therapy_Ordered__c}" />
-                         <apex:pageBlockSectionItem >
-                         	<apex:outputText value="Mobility Devices" styleClass="labelCol" />
-                         	<apex:outputText value=""  />
-                         </apex:pageBlockSectionItem>
-                         <apex:outputField value="{!Evaluation__c.Rehab_Other_Equipment_Needed__c}" label="Other Speial Equipment Needed"  />
+			 		<apex:pageBlockSection columns="2">
+                         <apex:inputField value="{!Evaluation__c.Therapy_Ordered__c}" label="Further Assessment by Therapist Indicated?" />
+                         <apex:outputText value="Mobility Devices" styleClass="labelCol" style="margin-left: 3cm;"/>
                          <apex:outputField value="{!Evaluation__c.Therapy_Ordered_PT__c}"  label="PT" />
                          <apex:outputField value="{!Evaluation__c.Wheel_Chair__c}" />
-                         <apex:outputField value="{!Evaluation__c.Elastic_Hose__c}" />
                          <apex:outputField value="{!Evaluation__c.Therapy_Ordered_OT__c}" label="OT" />
                          <apex:outputField value="{!Evaluation__c.Front_Wheeled_Walker__c}" />
-                         <apex:outputField value="{!Evaluation__c.Hand_Rolls__c}" />  
                          <apex:outputField value="{!Evaluation__c.Therapy_Ordered_ST__c}"  label="ST" />
-			 			 <apex:outputField value="{!Evaluation__c.Rehab_Cane__c}"/>
-			 			 <apex:outputField value="{!Evaluation__c.Bed_Craddle__c}" /> 
-			 			 <apex:pageBlockSectionItem />
-			 			 <apex:outputField value="{!Evaluation__c.Current_Gait_Mobility_Other__c}" label="Other"  />
-			 			 <apex:outputField value="{!Evaluation__c.Overhead_Trapaze__c}" /> 
-			 			 <apex:pageBlockSectionItem />
-			 			 <apex:outputField value="{!Evaluation__c.Current_Gait_Mobility_Other_Comments__c}"  label="Specify Other" />
-			 			 <apex:outputField Value="{!Evaluation__c.Rehab_Equipment_Other__c}" label="Other" />
-			 			 <apex:pageBlockSectionItem />
-			 			 <apex:pageBlockSectionItem />
-			 			 <apex:outputField value="{!Evaluation__c.Rehab_Equipment_Other_Details__c}" label="Other Special Equipment Details" />
-			 		</apex:pageBlockSection>
+                         <apex:outputField value="{!Evaluation__c.Rehab_Cane__c}"/>
+                         <apex:pageBlockSectionItem />
+                         <apex:outputField value="{!Evaluation__c.Current_Gait_Mobility_Other__c}" label="Other"  />
+                         <apex:pageBlockSectionItem />
+                         <apex:outputField value="{!Evaluation__c.Current_Gait_Mobility_Other_Comments__c}" label="Specify Other" />
+                    </apex:pageBlockSection>
+                    <hr/>
+                    <apex:pageBlockSection Columns="1">
+                    	 <apex:outputField value="{!Evaluation__c.Rehab_Other_Equipment_Needed__c}" label="Other Speial Equipment Needed" />
+                    	 <apex:outputField value="{!Evaluation__c.Elastic_Hose__c}" />
+                    	 <apex:outputField value="{!Evaluation__c.Hand_Rolls__c}" />
+                    	 <apex:outputField value="{!Evaluation__c.Bed_Craddle__c}" /> 
+                    	 <apex:outputField value="{!Evaluation__c.Overhead_Trapaze__c}" /> 
+                    	 <apex:outputField Value="{!Evaluation__c.Rehab_Equipment_Other__c}" label="Other" />
+                    	 <apex:outputField value="{!Evaluation__c.Rehab_Equipment_Other_Details__c}" label="Other Special Equipment Details" />
+                    </apex:pageBlockSection>
 			 		<hr />
 			 		<apex:pageBlockSection columns="2" >
                     	<apex:pageBlockSectionItem >
@@ -1167,11 +1168,11 @@
                     		<apex:outputPanel layout="none" >
                     			<table style="text-align: center; ">
                     				<tr>
-                    					<td style="padding-right: 5px;"> Unknown </td>
-                    					<td style="padding: 0 35px;">Impaired </td>
-                    					<td style="padding: 0 20px;">WFLs</td>
-                    					<td style="padding: 0 5px;">Therapist to Determine</td>
-                                    	<td style="padding: 0 5px;">N/A</td>
+                    					<td style="padding-left:0.3cm;"> Unknown </td>
+                                        <td style="padding-left: 1cm;">Impaired </td>
+                                        <td style="padding-left: 1cm;">WFLs</td>
+                                        <td style="padding-left: 1cm;">Therapist to <br/> Determine</td>
+                                        <td style="padding-left: 1cm;">N/A</td>
                                 	</tr>
                                 </table>
                                </apex:outputPanel>
@@ -1247,10 +1248,11 @@
 				 			<apex:outputField value="{!Evaluation__c.Risk_to_Others__c}"  />
 				 			<apex:outputField value="{!Evaluation__c.Risk_to_Self_Describe__c}"  label="Describe"/>
 				 			<apex:outputField value="{!Evaluation__c.Risk_to_Others_Describe__c}" label="Describe"/>
-				 			<apex:outputField value="{!Evaluation__c.Hallucinations__c}" />
 				 			<apex:outputField value="{!Evaluation__c.Elopement_Risk__c}" />
-				 			<apex:outputField value="{!Evaluation__c.Hallucinations_Describe__c}"  label="Describe" />
+				 			<apex:outputField value="{!Evaluation__c.Hallucinations__c}" />
 				 			<apex:outputField value="{!Evaluation__c.Elopement_Risk_Describe__c}" label="Describe" />
+				 			<apex:outputField value="{!Evaluation__c.Hallucinations_Describe__c}"  label="Describe" />
+				 			<apex:pageBlockSectionItem />
 				 			<apex:pageBlockSectionItem >
 				 				<apex:outputText value="Hallucination Type" />
 				 				<apex:selectCheckboxes value="{!selectedHalls}" Disabled="True">
