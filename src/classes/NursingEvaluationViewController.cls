@@ -361,6 +361,11 @@ public with sharing class NursingEvaluationViewController {
 		if(!String.isBlank(this.evaluation.Neuro_pain_Descriptors__c))
 		selectedpainDescriptors = this.evaluation.Neuro_pain_Descriptors__c.split(';');
 		
+		string file;
+		file = 'Person Being Served- '+ this.evaluation.ServiceAssignment__r.Person_Being_Served__r.Name+'.pdf';
+		file = file.replaceAll('[|,||\\,||"||:|~|!|@|#|$|%|^|&|*|_|+|=|<|>|?|\\(|\\)|\\{|\\}|\\;|\\\'"]', ' ');	
+		// Assigns the person being served Name to the PDF dynamically
+		Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename='+file);
         
     }
     

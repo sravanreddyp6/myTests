@@ -230,6 +230,7 @@
         <apex:inputhidden value="{!Evaluation__c.Perception_of_Need_to_Void__c}" />
         <apex:inputhidden value="{!Evaluation__c.Urinary_Issues__c}" />
         <apex:inputhidden value="{!Evaluation__c.Urine_Color__c}" />
+		<apex:inputhidden value="{!Evaluation__c.Urine_Color_Other__c}" />        
         <apex:inputhidden value="{!Evaluation__c.Urine_Clarity__c}" />
         <apex:inputhidden value="{!Evaluation__c.Urine_Clarity_Other__c}" />
         <apex:inputhidden value="{!Evaluation__c.Urine_Odor__c}" />
@@ -317,7 +318,7 @@
         <apex:inputhidden value="{!Evaluation__c.Unresponsive__c}" />
         <apex:inputhidden value="{!Evaluation__c.VP_Shunt__c}" />
         <apex:inputhidden value="{!Evaluation__c.VP_Shunt_Describe__c}" />
-        <apex:inputhidden value="{!Evaluation__c.Head_Circumference_cm__c}" />
+<!--         <apex:inputhidden value="{!Evaluation__c.Head_Circumference_cm__c}" /> -->
         <apex:inputhidden value="{!Evaluation__c.Mood__c}" />
         <apex:inputhidden value="{!Evaluation__c.Depression_History__c}" />
         <apex:inputhidden value="{!Evaluation__c.Bed_Alarm__c}" />
@@ -559,36 +560,39 @@
 
       <br />
       <table style="width:80%">
-          <tr><td>
-                  <apex:outputLabel value="Weight at Admission" styleClass="label"/>
-            <table><tr><td>
-                        <apex:dynamiccomponent componentValue="{!ctlmap['weightlbs__c']}" />
-                    </td><td>
-                        <apex:dynamiccomponent componentValue="{!ctlmap['weightoz__c']}" />
-                    </td><td>
-                    	<apex:outputText value=" (or) "/>                    
-                        <apex:dynamiccomponent componentValue="{!ctlmap['weightkg__c']}" />
-            </td></tr></table>
-            </td><td>
-            <apex:outputLabel value="Height at Admission" styleClass="label"/>
-            <table><tr><td>
-                        <apex:dynamiccomponent componentValue="{!ctlmap['heightft__c']}" />
-                    </td><td>
-                        <apex:dynamiccomponent componentValue="{!ctlmap['heightinches__c']}" />
-                    </td><td>
-                    	<apex:outputText value=" (or) "/>
-                        <apex:dynamiccomponent componentValue="{!ctlmap['height_in_cms__c']}" />
-            </td></tr></table>
-            </td></tr>
-          <tr><td>
-            <apex:dynamiccomponent componentValue="{!ctlmap['head_circumference_cm__c']}" />
-          </td><td></td></tr>
+			<tr><td><apex:outputLabel value="Weight at Admission" styleClass="label"/></td>
+				<td><apex:outputLabel value="Height at Admission" styleClass="label"/></td>
+			</tr>
+           <tr><td>
+           <table><tr>
+				<td><apex:dynamiccomponent componentValue="{!ctlmap['weightlbs__c']}" /></td>
+				<td><apex:dynamiccomponent componentValue="{!ctlmap['weightoz__c']}" /></td>
+				<td><apex:outputText value=" (or) "/> <apex:dynamiccomponent componentValue="{!ctlmap['weightkg__c']}" /></td>
+			</tr></table>
+			</td>
+			<td>
+            <table><tr>
+				<td><apex:dynamiccomponent componentValue="{!ctlmap['heightft__c']}" /></td>
+            	<td><apex:dynamiccomponent componentValue="{!ctlmap['heightinches__c']}" /></td>
+            	<td><apex:outputText value=" (or) "/> <apex:dynamiccomponent componentValue="{!ctlmap['height_in_cms__c']}" /></td>
+            </tr></table>
+			</td></tr>            
       </table>
+      
+	  <apex:pageBlockSection columns="1">
+	      <apex:pageBlockSectionItem >
+			  <apex:outputLabel value="Head Circumference (cm)" styleClass="label"/>
+			  <apex:outputField value="{!Evaluation__c.Head_Circumference_cm__c}" />
+	      </apex:pageBlockSectionItem>	
+      </apex:pageBlockSection>
             
       <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" isPdf="true" />
       <br />
       <apex:pageBlockSection columns="1">
-        <apex:dynamiccomponent componentValue="{!ctlmap['details_section_completed__c']}" />
+	      <apex:pageBlockSectionItem >
+			<apex:outputLabel value="Demographics Section Completed" styleClass="label"/>
+			<apex:outputField value="{!Evaluation__c.Details_Section_Completed__c}" />
+	      </apex:pageBlockSectionItem>	
       </apex:pageBlockSection>
     </apex:pageBlock>
 <hr />
@@ -606,8 +610,8 @@
         <td><apex:dynamiccomponent componentValue="{!ctlmap['pneumococcal__c']}" /></td></tr>
 
         <tr><td><apex:dynamiccomponent componentValue="{!ctlmap['frequency_of_menstrual_cycles__c']}" /></td>
-        <td><apex:outputLabel value="Explain" styleClass="label"/>
-        <apex:outputField value="{!Evaluation__c.Pneumococcal_Text__c}" label="Explain" /><br/></td></tr>
+        <td><apex:outputLabel value="Describe" styleClass="label"/>
+        <apex:outputText value="{!Evaluation__c.Pneumococcal_Text__c}" label="Describe" /><br/></td></tr>
         
         <tr><td><apex:dynamiccomponent componentValue="{!ctlmap['date_of_last_pap__c']}" /></td>
         <td><apex:dynamiccomponent componentValue="{!ctlmap['pneumococcal_where_and_when__c']}" /></td></tr>
@@ -617,16 +621,16 @@
         
         <tr><td><apex:dynamiccomponent componentValue="{!ctlmap['diagnostics_gyn_experiences__c']}" /></td>
             
-        <td><apex:outputLabel value="Explain" styleClass="label"/>
-        <apex:outputField value="{!Evaluation__c.Influenza_Text__c}" label="Explain" /><br/>
+        <td><apex:outputLabel value="Describe" styleClass="label"/>
+        <apex:outputText value="{!Evaluation__c.Influenza_Text__c}" label="Describe" /><br/>
         <apex:dynamiccomponent componentValue="{!ctlmap['influenza_where_and_when__c']}" /></td></tr>                        
 
         <tr><td><apex:dynamiccomponent componentValue="{!ctlmap['diabetic__c']}" /></td>
         <td><apex:dynamiccomponent componentValue="{!ctlmap['tdap__c']}" /></td></tr>
  
         <tr><td><apex:dynamiccomponent componentValue="{!ctlmap['if_yes_glucose_meter_reading__c']}" /></td>
-        <td><apex:outputLabel value="Explain" styleClass="label"/>
-        <apex:outputField value="{!Evaluation__c.TDAP_Text__c}" label="Explain"  /><br/>
+        <td><apex:outputLabel value="Describe" styleClass="label"/>
+        <apex:outputField value="{!Evaluation__c.TDAP_Text__c}" label="Describe"  /><br/>
         <apex:dynamiccomponent componentValue="{!ctlmap['tdap_where_and_when__c']}" /><br/>
         <apex:dynamiccomponent componentValue="{!ctlmap['immunization_n_a__c']}" />
         </td></tr>
@@ -948,6 +952,7 @@
             <apex:dynamiccomponent componentvalue="{!ctlmap['perception_of_need_to_void__c']}" /><br/>
             <apex:dynamiccomponent componentvalue="{!ctlmap['urinary_issues__c']}" /><br/>
             <apex:dynamiccomponent componentvalue="{!ctlmap['urine_color__c']}" /><br/>
+			<apex:dynamiccomponent componentvalue="{!ctlmap['urine_color_other__c']}" /><br/>
             <apex:dynamiccomponent componentvalue="{!ctlmap['urine_clarity__c']}" /><br/>
             <apex:dynamiccomponent componentvalue="{!ctlmap['urine_clarity_other__c']}" /><br/>
             <apex:dynamiccomponent componentvalue="{!ctlmap['urine_odor__c']}" />
@@ -956,6 +961,8 @@
 	        <apex:dynamiccomponent componentvalue="{!ctlmap['elimination_bowel_continent__c']}" /><br />
 	        <apex:outputLabel value="Appliance" style="margin:10px;font-weight: Bold;"/>
 	        <apex:outputField value="{!Evaluation__c.Elimination_Bowel_No_Continent_Appliance__c}" label="Appliance" /><br/>
+            <apex:outputLabel value="Specify Other" styleClass="label" />
+            <apex:outputText value="{!Evaluation__c.Elimination_Bowel_No_Appliance_Other__c}" label="Age Appropriate" /><br/>
             <apex:outputLabel value="Age Appropriate" styleClass="label" />
             <apex:outputText value="{!Evaluation__c.Incontinent_Bowel_Age_Appropriate__c}" label="Age Appropriate" /><br/>
             <apex:outputLabel value="Has Child begun toilet training" styleClass="label" />
@@ -1187,9 +1194,15 @@
             </tbody>
         </table>
     </div>
+    
+    <apex:pageBlockSection columns="1">     
+        <apex:pageBlockSectionItem >
+        	<apex:outputLabel value="Other Body Map Comments" styleClass="label" /> 
+			<apex:outputText value="{!Evaluation__c.Body_Map_Comments__c}" label="Other Body Map Comments" />
+		</apex:pageBlockSectionItem>        
+    </apex:pageBlockSection>    
     <hr />
-    <apex:pageBlockSection columns="1" id="skinBodyFooter">
-        <apex:outputField value="{!Evaluation__c.Body_Map_Comments__c}" label="Other Body Map Comments" />
+    <apex:pageBlockSection columns="1" id="skinBodyFooter">     
         <apex:dynamiccomponent componentvalue="{!ctlmap['skin_body_comments__c']}" />
         <apex:dynamiccomponent componentvalue="{!ctlmap['skin_section_completed__c']}" />
     </apex:pageBlockSection>
@@ -1548,9 +1561,12 @@
     </div>
     <br/>
     <apex:pageBlockSection columns="1">
-        <apex:outputField value="{!Evaluation__c.Neuro_Other_Body_Map_Comments__c}" label="Other Body Map Comments" />
+        <apex:pageBlockSectionItem >
+        	<apex:outputLabel value="Other Body Map Comments" styleClass="label" /> 
+			<apex:outputText value="{!Evaluation__c.Neuro_Other_Body_Map_Comments__c}" label="Other Body Map Comments" />
+		</apex:pageBlockSectionItem>    
     </apex:pageBlockSection>
-        
+    <br/>        
       <apex:pageBlockSection columns="1" >
         <apex:pageBlockSectionitem >
 	        <apex:outputLabel value="Pain Level" styleClass="label"/>
@@ -1654,7 +1670,7 @@
     <apex:dynamiccomponent componentvalue="{!ctlmap['rehab_wfls__c']}" />
     <hr />
     
-    <table style="width:100%">
+    <table style="width:80%">
     <tr>
     <td style="width:33%;vertical-align:top">
         <apex:dynamiccomponent componentvalue="{!ctlmap['therapy_ordered__c']}" /><br />
@@ -1669,7 +1685,12 @@
         <apex:dynamiccomponent componentvalue="{!ctlmap['current_gait_mobility_other__c']}" /><br />
         <apex:dynamiccomponent componentvalue="{!ctlmap['current_gait_mobility_other_comments__c']}" /><br />
     </td>
+    </tr>
+    </table>    
+    <hr />
     
+    <table style="width:80%">
+    <tr>        
     <td style="vertical-align:top">Other Speial Equipment Needed<br/>   
         <apex:dynamiccomponent componentvalue="{!ctlmap['elastic_hose__c']}" /><br />
         <apex:dynamiccomponent componentvalue="{!ctlmap['hand_rolls__c']}" /><br />  
