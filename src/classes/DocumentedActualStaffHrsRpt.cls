@@ -53,7 +53,7 @@ public with sharing class DocumentedActualStaffHrsRpt {
         				service_assignment__c,
         				Person_Being_Served__r.Name pbsname,
            			 	Owner.Name ownname,
-                      	Staff_Name__r.Name staff,
+                      	Staff_Name__r.Name staffname,
          				sum(Total_Time__c) sum                     
                        FROM Progress_Note__c 
                        WHERE 
