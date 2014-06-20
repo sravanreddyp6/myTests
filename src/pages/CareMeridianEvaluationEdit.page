@@ -467,7 +467,7 @@
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Surgery Detail" formId="{!$Component.wholePage}" uniqueId="surgery" />
                     <apex:pageBlockSection columns="1">
                         <apex:inputTextArea value="{!Evaluation__c.Clinical_Course__c}" cols="80" />
-                        <apex:inputField value="{!Evaluation__c.Details_Section_Completed__c}" />
+                        <apex:inputField value="{!Evaluation__c.Details_Section_Completed__c}" label="Demographics Section Completed"/>
                     </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:tab>
@@ -1087,7 +1087,7 @@
                     </apex:pageBlockSection>
                     <hr />
                     <apex:pageBlockSection columns="2">
-                        <apex:inputField value="{!Evaluation__c.Therapy_Ordered__c}"
+                        <apex:inputField value="{!Evaluation__c.Therapy_Ordered__c}" 
                             html-data-rules="{&quot;1&quot;: [&quot;{!$Component.pt}&quot;, &quot;{!$Component.ot}&quot;, &quot;{!$Component.st}&quot;, &quot;{!$Component.neuroPsy}&quot;]}" />
                         <apex:pageBlockSectionItem >
                             <apex:outputText value="Mobility Devices" />
