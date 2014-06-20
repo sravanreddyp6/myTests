@@ -1,6 +1,6 @@
 @isTest
 public class ActionPlan_Form_Test{
-	private static Action_plan__c ap;
+    private static Action_plan__c ap;
     private static Action_plan_Goal__c apg;
     private static Action_plan_Objective__c apo;
     private static Action_plan_Action__c apa;
@@ -9,10 +9,10 @@ static testMethod void myUnitTest() {
     
     createData();
 
-	ApexPages.StandardController sc = new ApexPages.StandardController(ap);  
+    ApexPages.StandardController sc = new ApexPages.StandardController(ap);  
     
     ActionPlan_Form contrl = new ActionPlan_Form(sc);
-	PageReference pageRef = Page.ActionPlanForm;
+    PageReference pageRef = Page.ActionPlanForm;
     Test.setCurrentPage(pageRef);
     
 
@@ -54,16 +54,18 @@ static testMethod void myUnitTest() {
 static testMethod void myCancel() {    
     createData();
 
-	ApexPages.StandardController sc = new ApexPages.StandardController(ap);  
+    ApexPages.StandardController sc = new ApexPages.StandardController(ap);  
     
     ActionPlan_Form contrl = new ActionPlan_Form(sc);
-	PageReference pageRef = Page.ActionPlanForm;
+    PageReference pageRef = Page.ActionPlanForm;
     Test.setCurrentPage(pageRef);    
-	contrl.myCancel();    
+    contrl.myCancel();    
 }
     
     private static Action_Plan__c createData(){
-		String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
+    
+    /*
+        String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
         
         Account Accnt = new Account(
             RecordTypeID=RecTypeId,
@@ -81,7 +83,7 @@ static testMethod void myCancel() {
         
         Id aContactId = [select PersonContactId from account where id =:accnt.id].PersonContactId;
         Id aAccountId = Accnt.Id;        
-		Admission__c Adm = new Admission__c(
+        Admission__c Adm = new Admission__c(
             Name = 'TEST ADM',
             Person_Being_Served__c = aContactId,
             Effective_Date__c = date.today(),
@@ -91,31 +93,33 @@ static testMethod void myCancel() {
         
         Service_Assignment__c SA = new Service_Assignment__c(
             admission__c = adm.id,
-        	Person_Being_Served__c = aContactId
+            Person_Being_Served__c = aContactId
         );        
         insert SA;
+        */
+        TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
         
-    	ap = new Action_Plan__c(
-        	Service_Assignment__c = sa.id,
-        	Target_Date__c = system.today()+365,
-        	Effective_Date__c = system.today()-365
+        ap = new Action_Plan__c(
+            Service_Assignment__c = myData.theSA.id,
+            Target_Date__c = myData.theSA.Start_Date__c.addDays(1),
+            Effective_Date__c = myData.theSA.start_Date__c
         );        
-    	insert ap; 
+        insert ap; 
         
         apg = new Action_Plan_Goal__c(
-        	Description__c = 'a goal',
-        	Action_Plan__c = ap.id,
+            Description__c = 'a goal',
+            Action_Plan__c = ap.id,
             sort_order__c = 'g'
         );
         insert apg;
         
         apo = new Action_Plan_Objective__c(
-        	Action_Plan_Goal__c = apg.id,
-        	Status__c = 'In Progress',
-        	Description__c = 'an Objective',
-        	Type__c = 'skill',
-        	Target_End_Date__c = system.today()+365,
-        	Effective_Date__c = system.today()-365,
+            Action_Plan_Goal__c = apg.id,
+            Status__c = 'In Progress',
+            Description__c = 'an Objective',
+            Type__c = 'skill',
+            Target_End_Date__c = myData.theSA.Start_Date__c.addDays(1),
+            Effective_Date__c = myData.theSA.Start_Date__c,
             sort_order__c = 'o'
         );
         insert apo;
