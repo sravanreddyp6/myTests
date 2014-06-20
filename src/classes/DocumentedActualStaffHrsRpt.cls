@@ -45,8 +45,7 @@ public with sharing class DocumentedActualStaffHrsRpt {
         PNResults = [ SELECT 
         				service_assignment__c,
         				Person_Being_Served__r.Name pbsname,
-           			 	Owner.Name ownname,
-                      	Staff_Name__r.Name staffname,
+           			 	Staff_Name__r.Name clinician,
          				sum(Total_Time__c) sum                     
                        FROM Progress_Note__c 
                        WHERE 
@@ -54,29 +53,42 @@ public with sharing class DocumentedActualStaffHrsRpt {
                          and disregard_note__c = false
                          and Start_time__c >= :fStartDate  AND  
                             Start_time__c <= :fEndDate
+                         and service_assignment__r.admission__r.state__c in ('IN','MA','MD','OH')  
                         group by
                         	service_assignment__c,
                         	Person_Being_Served__r.Name,
-                        	owner.name,
-           			 		staff_name__r.name];
+                        	staff_name__r.name];
+ 
+        PNResults.AddAll( [ SELECT 
+        				service_assignment__c,
+        				Person_Being_Served__r.Name pbsname,
+           			 	Owner.Name clinician,
+         				sum(Total_Time__c) sum                     
+                       FROM Progress_Note__c 
+                       WHERE 
+                         service_assignment__c in :SAResults
+                         and disregard_note__c = false
+                         and Start_time__c >= :fStartDate  AND  
+                            Start_time__c <= :fEndDate
+                         and service_assignment__r.admission__r.state__c not in ('IN','MA','MD','OH')  
+                        group by
+                        	service_assignment__c,
+                        	Person_Being_Served__r.Name,
+                        	owner.name]);
+ 
                                            
             StaffHrsInfo dataRow;
             Decimal phase = 0.0;
-            Boolean bPseudo = false;
             Service_Assignment__c pSA;                                                                   
+            
             for(AggregateResult pn : PNResults) {     
             	 dataRow = new StaffHrsInfo();
             	        	          
            
             	pSA = SAMap.get( (ID)pn.get('service_assignment__c'));        	            	
-            	bPseudo =  	pSA.Admission__r.State__c == 'IN' ||                            
-            				pSA.Admission__r.State__c == 'MA' ||
-            	     		pSA.Admission__r.State__c == 'MD' ||
-            	     		pSA.Admission__r.State__c == 'OH';
-            	     		                                
-                // if pseudo notes then Staff Name
             	
-            	dataRow.clinician = (bPseudo && pn.get('staffname') != null) ? (String)pn.get('staffname') : (String)pn.get('ownname');
+            	     		                                
+            	dataRow.clinician = (String)pn.get('clinician');
                 dataRow.pbs = (String)pn.get('pbsname');
                 
                 Decimal totalMinutes = (Decimal)pn.get('sum'); 
