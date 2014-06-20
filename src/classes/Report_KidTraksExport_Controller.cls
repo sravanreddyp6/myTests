@@ -84,7 +84,7 @@ public with sharing class Report_KidTraksExport_Controller {
 
     	List<Progress_Note__c> progressNotesThisReport = [ SELECT Start_Time__c, End_Time__c, Person_Being_Served__c, Authorization__r.Payer_Authorization_ID__c FROM Progress_Note__c 
     															WHERE Status__c = 'Final' 
-    																	AND Service_Code__r.Service_Code__c = '10942.11610' 
+    																	AND Service_Code__r.Service_Code__c = '10942.1161' 
     																	AND Start_Time__c >= :reportStartDate 
     																	AND End_Time__c <= :reportEndDate
     																	AND Program_Detail__c = :reportProgram ];
