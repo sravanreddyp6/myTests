@@ -1,0 +1,257 @@
+<apex:page controller="Report_KidTraksExport_Controller" docType="html-5.0" sidebar="false" readOnly="true">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!$Resource.jquery}"/>
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables_themeroller.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables.css')}"/>
+<style>
+    .headRow{
+       width: 250px;     
+    }
+</style>
+<style>
+.thinking{
+    opacity:0.8;
+    background-color:#ccc;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}
+
+.thinkingwheel{
+    position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+}
+#mytbl tr:nth-child(even)       { background-color:#eee; }
+#mytbl tr:nth-child(odd)      { //background-color:#fff; }
+
+#mytbl td{
+    font-size: 12px;
+    padding: 3px;
+}
+.headRow{
+   // background-color: white !important;
+    font-weight: bold;
+    border-bottom: 2px #dbdbdb solid;
+ //   width: 15%;
+    padding: 7px !important;
+
+}
+.dataRow{
+    border-bottom: 1px #dbdbdb solid;
+}
+#mytbl{
+    border: 1px solid #dbdbdb;
+    border-top: none;
+    padding: 0px;
+    margin-top: -9px;
+    margin-bottom: 7px;
+
+}
+.sorting{
+    background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_both.png')}') no-repeat center right;
+}
+.sorting_asc{
+    background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_asc.png')}') no-repeat center right;
+}
+.sorting_desc{
+    background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_desc.png')}') no-repeat center right;
+}
+.txtcol{
+    
+}
+.timecol{
+}
+.mytbl{
+
+    border: 1px #dbdbdb solid;
+    width: 250px;
+    margin-left: 40%;
+}
+.tblheader{
+    background-color: #99ccff;
+    border-bottom: 1px #dbdbdb solid;
+
+}
+.tblrow{
+
+    border-bottom: 1px #dbdbdb solid;
+    border-right: 1px #dbdbdb solid;
+}
+.header{
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px;
+}
+</style>
+<script>
+    function setFocusOnLoad() {}
+</script>
+<apex:form id="frm" >
+                        
+    <apex:pageBlock title="Filters" rendered="false">
+        <apex:pageBlockButtons location="bottom" >
+            
+        </apex:pageBlockButtons>
+        <apex:pageBlockSection >
+
+
+
+        </apex:pageBlockSection>
+   </apex:pageBlock>
+
+<!--
+{!mapresults}
+-->
+
+<apex:outputPanel layout="block" id="parameterPanel" style="width: 800px;">
+	<apex:pageBlock title="KidTraks Export: Parameters">
+		<apex:pageBlockSection >
+	        <apex:input id="start_date" 
+	        	type="date"
+				size="10"  
+				styleClass="datepicker" 
+				label="Start Date"  
+				value="{!reportStartDate}"
+				required="true"/>
+	        <apex:input id="end_date"
+				type="date"
+				size="10"
+				styleClass="datepicker"
+				label="End Date"
+				value="{!reportEndDate}"
+				required="true"/>
+				<apex:pageBlockSectionItem >
+			<apex:outputLabel for="program" value="Program" />
+			<apex:selectList id="program" value="{!reportProgram}" size="1">
+				<apex:selectOptions value="{!reportPrograms}" />
+			</apex:selectList>		
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem >
+			<apex:outputText value="" />
+			<apex:commandButton value="Run Report" action="{!submitParams}" />
+			</apex:pageBlockSectionItem> 
+		</apex:pageBlockSection>
+		
+	</apex:pageBlock>
+</apex:outputPanel>
+
+<apex:outputPanel layout="block" id="dataTable" style="width: 7000px;" rendered="{!reportResultsDisplayed}">   
+   <apex:pageBlock title="Results">
+        <apex:pageBlockButtons > 
+            <div style="float: right"><input class="btn" type="button" onclick="tableToExcel('mytbl', 'W3C Example Table')" value="Export to Excel"/></div>
+        </apex:pageBlockButtons>  
+
+
+        <table id="mytbl" cellpadding="0" cellspacing="0">
+            <thead class="headRow">
+                <tr class="headRow">
+                    <td style="width: 120px;"  class="headRow">Email_Address</td>
+                    <td  class="headRow">Phone_Number</td>
+                    <td  class="headRow">Vendor_ID</td>
+                    <td  class="headRow">Vendor_Location</td>
+                    <td  class="headRow">Vendor_Address_Seq</td>
+                    <td  class="headRow">Invoice_Type</td>
+                    <td  class="headRow">Bill_Type</td>
+                    <td  class="headRow">Invoice_Number</td>
+                    <td  class="headRow">Invoice_Date</td>
+                    <td  class="headRow">Service_Type</td>
+                    <td  class="headRow">Billable_Unit_ID</td>
+                    <td  class="headRow">Person_ID</td>
+                    <td  class="headRow">Case_ID</td>
+                    <td  class="headRow">Billing_Code</td>
+                    <td  class="headRow">Service_Code</td>
+                    <td  class="headRow">Component_Code</td>
+                    <td  class="headRow">Start_Date</td>
+                    <td  class="headRow">End_Date</td>
+                    <td  class="headRow">Units</td>
+                    <td  class="headRow">UOM</td>
+                    <td  class="headRow">Rate</td>
+                    <td  class="headRow">Amount</td>
+                    <td  class="headRow">County_Code</td>
+                    <td  class="headRow">Comments</td>
+                    <td  class="headRow">Place_of_Service</td>
+                </tr>
+            </thead>
+            <apex:repeat value="{!lineItems}" var="l">
+	            <tr>
+	            	<td>{!l.emailAddress}</td>
+	            	<td>{!l.phoneNumber}</td>
+	            	<td>{!l.vendorId}</td>
+	            	<td>{!l.vendorLocation}</td>
+	            	<td>{!l.vendorAddressSeq}</td>
+	            	<td>{!l.invoiceType}</td>
+	            	<td>{!l.billType}</td>
+	            	<td>{!l.invoiceNumber}</td>
+	            	<td></td>
+	            	<td>{!l.serviceType}</td>
+	            	<td>{!l.billableUnitId}</td>
+	            	<td></td>
+	            	<td></td>
+	            	<td>{!l.billingCode}</td>
+	            	<td></td>
+	            	<td></td>
+	            	<td>
+		            	<apex:outputText value="{0,date,M'/'d'/'yyyy}">
+						    <apex:param value="{!l.startDate}" /> 
+						</apex:outputText>
+	            	</td>
+	            	<td>
+	            		<apex:outputText value="{0,date,M'/'d'/'yyyy}">
+						    <apex:param value="{!l.endDate}" />
+						</apex:outputText>
+					</td>
+	            	<td>{!l.units}</td>
+	            	<td>{!l.uom}</td>
+	            	<td>{!l.rate}</td>
+	            	<td>{!l.amount}</td>
+	            	<td></td>
+	            	<td></td>
+	            	<td>{!l.placeOfService}</td>
+	            </tr>
+            </apex:repeat>
+</table>
+
+
+
+
+    </apex:pageBlock> 
+
+
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <div  class="thinking">
+            <div class="thinkingwheel">    
+                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+            </div>
+        </div>   
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus> 
+<script>
+j$ = jQuery.noConflict();
+function createtbl(){
+    j$('#mytbl').dataTable({"bPaginate": false, "bFilter": false});
+}
+j$(document).ready(function(){
+    createtbl();
+});
+var tableToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+  return function(table, name) {
+    if (!table.nodeType) table = document.getElementById(table)
+    var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+    window.location.href = uri + base64(format(template, ctx))
+  }
+})()
+</script>
+</apex:outputPanel> 
+</apex:form>
+</apex:page>
