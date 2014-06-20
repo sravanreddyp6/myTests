@@ -32,16 +32,9 @@ public with sharing class DocumentedActualStaffHrsRpt {
         
         List<Service_Assignment__c> SAResults = [ SELECT Id, phase__c, admission__r.state__c
          			from Service_Assignment__c where 
-        					(
-                            ((Start_Date__c >= :fStartDate OR 
-                              End_Date__c >= :fStartDate) 
-                           AND  
-                            (Start_Date__c <= :fEndDate OR 
-                             End_Date__c <= :fEndDate) )                         
-                           OR
-                            (Start_Date__c  <= :fEndDate AND 
-                             End_Date__c = null ) 
-                         )];
+        					Start_Date__c >= :fStartDate  AND  
+                            Start_Date__c <= :fEndDate  
+                         ];
                        
         // create a map of the service assignments
         Map<Id, Service_Assignment__c> SAMap = new Map<ID, Service_Assignment__c>();
@@ -59,9 +52,11 @@ public with sharing class DocumentedActualStaffHrsRpt {
                        WHERE 
                          service_assignment__c in :SAResults
                          and disregard_note__c = false
+                         and Start_time__c >= :fStartDate  AND  
+                            Start_time__c <= :fEndDate
                         group by
                         	service_assignment__c,
-                        	Person_BEing_Served__r.Name,
+                        	Person_Being_Served__r.Name,
                         	owner.name,
            			 		staff_name__r.name];
                                            
@@ -85,7 +80,7 @@ public with sharing class DocumentedActualStaffHrsRpt {
                 dataRow.pbs = (String)pn.get('pbsname');
                 
                 Decimal totalMinutes = (Decimal)pn.get('sum'); 
-                dataRow.totalMinutes = String.valueOf(totalMinutes);   
+                dataRow.totalMinutes = String.valueOf(totalMinutes.setscale(0));   
                 dataRow.hours = String.valueOf((totalMinutes/60).setscale(2));
                 phase  = SAMap.get( (ID)pn.get('service_assignment__c')).phase__c;
                      
@@ -105,7 +100,8 @@ public with sharing class DocumentedActualStaffHrsRpt {
                 listStaffHrsInfo.add(dataRow); 
                 
                                                                                                                   
-            }                                                                                                                                               
+            }              
+            listStaffHrsInfo.sort();                                                                                                                                 
             allCount = listStaffHrsInfo.size();
         
             fStartDate = null;
@@ -114,12 +110,25 @@ public with sharing class DocumentedActualStaffHrsRpt {
     }
     
     // Inner Class to store the row data detail of the report 
-    public class StaffHrsInfo {
+    public class StaffHrsInfo  implements comparable {
         public String clinician {get; set;}
         public String pbs {get; set;}
         public String phase {get; set;}
         public String totalMinutes {get; set;} 
         public String hours{get; set;}
+        
+        public Integer compareTo(Object compareTo) 
+    	{
+	        StaffHrsInfo s = (StaffHrsInfo) compareTo;
+	        if (clinician == s.clinician ) {
+	        	if ( pbs == s.pbs ) return 0;
+	        	if ( pbs > s.pbs ) return 1;
+	        	return -1;
+	        }
+	        if (clinician > s.clinician ) return 1;
+	        return -1;        
+    	}
+    
     }   
 
 }
