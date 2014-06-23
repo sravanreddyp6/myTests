@@ -495,7 +495,6 @@ public with sharing class referral_Controller2 {
         // dob and then if < 18 need a guardian
         if ( this.personBeingRefRecord.Date_of_Birth__c == null ) {
             messages.Add( 'Date of Birth' );
-            this.personBeingRefRecord.Date_of_Birth__c.AddError('Value required for conversion');
             hasReq = false;
         } else {
 
