@@ -693,7 +693,7 @@
 					<hr />
 					 <h2 style="display: block; margin: 10px;">Body Map</h2>
                     <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
-                        <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!IF(bodyMapUrl=null, baseUrl + URLFOR($Resource.WholeBodyNoGrid), bodyMapUrl)}" id="bodyMap" />
+                        <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!baseUrl + URLFOR($Resource.WholeBodyNoGrid)}" id="bodyMap" />
                     </div>
                     <div style="margin-left: 420px; height: 298px; overflow: auto;">
                         <table id="annotations">
@@ -997,7 +997,7 @@
 	                <apex:pageblockSection columns="2"  rendered="{!Evaluation__c.Pain_Present__c == 'Yes'}">
 		                    	<h2 style="display: block; margin: 10px;">Body Map</h2>
 		                    <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
-		                        <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!IF(bodyMapUrl=null, baseUrl + URLFOR($Resource.NeurotabBodyNoGrid), bodyMapUrl)}" id="neurobodyMap" />
+		                        <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!baseUrl + URLFOR($Resource.NeurotabBodyNoGrid)}" id="neurobodyMap" />
 		                    </div>
 		                    <div style="margin-left: 420px; height: 298px; overflow: auto;">
 		                        <table id="neuroAnnotations">

@@ -1166,7 +1166,7 @@
     <h2 style="display: block; margin: 10px;">Body Map</h2>
     <br /><br />
     <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px; height: 298px;">
-       <apex:image width="318" height="298" style="float: left; border: 3px solid #ECECEC;" value="{!IF(bodyMapUrl=null, URLFOR($Resource.WholeBodyNoGrid), bodyMapUrl)}" id="bodyMap" />
+       <apex:image width="318" height="298" style="float: left; border: 3px solid #ECECEC;" value="{!baseUrl+ URLFOR($Resource.WholeBodyNoGrid)}" id="bodyMap" />
 
         <apex:variable var="index" value="{!1}" />
         <apex:repeat value="{!annotations}" var="annotation">
@@ -1531,7 +1531,7 @@
     <h2 style="display: block; margin: 10px;">Body Map</h2>
     <br /><br />
     <div style="position: relative; float: left; margin-left: 80px; margin-top: 80px; margin-bottom: 10px; height: 298px;">
-       <apex:image width="318" height="298" style="float: left; border: 3px solid #ECECEC;" value="{!IF(bodyMapUrl=null, baseUrl + URLFOR($Resource.NeurotabBodyNoGrid), bodyMapUrl)}" id="neurobodyMap" />
+       <apex:image width="318" height="298" style="float: left; border: 3px solid #ECECEC;" value="{!baseUrl + URLFOR($Resource.NeurotabBodyNoGrid)}" id="neurobodyMap" />
 
         <apex:variable var="index" value="{!1}" />
         <apex:repeat value="{!neuroAnnotations}" var="neuroannotation">

@@ -15,17 +15,13 @@ public with sharing class DocumentedActualStaffHrsRpt {
     
     public integer allCount{get; set;}
     
-    public Map<string, integer > ParsedData = new Map<string, integer >();    
-    public Map<string, integer > getParsedData(){return ParsedData;}
-    
     public PageReference runReport(){
         if(fEndDate < fStartDate){
             ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,'Start Date must be before the End Date');//Same old drama 
             ApexPages.addMessage(myMsg);            
             return null;
         }
-        
-        ParsedData.clear();                
+                       
         
         PNResults.clear();
         listStaffHrsInfo.clear();                                                                                     
@@ -41,7 +37,12 @@ public with sharing class DocumentedActualStaffHrsRpt {
         for ( Service_Assignment__c s : SAResults) {
         	SAMap.put(s.id, s);
         }
-                                              
+                                      
+                                      
+        Datetime startdt = DateTime.newInstance( fStartDate, Time.newInstance(0,0,0,0));
+        Datetime enddt = DateTime.newInstance ( fEndDate, Time.newInstance(23, 59, 59, 999));        
+        
+        System.debug( 'starting: ' + startdt + ' ending: ' + enddt );                          
         PNResults = [ SELECT 
         				service_assignment__c,
         				Person_Being_Served__r.Name pbsname,
@@ -51,8 +52,8 @@ public with sharing class DocumentedActualStaffHrsRpt {
                        WHERE 
                          service_assignment__c in :SAResults
                          and disregard_note__c = false
-                         and Start_time__c >= :fStartDate  AND  
-                            Start_time__c <= :fEndDate
+                         and Start_time__c >= :startdt  AND  
+                            Start_time__c <= :enddt
                          and service_assignment__r.admission__r.state__c in ('IN','MA','MD','OH')  
                         group by
                         	service_assignment__c,
@@ -68,8 +69,8 @@ public with sharing class DocumentedActualStaffHrsRpt {
                        WHERE 
                          service_assignment__c in :SAResults
                          and disregard_note__c = false
-                         and Start_time__c >= :fStartDate  AND  
-                            Start_time__c <= :fEndDate
+                         and Start_time__c >= :startdt  AND  
+                            Start_time__c <= :enddt
                          and service_assignment__r.admission__r.state__c not in ('IN','MA','MD','OH')  
                         group by
                         	service_assignment__c,
