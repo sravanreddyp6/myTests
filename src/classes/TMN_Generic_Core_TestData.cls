@@ -61,5 +61,21 @@ String h = EncodingUtil.ConvertTohex(b);
     
     
     }
+    
+    public static Service_Assignment_Closure__c createServiceAssignmentClosure(Service_Assignment__c sa) {
+    	Service_Assignment_Closure__c thisServiceAssignmentClosure = new Service_Assignment_Closure__c(Service_Assignment__c = sa.Id);
+    	insert thisServiceAssignmentClosure;
+    	Service_Assignment_Closure__c testServiceAssignmentClosure = [ SELECT Id, Service_Assignment__c
+    										FROM Service_Assignment_Closure__c 
+    										WHERE Id = :thisServiceAssignmentClosure.Id];
+    	return testServiceAssignmentClosure;
+    }
+    
+    public static Assessment__c createAssessment(Admission__c adm, Service_Assignment__c sa, String type, String status, String phase, Boolean disregard) {
+    	Assessment__c thisAssessment = new Assessment__c(Admission__c = adm.Id, Service_Assignment__c = sa.Id, Type__c = type, Status__c = status, Phase__c = phase, Disregard__c = disregard);
+    	insert thisAssessment;
+    	Assessment__c testAssessment = [ SELECT Id, Service_Assignment__c, Type__c, Status__c, Phase__c, Disregard__c FROM Assessment__c WHERE Id = :thisAssessment.Id ];
+    	return testAssessment;
+    }
 
 }
