@@ -983,8 +983,10 @@ function toggleInialFinalPrimaryFields(  ) {
 }
 };
 function toggleInialFinalSecondaryFields(  ) {
-    if ( j$('.phasefield').val()=='Initial' || j$('.phasefield').val()== 'Final' ){       
-        j$('.Int_Final_field_Secondary' ).prop( "disabled", false);     
+    if ( j$('.phasefield').val()=='Initial' || j$('.phasefield').val()== 'Final' ){   
+        if(j$('.SC_Emp').val().indexOf('Employed') == 0){    
+            j$('.Int_Final_field_Secondary' ).prop( "disabled", false);     
+        }
       }
     else{    
         j$('.Int_Final_field_Secondary' ).prop( "disabled", true);  
