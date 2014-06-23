@@ -15,17 +15,13 @@ public with sharing class DocumentedActualStaffHrsRpt {
     
     public integer allCount{get; set;}
     
-    public Map<string, integer > ParsedData = new Map<string, integer >();    
-    public Map<string, integer > getParsedData(){return ParsedData;}
-    
     public PageReference runReport(){
         if(fEndDate < fStartDate){
             ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,'Start Date must be before the End Date');//Same old drama 
             ApexPages.addMessage(myMsg);            
             return null;
         }
-        
-        ParsedData.clear();                
+                       
         
         PNResults.clear();
         listStaffHrsInfo.clear();                                                                                     
