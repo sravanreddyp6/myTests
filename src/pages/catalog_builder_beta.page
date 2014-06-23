@@ -18,7 +18,11 @@
         width: 320px;
         height: 60px;    
     } 
-  
+    .label{
+        margin:10px;
+        font-weight:bold;
+    }
+          
 /*     .frmLCol{ */
 /*         float: left; */
 /*         width:300px; */
@@ -30,24 +34,27 @@
 /*         //border: 1px solid black; */
     
 /*     } */
-
 </style>
 <apex:outputPanel id="page">
-<apex:outputPanel id="hiddenField" style="display: none;">
-    <apex:outputField value="{!Clinical_Catalog__c.id}"/>
-</apex:outputPanel>
 <apex:form >
-
  <apex:actionFunction action="{!editTreeNode}" name="triggerNodeEdit" rerender="eleyForm" status="myStatus">
      <apex:param name="firstParam" assignTo="{!curTreeNodeKey}" value="" />
  </apex:actionFunction>
+
 <apex:outputPanel layout="block" styleClass="rcol">
-    <apex:pageBlock id="fullTree">    
+ 
+    <apex:pageBlock id="fullTree">
         <apex:pageBlockButtons >
             <apex:commandButton action="{!newEley}" value="New Component" reRender="eleyForm" status="myStatus"/>
-        </apex:pageBlockButtons>    
+        </apex:pageBlockButtons>
         <apex:outputPanel id="tree2" layout="block" >
-            <apex:outputlabel > Please select a component to edit:</apex:outputlabel>
+<!--    <apex:outputlabel > Please select a component to edit:</apex:outputlabel> -->
+<!--             <apex:outputLabel >Plan Name: </apex:outputLabel> -->
+            <apex:outputLabel value="{!myCatalog.Catalog_Name__c}" style="font-weight:bold"/>            
+            <apex:inputhidden value="{!Clinical_Catalog__c.Catalog_Name__c }" />
+<!--             <apex:inputField value="{!myCatalog.Catalog_Name__c}"/> -->
+<!--             <apex:commandButton value="Save" action="{!save}" rendered="{!myCatalog.id == null}"/>                         -->
+<!--             <apex:commandButton value="Save" action="{!upsertCatalog}" reRender="page" status="myStatus"  rendered="{!Clinical_Catalog__c.id != null}"/> -->
             <c:Fancy_Tree TreeString="{!allGoals.Fancy_Tree_JSon_String}" mode="1" checkbox="false" activateActionSignature="triggerNodeEdit(data.node.key);" ID_PageSideStorage="fullTreeKeys" TreeID="tree2" debug="false" />    
         </apex:outputPanel>                
     </apex:pageBlock>

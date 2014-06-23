@@ -15,13 +15,18 @@ public with sharing class catalog_builder_beta {
     public string curTreeNodeKey {get; set;}    
     
     public Clinical_Catalog__c myCatalog {get; set;}
-    
-    
+    public List<Clinical_Catalog__c> myCatalogs {get{
+    return [select id, Catalog_Name__c from Clinical_Catalog__c];
+    } set;}
     
     
     public catalog_builder_beta(ApexPages.StandardController controller) {
         nodes = new list<Clinical_Catalog_Tree_Node__c>();
         myCatalog = (Clinical_Catalog__c)controller.getRecord();
+        
+        if (myCatalog == null){
+            myCatalog = new Clinical_Catalog__c();	
+        }        
         selectedKeys ='';
         allGoals = new TMN_Tree();
         formTree = new TMN_Tree();
@@ -46,6 +51,9 @@ public with sharing class catalog_builder_beta {
         CurEley.Status__c = 'Active';
         return null;
     }
+    
+    
+    
        
 public pageReference upsertEley(){
 

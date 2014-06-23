@@ -36,7 +36,7 @@
     <apex:pageBlockSection columns="1" >
         <apex:outputField value="{!Clinical_Catalog__c.name}"/>
         <apex:inputField value="{!Clinical_Catalog__c.Category__c}"/>
-        <apex:inputField value="{!Clinical_Catalog__c.Item_Category__c}"/>
+<!--         <apex:inputField value="{!Clinical_Catalog__c.Item_Category__c}"/> -->
         <apex:commandButton value="Update Catalog" action="{!upsertCatalog}" reRender="page" status="myStatus"  rendered="{!Clinical_Catalog__c.id != null}"/>
         <apex:commandButton value="Save Catalog" action="{!save}" rendered="{!Clinical_Catalog__c.id == null}"/>
     </apex:pageBlockSection>
@@ -345,7 +345,7 @@
         
             <apex:actionRegion >
                 <apex:outputPanel layout="block" styleClass="editLink">
-                    <apex:commandLink value="manage" action="{!editEley}" reRender="eleyForm" status="myStatus" oncomplete="toggleById('editNodeFrm'); return false;">
+                    <apex:commandLink value="manage" action="{!editTreeNode}" reRender="eleyForm" status="myStatus" oncomplete="toggleById('editNodeFrm'); return false;">
                         <apex:param name="eleyID" assignTo="{!eleyID}" value="{!g.CatTreeNode.Catalog_Element__r.id}"/>
                     </apex:commandLink>
                 </apex:outputPanel>
@@ -386,7 +386,7 @@
                     Objective
                     <apex:actionRegion >
                         <apex:outputPanel layout="block" styleClass="editLink">
-                            <apex:commandLink value="manage" action="{!editEley}" reRender="eleyForm" status="myStatus" oncomplete="toggleById('editNodeFrm'); return false;">
+                            <apex:commandLink value="manage" action="{!editTreeNode}" reRender="eleyForm" status="myStatus" oncomplete="toggleById('editNodeFrm'); return false;">
                                 <apex:param name="eleyID" assignTo="{!eleyID}" value="{!o.CatTreeNode.Catalog_Element__r.id}"/>
                             </apex:commandLink>
                         </apex:outputPanel>
@@ -407,7 +407,7 @@
                     <apex:outputPanel layout="block" styleClass="acttext">
                         <apex:actionRegion >
                             <apex:outputPanel layout="block" styleClass="editLink">
-                                <apex:commandLink value="manage" action="{!editEley}" reRender="eleyForm, relatedTo" status="myStatus" oncomplete="toggleById('editNodeFrm'); return false;">
+                                <apex:commandLink value="manage" action="{!editTreeNode}" reRender="eleyForm, relatedTo" status="myStatus" oncomplete="toggleById('editNodeFrm'); return false;">
                                     <apex:param name="eleyID" assignTo="{!eleyID}" value="{!a.CatTreeNode.Catalog_Element__r.id}"/>
                                 </apex:commandLink>
                             </apex:outputPanel>
