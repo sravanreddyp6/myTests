@@ -32,8 +32,8 @@ public with sharing class DocumentedActualStaffHrsRpt {
         
         List<Service_Assignment__c> SAResults = [ SELECT Id, phase__c, admission__r.state__c
          			from Service_Assignment__c where 
-        					Start_Date__c >= :fStartDate  AND  
-                            Start_Date__c <= :fEndDate  
+        					(Start_Date__c <= :fStartDate  AND (end_date__c >= :fStartDate or end_date__c = null)) OR   
+                             start_date__c <= :fEndDate  
                          ];
                        
         // create a map of the service assignments
