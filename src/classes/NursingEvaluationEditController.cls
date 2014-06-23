@@ -834,7 +834,7 @@ public with sharing class NursingEvaluationEditController {
                         
 // For Negative Impact on ADLs Multi-picklist
                 string adl='';
-                for(string ad: selectedAlleviators)
+                for(string ad: selectedAdls)
                 adl += ad+';';
                         if(adl!=''){
                                 adl = adl.Substring(0,adl.length()-1);

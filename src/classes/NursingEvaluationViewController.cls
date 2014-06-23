@@ -134,7 +134,7 @@ public with sharing class NursingEvaluationViewController {
         }
     }
     
-     public String bodyMapUrl { get {
+  /*   public String bodyMapUrl { get {
         Attachment[] attachments = [
             SELECT Id FROM Attachment
             WHERE ParentId=:evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__c
@@ -144,7 +144,7 @@ public with sharing class NursingEvaluationViewController {
             return '/servlet/servlet.FileDownload?file=' + attachments[0].Id;
         }
         return null;
-    } }
+    } }*/
     
     public String serializedAnnotations { get; set; }
     public string neuroserializedAnnotations{get; set; }
