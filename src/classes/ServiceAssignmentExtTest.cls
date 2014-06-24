@@ -186,6 +186,9 @@ private class ServiceAssignmentExtTest {
         controller.saveServiceCodeSelections();
         controller.loadProgramDocXrefs();
         
+        controller.addNurAssessment();
+        system.assertEquals(1,Controller.evaluations.size());
+        
         system.assert(!controller.showWorksheetBlocks);
         System.Assert( controller.canCreateWorksheet);
 
