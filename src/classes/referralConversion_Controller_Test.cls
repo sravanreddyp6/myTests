@@ -84,6 +84,41 @@ private class referralConversion_Controller_Test {
       
 		}
 		Test.stopTest();
+		
+		User u2 = Referral_CreateTestData.createTestUser( 'testuzz', 'convuser@tmn.int','Conversion', 'TestUser2' );
+
+		System.RunAs(u2)
+		
+		{
+		Person_Being_Referred__c pbr2 = Referral_CreateTestData.createPersonBeingReferred(28, Date.valueOf('1985-01-01'));
+		Referral__c evalRef = Referral_CreateTestData.createReferral('CareMeridian', 'Active', 'Conversion Test3', 'CA', pbr2);
+		Referral_CreateTestData.createRelatedParty('Mom', 'Guardian', pbr2);
+		pbr2.State__c = 'California';
+		pbr2.City__c = 'San Francisco';
+		pbr2.Street_1__c = '10 Main St.';
+		pbr2.Street_2__c = 'Suite 201';
+		pbr2.Zip_Code__c = '90024';
+		pbr2.Ethnicity__c = 'Caucasian';
+		pbr2.Primary_Language__c = 'English';
+		pbr2.Non_Verbal__c = false;
+		update pbr2;
+		
+		ApexPages.StandardController sc = new ApexPages.StandardController( evalRef );
+	    referralConversion_Controller conv = new referralConversion_Controller( sc );
+	    PageReference pr;
+		
+		sc = new ApexPages.StandardController( evalRef );
+	    conv = new referralConversion_Controller( sc );
+		pr = conv.convertReferral();
+		
+		Evaluation__c exEval = new Evaluation__c();
+		exEval.Name = 'Test Eval';
+		exEval.RecordTypeId = Utility.getEValuationRecordType('CareMeridian');
+		exEval.Referral__c = evalRef.Id;
+		insert exEval;
+		pr = conv.convertReferral();
+		 
+		}
     }
  
  
