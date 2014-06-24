@@ -23,10 +23,12 @@
 private class DocumentedActualStaffHrsReportTest {
 
     static testMethod void myUnitTest() {
-        TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();        
+        TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();                        
         
         DocumentedActualStaffHrsRpt dashRpt = new DocumentedActualStaffHrsRpt();
         dashRpt.getListStaffHrsInfo();
+        dashRpt.fStartDate = Date.newInstance(2014, 4, 1);
+        dashRpt.fEndDate = Date.newInstance(2014, 6, 1);
         dashRpt.runReport();         
         
         DocumentedActualStaffHrsRpt.StaffHrsInfo staffHrsInfo =
