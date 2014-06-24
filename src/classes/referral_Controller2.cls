@@ -221,7 +221,7 @@ public with sharing class referral_Controller2 {
         this.locations =
         [select Id, Name, Referral__c, location__c, street_1__c, street_2__c, city__c, zip_code__c, state__c, user_assigned__c, status__c,
             service_location_city__c,service_location_state__c,service_location_street__c,service_location_zip__c,service_location_program__c,
-            service_location_service_value__c, service_location_setting__c, service_location__c, LastModifiedDate
+            service_location_service_value__c, service_location_setting__c, service_location__c, rank__c, LastModifiedDate
          from Referral_Location__c
          where Referral__c = :this.referralRecord.Id
          limit 150];

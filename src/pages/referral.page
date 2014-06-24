@@ -130,12 +130,16 @@ function enableDiagEff() {
     } else if (j$('input[id$=locationEntry_ServiceLocation_lkid]').val() =='') {
         errors += '<li>You must lookup the Alias</li>';
     }
-    if (j$('input[id$=locationEntry_User]').val() =='') {
-        errors += '<li>User Assigned is a required field.</li>';
-    } else if (j$('input[id$=locationEntry_User_lkid]').val() =='') {
-        errors += '<li>You must lookup the User</li>';
-    }
-    if (j$('select[id$=locationEntry_Status]').val() =='') {
+    
+	if (j$('input[id$=locationEntry_User]').length > 0) {
+	    if (j$('input[id$=locationEntry_User]').val() =='') {
+	        errors += '<li>User Assigned is a required field.</li>';
+	    } else if (j$('input[id$=locationEntry_User_lkid]').val() =='') {
+	        errors += '<li>You must lookup the User</li>';
+	    }
+	}
+	
+	if (j$('select[id$=locationEntry_Status]').val() =='') {
         errors += '<li>Status is a required field.</li>';
     }
     j$('#locationErrors').html(errors);
@@ -243,7 +247,7 @@ function enableDiagEff() {
           j$('input[id$=locationServiceLocation]').val(j$('input[id$=locationEntry_ServiceLocation_lkid]').val());
           j$('input[id$=locationUser]').val(j$('input[id$=locationEntry_User_lkid]').val());
           j$('input[id$=locationStatus]').val(j$('select[id$=locationEntry_Status]').val());
-
+		  j$('input[id$=locationRank]').val(j$('select[id$=locationEntry_Rank]').val());
           saveLocation();
           if (isClose) {
               closeModalDialog('ReferralLocationModal', 'span');
@@ -1048,6 +1052,7 @@ function enableDiagEff() {
             <apex:inputHidden id="locationEntry_ServiceLocation_lkid" value="{!searchedServiceLocationId}"/>
           
 			<apex:inputField value="{!location.User_Assigned__c}" id="locationEntry_User" rendered="{! referralRecordType != 'CareMeridian'}"/>
+            <apex:inputField value="{!location.Rank__c}" id="locationEntry_Rank"  rendered="{! referralRecordType == 'CareMeridian'}"/>
             <apex:inputField value="{!location.Status__c}" id="locationEntry_Status" />
             <apex:inputHidden value="{!location.Service_Location__c}" id="locationServiceLocation"/>
         </apex:pageBlockSection>
@@ -1782,6 +1787,7 @@ function enableDiagEff() {
                                 Zip="{!location.Service_Location_Zip__c}"/>
           </apex:column>
           <apex:column value="{!location.User_Assigned__c}" rendered="{! ReferralRecordType != 'CareMeridian'}"/>
+          <apex:column value="{!location.Rank__c}" rendered="{! ReferralRecordType == 'CareMeridian'}"/>
           <apex:column value="{!location.Status__c}" />
           <apex:column value="{!location.LastModifiedDate}"/>
         </apex:pageBlockTable>
@@ -1790,6 +1796,7 @@ function enableDiagEff() {
 
   <apex:inputHidden value="{!location.User_Assigned__c}" id="locationUser"/>
   <apex:inputHidden value="{!location.Status_String__c}" id="locationStatus"/>
+  <apex:inputHidden value="{!location.Rank__c}" id="locationRank"/>
         </apex:outputpanel>
       </apex:pageBlockSection>
 

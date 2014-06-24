@@ -662,7 +662,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
       this.locations =
         [select Name, Referral__c, location__c, street_1__c, street_2__c, city__c, zip_code__c, state__c, user_assigned__c,status__c
             , service_location_city__c,service_location_state__c,service_location_street__c,service_location_zip__c, service_location_service_value__c,
-            service_location_setting__c, service_location__c, LastModifiedDate, Service_Location_Program__c, Service_Location__r.Setting__c
+            service_location_setting__c, service_location__c, LastModifiedDate, Service_Location_Program__c, Service_Location__r.Setting__c, rank__c
          from Referral_Location__c
          where Referral__c = :this.referralRecord.Id
          limit 150];
@@ -824,7 +824,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     //this.location.State__c = this.location.State_String__c;
     // this.location.Status__c = this.location.Status_String__c;
     this.locations.add(this.location);
-    system.debug('Loc Status:'+ this.location.status__c);
+    //system.debug('Loc Status:'+ this.location.status__c);
     location = new Referral_Location__c();
   }
 
