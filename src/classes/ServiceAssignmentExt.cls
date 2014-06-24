@@ -1280,7 +1280,7 @@ public void loadProgramList() {
         String pbsLastName = theServAssign.Admission__r.Person_Being_Served__r.LastName;
         if(pbsLastName == null) pbsLastName = '';
         Evaluation__c nurseEval = new Evaluation__c();
-        nurseEVal.Name = pbsLastName + 'eval' + DateTime.Now().format('MMddyy');
+        nurseEVal.Name = pbsLastName + 'nursesAssessment' + DateTime.Now().format('MMddyy');
         nurseEval.RecordTypeId = Utility.getEValuationRecordType('NursesAssessment');
         nurseEval.ServiceAssignment__c = theServAssign.Id; 
         
