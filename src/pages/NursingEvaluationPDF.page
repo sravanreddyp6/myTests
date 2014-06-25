@@ -191,6 +191,7 @@
 		<apex:inputhidden value="{!Evaluation__c.PEEP__c}" />
 		<apex:inputhidden value="{!Evaluation__c.T_Piece__c}" />
 		<apex:inputhidden value="{!Evaluation__c.Heart_Sounds__c}" />
+		<apex:inputhidden value="{!Evaluation__c.cuffed__c}" />
 		<apex:inputhidden value="{!Evaluation__c.Trach_Plugged__c}" />
 		<apex:inputhidden value="{!Evaluation__c.TV__c}" />
 		<apex:inputhidden value="{!Evaluation__c.Mist__c}" />
@@ -1267,7 +1268,7 @@
         <apex:dynamiccomponent componentvalue="{!ctlmap['expression__c']}" />
         <apex:dynamiccomponent componentvalue="{!ctlmap['motivation_towards_rehab__c']}" />
         <apex:pageBlockSectionitem >
-            <apex:outputLabel value="if Non-verbal, Other Expression" styleClass="label"/>
+            <apex:outputLabel value="If Non-verbal, Other Expression" styleClass="label"/>
             <apex:outputText value="{!Evaluation__c.Expression_Other__c}" label="if Non-verbal, Other Expression"/>
         </apex:pageBlockSectionitem>            
         <apex:dynamiccomponent componentvalue="{!ctlmap['awareness_of_deficits__c']}" />
@@ -1287,7 +1288,8 @@
 	        <apex:dynamiccomponent componentvalue="{!ctlmap['tactile__c']}" /> <br/>
 	        <apex:dynamiccomponent componentvalue="{!ctlmap['hearing__c']}" /> 
         </td><td>
-            <apex:dynamiccomponent componentvalue="{!ctlmap['tracking_r__c']}" />
+            <apex:dynamiccomponent componentvalue="{!ctlmap['vision__c']}" /> <br/>        
+            <apex:dynamiccomponent componentvalue="{!ctlmap['tracking_r__c']}" /><br/>
             <apex:dynamiccomponent componentvalue="{!ctlmap['tracking_l__c']}" /> 
         </td>
         </tr>
@@ -1307,14 +1309,13 @@
             <apex:outputText value="{!Evaluation__c.Ear_infection_Describe__c}" label="Describe History" />            
         </td>
         <td>
-            <apex:dynamiccomponent componentvalue="{!ctlmap['vision__c']}" /> <br/>
             <apex:dynamiccomponent componentvalue="{!ctlmap['blink_to_threat_r_l__c']}" /><br/>
             <apex:outputLabel value="Glasses/Contacts" styleClass="label"/><br/>
             <apex:dynamiccomponent componentvalue="{!ctlmap['glasses_for_reading__c']}" /><br/>
             <apex:dynamiccomponent componentvalue="{!ctlmap['glasses_for_distance__c']}" /><br/>
             <apex:dynamiccomponent componentvalue="{!ctlmap['glasses_for_multi_focal_use__c']}" /><br/>
             <apex:dynamiccomponent componentvalue="{!ctlmap['glasses_for_other__c']}" /><br/>
-            <apex:outputLabel value="if Contacts, Type" styleClass="label"/>
+            <apex:outputLabel value="If Contacts, Type" styleClass="label"/>
             <apex:outputText value="{!Evaluation__c.Contacts_Type__c}" label="if Contacts, Type" /><br/>
             <apex:outputLabel value="Does resident have contacts or glasses at facility?" styleClass="label"/>
             <apex:outputText value="{!Evaluation__c.Resident_Contacts_Glasses_at_Facility__c}" label="Does resident have contacts or glasses at facility?" />
