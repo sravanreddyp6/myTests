@@ -191,8 +191,8 @@ function highlightButtons ( btype, sfid, on )
                                         rendered="{!editMode}" 
                                         status="myStatus"
                                         />
-                    <apex:commandButton value="Cancel" 
-                                        action="{!cancel}" 
+                    <apex:commandButton value="Cancel"
+                                        onclick="window.open('/apex/ActionPlanForm?id={!pn.Action_Plan__c}', '_self'); return false;" 
                                         rendered="{!editMode}" 
                                         status="myStatus"
                                         />
