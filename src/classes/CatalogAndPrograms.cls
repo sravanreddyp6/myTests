@@ -1,14 +1,16 @@
 public with sharing class CatalogAndPrograms {
-    public static final String CREATE_NEW_PLAN = 'Create New Plan';
+    public static final String CREATE_NEW_PLAN = 'CREATE NEW PLAN';
     public static final String CREATE_NEW_PLAN_CD = 'Create_New_Plan_code';
     
     public String curCtlg {get; set;}
     public Clinical_Catalog__c curr_catalog {get; set;}  
+    private List<Clinical_Programs__c> allPrgms {get; set;} 
     
     public List<Programs> prgms {get; set; }
     public List<SelectOption> ctlgs{get; set;}
     
     public CatalogAndPrograms() {
+    	allPrgms = Clinical_Programs__c.getall().values();
     	initPlanList();
    }
     
@@ -57,9 +59,8 @@ public with sharing class CatalogAndPrograms {
         return null; 
     }    
     
-    public List<Programs> getAllProgramsForCtlg(){
-        List<Programs> prgms = new List<programs>();
-        List<Clinical_Programs__c> allPrgms = Clinical_Programs__c.getall().values();
+    private List<Programs> getAllProgramsForCtlg(){
+        prgms = new List<programs>();        
     
         List<Clinical_Catalog_Program__c> selPrgrms = [select id, Name, Clinical_Catalog__c, Program_Custom_Setting__c 
         from Clinical_Catalog_Program__c where Clinical_Catalog__c = :curCtlg];
@@ -79,7 +80,7 @@ public with sharing class CatalogAndPrograms {
             return prgms;
     }
 
-    public void initPlanList(){
+    private void initPlanList(){
         ctlgs = new List<SelectOption>();
         ctlgs.add(new SelectOption('',''));
         ctlgs.add(new SelectOption(CREATE_NEW_PLAN_CD, CREATE_NEW_PLAN));
