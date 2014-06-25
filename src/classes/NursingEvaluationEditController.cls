@@ -447,10 +447,13 @@ public with sharing class NursingEvaluationEditController {
                 if (strtypes != ''){
                         strtypes = strtypes.Substring(0, strtypes.length() -1);
                         this.evaluation.Breathe_Sounds__c = strtypes;
+                        if(!strtypes.Contains('Other'))
+                        this.evaluation.Breathe_Sound_Other__c = '';
                 }
-                else
+                else{
                 this.evaluation.Breathe_Sounds__c ='';
-                
+                this.evaluation.Breathe_Sound_Other__c ='';
+                }
       //for Urinary Issues mUlti-Picklist       
         string uritypes ='';
         for(String u: selectedIssues)

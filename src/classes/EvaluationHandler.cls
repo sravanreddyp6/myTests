@@ -165,6 +165,9 @@ public with sharing class EvaluationHandler {
             	'Other'=> new String []{'Trach_Size_Other__c'}
             },
             
+            'Trach_Plugged__c' => new Map<String,String[]>{
+            	'1'=> new String []{'Trach_Plugged_Initiated__c','Trach_Plugged_Duration__c'}
+            },
             
             'treatments_other__c' => new Map<String, String[]>{
                 '1' => new String[] {'treatments_other_comments__c'}

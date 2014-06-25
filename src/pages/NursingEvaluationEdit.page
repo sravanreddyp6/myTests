@@ -62,8 +62,8 @@
        jQuery.noConflict();
         
         jQuery(document).ready(function ($) {
-        	disablePain();
-           	setupAnno();
+        	
+           	
             handleSliderChange = function (inputIdToUpdate) {
                 // Closure is so much fun :)
                 var $inputToUpdate = $(document.getElementById(inputIdToUpdate));
@@ -213,7 +213,7 @@
                 });*/
             }
             setUpFields();
-              
+            disablePain();
             
         });   //end "ready" function
         
@@ -336,19 +336,22 @@
         
         }
         
-	   disablePain = function(){                
+	   disablePain = function(){ 
+	   		 
+	   		           
             painval = j$('[id$=painYes]').val();
             if(painval == 'Yes'){
+          
                 j$('[id$=painSection]').show();
-               // alert('entering Anno from Show Section');
-              // setupAnno();
+                setupAnno();
                
             }
             if(painval != 'Yes'){
                 j$('[id$=painSection]').hide();
+               
                 
                 }
-        
+        	
         }
      </script> 
      <div id="breadcrumb" class="breadcrumb">
@@ -576,7 +579,7 @@
                 <apex:pageBlock >
                 
                 <apex:pageBlockSection columns="2" title="Trach">
-                         <apex:inputField value="{!Evaluation__c.Trach__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.trachPlacementDate}&quot;, &quot;{!$Component.trachType}&quot;, &quot;{!$Component.trachSize}&quot;, &quot;{!$Component.cuffed}&quot;, &quot;{!$Component.pmv}&quot;]}" />
+                         <apex:inputField value="{!Evaluation__c.Trach__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.trachPlacementDate}&quot;, &quot;{!$Component.trachType}&quot;, &quot;{!$Component.trachSize}&quot;, &quot;{!$Component.cuffed}&quot;, &quot;{!$Component.pmv}&quot;,&quot;{!$Component.cuffed}&quot;, &quot;{!$Component.trachPlugged}&quot;]}" />
                          <apex:inputField value="{!Evaluation__c.Trach_Placement_Date__c}" id="trachPlacementDate" />
                         
                          <apex:pageblocksectionitem >
@@ -598,7 +601,7 @@
                         </apex:pageblocksectionitem>
                          <apex:inputField value="{!Evaluation__c.Cuffed__c}" id="cuffed" />
 						 <apex:inputField value="{!Evaluation__c.PMV__c}" id="pmv" /> 
-                         <apex:inputField value="{!Evaluation__c.Trach_Plugged__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.plugInitiated}&quot;, &quot;{!$Component.plugDuration}&quot;]}" />
+                         <apex:inputField value="{!Evaluation__c.Trach_Plugged__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.plugInitiated}&quot;, &quot;{!$Component.plugDuration}&quot;]}" id="trachPlugged"/>
                          <apex:outputText value="" />
                          <apex:inputField value="{!Evaluation__c.Trach_Plugged_Initiated__c}" id="plugInitiated"/>
                          <apex:outputText value="" />
@@ -723,7 +726,7 @@
                          <apex:inputField value="{!Evaluation__c.Educated_Regarding_AD__c}" label="Has resident been educated regarding AD symptoms" id="educatedAD"/>
                          
                          <apex:pageBLockSectionItem helpText="{!$ObjectType.Evaluation__c.Fields.Breathe_Sound_Other__c.inlineHelpText}">
-                            <apex:outputlabel for="breathesoundOther" value="If Other, Describe" />
+                            <apex:outputlabel for="breathesoundOther" value="If Other Describe" />
                             <apex:inputField value="{!Evaluation__c.Breathe_Sound_Other__c}" id="breathesoundOther"/>
                          </apex:pageBLockSectionItem>
                     </apex:pageBlockSection>
@@ -1318,7 +1321,7 @@
                     <hr />
                     
                     <apex:pageBlockSection Columns="1" >
-                        <apex:inputField value="{!Evaluation__c.Pain_Present__c}" style="margin-left: 1cm;" id="painYes" onchange="disablePain(); setupAnno();return false;" />
+                        <apex:inputField value="{!Evaluation__c.Pain_Present__c}" style="margin-left: 1cm;" id="painYes" onchange="disablePain(); return false;" />
                     </apex:pageBlockSection>
                      <script>
                      		  //jQuery(document).ready(function ($) {
