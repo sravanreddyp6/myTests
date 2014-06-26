@@ -98,7 +98,7 @@ public with sharing class referral_Controller2 {
   		system.debug( 'Ref record type: ' + referralrecordtype );
   		system.debug(' is cambridge:' + iscambridge);
   		system.debug(' operatinggroup:' + operatinggroup);
-  		return ((operatinggroup == 'Cambridge' && isCambridge )|| (operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ) || (operatinggroup == 'CareMeridian'));
+  		return ((operatinggroup == 'Cambridge' && isCambridge )|| (operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ) ); // Add this line to make the convert button available for CareMeridian group || (operatinggroup == 'CareMeridian') && isCareMeridian  
   	} set;}
     
 
