@@ -15,10 +15,8 @@ public with sharing class catalog_builder_beta {
     public string curTreeNodeKey {get; set;}    
     
     public Clinical_Catalog__c myCatalog {get; set;}
-    public List<Clinical_Catalog__c> myCatalogs {get{
-    return [select id, Catalog_Name__c from Clinical_Catalog__c];
-    } set;}
-    
+    public List<SelectOption> pickList {get; set;}
+    public boolean ctlgHasABI {get; set;}
     
     public catalog_builder_beta(ApexPages.StandardController controller) {
         nodes = new list<Clinical_Catalog_Tree_Node__c>();
@@ -32,6 +30,7 @@ public with sharing class catalog_builder_beta {
         formTree = new TMN_Tree();
         CurEley = new Clinical_Catalog_Element__c ();
         currentInsertedNodes = new list<Clinical_Catalog_Tree_Node__c >();
+        ctlgCmpntTypes();
         refresh();
     }
     public pageReference upsertCatalog(){
@@ -171,7 +170,7 @@ public list<Clinical_Catalog_Tree_Node__c > updateSelected(id eID){
 
 }
     public pageReference refreshFormTree(){
-            formTree = new TMN_Tree();
+    	    formTree = new TMN_Tree();
             list<Clinical_Catalog_Tree_Node__c> curActive = updateSelected(CurEley.id);
             currentInsertedNodes = curActive;
             system.debug('here -' + curActive );
@@ -278,4 +277,39 @@ public list<Clinical_Catalog_Tree_Node__c > updateSelected(id eID){
             }                          
         }       
     }
+    
+    private void ctlgCmpntTypes(){
+        pickList = new List<SelectOption>();
+        pickList.add(new SelectOption('','--None--'));
+        ctlgHasABI = isABIpresent(); 
+        if (ctlgHasABI){
+	        pickList.add(new SelectOption('Goal','Problem'));
+	        pickList.add(new SelectOption('Objective','Goal'));
+	        pickList.add(new SelectOption('Action','Intervention'));        	
+        } else {
+            pickList.add(new SelectOption('Goal','Goal'));
+            pickList.add(new SelectOption('Objective','Objective'));
+            pickList.add(new SelectOption('Action','Action'));
+        }
+    }
+    
+    private boolean isABIpresent(){
+        boolean isABI = false;
+        List<Clinical_Catalog_Program__c> selPrgrms = [select id, Name, Clinical_Catalog__c, Program_Custom_Setting__c from Clinical_Catalog_Program__c where Clinical_Catalog__c = :myCatalog.Id];
+        List<Clinical_Programs__c> allPrgms = Clinical_Programs__c.getall().values();
+
+        for (Clinical_Catalog_Program__c prg :selPrgrms){
+            for (Clinical_Programs__c p :allPrgms){
+                if (prg.Program_Custom_Setting__c == p.ProgramID__c && p.Program_Name__c.contains('ABI') ){
+                    isABI = true;
+                    break;
+                }
+            }
+            if (isABI){
+                break;
+            }
+        }
+        return isABI;
+    }
+    
 }
