@@ -154,7 +154,7 @@ public with sharing class EvaluationHandler {
             'trach__c' => new Map<String, String[]>{
                 '1' => new String[] {
                     'trach_placement_date__c', 'trach_type__c', 'trach_size__c',
-                    'cuffed__c', 'pmv__c'
+                    'cuffed__c', 'pmv__c','Trach_Plugged__c'
                 }
             },
             'Trach_Type__c' => new Map <String, String[]>{
@@ -187,6 +187,27 @@ public with sharing class EvaluationHandler {
                     'Frothy__c', 'Sticky__c', 'Creamy__c', 'Odor__c'
                 }
             },
+  
+            'Smoking_History__c' => new Map<String, String[]>{
+                'No' => new String[] {'Packs_Day_Years__c'}
+            },
+            
+            'Heart_Sounds__c' => new Map<String, String[]>{
+                'Irregular' => new String[] {'Heart_Sound_Describe__c'}
+            },
+            
+            'Peripheral_Pulses_Present__c' => new Map<String, String[]>{
+                'No' => new String[] {'Peripheral_Pulses_Describe__c'}
+            },
+            
+            'Pulse_Ox_Details__c' => new Map<String, String[]>{
+                'Intermittent' => new String[] {'Pulse_Ox_Schedule__c'}
+            },
+            
+            'Autonomic_Dysreflexia__c' => new Map<String, String[]>{
+                'Yes' => new String[] {'Educated_Regarding_AD__c'}
+            },
+            
             'elimination_bladder_no_continent_details__c' => new Map<String, String[]>{
                 'ICP' => new String[] {'if_icp_q__c','ICP_Describe__c'}
             },
