@@ -44,24 +44,26 @@
     <apex:pageBlock id="treeList">    
         <apex:pageMessages ></apex:pageMessages>
         <apex:pageBlockButtons location="bottom">
-            <apex:commandButton action="{!updatePrgAssoc}" value="Save" reRender="page"/>
+            <apex:commandButton action="{!updatePrgAssoc}" value="Save" reRender="page" status="pageProcessing"/>
             <apex:commandButton value="View/Modify Catalog" action="{!editCatalog}" status="status"/>            
         </apex:pageBlockButtons>
                    
         <apex:pageBlock mode="maindetail">
             <apex:outputPanel layout="block">
-                <apex:outputLabel value="Select Plan" styleClass="label"/>
-                <apex:selectList id="choosePlan" value="{!curCtlg}" required="false" size="1" multiselect="false">
-                <apex:selectOptions value="{!ctlgs}"/>
-                <apex:actionSupport event="onchange" reRender="page" action="{!refreshHere}"/>                                            
-                </apex:selectList>
+                <apex:outputLabel value="Select Catalog" styleClass="label"/>
+                <apex:actionRegion >                
+	                <apex:selectList id="choosePlan" value="{!curCtlg}" required="false" size="1" multiselect="false">
+	                <apex:selectOptions value="{!ctlgs}"/>
+	                <apex:actionSupport event="onchange" reRender="page" action="{!refreshHere}"/>                                            
+	                </apex:selectList>
+                </apex:actionRegion>
                 <apex:inputField value="{!curr_catalog.Catalog_Name__c}" rendered="{!curCtlg == 'Create_New_Plan_code'}" style="margin:10px;"/>
             </apex:outputPanel>
          </apex:pageBlock>
 
 	    <apex:pageBlock id="relatedTo" mode="maindetail">
             <apex:outputPanel layout="block" rendered="{!curCtlg != null}" >
-            <apex:outputLabel value="Associated Programs" styleClass="label"/>	    
+            <apex:outputLabel value="Associated Service Settings" styleClass="label"/>	    
 	        <apex:pageBlockSection >
 	        <apex:pageBlockSectionItem >
 		        <apex:pageBlockTable value="{!prgms}" var="p">
@@ -76,14 +78,13 @@
 	        </apex:outputPanel>
 	    </apex:pageBlock>
 
-	    <apex:pageBlock id="SaveResults" mode="maindetail">
-	        <apex:outputPanel layout="block" rendered="{!showRes}">
-	        <apex:repeat value="{!prgms}" var="pr"> 
-	        {!pr.clincalPrgm.Program_Name__c} &nbsp; {!pr.clincalPrgm.ProgramID__c} &nbsp; {!pr.isSelected}
-	        </apex:repeat>                 
-	        </apex:outputPanel>
-	    </apex:pageBlock>
-
+<!-- 	    <apex:pageBlock id="SaveResults" mode="maindetail"> -->
+<!-- 	        <apex:outputPanel layout="block" rendered="{!showRes}"> -->
+<!-- 	        <apex:repeat value="{!prgms}" var="pr">  -->
+<!-- 	        {!pr.clincalPrgm.Program_Name__c} &nbsp; {!pr.clincalPrgm.ProgramID__c} &nbsp; {!pr.isSelected} -->
+<!-- 	        </apex:repeat>                  -->
+<!-- 	        </apex:outputPanel> -->
+<!-- 	    </apex:pageBlock> -->
     </apex:pageBlock>   
 
     <apex:actionStatus id="pageProcessing" >

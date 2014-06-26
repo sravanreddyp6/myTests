@@ -76,11 +76,12 @@
 	            
 	            <apex:pageblockSectionItem rendered="{!isNew}"   >
 	                <apex:outputLabel >Type</apex:outputLabel>        
-	                <apex:actionRegion >
-	                <apex:inputField value="{!CurEley.Type__c}" required="true"  >                
-	                    <apex:actionSupport event="onchange" action="{!refreshFormTree}" reRender="relatedTo" />
-	                </apex:inputField>
-	                </apex:actionRegion>            
+                    <apex:actionRegion >	                
+                    <apex:selectList value="{!CurEley.Type__c}" required="true" size="1" multiselect="false">
+		                <apex:selectOptions value="{!pickList}"/>
+		                <apex:actionSupport event="onchange" action="{!refreshFormTree}" reRender="relatedTo" />                
+	                </apex:selectList>
+                    </apex:actionRegion>	                
 	            </apex:pageblockSectionItem>
 	            <apex:outputField rendered="{! NOT(isNew)}" value="{!CurEley.Type__c}" />
 	            <apex:inputField styleClass="txtArea" value="{!CurEley.Description__c}" required="true" />
@@ -95,8 +96,8 @@
 		    <apex:outputPanel layout="block" rendered="{!CurEley.Type__c =='Action' || CurEley.Type__c =='Objective' }">
 		                <apex:outputLabel >
 		                    <br/>
-		                    <apex:outputLabel rendered="{!CurEley.Type__c =='Objective'}">Select Goals</apex:outputLabel> 
-		                    <apex:outputLabel rendered="{!CurEley.Type__c =='Action'}">Select Objectives</apex:outputLabel>
+		                    <apex:outputLabel rendered="{!CurEley.Type__c =='Objective'}" value="{! if(ctlgHasABI, 'Select Problems', 'Select Goals')}" /> 
+		                    <apex:outputLabel rendered="{!CurEley.Type__c =='Action'}" value="{! if(ctlgHasABI, 'Select Goals', 'Select Objectives')}" />
 		                </apex:outputLabel>
 		                <apex:outputPanel id="tree3" layout="block">
 		                    <c:Fancy_Tree TreeString="{!formTree.Fancy_Tree_JSon_String}" mode="2" ID_PageSideStorage="myKeys" TreeID="tree3" debug="false" />

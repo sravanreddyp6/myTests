@@ -1,5 +1,5 @@
 public with sharing class CatalogAndPrograms {
-    public static final String CREATE_NEW_PLAN = 'CREATE NEW PLAN';
+    public static final String CREATE_NEW_PLAN = '[Create New Catalog]';
     public static final String CREATE_NEW_PLAN_CD = 'Create_New_Plan_code';
     
     public String curCtlg {get; set;}
