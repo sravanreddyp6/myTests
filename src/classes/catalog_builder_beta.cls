@@ -1,8 +1,5 @@
-public with sharing class catalog_builder_beta {
-    public list<Clinical_Catalog_Tree_Node__c> nodes {get; set;}
+public with sharing class catalog_builder_beta extends CatalogBase {
     public list<Clinical_Catalog_Tree_Node__c > currentInsertedNodes {get; set;}
-    //this tree is used to display the gaols/obj/actions - no fancy tree conversion 
-    public TMN_Tree allGoals {get; set;}
     //this tree will be used in the form for selected a goal to related an objective to as well as objectives to relate actions to.
     public TMN_Tree formTree {get; set;}
     
@@ -14,27 +11,23 @@ public with sharing class catalog_builder_beta {
     public string eleyID {get; set;}
     public string curTreeNodeKey {get; set;}    
     
-    public Clinical_Catalog__c myCatalog {get; set;}
     public List<SelectOption> pickList {get; set;}
     public boolean ctlgHasABI {get; set;}
     
     public catalog_builder_beta(ApexPages.StandardController controller) {
-        nodes = new list<Clinical_Catalog_Tree_Node__c>();
-        myCatalog = (Clinical_Catalog__c)controller.getRecord();
+        curr_catalog = (Clinical_Catalog__c)controller.getRecord();
         
-        if (myCatalog == null){
-            myCatalog = new Clinical_Catalog__c();	
+        if (curr_catalog == null){
+            curr_catalog = new Clinical_Catalog__c();	
         }        
         selectedKeys ='';
-        allGoals = new TMN_Tree();
-        formTree = new TMN_Tree();
         CurEley = new Clinical_Catalog_Element__c ();
         currentInsertedNodes = new list<Clinical_Catalog_Tree_Node__c >();
         ctlgCmpntTypes();
-        refresh();
+        retrieveAllGoals();
     }
     public pageReference upsertCatalog(){
-        upsert myCatalog;
+        upsert curr_catalog;
         return null;
     }  
     
@@ -65,7 +58,7 @@ public pageReference upsertEley(){
         
     if(curEleyType == 'Goal' && currentInsertedNodes.size() == 0){
         Clinical_Catalog_Tree_Node__c newNode = new Clinical_Catalog_Tree_Node__c();
-        newNode.Catalog__c = myCatalog.id;
+        newNode.Catalog__c = curr_catalog.id;
         newNode.Catalog_Element__c = CurEley.id;
         newNode.ID_Goal__c = integer.valueof(CurEley.name);
         newNode.ID_Objective__c = 0;
@@ -91,7 +84,7 @@ public pageReference upsertEley(){
             }
             if(!hasRecord && n.isSelected){
                     Clinical_Catalog_Tree_Node__c newNode = new Clinical_Catalog_Tree_Node__c();
-                    newNode.Catalog__c = myCatalog.id;
+                    newNode.Catalog__c = curr_catalog.id;
                     newNode.Catalog_Element__c = CurEley.id;
                     newNode.ID_Goal__c = n.CatTreeNode.ID_Goal__c;
                     newNode.ID_Objective__c = integer.valueof(CurEley.name);
@@ -112,7 +105,7 @@ public pageReference upsertEley(){
                 }
                 if(!hasRecord && o.isSelected){
                         Clinical_Catalog_Tree_Node__c newNode = new Clinical_Catalog_Tree_Node__c();
-                        newNode.Catalog__c = myCatalog.id;
+                        newNode.Catalog__c = curr_catalog.id;
                         newNode.Catalog_Element__c = CurEley.id;
                         newNode.ID_Goal__c = o.CatTreeNode.ID_Goal__c;
                         newNode.ID_Objective__c = o.CatTreeNode.ID_Objective__c;
@@ -146,7 +139,7 @@ public pageReference upsertEley(){
     
     /*
     if(curEleyType == 'Objective'){
-    nodes = [select id, name, Catalog_Element__c, Catalog_Element__r.name, Catalog_Element__r.type__c, Catalog_Element__r.description__c, ID_Goal__c, ID_Objective__c, ID_Action__c  from Clinical_Catalog_Tree_Node__c Where Catalog__r.id =:myCatalog.id AND Catalog_Element__r.type__c = 'Action' ];
+    nodes = [select id, name, Catalog_Element__c, Catalog_Element__r.name, Catalog_Element__r.type__c, Catalog_Element__r.description__c, ID_Goal__c, ID_Objective__c, ID_Action__c  from Clinical_Catalog_Tree_Node__c Where Catalog__r.id =:curr_catalog.id AND Catalog_Element__r.type__c = 'Action' ];
        for(Clinical_Catalog_Tree_Node__c action :nodes){
            for(Clinical_Catalog_Tree_Node__c purge :PurgeNodes){           
                if((action.ID_Goal__c == purge.ID_Goal__c)&& (action.ID_Objective__c == purge.ID_Objective__c)){
@@ -159,13 +152,13 @@ public pageReference upsertEley(){
     insert NewNodes;
     delete PurgeNodes;
     CurEley = new Clinical_Catalog_Element__c ();
-    refresh();
+    retrieveAllGoals();
     return null;
 }
 
 public list<Clinical_Catalog_Tree_Node__c > updateSelected(id eID){
     list<Clinical_Catalog_Tree_Node__c> tmpLst2 = new list<Clinical_Catalog_Tree_Node__c>();
-    tmpLst2 = [select id, name, ID_Goal__c, ID_Objective__c, ID_Action__c, Catalog_Element__r.name, Catalog_Element__r.type__c, Catalog_Element__r.description__c, status__c from Clinical_Catalog_Tree_Node__c Where Catalog_Element__r.id =:eid AND Catalog__c =:myCatalog.id Order By name ];
+    tmpLst2 = [select id, name, ID_Goal__c, ID_Objective__c, ID_Action__c, Catalog_Element__r.name, Catalog_Element__r.type__c, Catalog_Element__r.description__c, status__c from Clinical_Catalog_Tree_Node__c Where Catalog_Element__r.id =:eid AND Catalog__c =:curr_catalog.id Order By name ];
     return tmpLst2;
 
 }
@@ -188,7 +181,7 @@ public list<Clinical_Catalog_Tree_Node__c > updateSelected(id eID){
             }
                 
         list<Clinical_Catalog_Tree_Node__c> tmpNodes = new list<Clinical_Catalog_Tree_Node__c>(); 
-        tmpNodes = [select id, name, ID_Goal__c, ID_Objective__c, ID_Action__c, Catalog_Element__r.name, Catalog_Element__r.type__c, Catalog_Element__r.description__c, status__c from Clinical_Catalog_Tree_Node__c Where Catalog_Element__r.type__c in :mytype AND Catalog__c =:myCatalog.id Order By ID_Goal__c , ID_Objective__c , ID_Action__c ];
+        tmpNodes = [select id, name, ID_Goal__c, ID_Objective__c, ID_Action__c, Catalog_Element__r.name, Catalog_Element__r.type__c, Catalog_Element__r.description__c, status__c from Clinical_Catalog_Tree_Node__c Where Catalog_Element__r.type__c in :mytype AND Catalog__c =:curr_catalog.id Order By ID_Goal__c , ID_Objective__c , ID_Action__c ];
         
         
         string goalID ='';
@@ -237,46 +230,6 @@ public list<Clinical_Catalog_Tree_Node__c > updateSelected(id eID){
         selectedKeys = formTree.GetSelectedNodeStr;
         return null;
     }
-
-    
-    public void refresh(){
-        allGoals = new TMN_Tree();
-  
-        nodes = [select id, name, Catalog_Element__c, Catalog_Element__r.name, Catalog_Element__r.type__c, Catalog_Element__r.description__c, ID_Goal__c, ID_Objective__c, ID_Action__c, Status__c  from Clinical_Catalog_Tree_Node__c Where Catalog__r.id =:myCatalog.id Order By ID_Goal__c , ID_Objective__c , ID_Action__c ];
-        string goalID ='';
-        string objID ='';
-        for(Clinical_Catalog_Tree_Node__c n: nodes){            
-            string curEleType = n.Catalog_Element__r.type__c;
-            string curID = n.name;
-            string title = n.Catalog_Element__r.description__c;
-            
-            if(curEleType == 'Goal'){
-                TMN_Tree.node g_node= new TMN_Tree.node(curID, title);
-                g_node.CatTreeNode = n;
-                g_node.isFolder = true;
-                allGoals.root.nodes.add(g_node);
-                goalID =curID;
-            }
-        
-            if(curEleType == 'Objective'){
-                TMN_Tree.node o_node= new TMN_Tree.node(curID, title);
-                o_node.CatTreeNode = n;
-                integer g_key = allGoals.root.getNode_Key(goalID );
-                allGoals.root.nodes.get(g_key).nodes.add(o_node);
-                objID =curID;
-            }
-            
-            if(curEleType == 'Action'){                
-                TMN_Tree.node a_node= new TMN_Tree.node(curID, title);
-                a_node.CatTreeNode = n;
-                integer g_key = allGoals.root.getNode_Key(goalID );
-                integer o_key = allGoals.root.nodes.get(g_key).getNode_Key(objID);
-                if(o_key != -1){
-                    allGoals.root.nodes.get(g_key).nodes.get(o_key).nodes.add(a_node);
-                }
-            }                          
-        }       
-    }
     
     private void ctlgCmpntTypes(){
         pickList = new List<SelectOption>();
@@ -295,7 +248,7 @@ public list<Clinical_Catalog_Tree_Node__c > updateSelected(id eID){
     
     private boolean isABIpresent(){
         boolean isABI = false;
-        List<Clinical_Catalog_Program__c> selPrgrms = [select id, Name, Clinical_Catalog__c, Program_Custom_Setting__c from Clinical_Catalog_Program__c where Clinical_Catalog__c = :myCatalog.Id];
+        List<Clinical_Catalog_Program__c> selPrgrms = [select id, Name, Clinical_Catalog__c, Program_Custom_Setting__c from Clinical_Catalog_Program__c where Clinical_Catalog__c = :curr_catalog.Id];
         List<Clinical_Programs__c> allPrgms = Clinical_Programs__c.getall().values();
 
         for (Clinical_Catalog_Program__c prg :selPrgrms){
