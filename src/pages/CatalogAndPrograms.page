@@ -45,7 +45,7 @@
         <apex:pageMessages ></apex:pageMessages>
         <apex:pageBlockButtons location="bottom">
             <apex:commandButton action="{!updatePrgAssoc}" value="Save" reRender="page" status="pageProcessing"/>
-            <apex:commandButton value="View/Modify Catalog" action="{!editCatalog}" status="status"/>            
+            <apex:commandButton value="View/Modify Catalog" action="{!editCatalog}" />            
         </apex:pageBlockButtons>
                    
         <apex:pageBlock mode="maindetail">
@@ -54,7 +54,7 @@
                 <apex:actionRegion >                
 	                <apex:selectList id="choosePlan" value="{!curCtlg}" required="false" size="1" multiselect="false">
 	                <apex:selectOptions value="{!ctlgs}"/>
-	                <apex:actionSupport event="onchange" reRender="page" action="{!refreshHere}"/>                                            
+	                <apex:actionSupport event="onchange" reRender="page" action="{!refreshHere}" status="myStatus"/>                                            
 	                </apex:selectList>
                 </apex:actionRegion>
                 <apex:inputField value="{!curr_catalog.Catalog_Name__c}" rendered="{!curCtlg == 'Create_New_Plan_code'}" style="margin:10px;"/>
@@ -97,6 +97,17 @@
         </apex:facet>
         <apex:facet name="stop" />
     </apex:actionStatus>
+
+	<apex:actionStatus id="myStatus" >
+	    <apex:facet name="start">
+	        <div class="thinking">
+	            <div class="thinkingwheel">    
+	                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+	            </div>
+	        </div>   
+	    </apex:facet>  
+	    <apex:facet name="stop"> </apex:facet>         
+	</apex:actionStatus> 
 
 </apex:outputPanel>
 </apex:form>

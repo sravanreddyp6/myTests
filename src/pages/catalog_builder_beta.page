@@ -50,10 +50,10 @@
         <apex:outputPanel id="tree2" layout="block" >
 <!--    <apex:outputlabel > Please select a component to edit:</apex:outputlabel> -->
 <!--             <apex:outputLabel >Plan Name: </apex:outputLabel> -->
-            <apex:outputLabel value="{!myCatalog.Catalog_Name__c}" style="font-weight:bold"/>            
+            <apex:outputLabel value="{!curr_catalog.Catalog_Name__c}" style="font-weight:bold"/>            
             <apex:inputhidden value="{!Clinical_Catalog__c.Catalog_Name__c }" />
-<!--             <apex:inputField value="{!myCatalog.Catalog_Name__c}"/> -->
-<!--             <apex:commandButton value="Save" action="{!save}" rendered="{!myCatalog.id == null}"/>                         -->
+<!--             <apex:inputField value="{!curr_catalog.Catalog_Name__c}"/> -->
+<!--             <apex:commandButton value="Save" action="{!save}" rendered="{!curr_catalog.id == null}"/>                         -->
 <!--             <apex:commandButton value="Save" action="{!upsertCatalog}" reRender="page" status="myStatus"  rendered="{!Clinical_Catalog__c.id != null}"/> -->
             <c:Fancy_Tree TreeString="{!allGoals.Fancy_Tree_JSon_String}" mode="1" checkbox="false" activateActionSignature="triggerNodeEdit(data.node.key);" ID_PageSideStorage="fullTreeKeys" TreeID="tree2" debug="false" />    
         </apex:outputPanel>                
@@ -83,7 +83,11 @@
 	                </apex:selectList>
                     </apex:actionRegion>	                
 	            </apex:pageblockSectionItem>
-	            <apex:outputField rendered="{! NOT(isNew)}" value="{!CurEley.Type__c}" />
+                
+                <apex:outputField rendered="{! NOT(isNew) && NOT(ctlgHasABI)}" value="{!CurEley.Type__c}" />
+                <apex:outputText label="Type" rendered="{! NOT(isNew) && ctlgHasABI && (CurEley.Type__c == 'Goal')}" value="Problem" />
+				<apex:outputText label="Type" rendered="{! NOT(isNew) && ctlgHasABI && (CurEley.Type__c == 'Objective')}" value="Goal" />
+				<apex:outputText label="Type" rendered="{! NOT(isNew) && ctlgHasABI && (CurEley.Type__c == 'Action')}" value="Intervention" />
 	            <apex:inputField styleClass="txtArea" value="{!CurEley.Description__c}" required="true" />
 	            <apex:inputField value="{!CurEley.Status__c}" required="true"/>
 	        
