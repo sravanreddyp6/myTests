@@ -186,39 +186,45 @@
          	<apex:pageBlock >
          		<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Vitals Detail" formId="{!$Component.wholePage}" uniqueId="Vitals" />
          		<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Orthostatic BP" formId="{!$Component.wholePage}" uniqueId="orthostatic" />
-         		<apex:pageBlockSection columns="2" >
-						<apex:outputText value="GYN" styleClass="labelCol" style="margin-left: 3cm;"/>
-						<apex:outputText value="Immunization History" styleClass="labelCol" style="margin-left: 3cm;"/>
-						<apex:outputField value="{!Evaluation__c.Date_of_Last_menstrual_Period__c}" />
-						<apex:outputField value="{!Evaluation__c.Pneumococcal__c}"  />
-						<apex:outputField value="{!Evaluation__c.Frequency_of_menstrual_cycles__c}" />
-						<apex:outputField value="{!Evaluation__c.Pneumococcal_Text__c}" label="Describe" />
-						<apex:outputField value="{!Evaluation__c.Date_of_last_pap__c}" />
-						<apex:outputField value="{!Evaluation__c.Pneumococcal_Where_and_when__c}" label="Where and When" />
-						<apex:outputField value="{!Evaluation__c.Date_of_last_mamogram__c}" />
-						<apex:outputField value="{!Evaluation__c.Influenza__c}"  />
-						<apex:pageBlockSectionitem >
-							<apex:outputText value="Have You Experienced Any of the Following:" styleClass="labelCol" />
-							<apex:selectCheckboxes value="{!selectedExperiences}" layout="pageDirection" disabled="True" >
-								<apex:selectOptions value="{!experienceValues}" />
-							</apex:selectCheckboxes>
-						</apex:pageBlockSectionItem>
-						<apex:outputPanel layout="block">
-                        	<apex:outputlabel value="Describe" styleClass="labelCol" style="margin-left: 5cm;"/>
-	                        <apex:outputField value="{!Evaluation__c.Influenza_Text__c}" label="Describe" id="influExplain" />
+	         		<apex:pageBlockSection title="GYN" columns="2" rendered="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Gender__c ='Female'}" collapsible="False" >
+	         				<apex:outputField value="{!Evaluation__c.Date_of_Last_menstrual_Period__c}" />
+	                    	<apex:outputField value="{!Evaluation__c.Frequency_of_menstrual_cycles__c}" />
+	                    	<apex:outputField value="{!Evaluation__c.Date_of_last_pap__c}" />
+	                    	<apex:outputField value="{!Evaluation__c.Date_of_last_mamogram__c}" />
+	                    	<apex:pageBlockSectionitem >
+	                            <apex:outputText value="Have you Experienced Any of the Following:" styleClass="labelCol" />
+	                            <apex:selectCheckboxes value="{!selectedExperiences}" layout="pageDirection" disabled="True">
+	                                <apex:selectOptions value="{!experienceValues}" />
+	                            </apex:selectCheckboxes>
+	                        </apex:pageBlockSectionItem>
+	                </apex:pageBlockSection>
+	                <hr />
+	                <apex:pageBlockSection columns="2" Title="Immunization History" collapsible="False">
+	                       <apex:outputField value="{!Evaluation__c.Pneumococcal__c}"  />
+	                       <apex:outputField value="{!Evaluation__c.Diabetic__c}"/>
+	                       <apex:outputField value="{!Evaluation__c.Pneumococcal_Text__c}" label="Describe" />
+	                       <apex:outputField value="{!Evaluation__c.If_yes_Glucose_meter_Reading__c}"  />
+	                       <apex:outputField value="{!Evaluation__c.Pneumococcal_Where_and_when__c}" label="Where and When" />
+	                       <apex:pageBlockSectionItem />
+	                       <apex:outputField value="{!Evaluation__c.Influenza__c}" />
+	                  	   <apex:pageBlockSectionItem />
+	                       <apex:outputPanel layout="block">
+	                       	<apex:outputlabel value="Describe" styleClass="labelCol" style="margin-left: 5cm;"/>
+	                        <apex:outputField value="{!Evaluation__c.Influenza_Text__c}" label="Describe"  />
 	                        <pre/>
-	                        <apex:outputlabel value="Where and when" styleClass="labelCol" style="margin-left: 4cm;" />
-	                        <apex:outputField value="{!Evaluation__c.Influenza_where_and_when__c}" label="Where and when" id="influWhere" />
-                        </apex:outputPanel>
-						<apex:outputField value="{!Evaluation__c.Diabetic__c}" />
-						<apex:outputField value="{!Evaluation__c.TDAP__c}"  />
-						<apex:outputField value="{!Evaluation__c.If_yes_Glucose_meter_Reading__c}"  />
-						<apex:outputField value="{!Evaluation__c.TDAP_Text__c}" label="Describe"  />
-						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.TDAP_Where_and_When__c}" label="Where and When"  />
-						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.Immunization_N_A__c}" label="N/A" />
-					</apex:pageBlockSection>
+	                        <apex:outputlabel value="Where and When" styleClass="labelCol" style="margin-left: 4cm;" />
+	                        <apex:outputField value="{!Evaluation__c.Influenza_where_and_when__c}" label="Where and When" />
+	                       </apex:outputPanel>
+	                       <apex:pageBlockSectionItem />
+	                       <apex:outputField value="{!Evaluation__c.TDAP__c}" />
+	                       <apex:pageBlockSectionItem />
+	                       <apex:outputField value="{!Evaluation__c.TDAP_Text__c}" label="Explain" id="tdapExplain" />
+	                       <apex:pageBlockSectionItem />
+	                       <apex:outputField value="{!Evaluation__c.TDAP_Where_and_When__c}" label="Where and When"  />
+	                       <apex:pageBlockSectionItem />
+	                       <apex:outputField value="{!Evaluation__c.Immunization_N_A__c}" label="N/A" />
+	                </apex:pageBlockSection>
+	                <hr />
 					<apex:pageBlockSection columns="1" title="Pediatric Immunization History" collapsible="True" >
 						<apex:pageBlockSectionItem >
 							<a href="/apex/uploader?parentid={!evaluation.id}">Add/Remove</a>
@@ -259,11 +265,11 @@
                         <apex:outputField value="{!Evaluation__c.Recent_Changes__c}"  />
                     </apex:pageBlockSection>
                     <hr />
-                         <apex:pageBlockSection columns="1">
-                        <apex:outputText value="{!Evaluation__c.MAR_Comments__c}"  />
-                        <!--  apex:inputField value="{!Evaluation__c.MAR_Section_Completed__c}" /-->
-                        <apex:outputText value="{!Evaluation__c.Diagnostics_Comments__c}"  />
-                        <apex:outputField value="{!Evaluation__c.Diagnostics_Section_Completed__c}" />
+                   	<apex:pageBlockSection columns="1">
+		                 <apex:outputText value="{!Evaluation__c.MAR_Comments__c}"  />
+		                 <!--  apex:inputField value="{!Evaluation__c.MAR_Section_Completed__c}" /-->
+		                 <apex:outputText value="{!Evaluation__c.Diagnostics_Comments__c}"  />
+		                 <apex:outputField value="{!Evaluation__c.Diagnostics_Section_Completed__c}" />
                     </apex:pageBlockSection>
          	 </apex:pageBlock>
          </apex:tab>

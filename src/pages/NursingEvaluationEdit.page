@@ -497,23 +497,40 @@
                 <apex:pageBlock >
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Vitals Detail" formId="{!$Component.wholePage}" uniqueId="vitals" />
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Orthostatic BP" formId="{!$Component.wholePage}" uniqueId="orthostatic" />
-                    <apex:pageBlockSection columns="2" >
-                        <apex:outputText value="GYN" styleClass="labelCol" style="margin-left: 3cm;"/>
-                        <apex:outputText value="Immunization History" styleClass="labelCol" style="margin-left: 3cm;"/>
-                        <apex:inputField value="{!Evaluation__c.Date_of_Last_menstrual_Period__c}" />
-                        <apex:inputField value="{!Evaluation__c.Pneumococcal__c}"  html-data-rules="{&quot;1&quot;: [&quot;{!$Component.pneumoExplain}&quot;, &quot;{!$Component.pneumoWhere}&quot;]}"/>
-                        <apex:inputField value="{!Evaluation__c.Frequency_of_menstrual_cycles__c}" />
-                        <apex:inputField value="{!Evaluation__c.Pneumococcal_Text__c}" label="Describe" id="pneumoExplain"/>
-                        <apex:inputField value="{!Evaluation__c.Date_of_last_pap__c}" />
-                        <apex:inputField value="{!Evaluation__c.Pneumococcal_Where_and_when__c}" label="Where and When" id="pneumoWhere"/>
-                        <apex:inputField value="{!Evaluation__c.Date_of_last_mamogram__c}" />
-                        <apex:inputField value="{!Evaluation__c.Influenza__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.influExplain}&quot;, &quot;{!$Component.influWhere}&quot;]}" />
-                        <apex:pageBlockSectionitem >
+                    <apex:pageBlockSection columns="2" title="GYN" rendered="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Gender__c ='Female'}" collapsible="False">
+                    	<apex:inputField value="{!Evaluation__c.Date_of_Last_menstrual_Period__c}" />
+                    	<apex:inputField value="{!Evaluation__c.Frequency_of_menstrual_cycles__c}" />
+                    	<apex:inputField value="{!Evaluation__c.Date_of_last_pap__c}" />
+                    	<apex:inputField value="{!Evaluation__c.Date_of_last_mamogram__c}" />
+                    	<apex:pageBlockSectionitem >
                             <apex:outputText value="Have you Experienced Any of the Following:" styleClass="labelCol" />
                             <apex:selectCheckboxes value="{!selectedExperiences}" layout="pageDirection">
                                 <apex:selectOptions value="{!experienceValues}" />
                             </apex:selectCheckboxes>
                         </apex:pageBlockSectionItem>
+                   </apex:pageBlockSection>
+                   <hr />
+                    <apex:pageBlockSection columns="2" Title="Immunization History" collapsible="False">
+                        <!--  apex:outputText value="GYN" styleClass="labelCol" style="margin-left: 3cm;"/-->
+                        <!-- apex:outputText value="Immunization History" styleClass="labelCol" style="margin-left: 3cm;"/-->
+                        <!--  apex:inputField value="{!Evaluation__c.Date_of_Last_menstrual_Period__c}" /-->
+                        <apex:inputField value="{!Evaluation__c.Pneumococcal__c}"  html-data-rules="{&quot;1&quot;: [&quot;{!$Component.pneumoExplain}&quot;, &quot;{!$Component.pneumoWhere}&quot;]}"/>
+                        <!--  apex:inputField value="{!Evaluation__c.Frequency_of_menstrual_cycles__c}" /-->
+                        <apex:inputField value="{!Evaluation__c.Diabetic__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.glucoseReading}&quot;}"/>
+                        <apex:inputField value="{!Evaluation__c.Pneumococcal_Text__c}" label="Describe" id="pneumoExplain"/>
+                        <!--  apex:inputField value="{!Evaluation__c.Date_of_last_pap__c}" /-->
+                        <apex:inputField value="{!Evaluation__c.If_yes_Glucose_meter_Reading__c}"  id="glucoseReading"/>
+                        <apex:inputField value="{!Evaluation__c.Pneumococcal_Where_and_when__c}" label="Where and When" id="pneumoWhere"/>
+                        <apex:pageBlockSectionItem />
+                        <!--  apex:inputField value="{!Evaluation__c.Date_of_last_mamogram__c}" /-->
+                        <apex:inputField value="{!Evaluation__c.Influenza__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.influExplain}&quot;, &quot;{!$Component.influWhere}&quot;]}" />
+                        <!--  apex:pageBlockSectionitem >
+                            <apex:outputText value="Have you Experienced Any of the Following:" styleClass="labelCol" />
+                            <apex:selectCheckboxes value="{!selectedExperiences}" layout="pageDirection">
+                                <apex:selectOptions value="{!experienceValues}" />
+                            </apex:selectCheckboxes>
+                       </apex:pageBlockSectionItem-->
+                   		<Apex:pageBlockSectionItem />
                         <apex:outputPanel layout="block">
                         	<apex:outputlabel value="Describe" styleClass="labelCol" style="margin-left: 5cm;"/>
 	                        <apex:inputField value="{!Evaluation__c.Influenza_Text__c}" label="Describe" id="influExplain" />
@@ -521,9 +538,9 @@
 	                        <apex:outputlabel value="Where and When" styleClass="labelCol" style="margin-left: 4cm;" />
 	                        <apex:inputField value="{!Evaluation__c.Influenza_where_and_when__c}" label="Where and When" id="influWhere" />
                         </apex:outputPanel>
-                        <apex:inputField value="{!Evaluation__c.Diabetic__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.glucoseReading}&quot;}"/>
+                        <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.TDAP__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.tdapExplain}&quot;, &quot;{!$Component.tdapWhere}&quot;]}" />
-                        <apex:inputField value="{!Evaluation__c.If_yes_Glucose_meter_Reading__c}"  id="glucoseReading"/>
+                        <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.TDAP_Text__c}" label="Explain" id="tdapExplain" />
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.TDAP_Where_and_When__c}" label="Where and When" id="tdapWhere" />
@@ -630,7 +647,7 @@
                 
                 </apex:pageBlockSection>
                 <apex:pageBlockSection columns="2" title="O2">
-                         <apex:inputField value="{!Evaluation__c.O2__c}"  html-data-rules="{&quot;1&quot;: [&quot;{!$Component.litersMin}&quot;, &quot;{!$Component.o2Type}&quot;, &quot;{!$Component.nasalCannula}&quot;, &quot;{!$Component.mask}&quot;, &quot;{!$Component.tPiece}&quot;, &quot;{!$Component.mistCooled}&quot;, &quot;{!$Component.mistHeated}&quot;]}"/>
+                         <apex:inputField value="{!Evaluation__c.O2__c}"  html-data-rules="{&quot;1&quot;: [&quot;{!$Component.litersMin}&quot;, &quot;{!$Component.o2Type}&quot;, &quot;{!$Component.nasalCannula}&quot;, &quot;{!$Component.mask}&quot;, &quot;{!$Component.tPiece}&quot;, &quot;{!$Component.mistType}&quot;, &quot;{!$Component.maskType}&quot;]}"/>
                          <apex:inputField value="{!Evaluation__c.O2_Type__c}" id="o2Type"/>
                          <apex:inputField value="{!Evaluation__c.Liters_Min__c}" id="litersMin" />
                          <apex:inputField value="{!Evaluation__c.Nasal_Cannula__c}" id="nasalCannula" />
@@ -695,7 +712,7 @@
                          <apex:inputField value="{!Evaluation__c.Alcoholic_drinks_per_day__c}" label="Consumes >2 alcoholic drinks/day" />
                          
                         <apex:pageBlockSectionItem >
-                            <apex:outputLabel for="heartsounds" style="color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.Smoking_History__c.label}</apex:outputLabel>
+                            <apex:outputLabel for="heartsounds" style="color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.Heart_Sounds__c.label}</apex:outputLabel>
                          <apex:outputPanel >
                          <apex:inputField value="{!Evaluation__c.Heart_Sounds__c}" html-data-rules="{&quot;Irregular&quot;: &quot;{!$Component.irregularSound}&quot;}"/>
                          <apex:outputLabel for="irregularsound" style="margin-left:15px; color: #4A4A56; font-size: 10px; font-weight: Bold;" value="If Irregular, Describe" />
