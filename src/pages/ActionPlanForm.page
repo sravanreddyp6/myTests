@@ -84,10 +84,11 @@ function highlightButtons ( btype, sfid, on )
 .clinical-catalog-slide-out-div {
     padding: 10px;
     width: 25%;
-	height: 35%;
-    background: #ccc;
+    min-height: 35%;
+    height: auto !important;
+    background: #babae8;
     border: 1px solid #29216d;
-}  
+}
 .label{
     margin:10px;
     font-weight:bold;
@@ -609,12 +610,15 @@ function highlightButtons ( btype, sfid, on )
 <div class="clinical-catalog-slide-out-div">
 <a class="handle" href="http://link-for-non-js-users.html">Content</a>
   <apex:form >
+    <apex:inputHidden value="{!Action_Plan__c.Service_Assignment__r.Alias__c}" />
     <apex:outputPanel layout="block">
         <apex:outputLabel value="Select Catalog" styleClass="label"/>
+        <apex:actionRegion >
         <apex:selectList id="choosePlan" value="{!curCtlg}" required="false" size="1" multiselect="false">
             <apex:selectOptions value="{!ctlgs}"/>
-            <apex:actionSupport event="onchange" reRender="fullTree" action="{!refreshHere}"/>                                            
+            <apex:actionSupport event="onchange" reRender="fullTree" action="{!refreshHere}" status="myStatus"/>                                            
         </apex:selectList>
+        </apex:actionRegion>        
     </apex:outputPanel>
   </apex:form>
     
