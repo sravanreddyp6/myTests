@@ -1,9 +1,8 @@
-<apex:page standardController="Action_Plan__c" extensions="ActionPlan_form,CatalogSelector" sidebar="false" tabStyle="Persons_Being_Served_New__tab" standardStylesheets="true">
+<apex:page standardController="Action_Plan__c" extensions="ActionPlan_form" sidebar="false" tabStyle="Persons_Being_Served_New__tab" standardStylesheets="true">
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:includeScript value="{!$Resource.jquery}"/>
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 <apex:includeScript value="{!URLFOR($Resource.jQueryTabSlideOut, 'js/jquery.tabSlideOut.v1.3.js')}"/>
-
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 
 <apex:variable value="{!Action_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__r.MailingState = 'Arizona' || $User.Operating_Group__c ='Cambridge'}" var="hideObjType"/>
@@ -81,14 +80,7 @@ function highlightButtons ( btype, sfid, on )
    
 </script>
 <style>
-.clinical-catalog-slide-out-div {
-    padding: 10px;
-    width: 25%;
-    min-height: 35%;
-    height: auto !important;
-    background: #babae8;
-    border: 1px solid #29216d;
-}
+ 
 .label{
     margin:10px;
     font-weight:bold;
@@ -135,9 +127,12 @@ function highlightButtons ( btype, sfid, on )
 .mytbl{
     width: 100%;
     margin-bottom:10px;
-    margin-top:10px
+    margin-top:10px;
 }
+#wrappertbl{
 
+    width: 100%;
+}
 .mytbl:nth-child(odd) {
    // background-color:#dcdcfd;
    //background-color:#c5d3ef;
@@ -183,8 +178,32 @@ function highlightButtons ( btype, sfid, on )
 }
 
 .fixedBtn { width:100px };
+.catalog_sticky{
+    height: 100px;
+}
+#clinical-catalog {
+    padding: 10px;
 
+    //height: 35%;
+    background: #ccc;
+    //border: 1px solid #29216d;
+    //float: right;
+} 
+.catalog_tree{
+
+
+}
+.stick {
+    position:fixed;
+    top:0px;
+    margin-top: 5px;
+}
+.fancytree-container{
+    height: 350px;
+
+} 
 </style>
+
 <!-- required for the controler to get the fields in scope-->
 <apex:outputPanel style="display: none;">
     <apex:outputField value="{!Action_Plan__c.Previous_Action_Plan__c}"/>
@@ -204,10 +223,8 @@ function highlightButtons ( btype, sfid, on )
         <apex:commandButton value="View Detail" onClick="toggleByClass('action_row','action_row_on' ); return false;" styleClass="action_row_on" style="display: none;" rendered="{! !editMode}" /> 
         <apex:outputPanel styleClass="action_row">
         <apex:variable value="{!Action_Plan__c.Service_Assignment__r.Admission__c}" var="admID"/>
-        <apex:commandButton value="View Summary" onClick="toggleByClass('action_row_on','action_row' ); return false;" rendered="{! !editMode}" />
-                
-        <apex:commandButton action="{!mySave}" value="Save" reRender="myFrm" status="myStatus" rendered="{!editMode}"/>
-        
+        <apex:commandButton value="View Summary" onClick="toggleByClass('action_row_on','action_row' ); return false;" rendered="{! !editMode}" />                
+        <apex:commandButton action="{!mySave}" value="Save" reRender="myFrm" status="myStatus" rendered="{!editMode}"/>        
         <apex:commandButton action="{!editMode}" value="Edit" reRender="myFrm" status="myStatus" rendered="{! !editMode  && canEditPlan && Action_Plan__c.Status__c = 'Inactive Draft'}" />
         <apex:commandButton onClick="toggleById('reviseform'); return false;" value="Revise" rendered="{!Action_Plan__c.Status__c = 'Active Final' && !HasDraft && canEditPlan }"/>  
         <apex:commandButton value="Acknowledge" styleClass="ackbtn" onClick="toggleById('ackfrom'); return false;" rendered="{! !editMode && !HasAcknowledged  && Action_Plan__c.Status__c = 'Active Final'}" /> 
@@ -247,34 +264,86 @@ function highlightButtons ( btype, sfid, on )
         
         <hr />
         
-<apex:commandButton style="float:right" action="{!addGoal}" rendered="{!editMode}" value="Add Goal" reRender="myFrm" status="myStatus"  oncomplete="gotoend('planend');"/>        
-<apex:pageBlockSection title="Action Plan" collapsible="false" columns="1">
-<apex:outputPanel id="goalwrapper" layout="none">
-    <apex:repeat value="{!planStuff}" var="g">
+<apex:commandButton style="float:right" action="{!addGoal}" rendered="{!editMode}" value="Add {!GoalAlias}" reRender="myFrm" status="myStatus"  oncomplete="gotoend('planend');"/>        
+<apex:pageBlockSection title="Action Plan" collapsible="false" columns="1" id="anothertest">
+<apex:outputPanel id="apchildren_wrapper">
+<table id="wrappertbl" >
+<tr>
+<td>
+    <apex:outputPanel layout="block" style="display: {!if(editMode, 'block','none')}" >
+        <div id="catalog_filler" style="display: none; width: 400px;"> &nbsp;</div>
+        <div style="width: 55px;"> &nbsp;</div>
+        <div id="catalog_sticky">
+            <div id="clinical-catalog" class="clinical-catalog" style="display: none; float: left; width: 300px; ">
+                <apex:outputPanel layout="block" >
+                    <apex:outputLabel value="Select Catalog" styleClass="label"/>
+                    <apex:selectList id="choosePlan" value="{!curCtlg}" required="false" size="1" multiselect="false">
+                        <apex:selectOptions value="{!ctlgs}"/>
+                        <apex:actionSupport event="onchange" reRender="fullTree" action="{!refreshHere}"/>                                            
+                    </apex:selectList>
+                    <apex:inputHidden value="{!catalog_selections}" id="catalog_items"/>
+                </apex:outputPanel>
+                
+                <apex:outputPanel styleClass="catalog_tree" layout="block">
+                    <apex:pageBlock id="fullTree">
+                        <apex:outputPanel id="tree2" layout="block" >
+                           <c:Fancy_Tree showIcons="false" TreeString="{!allGoals.Fancy_Tree_JSon_String}" allowInactiveNode="false" mode="3" checkbox="true" ID_PageSideStorage="catalog_items" TreeID="tree2" debug="false" />    
+                        </apex:outputPanel>                
+                    </apex:pageBlock>
+                </apex:outputPanel>    
+                
+                <apex:outputPanel >
+                    <apex:commandButton oncomplete="gotoend('planend');" status="myStatus" reRender="goalwrapper" style="float: right; margin-top: 5px;" action="{!addItemsFromTree}" value="Add to Plan"/>
+                </apex:outputPanel>
+                    
+            </div>
+        <apex:outputPanel onclick="toggleById('clinical-catalog', 300); toggleById('catalog_filler', 300); return false;"><apex:image url="{!$Resource.searchIMG}"/></apex:outputPanel>
+        </div>
+        <script>
     
+            $(document).ready(function() {
+                var s = $("#catalog_sticky");
+                var pos = s.position();                    
+                $(window).scroll(function() {
+                    var windowpos = $(window).scrollTop();
+                    //$("#header_left").html("Distance from top:" + pos.top + "<br />Scroll position: " + windowpos);
+                    if (windowpos - 120 >= pos.top) {
+                        s.addClass("stick");
+                    } else {
+                        s.removeClass("stick"); 
+                    }
+                });
+            });
+        </script>  
+    </apex:outputPanel>  
+    </td>
+    <td>
+    
+<apex:outputPanel id="goalwrapper" layout="block"  >
+    <apex:repeat value="{!planStuff}" var="g">    
     <table class="mytbl">
     <tr>
         <td class="leftcol" >        
-            <apex:outputLabel rendered="{! !editmode}"><b>Goal</b></apex:outputLabel>
+            <apex:outputLabel rendered="{! !editmode}"><b>{!GoalAlias}</b></apex:outputLabel>
             <apex:outputPanel id="goalButtons" 
                             layout="block" 
                             rendered="{!editMode}"
                             onmouseover="highlightButtons('goal','{!g}', true);" 
                             onmouseout="highlightButtons('goal','{!g}', false );"
                             style="width:102px">
-                    <img id="goalicon{!g}" src="{!URLFOR($Resource.GoalIcons, 'icon-edit-blue.png')}" style="vertical-align:middle"/>&nbsp;<b>Goal</b>
+                    <img id="goalicon{!g}" src="{!URLFOR($Resource.GoalIcons, 'icon-edit-blue.png')}" style="vertical-align:middle"/>&nbsp;<b>{!GoalAlias}</b>
                     <div id="goalbtn{!g}" class="btnhover" style="display: none;padding-top:0px" > 
-                    <apex:commandButton value="Add Objective" action="{!addObj}" reRender="myFrm" status="myStatus" styleClass="fixedBtn" >
+                    <apex:commandButton value="Add {!ObjAlias}" action="{!addObj}" reRender="myFrm" status="myStatus" styleClass="fixedBtn" >
                         <apex:param assignTo="{!goalID}" value="{!g}" name="goalID"  /> 
                         <apex:param assignTo="{!isparentNew}" value="{!planStuff[g].isNew}" name="isparentNew "  /> 
                     </apex:commandButton>
                     <br/>
                     <apex:commandButton action="{!deleteGoal}" 
-                                        value="Delete Goal" 
+                                        value="Delete {!GoalAlias}" 
                                         reRender="myFrm" 
                                         status="myStatus"
                                         styleClass="fixedBtn" 
-                                        onclick="if(!confirm('Are you sure you want to Delete this Goal? All associated Objectives and Actions will also be deleted.')){return};">
+                                        onclick="if(!confirm('Are you sure you want to Delete this {!GoalAlias}? All associated {!ObjAlias}s and {!ActAlias}s will also be deleted.')){return};">
                         <apex:param assignTo="{!deleteGid}" value="{!g}" name="deleteGid"  />   
                     </apex:commandButton>                
                 </div>
@@ -295,7 +364,7 @@ function highlightButtons ( btype, sfid, on )
             <apex:repeat value="{!planStuff[g].GoalObjs}" var="o" >
     <tr>
                     <td>
-                    <apex:outputLabel style="margin-left:10px" rendered="{! !editmode}"><b>Objective</b></apex:outputLabel>            
+                    <apex:outputLabel style="margin-left:10px" rendered="{! !editmode}"><b>{!ObjAlias}</b></apex:outputLabel>            
                         <apex:outputPanel id="objButtons" 
                                             layout="block" 
                                             rendered="{!editMode}" 
@@ -304,20 +373,20 @@ function highlightButtons ( btype, sfid, on )
                                             onmouseout="highlightButtons('obj','{!o}', false );"
                                             >
                             
-                    <img id="objicon{!o}" src="{!URLFOR($Resource.GoalIcons, 'icon-edit-blue.png')}" style="vertical-align:middle"/>&nbsp;<b>Objective</b>
+                    <img id="objicon{!o}" src="{!URLFOR($Resource.GoalIcons, 'icon-edit-blue.png')}" style="vertical-align:middle"/>&nbsp;<b>{!ObjAlias}</b>
                             <div id="objbtn{!o}" style="display: none;">  
-                                <apex:commandButton value="Add Action" action="{!addAct}" reRender="myFrm" styleClass="fixedBtn" status="myStatus">
+                                <apex:commandButton value="Add {!ActAlias}" action="{!addAct}" reRender="myFrm" styleClass="fixedBtn" status="myStatus">
                                     <apex:param assignTo="{!goalID}" value="{!g}" name="goalID"  /> 
                                     <apex:param assignTo="{!objID}" value="{!o}" name="objID"  />
                                     <apex:param assignTo="{!isparentNew}" value="{!planStuff[g].GoalObjs[o].isNew}" name="isparentNew "  />
                                 </apex:commandButton>
                                 <br/>                
                                     <apex:commandButton action="{!deleteObj}" 
-                                                        value="Delete Objective" 
+                                                        value="Delete {!ObjAlias}" 
                                                         reRender="myFrm" 
                                                         status="myStatus"
                                                         styleClass="fixedBtn" 
-                                                        onclick="if(!confirm('Are you sure you want to Delete this Objective ? All associated Actions will also be deleted.')){return};">
+                                                        onclick="if(!confirm('Are you sure you want to Delete this {!ObjAlias} ? All associated {!ActAlias}s will also be deleted.')){return};">
                                         <apex:param assignTo="{!deleteGid}" value="{!g}" name="deleteGid"  /> 
                                         <apex:param assignTo="{!deleteOid}" value="{!o}" name="deleteOid"  /> 
                                     </apex:commandButton> 
@@ -326,7 +395,7 @@ function highlightButtons ( btype, sfid, on )
                     </td>                    
                     <td>
                     
-                        <apex:outputLabel styleClass="tmnHelpText" >What measurable achievements will demonstrate this Person Being Served’s progress towards this goal?<br /></apex:outputLabel>       
+                        <apex:outputLabel styleClass="tmnHelpText" >What measurable achievements will demonstrate this Person Being Served’s progress towards this {!GoalAlias}?<br /></apex:outputLabel>       
                         <apex:outputPanel layout="block" id="theObj" style="padding-bottom:20px">
                             <apex:inputField styleClass="txtarea" rendered="{!editMode}" value="{!planStuff[g].GoalObjs[o].theObj.Description__c}"/>  
                             <apex:outputField rendered="{! !editMode}" value="{!planStuff[g].GoalObjs[o].theObj.Description__c}"/> 
@@ -356,7 +425,7 @@ function highlightButtons ( btype, sfid, on )
                     <apex:repeat value="{!planStuff[g].GoalObjs[o].ObjActs}" var="a" id="actsthe">
     <tr class="action_row">
                             <td >
-                            <apex:outputLabel style="margin-left:20px" rendered="{! !editmode}"><b>Action</b></apex:outputLabel>                
+                            <apex:outputLabel style="margin-left:20px" rendered="{! !editmode}"><b>{!ActAlias}</b></apex:outputLabel>                
                                 <apex:outputPanel id="actButtons" 
                                                 rendered="{!editMode}" 
                                                 layout="block" 
@@ -364,14 +433,14 @@ function highlightButtons ( btype, sfid, on )
                                                 onmouseover="highlightButtons('act','{!a}', true);" 
                                                 onmouseout="highlightButtons('act','{!a}', false );"
                                                 >
-                                <img id="acticon{!a}" src="{!URLFOR($Resource.GoalIcons, 'icon-edit-blue.png')}" style="vertical-align:middle"/>&nbsp;<b>Action</b>
+                                <img id="acticon{!a}" src="{!URLFOR($Resource.GoalIcons, 'icon-edit-blue.png')}" style="vertical-align:middle"/>&nbsp;<b>{!ActAlias}</b>
                                    <div id="actbtn{!a}" style="display: none;">                                
                                         <apex:commandButton action="{!deleteAct}" 
-                                                            value="Delete Action" 
+                                                            value="Delete {!ActAlias}" 
                                                             reRender="myFrm" 
                                                             status="myStatus"
                                                             styleClass="fixedBtn" 
-                                                            onclick="if(!confirm('Are you sure you want to delete this Action?')){return};">
+                                                            onclick="if(!confirm('Are you sure you want to delete this {!ActAlias}?')){return};">
                                             <apex:param assignTo="{!deleteGid}" value="{!g}" name="deleteGid"  /> 
                                             <apex:param assignTo="{!deleteOid}" value="{!o}" name="deleteOid"  /> 
                                             <apex:param assignTo="{!deleteAid}" value="{!a}" name="deleteAid"  /> 
@@ -382,7 +451,7 @@ function highlightButtons ( btype, sfid, on )
                             </td> 
                             <td>
                             
-                                <apex:outputLabel styleClass="tmnHelpText">How will staff support this Person Being Served to meet the objective?<br/></apex:outputLabel>     
+                                <apex:outputLabel styleClass="tmnHelpText">How will staff support this Person Being Served to meet the {!ObjAlias}?<br/></apex:outputLabel>     
                                 <apex:outputPanel layout="block" id="theAction" style="padding-bottom:20px">
                                     <apex:inputField styleClass="txtarea" rendered="{!editMode}" value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Description__c}"/>  
                                     <apex:outputField rendered="{! !editMode}" value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Description__c}"/>         
@@ -393,8 +462,10 @@ function highlightButtons ( btype, sfid, on )
         </apex:repeat> <!-- end obj -->
         </table>
     </apex:repeat><!--end goal-->
-    </apex:outputPanel>
-    <apex:commandButton style="float:right" action="{!addGoal}" rendered="{!editMode}" value="Add Goal" reRender="myFrm" status="myStatus"  oncomplete="gotoend('planend');"/>        
+    </apex:outputPanel><!-- end goals wrapper -->
+    </td></tr></table><!-- end full wrapper -->
+    </apex:outputPanel><!-- end ap children warpper -->
+    <apex:commandButton style="float:right" action="{!addGoal}" rendered="{!editMode}" value="Add {!GoalAlias}" reRender="myFrm" status="myStatus"  oncomplete="gotoend('planend');"/>        
     
 <div id="planend" ></div>
 </apex:pageBlockSection> 
@@ -607,30 +678,7 @@ function highlightButtons ( btype, sfid, on )
 </div>
 </div>
 
-<div class="clinical-catalog-slide-out-div">
-<a class="handle" href="http://link-for-non-js-users.html">Content</a>
-  <apex:form >
-    <apex:inputHidden value="{!Action_Plan__c.Service_Assignment__r.Alias__c}" />
-    <apex:outputPanel layout="block">
-        <apex:outputLabel value="Select Catalog" styleClass="label"/>
-        <apex:actionRegion >
-        <apex:selectList id="choosePlan" value="{!curCtlg}" required="false" size="1" multiselect="false">
-            <apex:selectOptions value="{!ctlgs}"/>
-            <apex:actionSupport event="onchange" reRender="fullTree" action="{!refreshHere}" status="myStatus"/>                                            
-        </apex:selectList>
-        </apex:actionRegion>        
-    </apex:outputPanel>
-  </apex:form>
-    
-    <apex:outputPanel layout="block">
-        <apex:pageBlock id="fullTree">
-            <apex:outputPanel id="tree2" layout="block" >
-               <c:Fancy_Tree TreeString="{!allGoals.Fancy_Tree_JSon_String}" mode="1" checkbox="false" ID_PageSideStorage="fullTreeKeys" TreeID="tree2" debug="false" />    
-            </apex:outputPanel>                
-        </apex:pageBlock>
-    </apex:outputPanel>
 
-</div>
 
 <apex:actionStatus id="myStatus" >
     <apex:facet name="start">
@@ -644,28 +692,6 @@ function highlightButtons ( btype, sfid, on )
 </apex:actionStatus> 
 
 
-<script type="text/javascript">
-/*
- * This method is called only when the entire DOM is called
- */
-j$(function() {
-       /*
-        * Activate the TAB slider
-        */
-        j$('.clinical-catalog-slide-out-div').tabSlideOut({
-            tabHandle: '.handle',                     //class of the element that will become your tab
-            pathToTabImage: '{!$Resource.searchIMG}', //path to the image for the tab //Optionally can be set using css
-            imageHeight: '154px',                     //height of tab image           //Optionally can be set using css
-            imageWidth: '54px',                       //width of tab image            //Optionally can be set using css
-            tabLocation: 'left',                      //side of screen where tab lives, top, right, bottom, or left
-            speed: 300,                               //speed of animation
-            action: 'click',                          //options: 'click' or 'hover', action to trigger animation
-            topPos: '200px',                          //position from the top/ use if tabLocation is left or right
-            leftPos: '20px',                          //position from left/ use if tabLocation is bottom or top
-            fixedPosition: true                      //options: true makes it stick(fixed position) on scroll
-        }); //end activating the tab slide out
-       
-});// end DOM has been fully loaded action
-</script>
+
 
 </apex:page>
