@@ -2,7 +2,7 @@
 private class AssessmentControllerExtensionTEST {
 
     static testMethod void myUnitTest() {
-       
+       /*
         String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
         
         Account Accnt = new Account(
@@ -44,6 +44,8 @@ private class AssessmentControllerExtensionTEST {
             Effective_Date__c = date.today()
         );
         insert Adm;
+        */
+        TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
         
         Assessment_Type__c testAssmtType = new Assessment_Type__c(
             Name = 'CANS'           
@@ -65,30 +67,30 @@ private class AssessmentControllerExtensionTEST {
         insert testQuestion;
         
         Assessment__c testAssmt = new Assessment__c(
-            Admission__c = Adm.Id,
+            Admission__c = myData.theAdm.Id,
             Assessment_Date__c = date.newinstance(2012, 06, 17),
             //OwnerID = testUser.Id,
             Interval__c = 'Intake',
             Name = 'TEST ASSMT',
             Assessment_Type__c = testAssmtTypeId[0].Id,
-            AccountPerson__c = aAccountId,
+            AccountPerson__c = myData.theAccount.Id,
             TFC_Family_Vistas__c = 'No'
         );
         insert testAssmt;
         
         Assessment__c testAssmt2 = new Assessment__c(
-            Admission__c = Adm.Id,
+            Admission__c = myData.theAdm.Id,
             Assessment_Date__c = date.newinstance(2012, 06, 17),
             //OwnerID = testUser.Id,
             Interval__c = 'Quarterly',
             Quarter__c = 1,
             Name = 'TEST ASSMT2',
             Assessment_Type__c = testAssmtTypeId[0].Id,
-            AccountPerson__c = aAccountId,
+            AccountPerson__c = myData.theAccount.Id,
             TFC_Family_Vistas__c = 'No'
         );
         insert testAssmt2;
-      	System.Debug( 'AFter insert' + testAssmt2.TFC_Family_Vistas__c);
+        System.Debug( 'AFter insert' + testAssmt2.TFC_Family_Vistas__c);
         PageReference pageRef = Page.AssessmentForm;
         Test.setCurrentPageReference(pageRef);
         
@@ -103,13 +105,13 @@ private class AssessmentControllerExtensionTEST {
     System.Debug( 'AFter insert' + testAssmt2.TFC_Family_Vistas__c);
     
     if ( testACE2.disregardAllowed ) {
-        	System.Debug( testAssmt2.TFC_Family_Vistas__c);
-        	
-        	testACE2.setDisregard();
-        	
-        	testAssmt2 = [ select id, disregard__c from assessment__c where id = :testAssmt2.Id];
-        	
-        	System.AssertEquals( true, testAssmt2.disregard__c);
+            System.Debug( testAssmt2.TFC_Family_Vistas__c);
+            
+            testACE2.setDisregard();
+            
+            testAssmt2 = [ select id, disregard__c from assessment__c where id = :testAssmt2.Id];
+            
+            System.AssertEquals( true, testAssmt2.disregard__c);
         }
         
         

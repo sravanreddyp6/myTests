@@ -33,7 +33,7 @@ private class AdmissionValidationTEST {
             PersonMailingStreet='test@yahoo.com',
             PersonMailingPostalCode='12345',
             PersonMailingCity='SFO',
-            PersonMailingStateCode='NC',
+            PersonMailingStateCode='AZ',
             PersonEmail='test@yahoo.com',
             PersonHomePhone='1234567',
             PersonMobilePhone='12345678'
@@ -54,7 +54,7 @@ private class AdmissionValidationTEST {
             Discharged_Status__c = 'Positive',
             Reason_for_Discharge__c = 'TEST REASON FOR DISCHARGE',
             Network_Offering__c = 'ARY',
-            State__c = 'NC'
+            State__c = 'AZ'
         );
         insert Adm;
 
@@ -63,7 +63,7 @@ private class AdmissionValidationTEST {
             Person_Being_Served__c = aContactId,
             Effective_Date__c = date.newInstance(2013, 7, 1),
             Network_Offering__c = 'ARY',
-            State__c = 'NC'
+            State__c = 'AZ'
         );
         insert Adm2;
 
@@ -72,7 +72,7 @@ private class AdmissionValidationTEST {
             Person_Being_Served__c = aContactId,
             Effective_Date__c = date.newInstance(2013, 9, 1),
             Network_Offering__c = 'ARY',
-            State__c = 'NC'
+            State__c = 'AZ'
         );
         try{
 
@@ -184,7 +184,7 @@ private class AdmissionValidationTEST {
             PersonMailingStreet='test@yahoo.com',
             PersonMailingPostalCode='12345',
             PersonMailingCity='SFO',
-            PersonMailingStateCode='NC',
+            PersonMailingStateCode='AZ',
             PersonEmail='test@yahoo.com',
             PersonHomePhone='1234567',
             PersonMobilePhone='12345678'
@@ -205,7 +205,7 @@ private class AdmissionValidationTEST {
             Discharged_Status__c = null,
             Reason_for_Discharge__c = null,
             Network_Offering__c = 'ARY',
-            State__c = 'NC'
+            State__c = 'AZ'
         );
         insert Adm;
 

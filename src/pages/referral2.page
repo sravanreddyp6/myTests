@@ -260,14 +260,16 @@ function stopRKey(evt) {
 
           var locID = j$('input[id$=locationEntry_Id]').val();
           var locUser = '';
+          var locRank = '';
           if (j$('input[id$=locationEntry_User_lkid]').length > 0 ) 
           	locUser = j$('input[id$=locationEntry_User_lkid]').val();
-          	
+          if (j$('select[id$=locationEntry_Rank]').length > 0 ) 
+          	locRank = j$('select[id$=locationEntry_Rank]').val();	
           var locServiceLocation = j$(idSelector).val();
           // j$('.searchLocationLookupElement_lkid').val();//j$('input[id$=lookupElement_lkid]').val();//'{!location.Service_Location__c}';//j$('input[id$=locationEntry_ServiceLocation_lkid]').val();
           var locStatus = j$('select[id$=locationEntry_Status]').val();
           var referralId = '{!Referral__c.ID}';
-          referral_Controller_Helper.saveReferralLocation(locID, locUser, locServiceLocation, locStatus, referralId,
+          referral_Controller_Helper.saveReferralLocation(locID, locUser, locServiceLocation, locStatus, locRank, referralId,
              function(result, event){
                     saveLocation();
                     if (isDialogClose) {
@@ -324,6 +326,9 @@ function stopRKey(evt) {
                 if (j$('input[id$=locationEntry_User_lkid]').length > 0 ) {
                 	j$('input[id$=locationEntry_User_lkid]').val(result.User_Assigned__c);
                 	j$('input[id$=locationEntry_User]').val(result.User_Assigned__r.Name);
+                }
+                if (j$('select[id$=locationEntry_Rank]').length > 0 ) {
+                	j$('select[id$=locationEntry_Rank]').val(result.Rank__c);
                 }
                 j$('select[id$=locationEntry_Status]').val(result.Status__c);
 
@@ -1022,6 +1027,7 @@ function stopRKey(evt) {
                     return="program__c,setting__c,service_value__c,phone__c,street__c,city__c,state__c,zip__c"/>
             </apex:pageBlockSectionItem>
             <apex:inputField value="{!location.User_Assigned__c}" id="locationEntry_User" rendered="{!referralRecordType != 'CareMeridian'}"/>
+            <apex:inputField value="{!location.Rank__c}" id="locationEntry_Rank" rendered="{!referralRecordType == 'CareMeridian'}"/>
             <apex:inputField value="{!location.Status__c}" id="locationEntry_Status"/>
            <apex:inputHidden value="{!location.Id}" id="locationEntry_Id"/>
 
@@ -1379,6 +1385,7 @@ function stopRKey(evt) {
                                 Zip="{!location.Service_Location_Zip__c}"/>
           </apex:column>
           <apex:column value="{!location.User_Assigned__c}" rendered="{! referralRecordType != 'CareMeridian'}"/>
+          <apex:column value="{!location.Rank__c}" rendered="{! referralRecordType == 'CareMeridian'}"/>
           <apex:column value="{!location.Status__c}"/>
           <apex:column value="{!location.LastModifiedDate}"/>
         </apex:pageBlockTable>

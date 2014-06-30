@@ -26,18 +26,16 @@
 .thinkingwheel{
     position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
 }
-#mytbl tr:nth-child(even)       { background-color:#eee; }
-#mytbl tr:nth-child(odd)      { //background-color:#fff; }
+#mytbl tr:nth-child(even)       { background-color:#ececec; }
+#mytbl tr:nth-child(odd)      { background-color:#ffffff; }
 
 #mytbl td{
     font-size: 12px;
     padding: 3px;
 }
 .headRow{
-   // background-color: white !important;
     font-weight: bold;
     border-bottom: 1px #dbdbdb solid;
- //   width: 15%;
     padding: 7px !important;
 
 }
@@ -59,11 +57,6 @@
 .sorting_desc{
     background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_desc.png')}') no-repeat center right;
 }
-.txtcol{
-    
-}
-.timecol{
-}
 .mytbl{
 
     border: 1px #dbdbdb solid;
@@ -76,7 +69,6 @@
 
 }
 .tblrow{
-
     border-bottom: 1px #dbdbdb solid;
     border-right: 1px #dbdbdb solid;
 }
@@ -95,7 +87,6 @@
     <apex:pageBlock title="Filters" >
         <apex:pageBlockSection columns="1" >
         
-
         <apex:inputText id="start_date" 
                         size="10" 
                         onfocus="DatePicker.pickDate(false, this , false);" 
@@ -125,38 +116,32 @@
   
    <apex:pageBlock title="Results" rendered="{!allCount >0}">
         <apex:pageBlockButtons > 
-            <div style="float: right"><input class="btn" type="button" onclick="tableToExcel('mytbl', 'W3C Example Table')" value="Export to Excel"/></div>
+            <div style="float: right"><input class="btn" type="button" onclick="tableToExcel('mytbl', 'Documented Actual Staff Hours Report')" value="Export to Excel"/></div>
         </apex:pageBlockButtons> 
-        <table id="mytbl" class="mytbl"  cellpadding="7" cellspacing="0" >
+        <br />
+        <table id="mytbl" class="mytbl"  cellpadding="7" cellspacing="0" width="100%">
                 <tr class="tblheader">
                     <td class="tblheader" style="text-align: left; width: 20%;"><strong>Clinician</strong></td>
                     <td class="tblheader" style="text-align: left;"><strong>Person Being Served</strong></td>
                     <td class="tblheader" style="text-align: left;"><strong>Projected Hours</strong></td>
                     <td class="tblheader" style="text-align: left;"><strong>Phase</strong></td>
-                    <td class="tblheader" style="text-align: left;"><strong>Total Minutes</strong></td>
-                    <td class="tblheader" style="text-align: left;"><strong>Hours (conversion)</strong></td>
+                    <td class="tblheader" style="text-align: right;"><strong>Total Minutes</strong></td>
+                    <td class="tblheader" style="text-align: right;"><strong>Hours (conversion)</strong></td>
                 </tr>
             <apex:repeat value="{!listStaffHrsInfo}" var="item">
                 <tr>
-                    <td class="tblrow" style="text-align: left; width: 20%;"><strong>{!item.clinician}</strong></td>
-                    <td class="tblrow" style="text-align: left; width: 20%;"><strong>{!item.pbs}</strong></td>
-                    <td class="tblrow" style="text-align: left; width: 5%"></td>                   
-                    <td class="tblrow" style="text-align: left; width: 5%"><strong>{!item.phase}</strong></td>
-                    <td class="tblrow" style="text-align: left; width: 5%">{!item.totalMinutes}</td>
-                    <td class="tblrow" style="text-align: left; width: 5%">{!item.hours}</td>
+                    <td class="tblrow" style="text-align: left; width: 20%;">{!item.clinician}</td>
+                    <td class="tblrow" style="text-align: left; width: 20%;">{!item.pbs}</td>
+                    <td class="tblrow" style="text-align: left;" ></td>                   
+                    <td class="tblrow" style="text-align: left;">{!item.phase}</td>
+                    <td class="tblrow" style="text-align: right;">{!item.totalMinutes}</td>
+                    <td class="tblrow" style="text-align: right;">{!item.hours}</td>
                 </tr>            
             </apex:repeat>
 
         </table>
    </apex:pageBlock>
 <br/>
-<apex:dataTable value="{!filteredResults }" var="item" width="100%" rendered="{!$CurrentPage.parameters.showdetails=='1'}">
-<apex:column headerValue="id">
-<apex:outputLink value="/{!item.id}" >{!item.id}</apex:outputLink>
-</apex:column>
-<apex:column value="{!item.Start_Date__c}" headerValue="start"/>
-<apex:column value="{!item.End_Date__c}" headerValue="end"/>
-</apex:dataTable>
 
 </apex:outputPanel>
 

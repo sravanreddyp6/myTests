@@ -33,6 +33,7 @@ public class Assessment_Fad_TestData {
     }
     
     public static Assessment__c createAssessment() {
+    /*
           String RecTypeId = [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
             Account Accnt = new Account(
                 RecordTypeID=RecTypeId,
@@ -56,10 +57,12 @@ public class Assessment_Fad_TestData {
             );
             insert admission;
             //insert ast;
+            */
+            TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
             Assessment__c ass = new Assessment__c(
                 Name='Test Assessment',
-                Admission__c=admission.ID,
-                AccountPerson__c=Accnt.ID,
+                Admission__c=myData.theAdm.ID,
+                AccountPerson__c= myData.theAccount.ID,
                 TFC_Family_Vistas__c='Yes',
                 Interval__c='Intake'
             );

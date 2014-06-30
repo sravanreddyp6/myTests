@@ -76,6 +76,7 @@ public with sharing class NursingEvaluationEditController {
     public List<string>selectedpainExpressions {get;set;}
     public List<selectOption>paindescriptorValues ;
     public List<string>selectedpainDescriptors {get;set;}
+    public List<string>dummyString{get; set;}
     
     
     
@@ -158,7 +159,7 @@ public with sharing class NursingEvaluationEditController {
             return [
                 SELECT ID, Name, Type__c, Address__c, Email__c, Phone__c, Phone_1_Type__c,
                        Phone_2__c, Phone_2_Type__c, Comments__c
-                FROM Related_Party__c WHERE Person_Being_served__c=:this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__c
+                FROM Related_Party__c WHERE Person_Being_served__c=:this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__c order by Type__c, Name
             ];
         }
     }
@@ -254,7 +255,7 @@ public with sharing class NursingEvaluationEditController {
                 selectedpainExpressions = new List<String>();
                 paindescriptorValues = new List<selectOption>();
                 selectedpainDescriptors = new List<String>();
-                
+                dummyString = new List<String>();
         
                 if(!String.isBlank(this.evaluation.Breathe_sounds__c))
                 selectedSounds = this.evaluation.Breathe_Sounds__c.split(';');
@@ -446,10 +447,13 @@ public with sharing class NursingEvaluationEditController {
                 if (strtypes != ''){
                         strtypes = strtypes.Substring(0, strtypes.length() -1);
                         this.evaluation.Breathe_Sounds__c = strtypes;
+                        if(!strtypes.Contains('Other'))
+                        this.evaluation.Breathe_Sound_Other__c = '';
                 }
-                else
+                else{
                 this.evaluation.Breathe_Sounds__c ='';
-                
+                this.evaluation.Breathe_Sound_Other__c ='';
+                }
       //for Urinary Issues mUlti-Picklist       
         string uritypes ='';
         for(String u: selectedIssues)
@@ -470,9 +474,12 @@ public with sharing class NursingEvaluationEditController {
                 if(clr!=''){
                         clr =clr.Substring(0,clr.length()-1);
                         this.evaluation.Urine_Clarity__c = clr;
+                        if(!clr.Contains('Other'))
+                        this.evaluation.Urine_Clarity_Other__c = '';
                 }
                 else
                 this.evaluation.Urine_Clarity__c ='';
+                this.evaluation.Urine_Clarity_Other__c ='';
                 
     // for Tongue Multi-Picklist
         string tng = '';
@@ -481,10 +488,14 @@ public with sharing class NursingEvaluationEditController {
                 if(tng!=''){
                         tng = tng.Substring(0,tng.length()-1);
                         this.evaluation.Tongue__c = tng;
+                        if(!tng.Contains('Sores'))
+                        this.evaluation.Tongue_Sores_Describe__c ='';
                 }
-                else
+                else{
                 this.evaluation.Tongue__c = '';
+                this.evaluation.Tongue_Sores_Describe__c = '';
                 
+                }
                 
         // for Gums Multi-picklist
                 string gms ='';
@@ -493,9 +504,13 @@ public with sharing class NursingEvaluationEditController {
                         if(gms!=''){
                                 gms = gms.SubString(0,gms.length()-1);
                                 this.evaluation.Gums__c = gms;
+                                if(!gms.Contains('Sores'))
+                                this.evaluation.Gums_Sores_Describe__c ='';
                         }
-                        else
+                        else{
                         this.evaluation.Gums__c = '';
+                        this.evaluation.Gums_Sores_Describe__c = '';
+                        }
                         
         // for Cheeks Multi-Picklist
                 string chk ='';
@@ -504,10 +519,14 @@ public with sharing class NursingEvaluationEditController {
                         if(chk!=''){
                                 chk= chk.Substring(0,chk.length()-1);
                                 this.evaluation.Cheeks__c = chk;
+                                if(!chk.contains('Sores'))
+                                this.evaluation.Cheeks_Sores_Describe__c = '';
                         }
-                else
-                this.evaluation.Cheeks__c ='';
-                
+                		else{
+                		this.evaluation.Cheeks__c ='';
+                		this.evaluation.Cheeks_Sores_Describe__c = '';
+                		}
+                		
    // for lips Multi-picklist
                 string lps ='';
                 for(string l: selectedLips)
@@ -515,10 +534,13 @@ public with sharing class NursingEvaluationEditController {
                         if(lps!=''){
                                 lps= lps.Substring(0,lps.length()-1);
                                 this.evaluation.Lips__c = lps;
+                                if(!lps.Contains('Sores'))
+                                this.evaluation.Lips_Sores_Describe__c = '';
                         }
-                        else
+                        else{
                         this.evaluation.Lips__c = '';
-                        
+                        this.evaluation.Lips_Sores_Describe__c = '';
+                        }
                         
    // for Saliva Multi-Picklist
                 string slv ='';
@@ -535,7 +557,7 @@ public with sharing class NursingEvaluationEditController {
                 string dtp ='';
                 for(string d:selectedDentures)
                 dtp += d+';';
-                        if(dtp!=''){
+                        if(dtp!='' && this.evaluation.Dentures__c == 'Yes'){
                                 dtp= dtp.Substring(0,dtp.length()-1);
                                 this.evaluation.Dentures_Type__c = dtp;
                         }
@@ -557,7 +579,7 @@ public with sharing class NursingEvaluationEditController {
                 string hal ='';
                 for(string h: selectedHalls)
                 hal += h+';';
-                        if(hal!=''){
+                        if(hal!='' && this.evaluation.Hallucinations__c){
                                 hal = hal.Substring(0,hal.length()-1);
                                 this.evaluation.Hallucination_Types__c = hal;
                         }
@@ -568,13 +590,16 @@ public with sharing class NursingEvaluationEditController {
                 string blf = '';
                 for(string bf: selectedBeliefs)
                 blf += bf+';';
-                        if(blf!=''){
+                        if(blf!=''&& this.evaluation.Beliefs_that_could_affect_Treatment__c == 'Yes'){
                                 blf= blf.Substring(0,blf.length()-1);
                                 this.evaluation.Typeof_Spiritual_belief_Effects__c = blf;
+                               	if(!blf.Contains('Other'))
+                               	this.evaluation.Other_Religious_Effect__c = '';
                         }
-                        else
+                        else{
                         this.evaluation.Typeof_Spiritual_belief_Effects__c ='';
-                        
+                        this.evaluation.Other_Religious_Effect__c ='';
+                        }
    // For Preferred Method of Learning Multi-Picklist
                 string pml ='';
                 for(string lm: selectedLearning)
@@ -604,9 +629,13 @@ public with sharing class NursingEvaluationEditController {
                         if(cmc!=''){
                                 cmc = cmc.Substring(0,cmc.length()-1);
                                 this.evaluation.Resident_s_Communication_Status__c = cmc;
+                                if(!cmc.Contains('Other'))
+                                this.evaluation.Resident_s_communication_Status_Other__c = '';
                         }
-                        else
+                        else{
                         this.evaluation.Resident_s_Communication_Status__c = '';
+                        this.evaluation.Resident_s_communication_Status_Other__c = '';
+                        }
                         
  // For Resident's Emotional Barriers Multi-picklist
                 string emb = '';
@@ -615,10 +644,14 @@ public with sharing class NursingEvaluationEditController {
                         if(emb!=''){
                                 emb = emb.Substring(0,emb.length()-1);
                                 this.evaluation.Resident_s_Emotional_Barriers__c = emb;
+                                if(!emb.Contains('Other'))
+                                this.evaluation.Resident_s_emotional_barrier_other__c ='';
                         }
-                        else
+                        else{
                         this.evaluation.Resident_s_Emotional_Barriers__c ='';
-                
+                        this.evaluation.Resident_s_emotional_barrier_other__c = '';
+                        
+                        }
  // For Resident's Learning Needs multi-picklist
                 string lrn ='';
                 for(string ln: selectedNeeds)
@@ -626,10 +659,15 @@ public with sharing class NursingEvaluationEditController {
                         if(lrn!=''){
                                 lrn = lrn.Substring(0,lrn.length()-1);
                                 this.evaluation.Resident_s_Learning_needs_related_to__c = lrn;
+                                if(!lrn.Contains('Other'))
+                                this.evaluation.Residents_Learning_relate_to_other__c ='';
                         }
-                        else
+                        else{
                         this.evaluation.Resident_s_Learning_needs_related_to__c ='';
-
+						this.evaluation.Residents_Learning_relate_to_other__c ='';
+						
+                        }
+                        
 // For Oriented to te following Multi-Picklist
                 string ori ='';
                 for(string ri: selectedOrients)
@@ -660,10 +698,14 @@ public with sharing class NursingEvaluationEditController {
                         if(fmb!=''){
                                 fmb = fmb.Substring(0,fmb.length()-1);
                                 this.evaluation.Family_Member_s_Emotional_Barriers__c = fmb;
+                                if(!fmb.Contains('Other'))
+                                this.evaluation.Family_Emotional_Barrier_Other__c = '';
                         }
-                        else
+                        else{
                         this.evaluation.Family_Member_s_Emotional_Barriers__c ='';
+                        this.evaluation.Family_Emotional_Barrier_Other__c = '';
                         
+                        }
                         
 // For Family Communication Status Multi-Picklist
                 string fmc ='';
@@ -672,9 +714,14 @@ public with sharing class NursingEvaluationEditController {
                         if(fmc!=''){
                                 fmc = fmc.Substring(0,fmc.length()-1);
                                 this.evaluation.Family_Communication_Status__c = fmc;
+                                if(!fmc.Contains('Other'))
+                                this.evaluation.Family_Commu_Status_other__c = '';
                         }
-                        else
+                        else{
                         this.evaluation.Family_Communication_Status__c ='';
+                        this.evaluation.Family_Commu_Status_other__c = '';
+                        
+                        }
                         
 // For FamilyMember's learning related to Multi-Picklist
                 string fsr = '';
@@ -683,9 +730,15 @@ public with sharing class NursingEvaluationEditController {
                         if(fsr!=''){
                                 fsr = fsr.Substring(0,fsr.length()-1);
                                 this.evaluation.Family_Member_s_Learning_related_to__c = fsr;
+                                if(!fsr.Contains('Other'))
+                                this.evaluation.Family_Members_Learning_Other__c = '';
                         }
-                        else
+                        else{
                         this.evaluation.Family_Member_s_Learning_related_to__c ='';
+                        this.evaluation.Family_Members_Learning_Other__c = '';
+                        
+                        }
+                        
                         
 // For Diagnostics GYN Experiences Multi-Picklist
                 string exp = '';
@@ -726,23 +779,31 @@ public with sharing class NursingEvaluationEditController {
                 string pros ='';
                 for(string ps: selectedProsthetics)
                 pros += ps+';';
-                        if(pros!=''){
+                        if(pros!='' && this.evaluation.Prosthetics__c == 'Yes'){
                                 pros = pros.Substring(0,pros.length()-1);
                                 this.evaluation.Prosthetic_Types__c = pros;
+                                if(!pros.Contains('Other'))
+                                this.evaluation.Prosthetics_Other__c ='';
                         }
-                        else
+                        else{
                         this.evaluation.Prosthetic_Types__c='';
+                        this.evaluation.Prosthetics_Other__c ='';
+                        }
                         
 // For Orthodics Types Multi-picklist
                 string orth='';
                 for(string ot: selectedOrthodics)
                 orth += ot+';';
-                        if(orth!=''){
+                        if(orth!='' && this.evaluation.Orthodics__c == 'Yes'){
                                 orth = orth.Substring(0,orth.length()-1);
                                 this.evaluation.Orthodics_Types__c = orth;
+                                if(!pros.Contains('Other'))
+                                this.evaluation.Orthodics_Other__c = '';
                         }
-                        else
+                        else{
                         this.evaluation.Orthodics_Types__c ='';
+                        this.evaluation.Orthodics_Other__c = '';
+                        }
                         
 // For Mood Multi-picklist
                 string mod='';
@@ -751,10 +812,18 @@ public with sharing class NursingEvaluationEditController {
                         if(mod!=''){
                                 mod = mod.Substring(0,mod.length()-1);
                                 this.evaluation.Mood__c = mod;
+                                if(!mod.Contains('Sad') && !mod.Contains('Flat')){
+                                	this.evaluation.Desire_to_hurt_themselves__c ='';
+                                	this.evaluation.Plan_to_Harm_themselves__c ='';
+                                }
+                                
                         }
-                        else
+                        else{
                         this.evaluation.Mood__c ='';
+                        this.evaluation.Desire_to_hurt_themselves__c ='';
+                        this.evaluation.Plan_to_Harm_themselves__c ='';
                         
+                        }
 // For Alleviating Factors Multi-picklist
                 string alv='';
                 for(string av: selectedAlleviators)
@@ -768,7 +837,7 @@ public with sharing class NursingEvaluationEditController {
                         
 // For Negative Impact on ADLs Multi-picklist
                 string adl='';
-                for(string ad: selectedAlleviators)
+                for(string ad: selectedAdls)
                 adl += ad+';';
                         if(adl!=''){
                                 adl = adl.Substring(0,adl.length()-1);
@@ -1033,7 +1102,7 @@ public with sharing class NursingEvaluationEditController {
    }
    
    public List<selectoption> getpaindescriptorValues(){
-                List<Selectoption> paindescriptorValue = Utility.getPicklistValues(evaluation, 'Neuro_Pain_Manner_of_Exp__c');
+                List<Selectoption> paindescriptorValue = Utility.getPicklistValues(evaluation, 'Neuro_pain_Descriptors__c');
                 return paindescriptorValue; 
    }
    
