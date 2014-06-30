@@ -572,6 +572,7 @@ public with sharing class referralConversion_Controller {
     	}
     	else{
     		id evalID = refEval[0].id;
+    		list<Evaluation_Response__c> tobeCreated = new List<Evaluation_Response__c>();
     		String asmtName = refEval[0].Name.length()>10 ? refEval[0].Name.Substringbefore('Eval')+'NursesAssessment'+ DateTime.Now().format('MMddyy') : 'NursesAssessment'+ DateTime.Now().format('MMddyy');
     		String query = 'SELECT ';
     		FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment;
@@ -597,7 +598,37 @@ public with sharing class referralConversion_Controller {
 			dynObjectEvaluationRecord.put('Name',asmtName );
 			
         insert dynObjectEvaluationRecord;
-    	} 
+        
+	        if(tobeCreated.isEmpty()){
+	        	system.debug('inside the loop,,,,,,,,');
+		        
+		        list<string> respRectypes = new List<string>{'Allergy','Pressure Ulcer Detail','Wound Detail','Annotation'};
+		        String respQuery ='SELECT ';
+		        FieldSet copyrespFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses;
+		        
+		        	for(Schema.FieldSetMember f : copyrespFields.getFields()) {
+		        		respQuery +=f.getFieldPath() + ', ';
+		        	}
+		        
+		        	respQuery += 'Name FROM Evaluation_Response__c WHERE Evaluation__c =:evalID AND RecordType.Name IN:respRectypes';
+		        	List<Evaluation_Response__c> evalResponses = database.query(respQuery);
+		        	if(evalResponses!=null){
+		        		for(Evaluation_Response__c erp : evalResponses){
+		        			Evaluation_Response__c newRecord = erp.clone(false);
+		        			newRecord.Evaluation__c = dynobjectEvaluationRecord.Id;
+		        			tobeCreated.add(newRecord);
+		        			
+		        		}
+		        		
+		        		insert tobeCreated;
+		        		System.debug('Created Records+++++++'+tobeCreated);
+		        	}
+		        }
+        
+    	}
+    	
+    	
+    	
     }
     
     // link the funding sources that were on the referral

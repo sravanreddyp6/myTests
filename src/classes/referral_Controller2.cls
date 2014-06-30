@@ -98,7 +98,7 @@ public with sharing class referral_Controller2 {
   		system.debug( 'Ref record type: ' + referralrecordtype );
   		system.debug(' is cambridge:' + iscambridge);
   		system.debug(' operatinggroup:' + operatinggroup);
-  		return ((operatinggroup == 'Cambridge' && isCambridge )|| (operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ) || (operatinggroup == 'CareMeridian'));
+  		return ((operatinggroup == 'Cambridge' && isCambridge )|| (operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ) ); // Add this line to make the convert button available for CareMeridian group || (operatinggroup == 'CareMeridian') && isCareMeridian  
   	} set;}
     
 
@@ -178,6 +178,7 @@ public with sharing class referral_Controller2 {
         if (pbrLastName == null) pbrLastName = '';
         Evaluation__c eval = new Evaluation__c(
             Referral__c = referralRecord.Id,
+            RecordtypeId = Utility.getEValuationRecordType('CareMeridian'),
             Name = pbrLastName + 'Eval' + DateTime.Now().format('MMddyy')
         );
         insert eval;
@@ -220,7 +221,7 @@ public with sharing class referral_Controller2 {
         this.locations =
         [select Id, Name, Referral__c, location__c, street_1__c, street_2__c, city__c, zip_code__c, state__c, user_assigned__c, status__c,
             service_location_city__c,service_location_state__c,service_location_street__c,service_location_zip__c,service_location_program__c,
-            service_location_service_value__c, service_location_setting__c, service_location__c, LastModifiedDate
+            service_location_service_value__c, service_location_setting__c, service_location__c, rank__c, LastModifiedDate
          from Referral_Location__c
          where Referral__c = :this.referralRecord.Id
          limit 150];
@@ -494,7 +495,6 @@ public with sharing class referral_Controller2 {
         // dob and then if < 18 need a guardian
         if ( this.personBeingRefRecord.Date_of_Birth__c == null ) {
             messages.Add( 'Date of Birth' );
-            this.personBeingRefRecord.Date_of_Birth__c.AddError('Value required for conversion');
             hasReq = false;
         } else {
 

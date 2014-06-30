@@ -3,31 +3,17 @@ public with sharing class DocumentedActualStaffHrsRpt {
     public Date fStartDate{get{return fStartDate;} set;}
     public Date fEndDate{get{return fEndDate;} set;}
     
-    public List<Service_Assignment__c> Results = new List<Service_Assignment__c>();
-    public List<Service_Assignment__c> getResults(){return Results;}
-    
-    public List<Progress_Note__c> PNResults = new List<Progress_Note__c>();
-    public List<Progress_Note__c> getPNResults(){return PNResults;}
- 
-    public List<Service_Assignment__c> filteredResults = new List<Service_Assignment__c>();
-    public List<Service_Assignment__c> getfilteredResults (){return filteredResults ;}
-    
     public List<StaffHrsInfo> listStaffHrsInfo = new List<StaffHrsInfo>();
     public List<StaffHrsInfo> getListStaffHrsInfo(){return listStaffHrsInfo;}
-    
-    public List<StaffHrsInfo> finalStaffHrsInfo = new List<StaffHrsInfo>();
-    public List<StaffHrsInfo> getFinalStaffHrsInfo(){return finalStaffHrsInfo;}
+        
+    List<AggregateResult> PNResults = new List<AggregateResult>();            
         
     public DocumentedActualStaffHrsRpt () {
        //fStartDate = system.today();
        allCount = 0;
     } 
     
-    set<id> uniquePBS = new Set<id>();
     public integer allCount{get; set;}
-    
-    public Map<string, integer > ParsedData = new Map<string, integer >();    
-    public Map<string, integer > getParsedData(){return ParsedData;}
     
     public PageReference runReport(){
         if(fEndDate < fStartDate){
@@ -35,104 +21,127 @@ public with sharing class DocumentedActualStaffHrsRpt {
             ApexPages.addMessage(myMsg);            
             return null;
         }
+                       
         
-        ParsedData.clear();                
-        uniquePBS.clear();
-        filteredResults.clear();
-        
-        Results.clear();
         PNResults.clear();
-        listStaffHrsInfo.clear();                
+        listStaffHrsInfo.clear();                                                                                     
         
-        Results = [Select  id,     
-                        Admission__r.Person_Being_Served__r.FirstName, 
-                        Admission__r.Person_Being_Served__r.LastName,                        
-                        Phase__c,                        
-                        Start_Date__c,
-                        End_Date__c
-                        From Service_Assignment__c
-                        Where                        
-                         (
-                            ((Start_Date__c >= :fStartDate OR End_Date__c >= :fStartDate) 
-                           AND  
-                            (Start_Date__c <= :fEndDate OR End_Date__c <= :fEndDate) )                         
-                           OR
-                            (Start_Date__c  <= :fEndDate AND End_Date__c = null ) 
-                         )
-                   ];                                                                             
-					                            
-        for(Service_Assignment__c SA: Results){                            
-            StaffHrsInfo dataRow = new StaffHrsInfo();
-                                    
-            PNResults = [Select  id,     
-                        First_Name__c, 
-                        Last_Name__c,
-                        Start_Time__c,
-                        End_Time__c
-                        From Progress_Note__c Where 
-                           Service_Assignment__c = :SA.id                          
-                   ];                           
-                                              
-            for(Progress_Note__c pn: PNResults) {              	         	                	 
-                dataRow.clinician =  pn.First_Name__c+' '+pn.Last_Name__c;
-                Decimal totalMinutes = ((pn.End_Time__c.getTime() - pn.Start_Time__c.getTime())/60000);
+        List<Service_Assignment__c> SAResults = [ SELECT Id, phase__c, admission__r.state__c
+         			from Service_Assignment__c where 
+        					(Start_Date__c <= :fStartDate  AND (end_date__c >= :fStartDate or end_date__c = null)) OR   
+                             start_date__c <= :fEndDate  
+                         ];
+                       
+        // create a map of the service assignments
+        Map<Id, Service_Assignment__c> SAMap = new Map<ID, Service_Assignment__c>();
+        for ( Service_Assignment__c s : SAResults) {
+        	SAMap.put(s.id, s);
+        }
+                                      
+                                      
+        Datetime startdt = DateTime.newInstance( fStartDate, Time.newInstance(0,0,0,0));
+        Datetime enddt = DateTime.newInstance ( fEndDate, Time.newInstance(23, 59, 59, 999));        
+        
+        System.debug( 'starting: ' + startdt + ' ending: ' + enddt );                          
+        PNResults = [ SELECT 
+        				service_assignment__c,
+        				Person_Being_Served__r.Name pbsname,
+           			 	Staff_Name__r.Name clinician,
+         				sum(Total_Time__c) sum                     
+                       FROM Progress_Note__c 
+                       WHERE 
+                         service_assignment__c in :SAResults
+                         and disregard_note__c = false
+                         and Start_time__c >= :startdt  AND  
+                            Start_time__c <= :enddt
+                         and service_assignment__r.admission__r.state__c in ('IN','MA','MD','OH')  
+                        group by
+                        	service_assignment__c,
+                        	Person_Being_Served__r.Name,
+                        	staff_name__r.name];
+ 
+        PNResults.AddAll( [ SELECT 
+        				service_assignment__c,
+        				Person_Being_Served__r.Name pbsname,
+           			 	Owner.Name clinician,
+         				sum(Total_Time__c) sum                     
+                       FROM Progress_Note__c 
+                       WHERE 
+                         service_assignment__c in :SAResults
+                         and disregard_note__c = false
+                         and Start_time__c >= :startdt  AND  
+                            Start_time__c <= :enddt
+                         and service_assignment__r.admission__r.state__c not in ('IN','MA','MD','OH')  
+                        group by
+                        	service_assignment__c,
+                        	Person_Being_Served__r.Name,
+                        	owner.name]);
+ 
+                                           
+            StaffHrsInfo dataRow;
+            Decimal phase = 0.0;
+            Service_Assignment__c pSA;                                                                   
             
-                dataRow.totalMinutes = String.valueOf(totalMinutes);                
+            for(AggregateResult pn : PNResults) {     
+            	 dataRow = new StaffHrsInfo();
+            	        	          
+           
+            	pSA = SAMap.get( (ID)pn.get('service_assignment__c'));        	            	
+            	
+            	     		                                
+            	dataRow.clinician = (String)pn.get('clinician');
+                dataRow.pbs = (String)pn.get('pbsname');
+                
+                Decimal totalMinutes = (Decimal)pn.get('sum'); 
+                dataRow.totalMinutes = String.valueOf(totalMinutes.setscale(0));   
                 dataRow.hours = String.valueOf((totalMinutes/60).setscale(2));
-                dataRow.pbs = SA.Admission__r.Person_Being_Served__r.FirstName+' '+SA.Admission__r.Person_Being_Served__r.LastName;                                 
+                phase  = SAMap.get( (ID)pn.get('service_assignment__c')).phase__c;
                      
-                if (SA.Phase__c == 1) {
+                if (phase == 1.0) {
                     dataRow.phase = 'J';                
                 }
-                if (SA.Phase__c == 2) {
+                if (phase == 2.0) {
                     dataRow.phase = 'R';
                 }
-                if (SA.Phase__c == 3) {
+                if (phase == 3.0) {
                     dataRow.phase = 'VC'; 
                 }
-                if (SA.Phase__c == 4) {
+                if (phase == 4.0) {
                     dataRow.phase = 'G'; 
                 }
+                System.debug(dataRow);          
+                listStaffHrsInfo.add(dataRow); 
                 
-                listStaffHrsInfo.add(dataRow);                                                      
-            }                                                                                                                                       
-        }
-        allCount = listStaffHrsInfo.size();
-                              
-        integer index = 0;                                 
-        finalStaffHrsInfo.add(listStaffHrsInfo.get(0));
+                                                                                                                  
+            }              
+            listStaffHrsInfo.sort();                                                                                                                                 
+            allCount = listStaffHrsInfo.size();
         
-        // Aggregate	    
-        for (StaffHrsInfo row : listStaffHrsInfo) {        	
-        	StaffHrsInfo tempRow = finalStaffHrsInfo.get(index);    
-        	     	       	        	        	       	                                
-            if (tempRow.clinician.equals(row.clinician) && tempRow.pbs.equals(row.pbs)) { 
-                Decimal tm = Decimal.valueOf(tempRow.totalMinutes) + Decimal.valueOf(row.totalMinutes);                 
-                tempRow.totalMinutes = String.valueOf(tm);
-                tempRow.hours = String.valueOf((tm/60).setscale(2));                                         
-                tempRow.clinician = row.clinician; 
-        	    tempRow.pbs = row.pbs;
-        	    tempRow.phase = row.phase;        	                                  	
-            }      	                	
-        	else {   
-        	    finalStaffHrsInfo.add(row);
-        	    index++;
-            }                       	        
-        }
-        listStaffHrsInfo = finalStaffHrsInfo;
-        
-        fStartDate = null;
-        fEndDate= null;
-        return null; 
+            fStartDate = null;
+            fEndDate= null;
+            return null; 
     }
     
     // Inner Class to store the row data detail of the report 
-    public class StaffHrsInfo {
+    public class StaffHrsInfo  implements comparable {
         public String clinician {get; set;}
         public String pbs {get; set;}
         public String phase {get; set;}
         public String totalMinutes {get; set;} 
         public String hours{get; set;}
+        
+        public Integer compareTo(Object compareTo) 
+    	{
+	        StaffHrsInfo s = (StaffHrsInfo) compareTo;
+	        if (clinician == s.clinician ) {
+	        	if ( pbs == s.pbs ) return 0;
+	        	if ( pbs > s.pbs ) return 1;
+	        	return -1;
+	        }
+	        if (clinician > s.clinician ) return 1;
+	        return -1;        
+    	}
+    
     }   
 
 }

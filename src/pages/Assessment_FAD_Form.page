@@ -80,15 +80,15 @@
 
 <apex:outputPanel id="everything">
 <apex:pageMessages ></apex:pageMessages>
-
+<apex:outputPanel id="pop_up_frm">
 <div id="relPartyFrm" style="display: {!otherChildDisplayStyle};">
 <div class="hbbg">  </div>
 <div id="p" class="popupform" >
 <apex:form id="RelPartyFrm" >
 <apex:pageBlock title="Child Info" >
     <apex:pageBlockButtons location="bottom">
-        <apex:commandButton action="{!AddOtherChild}" value="Save" reRender="everything" status="myStatus" oncomplete=" checkInputs(); return false;" />
-        <apex:commandButton action="{!SaveNew_Rel_Party}" value="Save and New" reRender="everything" status="myStatus" oncomplete=" checkInputs(); return false;" />
+        <apex:commandButton action="{!AddOtherChild}" value="Save" reRender="pop_up_frm, otherChildrenList" status="myStatus" oncomplete=" checkInputs(); return false;" />
+        <apex:commandButton action="{!SaveNew_Rel_Party}" value="Save and New" reRender="pop_up_frm, otherChildrenList" status="myStatus" oncomplete=" checkInputs(); return false;" />
         <apex:commandButton action="{!resetRelParty}" value="Cancel" oncomplete="toggleById('relPartyFrm');  checkInputs(); return false;" reRender="nothing" immediate="true" status="myStatus"/>
     </apex:pageBlockButtons>
     <apex:pageBlockSection columns="1" >
@@ -104,6 +104,7 @@
 </apex:form>
 </div>
 </div>
+</apex:outputPanel>
 
 <apex:form id="myfrm" >
 <apex:pageBlock title="FAD Assessment Summary" id="mainblock" >
@@ -717,7 +718,7 @@
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['SC_Highest_Edu'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:selectList styleClass="second_cg_question Int_Final_field" size="1" value="{!mapRes['SC_Highest_Edu'].Rating__c}">
+                <apex:selectList styleClass="second_cg_question Int_Final_field_Secondary" size="1" value="{!mapRes['SC_Highest_Edu'].Rating__c}">
                     <apex:selectOptions value="{!EduTypes}"></apex:selectOptions>
                 </apex:selectList>                                   
             </apex:outputPanel>        
@@ -725,7 +726,7 @@
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['SC_Employment'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:selectList styleClass="second_cg_question SC_Emp Int_Final_field" onchange="checkOtherField('SC_Emp', 'SC_Occ', 'Employed');"  size="1" value="{!mapRes['SC_Employment'].Rating__c}" >
+                <apex:selectList styleClass="second_cg_question SC_Emp Int_Final_field_Secondary" onchange="checkOtherField('SC_Emp', 'SC_Occ', 'Employed');"  size="1" value="{!mapRes['SC_Employment'].Rating__c}" >
                     <apex:selectOptions value="{!EmploTypes}"></apex:selectOptions>
                 </apex:selectList>   &nbsp; &nbsp; &nbsp; 
                 <apex:outputPanel >{!mapQs['SC_Occupation'].Question_Title__c}</apex:outputPanel>&nbsp; &nbsp; &nbsp;   
@@ -735,7 +736,7 @@
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['SC_Received_FCT_before'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
-                <apex:selectList size="1" styleClass="second_cg_question Int_Final_field" value="{!mapRes['SC_Received_FCT_before'].Rating__c}" >
+                <apex:selectList size="1" styleClass="second_cg_question Int_Final_field_Secondary" value="{!mapRes['SC_Received_FCT_before'].Rating__c}" >
                     <apex:selectOption itemLabel="--None--" itemValue=""></apex:selectOption>
                     <apex:selectOption itemValue="Yes" itemLabel="Yes"></apex:selectOption>
                     <apex:selectOption itemValue="No" itemLabel="No"></apex:selectOption>
@@ -972,13 +973,24 @@ function toggleRefDate(  ) {
         j$('.ref_date_field' ).prop( "value", "");       
 }
 };
-function toggleInialFinalFields(  ) {
+function toggleInialFinalPrimaryFields(  ) {
     if ( j$('.phasefield').val()=='Initial' || j$('.phasefield').val()== 'Final' ){       
         j$('.Int_Final_field' ).prop( "disabled", false);     
       }
     else{    
         j$('.Int_Final_field' ).prop( "disabled", true);  
         j$('.Int_Final_field' ).prop( "value", "");       
+}
+};
+function toggleInialFinalSecondaryFields(  ) {
+    if ( j$('.phasefield').val()=='Initial' || j$('.phasefield').val()== 'Final' ){   
+        if(j$('.SC_Emp').val().indexOf('Employed') == 0){    
+            j$('.Int_Final_field_Secondary' ).prop( "disabled", false);     
+        }
+      }
+    else{    
+        j$('.Int_Final_field_Secondary' ).prop( "disabled", true);  
+        j$('.Int_Final_field_Secondary' ).prop( "value", "");       
 }
 };
 function toggleById(id, ms){
@@ -1002,8 +1014,9 @@ function checkInputs(){
     toggleOptionsbyStyle('cg_cnc_cb', 'CG_CNC2', 'cg_question'); 
     toggleRefDate(); 
     
-    toggleInialFinalFields();
+    toggleInialFinalPrimaryFields();
     toggleOptionsbyStyle('SC_NoSC_CB', 'holder', 'second_cg_question');
+    toggleInialFinalSecondaryFields();
     
     checkOtherField('PC_Rel', 'PC_Other_Rel', 'Other');    
     checkOtherField('SC_Rel', 'SC_Other_Rel', 'Other');    

@@ -7,7 +7,7 @@ public with sharing class NursingEvaluationViewController {
             return [
                 SELECT ID, Name, Type__c, Address__c, Email__c, Phone__c, Phone_1_Type__c,
                        Phone_2__c, Phone_2_Type__c, Comments__c
-                FROM Related_Party__c WHERE Person_Being_Served__c = :this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Id
+                FROM Related_Party__c WHERE Person_Being_Served__c = :this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Id order by Type__c, Name
             ];
         }
     }
@@ -134,7 +134,7 @@ public with sharing class NursingEvaluationViewController {
         }
     }
     
-     public String bodyMapUrl { get {
+  /*   public String bodyMapUrl { get {
         Attachment[] attachments = [
             SELECT Id FROM Attachment
             WHERE ParentId=:evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__c
@@ -144,9 +144,10 @@ public with sharing class NursingEvaluationViewController {
             return '/servlet/servlet.FileDownload?file=' + attachments[0].Id;
         }
         return null;
-    } }
+    } }*/
     
     public String serializedAnnotations { get; set; }
+    public string neuroserializedAnnotations{get; set; }
     
     public List<Attachment> immuneAttachments{
         get{
@@ -174,6 +175,7 @@ public with sharing class NursingEvaluationViewController {
         Map<String, Schema.Sobjectfield> fieldMap = Schema.SobjectType.Evaluation__c.fields.getMap();
         evaluation = (Evaluation__c) stdController.getRecord();
         serializedAnnotations = JSON.serialize(annotations);
+        neuroserializedAnnotations = JSON.serialize(neuroAnnotations);
         currentRelatedParty = new Related_Party__c();
         selectedTab = ApexPages.currentPage().getParameters().get('tab');
         
@@ -359,13 +361,18 @@ public with sharing class NursingEvaluationViewController {
 		if(!String.isBlank(this.evaluation.Neuro_pain_Descriptors__c))
 		selectedpainDescriptors = this.evaluation.Neuro_pain_Descriptors__c.split(';');
 		
+		string file;
+		file = 'Person Being Served- '+ this.evaluation.ServiceAssignment__r.Person_Being_Served__r.Name+'.pdf';
+		file = file.replaceAll('[|,||\\,||"||:|~|!|@|#|$|%|^|&|*|_|+|=|<|>|?|\\(|\\)|\\{|\\}|\\;|\\\'"]', ' ');	
+		// Assigns the person being served Name to the PDF dynamically
+		Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename='+file);
         
     }
     
     public void showAddRelatedParty() {
         this.currentRelatedParty = new Related_Party__c();
         this.currentRelatedParty.Person_Being_Served__c = this.evaluation.ServiceAssignment__r.Person_Being_Served__r.Id;
-        this.currentRelatedParty.RecordTypeId = '012U0000000Dj0Y';//Need to make it Dynamic 
+        this.currentRelatedParty.RecordTypeId = Utility.getRelatedPartyRecordType('CareMeridian');
     }
 
     public void showEditRelatedParty() {
@@ -562,7 +569,7 @@ public with sharing class NursingEvaluationViewController {
    }
    
    public List<selectoption> getpaindescriptorValues(){
-   		List<Selectoption> paindescriptorValue = Utility.getPicklistValues(evaluation, 'Neuro_Pain_Manner_of_Exp__c');
+   		List<Selectoption> paindescriptorValue = Utility.getPicklistValues(evaluation, 'Neuro_pain_Descriptors__c');
    		return paindescriptorValue; 
    }
    
