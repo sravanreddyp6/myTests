@@ -51,6 +51,19 @@
     <enableHistory>false</enableHistory>
     <enableReports>false</enableReports>
     <fields>
+        <fullName>Catalog_Name__c</fullName>
+        <caseSensitive>false</caseSensitive>
+        <description>Clinical Catalog Name</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Clinical Catalog Name for this tree</inlineHelpText>
+        <label>Catalog Name</label>
+        <length>75</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>true</unique>
+    </fields>
+    <fields>
         <fullName>Category__c</fullName>
         <externalId>false</externalId>
         <label>Category</label>
@@ -71,13 +84,23 @@
                 <fullName>Test</fullName>
                 <default>false</default>
             </picklistValues>
-            <sorted>true</sorted>
+            <sorted>false</sorted>
         </picklist>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Item_Category__c</fullName>
+        <externalId>false</externalId>
+        <label>Item Category</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Item_Category_del__c</fullName>
         <externalId>false</externalId>
         <label>Item Category</label>
         <length>255</length>
@@ -94,7 +117,7 @@
     </listViews>
     <nameField>
         <displayFormat>{0}</displayFormat>
-        <label>Clinical Catalog Name</label>
+        <label>ID</label>
         <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Clinical Catalogs</pluralLabel>

@@ -141,7 +141,7 @@ td{
     <table class="mytbl">
     <tr>
         <td class="leftcol" width="150px" >        
-            <apex:outputLabel ><b>Goal</b></apex:outputLabel>       
+            <apex:outputLabel ><b>{!GoalAlias}</b></apex:outputLabel>       
         </td>                
         <td>
             <!--
@@ -158,11 +158,11 @@ td{
             <apex:repeat value="{!planStuff[g].GoalObjs}" var="o" >
     <tr>
                     <td>
-                        <apex:outputLabel ><b>Objective</b></apex:outputLabel>
+                        <apex:outputLabel ><b>{!ObjAlias}</b></apex:outputLabel>
                     </td>                    
                     <td>
                         <!--
-                        <apex:outputLabel styleClass="tmnHelpText" >What measurable achievements will demonstrate this Person Being Served’s progress towards this goal?<br /></apex:outputLabel>       
+                        <apex:outputLabel styleClass="tmnHelpText" >What measurable achievements will demonstrate this Person Being Served’s progress towards this {!GoalAlias}?<br /></apex:outputLabel>       
                         -->
                         <apex:outputPanel layout="block" id="theObj" style="padding-bottom:20px; width: 100%;">
                             <apex:outputField value="{!planStuff[g].GoalObjs[o].theObj.Description__c}"/> 
@@ -189,13 +189,13 @@ td{
                     <apex:repeat value="{!planStuff[g].GoalObjs[o].ObjActs}" var="a" id="actsthe">
     <tr>
                             <td>
-                            <apex:outputLabel ><b>Action</b></apex:outputLabel>                
+                            <apex:outputLabel ><b>{!ActAlias}</b></apex:outputLabel>                
                                 
                             </td> 
                             <td>
                             
                             <!--
-                                <apex:outputPanel layout="block" styleClass="tmnHelpText" >How will staff support this Person Being Served to meet the objective?<br/></apex:outputPanel>     
+                                <apex:outputPanel layout="block" styleClass="tmnHelpText" >How will staff support this Person Being Served to meet the {!ObjAlias}?<br/></apex:outputPanel>     
                             -->
                                 <apex:outputPanel layout="block" id="theAction" style="padding-bottom:20px">
                                     <apex:outputField value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Description__c}"/>  
