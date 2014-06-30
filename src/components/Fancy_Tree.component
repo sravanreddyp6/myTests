@@ -9,6 +9,7 @@
 	<apex:attribute name="debug" type="boolean" default="false" description="show extra divs to sees of selections" />		
 	<apex:attribute name="ID_PageSideStorage" type="string" description="Id of the element the the tree will push selected keys to" />
     <apex:attribute name="allowInactiveNode" assignTo="{!allowInactive}" type="boolean" default="true" description="show Inactive nodes in the tree" />
+    <apex:attribute name="showIcons" type="boolean" default="true" description="Show icons for the tree nodes" />
 		
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
@@ -79,7 +80,8 @@
             // The following options are only required, if we have more than one tree on one page:
 //              initId: "treeData",
             cookieId: "fancytree-Cb3",
-            idPrefix: "fancytree-Cb3-"
+            idPrefix: "fancytree-Cb3-",
+            icons: {!showIcons}                 // Display node icons.
         });
 
         $('[id*={!TreeName}showAllNode]').change(function(){            
