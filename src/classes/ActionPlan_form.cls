@@ -28,7 +28,7 @@ public with sharing class ActionPlan_form {
         for(tmn_tree.node goal : allGoals.root.nodes){            
             if(goal.isSelected){ 
                 Action_Plan_Goal__c tmpGoal = new Action_Plan_Goal__c();   
-                tmpGoal.Description__c = goal.Title; 
+                tmpGoal.Description__c = goal.Title.replace('<br/>', '\r\n'); 
                 tmpGoal.ReferenceID__c = goal.key;      
                 tmpGoal.Action_Plan__c = ActionPlan.id;
                 clsGoal tmpClsGoal = new clsGoal( tmpGoal);
@@ -80,7 +80,7 @@ public with sharing class ActionPlan_form {
                     string curEleType = n.Catalog_Element__r.type__c;
                     string curID = n.name;
                     string title = n.Catalog_Element__r.description__c;
-                    
+                    //
                     if(curEleType == 'Goal'){
                         TMN_Tree.node g_node= new TMN_Tree.node(curID, title);
                         g_node.CatTreeNode = n;
