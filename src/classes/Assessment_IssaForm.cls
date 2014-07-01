@@ -1,4 +1,4 @@
-public with sharing class Assessment_RiskForm {
+public with sharing class Assessment_IssaForm {
    public string glbListSeperator {get{return ';';} set;}
    public string glbItemSeperator {get{return '__';} set;}
    public boolean hasErrorOnFinalize {get; set;}
@@ -101,12 +101,7 @@ public PageReference testForCans() {
            PageReference ref =  new PageReference('/apex/Assessment_FAD_Form?id='+this.assessment.id);
            return ref;
        
-       }
-       if (assessment.type__c == 'ISSA'){
-           PageReference ref =  new PageReference('/apex/Assessment_IssaForm?id='+this.assessment.id);
-           return ref;
-       
-       }      
+       }     
             return null;
 
 }    
@@ -275,7 +270,7 @@ public PageReference testForCans() {
     
     }    
     
-    public Assessment_RiskForm(ApexPages.StandardController controller) {
+    public Assessment_IssaForm(ApexPages.StandardController controller) {
 
         this.assessment = (Assessment__c) controller.getRecord();
         mode = 'view';
