@@ -141,7 +141,7 @@ function highlightButtons ( btype, sfid, on )
 }
 
 .mytbl:nth-child(even) {
-    background-color:#fff;
+    background-color:#FAFBFC;
 }
 
 .leftcol{
@@ -177,7 +177,7 @@ function highlightButtons ( btype, sfid, on )
 
 }
 
-.fixedBtn { width:100px };
+.fixedBtn { width:120px };
 .catalog_sticky{
     height: 100px;
 }
@@ -185,7 +185,7 @@ function highlightButtons ( btype, sfid, on )
     padding: 10px;
 
     //height: 35%;
-    background: #ccc;
+    background: #BDC4D9;
     //border: 1px solid #29216d;
     //float: right;
 } 
@@ -285,20 +285,21 @@ function highlightButtons ( btype, sfid, on )
                 </apex:outputPanel>
                 
                 <apex:outputPanel styleClass="catalog_tree" layout="block">
-                    <apex:pageBlock id="fullTree">
+                    <apex:pageBlock id="fullTree" mode="mainDetail">
                         <apex:outputPanel id="tree2" layout="block" >
-                           <c:Fancy_Tree showIcons="false" TreeString="{!allGoals.Fancy_Tree_JSon_String}" allowInactiveNode="false" mode="3" checkbox="true" ID_PageSideStorage="catalog_items" TreeID="tree2" debug="false" />    
+                           <c:Fancy_Tree showIcons="false" TreeString="{!allGoals.Fancy_Tree_JSon_String_LongText}" allowInactiveNode="false" mode="3" checkbox="true" ID_PageSideStorage="catalog_items" TreeID="tree2" debug="false" />    
                         </apex:outputPanel>                
                     </apex:pageBlock>
                 </apex:outputPanel>    
                 
                 <apex:outputPanel >
-                    <apex:commandButton oncomplete="gotoend('planend');" status="myStatus" reRender="goalwrapper" style="float: right; margin-top: 5px;" action="{!addItemsFromTree}" value="Add to Plan"/>
+                    <apex:commandButton oncomplete="gotoend('planend');" status="myStatus" reRender="goalwrapper" style="float: right; margin-top: 0px; " action="{!addItemsFromTree}" value="Add to Plan"/>
                 </apex:outputPanel>
                     
             </div>
-        <apex:outputPanel onclick="toggleById('clinical-catalog', 300); toggleById('catalog_filler', 300); return false;"><apex:image url="{!$Resource.searchIMG}"/></apex:outputPanel>
+        <apex:outputPanel onclick="toggleById('clinical-catalog', 250); toggleById('catalog_filler',0); return false;" style="cursor:pointer;"><apex:image url="{!$Resource.searchIMG}"/></apex:outputPanel>
         </div>
+
         <script>
     
             $(document).ready(function() {
@@ -330,7 +331,7 @@ function highlightButtons ( btype, sfid, on )
                             rendered="{!editMode}"
                             onmouseover="highlightButtons('goal','{!g}', true);" 
                             onmouseout="highlightButtons('goal','{!g}', false );"
-                            style="width:102px">
+                            style="width: 122px">
                     <img id="goalicon{!g}" src="{!URLFOR($Resource.GoalIcons, 'icon-edit-blue.png')}" style="vertical-align:middle"/>&nbsp;<b>{!GoalAlias}</b>
                     <div id="goalbtn{!g}" class="btnhover" style="display: none;padding-top:0px" > 
                     <apex:commandButton value="Add {!ObjAlias}" action="{!addObj}" reRender="myFrm" status="myStatus" styleClass="fixedBtn" >
@@ -368,7 +369,7 @@ function highlightButtons ( btype, sfid, on )
                         <apex:outputPanel id="objButtons" 
                                             layout="block" 
                                             rendered="{!editMode}" 
-                                            style="margin-left: 10px;width:102px"
+                                            style="margin-left: 10px; width: 122px"
                                             onmouseover="highlightButtons('obj','{!o}', true);" 
                                             onmouseout="highlightButtons('obj','{!o}', false );"
                                             >
@@ -429,7 +430,7 @@ function highlightButtons ( btype, sfid, on )
                                 <apex:outputPanel id="actButtons" 
                                                 rendered="{!editMode}" 
                                                 layout="block" 
-                                                style="margin-left:20px;width:102px"
+                                                style="margin-left:20px; width: 122px"
                                                 onmouseover="highlightButtons('act','{!a}', true);" 
                                                 onmouseout="highlightButtons('act','{!a}', false );"
                                                 >
@@ -690,7 +691,6 @@ function highlightButtons ( btype, sfid, on )
     </apex:facet>  
     <apex:facet name="stop"> </apex:facet>         
 </apex:actionStatus> 
-
 
 
 

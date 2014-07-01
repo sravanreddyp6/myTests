@@ -5,14 +5,15 @@ public class TMN_Tree{
                              // {'{', n.Title, n.isExpand, n.hideCheckbox, n.isFolder, n.isActivate, n.isSelected, n.isUnselectable, n.key, n.CatTreeNode.status, 'children: ['};
 
     public node root{get; set;}
-    public string Fancy_Tree_JSon_String {get{return BuildJSonString(root.nodes);} set;}
+    public string Fancy_Tree_JSon_String {get{return BuildJSonString(root.nodes, true);} set;}
+    public string Fancy_Tree_JSon_String_LongText {get{return BuildJSonString(root.nodes, false);} set;}
 
     public string GetSelectedNodeStr {
-    	get{ string str=''; 
-    		str = BuildSelectedNodeStr(root.nodes);
-    		if (str.length()>0) {
+        get{ string str=''; 
+            str = BuildSelectedNodeStr(root.nodes);
+            if (str.length()>0) {
                 str = str.substring(0, (str.length()-1));
-    		}
+            }
             return str;}
             set;}
         
@@ -28,6 +29,7 @@ public class TMN_Tree{
             public list<node> nodes {get; set;}
             public string key {get; set;}
             public string title {get; set;}
+            public string getLongTextTitle(){ return title.replace('\r\n','<br/>');}
             public string status {get; set;}
             
             //fancy tree settings            
@@ -124,55 +126,25 @@ public class TMN_Tree{
   
        
    //the JSon string used to send to the a component for rendering 
-    public string BuildJSonString(list<tmn_tree.node> theNodes){
+    public string BuildJSonString(list<tmn_tree.node> theNodes, boolean isHTML){
         string str = '';
         String[] arguments;
+        string myTitle ='error no title found';
+
                 
-        for(node n: theNodes){
-        	        	
-//		            str += '{title: "';
-//		            str += n.Title;
-//		            str += '", ';
-//		
-//		            str += 'expanded: ';
-//		            str += n.isExpand;
-//		            str += ', ';
-//		
-//		            str += 'hideCheckbox: ';
-//		            str += n.hideCheckbox;
-//		            str += ', ';            
-//		                        
-//		            str += 'folder: ';
-//		            str += n.isFolder;
-//		            str += ', ';
-//		            
-//		            str += 'activate: ';
-//		            str += n.isActivate;
-//		            str += ', ';            
-//		
-//		            str += 'selected: ';
-//		            str += n.isSelected;
-//		            str += ', ';
-//		            
-//		            str += 'unselectable: ';
-//		            str += n.isUnselectable;
-//		            str += ', ';  
-//		                      
-//		            str += 'key: "';
-//		            str += n.key;
-//		            str += '", ';           
-
-//                  str += 'status: "';
-//                  str += n.status;
-//                  str += '", ';
-		            
-//		            str += 'children: ['; 
-
-            arguments = new String[] {'{', n.Title, ToString(n.isExpand), ToString(n.hideCheckbox), ToString(n.isFolder), ToString(n.isActivate), ToString(n.isSelected), ToString(n.isUnselectable), n.key, n.CatTreeNode.Status__c, 'children: ['};
+        for(node n: theNodes){  
+            if(isHTML){
+                myTitle = n.Title;        
+            }
+            else{
+                myTitle = n.getLongTextTitle();
+            }        
+        
+            arguments = new String[] {'{', myTitle, ToString(n.isExpand), ToString(n.hideCheckbox), ToString(n.isFolder), ToString(n.isActivate), ToString(n.isSelected), ToString(n.isUnselectable), n.key, n.CatTreeNode.Status__c, 'children: ['};
             str += String.format(TEMPLATE_STR, arguments);
             //get children 
             if(n.nodes.size() >0){
-                str += BuildJSonString(n.nodes);
+                str += BuildJSonString(n.nodes, isHTML);
             }
             //end 
             str += ']},';
@@ -186,7 +158,7 @@ public class TMN_Tree{
     public string BuildSelectedNodeStr(list<tmn_tree.node> theNodes){
         string str = '';
         for(node n: theNodes){
-        	if (n.isSelected){  
+            if (n.isSelected){  
                 str += n.key + ',';
                 // str += ',';
             }
