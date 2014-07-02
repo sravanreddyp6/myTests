@@ -77,7 +77,16 @@
     }
     .whitenoise { color:white; }
   </style>
-
+  
+  <script>
+  	jQuery.noConflict();
+  	jQuery(document).ready(function ($) {
+  		enableDiagEff();
+  	
+  	});
+  
+  </script>
+  
   <script type="text/javascript">
 
    j$ = jQuery.noConflict();
@@ -94,12 +103,20 @@ document.onkeypress = stopRKey;
 // ERNS-7 enable the diagnosis effective date when diagnosis is chosen
 function enableDiagEff() {
 	if ( j$('[id$=diagIdrop]').val() != '') {
-		j$('input[id$=diageffdate').removeAttr('disabled');
-	} else {
+		j$('input[id$=diageffdate]').removeAttr('disabled');
+		if ( j$('[id$=diagIdrop]').val() == 'Encephalopathy') {
+			j$('[id$=encephaloPanel]').show();
+			}
+		else if ( j$('[id$=diagIdrop]').val() != 'Encephalopathy') {
+			j$('[id$=encephaloPanel]').hide();
+			
+			}
+	}else {
 		j$('input[id$=diageffdate]').val('');
 		j$('input[id$=diageffdate]').attr('disabled', 'disabled')
+		j$('[id$=encephaloPanel]').hide();	
 	}
-}
+ }
   function validateRelatedParty() {
     var errors = '';
     j$('#relatedPartyErrors').html(errors);
@@ -1335,8 +1352,8 @@ function enableDiagEff() {
         <apex:inputField value="{!Referral__c.Billing_ID__c}" rendered="{!isCambridge}" />
 
         <apex:inputText id="referrerFax" value="{!Referral__c.Referrer_Fax__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" onblur="j$('input[id$=referrerFax]').val(this.value.replace(/(\d\d\d)(\d\d\d)(\d\d\d\d)/, '$1-$2-$3'))"/>
-        <apex:inputField value="{!Referral__c.Case_Manager_Name__c}" />
-        <apex:inputField value="{!Referral__c.Case_Manager_Phone__c}" />
+        <apex:inputField value="{!Referral__c.Case_Manager_Name__c}"  rendered="{!ReferralRecordType!='NeuroRestorative'}" /> <!-- ERNS-26 -->
+        <apex:inputField value="{!Referral__c.Case_Manager_Phone__c}"  rendered="{!ReferralRecordType!='NeuroRestorative'}" />
         <!--apex:inputField value="{!Referral__c.Evaluation_Date__c}" rendered="{!referralRecordType=='CareMeridian'}"/-->
         
             
@@ -1836,6 +1853,13 @@ function enableDiagEff() {
         
         </apex:pageBlocksectionItem>
         
+        <apex:outputPanel id="encephaloPanel" >
+        <apex:outputLabel value="Type of Encephalopathy" for="typeofEncephalopathy" styleclass="labelCol" style="margin-left:2.0cm;" />
+        <apex:inputField value="{!Referral__c.Type_of_Encephalopathy__c}" id="typeofEncephalopathy"  />
+        </apex:outputPanel>
+        
+        <apex:pageBlockSectionItem rendered="{!referralRecordtype == 'NeuroRestorative'}"/>
+        
         <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian')}"/>
         
          <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}">
@@ -1989,10 +2013,11 @@ function enableDiagEff() {
 
 
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
-        <apex:inputField value="{!Referral__c.Primary_Requested_Location__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
-        <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
-        <apex:inputField value="{!Referral__c.Secondary_Location__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
-        <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
+        <!-- Commented by Sravan For Ticket ERNS-22 07/02/2014 1:11 PM -->
+        <!--  apex:inputField value="{!Referral__c.Primary_Requested_Location__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/-->
+        <!--  apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/-->
+        <!--  apex:inputField value="{!Referral__c.Secondary_Location__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/-->
+        <!--  apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/-->
         <apex:inputField value="{!Referral__c.Glasgow_Coma_Scale__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
 
         <!--Flavor Specific fields-->
