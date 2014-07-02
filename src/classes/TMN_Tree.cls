@@ -1,7 +1,7 @@
 public class TMN_Tree{
 //Declarations
 
-    String TEMPLATE_STR = '{0}title:"{1}", expanded:{2}, hideCheckbox:{3}, folder:{4}, activate:{5}, selected:{6}, unselectable:{7}, key:"{8}", status:"{9}", {10}'; 
+    String TEMPLATE_STR = '{0}title:"{1}", tooltip:"{2}", expanded:{3}, hideCheckbox:{4}, folder:{5}, activate:{6}, selected:{7}, unselectable:{8}, key:"{9}", status:"{10}", {11}'; 
                              // {'{', n.Title, n.isExpand, n.hideCheckbox, n.isFolder, n.isActivate, n.isSelected, n.isUnselectable, n.key, n.CatTreeNode.status, 'children: ['};
 
     public node root{get; set;}
@@ -35,6 +35,8 @@ public class TMN_Tree{
                 newTitle = newTitle.replace('"','\\"');
             	return newTitle;}
             public string status {get; set;}
+            public string helpText {get; set;}
+            public boolean isNew {get; set;}
             
             //fancy tree settings            
             public boolean isSelected {get; set;}
@@ -65,6 +67,7 @@ public class TMN_Tree{
                 isactivate = true;
                 isselected = false;
                 hideCheckbox = false;
+                isNew = true;
                 CatTreeNode = new Clinical_Catalog_Tree_Node__c ();
                 CatTreeEley = new Clinical_Catalog_Element__c ();
                             
@@ -144,7 +147,7 @@ public class TMN_Tree{
                 myTitle = n.getLongTextTitle();
             }        
         
-            arguments = new String[] {'{', myTitle, ToString(n.isExpand), ToString(n.hideCheckbox), ToString(n.isFolder), ToString(n.isActivate), ToString(n.isSelected), ToString(n.isUnselectable), n.key, n.CatTreeNode.Status__c, 'children: ['};
+            arguments = new String[] {'{', myTitle, n.helpText, ToString(n.isExpand), ToString(n.hideCheckbox), ToString(n.isFolder), ToString(n.isActivate), ToString(n.isSelected), ToString(n.isUnselectable), n.key, n.CatTreeNode.Status__c, 'children: ['};
             str += String.format(TEMPLATE_STR, arguments);
             //get children 
             if(n.nodes.size() >0){
