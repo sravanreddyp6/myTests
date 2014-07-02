@@ -1127,8 +1127,8 @@ function stopRKey(evt) {
         <apex:outputField value="{!Referral__c.Billing_ID__c}" rendered="{! isCambridge}" />
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative' }"/>
         <apex:outputField value="{!Referral__c.Referrer_Fax__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
-        <apex:outputField value="{!Referral__c.Case_Manager_Name__c}" />
-        <apex:outputField value="{!Referral__c.Case_Manager_Phone__c}" />
+        <apex:outputField value="{!Referral__c.Case_Manager_Name__c}" rendered="{!ReferralRecordType!='NeuroRestorative'}"/> <!-- ERNS-26 -->
+        <apex:outputField value="{!Referral__c.Case_Manager_Phone__c}" rendered="{!ReferralRecordType!='NeuroRestorative'}"/>
         <!--apex:outputField value="{!Referral__c.Evaluation_Date__c}" rendered="{!referralRecordType=='CareMeridian'}"/-->
         <apex:outputField value="{!Referral__c.Evaluated_By__c}" rendered="{!referralRecordType=='CareMeridian'}"/>
 
@@ -1422,6 +1422,8 @@ function stopRKey(evt) {
        </apex:outputPanel>
         
         </apex:pageBlocksectionItem>
+        <apex:outputField value="{!Referral__c.Type_of_Encephalopathy__c}" rendered="{!Referral__c.Diagnosis_I__c =='Encephalopathy'}" />
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative' && Referral__c.Diagnosis_I__c =='Encephalopathy'}"/>
         
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}"/>
  
@@ -1553,10 +1555,10 @@ function stopRKey(evt) {
 
 
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
-        <apex:outputField value="{!Referral__c.Primary_Requested_Location__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
-        <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
-        <apex:outputField value="{!Referral__c.Secondary_Location__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
-
+        <!--  apex:outputField value="{!Referral__c.Primary_Requested_Location__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/-->
+        <!--  apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/-->
+        <!--  apex:outputField value="{!Referral__c.Secondary_Location__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/-->
+		<apex:outputField value="{!Referral__c.Glasgow_Coma_Scale__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
         <!--Flavor Specific fields-->
 
         <apex:outputField label="Primary Diagnosis" value="{!Referral__c.Primary_Diagnosis__c}" rendered="{!OR(referralRecordType=='CareMeridian',referralRecordType=='Wisconsin' )}"/>
