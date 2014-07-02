@@ -29,7 +29,11 @@ public class TMN_Tree{
             public list<node> nodes {get; set;}
             public string key {get; set;}
             public string title {get; set;}
-            public string getLongTextTitle(){ return title.replace('\r\n','<br/>');}
+            public string getLongTextTitle(){ 
+            	String newTitle = title.replace('\r\n','<br/>');
+                newTitle = newTitle.replace('\n','<br/>');
+                newTitle = newTitle.replace('"','\\"');
+            	return newTitle;}
             public string status {get; set;}
             
             //fancy tree settings            
