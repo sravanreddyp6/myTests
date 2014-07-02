@@ -279,9 +279,10 @@ function highlightButtons ( btype, sfid, on )
                     <apex:outputLabel value="Select Catalog" styleClass="label"/>
                     <apex:selectList id="choosePlan" value="{!curCtlg}" required="false" size="1" multiselect="false">
                         <apex:selectOptions value="{!ctlgs}"/>
-                        <apex:actionSupport event="onchange" reRender="fullTree" action="{!refreshHere}"/>                                            
+                        <apex:actionSupport event="onchange" reRender="fullTree" action="{!refreshHere}" status="myCatalogStatus"/>                                            
                     </apex:selectList>
                     <apex:inputHidden value="{!catalog_selections}" id="catalog_items"/>
+                      
                 </apex:outputPanel>
                 
                 <apex:outputPanel styleClass="catalog_tree" layout="block">
@@ -294,6 +295,17 @@ function highlightButtons ( btype, sfid, on )
                 
                 <apex:outputPanel >
                     <apex:commandButton oncomplete="gotoend('planend');" status="myStatus" reRender="goalwrapper" style="float: right; margin-top: 0px; " action="{!addItemsFromTree}" value="Add to Plan"/>
+                        <apex:actionStatus id="myCatalogStatus" >
+                            <apex:facet name="start">
+                                <div style="float: left;" >
+                                    <div >    
+                                        <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+                                    </div>
+                                </div>   
+                            </apex:facet>  
+                            <apex:facet name="stop"> </apex:facet>         
+                        </apex:actionStatus>                
+                
                 </apex:outputPanel>
                     
             </div>
@@ -316,7 +328,8 @@ function highlightButtons ( btype, sfid, on )
                 });
             });
         </script>  
-    </apex:outputPanel>  
+    </apex:outputPanel> 
+    
     </td>
     <td>
     

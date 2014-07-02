@@ -26,9 +26,9 @@ public with sharing class ActionPlan_form {
         string holdActID = '';
         
         for(tmn_tree.node goal : allGoals.root.nodes){            
-            if(goal.isSelected){ 
+            if(goal.isSelected & goal.isNew){ 
                 Action_Plan_Goal__c tmpGoal = new Action_Plan_Goal__c();   
-                tmpGoal.Description__c = goal.Title.replace('<br/>', '\r\n'); 
+                tmpGoal.Description__c = goal.Title; 
                 tmpGoal.ReferenceID__c = goal.key;      
                 tmpGoal.Action_Plan__c = ActionPlan.id;
                 clsGoal tmpClsGoal = new clsGoal( tmpGoal);
@@ -39,7 +39,7 @@ public with sharing class ActionPlan_form {
                 system.debug('goal id  = ' + holdGoalID);          
             }
             for(tmn_tree.node obj: goal.nodes){
-                if(obj.isSelected){  
+                if(obj.isSelected & obj.isNew){  
                     Action_Plan_Objective__c tmpObj = new Action_Plan_Objective__c(); 
                     tmpObj.Description__c = obj.title;
                     tmpObj.ReferenceID__c = obj.key;             
@@ -51,7 +51,7 @@ public with sharing class ActionPlan_form {
                     system.debug('obj id  = ' + holdobjID);                
                 }
                 for(tmn_tree.node act : obj.nodes){
-                    if(act.isSelected){
+                    if(act.isSelected & act.isNew){
                         Action_Plan_Action__c tmpAct = new Action_plan_Action__c();
                         tmpAct.Description__c = act.title;
                         tmpAct.ReferenceID__c  = act.key;
@@ -72,7 +72,7 @@ public with sharing class ActionPlan_form {
         
         if(curCtlg != null){
             curr_catalog = [select id, Catalog_Name__c from Clinical_Catalog__c where id = :curCtlg];
-            nodes = [select id, name, Catalog_Element__c, Catalog_Element__r.name, Catalog_Element__r.type__c, Catalog_Element__r.description__c, ID_Goal__c, ID_Objective__c, ID_Action__c, Status__c  from Clinical_Catalog_Tree_Node__c Where Catalog__r.id =:curr_catalog.id Order By ID_Goal__c , ID_Objective__c , ID_Action__c ];
+            nodes = [select id, name, Catalog_Element__c, Catalog_Element__r.name, Catalog_Element__r.type__c, Catalog_Element__r.description__c, ID_Goal__c, ID_Objective__c, ID_Action__c, Status__c  from Clinical_Catalog_Tree_Node__c Where Catalog__r.id =:curr_catalog.id AND Status__c ='Active' Order By ID_Goal__c , ID_Objective__c , ID_Action__c ];
             
                 string goalID ='';
                 string objID ='';
@@ -80,26 +80,41 @@ public with sharing class ActionPlan_form {
                     string curEleType = n.Catalog_Element__r.type__c;
                     string curID = n.name;
                     string title = n.Catalog_Element__r.description__c;
+                    sobject myObj = getAP_Child_Record(curID);
+                    boolean selected = myObj.id != null;
+                    string tooltip = '';
+                    if(selected){tooltip = 'This item has been added to the Action Plan.  It can\'t be unchecked here.  To remove the item delete it from the Action Plan';}
                     //
                     if(curEleType == 'Goal'){
                         TMN_Tree.node g_node= new TMN_Tree.node(curID, title);
-                        g_node.CatTreeNode = n;
-                        g_node.isSelected = true;
+                        g_node.CatTreeNode = n;    
+                        g_node.isselected = selected;
+                        g_node.isunselectable = selected;
+                        g_node.isNew = !selected;
+                        g_node.helpText = tooltip;
                         allGoals.root.nodes.add(g_node);
-                        goalID =curID;
+                        goalID = curID;
                     }
         
                     if(curEleType == 'Objective'){
                         TMN_Tree.node o_node= new TMN_Tree.node(curID, title);
                         o_node.CatTreeNode = n;
+                        o_node.isselected = selected;
+                        o_node.isunselectable = selected;
+                        o_node.isNew = !selected;
+                        o_node.helpText = tooltip;
                         integer g_key = allGoals.root.getNode_Key(goalID );
                         allGoals.root.nodes.get(g_key).nodes.add(o_node);
-                        objID =curID;
+                        objID = curID;
                     }
             
                     if(curEleType == 'Action'){                
                         TMN_Tree.node a_node= new TMN_Tree.node(curID, title);
                         a_node.CatTreeNode = n;
+                        a_node.isselected = selected;
+                        a_node.isunselectable = selected;
+                        a_node.isNew = !selected;
+                        a_node.helpText = tooltip;
                         integer g_key = allGoals.root.getNode_Key(goalID );
                         integer o_key = allGoals.root.nodes.get(g_key).getNode_Key(objID);
                         if(o_key != -1){
@@ -110,6 +125,24 @@ public with sharing class ActionPlan_form {
         }
         return null; 
     }    
+    
+    public sObject getAP_Child_Record(string refID){
+        sObject myObj = new account();
+        
+        for(clsGoal g: planStuff.values()){    
+            if(g.theGoal.ReferenceID__c==refID)
+                {myObj = g.theGoal;}            
+            for(clsObj o: g.GoalObjs.values()){
+                if(o.theObj.ReferenceID__c==refID)
+                    {myObj = o.theObj;}   
+                for(clsAction a: o.objActs.values()){
+                    if(a.theAction.ReferenceID__c==refID)
+                        {myObj = a.theAction;}
+                }            
+            }        
+        }
+        return myObj;
+    }
     
     public string GoalAlias { get; set;}
     public string ObjAlias { get; set;}
@@ -512,10 +545,31 @@ public pagereference mySave(){
             {showAck = false;}
             
         ctlgs = new List<SelectOption>();
-        ctlgs.add(new SelectOption('',''));
+        ctlgs.add(new SelectOption('','Select Catalog'));
+        string curSV = ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c;
+        
+        List<Clinical_Programs__c> allPrgms = Clinical_Programs__c.getall().values();
+        map< Decimal, string > mapAllPrgs = new map< Decimal, string >();
+        for(Clinical_Programs__c item: allPrgms){
+            if(curSV == item.Program_Name__c){
+                mapAllPrgs.put(item.ProgramID__c, item.Program_Name__c );
+            }
+        }        
+        List<Clinical_Catalog_Program__c> ctlgWithPrgms = [select Clinical_Catalog__r.id, Clinical_Catalog__r.Catalog_Name__c, Program_Custom_Setting__c from Clinical_Catalog_Program__c Where Program_Custom_setting__c in :mapAllPrgs.keySet()];
+        map<id, string> finalBuild = new Map<id, string>();
+        for(Clinical_Catalog_Program__c item: ctlgWithPrgms ){
+            finalBuild.put(item.Clinical_Catalog__r.id, item.Clinical_Catalog__r.Catalog_Name__c);        
+        }
+        for(id item: finalBuild.keySet()){
+            ctlgs.add(new SelectOption(item, finalBuild.get(item)));
+        }
+        
+        /*
         for (Clinical_Catalog__c c : [select id, Catalog_Name__c from Clinical_Catalog__c]){
                 ctlgs.add(new SelectOption(c.id,c.Catalog_Name__c));
-            }              
+            }  
+            
+            */            
              
                                   
     }
@@ -532,14 +586,14 @@ public pagereference mySave(){
         okstatus.add ('New');
         
         
-        List<Action_Plan_Goal__c> goals = [select id, name, description__c, Sort_Order__c,  
-                    (select id, name, description__c, Effective_Date__c, target_end_date__c, status__c, type__c, Sort_Order__c
+        List<Action_Plan_Goal__c> goals = [select id, name, description__c, Sort_Order__c, ReferenceID__c,  
+                    (select id, name, description__c, Effective_Date__c,ReferenceID__c,  target_end_date__c, status__c, type__c, Sort_Order__c
                      from Action_Plan_Objectives__r Where Status__c in :okstatus Order By Sort_Order__c) 
                         from Action_Plan_Goal__c where action_plan__c = :ActionPlan.id Order By Sort_Order__c]; 
                         
 
-        List<Action_Plan_Objective__c> objectives = [select id, 
-                    (select id, description__c, Sort_Order__c 
+        List<Action_Plan_Objective__c> objectives = [select id, ReferenceID__c, 
+                    (select id, description__c, Sort_Order__c, ReferenceID__c 
                         from Action_Plan_Actions__r Order By CreatedDate) 
                             from Action_Plan_Objective__c where Action_Plan_Goal__r.Action_Plan__c = :ActionPlan.id AND Status__c in :okstatus];
 
@@ -705,7 +759,7 @@ public pagereference mySave(){
     }
     
     public void refreshPlan(){
-       goals = [select id, name, description__c, CreatedDate,Sort_Order__c ,
+       goals = [select id, name, description__c, CreatedDate,Sort_Order__c ,ReferenceID__c, 
                     (select id, name, description__c, Effective_Date__c, target_end_date__c, status__c, type__c, Action_plan_Goal__c, sort_order__c, ReferenceID__c, CreatedDate
                      from Action_Plan_Objectives__r Order By CreatedDate) 
                         from Action_Plan_Goal__c where action_plan__c = :ActionPlan.id Order By CreatedDate]; 
