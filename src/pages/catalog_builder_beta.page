@@ -55,7 +55,7 @@
 <!--             <apex:inputField value="{!curr_catalog.Catalog_Name__c}"/> -->
 <!--             <apex:commandButton value="Save" action="{!save}" rendered="{!curr_catalog.id == null}"/>                         -->
 <!--             <apex:commandButton value="Save" action="{!upsertCatalog}" reRender="page" status="myStatus"  rendered="{!Clinical_Catalog__c.id != null}"/> -->
-            <c:Fancy_Tree TreeString="{!allGoals.Fancy_Tree_JSon_String}" mode="1" checkbox="false" allowInactiveNode="true" activateActionSignature="triggerNodeEdit(data.node.key);" ID_PageSideStorage="fullTreeKeys" TreeID="tree2" debug="false" />    
+            <c:Fancy_Tree TreeString="{!allGoals.Fancy_Tree_JSon_String_LongText}" mode="1" checkbox="false" allowInactiveNode="true" activateActionSignature="triggerNodeEdit(data.node.key);" ID_PageSideStorage="fullTreeKeys" TreeID="tree2" debug="false" />    
         </apex:outputPanel>                
     </apex:pageBlock>
 </apex:outputPanel><!-- end left col -->
@@ -104,7 +104,7 @@
 		                    <apex:outputLabel rendered="{!CurEley.Type__c =='Action'}" value="{! if(ctlgHasABI, 'Select Goals', 'Select Objectives')}" />
 		                </apex:outputLabel>
 		                <apex:outputPanel id="tree3" layout="block">
-		                    <c:Fancy_Tree TreeString="{!formTree.Fancy_Tree_JSon_String}" mode="2" ID_PageSideStorage="myKeys" allowInactiveNode="false" TreeID="tree3" showIcons="false" debug="false" />
+		                    <c:Fancy_Tree TreeString="{!formTree.Fancy_Tree_JSon_String_LongText}" mode="2" ID_PageSideStorage="myKeys" allowInactiveNode="false" TreeID="tree3" showIcons="false" debug="false" />
 		                    <apex:inputHidden value="{!selectedKeys}" id="myKeys"/>       
 		                </apex:outputPanel>
 		    </apex:outputPanel>               

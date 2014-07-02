@@ -136,6 +136,26 @@ public pageReference upsertEley(){
         }
         upsert inactivateNodes;        
     }    
+
+
+    list<Clinical_Catalog_Tree_Node__c > activateNodes = new list<Clinical_Catalog_Tree_Node__c >();    
+    if (CurEley.status__c == 'Active') {
+        for (Clinical_Catalog_Tree_Node__c n :nodes){
+            if(curEleyType == 'Goal' && n.ID_Goal__c.toPlainString() == CurEley.name && n.Status__c == 'Inactive'){
+                activateNodes.add(n);
+            }
+            if(curEleyType == 'Objective' && n.ID_Objective__c.toPlainString() == CurEley.name && n.Status__c == 'Inactive'){
+                activateNodes.add(n);
+            }
+            if(curEleyType == 'Action' && n.ID_Action__c.toPlainString()== CurEley.name && n.Status__c == 'Inactive'){
+                activateNodes.add(n);
+            }            
+        }        
+        for (Clinical_Catalog_Tree_Node__c actNd :activateNodes) {
+                actNd.Status__c = 'Active';
+        }
+        upsert activateNodes;        
+    }
     
     /*
     if(curEleyType == 'Objective'){
