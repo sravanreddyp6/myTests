@@ -1778,7 +1778,7 @@ function enableDiagEff() {
 
        <apex:pageBlockSection columns="1"
                              title="{! if (ReferralRecordType == 'CareMeridian', 'Requested Locations', 'Locations Working Referral')}" id="locations"
-                             rendered="{! ReferralRecordType!='NeuroRestorative'}">
+                              >
         <apex:pageBlockSectionItem >
           <apex:outputPanel layout="none">
             <apex:commandButton value="Add Location"
@@ -1793,7 +1793,7 @@ function enableDiagEff() {
           </apex:outputPanel>
         </apex:pageBlockSectionItem>
         <apex:pageBlockTable value="{!locations}" var="location">
-           <apex:column value="{!location.Service_Location__c}"/>
+           <apex:column value="{!location.Service_Location__c}"/> 
             <apex:column value="{!location.Service_Location_Service_Value__c}"/>
             <apex:column value="{!location.Service_Location__r.Setting__c}"/>
           <apex:column value="{!location.Service_Location_Program__c}"/>
