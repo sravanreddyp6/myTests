@@ -733,14 +733,14 @@ function enableDiagEff() {
                 <apex:outputLabel for="insuredSSN" value="Insured SSN" />
                 <apex:outputPanel >
                     <apex:inputField value="{!fundingSource.Insured_SSN__c}" id="insuredSSN" />
-                    <apex:commandLink value="Same as PBR" onclick="assignValue('{!$Component.insuredSSN}', '{!Referral__c.Person_Being_Referred__r.SSN__c}'); return false;" />
+                    <apex:commandLink value="Same as PBR" onclick="assignValue('{!$Component.insuredSSN}', '{!personBeingRefRecord.SSN__c}'); return false;" />
                 </apex:outputPanel>
             </apex:pageBlockSectionItem>
             <apex:pageBlockSectionItem >
                 <apex:outputLabel for="insuredDOB" value="Insured DOB" />
                 <apex:outputPanel >
                     <apex:inputField value="{!fundingSource.Insured_DOB__c}" id="insuredDOB" />
-                    <apex:commandLink value="Same as PBR" onclick="assignValue('{!$Component.insuredDOB}', '{!Referral__c.Person_Being_Referred__r.Date_of_Birth__c}'); return false;" />
+                    <apex:commandLink value="Same as PBR" onclick="assignValue('{!$Component.insuredDOB}', '{!personBeingRefRecord.Date_of_Birth__c}'); return false;" />
                 </apex:outputPanel>
             </apex:pageBlockSectionItem>
             <apex:inputField value="{!fundingSource.Policy_Number__c}" />
