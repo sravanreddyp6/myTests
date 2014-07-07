@@ -1,0 +1,132 @@
+<apex:page standardController="Progress_Note__c" extensions="NotesTimeExtract,ProgressNoteExtension" renderAs="pdf"  >
+<head>
+<style type="text/css">
+    .BoldLabelLg {
+    font-size: 10pt;
+    font-weight: bold;
+    }
+    .Lg1 {
+    font-size: 15px;
+    font-weight: bold;
+    }
+    .Lg {
+    font-size: 12pt;
+    font-weight: bold;
+    }
+    .smTxt{
+    font-size: 9pt;
+    }
+    .myTB{
+    width: 100%;
+    padding:7px;
+    }   
+</style>
+</head>
+<body>
+<table class="myTB">
+  <tr><td align="center" style="font-size:15pt">NC Division of Mental Health, Developmental Disabilities and Substance Abuse Services</td></tr>
+  <tr><td align="center">Intensive In-Home Service Note</td></tr>
+</table>
+<table class="myTB">            
+    <tr><td class="BoldLabelLg">Client Name:&nbsp;<apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Name}"/></td>
+    <td align="right" class="BoldLabelLg">Record Number:&nbsp;<apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Other_ID__c}"/></td></tr>
+    <tr><td class="BoldLabelLg">Medicaid ID:&nbsp;<apex:outputLabel value="{!medicaidIDClear}"/></td>
+    <td align="right" class="BoldLabelLg">Start Date:&nbsp;<apex:outputField value="{!Progress_Note__c.Start_Time__c}"/></td></tr>
+    <tr><td class="BoldLabelLg">DOB:&nbsp;<apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Birthdate}"/></td>
+    <td align="right" class="BoldLabelLg">Start Time:&nbsp;<apex:outputField value="{!Progress_Note__c.Start_Time__c}"/></td></tr>
+    <tr><td class=" BoldLabelLg">Duration:&nbsp;<apex:outputField value="{!Progress_Note__c.Total_Time__c}"/></td>
+    <td align="right" class=" BoldLabelLg">End Time:&nbsp;<apex:outputField value="{!Progress_Note__c.End_Time__c}"/></td></tr>
+    <tr><td class=" BoldLabelLg">Service Code:&nbsp;<apex:outputField value="{!Progress_Note__c.Service_Code__r.Service_Code__c}"/></td></tr>
+    <tr><td class="BoldLabelLg">Service Location:&nbsp;<apex:outputField value="{!Progress_Note__c.Service_Location__c}"/></td></tr>
+</table>
+<table class="myTB"> 
+    <tr><td><apex:outputField styleClass="tbCB" value="{!Progress_Note__c.Individual_Session__c}"/>Individual Session</td>
+        <td><apex:outputField value="{!Progress_Note__c.Fam_Session__c}"/>Fam. Session</td></tr>
+    <tr><td><apex:outputField value="{!Progress_Note__c.Psychoeducation__c}"/>Psychoeducation</td>
+         <td><apex:outputField value="{!Progress_Note__c.Therapeutic_Mentoring__c}"/>Therapeutic Mentoring</td></tr>
+    <tr><td><apex:outputField value="{!Progress_Note__c.Behavior_Anger_Mgt_Techniques__c}"/>Behavior &amp; Anger Mgt. Techniques</td>
+        <td><apex:outputField value="{!Progress_Note__c.Dev_Impl_Home_Based_Support_Plan__c}"/>Developing &amp; Implementing Home Based Support Plan</td></tr>
+    <tr><td><apex:outputField value="{!Progress_Note__c.Crisis_Management__c}"/>Crisis Management</td>
+        <td><apex:outputField value="{!Progress_Note__c.Assessing__c}"/>Assessing</td></tr>
+    <tr><td><apex:outputField value="{!Progress_Note__c.Linking__c}"/>Linking</td>
+        <td><apex:outputField value="{!Progress_Note__c.Coordinating__c}"/>Coordinating</td></tr>
+    <tr><td><apex:outputField value="{!Progress_Note__c.Monitoring__c}"/>Monitoring</td>
+        <td><apex:outputField value="{!Progress_Note__c.Planning__c}"/>Planning</td></tr>
+    <tr>
+      <td style="padding-top:20px;"><apex:outputField value="{!Progress_Note__c.Purpose_Service_is_Billable__c}"/>Billable
+      <apex:outputField value="{!Progress_Note__c.Non_Payable_Outcome__c}"/>Non Billable</td>
+      
+    </tr>
+    
+    <tr>
+    
+      <td style="padding-top:20px;">
+          <apex:variable value="{!IF(Progress_Note__c.Direct_Contact__c = 1, 'True', 'False')}" var="mydirect"/>
+        <apex:variable value="{!IF(Progress_Note__c.Direct_Contact__c != 1, 'True', 'False')}" var="mynotdirect"/>
+
+          <apex:image url="{!URLFOR($Resource.checkboxes,'checked.png')}" rendered="{!mydirect}"  />
+          <apex:image url="{!URLFOR($Resource.checkboxes,'unchecked.png')}" rendered="{!mynotdirect}"  />
+          Direct
+          &nbsp;
+          <apex:image url="{!URLFOR($Resource.checkboxes,'checked.png')}" rendered="{!mynotdirect}"  />
+          <apex:image url="{!URLFOR($Resource.checkboxes,'unchecked.png')}" rendered="{!mydirect}" />
+          Indirect
+      </td>
+      
+    </tr>    
+</table>
+<table class="myTB">
+    <tr>
+        <td>
+            <apex:outputPanel rendered="{!Progress_Note__c.Non_Payable_Outcome__c}">
+                <b>Non Payable Outcome: </b>
+                <apex:outputField value="{!Progress_Note__c.No_Show__c}" rendered="{!Progress_Note__c.No_Show__c}" /><apex:outputLabel value="No Show" rendered="{!Progress_Note__c.No_Show__c}" />
+                <apex:outputField value="{!Progress_Note__c.Family_Life_Cycle__c}" rendered="{!Progress_Note__c.Family_Life_Cycle__c}" /><apex:outputLabel value="Family Life Cycle" rendered="{!Progress_Note__c.Family_Life_Cycle__c}" />
+                <apex:outputField value="{!Progress_Note__c.Family_Assessment_Evaluation__c}" rendered="{!Progress_Note__c.Family_Assessment_Evaluation__c}" /><apex:outputLabel value="Family Assessment Evaluation" rendered="{!Progress_Note__c.Family_Assessment_Evaluation__c}" />
+                <apex:outputField value="{!Progress_Note__c.Structured_Family_Assessment__c}" rendered="{!Progress_Note__c.Structured_Family_Assessment__c}" /><apex:outputLabel value="Structured Family Assessment" rendered="{!Progress_Note__c.Structured_Family_Assessment__c}" />
+                <apex:outputField value="{!Progress_Note__c.Generalization__c}" rendered="{!Progress_Note__c.Generalization__c}" /><apex:outputLabel value="Generalization" rendered="{!Progress_Note__c.Generalization__c}" />
+                <apex:outputField value="{!Progress_Note__c.Co_Therapist_unable_to_bill__c}" rendered="{!Progress_Note__c.Co_Therapist_unable_to_bill__c}" /><apex:outputLabel value="Co-Therapist (unable to bill)" rendered="{!Progress_Note__c.Co_Therapist_unable_to_bill__c}" />
+                <apex:outputField value="{!Progress_Note__c.Field_Support__c}" rendered="{!Progress_Note__c.Field_Support__c}" /><apex:outputLabel value="Field Support" rendered="{!Progress_Note__c.Field_Support__c}" />
+                <apex:outputField value="{!Progress_Note__c.FCT_Fidelity_Measure__c}" rendered="{!Progress_Note__c.FCT_Fidelity_Measure__c}" /><apex:outputLabel value="FCT Fidelity Measure" rendered="{!Progress_Note__c.FCT_Fidelity_Measure__c}" />
+                <apex:outputField value="{!Progress_Note__c.FCT_Check_Off__c}" rendered="{!Progress_Note__c.FCT_Check_Off__c}" /><apex:outputLabel value="FCT Check Off" rendered="{!Progress_Note__c.FCT_Check_Off__c}" />
+                <apex:outputField value="{!Progress_Note__c.Called_Client_Family_phone_disconnected__c}" rendered="{!Progress_Note__c.Called_Client_Family_phone_disconnected__c}" /><apex:outputLabel value="Called Client/Family, phone disconnected" rendered="{!Progress_Note__c.Called_Client_Family_phone_disconnected__c}" />
+                <apex:outputField value="{!Progress_Note__c.Client_Family_not_home_left_note_on_door__c}" rendered="{!Progress_Note__c.Client_Family_not_home_left_note_on_door__c}" /><apex:outputLabel value="Client/Family not home left note on door" rendered="{!Progress_Note__c.Client_Family_not_home_left_note_on_door__c}" />
+                <apex:outputField value="{!Progress_Note__c.Client_Family_home_but_refusing_service__c}" rendered="{!Progress_Note__c.Client_Family_home_but_refusing_service__c}" /><apex:outputLabel value="Client/Family home but refusing service" rendered="{!Progress_Note__c.Client_Family_home_but_refusing_service__c}" />
+                <apex:outputField value="{!Progress_Note__c.Client_placed_in_detention__c}" rendered="{!Progress_Note__c.Client_placed_in_detention__c}" /><apex:outputLabel value="Client placed in detention" rendered="{!Progress_Note__c.Client_placed_in_detention__c}" />
+                <apex:outputField value="{!Progress_Note__c.Client_placed_in_hospital__c}" rendered="{!Progress_Note__c.Client_placed_in_hospital__c}" /><apex:outputLabel value="Client placed in hospital" rendered="{!Progress_Note__c.Client_placed_in_hospital__c}" />
+                <apex:outputField value="{!Progress_Note__c.Client_placed_in_group_home__c}" rendered="{!Progress_Note__c.Client_placed_in_group_home__c}" /><apex:outputLabel value="Client placed in group home" rendered="{!Progress_Note__c.Client_placed_in_group_home__c}" />
+                <apex:outputField value="{!Progress_Note__c.Client_placed_in_Substance_Abuse_program__c}" rendered="{!Progress_Note__c.Client_placed_in_Substance_Abuse_program__c}" /><apex:outputLabel value="Client placed in Substance Abuse program" rendered="{!Progress_Note__c.Client_placed_in_Substance_Abuse_program__c}" />
+                <apex:outputField value="{!Progress_Note__c.Child_and_Family_Team_Meeting__c}" rendered="{!Progress_Note__c.Child_and_Family_Team_Meeting__c}" /><apex:outputLabel value="Child and Family Team Meeting" rendered="{!Progress_Note__c.Child_and_Family_Team_Meeting__c}" />
+                <apex:outputField value="{!Progress_Note__c.Called_Client_Family_left_voice_message__c}" rendered="{!Progress_Note__c.Called_Client_Family_left_voice_message__c}" /><apex:outputLabel value="Called Client/Family, left voice message" rendered="{!Progress_Note__c.Called_Client_Family_left_voice_message__c}" />
+                <apex:outputField value="{!Progress_Note__c.Called_collateral_left_voice_message__c}" rendered="{!Progress_Note__c.Called_collateral_left_voice_message__c}" /><apex:outputLabel value="Called collateral, left voice message" rendered="{!Progress_Note__c.Called_collateral_left_voice_message__c}" />
+            </apex:outputPanel>
+        </td>
+    </tr>
+</table>
+<table class="myTB">
+    <tr><td><b>Area of Family Functioning: </b><apex:outputField value="{!Progress_Note__c.Area_Family_Functioning__c}" /></td></tr>
+</table>           
+<table class="myTB">
+    <tr><td><apex:include pageName="progressnote_actionplan_embed_include"/></td></tr>
+</table>
+<table class="myTB">
+    <tr><td><b>Purpose of Contact:</b></td></tr>
+    <tr><td><apex:outputField value="{!Progress_Note__c.Purpose_of_Contact__c}"/></td></tr>
+</table> 
+<table class="myTB">
+    <tr><td class="Lg">Description of Intervention/Activity</td></tr>
+    <tr><td><apex:outputField value="{!Progress_Note__c.Interventions__c}"/></td></tr>
+</table>
+<table class="myTB">
+    <tr><td class="Lg">Effectiveness of the Intervention/Activity per Client/Activity:</td></tr>
+    <tr><td><apex:outputField value="{!Progress_Note__c.Progress__c}"/></td></tr>
+    <tr><td><apex:outputField value="{!Progress_Note__c.Notes_For_Next_Visit__c}"/></td></tr>   
+</table>
+<table class="myTB">
+   <tr><td align="center">Client Signature________________________________</td></tr>
+</table>
+<div class="sm" align="center" style="color:rgb(128,128,128)">Created By:&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedBy.Name}"/>,&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedBy.Title}"/></div>
+    <div class="sm" align="center" style="color:rgb(128,128,128)">Created Date:&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedDate}"/><apex:outputLabel rendered="{!Progress_Note__c.Is_Note_Late__c == 'Yes'}"  > - LATE ENTRY</apex:outputLabel></div>
+<div class="sm" align="center" style="color:rgb(128,128,128)">Latest release of form: 8/13/12</div>
+</body>
+</apex:page>
