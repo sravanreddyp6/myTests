@@ -479,10 +479,15 @@ public with sharing class referral_Controller2 {
 
     //start CTEAE-137
     if(ReferralRecordType=='Cambridge North Carolina'){
-        if(referralRecord.Payer_Medical_Record_Number__c == null || referralRecord.Payer_Medical_Record_Number_Description__c == null){
-        messages.Add( 'For NC Payer/Guarantor Medical Record Number and Description are required' );
+        if(referralRecord.Payer_Medical_Record_Number__c == null ){
+        messages.Add( 'Payer/Guarantor Medical Record Number' );
         hasReq = true;
         }
+        if(referralRecord.Payer_Medical_Record_Number_Description__c == null){
+        messages.Add( 'Payer/Guarantor Medical Description' );
+        hasReq = true;
+        }        
+        
     }
     
     //end CTEAE-137
