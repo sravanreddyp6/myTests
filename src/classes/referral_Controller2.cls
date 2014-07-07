@@ -93,13 +93,13 @@ public with sharing class referral_Controller2 {
   public Id pBSId { get; set; }
   public boolean isEditor{get; set;}
   public boolean canConvert{ get { 
-  	
-  		Set<string> RWStates = new Set<string>{'Minnesota', 'California', 'Indiana'};
-  		system.debug( 'Ref record type: ' + referralrecordtype );
-  		system.debug(' is cambridge:' + iscambridge);
-  		system.debug(' operatinggroup:' + operatinggroup);
-  		return ((operatinggroup == 'Cambridge' && isCambridge )|| (operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ) ); // Add this line to make the convert button available for CareMeridian group || (operatinggroup == 'CareMeridian') && isCareMeridian  
-  	} set;}
+    
+        Set<string> RWStates = new Set<string>{'Minnesota', 'California', 'Indiana'};
+        system.debug( 'Ref record type: ' + referralrecordtype );
+        system.debug(' is cambridge:' + iscambridge);
+        system.debug(' operatinggroup:' + operatinggroup);
+        return ((operatinggroup == 'Cambridge' && isCambridge )|| (operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ) ); // Add this line to make the convert button available for CareMeridian group || (operatinggroup == 'CareMeridian') && isCareMeridian  
+    } set;}
     
 
   public static final String REFERRAL_EDIT_URL = '/apex/referral';
@@ -157,7 +157,7 @@ public with sharing class referral_Controller2 {
         isCambridge = true;
     }
     if(referralRecordType.startsWith('CareMeridian')){
-    	isCareMeridian = true;
+        isCareMeridian = true;
     }
   }
 
@@ -388,9 +388,9 @@ public with sharing class referral_Controller2 {
     
     List<RecordType> cmrt = [ select id from recordtype where sobjecttype='Funding_Source__c' and developername = 'CareMeridian_FS'];
     if (cmrt.size() > 0) {
-    	ID CMID = cmrt[0].Id;
-	    if ( fundingSource.RecordTypeId == CMID)
-    		fundingSource.Authorization_type__c = 'Initial'; // set default value that is not being honored in late render on jquery dialog
+        ID CMID = cmrt[0].Id;
+        if ( fundingSource.RecordTypeId == CMID)
+            fundingSource.Authorization_type__c = 'Initial'; // set default value that is not being honored in late render on jquery dialog
     }
     
     fundingSource.Referral__c = this.referralRecord.Id;
@@ -420,10 +420,10 @@ public with sharing class referral_Controller2 {
         upsert this.fundingSource;
     }
     catch (Exception e) {
-    	 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+         ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
         'Please enter zip code in the format: XXXXX or XXXXX-XXXX'));
     }
-   	
+    
     populateFundingSources();
     this.fundingSource = new Funding_Source__c();
     this.fundingSource.RecordTypeId = Utility.getFundingSourceRecordTypeFromReferral(this.ReferralRecord);
@@ -477,7 +477,15 @@ public with sharing class referral_Controller2 {
     List<String> messages = new List<String>{};
     boolean hasReq = false;
 
-
+    //start CTEAE-137
+    if(ReferralRecordType=='Cambridge North Carolina'){
+        if(referralRecord.Payer_Medical_Record_Number__c == null || referralRecord.Payer_Medical_Record_Number_Description__c == null){
+        messages.Add( 'For NC Payer/Guarantor Medical Record Number and Description are required' );
+        hasReq = true;
+        }
+    }
+    
+    //end CTEAE-137
     // requirements to create a new PBS
     if ( (string.valueOf(this.referralRecord.Person_Being_Served__c) == '' )) {
 
