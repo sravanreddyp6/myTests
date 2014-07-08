@@ -1851,13 +1851,14 @@ function enableDiagEff() {
         </apex:outputPanel>
         </apex:outputPanel>
         </apex:pageBlocksectionItem>
-        
+   
         <apex:pageBlockSectionItem >
-	        <apex:outputPanel id="encephaloPanel" >
-	        <apex:outputLabel value="Type of Encephalopathy" for="typeofEncephalopathy" styleclass="labelCol"  style="margin-left: 2.5cm;"/>
-	        <apex:inputField value="{!Referral__c.Type_of_Encephalopathy__c}" id="typeofEncephalopathy" style="margin-left: 0.2cm;"/>
+        	<apex:outputPanel id="encephaloPanel" >
+		        <apex:outputLabel for="typeofEncephalopathy" value="Type of Encephalopathy" styleclass="labelCol" style="margin-left: 10%;"/>
+		        <apex:inputField value="{!Referral__c.Type_of_Encephalopathy__c}" id="typeofEncephalopathy" />
 	        </apex:outputPanel>
-        </apex:pageBlockSectionItem>
+       	</apex:pageBlockSectionItem>
+       
         <apex:pageBlockSectionItem rendered="{!referralRecordtype == 'NeuroRestorative'}"/>
         <apex:inputField Value="{!Referral__c.Diagnosis_II__c}" label="Secondary Diagnosis" rendered="{!referralRecordtype == 'NeuroRestorative'}"/>
         
