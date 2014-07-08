@@ -72,6 +72,7 @@
             <!-- <apex:commandButton rendered="{!assessmentTypes['CANS']}" onclick="window.open('/a0d/e?CF00NU00000036vU3={!admission.Name}&CF00NU00000036vU3_lkid={!admission.ID}', '_self'); return false;" value="New CANS Assessment" />&nbsp;&nbsp; -->
             <apex:commandButton rendered="{!(assessmentTypes['CANS'] &&  canCreateAsmt )&& showCans }" onclick="window.open('/apex/assessment_CANSdetail?admission={!admission.ID}&type={!CANsID}', '_self'); return false;" value="New CANS Assessment" />&nbsp;&nbsp;
             <apex:commandButton rendered="{!(assessmentTypes['Risk'] && riskAssessments.size=0 && canCreateAsmt ) && !showCans}" action="{!createRiskAssess}" value="New Risk Assessment" />
+            <apex:commandButton rendered="{!(admission.State__c = 'MN' && issaAssessments.size=0 && canCreateAsmt ) && !showCans}" action="{!createIssaAssess}" value="New ISSA Assessment" />
             <apex:commandButton onclick="window.open('/{!Risk_Overview}?pv0={!Admission__c.Name}','_self'); return false;" rendered="{!(assessmentTypes['Risk'] && riskAssessments.size!=0 )}" value="Acknowledgment Overview" />
         </div>
         <apex:outputPanel rendered="{!(cansAssessments.size>0)}">
@@ -90,6 +91,19 @@
         <apex:outputPanel rendered="{!(riskAssessments.size>0)}">
             <h1 style="display: block; margin-bottom: 30px;">Risk Assessments</h1>
             <apex:pageBlockTable styleclass="pbBody-list"  value="{!riskAssessments}" var="item" rendered="{!(riskAssessments.size>0)}">
+                <apex:column headerValue="Name">
+                    <apex:outputLink value="/{!item.ID}">{!item.Name}</apex:outputLink>
+                </apex:column>
+                <apex:column value="{!item.Status__c}" />
+                <apex:column value="{!item.Finalized_Date__c}" />
+                <apex:column headerValue="Owner">
+                    <apex:outputLink value="/{!item.Owner.ID}">{!item.Owner.Name}</apex:outputLink>
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!(issaAssessments.size>0)}">
+            <h1 style="display: block; margin-bottom: 30px;">ISSA Assessments</h1>
+            <apex:pageBlockTable styleclass="pbBody-list"  value="{!issaAssessments}" var="item" rendered="{!(issaAssessments.size>0)}">
                 <apex:column headerValue="Name">
                     <apex:outputLink value="/{!item.ID}">{!item.Name}</apex:outputLink>
                 </apex:column>

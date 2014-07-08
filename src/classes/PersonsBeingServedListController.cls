@@ -126,7 +126,7 @@ public with sharing class PersonsBeingServedListController {
 		if ( filterlabel.indexOf('Recently Viewed') == 0)
 			filteredAcct = [SELECT ID, FirstName, LastName, Owner.ID, Owner.Name, PersonContactId From Account WHERE RecordTypeID=:PBS_REC_TYPE_ID and lastvieweddate != null order by lastvieweddate desc LIMIT 200];
 		else if ( filterlabel.indexOf( 'My') == 0 ) 
-			filteredAcct = [SELECT ID, FirstName, LastName, Owner.ID, Owner.Name, PersonContactId From Account WHERE RecordTypeID=:PBS_REC_TYPE_ID and createdbyid = :UserInfo.getUserId()];
+			filteredAcct = [SELECT ID, FirstName, LastName, Owner.ID, Owner.Name, PersonContactId From Account WHERE RecordTypeID=:PBS_REC_TYPE_ID and ( createdbyid = :UserInfo.getUserId() or ownerid = :UserInfo.getUserId()) ];
 		else if ( filterlabel.indexOf('All') == 0 ) 
 			filteredAcct = [SELECT ID, FirstName, LastName, Owner.ID, Owner.Name, PersonContactId From Account WHERE RecordTypeID=:PBS_REC_TYPE_ID];
 		else if ( filterlabel.indexOf('New This Week') == 0) 

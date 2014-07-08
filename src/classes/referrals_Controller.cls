@@ -843,6 +843,9 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     // ERNS-8 - when trying to close/admit Neuro referral, check for required fields
     if ( referralRecordType == 'NeuroRestorative') {
     	
+    	if (referralRecord.Diagnosis_I__c != 'Encephalopathy') //Added by Sravan for ERNS-21 ticket.07/02/2014 1:02 PM
+    		referralRecord.Type_of_Encephalopathy__c = '';
+    	
     	if ( referralRecord.referral_status__c == 'Closed' && referralRecord.close_reason__c =='Admitted') {
     		if (!checkNRRequiredCloseAdmitFields()) 
     			return null;
