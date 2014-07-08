@@ -481,11 +481,11 @@ public with sharing class referral_Controller2 {
     if(ReferralRecordType=='Cambridge North Carolina'){
         if(referralRecord.Payer_Medical_Record_Number__c == null ){
         messages.Add( 'Payer/Guarantor Medical Record Number' );
-        hasReq = true;
+        hasReq = false;
         }
         if(referralRecord.Payer_Medical_Record_Number_Description__c == null){
-        messages.Add( 'Payer/Guarantor Medical Description' );
-        hasReq = true;
+        messages.Add( 'Payer/Guarantor Medical Number Description' );
+        hasReq = false;
         }        
         
     }
