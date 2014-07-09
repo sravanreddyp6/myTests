@@ -101,7 +101,12 @@ public PageReference testForCans() {
            PageReference ref =  new PageReference('/apex/Assessment_FAD_Form?id='+this.assessment.id);
            return ref;
        
-       }     
+       }
+       if (assessment.type__c == 'ISSA'){
+           PageReference ref =  new PageReference('/apex/Assessment_IssaForm?id='+this.assessment.id);
+           return ref;
+       
+       }      
             return null;
 
 }    

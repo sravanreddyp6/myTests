@@ -69,9 +69,10 @@
                         <apex:outputField value="{!Evaluation__c.Number_of_Children__c}" />
                         <apex:outputField value="{!Evaluation__c.Occupation__c}" />
                         <apex:outputField value="{!Evaluation__c.Number_of_Children_at_Home__c}" />
+                        <apex:outputText value="Employment Status" styleClass="labelCol" style="margin-left: 3cm;"/>
+                        <apex:pageBlockSectionItem />
                         <apex:outputField value="{!Evaluation__c.Employed__c}" id="employed" />
                         <apex:pageBlockSectionItem />
-                        <!-- Added by Sravan -->
                         <apex:outputField value="{!Evaluation__c.EmploymentFT__c}" />
                         <apex:pageBlockSectionItem />
                         <apex:outputField value="{!Evaluation__c.EmploymentPT__c}" />
@@ -80,10 +81,9 @@
                         <apex:pageBlockSectionItem />
                         <apex:outputField value="{!Evaluation__c.EmploymentDisabled__c}" />
                         <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.EmploymentUnknown__c}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Employment_Status__c}" id="employmentStatus" />
+                        <apex:outputField value="{!Evaluation__c.EmploymentUnknown__c}" />    
                     </apex:pageBlockSection>
+                    <hr/>
                     <apex:pageBlockSection columns="2">
                         <apex:outputField value="{!Evaluation__c.Code_Status__c}" />
                         <apex:outputField value="{!Evaluation__c.Advanced_Directives__c}" />
@@ -159,11 +159,15 @@
                         <apex:outputPanel >
                         	<apex:outputLabel value="Height at Admission" style="font-weight: Bold; color: #4A4A56; font-size: 10px;margin-left: 85px;"/>
                         	&nbsp;&nbsp;&nbsp;
-                        	<apex:outputField id="ft" value="{!Evaluation__c.HeightFt__c}" style="margin-left: 150px;"/>
+                        	<apex:outputField id="ft" value="{!Evaluation__c.HeightFt__c}" style="margin-left: 25px;"/>
                         	<apex:outputLabel for="ft" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.HeightFt__c.label}</apex:outputLabel>
                         	<span/>
-                        	<apex:outputField id="in" value="{!Evaluation__c.HeightInches__c}" style="Margin-left: 50px;"/>
+                        	<apex:outputField id="in" value="{!Evaluation__c.HeightInches__c}" style="Margin-left: 25px;"/>
                         	<apex:outputLabel for="in" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.HeightInches__c.label}</apex:outputLabel>
+                        	<span/>
+	                            <apex:outputText value=" (or) "/>
+	                            <apex:outputField id="cm" value="{!Evaluation__c.Height_in_cms__c}" style="margin-left: 25px;"/>
+	                            <apex:outputLabel for="cm" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Height_in_cms__c.label}</apex:outputLabel>
                         </apex:outputPanel>   		  
                     </apex:pageBlockSection>  
                        
@@ -177,7 +181,7 @@
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Surgery Detail" formId="{!$Component.wholePage}" uniqueId="surgery" />
                     <apex:pageBlockSection columns="1">
                         <apex:outputField value="{!Evaluation__c.Clinical_Course__c}" />
-                        <apex:outputField value="{!Evaluation__c.Details_Section_Completed__c}" />
+                        <apex:outputField value="{!Evaluation__c.Details_Section_Completed__c}" label="Demographics Section Completed"/>
                     </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:tab>
@@ -922,7 +926,7 @@
             <apex:pageBlockButtons location="bottom">
                 <apex:commandButton onclick="window.location='/apex/CareMeridianEvaluationEdit?id={!Evaluation__c.Id}&tab={!selectedTab}'; return false;" value="Edit" />
                 <apex:commandButton onclick="window.location='/apex/CareMeridianEvaluationEsign?id={!Evaluation__c.Id}'; return false;" value="E-Sign" rendered="{!selectedTab == 'dischargePlanTab'}" />
-                <apex:commandButton value="Generate Paper Form" action="{!generatePaperForm}" rerender="pageMessages" onclick="jQuery('[id$=pdfGenerationSpinner]').show();" oncomplete="downloadPaperForm('{!pdfExistenceUrl}');" />
+                <!-- apex:commandButton value="Generate Paper Form" action="{!generatePaperForm}" rerender="pageMessages" onclick="jQuery('[id$=pdfGenerationSpinner]').show();" oncomplete="downloadPaperForm('{!pdfExistenceUrl}');" /-->
                 <apex:commandButton value="Generate PDF" onclick="openWin('/apex/CareMeridianEvaluationPDF?id={!Evaluation__c.Id}'); return false;" />
                 <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" style="display: none;" id="pdfGenerationSpinner" />
             </apex:pageBlockButtons>

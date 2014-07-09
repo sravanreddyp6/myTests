@@ -722,13 +722,15 @@ END: Uncomment to have the element collapsed by default -->
     </apex:pageBlock>
     <apex:pageBlock title="Nurses Assessment" rendered="{!showNurseAssessment && !editSA}">
     		<div class="pbHeaderButton">
-    			<apex:CommandButton value="Nurses Assessment" rendered="{!evaluations == null || evaluations.size =0}" action="{!addNurAssessment}"/>
+    			<apex:CommandButton value="Nurses Assessment" rendered="{!evaluations == null || evaluations.size=0}" action="{!addNurAssessment}"/>
     		</div>
     		<apex:pageBlockTable styleclass="pcBody-list" value="{!evaluations}" var="evs" rendered="{!evaluations.size>0}">
+    			<apex:column headerValue="Action"><a href="/apex/NursingEvaluationEdit?id={!evs.Id}&tab=demographicsTab">Edit</a></apex:column>
     			<apex:column headerValue="Name">
     				<apex:outputLink value="/apex/NursingEvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
     			</apex:column>
-    			<apex:Column value="{!evs.LastModifiedDate}"/>
+    			<apex:column headerValue="Signed" value="{!evs.Is_Signed__c}"></apex:column>
+    			<apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
     		</apex:pageBlockTable>
     	<apex:outputText value="No Records to display" rendered="{!evaluations.size=0 || evaluations == null}" />
     </apex:pageBlock>
@@ -770,7 +772,7 @@ END: Uncomment to have the element collapsed by default -->
 <!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
         <apex:commandButton action="{!createFadAssess}" value="New FAD Assessment Summary"/>
     </div>
-    <apex:outputText value="No FAD Assessment Summarys to display" rendered="{!(Assessments_Fad.size=0)}" />
+    <apex:outputText value="No FAD Assessment Summaries to display" rendered="{!(Assessments_Fad.size=0)}" />
     <apex:pageBlockTable value="{!Assessments_Fad}" var="assess" rendered="{!(Assessments_Fad.size!=0)}">
         <apex:column headerValue="Action"  styleClass="editcol">
             <a href="/apex/Assessment_FAD_Form?id={!assess.ID}&edit=1">Edit</a>
@@ -820,6 +822,25 @@ END: Uncomment to have the element collapsed by default -->
 
  </apex:pageBlock>
 
+<!-- START: Service Assignment Closure Section; CTEAE-125 & CTEAE-126 -->
+    <apex:pageBlock id="pbServAssignClose" title="Service Assignment Closure" rendered="{!showServAssignClose}">
+    <div class="pbHeaderButton">
+        <apex:commandButton action="{!addServAssignClose}"
+        					value="Add Service Assignment Closure"
+                            id="addServAssignClose"
+                            rendered="{!editSA && (ServAssignCloses.size==0)}"/>
+    </div>
+    <apex:pageBlockTable value="{!ServAssignCloses}" var="servAssignLineItem" rendered="{!(ServAssignCloses.size!=0)}">
+        <apex:column headerValue="Action"  styleClass="editcol">
+            <a href="/{!servAssignLineItem.ID}">Edit</a>
+        </apex:column>
+        <apex:column headerValue="Name" >
+            <a href="/{!servAssignLineItem.ID}">{!servAssignLineItem.name}</a>
+        </apex:column>        
+        <apex:column value="{!servAssignLineItem.Status__c}" />
+    </apex:pageBlockTable>
+    </apex:pageBlock>
+<!-- END: Service Assignment Closure Section; CTEAE-125 & CTEAE-126 -->
 
  <!-- Add diagnosis modal -->
  <apex:outputPanel id="modalWrapper">
@@ -860,6 +881,7 @@ END: Uncomment to have the element collapsed by default -->
 <apex:relatedList list="Action_Summaries__r" rendered="{!showLocation && $ObjectType.Action_Summary__c.accessible && !editSA}" />
 <c:SObjectNotesAndAttachments parentId="{!Service_Assignment__c.id}" showAction="false" rendered="{!!editSA && newSA==false}" ></c:SObjectNotesAndAttachments> 
 <c:GenericHistoryComponent myObject="{!Service_Assignment__c}" rendered="{!!editSA && newSA==false}" />
+
 
 <script type="text/javascript">
 j$(setFocus);
@@ -970,7 +992,24 @@ function validateDiagnosis() {
 
       }
 
+  function loadDiagnosis(servAssignCloseId) {
 
+            if ( !servAssignCloseId ) {
+            alert('Please save before editing the new Service Assignment Closure.');
+            return;
+            }
+
+        ServiceAssignmentExt.loadServAssignClose(servAssignCloseId,
+          function(result, event){
+            if (event.status) {
+                openDialog('servAssignCloseModal', 'span', 'Edit Service Assignment Closure');
+
+            } else { alert ('Error loading diagnosis to edit.');  }
+          },
+          {escape: true}
+        );
+
+      }
 
 
   //disable enter key
