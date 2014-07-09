@@ -90,6 +90,7 @@ public with sharing class ActionPlan_form {
                         g_node.CatTreeNode = n;    
                         g_node.isselected = selected;
                         g_node.isunselectable = selected;
+                        g_node.hideCheckbox = selected;
                         g_node.isNew = !selected;
                         g_node.helpText = tooltip;
                         allGoals.root.nodes.add(g_node);
@@ -101,6 +102,7 @@ public with sharing class ActionPlan_form {
                         o_node.CatTreeNode = n;
                         o_node.isselected = selected;
                         o_node.isunselectable = selected;
+                        o_node.hideCheckbox = selected;
                         o_node.isNew = !selected;
                         o_node.helpText = tooltip;
                         integer g_key = allGoals.root.getNode_Key(goalID );
@@ -113,6 +115,7 @@ public with sharing class ActionPlan_form {
                         a_node.CatTreeNode = n;
                         a_node.isselected = selected;
                         a_node.isunselectable = selected;
+                        a_node.hideCheckbox = selected;
                         a_node.isNew = !selected;
                         a_node.helpText = tooltip;
                         integer g_key = allGoals.root.getNode_Key(goalID );
