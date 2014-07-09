@@ -80,7 +80,26 @@ function highlightButtons ( btype, sfid, on )
    
 </script>
 <style>
+#catalog_sticky::-webkit-scrollbar {
+    width: 12px;
+}
+/* Track */
+#catalog_sticky::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
  
+/* Handle */
+#catalog_sticky::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: rgba(255,0,0,0.8); 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}
+#catalog_sticky::-webkit-scrollbar-thumb:window-inactive {
+    background: rgba(255,0,0,0.4); 
+}
 .label{
     margin:10px;
     font-weight:bold;
@@ -270,7 +289,7 @@ function highlightButtons ( btype, sfid, on )
 <table id="wrappertbl" >
 <tr>
 <td>
-    <apex:outputPanel layout="block" style="display: {!if(editMode, 'block','none')}" >
+    <apex:outputPanel layout="block" style="display: {!if(editMode, 'block','none')}" rendered="{!$Setup.SystemSettings__c.ActionPlan_CatalogSelectorEnabled__c}" >
         <div id="catalog_filler" style="display: none; width: 400px;"> &nbsp;</div>
         <div style="width: 55px;"> &nbsp;</div>
         <div id="catalog_sticky">
@@ -309,7 +328,7 @@ function highlightButtons ( btype, sfid, on )
                 </apex:outputPanel>
                     
             </div>
-        <apex:outputPanel onclick="toggleById('clinical-catalog', 250); toggleById('catalog_filler',0); return false;" style="cursor:pointer;"><apex:image url="{!$Resource.searchIMG}"/></apex:outputPanel>
+        <apex:outputPanel onclick="toggleById('clinical-catalog', 250); toggleById('catalog_filler',0); return false;" style="cursor:pointer;"><apex:image url="{!$Resource.catalogIMG}"/></apex:outputPanel>
         </div>
 
         <script>
