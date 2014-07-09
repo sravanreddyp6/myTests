@@ -75,10 +75,16 @@ public with sharing class Report_KidTraksExport_Controller {
 			ProgressNoteWrapper_CullKidTraksLineItems compareToPnw = (ProgressNoteWrapper_CullKidTraksLineItems) compareTo; 
 			
 			Integer returnValue = 0;
-			if(thePn.Person_Being_Served__c > compareToPnw.thePn.Person_Being_Served__c || thePn.Start_Time__c.date() > compareToPnw.thePn.Start_Time__c.date()) {
+			if(thePn.Person_Being_Served__c==compareToPnw.thePn.Person_Being_Served__c && thePn.Start_Time__c.date() > compareToPnw.thePn.Start_Time__c.date()) {
 				returnValue = 1;
 			}
-			if(thePn.Person_Being_Served__c < compareToPnw.thePn.Person_Being_Served__c || thePn.Start_Time__c.date() < compareToPnw.thePn.Start_Time__c.date()) {
+			if(thePn.Person_Being_Served__c==compareToPnw.thePn.Person_Being_Served__c && thePn.Start_Time__c.date() < compareToPnw.thePn.Start_Time__c.date()) {
+				returnValue = -1;
+			}
+			if(thePn.Person_Being_Served__c > compareToPnw.thePn.Person_Being_Served__c) {
+				returnValue = 1;
+			}
+			if(thePn.Person_Being_Served__c < compareToPnw.thePn.Person_Being_Served__c) {
 				returnValue = -1;
 			}
 
@@ -139,6 +145,8 @@ public with sharing class Report_KidTraksExport_Controller {
 	    		//		unitsCounter++;
 	    		//	}
 	    		//}
+	    		
+	    	// IF THIS LOOP IS ON A DIFFERENT PBS, AND THERE WAS A PREVIOUS NOTE...	
     		if(thePreviousNotesPbsId!=pWrapped.thePn.Person_Being_Served__c && thePreviousNotesPbsId!=null) {
     			System.debug('MARKER 1');
     			System.debug('What is pWrapped.thePn.Service_Assignment__r.Start_Date__c at MARKER 1: ' + pWrapped.thePn.Service_Assignment__r.Start_Date__c);
@@ -155,16 +163,22 @@ public with sharing class Report_KidTraksExport_Controller {
     			if(pWrapped.thePn.Service_Assignment__r.End_Date__c!=null) {
     				System.debug('DAYS BETWEEN CHECK: ' + pWrapped.thePn.Service_Assignment__r.End_Date__c.daysBetween(reportEndDate));
     			}
-    				
-    			if(pWrapped.thePn.Service_Assignment__r.End_Date__c==null) {
-    				theLastNotesStartDate = reportEndDate;		
+    			
+    			if(thePreviousWrappedPn!=null) {
+	    			if(thePreviousWrappedPn.thePn.Service_Assignment__r.End_Date__c==null) {
+	    				theLastNotesStartDate = reportEndDate;		
+	    			}
+	    			else if (thePreviousWrappedPn.thePn.Service_Assignment__r.End_Date__c.daysBetween(reportEndDate) < 0) {
+	    				theLastNotesStartDate = reportEndDate;
+	    			}	
+		    		else {
+		    				theLastNotesStartDate = thePreviousNotesStartDate;
+		    		}
     			}
-    			else if (pWrapped.thePn.Service_Assignment__r.End_Date__c.daysBetween(reportEndDate) < 0) {
-    				theLastNotesStartDate = reportEndDate;
-    			}
-    			else {
-    				theLastNotesStartDate = thePreviousNotesStartDate;
-    			}
+				else {
+					theLastNotesStartDate = reportEndDate;
+				}
+
     			
     			unitsFromDateSubtract = theFirstNotesStartDate.daysBetween(theLastNotesStartDate) + 1;
     			lineItems.add(new KidTraksLineItem(theFirstNotesStartDate, theLastNotesStartDate, theUser, thePreviousWrappedPn.thePn.Person_Being_Served__r.Name, thePreviousWrappedPn.thePn.Person_Being_Served__r.Avatar_ID__c, thePreviousWrappedPn.thePn.Person_Being_Served__r.Other_ID__c, unitsFromDateSubtract));
@@ -173,6 +187,8 @@ public with sharing class Report_KidTraksExport_Controller {
 		    	// the "per diem continuous" concept (per diem billed daily whether or not a visit happens), so I'm leaving the line just in case.  J. Gilliam, 7-9-14, CTEAE-143
     				//unitsCounter=0;
     		}
+    		
+    		// IF THIS IS THE LAST NOTE OF THE ENTIRE LOOP...
     		if(numberOfWrappedNotes==loopCounter) {
     			System.debug('MARKER 2');
     			System.debug('What is pWrapped.thePn.Service_Assignment__r.Start_Date__c at MARKER 2: ' + pWrapped.thePn.Service_Assignment__r.Start_Date__c);
@@ -198,6 +214,7 @@ public with sharing class Report_KidTraksExport_Controller {
     				//unitsCounter=0;  // This probably doesn't matter, since this should be the last iteration of the containing loop.
     		}
     		
+    		// IF THIS PERSON BEING SERVED IS DIFFERENT THAN THE ONE FOR THE LAST NOTE LOOPED OVER, OR IF THIS IS THE FIRST NOTE WE LOOP OVER...
     		if(thePreviousNotesPbsId!=pWrapped.thePn.Person_Being_Served__c || thePreviousNotesPbsId==null) {
     			System.debug('FIRST NOTE DATE CONDITION EXECUTING'); 			
 				if(pWrapped.thePn.Service_Assignment__r.Start_Date__c < reportStartDate) {
