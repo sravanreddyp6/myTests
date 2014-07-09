@@ -3,8 +3,9 @@
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
     <apex:stylesheet value="{!if ($CurrentPage.parameters.pdf !='1', $Resource.mentoresdcss, $Resource.mentoresdprint)}" />
+    <apex:variable value="{!Assessment__c.Phase__c =='Initial' || Assessment__c.Phase__c =='Final'}"  var="isInitalOrFinal"/>
     <script>function setFocusOnLoad() {}</script>
-<apex:outputPanel style="display: none;">
+<apex:outputPanel style="display: none;"> 
     {!Assessment__c.Service_Assignment__r.Person_Being_Served__c}
     {!Assessment__c.Locked__c}
 </apex:outputPanel>    
@@ -23,7 +24,7 @@
     z-index:1000;
 }    
 .thinkingwheel{
-position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+    position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
 }
 .dateFormat{
     display :none;
@@ -34,74 +35,144 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
     width: 270px;
 
 }
+.addressBox{
+    width: 250px;
+    height: 150px;
+}
+.hbbg{
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    background-color: gray;
+    opacity: .6;
+    z-index:900;
+}
+
+.popupform{
+    position: fixed; 
+    left:33%; 
+    top:28%;
+     /*background-color: white; border: 2px solid gray; padding: 7px;*/
+    width: 450px;
+    opacity: 1;
+    z-index:950;
+
+}
+#p .labelCol{
+    width: 35% !important;
+    
+
+}
+
+.tbleven {
+  background-color:#e3e6ef;
+}
+
+.tblodd {
+    background-color:#fff;
+}
 </style>
 <!---->
 <c:PersonalRecord servAssignId="{!Assessment__c.Service_Assignment__c}" pbsId="{!Assessment__c.Admission__r.Person_Being_Served__c}" parentPage="Assessment" admId="{!Assessment__c.Admission__c}" asmtType="{!Assessment__c.Type__c}" asmtId="{!Assessment__c.Id}"   />
 <br/>
+
 <apex:outputPanel id="everything">
 <apex:pageMessages ></apex:pageMessages>
+<apex:outputPanel id="pop_up_frm">
+<div id="relPartyFrm" style="display: {!otherChildDisplayStyle};">
+<div class="hbbg">  </div>
+<div id="p" class="popupform" >
+<apex:form id="RelPartyFrm" >
+<apex:pageBlock title="Child Info" >
+    <apex:pageBlockButtons location="bottom">
+        <apex:commandButton action="{!AddOtherChild}" value="Save" reRender="pop_up_frm, otherChildrenList" status="myStatus" oncomplete=" checkInputs(); return false;" />
+        <apex:commandButton action="{!SaveNew_Rel_Party}" value="Save and New" reRender="pop_up_frm, otherChildrenList" status="myStatus" oncomplete=" checkInputs(); return false;" />
+        <apex:commandButton action="{!resetRelParty}" value="Cancel" oncomplete="toggleById('relPartyFrm');  checkInputs(); return false;" reRender="nothing" immediate="true" status="myStatus"/>
+    </apex:pageBlockButtons>
+    <apex:pageBlockSection columns="1" >
+                <apex:inputField label="Name" value="{!curRel_Party .name}" required="true" />           
+                <apex:inputField label="Age" value="{!curRel_Party .Age__c}" required="true" />            
+                <apex:inputField label="Gender" value="{!curRel_Party .Gender__c}" required="true" />            
+                <apex:inputField label="Relationship to Person Being Served" styleClass="OC_Rel" value="{!curRel_Party.Relationship_to_Person_Being_Served__c}" required="true"
+                  onchange="checkOtherField('OC_Rel', 'OC_Other_Rel', 'Other');" />           
+                <apex:inputField label="Specify Other" styleClass="OC_Other_Rel" value="{!curRel_Party.Relationship_to_Person_Being_Served_Othe__c }" />            
+                <apex:inputField label="Received FCT services before" value="{!curRel_Party.Received_FCT_services_before__c}" required="true" />
+    </apex:pageblockSection>
+</apex:pageBlock>
+</apex:form>
+</div>
+</div>
+</apex:outputPanel>
+
 <apex:form id="myfrm" >
 <apex:pageBlock title="FAD Assessment Summary" id="mainblock" >
     <apex:pageBlockButtons >
         <div style="float: right" >
-                   
-        <!--
-        -->
             <apex:commandButton action="{!myUnlock}" 
                                 value="Unlock" 
                                 rendered="{!mode='view' && Assessment__c.Status__c =='Locked' && Assessment__c.Service_assignment__r.Status__c =='Active' && canUnlock}" 
                                 reRender="everything" 
                                 status="myStatus"
-                                oncomplete="toggleOptionsbyStyle('pbs_cnc_cb', 'PBS_CNC2', 'pbs_question'); toggleOptionsbyStyle('cg_cnc_cb', 'CG_CNC2', 'cg_question'); toggleRefDate();"
-                                />
-                                
+                                oncomplete="checkInputs();"
+                                />                                
             <apex:commandButton action="{!myDisregard}" 
                                 value="Disregard" 
                                 rendered="{!mode='view' && !Assessment__c.Disregard__c && Assessment__c.Service_assignment__r.Status__c =='Active' && CanSubmit}" 
                                 reRender="everything" 
                                 status="myStatus"
-                                oncomplete="toggleOptionsbyStyle('pbs_cnc_cb', 'PBS_CNC2', 'pbs_question'); toggleOptionsbyStyle('cg_cnc_cb', 'CG_CNC2', 'cg_question'); toggleRefDate();"
-                                />                                 
-                                
+                                oncomplete="checkInputs();"
+                                />
             <apex:commandButton action="{!myLock}" 
                                 value="Submit" 
                                 rendered="{!mode='view' && Assessment__c.Status__c =='Open' && Assessment__c.Service_assignment__r.Status__c =='Active' && CanSubmit}" 
                                 reRender="everything" 
                                 status="myStatus"
-                                oncomplete="toggleOptionsbyStyle('pbs_cnc_cb', 'PBS_CNC2', 'pbs_question'); toggleOptionsbyStyle('cg_cnc_cb', 'CG_CNC2', 'cg_question'); toggleRefDate();"/>                                        
-        
+                                oncomplete="checkInputs();"
+                                /> 
             <apex:commandButton action="{!mySave}" 
                                 value="Save"  id="confirmBtn"
                                 rendered="{!mode='edit'}" 
                                 reRender="everything" 
                                 status="myStatus"
-                                oncomplete="toggleOptionsbyStyle('pbs_cnc_cb', 'PBS_CNC2', 'pbs_question'); toggleOptionsbyStyle('cg_cnc_cb', 'CG_CNC2', 'cg_question'); toggleRefDate();"
+                                oncomplete="checkInputs();"
                                 />
             <apex:commandButton action="{!myEdit}" 
                                 value="Edit" 
                                 rendered="{!mode='view' && Assessment__c.Status__c =='Open'}" 
                                 reRender="everything, scripts" 
                                 status="myStatus" 
-                                oncomplete="toggleOptionsbyStyle('pbs_cnc_cb', 'PBS_CNC2', 'pbs_question'); toggleOptionsbyStyle('cg_cnc_cb', 'CG_CNC2', 'cg_question'); toggleRefDate();"/>
+                                oncomplete="checkInputs();"
+                                />
             <apex:commandButton action="{!cancel}" 
                                 value="Cancel" 
                                 rendered="{!$CurrentPage.parameters.isnew !='1' && mode='edit'}" 
-                                immediate="true" />    
+                                immediate="true" 
+                                />    
             <apex:commandButton action="{!mycancel}" 
                                 value="Cancel" 
                                 rendered="{!$CurrentPage.parameters.isnew =='1' && mode='edit'}" 
-                                immediate="true"/>                                 
-        <apex:image value="/img/lock_small.gif" alt="Locked" width="20" height="20" title="Record is Locked" rendered="{!Assessment__c.Status__c =='Locked'}" />                         
+                                immediate="true"
+                                />                                 
+            <apex:image value="/img/lock_small.gif" alt="Locked" width="20" height="20" title="Record is Locked" rendered="{!Assessment__c.Status__c =='Locked'}" />                         
         </div>
     </apex:pageBlockButtons>
 <!-- edit -->    
     <apex:pageBlockSection rendered="{!mode='edit'}" id="details_edit"  >
-        <apex:inputField label="Date of Admistration" required="true"  value="{!Assessment__c.Assessment_Date__c}"/>
+        <apex:inputField label="Date of Administration" required="true"  value="{!Assessment__c.Assessment_Date__c}"/>
         <apex:outputField label="Person Being Served" value="{!Assessment__c.AccountPerson__c}"/>
         
+        <apex:pageBlockSectionItem >
+        <apex:outputPanel >Phase</apex:outputPanel>
+        <apex:actionRegion >
         <apex:inputField required="true" value="{!Assessment__c.Phase__c}" id="phase" styleClass="phasefield">
-            <apex:actionSupport reRender="previous_CG, refDate" event="onchange" action="{!myCG_is_same_as_other_assessment}" oncomplete="toggleRefDate();"  />
+        
+            <apex:actionSupport reRender="previous_CG" event="onchange" action="{!myCG_is_same_as_other_assessment}" oncomplete="checkInputs();"  />
+        
         </apex:inputField>
+        </apex:actionRegion>
+        </apex:pageBlockSectionItem>
         <apex:outputField value="{!Assessment__c.Service_Assignment__c}"/>
         <apex:outputField value="{!Assessment__c.Status__c}"/>
         <apex:outputField value="{!Assessment__c.Disregard__c}"/>
@@ -116,7 +187,7 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
     </apex:pageBlockSection>
 <!-- view -->    
     <apex:pageBlockSection rendered="{!mode='view'}" >
-        <apex:outputField label="Date of Admistration"  value="{!Assessment__c.Assessment_Date__c}"/>
+        <apex:outputField label="Date of Administration"  value="{!Assessment__c.Assessment_Date__c}"/>
         <apex:outputField label="Person Being Served" value="{!Assessment__c.AccountPerson__c}"/>
         <apex:outputField value="{!Assessment__c.Phase__c}"/>
         <apex:outputField value="{!Assessment__c.Service_Assignment__c}"/>
@@ -126,7 +197,7 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         <apex:pageBlockSectionItem >
             <apex:outputLabel >Owner</apex:outputLabel>
             <apex:outputPanel >
-                <apex:outputField value="{!Assessment__c.OwnerID}"/>&nbsp;
+                <apex:outputField value="{!Assessment__c.OwnerID}"/>&nbsp;&nbsp;
                 <apex:outputLink value="/{!Assessment__c.id}/a?retURL={!Assessment__c.id}" rendered="{!IsLogedHigherRole || Assessment__c.OwnerID= $User.Id}">[Change Owner]</apex:outputLink>
             </apex:outputPanel>
         </apex:pageBlockSectionItem>
@@ -141,7 +212,8 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
             <apex:outputPanel >{!mapQs['PBS_Could_Not_complete'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel layout="block" >
                 <apex:inputCheckbox value="{!mapRes['PBS_Could_Not_complete'].Yes_No__c}" onclick="toggleOptions(this, 'PBS_CNC2', 'pbs_question');" id="pbs_cnc_cb" styleClass="pbs_cnc_cb"/>  
-                &nbsp;
+                &nbsp;     
+                
                 <span id="PBS_CNC2" style="{!if(mapRes['PBS_Could_Not_complete'].Yes_No__c,'','display:none;')}">
                     Reason:&nbsp;<apex:inputField id="PBS_CNC" value="{!mapRes['PBS_Could_Not_complete_reason'].Rating__c}"/>
                 </span>
@@ -246,15 +318,7 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
 <br/>
 <hr/>       
 <!-- CG edit -->    
-    <apex:pageBlockSection columns="1" title="Caregiver" collapsible="false"  rendered="{!mode='edit'}">
-        <apex:pageBlockSectionItem >
-            <apex:outputPanel >Primary Caregiver</apex:outputPanel>            
-            <apex:outputPanel >
-                <apex:outputPanel rendered="{!RelParty.size ==1}">
-                    {!RelParty[0].name}
-                </apex:outputPanel>      
-            </apex:outputPanel>        
-        </apex:pageBlockSectionItem>    
+    <apex:pageBlockSection columns="1" title="Caregiver" collapsible="false"  rendered="{!mode='edit'}">  
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['CG_Could_Not_complete'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
@@ -269,6 +333,7 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
             <apex:outputPanel id="previous_CG"> 
                 <apex:selectRadio value="{!mapRes['CG_is_same_as_other_assessment'].Rating__c}" 
                                     disabled="{!Assessment__c.Phase__c ='Initial'}">
+                    
                     <apex:selectOption itemLabel="Yes" itemValue="Yes"></apex:selectOption>
                     <apex:selectOption itemLabel="No" itemValue="No"></apex:selectOption>
                 </apex:selectRadio>
@@ -315,18 +380,22 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
             <apex:outputPanel >
                 <apex:inputField styleClass="cg_question" value="{!mapRes['CG_General_Functioning'].Score__c}"/>    
             </apex:outputPanel>        
-        </apex:pageBlockSectionItem>    
+        </apex:pageBlockSectionItem> 
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['Caregiver_Who_Completed_Assessment'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                 
+                <apex:selectRadio value="{!mapRes['Caregiver_Who_Completed_Assessment'].Rating__c}"  >
+                    <apex:selectOption itemValue="Primary" itemLabel="Primary"></apex:selectOption>
+                    <apex:selectOption itemValue="Secondary" itemLabel="Secondary"></apex:selectOption>
+                </apex:selectRadio>                   
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem>        
+        
+           
     </apex:pageBlockSection>
 <!-- CG view --> 
-    <apex:pageBlockSection columns="1" title="Caregiver" collapsible="false"  rendered="{!mode='view'}">
-        <apex:pageBlockSectionItem >
-            <apex:outputPanel >Primary Caregiver</apex:outputPanel>            
-            <apex:outputPanel >
-                <apex:outputPanel rendered="{!RelParty.size ==1}">
-                    {!RelParty[0].name}
-                </apex:outputPanel>                        
-            </apex:outputPanel>        
-        </apex:pageBlockSectionItem>     
+    <apex:pageBlockSection columns="1" title="Caregiver" collapsible="false"  rendered="{!mode='view'}">    
         <apex:pageBlockSectionItem >
             <apex:outputPanel >{!mapQs['CG_Could_Not_complete'].Question_Title__c}</apex:outputPanel>            
             <apex:outputPanel >
@@ -382,8 +451,466 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
                 <apex:outputField value="{!mapRes['CG_General_Functioning'].Score__c}"/>    
             </apex:outputPanel>        
         </apex:pageBlockSectionItem>   
-    </apex:pageBlockSection>   
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['Caregiver_Who_Completed_Assessment'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:outputField value="{!mapRes['Caregiver_Who_Completed_Assessment'].Rating__c}"/>    
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem>        
+    </apex:pageBlockSection> 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+     
+<hr/> 
+<apex:outputPanel id="CG_AND_HH_Details">
+    <apex:pageBlockSection columns="1" title="Caregiver and Household Details" collapsible="false" > 
+    Primary Caregiver:   
+    </apex:pageBlockSection>
+    
+    <apex:pageBlockSection columns="2" collapsible="false"  rendered="{!mode='edit'}">
+            <apex:pageBlockSectionItem >
+                <apex:outputPanel >{!mapQs['PC_Name'].Question_Title__c}</apex:outputPanel>            
+                <apex:outputPanel >
+                    <apex:inputField value="{!mapRes['PC_Name'].Rating__c}" />                    
+                </apex:outputPanel>        
+            </apex:pageBlockSectionItem> 
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['PC_Relationship_to_PBS'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:selectList size="1" styleClass="PC_Rel" onchange="checkOtherField('PC_Rel', 'PC_Other_Rel', 'Other');" value="{!mapRes['PC_Relationship_to_PBS'].Rating__c}">
+                    <apex:selectOptions value="{!PC_Rel_To_PBS}"></apex:selectOptions>
+                </apex:selectList>  
+                <apex:outputPanel >Specify Other: <apex:inputField styleClass="PC_Other_Rel" value="{!mapRes['PC_Relationship_to_PBS_Other'].Rating__c}"/></apex:outputPanel>                  
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem> 
+        <apex:pageBlockSectionItem >
+                <apex:outputPanel >{!mapQs['PC_Address'].Question_Title__c}</apex:outputPanel>            
+                <apex:outputPanel >
+                    <apex:inputField styleClass="addressBox" value="{!mapRes['PC_Address'].Response__c}" />                    
+                </apex:outputPanel>        
+            </apex:pageBlockSectionItem> 
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['PC_Email'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:inputField value="{!mapRes['PC_Email'].Rating__c}" />                    
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputPanel >{!mapQs['PC_Phone_1'].Question_Title__c}</apex:outputPanel>            
+                <apex:outputPanel >
+                    <apex:inputField value="{!mapRes['PC_Phone_1'].Rating__c}" />                    
+                </apex:outputPanel>        
+            </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['PC_Phone_1_Type'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel > 
+                <apex:selectList size="1" value="{!mapRes['PC_Phone_1_Type'].Rating__c}">
+                    <apex:selectOptions value="{!PhoneTypes}"></apex:selectOptions>
+                </apex:selectList>                                    
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem> 
+            <apex:pageBlockSectionItem >
+                <apex:outputPanel >{!mapQs['PC_Phone_2'].Question_Title__c}</apex:outputPanel>            
+                <apex:outputPanel >
+                    <apex:inputField value="{!mapRes['PC_Phone_2'].Rating__c}" />                    
+                </apex:outputPanel>        
+            </apex:pageBlockSectionItem> 
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['PC_Phone_2_Type'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel > 
+                <apex:selectList size="1" value="{!mapRes['PC_Phone_2_Type'].Rating__c}">
+                    <apex:selectOptions value="{!PhoneTypes}"></apex:selectOptions>
+                </apex:selectList>                                   
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem> 
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['PC_Highest_Edu'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:selectList styleClass="Int_Final_field" size="1" value="{!mapRes['PC_Highest_Edu'].Rating__c}">
+                    <apex:selectOptions value="{!EduTypes}"></apex:selectOptions>
+                </apex:selectList>                                    
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem> 
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['PC_Employment'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:selectList styleClass="PC_Emp Int_Final_field" onchange="checkOtherField('PC_Emp', 'PC_Occ', 'Employed');" size="1" value="{!mapRes['PC_Employment'].Rating__c}" >
+                    <apex:selectOptions value="{!EmploTypes}"></apex:selectOptions>
+                </apex:selectList>   &nbsp; &nbsp; &nbsp; 
+                <apex:outputPanel >{!mapQs['PC_Occupation'].Question_Title__c}</apex:outputPanel>&nbsp; &nbsp; &nbsp;   
+                <apex:inputField styleClass="PC_Occ" value="{!mapRes['PC_Occupation'].Rating__c}" />                    
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem> 
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['PC_Received_FCT_before'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:selectList size="1" styleClass="Int_Final_field" value="{!mapRes['PC_Received_FCT_before'].Rating__c}" >
+                    <apex:selectOption itemLabel="--None--" itemValue=""></apex:selectOption>
+                    <apex:selectOption itemValue="Yes" itemLabel="Yes"></apex:selectOption>
+                    <apex:selectOption itemValue="No" itemLabel="No"></apex:selectOption>
+                </apex:selectList>                   
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem>  
+    </apex:pageBlockSection>
+
+    <apex:pageBlockSection columns="2" collapsible="false"  rendered="{!mode='view'}">
+            <apex:pageBlockSectionItem >
+                <apex:outputPanel >{!mapQs['PC_Name'].Question_Title__c}</apex:outputPanel>            
+                <apex:outputPanel >
+                    <apex:outputField value="{!mapRes['PC_Name'].Rating__c}" />                    
+                </apex:outputPanel>        
+            </apex:pageBlockSectionItem> 
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['PC_Relationship_to_PBS'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:outputField value="{!mapRes['PC_Relationship_to_PBS'].Rating__c}"/>                   
+                <apex:outputPanel rendered="{!mapRes['PC_Relationship_to_PBS_Other'].Rating__c != null}">&nbsp;-&nbsp;<apex:outputField value="{!mapRes['PC_Relationship_to_PBS_Other'].Rating__c}"/></apex:outputPanel>                       
+            </apex:outputPanel> 
+        </apex:pageBlockSectionItem> 
+        <apex:pageBlockSectionItem >
+                <apex:outputPanel >{!mapQs['PC_Address'].Question_Title__c}</apex:outputPanel>            
+                <apex:outputPanel >
+                    <apex:outputField styleClass="addressBox" value="{!mapRes['PC_Address'].Response__c}" />                    
+                </apex:outputPanel>        
+            </apex:pageBlockSectionItem> 
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['PC_Email'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:outputField value="{!mapRes['PC_Email'].Rating__c}" />                    
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputPanel >{!mapQs['PC_Phone_1'].Question_Title__c}</apex:outputPanel>            
+                <apex:outputPanel >
+                    <apex:outputField value="{!mapRes['PC_Phone_1'].Rating__c}" />                    
+                </apex:outputPanel>        
+            </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['PC_Phone_1_Type'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel > 
+                <apex:outputField value="{!mapRes['PC_Phone_1_Type'].Rating__c}"/>                                 
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem> 
+            <apex:pageBlockSectionItem >
+                <apex:outputPanel >{!mapQs['PC_Phone_2'].Question_Title__c}</apex:outputPanel>            
+                <apex:outputPanel >
+                    <apex:outputField value="{!mapRes['PC_Phone_2'].Rating__c}" />                    
+                </apex:outputPanel>        
+            </apex:pageBlockSectionItem> 
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['PC_Phone_2_Type'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel > 
+                <apex:outputField value="{!mapRes['PC_Phone_2_Type'].Rating__c}"/>                                  
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem> 
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['PC_Highest_Edu'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:outputField value="{!mapRes['PC_Highest_Edu'].Rating__c}"/>                                   
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem> 
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['PC_Employment'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:outputField value="{!mapRes['PC_Employment'].Rating__c}" />   &nbsp; &nbsp; &nbsp; 
+                <apex:outputPanel rendered="{!mapRes['PC_Occupation'].Rating__c != null}" ><i>{!mapQs['PC_Occupation'].Question_Title__c}</i> -&nbsp;</apex:outputPanel>   
+                <apex:outputField value="{!mapRes['PC_Occupation'].Rating__c}" />                    
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem> 
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['PC_Received_FCT_before'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:outputField value="{!mapRes['PC_Received_FCT_before'].Rating__c}" />
+                   
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem>  
+    </apex:pageBlockSection>
+
+
+    <apex:pageBlockSection columns="1" collapsible="false"  > 
+        Secondary Caregiver:  
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['SC_No_SC'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:inputCheckbox value="{!mapRes['SC_No_SC'].Yes_No__c}" styleClass="SC_NoSC_CB" onclick="checkInputs();"  rendered="{!mode='edit'}"/>   
+                <apex:outputField value="{!mapRes['SC_No_SC'].Yes_No__c}" rendered="{!mode='view'}"/>                   
+            <span id="holder"/>
+            </apex:outputPanel>
+                    
+        </apex:pageBlockSectionItem>  
+    </apex:pageBlockSection>
+    
+    <apex:pageBlockSection columns="2"  rendered="{!mode='edit'}">
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['SC_Name'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:inputField styleClass="second_cg_question" value="{!mapRes['SC_Name'].Rating__c}" />                    
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem> 
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['SC_Relationship_to_PBS'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:selectList styleClass="second_cg_question SC_Rel"  onchange="checkInputs(); "  size="1" value="{!mapRes['SC_Relationship_to_PBS'].Rating__c}">
+                    <apex:selectOptions value="{!PC_Rel_To_PBS}"></apex:selectOptions>
+                </apex:selectList>  
+                <apex:outputPanel >Specify Other: <apex:inputField styleClass="second_cg_question SC_Other_Rel" value="{!mapRes['SC_Relationship_to_PBS_Other'].Rating__c}"/></apex:outputPanel>       
+                                 
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem> 
+        
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['SC_Address'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:inputField styleClass="addressBox second_cg_question" value="{!mapRes['SC_Address'].Response__c}" />                    
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem> 
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['SC_Email'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:inputField styleClass="second_cg_question" value="{!mapRes['SC_Email'].Rating__c}" />                    
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem>         
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['SC_Phone_1'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:inputField styleClass="second_cg_question" value="{!mapRes['SC_Phone_1'].Rating__c}" />                    
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['SC_Phone_1_Type'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:selectList styleClass="second_cg_question" size="1" value="{!mapRes['SC_Phone_1_Type'].Rating__c}">
+                    <apex:selectOptions value="{!PhoneTypes}"></apex:selectOptions>
+                </apex:selectList>                                    
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem>          
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['SC_Phone_2'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:inputField styleClass="second_cg_question" value="{!mapRes['SC_Phone_2'].Rating__c}" />                    
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem> 
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['SC_Phone_2_Type'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:selectList styleClass="second_cg_question" size="1" value="{!mapRes['SC_Phone_2_Type'].Rating__c}">
+                    <apex:selectOptions value="{!PhoneTypes}"></apex:selectOptions>
+                </apex:selectList>                                     
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem>         
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['SC_Highest_Edu'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:selectList styleClass="second_cg_question Int_Final_field_Secondary" size="1" value="{!mapRes['SC_Highest_Edu'].Rating__c}">
+                    <apex:selectOptions value="{!EduTypes}"></apex:selectOptions>
+                </apex:selectList>                                   
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['SC_Employment'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:selectList styleClass="second_cg_question SC_Emp Int_Final_field_Secondary" onchange="checkOtherField('SC_Emp', 'SC_Occ', 'Employed');"  size="1" value="{!mapRes['SC_Employment'].Rating__c}" >
+                    <apex:selectOptions value="{!EmploTypes}"></apex:selectOptions>
+                </apex:selectList>   &nbsp; &nbsp; &nbsp; 
+                <apex:outputPanel >{!mapQs['SC_Occupation'].Question_Title__c}</apex:outputPanel>&nbsp; &nbsp; &nbsp;   
+                <apex:inputField styleClass="second_cg_question SC_Occ" value="{!mapRes['SC_Occupation'].Rating__c}" />                    
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem>          
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['SC_Received_FCT_before'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:selectList size="1" styleClass="second_cg_question Int_Final_field_Secondary" value="{!mapRes['SC_Received_FCT_before'].Rating__c}" >
+                    <apex:selectOption itemLabel="--None--" itemValue=""></apex:selectOption>
+                    <apex:selectOption itemValue="Yes" itemLabel="Yes"></apex:selectOption>
+                    <apex:selectOption itemValue="No" itemLabel="No"></apex:selectOption>
+                </apex:selectList>                    
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem> 
+      
+</apex:pageBlockSection> 
+
+
+
+<!-- secondary CG view -->
+    <apex:pageBlockSection columns="2"  rendered="{!mode='view'}">
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['SC_Name'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:outputField value="{!mapRes['SC_Name'].Rating__c}" />                    
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem> 
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['SC_Relationship_to_PBS'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:outputField value="{!mapRes['SC_Relationship_to_PBS'].Rating__c}"/>  
+                <apex:outputPanel rendered="{!mapRes['SC_Relationship_to_PBS_Other'].Rating__c != null}" >&nbsp;-&nbsp;<apex:outputField value="{!mapRes['SC_Relationship_to_PBS_Other'].Rating__c}"/></apex:outputPanel>                                                    
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem> 
+        
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['SC_Address'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:outputField styleClass="addressBox" value="{!mapRes['SC_Address'].Response__c}" />                    
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem> 
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['SC_Email'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:outputField value="{!mapRes['SC_Email'].Rating__c}" />                    
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem>         
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['SC_Phone_1'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:outputField value="{!mapRes['SC_Phone_1'].Rating__c}" />                    
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['SC_Phone_1_Type'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:outputField value="{!mapRes['SC_Phone_1_Type'].Rating__c}"/>                                   
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem>          
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['SC_Phone_2'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:outputField value="{!mapRes['SC_Phone_2'].Rating__c}" />                    
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem> 
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['SC_Phone_2_Type'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:outputField value="{!mapRes['SC_Phone_2_Type'].Rating__c}"/>                                    
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem>         
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['SC_Highest_Edu'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:outputField value="{!mapRes['SC_Highest_Edu'].Rating__c}"/>                                  
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['SC_Employment'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:outputField value="{!mapRes['SC_Employment'].Rating__c}" />   &nbsp; &nbsp; &nbsp; 
+                <apex:outputPanel rendered="{!mapRes['SC_Occupation'].Rating__c != null}"><i>{!mapQs['SC_Occupation'].Question_Title__c}</i> -&nbsp; </apex:outputPanel>  
+                <apex:outputField value="{!mapRes['SC_Occupation'].Rating__c}" />                    
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem>          
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >{!mapQs['SC_Received_FCT_before'].Question_Title__c}</apex:outputPanel>            
+            <apex:outputPanel >
+                <apex:outputField value="{!mapRes['SC_Received_FCT_before'].Rating__c}" />                   
+            </apex:outputPanel>        
+        </apex:pageBlockSectionItem> 
+      
+</apex:pageBlockSection> 
+       
+<apex:pageBlockSection columns="1" >
+    <apex:outputPanel >
+    Other Children Living in Home:
+        <apex:commandButton style="float: right;" rendered="{!mode='edit'}" action="{!resetRelParty}" value="Add" oncomplete="toggleById('relPartyFrm'); checkOtherField('OC_Rel', 'OC_Other_Rel', 'Other'); return false;" reRender="RelPartyFrm" immediate="true" status="myStatus"/> 
+
+    </apex:outputPanel>
+    <apex:outputPanel id="otherChildrenList" >
+        <apex:dataTable rowClasses="tbleven, tblodd" value="{!curOtherChilren}" var="item" width="100%" border="1" cellpadding="3">
+            <apex:column headerValue="Action" rendered="{!mode = 'edit'}">
+                <apex:commandLink value="Edit" action="{!editRel_Party}" immediate="true" reRender="RelPartyFrm" oncomplete="toggleById('relPartyFrm'); checkOtherField('OC_Rel', 'OC_Other_Rel', 'Other'); return false;" status="myStatus">
+                    <apex:param assignTo="{!Rel_Party_ID}" value="{!item.id}" name="Rel_Party_ID"/>
+                </apex:commandLink>
+            </apex:column>        
+            <apex:column headerValue="Name">
+                <apex:outputField value="{!item.name}" />
+            </apex:column>
+            <apex:column headerValue="Age">
+                <apex:outputField value="{!item.Age__c}" />
+            </apex:column>
+            <apex:column headerValue="Gender">
+                <apex:outputField value="{!item.Gender__c}" />
+            </apex:column>
+            <apex:column headerValue="Relationship to Person Being Served">
+                <apex:outputField value="{!item.Relationship_to_Person_Being_Served__c}" />
+            </apex:column>
+            <apex:column headerValue="Specify Other">
+                <apex:outputField value="{!item.Relationship_to_Person_Being_Served_Othe__c }" />
+            </apex:column>  
+            <apex:column headerValue="Received FCT services before">
+                <apex:outputField value="{!item.Received_FCT_services_before__c}" />
+            </apex:column>                                                      
+        </apex:dataTable>
+    </apex:outputPanel>
+    <apex:pageBlockSectionItem />
+
+        <apex:outputField rendered="{!mode ='view'}" value="{!Assessment__c.Family_Annual_Income__c}"/> 
+
+
+        <apex:inputField rendered="{!mode ='edit'}" styleClass="Int_Final_field" value="{!Assessment__c.Family_Annual_Income__c}"/> 
+
+    
+    
+</apex:pageBlockSection>        
+       
+       
+</apex:outputPanel>       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+              
 </apex:pageBlock>
+
+
 </apex:form>
 
 
@@ -423,7 +950,6 @@ function toggleOptions( rb, divopt, dis_class ) {
         document.getElementById( divopt).style.display = 'none';
         j$('.'+ dis_class ).prop( "disabled", false);        
     }
-   // alert(j$('.pbs_cnc_cb').prop('checked'));
 };
 
 function toggleOptionsbyStyle( rb, divopt, dis_class ) {
@@ -436,11 +962,9 @@ function toggleOptionsbyStyle( rb, divopt, dis_class ) {
         document.getElementById( divopt).style.display = 'none';
         j$('.'+ dis_class ).prop( "disabled", false);        
     }
-   // alert(j$('.pbs_cnc_cb').prop('checked'));
 };
 function toggleRefDate(  ) {
-//alert('h');
-j$('.ref_date_field' ).prop( "disabled", true);
+//j$('.ref_date_field' ).prop( "disabled", true);
     if ( j$('.phasefield').val()=='Initial' ){       
         j$('.ref_date_field' ).prop( "disabled", false);     
       }
@@ -449,9 +973,65 @@ j$('.ref_date_field' ).prop( "disabled", true);
         j$('.ref_date_field' ).prop( "value", "");       
 }
 };
+function toggleInialFinalPrimaryFields(  ) {
+    if ( j$('.phasefield').val()=='Initial' || j$('.phasefield').val()== 'Final' ){       
+        j$('.Int_Final_field' ).prop( "disabled", false);     
+      }
+    else{    
+        j$('.Int_Final_field' ).prop( "disabled", true);  
+        j$('.Int_Final_field' ).prop( "value", "");       
+}
+};
+function toggleInialFinalSecondaryFields(  ) {
+    if ( j$('.phasefield').val()=='Initial' || j$('.phasefield').val()== 'Final' ){   
+        if(j$('.SC_Emp').val().indexOf('Employed') == 0){    
+            j$('.Int_Final_field_Secondary' ).prop( "disabled", false);     
+        }
+      }
+    else{    
+        j$('.Int_Final_field_Secondary' ).prop( "disabled", true);  
+        j$('.Int_Final_field_Secondary' ).prop( "value", "");       
+}
+};
 function toggleById(id, ms){
     j$(document.getElementById(id)).toggle(ms);
 };
+function checkOtherField(parent, otherid, mytxt){
+//alert(parent + ' - ' + j$('.'+parent).val() + ' | ' + otherid + ' - ' + j$('.'+otherid).val());
+    if ( j$('.'+parent).val().indexOf(mytxt) == 0){ 
+        j$('.'+ otherid).prop( "disabled", false);
+    }
+    else{
+        j$('.'+ otherid).prop( "disabled", true);
+        j$('.'+ otherid).prop( "value", ""); 
+    
+    }
+   
+};
+
+function checkInputs(){
+    toggleOptionsbyStyle('pbs_cnc_cb', 'PBS_CNC2', 'pbs_question'); 
+    toggleOptionsbyStyle('cg_cnc_cb', 'CG_CNC2', 'cg_question'); 
+    toggleRefDate(); 
+    
+    toggleInialFinalPrimaryFields();
+    toggleOptionsbyStyle('SC_NoSC_CB', 'holder', 'second_cg_question');
+    toggleInialFinalSecondaryFields();
+    
+    checkOtherField('PC_Rel', 'PC_Other_Rel', 'Other');    
+    checkOtherField('SC_Rel', 'SC_Other_Rel', 'Other');    
+    checkOtherField('SC_Emp', 'SC_Occ', 'Employed'); 
+    checkOtherField('PC_Emp', 'PC_Occ', 'Employed');   
+    checkOtherField('OC_Rel', 'OC_Other_Rel', 'Other');    
+    
+    
+};
+j$( document ).ready(function() {
+
+    if( {!mode =='edit'}){
+        checkInputs();
+    }
+});
 </script>
 </apex:outputPanel>
 

@@ -122,9 +122,9 @@ function stopRKey(evt) {
   <apex:form id="FormId" >
       <apex:actionFunction name="saveRelParty" action="{!saveRelParty}" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs"/>
     <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs"/>
-  	<!-- START: CTEAE-39; siblings -->
-    <apex:actionFunction name="showAddSibling" action="{!showAddSibling}" rerender="siblings,msgs"/>	
-  	<!-- END: CTEAE-39; siblings -->
+    <!-- START: CTEAE-39; siblings -->
+    <apex:actionFunction name="showAddSibling" action="{!showAddSibling}" rerender="siblings,msgs"/>    
+    <!-- END: CTEAE-39; siblings -->
   <apex:pageMessages />         
    
  <!--Person Being Served Section-->
@@ -270,35 +270,37 @@ function stopRKey(evt) {
     
 <!--Family Information Section-->
 
-		<apex:pageBlockSection columns="2" rendered="{!canViewFamilyInfo}"
-		                             title="Family Information" 
-		                             showHeader="true" 
-		                             collapsible="True"   
-		                             id="pbsOutputFamilyInfo">
-			<apex:inputfield value="{!Contact.Family_Annual_Income__c}" rendered="{!pbsEditModeOn}" />
-			<apex:outputfield value="{!Contact.Family_Annual_Income__c}" rendered="{!!pbsEditModeOn}" />
-			<span/>
-			<apex:inputfield value="{!Contact.Family_Military_Involvement__c}" rendered="{!pbsEditModeOn}" />
-			<apex:outputfield value="{!Contact.Family_Military_Involvement__c}" rendered="{!!pbsEditModeOn}" />
-			<apex:inputfield value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!pbsEditModeOn}" />
-			<apex:outputfield value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!!pbsEditModeOn && Contact.Family_Military_Involvement__c = 'Prior'}" />
-			<apex:inputfield value="{!Contact.Family_Military_Involvement_Branch__c}" rendered="{!pbsEditModeOn}" />
-			<apex:outputfield value="{!Contact.Family_Military_Involvement_Branch__c}" rendered="{!!pbsEditModeOn && Contact.Family_Military_Involvement__c != 'None'}" />
-			
-			
-			<apex:PageBlockSectionitem >
-			 <apex:outputLabel Value="Family Native American Tribe" for="nativetribe"/>
-			<apex:outputpanel id="familynativeamericantribe" >
-          	 <apex:inputfield value="{!Contact.Family_Native_American_Tribe__c}" rendered="{!pbsEditModeOn && NOT(Contact.Family_Native_American_Ancestry__c)}" html-disabled="true"/>
-          	 <apex:inputfield value="{!Contact.Family_Native_American_Tribe__c}" required="{!Contact.Family_Native_American_Ancestry__c}" rendered="{!pbsEditModeOn && Contact.Family_Native_American_Ancestry__c}"/>
-          	 
-          	 </apex:outputpanel>
-          	 </apex:PageBlockSectionitem>
-			
-			
-			<apex:outputfield value="{!Contact.Family_Native_American_Tribe__c}" rendered="{!!pbsEditModeOn && Contact.Family_Native_American_Ancestry__c}" />
-			
-			<apex:pageBlockSectionItem rendered="{!pbsEditModeOn}">
+        <apex:pageBlockSection columns="2" rendered="{!canViewFamilyInfo}"
+                                     title="Family Information" 
+                                     showHeader="true" 
+                                     collapsible="True"   
+                                     id="pbsOutputFamilyInfo">
+            <!-- hiding via CTEAE -114
+            <apex:inputfield value="{!Contact.Family_Annual_Income__c}" rendered="{!pbsEditModeOn}" />
+            <apex:outputfield value="{!Contact.Family_Annual_Income__c}" rendered="{!!pbsEditModeOn}" />
+            -->
+            <span/>
+            <apex:inputfield value="{!Contact.Family_Military_Involvement__c}" rendered="{!pbsEditModeOn}" />
+            <apex:outputfield value="{!Contact.Family_Military_Involvement__c}" rendered="{!!pbsEditModeOn}" />
+            <apex:inputfield value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!pbsEditModeOn}" />
+            <apex:outputfield value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!!pbsEditModeOn && Contact.Family_Military_Involvement__c = 'Prior'}" />
+            <apex:inputfield value="{!Contact.Family_Military_Involvement_Branch__c}" rendered="{!pbsEditModeOn}" />
+            <apex:outputfield value="{!Contact.Family_Military_Involvement_Branch__c}" rendered="{!!pbsEditModeOn && Contact.Family_Military_Involvement__c != 'None'}" />
+            
+            
+            <apex:PageBlockSectionitem >
+             <apex:outputLabel Value="Family Native American Tribe" for="nativetribe"/>
+            <apex:outputpanel id="familynativeamericantribe" >
+             <apex:inputfield value="{!Contact.Family_Native_American_Tribe__c}" rendered="{!pbsEditModeOn && NOT(Contact.Family_Native_American_Ancestry__c)}" html-disabled="true"/>
+             <apex:inputfield value="{!Contact.Family_Native_American_Tribe__c}" required="{!Contact.Family_Native_American_Ancestry__c}" rendered="{!pbsEditModeOn && Contact.Family_Native_American_Ancestry__c}"/>
+             
+             </apex:outputpanel>
+             </apex:PageBlockSectionitem>
+            
+            
+            <apex:outputfield value="{!Contact.Family_Native_American_Tribe__c}" rendered="{!!pbsEditModeOn && Contact.Family_Native_American_Ancestry__c}" />
+            
+            <apex:pageBlockSectionItem rendered="{!pbsEditModeOn}">
                       <apex:outputLabel for="nativeancestry" value="Family Native American Ancestry"/>
                       <apex:actionRegion >
                     <apex:inputField id="nativeancestry" value="{!Contact.Family_Native_American_Ancestry__c}">
@@ -314,9 +316,9 @@ function stopRKey(evt) {
                     </apex:inputField>
                     </apex:actionRegion>
                     </apex:pageBlockSectionItem>
-			<apex:outputfield value="{!Contact.Family_Native_American_Ancestry__c}" rendered="{!!pbsEditModeOn}" />
-			
-		</apex:pageBlockSection>
+            <apex:outputfield value="{!Contact.Family_Native_American_Ancestry__c}" rendered="{!!pbsEditModeOn}" />
+            
+        </apex:pageBlockSection>
     
   </apex:pageBlock>
     <!--Related Parties Section-->
@@ -324,7 +326,7 @@ function stopRKey(evt) {
 
     <apex:pageBlock id="relatedPartiesListId">
         <div class="pbSubHeadButton">
-            				<apex:commandButton onclick="window.open('/{!RelatedPartyReport}?pv0={!Contact.Name}', '_self'); return false;" value="Related Parties Report" />
+                            <apex:commandButton onclick="window.open('/{!RelatedPartyReport}?pv0={!Contact.Name}', '_self'); return false;" value="Related Parties Report" />
                             <apex:commandButton value="Add Related Party"
                               onClick="showAddRelParty();openDialog('relatedPartyModal', 'span', 'Add Related Party'); return false;" rendered="{!AND(isEditor, canEdit)}"/>
                               </div>
@@ -389,27 +391,26 @@ function stopRKey(evt) {
       </apex:pageBlock>
     </apex:outputPanel>
 
-<!-- START: CTEAE-39; Siblings Section -->
-    <!--Siblings Section-->
+<!-- START: CTEAE-39; Siblings Section
+
     <a name="SIB" id="SIB"></a>
-	 
-	<apex:pageBlock id="siblingsListId">
-	        <div class="pbSubHeadButton">
-	            				<apex:commandButton onclick="window.open('/{!RelatedPartyReport}?pv0={!Contact.Name}', '_self'); return false;" value="Siblings Report" />
-	                            <apex:commandButton value="Add Sibling"
-	                              onClick="showAddSibling();openDialog('siblingModal', 'span', 'Add Sibling'); return false;" rendered="{!AND(isEditor, canEdit)}"/>
-	                              </div>
-	      <apex:pageBlockSection columns="1"
-	                             title="Siblings" id="siblings" collapsible="false">
-	        TEST
-	        <apex:pageBlockSectionItem >
-	        
-	        </apex:pageBlockSectionItem>
-	
-	      </apex:pageBlockSection>
-	</apex:pageBlock>
-	
-	<!-- Add Sibling modal. -->
+     
+    <apex:pageBlock id="siblingsListId">
+            <div class="pbSubHeadButton">
+                                <apex:commandButton onclick="window.open('/{!RelatedPartyReport}?pv0={!Contact.Name}', '_self'); return false;" value="Siblings Report" />
+                                <apex:commandButton value="Add Sibling"
+                                  onClick="showAddSibling();openDialog('siblingModal', 'span', 'Add Sibling'); return false;" rendered="{!AND(isEditor, canEdit)}"/>
+                                  </div>
+          <apex:pageBlockSection columns="1"
+                                 title="Siblings" id="siblings" collapsible="false">
+            TEST
+            <apex:pageBlockSectionItem >
+            
+            </apex:pageBlockSectionItem>
+    
+          </apex:pageBlockSection>
+    </apex:pageBlock>
+    
     <apex:outputPanel id="siblingModal" style="display:none">
 
       <apex:pageBlock title="Add Sibling">
@@ -426,7 +427,7 @@ function stopRKey(evt) {
         <div id="relatedPartyErrors" style="color:red" />
 
         <apex:pageBlockSection columns="2" id="siblingEntry">
-			TEST
+            TEST
         </apex:pageBlockSection>
       </apex:pageBlock>
     </apex:outputPanel>
@@ -579,7 +580,7 @@ function stopRKey(evt) {
              
       </apex:pageBlockTable>
         <apex:outputText value="No Activities to display" rendered="{!(eventOnCurrentPBSAccount.size=0)}" />
-		<apex:outputPanel rendered="{!eventOnCurrentPBSAccount.size!=0}">Showing the 10 most recent events click&nbsp;<apex:outputLink value="/00T?id={!currentContact.AccountID}&rlid=RelatedActivityList" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel> 
+        <apex:outputPanel rendered="{!eventOnCurrentPBSAccount.size!=0}">Showing the 10 most recent events click&nbsp;<apex:outputLink value="/00T?id={!currentContact.AccountID}&rlid=RelatedActivityList" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel> 
 
       </apex:pageBlockSection>
        </apex:pageBlock>

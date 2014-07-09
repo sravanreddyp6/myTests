@@ -3,7 +3,10 @@ private class ChatRetentionTest2 {
 
     static testMethod void myUnitTest() {
     	
-    	     	
+			CollaborationGroup cg = new CollaborationGroup(Name='Test Group', CollaborationType='Public');
+     		insert cg;
+            
+                	     	
      	   String ProfileId = [select ProfileId from User where (Department='Operations Systems') LIMIT 1].ProfileId;
      
            User usr = new User(USERNAME='Steve.Test@thementornetwork.com',
@@ -26,17 +29,14 @@ private class ChatRetentionTest2 {
            System.Debug('What is in testUsr: ' + testUsr);        
            Id uUserid = testUsr[0].Id;
            
-           FeedItem fi = new FeedItem(PARENTID = uUserID,
+           FeedItem fi = new FeedItem(PARENTID = cg.Id,
                                       Body = 'Test Post by steve'
            
            );
            insert fi;          
            
            
-           String ParentID = [select ParentID from Feeditem where (Type='TextPost') LIMIT 1].ParentID;
-     
-           
-           FeedItem fi1 = new FeedItem(PARENTID = ParentID,
+           FeedItem fi1 = new FeedItem(PARENTID = cg.Id,
                                       Body = 'Test Post by steve2'
            
            );
@@ -44,14 +44,11 @@ private class ChatRetentionTest2 {
            
             string before = 'Testing base 64 encode';
  			Blob resBody =Blob.valueOf(before);     
- 			FeedItem fi2 = new FeedItem(ParentID = ParentID, ContentData = resBody, ContentFileName='test file post');
+ 			FeedItem fi2 = new FeedItem(ParentID = cg.Id, ContentData = resBody, ContentFileName='test file post');
 			insert fi2;          
           
            
-           
-           
             List<FeedItem> testFeedItem = [Select Id From FeedItem I WHERE Id = :fi.Id];        
-           //System.Debug('What is in testAcct: ' + testAcct);        
            Id iItemid = testFeedItem[0].Id;
            
            
@@ -62,21 +59,33 @@ private class ChatRetentionTest2 {
            insert fc;
            
            FeedComment fc2 = new FeedComment(FEEDITEMID = iItemid,
-                                            COMMENTBODY = 'Test comment by steve #save',
+                                            COMMENTBODY = 'Test comment by steve no save',
                                             COMMENTTYPE = 'TextComment'
            );
           
            insert fc2;
     	
+    		List<CollaborationGroupFeed> feeds = [ select body from CollaborationGroupFeed];
+    		system.debug('FEED:' + feeds);
+    		
+    		ContentDocument cd = new ContentDocument();
+    		
     	   FeedComment fc3 = new FeedComment(FEEDITEMID = iItemid,
-                                            COMMENTTYPE = 'ContentComment'
+                                            COMMENTTYPE = 'ContentComment',
+                                            RelatedRecordId = cd.Id
            );
           
-           insert fc3;
+           //insert fc3;
     	
-    	ChatterRetention myobj = new ChatterRetention('Select f.Type, f.CommentCount, f.Body, f.Title, f.Id, f.CreatedById, f.ParentId, f.LastModifiedDate, f.CreatedDate From FeedItem f');
-        ID batchprocessid = Database.executeBatch(myobj, 200);
-        
+		  datetime ninetyDays;
+	  	  ninetyDays = DateTime.now().AddDays(1);
+	  	String ninetyString = ninetydays.format('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'');
+	  	
+	  	  system.debug('ninetyDays time is: ' + ninetyDays);
+	  
+        	String query = 'Select Type, CommentCount, ContentType, Body, Title, Id, CreatedById, ParentId, LastModifiedDate, CreatedDate from FeedItem where LastModifiedDate < '  + ninetyString;
+        	system.debug( query);
+            ID batchprocessid = Database.executeBatch(new ChatterRetention(query), 200);
         
     }
 }

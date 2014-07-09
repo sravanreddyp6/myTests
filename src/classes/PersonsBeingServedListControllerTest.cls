@@ -39,7 +39,7 @@ public with sharing class PersonsBeingServedListControllerTest {
         for (Integer i=0; i<numAccounts; i++) {
             accts.add(new Account(
                 LastName = 'Test Last Name ' + i,
-                PersonMailingStateCode='NC',
+                PersonMailingStateCode='AZ',
                 RecordTypeID = RecTypeId
             ));
         }

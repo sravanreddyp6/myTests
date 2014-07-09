@@ -25,9 +25,9 @@
 private class ProgressNoteNotificationRunBatchTEST {
 
     static testMethod void myUnitTest() {
-	 	  User usr = [ SELECT Id FROM User WHERE LastName = 'Gilliam' AND FirstName = 'Josh' LIMIT 1];
-
-		String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
+          User usr = [ SELECT Id FROM User WHERE LastName = 'Gilliam' AND FirstName = 'Josh' LIMIT 1];
+        
+        String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
         
         Account Accnt = new Account(
             RecordTypeID=RecTypeId,
@@ -36,7 +36,7 @@ private class ProgressNoteNotificationRunBatchTEST {
             PersonMailingStreet='test@yahoo.com',
             PersonMailingPostalCode='12345',
             PersonMailingCity='SFO',
-            PersonMailingStateCode='NC',
+            PersonMailingStateCode='AZ',
             PersonEmail='test@yahoo.com',
             PersonHomePhone='1234567',
             PersonMobilePhone='12345678'
@@ -44,7 +44,7 @@ private class ProgressNoteNotificationRunBatchTEST {
         insert Accnt;
         
         Contact myContact = new Contact(
-        	LastName = 'TEST'
+            LastName = 'TEST'
         );
         insert myContact;
         
@@ -52,100 +52,100 @@ private class ProgressNoteNotificationRunBatchTEST {
         System.Debug('What is in testAcct: ' + testAcct);
         Id aContactId = testAcct[0].PersonContactId;
         Id aAccountId = testAcct[0].Id;
-	 	  
-	      
-	      Admission__c testAdm = new Admission__c(
-	            Name = 'TEST ADM',
-	            Person_Being_Served__c = aContactId,
-	            Effective_Date__c = date.today()
-	      );
-	      insert testAdm;
+          
+          
+          Admission__c testAdm = new Admission__c(
+                Name = 'TEST ADM',
+                Person_Being_Served__c = aContactId,
+                Effective_Date__c = date.today()
+          );
+          insert testAdm;
 
-	      Admission__c testAdm2 = new Admission__c(
-	            Name = 'TEST ADM2',
-	            Person_Being_Served__c = myContact.Id,
-	            Effective_Date__c = date.today()
-	      );
-	      insert testAdm2;
-	        
-	        Service_Assignment__c testServAssignment = new Service_Assignment__c(
-	          Admission__c = testAdm.Id,
-	          Person_Being_Served__c = aContactId
-	        );
-	        insert testServAssignment;
+          Admission__c testAdm2 = new Admission__c(
+                Name = 'TEST ADM2',
+                Person_Being_Served__c = myContact.Id,
+                Effective_Date__c = date.today()
+          );
+          insert testAdm2;
+            
+            Service_Assignment__c testServAssignment = new Service_Assignment__c(
+              Admission__c = testAdm.Id,
+              Person_Being_Served__c = aContactId
+            );
+            insert testServAssignment;
 
-	        Service_Assignment__c testServAssignment2 = new Service_Assignment__c(
-	          Admission__c = testAdm2.Id,
-	          Person_Being_Served__c = myContact.Id
-	        );
-	        insert testServAssignment2;
-	        
-	        Service_Code__c testServCode = new Service_Code__c(
-	          Service_Code__c = 'TEST SVC CODE',
-	          FacilityID__c = 'TEST FAC ID',
-	          Program_Code__c = 'TEST PROGRAM CODE',
-	          Start_Date__c = date.newInstance(2012,1,1) 
-	        );
-	        insert testServCode;
-	        
-	        
-	        List<RecordType> pnRecordTypes = [SELECT Id, Name FROM RecordType WHERE SObjectType = 'Progress_Note__c'];
-	        
-	        System.Debug('What is in pnRecordTypes: ' + pnRecordTypes);
-	        
-	        List<Progress_Note__c> pnsToInsert = new List<Progress_Note__c>();
-		    Integer pnsToInsertCounter = 0;             
-	       	
-	       	for(RecordType rt : pnRecordTypes){
-       		  pnsToInsert.add( 
-	       		new Progress_Note__c(
-		          Service_Assignment__c = testServAssignment.Id, 
-		          Service_Code__c = testServCode.Id, 
-		          Admission__c = testAdm.ID,
-		          Start_Time__c = datetime.now().addHours(-2),
-		          End_Time__c = datetime.now(),
-		          Person_Being_Served__c = aContactId,
-		          No_Approval_Needed__c = false,
-		          RecordTypeId = rt.Id,
-		          Status__c = 'In Progress',
-		          OwnerId = usr.Id)
-	        	);
-	          pnsToInsert.add(
-	       		new Progress_Note__c(
-		          Service_Assignment__c = testServAssignment.Id, 
-		          Service_Code__c = testServCode.Id, 
-		          Admission__c = testAdm.ID,
-		          Start_Time__c = datetime.now().addHours(-2),
-		          End_Time__c = datetime.now(),
-		          Person_Being_Served__c = aContactId,
-		          No_Approval_Needed__c = false,
-		          RecordTypeId = rt.Id,
-		          Status__c = 'Final',
-		          OwnerId = usr.Id)
-	          );	    	
-	       	}
+            Service_Assignment__c testServAssignment2 = new Service_Assignment__c(
+              Admission__c = testAdm2.Id,
+              Person_Being_Served__c = myContact.Id
+            );
+            insert testServAssignment2;
+            
+            Service_Code__c testServCode = new Service_Code__c(
+              Service_Code__c = 'TEST SVC CODE',
+              FacilityID__c = 'TEST FAC ID',
+              Program_Code__c = 'TEST PROGRAM CODE',
+              Start_Date__c = date.newInstance(2012,1,1) 
+            );
+            insert testServCode;
+            
+            
+            List<RecordType> pnRecordTypes = [SELECT Id, Name FROM RecordType WHERE SObjectType = 'Progress_Note__c'];
+            
+            System.Debug('What is in pnRecordTypes: ' + pnRecordTypes);
+            
+            List<Progress_Note__c> pnsToInsert = new List<Progress_Note__c>();
+            Integer pnsToInsertCounter = 0;             
+            
+            for(RecordType rt : pnRecordTypes){
+              pnsToInsert.add( 
+                new Progress_Note__c(
+                  Service_Assignment__c = testServAssignment.Id, 
+                  Service_Code__c = testServCode.Id, 
+                  Admission__c = testAdm.ID,
+                  Start_Time__c = datetime.now().addHours(-2),
+                  End_Time__c = datetime.now(),
+                  Person_Being_Served__c = aContactId,
+                  No_Approval_Needed__c = false,
+                  RecordTypeId = rt.Id,
+                  Status__c = 'In Progress',
+                  OwnerId = usr.Id)
+                );
+              pnsToInsert.add(
+                new Progress_Note__c(
+                  Service_Assignment__c = testServAssignment.Id, 
+                  Service_Code__c = testServCode.Id, 
+                  Admission__c = testAdm.ID,
+                  Start_Time__c = datetime.now().addHours(-2),
+                  End_Time__c = datetime.now(),
+                  Person_Being_Served__c = aContactId,
+                  No_Approval_Needed__c = false,
+                  RecordTypeId = rt.Id,
+                  Status__c = 'Final',
+                  OwnerId = usr.Id)
+              );            
+            }
 
-	          pnsToInsert.add(
-	       		new Progress_Note__c(
-		          Service_Assignment__c = testServAssignment2.Id, 
-		          Service_Code__c = testServCode.Id, 
-		          Admission__c = testAdm2.ID,
-		          Start_Time__c = datetime.now().addHours(-2),
-		          End_Time__c = datetime.now(),
-		          No_Approval_Needed__c = false,
-		          Person_Being_Served__c = myContact.Id,
-		          Status__c = 'Final',
-		          OwnerId = usr.Id)
-	          ); 	   
-	       	
-	       	insert pnsToInsert;
-	       	
-			SchedulableContext sc;
-			ProgressNoteNotificationRunBatch pNNRB = new ProgressNoteNotificationRunBatch();
-			
-			Integer emailbefore = Limits.getEmailInvocations();
-			pNNRB.execute(sc); 
-			system.debug('emailbefore = ' + emailbefore + ';  Limits.getEmailInvocations() = ' + Limits.getEmailInvocations());
+              pnsToInsert.add(
+                new Progress_Note__c(
+                  Service_Assignment__c = testServAssignment2.Id, 
+                  Service_Code__c = testServCode.Id, 
+                  Admission__c = testAdm2.ID,
+                  Start_Time__c = datetime.now().addHours(-2),
+                  End_Time__c = datetime.now(),
+                  No_Approval_Needed__c = false,
+                  Person_Being_Served__c = myContact.Id,
+                  Status__c = 'Final',
+                  OwnerId = usr.Id)
+              );       
+            
+            insert pnsToInsert;
+            
+            SchedulableContext sc;
+            ProgressNoteNotificationRunBatch pNNRB = new ProgressNoteNotificationRunBatch();
+            
+            Integer emailbefore = Limits.getEmailInvocations();
+            pNNRB.execute(sc); 
+            system.debug('emailbefore = ' + emailbefore + ';  Limits.getEmailInvocations() = ' + Limits.getEmailInvocations());
 
     }
 }

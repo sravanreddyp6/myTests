@@ -50,6 +50,7 @@ public with sharing class PersonalRecordController {
 	public String saId { get; set; }
 	public Boolean saNew { get; set; }
     public String planId { get; set; }
+    public String servAssignClosure { get; set; }
 	public PageReference breadcrumb { get; set; }
 	
 	public String opGrp { get { 
