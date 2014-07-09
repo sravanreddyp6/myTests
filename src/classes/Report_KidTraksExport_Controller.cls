@@ -92,7 +92,7 @@ public with sharing class Report_KidTraksExport_Controller {
     	lineItems = new List<KidTraksLineItem>();
 
     	List<Progress_Note__c> progressNotesThisReport = [ SELECT Start_Time__c, End_Time__c, Person_Being_Served__c, Person_Being_Served__r.Name, Person_Being_Served__r.Avatar_ID__c,
-    														Person_Being_Served__r.Other_ID__c FROM Progress_Note__c 
+    														Person_Being_Served__r.Other_ID__c, Service_Assignment__r.Start_Date__c, Service_Assignment__r.End_Date__c FROM Progress_Note__c 
     															WHERE Status__c = 'Final' 
     																	AND Service_Code__r.Service_Code__c = '10942.1161' 
     																	AND Start_Time__c >= :reportStartDate 
@@ -110,58 +110,112 @@ public with sharing class Report_KidTraksExport_Controller {
     		System.debug('WRAPPED PN CHECK: ' + p);
     	}
     	
-    	List<ProgressNoteWrapper_CullKidTraksLineItems> thisPbsWrappedNotes = new List<ProgressNoteWrapper_CullKidTraksLineItems>();
+
     	ProgressNoteWrapper_CullKidTraksLineItems thePreviousWrappedPn;
     	Date theFirstNotesStartDate;
+    	// Commenting out the following line because it is not needed for flagging incrementation of the unitsCounter variable if we're just subtracting the
+    	// dates of the first and last notes to get the unit count.  But, we may need to come back and count units / notes as we refine the algorith for
+    	// the "per diem continuous" concept (per diem billed daily whether or not a visit happens), so I'm leaving the line just in case.  J. Gilliam, 7-9-14, CTEAE-143
+    		//Date thePreviousNotesStartDate;
     	Date thePreviousNotesStartDate;
-    	Date thePreviousNotesEndDate;
-    	Date theLastNotesEndDate;
+    	Date theLastNotesStartDate;
     	Id thePreviousNotesPbsId;
-    	Integer unitsCounter = 0;
+    	// Commenting out the following line because it is not needed for if we're just subtracting the
+    	// dates of the first and last notes to get the unit count.  But, we may need to come back and count units / notes as we refine the algorith for
+    	// the "per diem continuous" concept (per diem billed daily whether or not a visit happens), so I'm leaving the line just in case.  J. Gilliam, 7-9-14, CTEAE-143
+    		//Integer unitsCounter = 0;
+    	Integer unitsFromDateSubtract;
     	Integer loopCounter = 0;
     	
     	for(ProgressNoteWrapper_CullKidTraksLineItems pWrapped : listWrappedPns) {
     		Integer 	numberOfWrappedNotes = listWrappedPns.size();
     		loopCounter++;
-    		if(thePreviousNotesPbsId==pWrapped.thePn.Person_Being_Served__c || thePreviousNotesPbsId==null) {
-    			if(pWrapped.thePn.Start_Time__c.date()!=thePreviousNotesStartDate) {
-    				unitsCounter++;
-    			}
-    			thisPbsWrappedNotes.add(pWrapped);
-    		}
+    		
+	    	// Commenting out the following section because it is not needed for if we're just subtracting the
+	    	// dates of the first and last notes to get the unit count.  But, we may need to come back and count units / notes as we refine the algorith for
+	    	// the "per diem continuous" concept (per diem billed daily whether or not a visit happens), so I'm leaving the line just in case.  J. Gilliam, 7-9-14, CTEAE-143
+	    		//if(thePreviousNotesPbsId==pWrapped.thePn.Person_Being_Served__c || thePreviousNotesPbsId==null) {
+	    		//	if(pWrapped.thePn.Start_Time__c.date()!=thePreviousNotesStartDate) {
+	    		//		unitsCounter++;
+	    		//	}
+	    		//}
     		if(thePreviousNotesPbsId!=pWrapped.thePn.Person_Being_Served__c && thePreviousNotesPbsId!=null) {
+    			System.debug('MARKER 1');
+    			System.debug('What is pWrapped.thePn.Service_Assignment__r.Start_Date__c at MARKER 1: ' + pWrapped.thePn.Service_Assignment__r.Start_Date__c);
+    			System.debug('What is pWrapped.thePn.Service_Assignment__r.End_Date__c at MARKER 1: ' + pWrapped.thePn.Service_Assignment__r.End_Date__c);
     			if(theFirstNotesStartDate==null) {
-    				theFirstNotesStartDate = pWrapped.thePn.Start_Time__c.date();
+    				if(pWrapped.thePn.Service_Assignment__r.Start_Date__c < reportStartDate) {
+    					theFirstNotesStartDate = reportStartDate;
+    				}
+    				else {
+    					theFirstNotesStartDate = pWrapped.thePn.Start_Time__c.date();
+    				}
     			}
-    			theLastNotesEndDate = thePreviousNotesEndDate;
-    			lineItems.add(new KidTraksLineItem(theFirstNotesStartDate, theLastNotesEndDate, theUser, thePreviousWrappedPn.thePn.Person_Being_Served__r.Name, thePreviousWrappedPn.thePn.Person_Being_Served__r.Avatar_ID__c, thePreviousWrappedPn.thePn.Person_Being_Served__r.Other_ID__c, unitsCounter));
-    			unitsCounter=0;
+
+    			if(pWrapped.thePn.Service_Assignment__r.End_Date__c!=null) {
+    				System.debug('DAYS BETWEEN CHECK: ' + pWrapped.thePn.Service_Assignment__r.End_Date__c.daysBetween(reportEndDate));
+    			}
+    				
+    			if(pWrapped.thePn.Service_Assignment__r.End_Date__c==null) {
+    				theLastNotesStartDate = reportEndDate;		
+    			}
+    			else if (pWrapped.thePn.Service_Assignment__r.End_Date__c.daysBetween(reportEndDate) < 0) {
+    				theLastNotesStartDate = reportEndDate;
+    			}
+    			else {
+    				theLastNotesStartDate = thePreviousNotesStartDate;
+    			}
+    			
+    			unitsFromDateSubtract = theFirstNotesStartDate.daysBetween(theLastNotesStartDate) + 1;
+    			lineItems.add(new KidTraksLineItem(theFirstNotesStartDate, theLastNotesStartDate, theUser, thePreviousWrappedPn.thePn.Person_Being_Served__r.Name, thePreviousWrappedPn.thePn.Person_Being_Served__r.Avatar_ID__c, thePreviousWrappedPn.thePn.Person_Being_Served__r.Other_ID__c, unitsFromDateSubtract));
+		    	// Commenting out the following line because it is not needed for if we're just subtracting the
+		    	// dates of the first and last notes to get the unit count.  But, we may need to come back and count units / notes as we refine the algorith for
+		    	// the "per diem continuous" concept (per diem billed daily whether or not a visit happens), so I'm leaving the line just in case.  J. Gilliam, 7-9-14, CTEAE-143
+    				//unitsCounter=0;
     		}
     		if(numberOfWrappedNotes==loopCounter) {
-    			theLastNotesEndDate = pWrapped.thePn.End_Time__c.date();
-    			lineItems.add(new KidTraksLineItem(theFirstNotesStartDate, theLastNotesEndDate, theUser, pWrapped.thePn.Person_Being_Served__r.Name, pWrapped.thePn.Person_Being_Served__r.Avatar_ID__c, pWrapped.thePn.Person_Being_Served__r.Other_ID__c,  unitsCounter));
-    			unitsCounter=0;  // This probably doesn't matter, since this should be the last iteration of the containing loop.
+    			System.debug('MARKER 2');
+    			System.debug('What is pWrapped.thePn.Service_Assignment__r.Start_Date__c at MARKER 2: ' + pWrapped.thePn.Service_Assignment__r.Start_Date__c);
+    			System.debug('What is pWrapped.thePn.Service_Assignment__r.End_Date__c at MARKER 2: ' + pWrapped.thePn.Service_Assignment__r.End_Date__c);
+    			if(pWrapped.thePn.Service_Assignment__r.End_Date__c!=null) {
+    				System.debug('DAYS BETWEEN CHECK: ' + pWrapped.thePn.Service_Assignment__r.End_Date__c.daysBetween(reportEndDate));
+    			}    			
+    			if(pWrapped.thePn.Service_Assignment__r.End_Date__c==null) {
+    				theLastNotesStartDate = reportEndDate;
+    			}
+    			else if(pWrapped.thePn.Service_Assignment__r.End_Date__c.daysBetween(reportEndDate) < 0) {
+    				theLastNotesStartDate = reportEndDate;
+    			}
+    			else {
+    				theLastNotesStartDate = pWrapped.thePn.Start_Time__c.date();
+    			}    			
+    			
+    			unitsFromDateSubtract = theFirstNotesStartDate.daysBetween(theLastNotesStartDate) + 1;
+    			lineItems.add(new KidTraksLineItem(theFirstNotesStartDate, theLastNotesStartDate, theUser, pWrapped.thePn.Person_Being_Served__r.Name, pWrapped.thePn.Person_Being_Served__r.Avatar_ID__c, pWrapped.thePn.Person_Being_Served__r.Other_ID__c, unitsFromDateSubtract));
+		    	// Commenting out the following line because it is not needed for if we're just subtracting the
+		    	// dates of the first and last notes to get the unit count.  But, we may need to come back and count units / notes as we refine the algorith for
+		    	// the "per diem continuous" concept (per diem billed daily whether or not a visit happens), so I'm leaving the line just in case.  J. Gilliam, 7-9-14, CTEAE-143
+    				//unitsCounter=0;  // This probably doesn't matter, since this should be the last iteration of the containing loop.
     		}
     		
     		if(thePreviousNotesPbsId!=pWrapped.thePn.Person_Being_Served__c || thePreviousNotesPbsId==null) {
-    			System.debug('FIRST NOTE DATE CONDITION EXECUTING');
-    			theFirstNotesStartDate = pWrapped.thePn.Start_Time__c.date();
-    			System.debug('theFirstNotesStartDate: ' + theFirstNotesStartDate);
+    			System.debug('FIRST NOTE DATE CONDITION EXECUTING'); 			
+				if(pWrapped.thePn.Service_Assignment__r.Start_Date__c < reportStartDate) {
+					theFirstNotesStartDate = reportStartDate;
+				}
+				else {
+					theFirstNotesStartDate = pWrapped.thePn.Start_Time__c.date();
+				}    			
     		}
     		
 			thePreviousNotesPbsId = pWrapped.thePn.Person_Being_Served__c;
+	    	// Commenting out the following line because it is not needed for flagging incrementation of the unitsCounter variable if we're just subtracting the
+	    	// dates of the first and last notes to get the unit count.  But, we may need to come back and count units / notes as we refine the algorith for
+	    	// the "per diem continuous" concept (per diem billed daily whether or not a visit happens), so I'm leaving the line just in case.  J. Gilliam, 7-9-14, CTEAE-143
+				//thePreviousNotesStartDate = pWrapped.thePn.Start_Time__c.date();
 			thePreviousNotesStartDate = pWrapped.thePn.Start_Time__c.date();
-			thePreviousNotesEndDate = pWrapped.thePn.End_Time__c.date();
     		thePreviousWrappedPn = new ProgressNoteWrapper_CullKidTraksLineItems(pWrapped.thePn);
-    		/*
-    		if((thePreviousNotesPbsId==pWrapped.thePn.Person_Being_Served__c && (thePreviousNotesStartDate==null || thePreviousNotesStartDate < pWrapped.thePn.Start_Time__c.date())) || thePreviousNotesPbsId!=pWrapped.thePn.Person_Being_Served__c) {
-    			lineItems.add(new KidTraksLineItem(pWrapped.thePn.Start_Time__c, pWrapped.thePn.End_Time__c, theUser, pWrapped.thePn.Person_Being_Served__r.Name, pWrapped.thePn.Person_Being_Served__r.Avatar_ID__c, unitsCounter));
-    			unitsCounter = 1;
-    		}
-    		thePreviousNotesStartDate = pWrapped.thePn.Start_Time__c.date();
-    		thePreviousNotesPbsId = pWrapped.thePn.Person_Being_Served__c;
-    		unitsCounter++;
-    		*/
+
     	}
     	      
         return null;
