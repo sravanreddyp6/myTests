@@ -1,24 +1,3 @@
-/**
- * This class contains unit tests for validating the behavior of Apex classes
- * and triggers.
- *
- * Unit tests are class methods that verify whether a particular piece
- * of code is working properly. Unit test methods take no arguments,
- * commit no data to the database, and are flagged with the testMethod
- * keyword in the method definition.
- *
- * All test methods in an organization are executed whenever Apex code is deployed
- * to a production organization to confirm correctness, ensure code
- * coverage, and prevent regressions. All Apex classes are
- * required to have at least 75% code coverage in order to be deployed
- * to a production organization. In addition, all triggers must have some code coverage.
- * 
- * The @isTest class annotation indicates this class only contains test
- * methods. Classes defined with the @isTest annotation do not count against
- * the organization size limit for all Apex scripts.
- *
- * See the Apex Language Reference for more information about Testing and Code Coverage.
- */
 @isTest
 private class CredentialAddTEST {
 
@@ -49,9 +28,10 @@ private class CredentialAddTEST {
         insert tmnContact;
         
         ApexPages.currentPage().getParameters().put('contactid', tmnContact.Id);
-
 		CredentialAdd controller = new CredentialAdd();
-		controller.selectedCredId = HealthInspection_Profile.Id;
+		// set the selected item
+		controller.selectedCreds.Add(HealthInspection_Profile.Id);
+		controller.SaveAddCred();
 		
 		String nextPage = controller.CancelCredAdd().getUrl();
 		
@@ -100,6 +80,15 @@ private class CredentialAddTEST {
 		
 		ApexPages.currentPage().getParameters().put('contactid', coApplicant.Id);
 		CredentialAdd controller2 = new CredentialAdd();
+		
+		// set the selected item
+		controller2.selectedCreds.Add(HealthInspection_Profile.Id);
+		controller2.SaveAddCred();
+		
+		// make sure that it was inserted
+		System.Debug( 'Checking for: ' + coApplicant.Id);
+		List<Credential_Record__c> existCreds = [SELECT Credential_Profile__c FROM Credential_Record__c WHERE TMN_Contact__c = :coApplicant.Id];
+		system.AssertEquals( 1, existCreds.Size());
 		
 		ApexPages.currentPage().getParameters().put('contactid', fosterParentChild.Id);
 		CredentialAdd controller3 = new CredentialAdd();		

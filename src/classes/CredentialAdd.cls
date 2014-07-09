@@ -3,7 +3,7 @@ public with sharing class CredentialAdd {
 	public Id contactID {get;set;}
     public List<Credential_Profile__c> possibleCreds  {get;set;}
     public List<SelectOption> credSelectList {get;set;}
-    public Id selectedCredId {get;set;}
+    public string[] selectedCreds {get;set;}
     public TMN_Contact__c thisTmnContact {get;set;}
     public String baseUrl { get; set; }
     public boolean canCreateCredRec {get;set;}
@@ -12,6 +12,7 @@ public with sharing class CredentialAdd {
        
     public CredentialAdd() {
     
+    	selectedCreds = new List<string>();
     	contactID = apexpages.currentpage().getparameters().get('contactid');
     
     	// 1.  Figure out what kind of TMN_Contact__c this is (Mentor? Co-Applicant? App Family?  App Child? Non-Relative? Pet?)
@@ -58,7 +59,6 @@ public with sharing class CredentialAdd {
     	
     	
     	credSelectList = new List<SelectOption>();
-    	credSelectList.add(new SelectOption('--None--','--None--'));
     	
     	if(possibleCreds!=null) {
 	    	for(Credential_Profile__c cP : possibleCreds) {
@@ -75,16 +75,20 @@ public with sharing class CredentialAdd {
     
     public PageReference SaveAddCred() {
     	
-		Credential_Record__c credToSave = new Credential_Record__c(
-			Credential_Profile__c = selectedCredId,
-			TMN_Contact__c = contactID			
-		);
-		
+    	
+    	List<Credential_Record__c> creds = new List<Credential_Record__c>();
+    	
+    	for (String cred : selectedCreds  ) {
+    		creds.Add( new Credential_Record__c( Credential_Profile__c = (ID)cred, TMN_Contact__c = contactID ));
+    	}
+			
+		system.debug( 'SAVING: ' + creds);
 		PageReference myPageRef;
 		
 		try {
 			if(canCreateCredRec==true) {
-				insert credToSave;
+				insert creds;
+				system.debug('INSERTING CREDS:' + creds);
 				myPageRef = new PageReference('/apex/Credential?contactid=' + contactID);
 			}
 			else {
