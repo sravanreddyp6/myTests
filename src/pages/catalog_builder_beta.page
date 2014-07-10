@@ -1,0 +1,119 @@
+<apex:page standardController="Clinical_Catalog__c" sidebar="false" extensions="catalog_builder_beta">
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+<style>
+    .lcol{
+        width: 58%;
+        float: right;
+        //border: 1px solid black;
+        padding: 7px;
+    }
+    .rcol{
+        float: left;
+        width: 38%;
+        //border: 1px solid gray;
+        padding: 7px;
+    }
+    .txtArea{
+        width: 320px;
+        height: 60px;    
+    } 
+    .label{
+        margin:10px;
+        font-weight:bold;
+    }
+          
+/*     .frmLCol{ */
+/*         float: left; */
+/*         width:300px; */
+    
+/*     } */
+/*     .frmRCol{ */
+/*         float: right;   */
+/*         width: 250px;   */
+/*         //border: 1px solid black; */
+    
+/*     } */
+</style>
+<apex:outputPanel id="page">
+<apex:form >
+ <apex:actionFunction action="{!editTreeNode}" name="triggerNodeEdit" rerender="eleyForm" status="myStatus">
+     <apex:param name="firstParam" assignTo="{!curTreeNodeKey}" value="" />
+ </apex:actionFunction>
+
+<apex:outputPanel layout="block" styleClass="rcol">
+ 
+    <apex:pageBlock id="fullTree">
+        <apex:pageBlockButtons >
+            <apex:commandButton action="{!newEley}" value="New Component" reRender="eleyForm" status="myStatus"/>
+        </apex:pageBlockButtons>
+        <apex:outputPanel id="tree2" layout="block" >
+<!--    <apex:outputlabel > Please select a component to edit:</apex:outputlabel> -->
+<!--             <apex:outputLabel >Plan Name: </apex:outputLabel> -->
+            <apex:outputLabel value="{!curr_catalog.Catalog_Name__c}" style="font-weight:bold"/>            
+            <apex:inputhidden value="{!Clinical_Catalog__c.Catalog_Name__c }" />
+<!--             <apex:inputField value="{!curr_catalog.Catalog_Name__c}"/> -->
+<!--             <apex:commandButton value="Save" action="{!save}" rendered="{!curr_catalog.id == null}"/>                         -->
+<!--             <apex:commandButton value="Save" action="{!upsertCatalog}" reRender="page" status="myStatus"  rendered="{!Clinical_Catalog__c.id != null}"/> -->
+            <c:Fancy_Tree TreeString="{!allGoals.Fancy_Tree_JSon_String_LongText}" mode="1" checkbox="false" allowInactiveNode="true" activateActionSignature="triggerNodeEdit(data.node.key);" ID_PageSideStorage="fullTreeKeys" TreeID="tree2" debug="false" />    
+        </apex:outputPanel>                
+    </apex:pageBlock>
+</apex:outputPanel><!-- end left col -->
+</apex:form>
+
+
+<apex:form >
+<apex:outputPanel layout="block" styleClass="lcol">
+<apex:pageBlock id="eleyForm" title="Component" >
+     <apex:pageBlockButtons >
+     <apex:commandButton action="{!upsertEley}" value="Save" reRender="page" status="myStatus"/>             
+     </apex:pageBlockButtons>        
+    <apex:pageMessages ></apex:pageMessages>    
+	<apex:outputPanel layout="block" styleClass="frmLCol">   
+	    <apex:pageBlock mode="maindetail">      
+	        <apex:pageBlockSection columns="1" >
+	            <apex:variable value="{!CurEley.id ==null}" var="isNew"/>
+	            
+	            <apex:pageblockSectionItem rendered="{!isNew}"   >
+	                <apex:outputLabel >Type</apex:outputLabel>        
+                    <apex:actionRegion >	                
+                    <apex:selectList value="{!CurEley.Type__c}" required="true" size="1" multiselect="false">
+		                <apex:selectOptions value="{!pickList}"/>
+		                <apex:actionSupport event="onchange" action="{!refreshFormTree}" reRender="relatedTo" />                
+	                </apex:selectList>
+                    </apex:actionRegion>	                
+	            </apex:pageblockSectionItem>
+                
+                <apex:outputField rendered="{! NOT(isNew) && NOT(ctlgHasABI)}" value="{!CurEley.Type__c}" />
+                <apex:outputText label="Type" rendered="{! NOT(isNew) && ctlgHasABI && (CurEley.Type__c == 'Goal')}" value="Problem" />
+				<apex:outputText label="Type" rendered="{! NOT(isNew) && ctlgHasABI && (CurEley.Type__c == 'Objective')}" value="Goal" />
+				<apex:outputText label="Type" rendered="{! NOT(isNew) && ctlgHasABI && (CurEley.Type__c == 'Action')}" value="Intervention" />
+	            <apex:inputField styleClass="txtArea" value="{!CurEley.Description__c}" required="true" />
+	            <apex:inputField value="{!CurEley.Status__c}" required="true"/>
+	        
+	        </apex:pageBlockSection>
+	    </apex:pageBlock>
+	</apex:outputPanel>
+
+	<apex:outputPanel id="relatedTo">
+		<apex:outputPanel layout="block" styleClass="frmRCol">
+		    <apex:outputPanel layout="block" rendered="{!CurEley.Type__c =='Action' || CurEley.Type__c =='Objective' }">
+		                <apex:outputLabel >
+		                    <br/>
+		                    <apex:outputLabel rendered="{!CurEley.Type__c =='Objective'}" value="{! if(ctlgHasABI, 'Select Problems', 'Select Goals')}" /> 
+		                    <apex:outputLabel rendered="{!CurEley.Type__c =='Action'}" value="{! if(ctlgHasABI, 'Select Goals', 'Select Objectives')}" />
+		                </apex:outputLabel>
+		                <apex:outputPanel id="tree3" layout="block">
+		                    <c:Fancy_Tree TreeString="{!formTree.Fancy_Tree_JSon_String_LongText}" mode="2" ID_PageSideStorage="myKeys" allowInactiveNode="false" TreeID="tree3" showIcons="false" debug="false" />
+		                    <apex:inputHidden value="{!selectedKeys}" id="myKeys"/>       
+		                </apex:outputPanel>
+		    </apex:outputPanel>               
+		</apex:outputPanel>
+	</apex:outputPanel>
+
+</apex:pageBlock>
+</apex:outputPanel><!-- end right col -->
+</apex:form>
+</apex:outputPanel>
+
+</apex:page>
