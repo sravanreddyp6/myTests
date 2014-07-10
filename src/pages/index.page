@@ -1,0 +1,356 @@
+<apex:page showHeader="false">
+
+
+   <apex:includeScript value="{!URLFOR($Resource.jqGrid, 'js/jquery-1.11.0.min.js')}"/>
+   <apex:includeScript value="{!URLFOR($Resource.jqGrid, 'js/i18n/grid.locale-en.js')}"/>
+   <apex:includeScript value="{!URLFOR($Resource.jqGrid, 'js/jquery.jqGrid.min.js')}"/>
+   <apex:stylesheet value="{!URLFOR($Resource.jqGrid, 'css/ui.jqgrid.css')}"/>
+
+
+  
+<!-- 
+   <apex:includeScript value="{!URLFOR($Resource.jQueryThemeStart, 'jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.js')}"/>
+   <apex:stylesheet value="{!URLFOR($Resource.jQueryThemeStart, 'jquery-ui-1.10.4.custom/css/start/jquery-ui-1.10.4.custom.css')}"/>
+ -->
+   <apex:includeScript value="{!URLFOR($Resource.jQueryThemeSunny, 'jquery-ui-1.11.0.custom/jquery-ui.min.js')}"/>
+   <apex:stylesheet value="{!URLFOR($Resource.jQueryThemeSunny, 'jquery-ui-1.11.0.custom/jquery-ui.min.css')}"/>
+   
+   
+   <apex:includeScript value="{!URLFOR($Resource.jQueryTabSlideOut, 'js/jquery.tabSlideOut.v1.3.js')}"/>
+   
+
+<script>
+
+	j$ = jQuery.noConflict();
+
+</script>
+
+<style>
+
+
+
+#pbs, #referral, #tmn-contacts {
+	margin: 5px;
+	float: left;
+	width: 500px; 
+	/* outline:#000000 solid thin; */ 
+}
+
+	
+.ui-accordion-header {
+   background:black;
+}
+
+ 
+.divTable{
+    display:table;
+    margin-left: auto;
+    margin-right; auto;
+    width:450px;
+    border-collapse: collapse;
+ }
+
+ .divTitleRow{
+     font-weight: bold;
+     display:table-row;
+     background-color:#4F4763;
+     text-align: center;
+     line-height: 25px;
+     font-size: 14px;
+     font-family:georgia;
+     color:#fff;
+ }
+ 
+ .divHeadRow{
+     font-weight: bold;
+     display:table-row;
+     background-color:#A395C6;
+     text-align: center;
+     line-height: 25px;
+     font-size: 14px;
+     font-family:georgia;
+     color:#fff;
+ }
+ 
+ .divRow{  
+     display:table-row;
+     text-align: center;
+     background-color:#FFFFCC;
+ }
+ .divCell{ 
+    display:table-cell;
+     border: 1px solid #CCC;
+ }
+
+</style>
+
+<body background="{!$Resource.TMNimages}">
+
+            
+<div id="pbs" title="Person Being Served">
+	 <H3>Person Being Served (PBS)</H3> 
+   <!-- <div style="background-image:url('{!$Resource.TMNimages}');"> <!-- Dive to space everything out -->
+     <div>
+      <div class="divTable"> 
+      		 <div class="divTitleRow">Recently Viewed</div>
+             <div class="divHeadRow">
+                <div class="divCell">Person</div>
+                <div class="divCell">Latest Admission</div>
+                <div class="divCell">Latest Assignment</div>
+             </div>
+            <div class="divRow">
+                  <div class="divCell">&nbsp;Shaun Wood</div>
+                <div class="divCell">&nbsp;05/01/2013</div>
+                <div class="divCell">&nbsp;T. Peterson</div>
+            </div>
+            <div class="divRow">
+                <div class="divCell">&nbsp;Big Bad Tyler</div>
+                <div class="divCell">&nbsp;01/01/2014</div>
+                <div class="divCell">&nbsp;Willcox</div>
+           </div>
+            <div class="divRow">
+                <div class="divCell">&nbsp;Vianne Wood</div>
+                <div class="divCell">&nbsp;05/01/2012</div>
+                <div class="divCell">&nbsp;Winnie Mok</div>
+           </div>
+      </div>
+      <p/>
+      <div class="divTable">
+      		 <div class="divTitleRow">Quick Reports</div>
+             <div class="divHeadRow">
+                <div class="divCell">Report Name</div>
+             </div>
+            <div class="divRow">
+                <div class="divCell">&nbsp;PBS with No Action Plan</div>
+                <div class="divCell">&nbsp;Displays PBS's with no action plan.</div>
+            </div>
+            <div class="divRow">
+                <div class="divCell">&nbsp;Progress Note Type</div>
+                <div class="divCell">&nbsp;Research your progress note details.</div>
+           </div>
+            <div class="divRow">
+                <div class="divCell">&nbsp;Weekly Activity</div>
+                <div class="divCell">&nbsp;What has been going on this week.</div>
+           </div>
+      </div>
+      
+      
+    </div>	 <!-- Dive to space everything out -->
+</div>
+
+<div id="referral" title="Referral">
+	<H3>Referral</H3>
+	<div id="pbs-div-content">
+		Here we go.
+	</div>
+</div>
+
+<div id="tmn-contacts" title="Contacts">
+	<H3>Contacts</H3>
+	<div id="pbs-div-content">
+		Here we go.
+	</div>
+</div>
+
+
+<div class="help-slide-out-div">
+	<a class="help-handle" href="http://link-for-non-js-users.html">Content</a>
+	<p>This is where help and it's links will go.</p>
+</div>
+
+<div class="search-slide-out-div">
+	<a class="handle" href="http://link-for-non-js-users.html">Content</a>
+     <div id="filterLabelOneDiv">
+		<fieldset>
+		<legend>Filters:</legend>
+		    <label for="searchFor">Search For:</label><select id="searchFor" name="searchFor">
+				<option>Person Being Served</option>
+				<option>Referral</option>
+			</select><br/>
+		    <label for="firstName">First Name:</label><input id="firstName" name="firstName" type="text"/><br/>
+		    <label for="created">Created:</label><select id="created" name="created" >
+				<option>Whenever</option>
+				<option>Today</option>
+				<option>This week</option>
+				<option>Last week</option>
+				<option>Three weeks ago</option>
+				<option>One month ago</option>
+			</select>
+		  <!-- 
+		  <div id="filterControlOneDiv" style="float: left;">
+			<select id="searchFor">
+				<option>Person Being Served</option>
+				<option>Referral</option>
+			</select><br/>
+			<input id="firstName" type="text"/><br/>
+			<select id="created" style="float: left;">
+				<option>Whenever</option>
+				<option>Today</option>
+				<option>This week</option>
+				<option>Last week</option>
+				<option>Three weeks ago</option>
+				<option>One month ago</option>
+			</select>
+		  </div>
+		  -->
+		  <!-- 
+		  <div id="filterLabelTwoDiv">
+		    <label for="owner">Owner:</label><input id="owner" type="text" /><br/>
+		    <label for="lastName">Last Name:</label><input id="lastName" type="text" /><br/>
+			<label for="modified">Modified:</label>
+						<select id="modified">
+				<option>Whenever</option>
+				<option>Today</option>
+				<option>This week</option>
+				<option>Last week</option>
+				<option>Three weeks ago</option>
+				<option>One month ago</option>
+			</select>
+		  </div>
+		  -->	
+		  <!-- 	
+		  <div id="filterControlTwoDiv" style="float: left;">
+		    <input id="owner" type="text" /><br/>
+		    <input id="lastName" type="text" /><br/>
+			<select id="modified">
+				<option>Whenever</option>
+				<option>Today</option>
+				<option>This week</option>
+				<option>Last week</option>
+				<option>Three weeks ago</option>
+				<option>One month ago</option>
+			</select>
+		  </div>
+		  -->		
+		</fieldset>
+	</div>
+	<div>
+		<div id='searchTableDiv' style="float: left;">
+		  <table id="searchTBL"><tr><td></td></tr></table>  
+		  <div id="pager"></div>
+		</div>
+	</div>
+</div>
+
+
+
+<script type="text/javascript">
+
+	
+/*
+ * This method is called only when the entire DOM is called
+ */
+j$(function() {
+		
+	   /*
+	    * Activate the hover over for the accordion
+	    */
+	   j$( "#pbs, #referral, #tmn-contacts" ).accordion({
+	      event: "click hoverintent",
+	      heightStyle: "content"
+	   }); //end activating the accordion.
+	   
+	   
+	   /*
+	    * Activate the TAB slider
+	    */
+        j$('.search-slide-out-div').tabSlideOut({
+            tabHandle: '.handle',                     //class of the element that will become your tab
+            pathToTabImage: '{!$Resource.searchIMG}', //path to the image for the tab //Optionally can be set using css
+            imageHeight: '154px',                     //height of tab image           //Optionally can be set using css
+            imageWidth: '54px',                       //width of tab image            //Optionally can be set using css
+            tabLocation: 'left',                      //side of screen where tab lives, top, right, bottom, or left
+            speed: 300,                               //speed of animation
+            action: 'click',                          //options: 'click' or 'hover', action to trigger animation
+            topPos: '200px',                          //position from the top/ use if tabLocation is left or right
+            leftPos: '20px',                          //position from left/ use if tabLocation is bottom or top
+            fixedPosition: false                      //options: true makes it stick(fixed position) on scroll
+        });	//end activating the tab slide out
+
+	   /*
+	    * Activate the TAB slider
+	    */
+        j$('.help-slide-out-div').tabSlideOut({
+            tabHandle: '.help-handle',                     //class of the element that will become your tab
+            pathToTabImage: '{!$Resource.helpIMG}', //path to the image for the tab //Optionally can be set using css
+            imageHeight: '154px',                     //height of tab image           //Optionally can be set using css
+            imageWidth: '54px',                       //width of tab image            //Optionally can be set using css
+            tabLocation: 'right',                      //side of screen where tab lives, top, right, bottom, or left
+            speed: 300,                               //speed of animation
+            action: 'click',                          //options: 'click' or 'hover', action to trigger animation
+            topPos: '200px',                          //position from the top/ use if tabLocation is left or right
+            leftPos: '20px',                          //position from left/ use if tabLocation is bottom or top
+            fixedPosition: false                      //options: true makes it stick(fixed position) on scroll
+        });	//end activating the tab slide out
+        
+        
+	    j$("#searchTBL").jqGrid({
+	        datatype: "local",
+	        height: 150,
+	        colNames: ["ID", "First Name", "Last Name", "State", "Created By", "Create Date"],
+	        colModel: [
+	            { name: "id", width: 1, hidden: true },
+	            { name: "name", width: 85 },
+	            { name: "Household_Id__c", width: 1, hidden: true },
+	            { name: "full_name__c", width: 100 },
+	            { name: "role__c", width: 200 },
+	            { name: "owner_full_name__c", width: 100, align: "right" },
+	        ],
+	        pager: "#pager",
+	        rowNum: 10,
+	        rowList: [10, 20, 30],
+	        sortname: "name",
+	        sortorder: "desc",
+	        viewrecords: true,
+	        gridview: true,
+	        caption: "Search Persons Being Served or Referrals",
+		}); //end activating the table         
+
+	   
+   });// end DOM has been fully loaded action
+
+
+</script>
+
+<style>
+
+/*
+#filterLabelOneDiv, #filterLabelTwoDiv {
+	width: 650px;
+	height: 150px;
+	float: left;
+	outline:#000000 solid thin;
+}
+*/
+	
+
+#filterLabelOneDiv, #filterLabelTwoDiv label{
+	width: 250px;
+	float: left; 
+	text-align: right;
+	margin: 0;
+	/* margin-right: 0.5em; */
+	display: block
+}
+
+
+.search-slide-out-div {
+    padding: 10px;
+    width: 700px;
+    height: 450px;
+    background: #ccc;
+    border: 1px solid #29216d;
+}  
+
+.help-slide-out-div {
+    padding: 5px;
+    width: 250px;
+    height: 100px;
+    background: #ccc;
+    border: 1px solid #29216d;
+}  
+
+
+</style>
+</body>
+</apex:page>

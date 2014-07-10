@@ -1,0 +1,753 @@
+<apex:page controller="TMNContacts">
+
+   <apex:includeScript value="{!URLFOR($Resource.jqGrid, 'js/jquery-1.11.0.min.js')}"/>
+   <apex:includeScript value="{!URLFOR($Resource.jqGrid, 'js/i18n/grid.locale-en.js')}"/>
+   <apex:includeScript value="{!URLFOR($Resource.jqGrid, 'js/jquery.jqGrid.min.js')}"/>
+   <apex:stylesheet value="{!URLFOR($Resource.jqGrid, 'css/ui.jqgrid.css')}"/>
+
+<!-- 
+   <apex:includeScript value="{!URLFOR($Resource.jQueryThemeStart, 'jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.js')}"/>
+   <apex:stylesheet value="{!URLFOR($Resource.jQueryThemeStart, 'jquery-ui-1.10.4.custom/css/start/jquery-ui-1.10.4.custom.css')}"/>
+ -->
+   <apex:includeScript value="{!URLFOR($Resource.jQueryThemeSunny, 'jquery-ui-1.11.0.custom/jquery-ui.min.js')}"/>
+   <apex:stylesheet value="{!URLFOR($Resource.jQueryThemeSunny, 'jquery-ui-1.11.0.custom/jquery-ui.min.css')}"/>
+
+
+
+
+<style>
+
+fieldset {
+	border: 0 none;
+}
+
+#search-error-message {
+	width: 300px;
+}
+
+#left-side, #tmnContactsDiv, #nonMentors {
+	margin: 5px;
+	float: left;
+	/* width: 900px; */
+	/* outline:#000000 solid thin; */ 
+}
+
+#left-side {
+	width: 900px;
+}
+
+#topNavDiv {
+	margin: 10px;
+	/* width: 900px; */
+	/* outline:#000000 solid thin; */ 
+}
+
+#tmnContactsDiv {
+	margin: 10px;
+	float: left;
+}
+
+#searchDiv {
+	margin-left: 10px;
+	float: left;
+	/* outline:#00FF00 dotted thin; */
+}
+
+
+#buttonDiv {
+	margin-left: 10px;
+	float: right;
+	/* outline:#00FF00 dotted thin; */
+}
+
+
+
+#nonMentors {
+	margin: 10px;
+}
+
+/*
+#dem-col-one {
+
+	outline:#000000 solid thin;
+	margin: 5px;
+	float: left;
+}
+*/
+
+#demographics-div {
+	width: 800px;
+	height: 250px;
+	align: left;
+	/* float: left; */ 
+}
+
+#demographics-div-left {
+	width: 365px;
+	height: 250px;
+	float: left;
+	/* float: left; */ 
+}
+
+#demographics-div-right {
+	width: 375px;
+	height: 250px;
+	float: left;
+	/* float: left; */ 
+}
+
+#mentor-div {
+	width: 800px;
+	height: 270px;
+	align: left;
+	/* float: left; */ 
+}
+
+#mentor-div-left {
+	width: 365px;
+	height: 250px;
+	float: left;
+	/* float: left; */ 
+}
+
+#mentor-div-right {
+	width: 375px;
+	height: 250px;
+	float: left;
+	/* float: left; */ 
+}
+
+
+
+#demographics-div label{
+	width: 130px;
+	float: left;
+	text-align: right;
+	margin-right: 0.5em;
+	display: block
+}
+
+#marketing-div label{
+	width: 170px;
+	float: left;
+	text-align: right;
+	margin-right: 0.5em;
+	display: block
+}
+
+#mentor-div-left label{
+	width: 200px;
+	float: left;
+	text-align: right;
+	margin-right: 0.5em;
+	display: block
+}
+
+#mentor-div-right label{
+	width: 50px;
+	float: left;
+	text-align: right;
+	margin-right: 0.5em;
+	display: block
+}
+
+#system-div label{
+	width: 100px;
+	float: left;
+	text-align: right;
+	margin-right: 0.5em;
+	display: block
+}
+
+
+</style>
+
+
+<script type="text/javascript">
+
+function convertFromSalesForceDate(mydate){  
+   mydate = new Date(mydate);  
+   data = new Date(mydate - mydate.getTimezoneOffset() * 60000);  
+   var d = mydate.getDate();  
+   var m = mydate.getMonth()+1;  
+   var y = mydate.getFullYear();  
+   return ''+ (m<=9?'0'+m:m) +'-' + (d<=9?'0'+d:d)+'-' + y;  
+ }  
+
+j$ = jQuery.noConflict();
+	
+j$(function () {
+    j$("#tmnContactsTBL").jqGrid({
+        datatype: "local",
+        height: 150,
+        colNames: ["ID", "HouseholdId", "Contact ID", "Contact Name", "Role", "Owner", "Created By", "Create Date", "Modified By", "Modified Date"],
+        colModel: [
+            { name: "id", width: 1, hidden: true },
+            { name: "name", width: 85 },
+            { name: "Household_Id__c", width: 1, hidden: true },
+            { name: "full_name__c", width: 100 },
+            { name: "role__c", width: 200 },
+            { name: "owner_full_name__c", width: 100, align: "right" },
+            { name: "createdBy", width: 100, align: "right" },
+            { name: "createdDate", width: 80, align: "right" },
+            { name: "lastModifiedBy", width: 100, sortable: false },
+            { name: "lastModifiedDate", width: 80, sortable: false }
+        ],
+        pager: "#pager",
+        rowNum: 10,
+        rowList: [10, 20, 30],
+        sortname: "name",
+        sortorder: "desc",
+        viewrecords: true,
+        gridview: true,
+        //autoencode: true,
+        //bindkeys: true,
+        caption: "TMN Contacts",
+        
+	    onSelectRow: function(Household_Id__c){ 
+	        //alert('Called this method --> ' + j$('#topNavSelect').val() );
+	    	if (j$('#topNavSelect').val() != 'All') {
+	    	    //alert('Not all');
+	      		getNonMentors(Household_Id__c,'Non Mentors');
+	      	}
+	      
+	   },
+	   
+	}); 
+	 
+}); 
+
+
+j$(function () {
+    j$("#tmnNonMentorsTBL").jqGrid({
+        datatype: "local",
+        height: 150,
+        colNames: ["ID", "HouseholdId", "Contact ID", "Contact Name", "Role", "Owner", "Created By", "Create Date", "Modified By", "Modified Date"],
+        colModel: [
+            { name: "id", width: 1, hidden: true },
+            { name: "name", width: 85 },
+            { name: "Household_Id__c", width: 1, hidden: true },
+            { name: "full_name__c", width: 100 },
+            { name: "role__c", width: 200 },
+            { name: "owner_full_name__c", width: 100, align: "right" },
+            { name: "createdBy", width: 100, align: "right" },
+            { name: "createdDate", width: 80, align: "right" },
+            { name: "lastModifiedBy", width: 100, sortable: false },
+            { name: "lastModifiedDate", width: 80, sortable: false }
+        ],
+        pager: "#nonmentorpager",
+        rowNum: 10,
+        rowList: [10, 20, 30],
+        sortname: "name",
+        sortorder: "desc",
+        viewrecords: true,
+        gridview: true,
+        autoencode: true,
+        //multiselect: true,
+        caption: "Household Members",
+        
+	    onSelectRow: function(Household_Id__c){ 
+
+		   j$(Household_Id__c).css("background","#FFEAEA");
+	    
+	      if (j$('#topNavSelect').val() != 'All') {
+	      	getNonMentors(Household_Id__c,'Non Mentors');
+	      }
+	      
+	   },
+	   
+	}); 
+	 
+}); 
+
+
+function getNonMentors(filterType, filter) {
+
+	//alert('filterType --> ' + filterType + ' filter is --> ' + filter);
+	var household;
+	if (filter == 'Non Mentors') {
+	  household = j$('#tmnContactsTBL').jqGrid('getCell', filterType, 'Household_Id__c');
+	  filterType = household;
+	  	//alert('Selected row is --> ' + household);
+	  
+	}
+
+
+    j$('#tmnNonMentorsTBL').jqGrid("clearGridData");
+	
+    Visualforce.remoting.Manager.invokeAction(
+        '{!$RemoteAction.TMNContacts.getTMNContacts}', filterType, filter,
+        function(result, event){
+            if (event.status) {
+            
+       		    var gridData;
+       		    var obj;
+       		    gridData = JSON.stringify(result);
+       		    //alert(gridData);
+                obj = JSON.parse(gridData); 
+          
+				for (var i = 0; i < obj.length; i++) {
+				    var d;
+					d = [{id: obj[i].Id, name: obj[i].Name, Household_Id__c: obj[i].Household_Id__c , full_name__c: obj[i].Full_Name__c, role__c: obj[i].Role__c, owner_full_name__c: obj[i].Owner_Full_Name__c, createdBy: obj[i].CreatedBy.FirstName + ' ' + obj[i].CreatedBy.LastName, createdDate: convertFromSalesForceDate(obj[i].CreatedDate), lastModifiedBy: obj[i].LastModifiedBy.FirstName + ' ' + obj[i].LastModifiedBy.LastName, lastModifiedDate: convertFromSalesForceDate(obj[i].LastModifiedDate)}] ;
+					j$('#tmnNonMentorsTBL').addRowData(i+1, d);
+				}
+
+				//j$('#tmnContactsTBL').unblock();
+
+				                
+            } else if (event.type === 'exception') {
+                //alert(event.where);
+                document.getElementById("unexpected-error-paragraph").innerHTML = "Issue putting results in the [tmnNonMentorsTBL] table <br/>"
+                																  + "filterType --> " + filterType + " <br/> "  
+                																  + "filter     --> " + filter + " <br/> "  
+                																  +  event.message + "<br/><br/>" + event.where;
+            } else {
+            	/* This is an unexpected error */
+                document.getElementById("unexpected-error-paragraph").innerHTML = "Unexpected issue putting results in the [tmnNonMentorsTBL] table <br/>"
+                																  + "filterType --> " + filterType + " <br/> "  
+                																  + "filter     --> " + filter + " <br/> "  
+                																  +  event.message + "<br/>";
+            }
+        },
+        {escape: true}
+    );	
+
+
+
+}
+	
+function getTMNContacts(filterType, filter) {
+
+
+	document.getElementById("page-status-text").innerHTML = " Loading...";
+	
+    j$('#tmnContactsTBL').jqGrid("clearGridData");
+	
+    Visualforce.remoting.Manager.invokeAction(
+        '{!$RemoteAction.TMNContacts.getTMNContacts}', filterType, filter,
+        function(result, event){
+            if (event.status) {
+            
+       		    var gridData;
+       		    var obj;
+       		    gridData = JSON.stringify(result);
+       		    //alert(gridData);
+                obj = JSON.parse(gridData); 
+          
+				for (var i = 0; i < obj.length; i++) {
+				    var d;
+					d = [{id: obj[i].Id, name: obj[i].Name, Household_Id__c: obj[i].Household_Id__c , full_name__c: obj[i].Full_Name__c, role__c: obj[i].Role__c, owner_full_name__c: obj[i].Owner_Full_Name__c, createdBy: obj[i].CreatedBy.FirstName + ' ' + obj[i].CreatedBy.LastName, createdDate: convertFromSalesForceDate(obj[i].CreatedDate), lastModifiedBy: obj[i].LastModifiedBy.FirstName + ' ' + obj[i].LastModifiedBy.LastName, lastModifiedDate: convertFromSalesForceDate(obj[i].LastModifiedDate)}] ;
+					j$('#tmnContactsTBL').addRowData(i+1, d);
+				}
+
+            } else if (event.type === 'exception') {
+                alert(event.where);
+            } else {
+                alert(event.message);
+            }
+        },
+        {escape: true}
+    );	
+
+	document.getElementById("page-status-text").innerHTML = " Click on a mentor to view or add a new mentor.";
+
+}
+
+
+/*
+ * This method is called only when the entire DOM is called
+ */
+j$(function() {
+  
+  getTMNContacts('All','All');
+  
+  /*
+   * Make sure the theme is added to all buttons
+   */
+  j$('button, input[type=submit], input:button, input:submit' ).button();
+  
+  /*
+   * Make sure the div is hidden by default
+   */
+  j$('#nonMentors').hide();
+
+
+   /*
+    * Activate the hover over for the accordion
+    */
+   j$( "#edit-contact-form-accordion" ).accordion({
+      event: "click hoverintent",
+      heightStyle: "content"
+   });
+   
+   
+  
+});
+
+
+
+
+</script>   
+
+<body id="tmncontacts-body">
+
+ <div id="page-status" class="ui-state-highlight ui-corner-all">
+	<p id="page-status-text"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+		<strong>Alert:</strong>You must have a minimum of 2 characters in both the first and last name field(s).
+	</p>
+ </div>
+<div id="left-side">
+	  <div id='topNavDiv'>
+	  
+	    <!-- <div id="searchDiv"> -->
+		    View Option:
+		    <select id="topNavSelect">
+		    	<option value="All" selected="selected">All TMN Contacs</option>
+		    	<option value="Mentor">Mentors Only</option>
+		    </select>
+			First/Last: <input id='First' size='20'/>/<input id='Last' size='20' width='20'/>
+		    <button id="search-contact">Search</button>
+	    <!-- </div> -->
+	    <div id='buttonDiv'>
+	    	<button id="Add">Add</button>
+	    	<button id="edit-contact">Edit</button>
+	    	<button id="delete-contact">Delete</button>
+	    </div>
+	    
+	  </div> <!--  end of topNavDiv --> 
+	  
+	<div id='tmnContactsDiv'>
+	  <table id="tmnContactsTBL"><tr><td></td></tr></table>  
+	  <div id="pager"></div>
+	</div>
+	  
+	<br/>  
+	<div id='nonMentors'>
+	  <table id="tmnNonMentorsTBL"><tr><td></td></tr></table>  
+	  <div id="nonmentorpager"></div>
+	</div>
+  
+</div> <!--  end of left-side div -->
+  
+<div id="delete-contact-form" title="Delete Contact">
+  <p class="validateTips">Are you sure you want to delete the selected contact?</p>
+</div>  
+
+<div id="search-contact-form-error"  title="Search Error">
+  <div id="search-error-message" class="ui-state-error ui-corner-all">
+		<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+		<strong>Alert:</strong>You must have a minimum of 2 characters in both the first and last name field(s).</p>
+  </div>
+</div>  
+
+
+<div id="unexpected-error"  title="Unexpected Error">
+  <div id="unexpected-error-message" class="ui-state-error ui-corner-all">
+		<p id="unexpected-error-paragraph"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+		You and everyone must have a minimum of 2 characters in both the first and last name field(s).</p>
+  </div>
+</div>  
+
+
+<div id="edit-contact-form" title="Edit a contact">
+
+ 
+	<div id="edit-contact-form-accordion">
+		<H3>Demographics</H3>
+		<div id="demographics-div">
+			<div id="demographics-div-left">
+				<fieldset>
+					<label for="get-name">Name:</label><input type="text" name="get-name"/><br/>
+					<label for="get-chessie-id">Chessie ID:</label><input type="text" name="get-chessie-id"/><br/>
+					<label for="get-gender">Gender:</label><input type="text" name="get-gender"/><br/>
+					<label for="get-dob">Date of Birth:</label><input type="text" name="get-dob"/><br/>
+					<label for="get-marital-status">Marital Status:</label><input type="text" name="get-marital-status"/><br/>
+					<label for="get-race">Race:</label><input type="text" name="get-race"/><br/>
+					<label for="get-hisp">Hispanic Heritage:</label><input type="text" name="get-hisp"/><br/>
+					<label for="get-dhr-cpa-1">DHR CPA Race 1:</label><input type="text" name="get-dhr-cpa-1"/><br/>
+					<label for="get-dhr-cpa-2">DHR CPA Race 2:</label><input type="text" name="get-dhr-cpa-2"/>
+				</fieldset>
+			</div>
+			<div id="demographics-div-right">
+				<fieldset>
+					<label for="get-street-address">Street Address:</label><input type="text" name="get-street-address"/><br/>
+					<label for="get-street-line-2">Street Line 2:</label><input type="text" name="get-street-line-2"/><br/>
+					<label for="get-city">City:</label><input type="text" name="get-city"/><br/>
+					<label for="get-state">State:</label><input type="text" name="get-state"/><br/>
+					<label for="get-zip-code">Zip Code:</label><input type="text" name="get-zip-code"/><br/>
+					<label for="get-primary-phone">Primary Phone:</label><input type="text" name="get-primary-phone"/><br/>
+					<label for="get-secondary-phone">Secondary Phone:</label><input type="text" name="get-secondary-phone"/><br/>
+					<label for="get-email">Email:</label><input type="text" name="get-email"/><br/>
+				</fieldset>
+			</div>
+		</div>
+		<h3>Marketing Information</h3>
+		<div id="marketing-div">
+				<fieldset>
+					<label for="get-how">How did hear about us?</label><input type="text" name="get-how"/><br/>
+					<label for="get-referral-type">Referral Type:</label><input type="text" name="get-referral-type"/><br/>
+					<label for="get-get-other">Other-Describe:</label><input type="text" name="get-get-other"/><br/>
+				</fieldset>
+		</div>
+		<h3>Mentor Status</h3>
+		<div id="mentor-div">
+			<div id="mentor-div-left">
+				<fieldset>
+					<label for="get-disregard">Disregard:</label><input type="text" name="get-disregard" size="10"/><br/>
+					<label for="get-home-assctn">Associated home population:</label><input type="text" name="get-home-assctn" size="10"/><br/>
+					<label for="get-in-progress">In Progress:</label><input type="text" name="get-in-progress" size="10"/><br/>
+					<label for="get-active">Active:</label><input type="text" name="get-active" size="10"/><br/>
+					<label for="get-suspended">Suspended:</label><input type="text" name="get-suspended" size="10"/><br/>
+					<label for="get-inactive">Inactive:</label><input type="text" name="get-inactive" size="10"/><br/>
+					<label for="get-denied">Denied:</label><input type="text" name="get-denied" size="10"/><br/>
+					<label for="get-blank"> </label><input type="text" name="get-blank" size="10" style="border: solid 1px #FFFFFF"/><br/>
+					<label for="get-withdrawn">Withdrawn:</label><input type="text" name="get-withdrawn" size="10"/><br/>
+					<label for="get-blank"> </label><input type="text" name="get-blank" size="10" style="border: solid 1px #FFFFFF"/><br/>
+					<label for="get-recertification">Recent Recertification Date:</label><input type="text" name="get-recertification" size="10"/><br/>
+				</fieldset>
+			</div>
+			<div id="mentor-div-right">
+				<fieldset>
+					<label for="get-blank"> </label><input type="text" name="get-blank" size="10" style="border: solid 1px #FFFFFF"/><br/>
+					<label for="get-blank"> </label><input type="text" name="get-blank" size="10" style="border: solid 1px #FFFFFF"/><br/>
+					<label for="get-in-progress-date">Date:</label><input type="text" name="get-in-progress-date" size="10"/><br/>
+					<label for="get-active-date">Date:</label><input type="text" name="get-active-date" size="10"/><br/>
+					<label for="get-suspended-date">Date:</label><input type="text" name="get-suspended-date" size="10"/><br/>
+					<label for="get-inactive-date">Date:</label><input type="text" name="get-inactive-date" size="10"/><br/>
+					<label for="get-denied-date">Date:</label><input type="text" name="get-denied-date" size="10"/><br/>
+					<label for="get-denied-reason">Reason:</label><input type="text" name="get-denied-reason" size="10"/><br/>
+					<label for="get-withdrawn-date">Date:</label><input type="text" name="get-withdrawn-date" size="10"/><br/>
+					<label for="get-withdrawn-reason">Reason:</label><input type="text" name="get-withdrawn-reason" size="10"/><br/>
+				</fieldset>
+			</div>
+		</div>
+		<h3>System Information</h3>
+		<div id="system-div">
+				<fieldset>
+					<label for="get-owner">Owner:</label><input type="text" name="get-in-progress-date" size="10"/><br/>
+					<label for="get-created-by">Created By:</label><input type="text" name="get-active-date" size="10"/><br/>
+					<label for="get-last-modified-by">Last Modified By:</label><input type="text" name="get-suspended-date" size="10"/><br/>
+				</fieldset>
+		</div>
+	</div>
+
+</div>  
+  
+</body>  
+
+<script>
+
+/*
+ * Add an event to the topNavSelect "select" list
+ */
+ j$("#topNavSelect").change(function() {
+ 
+ 	//alert('topNavSelect event -->' + j$('#topNavSelect').val());
+ 	
+ 	if (j$('#topNavSelect').val() == 'All') {
+ 		j$('#tmnNonMentorsTBL').jqGrid("clearGridData");
+ 		j$('#nonMentors').slideUp('slow');
+ 	} else {
+ 		j$('#nonMentors').slideDown('slow');
+ 	}
+ 	
+ 	getTMNContacts('All',j$('#topNavSelect').val());
+ 
+ });
+ 
+
+	/*
+	 * Add the appropriate "events" to the delect contact model
+	 */ 
+     j$( "#delete-contact-form" ).dialog({
+      autoOpen: false,
+      height: 200,
+      width: 250,
+      modal: true,
+      buttons: {
+        "Delete": function() {
+          	var bValid = true;
+            j$( this ).dialog( "close" );
+          //}
+        },
+        Cancel: function() {
+          j$( this ).dialog( "close" );
+        }
+      },
+      close: function() {
+        j$( this ).dialog( "close" );
+      }
+    });
+ 
+ 	/*
+ 	 * Add an event to the delete button to open the delete model form
+ 	 */
+     j$( "#delete-contact" )
+      .button()
+      .click(function() {
+        j$( "#delete-contact-form" ).dialog( "open" );
+      });
+
+
+	/*
+	 * Add the appropriate "events" to the search contact form
+	 */
+     j$( "#search-contact-form-error" ).dialog({
+      autoOpen: false,
+      height: 200,
+      width: 400,
+      modal: true,
+      buttons: {
+        Ok: function() {
+          j$( this ).dialog( "close" );
+        }
+      },
+      close: function() {
+        j$( this ).dialog( "close" );
+      }
+    });
+
+
+	/*
+	 * Add the click event to the search contact button
+	 */
+    j$( "#search-contact" )
+      .button()
+      .click(function() {
+        j$( "#search-contact-form-error" ).dialog( "open" );
+        document.getElementById("page-status-text").innerHTML = " Search selected.";
+      });
+
+
+
+	/*
+	 * Unexpected error will show up here.
+	 * A user can only see it if they double click on the body.
+	 */
+     j$( "#unexpected-error" ).dialog({
+      autoOpen: false,
+      height: 500,
+      width: 700,
+      modal: true,
+      buttons: {
+        Ok: function() {
+          j$( this ).dialog( "close" );
+        }
+      },
+      close: function() {
+        j$( this ).dialog( "close" );
+      }
+    });
+
+	/*
+	 * Add the click event to the body so the user can bring up unexpected errors.
+	 */
+    j$( "#tmncontacts-body" )
+      //.button()
+      .dblclick(function() {
+        j$( "#unexpected-error" ).dialog( "open" );
+      });
+
+
+
+ 	/*
+ 	 * Add a click event to the "edit" button to open the edit model.
+ 	 * 
+	 */
+     j$( "#edit-contact" )
+      .button()
+      .click(function() {
+        j$( "#edit-contact-form" ).dialog( "open" );
+      });
+
+
+	/*
+	 * Add the appropriate "events" to the "edit" contact model
+	 *
+	 */
+     j$( "#edit-contact-form" ).dialog({
+      autoOpen: false,
+      height: 600,
+      width: 850,
+      modal: true,
+      buttons: {
+        "Save": function() {
+          	var bValid = true;
+            j$( this ).dialog( "close" );
+          //}
+        },
+        Cancel: function() {
+          j$( this ).dialog( "close" );
+        }
+      },
+      close: function() {
+        j$( this ).dialog( "close" );
+      }
+    });
+ 
+  /*
+   * Handels the magic of the hover over on the accordion.
+   */
+   j$.event.special.hoverintent = {
+    setup: function() {
+      j$( this ).bind( "mouseover", jQuery.event.special.hoverintent.handler );
+    },
+    teardown: function() {
+      j$( this ).unbind( "mouseover", jQuery.event.special.hoverintent.handler );
+    },
+    handler: function( event ) {
+      var currentX, currentY, timeout,
+        args = arguments,
+        target = j$( event.target ),
+        previousX = event.pageX,
+        previousY = event.pageY;
+ 
+      function track( event ) {
+        currentX = event.pageX;
+        currentY = event.pageY;
+      };
+ 
+      function clear() {
+        target
+          .unbind( "mousemove", track )
+          .unbind( "mouseout", clear );
+        clearTimeout( timeout );
+      }
+ 
+      function handler() {
+        var prop,
+          orig = event;
+ 
+        if ( ( Math.abs( previousX - currentX ) +
+            Math.abs( previousY - currentY ) ) < 7 ) {
+          clear();
+ 
+          event = j$.Event( "hoverintent" );
+          for ( prop in orig ) {
+            if ( !( prop in event ) ) {
+              event[ prop ] = orig[ prop ];
+            }
+          }
+          // Prevent accessing the original event since the new event
+          // is fired asynchronously and the old event is no longer
+          // usable (#6028)
+          delete event.originalEvent;
+ 
+          target.trigger( event );
+        } else {
+          previousX = currentX;
+          previousY = currentY;
+          timeout = setTimeout( handler, 100 );
+        }
+      }
+ 
+      timeout = setTimeout( handler, 100 );
+      target.bind({
+        mousemove: track,
+        mouseout: clear
+      });
+    }
+  };
+
+</script>
+</apex:page>
