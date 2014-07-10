@@ -92,13 +92,14 @@ public with sharing class referral_Controller2 {
   private Id personBeingServedId {get; set;}
   public Id pBSId { get; set; }
   public boolean isEditor{get; set;}
+  SystemSettings__c OS = SystemSettings__c.getOrgDefaults(); // Custom setting to control the visibility of convert button for CareMeridian group Sravan: 07/10/2014 1:42 PM.
   public boolean canConvert{ get { 
     
         Set<string> RWStates = new Set<string>{'Minnesota', 'California', 'Indiana'};
         system.debug( 'Ref record type: ' + referralrecordtype );
         system.debug(' is cambridge:' + iscambridge);
         system.debug(' operatinggroup:' + operatinggroup);
-        return ((operatinggroup == 'Cambridge' && isCambridge )|| (operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ) ); // Add this line to make the convert button available for CareMeridian group || (operatinggroup == 'CareMeridian') && isCareMeridian  
+        return ((operatinggroup == 'Cambridge' && isCambridge )|| (operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ) || (operatinggroup == 'CareMeridian' && isCareMeridian && OS.Convert_Referral_enable_for_CM__c) );  
     } set;}
     
 
