@@ -1572,17 +1572,22 @@ function enableDiagEff() {
          <apex:inputField label="Is the plan to return the person to home/community?" value="{!Referral__c.Placement_History_Plan_to_Return__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || Referral__c.Placement_Current__c!='Yes'}" />
          <apex:inputField label="Is the plan to return the person to home/community?" value="{!Referral__c.Placement_History_Plan_to_Return__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Current__c=='Yes'}" />
          <apex:inputField label="Select the type of the current out of home placement:" value="{!Referral__c.Placement_Type_Current__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || Referral__c.Placement_Current__c!='Yes'}" />
-         <apex:inputField label="Select the type of the current out of home placement:" value="{!Referral__c.Placement_Type_Current__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Current__c=='Yes'}">
-             <apex:actionStatus id="statusPlaceTypeCur">
-                 <apex:facet name="start">
-                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
-                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
-                     </div>
-                 </apex:facet>
-                 <apex:facet name="stop"></apex:facet>
-             </apex:actionStatus>
-             <apex:actionSupport event="onchange" rerender="PlacementHxBlockSection" status="statusPlaceTypeCur" />
-         </apex:inputField>
+         <apex:pageBlockSectionItem rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Current__c=='Yes'}" >
+         	 <apex:outputlabel for="typeofhomePlacement" value="Select the type of the current out of home placement:"  />
+	         <apex:actionRegion >
+	         <apex:inputField id="typeofhomePlacement" value="{!Referral__c.Placement_Type_Current__c}" >
+	             <apex:actionStatus id="statusPlaceTypeCur">
+	                 <apex:facet name="start">
+	                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+	                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+	                     </div>
+	                 </apex:facet>
+	                 <apex:facet name="stop"></apex:facet>
+	             </apex:actionStatus>
+	             <apex:actionSupport event="onchange" rerender="PlacementHxBlockSection" status="statusPlaceTypeCur" />
+	          </apex:inputField>
+	         </apex:actionRegion>
+         </apex:pageBlockSectionItem>
          <apex:inputField label="Other (specify)" value="{!Referral__c.Placement_Type_Current_Other__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || Referral__c.Placement_Current__c!='Yes' || Referral__c.Placement_Type_Current__c!='Other (specify)'}" />
          <apex:inputField label="Other (specify)" value="{!Referral__c.Placement_Type_Current_Other__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Current__c=='Yes' && Referral__c.Placement_Type_Current__c=='Other (specify)'}" />
          <apex:pageBlockSectionItem >
@@ -1621,17 +1626,22 @@ function enableDiagEff() {
          <apex:inputField label="Inpatient Substance Abuse Treatment (how many times?)" value="{!Referral__c.Placement_InpatientSubAbuseTx_Count__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
          <apex:inputField label="Inpatient Substance Abuse Treatment (how many times?)" value="{!Referral__c.Placement_InpatientSubAbuseTx_Count__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
          <apex:inputField value="{!Referral__c.Placement_Other_Count__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
-         <apex:inputField value="{!Referral__c.Placement_Other_Count__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}">
-             <apex:actionStatus id="statusPlaceOtherCount">
-                 <apex:facet name="start">
-                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
-                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
-                     </div>
-                 </apex:facet>
-                 <apex:facet name="stop"></apex:facet>
-             </apex:actionStatus>
-             <apex:actionSupport event="onchange" rerender="PlacementHxBlockSection" status="statusPlaceOtherCount" />
-         </apex:inputField>
+         <apex:pageBlocksectionItem rendered="{!Referral__c.Placement_History__c=='Yes'}" >
+         	 <apex:outputlabel value="Other (how many times?)" for="placementotherCount" />
+	         <apex:actionRegion >
+	         <apex:inputField value="{!Referral__c.Placement_Other_Count__c}" id="placementotherCount">
+	             <apex:actionStatus id="statusPlaceOtherCount">
+	                 <apex:facet name="start">
+	                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+	                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+	                     </div>
+	                 </apex:facet>
+	                 <apex:facet name="stop"></apex:facet>
+	             </apex:actionStatus>
+	             <apex:actionSupport event="onchange" rerender="PlacementHxBlockSection" status="statusPlaceOtherCount" />
+	         </apex:inputField>
+	         </apex:actionRegion>
+         </apex:pageBlocksectionItem>
          <apex:inputField value="{!Referral__c.Placement_Past_Other_Describe__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || Referral__c.Placement_Other_Count__c == null || Referral__c.Placement_Other_Count__c == 0}" />
          <apex:inputField value="{!Referral__c.Placement_Past_Other_Describe__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Other_Count__c != null && Referral__c.Placement_Other_Count__c > 0}" />
          
@@ -1855,7 +1865,7 @@ function enableDiagEff() {
         </apex:outputPanel>
         </apex:pageBlocksectionItem>
    
-        <apex:pageBlockSectionItem >
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}">
         	<apex:outputPanel id="encephaloPanel" >
 		        <apex:outputLabel for="typeofEncephalopathy" value="Type of Encephalopathy" styleclass="labelCol" style="margin-left: 10%;"/>
 		        <apex:inputField value="{!Referral__c.Type_of_Encephalopathy__c}" id="typeofEncephalopathy" />
