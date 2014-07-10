@@ -78,7 +78,7 @@ public pageReference savePBS() {
 		this.personbeingserved.guardian1_name__pc = relParty.Name;
 		this.personbeingserved.guardian_phone_number__pc = relParty.Phone__c;
 		this.personbeingserved.guardian_1_e_mail__pc = relparty.email__c;
-	}
+	}  
 
 	// insert the new account record, and check for its validity
 	decimal age = math.FLOOR(this.personbeingserved.personbirthdate.daysBetween(system.today())/365.2425);
@@ -116,7 +116,11 @@ public pageReference savePBS() {
 	     		 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
 	        	'An error occurred saving this record. ' + e.getMessage()));
 				}
-  			} else {
+  			} else if (e.getMessage().Contains('The Other ID and Other ID Description fields')) {
+  			     ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+	        	    'The Other ID and Other ID Description fields must be filled in for a person being served with a Mailing State of North Carolina.'));  			 
+  			}	 
+  			else {
   				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
         	'An error occurred saving this record. ' + e.getMessage()));
   				

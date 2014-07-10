@@ -3976,20 +3976,17 @@ TEXT( Im_intersted_in_supporting__c )
         <label>My - Review</label>
     </listViews>
     <listViews>
-        <fullName>Prospects_by_Owner_2</fullName>
-        <columns>OWNER.FIRST_NAME</columns>
-        <columns>OWNER.LAST_NAME</columns>
-        <columns>First_Name__c</columns>
+        <fullName>Prospects_by_Owner4</fullName>
         <columns>NAME</columns>
+        <columns>First_Name__c</columns>
+        <columns>Date_of_Inquiry__c</columns>
         <columns>Program__c</columns>
-        <columns>Region__c</columns>
-        <columns>Status__c</columns>
-        <columns>State__c</columns>
+        <columns>LAST_ACTIVITY</columns>
         <filterScope>Everything</filterScope>
         <filters>
             <field>OWNER.LAST_NAME</field>
             <operation>equals</operation>
-            <value>rogers</value>
+            <value>savage</value>
         </filters>
         <filters>
             <field>Status__c</field>
@@ -4033,7 +4030,9 @@ TEXT( Im_intersted_in_supporting__c )
     <validationRules>
         <fullName>Allow_Nurturing_only_on_Inquiry_Stage</fullName>
         <active>true</active>
-        <errorConditionFormula>AND(ISPICKVAL(Status__c, &quot;Nurturing&quot;),ISPICKVAL(  Application_Review_Status__c , &quot;Approved&quot;))</errorConditionFormula>
+        <errorConditionFormula>AND(ISPICKVAL(Status__c, &quot;Nurturing&quot;),ISPICKVAL(  Application_Review_Status__c , &quot;Approved&quot;))
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Status__c</errorDisplayField>
         <errorMessage>Prospects may only be moved to a nurturing status during initial inquiry stage (before application is approved) indicating additional time is needed to nurture the relationship. For prospects in later stages select the appropriate “On-Hold” status.</errorMessage>
     </validationRules>
@@ -4043,7 +4042,9 @@ TEXT( Im_intersted_in_supporting__c )
         <errorConditionFormula>AND( 
 OR(ISPICKVAL(Status__c, &quot;On hold - Prospect&quot;), 
 ISPICKVAL( Status__c , &quot;On hold - Agency&quot;)), 
-NOT(ISPICKVAL( Application_Review_Status__c , &quot;Approved&quot;)), $User.ProfileId &lt;&gt; &apos;00eU0000000myCw&apos; )</errorConditionFormula>
+NOT(ISPICKVAL( Application_Review_Status__c , &quot;Approved&quot;)), $User.ProfileId &lt;&gt; &apos;00eU0000000myCw&apos; )
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Status__c</errorDisplayField>
         <errorMessage>The “on hold” value can only be selected if a Prospect has reached screening stage (after the application is approved)</errorMessage>
     </validationRules>
@@ -4051,36 +4052,36 @@ NOT(ISPICKVAL( Application_Review_Status__c , &quot;Approved&quot;)), $User.Prof
         <fullName>Application_Review</fullName>
         <active>true</active>
         <description>Application Review</description>
-        <errorConditionFormula>AND( OR(TEXT(Application_Review_Status__c) = &quot;Pass&quot;, TEXT(Application_Review_Status__c) = &quot;Fail&quot;),  ISNULL( Application_Received_Date__c ))</errorConditionFormula>
+        <errorConditionFormula>AND( OR(TEXT(Application_Review_Status__c) = &quot;Pass&quot;, TEXT(Application_Review_Status__c) = &quot;Fail&quot;),  ISNULL( Application_Received_Date__c ))
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Address__c</errorDisplayField>
         <errorMessage>Application Received date is required</errorMessage>
     </validationRules>
     <validationRules>
-        <fullName>Application_Status_Locked</fullName>
-        <active>false</active>
-        <description>Rule is inactive via PMC-17</description>
-        <errorConditionFormula>AND(ISCHANGED( Application_Review_Status__c ), OR( $Profile.Name &lt;&gt; &quot;Mentor Recruiter Manager&quot;), NOT(CONTAINS($Profile.Name, &quot;Administrator&quot;)))</errorConditionFormula>
-        <errorDisplayField>Application_Review_Status__c</errorDisplayField>
-        <errorMessage>Only Mentor Recruiter Manager&apos;s can change the application status of a prospect.</errorMessage>
-    </validationRules>
-    <validationRules>
         <fullName>Application_Status_Rules_Required</fullName>
         <active>true</active>
-        <errorConditionFormula>AND(OR(ISPICKVAL(Application_Review_Status__c, &quot;Rejected&quot;), ISPICKVAL(Application_Review_Status__c, &quot;Pending&quot;)), Application_Status_Notes__c = &quot;&quot;)</errorConditionFormula>
+        <errorConditionFormula>AND(OR(ISPICKVAL(Application_Review_Status__c, &quot;Rejected&quot;), ISPICKVAL(Application_Review_Status__c, &quot;Pending&quot;)), Application_Status_Notes__c = &quot;&quot;)
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Application_Status_Notes__c</errorDisplayField>
         <errorMessage>Application Status Notes is required before saving.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Approving_Manager_Blank</fullName>
         <active>true</active>
-        <errorConditionFormula>AND( ISBLANK(Approving_Manager__c),  Notify_Manager_to_Approve__c  =TRUE)</errorConditionFormula>
+        <errorConditionFormula>AND( ISBLANK(Approving_Manager__c),  Notify_Manager_to_Approve__c  =TRUE)
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Approving_Manager__c</errorDisplayField>
         <errorMessage>Please enter an approving manager to associate the notification properly.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Approving_Manager_Not_Blank</fullName>
         <active>true</active>
-        <errorConditionFormula>AND( ISBLANK(Approving_Manager__c),  Notify_Manager_to_Approve__c =TRUE)</errorConditionFormula>
+        <errorConditionFormula>AND( ISBLANK(Approving_Manager__c),  Notify_Manager_to_Approve__c =TRUE)
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Approving_Manager__c</errorDisplayField>
         <errorMessage>Please enter an approving manager to associate the notification properly.</errorMessage>
     </validationRules>
@@ -4088,7 +4089,9 @@ NOT(ISPICKVAL( Application_Review_Status__c , &quot;Approved&quot;)), $User.Prof
         <fullName>Background_Check_Results</fullName>
         <active>true</active>
         <errorConditionFormula>AND ( OR (TEXT(Background_Check_Results__c)  = &quot;Pass&quot;, TEXT(Background_Check_Results__c)  = &quot;Fail&quot;), 
-ISNULL(Background_Check_Completed_Date__c))</errorConditionFormula>
+ISNULL(Background_Check_Completed_Date__c))
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Background_Check_Completed_Date__c</errorDisplayField>
         <errorMessage>Background Check Completed Date must be entered when Background Check Results is Pass or Fail</errorMessage>
     </validationRules>
@@ -4099,7 +4102,9 @@ ISNULL(Background_Check_Completed_Date__c))</errorConditionFormula>
 OR(
 ISPICKVAL(Closed_On_Hold_Reasons__c, &quot;Other&quot;), 
 ISPICKVAL(Closed_On_Hold_Reasons__c, &quot;Selected another agency&quot;)),
-ISBLANK(Other_Reasons__c))</errorConditionFormula>
+ISBLANK(Other_Reasons__c))
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Other_Reasons__c</errorDisplayField>
         <errorMessage>Please give an explanation for choosing &quot;other&quot; or &quot;selected another agency&quot; as the closed/on-hold reason.</errorMessage>
     </validationRules>
@@ -4107,7 +4112,9 @@ ISBLANK(Other_Reasons__c))</errorConditionFormula>
         <fullName>Closed_Reason_Required2</fullName>
         <active>true</active>
         <errorConditionFormula>BEGINS(TEXT( Status__c), &apos;Closed&apos;) &amp;&amp;
-  ISBLANK( TEXT(Closed_On_Hold_Reasons__c) )</errorConditionFormula>
+  ISBLANK( TEXT(Closed_On_Hold_Reasons__c) )
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Closed_On_Hold_Reasons__c</errorDisplayField>
         <errorMessage>Please select a closed reason</errorMessage>
     </validationRules>
@@ -4116,14 +4123,18 @@ ISBLANK(Other_Reasons__c))</errorConditionFormula>
         <active>true</active>
         <errorConditionFormula>IsBlank(  First_Contact_Date__c ) &amp;&amp; 
 LOWER(LEFT(Text(Status__c),6)) =&apos;closed&apos; &amp;&amp; 
-$Profile.Id !=&apos;00eU0000000RHex&apos;</errorConditionFormula>
+$Profile.Id !=&apos;00eU0000000RHex&apos;
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>First_Contact_Date__c</errorDisplayField>
         <errorMessage>First Contact Attempt date must be filled in when closing a record</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Contact_Made_Required_Status_Change</fullName>
         <active>true</active>
-        <errorConditionFormula>AND(OR(ISPICKVAL( Status__c, &quot;Mentor&quot;)), ISNULL(Contact_Made__c),  $Profile.Name &lt;&gt; &apos;System Administrator&apos;)</errorConditionFormula>
+        <errorConditionFormula>AND(OR(ISPICKVAL( Status__c, &quot;Mentor&quot;)), ISNULL(Contact_Made__c),  $Profile.Name &lt;&gt; &apos;System Administrator&apos;)
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Contact_Made__c</errorDisplayField>
         <errorMessage>Contact made is required before Status can be changed to &quot;Mentor&quot;</errorMessage>
     </validationRules>
@@ -4131,28 +4142,45 @@ $Profile.Id !=&apos;00eU0000000RHex&apos;</errorConditionFormula>
         <fullName>Date_of_Inquiry_Validation</fullName>
         <active>true</active>
         <description>Allow edits of  Date of Inquiry for Manual records only; Make sure that Web Entries are permitted.</description>
-        <errorConditionFormula>AND(ISCHANGED( Date_of_Inquiry__c ), NOT(ISNEW()), Entry_Point__c = &quot;Web&quot;)</errorConditionFormula>
+        <errorConditionFormula>AND(ISCHANGED( Date_of_Inquiry__c ), NOT(ISNEW()), Entry_Point__c = &quot;Web&quot;)
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorMessage>Date of Inquiry cannot be modified.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Final_Review_Approved_after_Screening</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND( ISPICKVAL(Final_Review__c, &quot;Approved&quot;), Screening_Progress_Percent__c &lt;&gt; 1.0)
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
+        <errorDisplayField>Final_Review__c</errorDisplayField>
+        <errorMessage>Cannot mark as &quot;Approved&quot; until all screening milestones are complete.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>FirstContact_vs_DateOfInquiry</fullName>
         <active>true</active>
         <errorConditionFormula>ISBLANK(First_Contact_Date__c)  &amp;&amp;
-(  (TODAY()-Date_of_Inquiry__c )&gt;7)</errorConditionFormula>
+(  (TODAY()-Date_of_Inquiry__c )&gt;7)
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>First_Contact_Date__c</errorDisplayField>
         <errorMessage>First Contact Attempted is required within 7 Days of the Date of Inquiry</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>First_Contact_Date_Notes_Required</fullName>
         <active>true</active>
-        <errorConditionFormula>AND(NOT(ISNULL( First_Contact_Date__c )), ISBLANK( First_Contact_Attempt_Notes__c),  $User.ProfileId &lt;&gt; &apos;00eU0000000myCw&apos; )</errorConditionFormula>
+        <errorConditionFormula>AND(NOT(ISNULL( First_Contact_Date__c )), ISBLANK( First_Contact_Attempt_Notes__c),  $User.ProfileId &lt;&gt; &apos;00eU0000000myCw&apos; )
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>First_Contact_Attempt_Notes__c</errorDisplayField>
         <errorMessage>First contact notes are required.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>First_Contact_greater_date_of_inquiry</fullName>
         <active>true</active>
-        <errorConditionFormula>AND(NOT(ISNULL(  First_Contact_Date__c )), First_Contact_Date__c  &lt; Date_of_Inquiry__c,  $Profile.Name &lt;&gt; &apos;System Administrator&apos;)</errorConditionFormula>
+        <errorConditionFormula>AND(NOT(ISNULL(  First_Contact_Date__c )), First_Contact_Date__c  &lt; Date_of_Inquiry__c,  $Profile.Name &lt;&gt; &apos;System Administrator&apos;)
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Date_of_Inquiry__c</errorDisplayField>
         <errorMessage>Date must be greater than or equal to First Contact Date</errorMessage>
     </validationRules>
@@ -4160,28 +4188,36 @@ $Profile.Id !=&apos;00eU0000000RHex&apos;</errorConditionFormula>
         <fullName>Health_Status_Statement_Results</fullName>
         <active>true</active>
         <errorConditionFormula>AND ( OR (TEXT(Health_Status_Statement_Results__c)  = &quot;Pass&quot;, TEXT(Health_Status_Statement_Results__c)  = &quot;Fail&quot;), 
-ISNULL( Health_Status_Statement_Received__c ))</errorConditionFormula>
+ISNULL( Health_Status_Statement_Received__c ))
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Health_Status_Statement_Received__c</errorDisplayField>
         <errorMessage>Health Status Statement Received Date must be entered when Health Status Statement Results is Pass or Fail</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>History_Contracted_with_TMN_Comments</fullName>
         <active>true</active>
-        <errorConditionFormula>AND(Contracted_with_TMN_before__c = TRUE , Contract_Comments__c  =&quot;&quot;)</errorConditionFormula>
+        <errorConditionFormula>AND(Contracted_with_TMN_before__c = TRUE , Contract_Comments__c  =&quot;&quot;)
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Contract_Comments__c</errorDisplayField>
         <errorMessage>When Prospect has Contracted with TMN Before, associated Comments are required</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>History_Exp_Providing_In_Home_Care</fullName>
         <active>true</active>
-        <errorConditionFormula>AND( In_Home_Care_Experience__c = true,  ISNULL(Previous_Agency_Comments__c))</errorConditionFormula>
+        <errorConditionFormula>AND( In_Home_Care_Experience__c = true,  ISNULL(Previous_Agency_Comments__c))
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Previous_Agency_Comments__c</errorDisplayField>
         <errorMessage>Previous Agency Reference Comments are required when Experience Providing In-Home Care is checked.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>History_In_Home_Care_Comments</fullName>
         <active>true</active>
-        <errorConditionFormula>AND ( In_Home_Care_Experience__c = TRUE, Previous_Agency_Comments__c  = &quot;&quot;)</errorConditionFormula>
+        <errorConditionFormula>AND ( In_Home_Care_Experience__c = TRUE, Previous_Agency_Comments__c  = &quot;&quot;)
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Previous_Agency_Comments__c</errorDisplayField>
         <errorMessage>If In Home Care Experience is checked, associated Comments are Required</errorMessage>
     </validationRules>
@@ -4189,7 +4225,9 @@ ISNULL( Health_Status_Statement_Received__c ))</errorConditionFormula>
         <fullName>Home_Study_Results</fullName>
         <active>true</active>
         <errorConditionFormula>AND ( OR (TEXT(Home_Study_Results__c)  = &quot;Pass&quot;, TEXT(Home_Study_Results__c)  = &quot;Fail&quot;), 
-ISNULL(Home_Study_Completed_Date__c))</errorConditionFormula>
+ISNULL(Home_Study_Completed_Date__c))
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Home_Study_Completed_Date__c</errorDisplayField>
         <errorMessage>Home Study Completed Date must be entered when Home Study Results is Pass or Fail</errorMessage>
     </validationRules>
@@ -4202,7 +4240,9 @@ NOT(ISPICKVAL(How_did_you_hear_about_us__c,&quot;&quot;))
 &amp;&amp;
 ISBLANK(  Outreach_Event__c )
 &amp;&amp;
-Entry_Point__c ==&apos;Employee&apos;</errorConditionFormula>
+Entry_Point__c ==&apos;Employee&apos;
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Outreach_Event__c</errorDisplayField>
         <errorMessage>Please add an Ad Placement/Event Specifics</errorMessage>
     </validationRules>
@@ -4215,7 +4255,9 @@ NOT(ISPICKVAL(How_did_you_hear_about_us__c,&quot;&quot;))
 &amp;&amp;
 ISBLANK( Outreach_Source__c )
 &amp;&amp;
-Entry_Point__c ==&apos;Employee&apos;</errorConditionFormula>
+Entry_Point__c ==&apos;Employee&apos;
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Outreach_Source__c</errorDisplayField>
         <errorMessage>Please add an Ad Campaign/Event Type</errorMessage>
     </validationRules>
@@ -4226,159 +4268,41 @@ Entry_Point__c ==&apos;Employee&apos;</errorConditionFormula>
 &amp;&amp;
 ISPICKVAL( Referral_Type__c ,&quot;&quot;)
 &amp;&amp;
-Entry_Point__c == &quot;Employee&quot;</errorConditionFormula>
+Entry_Point__c == &quot;Employee&quot;
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Referral_Type__c</errorDisplayField>
         <errorMessage>Please select a Referral Type</errorMessage>
-    </validationRules>
-    <validationRules>
-        <fullName>Mentor_All_DMV_Records_Received</fullName>
-        <active>false</active>
-        <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
-All_DMV_Records_Received__c =False
-),True, False)</errorConditionFormula>
-        <errorDisplayField>All_DMV_Records_Received__c</errorDisplayField>
-        <errorMessage>All DMV Records Received must be checked before the status &apos;Mentor&apos; can be applied</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Mentor_Application_Review_Status</fullName>
         <active>true</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 NOT(ISPICKVAL( Application_Review_Status__c ,&quot;Approved&quot;)))
-,True, False)</errorConditionFormula>
+,True, False)
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Application_Review_Status__c</errorDisplayField>
         <errorMessage>Application review is required</errorMessage>
-    </validationRules>
-    <validationRules>
-        <fullName>Mentor_Auto_Insure_Rec</fullName>
-        <active>false</active>
-        <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
-All_Auto_Insurance_Received__c =False
-),True, False)</errorConditionFormula>
-        <errorDisplayField>All_Auto_Insurance_Received__c</errorDisplayField>
-        <errorMessage>All Auto Insurance must be received before the status &apos;Mentor&apos; can be applied</errorMessage>
-    </validationRules>
-    <validationRules>
-        <fullName>Mentor_Auto_Registration_Received</fullName>
-        <active>false</active>
-        <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
-All_Auto_Registration_Received__c =False
-),True, False)</errorConditionFormula>
-        <errorDisplayField>All_Auto_Registration_Received__c</errorDisplayField>
-        <errorMessage>All Auto Registration must be Received before the status &apos;Mentor&apos; can be applied</errorMessage>
-    </validationRules>
-    <validationRules>
-        <fullName>Mentor_Background_Check_Results</fullName>
-        <active>false</active>
-        <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
-NOT(ISPICKVAL( Background_Check_Results__c ,&quot;Pass&quot;)))
-,True, False)</errorConditionFormula>
-        <errorDisplayField>Background_Check_Results__c</errorDisplayField>
-        <errorMessage>must be marked as Pass before the status &apos;Mentor&apos; can be applied</errorMessage>
-    </validationRules>
-    <validationRules>
-        <fullName>Mentor_Drivers_License_Received</fullName>
-        <active>false</active>
-        <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
-All_Drivers_License_Received__c =False
-),True, False)</errorConditionFormula>
-        <errorDisplayField>All_Drivers_License_Received__c</errorDisplayField>
-        <errorMessage>All Driver&apos;s Licenses must be received before the status &apos;Mentor&apos; can be applied</errorMessage>
-    </validationRules>
-    <validationRules>
-        <fullName>Mentor_Final_Review</fullName>
-        <active>false</active>
-        <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
-NOT(ISPICKVAL( Final_Review__c ,&quot;Approved&quot;)))
-,True, False)</errorConditionFormula>
-        <errorDisplayField>Final_Review__c</errorDisplayField>
-        <errorMessage>Mentor Final Review must be marked as Approved before the status &apos;Mentor&apos; can be applied</errorMessage>
-    </validationRules>
-    <validationRules>
-        <fullName>Mentor_Fire_Safety_Check</fullName>
-        <active>false</active>
-        <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
-NOT(ISPICKVAL( Fire_Safety_Check__c ,&quot;Pass&quot;)))
-,True, False)</errorConditionFormula>
-        <errorDisplayField>Fire_Safety_Check__c</errorDisplayField>
-        <errorMessage>Mentor Fire Safety Check must be marked as Pass before the status &apos;Mentor&apos; can be applied</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Mentor_FirstName</fullName>
         <active>true</active>
         <errorConditionFormula>Text(Status__c)==&quot;Mentor&quot;
 &amp;&amp;
- First_Name__c ==&quot;&quot;</errorConditionFormula>
+ First_Name__c ==&quot;&quot;
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>First_Name__c</errorDisplayField>
         <errorMessage>First Name is required when &apos;Mentor&apos; Status is selected</errorMessage>
-    </validationRules>
-    <validationRules>
-        <fullName>Mentor_First_Contact</fullName>
-        <active>false</active>
-        <description>checks to make sure the field first contact date has been filled out</description>
-        <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;, ISNULL(First_Contact_Date__c))
-,True, False)</errorConditionFormula>
-        <errorDisplayField>First_Contact_Date__c</errorDisplayField>
-        <errorMessage>First Contact Date is require before the status &apos;Mentor&apos; can be applied</errorMessage>
-    </validationRules>
-    <validationRules>
-        <fullName>Mentor_Health_Status_Statement</fullName>
-        <active>false</active>
-        <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
-NOT(ISPICKVAL( Health_Status_Statement_Results__c ,&quot;Pass&quot;)))
-,True, False)</errorConditionFormula>
-        <errorDisplayField>Health_Status_Statement_Results__c</errorDisplayField>
-        <errorMessage>Mentor Health Status Statement must be marked as Pass before the status &apos;Mentor&apos; can be applied</errorMessage>
-    </validationRules>
-    <validationRules>
-        <fullName>Mentor_Home_Renter_Insurance</fullName>
-        <active>false</active>
-        <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
-Home_Renter_Insurance__c =False
-),True, False)</errorConditionFormula>
-        <errorDisplayField>Home_Renter_Insurance__c</errorDisplayField>
-        <errorMessage>Home/Renters Insurance is require before the status &apos;Mentor&apos; can be applied</errorMessage>
-    </validationRules>
-    <validationRules>
-        <fullName>Mentor_Home_Study</fullName>
-        <active>false</active>
-        <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
-NOT(ISPICKVAL( Home_Study_Results__c ,&quot;Pass&quot;)))
-,True, False)</errorConditionFormula>
-        <errorDisplayField>Home_Study_Results__c</errorDisplayField>
-        <errorMessage>Mentor Home Study must be marked as Pass before the status &apos;Mentor&apos; can be applied</errorMessage>
-    </validationRules>
-    <validationRules>
-        <fullName>Mentor_OIG_Results</fullName>
-        <active>false</active>
-        <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
-NOT(ISPICKVAL( OIG_Results__c ,&quot;Pass&quot;)))
-,True, False)</errorConditionFormula>
-        <errorDisplayField>OIG_Results__c</errorDisplayField>
-        <errorMessage>Mentor OIG Results must be marked as Pass before the status &apos;Mentor&apos; can be applied</errorMessage>
-    </validationRules>
-    <validationRules>
-        <fullName>Mentor_Physical_House_Inspection</fullName>
-        <active>false</active>
-        <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
-NOT(ISPICKVAL( Physical_House_Inspection__c ,&quot;Pass&quot;)))
-,True, False)</errorConditionFormula>
-        <errorDisplayField>Physical_House_Inspection__c</errorDisplayField>
-        <errorMessage>Mentor Physical House Inspection must be marked as Pass before the status &apos;Mentor&apos; can be applied</errorMessage>
-    </validationRules>
-    <validationRules>
-        <fullName>Mentor_Pre_Service</fullName>
-        <active>false</active>
-        <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
-NOT(ISPICKVAL( Pre_Service_Results__c ,&quot;Pass&quot;)))
-,True, False)</errorConditionFormula>
-        <errorDisplayField>Pre_Service_Results__c</errorDisplayField>
-        <errorMessage>Pre-Service results are required to be Pass before the status &apos;Mentor&apos; can be applied.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Mentor_Program</fullName>
         <active>true</active>
         <description>Mentor Program</description>
-        <errorConditionFormula>AND( ISBLANK(text(Program__c)),  TEXT(Status__c)  = &quot;Mentor&quot;)</errorConditionFormula>
+        <errorConditionFormula>AND( ISBLANK(text(Program__c)),  TEXT(Status__c)  = &quot;Mentor&quot;)
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Program__c</errorDisplayField>
         <errorMessage>Program is required before the status &apos;Mentor&apos; can be applied</errorMessage>
     </validationRules>
@@ -4387,24 +4311,19 @@ NOT(ISPICKVAL( Pre_Service_Results__c ,&quot;Pass&quot;)))
         <active>true</active>
         <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
 ISNULL( Provider_Agreement_Signature_Date__c )
-),True, False)</errorConditionFormula>
+),True, False)
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Provider_Agreement_Signature_Date__c</errorDisplayField>
         <errorMessage>Provider Agreement Signature Date is required before the status &apos;Mentor&apos; can be applied</errorMessage>
-    </validationRules>
-    <validationRules>
-        <fullName>Mentor_References_Primary</fullName>
-        <active>false</active>
-        <errorConditionFormula>IF(AND(Text(Status__c)=&quot;Mentor&quot;,
-NOT(ISPICKVAL( References_Primary__c ,&quot;Approved&quot;)))
-,True, False)</errorConditionFormula>
-        <errorDisplayField>References_Primary__c</errorDisplayField>
-        <errorMessage>Mentor References Primary must be marked as Pass before the status &apos;Mentor&apos; can be applied</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Mentor_Region</fullName>
         <active>true</active>
         <description>Mentor Region</description>
-        <errorConditionFormula>AND (ISBLANK(Region__c), TEXT( Status__c ) = &quot;Mentor&quot;)</errorConditionFormula>
+        <errorConditionFormula>AND (ISBLANK(Region__c), TEXT( Status__c ) = &quot;Mentor&quot;)
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Region__c</errorDisplayField>
         <errorMessage>A Region is required before the status &apos;Mentor&apos; can be applied</errorMessage>
     </validationRules>
@@ -4412,7 +4331,9 @@ NOT(ISPICKVAL( References_Primary__c ,&quot;Approved&quot;)))
         <fullName>On_Hold_Closed_Date</fullName>
         <active>true</active>
         <description>On Hold / Closed Date</description>
-        <errorConditionFormula>AND (OR(  CONTAINS(TEXT(Status__c), &quot;Closed&quot;), CONTAINS(TEXT(Status__c),&quot;On hold&quot;) ), ISNULL( Closed_Date__c ))</errorConditionFormula>
+        <errorConditionFormula>AND (OR(  CONTAINS(TEXT(Status__c), &quot;Closed&quot;), CONTAINS(TEXT(Status__c),&quot;On hold&quot;) ), ISNULL( Closed_Date__c ))
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Closed_Date__c</errorDisplayField>
         <errorMessage>A date is required when placing prospects on hold or closed</errorMessage>
     </validationRules>
@@ -4420,7 +4341,9 @@ NOT(ISPICKVAL( References_Primary__c ,&quot;Approved&quot;)))
         <fullName>Pre_Service_Results</fullName>
         <active>true</active>
         <errorConditionFormula>AND ( OR (TEXT(Pre_Service_Results__c)  = &quot;Pass&quot;, TEXT(Pre_Service_Results__c)  = &quot;Fail&quot;), 
-ISNULL(Pre_Service_Completed_Date__c))</errorConditionFormula>
+ISNULL(Pre_Service_Completed_Date__c))
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Pre_Service_Completed_Date__c</errorDisplayField>
         <errorMessage>Pre-Service Completed Date must be entered when Pre-Service Results is Pass or Fail</errorMessage>
     </validationRules>
@@ -4429,7 +4352,9 @@ ISNULL(Pre_Service_Completed_Date__c))</errorConditionFormula>
         <active>true</active>
         <errorConditionFormula>AND(NOT(CONTAINS(Entry_Point__c, &quot;Web&quot;)), ISPICKVAL(How_did_you_hear_about_us__c, &quot;Referred by someone&quot;),
 OR(ISBLANK(ReferredByFirst__c),
-ISBLANK(ReferredByLast__c)))</errorConditionFormula>
+ISBLANK(ReferredByLast__c)))
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorMessage>You must enter the First and Last Name of the person you were referred by.</errorMessage>
     </validationRules>
     <validationRules>
@@ -4441,125 +4366,92 @@ ISBLANK(ReferredByLast__c)))</errorConditionFormula>
 ISBlank( Week_2_Follow_Up__c) ||
 ISBlank( Week_3_Follow_Up__c)) &amp;&amp;
 ISBlank(Contact_Made__c) &amp;&amp;
-$Profile.Id !=&apos;00eU0000000RHex&apos;</errorConditionFormula>
+$Profile.Id !=&apos;00eU0000000RHex&apos;
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Status__c</errorDisplayField>
         <errorMessage>Please ensure that first contact attempt, week 1, 2, and 3 follow-up dates have all been recorded before closing this record.  Or Enter a Contact Made Date</errorMessage>
     </validationRules>
     <validationRules>
-        <fullName>Status_Mentor_Dynamic_Background</fullName>
-        <active>false</active>
-        <errorConditionFormula>IF(Text(Status__c)&lt;&gt;&quot;Mentor&quot;,False,
-IF(OR(ISPICKVAL( Background_Check_Results_Other__c ,&quot;Pass&quot;),ISPICKVAL( Background_Check_Results_Other__c ,&quot;Does Not Apply&quot;)),False,True)
-
-
-)</errorConditionFormula>
-        <errorDisplayField>Background_Check_Results_Other__c</errorDisplayField>
-        <errorMessage>Pass or Does NOT Apply must be marked before the status &apos;Mentor&apos; can be applied</errorMessage>
-    </validationRules>
-    <validationRules>
-        <fullName>Status_Mentor_Dynamic_Health</fullName>
-        <active>false</active>
-        <errorConditionFormula>IF(Text(Status__c)&lt;&gt;&quot;Mentor&quot;,False, 
-IF(OR(ISPICKVAL(  Health_Status_Statement_Results_Other__c ,&quot;Pass&quot;),ISPICKVAL(  Health_Status_Statement_Results_Other__c ,&quot;Does Not Apply&quot;)),False,True) 
-
-
-)</errorConditionFormula>
-        <errorDisplayField>Health_Status_Statement_Results_Other__c</errorDisplayField>
-        <errorMessage>Pass or Does NOT Apply must be marked before the status &apos;Mentor&apos; can be applied</errorMessage>
-    </validationRules>
-    <validationRules>
-        <fullName>Status_Mentor_Dynamic_Pet</fullName>
-        <active>false</active>
-        <errorConditionFormula>IF(Text(Status__c)&lt;&gt;&quot;Mentor&quot;,False, 
-IF(OR(ISPICKVAL(  Pet_Vaccination_and_Licenses__c ,&quot;Pass&quot;),ISPICKVAL(  Pet_Vaccination_and_Licenses__c ,&quot;Does Not Apply&quot;)),False,True) 
-
-
-)</errorConditionFormula>
-        <errorDisplayField>Pet_Vaccination_and_Licenses__c</errorDisplayField>
-        <errorMessage>Pass or Does NOT Apply must be marked before the status &apos;Mentor&apos; can be applied</errorMessage>
-    </validationRules>
-    <validationRules>
-        <fullName>Status_Mentor_Dynamic_Pool</fullName>
-        <active>false</active>
-        <errorConditionFormula>IF(Text(Status__c)&lt;&gt;&quot;Mentor&quot;,False, 
-IF(OR(ISPICKVAL(  Pool_Water_Body_Assessment__c ,&quot;Pass&quot;),ISPICKVAL(  Pool_Water_Body_Assessment__c ,&quot;Does Not Apply&quot;)),False,True) 
-
-
-)</errorConditionFormula>
-        <errorDisplayField>Pool_Water_Body_Assessment__c</errorDisplayField>
-        <errorMessage>Pass or Does NOT Apply must be marked before the status &apos;Mentor&apos; can be applied</errorMessage>
-    </validationRules>
-    <validationRules>
-        <fullName>Status_Mentor_Dynamic_Ref</fullName>
-        <active>false</active>
-        <errorConditionFormula>IF(Text(Status__c)&lt;&gt;&quot;Mentor&quot;,False, 
-IF(OR(ISPICKVAL(  References_All_Other__c ,&quot;Approved&quot;),ISPICKVAL(  References_All_Other__c ,&quot;Does Not Apply&quot;)),False,True) 
-
-
-)</errorConditionFormula>
-        <errorDisplayField>References_All_Other__c</errorDisplayField>
-        <errorMessage>Approved or Does NOT Apply must be marked before the status &apos;Mentor&apos; can be applied</errorMessage>
-    </validationRules>
-    <validationRules>
         <fullName>Status_Mentor_FileSubmittedApproval</fullName>
         <active>true</active>
-        <errorConditionFormula>ISPICKVAL(Status__c, &apos;Mentor&apos;) &amp;&amp; ISNULL( File_Submitted_for_Approval__c )</errorConditionFormula>
+        <errorConditionFormula>ISPICKVAL(Status__c, &apos;Mentor&apos;) &amp;&amp; ISNULL( File_Submitted_for_Approval__c )
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>File_Submitted_for_Approval__c</errorDisplayField>
         <errorMessage>Date File Submitted for Approval must be entered before the status &apos;Mentor&apos; can be applied</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Status_Null</fullName>
         <active>true</active>
-        <errorConditionFormula>IF(Text( Status__c )=&quot;&quot;,True,False)</errorConditionFormula>
+        <errorConditionFormula>IF(Text( Status__c )=&quot;&quot;,True,False) 
+&amp;&amp;
+(Date_of_Inquiry__c  &gt;=  $Setup.PMC_ValidationGrandfatherDate__c.Date__c )
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Status__c</errorDisplayField>
         <errorMessage>A Status is required</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Week_1_Notes_Required</fullName>
         <active>true</active>
-        <errorConditionFormula>AND(NOT(ISNULL( Week_1_Follow_Up__c )), ISBLANK(Week_1_Follow_Up_Notes__c))</errorConditionFormula>
+        <errorConditionFormula>AND(NOT(ISNULL( Week_1_Follow_Up__c )), ISBLANK(Week_1_Follow_Up_Notes__c))
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Week_1_Follow_Up_Notes__c</errorDisplayField>
         <errorMessage>Notes are required when follow-ups are recorded.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Week_1_date_greater_First_Contact</fullName>
         <active>true</active>
-        <errorConditionFormula>AND(NOT(ISNULL( Week_1_Follow_Up__c )), Week_1_Follow_Up__c &lt;  First_Contact_Date__c )</errorConditionFormula>
+        <errorConditionFormula>AND(NOT(ISNULL( Week_1_Follow_Up__c )), Week_1_Follow_Up__c &lt;  First_Contact_Date__c )
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Week_1_Follow_Up__c</errorDisplayField>
         <errorMessage>Date must be greater than or equal to the first contact date.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Week_2_Notes_Required</fullName>
         <active>true</active>
-        <errorConditionFormula>AND(NOT(ISNULL( Week_2_Follow_Up__c )), ISBLANK(Week_2_Follow_Up_Notes__c))</errorConditionFormula>
+        <errorConditionFormula>AND(NOT(ISNULL( Week_2_Follow_Up__c )), ISBLANK(Week_2_Follow_Up_Notes__c))
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Week_2_Follow_Up_Notes__c</errorDisplayField>
         <errorMessage>Notes are required when follow-ups are recorded.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Week_2_date_greater_than_week_1</fullName>
         <active>true</active>
-        <errorConditionFormula>AND(NOT(ISNULL( Week_2_Follow_Up__c )), Week_2_Follow_Up__c &lt; Week_1_Follow_Up__c )</errorConditionFormula>
+        <errorConditionFormula>AND(NOT(ISNULL( Week_2_Follow_Up__c )), Week_2_Follow_Up__c &lt; Week_1_Follow_Up__c )
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Week_2_Follow_Up__c</errorDisplayField>
         <errorMessage>Date must be greater than or equal to the Week 1 date.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Week_3_Notes_Required</fullName>
         <active>true</active>
-        <errorConditionFormula>AND(NOT(ISNULL( Week_3_Follow_Up__c )), ISBLANK(Week_3_Follow_Up_Notes__c))</errorConditionFormula>
+        <errorConditionFormula>AND(NOT(ISNULL( Week_3_Follow_Up__c )), ISBLANK(Week_3_Follow_Up_Notes__c))
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Week_3_Follow_Up_Notes__c</errorDisplayField>
         <errorMessage>Notes are required when follow-ups are recorded.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Week_3_date_greater_than_week_2</fullName>
         <active>true</active>
-        <errorConditionFormula>AND(NOT(ISNULL( Week_3_Follow_Up__c )), Week_3_Follow_Up__c &lt; Week_2_Follow_Up__c )</errorConditionFormula>
+        <errorConditionFormula>AND(NOT(ISNULL( Week_3_Follow_Up__c )), Week_3_Follow_Up__c &lt; Week_2_Follow_Up__c )
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Week_3_Follow_Up__c</errorDisplayField>
         <errorMessage>Date must be greater than or equal to the Week 2 date.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Zip_Validation</fullName>
         <active>true</active>
-        <errorConditionFormula>IF( AND(OR(NOT(ISNUMBER(Zip__c)) ,LEN(Zip__c)&lt;5) ,  LEN( Zip__c ) &gt;0), True, False)</errorConditionFormula>
+        <errorConditionFormula>IF( AND(OR(NOT(ISNUMBER(Zip__c)) ,LEN(Zip__c)&lt;5) ,  LEN( Zip__c ) &gt;0), True, False)
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Zip__c</errorDisplayField>
         <errorMessage>Zip Code must be 5 numbers, include leading &apos;0&apos; when necessary.</errorMessage>
     </validationRules>
@@ -4571,7 +4463,9 @@ LOWER(LEFT(Text(Status__c),6)) =&apos;closed&apos; &amp;&amp;
 ISBlank( Week_1_Follow_Up__c) &amp;&amp;
 ISBlank( Week_2_Follow_Up__c) &amp;&amp;
 ISBlank( Week_3_Follow_Up__c) &amp;&amp; 
-$Profile.Id !=&apos;00eU0000000RHex&apos;</errorConditionFormula>
+$Profile.Id !=&apos;00eU0000000RHex&apos;
+&amp;&amp; 
+(Date_of_Inquiry__c &gt;= $Setup.PMC_ValidationGrandfatherDate__c.Date__c )</errorConditionFormula>
         <errorDisplayField>Status__c</errorDisplayField>
         <errorMessage>-</errorMessage>
     </validationRules>

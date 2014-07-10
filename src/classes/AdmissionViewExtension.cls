@@ -5,14 +5,12 @@ public with sharing class AdmissionViewExtension {
     public Admission__c admission { get; set; }
     public Assessment__c[] riskAssessments { get; set; }
     public Assessment__c[] cansAssessments { get; set; }
-    public Map<String, Boolean> assessmentTypes { get; set; }
-    
+    public Map<String, Boolean> assessmentTypes { get; set; } 
     public boolean isEditor { get; set;} 
     public boolean canCreateAsmt{ get; set;}
     public boolean canCreateSvc{ get; set;}
     public boolean canCreateAdm{ get; set;}
     public boolean canCreatePlan{ get; set;}
-    
     private void setisEditor() {
         List<UserRecordAccess> acls = [SELECT RecordId, HasEditAccess
                 FROM UserRecordAccess WHERE UserId = :UserInfo.getUserId() AND RecordId = :this.admission.Id ];
@@ -49,7 +47,7 @@ public with sharing class AdmissionViewExtension {
         this.admission = [
                 SELECT ID, Name, CreatedBy.Name, CreatedDate, LastModifiedBy.Name,
                            LastModifiedDate, Effective_Date__c, Status__c,
-                           Discharged_Date__c,Person_Being_Served__c, Person_Being_Served__r.AccountID, person_being_served__r.Name,
+                           Discharged_Date__c,Person_Being_Served__c, Person_Being_Served__r.AccountID, person_being_served__r.Name,Person_Being_Served__r.OwnerId, person_being_served__r.LastName,
                            Network_Offering__c, Discharged_Status__c, Reason_for_Discharge__c, State__c,
                            Referred_Out_Date__c, Referred_Out_Agency_Name__c,
                            Referred_Out_Reason__c,
@@ -116,4 +114,6 @@ public with sharing class AdmissionViewExtension {
     
     
     }    
+    
+    
 }
