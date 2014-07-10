@@ -950,6 +950,17 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Service_Assignment_Closure_Count__c</fullName>
+        <description>A field that sums the number of child Service Assignment Closure records for the Service Assignment, used in a validation rule to insure that no more than one Service Assignment Closure is created per Service Assignment.</description>
+        <externalId>false</externalId>
+        <label>Service Assignment Closure Count</label>
+        <summaryForeignKey>Service_Assignment_Closure__c.Service_Assignment__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Summary</type>
+    </fields>
+    <fields>
         <fullName>Service_Assignment_Number__c</fullName>
         <displayFormat>SA - {000000}</displayFormat>
         <externalId>false</externalId>

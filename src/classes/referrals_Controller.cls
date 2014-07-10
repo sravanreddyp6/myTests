@@ -440,6 +440,7 @@ public with sharing class referrals_Controller{
         if (pbrLastName == null) pbrLastName = '';
         Evaluation__c eval = new Evaluation__c(
             Referral__c = referralRecord.Id,
+            RecordtypeId = Utility.getEValuationRecordType('CareMeridian'),
             Name = pbrLastName + 'Eval' + DateTime.Now().format('MMddyy')
         );
         insert eval;
@@ -447,6 +448,7 @@ public with sharing class referrals_Controller{
         // ERC-93 - fill evaluated by field on Referral with current user
         TMN_User__c curruser = [ select id from tmn_user__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];
         referralRecord.evaluated_by_internal__c = curruser.id;
+        referralRecord.Has_evaluation__c = true;
         update referralRecord;
         
         return new PageReference('/' + eval.Id + '/e');
@@ -660,7 +662,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
       this.locations =
         [select Name, Referral__c, location__c, street_1__c, street_2__c, city__c, zip_code__c, state__c, user_assigned__c,status__c
             , service_location_city__c,service_location_state__c,service_location_street__c,service_location_zip__c, service_location_service_value__c,
-            service_location_setting__c, service_location__c, LastModifiedDate, Service_Location_Program__c, Service_Location__r.Setting__c
+            service_location_setting__c, service_location__c, LastModifiedDate, Service_Location_Program__c, Service_Location__r.Setting__c, rank__c
          from Referral_Location__c
          where Referral__c = :this.referralRecord.Id
          limit 150];
@@ -773,6 +775,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
   public void showAddFundingSource() {
     fundingSource = new Funding_Source__c();
     fundingSource.RecordTypeId = Utility.getFundingSourceRecordTypeFromReferral(this.ReferralRecord);
+	defaultAuthTypePicklist( fundingSource );    
   }
 
   public void saveFundingSource() {
@@ -784,8 +787,18 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     this.fundingSources.add(this.fundingSource);
     this.fundingSource = new Funding_Source__c();
     fundingSource.RecordTypeId = Utility.getFundingSourceRecordTypeFromReferral(this.ReferralRecord);
+    defaultAuthTypePicklist( fundingSource );
  }
 
+ private void defaultAuthTypePicklist ( Funding_Source__c fs ) {
+ 	 List<RecordType> cmrt = [ select id from recordtype where sobjecttype='Funding_Source__c' and developername = 'CareMeridian_FS'];
+    if (cmrt.size() > 0) {
+    	ID CMID = cmrt[0].Id;
+	    if ( fs.RecordTypeId == CMID)
+    		fs.Authorization_type__c = 'Initial'; // set default value that is not being honored in late render on jquery dialog
+    }
+ }
+ 
   public void showAddRelParty() {
     relParty = new Related_Party__c();
     relParty.RecordTypeId = Utility.getRelatedPartyRecordTypeFromReferral(this.ReferralRecord);
@@ -811,7 +824,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     //this.location.State__c = this.location.State_String__c;
     // this.location.Status__c = this.location.Status_String__c;
     this.locations.add(this.location);
-    system.debug('Loc Status:'+ this.location.status__c);
+    //system.debug('Loc Status:'+ this.location.status__c);
     location = new Referral_Location__c();
   }
 

@@ -64,12 +64,12 @@ public class referral_Controller_Helper_Test{
         
         test.startTest();
         Referral_Location__c testLoc = referral_Controller_Helper.saveReferralLocation(
-            loc.Id, testUser2.Id, null, null, ref.Id);
+            loc.Id, testUser2.Id, null, null, 'Primary', ref.Id);
         system.assert(testLoc.User_Assigned__c == testUser2.Id);
         system.assert(testLoc.Id == loc.ID);
         
         Referral_Location__c testLoc2 = referral_Controller_Helper.saveReferralLocation(
-           '',  null, null, null, ref.Id);
+           '',  null, null, null, null, ref.Id);
         system.assert(testLoc2.Id != loc.ID);
         test.stopTest();
     }

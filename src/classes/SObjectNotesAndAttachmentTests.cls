@@ -1,36 +1,27 @@
 @isTest
 public with sharing class SObjectNotesAndAttachmentTests {
     static testmethod void simpleTests() {
-        String RecTypeId = [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
-        Account acct = new Account(
-            RecordTypeID=RecTypeId,
-            FirstName= 'Test FName',
-            LastName='Test LName',
-            PersonMailingStreet='test@yahoo.com',
-            PersonMailingPostalCode='12345',
-            PersonMailingCity='SFO',
-            PersonMailingStateCode='NC',
-            PersonEmail='test@yahoo.com',
-            PersonHomePhone='1234567',
-            PersonMobilePhone='12345678'
-        );
-        insert acct;
+    
+        TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
+           
         Note note = new Note(
-            ParentId=acct.ID,
+            ParentId=myData.theAccount.Id,
             Title='Test Note',
             Body='Test Description'
         );
         insert note;
+        
+        
         Attachment attachment = new Attachment(
-            ParentId=acct.Id,
+            ParentId=myData.theAccount.Id,
             Name='Test Attachment',
             Body=Blob.valueOf('Test Body')
         );
         insert attachment;
-        PageReference pageRef = new PageReference('/' + acct.Id);
+        PageReference pageRef = new PageReference('/' + myData.theAccount.Id);
         Test.setCurrentPage(pageRef);
         SObjectNotesAndAttachmentsController con = new SObjectNotesAndAttachmentsController();
-        con.parent = acct.Id;
+        con.parent = myData.theAccount.Id;
         System.assertEquals(2, con.entries.size());
         
         con.toDelete = note.Id;

@@ -40,7 +40,9 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>Tab</actionName>
-        <type>Default</type>
+        <content>Progress_Notes_List_View</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
@@ -1190,7 +1192,7 @@
         <externalId>false</externalId>
         <formula>datevalue(CreatedDate) - Date_of_Service__c</formula>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
-        <label># Days Created past DOS</label>
+        <label>Days Since Creation</label>
         <precision>18</precision>
         <required>false</required>
         <scale>0</scale>
@@ -2876,6 +2878,19 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Staff_Employee_ID__c</fullName>
+        <description>Employee Number from the User Object for the Staff Name selected on the Progress Note.</description>
+        <externalId>false</externalId>
+        <formula>Staff_Name__r.EmployeeNumber</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Practitioner ID</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Staff_Name__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
@@ -3323,6 +3338,44 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <columns>CREATEDBY_USER</columns>
         <filterScope>Mine</filterScope>
         <label>My Progress Notes</label>
+    </listViews>
+    <listViews>
+        <fullName>My_Progress_Notes_Unfinalized</fullName>
+        <columns>Date_of_Service_String__c</columns>
+        <columns>Total_Time__c</columns>
+        <columns>NAME</columns>
+        <columns>Auth_Service_Code__c</columns>
+        <columns>Start_Time__c</columns>
+        <columns>End_Time__c</columns>
+        <columns>Program_Detail__c</columns>
+        <columns>Approval_Status__c</columns>
+        <columns>Disregard_Note__c</columns>
+        <columns>CREATEDBY_USER</columns>
+        <columns>Created_by_Title__c</columns>
+        <filterScope>Mine</filterScope>
+        <filters>
+            <field>Status__c</field>
+            <operation>equals</operation>
+            <value>In Progress</value>
+        </filters>
+        <label>My Progress Notes-Unfinalized</label>
+        <sharedTo>
+            <roleAndSubordinates>FL_Broward_Plantation</roleAndSubordinates>
+            <roleAndSubordinates>FL_Broward_Plantation_Clinical_Users</roleAndSubordinates>
+            <roleAndSubordinates>FL_Miami_Dade</roleAndSubordinates>
+            <roleAndSubordinates>FL_Miami_Dade_Clinical_Users</roleAndSubordinates>
+            <roleAndSubordinates>NC</roleAndSubordinates>
+            <roleAndSubordinates>NCGreensboro</roleAndSubordinates>
+            <roleAndSubordinates>NCRockingham</roleAndSubordinates>
+            <roleAndSubordinates>NC_Charlotte</roleAndSubordinates>
+            <roleAndSubordinates>NC_Charlotte_Clinical_Users</roleAndSubordinates>
+            <roleAndSubordinates>NC_Greensboro_Clinical_Users</roleAndSubordinates>
+            <roleAndSubordinates>NC_Raleigh</roleAndSubordinates>
+            <roleAndSubordinates>NC_Raleigh_Clinical_Users</roleAndSubordinates>
+            <roleAndSubordinates>NC_Rockingham_Clinical_Users</roleAndSubordinates>
+            <roleAndSubordinates>NC_Wilmington</roleAndSubordinates>
+            <roleAndSubordinates>NC_Wilmington_Clinical_Users</roleAndSubordinates>
+        </sharedTo>
     </listViews>
     <listViews>
         <fullName>Progress_Note_Approval_Queue</fullName>
@@ -16366,6 +16419,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <customTabListAdditionalFields>Type_of_Contact__c</customTabListAdditionalFields>
         <customTabListAdditionalFields>Purpose_Nature_of_Service__c</customTabListAdditionalFields>
         <customTabListAdditionalFields>Plan__c</customTabListAdditionalFields>
+        <excludedStandardButtons>New</excludedStandardButtons>
         <excludedStandardButtons>ChangeOwner</excludedStandardButtons>
         <searchResultsAdditionalFields>Last_Name__c</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>Date_of_Service__c</searchResultsAdditionalFields>
@@ -16463,11 +16517,11 @@ If this is selected, please fill out the appropriate check boxes to the right.</
     <validationRules>
         <fullName>Seven_Day_Late_Note_Non_Billable_NC</fullName>
         <active>true</active>
-        <description>A rule to make notes written 7 days or more after the start date non-billable by forcing an uncheck of the &quot;Purpose/Service is Billable&quot; checkbox if the state is NC / IFCS - NC.</description>
+        <description>A rule to make notes written 7 days or more after the start date non-billable by forcing an uncheck of the &quot;Purpose/Service is Billable&quot; checkbox if the state is NC.</description>
         <errorConditionFormula>IF( ISNEW() ,
-(($RecordType.Name  =  &apos;NC - Child and Family Team&apos; ||  $RecordType.Name  = &apos;NC - IFCS&apos;  ||  $RecordType.Name = &apos;NC - IIH&apos; ||  $RecordType.Name = &apos;NC - IMAPP&apos; || $RecordType.Name = &apos;NC - OPT&apos;) &amp;&amp; ((  TODAY()   -     DATEVALUE(Start_Time__c  ) ) &gt;= 7) &amp;&amp;  Purpose_Service_is_Billable__c = true)
+(($RecordType.DeveloperName  =  &apos;NC_Child_and_Family_Team&apos; ||  $RecordType.DeveloperName  = &apos;NC_IFCS_Progress_Note&apos;  ||  $RecordType.DeveloperName = &apos;NC_IIH_Progress_Note&apos; ||  $RecordType.DeveloperName = &apos;NC_IMAPP_Progress_Note&apos; || $RecordType.DeveloperName = &apos;NC_OPT_Progress_Note&apos;) &amp;&amp; ((  TODAY()   -     DATEVALUE(Start_Time__c  ) ) &gt;= 7) &amp;&amp;  Purpose_Service_is_Billable__c = true)
 ,
-(($RecordType.Name  =  &apos;NC - Child and Family Team&apos; ||  $RecordType.Name  = &apos;NC - IFCS&apos;  ||  $RecordType.Name = &apos;NC - IIH&apos; ||  $RecordType.Name = &apos;NC - IMAPP&apos; || $RecordType.Name = &apos;NC - OPT&apos;) &amp;&amp; (( DATEVALUE(CreatedDate )  -    DATEVALUE(Start_Time__c ) ) &gt;= 7) &amp;&amp;  Purpose_Service_is_Billable__c = true)
+(($RecordType.DeveloperName  =  &apos;NC_Child_and_Family_Team&apos; ||  $RecordType.DeveloperName  = &apos;NC_IFCS_Progress_Note&apos;  ||  $RecordType.DeveloperName = &apos;NC_IIH_Progress_Note&apos; ||  $RecordType.DeveloperName = &apos;NC_IMAPP_Progress_Note&apos; || $RecordType.DeveloperName = &apos;NC_OPT_Progress_Note&apos;) &amp;&amp; (( DATEVALUE(CreatedDate )  -    DATEVALUE(Start_Time__c ) ) &gt;= 7) &amp;&amp;  Purpose_Service_is_Billable__c = true)
 )</errorConditionFormula>
         <errorMessage>Notes created 7 days or more after the start date for NC / IFCS-NC must have the Purpose/Service is Billable checkbox unchecked.  Please uncheck the Purpose/Service is Billable checkbox and attempt the save again.</errorMessage>
     </validationRules>
@@ -16767,13 +16821,13 @@ var value = &apos;{!Progress_Note__c.FCT_Phase_at_Note_Creation__c}&apos;;
  if (value == &apos;&apos;){
     errors.push(&apos;You must select a &quot;FCT Phase of Treatment&quot; before continuing.&apos;);
    }
- value = &apos;{!Progress_Note__c.People_Present__c}&apos;;
- if (value == &apos;&apos;){
-    errors.push(&apos;You must select a &quot;People Present&quot; before continuing.&apos;);
+ 
+ if ({!ISBLANK(Progress_Note__c.People_Present__c)}){
+    errors.push(&apos;You must enter a value in &quot;People Present&quot; before continuing.&apos;);
    }
  value = &apos;{!Progress_Note__c.Staff_Name__c}&apos;;
  if (value == &apos;&apos;){
-    errors.push(&apos;You must select the &quot;Staff Name&quot; before continuing.&apos;); 
+    errors.push(&apos;You must select a value for &quot;Staff Name&quot; before continuing.&apos;); 
    }
  if({!ISPICKVAL(Progress_Note__c.Area_Family_Functioning__c,&apos;&apos;)}){ 
     errors.push(&apos;You must select the &quot;Area of Family Functioning&quot; before continuing.&apos;); 

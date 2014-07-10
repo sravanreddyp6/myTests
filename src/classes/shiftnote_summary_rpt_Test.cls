@@ -1,7 +1,8 @@
 @isTest
 public class shiftnote_summary_rpt_Test{
 static testMethod void myUnitTest() {
-		String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
+/*
+        String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
         
         Account Accnt = new Account(
             RecordTypeID=RecTypeId,
@@ -16,6 +17,8 @@ static testMethod void myUnitTest() {
             PersonMobilePhone='12345678'
         );
         insert Accnt; 
+    */
+    TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
     
     shiftnote_summary_rpt cntl = new shiftnote_summary_rpt();
     cntl.getNote_plan_joins();

@@ -19,7 +19,7 @@ public static Id getAccountRecordType(){
             PersonBirthdate = myDate,
             PersonMailingPostalCode='12345',
             PersonMailingCity='SFO',
-            PersonMailingStateCode='NC',
+            PersonMailingStateCode='AZ',
             PersonEmail=EncodingUtil.convertToHex(crypto.generateAesKey(128)).substring(1,5).toUpperCase() + '_test@yahoo.com',
             PersonHomePhone='1234567',
             PersonMobilePhone='12345678'
@@ -87,25 +87,25 @@ public static Id getAccountRecordType(){
     }
     
     public static Referral_Location__c createReferralLocation(String name, String location, string Status, User userAssigned, Referral__c ref ) {
-    	
-    	String tmp = String.ValueOf(System.currentTimeMillis());
-    	
-    	Service_Location__c svcLoc = new Service_Location__c (
-        		Zip__c = '90021', 
-        		UniqueID__c = '1001' + tmp.Substring(tmp.length()-6, tmp.length()-1), 
-    			Street__c = '10 Main St.', 
-    			State__c = 'CA', 
-    			Setting__c = 'Residential',
-    			Service_Value__c = 'IDD', 
-    			Program__c = 'Redwood Res', 
-    			ProgramID__c = '1000', 
-    			Phone__c = '213-555-5555',
-				FacilityID__c = 10,
-				City__c = 'Bakersfield',
-				Alias__c = '10101' + tmp.Substring(tmp.length()-6, tmp.length()-1)
-	        );
-	   insert svcLoc;
-	   system.debug('NEW ALIAS = ' +  svcLoc.Id);      
+        
+        String tmp = String.ValueOf(System.currentTimeMillis());
+        
+        Service_Location__c svcLoc = new Service_Location__c (
+                Zip__c = '90021', 
+                UniqueID__c = '1001' + tmp.Substring(tmp.length()-6, tmp.length()-1), 
+                Street__c = '10 Main St.', 
+                State__c = 'CA', 
+                Setting__c = 'Residential',
+                Service_Value__c = 'IDD', 
+                Program__c = 'Redwood Res', 
+                ProgramID__c = '1000', 
+                Phone__c = '213-555-5555',
+                FacilityID__c = 10,
+                City__c = 'Bakersfield',
+                Alias__c = '10101' + tmp.Substring(tmp.length()-6, tmp.length()-1)
+            );
+       insert svcLoc;
+       system.debug('NEW ALIAS = ' +  svcLoc.Id);      
        Referral_Location__c loc = new Referral_Location__c(Name=name, Location__c=location, Status__c=status,Referral__c=ref.ID, user_assigned__c=userAssigned.Id, Service_Location__c=svcLoc.Id);
         insert loc;
        Referral_Location__c testLoc = [Select Id, Name, Status__c, Location__c, Service_Location__c, user_assigned__c From Referral_Location__c a WHERE a.Id = :loc.Id];
