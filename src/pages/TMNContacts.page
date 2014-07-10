@@ -319,7 +319,10 @@ function getNonMentors(filterType, filter) {
 function getTMNContacts(filterType, filter) {
 
 
-	document.getElementById("page-status-text").innerHTML = " Loading...";
+	document.getElementById("page-status-text").innerHTML = "&nbsp; Loading...";
+	
+	var recordsExist;
+	recordsExist = 'YES';
 	
     j$('#tmnContactsTBL').jqGrid("clearGridData");
 	
@@ -333,12 +336,28 @@ function getTMNContacts(filterType, filter) {
        		    gridData = JSON.stringify(result);
        		    //alert(gridData);
                 obj = JSON.parse(gridData); 
+                
+          
+          		if (obj.length == 0) {
+          		   recordsExist = 'NO';
+          		}
           
 				for (var i = 0; i < obj.length; i++) {
 				    var d;
 					d = [{id: obj[i].Id, name: obj[i].Name, Household_Id__c: obj[i].Household_Id__c , full_name__c: obj[i].Full_Name__c, role__c: obj[i].Role__c, owner_full_name__c: obj[i].Owner_Full_Name__c, createdBy: obj[i].CreatedBy.FirstName + ' ' + obj[i].CreatedBy.LastName, createdDate: convertFromSalesForceDate(obj[i].CreatedDate), lastModifiedBy: obj[i].LastModifiedBy.FirstName + ' ' + obj[i].LastModifiedBy.LastName, lastModifiedDate: convertFromSalesForceDate(obj[i].LastModifiedDate)}] ;
 					j$('#tmnContactsTBL').addRowData(i+1, d);
 				}
+				
+				
+				/*
+				 * Let's show the user what was found with a friendly message
+				 */				
+				if (recordsExist == 'YES') {
+					document.getElementById("page-status-text").innerHTML = "&nbsp;  Click on a mentor to view or add a new mentor.";
+				} else {
+					document.getElementById("page-status-text").innerHTML = "&nbsp;  No contacts were found.";
+				}
+				
 
             } else if (event.type === 'exception') {
                 alert(event.where);
@@ -349,7 +368,6 @@ function getTMNContacts(filterType, filter) {
         {escape: true}
     );	
 
-	document.getElementById("page-status-text").innerHTML = " Click on a mentor to view or add a new mentor.";
 
 }
 
