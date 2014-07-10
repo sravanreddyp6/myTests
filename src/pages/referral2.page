@@ -1429,7 +1429,7 @@ function stopRKey(evt) {
         <apex:outputField value="{!Referral__c.Type_of_Encephalopathy__c}" rendered="{!Referral__c.Diagnosis_I__c =='Encephalopathy' && ReferralRecordType == 'NeuroRestorative'}" />
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative' && Referral__c.Diagnosis_I__c =='Encephalopathy'}"/>
         
-        <apex:outputField value="{!Referral__c.Diagnosis_II__c}" label="Secondary Location" />
+        <apex:outputField value="{!Referral__c.Diagnosis_II__c}" label="Secondary Diagnosis" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
  
         <apex:outputField value="{!Referral__c.Current_Location__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" />
 
