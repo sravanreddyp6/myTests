@@ -99,7 +99,7 @@ public with sharing class referral_Controller2 {
         system.debug( 'Ref record type: ' + referralrecordtype );
         system.debug(' is cambridge:' + iscambridge);
         system.debug(' operatinggroup:' + operatinggroup);
-        return ((operatinggroup == 'Cambridge' && isCambridge )|| (operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ) || (operatinggroup == 'CareMeridian' && isCareMeridian && OS.Convert_Referral_enable_for_CM__c) );  
+        return ((operatinggroup == 'Cambridge' && isCambridge )|| (operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ) || (operatinggroup == 'CareMeridian' && isCareMeridian && OS.Referral_ConvertCMEnabled__c ) );  
     } set;}
     
 
