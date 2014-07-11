@@ -348,7 +348,7 @@ public with sharing class Assessment_IssaForm {
         try{
             Assessment__c curAssess = new Assessment__c();
             Assessment__c newAssess = new Assessment__c();
-            curAssess = [Select id, Assessment_Type__c, Admission__c, AccountPerson__c from Assessment__c Where ID = :assessment.id];
+            curAssess = [Select id, Assessment_Type__c, Admission__c, AccountPerson__c, Type__c from Assessment__c Where ID = :assessment.id];
             newAssess = curAssess.clone();
             newAssess.Previous__c = curAssess.id;
             newAssess.Status__c = 'Inactive Draft';
