@@ -116,7 +116,7 @@ public with sharing class AssessmentSetup {
         } else {
             // Clone stuff now
             tempQuery = 'SELECT ID, Assessment_Domain_Result__r.Assessment_Domain__c,' +
-               'Question__c, Rating__c, Color__c';
+               'Question__c, Rating__c, Color__c, Response__c';
             for(Schema.FieldSetMember f : customQuestions) {
                 tempQuery += ', ' + f.getFieldPath();
             }
@@ -136,7 +136,8 @@ public with sharing class AssessmentSetup {
                     Question__c = ar.Question__c,
                     Assessment_Domain_Result__c = dummyAdr.ID,
                     Rating__c = ar.Rating__c,
-                    Color__c = ar.Color__c
+                    Color__c = ar.Color__c,
+                    Response__c = ar.Response__c
                 );
                 for(Schema.FieldSetMember f : customQuestions) {
                     tempAr.put(f.getFieldPath(), ar.get(f.getFieldPath()));
