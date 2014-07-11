@@ -18,10 +18,14 @@ public with sharing class Report_KidTraksExport_Controller {
 		public Integer vendorAddressSeq { get; set; }
 		public String invoiceType { get; set; }
 		public String billType { get; set; }
-		public Integer invoiceNumber { get; set; }
+		public String invoiceNumber { get; set; }
 		public String serviceType { get; set; }
 		public String billableUnitId { get; set; }
+		public String personId { get; set; }
+		public String caseId { get; set; }
 		public String billingCode { get; set; }
+		public String serviceCode { get; set; }
+		public String componentCode { get; set; }
 		public DateTime startTime { get; set; }
 		public DateTime startDate { get; set; }
 		public DateTime endDate { get; set; }
@@ -31,23 +35,28 @@ public with sharing class Report_KidTraksExport_Controller {
 		public Integer amount { get; set; }
 		public String placeOfService { get; set; }
 		
-		public KidTraksLineItem(DateTime startDate, DateTime endDate, String authNumber, User theUser) {
-			emailAddress = theUser.Email; // Using report runner's email.  Acceptable?
-			phoneNumber = theUser.Phone; // Using report runner's phone number.  Acceptable?
-			vendorId = 'STO64986';
+		public KidTraksLineItem(DateTime startDate, DateTime endDate, User theUser, String PbsName, String avatarId, String otherId, Integer u) {
+			emailAddress = theUser.Email; // Using report runner's email.
+			phoneNumber = theUser.Phone; // Using report runner's phone number.
+			vendorId = 'ST064986';
 			vendorLocation = 'REMIT001';
 			vendorAddressSeq = 1;
 			invoiceType = 'Regular';
 			billType = 'First Bill';
+			invoiceNumber = '';
 			serviceType = 'FamilyPreservation';
-			billableUnitId = authNumber; // Where can I get this in Salesforce?
-			billingCode = '10942.1161';  // Is this always the billing code?
+			billableUnitId = avatarId;
+			personId = PbsName;
+			caseId = otherId;
+			billingCode = '10942.1161';
+			serviceCode = '10942';
+			componentCode = '11610';
 			this.startDate = startDate; // Aggregate line IN progress notes on a given day for each IN clients
 			this.endDate = endDate; // Aggregate line IN progress notes on a given day for each IN clients
-			units = 1;
+			units = u;
 			uom = 'Day';
 			rate = 88;
-			amount = 88;
+			amount = u * 88;
 			placeOfService = 'Home';
 						
 		}
@@ -66,13 +75,13 @@ public with sharing class Report_KidTraksExport_Controller {
 			ProgressNoteWrapper_CullKidTraksLineItems compareToPnw = (ProgressNoteWrapper_CullKidTraksLineItems) compareTo; 
 			
 			Integer returnValue = 0;
-			if(thePn.Id>compareToPnw.thePn.Id && thePn.Start_Time__c.date() > compareToPnw.thePn.Start_Time__c.date()) {
+			if(thePn.Person_Being_Served__c > compareToPnw.thePn.Person_Being_Served__c || thePn.Start_Time__c.date() > compareToPnw.thePn.Start_Time__c.date()) {
 				returnValue = 1;
 			}
-			if(thePn.Id<compareToPnw.thePn.Id && thePn.Start_Time__c.date() < compareToPnw.thePn.Start_Time__c.date()) {
+			if(thePn.Person_Being_Served__c < compareToPnw.thePn.Person_Being_Served__c || thePn.Start_Time__c.date() < compareToPnw.thePn.Start_Time__c.date()) {
 				returnValue = -1;
 			}
-			
+
 			return returnValue;
 		}
 		
@@ -82,11 +91,12 @@ public with sharing class Report_KidTraksExport_Controller {
     public PageReference runReport(){
     	lineItems = new List<KidTraksLineItem>();
 
-    	List<Progress_Note__c> progressNotesThisReport = [ SELECT Start_Time__c, End_Time__c, Person_Being_Served__c, Authorization__r.Payer_Authorization_ID__c FROM Progress_Note__c 
+    	List<Progress_Note__c> progressNotesThisReport = [ SELECT Start_Time__c, End_Time__c, Person_Being_Served__c, Person_Being_Served__r.Name, Person_Being_Served__r.Avatar_ID__c,
+    														Person_Being_Served__r.Other_ID__c FROM Progress_Note__c 
     															WHERE Status__c = 'Final' 
     																	AND Service_Code__r.Service_Code__c = '10942.1161' 
     																	AND Start_Time__c >= :reportStartDate 
-    																	AND End_Time__c <= :reportEndDate
+    																		AND End_Time__c <= :reportEndDate
     																	AND Program_Detail__c = :reportProgram ];
     	
     	List<ProgressNoteWrapper_CullKidTraksLineItems> listWrappedPns = new List<ProgressNoteWrapper_CullKidTraksLineItems>();
@@ -96,16 +106,62 @@ public with sharing class Report_KidTraksExport_Controller {
     	}
     	
     	listWrappedPns.sort();
+    	for(ProgressNoteWrapper_CullKidTraksLineItems p : listWrappedPns) {
+    		System.debug('WRAPPED PN CHECK: ' + p);
+    	}
     	
-    	Date theLastNotesStartDate;
-    	Id theLastNotesPbsId;
+    	List<ProgressNoteWrapper_CullKidTraksLineItems> thisPbsWrappedNotes = new List<ProgressNoteWrapper_CullKidTraksLineItems>();
+    	ProgressNoteWrapper_CullKidTraksLineItems thePreviousWrappedPn;
+    	Date theFirstNotesStartDate;
+    	Date thePreviousNotesStartDate;
+    	Date thePreviousNotesEndDate;
+    	Date theLastNotesEndDate;
+    	Id thePreviousNotesPbsId;
+    	Integer unitsCounter = 0;
+    	Integer loopCounter = 0;
     	
     	for(ProgressNoteWrapper_CullKidTraksLineItems pWrapped : listWrappedPns) {
-    		if((theLastNotesPbsId==pWrapped.thePn.Person_Being_Served__c && (theLastNotesStartDate==null || theLastNotesStartDate < pWrapped.thePn.Start_Time__c.date())) || theLastNotesPbsId!=pWrapped.thePn.Person_Being_Served__c) {
-    			lineItems.add(new KidTraksLineItem(pWrapped.thePn.Start_Time__c, pWrapped.thePn.End_Time__c, pWrapped.thePn.Authorization__r.Payer_Authorization_ID__c, theUser));
+    		Integer 	numberOfWrappedNotes = listWrappedPns.size();
+    		loopCounter++;
+    		if(thePreviousNotesPbsId==pWrapped.thePn.Person_Being_Served__c || thePreviousNotesPbsId==null) {
+    			if(pWrapped.thePn.Start_Time__c.date()!=thePreviousNotesStartDate) {
+    				unitsCounter++;
+    			}
+    			thisPbsWrappedNotes.add(pWrapped);
     		}
-    		theLastNotesStartDate = pWrapped.thePn.Start_Time__c.date();
-    		theLastNotesPbsId = pWrapped.thePn.Person_Being_Served__c;
+    		if(thePreviousNotesPbsId!=pWrapped.thePn.Person_Being_Served__c && thePreviousNotesPbsId!=null) {
+    			if(theFirstNotesStartDate==null) {
+    				theFirstNotesStartDate = pWrapped.thePn.Start_Time__c.date();
+    			}
+    			theLastNotesEndDate = thePreviousNotesEndDate;
+    			lineItems.add(new KidTraksLineItem(theFirstNotesStartDate, theLastNotesEndDate, theUser, thePreviousWrappedPn.thePn.Person_Being_Served__r.Name, thePreviousWrappedPn.thePn.Person_Being_Served__r.Avatar_ID__c, thePreviousWrappedPn.thePn.Person_Being_Served__r.Other_ID__c, unitsCounter));
+    			unitsCounter=0;
+    		}
+    		if(numberOfWrappedNotes==loopCounter) {
+    			theLastNotesEndDate = pWrapped.thePn.End_Time__c.date();
+    			lineItems.add(new KidTraksLineItem(theFirstNotesStartDate, theLastNotesEndDate, theUser, pWrapped.thePn.Person_Being_Served__r.Name, pWrapped.thePn.Person_Being_Served__r.Avatar_ID__c, pWrapped.thePn.Person_Being_Served__r.Other_ID__c,  unitsCounter));
+    			unitsCounter=0;  // This probably doesn't matter, since this should be the last iteration of the containing loop.
+    		}
+    		
+    		if(thePreviousNotesPbsId!=pWrapped.thePn.Person_Being_Served__c || thePreviousNotesPbsId==null) {
+    			System.debug('FIRST NOTE DATE CONDITION EXECUTING');
+    			theFirstNotesStartDate = pWrapped.thePn.Start_Time__c.date();
+    			System.debug('theFirstNotesStartDate: ' + theFirstNotesStartDate);
+    		}
+    		
+			thePreviousNotesPbsId = pWrapped.thePn.Person_Being_Served__c;
+			thePreviousNotesStartDate = pWrapped.thePn.Start_Time__c.date();
+			thePreviousNotesEndDate = pWrapped.thePn.End_Time__c.date();
+    		thePreviousWrappedPn = new ProgressNoteWrapper_CullKidTraksLineItems(pWrapped.thePn);
+    		/*
+    		if((thePreviousNotesPbsId==pWrapped.thePn.Person_Being_Served__c && (thePreviousNotesStartDate==null || thePreviousNotesStartDate < pWrapped.thePn.Start_Time__c.date())) || thePreviousNotesPbsId!=pWrapped.thePn.Person_Being_Served__c) {
+    			lineItems.add(new KidTraksLineItem(pWrapped.thePn.Start_Time__c, pWrapped.thePn.End_Time__c, theUser, pWrapped.thePn.Person_Being_Served__r.Name, pWrapped.thePn.Person_Being_Served__r.Avatar_ID__c, unitsCounter));
+    			unitsCounter = 1;
+    		}
+    		thePreviousNotesStartDate = pWrapped.thePn.Start_Time__c.date();
+    		thePreviousNotesPbsId = pWrapped.thePn.Person_Being_Served__c;
+    		unitsCounter++;
+    		*/
     	}
     	      
         return null;
