@@ -11,8 +11,8 @@
  -->
    <apex:includeScript value="{!URLFOR($Resource.jQueryThemeSunny, 'jquery-ui-1.11.0.custom/jquery-ui.min.js')}"/>
    <apex:stylesheet value="{!URLFOR($Resource.jQueryThemeSunny, 'jquery-ui-1.11.0.custom/jquery-ui.min.css')}"/>
-
-
+  
+   <apex:includeScript value="{!URLFOR($Resource.jQueryFormAutofill)}"/>
 
 
 <style>
@@ -371,6 +371,30 @@ function getTMNContacts(filterType, filter) {
 
 }
 
+function getTMNContactDetail(id) {
+
+    Visualforce.remoting.Manager.invokeAction(
+        '{!$RemoteAction.TMNContacts.getTMNContactDetail}', id,
+        function(result, event){
+            if (event.status) {
+                var gridData = JSON.stringify(result);
+                var obj = JSON.parse(gridData); 
+                
+                var data = {"get-name": obj.Full_Name__c, "get-chessie-id": obj.Chessie_ID__c, "get-gender": obj.Gender__c, "get-dob": convertFromSalesForceDate(obj.Date_of_Birth__c), "get-marital-status": obj.Marital_Status__c, "get-race": obj.Race__c, "get-hisp": obj.Hispanic_Heritage__c, "get-dhr-cpa-1": obj.DHR_CPA_Race_1__c, "get-dhr-cpa-2": obj.DHR_CPA_Race_2__c}
+                j$("#edit-contact-form").autofill( data, {restrict: false} );
+                j$( "#edit-contact-form" ).dialog( "open" );
+        
+            } else if (event.type === 'exception') {
+                    alert(event.where);
+                    } else {
+                        alert(event.message);
+                    }
+                },
+            {escape: true}
+            );
+             
+}
+
 
 /*
  * This method is called only when the entire DOM is called
@@ -468,7 +492,6 @@ j$(function() {
 
 
 <div id="edit-contact-form" title="Edit a contact">
-
  
 	<div id="edit-contact-form-accordion">
 		<H3>Demographics</H3>
@@ -550,6 +573,7 @@ j$(function() {
 	</div>
 
 </div>  
+
   
 </body>  
 
@@ -575,7 +599,7 @@ j$(function() {
  
 
 	/*
-	 * Add the appropriate "events" to the delect contact model
+	 * Add the appropriate "events" to the delete contact model
 	 */ 
      j$( "#delete-contact-form" ).dialog({
       autoOpen: false,
@@ -675,7 +699,16 @@ j$(function() {
      j$( "#edit-contact" )
       .button()
       .click(function() {
-        j$( "#edit-contact-form" ).dialog( "open" );
+
+
+        var id = j$("#tmnContactsTBL").jqGrid('getGridParam','selrow');
+        if (id) {
+            var ret = jQuery("#tmnContactsTBL").jqGrid('getRowData',id);
+            alert("id="+ret.id);
+            getTMNContactDetail(ret.id);
+//            j$( "#edit-contact-form" ).dialog( "open" );
+        } else { alert("Please select row");}
+        
       });
 
 
