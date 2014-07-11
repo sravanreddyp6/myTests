@@ -82,6 +82,72 @@ global with sharing class TMNContacts {
     }// end getTMNContacts method
     
 
+    @RemoteAction
+    global static TMN_Contact__c getTMNContactDetail(String id){
+        TMN_Contact__c tmnContact;
+        tmnContact = [
+                      select 
+                         Full_Name__c
+						,Chessie_ID__c
+						,Date_of_Birth__c
+						,Gender__c
+						,Age__c
+						,Marital_Status__c
+						,Race__c
+						,Hispanic_Heritage__c
+						,DHR_CPA_Race_1__c
+						,DHR_CPA_Race_2__c 
+						 from tmn_contact__c
+        ];        
+        return tmnContact;
+    }// end getTMNContactDetail
 
 
+/*
+            <apex:pageBlockSection title="Contact Information">
+                <apex:outputField value="{!TMN_Contact__c.Street_1__c,Street_2__c}" />
+
+                <apex:outputField value="{!TMN_Contact__c.City__c,State__c}" />
+
+                <apex:pageBlockSectionItem />
+                <apex:outputField value="{!TMN_Contact__c.Zip_Code__c}" />
+
+                <apex:outputField value="{!TMN_Contact__c.Primary_Phone__c,Secondary_Phone__c}" />
+
+                <apex:outputField value="{!TMN_Contact__c.Email__c}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Marketing Info" columns="2">
+                <apex:outputField value="{!TMN_Contact__c.How_did_you_hear_about_us__c}" />
+                <apex:outputField value="{!TMN_Contact__c.How_did_you_hear_Other_Describe__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Referral_Type__c}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Mentor Status" columns="2">
+                <apex:outputField value="{!TMN_Contact__c.Disregarded__c}" />
+                <apex:pageBlockSectionItem />
+                <apex:outputField value="{!TMN_Contact__c.Population_This_Home_Is_Associated_With__c}" label="With which population is this home associated?" />
+                <apex:pageBlockSectionItem />
+                <apex:outputField value="{!TMN_Contact__c.In_Progress__c}" />
+                <apex:outputField value="{!TMN_Contact__c.In_Progress_Date__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Active__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Active_Date__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Suspended__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Suspend_Date__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Inactive__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Inactive_Date__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Denied__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Denied_Date__c}" />
+                <apex:pageBlockSectionItem />
+                <apex:outputField value="{!TMN_Contact__c.Denied_Reason__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Withdrawn__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Withdrawn_Date__c}" />
+                <apex:pageBlockSectionItem />
+                <apex:outputField value="{!TMN_Contact__c.Withdrawn_Reason__c}" />
+                <apex:outputField value="{!TMN_Contact__c.Most_Recent_Recertification_Date__c}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="System Info">
+                <apex:outputField value="{!TMN_Contact__c.OwnerId}" />
+                <apex:outputText label="Created By" value="{!TMN_Contact__c.CreatedBy.Name}, {!TMN_Contact__c.CreatedDate}" />
+                <apex:outputText label="Last Modified By" value="{!TMN_Contact__c.LastModifiedBy.Name}, {!TMN_Contact__c.LastModifiedDate}" />
+*/                
+                
 } //end class
