@@ -20,7 +20,7 @@ public with sharing class MentorViewController {
                 SELECT Id, Name, Full_Name__c, First_Name__c, Middle_Initial__c,
                        Last_Name__c, Primary_Phone__c, Secondary_Phone__c,
                        Related_Party_Type__c, Email__c, Comments__c, Age__c,
-                       Date_of_Birth__c
+                       Date_of_Birth__c, DHR_CPA_Race_1__c, DHR_CPA_Race_2__c, Hispanic_Heritage__c
                 FROM TMN_Contact__c WHERE Mentor__c = :contact.Id
             ];
         }
@@ -64,7 +64,7 @@ public with sharing class MentorViewController {
                    Last_Name__c, Primary_Phone__c, Secondary_Phone__c,
                    Related_Party_Type__c, Email__c, Comments__c, Date_of_Birth__c,
                    Age__c, Gender__c, Marital_Status__c, No_Longer_In_Home__c,
-                   Population_This_Home_Is_Associated_With__c
+                   Population_This_Home_Is_Associated_With__c, DHR_CPA_Race_1__c, DHR_CPA_Race_2__c, Hispanic_Heritage__c
             FROM TMN_Contact__c WHERE ID=:currentHouseholdMemberId
         ];
        

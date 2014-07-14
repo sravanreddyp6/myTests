@@ -105,17 +105,22 @@ public pageReference savePBS() {
   		} catch (Exception e) {
   			
   			if ( e.getMessage().Contains('DUPLICATE_VALUE')) {
-			// look up the duplicate
-			Contact cDup = [select id, owner.name from Contact where firstname = :this.personBeingServed.firstName and 
-																	 lastname = :this.personBeingServed.lastName and
-																	 birthdate = :this.personBeingServed.PersonBirthDate limit 1];
-			
-				if (cDup != null) {
-					personbeingserved.AddError('This Person Being Served already exists, and is owned by ' + cDup.Owner.Name);
-				} else {
-	     		 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
-	        	'An error occurred saving this record. ' + e.getMessage()));
-				}
+  				
+  				try {
+				// look up the duplicate
+				Contact cDup = [select id, owner.name from Contact where firstname = :this.personBeingServed.firstName and 
+																		 lastname = :this.personBeingServed.lastName and
+																		 birthdate = :this.personBeingServed.PersonBirthDate limit 1];
+				
+					if (cDup != null) {
+						personbeingserved.AddError('This Person Being Served already exists, and is owned by ' + cDup.Owner.Name);
+					} else {
+		     		 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+		        	'An error occurred saving this record. ' + e.getMessage()));
+					}
+  				} catch (Exception e2) {
+  					ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'You have attempted to create a Person Being Served that already exists in the database but is currently saved outside of your account Role. Contact the IT Service Desk (1-888-774-4872) for assistance with this issue.'));
+  				}
   			} else if (e.getMessage().Contains('The Other ID and Other ID Description fields')) {
   			     ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
 	        	    'The Other ID and Other ID Description fields must be filled in for a person being served with a Mailing State of North Carolina.'));  			 

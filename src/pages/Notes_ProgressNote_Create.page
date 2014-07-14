@@ -2,6 +2,20 @@
 <apex:variable var="State" value="{!if(ISBLANK($CurrentPage.parameters.state) ,'',$CurrentPage.parameters.state)}"/>
 <style>
 .dateFormat{display: none;}
+
+.thinking{
+    opacity:0.8;
+    background-color:#ccc;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}    
+.thinkingwheel{
+    position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+}
 </style>
 <script>
 function setFocusOnLoad() {};
@@ -11,23 +25,16 @@ function setFocusOnLoad() {};
 
 <apex:sectionHeader title="New Progress Note"/>
 <!-- wraps the buttons<apex:repeat value="{!SA_SC_JO}" var="t">t.name</apex:repeat>-->
-<apex:pageBlock mode="mainDetail">
+<apex:pageBlock mode="mainDetail" id="mainData">
     <apex:pagemessages ></apex:pagemessages>
-                    <apex:actionStatus id="myStatus">
-                        <apex:facet name="start">
-                            <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
-                                <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
-                            </div>
-                        </apex:facet>
-                        <apex:facet name="stop"></apex:facet>
-                    </apex:actionStatus>
 <apex:form id="myFRM" >
 <apex:pageBlock >
-    <apex:pageBlockButtons >
-            <apex:commandButton action="{!Save}" value="Save and Continue"  >
+    <apex:pageBlockButtons >  
+            <apex:commandButton action="{!Save}" value="Save and Continue" status="myStatus" reRender="mainData" >
             </apex:commandButton>
             <apex:commandButton action="{!Cancel}" value="Cancel"  >
-            </apex:commandButton>        
+            </apex:commandButton>  
+       
     </apex:pageBlockButtons>
     
 
@@ -65,4 +72,18 @@ function setFocusOnLoad() {};
 </apex:pageBlock>
 </apex:form>
 </apex:pageBlock>
+
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <div  class="thinking">
+            <div class="thinkingwheel">
+                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp;Processing...</span>
+            </div>
+        </div>
+    </apex:facet>  
+    <apex:facet name="stop"></apex:facet> 
+
+  
+            
+</apex:actionStatus> 
 </apex:page>

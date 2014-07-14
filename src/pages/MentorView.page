@@ -196,15 +196,20 @@
                          <apex:inputField id="Marital" label="Marital Status" value="{!currentHouseholdMember.Marital_Status__c}" required="{!(currentHouseholdMember.Related_Party_Type__c != 'Pet' && Ages!=false)}"/>
                         </apex:actionRegion>
                     </apex:pageBlockSectionItem>
-                    </apex:PageBlockSection>
-                    <apex:PageBlockSection >
-                    <apex:inputField value="{!currentHouseholdMember.Primary_Phone__c}"/>
-                    <apex:inputField value="{!currentHouseholdMember.Secondary_Phone__c}" />
-                    <apex:inputField value="{!currentHouseholdMember.Email__c}" />
-                    <apex:inputField value="{!currentHouseholdMember.No_Longer_In_Home__c}" />
-                </apex:pageBlockSection>
-                <apex:pageBlockSection columns="1">
+                    
+                    <apex:inputField value="{!currentHouseholdMember.DHR_CPA_Race_1__c}"  rendered="{!currentHouseholdMember.Related_Party_Type__c != 'Pet'}" required="{!currentHouseholdMember.Related_Party_Type__c != 'Pet'}"/>
+                    <apex:inputField value="{!currentHouseholdMember.DHR_CPA_Race_2__c}"  rendered="{!currentHouseholdMember.Related_Party_Type__c != 'Pet'}" required="{!currentHouseholdMember.Related_Party_Type__c != 'Pet'}"/>
+                    <apex:inputField value="{!currentHouseholdMember.Hispanic_Heritage__c}"  rendered="{!currentHouseholdMember.Related_Party_Type__c != 'Pet'}" required="{!currentHouseholdMember.Related_Party_Type__c != 'Pet'}"/>
+                    <apex:outputText value="" />
+                    
+                    <apex:inputField value="{!currentHouseholdMember.Primary_Phone__c}" rendered="{!currentHouseholdMember.Related_Party_Type__c != 'Pet'}" />
+                    <apex:inputField value="{!currentHouseholdMember.Secondary_Phone__c}" rendered="{!currentHouseholdMember.Related_Party_Type__c != 'Pet'}" />
+                    <apex:inputField value="{!currentHouseholdMember.Email__c}" rendered="{!currentHouseholdMember.Related_Party_Type__c != 'Pet'}" />
+                    <apex:outputText value="" />
+                    </apex:pageBlockSection>
+                <apex:pageBlockSection columns="2">
                     <apex:inputField value="{!currentHouseholdMember.Comments__c}" />
+                    <apex:inputField value="{!currentHouseholdMember.No_Longer_In_Home__c}" />
                 </apex:pageBlockSection>
             </apex:pageBlock>
         </apex:outputPanel>

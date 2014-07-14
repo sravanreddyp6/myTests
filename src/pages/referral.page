@@ -77,7 +77,16 @@
     }
     .whitenoise { color:white; }
   </style>
-
+  
+  <script>
+  	jQuery.noConflict();
+  	jQuery(document).ready(function ($) {
+  		enableDiagEff();
+  	
+  	});
+  
+  </script>
+  
   <script type="text/javascript">
 
    j$ = jQuery.noConflict();
@@ -93,13 +102,21 @@ document.onkeypress = stopRKey;
 
 // ERNS-7 enable the diagnosis effective date when diagnosis is chosen
 function enableDiagEff() {
-    if ( j$('[id$=diagIdrop]').val() != '') {
-        j$('input[id$=diageffdate').removeAttr('disabled');
-    } else {
-        j$('input[id$=diageffdate]').val('');
-        j$('input[id$=diageffdate]').attr('disabled', 'disabled')
-    }
-}
+	if ( j$('[id$=diagIdrop]').val() != '') {
+		j$('input[id$=diageffdate]').removeAttr('disabled');
+		if ( j$('[id$=diagIdrop]').val() == 'Encephalopathy') {
+			j$('[id$=encephaloPanel]').show();
+			}
+		else if ( j$('[id$=diagIdrop]').val() != 'Encephalopathy') {
+			j$('[id$=encephaloPanel]').hide();
+			
+			}
+	}else {
+		j$('input[id$=diageffdate]').val('');
+		j$('input[id$=diageffdate]').attr('disabled', 'disabled')
+		j$('[id$=encephaloPanel]').hide();	
+	}
+ }
   function validateRelatedParty() {
     var errors = '';
     j$('#relatedPartyErrors').html(errors);
@@ -131,15 +148,15 @@ function enableDiagEff() {
         errors += '<li>You must lookup the Alias</li>';
     }
     
-    if (j$('input[id$=locationEntry_User]').length > 0) {
-        if (j$('input[id$=locationEntry_User]').val() =='') {
-            errors += '<li>User Assigned is a required field.</li>';
-        } else if (j$('input[id$=locationEntry_User_lkid]').val() =='') {
-            errors += '<li>You must lookup the User</li>';
-        }
-    }
-    
-    if (j$('select[id$=locationEntry_Status]').val() =='') {
+	if (j$('input[id$=locationEntry_User]').length > 0) {
+	    if (j$('input[id$=locationEntry_User]').val() =='') {
+	        errors += '<li>User Assigned is a required field.</li>';
+	    } else if (j$('input[id$=locationEntry_User_lkid]').val() =='') {
+	        errors += '<li>You must lookup the User</li>';
+	    }
+	}
+	
+	if (j$('select[id$=locationEntry_Status]').val() =='') {
         errors += '<li>Status is a required field.</li>';
     }
     j$('#locationErrors').html(errors);
@@ -185,11 +202,11 @@ function enableDiagEff() {
     }
   }
 
-    fundingSourceSave = function (isClose) {
-        // We cant use Visualforce functions/variables in a Static Resource JS file,
-        // so we have to pass it in here.
-        closeFundingSource = isClose;
-        fundingSourceSaveHelper('{!JSENCODE(ReferralRecordType)}');
+	fundingSourceSave = function (isClose) {
+	    // We cant use Visualforce functions/variables in a Static Resource JS file,
+	    // so we have to pass it in here.
+	    closeFundingSource = isClose;
+	    fundingSourceSaveHelper('{!JSENCODE(ReferralRecordType)}');
     }
   
   // ERC-96: Adding this for front end validation.
@@ -197,7 +214,7 @@ function enableDiagEff() {
   function checkZipCode(value) {
       var errors = '';
       var validformat = /^\d{5}$|^\d{5}-\d{4}$/    
-        
+      	
       // if it contains a value and doesn't match regex then error
       if (!validformat.test(value) && value.trim() ) {
           errors += '<li class="error">Please enter zip code in the format: XXXXX or XXXXX-XXXX</li>';
@@ -247,7 +264,7 @@ function enableDiagEff() {
           j$('input[id$=locationServiceLocation]').val(j$('input[id$=locationEntry_ServiceLocation_lkid]').val());
           j$('input[id$=locationUser]').val(j$('input[id$=locationEntry_User_lkid]').val());
           j$('input[id$=locationStatus]').val(j$('select[id$=locationEntry_Status]').val());
-          j$('input[id$=locationRank]').val(j$('select[id$=locationEntry_Rank]').val());
+		  j$('input[id$=locationRank]').val(j$('select[id$=locationEntry_Rank]').val());
           saveLocation();
           if (isClose) {
               closeModalDialog('ReferralLocationModal', 'span');
@@ -656,7 +673,7 @@ function enableDiagEff() {
     <apex:outputPanel id="FundingSourceModal" style="display:none">
 
         <apex:actionFunction name="saveFundingSource" status="saveFundingSourceStatus" action="{!saveFundingSource}" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialog('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceAuthorizationDetailEntry,fundingSourceEntry,msgs"/>
-        
+   		
       <div id='fundingMessages' ></div>
       <apex:pageBlock title="Add Funding Source" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative'}">
         <apex:pageBlockSection columns="1" id="fundingSourceEntry">
@@ -716,14 +733,14 @@ function enableDiagEff() {
                 <apex:outputLabel for="insuredSSN" value="Insured SSN" />
                 <apex:outputPanel >
                     <apex:inputField value="{!fundingSource.Insured_SSN__c}" id="insuredSSN" />
-                    <apex:commandLink value="Same as PBR" onclick="assignValue('{!$Component.insuredSSN}', '{!Referral__c.Person_Being_Referred__r.SSN__c}'); return false;" />
+                    <apex:commandLink value="Same as PBR" onclick="assignValue('{!$Component.insuredSSN}', '{!personBeingRefRecord.SSN__c}'); return false;" />
                 </apex:outputPanel>
             </apex:pageBlockSectionItem>
             <apex:pageBlockSectionItem >
                 <apex:outputLabel for="insuredDOB" value="Insured DOB" />
                 <apex:outputPanel >
                     <apex:inputField value="{!fundingSource.Insured_DOB__c}" id="insuredDOB" />
-                    <apex:commandLink value="Same as PBR" onclick="assignValue('{!$Component.insuredDOB}', '{!Referral__c.Person_Being_Referred__r.Date_of_Birth__c}'); return false;" />
+                    <apex:commandLink value="Same as PBR" onclick="assignValue('{!$Component.insuredDOB}', '{!personBeingRefRecord.Date_of_Birth__c}'); return false;" />
                 </apex:outputPanel>
             </apex:pageBlockSectionItem>
             <apex:inputField value="{!fundingSource.Policy_Number__c}" />
@@ -762,7 +779,7 @@ function enableDiagEff() {
             <apex:inputField value="{!fundingSource.Precert_Required__c}" />
             <apex:pageBlockSectionItem />
 
-            <apex:outputText value="Acute Rehab" styleClass="modalSubheader" />
+			<apex:outputText value="Acute Rehab" styleClass="modalSubheader" />
             <apex:pageBlockSectionItem />
             <apex:inputField value="{!fundingSource.ARU_Day_Total__c}" />
             <apex:inputField value="{!fundingSource.ARU_Days_Used__c}" />
@@ -906,10 +923,10 @@ function enableDiagEff() {
       
       <apex:pageBlock title="Authorization Detail" id="fundingSourceAuthorizationDetailEntry" rendered="{!ReferralRecordType == 'CareMeridian' || ReferralRecordType == 'NeuroRestorative'}">
         <apex:pageBlockSection columns="2" rendered="{!ReferralRecordType == 'CareMeridian'}">
-            <apex:pageBlockSectionItem >
-            <apex:outputlabel for="authtype" value="Authorization Type" />  
-            <apex:outputpanel >
-            <apex:actionRegion >
+	        <apex:pageBlockSectionItem >
+	        <apex:outputlabel for="authtype" value="Authorization Type" />  
+	        <apex:outputpanel >
+	        <apex:actionRegion >
             <apex:inputField id="authtype" value="{!fundingSource.Authorization_Type__c}" >
             <apex:actionSupport event="onchange" rerender="otherauthtypeblock" status="authtypestatus" />
             </apex:inputField>
@@ -924,7 +941,7 @@ function enableDiagEff() {
             <apex:outputpanel id="otherauthtypeblock">
             <apex:inputfield id="otherauthtype" value="{!fundingSource.Other_Authorization_Type__c}" required="{!fundingSource.Authorization_Type__c=='Other'}" rendered="{!fundingSource.Authorization_Type__c == 'Other'}"/>
             </apex:outputpanel>
-            </apex:outputpanel>
+			</apex:outputpanel>
             </apex:pageBlockSectionItem>
 
             <apex:inputField value="{!fundingSource.Status__c}" />
@@ -1051,7 +1068,7 @@ function enableDiagEff() {
 
             <apex:inputHidden id="locationEntry_ServiceLocation_lkid" value="{!searchedServiceLocationId}"/>
           
-            <apex:inputField value="{!location.User_Assigned__c}" id="locationEntry_User" rendered="{! referralRecordType != 'CareMeridian'}"/>
+			<apex:inputField value="{!location.User_Assigned__c}" id="locationEntry_User" rendered="{! referralRecordType != 'CareMeridian'}"/>
             <apex:inputField value="{!location.Rank__c}" id="locationEntry_Rank"  rendered="{! referralRecordType == 'CareMeridian'}"/>
             <apex:inputField value="{!location.Status__c}" id="locationEntry_Status" />
             <apex:inputHidden value="{!location.Service_Location__c}" id="locationServiceLocation"/>
@@ -1249,8 +1266,8 @@ function enableDiagEff() {
         <apex:pageblocksectionitem >
         <apex:outputlabel for="referralStatus" value="Referral Status" />
         <apex:actionregion >
-            <apex:inputField id="referralStatus" value="{!Referral__c.Referral_Status__c}" required="true">
-            <apex:actionSupport event="onchange" action="{!unsetStatusHelperFiels}" rerender="ReferralStatus" oncomplete="unsetAdditionalFields(j$('select[id$=referralStatus]').val());" />
+        	<apex:inputField id="referralStatus" value="{!Referral__c.Referral_Status__c}" required="true">
+        	<apex:actionSupport event="onchange" action="{!unsetStatusHelperFiels}" rerender="ReferralStatus" oncomplete="unsetAdditionalFields(j$('select[id$=referralStatus]').val());" />
         </apex:inputField>
         </apex:actionregion>
         </apex:pageblocksectionitem>
@@ -1288,10 +1305,10 @@ function enableDiagEff() {
         <!-- ERC-97: Start -->
         <!-- <apex:inputField value="{!Referral__c.Agency_Name__c}" label="Referral Source" /> -->
         <apex:pageBlockSectionItem helpText="{!$ObjectType.Referral__c.fields.Agency_Name__c.InlineHelpText}">
-            <apex:outputlabel for="referralSource" value="Referral Source" />
-            <apex:inputField id="referralSource" value="{!Referral__c.Agency_Name__c}" />
-            </apex:pageBlockSectionItem>
-        <!-- ERC-97: End --> 
+        	<apex:outputlabel for="referralSource" value="Referral Source" />
+			<apex:inputField id="referralSource" value="{!Referral__c.Agency_Name__c}" />
+			</apex:pageBlockSectionItem>
+		<!-- ERC-97: End --> 
         <apex:inputField value="{!Referral__c.How_did_they_learn__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" />
 
         <apex:pageBlockSectionItem rendered="{! ReferralRecordType == 'CareMeridian'}"  />
@@ -1319,18 +1336,18 @@ function enableDiagEff() {
           </apex:outputPanel>
         </apex:pageBlockSectionItem>
         <apex:inputField value="{!Referral__c.Referrer_Street__c}" rendered="{!ReferralRecordType=='Cambridge Florida' || 
-                                                                                ReferralRecordType = 'Cambridge Massachusetts' ||                        
-                                                                                ReferralRecordType = 'Cambridge Maryland' || 
-                                                                                ReferralRecordType = 'Cambridge Indiana' ||
-                                                                                ReferralRecordType = 'Cambridge North Carolina' ||
-                                                                                ReferralRecordType = 'Cambridge Ohio'}"/>
+        																		ReferralRecordType = 'Cambridge Massachusetts' ||                        
+        																		ReferralRecordType = 'Cambridge Maryland' || 
+                        														ReferralRecordType = 'Cambridge Indiana' ||
+                        														ReferralRecordType = 'Cambridge North Carolina' ||
+                        														ReferralRecordType = 'Cambridge Ohio'}"/>
         <apex:inputField value="{!Referral__c.Referrer_Email__c}" rendered="{!ReferralRecordType=='NeuroRestorative' || 
-                                                                                ReferralRecordType=='Cambridge Florida' || 
-                                                                                ReferralRecordType = 'Cambridge Massachusetts' ||
-                                                                                ReferralRecordType = 'Cambridge Maryland' || 
-                                                                                ReferralRecordType = 'Cambridge Indiana' ||
-                                                                                ReferralRecordType = 'Cambridge North Carolina' ||
-                                                                                ReferralRecordType = 'Cambridge Ohio'}"/>
+        																		ReferralRecordType=='Cambridge Florida' || 
+	                        													ReferralRecordType = 'Cambridge Massachusetts' ||
+                        														ReferralRecordType = 'Cambridge Maryland' || 
+                        														ReferralRecordType = 'Cambridge Indiana' ||
+                        														ReferralRecordType = 'Cambridge North Carolina' ||
+                        														ReferralRecordType = 'Cambridge Ohio'}"/>
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative' || isCambridge}"/>
         <apex:inputField value="{!Referral__c.Billing_ID__c}" rendered="{!isCambridge}" />
         <!-- CTEAE-137 -->
@@ -1338,8 +1355,8 @@ function enableDiagEff() {
         <apex:inputField label="Payer/Guarantor Medical Record Number Description" value="{!Referral__c.Payer_Medical_Record_Number_Description__c}" rendered="{!ReferralRecordType=='Cambridge North Carolina'}"/>
         <!-- end CTEAE -137 -->
         <apex:inputText id="referrerFax" value="{!Referral__c.Referrer_Fax__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" onblur="j$('input[id$=referrerFax]').val(this.value.replace(/(\d\d\d)(\d\d\d)(\d\d\d\d)/, '$1-$2-$3'))"/>
-        <apex:inputField value="{!Referral__c.Case_Manager_Name__c}" />
-        <apex:inputField value="{!Referral__c.Case_Manager_Phone__c}" />
+        <apex:inputField value="{!Referral__c.Case_Manager_Name__c}"  rendered="{!ReferralRecordType!='NeuroRestorative'}" /> <!-- ERNS-26 -->
+        <apex:inputField value="{!Referral__c.Case_Manager_Phone__c}"  rendered="{!ReferralRecordType!='NeuroRestorative'}" />
         <!--apex:inputField value="{!Referral__c.Evaluation_Date__c}" rendered="{!referralRecordType=='CareMeridian'}"/-->
         
             
@@ -1366,7 +1383,7 @@ function enableDiagEff() {
         <apex:inputField value="{!Referral__c.Evaluated_By_External__c}" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Evaluated_By_Source__c == 'External'}" />
         <apex:inputField value="{!Referral__c.Evaluated_By_Internal_Other__c}" html-disabled="true" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Evaluated_By_Source__c != 'Internal'}" />
         <apex:inputField value="{!Referral__c.Evaluated_By_Internal_Other__c}" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Evaluated_By_Source__c == 'Internal'}" />
-        <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+		<apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
 
         <apex:inputField value="{!referralRecord.Referral_Provided_By_Source__c}" rendered="{!referralRecordType=='NeuroRestorative'}">
            <apex:actionStatus id="statusRefBy">
@@ -1448,10 +1465,10 @@ function enableDiagEff() {
      
      <!-- START: CTEAE-106, MA Referral Flavor Fields -->
      <apex:pageBlockSection rendered="{!ReferralRecordType=='Cambridge Massachusetts'}">
-        <apex:inputField id="IccCarePlanSubmittedField" value="{!Referral__c.ICC_Care_Plan_Submitted__c}" label="If the referral is from the ICC has the care plan been submitted to the insurance company in order for us to obtain an authorization for services?" />
-        <apex:inputField value="{!Referral__c.Grade__c}" />
-        <apex:inputField value="{!Referral__c.If_Yes_What_kind__c}" label="Describe Any Household Pets" />
-        <apex:inputField value="{!Referral__c.Goals_from_the_Referral_Source__c}" />
+    	<apex:inputField id="IccCarePlanSubmittedField" value="{!Referral__c.ICC_Care_Plan_Submitted__c}" label="If the referral is from the ICC has the care plan been submitted to the insurance company in order for us to obtain an authorization for services?" />
+    	<apex:inputField value="{!Referral__c.Grade__c}" />
+    	<apex:inputField value="{!Referral__c.If_Yes_What_kind__c}" label="Describe Any Household Pets" />
+    	<apex:inputField value="{!Referral__c.Goals_from_the_Referral_Source__c}" />
      </apex:pageBlockSection>
      <!-- END: CTEAE-106, MA Referral Flavor Fields -->
      
@@ -1464,11 +1481,11 @@ function enableDiagEff() {
      </apex:pageBlockSection>
     <apex:actionRegion >
      <apex:pageBlockSection title="Placement Risk" id="placementRiskBlock" rendered="{!referralRecordType=='Cambridge Florida' ||                         
-                                                                                        ReferralRecordType = 'Cambridge Massachusetts' ||
-                                                                                        ReferralRecordType = 'Cambridge Maryland' || 
-                                                                                        ReferralRecordType = 'Cambridge Indiana' ||
-                                                                                        ReferralRecordType = 'Cambridge North Carolina' ||
-                                                                                        ReferralRecordType = 'Cambridge Ohio'}">
+																     					ReferralRecordType = 'Cambridge Massachusetts' ||
+																                        ReferralRecordType = 'Cambridge Maryland' || 
+																                        ReferralRecordType = 'Cambridge Indiana' ||
+																                        ReferralRecordType = 'Cambridge North Carolina' ||
+																                        ReferralRecordType = 'Cambridge Ohio'}">
          <apex:inputField label="Is the person at risk of an out of home placement?" value="{!Referral__c.Risk_of_Out_of_Home_Placement__c}">
              <apex:actionStatus id="statusPlaceRisk">
                  <apex:facet name="start">
@@ -1501,14 +1518,14 @@ function enableDiagEff() {
    </apex:actionRegion>
    
      <apex:pageBlockSection id="PlacementHxBlockSection" title="Placement History" rendered="{!referralRecordType=='Cambridge Florida' || 
-                                                                                                ReferralRecordType = 'Cambridge Massachusetts' ||
-                                                                                                ReferralRecordType = 'Cambridge Maryland' || 
-                                                                                                ReferralRecordType = 'Cambridge Indiana' ||
-                                                                                                ReferralRecordType = 'Cambridge North Carolina' ||
-                                                                                                ReferralRecordType = 'Cambridge Ohio'}">
-        <apex:pageBlockSectionItem >
-        <apex:outputLabel for="placementhist" value="Does the person have a history of placement (past or current)?"/>                                                                                      
-         <apex:actionregion >
+																		                        ReferralRecordType = 'Cambridge Massachusetts' ||
+																		                        ReferralRecordType = 'Cambridge Maryland' || 
+																		                        ReferralRecordType = 'Cambridge Indiana' ||
+																		                        ReferralRecordType = 'Cambridge North Carolina' ||
+																								ReferralRecordType = 'Cambridge Ohio'}">
+		<apex:pageBlockSectionItem >
+		<apex:outputLabel for="placementhist" value="Does the person have a history of placement (past or current)?"/>																                        
+	     <apex:actionregion >
          <apex:inputField id="placementhist" value="{!Referral__c.Placement_History__c}">
              <apex:actionStatus id="statusPlaceHx">
                  <apex:facet name="start">
@@ -1555,17 +1572,22 @@ function enableDiagEff() {
          <apex:inputField label="Is the plan to return the person to home/community?" value="{!Referral__c.Placement_History_Plan_to_Return__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || Referral__c.Placement_Current__c!='Yes'}" />
          <apex:inputField label="Is the plan to return the person to home/community?" value="{!Referral__c.Placement_History_Plan_to_Return__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Current__c=='Yes'}" />
          <apex:inputField label="Select the type of the current out of home placement:" value="{!Referral__c.Placement_Type_Current__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || Referral__c.Placement_Current__c!='Yes'}" />
-         <apex:inputField label="Select the type of the current out of home placement:" value="{!Referral__c.Placement_Type_Current__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Current__c=='Yes'}">
-             <apex:actionStatus id="statusPlaceTypeCur">
-                 <apex:facet name="start">
-                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
-                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
-                     </div>
-                 </apex:facet>
-                 <apex:facet name="stop"></apex:facet>
-             </apex:actionStatus>
-             <apex:actionSupport event="onchange" rerender="PlacementHxBlockSection" status="statusPlaceTypeCur" />
-         </apex:inputField>
+         <apex:pageBlockSectionItem rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Current__c=='Yes'}" >
+         	 <apex:outputlabel for="typeofhomePlacement" value="Select the type of the current out of home placement:"  />
+	         <apex:actionRegion >
+	         <apex:inputField id="typeofhomePlacement" value="{!Referral__c.Placement_Type_Current__c}" >
+	             <apex:actionStatus id="statusPlaceTypeCur">
+	                 <apex:facet name="start">
+	                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+	                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+	                     </div>
+	                 </apex:facet>
+	                 <apex:facet name="stop"></apex:facet>
+	             </apex:actionStatus>
+	             <apex:actionSupport event="onchange" rerender="PlacementHxBlockSection" status="statusPlaceTypeCur" />
+	          </apex:inputField>
+	         </apex:actionRegion>
+         </apex:pageBlockSectionItem>
          <apex:inputField label="Other (specify)" value="{!Referral__c.Placement_Type_Current_Other__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || Referral__c.Placement_Current__c!='Yes' || Referral__c.Placement_Type_Current__c!='Other (specify)'}" />
          <apex:inputField label="Other (specify)" value="{!Referral__c.Placement_Type_Current_Other__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Current__c=='Yes' && Referral__c.Placement_Type_Current__c=='Other (specify)'}" />
          <apex:pageBlockSectionItem >
@@ -1604,30 +1626,35 @@ function enableDiagEff() {
          <apex:inputField label="Inpatient Substance Abuse Treatment (how many times?)" value="{!Referral__c.Placement_InpatientSubAbuseTx_Count__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
          <apex:inputField label="Inpatient Substance Abuse Treatment (how many times?)" value="{!Referral__c.Placement_InpatientSubAbuseTx_Count__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}" />
          <apex:inputField value="{!Referral__c.Placement_Other_Count__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes'}" />
-         <apex:inputField value="{!Referral__c.Placement_Other_Count__c}" rendered="{!Referral__c.Placement_History__c=='Yes'}">
-             <apex:actionStatus id="statusPlaceOtherCount">
-                 <apex:facet name="start">
-                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
-                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
-                     </div>
-                 </apex:facet>
-                 <apex:facet name="stop"></apex:facet>
-             </apex:actionStatus>
-             <apex:actionSupport event="onchange" rerender="PlacementHxBlockSection" status="statusPlaceOtherCount" />
-         </apex:inputField>
+         <apex:pageBlocksectionItem rendered="{!Referral__c.Placement_History__c=='Yes'}" >
+         	 <apex:outputlabel value="Other (how many times?)" for="placementotherCount" />
+	         <apex:actionRegion >
+	         <apex:inputField value="{!Referral__c.Placement_Other_Count__c}" id="placementotherCount">
+	             <apex:actionStatus id="statusPlaceOtherCount">
+	                 <apex:facet name="start">
+	                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+	                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+	                     </div>
+	                 </apex:facet>
+	                 <apex:facet name="stop"></apex:facet>
+	             </apex:actionStatus>
+	             <apex:actionSupport event="onchange" rerender="PlacementHxBlockSection" status="statusPlaceOtherCount" />
+	         </apex:inputField>
+	         </apex:actionRegion>
+         </apex:pageBlocksectionItem>
          <apex:inputField value="{!Referral__c.Placement_Past_Other_Describe__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || Referral__c.Placement_Other_Count__c == null || Referral__c.Placement_Other_Count__c == 0}" />
          <apex:inputField value="{!Referral__c.Placement_Past_Other_Describe__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Other_Count__c != null && Referral__c.Placement_Other_Count__c > 0}" />
          
          </apex:pageBlockSection>
          
-        <apex:pageBlockSection id="JuvBlockSection" title="Juvenile Services Info" rendered="{!referralRecordType=='Cambridge Florida' || 
+ 		<apex:pageBlockSection id="JuvBlockSection" title="Juvenile Services Info" rendered="{!referralRecordType=='Cambridge Florida' || 
                         ReferralRecordType = 'Cambridge Massachusetts' ||
                         ReferralRecordType = 'Cambridge Maryland' || 
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio'}">
-        <apex:pageBlockSectionItem >
-         <apex:outputlabel for="previnvolvecb" value="Previous Juvenile Services Involvement?" />
+ 		<apex:pageBlockSectionItem >
+		 <apex:outputlabel for="previnvolvecb" value="Previous Juvenile Services Involvement?" />
          <apex:actionregion >
          <apex:inputField value="{!Referral__c.Previous_Juvenile_Services_Involvement__c}" id="previnvolvecb" >
          
@@ -1641,10 +1668,10 @@ function enableDiagEff() {
              </apex:actionStatus>
              <apex:actionSupport event="onchange" rerender="HxBlock,moreHxBlock" status="statusPrevJuv" />
          </apex:inputField>
-        </apex:actionregion>
-        </apex:pageBlockSectionItem>
-         <apex:pageblockSectionItem />
-         <apex:pageBlockSectionItem >
+		</apex:actionregion>
+		</apex:pageBlockSectionItem>
+		 <apex:pageblockSectionItem />
+		 <apex:pageBlockSectionItem >
          <apex:outputlabel for="currinvolvecb" value="Current Juvenile Services Involvement?" />
          <apex:actionregion >
          <apex:inputField value="{!Referral__c.Current_Juvenile_Services_Involvement__c}" id="currinvolveb2" >
@@ -1659,11 +1686,11 @@ function enableDiagEff() {
              </apex:actionStatus>
              <apex:actionSupport event="onchange" rerender="HxBlock,moreHxBlock" status="statusCurrJuv" />
          </apex:inputField>
-        </apex:actionregion>
+		</apex:actionregion>
          </apex:pageBlockSectionItem>
          <apex:pageblockSectionItem />
          </apex:pageBlockSection>
-        <apex:pageBlockSection id="HxBlock" rendered="{!referralRecordType=='Cambridge Florida' || 
+		<apex:pageBlockSection id="HxBlock" rendered="{!referralRecordType=='Cambridge Florida' || 
                         ReferralRecordType = 'Cambridge Massachusetts' ||
                         ReferralRecordType = 'Cambridge Maryland' || 
                         ReferralRecordType = 'Cambridge Indiana' ||
@@ -1764,7 +1791,7 @@ function enableDiagEff() {
 
        <apex:pageBlockSection columns="1"
                              title="{! if (ReferralRecordType == 'CareMeridian', 'Requested Locations', 'Locations Working Referral')}" id="locations"
-                             rendered="{! ReferralRecordType!='NeuroRestorative'}">
+                              >
         <apex:pageBlockSectionItem >
           <apex:outputPanel layout="none">
             <apex:commandButton value="Add Location"
@@ -1779,7 +1806,7 @@ function enableDiagEff() {
           </apex:outputPanel>
         </apex:pageBlockSectionItem>
         <apex:pageBlockTable value="{!locations}" var="location">
-           <apex:column value="{!location.Service_Location__c}"/>
+           <apex:column value="{!location.Service_Location__c}"/> 
             <apex:column value="{!location.Service_Location_Service_Value__c}"/>
             <apex:column value="{!location.Service_Location__r.Setting__c}"/>
           <apex:column value="{!location.Service_Location_Program__c}"/>
@@ -1816,7 +1843,7 @@ function enableDiagEff() {
 
         <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_II__c}"  rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />
         <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian')}"/>
-        <apex:inputField id="diageffdate" value="{!Referral__c.Diagnosis_Effective_Date__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" html-disabled="true"/>
+		<apex:inputField id="diageffdate" value="{!Referral__c.Diagnosis_Effective_Date__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" html-disabled="true"/>
         
         
         <apex:inputField value="{!Referral__c.Cause_of_Injury__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" />
@@ -1828,18 +1855,27 @@ function enableDiagEff() {
         <apex:outputPanel >
         <apex:actionRegion >
         <apex:inputField id="causepick" value="{!Referral__c.Cause_of_Injury_pick__c}" label="Cause of Injury" >
-            <apex:actionSupport rerender="othercause" event="onchange" /> 
-            </apex:inputField>
+        	<apex:actionSupport rerender="othercause" event="onchange" /> 
+        	</apex:inputField>
         </apex:actionRegion>
         <apex:outputPanel id="othercause">
         <apex:outputLabel value="Specify Other" rendered="{!Referral__c.Cause_of_Injury_pick__c == 'Other'}" for="txtothercause" />
         <apex:inputField id="txtothercause" value="{!Referral__c.Cause_of_Injury_Other__c}" rendered="{!Referral__c.Cause_of_Injury_pick__c == 'Other'}"  required="{!Referral__c.Cause_of_Injury_pick__c == 'Other'}"  label="Specify Other" />
         </apex:outputPanel>
         </apex:outputPanel>
-        
         </apex:pageBlocksectionItem>
+   
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}">
+        	<apex:outputPanel id="encephaloPanel" >
+		        <apex:outputLabel for="typeofEncephalopathy" value="Type of Encephalopathy" styleclass="labelCol" style="margin-left: 10%;"/>
+		        <apex:inputField value="{!Referral__c.Type_of_Encephalopathy__c}" id="typeofEncephalopathy" />
+	        </apex:outputPanel>
+       	</apex:pageBlockSectionItem>
+       
+        <apex:pageBlockSectionItem rendered="{!referralRecordtype == 'NeuroRestorative'}"/>
+        <apex:inputField Value="{!Referral__c.Diagnosis_II__c}" label="Secondary Diagnosis" rendered="{!referralRecordtype == 'NeuroRestorative'}"/>
         
-        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian')}"/>
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian',referralRecordType!='NeuroRestorative')}"/>
         
          <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}">
              <apex:outputText value="Current Location"/>
@@ -1847,7 +1883,7 @@ function enableDiagEff() {
                  <input id="MN_usePermanent" type="checkbox" value="1" onchange="copyPermanent(this);"/>&nbsp;Same as Permanent
              </apex:outputPanel>
          </apex:pageBlockSectionItem>
-        
+		
         <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_IV__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}">
              <apex:outputText value="Current Location"/>
@@ -1859,11 +1895,12 @@ function enableDiagEff() {
              
              </apex:outputPanel>
          </apex:pageBlockSectionItem>
-        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota', ReferralRecordType != 'CareMeridian')}"/>
+         <apex:inputField value="{!Referral__c.Ranchos_Los_Amigos_Scale__c}" rendered="{!referralRecordtype == 'NeuroRestorative'}" />
+        <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota', ReferralRecordType != 'CareMeridian', ReferralRecordType != 'NeuroRestorative')}"/>
         <apex:inputField value="{!Referral__c.Street_1__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" id="MN_Street1"/>
 
         <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_V__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />
-        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}"/>
+        
         <apex:inputField value="{!Referral__c.Street_1__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" id="Neuro_Street1"/>
         <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota')}"/>
         <apex:inputField value="{!Referral__c.Street_2__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}"  id="MN_Street2"/>
@@ -1992,10 +2029,11 @@ function enableDiagEff() {
 
 
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
-        <apex:inputField value="{!Referral__c.Primary_Requested_Location__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
-        <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
-        <apex:inputField value="{!Referral__c.Secondary_Location__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
-        <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
+        <!-- Commented by Sravan For Ticket ERNS-22 07/02/2014 1:11 PM -->
+        <!--  apex:inputField value="{!Referral__c.Primary_Requested_Location__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/-->
+        <!--  apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/-->
+        <!--  apex:inputField value="{!Referral__c.Secondary_Location__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/-->
+        <!--  apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/-->
         <apex:inputField value="{!Referral__c.Glasgow_Coma_Scale__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
 
         <!--Flavor Specific fields-->
@@ -2389,7 +2427,7 @@ function enableDiagEff() {
           />
           <apex:inputField value="{!Referral__c.Mobility__c}"
             rendered="{!ReferralRecordType = 'Arizona' ||
-                        ReferralRecordType = 'California' ||
+            			ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Iowa' ||
                         ReferralRecordType = 'Illinois' ||
                         ReferralRecordType = 'Minnesota' ||
@@ -2480,7 +2518,7 @@ function enableDiagEff() {
           />
           <apex:inputField value="{!Referral__c.Accessible_Housing_Needed__c}"
             rendered="{!ReferralRecordType = 'Iowa' ||
-                        ReferralRecordType = 'California' ||
+            			ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Illinois' ||
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'North Dakota' ||
@@ -2576,7 +2614,7 @@ function enableDiagEff() {
           />
           <apex:inputField value="{!Referral__c.Accessible_Vehicle_Needed__c}"
             rendered="{!ReferralRecordType = 'California' ||
-                        ReferralRecordType = 'Iowa' ||
+            			ReferralRecordType = 'Iowa' ||
                         ReferralRecordType = 'Illinois' ||
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'North Dakota' ||
@@ -2986,9 +3024,9 @@ function enableDiagEff() {
           <!-- Row 11, Col 4 -->
           <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                                                 ReferralRecordType = 'Cambridge Massachusetts' ||
-                                                ReferralRecordType = 'Cambridge Maryland' || 
-                                                ReferralRecordType = 'Cambridge North Carolina' ||
-                                                ReferralRecordType = 'Cambridge New Jersey'}" />
+						                        ReferralRecordType = 'Cambridge Maryland' || 
+						                        ReferralRecordType = 'Cambridge North Carolina' ||
+						                        ReferralRecordType = 'Cambridge New Jersey'}" />
           <apex:inputField value="{!Referral__c.If_Yes_What_kind__c}" label="If Yes, Type"
             rendered="{!ReferralRecordType = 'Cambridge Georgia'}"
           />
@@ -3006,10 +3044,10 @@ function enableDiagEff() {
 
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Cambridge Florida' ||
                                                 ReferralRecordType = 'Cambridge Massachusetts' ||
-                                                ReferralRecordType = 'Cambridge Maryland' || 
-                                                ReferralRecordType = 'Cambridge Indiana' ||
-                                                ReferralRecordType = 'Cambridge North Carolina' ||
-                                                ReferralRecordType = 'Cambridge Ohio'}">
+						                        ReferralRecordType = 'Cambridge Maryland' || 
+						                        ReferralRecordType = 'Cambridge Indiana' ||
+						                        ReferralRecordType = 'Cambridge North Carolina' ||
+						                        ReferralRecordType = 'Cambridge Ohio'}">
               <apex:outputPanel >
                   <apex:outputLabel for="Adjudicated_offense_status">Adjudicated offense status<br/></apex:outputLabel>
                   <apex:actionStatus id="statusAdjudicated_offense_status">
@@ -3060,10 +3098,10 @@ function enableDiagEff() {
           <!-- Row 12, Col 4 -->
           <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                                                 ReferralRecordType = 'Cambridge Massachusetts' ||
-                                                ReferralRecordType = 'Cambridge Maryland' || 
-                                                ReferralRecordType = 'Cambridge Indiana' ||
-                                                ReferralRecordType = 'Cambridge North Carolina' 
-                                                }" />
+						                        ReferralRecordType = 'Cambridge Maryland' || 
+						                        ReferralRecordType = 'Cambridge Indiana' ||
+						                        ReferralRecordType = 'Cambridge North Carolina' 
+						                        }" />
           <apex:inputField value="{!Referral__c.Animal_Cruelty__c}" rendered="{!ReferralRecordType = 'Cambridge Georgia'}"
           />
           
