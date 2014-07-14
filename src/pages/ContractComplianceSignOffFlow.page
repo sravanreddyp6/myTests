@@ -1,0 +1,15 @@
+<apex:page standardController="TMN_Contract__c" showHeader="true">
+<apex:stylesheet value="{!$Resource.ContractCss}"/>
+<apex:sectionHeader title="{!TMN_Contract__c.Name} Compliance Sign Off - {!$User.myFullName__c}"/> 
+<br/>
+<apex:outputPanel layout="block" styleClass="panel">
+    
+    <flow:interview buttonLocation="bottom" name="ContractComplianceSignOff" finishLocation="{!$Page.ViewContract + '?id=' + TMN_Contract__c.Id + '&tab=CI'}" />
+    
+    <apex:sectionHeader title="Critical Indicators"/>
+<!--Critical Indicators-->       
+    <apex:include pageName="incContractCritInd"/>          
+
+</apex:outputPanel>
+
+</apex:page>
