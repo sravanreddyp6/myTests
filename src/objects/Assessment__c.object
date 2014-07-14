@@ -240,9 +240,9 @@ Delete Me</description>
         <externalId>false</externalId>
         <label>AssessmentResponseCount</label>
         <summaryFilterItems>
-            <field>Assessment_Response__c.Rating__c</field>
-            <operation>notEqual</operation>
-            <value></value>
+            <field>Assessment_Response__c.Response_Has_Value__c</field>
+            <operation>equals</operation>
+            <value>True</value>
         </summaryFilterItems>
         <summaryForeignKey>Assessment_Response__c.Assessment__c</summaryForeignKey>
         <summaryOperation>count</summaryOperation>
@@ -703,7 +703,7 @@ Delete Me</description>
         <active>true</active>
         <errorConditionFormula>LOWER(TEXT(Status__c))=&apos;active final&apos; &amp;&amp;
 ISBLANK(Approval_Date__c) &amp;&amp;
-LOWER(Assessment_Type__r.Name) =&apos;risk&apos;</errorConditionFormula>
+(LOWER(Assessment_Type__r.Name) =&apos;risk&apos; ||  ISPICKVAL( Type__c , &apos;ISSA&apos;))</errorConditionFormula>
         <errorDisplayField>Approval_Date__c</errorDisplayField>
         <errorMessage>Approval Date  is required</errorMessage>
     </validationRules>
