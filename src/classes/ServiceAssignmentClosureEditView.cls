@@ -62,8 +62,10 @@ public with sharing class ServiceAssignmentClosureEditView {
 			
 			List<Action_Plan_Goal__c> actionPlanGoals = [ SELECT Description__c FROM Action_Plan_Goal__c WHERE Action_Plan__c = :actionPlanId ];
 			
+			integer maxLen;
 			for(Action_Plan_Goal__c apg : actionPlanGoals) {
-				actionPlanGoalSelectOptions.add(new SelectOption(apg.Description__c, apg.Description__c));
+				maxLen = Math.min(apg.Description__c.Length(), 255);
+				actionPlanGoalSelectOptions.add(new SelectOption(apg.Description__c.substring(0, maxLen), apg.Description__c.substring(0, maxLen)));
 			}
 		}
 		
