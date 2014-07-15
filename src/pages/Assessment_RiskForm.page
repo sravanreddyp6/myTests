@@ -306,7 +306,7 @@ function toggleById(id, ms){
             <apex:variable value="{!Domain.Header__c}" var="currentHeader" />
             
             <apex:outputPanel rendered="{!mode = 'edit'}"> 
-                <table class="myradiotable" style="margin-left:310px; margin-top:-18px;">                    
+                <table class="myradiotable" style="margin-left:410px; margin-top:-18px;">                    
                         <tr><td><b>Presents a Risk</b></td>
                             <td><b>Does Not Present a Risk</b></td>        
                         </tr>            
@@ -318,7 +318,7 @@ function toggleById(id, ms){
             <apex:dataTable value="{!Domain.Question__r}" var="Question" width="100%" rowClasses="risk-question-odd, risk-question-even">
                 
                     <!--  if the question presents a risk in summary mode, or if editing -->
-                    <apex:column style="{!if (printmode, 'width:30%;padding-left:0px;','width:300px;padding-left:20px')} ;vertical-align:top;" >
+                    <apex:column style="{!if (printmode, 'width:30%;padding-left:0px;','width:400px;padding-left:20px')} ;vertical-align:top;" >
                         <apex:outputPanel layout="block" rendered="{! (mode='summary' && (LOWER(mapCurrentResps[Question.ID].Rating__c) ='presents a risk')) || mode !='summary'}" style="padding-top:5px">
                         {!Question.Question_Title__c}
                         <c:HelpTooltip helpText="{!Question.Question_Description__c}" rendered="{!Question.Question_Description__c !='' && !printmode}"/>
