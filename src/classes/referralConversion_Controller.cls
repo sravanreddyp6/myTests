@@ -15,6 +15,17 @@ public with sharing class referralConversion_Controller {
   public string Location{ get; set;}
   public string ServiceLine { get; set; }
   
+ public String ReferralRecordType{
+  	get{
+  		if(this.referralRecord.RecordTypeId!=null){
+  			referralRecordtype = Utility.getRecordTypeForReferral(Id.valueOf(this.referralRecord.RecordTypeId));
+  		}
+  		return referralRecordType;
+  	}
+  	set;
+  }
+   
+  
   public referralConversion_Controller(ApexPages.standardController ctl){
 
     //this.referralRecord = (Referral__c) ctl.getRecord();
@@ -553,6 +564,92 @@ public with sharing class referralConversion_Controller {
         );
         insert newDiag;
     }
+    
+    
+/*
+ * Sravan's Conversion code 
+ */
+ 
+ 
+    //Nurses Evaluation Creation - Sravan 5/15/2014
+   if(referralRecordType.startsWith('CareMeridian')){
+   List <Evaluation__c> refEval = [SELECT ID, NAME FROM Evaluation__c WHERE Referral__c =:refCurr.Id LIMIT 1]; //using List to avoid System.Query Exception when no records are returned
+    
+    	if(refEval.isEmpty()){
+    		string pbslastName =  this.referralRecord.Name_PBR__c.Substringbefore(','); //newSA.Admission__r.Person_Being_Served__r.LastName;
+    		if(pbslastName == null) pbslastName = '';
+                Evaluation__c nurseEval = new Evaluation__c(
+    										ServiceAssignment__c = newSA.id,
+    										Name = pbslastName +'NursesAssessment'+ DateTime.Now().format('MMddyy'),
+    										RecordtypeId = Utility.getEvaluationRecordType('NursesAssessment')
+    		
+    		);
+    		insert nurseEval;
+    	}
+    	else{
+    		id evalID = refEval[0].id;
+    		list<Evaluation_Response__c> tobeCreated = new List<Evaluation_Response__c>();
+    		String asmtName = refEval[0].Name.length()>10 ? refEval[0].Name.Substringbefore('Eval')+'NursesAssessment'+ DateTime.Now().format('MMddyy') : 'NursesAssessment'+ DateTime.Now().format('MMddyy');
+    		String query = 'SELECT ';
+    		FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment;
+    		
+    		for(Schema.FieldSetMember f : copyFields.getFields()) {
+    			query += f.getFieldPath() + ', ';
+    				
+    		}
+    		 query += 'Name FROM Evaluation__c WHERE ID =:evalID';
+    		// refEval = Database.query(query);
+    		// system.debug('REFEVALREFEVAL>>>'+refEval);
+    		 
+    		 SObject refEval1=database.query(query);
+    		 string evaluationObj='Evaluation__c';
+       		 sObject dynObjectEvaluationRecord= Schema.getGlobalDescribe().get(evaluationObj).newSObject() ;
+        
+        	 for(Schema.FieldSetMember f : copyFields.getFields()) {
+             dynObjectEvaluationRecord.put(f.getfieldPath(), refEval1.get(f.getfieldPath()));     
+                    
+            }
+			dynObjectEvaluationRecord.put('RecordTypeID', Utility.getEvaluationRecordType('NursesAssessment'));
+			dynObjectEvaluationRecord.put('ServiceAssignment__c', newSA.id);
+			dynObjectEvaluationRecord.put('Name',asmtName );
+			
+        insert dynObjectEvaluationRecord;
+        
+	        if(tobeCreated.isEmpty()){
+	        	system.debug('inside the loop,,,,,,,,');
+		        
+		        list<string> respRectypes = new List<string>{'Allergy','Pressure Ulcer Detail','Wound Detail','Annotation'};
+		        String respQuery ='SELECT ';
+		        FieldSet copyrespFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses;
+		        
+		        	for(Schema.FieldSetMember f : copyrespFields.getFields()) {
+		        		respQuery +=f.getFieldPath() + ', ';
+		        	}
+		        
+		        	respQuery += 'Name FROM Evaluation_Response__c WHERE Evaluation__c =:evalID AND RecordType.Name IN:respRectypes';
+		        	List<Evaluation_Response__c> evalResponses = database.query(respQuery);
+		        	if(evalResponses!=null){
+		        		for(Evaluation_Response__c erp : evalResponses){
+		        			Evaluation_Response__c newRecord = erp.clone(false);
+		        			newRecord.Evaluation__c = dynobjectEvaluationRecord.Id;
+		        			tobeCreated.add(newRecord);
+		        			
+		        		}
+		        		
+		        		insert tobeCreated;
+		        		System.debug('Created Records+++++++'+tobeCreated);
+		        	}
+		        }
+        
+    	}
+    	
+    	
+    	
+    } 
+ 
+ /*
+  * End of Sravan's Conversion Code
+  */    
     
     // link the funding sources that were on the referral
     Contact pbsmed = [select id, medicaid_id__c from contact where id = :idPBS ];
