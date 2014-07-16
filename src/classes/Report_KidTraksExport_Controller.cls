@@ -45,9 +45,9 @@ public with sharing class Report_KidTraksExport_Controller {
 			billType = 'First Bill';
 			invoiceNumber = '';
 			serviceType = 'FamilyPreservation';
-			billableUnitId = avatarId;
+			billableUnitId = otherId;
 			personId = PbsName;
-			caseId = otherId;
+			caseId = avatarId;
 			billingCode = '10942.1161';
 			serviceCode = '10942';
 			componentCode = '11610';
@@ -172,7 +172,7 @@ public with sharing class Report_KidTraksExport_Controller {
 	    				theLastNotesStartDate = reportEndDate;
 	    			}	
 		    		else {
-		    				theLastNotesStartDate = thePreviousNotesStartDate;
+		    				theLastNotesStartDate = thePreviousWrappedPn.thePn.Service_Assignment__r.End_Date__c;
 		    		}
     			}
 				else {
@@ -203,7 +203,7 @@ public with sharing class Report_KidTraksExport_Controller {
     				theLastNotesStartDate = reportEndDate;
     			}
     			else {
-    				theLastNotesStartDate = pWrapped.thePn.Start_Time__c.date();
+    				theLastNotesStartDate = pWrapped.thePn.Service_Assignment__r.End_Date__c;
     			}    			
     			
     			unitsFromDateSubtract = theFirstNotesStartDate.daysBetween(theLastNotesStartDate) + 1;
