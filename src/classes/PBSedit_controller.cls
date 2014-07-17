@@ -20,7 +20,7 @@ public Boolean isUserLevel1or2 { get { return PBS_controller_helper.isUserLevel1
  
 private TMN_User__c TMNUser_internal;
 private boolean TMNUser_set = false;
-private TMN_User__c TMNUser {
+@TestVisible private TMN_User__c TMNUser {
 	get {
 		if (!TMNUser_set) {
 			TMN_User__c[] users = [

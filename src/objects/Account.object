@@ -1042,7 +1042,7 @@
     <validationRules>
         <fullName>Req_Mailing_Address_State</fullName>
         <active>true</active>
-        <errorConditionFormula>AND( RecordTypeId = &apos;012U0000000Dbif&apos;, ISBLANK(PersonMailingState))</errorConditionFormula>
+        <errorConditionFormula>AND(  RecordType.DeveloperName =&apos;Person_Being_Served&apos;, ISBLANK(PersonMailingState))</errorConditionFormula>
         <errorDisplayField>PersonMailingState</errorDisplayField>
         <errorMessage>State is required.</errorMessage>
     </validationRules>
