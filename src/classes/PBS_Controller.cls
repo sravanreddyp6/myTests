@@ -41,7 +41,8 @@ public string dontShowFields {
 
 private TMN_User__c TMNUser_internal;
 private boolean TMNUser_set = false;
-private TMN_User__c TMNUser {
+//Using @TestVisible annotation will allow us to access the private members of the class in the test class - Sravan: 07/15/2014 1:03PM.
+@TestVisible private TMN_User__c TMNUser {
 	get {
 		if (!TMNUser_set) {
 			TMN_User__c[] users = [
