@@ -412,6 +412,20 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Medical_Record_Number__c</fullName>
+        <description>Service Assignment Record number in the format as follows:
+[nine-digit unique number assigned to the program string] – [ten-digit PBS Unique Number] – [2 digit sequence number starting with 01]</description>
+        <externalId>false</externalId>
+        <formula>Service_Location__r.ProgramID__c &amp; &apos; - &apos; &amp; Person_Being_Served__r.PBS_Identifier__c &amp; &apos; - &apos; &amp; LPAD(TEXT(PBS_ServiceLocation_Count__c), 2, &apos;0&apos;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Medical Record Number</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Model__c</fullName>
         <description>used for NC and FL</description>
         <externalId>false</externalId>
@@ -444,6 +458,18 @@
         <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
+        <fullName>PBS_ServiceLocation_Count__c</fullName>
+        <externalId>false</externalId>
+        <label>PBS ServiceLocation Count</label>
+        <precision>2</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Person_Being_Served__c</fullName>
