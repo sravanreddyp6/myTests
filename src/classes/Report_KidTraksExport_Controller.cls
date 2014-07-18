@@ -97,13 +97,26 @@ public with sharing class Report_KidTraksExport_Controller {
     public PageReference runReport(){
     	lineItems = new List<KidTraksLineItem>();
 
+		// In the query below, the WHERE condition "Service_Assignment__r.End_Date__c > :reportStartDate" requires that the Service Assignment End Date be AFTER the first day
+		// in the report date range so that we never bill for a client whose service assignment ends on the first day of a report range.  This is in keeping with the requirements,
+		// and also prevents us from getting the case in which a Service Assignment ends on the first day of the report, and the code below that figures out the value of
+		// "theLastNotesStartDate" (a misleading variable name in that it's meaning evolved over time; study code below to see what I mean) would do things like give you 
+		// 7/1/14 as the first day billed for a client, and 6/30/14 as the last day billed, resulting in 0 units and $0.  This filter will result in finalized notes for the 
+		// first day of the report being excluded if the Service Assignment's End Date is also on the day of the report.  Based on the info from the business, there probably shouldn't
+		// be finalized notes for this code on the same day as the Service Assignment End Date, or if there are, the business must think of such as non-billable given the requirements
+		// they gave us. I'm noting this here, though, in case we ever have issues with the way the first day of the report and notes / Service Assignment End Dates on that day are
+		// handled.  J. Gilliam, 7/18/14 
     	List<Progress_Note__c> progressNotesThisReport = [ SELECT Start_Time__c, End_Time__c, Person_Being_Served__c, Person_Being_Served__r.Name, Person_Being_Served__r.Avatar_ID__c,
     														Person_Being_Served__r.Other_ID__c, Service_Assignment__r.Start_Date__c, Service_Assignment__r.End_Date__c FROM Progress_Note__c 
     															WHERE Status__c = 'Final' 
     																	AND Service_Code__r.Service_Code__c = '10942.1161' 
     																	AND Start_Time__c >= :reportStartDate 
-    																		AND End_Time__c <= :reportEndDate
-    																	AND Program_Detail__c = :reportProgram ];
+    																	AND End_Time__c <= :reportEndDate
+    																	AND Program_Detail__c = :reportProgram
+    																	AND (
+    																		Service_Assignment__r.End_Date__c > :reportStartDate
+    																		OR Service_Assignment__r.End_Date__c = null
+    																	) ];    	
     	
     	List<ProgressNoteWrapper_CullKidTraksLineItems> listWrappedPns = new List<ProgressNoteWrapper_CullKidTraksLineItems>();
     	
@@ -120,14 +133,14 @@ public with sharing class Report_KidTraksExport_Controller {
     	ProgressNoteWrapper_CullKidTraksLineItems thePreviousWrappedPn;
     	Date theFirstNotesStartDate;
     	// Commenting out the following line because it is not needed for flagging incrementation of the unitsCounter variable if we're just subtracting the
-    	// dates of the first and last notes to get the unit count.  But, we may need to come back and count units / notes as we refine the algorith for
+    	// dates of the first and last notes to get the unit count.  But, we may need to come back and count units / notes as we refine the algorithm for
     	// the "per diem continuous" concept (per diem billed daily whether or not a visit happens), so I'm leaving the line just in case.  J. Gilliam, 7-9-14, CTEAE-143
     		//Date thePreviousNotesStartDate;
     	Date thePreviousNotesStartDate;
     	Date theLastNotesStartDate;
     	Id thePreviousNotesPbsId;
     	// Commenting out the following line because it is not needed for if we're just subtracting the
-    	// dates of the first and last notes to get the unit count.  But, we may need to come back and count units / notes as we refine the algorith for
+    	// dates of the first and last notes to get the unit count.  But, we may need to come back and count units / notes as we refine the algorithm for
     	// the "per diem continuous" concept (per diem billed daily whether or not a visit happens), so I'm leaving the line just in case.  J. Gilliam, 7-9-14, CTEAE-143
     		//Integer unitsCounter = 0;
     	Integer unitsFromDateSubtract;
@@ -138,7 +151,7 @@ public with sharing class Report_KidTraksExport_Controller {
     		loopCounter++;
     		
 	    	// Commenting out the following section because it is not needed for if we're just subtracting the
-	    	// dates of the first and last notes to get the unit count.  But, we may need to come back and count units / notes as we refine the algorith for
+	    	// dates of the first and last notes to get the unit count.  But, we may need to come back and count units / notes as we refine the algorithm for
 	    	// the "per diem continuous" concept (per diem billed daily whether or not a visit happens), so I'm leaving the line just in case.  J. Gilliam, 7-9-14, CTEAE-143
 	    		//if(thePreviousNotesPbsId==pWrapped.thePn.Person_Being_Served__c || thePreviousNotesPbsId==null) {
 	    		//	if(pWrapped.thePn.Start_Time__c.date()!=thePreviousNotesStartDate) {
@@ -172,7 +185,7 @@ public with sharing class Report_KidTraksExport_Controller {
 	    				theLastNotesStartDate = reportEndDate;
 	    			}	
 		    		else {
-		    				theLastNotesStartDate = thePreviousWrappedPn.thePn.Service_Assignment__r.End_Date__c;
+		    				theLastNotesStartDate = thePreviousWrappedPn.thePn.Service_Assignment__r.End_Date__c - 1;
 		    		}
     			}
 				else {
@@ -183,7 +196,7 @@ public with sharing class Report_KidTraksExport_Controller {
     			unitsFromDateSubtract = theFirstNotesStartDate.daysBetween(theLastNotesStartDate) + 1;
     			lineItems.add(new KidTraksLineItem(theFirstNotesStartDate, theLastNotesStartDate, theUser, thePreviousWrappedPn.thePn.Person_Being_Served__r.Name, thePreviousWrappedPn.thePn.Person_Being_Served__r.Avatar_ID__c, thePreviousWrappedPn.thePn.Person_Being_Served__r.Other_ID__c, unitsFromDateSubtract));
 		    	// Commenting out the following line because it is not needed for if we're just subtracting the
-		    	// dates of the first and last notes to get the unit count.  But, we may need to come back and count units / notes as we refine the algorith for
+		    	// dates of the first and last notes to get the unit count.  But, we may need to come back and count units / notes as we refine the algorithm for
 		    	// the "per diem continuous" concept (per diem billed daily whether or not a visit happens), so I'm leaving the line just in case.  J. Gilliam, 7-9-14, CTEAE-143
     				//unitsCounter=0;
     		}
@@ -203,13 +216,13 @@ public with sharing class Report_KidTraksExport_Controller {
     				theLastNotesStartDate = reportEndDate;
     			}
     			else {
-    				theLastNotesStartDate = pWrapped.thePn.Service_Assignment__r.End_Date__c;
+    				theLastNotesStartDate = pWrapped.thePn.Service_Assignment__r.End_Date__c - 1;
     			}    			
     			
     			unitsFromDateSubtract = theFirstNotesStartDate.daysBetween(theLastNotesStartDate) + 1;
     			lineItems.add(new KidTraksLineItem(theFirstNotesStartDate, theLastNotesStartDate, theUser, pWrapped.thePn.Person_Being_Served__r.Name, pWrapped.thePn.Person_Being_Served__r.Avatar_ID__c, pWrapped.thePn.Person_Being_Served__r.Other_ID__c, unitsFromDateSubtract));
 		    	// Commenting out the following line because it is not needed for if we're just subtracting the
-		    	// dates of the first and last notes to get the unit count.  But, we may need to come back and count units / notes as we refine the algorith for
+		    	// dates of the first and last notes to get the unit count.  But, we may need to come back and count units / notes as we refine the algorithm for
 		    	// the "per diem continuous" concept (per diem billed daily whether or not a visit happens), so I'm leaving the line just in case.  J. Gilliam, 7-9-14, CTEAE-143
     				//unitsCounter=0;  // This probably doesn't matter, since this should be the last iteration of the containing loop.
     		}
@@ -227,7 +240,7 @@ public with sharing class Report_KidTraksExport_Controller {
     		
 			thePreviousNotesPbsId = pWrapped.thePn.Person_Being_Served__c;
 	    	// Commenting out the following line because it is not needed for flagging incrementation of the unitsCounter variable if we're just subtracting the
-	    	// dates of the first and last notes to get the unit count.  But, we may need to come back and count units / notes as we refine the algorith for
+	    	// dates of the first and last notes to get the unit count.  But, we may need to come back and count units / notes as we refine the algorithm for
 	    	// the "per diem continuous" concept (per diem billed daily whether or not a visit happens), so I'm leaving the line just in case.  J. Gilliam, 7-9-14, CTEAE-143
 				//thePreviousNotesStartDate = pWrapped.thePn.Start_Time__c.date();
 			thePreviousNotesStartDate = pWrapped.thePn.Start_Time__c.date();
