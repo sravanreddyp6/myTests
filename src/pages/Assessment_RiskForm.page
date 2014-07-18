@@ -19,7 +19,7 @@
 
 <apex:variable var="printmode" value="{!if($CurrentPage.parameters.pdf ='1' ,true,false)}"/>
 
-<apex:stylesheet value="{!if ($CurrentPage.parameters.pdf !='1', $Resource.mentoresdcss, $Resource.mentoresdprint)}" />
+<apex:stylesheet value="{!if ($CurrentPage.parameters.pdf !='1', URLFOR($Resource.mentoresd,'/mentoresd.css'), $Resource.mentoresdprint)}" />
 
 <head>
 <style>

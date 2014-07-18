@@ -246,7 +246,7 @@ public class ServiceAssignmentExt {
                 dg.Secondary_Diagnosis__c = dgnew.Secondary_Diagnosis__c;
                 dg.Level_of_Disability__c = dgnew.Level_of_Disability__c;
                 dg.Comments__c = dgnew.Comments__c;
-
+				system.debug('updating ' + dg.Id + ', ' + dgnew);
                 foundDiag = true;
                 break;
             }
@@ -256,7 +256,14 @@ public class ServiceAssignmentExt {
             this.diagnoses.add(dgnew);
 
     this.diag= new Diagnosis__c();
-    newDiagnosis = false;
+    //newDiagnosis = false;
+  }
+  
+  public void refreshDiagnoses() {
+  	// requery the diagnosis list
+  	diagnoses = [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__c = :currentID];
+  	newDiagnosis = false;
+  	
   }
   
   public void createDiagnoses() {
@@ -1364,11 +1371,44 @@ public void loadProgramList() {
     @RemoteAction
     public static Diagnosis__c loadDiagnosis(string diagnosisId) {
             Diagnosis__c dg =
-                [select Id, Effective_Date__c, Axis_I__c, Axis_II__c, Axis_III__c, Axis_IV__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Level_of_Disability__c, Comments__c, Service_Assignment__c
+                [select Id, Effective_Date__c, Axis_I__c, Axis_II__c, Axis_III__c, Axis_IV__c, Axis_V__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Level_of_Disability__c, Comments__c, Service_Assignment__c
                  from Diagnosis__c where id = :diagnosisId];
+            system.debug('LOD:' + dg.Level_Of_disability__c);
             return dg;
      }
 
+
+    @RemoteAction
+    public static boolean saveSingleDiagnosis (string diagId, long effDate, string axisI, string axisII, string axisIII, string axisIV, string axisV, string primDiag, string secondDiag, string lod, string comments, string saID) {
+    	Diagnosis__c dg;         
+        ID newID;
+        if (diagId == '') { 
+        	
+        	dg = new Diagnosis__c ( Effective_Date__c = datetime.newInstance(effDate), Axis_I__c = axisI, Axis_II__c = axisII, Axis_III__c = axisIII, Axis_IV__c = axisIV, Axis_V__c = axisV, Primary_Diagnosis__c = primDiag, Secondary_Diagnosis__c = secondDiag, Level_of_Disability__c = lod, Comments__c = comments, Service_Assignment__c = saID );
+        }
+        else {
+        	
+        	dg = [select Id, Effective_Date__c, Axis_I__c, Axis_II__c, Axis_III__c, Axis_IV__c, Axis_V__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Level_of_Disability__c, Comments__c, Service_Assignment__c
+                 from Diagnosis__c where id = :diagId];
+        	
+	        dg.Effective_Date__c = datetime.newInstance(effDate);
+	        dg.Axis_I__c = axisI;
+	        dg.Axis_II__c = axisII;
+	        dg.Axis_III__c = axisIII;
+	        dg.Axis_IV__c = axisIV;
+	        dg.Axis_V__c = axisV;
+	        dg.Primary_Diagnosis__c = primDiag;
+	        dg.Secondary_Diagnosis__c = secondDiag;
+	        dg.Level_of_Disability__c = lod;
+	        dg.Comments__c = comments;
+	        dg.Service_Assignment__c = saID;
+			system.debug('updating ' + dg.Id + ', ' + dg);
+        }
+		
+        upsert dg;
+        return true;
+   }
+   
  @RemoteAction
     public static Service_Location__c loadServiceLocation(string locationId) {
         Service_Location__c loc = [ select ID, Name, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c, Service_Value__c from Service_Location__c where ID = :locationId];
