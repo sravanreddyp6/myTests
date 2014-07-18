@@ -17,9 +17,12 @@ public with sharing class Assessment_IssaForm {
     public Map<id, List<SelectOption>> mapOptions = new Map<id, List<SelectOption>>();
     public Map<id, List<SelectOption>> getMapOptions(){return mapOptions ;}
     public Map<Id, WrappedSelectOptions> mapWrappedSelectOptions { get; set; }
+    
     string assessID = ApexPages.currentPage().getParameters().get('id');
     public string thetest{get;set;}
+    
     public map<string, List<string>> mapQuestions = new map<string, List<string>>();
+    
     public map<string, List<string>> getMapQuestions(){ return mapQuestions ;}
 
     
@@ -205,7 +208,7 @@ public with sharing class Assessment_IssaForm {
                 continue;
             } else {
             
-                if(local.rating__c != null  &&  local.rating__c.equalsIgnoreCase('presents a risk') ) {
+                if(local.rating__c != null  &&  local.rating__c.equalsIgnoreCase('yes') ) {
                     mapDomainHasRisk.put(idDomId,true);
                     //system.debug('Putting ' + idDomId + ' into hasrisk list with true');
                 } else {
@@ -234,23 +237,27 @@ public with sharing class Assessment_IssaForm {
                 List<SelectOption> sortedTmpSO = new List<SelectOption>();
                 
                 // always show the extra questions - we'll do the show/hide toggle on the front end
-                List<String> showFields= new List<String>{'Description_of_Risk__c','Plan_to_reduce_Risk__c'};
+                List<String> showFields= new List<String>{'Description_of_risk__c'};
+                List<String> emptyList= new List<String>();
+                    
                     for(Assessment_Question_Option__c QO : local.Assessment_Question_Option__r ){
                     
-                        //QO.Rating__c
+                        // create the options for a yes/no question
                         tmpSO.ADD(new SelectOption(QO.Rating__c, QO.Rating__c));       
-                        
-                        //system.debug('here'+QO.id);
-                        //if(QO.Show_These_Fields__c == null){QO.Show_These_Fields__c ='false';}
-                        //showFields = QO.Show_These_Fields__c.split(',');
-                        //showFields={'Description_of_Risk__c','Plan_to_reduce_Risk__c'};
-                        
-                        
-                        mapQuestions.put(local.id+QO.Rating__c, showFields) ;      
-                          
+
+						// if the question contains the words 'supports' then add the extra field to show                        
+                        if ( local.Question_title__c.contains('supports')) {
+                         system.debug('here: '+local.id+QO.Rating__c + ' - showfields: ' + showfields);	
+                       	 mapQuestions.put(local.id+QO.Rating__c, showfields);      
+                        } else
+                        	mapQuestions.put(local.id+QO.Rating__c, emptyList);
                     }
+                   
                     // add the question options for when the radio button is not selected
-                    mapQuestions.put(local.id, showFields);
+                    if ( local.Question_title__c.contains('supports'))
+                    	mapQuestions.put(local.id, showFields);
+                    else
+                    	mapQuestions.put(local.id, emptyList);
                     
                 tmpSO.sort();
                 for(Integer i = tmpSO.size()-1; i>=0; i--) {
@@ -261,7 +268,7 @@ public with sharing class Assessment_IssaForm {
                 mapWrappedSelectOptions.put(local.id, new WrappedSelectOptions(sortedTmpSO));   
             
             }
-            system.debug(mapquestions);
+            system.debug('MAP QUESTIONS:' + mapquestions);
             
             DomainsInScope= [Select ID,  Name, Description__c, Assessment_Type__c, Header__c,  
                         (Select Name, ID, Question_Description__c, Question_Title__c, Question_Number__c
