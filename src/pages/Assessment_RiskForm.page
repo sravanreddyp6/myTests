@@ -536,14 +536,14 @@ function toggleById(id, ms){
          
         <div style="float:right">
         <apex:outputPanel rendered="{!!printmode}" >
-            <apex:commandButton action="{!myEdit}" value="Edit" reRender="myfrm" status="myStatus" rendered="{! mode='view' && Assessment__c.Status__c = 'Inactive Draft'}"/>&nbsp;
+            <apex:commandButton action="{!myEdit}" value="Edit" reRender="myfrm" status="myStatus" rendered="{! mode='view' && Assessment__c.Status__c = 'Inactive Draft' && canEditRisk}"/>&nbsp;
             <apex:commandButton action="{!mySave}" value="Save" reRender="myfrm" status="myStatus" rendered="{!mode='edit' || mode = 'new'}" />&nbsp; 
             <apex:commandButton action="{!myApprove}" value="Finalize" status="myStatus" rendered="{!mode='view' && (Assessment__c.Status__c = 'Inactive Draft') && canFinalize}" />&nbsp;
             <apex:commandButton value="Acknowledge" styleClass="ackbtn" onClick="toggleById('ackfrom'); return false;" rendered="{!(mode='view' && showConfirmationButton)}" >             
                 &nbsp;
             </apex:commandButton>  
             <apex:commandButton action="{!myRevise}" 
-                    value="Revise" status="myStatus"  rendered="{!mode='view' && CanReviseAssess}" onclick="if(!confirm('Are you sure you wish to revise the current version of the Risk Assessment?')){return false};">
+                    value="Revise" status="myStatus"  rendered="{!mode='view' && CanReviseAssess && $ObjectType.Assessment__c.createable}" onclick="if(!confirm('Are you sure you wish to revise the current version of the Risk Assessment?')){return false};">
                 &nbsp;
             </apex:commandButton>  
             <apex:commandButton onclick="window.open('/apex/assessment_riskform?id={!Assessment__c.id}&Summary=1', '_self'); return false;" 
