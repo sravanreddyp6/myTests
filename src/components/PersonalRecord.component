@@ -54,6 +54,9 @@
                         <span class="pbsname">{!con.FirstName}  {!con.LastName}</span>
                         <table cellpadding="5" >
                         <tr>
+                            <td><b>Person Number:</b>&nbsp;<apex:outputText value="{!con.PBS_Identifier__c}" /></td>
+                        </tr>
+                        <tr>
                             <td colspan="2"><b>DOB:</b>&nbsp;<apex:outputText id="txtdob" value="{0, date, MM/dd/yyyy}"><apex:param value="{!con.Birthdate}" /></apex:outputText>&nbsp;&nbsp;
                             <b>Age:</b>&nbsp;<apex:outputText id="txtage" value="{!con.Age__c}" />
                             </td>

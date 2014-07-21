@@ -88,6 +88,7 @@
         <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
         <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}"  />
+        <apex:outputField value="{!theServAssign.Medical_Record_Number__c}" />
         <apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA}"  required="{!episodeReq}"/>
         <apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation}" />
@@ -117,6 +118,7 @@
         <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}"  onblur="changeEffectiveDates();" />
         <apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA}"  />
+        <apex:outputField value="{!theServAssign.Medical_Record_Number__c}" />        
         <apex:pageblocksectionitem rendered="{!editSA}"  >
         <apex:outputLabel value="Model" for="modelfield" />
         <apex:actionregion >
@@ -239,14 +241,19 @@
     
     <hr />
     <apex:pageBlockSection title="Location of Service" columns="2" id="locationDisplay" collapsible="false">
-          <apex:pageBlockSectionItem rendered="{!editSA}" >
+          <apex:pageBlockSectionItem rendered="{!editSA && serviceLocation = null}" >
               <apex:outputLabel value="Alias" />
               <apex:actionregion >
-          <c:CustomLookup id="sl" formID="myFRM" uniqueId="searchLocation" type="Service_Location__c" parentId="{!theServAssign.Service_Location__c}"
-                    parentName="{!serviceLocation.Name}" filters="name,city__c,state__c"
-                    return="ID, program__c,setting__c,service_value__c,phone__c,street__c,city__c,state__c,zip__c" />
-</apex:actionregion>
-                    </apex:pageBlockSectionItem>
+                  <c:CustomLookup id="sl" formID="myFRM" uniqueId="searchLocation" type="Service_Location__c" parentId="{!theServAssign.Service_Location__c}"
+                                  parentName="{!serviceLocation.Name}" filters="name,city__c,state__c"
+                                  return="ID, program__c,setting__c,service_value__c,phone__c,street__c,city__c,state__c,zip__c" />
+              </apex:actionregion>
+          </apex:pageBlockSectionItem>
+
+          <apex:pageBlockSectionItem rendered="{!editSA && serviceLocation != null}" >
+            <apex:outputLabel value="Alias" />
+            <apex:outputText value="{!serviceLocation.Name}" />
+          </apex:pageBlockSectionItem>
                     
           <apex:outputField value="{!serviceLocation.Name}" rendered="{!!editSA}"/>
           <apex:outputField value="{!serviceLocation.Setting__c}"/>
