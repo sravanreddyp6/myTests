@@ -380,9 +380,34 @@ public with sharing class Assessment_IssaForm {
         
         try{
             hasErrorOnFinalize = false;
+            boolean hasDesError = false;
             
+            for(Assessment_Response__c local :  mapCurrentResps.values()){
+                if(local.Rating__c != null && local.Question__r.question_title__c.contains('supports') && local.Rating__c.equalsIgnoreCase('yes')){
+                    system.debug('entered loop for ' + local.id);
+                    IF(string.isblank(local.Description_of_Risk__c  ))
+                        {
+                            hasDesError =true;
+                            system.debug('true ' + local.id);
+                            local.Description_of_Risk__c.addError('Support Plan must be entered');
+                        }
+                   
+                }                   
+            } 
+           // this.validateHardcodedQuestions(true);
+            if(hasDesError ){
+                mode='edit';
+              /*
+ 	            List<Apexpages.Message> msgs = ApexPages.getMessages();
+				for(Apexpages.Message msg:msgs){
+			    	msg.getDetail().replace('Description of Risk', ''));
+				}
+              */
+                return null;
+            }
+	            
             update mapCurrentResps.values() ;
-            
+			
             try {
                 Assessment__c currFinal = [select id, status__c from assessment__c where Admission__c = :assessment.Admission__c AND Assessment_Type__c = :assessment.Assessment_Type__c and status__C = 'Active Final' LIMIT 1];
                 currFinal.Status__c = 'Inactive Final';
@@ -408,12 +433,10 @@ public with sharing class Assessment_IssaForm {
             Assessment.Approved_By__c = null ; 
             mode='edit'; 
             hasErrorOnFinalize = true;
+            system.debug('error is: ' + e.getMessage());
+            e.setMessage(e.getMessage().replace('Description of Risk', ''));
             ApexPages.addMessages(e); 
-            
-            
-                     
         }
-        
         
         return null;        
         
