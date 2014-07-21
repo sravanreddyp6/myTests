@@ -4,21 +4,8 @@ private class PBS_ControllerTest {
 
 // Testing Cambridge flavor
 	static testMethod void insertPBSTestforCambridge() {
-	profile p = [SELECT Id, Name FROM Profile WHERE Name='System Administrator'];
-	User admin = new User(alias = 'sravan',
-                                email='sravan@TMN.com',
-                                emailencodingkey='UTF-8',
-                                lastname='Last Name', firstname='firstName', languagelocalekey='en_US',
-                                localesidkey='en_US',
-                                profileid = p.id,
-                                timezonesidkey='America/Los_Angeles',
-                                username='sravan@TMN.com' + System.currentTimeMillis());
-                                
-        insert admin;
-        
-   	 Tmn_User__c admintmnUser= new Tmn_User__c(operating_group__c='Cambridge', Salesforce_User_Account__c=admin.id);
-        insert admintmnUser;
-		
+       	User admin = TMN_Generic_Core_TestData.createUser('System Administrator', 'cam', 'srn@tmn.com', 'firt Fname', 'Last LName', 'Cambridge');
+	   	TMN_User__c admintmnUser = [SELECT ID, Name FROM TMN_User__c WHERE Salesforce_User_Account__c =: admin.id];
 		system.runas(admin){
         String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
 		Account Accnt = new Account(
@@ -115,7 +102,7 @@ private class PBS_ControllerTest {
     
     //  Testing Care Meridian Flavor
     static testMethod void insertPBSTestforCareMeridian() {
-	system.runas(new User(Id = Userinfo.getUserId())){ // Running as the current user as Salesforce will not allow us to create a user, assign perm sets and create a TMN user in one transaction unless we use System.runas
+	/*system.runas(new User(Id = Userinfo.getUserId())){ // Running as the current user as Salesforce will not allow us to create a user, assign perm sets and create a TMN user in one transaction unless we use System.runas
 	profile p = [SELECT Id, Name FROM Profile WHERE Name='ESD General'];
 	User cmUser = new User(alias = 'cm',
                                 email='cm@TMN.com',
@@ -130,7 +117,7 @@ private class PBS_ControllerTest {
 
         
     // Permission Set Assignment 
-    List<PermissionSet> theSets = [SELECT ID, Name FROM PermissionSet WHERE Name IN('ESD_Notes_Common','ESD_Notes_Intaker')];
+  List<PermissionSet> theSets = [SELECT ID, Name FROM PermissionSet WHERE Name IN('ESD_Notes_Common','ESD_Notes_Intaker')];
 	List<PermissionSetAssignment> thepermAssigns = new List<PermissionSetAssignment>();	
      	for(PermissionSet ps : theSets){
      		thepermAssigns.add(new PermissionSetAssignment(PermissionSetId = ps.Id, AssigneeId = cmUser.Id));
@@ -138,12 +125,26 @@ private class PBS_ControllerTest {
      	}
         insert thepermAssigns;
         system.debug('permission setssss'+thePermAssigns[0].PermissionSetId);
-	}
+        List<String> sets = new List<String> {'ESD_Notes_Common','ESD_Notes_Intaker'};
+        
+        TMN_Generic_Core_TestData.permsetAssign(sets, cmUser.Id);
+        
+	} 
+	
 	User u2 = [SELECT ID, NAME FROM User WHERE alias = 'cm' and email='cm@TMN.com'];
 	Tmn_User__c cmtmnUser= new Tmn_User__c(operating_group__c='Care Meridian', Salesforce_User_Account__c= u2.id);
-        insert cmtmnUser;
+        insert cmtmnUser; */
         
-		system.runas(u2){
+        
+        User cmUser = TMN_Generic_Core_TestData.createUser('ESD General', 'cmuser', 'cmuser@cm.com', 'cmFname', 'CmLName', 'Care Meridian');
+        List<String> permsets = new List<String> {'ESD_Notes_Common','ESD_Notes_Intaker'};
+        
+        system.runas(new User(Id = Userinfo.getUserId())){ //Running the permissionset Assignment as a seperate user to avoid MIXED DML Operation error.
+        	TMN_Generic_Core_TestData.permsetAssign(permsets, cmUser.Id);
+        }
+        
+        TMN_User__c cmtmnUser = [SELECT ID, Name FROM TMN_User__c WHERE Salesforce_User_Account__c =: cmUser.id];
+		system.runas(cmUser){
         String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
 		Account Accnt = new Account(
 			RecordTypeID=RecTypeId,
@@ -237,126 +238,107 @@ private class PBS_ControllerTest {
     }
     
     // Testing Redwood flavor
-    static testMethod void insertPBSTestforRedwood() {
-	system.runas(new User(Id = Userinfo.getUserId())){ // Running as the current user as Salesforce will not allow us to create a user, assign perm sets and create a TMN user in one transaction unless we use System.runas
-	profile p = [SELECT Id, Name FROM Profile WHERE Name='ESD General'];
-	User redwoodUser = new User(alias = 'rd',
-                                email='rd@TMN.com',
-                                emailencodingkey='UTF-8',
-                                lastname='TrLastName', firstname='TrfirstName', languagelocalekey='en_US',
-                                localesidkey='en_US',
-                                profileid = p.id,
-                                timezonesidkey='America/Los_Angeles',
-                                username='rd@TMN.com' + System.currentTimeMillis());
-                                
-        insert redwoodUser;
+	static testMethod void insertPBSTestforRedwood() {
 
-        
-    // Permission Set Assignment 
-    List<PermissionSet> theSets = [SELECT ID, Name FROM PermissionSet WHERE Name IN('ESD_Notes_Common','ESD_Notes_Intaker')];
-	List<PermissionSetAssignment> thepermAssigns = new List<PermissionSetAssignment>();	
-     	for(PermissionSet ps : theSets){
-     		thepermAssigns.add(new PermissionSetAssignment(PermissionSetId = ps.Id, AssigneeId = redwoodUser.Id));
-     		
-     	}
-        insert thepermAssigns;
-        system.debug('permission setssss'+thePermAssigns[0].PermissionSetId);
-	}
-	User u3 = [SELECT ID, NAME FROM User WHERE alias = 'rd' and email='rd@TMN.com'];
-	Tmn_User__c redwoodtmnUser= new Tmn_User__c(operating_group__c='Redwood', Salesforce_User_Account__c= u3.id);
-        insert redwoodtmnUser;
-        
-		system.runas(u3){
-        String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
-		Account Accnt = new Account(
-			RecordTypeID=RecTypeId,
-			FirstName= 'Test rdFName',
-			LastName='Test rdLName',
-			PersonMailingStreet='10 Main St.',
-			PersonMailingPostalCode='12345',
-			PersonMailingCity='SF',
-			PersonMailingStateCode='CA',
-			PersonEmail='test@yahoo.com',
-			PersonHomePhone='1234567',
-			PersonMobilePhone='12345678',
-			PersonBirthdate= date.today()-30
-		);
+		User redwoodUser = TMN_Generic_Core_TestData.createUser('ESD General', 'rduser', 'rduser@rd.com', 'rdFname', 'rdLName', 'Redwood');
+		Tmn_User__c redwoodtmnUser= [SELECT ID, Name FROM TMN_User__c WHERE Salesforce_User_Account__c =: redwoodUser.id];
 		
-		Related_Party__c relParty = new Related_Party__c ( Name='rp name', type__c = 'Guardian');
-		
-		PageReference ref = new PageReference('/apex/PBS_Create');
-		Test.setCurrentPage(ref); 
-		
-		PBS_Controller controller = new PBS_Controller(new ApexPages.StandardController(Accnt));
-		system.assertEquals(false,controller.canViewFamilyInfo); // Redwood should not see Family Info
-		system.assert(controller.showDiagnosis); // Redwood should See Diagnosis section
-		system.assertEquals(controller.dontShowFields.Contains('Current_Medications__pc'), True); //Checking for the fields to be hidden for Redwood flavor.
-		system.assertEquals(controller.TMNUser.id,redwoodtmnUser.id); // Checking the TMN User created
-		PageReference ref2;
-		try {
-			ref2 = controller.savePBS();
-			List<ApexPages.Message> msgList = ApexPages.getMessages();
-			boolean validateAge = false;
-			for(ApexPages.Message msg :  ApexPages.getMessages()) {
-				system.debug( msg.getSummary());
-				if(msg.getsummary().contains('younger than 18')) 
-				validateAge = true;
-			}			
-			system.assert(validateAge);	
-		
-		} catch (Exception e) {
-			// person is less than 18 and no guardian provided; should throw error
-			system.debug(e.getMessage());
-			System.Assert( e.getMessage().contains('less than 18'), e.getMessage() );
+	    List<String> permsets = new List<String> {'ESD_Notes_Common','ESD_Notes_Intaker'};
+	        system.runas(new User(Id = Userinfo.getUserId())){ //Running the permissionset Assignment as a seperate user to avoid MIXED DML Operation error.
+	        	TMN_Generic_Core_TestData.permsetAssign(permsets, redwoodUser.Id);
+	        } 
+	        
+			system.runas(redwoodUser){
+	        String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
+			Account Accnt = new Account(
+				RecordTypeID=RecTypeId,
+				FirstName= 'Test rdFName',
+				LastName='Test rdLName',
+				PersonMailingStreet='10 Main St.',
+				PersonMailingPostalCode='12345',
+				PersonMailingCity='SF',
+				PersonMailingStateCode='CA',
+				PersonEmail='test@yahoo.com',
+				PersonHomePhone='1234567',
+				PersonMobilePhone='12345678',
+				PersonBirthdate= date.today()-30
+			);
 			
+			Related_Party__c relParty = new Related_Party__c ( Name='rp name', type__c = 'Guardian');
+			
+			PageReference ref = new PageReference('/apex/PBS_Create');
+			Test.setCurrentPage(ref); 
+			
+			PBS_Controller controller = new PBS_Controller(new ApexPages.StandardController(Accnt));
+			system.assertEquals(false,controller.canViewFamilyInfo); // Redwood should not see Family Info
+			system.assert(controller.showDiagnosis); // Redwood should See Diagnosis section
+			system.assertEquals(controller.dontShowFields.Contains('Current_Medications__pc'), True); //Checking for the fields to be hidden for Redwood flavor.
+			system.assertEquals(controller.TMNUser.id,redwoodtmnUser.id); // Checking the TMN User created
+			PageReference ref2;
+			try {
+				ref2 = controller.savePBS();
+				List<ApexPages.Message> msgList = ApexPages.getMessages();
+				boolean validateAge = false;
+				for(ApexPages.Message msg :  ApexPages.getMessages()) {
+					system.debug( msg.getSummary());
+					if(msg.getsummary().contains('younger than 18')) 
+					validateAge = true;
+				}			
+				system.assert(validateAge);	
+			
+			} catch (Exception e) {
+				// person is less than 18 and no guardian provided; should throw error
+				system.debug(e.getMessage());
+				System.Assert( e.getMessage().contains('less than 18'), e.getMessage() );
+				
+				}
+				
+			controller.relParty = relParty;
+			ref2 = controller.savePBS();
+	
+			
+			Related_Party__c rp = PBS_controller_helper.loadRelatedParty(relParty.Id);
+			System.assertEquals( relParty.name, rp.name);
+			
+			rp = PBS_controller_helper.saveRelatedParty(rp.Id, 'rp new name', rp.type__c, '', '', '', '', '', '', '', controller.pBSId);
+			Related_Party__c rp2 = PBS_controller_helper.saveRelatedParty(null, 'another rp', rp.type__c, '', '', '', '', '', '', '', controller.pBSId);
+			System.assertEquals( rp.type__c, rp2.type__c);
+			
+			
+			Account Accnt2 = new Account(
+				RecordTypeID=RecTypeId,
+				FirstName= 'Test rdFName',
+				LastName='Test rdLName',
+				PersonMailingStreet='10 Main St.',
+				PersonMailingPostalCode='12345',
+				PersonMailingCity='SF',
+				PersonMailingStateCode='CA',
+				PersonEmail='test@yahoo.com',
+				PersonHomePhone='1234567',
+				PersonMobilePhone='12345678',
+				PersonBirthdate= date.today()-30
+			);
+	
+			controller = new PBS_Controller(new ApexPages.StandardController(Accnt2));
+			Related_Party__c relParty2 = new Related_Party__c ( Name='rp name', type__c = 'Guardian');
+			
+			try {
+				controller.relParty = relParty2;
+				ref2 = controller.savePBS();
+				List<ApexPages.Message> msgList = ApexPages.getMessages();
+				for(ApexPages.Message msg :  ApexPages.getMessages()) {
+					system.debug( msg.getSummary());
+	    			System.Assert(msg.getSummary().contains ('already exists') || msg.getSummary().contains('guardian'));
+	    			System.assertEquals(ApexPages.Severity.ERROR, msg.getSeverity()); 
+				}
+			} catch (Exception e) {
+				// person is duplicate; should throw error
+				System.Assert( e.getMessage().contains('already exists'), e.getMessage() );
 			}
 			
-		controller.relParty = relParty;
-		ref2 = controller.savePBS();
-
-		
-		Related_Party__c rp = PBS_controller_helper.loadRelatedParty(relParty.Id);
-		System.assertEquals( relParty.name, rp.name);
-		
-		rp = PBS_controller_helper.saveRelatedParty(rp.Id, 'rp new name', rp.type__c, '', '', '', '', '', '', '', controller.pBSId);
-		Related_Party__c rp2 = PBS_controller_helper.saveRelatedParty(null, 'another rp', rp.type__c, '', '', '', '', '', '', '', controller.pBSId);
-		System.assertEquals( rp.type__c, rp2.type__c);
-		
-		
-		Account Accnt2 = new Account(
-			RecordTypeID=RecTypeId,
-			FirstName= 'Test rdFName',
-			LastName='Test rdLName',
-			PersonMailingStreet='10 Main St.',
-			PersonMailingPostalCode='12345',
-			PersonMailingCity='SF',
-			PersonMailingStateCode='CA',
-			PersonEmail='test@yahoo.com',
-			PersonHomePhone='1234567',
-			PersonMobilePhone='12345678',
-			PersonBirthdate= date.today()-30
-		);
-
-		controller = new PBS_Controller(new ApexPages.StandardController(Accnt2));
-		Related_Party__c relParty2 = new Related_Party__c ( Name='rp name', type__c = 'Guardian');
-		
-		try {
-			controller.relParty = relParty2;
-			ref2 = controller.savePBS();
-			List<ApexPages.Message> msgList = ApexPages.getMessages();
-			for(ApexPages.Message msg :  ApexPages.getMessages()) {
-				system.debug( msg.getSummary());
-    			System.Assert(msg.getSummary().contains ('already exists') || msg.getSummary().contains('guardian'));
-    			System.assertEquals(ApexPages.Severity.ERROR, msg.getSeverity()); 
+			System.assertEquals( false, PBS_controller_helper.isUserLevel1or2());
+			
 			}
-		} catch (Exception e) {
-			// person is duplicate; should throw error
-			System.Assert( e.getMessage().contains('already exists'), e.getMessage() );
-		}
-		
-		System.assertEquals( false, PBS_controller_helper.isUserLevel1or2());
-		
-		}
-    }
-    
+	    }
+	    
 }
