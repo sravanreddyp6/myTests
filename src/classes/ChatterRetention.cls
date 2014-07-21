@@ -81,7 +81,18 @@ global class ChatterRetention implements Database.Batchable<sObject>{
        //create comment list based on whats in feedItem temp to delete list
        List<FeedComment> tempFeedCommentList = [Select Id, CreatedById, FeedItemId, CommentBody, CommentType from FeedComment where FeedItemId in :tempDeletedFeedsList];
        
-       
+       // add the creators of the feed comments to the user list
+       for(FeedComment feedc : tempFeedCommentList ) {
+		    userids.add(feedc.createdbyid);
+		}
+		
+		
+		// add them to the map too - empty it first
+		u.clear();
+       for (User usr : [select id, legal_custodian__c from user where id in :userids]){
+		    u.put(usr.id, usr);
+		 }
+		 
        //loop through feedComments in temp feed comment list
        for(FeedComment fc : tempFeedCommentList){
 

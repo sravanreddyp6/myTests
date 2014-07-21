@@ -17,6 +17,6 @@ public with sharing class ChatterRetentionRunBatch implements schedulable {
       String query = 'Select Type, CommentCount, ContentType, Body, Title, Id, CreatedById, ParentId, LastModifiedDate, CreatedDate from FeedItem where LastModifiedDate < '  + ninetyString;
 	  
         
-      ID batchprocessid = Database.executeBatch(new ChatterRetention(query), 200);
+      ID batchprocessid = Database.executeBatch(new ChatterRetention(query), 5);
     }
 }
