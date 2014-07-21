@@ -1036,7 +1036,7 @@
         <fullName>Other_ID_Filled_In_For_NC_PBS</fullName>
         <active>true</active>
         <description>Ensures that the Other ID field is filled in for persons being served with a Mailing State of North Carolina.</description>
-        <errorConditionFormula>AND(ISPICKVAL(PersonMailingStateCode , &apos;NC&apos;), OR(ISBLANK( Other_ID__pc ), ISBLANK( Other_ID_Description__pc) ))</errorConditionFormula>
+        <errorConditionFormula>AND(ISPICKVAL(PersonMailingStateCode , &apos;NC&apos;), OR(ISBLANK( Other_ID__pc ), ISBLANK( Other_ID_Description__pc) ), NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;)))</errorConditionFormula>
         <errorMessage>The Other ID and Other ID Description fields must be filled in for a person being served with a Mailing State of North Carolina.</errorMessage>
     </validationRules>
     <validationRules>
