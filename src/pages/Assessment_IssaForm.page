@@ -141,7 +141,6 @@ function scrollWindow()
   window.scrollTo(0,0)
   }
 
-jQuery.noConflict();
 var j$ = jQuery.noConflict();
 function toggleOptions( rb, divopt ) {
     if ( rb.value.toLowerCase() == 'yes' )
@@ -152,6 +151,19 @@ function toggleOptions( rb, divopt ) {
 function toggleById(id, ms){
     j$(document.getElementById(id)).toggle(ms);
 };
+
+j$(document).ready(function() {
+  // strip the wrong field label out of messages box
+  var divmsgs = j$('div[id*=pageMsgs]');
+  if (divmsgs.length > 0) {
+  	txt = divmsgs.html();
+  	if ( txt.length > 0 ) {
+  		txt = txt.replace('Description of Risk:', '' );	// strip out the default field label
+  		divmsgs.html( txt );
+  	}
+  }
+});
+
 </script>
 <script>function setFocusOnLoad() {}</script>
 <apex:outputPanel style="display: none;" rendered="false">
@@ -172,7 +184,7 @@ function toggleById(id, ms){
 <br />
 
 <apex:form id="myfrm" >
-    <apex:pageMessages />
+    <apex:pageMessages id="pageMsgs" />
     <apex:pageBlock id="main_detail" title="{!if ($CurrentPage.parameters.pdf ='1', Assessment__c.Admission__r.Person_Being_Served__r.Name + ' - ', '') }ISSA Assessment {!if (mode == 'summary', 'Summary', 'Detail')}">
   
     <div class="pbHeaderButton">
@@ -347,7 +359,7 @@ function toggleById(id, ms){
                                                     <span style="font-weight:bold">Support Plan</span>
                                                 </apex:column>
                                                 <apex:column style="vertical-align: top; width:700px;padding-bottom:5px">
-                                                    <apex:inputfield value="{!mapCurrentResps[Question.ID][h]}" rendered="{!mode == 'edit'}"/>
+                                                    <apex:inputfield id="suppplan" value="{!mapCurrentResps[Question.ID][h]}" rendered="{!mode == 'edit'}"/>
                                                     <apex:outputtext value="{!mapCurrentResps[Question.ID][h]}" rendered="{! (mode == 'summary' || mode == 'view') && !printmode  }"/>
                                                     <apex:outputpanel layout="none" rendered="{! printmode  }"><span style="width:80%; display:block; margin-left:10px"><i>Support Plan:</i> {!mapCurrentResps[Question.ID][h]}</span></apex:outputpanel>
                                                 </apex:column>
