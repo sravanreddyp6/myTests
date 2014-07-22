@@ -54,7 +54,7 @@ public with sharing class Assessment_IssaForm {
         
      List<UserRecordAccess> acls = [SELECT RecordId, HasEditAccess
                 FROM UserRecordAccess WHERE UserId = :UserInfo.getUserId() AND RecordId = :assessment.Id ];
-
+		System.debug('acls.size(): ' + acls.size());
         if (acls.size() > 0) {
             return acls[0].HasEditAccess;
         } else { return false;} 
@@ -492,7 +492,7 @@ public with sharing class Assessment_IssaForm {
         List<Assessment__c> newestAssessment = [
             SELECT ID, Status__c FROM Assessment__c
             WHERE Admission__c = :assessment.Admission__c 
-              AND Assessment_Type__c = :assessment.Assessment_Type__c
+              AND Type__c = :assessment.Type__c
             ORDER BY CreatedDate DESC 
         ];
         
