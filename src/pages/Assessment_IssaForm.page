@@ -389,7 +389,7 @@ j$(document).ready(function() {
 	                &nbsp;
 	            </apex:commandButton>  
 	            <apex:commandButton action="{!myRevise}" 
-	                    value="Revise" status="myStatus"  rendered="{!mode='view' && CanReviseAssess}" onclick="if(!confirm('Are you sure you wish to revise the current version of the ISSA Assessment?')){return false};">
+	                    value="Revise" status="myStatus"  rendered="{!mode='view' && CanReviseAssess && $ObjectType.Assessment__c.createable}" onclick="if(!confirm('Are you sure you wish to revise the current version of the ISSA Assessment?')){return false};">
 	                &nbsp;
 	            </apex:commandButton>
 	            <!--   SUMMARY MODE NOT NECESSARY FOR ISSA; HIDING BUTTON (J. Gilliam, 7/10/14)
