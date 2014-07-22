@@ -40,30 +40,27 @@
     <columns>
         <field>Prospects__c$First_Name__c</field>
     </columns>
+    <columns>
+        <field>Prospects__c$Provider_Agreement_Signature_Date__c</field>
+    </columns>
+    <columns>
+        <aggregateTypes>Average</aggregateTypes>
+        <field>Prospects__c$Rpt_Months_to_Approve__c</field>
+    </columns>
     <description># of homes opened by recruiter each month</description>
     <filter>
         <criteriaItems>
-            <column>Prospects__c$Region__c.Operating_Group__c</column>
-            <operator>equals</operator>
-            <value>Cambridge</value>
-        </criteriaItems>
-        <criteriaItems>
-            <column>Prospects__c$Provider_Agreement_Signed__c</column>
-            <operator>equals</operator>
-            <value>1</value>
+            <column>Prospects__c$Provider_Agreement_Signature_Date__c</column>
+            <operator>notEqual</operator>
+            <value></value>
         </criteriaItems>
     </filter>
-    <format>Matrix</format>
-    <groupingsAcross>
-        <dateGranularity>Month</dateGranularity>
-        <field>Prospects__c$Provider_Agreement_Signature_Date__c</field>
-        <sortOrder>Asc</sortOrder>
-    </groupingsAcross>
-    <groupingsAcross>
+    <format>Summary</format>
+    <groupingsDown>
         <dateGranularity>Day</dateGranularity>
-        <field>Prospects__c$Program__c</field>
+        <field>Prospects__c$Region__c.Operating_Group__c</field>
         <sortOrder>Asc</sortOrder>
-    </groupingsAcross>
+    </groupingsDown>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>
         <field>Prospects__c$State__c</field>
@@ -83,9 +80,7 @@
     <scope>organization</scope>
     <showDetails>false</showDetails>
     <timeFrameFilter>
-        <dateColumn>Prospects__c$Provider_Agreement_Signature_Date__c</dateColumn>
-        <endDate>2012-12-31</endDate>
+        <dateColumn>Prospects__c$Date_of_Inquiry__c</dateColumn>
         <interval>INTERVAL_CUSTOM</interval>
-        <startDate>2012-10-01</startDate>
     </timeFrameFilter>
 </Report>

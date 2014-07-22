@@ -48,9 +48,12 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>NOTES Plan object is Master-detail to Persons Being Served. (PENDING SECURITY MODEL FINALIZATION)</description>
     <enableActivities>true</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>true</enableHistory>
     <enableReports>true</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fields>
         <fullName>Account_Owner_Name__c</fullName>
         <externalId>false</externalId>
@@ -628,19 +631,6 @@ Manually editing this field may break the workflow logic.</description>
         <trackHistory>false</trackHistory>
         <type>Text</type>
     </nameField>
-    <namedFilters>
-        <fullName>nf_01IJ00000000JNEMA2_00NJ0000000IBXsMAO</fullName>
-        <active>false</active>
-        <field>Progress_Note__c.Plan__c</field>
-        <filterItems>
-            <field>Plan__c.Admission__c</field>
-            <operation>equals</operation>
-            <valueField>$Source.Person_Being_Served__c</valueField>
-        </filterItems>
-        <isOptional>false</isOptional>
-        <name>Progress Note_Plan</name>
-        <sourceObject>Progress_Note__c</sourceObject>
-    </namedFilters>
     <pluralLabel>Plans</pluralLabel>
     <recordTypeTrackHistory>true</recordTypeTrackHistory>
     <recordTypes>

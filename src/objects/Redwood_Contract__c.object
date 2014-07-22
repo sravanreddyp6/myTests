@@ -48,10 +48,13 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>Redwood Contract Management</description>
     <enableActivities>true</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableEnhancedLookup>false</enableEnhancedLookup>
     <enableFeeds>true</enableFeeds>
     <enableHistory>true</enableHistory>
     <enableReports>true</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fieldSets>
         <fullName>Renewal_Fields</fullName>
         <description>These are the fields that will display and be copied over on the renewal of contracts</description>
@@ -702,6 +705,15 @@
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
         <label>Issuing Agency Contact</label>
+        <lookupFilter>
+            <active>true</active>
+            <filterItems>
+                <field>Issuing_Agency_Contact__c.Issuing_Agency__c</field>
+                <operation>equals</operation>
+                <valueField>$Source.Issuing_Agency__c</valueField>
+            </filterItems>
+            <isOptional>false</isOptional>
+        </lookupFilter>
         <referenceTo>Issuing_Agency_Contact__c</referenceTo>
         <relationshipLabel>Redwood Contracts</relationshipLabel>
         <relationshipName>Redwood_Contracts</relationshipName>

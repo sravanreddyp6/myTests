@@ -54,10 +54,13 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>National Performance Audit</description>
     <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableEnhancedLookup>true</enableEnhancedLookup>
     <enableFeeds>false</enableFeeds>
     <enableHistory>true</enableHistory>
     <enableReports>true</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fieldSets>
         <fullName>ClearBillingFields</fullName>
         <description>These fields will be cleared out if the audit doesn&apos;t have the Billing Audit Section field as true (checked)</description>
@@ -4727,28 +4730,15 @@ QualityExceptions_ClientFunds__c</formula>
     </fields>
     <label>NPA</label>
     <listViews>
-        <fullName>All</fullName>
-        <columns>NAME</columns>
-        <columns>Client_First_Name__c</columns>
-        <columns>Client_Last_Name__c</columns>
-        <columns>HHP_First_Name__c</columns>
-        <columns>HHP_Last_Name__c</columns>
-        <columns>Status__c</columns>
-        <columns>OWNER.ALIAS</columns>
-        <columns>CREATED_DATE</columns>
-        <columns>LAST_UPDATE</columns>
-        <filterScope>Everything</filterScope>
-        <label>All</label>
-    </listViews>
-    <listViews>
         <fullName>All2</fullName>
         <columns>NAME</columns>
+        <columns>Status__c</columns>
         <columns>Client_First_Name__c</columns>
         <columns>Client_Last_Name__c</columns>
         <columns>HHP_First_Name__c</columns>
         <columns>HHP_Last_Name__c</columns>
         <filterScope>Everything</filterScope>
-        <label>All2</label>
+        <label>All</label>
     </listViews>
     <nameField>
         <displayFormat>{000000}</displayFormat>

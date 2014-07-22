@@ -47,10 +47,13 @@
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
     <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableEnhancedLookup>true</enableEnhancedLookup>
     <enableFeeds>false</enableFeeds>
     <enableHistory>true</enableHistory>
     <enableReports>true</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fieldSets>
         <fullName>Wizard</fullName>
         <description>Wizard visualforce page</description>
@@ -292,10 +295,10 @@
         <columns>First_Name__c</columns>
         <columns>Last_Name__c</columns>
         <columns>NAME</columns>
+        <columns>Job_Status__c</columns>
         <columns>Salesforce_User_Account__c</columns>
         <columns>Email__c</columns>
         <columns>Employee_Number__c</columns>
-        <columns>Job_Status__c</columns>
         <columns>Job_Title__c</columns>
         <columns>Operating_Group__c</columns>
         <columns>Work_State__c</columns>
@@ -308,18 +311,6 @@
         <trackHistory>false</trackHistory>
         <type>Text</type>
     </nameField>
-    <namedFilters>
-        <fullName>nf_01IU0000000GF6aMAG_00NJ000000129t0MAA</fullName>
-        <active>true</active>
-        <field>Referral__c.Evaluated_By_Internal__c</field>
-        <filterItems>
-            <field>TMN_User__c.Operating_Group__c</field>
-            <operation>equals</operation>
-            <valueField>$User.Operating_Group__c</valueField>
-        </filterItems>
-        <isOptional>false</isOptional>
-        <name>Referral_Evaluated By (Internal)</name>
-    </namedFilters>
     <pluralLabel>TMN Users</pluralLabel>
     <searchLayouts>
         <customTabListAdditionalFields>Email__c</customTabListAdditionalFields>
