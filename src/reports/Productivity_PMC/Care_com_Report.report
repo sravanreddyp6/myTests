@@ -11,7 +11,7 @@
         <chartType>VerticalColumn</chartType>
         <enableHoverLabels>false</enableHoverLabels>
         <expandOthers>true</expandOthers>
-        <groupingColumn>Prospects__c$Status__c</groupingColumn>
+        <groupingColumn>Prospects__c$State__c</groupingColumn>
         <location>CHART_TOP</location>
         <showAxisLabels>true</showAxisLabels>
         <showPercentage>false</showPercentage>
@@ -21,7 +21,7 @@
         <summaryAxisRange>Auto</summaryAxisRange>
         <textColor>#000000</textColor>
         <textSize>12</textSize>
-        <title>Care.com Prospects by Status</title>
+        <title>Care.com Active Prospects by State</title>
         <titleColor>#000000</titleColor>
         <titleSize>12</titleSize>
     </chart>
@@ -44,6 +44,9 @@
         <field>Prospects__c$First_Contact_Date__c</field>
     </columns>
     <columns>
+        <field>Prospects__c$Provider_Agreement_Signature_Date__c</field>
+    </columns>
+    <columns>
         <field>Prospects__c$Inquiry_Progress_percent__c</field>
     </columns>
     <columns>
@@ -53,7 +56,7 @@
         <field>Prospects__c$How_did_you_hear_about_us__c</field>
     </columns>
     <columns>
-        <field>Prospects__c$Outreach_Event__c.Outreach_Dictionary_Event__c</field>
+        <field>Prospects__c$Outreach_Event__c.Outreach_Dictionary__c</field>
     </columns>
     <columns>
         <field>Prospects__c$cid__c</field>
@@ -66,16 +69,16 @@
     </columns>
     <description>Prospects grouped by state and owner from Care.com</description>
     <filter>
-        <booleanFilter>((1 OR 2 OR 3)) AND 4</booleanFilter>
+        <booleanFilter>((((((1 OR 2 OR 3)) AND 4)) AND 5))</booleanFilter>
         <criteriaItems>
             <column>Prospects__c$tag__c</column>
             <operator>equals</operator>
             <value>Care.com</value>
         </criteriaItems>
         <criteriaItems>
-            <column>Prospects__c$Outreach_Event__c.Outreach_Dictionary_Event__c</column>
+            <column>Prospects__c$Outreach_Event__c.Outreach_Dictionary__c</column>
             <operator>equals</operator>
-            <value>Care.com - Pilot Program</value>
+            <value>Care.com - National</value>
         </criteriaItems>
         <criteriaItems>
             <column>Prospects__c$cid__c</column>
@@ -86,6 +89,11 @@
             <column>Prospects__c$State__c</column>
             <operator>equals</operator>
             <value>AL,FL,GA,IL,IN,LA,MA,MD,NC,NJ,OH,PA,TX,SC,CA,IA,VA,AZ</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Prospects__c$Status__c</column>
+            <operator>equals</operator>
+            <value>Mentor</value>
         </criteriaItems>
     </filter>
     <format>Summary</format>
@@ -112,8 +120,12 @@
     <reportType>Prospects__c</reportType>
     <scope>organization</scope>
     <showDetails>true</showDetails>
+    <sortColumn>Prospects__c$Provider_Agreement_Signature_Date__c</sortColumn>
+    <sortOrder>Asc</sortOrder>
     <timeFrameFilter>
         <dateColumn>Prospects__c$Date_of_Inquiry__c</dateColumn>
+        <endDate>2014-04-30</endDate>
         <interval>INTERVAL_CUSTOM</interval>
+        <startDate>2013-07-01</startDate>
     </timeFrameFilter>
 </Report>

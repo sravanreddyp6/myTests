@@ -54,9 +54,12 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>NOTES Progress Notes are the notes taken for a Person Being Served on their progress towards meeting the goals on a Plan. Progress Notes are Master-detail to Plans.</description>
     <enableActivities>true</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>true</enableHistory>
     <enableReports>true</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fieldSets>
         <fullName>NewForm</fullName>
         <description>the Fields that get displayed on the new form</description>
@@ -146,6 +149,15 @@
         <deleteConstraint>Restrict</deleteConstraint>
         <externalId>false</externalId>
         <label>Admission</label>
+        <lookupFilter>
+            <active>true</active>
+            <filterItems>
+                <field>$Source.Person_Being_Served__c</field>
+                <operation>equals</operation>
+                <valueField>Admission__c.Person_Being_Served__c</valueField>
+            </filterItems>
+            <isOptional>false</isOptional>
+        </lookupFilter>
         <referenceTo>Admission__c</referenceTo>
         <relationshipLabel>Progress Notes</relationshipLabel>
         <relationshipName>Progress_Notes</relationshipName>
@@ -2282,6 +2294,15 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
         <label>Plan</label>
+        <lookupFilter>
+            <active>false</active>
+            <filterItems>
+                <field>Plan__c.Admission__c</field>
+                <operation>equals</operation>
+                <valueField>$Source.Person_Being_Served__c</valueField>
+            </filterItems>
+            <isOptional>false</isOptional>
+        </lookupFilter>
         <referenceTo>Plan__c</referenceTo>
         <relationshipLabel>Progress Notes</relationshipLabel>
         <relationshipName>Progress_Notes</relationshipName>
@@ -2585,6 +2606,15 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
         <label>Service Assignment</label>
+        <lookupFilter>
+            <active>true</active>
+            <filterItems>
+                <field>Service_Assignment__c.Admission__c</field>
+                <operation>equals</operation>
+                <valueField>$Source.Admission__c</valueField>
+            </filterItems>
+            <isOptional>false</isOptional>
+        </lookupFilter>
         <referenceTo>Service_Assignment__c</referenceTo>
         <relationshipLabel>Progress Notes</relationshipLabel>
         <relationshipName>Progress_Notes</relationshipName>
@@ -16419,8 +16449,8 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <customTabListAdditionalFields>Type_of_Contact__c</customTabListAdditionalFields>
         <customTabListAdditionalFields>Purpose_Nature_of_Service__c</customTabListAdditionalFields>
         <customTabListAdditionalFields>Plan__c</customTabListAdditionalFields>
-        <excludedStandardButtons>New</excludedStandardButtons>
         <excludedStandardButtons>ChangeOwner</excludedStandardButtons>
+        <excludedStandardButtons>New</excludedStandardButtons>
         <searchResultsAdditionalFields>Last_Name__c</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>Date_of_Service__c</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>Type_of_Contact__c</searchResultsAdditionalFields>

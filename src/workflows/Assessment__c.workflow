@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
     <fieldUpdates>
-        <fullName>Assessment_Name_ISSA</fullName>
-        <field>Name</field>
-        <formula>&quot;ISSA - &quot; &amp;
-Admission__r.Person_Being_Served__r.FirstName &amp; &quot; &quot; &amp; Admission__r.Person_Being_Served__r.Account.LastName &amp; &quot; - &quot;&amp;
-IF(TEXT(Status__c) !=&apos;Inactive Draft&apos;, TEXT(Approval_Date__c), TEXT(Status__c ))</formula>
-        <name>Assessment Name ISSA</name>
-        <notifyAssignee>false</notifyAssignee>
-        <operation>Formula</operation>
-        <protected>false</protected>
-    </fieldUpdates>
-    <fieldUpdates>
         <fullName>Assessment_Name_Risk</fullName>
         <field>Name</field>
         <formula>&quot;Risk - &quot; &amp;
@@ -42,16 +31,6 @@ TEXT(Status__c)</formula>
         </actions>
         <active>true</active>
         <formula>ISPICKVAL(Type__c, &apos;FAD Summary&apos;)</formula>
-        <triggerType>onAllChanges</triggerType>
-    </rules>
-    <rules>
-        <fullName>Update Name - ISSA</fullName>
-        <actions>
-            <name>Assessment_Name_ISSA</name>
-            <type>FieldUpdate</type>
-        </actions>
-        <active>true</active>
-        <formula>ISPICKVAL(Type__c, &apos;ISSA&apos;)</formula>
         <triggerType>onAllChanges</triggerType>
     </rules>
     <rules>

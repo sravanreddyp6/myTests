@@ -45,9 +45,10 @@
 .divTable{
     display:table;
     margin-left: auto;
-    margin-right; auto;
+    margin-right: auto;
     width:450px;
     border-collapse: collapse;
+    align: center;
  }
 
  .divTitleRow{
@@ -59,6 +60,7 @@
      font-size: 14px;
      font-family:georgia;
      color:#fff;
+     
  }
  
  .divHeadRow{
@@ -81,76 +83,287 @@
     display:table-cell;
      border: 1px solid #CCC;
  }
+ 
+/* entire container, keeps perspective */
+.flip-container {
+	perspective: 1000;
+}
+	/* flip the pane when hovered */
+	.flip-container:hover .flipper, .flip-container.hover .flipper {
+		transform: rotateY(180deg);
+	}
+
+.flip-container, .front, .back {
+	float:   left;
+	width:   500px;
+	height:  320px;
+	outline: #000000 solid thin;
+}
+
+/* flip speed goes here */
+.flipper {
+	transition: 0.6s;
+	transform-style: preserve-3d;
+
+	position: relative;
+}
+
+/* hide back of pane during swap */
+.front, .back {
+	backface-visibility: hidden;
+
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+/* front pane, placed above back */
+.front {
+	z-index: 2;
+}
+
+/* back, initially hidden pane */
+.back {
+	transform: rotateY(180deg);
+} 
 
 </style>
 
-<body background="{!$Resource.TMNimages}">
+<body >
 
+<!--  Side Div -->
+<div style="float: top; width: 800px; height: 60px; border: 1px solid #CCC; padding=10px;">
+</div>
+
+<!--  Side Div -->
+<div style="float: left; height: 800px; width: 60px; border: 1px solid #CCC; padding=10px;">
+</div>
             
-<div id="pbs" title="Person Being Served">
-	 <H3>Person Being Served (PBS)</H3> 
-   <!-- <div style="background-image:url('{!$Resource.TMNimages}');"> <!-- Dive to space everything out -->
-     <div>
-      <div class="divTable"> 
-      		 <div class="divTitleRow">Recently Viewed</div>
-             <div class="divHeadRow">
-                <div class="divCell">Person</div>
-                <div class="divCell">Latest Admission</div>
-                <div class="divCell">Latest Assignment</div>
-             </div>
-            <div class="divRow">
-                  <div class="divCell">&nbsp;Shaun Wood</div>
-                <div class="divCell">&nbsp;05/01/2013</div>
-                <div class="divCell">&nbsp;T. Peterson</div>
-            </div>
-            <div class="divRow">
-                <div class="divCell">&nbsp;Big Bad Tyler</div>
-                <div class="divCell">&nbsp;01/01/2014</div>
-                <div class="divCell">&nbsp;Willcox</div>
-           </div>
-            <div class="divRow">
-                <div class="divCell">&nbsp;Vianne Wood</div>
-                <div class="divCell">&nbsp;05/01/2012</div>
-                <div class="divCell">&nbsp;Winnie Mok</div>
-           </div>
-      </div>
-      <p/>
-      <div class="divTable">
-      		 <div class="divTitleRow">Quick Reports</div>
-             <div class="divHeadRow">
-                <div class="divCell">Report Name</div>
-             </div>
-            <div class="divRow">
-                <div class="divCell">&nbsp;PBS with No Action Plan</div>
-                <div class="divCell">&nbsp;Displays PBS's with no action plan.</div>
-            </div>
-            <div class="divRow">
-                <div class="divCell">&nbsp;Progress Note Type</div>
-                <div class="divCell">&nbsp;Research your progress note details.</div>
-           </div>
-            <div class="divRow">
-                <div class="divCell">&nbsp;Weekly Activity</div>
-                <div class="divCell">&nbsp;What has been going on this week.</div>
-           </div>
-      </div>
-      
-      
-    </div>	 <!-- Dive to space everything out -->
-</div>
-
-<div id="referral" title="Referral">
-	<H3>Referral</H3>
-	<div id="pbs-div-content">
-		Here we go.
+<div class="flip-container" ontouchstart="this.classList.loggle('hover');" >
+	<div class="flipper">
+		<div class="front" style="background: url({!$Resource.TMNimages});">
+			<!-- front content -->
+			<p style="font-size: 60px; font-weight: bold; color: #F9F4B2; text-align: center; " >Person Being Served</p>
+		</div>
+		<div  class="back" style="background: url({!$Resource.homepageDivBackground});">
+			<!-- back content -->
+			      <div class="divTable"> 
+			      		 <div class="divTitleRow">Recently Viewed</div>
+			             <div class="divHeadRow">
+			                <div class="divCell">Person</div>
+			                <div class="divCell">Latest Admission</div>
+			                <div class="divCell">Latest Assignment</div>
+			             </div>
+			            <div class="divRow">
+			                  <div class="divCell">&nbsp;Shaun Wood</div>
+			                <div class="divCell">&nbsp;05/01/2013</div>
+			                <div class="divCell">&nbsp;T. Peterson</div>
+			            </div>
+			            <div class="divRow">
+			                <div class="divCell">&nbsp;Big Bad Tyler</div>
+			                <div class="divCell">&nbsp;01/01/2014</div>
+			                <div class="divCell">&nbsp;Willcox</div>
+			           </div>
+			            <div class="divRow">
+			                <div class="divCell">&nbsp;Vianne Wood</div>
+			                <div class="divCell">&nbsp;05/01/2012</div>
+			                <div class="divCell">&nbsp;Winnie Mok</div>
+			           </div>
+			      </div>
+			      <p/>
+			      <div class="divTable">
+			      		 <div class="divTitleRow">Quick Reports</div>
+			             <div class="divHeadRow">
+			                <div class="divCell">Report Name</div>
+			             </div>
+			            <div class="divRow">
+			                <div class="divCell">&nbsp;PBS with No Action Plan</div>
+			                <div class="divCell">&nbsp;Displays PBS's with no action plan.</div>
+			            </div>
+			            <div class="divRow">
+			                <div class="divCell">&nbsp;Progress Note Type</div>
+			                <div class="divCell">&nbsp;Research your progress note details.</div>
+			           </div>
+			            <div class="divRow">
+			                <div class="divCell">&nbsp;Weekly Activity</div>
+			                <div class="divCell">&nbsp;What has been going on this week.</div>
+			           </div>
+			      </div>
+		</div>
 	</div>
 </div>
 
-<div id="tmn-contacts" title="Contacts">
-	<H3>Contacts</H3>
-	<div id="pbs-div-content">
-		Here we go.
+<!--  Side Div -->
+<div style="float: left; height: 400px; width: 20px; border: 1px solid #CCC; padding=10px;">
+</div>
+
+<div class="flip-container" ontouchstart="this.classList.loggle('hover');" >
+	<div class="flipper">
+		<div class="front" style="background: url({!$Resource.homepageDivBackgroundTwo});">
+			<!-- front content -->
+			<p style="font-size: 60px; font-weight: bold; color: #F9F4B2; text-align: center; " >Referral</p>
+		</div>
+		<div  class="back" style="background: url({!$Resource.homepageDivBackground});">
+			<!-- back content -->
+			      <div class="divTable"> 
+			      		 <div class="divTitleRow">Recently Viewed</div>
+			             <div class="divHeadRow">
+			                <div class="divCell">Person</div>
+			                <div class="divCell">Latest Admission</div>
+			                <div class="divCell">Latest Assignment</div>
+			             </div>
+			            <div class="divRow">
+			                  <div class="divCell">&nbsp;Shaun Wood</div>
+			                <div class="divCell">&nbsp;05/01/2013</div>
+			                <div class="divCell">&nbsp;T. Peterson</div>
+			            </div>
+			            <div class="divRow">
+			                <div class="divCell">&nbsp;Big Bad Tyler</div>
+			                <div class="divCell">&nbsp;01/01/2014</div>
+			                <div class="divCell">&nbsp;Willcox</div>
+			           </div>
+			            <div class="divRow">
+			                <div class="divCell">&nbsp;Vianne Wood</div>
+			                <div class="divCell">&nbsp;05/01/2012</div>
+			                <div class="divCell">&nbsp;Winnie Mok</div>
+			           </div>
+			      </div>
+			      <p/>
+			      <div class="divTable">
+			      		 <div class="divTitleRow">Quick Reports</div>
+			             <div class="divHeadRow">
+			                <div class="divCell">Report Name</div>
+			             </div>
+			            <div class="divRow">
+			                <div class="divCell">&nbsp;PBS with No Action Plan</div>
+			                <div class="divCell">&nbsp;Displays PBS's with no action plan.</div>
+			            </div>
+			            <div class="divRow">
+			                <div class="divCell">&nbsp;Progress Note Type</div>
+			                <div class="divCell">&nbsp;Research your progress note details.</div>
+			           </div>
+			            <div class="divRow">
+			                <div class="divCell">&nbsp;Weekly Activity</div>
+			                <div class="divCell">&nbsp;What has been going on this week.</div>
+			           </div>
+			      </div>
+		</div>
 	</div>
 </div>
+
+<!--  Side Div -->
+<div style="float: left; height: 400px; width: 20px; border: 1px solid #CCC; padding=10px;">
+</div>
+
+<div class="flip-container" ontouchstart="this.classList.loggle('hover');" >
+	<div class="flipper">
+		<div class="front" style="background: url({!$Resource.homepageDivBackgroundThree});">
+			<!-- front content -->
+			<p style="font-size: 60px; font-weight: bold; color: #F9F4B2; text-align: center; " >Contacts</p>
+		</div>
+		<div  class="back" style="background: url({!$Resource.homepageDivBackground});">
+			<!-- back content -->
+			      <div class="divTable"> 
+			      		 <div class="divTitleRow">Recently Viewed</div>
+			             <div class="divHeadRow">
+			                <div class="divCell">Person</div>
+			                <div class="divCell">Latest Admission</div>
+			                <div class="divCell">Latest Assignment</div>
+			             </div>
+			            <div class="divRow">
+			                  <div class="divCell">&nbsp;Shaun Wood</div>
+			                <div class="divCell">&nbsp;05/01/2013</div>
+			                <div class="divCell">&nbsp;T. Peterson</div>
+			            </div>
+			            <div class="divRow">
+			                <div class="divCell">&nbsp;Big Bad Tyler</div>
+			                <div class="divCell">&nbsp;01/01/2014</div>
+			                <div class="divCell">&nbsp;Willcox</div>
+			           </div>
+			            <div class="divRow">
+			                <div class="divCell">&nbsp;Vianne Wood</div>
+			                <div class="divCell">&nbsp;05/01/2012</div>
+			                <div class="divCell">&nbsp;Winnie Mok</div>
+			           </div>
+			      </div>
+			      <p/>
+			      <div class="divTable">
+			      		 <div class="divTitleRow">Quick Reports</div>
+			             <div class="divHeadRow">
+			                <div class="divCell">Report Name</div>
+			             </div>
+			            <div class="divRow">
+			                <div class="divCell">&nbsp;PBS with No Action Plan</div>
+			                <div class="divCell">&nbsp;Displays PBS's with no action plan.</div>
+			            </div>
+			            <div class="divRow">
+			                <div class="divCell">&nbsp;Progress Note Type</div>
+			                <div class="divCell">&nbsp;Research your progress note details.</div>
+			           </div>
+			            <div class="divRow">
+			                <div class="divCell">&nbsp;Weekly Activity</div>
+			                <div class="divCell">&nbsp;What has been going on this week.</div>
+			           </div>
+			      </div>
+		</div>
+	</div>
+</div>
+
+
+<div class="flip-container" ontouchstart="this.classList.loggle('hover');" >
+	<div class="flipper">
+		<div class="front" style="background: url({!$Resource.homepageDivBackgroundThree});">
+			<!-- front content -->
+			<p style="font-size: 60px; font-weight: bold; color: #F9F4B2; text-align: center; " >Tasks & Approvals</p>
+		</div>
+		<div  class="back" style="background: url({!$Resource.homepageDivBackground});">
+			<!-- back content -->
+			      <div class="divTable"> 
+			      		 <div class="divTitleRow">Recently Viewed</div>
+			             <div class="divHeadRow">
+			                <div class="divCell">Person</div>
+			                <div class="divCell">Latest Admission</div>
+			                <div class="divCell">Latest Assignment</div>
+			             </div>
+			            <div class="divRow">
+			                  <div class="divCell">&nbsp;Shaun Wood</div>
+			                <div class="divCell">&nbsp;05/01/2013</div>
+			                <div class="divCell">&nbsp;T. Peterson</div>
+			            </div>
+			            <div class="divRow">
+			                <div class="divCell">&nbsp;Big Bad Tyler</div>
+			                <div class="divCell">&nbsp;01/01/2014</div>
+			                <div class="divCell">&nbsp;Willcox</div>
+			           </div>
+			            <div class="divRow">
+			                <div class="divCell">&nbsp;Vianne Wood</div>
+			                <div class="divCell">&nbsp;05/01/2012</div>
+			                <div class="divCell">&nbsp;Winnie Mok</div>
+			           </div>
+			      </div>
+			      <p/>
+			      <div class="divTable">
+			      		 <div class="divTitleRow">Quick Reports</div>
+			             <div class="divHeadRow">
+			                <div class="divCell">Report Name</div>
+			             </div>
+			            <div class="divRow">
+			                <div class="divCell">&nbsp;PBS with No Action Plan</div>
+			                <div class="divCell">&nbsp;Displays PBS's with no action plan.</div>
+			            </div>
+			            <div class="divRow">
+			                <div class="divCell">&nbsp;Progress Note Type</div>
+			                <div class="divCell">&nbsp;Research your progress note details.</div>
+			           </div>
+			            <div class="divRow">
+			                <div class="divCell">&nbsp;Weekly Activity</div>
+			                <div class="divCell">&nbsp;What has been going on this week.</div>
+			           </div>
+			      </div>
+		</div>
+	</div>
+</div>
+
 
 
 <div class="help-slide-out-div">
@@ -245,10 +458,15 @@ j$(function() {
 	   /*
 	    * Activate the hover over for the accordion
 	    */
-	   j$( "#pbs, #referral, #tmn-contacts" ).accordion({
-	      event: "click hoverintent",
-	      heightStyle: "content"
-	   }); //end activating the accordion.
+	  /*
+	   * For now I'll turn off the hover over
+	   *
+	   //j$( "#pbs, #referral, #tmn-contacts" ).accordion({
+	   //   event: "click hoverintent",
+	   //   heightStyle: "content"
+	   //}); //end activating the accordion.
+	   
+	   */
 	   
 	   
 	   /*

@@ -10,6 +10,8 @@
             <autoselectColumnsFromReport>true</autoselectColumnsFromReport>
             <componentType>Table</componentType>
             <displayUnits>Auto</displayUnits>
+            <drillEnabled>false</drillEnabled>
+            <drillToDetailEnabled>false</drillToDetailEnabled>
             <footer>Who IS logging in regularly?</footer>
             <header>Login Wall of FAME</header>
             <indicatorHighColor>#54C254</indicatorHighColor>
@@ -24,18 +26,17 @@
         <components>
             <autoselectColumnsFromReport>true</autoselectColumnsFromReport>
             <chartAxisRange>Auto</chartAxisRange>
-            <componentType>Bar</componentType>
+            <componentType>Column</componentType>
             <displayUnits>Auto</displayUnits>
             <drillEnabled>false</drillEnabled>
             <drillToDetailEnabled>false</drillToDetailEnabled>
-            <enableHover>false</enableHover>
+            <enableHover>true</enableHover>
             <expandOthers>false</expandOthers>
             <footer>How well is Salesforce adopted by different REGIONS?</footer>
-            <header>Logins by REGION</header>
-            <legendPosition>Right</legendPosition>
+            <header>Logins by OPERATING GROUP</header>
+            <legendPosition>Bottom</legendPosition>
             <report>DB_Adoption/DB_Adoption_Login_by_Region</report>
             <showPercentage>false</showPercentage>
-            <showPicturesOnCharts>false</showPicturesOnCharts>
             <showValues>false</showValues>
             <sortBy>RowLabelAscending</sortBy>
             <title>Last 14 Days</title>
@@ -59,11 +60,11 @@
             <componentType>Gauge</componentType>
             <displayUnits>Auto</displayUnits>
             <footer>How many &quot;active&quot; Users are logging in on a regular basis</footer>
-            <gaugeMax>40.0</gaugeMax>
+            <gaugeMax>2500.0</gaugeMax>
             <gaugeMin>0.0</gaugeMin>
             <header>ALL User Logins</header>
-            <indicatorBreakpoint1>1.0</indicatorBreakpoint1>
-            <indicatorBreakpoint2>24.0</indicatorBreakpoint2>
+            <indicatorBreakpoint1>500.0</indicatorBreakpoint1>
+            <indicatorBreakpoint2>1500.0</indicatorBreakpoint2>
             <indicatorHighColor>#54C254</indicatorHighColor>
             <indicatorLowColor>#C25454</indicatorLowColor>
             <indicatorMiddleColor>#C2C254</indicatorMiddleColor>
@@ -73,25 +74,6 @@
             <showValues>false</showValues>
             <title>Last 14 Days</title>
         </components>
-        <components>
-            <autoselectColumnsFromReport>true</autoselectColumnsFromReport>
-            <chartAxisRange>Auto</chartAxisRange>
-            <componentType>Column</componentType>
-            <displayUnits>Auto</displayUnits>
-            <drillEnabled>false</drillEnabled>
-            <drillToDetailEnabled>false</drillToDetailEnabled>
-            <enableHover>true</enableHover>
-            <expandOthers>false</expandOthers>
-            <footer>How well is Salesforce adopted by different DEPARTMENTS?</footer>
-            <header>Logins by DEPARTMENT</header>
-            <legendPosition>Right</legendPosition>
-            <report>DB_Adoption/DB_Adoption_Login_by_Department</report>
-            <showPercentage>false</showPercentage>
-            <showValues>false</showValues>
-            <sortBy>RowLabelAscending</sortBy>
-            <title>Last 14 Days</title>
-            <useReportChart>true</useReportChart>
-        </components>
     </middleSection>
     <rightSection>
         <columnSize>Medium</columnSize>
@@ -99,6 +81,8 @@
             <autoselectColumnsFromReport>true</autoselectColumnsFromReport>
             <componentType>Table</componentType>
             <displayUnits>Auto</displayUnits>
+            <drillEnabled>false</drillEnabled>
+            <drillToDetailEnabled>false</drillToDetailEnabled>
             <footer>Who IS NOT logging in regularly?</footer>
             <header>Login Wall of SHAME</header>
             <indicatorHighColor>#54C254</indicatorHighColor>
