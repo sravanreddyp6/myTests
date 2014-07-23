@@ -1,0 +1,405 @@
+<messaging:emailTemplate subject="A Contract ({!relatedTo.Name}) Requires your Compliance Signoff " recipientType="User" relatedToType="TMN_Contract__c">
+<messaging:plainTextEmailBody >
+
+</messaging:plainTextEmailBody>
+
+    <messaging:htmlEmailBody >
+<style>
+   .clQuestion{
+        font-size: 13pt;
+        color: #5d5d5d;
+    }
+  .clAnswer{
+        font-size: 12pt;
+    }
+    .c1{        
+           padding: 7px;   
+           border-right: 1px solid gray; 
+           text-align: middle;
+        }
+            .c2{
+                color: #00655a;
+                font-size: 10pt;
+                font-weight: bold;
+                text-align: middle;
+                padding: 7px;        
+                }
+            .c3{
+                
+                font-size: 10pt;
+                padding: 7px; 
+                width: 250px;
+                border-right: 1px solid gray; 
+                }
+                
+            .c4{
+                font-size: 10pt;
+                padding: 7px; 
+                width: 200px;
+            }
+
+    
+    .r1{ 
+        
+        border-bottom: 1px solid black;
+        
+    }
+    
+        .r2{
+            background-color: #efefef;
+            border-bottom: 1px solid black;
+            
+        }
+    .header{
+        border-bottom: 2px solid black;
+        background-color: #daeef3;
+    }
+    .table{
+        width: 100%;
+        border: 1px solid black;
+    }
+        .detQ{
+        width: 250px;
+        font-wieght: bold;
+
+    }
+</style>
+
+<table class="table">
+    <tr class="header">
+        <td class="header" colspan="2">
+            <b>Details</b>
+        </td>        
+    </tr>
+    
+    <tr class="r1">
+        <td class="detQ" >
+            <apex:outputLabel styleClass="clQuestion">    Name </apex:outputLabel>
+        </td>
+        <td>
+            {!relatedTo.Name} 
+        </td>
+    </tr>
+    
+    <tr class="r2">
+        <td >
+            <apex:outputLabel styleClass="clQuestion">Number </apex:outputLabel>
+        </td>
+        <td >
+            {!relatedTo.Contract_Number__c} 
+        </td>
+    </tr>
+    
+    <tr class="r1">
+        <td>
+            <apex:outputLabel styleClass="clQuestion">Description </apex:outputLabel>
+        </td>
+        <td>
+            {!relatedTo.Description__c} 
+        </td>
+    </tr>
+    
+    <tr class="r2">
+        <td>
+            <apex:outputLabel styleClass="clQuestion">Status </apex:outputLabel>
+        </td>
+        <td>
+            {!relatedTo.Status__c} 
+        </td>
+    </tr>
+    
+    <tr class="r1">
+        <td>
+            <apex:outputLabel styleClass="clQuestion">Legal Entity </apex:outputLabel>
+        </td>
+        <td>
+            {!relatedTo.LegalEntity__c} 
+        </td>
+    </tr>
+    
+    <tr class="r2">
+        <td>
+            <apex:outputLabel styleClass="clQuestion">State </apex:outputLabel>
+        </td>
+        <td>
+            {!relatedTo.State__c} 
+        </td>
+    </tr>
+    
+    <tr class="r1">
+        <td>
+            <apex:outputLabel styleClass="clQuestion">Region/Office/Program Name </apex:outputLabel>
+        </td>
+        <td>
+            {!relatedTo.MentorRegionOfficeProgramName__c}
+        </td>
+    </tr>
+    
+    <tr class="r2">
+        <td>
+            <apex:outputLabel styleClass="clQuestion">Service Line </apex:outputLabel>
+        </td>
+        <td>
+            {!relatedTo.Service_Line__c} 
+        </td>
+    </tr>
+    
+    
+    
+ 
+</table>
+        <br/>
+<table class="table">
+ <tr>
+        <td  class="header" colspan="4">
+
+            <b>Critical Indicators</b>
+        </td>
+
+    </tr>
+    
+    <tr class="r1">
+        <td>
+        
+        </td>
+        <td >
+            <apex:outputLabel styleClass="head">Indicator</apex:outputLabel>
+        </td>
+
+        <td >
+            <apex:outputLabel styleClass="head">Details</apex:outputLabel>
+        </td>
+        <td>
+            <apex:outputLabel styleClass="head">Value</apex:outputLabel>
+        </td>
+    </tr>
+    
+    <tr class="r2">
+        <td>
+            <apex:outputField label="" value="{!relatedTo.AuditRequirementsYN__c}" />
+        </td>
+        <td>
+            <apex:outputLabel styleClass="title">Audit</apex:outputLabel>
+        </td>
+        <td >
+            <apex:outputField label="" styleClass="txtArea" value="{!relatedTo.AuditReqsDetail__c}"/> 
+        </td>
+        <td >
+            <apex:outputField label="" value="{!relatedTo.Audit_Requirements__c}" />
+        </td>
+    </tr>
+    
+    <tr class="r1">
+        <td>
+            <apex:outputField label="" value="{!relatedTo.CostReportRequiredYN__c}"/>
+        </td>
+        <td>
+            <apex:outputLabel styleClass="title">Cost Report Required</apex:outputLabel> 
+        </td>
+        <td>
+            <apex:outputField label="" value="{!relatedTo.CostReport__c}" /> 
+        </td>
+        <td>
+        
+        </td>
+    </tr>
+    
+    <tr class="r2">
+        <td>
+            <apex:outputField label="" value="{!relatedTo.FrequencyOfVisitsYN__c}" />
+        </td>
+        <td>
+            <apex:outputLabel styleClass="title">Frequency of Visits</apex:outputLabel> 
+        </td>
+        <td>
+            <apex:outputField styleClass="txtArea" label="" value="{!relatedTo.FrequencyOfVisitsDetail__c}" />             
+        </td>
+        <td>
+        
+        </td>
+    </tr>
+    
+    <tr class="r1">
+        <td>
+            <apex:outputField label="" value="{!relatedTo.OutcomeRequirementsYN__c}" />
+        </td>
+        <td>
+            <apex:outputLabel styleClass="title">Outcome Requirements</apex:outputLabel>
+        </td>
+        <td>
+            <apex:outputField label="" styleClass="txtArea" value="{!relatedTo.OutcomeRequirementsDetail__c}" />
+        </td>
+        <td>
+        
+        </td>
+    </tr>
+    
+    <tr class="r2">
+        <td>
+            <apex:outputField label="" value="{!relatedTo.PerformanceBasedContractYN__c}" />
+        </td>
+        <td>
+            <apex:outputLabel styleClass="title">Performance Based Contract</apex:outputLabel>
+        </td>
+        <td>
+            <apex:outputField styleClass="txtArea" label="" value="{!relatedTo.PerformanceDetail__c}" />
+        </td>
+        <td>
+        
+        </td>
+    </tr>
+    
+    <tr class="r1">
+        <td>
+            <apex:outputField label="" value="{!relatedTo.Personnel_CredentialRequirementsYN__c}" /> 
+            
+        </td>
+        <td>
+            <apex:outputLabel styleClass="title">Personnel Credential Requirements</apex:outputLabel>
+            
+        </td>
+        <td>
+            <apex:outputField label="" styleClass="txtArea" value="{!relatedTo.PersonnelCredentialRequirementsDetail__c}" />
+            
+        </td>
+        <td>
+        
+        </td>
+    </tr>
+    
+    <tr class="r2">
+        <td>
+            <apex:outputField label="" value="{!relatedTo.ProviderRequiredTrainingYN__c}" />
+        </td>
+        <td>
+            <apex:outputLabel styleClass="title">Provider Required Training</apex:outputLabel>
+        </td>
+        <td>
+            <apex:outputField label="" styleClass="txtArea" value="{!relatedTo.ProviderRequiredTrainingDetail__c}" />                
+        </td>
+        <td>
+            <apex:outputField label="" value="{!relatedTo.ProviderRequiredTraining__c}" />
+        </td>
+    </tr>
+    
+    <tr class="r1">
+        <td>
+            <apex:outputField label="" value="{!relatedTo.ReportingRequirementsYN__c}" />
+        </td>
+        <td>
+            <apex:outputLabel styleClass="title">Reporting Requirements</apex:outputLabel>
+        </td>
+        <td>
+            <apex:outputField label="" styleClass="txtArea" value="{!relatedTo.ReportingRequirementsDetail__c}" />            
+        </td>
+        <td>
+            <apex:outputField label="" value="{!relatedTo.ReportingRequirements__c}" />
+        </td>
+    </tr>
+    
+    <tr class="r2">
+        <td >
+                <apex:outputField label="" value="{!relatedTo.ServiceDocumentationYN__c}" />
+        </td>
+        <td>
+            <apex:outputLabel styleClass="title">Service Documentation</apex:outputLabel>
+        </td>
+        <td>
+            <apex:outputField styleClass="txtArea" label="" value="{!relatedTo.ServiceDocumentationDetail__c}" />
+                
+        </td>
+        <td>
+            <apex:outputField label="" value="{!relatedTo.ServiceDocumentation__c}" />
+        </td>
+    </tr>
+    
+    <tr class="r1">
+        <td>
+            <apex:outputField value="{!relatedTo.SpendingRequirementsYN__c}"/>
+        </td>
+        <td>
+            <apex:outputLabel styleClass="title">Spending Requirements</apex:outputLabel>
+        </td>
+        <td>
+            <apex:outputField styleClass="txtArea" label="" value="{!relatedTo.SpendingRequirementsDetails__c}" />                      
+        </td>
+        <td>
+        
+        </td>
+    </tr>
+    
+    <tr class="r2">
+        <td>
+            <apex:outputField label="" value="{!relatedTo.StaffingClientRequirementsYN__c}" />           
+        </td>
+        <td>
+             <apex:outputLabel styleClass="title">Staffing Client Requirements</apex:outputLabel>
+        </td>
+
+        <td >
+            <apex:outputField styleClass="txtArea" label="" value="{!relatedTo.Staffing_ClientRequirementsDetail__c}" />                
+        </td>
+        <td>
+            <apex:outputField label="" value="{!relatedTo.StaffingClientRequirements__c}" />
+        </td>
+    </tr>
+    
+    <tr class="r1">
+        <td>
+            <apex:outputField label="" value="{!relatedTo.SubjectToCostReimbursementYN__c}" />
+        </td>
+        <td>
+            <apex:outputLabel styleClass="title">Subject to Cost Reimbursement</apex:outputLabel>
+        </td>
+            
+        <td>
+            <apex:outputField styleClass="txtArea" label="" value="{!relatedTo.CostReimbursementDetail__c}" />
+               
+        </td>
+        <td>
+        
+        </td>
+    </tr>
+    
+    <tr class="r2">
+        <td>
+            <apex:outputField label="" value="{!relatedTo.SupportServicesYN__c}"/>
+        </td>
+        <td>
+            <apex:outputLabel styleClass="title">Support Services</apex:outputLabel>
+        </td>
+        <td>
+            <apex:outputField styleClass="txtArea" label="" value="{!relatedTo.SupportServicesDetail__c}" />
+        </td>
+        <td>
+            <apex:outputField label="" value="{!relatedTo.SupportServices__c}" /> 
+        </td>
+    </tr>
+    
+    <tr class="r1">
+        <td>
+                <apex:outputField label="" value="{!relatedTo.OtherSpecialRequirementsYN__c}" /> 
+                     
+        </td>
+        <td>
+            <apex:outputLabel styleClass="title">Other Unusual or Special Requirements</apex:outputLabel>
+                
+        </td>
+
+        <td>
+            <apex:outputField styleClass="txtArea" label="" value="{!relatedTo.SpecialRequirementsDetail__c}" />
+                
+        </td>
+        <td>
+        
+        </td>
+    </tr>
+</table>
+
+
+
+<br/>
+           
+            <apex:outputlink value="{!LEFT($Api.Partner_Server_URL_140,FIND('.com',$Api.Partner_Server_URL_140)+4)+'apex/viewContract?id='+relatedTo.Id}">Click here to complete the Critical Indicator Acknowledgement.</apex:outputlink>
+    </messaging:htmlEmailBody>
+</messaging:emailTemplate>
