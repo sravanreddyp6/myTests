@@ -97,6 +97,9 @@ public with sharing class Report_KidTraksExport_Controller {
     public PageReference runReport(){
     	lineItems = new List<KidTraksLineItem>();
 
+		Datetime reportStartDateTime = datetime.newInstance(reportStartDate, Time.newInstance(0,0,0,0));
+		Datetime reportEndDateTime = datetime.newInstance(reportEndDate,Time.newInstance(23,59,59,59));
+
 		// In the query below, the WHERE condition "Service_Assignment__r.End_Date__c > :reportStartDate" requires that the Service Assignment End Date be AFTER the first day
 		// in the report date range so that we never bill for a client whose service assignment ends on the first day of a report range.  This is in keeping with the requirements,
 		// and also prevents us from getting the case in which a Service Assignment ends on the first day of the report, and the code below that figures out the value of
@@ -110,8 +113,8 @@ public with sharing class Report_KidTraksExport_Controller {
     														Person_Being_Served__r.Other_ID__c, Service_Assignment__r.Start_Date__c, Service_Assignment__r.End_Date__c FROM Progress_Note__c 
     															WHERE Status__c = 'Final' 
     																	AND Service_Code__r.Service_Code__c = '10942.1161' 
-    																	AND Start_Time__c >= :reportStartDate 
-    																	AND End_Time__c <= :reportEndDate
+    																	AND Start_Time__c >= :reportStartDateTime 
+    																	AND End_Time__c <= :reportEndDateTime
     																	AND Program_Detail__c = :reportProgram
     																	AND (
     																		Service_Assignment__r.End_Date__c > :reportStartDate
