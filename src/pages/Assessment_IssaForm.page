@@ -258,9 +258,7 @@ j$(document).ready(function() {
                     </apex:outputPanel> 
                 </apex:pageBlockSectionItem>
 
-                
-                <apex:outputField value="{!Assessment__c.Type__c}" label="Name" rendered="{!!printmode}"/>
-                <apex:outputText value="{!Assessment__c.Type__c}" label="Name" rendered="{!printmode}"/>
+                 <apex:outputField value="{!Assessment__c.Status__c}"/>
                 
                 <apex:pageBlockSectionItem labelStyle="width: 13%; dataStyle: 20%;" rendered="{!!printmode}">
                     <apex:outputPanel >Last Modified By</apex:outputPanel>
@@ -271,8 +269,8 @@ j$(document).ready(function() {
                     <apex:outputPanel >Last Modified By</apex:outputPanel>
                     <apex:outputPanel ><apex:outputText value="{!Assessment__c.LastModifiedBy.Name}"/>&nbsp;<apex:outputText value=" {!Assessment__c.LastModifiedDate}"/></apex:outputPanel>  
                 </apex:pageBlockSectionItem> 
-                
-                 <apex:outputField value="{!Assessment__c.Status__c}"/>
+ 
+ 				<apex:pageBlockSectionItem />
                 
                 <apex:pageBlockSectionItem rendered="{!!printmode}">
                     <apex:outputPanel >Finalized By</apex:outputPanel>

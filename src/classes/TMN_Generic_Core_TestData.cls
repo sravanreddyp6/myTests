@@ -85,6 +85,40 @@ String h = EncodingUtil.ConvertTohex(b);
     	Assessment__c testAssessment = [ SELECT Id, Admission__c, Service_Assignment__c, Type__c, Status__c, Phase__c, Disregard__c FROM Assessment__c WHERE Id = :thisAssessment.Id ];
     	return testAssessment;
     }
+ 
+    public static User createUser(string profileName,string userAlias, string userName, string firstName, string lastName, string OperatingGroup){
+    	Map<String,Profile> profileMap = new Map<String,Profile>();
+    	List<Profile> proflist = [SELECT Id, Name FROM Profile];
+    	for(Profile p : proflist){
+    		profileMap.put(p.Name, P);
+    	}
+    	User testUser = new User(alias = userAlias,
+                                email='sravan@TMN.com',
+                                emailencodingkey='UTF-8',
+                                lastname=lastName,firstname=firstName, languagelocalekey='en_US',
+                                localesidkey='en_US',
+                                profileid = profileMap.get(profileName).id,
+                                timezonesidkey='America/Los_Angeles',
+                                username=username + System.currentTimeMillis());
+                                
+        insert testUser;
+        
+        Tmn_User__c tmnUser= new Tmn_User__c(operating_group__c=OperatingGroup, Salesforce_User_Account__c=testUser.id);
+        insert tmnUser;
+        
+        return testUser;
+    } 
+    
+    public static void permsetAssign(string[]permSets, Id assigntoId){
+    	List<PermissionSet> theSets = [SELECT ID, Name FROM PermissionSet WHERE Name IN :permSets];
+		List<PermissionSetAssignment> thepermAssigns = new List<PermissionSetAssignment>();	
+     	for(PermissionSet ps : theSets){
+     		thepermAssigns.add(new PermissionSetAssignment(PermissionSetId = ps.Id, AssigneeId = assigntoId));
+     		
+     	}
+        insert thepermAssigns;
+        
+    } 
     
     public static Progress_Note__c createProgressNote(Service_Assignment__c sa, Admission__c adm, Service_Code__c sc, String contactId) {
     	Progress_Note__c thisProgressNote = new Progress_Note__c(Service_Assignment__c = sa.Id,
