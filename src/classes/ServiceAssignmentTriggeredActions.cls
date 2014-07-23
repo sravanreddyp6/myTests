@@ -58,6 +58,16 @@ public with sharing class ServiceAssignmentTriggeredActions {
 	                currCounts.add(new SAaggregates(sa.Service_Location__c, sa.Person_Being_Served__c, 1));             
 	            }                
             }
+            // To update the exisiting service assignment records.
+            else if (sa.Service_Location__c != null && (sa.PBS_ServiceLocation_Count__c == null || sa.PBS_ServiceLocation_Count__c == 0 )){
+                for (SAaggregates res : currCounts){
+                    if (sa.Person_Being_Served__c == res.personBeingServed  &&  sa.Service_Location__c == res.serviceLocation ){
+                        sa.PBS_ServiceLocation_Count__c = res.total;
+	                    --res.total;
+	                    break;
+                    }
+                }            	
+            }
         }
     }
 
@@ -86,5 +96,34 @@ public with sharing class ServiceAssignmentTriggeredActions {
         	return ++this.total;
         }
     } 
+    
+    
+   /* 
+    class ServiceAssignmentWrapper implements Comparable {
+
+	    public Service_Assignment__c servAssig;
+
+	    // Constructor 
+	    public ServiceAssignmentWrapper(Service_Assignment__c s) {
+	        servAssig = s;
+	    }
+	    
+	    // Compare service Assigment based on the created date 
+	    global Integer compareTo(Object compareTo) {
+
+	        ServiceAssignmentWrapper compareToSA = (ServiceAssignmentWrapper)compareTo;
+	        // The return value of 0 indicates that both elements are equal. 	    
+	        Integer returnValue = 0;
+	        if (servAssig.id > compareToSA.servAssig.id) {
+                // Set return value to a negative value. 	    
+	            returnValue = -1;
+	        } else if (servAssig.id < compareToSA.servAssig.id) {
+                // Set return value to a positive value. 
+	            returnValue = 1;
+	        }
+	        return returnValue;
+	    }
+    }
+    */
     
 }

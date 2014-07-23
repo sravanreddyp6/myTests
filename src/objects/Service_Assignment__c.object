@@ -416,7 +416,7 @@
         <description>Service Assignment Record number in the format as follows:
 [nine-digit unique number assigned to the program string] – [ten-digit PBS Unique Number] – [2 digit sequence number starting with 01]</description>
         <externalId>false</externalId>
-        <formula>Service_Location__r.ProgramID__c &amp; &apos; - &apos; &amp; Person_Being_Served__r.PBS_Identifier__c &amp; &apos; - &apos; &amp; LPAD(TEXT(PBS_ServiceLocation_Count__c), 2, &apos;0&apos;)</formula>
+        <formula>IF(PBS_ServiceLocation_Count__c &gt; 0, Service_Location__r.ProgramID__c &amp; &apos;-&apos; &amp; Person_Being_Served__r.PBS_Identifier__c &amp; &apos;-&apos; &amp; LPAD(TEXT(PBS_ServiceLocation_Count__c), 2, &apos;0&apos;), &apos;&apos;)</formula>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Service Record Number</label>
         <required>false</required>
