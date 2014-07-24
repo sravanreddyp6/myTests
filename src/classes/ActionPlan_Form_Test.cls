@@ -12,17 +12,42 @@ static testMethod void myUnitTest() {
     ApexPages.StandardController sc = new ApexPages.StandardController(ap);  
     
     ActionPlan_Form contrl = new ActionPlan_Form(sc);
+    
+
+    
     PageReference pageRef = Page.ActionPlanForm;
     Test.setCurrentPage(pageRef);
     
 
     
     contrl.addGoal();
-    contrl.goalID = 'g'+ apg.id;
-    contrl.isparentNew = false;
-    contrl.addObj();
+        for(string gid: contrl.planStuff.keySet()){
+            contrl.goalID = gid;
+        
+        }
+        
+        
+        
+        for(ActionPlan_form.clsGoal g: contrl.planStuff.values()){    
+            g.theGoal.Description__c = 'goal';             
+            for(ActionPlan_form.clsObj o: g.GoalObjs.values()){
+                o.theObj.Description__c = 'obj';
+                o.theObj.Status__c ='N/A';
+                for(ActionPlan_form.clsAction a: o.objActs.values()){
+                   a.theAction.Description__c = 'act'; 
+                }            
+            }        
+        }
+    
+    
+   
+    
+    /*
+    contrl.isparentNew = false;    
     contrl.objID = 'o' + apo.id;
+    contrl.addObj();
     contrl.addAct();
+    */
     contrl.mySave();
     
     Date internaldate = system.today();
@@ -47,10 +72,42 @@ static testMethod void myUnitTest() {
     contrl.newWorksheet();
     
    //
+    Clinical_Catalog__c cat = new Clinical_Catalog__c(); 
+    cat = createCatalog();
+    contrl.curCtlg = cat.id;
+    contrl.refreshHere();
+    contrl.catalog_selections = '';
+    for(tmn_tree.node goal : contrl.allGoals.root.nodes){
+        contrl.catalog_selections += goal.key;
+        contrl.catalog_selections += ',';
+        
+        for(tmn_tree.node obj: goal.nodes){
+            contrl.catalog_selections += obj.key;
+            contrl.catalog_selections += ',';
+            
+            for(tmn_tree.node act : obj.nodes){
+                contrl.catalog_selections += act.key;
+                contrl.catalog_selections += ',';
+            
+            }
+        }
+    }    
+    contrl.addItemsFromTree();
+
+    
+    contrl.deleteGid = contrl.goalID;
+    contrl.deleteGoal();
+    //contrl.deleteObj();
+    //contrl.deleteAct();
+    
+    
+    
     contrl.myCancel();
     
     
+    
 }
+/*
 static testMethod void myCancel() {    
     createData();
 
@@ -61,6 +118,7 @@ static testMethod void myCancel() {
     Test.setCurrentPage(pageRef);    
     contrl.myCancel();    
 }
+*/
     
     private static Action_Plan__c createData(){
     
@@ -136,4 +194,64 @@ static testMethod void myCancel() {
         return ap;
         
     }
+    
+    private static Clinical_Catalog__c createCatalog(){
+        Clinical_Catalog_Element__c goal = new Clinical_Catalog_Element__c();
+        Clinical_Catalog_Element__c obj = new Clinical_Catalog_Element__c();
+        Clinical_Catalog_Element__c act = new Clinical_Catalog_Element__c();
+        Clinical_Catalog_Tree_Node__c g_node = new Clinical_Catalog_Tree_Node__c();
+        Clinical_Catalog_Tree_Node__c o_node = new Clinical_Catalog_Tree_Node__c();
+        Clinical_Catalog_Tree_Node__c a_node = new Clinical_Catalog_Tree_Node__c();
+        Clinical_Catalog__c cata = new Clinical_Catalog__c();
+        
+        goal.Description__c = 'catalog-goal';
+        goal.type__c = 'Goal';
+        goal.status__c = 'Active';
+        
+        obj.Description__c = 'catalog-obj';
+        obj.type__c = 'Objective';
+        obj.status__c = 'Active';
+        act.Description__c = 'catalog-act';
+        act.type__c = 'Action';
+        act.status__c = 'Active';
+        
+        
+        insert goal;
+        insert obj;
+        insert act;            
+        insert cata;
+//        need to get the aut generated name so we need to reselect them from the database
+        goal = [select id, name from Clinical_Catalog_Element__c where id = :goal.id];
+        obj = [select id, name from Clinical_Catalog_Element__c where id = :obj.id];
+        act = [select id, name from Clinical_Catalog_Element__c where id = :act.id];
+        system.debug('here - '+ goal);
+        
+        g_node.Catalog__c = cata.id;
+        g_node.Catalog_Element__c = goal.id;
+        g_node.ID_Goal__c = integer.valueof(goal.name);
+        g_node.ID_Objective__c = 0;
+        g_node.ID_Action__c = 0;
+        g_node.status__c = 'Active';
+        insert g_node;
+
+        o_node.Catalog__c = cata.id;
+        o_node.Catalog_Element__c = obj.id;
+        o_node.ID_Goal__c = integer.valueof(goal.name);
+        o_node.ID_Objective__c = integer.valueof(obj.name);
+        o_node.ID_Action__c =0;
+        o_node.status__c = 'Active';
+        insert o_node;
+
+        a_node.Catalog__c = cata.id;
+        a_node.Catalog_Element__c = act.id;
+        a_node.ID_Goal__c = integer.valueof(goal.name);
+        a_node.ID_Objective__c = integer.valueof(obj.name);
+        a_node.ID_Action__c = integer.valueof(act.name);
+        a_node.status__c = 'Active';
+        insert a_node;                
+        
+        return cata;
+    
+    }
+    
 }
