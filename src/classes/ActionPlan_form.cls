@@ -545,7 +545,9 @@ public pagereference mySave(){
 
         
     public ActionPlan_Form(ApexPages.StandardController controller) {
-        controller.addFields(new List<String> {'Service_Assignment__r.Service_Location__r.Service_Value__c'});
+        if(!test.isRunningTest()){
+            controller.addFields(new List<String> {'Service_Assignment__r.Service_Location__r.Service_Value__c'});
+        }
         ActionPlan = (Action_Plan__c)controller.getRecord();
         
         
