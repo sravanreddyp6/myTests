@@ -1,0 +1,827 @@
+<apex:page standardController="Action_Plan__c" extensions="ActionPlan_form" sidebar="false" tabStyle="Persons_Being_Served_New__tab" standardStylesheets="true">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!$Resource.jquery}"/>
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jQueryTabSlideOut, 'js/jquery.tabSlideOut.v1.3.js')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+
+<apex:variable value="{!Action_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__r.MailingState = 'Arizona' || $User.Operating_Group__c ='Cambridge'}" var="hideObjType"/>
+
+<apex:variable value="{!$ObjectType.Action_Plan_Worksheet__c.accessible}" var="vfVarCanAccessWS"/>
+
+<script>
+
+    function setFocusOnLoad() {}
+
+    var j$ = jQuery.noConflict();
+    
+function printpage(radioObj) {
+
+        
+    if(radioObj.value == 'WORD'){
+        return window.open('/apex/ActionPlan_Print?Id={!Action_Plan__c.Id}', '_blank');
+    
+    }
+
+    if(radioObj.value == 'PDF'){
+        return window.open('/apex/ActionPlan_Print?Id={!Action_Plan__c.Id}&pdf=1', '_blank');
+    
+    }    
+
+    return '';
+}
+  
+  
+       
+function hideStuff(cls, cls2, option, newtopion){
+    j$("."+cls).slideUp(400);   
+    j$("."+cls2).slideUp(400); 
+    
+    j$("."+option).slideUp(0); 
+    j$("."+newtopion).slideDown(0); 
+     
+};
+
+function showStuff(cls, cls2, option, newtopion){
+    j$("."+cls).slideDown(400);   
+    j$("."+cls2).slideDown(400); 
+    
+    j$("."+option).slideUp(0); 
+    j$("."+newtopion).slideDown(0);     
+     
+};
+
+function gotoend(div){
+    j$('html, body').animate({scrollTop: j$("#"+div).offset().top}, 1000); 
+
+};    
+    
+function toggleById(id, ms){
+    j$(document.getElementById(id)).toggle(ms);
+};
+function maxCatalog(){
+    
+    j$("#catalog-flyout").addClass('nodisplay');
+    j$("#catalog-wrapper").addClass('catmaxWRAP');
+    j$("#catalog-bg").addClass('catmaxBG');
+    j$(".clinical-catalog").addClass('widthfull');
+    j$("#catalog_sticky").addClass('catmin');
+    j$(".catalog_tree").css({'height': 'auto'});
+    j$("#cata-minimize").removeClass('nodisplay');
+    j$("#cata-maximize").addClass('nodisplay');
+    
+
+}
+function minCatalog(){
+
+    j$("#catalog-flyout").removeClass('nodisplay');
+    j$("#catalog-wrapper").removeClass('catmaxWRAP');
+    j$("#catalog-bg").removeClass('catmaxBG');
+    j$(".clinical-catalog").removeClass('widthfull');
+    j$("#catalog_sticky").removeClass('catmin');
+    j$(".catalog_tree").css({'height': '350px'}); 
+    j$("#cata-minimize").addClass('nodisplay');
+    j$("#cata-maximize").removeClass('nodisplay');
+    
+    
+    
+     
+      
+
+}
+function toggleByClass(showcls, hidecls){
+    j$("."+hidecls).slideUp(0);
+    j$("."+showcls).slideDown(0);
+};
+function highlightButtons ( btype, sfid, on )
+{
+
+    j$('#' + btype + 'btn'+ sfid).toggle();
+    if (on) { 
+        j$('#' + btype + 'btn'+ sfid).css('background-color','#99f'); 
+        j$('#' + btype + 'icon'+ sfid).attr('src','{!URLFOR($Resource.GoalIcons, 'icon-edit-orange.png')}');
+        j$('#' + btype + 'icon'+ sfid).css('background-color','#99f');  
+    } else {
+        j$('#' + btype + 'icon'+ sfid).attr('src','{!URLFOR($Resource.GoalIcons, 'icon-edit-blue.png')}');
+        j$('#' + btype + 'icon'+ sfid).css('background-color','transparent');  
+    }        
+    
+}
+   
+</script>
+<style>
+.nodisplay{display: none; }
+#catalog_sticky::-webkit-scrollbar {
+    width: 12px;
+}
+/* Track */
+#catalog_sticky::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+ 
+/* Handle */
+#catalog_sticky::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: rgba(255,0,0,0.8); 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}
+#catalog_sticky::-webkit-scrollbar-thumb:window-inactive {
+    background: rgba(255,0,0,0.4); 
+}
+.label{
+    margin:10px;
+    font-weight:bold;
+}
+.dateFormat{ display: none;}
+.thinking{
+    opacity:0.8;
+    background-color:#ccc;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:10000;
+}
+.btnhover{
+    z-index:10001;
+
+}
+.thinkingwheel{
+    position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+}
+    .editcol{
+        width: 50px;
+    }
+    .datecol{
+        width: 250px;
+    }
+.lblaction{
+    padding-left: 22px;
+}
+.lblobj{
+    padding-left: 11px;
+}
+.lblgoal{
+    padding-left: 0px;
+}
+.mylbl{
+    font-weight: bold;
+}
+.txtarea{
+    width: 95%;
+}
+.mytbl{
+    width: 100%;
+    margin-bottom:10px;
+    margin-top:10px;
+}
+#wrappertbl{
+
+    width: 100%;
+}
+.mytbl:nth-child(odd) {
+   // background-color:#dcdcfd;
+   //background-color:#c5d3ef;
+   
+  background-color:#e3e6ef;
+}
+
+.mytbl:nth-child(even) {
+    background-color:#FAFBFC;
+}
+
+.leftcol{
+    width: 150px;
+}
+.innerLabel{
+    width: 85px;
+    font-weight: bold;
+}
+.innerData{
+    width: 250px;
+}
+
+.hbbg{
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    background-color: gray;
+    opacity: .6;
+    z-index:1000;
+}
+
+.popupform{
+    position: fixed; 
+    left:35%; 
+    top:40%;
+     /*background-color: white; border: 2px solid gray; padding: 7px;*/
+    width: 343px;
+    opacity: 1;
+    z-index:1099;
+
+}
+
+.fixedBtn { width:120px };
+.catalog_sticky{
+    height: 100px;
+}
+#clinical-catalog {
+    padding: 10px;
+
+    //height: 35%;
+    background: #BDC4D9;
+    //border: 1px solid #29216d;
+    //float: right;
+} 
+.catalog_tree{
+    height: 350px;
+    overflow: auto;
+    max-height: 700px;
+    margin-bottom: 15px;
+}
+
+.fancytree-container{
+    overflow-x: visible !important;
+
+} 
+.clinical-catalog{
+
+    width: 300px;
+}
+.max{
+    width: 800px;
+    height: 100%;
+
+}
+.catmax{
+    width: 750px;
+
+}
+.catmaxBG{
+    opacity:0.8;
+    background-color:#ccc;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:100;
+    }
+.catmin{
+    position: absolute; opacity:1; left:10%; top:5%; background-color: white; border: 2px solid gray; padding: 2px; z-index:101; 
+}
+.catmaxWRAP{
+     //position: fixed; 
+     width: 100%;
+     height: 100%;
+     z-index:99;
+
+}
+.stick {
+    position:fixed;
+    top:0px;
+    margin-top: 5px;
+}
+.widthfull{
+    position: fixed;
+    left: 2%;
+    top: 5px;
+    width: 95%;
+    height: 95%;
+    min-height: 700px;
+    overflow: auto;
+}
+.min-max-containter{
+    float: right; 
+    padding-right: 5px; 
+    cursor: pointer;
+    margin-top: -3px;
+}
+.min-max{
+    width: 24px;
+    height: 24px;    
+
+}
+.min-max:hover{
+    border: 1px black solid;
+
+}
+</style>
+
+<!-- required for the controler to get the fields in scope-->
+<apex:outputPanel style="display: none;">
+    <apex:outputField value="{!Action_Plan__c.Previous_Action_Plan__c}"/>
+    <apex:outputField value="{!Action_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}"/>
+</apex:outputPanel>
+
+<c:PersonalRecord pbsId="{!Action_Plan__c.Service_Assignment__r.Person_Being_Served__c}" parentPage="ActionPlan" apId="{!Action_Plan__c.Id}" servAssignId="{!Action_Plan__c.Service_Assignment__c}" admId="{!Action_Plan__c.Service_Assignment__r.Admission__c}"/>
+<br />
+<apex:outputPanel id="myFrm">
+<apex:form >
+<apex:pageMessages />   
+<apex:pageBlock title="Action Plan">
+<apex:pageBlockButtons >
+<div class="pbHeaderButton" style="top: 0px;" >     
+        
+        
+        <apex:commandButton value="View Detail" onClick="toggleByClass('action_row','action_row_on' ); return false;" styleClass="action_row_on" style="display: none;" rendered="{! !editMode}" /> 
+        <apex:outputPanel styleClass="action_row">
+        <apex:variable value="{!Action_Plan__c.Service_Assignment__r.Admission__c}" var="admID"/>
+        <apex:commandButton value="View Summary" onClick="toggleByClass('action_row_on','action_row' ); return false;" rendered="{! !editMode}" />                
+        <apex:commandButton action="{!mySave}" value="Save" reRender="myFrm" status="myStatus" rendered="{!editMode}"/>        
+        <apex:commandButton action="{!editMode}" value="Edit" reRender="myFrm" status="myStatus" rendered="{! !editMode  && canEditPlan && Action_Plan__c.Status__c = 'Inactive Draft'}" />
+        <apex:commandButton onClick="toggleById('reviseform'); return false;" value="Revise" rendered="{!Action_Plan__c.Status__c = 'Active Final' && !HasDraft && canEditPlan }"/>  
+        <apex:commandButton value="Acknowledge" styleClass="ackbtn" onClick="toggleById('ackfrom'); return false;" rendered="{! !editMode && !HasAcknowledged  && Action_Plan__c.Status__c = 'Active Final'}" /> 
+        <apex:commandButton action="{!myFinal}" value="Finalize" reRender="myFrm" status="myStatus" rendered="{! !editMode && canFinalize && Action_Plan__c.Status__c = 'Inactive Draft'}"/>
+        <apex:commandButton onClick="toggleById('printform'); return false;" value="Print" rendered="{! !editMode}"/>
+        <apex:commandButton action="{!myCancel}" value="Cancel" reRender="myFrm" status="myStatus" rendered="{!editMode}"/>
+        </apex:outputPanel>    
+</div>     
+</apex:pageBlockButtons>   
+    
+        
+             
+    
+        <apex:pageBlockSection title="Plan Detail" collapsible="False" rendered="{!!editMode}">
+            <apex:outputField value="{!Action_Plan__c.name}"/>
+            <apex:outputField value="{!Action_Plan__c.Service_Assignment__r.Admission__c}"/>
+            <apex:outputField value="{!Action_Plan__c.Service_Assignment__c}"/>   
+            <apex:outputField value="{!Action_Plan__c.External_Plan__c}"/>     
+            <apex:outputField value="{!Action_Plan__c.Effective_Date__c}"/>
+            <apex:outputField value="{!Action_Plan__c.Target_Date__c}"/>
+            <apex:outputField value="{!Action_Plan__c.Date_Service_Started__c}"/>
+            <apex:outputField value="{!Action_Plan__c.Status__c}"/> 
+            <apex:outputField value="{!Action_Plan__c.Baseline__c}"/>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Plan Detail" collapsible="False" rendered="{!editMode}">
+            <apex:outputField value="{!Action_Plan__c.name}"/>
+            <apex:outputField value="{!Action_Plan__c.Service_Assignment__r.Admission__c}"/>
+            <apex:outputField value="{!Action_Plan__c.Service_Assignment__c}"/>   
+            <apex:inputField value="{!Action_Plan__c.External_Plan__c}"/>     
+            <apex:inputField value="{!Action_Plan__c.Effective_Date__c}"/>
+            <apex:inputField value="{!Action_Plan__c.Target_Date__c}"/>
+            <apex:outputField value="{!Action_Plan__c.Date_Service_Started__c}"/>
+            <apex:outputField value="{!Action_Plan__c.Status__c}"/> 
+            <apex:inputField value="{!Action_Plan__c.Baseline__c}"/>
+        </apex:pageBlockSection> 
+        
+        <hr />
+        
+<apex:commandButton style="float:right" action="{!addGoal}" rendered="{!editMode}" value="Add {!GoalAlias}" reRender="myFrm" status="myStatus"  oncomplete="gotoend('planend');"/>        
+<apex:pageBlockSection title="Action Plan" collapsible="false" columns="1" id="anothertest">
+<apex:outputPanel id="apchildren_wrapper">
+<table id="wrappertbl" >
+<tr>
+<td>
+    <div id="catalog-bg"/>
+    <div id="catalog-wrapper">
+        <apex:outputPanel layout="block" style="display: {!if(editMode, 'block','none')}" rendered="{!$Setup.SystemSettings__c.ActionPlan_CatalogSelectorEnabled__c}" >
+            <div id="catalog_filler" style="display: none; width: 400px;"> &nbsp;</div>
+            <div style="width: 55px;"> &nbsp;</div>
+            <div id="catalog_sticky">
+                <div id="clinical-catalog" class="clinical-catalog" style="display: none; float: left; ">
+                    <apex:outputPanel layout="block" >
+                        <apex:outputLabel value="Select Catalog" styleClass="label"/>
+                        <apex:selectList id="choosePlan" value="{!curCtlg}" required="false" size="1" multiselect="false">
+                            <apex:selectOptions value="{!ctlgs}"/>
+                            <apex:actionSupport event="onchange" reRender="fullTree" action="{!refreshHere}" status="myCatalogStatus"/>                                            
+                        </apex:selectList>
+                        <div id="cata-maximize" class="min-max-containter" onclick="maxCatalog(); return false;" ><apex:image styleClass="min-max" url="{!URLFOR($Resource.min_max_imgs,'max.png')}"/></div>
+                        <div id="cata-minimize" class="min-max-containter nodisplay" onclick="minCatalog(); return false;"><apex:image styleClass="min-max" url="{!URLFOR($Resource.min_max_imgs,'min.png')}"/></div>
+                        <apex:inputHidden value="{!catalog_selections}" id="catalog_items"/>
+                          
+                    </apex:outputPanel>
+                    
+                    <apex:outputPanel styleClass="catalog_tree" layout="block">
+                        <apex:pageBlock id="fullTree" mode="mainDetail">
+                            <apex:outputPanel id="tree2" layout="block" >
+                                <div id="tree-wrapper">
+                                   <c:Fancy_Tree showIcons="false" TreeString="{!allGoals.Fancy_Tree_JSon_String_LongText}" allowInactiveNode="false" mode="3" checkbox="true" ID_PageSideStorage="catalog_items" TreeID="tree2" debug="false" />    
+                                </div>
+                            </apex:outputPanel>                
+                        </apex:pageBlock>
+                    </apex:outputPanel>    
+                    
+                    <apex:outputPanel >
+                        <apex:commandButton oncomplete="gotoend('planend'); minCatalog(); " status="myStatus" reRender="goalwrapper" style="float: right; margin-top: 0px; " action="{!addItemsFromTree}" value="Add to Plan"/>
+                            <apex:actionStatus id="myCatalogStatus" >
+                                <apex:facet name="start">
+                                    <div style="float: left;" >
+                                        <div >    
+                                            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+                                        </div>
+                                    </div>   
+                                </apex:facet>  
+                                <apex:facet name="stop"> </apex:facet>         
+                            </apex:actionStatus>      
+                    
+                    </apex:outputPanel>
+                        
+                </div>
+                <span id="catalog-flyout" onclick="toggleById('clinical-catalog', 250); toggleById('catalog_filler',0);  return false;" style="cursor:pointer;"><apex:image url="{!$Resource.catalogIMG}"/></span>
+            </div>
+    
+            <script>
+        
+                $(document).ready(function() {
+                    var s = $("#catalog_sticky");
+                    var pos = s.position();                    
+                    $(window).scroll(function() {
+                        var windowpos = $(window).scrollTop();
+                        //$("#header_left").html("Distance from top:" + pos.top + "<br />Scroll position: " + windowpos);
+                        if (windowpos - 120 >= pos.top) {
+                            s.addClass("stick");
+                        } else {
+                            s.removeClass("stick"); 
+                        }
+                    });
+                });
+            </script>  
+        </apex:outputPanel> 
+    </div>
+    
+    </td>
+    <td>
+    
+<apex:outputPanel id="goalwrapper" layout="block"  >
+    <apex:repeat value="{!planStuff}" var="g">    
+    <table class="mytbl">
+    <tr>
+        <td class="leftcol" >        
+            <apex:outputLabel rendered="{! !editmode}"><b>{!GoalAlias}</b></apex:outputLabel>
+            <apex:outputPanel id="goalButtons" 
+                            layout="block" 
+                            rendered="{!editMode}"
+                            onmouseover="highlightButtons('goal','{!g}', true);" 
+                            onmouseout="highlightButtons('goal','{!g}', false );"
+                            style="width: 122px">
+                    <img id="goalicon{!g}" src="{!URLFOR($Resource.GoalIcons, 'icon-edit-blue.png')}" style="vertical-align:middle"/>&nbsp;<b>{!GoalAlias}</b>
+                    <div id="goalbtn{!g}" class="btnhover" style="display: none;padding-top:0px" > 
+                    <apex:commandButton value="Add {!ObjAlias}" action="{!addObj}" reRender="myFrm" status="myStatus" styleClass="fixedBtn" >
+                        <apex:param assignTo="{!goalID}" value="{!g}" name="goalID"  /> 
+                        <apex:param assignTo="{!isparentNew}" value="{!planStuff[g].isNew}" name="isparentNew "  /> 
+                    </apex:commandButton>
+                    <br/>
+                    <apex:commandButton action="{!deleteGoal}" 
+                                        value="Delete {!GoalAlias}" 
+                                        reRender="myFrm" 
+                                        status="myStatus"
+                                        styleClass="fixedBtn" 
+                                        onclick="if(!confirm('Are you sure you want to Delete this {!GoalAlias}? All associated {!ObjAlias}s and {!ActAlias}s will also be deleted.')){return};">
+                        <apex:param assignTo="{!deleteGid}" value="{!g}" name="deleteGid"  />   
+                    </apex:commandButton>                
+                </div>
+            </apex:outputPanel>
+        
+        </td>                
+        <td>
+            <apex:outputLabel styleClass="tmnHelpText">What does this Person Being Served want to achieve?<br /></apex:outputLabel>
+            <apex:outputPanel layout="block" style="padding-bottom:20px">
+                <apex:inputField rendered="{!editMode}" styleClass="txtarea" value="{!planStuff[g].theGoal.Description__c}" /> 
+                <apex:outputField rendered="{! !editMode}" value="{!planStuff[g].theGoal.Description__c}"  />
+            </apex:outputPanel> 
+            
+        </td>            
+    </tr>            
+        
+        
+            <apex:repeat value="{!planStuff[g].GoalObjs}" var="o" >
+    <tr>
+                    <td>
+                    <apex:outputLabel style="margin-left:10px" rendered="{! !editmode}"><b>{!ObjAlias}</b></apex:outputLabel>            
+                        <apex:outputPanel id="objButtons" 
+                                            layout="block" 
+                                            rendered="{!editMode}" 
+                                            style="margin-left: 10px; width: 122px"
+                                            onmouseover="highlightButtons('obj','{!o}', true);" 
+                                            onmouseout="highlightButtons('obj','{!o}', false );"
+                                            >
+                            
+                    <img id="objicon{!o}" src="{!URLFOR($Resource.GoalIcons, 'icon-edit-blue.png')}" style="vertical-align:middle"/>&nbsp;<b>{!ObjAlias}</b>
+                            <div id="objbtn{!o}" style="display: none;">  
+                                <apex:commandButton value="Add {!ActAlias}" action="{!addAct}" reRender="myFrm" styleClass="fixedBtn" status="myStatus">
+                                    <apex:param assignTo="{!goalID}" value="{!g}" name="goalID"  /> 
+                                    <apex:param assignTo="{!objID}" value="{!o}" name="objID"  />
+                                    <apex:param assignTo="{!isparentNew}" value="{!planStuff[g].GoalObjs[o].isNew}" name="isparentNew "  />
+                                </apex:commandButton>
+                                <br/>                
+                                    <apex:commandButton action="{!deleteObj}" 
+                                                        value="Delete {!ObjAlias}" 
+                                                        reRender="myFrm" 
+                                                        status="myStatus"
+                                                        styleClass="fixedBtn" 
+                                                        onclick="if(!confirm('Are you sure you want to Delete this {!ObjAlias} ? All associated {!ActAlias}s will also be deleted.')){return};">
+                                        <apex:param assignTo="{!deleteGid}" value="{!g}" name="deleteGid"  /> 
+                                        <apex:param assignTo="{!deleteOid}" value="{!o}" name="deleteOid"  /> 
+                                    </apex:commandButton> 
+                            </div>
+                        </apex:outputPanel>
+                    </td>                    
+                    <td>
+                    
+                        <apex:outputLabel styleClass="tmnHelpText" >What measurable achievements will demonstrate this Person Being Served’s progress towards this {!GoalAlias}?<br /></apex:outputLabel>       
+                        <apex:outputPanel layout="block" id="theObj" style="padding-bottom:20px">
+                            <apex:inputField styleClass="txtarea" rendered="{!editMode}" value="{!planStuff[g].GoalObjs[o].theObj.Description__c}"/>  
+                            <apex:outputField rendered="{! !editMode}" value="{!planStuff[g].GoalObjs[o].theObj.Description__c}"/> 
+                            
+                            <apex:panelGrid columns="8" style="width:100%" rules="groups" columnClasses="innerLabel, innerData">
+                                <apex:outputPanel layout="block" styleClass="innerLabel" > Status</apex:outputPanel>  
+                                <apex:outputField value="{!planStuff[g].GoalObjs[o].theObj.Status__c}"  rendered="{!!editMode}"/> 
+                                <apex:inputField value="{!planStuff[g].GoalObjs[o].theObj.Status__c}"  rendered="{!editMode}"/> 
+                                                                        
+                                <apex:outputPanel layout="block" styleClass="innerLabel" > Effective Date</apex:outputPanel>
+                                <apex:outputField value="{!planStuff[g].GoalObjs[o].theObj.Effective_Date__c}" rendered="{!!editMode}"/>
+                                <apex:inputField value="{!planStuff[g].GoalObjs[o].theObj.Effective_Date__c}" rendered="{!editMode}"/>    
+                                
+                                <apex:outputPanel layout="block" styleClass="innerLabel" > Target Date</apex:outputPanel>
+                                <apex:outputField value="{!planStuff[g].GoalObjs[o].theObj.Target_End_Date__c}" rendered="{!!editMode}"/> 
+                                <apex:inputField value="{!planStuff[g].GoalObjs[o].theObj.Target_End_Date__c}" rendered="{!editMode}"/> 
+                                
+                                
+                                <apex:outputPanel layout="block" styleClass="innerLabel" rendered="{! !hideObjType}" > Type</apex:outputPanel> 
+                                <apex:outputField value="{!planStuff[g].GoalObjs[o].theObj.Type__c}" rendered="{!!editMode  && !hideObjType}"/>
+                                <apex:inputField value="{!planStuff[g].GoalObjs[o].theObj.Type__c}" rendered="{!editMode  && !hideObjType}"/> 
+                            </apex:panelGrid> 
+                                                
+                        </apex:outputPanel>
+                    </td>
+    </tr>                
+                    <apex:repeat value="{!planStuff[g].GoalObjs[o].ObjActs}" var="a" id="actsthe">
+    <tr class="action_row">
+                            <td >
+                            <apex:outputLabel style="margin-left:20px" rendered="{! !editmode}"><b>{!ActAlias}</b></apex:outputLabel>                
+                                <apex:outputPanel id="actButtons" 
+                                                rendered="{!editMode}" 
+                                                layout="block" 
+                                                style="margin-left:20px; width: 122px"
+                                                onmouseover="highlightButtons('act','{!a}', true);" 
+                                                onmouseout="highlightButtons('act','{!a}', false );"
+                                                >
+                                <img id="acticon{!a}" src="{!URLFOR($Resource.GoalIcons, 'icon-edit-blue.png')}" style="vertical-align:middle"/>&nbsp;<b>{!ActAlias}</b>
+                                   <div id="actbtn{!a}" style="display: none;">                                
+                                        <apex:commandButton action="{!deleteAct}" 
+                                                            value="Delete {!ActAlias}" 
+                                                            reRender="myFrm" 
+                                                            status="myStatus"
+                                                            styleClass="fixedBtn" 
+                                                            onclick="if(!confirm('Are you sure you want to delete this {!ActAlias}?')){return};">
+                                            <apex:param assignTo="{!deleteGid}" value="{!g}" name="deleteGid"  /> 
+                                            <apex:param assignTo="{!deleteOid}" value="{!o}" name="deleteOid"  /> 
+                                            <apex:param assignTo="{!deleteAid}" value="{!a}" name="deleteAid"  /> 
+                                        </apex:commandButton> 
+                                        <br/>
+                                    </div>
+                                </apex:outputPanel>
+                            </td> 
+                            <td>
+                            
+                                <apex:outputLabel styleClass="tmnHelpText">How will staff support this Person Being Served to meet the {!ObjAlias}?<br/></apex:outputLabel>     
+                                <apex:outputPanel layout="block" id="theAction" style="padding-bottom:20px">
+                                    <apex:inputField styleClass="txtarea" rendered="{!editMode}" value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Description__c}"/>  
+                                    <apex:outputField rendered="{! !editMode}" value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Description__c}"/>         
+                                </apex:outputPanel>
+                            </td>
+    </tr>                    
+                </apex:repeat> <!-- end action-->
+        </apex:repeat> <!-- end obj -->
+        </table>
+    </apex:repeat><!--end goal-->
+    </apex:outputPanel><!-- end goals wrapper -->
+    </td></tr></table><!-- end full wrapper -->
+    </apex:outputPanel><!-- end ap children warpper -->
+    <apex:commandButton style="float:right" action="{!addGoal}" rendered="{!editMode}" value="Add {!GoalAlias}" reRender="myFrm" status="myStatus"  oncomplete="gotoend('planend');"/>        
+    
+<div id="planend" ></div>
+</apex:pageBlockSection> 
+</apex:pageBlock>
+    <a name="worksheets" />
+<apex:outputPanel layout="block" styleClass="action_row">
+    <apex:pageBlock title="Skills Worksheets" rendered="{!showWorksheets && vfVarCanAccessWS}">
+ 
+        <div class="pbHeaderButton">
+            <apex:outputPanel onclick="j$('[id *=newswsbtn]').toggle();" styleClass="btn" >New Worksheet</apex:outputPanel>
+        </div>
+        <apex:pageBlockSection columns="1" collapsible="false" >
+                <apex:outputPanel id="newswsbtn" layout="block" style="display:none; border: 1px solid black;width:600px;-webkit-columns:120px 4;columns:150px 4" >    
+                    <apex:repeat value="{!uncheckedWeeks}" var="week">
+                         <apex:commandLink action="{!newWorksheet}" value="{!week.UserDate}" >
+                               <apex:param assignTo="{!worksheetWeek}" value="{!week.ParsableDate}" name="week"  /> 
+                         </apex:commandLink><br/>
+                    </apex:repeat>
+                </apex:outputPanel>
+            <apex:pageBlockTable value="{!WeekResults}" var="skillWorksheet">
+                <apex:column headerValue="Action" styleClass="editcol"><a href="/apex/WeeklySkillTracking?id={!skillWorksheet.Id}">Edit</a></apex:column>
+                <apex:column styleClass="datecol" headerValue="Start Date">
+                    <a href="/apex/WeeklySkillTracking?id={!skillWorksheet.Id}">Week of&nbsp;<apex:outputField value="{!skillWorksheet.start_date__c }"/></a>
+                </apex:column>
+                <apex:column headerValue="Action Plan Name" >
+                <apex:outputLink value="/{!Action_Plan__c}"><apex:outputField value="{! Action_plan__c.name}"/></apex:outputLink>
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    <apex:pageBlock title="Behavior Worksheets" rendered="{!showWorksheets && vfVarCanAccessWS}"> 
+        <div class="pbHeaderButton">
+            <apex:outputPanel onclick="j$('[id *=newbwsbtn]').toggle();" styleClass="btn" >New Worksheet</apex:outputPanel>
+        </div>
+        <apex:pageBlockSection columns="1" collapsible="false" >
+                <apex:outputPanel id="newbwsbtn" layout="block" style="display:none; border: 1px solid black;width:600px;-webkit-columns:120px 4;columns:150px 4" >    
+                    <apex:repeat value="{!BehaviorMonthsAvailable}" var="week">
+                         <apex:commandLink action="{!newBehaviorWorksheet}" value="{!week.UserDate}" >
+                               <apex:param assignTo="{!worksheetWeek}" value="{!week.ParsableDate}" name="week"  /> 
+                         </apex:commandLink><br/>
+                    </apex:repeat>
+                </apex:outputPanel>
+  
+            <apex:pageBlockTable value="{!BehaviorWorksheets}" var="behaviorWorksheet">
+                <apex:column headerValue="Action" styleClass="editcol"><a href="/apex/BehaviorTracking?id={!behaviorWorksheet.Id}">Edit</a></apex:column>
+                 <apex:column styleClass="datecol" headerValue="Start Date" >
+                     <a href="/apex/BehaviorTracking?id={!behaviorWorksheet.Id}"> <apex:outputField value="{!behaviorWorksheet.start_date__c }"/></a>
+                 </apex:column>
+                 <apex:column headerValue="Action Plan Name" >
+                    <apex:outputLink value="/{!Action_Plan__c.id}"><apex:outputField value="{! Action_plan__c.name}"/></apex:outputLink>
+                </apex:column>            
+            </apex:pageBlockTable>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+        <apex:pageBlock title="Acknowledgments" rendered="{! !editMode && Action_plan__c.Status__c !='Inactive Draft'}"> 
+        <apex:pageBlockSection columns="2" rendered="{!AllAcks.size > 0}">
+            <apex:pageBlockTable value="{!AllAcks}" var="a">
+                <apex:column value="{!a.User__c}" headerValue="Staff Name "/>
+                <apex:column value="{!a.Initials__c}" />
+                <apex:column value="{!a.Date_Acknowledged__c }"/>
+            </apex:pageBlockTable>
+        
+        </apex:pageBlockSection>   
+        
+     
+    </apex:pageBlock> 
+    <apex:pageBlock title="Notes" rendered="{!notes.size > 0}">
+        <apex:pageBlockButtons location="top" >
+            <div class="pbHeaderButton" style="top: 0px;" >    
+                <apex:commandButton value="New Note" rendered="{!Action_Plan__c.Status__c = 'Active Final'}"
+                    onclick="window.open('{!$Page.Notes_ProgressNote_Create}?plan={!Action_Plan__c}&service_assignment={!Action_Plan__c.Service_Assignment__c}&admission={!Action_Plan__c.Service_Assignment__r.Admission__c}&person={!Action_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}&state={!Action_Plan__c.Service_Assignment__r.Admission__r.State__c}', '_self'); return false;" >
+                    
+                        <apex:param value="{!Action_Plan__c.Service_Assignment__c}" name="service_assignment" />
+                        <apex:param value="{!Action_Plan__c.Service_Assignment__r.Admission__c}" name="admission" />
+                        <apex:param value="{!Action_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}" name="person" />
+                        <apex:param value="{!Action_Plan__c.Service_Assignment__r.Admission__r.State__c}" name="State" />                    
+                </apex:commandButton>
+            </div>
+        </apex:pageBlockButtons>    
+    <apex:pageBlockTable value="{!notes}" var="pn">
+        <apex:column >
+            <apex:outputLink value="/{!pn.id}">{!pn.name}</apex:outputLink>
+        </apex:column>
+        <apex:column value="{!pn.Start_Time__c}"/>
+        <apex:column value="{!pn.End_Time__c}"/>
+        <apex:column value="{!pn.createddate}"/>
+        <apex:column value="{!pn.createdby.name}"/>
+    
+    </apex:pageBlockTable>   
+    <br/>
+    <apex:outputPanel rendered="{!notes.size!=0}">Showing the 10 most recent notes click&nbsp;<apex:outputLink value="/a0L?id={!Action_Plan__c.id}&rlid=00NU0000003m5Tn&lsr=0" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
+
+    </apex:pageBlock>
+    
+    
+</apex:outputPanel>
+<!--
+       <div style="width:100%; text-align:right;position:relative; right:20px;">
+        <apex:commandButton value="View Detail" onClick="toggleByClass('action_row','action_row_on' ); return false;" styleClass="action_row_on" style="display: none;" rendered="{! !editMode}"/> 
+        <apex:outputPanel styleClass="action_row">
+        <apex:commandButton value="View Summary" onClick="toggleByClass('action_row_on','action_row' ); return false;" rendered="{! !editMode}"/>
+
+                
+        <apex:commandButton action="{!mySave}" value="Save" reRender="myFrm" status="myStatus" rendered="{!editMode}"/>
+        <apex:commandButton action="{!editMode}" value="Edit" reRender="myFrm" status="myStatus" rendered="{! !editMode && canEditPlan && Action_Plan__c.Status__c = 'Inactive Draft'}" />
+         
+        <apex:commandButton value="Acknowledge" styleClass="ackbtn" onClick="toggleById('ackfrom'); return false;" rendered="{! !editMode && !HasAcknowledged  && Action_Plan__c.Status__c = 'Active Final'}" /> 
+        <apex:commandButton action="{!myFinal}" value="Finalize" reRender="myFrm" status="myStatus" rendered="{! !editMode && Action_Plan__c.Status__c = 'Inactive Draft'}"/>
+        <apex:commandButton onClick="toggleById('printform'); return false;" value="Print" rendered="{! !editMode}"/>
+        <apex:commandButton action="{!myCancel}" value="Cancel" reRender="myFrm" status="myStatus" rendered="{!editMode}"/>
+        </apex:outputPanel> 
+        </div> 
+        --> 
+    
+</apex:form> 
+<br/>
+
+<c:SObjectNotesAndAttachments parentId="{!Action_Plan__c.id}" showAction="false" rendered="{! !editMode}"></c:SObjectNotesAndAttachments> 
+</apex:outputPanel>
+<div id="ackfrom"  style="display: none;">
+<div class="hbbg">  </div>
+<div id="p" class="popupform" >
+<apex:form id="myAck">
+    <apex:pageBlock >
+        <apex:pageBlockSection columns="1">
+            <apex:outputPanel >
+                Please enter the initials you plan to use on your Worksheets
+            
+            </apex:outputPanel>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel >
+                    Staff Name
+                </apex:outputLabel>
+                {! $User.myFullName__c} 
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel >Date</apex:outputLabel>
+                 <apex:outputText value="{0, date, E - MM/dd/yyyy}">
+                    <apex:param value="{!TODAY()}" />
+                </apex:outputText>               
+            </apex:pageBlockSectionItem>
+            <apex:inputField id="inti" label="Initials" value="{!theAck.Initials__c}" required="true"/>
+            
+            <apex:pageBlockSectionItem >
+                
+                I have received training on this Action Plan, and I know whom to contact if I have questions regarding it.
+                
+            </apex:pageBlockSectionItem>
+
+            <apex:outputPanel layout="block" style="width: 100%; text-align: center;" >
+                <apex:commandButton action="{!myAcknowledge}" style=" " value="Acknowledge" reRender="myAck" status="myStatus"/>
+                &nbsp;
+                <apex:commandButton onclick="toggleById('ackfrom', '500'); return false;"  value="Cancel" />
+                
+                
+            </apex:outputPanel>
+            
+        </apex:pageBlockSection>
+        
+    </apex:pageBlock>
+ </apex:form>     
+</div>    
+</div>
+ 
+<div id="printform"  style="display: none;" >
+<div class="hbbg" > </div>
+<div id="p" class="popupform" >
+    <form name="radioExampleForm" method="get" action="" onsubmit="return false;">
+    <apex:pageBlock >
+        <apex:pageBlockButtons location="bottom">
+                <input type="button" class="btn" onclick="printpage(document.forms['radioExampleForm'].elements['type']);" value="Create"/>
+                <input type="button" class="btn" onclick="toggleById('printform', '500'); return false;" value="Cancel"/>          
+        </apex:pageBlockButtons>
+        <apex:pageBlockSection columns="1">
+            <apex:outputPanel >
+                Select the type of file you would like to create
+            </apex:outputPanel>
+            <apex:outputPanel >
+                <label for="number0"><input type="radio" value="PDF" name="type" id="number0" checked="checked"/> PDF</label>
+                <br/>
+                <label for="number1"><input type="radio" value="WORD" name="type" id="number1"/> Word Document</label> 
+            </apex:outputPanel>
+
+            
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    
+   
+    </form>
+</div>
+</div>
+<div id="reviseform"   style="display: none;" >
+<div class="hbbg">  </div>
+<div id="p" class="popupform" >
+<apex:form id="thereviseform" >
+<apex:pageBlock >
+<apex:pageBlockButtons location="bottom" >
+    <apex:commandButton action="{!myclone}" value="Yes" status="myStatus" /> 
+    <apex:commandButton onclick="toggleById('reviseform', '500'); return false;"  value="No" />
+</apex:pageBlockButtons>
+<apex:pageBlockSection columns="1" >
+
+<apex:outputLabel >Are you sure you would like to revise this Action Plan?</apex:outputLabel>
+
+
+</apex:pageBlockSection>
+
+</apex:pageBlock>
+</apex:form>
+</div>
+</div>
+
+
+
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <div  class="thinking">
+            <div class="thinkingwheel">    
+                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+            </div>
+        </div>   
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus> 
+
+
+
+</apex:page>
