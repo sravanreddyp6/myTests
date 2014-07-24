@@ -261,7 +261,7 @@ public class ServiceAssignmentExt {
   
   public void refreshDiagnoses() {
   	// requery the diagnosis list
-  	diagnoses = [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__c = :currentID];
+  	diagnoses = [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__c = :currentID order by createddate desc];
   	newDiagnosis = false;
   	
   }
@@ -808,7 +808,7 @@ public class ServiceAssignmentExt {
                                and Action_Plan__c = :activePlan.id Order by Start_Date__c DESC];
              }
         notes = [select name, id, Start_Time__c, End_time__c, createddate, createdby.name, action_plan__r.Name, Action_plan__c from Progress_Note__c where Service_Assignment__c = :currentID Order by CreatedDate DESC Limit 10];
-        diagnoses = [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__c = :currentID];
+        diagnoses = [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__c = :currentID order by createddate desc];
         }
         if ( currentrecord.Service_Location__c != null) {
             serviceLocation = [ select ID, Name, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c from Service_Location__c where ID = :currentrecord.Service_Location__c];
