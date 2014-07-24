@@ -38,6 +38,7 @@ public class TMN_Tree{
             public string status {get; set;}
             public string helpText {get; set;}
             public boolean isNew {get; set;}
+            public boolean isInserted {get; set;}
             
             //fancy tree settings            
             public boolean isSelected {get; set;}

@@ -59,6 +59,36 @@ function gotoend(div){
 function toggleById(id, ms){
     j$(document.getElementById(id)).toggle(ms);
 };
+function maxCatalog(){
+    
+    j$("#catalog-flyout").addClass('nodisplay');
+    j$("#catalog-wrapper").addClass('catmaxWRAP');
+    j$("#catalog-bg").addClass('catmaxBG');
+    j$(".clinical-catalog").addClass('widthfull');
+    j$("#catalog_sticky").addClass('catmin');
+    j$(".catalog_tree").css({'height': 'auto'});
+    j$("#cata-minimize").removeClass('nodisplay');
+    j$("#cata-maximize").addClass('nodisplay');
+    
+
+}
+function minCatalog(){
+
+    j$("#catalog-flyout").removeClass('nodisplay');
+    j$("#catalog-wrapper").removeClass('catmaxWRAP');
+    j$("#catalog-bg").removeClass('catmaxBG');
+    j$(".clinical-catalog").removeClass('widthfull');
+    j$("#catalog_sticky").removeClass('catmin');
+    j$(".catalog_tree").css({'height': '350px'}); 
+    j$("#cata-minimize").addClass('nodisplay');
+    j$("#cata-maximize").removeClass('nodisplay');
+    
+    
+    
+     
+      
+
+}
 function toggleByClass(showcls, hidecls){
     j$("."+hidecls).slideUp(0);
     j$("."+showcls).slideDown(0);
@@ -80,6 +110,7 @@ function highlightButtons ( btype, sfid, on )
    
 </script>
 <style>
+.nodisplay{display: none; }
 #catalog_sticky::-webkit-scrollbar {
     width: 12px;
 }
@@ -209,7 +240,47 @@ function highlightButtons ( btype, sfid, on )
     //float: right;
 } 
 .catalog_tree{
+    height: 350px;
+    overflow: auto;
+    max-height: 700px;
+    margin-bottom: 15px;
+}
 
+.fancytree-container{
+    overflow-x: visible !important;
+
+} 
+.clinical-catalog{
+
+    width: 300px;
+}
+.max{
+    width: 800px;
+    height: 100%;
+
+}
+.catmax{
+    width: 750px;
+
+}
+.catmaxBG{
+    opacity:0.8;
+    background-color:#ccc;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:100;
+    }
+.catmin{
+    position: absolute; opacity:1; left:10%; top:5%; background-color: white; border: 2px solid gray; padding: 2px; z-index:101; 
+}
+.catmaxWRAP{
+     //position: fixed; 
+     width: 100%;
+     height: 100%;
+     z-index:99;
 
 }
 .stick {
@@ -217,10 +288,30 @@ function highlightButtons ( btype, sfid, on )
     top:0px;
     margin-top: 5px;
 }
-.fancytree-container{
-    height: 350px;
+.widthfull{
+    position: fixed;
+    left: 2%;
+    top: 5px;
+    width: 95%;
+    height: 95%;
+    min-height: 700px;
+    overflow: auto;
+}
+.min-max-containter{
+    float: right; 
+    padding-right: 5px; 
+    cursor: pointer;
+    margin-top: -3px;
+}
+.min-max{
+    width: 24px;
+    height: 24px;    
 
-} 
+}
+.min-max:hover{
+    border: 1px black solid;
+
+}
 </style>
 
 <!-- required for the controler to get the fields in scope-->
@@ -289,65 +380,72 @@ function highlightButtons ( btype, sfid, on )
 <table id="wrappertbl" >
 <tr>
 <td>
-    <apex:outputPanel layout="block" style="display: {!if(editMode, 'block','none')}" rendered="{!$Setup.SystemSettings__c.ActionPlan_CatalogSelectorEnabled__c}" >
-        <div id="catalog_filler" style="display: none; width: 400px;"> &nbsp;</div>
-        <div style="width: 55px;"> &nbsp;</div>
-        <div id="catalog_sticky">
-            <div id="clinical-catalog" class="clinical-catalog" style="display: none; float: left; width: 300px; ">
-                <apex:outputPanel layout="block" >
-                    <apex:outputLabel value="Select Catalog" styleClass="label"/>
-                    <apex:selectList id="choosePlan" value="{!curCtlg}" required="false" size="1" multiselect="false">
-                        <apex:selectOptions value="{!ctlgs}"/>
-                        <apex:actionSupport event="onchange" reRender="fullTree" action="{!refreshHere}" status="myCatalogStatus"/>                                            
-                    </apex:selectList>
-                    <apex:inputHidden value="{!catalog_selections}" id="catalog_items"/>
-                      
-                </apex:outputPanel>
-                
-                <apex:outputPanel styleClass="catalog_tree" layout="block">
-                    <apex:pageBlock id="fullTree" mode="mainDetail">
-                        <apex:outputPanel id="tree2" layout="block" >
-                           <c:Fancy_Tree showIcons="false" TreeString="{!allGoals.Fancy_Tree_JSon_String_LongText}" allowInactiveNode="false" mode="3" checkbox="true" ID_PageSideStorage="catalog_items" TreeID="tree2" debug="false" />    
-                        </apex:outputPanel>                
-                    </apex:pageBlock>
-                </apex:outputPanel>    
-                
-                <apex:outputPanel >
-                    <apex:commandButton oncomplete="gotoend('planend');" status="myStatus" reRender="goalwrapper" style="float: right; margin-top: 0px; " action="{!addItemsFromTree}" value="Add to Plan"/>
-                        <apex:actionStatus id="myCatalogStatus" >
-                            <apex:facet name="start">
-                                <div style="float: left;" >
-                                    <div >    
-                                        <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
-                                    </div>
-                                </div>   
-                            </apex:facet>  
-                            <apex:facet name="stop"> </apex:facet>         
-                        </apex:actionStatus>                
-                
-                </apex:outputPanel>
+    <div id="catalog-bg"/>
+    <div id="catalog-wrapper">
+        <apex:outputPanel layout="block" style="display: {!if(editMode, 'block','none')}" rendered="{!$Setup.SystemSettings__c.ActionPlan_CatalogSelectorEnabled__c}" >
+            <div id="catalog_filler" style="display: none; width: 400px;"> &nbsp;</div>
+            <div style="width: 55px;"> &nbsp;</div>
+            <div id="catalog_sticky">
+                <div id="clinical-catalog" class="clinical-catalog" style="display: none; float: left; ">
+                    <apex:outputPanel layout="block" >
+                        <apex:outputLabel value="Select Catalog" styleClass="label"/>
+                        <apex:selectList id="choosePlan" value="{!curCtlg}" required="false" size="1" multiselect="false">
+                            <apex:selectOptions value="{!ctlgs}"/>
+                            <apex:actionSupport event="onchange" reRender="fullTree" action="{!refreshHere}" status="myCatalogStatus"/>                                            
+                        </apex:selectList>
+                        <div id="cata-maximize" class="min-max-containter" onclick="maxCatalog(); return false;" ><apex:image styleClass="min-max" url="{!URLFOR($Resource.min_max_imgs,'max.png')}"/></div>
+                        <div id="cata-minimize" class="min-max-containter nodisplay" onclick="minCatalog(); return false;"><apex:image styleClass="min-max" url="{!URLFOR($Resource.min_max_imgs,'min.png')}"/></div>
+                        <apex:inputHidden value="{!catalog_selections}" id="catalog_items"/>
+                          
+                    </apex:outputPanel>
                     
+                    <apex:outputPanel styleClass="catalog_tree" layout="block">
+                        <apex:pageBlock id="fullTree" mode="mainDetail">
+                            <apex:outputPanel id="tree2" layout="block" >
+                                <div id="tree-wrapper">
+                                   <c:Fancy_Tree showIcons="false" TreeString="{!allGoals.Fancy_Tree_JSon_String_LongText}" allowInactiveNode="false" mode="3" checkbox="true" ID_PageSideStorage="catalog_items" TreeID="tree2" debug="false" />    
+                                </div>
+                            </apex:outputPanel>                
+                        </apex:pageBlock>
+                    </apex:outputPanel>    
+                    
+                    <apex:outputPanel >
+                        <apex:commandButton oncomplete="gotoend('planend'); minCatalog(); " status="myStatus" reRender="goalwrapper" style="float: right; margin-top: 0px; " action="{!addItemsFromTree}" value="Add to Plan"/>
+                            <apex:actionStatus id="myCatalogStatus" >
+                                <apex:facet name="start">
+                                    <div style="float: left;" >
+                                        <div >    
+                                            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+                                        </div>
+                                    </div>   
+                                </apex:facet>  
+                                <apex:facet name="stop"> </apex:facet>         
+                            </apex:actionStatus>      
+                    
+                    </apex:outputPanel>
+                        
+                </div>
+                <span id="catalog-flyout" onclick="toggleById('clinical-catalog', 250); toggleById('catalog_filler',0);  return false;" style="cursor:pointer;"><apex:image url="{!$Resource.catalogIMG}"/></span>
             </div>
-        <apex:outputPanel onclick="toggleById('clinical-catalog', 250); toggleById('catalog_filler',0); return false;" style="cursor:pointer;"><apex:image url="{!$Resource.catalogIMG}"/></apex:outputPanel>
-        </div>
-
-        <script>
     
-            $(document).ready(function() {
-                var s = $("#catalog_sticky");
-                var pos = s.position();                    
-                $(window).scroll(function() {
-                    var windowpos = $(window).scrollTop();
-                    //$("#header_left").html("Distance from top:" + pos.top + "<br />Scroll position: " + windowpos);
-                    if (windowpos - 120 >= pos.top) {
-                        s.addClass("stick");
-                    } else {
-                        s.removeClass("stick"); 
-                    }
+            <script>
+        
+                $(document).ready(function() {
+                    var s = $("#catalog_sticky");
+                    var pos = s.position();                    
+                    $(window).scroll(function() {
+                        var windowpos = $(window).scrollTop();
+                        //$("#header_left").html("Distance from top:" + pos.top + "<br />Scroll position: " + windowpos);
+                        if (windowpos - 120 >= pos.top) {
+                            s.addClass("stick");
+                        } else {
+                            s.removeClass("stick"); 
+                        }
+                    });
                 });
-            });
-        </script>  
-    </apex:outputPanel> 
+            </script>  
+        </apex:outputPanel> 
+    </div>
     
     </td>
     <td>
