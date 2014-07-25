@@ -311,6 +311,9 @@ function highlightButtons ( btype, sfid, on )
     padding-right: 5px; 
     cursor: pointer;
     margin-top: -3px;
+    position: relative;
+    top: 0;
+    right: 0;
 }
 .min-max{
     width: 24px;
@@ -328,11 +331,11 @@ function highlightButtons ( btype, sfid, on )
     font-size: 12px;
 }
 #clinical-catalog select{
-    background: #e3e6ef !important;
+    background: #FAFBFC ;
     padding: 3px;
-    //border: none;
     border-radius: 3px;
     font-size: 14px;
+    max-width: 225px;
 }
 
 #clinical-catalog select:focus{
@@ -417,6 +420,9 @@ function highlightButtons ( btype, sfid, on )
             <div id="catalog_sticky">
                 <div id="clinical-catalog" class="clinical-catalog" style="display: none; float: left; ">
                     <apex:outputPanel layout="block" styleClass="catalog-header" >
+                        <div id="cata-maximize" class="min-max-containter" onclick="maxCatalog(); return false;" ><apex:image styleClass="min-max" url="{!URLFOR($Resource.min_max_imgs,'max.png')}"/></div>
+                        <div id="cata-minimize" class="min-max-containter nodisplay" onclick="minCatalog(); return false;"><apex:image styleClass="min-max" url="{!URLFOR($Resource.min_max_imgs,'min.png')}"/></div>
+                                            
                         <apex:outputLabel value="Catalog: " styleClass="label" style="margin-bottom: 7px;"/>
                                     <apex:selectList id="choosePlan" value="{!curCtlg}" required="false" size="1" multiselect="false">
                                         <apex:selectOptions value="{!ctlgs}"/>
@@ -433,12 +439,7 @@ function highlightButtons ( btype, sfid, on )
                             </apex:actionStatus>                        
 
 
-                        <div id="cata-maximize" class="min-max-containter" onclick="maxCatalog(); return false;" ><apex:image styleClass="min-max" url="{!URLFOR($Resource.min_max_imgs,'max.png')}"/></div>
-                        <div id="cata-minimize" class="min-max-containter nodisplay" onclick="minCatalog(); return false;"><apex:image styleClass="min-max" url="{!URLFOR($Resource.min_max_imgs,'min.png')}"/></div>
-                        <apex:inputHidden value="{!catalog_selections}" id="catalog_items"/>
-                        <span  >
-                         
-                        </span>                         
+                        <apex:inputHidden value="{!catalog_selections}" id="catalog_items"/>                       
                     </apex:outputPanel>
                      
                     <apex:outputPanel styleClass="catalog_tree" layout="block">
