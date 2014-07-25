@@ -694,7 +694,13 @@ function stopRKey(evt) {
             <apex:inputField value="{!fundingSource.Payer_Type__c}" />
             <apex:inputField value="{!fundingSource.Payer_Name__c}" />
             <apex:inputField value="{!fundingSource.Payer_Phone__c}" />
-            <apex:inputField value="{!fundingSource.Policy_Holder__c}" />
+            <apex:pageBlockSectionItem >
+            	<apex:outputLabel for="policyHolder" value="Policy Holder" />
+            	<apex:outputPanel >
+            	<apex:inputField value="{!fundingSource.Policy_Holder__c}" id="policyHolder"/>
+            	<apex:commandLink value="Same as PBR" onclick="assignValue('{!$Component.policyHolder}', '{!Referral__c.Person_Being_Referred__r.Full_Name__c}'); return false;" />
+            	</apex:outputPanel>
+            </apex:pageBlockSectionItem>
             <apex:inputField value="{!fundingSource.Relationship_To_Patient__c}" />
 
             <apex:pageBlockSectionItem >
