@@ -228,7 +228,7 @@
         <active>true</active>
         <errorConditionFormula>Effective_Date__c &lt; Action_Plan_Goal__r.Action_Plan__r.Effective_Date__c</errorConditionFormula>
         <errorDisplayField>Effective_Date__c</errorDisplayField>
-        <errorMessage>Objective Effective Date must be on or after the Action Plan Effective Date</errorMessage>
+        <errorMessage>Effective Date must be on or after the Action Plan Effective Date</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Effective_req</fullName>
@@ -242,14 +242,14 @@
         <active>true</active>
         <errorConditionFormula>ISblank(TEXT(Status__c)) &amp;&amp;  $User.Operating_Group__c == &apos;Redwood&apos; &amp;&amp; !ISBLANK(Description__c)</errorConditionFormula>
         <errorDisplayField>Status__c</errorDisplayField>
-        <errorMessage>Objective Status Description is required</errorMessage>
+        <errorMessage>Status is required</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Status_Req_CB</fullName>
         <active>true</active>
         <errorConditionFormula>ISblank(TEXT(Status__c)) &amp;&amp;  $User.Operating_Group__c == &apos;Cambridge&apos; &amp;&amp; !ISBLANK(Description__c)</errorConditionFormula>
         <errorDisplayField>Status__c</errorDisplayField>
-        <errorMessage>Objective Status is required</errorMessage>
+        <errorMessage>Status is required</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>TargetDate_before_EfftiveDate</fullName>
@@ -263,7 +263,7 @@
         <active>true</active>
         <errorConditionFormula>Target_End_Date__c  &gt; Action_Plan_Goal__r.Action_Plan__r.Target_Date__c</errorConditionFormula>
         <errorDisplayField>Target_End_Date__c</errorDisplayField>
-        <errorMessage>Objective Target Date must be on or before the Action Plan Target Date</errorMessage>
+        <errorMessage>Target Date must be on or before the Action Plan Target Date</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Target_req</fullName>
@@ -282,6 +282,6 @@ $User.Operating_Group__c == &apos;Redwood&apos; &amp;&amp;
 
  Action_Plan_Goal__r.Action_Plan__r.Service_Assignment__r.Admission__r.Person_Being_Served__r.MailingState != &apos;Arizona&apos;</errorConditionFormula>
         <errorDisplayField>Type__c</errorDisplayField>
-        <errorMessage>Objective Type is required</errorMessage>
+        <errorMessage>Type is required</errorMessage>
     </validationRules>
 </CustomObject>
