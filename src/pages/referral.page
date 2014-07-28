@@ -688,7 +688,7 @@ function enableDiagEff() {
       </apex:pageBlock>
       <apex:pageBlock title="Payer Detail" id="fundingSourcePayerDetailEntry" rendered="{!ReferralRecordType == 'CareMeridian' || ReferralRecordType == 'NeuroRestorative'}">
         <apex:pageBlockSection columns="2" rendered="{!ReferralRecordType == 'CareMeridian'}">
-            <apex:outputField value="{!personBeingRefRecord.Full_Name__c}" />
+        	<apex:outputText label="Full Name" value="{!IF(ISBLANK(personBeingRefRecord.Middle_Initial__c),personBeingRefRecord.First_Name__c &' '&personBeingRefRecord.Last_Name__c, personBeingRefRecord.First_Name__c &' ' &personBeingRefRecord.Middle_Initial__c &' '& personBeingRefRecord.Last_Name__c)}" />
             <!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
             <apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!personBeingRefRecord.Age__c})">
                 <apex:param value="{!personBeingRefRecord.Date_of_Birth__c}"/>
@@ -717,7 +717,7 @@ function enableDiagEff() {
             <apex:inputField value="{!fundingSource.Relationship_To_Patient__c}" id="policyHolderRelationship" />
         </apex:pageBlockSection>
         <apex:pageBlockSection columns="2" rendered="{!ReferralRecordType == 'NeuroRestorative'}">
-            <apex:outputField value="{!personBeingRefRecord.Full_Name__c}" />
+            <apex:outputText label="Full Name" value="{!IF(ISBLANK(personBeingRefRecord.Middle_Initial__c),personBeingRefRecord.First_Name__c &' '&personBeingRefRecord.Last_Name__c, personBeingRefRecord.First_Name__c &' ' &personBeingRefRecord.Middle_Initial__c &' '& personBeingRefRecord.Last_Name__c)}" />
             <!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
             <apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!personBeingRefRecord.Age__c})">
                 <apex:param value="{!personBeingRefRecord.Date_of_Birth__c}"/>
@@ -726,7 +726,13 @@ function enableDiagEff() {
             <apex:inputField value="{!fundingSource.Payer_Type__c}" />
             <apex:inputField value="{!fundingSource.Payer_Name__c}" />
             <apex:inputField value="{!fundingSource.Payer_Phone__c}" />
-            <apex:inputField value="{!fundingSource.Policy_Holder__c}" />
+            <apex:pageBlockSectionItem >
+            	<apex:outputLabel for="policyHolder" value="Policy Holder" />
+            	<apex:outputPanel >
+            	<apex:inputField value="{!fundingSource.Policy_Holder__c}" id="policyHolder"/>
+            	<apex:commandLink value="Same as PBR" onclick="assignValue('{!$Component.policyHolder}', '{!IF(ISBLANK(personBeingRefRecord.Middle_Initial__c),personBeingRefRecord.First_Name__c &' '&personBeingRefRecord.Last_Name__c, personBeingRefRecord.First_Name__c &' ' &personBeingRefRecord.Middle_Initial__c &' '& personBeingRefRecord.Last_Name__c)}'); return false;" />
+            	</apex:outputPanel>
+            </apex:pageBlockSectionItem>
             <apex:inputField value="{!fundingSource.Relationship_To_Patient__c}" />
 
             <apex:pageBlockSectionItem >

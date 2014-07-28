@@ -882,7 +882,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
       }
 
       if (fundingSources != null) {
-
+      	
         for (Funding_Source__c fndSrc : fundingSources) {
           if (fndSrc.Referral__c == null) {
               System.debug('refId: ' + refId);
