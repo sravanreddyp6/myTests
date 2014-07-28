@@ -17,7 +17,27 @@
     .datecol{
         width: 250px;
     }
+    
+   .serviceLocation:hover {
+        background:#ffffff; /*BG color is a must for IE6*/
+        text-decoration:none;
+    } 
+    .serviceLocation div > div{
+        display:none; 
+        padding:2px 3px; 
+        margin-left:8px; 
+        min-width:350px;
+    }
+    .serviceLocation:hover div > div {
+        display:inline; 
+        position:absolute; 
+        background:#FFC; 
+        border:1px solid #cccccc; 
+        color:#000000;
+        cursor: text;
+    }        
 </style>
+
 <c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" servAssignId="{!theServAssign.Id}" parentPage="ServAssign" servAssignNew="{!newSA}" admId="{!admissionId}"  />
 <script>
     j$ = jQuery.noConflict();
@@ -86,8 +106,33 @@
         <apex:inputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!editSA}"  />
         <apex:outputField value="{!theServAssign.End_Date__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
-        <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!!editSA}"  />
-        <apex:inputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}"  />
+        <apex:pageBlockSectionItem rendered="{!editSA && serviceLocation = null}" >
+            <apex:outputLabel value="Location of Service" />
+            <apex:actionregion >
+                <c:CustomLookup id="sl" formID="myFRM" uniqueId="searchLocation" type="Service_Location__c" parentId="{!theServAssign.Service_Location__c}"
+                                parentName="{!serviceLocation.Name}" filters="name,city__c,state__c"
+                                return="ID, program__c,setting__c,service_value__c,phone__c,street__c,city__c,state__c,zip__c" />
+            </apex:actionregion>
+        </apex:pageBlockSectionItem>
+
+        <apex:pageblocksectionitem rendered="{!!editSA || (editSA && serviceLocation != null) }"  >
+            <apex:outputLabel value="Location of Service" for="LocationOfService" />
+            <apex:outputPanel id="LocationOfService" styleClass="serviceLocation"><u>{!serviceLocation.Name}</u>            
+                <apex:pageBlockSection columns="2" id="locationDisplay" collapsible="false" showHeader="false">
+                      <apex:outputField value="{!serviceLocation.Name}"/>
+                      <apex:outputField value="{!serviceLocation.Setting__c}"/>
+                      <apex:pageBlockSectionItem id="locationaddr" >
+                          <apex:outputLabel value="Address" /><c:AddressDisplay Street1="{!serviceLocation.Street__c}"
+                                            City="{!serviceLocation.City__c}"
+                                            State="{!serviceLocation.State__c}"
+                                            Zip="{!serviceLocation.Zip__c}"/>
+                      </apex:pageBlockSectionItem>
+                      <apex:outputField value="{!serviceLocation.Phone__c}" />
+                </apex:pageBlockSection>
+            </apex:outputPanel>
+        </apex:pageblocksectionitem>        
+        <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!!editSA || (editSA && serviceLocation != null)}"  />
+        <apex:inputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA && serviceLocation = null}"  />
         <apex:outputField value="{!theServAssign.Medical_Record_Number__c}" />
         <apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA}"  required="{!episodeReq}"/>
@@ -116,9 +161,34 @@
         <apex:inputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!editSA}"  />
         <apex:outputField value="{!theServAssign.End_Date__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}"  onblur="changeEffectiveDates();" />
-        <apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA}"  />
-        <apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA}"  />
+        <apex:pageBlockSectionItem rendered="{!editSA && serviceLocation = null}" >
+            <apex:outputLabel value="Location of Service" />
+            <apex:actionregion >
+                <c:CustomLookup id="sl" formID="myFRM" uniqueId="searchLocation" type="Service_Location__c" parentId="{!theServAssign.Service_Location__c}"
+                                parentName="{!serviceLocation.Name}" filters="name,city__c,state__c"
+                                return="ID, program__c,setting__c,service_value__c,phone__c,street__c,city__c,state__c,zip__c" />
+            </apex:actionregion>
+        </apex:pageBlockSectionItem>
+
+        <apex:pageblocksectionitem rendered="{!!editSA || (editSA && serviceLocation != null) }"  >
+            <apex:outputLabel value="Location of Service" for="LocationOfService" />
+            <apex:outputPanel id="LocationOfService" styleClass="serviceLocation"><u>{!serviceLocation.Name}</u>            
+                <apex:pageBlockSection columns="2" id="locationDisplay" collapsible="false" showHeader="false">
+                      <apex:outputField value="{!serviceLocation.Name}"/>
+                      <apex:outputField value="{!serviceLocation.Setting__c}"/>
+                      <apex:pageBlockSectionItem id="locationaddr" >
+                          <apex:outputLabel value="Address" /><c:AddressDisplay Street1="{!serviceLocation.Street__c}"
+                                            City="{!serviceLocation.City__c}"
+                                            State="{!serviceLocation.State__c}"
+                                            Zip="{!serviceLocation.Zip__c}"/>
+                      </apex:pageBlockSectionItem>
+                      <apex:outputField value="{!serviceLocation.Phone__c}" />
+                </apex:pageBlockSection>
+            </apex:outputPanel>
+        </apex:pageblocksectionitem>
         <apex:outputField value="{!theServAssign.Medical_Record_Number__c}" />        
+        <apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA}"  />
+        <apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA}"  />        
         <apex:pageblocksectionitem rendered="{!editSA}"  >
         <apex:outputLabel value="Model" for="modelfield" />
         <apex:actionregion >
@@ -238,41 +308,7 @@
 
  
     </apex:pageBlockSection>
-    
-    <hr />
-    <apex:pageBlockSection title="Location of Service" columns="2" id="locationDisplay" collapsible="false">
-          <apex:pageBlockSectionItem rendered="{!editSA && serviceLocation = null}" >
-              <apex:outputLabel value="Alias" />
-              <apex:actionregion >
-                  <c:CustomLookup id="sl" formID="myFRM" uniqueId="searchLocation" type="Service_Location__c" parentId="{!theServAssign.Service_Location__c}"
-                                  parentName="{!serviceLocation.Name}" filters="name,city__c,state__c"
-                                  return="ID, program__c,setting__c,service_value__c,phone__c,street__c,city__c,state__c,zip__c" />
-              </apex:actionregion>
-          </apex:pageBlockSectionItem>
 
-          <apex:pageBlockSectionItem rendered="{!editSA && serviceLocation != null}" >
-            <apex:outputLabel value="Alias" />
-            <apex:outputText value="{!serviceLocation.Name}" />
-          </apex:pageBlockSectionItem>
-                    
-          <apex:outputField value="{!serviceLocation.Name}" rendered="{!!editSA}"/>
-          <apex:outputField value="{!serviceLocation.Setting__c}"/>
-          <apex:pageBlockSectionItem id="locationaddr" >
-              <apex:outputLabel value="Address" /><c:AddressDisplay Street1="{!serviceLocation.Street__c}"
-                                City="{!serviceLocation.City__c}"
-                                State="{!serviceLocation.State__c}"
-                                Zip="{!serviceLocation.Zip__c}"/>
-          </apex:pageBlockSectionItem>
-          <apex:outputField value="{!serviceLocation.Phone__c}" />
-              <apex:outputPanel style="display:none">
-              <apex:actionregion >
-              <apex:inputText id="currentProgramID" value="{!currentProgramID}" >
-              <apex:actionsupport event="onchange" action="{!loadAvailableCodesByID}" rerender="ServCodeSelect" />
-              </apex:inputText>
-              </apex:actionregion>
-              </apex:outputPanel>
-          
-</apex:pageBlockSection>
 <apex:outputpanel rendered="{!showCodes}"><hr /></apex:outputpanel>
     <apex:pageBlockSection title="Service Code Selection"
                              showHeader="true"
