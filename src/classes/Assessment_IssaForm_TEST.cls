@@ -90,13 +90,14 @@ private class Assessment_IssaForm_TEST {
             for(Assessment_Response__c res : frmNew.mapCurrentResps.values()){
                 res.Response__c = 'awesome';
             }        
-            frmNew.assessment.Previous__c = ass.previous__c;    
+            frmNew.assessment.Previous__c = ass.previous__c;   
+            frmNew.assessment.Approval_date__c = system.today();   
             frmNew.mySave();
             frmNew.myApprove();          
             system.debug('heeee - ' + frmNew.assessment.Previous__c);
             list<task> t = [select id from task];
             //Commented for July 2014 Deployment to resolve test class failure.
-            //system.assertEquals(1, t.size());
+            system.assertEquals(1, t.size());
             
                            
     
@@ -181,7 +182,7 @@ private class Assessment_IssaForm_TEST {
     
     
     }
-/*
+
     static testMethod void hideEditAndReviseButtonFromLevel1User() {
         // We need business logic that prevents a Level 1 user from accessing the Edit and Revise button, per note on RBO-289 from Kristen Lewis, 7/18/14, 8:54 AM.  To test:
         
@@ -218,7 +219,7 @@ private class Assessment_IssaForm_TEST {
             
             insert testUsers;
                         
-            
+            system.runas(new User(Id = Userinfo.getUserId())){ // Used system.run as to avoid the test class failure due to Mixed DML Opertaion error! Sravan: 07/28/2014 12:53 PM
             List<PermissionSetAssignment> psaList = new List<PermissionSetAssignment>();
             
             // Create the 3 permission set assignments four our 4 users with the 4 RW Level permission sets, respectively.
@@ -230,6 +231,7 @@ private class Assessment_IssaForm_TEST {
             }
             
             insert psaList;
+            }
             
             TMN_Generic_Core_TestData myTestData = new TMN_Generic_Core_TestData();
             
@@ -303,5 +305,5 @@ private class Assessment_IssaForm_TEST {
                 }
             Test.stopTest();
     }
-    */
+    
 }
