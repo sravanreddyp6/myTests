@@ -29,14 +29,16 @@ public class TMN_Tree{
             public list<node> nodes {get; set;}
             public string key {get; set;}
             public string title {get; set;}
+            public string refID {get; set;}
             public string getLongTextTitle(){ 
-            	String newTitle = title.replace('\r\n','<br/>');
+                String newTitle = title.replace('\r\n','<br/>');
                 newTitle = newTitle.replace('\n','<br/>');
                 newTitle = newTitle.replace('"','\\"');
-            	return newTitle;}
+                return newtitle;}
             public string status {get; set;}
             public string helpText {get; set;}
             public boolean isNew {get; set;}
+            public boolean isInserted {get; set;}
             
             //fancy tree settings            
             public boolean isSelected {get; set;}

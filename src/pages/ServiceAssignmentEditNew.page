@@ -601,14 +601,14 @@ END: Uncomment to have the element collapsed by default -->
         <apex:commandButton value="Add Diagnosis"
                             id="addDiagnosis"
                             onClick="showAddDiagnosis();return false;"
-                            rendered="{!editSA}"/>
+                            />
     </div>
     <apex:pageBlockSection columns="1"
                              collapsible="false">
 
      <apex:pageblockTable value="{!diagnoses}" var="dg" rendered="{!diagnoses != null && (diagnoses.size>0)}" >
 
-     <apex:column rendered="{!editSA && !newSA}" headerValue="Action" ><a href="#Diag" onclick="showEditDiagnosis('{!dg.id}');return false;">Edit</a></apex:column>
+     <apex:column rendered="{!!newSA}" headerValue="Action" ><a href="#Diag" onclick="showEditDiagnosis('{!dg.id}');return false;">Edit</a></apex:column>
      <apex:column headerValue="Effective Date" value="{!dg.Effective_Date__c}"/>
      <apex:column value="{!dg.Primary_Diagnosis__c}"  headerValue="Primary" />
      <apex:column value="{!dg.Secondary_Diagnosis__c}"  headerValue="Secondary" />
