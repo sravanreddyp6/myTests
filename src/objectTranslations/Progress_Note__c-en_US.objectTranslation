@@ -537,8 +537,16 @@
         <name>Date_of_Service__c</name>
     </fields>
     <fields>
+        <label><!-- Days Since Creation --></label>
+        <name>Days_Created_past_DOS__c</name>
+    </fields>
+    <fields>
         <label><!-- Dev. &amp; Impl. Home Based Support Plan --></label>
         <name>Dev_Impl_Home_Based_Support_Plan__c</name>
+    </fields>
+    <fields>
+        <label><!-- Diagnostic Code --></label>
+        <name>Diagnostic_Code__c</name>
     </fields>
     <fields>
         <label><!-- Direct Contact? --></label>
@@ -602,6 +610,14 @@
         <name>FCT_Fidelity_Measure__c</name>
     </fields>
     <fields>
+        <label><!-- FCT Phase at Note Creation --></label>
+        <name>FCT_Phase_String_At_Note_Creation__c</name>
+    </fields>
+    <fields>
+        <label><!-- FCT Phase at Note Creation --></label>
+        <name>FCT_Phase_at_Note_Creation__c</name>
+    </fields>
+    <fields>
         <label><!-- Face-to-Face Time --></label>
         <name>Face_to_Face_Time__c</name>
     </fields>
@@ -624,6 +640,14 @@
     <fields>
         <label><!-- First Name --></label>
         <name>First_Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Funding Source --></label>
+        <name>Funding_Source2__c</name>
+    </fields>
+    <fields>
+        <label><!-- Funding Source Number --></label>
+        <name>Funding_Source_Number__c</name>
     </fields>
     <fields>
         <help><!-- Please indicate the funding source. --></help>
@@ -801,6 +825,10 @@
         <name>Member_Transportation_by_Staff__c</name>
     </fields>
     <fields>
+        <label><!-- Mileage --></label>
+        <name>Mileage__c</name>
+    </fields>
+    <fields>
         <label><!-- Mod 1 --></label>
         <name>Mod_1__c</name>
     </fields>
@@ -819,6 +847,10 @@
     <fields>
         <label><!-- Monitoring --></label>
         <name>Monitoring__c</name>
+    </fields>
+    <fields>
+        <label><!-- Month &amp; Year --></label>
+        <name>Month_Year__c</name>
     </fields>
     <fields>
         <label><!-- Mood/Affect --></label>
@@ -1012,6 +1044,10 @@ If this is selected, please fill out the appropriate check boxes to the right. -
         <name>Primary_Diagnosis_Code__c</name>
     </fields>
     <fields>
+        <label><!-- Primary Diagnosis --></label>
+        <name>Primary_Diagnosis__c</name>
+    </fields>
+    <fields>
         <label><!-- Procedure Code --></label>
         <name>Procedure_Code_MA__c</name>
         <picklistValues>
@@ -1122,9 +1158,49 @@ If this is selected, please fill out the appropriate check boxes to the right. -
         <name>School__c</name>
     </fields>
     <fields>
+        <label><!-- Secondary Diagnosis --></label>
+        <name>Secondary_Diagnosis__c</name>
+    </fields>
+    <fields>
         <label><!-- Service Assignment --></label>
         <name>Service_Assignment__c</name>
         <relationshipLabel><!-- Progress Notes --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Service Code Modifier 1 --></label>
+        <name>Service_Code_Modifier_1__c</name>
+        <picklistValues>
+            <masterLabel>GT</masterLabel>
+            <translation><!-- GT --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>HE</masterLabel>
+            <translation><!-- HE --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>HQ</masterLabel>
+            <translation><!-- HQ --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Service Code Modifier 2 --></label>
+        <name>Service_Code_Modifier_2__c</name>
+        <picklistValues>
+            <masterLabel>99</masterLabel>
+            <translation><!-- 99 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>UK</masterLabel>
+            <translation><!-- UK --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Service Code Modifier 3 --></label>
+        <name>Service_Code_Modifier_3__c</name>
+        <picklistValues>
+            <masterLabel>HR</masterLabel>
+            <translation><!-- HR --></translation>
+        </picklistValues>
     </fields>
     <fields>
         <label><!-- Service Code --></label>
@@ -1152,8 +1228,28 @@ If this is selected, please fill out the appropriate check boxes to the right. -
             <translation><!-- Community --></translation>
         </picklistValues>
         <picklistValues>
+            <masterLabel>Community Mental Health Center</masterLabel>
+            <translation><!-- Community Mental Health Center --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Court</masterLabel>
+            <translation><!-- Court --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Day Program</masterLabel>
+            <translation><!-- Day Program --></translation>
+        </picklistValues>
+        <picklistValues>
             <masterLabel>Home</masterLabel>
             <translation><!-- Home --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>MR Intermediate Care</masterLabel>
+            <translation><!-- MR Intermediate Care --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Medical Facility</masterLabel>
+            <translation><!-- Medical Facility --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Office</masterLabel>
@@ -1237,6 +1333,23 @@ If this is selected, please fill out the appropriate check boxes to the right. -
         <help><!-- Skills transferred to consultee (teacher, tss, parent/guardian, etc.), and how transferred? --></help>
         <label><!-- Skills transferred to consultee --></label>
         <name>Skills_transferred_to_consultee__c</name>
+    </fields>
+    <fields>
+        <label><!-- Staff Credentials Current --></label>
+        <name>Staff_Credentials_Current__c</name>
+    </fields>
+    <fields>
+        <label><!-- Staff Credentials --></label>
+        <name>Staff_Credentials__c</name>
+    </fields>
+    <fields>
+        <label><!-- Practitioner ID --></label>
+        <name>Staff_Employee_ID__c</name>
+    </fields>
+    <fields>
+        <label><!-- Staff Name --></label>
+        <name>Staff_Name__c</name>
+        <relationshipLabel><!-- Progress Notes --></relationshipLabel>
     </fields>
     <fields>
         <label><!-- Service Start Time --></label>
@@ -1416,6 +1529,18 @@ If this is selected, please fill out the appropriate check boxes to the right. -
         </picklistValues>
     </fields>
     <fields>
+        <label><!-- Type of Service --></label>
+        <name>Type_of_Service__c</name>
+        <picklistValues>
+            <masterLabel>Family</masterLabel>
+            <translation><!-- Family --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Individual</masterLabel>
+            <translation><!-- Individual --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
         <label><!-- Unit(s) --></label>
         <name>Units__c</name>
     </fields>
@@ -1521,6 +1646,56 @@ If this is selected, please fill out the appropriate check boxes to the right. -
         </sections>
     </layouts>
     <layouts>
+        <layout>IN - FCT Progress Note Layout</layout>
+        <sections>
+            <label><!-- Approval Information --></label>
+            <section>Approval Information</section>
+        </sections>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+        <sections>
+            <label><!-- New Section --></label>
+            <section>New Section</section>
+        </sections>
+        <sections>
+            <label><!-- Service Details --></label>
+            <section>Service Details</section>
+        </sections>
+        <sections>
+            <label><!-- Short Term Goals --></label>
+            <section>Short Term Goals</section>
+        </sections>
+        <sections>
+            <label><!-- Warning --></label>
+            <section>Warning</section>
+        </sections>
+    </layouts>
+    <layouts>
+        <layout>MA - FCT Progress Note</layout>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+        <sections>
+            <label><!-- New Section --></label>
+            <section>New Section</section>
+        </sections>
+        <sections>
+            <label><!-- Service Details --></label>
+            <section>Service Details</section>
+        </sections>
+        <sections>
+            <label><!-- Short Term Goals --></label>
+            <section>Short Term Goals</section>
+        </sections>
+        <sections>
+            <label><!-- Warning --></label>
+            <section>Warning</section>
+        </sections>
+    </layouts>
+    <layouts>
         <layout>MA - IFCS Progress Note Layout</layout>
         <sections>
             <label><!-- Custom Links --></label>
@@ -1567,6 +1742,29 @@ If this is selected, please fill out the appropriate check boxes to the right. -
         </sections>
     </layouts>
     <layouts>
+        <layout>MD - FCT Progress Note</layout>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+        <sections>
+            <label><!-- New Section --></label>
+            <section>New Section</section>
+        </sections>
+        <sections>
+            <label><!-- Service Details --></label>
+            <section>Service Details</section>
+        </sections>
+        <sections>
+            <label><!-- Short Term Goals --></label>
+            <section>Short Term Goals</section>
+        </sections>
+        <sections>
+            <label><!-- Warning --></label>
+            <section>Warning</section>
+        </sections>
+    </layouts>
+    <layouts>
         <layout>MD IFCS-Progress Note</layout>
         <sections>
             <label><!-- Custom Links --></label>
@@ -1584,20 +1782,12 @@ If this is selected, please fill out the appropriate check boxes to the right. -
     <layouts>
         <layout>NC - Child and Family Team Progress Note Layout</layout>
         <sections>
-            <label><!-- Approval Information --></label>
-            <section>Approval Information</section>
-        </sections>
-        <sections>
             <label><!-- Custom Links --></label>
             <section>Custom Links</section>
         </sections>
         <sections>
             <label><!-- NC Details --></label>
             <section>NC Details</section>
-        </sections>
-        <sections>
-            <label><!-- New Section --></label>
-            <section>New Section</section>
         </sections>
         <sections>
             <label><!-- Service Code and Authorization --></label>
@@ -1617,26 +1807,57 @@ If this is selected, please fill out the appropriate check boxes to the right. -
         </sections>
     </layouts>
     <layouts>
-        <layout>NC - IFCS Progress Note</layout>
-        <sections>
-            <label><!-- Approval Information --></label>
-            <section>Approval Information</section>
-        </sections>
+        <layout>NC - FCT Progress Note</layout>
         <sections>
             <label><!-- Custom Links --></label>
             <section>Custom Links</section>
         </sections>
         <sections>
-            <label><!-- NC - IFCS Details --></label>
-            <section>NC - IFCS Details</section>
+            <label><!-- NC - FCT Details --></label>
+            <section>NC - FCT Details</section>
         </sections>
         <sections>
-            <label><!-- NC - IFCS Non-Payable Outcome --></label>
-            <section>NC - IFCS Non-Payable Outcome</section>
+            <label><!-- NC - FCT Non-Payable Outcome --></label>
+            <section>NC - FCT Non-Payable Outcome</section>
         </sections>
         <sections>
-            <label><!-- NC - IFCS Type of Session --></label>
-            <section>NC - IFCS Type of Session</section>
+            <label><!-- NC - FCT Type of Session --></label>
+            <section>NC - FCT Type of Session</section>
+        </sections>
+        <sections>
+            <label><!-- New Section --></label>
+            <section>New Section</section>
+        </sections>
+        <sections>
+            <label><!-- Service Details --></label>
+            <section>Service Details</section>
+        </sections>
+        <sections>
+            <label><!-- Short Term Goals --></label>
+            <section>Short Term Goals</section>
+        </sections>
+        <sections>
+            <label><!-- Warning --></label>
+            <section>Warning</section>
+        </sections>
+    </layouts>
+    <layouts>
+        <layout>NC - IFCS Progress Note</layout>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+        <sections>
+            <label><!-- NC - FCT Details --></label>
+            <section>NC - FCT Details</section>
+        </sections>
+        <sections>
+            <label><!-- NC - FCT Non-Payable Outcome --></label>
+            <section>NC - FCT Non-Payable Outcome</section>
+        </sections>
+        <sections>
+            <label><!-- NC - FCT Type of Session --></label>
+            <section>NC - FCT Type of Session</section>
         </sections>
         <sections>
             <label><!-- New Section --></label>
@@ -1792,6 +2013,29 @@ If this is selected, please fill out the appropriate check boxes to the right. -
         </sections>
     </layouts>
     <layouts>
+        <layout>OH - FCT Progress Note</layout>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+        <sections>
+            <label><!-- New Section --></label>
+            <section>New Section</section>
+        </sections>
+        <sections>
+            <label><!-- Service Details --></label>
+            <section>Service Details</section>
+        </sections>
+        <sections>
+            <label><!-- Short Term Goals --></label>
+            <section>Short Term Goals</section>
+        </sections>
+        <sections>
+            <label><!-- Warning --></label>
+            <section>Warning</section>
+        </sections>
+    </layouts>
+    <layouts>
         <layout>PA - BHRS (BSC) Progress Note Layout</layout>
         <sections>
             <label><!-- Custom Links --></label>
@@ -1891,12 +2135,20 @@ If this is selected, please fill out the appropriate check boxes to the right. -
         <name>FL_FSS_Progress_Note</name>
     </recordTypes>
     <recordTypes>
+        <label><!-- IN-FCT --></label>
+        <name>IN_FCT</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- MA-FCT --></label>
+        <name>MA_FCT</name>
+    </recordTypes>
+    <recordTypes>
         <label><!-- IFCS-MA - Progress Note --></label>
         <name>MA_IFCS_Progress_Note</name>
     </recordTypes>
     <recordTypes>
-        <label><!-- MA - Face to Face --></label>
-        <name>MA_Progress_Note</name>
+        <label><!-- MD-FCT --></label>
+        <name>MD_FCT</name>
     </recordTypes>
     <recordTypes>
         <label><!-- IFCS-MD - Progress Note --></label>
@@ -1907,7 +2159,7 @@ If this is selected, please fill out the appropriate check boxes to the right. -
         <name>NC_Child_and_Family_Team</name>
     </recordTypes>
     <recordTypes>
-        <label><!-- NC - IFCS --></label>
+        <label><!-- NC - FCT --></label>
         <name>NC_IFCS_Progress_Note</name>
     </recordTypes>
     <recordTypes>
@@ -1925,6 +2177,10 @@ If this is selected, please fill out the appropriate check boxes to the right. -
     <recordTypes>
         <label><!-- NJ - Progress Note --></label>
         <name>NJ_Progress_Note</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- OH-FCT --></label>
+        <name>OH_FCT</name>
     </recordTypes>
     <recordTypes>
         <label><!-- PA - BHRS (BSC) Progress Note --></label>
@@ -1974,6 +2230,14 @@ If this is selected, please fill out the appropriate check boxes to the right. -
     <validationRules>
         <errorMessage><!-- This Progress Note has been locked, it can not be edited. --></errorMessage>
         <name>Locked</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Please enter only numeric values. --></errorMessage>
+        <name>Mileage_Numeric</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Please enter only one digit after the decimal. --></errorMessage>
+        <name>Mileage_OneDecimals</name>
     </validationRules>
     <validationRules>
         <errorMessage><!-- Non-Payable Outcome checkbox is checked but no outcomes have been selected. Please select an outcome. --></errorMessage>

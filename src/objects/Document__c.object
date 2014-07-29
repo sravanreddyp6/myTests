@@ -54,10 +54,13 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>An object for holding document profiles for the Document Tracker.</description>
     <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableEnhancedLookup>false</enableEnhancedLookup>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableReports>true</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fields>
         <fullName>Active__c</fullName>
         <defaultValue>true</defaultValue>
@@ -351,6 +354,34 @@
         <columns>Relative_Due_Date_Event__c</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
+    </listViews>
+    <listViews>
+        <fullName>Cambridge_BP_DocView</fullName>
+        <columns>State__c</columns>
+        <columns>NAME</columns>
+        <columns>Type__c</columns>
+        <columns>Active__c</columns>
+        <columns>Relative_Due_Date_Units__c</columns>
+        <columns>Relative_Due_Date_UOM__c</columns>
+        <columns>Relative_Due_Date_Event__c</columns>
+        <columns>Auto_Include__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>State__c</field>
+            <operation>equals</operation>
+            <value>NC</value>
+        </filters>
+        <filters>
+            <field>Type__c</field>
+            <operation>equals</operation>
+            <value>Case Document</value>
+        </filters>
+        <filters>
+            <field>Auto_Include__c</field>
+            <operation>equals</operation>
+            <value>1</value>
+        </filters>
+        <label>Cambridge BP DocView</label>
     </listViews>
     <nameField>
         <label>Document Name</label>

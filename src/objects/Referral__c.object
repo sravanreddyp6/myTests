@@ -54,10 +54,13 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>REFERRAL - Stores data related to clients being referred</description>
     <enableActivities>true</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableEnhancedLookup>false</enableEnhancedLookup>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableReports>true</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fieldSets>
         <fullName>Red_Flag_Arizona</fullName>
         <description>Field that define a Red Flag Referral in Arizona</description>
@@ -1931,6 +1934,15 @@
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
         <label>Evaluated By (Internal)</label>
+        <lookupFilter>
+            <active>true</active>
+            <filterItems>
+                <field>TMN_User__c.Operating_Group__c</field>
+                <operation>equals</operation>
+                <valueField>$User.Operating_Group__c</valueField>
+            </filterItems>
+            <isOptional>false</isOptional>
+        </lookupFilter>
         <referenceTo>TMN_User__c</referenceTo>
         <relationshipLabel>Referrals (Evaluated By (Internal))</relationshipLabel>
         <relationshipName>Referrals1</relationshipName>
@@ -4613,6 +4625,10 @@
             </picklistValues>
             <picklistValues>
                 <fullName>Physical Disability</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Victim of Discrimination</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -14748,6 +14764,10 @@
             </values>
             <values>
                 <fullName>Physical Disability</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Victim of Discrimination</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -25981,6 +26001,10 @@
                 <fullName>Physical Disability</fullName>
                 <default>false</default>
             </values>
+            <values>
+                <fullName>Victim of Discrimination</fullName>
+                <default>false</default>
+            </values>
         </picklistValues>
         <picklistValues>
             <picklist>Reason_Category_Mental_Health_Emotional__c</picklist>
@@ -29579,6 +29603,10 @@
             </values>
             <values>
                 <fullName>Physical Disability</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Victim of Discrimination</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -33264,6 +33292,10 @@
                 <fullName>Physical Disability</fullName>
                 <default>false</default>
             </values>
+            <values>
+                <fullName>Victim of Discrimination</fullName>
+                <default>false</default>
+            </values>
         </picklistValues>
         <picklistValues>
             <picklist>Reason_Category_Mental_Health_Emotional__c</picklist>
@@ -36929,6 +36961,10 @@
             </values>
             <values>
                 <fullName>Physical Disability</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Victim of Discrimination</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -44096,6 +44132,10 @@
             </values>
             <values>
                 <fullName>Physical Disability</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Victim of Discrimination</fullName>
                 <default>false</default>
             </values>
         </picklistValues>

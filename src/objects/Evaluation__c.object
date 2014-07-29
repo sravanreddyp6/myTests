@@ -51,19 +51,22 @@
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
     <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableReports>true</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fieldSets>
         <fullName>NursingAssessment</fullName>
         <description>This field set is used to carryover the field values from Referral Evaluation to NursesAssessment evaluation under ServiceAssignment for CareMeridian group.</description>
         <displayedFields>
-            <field>Advanced_Directives__c</field>
+            <field>Weight__c</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>false</isRequired>
         </displayedFields>
         <displayedFields>
-            <field>Advanced_Directives_Attached__c</field>
+            <field>HeightFt__c</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>false</isRequired>
         </displayedFields>
@@ -73,22 +76,7 @@
             <isRequired>false</isRequired>
         </displayedFields>
         <displayedFields>
-            <field>Code_Status_Other__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Isolation__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>DiagnosisIsolation_Type__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>O2_Type__c</field>
+            <field>Trach_Type__c</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>false</isRequired>
         </displayedFields>
@@ -98,12 +86,7 @@
             <isRequired>false</isRequired>
         </displayedFields>
         <displayedFields>
-            <field>Cuffed__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>PMV__c</field>
+            <field>Trach_Type_Other__c</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>false</isRequired>
         </displayedFields>
@@ -113,17 +96,47 @@
             <isRequired>false</isRequired>
         </displayedFields>
         <displayedFields>
+            <field>Trach_Size__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Code_Status_Other__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Advanced_Directives__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Trach_Placement_Date__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Advanced_Directives_Attached__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Trach_Size_Other__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Details_Section_Completed__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Telemetry__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
             <field>Ventilator__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Ventilator_Type__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>If_Intermittent_Schedule__c</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>false</isRequired>
         </displayedFields>
@@ -138,6 +151,16 @@
             <isRequired>false</isRequired>
         </displayedFields>
         <displayedFields>
+            <field>Ventilator_Type__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>FIO2__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
             <field>PEEP__c</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>false</isRequired>
@@ -148,12 +171,7 @@
             <isRequired>false</isRequired>
         </displayedFields>
         <displayedFields>
-            <field>PS__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>CPAP__c</field>
+            <field>Wound__c</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>false</isRequired>
         </displayedFields>
@@ -163,337 +181,12 @@
             <isRequired>false</isRequired>
         </displayedFields>
         <displayedFields>
-            <field>O2__c</field>
+            <field>BiPAP_Rate__c</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>false</isRequired>
         </displayedFields>
         <displayedFields>
-            <field>Liters_Min__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Nasal_Cannula__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Mask__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Mask_Type__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Mist__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Mist_Type__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>T_Piece__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Elimination_Bladder_Continent__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Incontinent_Neuro_Bowel_Describe__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Elimination_Bladder_No_Continent_Details__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>If_ICP_Q__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Elimination_Bowel_Continent__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Elimination_Bowel_No_Continent_Appliance__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Dialysis__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Dialysis_Type__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Dialysis_Type_Details__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Dialysis_Days_of_the_Week__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Intact__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Responds_To_Pain__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Shunt_Permacath__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Shunt_Permacath_Location__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Nutrition_Route__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Wound_Vac__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Wound_Vac_Duration__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Wound_Vac_Frequency__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Specialty_Bed__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Specialty_Bed_Type__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Body_Map_Comments__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Glasses_For_Reading__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Glasses_For_Distance__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Glasses_For_Multi_Focal_Use__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Verbal_Stim__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Auditory_Stim__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Tactile_Stim__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Pain__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Visual__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Rancho_Level__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Cooperative__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Impulsive__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Inappropriate__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Agitated__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Combative__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Confused__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Unresponsive__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Bed_Alarm__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>One_to_One_Sitter__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Weight_Bearing_Precautions__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Cast__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Ortho_Cast_Location__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Cast_Location__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Traction__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Traction_Location__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Traction_Type__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Traction_Weight__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>External_Devices__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>External_Devices_Location__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>External_Devices_Type__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Wheel_Chair__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Front_Wheeled_Walker__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Rehab_Cane__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Current_Gait_Mobility_Other__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Current_Gait_Mobility_Other_Comments__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Distance_Details__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>History_of_Psycho_Social_Issues__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Prior_Living_Situation__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Prior_Living_Situation_Other__c</field>
+            <field>Patient_to_Bring_BiPAP__c</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>false</isRequired>
         </displayedFields>
@@ -594,7 +287,7 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Return from Bedhold</fullName>
+                <fullName>Return from bedhold</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -630,10 +323,11 @@
         <fullName>Alcohol_Abuse_Describe__c</fullName>
         <externalId>false</externalId>
         <label>Alcohol Abuse Describe</label>
-        <length>32768</length>
+        <length>255</length>
+        <required>false</required>
         <trackTrending>false</trackTrending>
-        <type>LongTextArea</type>
-        <visibleLines>4</visibleLines>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Alcohol_Abuse__c</fullName>
@@ -1061,7 +755,7 @@
     <fields>
         <fullName>Breathe_Sound_Other__c</fullName>
         <externalId>false</externalId>
-        <inlineHelpText>Please enter a value if Other is selected in Breath Sounds above.</inlineHelpText>
+        <inlineHelpText>Please enter the value if breathe sound is Other.</inlineHelpText>
         <label>Breathe Sound Other</label>
         <length>255</length>
         <required>false</required>
@@ -1564,16 +1258,6 @@
         <unique>false</unique>
     </fields>
     <fields>
-        <fullName>DC_Plan_Other__c</fullName>
-        <externalId>false</externalId>
-        <label>DC Plan Other</label>
-        <length>255</length>
-        <required>false</required>
-        <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
-    </fields>
-    <fields>
         <fullName>DC_Plan__c</fullName>
         <externalId>false</externalId>
         <label>DC Plan</label>
@@ -1636,7 +1320,7 @@
     <fields>
         <fullName>Date_of_Last_menstrual_Period__c</fullName>
         <externalId>false</externalId>
-        <label>Date of Last Menstrual Period</label>
+        <label>Date of Last menstrual Period</label>
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Date</type>
@@ -1644,7 +1328,7 @@
     <fields>
         <fullName>Date_of_last_mamogram__c</fullName>
         <externalId>false</externalId>
-        <label>Date of Last Mamogram</label>
+        <label>Date of last mamogram</label>
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Date</type>
@@ -1652,7 +1336,7 @@
     <fields>
         <fullName>Date_of_last_pap__c</fullName>
         <externalId>false</externalId>
-        <label>Date of Last Pap</label>
+        <label>Date of last pap</label>
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Date</type>
@@ -1889,11 +1573,11 @@
         <label>Diagnostics GYN Experiences</label>
         <picklist>
             <picklistValues>
-                <fullName>Delayed Onset of Puberty</fullName>
+                <fullName>Delayed onset of puberty</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Span of Several Months without Period</fullName>
+                <fullName>span of several months without period</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -1901,7 +1585,7 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>History of Implants</fullName>
+                <fullName>History of implants</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -2461,10 +2145,11 @@
         <fullName>Domestic_Abuse_Describe__c</fullName>
         <externalId>false</externalId>
         <label>Domestic Abuse Describe</label>
-        <length>20000</length>
+        <length>255</length>
+        <required>false</required>
         <trackTrending>false</trackTrending>
-        <type>LongTextArea</type>
-        <visibleLines>4</visibleLines>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Domestic_Abuse__c</fullName>
@@ -2498,10 +2183,11 @@
         <fullName>Drug_Abuse_Describe__c</fullName>
         <externalId>false</externalId>
         <label>Drug Abuse Describe</label>
-        <length>20000</length>
+        <length>255</length>
+        <required>false</required>
         <trackTrending>false</trackTrending>
-        <type>LongTextArea</type>
-        <visibleLines>4</visibleLines>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Drug_Abuse__c</fullName>
@@ -3434,10 +3120,11 @@
         <fullName>Financial_Abuse_Describe__c</fullName>
         <externalId>false</externalId>
         <label>Financial Abuse Describe</label>
-        <length>20000</length>
+        <length>255</length>
+        <required>false</required>
         <trackTrending>false</trackTrending>
-        <type>LongTextArea</type>
-        <visibleLines>4</visibleLines>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Financial_Abuse__c</fullName>
@@ -3482,7 +3169,7 @@
     <fields>
         <fullName>Frequency_of_menstrual_cycles__c</fullName>
         <externalId>false</externalId>
-        <label>Frequency of Menstrual Cycles</label>
+        <label>Frequency of menstrual cycles</label>
         <length>255</length>
         <required>false</required>
         <trackTrending>false</trackTrending>
@@ -3689,10 +3376,11 @@
         <fullName>Hallucinations_Describe__c</fullName>
         <externalId>false</externalId>
         <label>Hallucinations Describe</label>
-        <length>20000</length>
+        <length>255</length>
+        <required>false</required>
         <trackTrending>false</trackTrending>
-        <type>LongTextArea</type>
-        <visibleLines>4</visibleLines>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Hallucinations__c</fullName>
@@ -3799,7 +3487,7 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Poor</fullName>
+                <fullName>poor</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -3851,23 +3539,105 @@
         <fullName>HeightFt__c</fullName>
         <externalId>false</externalId>
         <label>ft</label>
-        <precision>7</precision>
-        <required>false</required>
-        <scale>2</scale>
+        <picklist>
+            <picklistValues>
+                <fullName>1</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>2</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>3</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>4</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>5</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>6</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>7</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>8</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>9</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>10</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
         <trackTrending>false</trackTrending>
-        <type>Number</type>
-        <unique>false</unique>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>HeightInches__c</fullName>
         <externalId>false</externalId>
         <label>inches</label>
-        <precision>7</precision>
-        <required>false</required>
-        <scale>2</scale>
+        <picklist>
+            <picklistValues>
+                <fullName>1</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>2</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>3</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>4</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>5</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>6</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>7</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>8</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>9</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>10</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>11</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
         <trackTrending>false</trackTrending>
-        <type>Number</type>
-        <unique>false</unique>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Height__c</fullName>
@@ -3877,17 +3647,6 @@
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Text</type>
-        <unique>false</unique>
-    </fields>
-    <fields>
-        <fullName>Height_in_cms__c</fullName>
-        <externalId>false</externalId>
-        <label>cm</label>
-        <precision>7</precision>
-        <required>false</required>
-        <scale>2</scale>
-        <trackTrending>false</trackTrending>
-        <type>Number</type>
         <unique>false</unique>
     </fields>
     <fields>
@@ -4058,7 +3817,7 @@
     <fields>
         <fullName>If_yes_Glucose_meter_Reading__c</fullName>
         <externalId>false</externalId>
-        <label>If Yes, Glucose Meter Reading</label>
+        <label>If yes, Glucose meter Reading</label>
         <length>255</length>
         <required>false</required>
         <trackTrending>false</trackTrending>
@@ -5427,15 +5186,6 @@
         <visibleLines>3</visibleLines>
     </fields>
     <fields>
-        <fullName>Neuro_Other_Body_Map_Comments__c</fullName>
-        <externalId>false</externalId>
-        <label>Neuro Other Body Map Comments</label>
-        <length>32768</length>
-        <trackTrending>false</trackTrending>
-        <type>LongTextArea</type>
-        <visibleLines>3</visibleLines>
-    </fields>
-    <fields>
         <fullName>Neuro_Pain_Activity__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
@@ -5477,16 +5227,6 @@
         <trackTrending>false</trackTrending>
         <type>MultiselectPicklist</type>
         <visibleLines>4</visibleLines>
-    </fields>
-    <fields>
-        <fullName>Neuro_Pain_Level__c</fullName>
-        <externalId>false</externalId>
-        <label>Neuro Pain Level</label>
-        <length>255</length>
-        <required>false</required>
-        <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Neuro_Pain_Manner_of_Exp__c</fullName>
@@ -6490,10 +6230,11 @@
         <fullName>Pain_History__c</fullName>
         <externalId>false</externalId>
         <label>Pain History</label>
-        <length>20000</length>
+        <length>255</length>
+        <required>false</required>
         <trackTrending>false</trackTrending>
-        <type>LongTextArea</type>
-        <visibleLines>4</visibleLines>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Pain_Level_Requiring_Intervention__c</fullName>
@@ -6556,7 +6297,7 @@
             </picklistValues>
             <picklistValues>
                 <fullName>No</fullName>
-                <default>true</default>
+                <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
@@ -6741,10 +6482,11 @@
         <fullName>Physical_Abuse_Describe__c</fullName>
         <externalId>false</externalId>
         <label>Physical Abuse Describe</label>
-        <length>20000</length>
+        <length>255</length>
+        <required>false</required>
         <trackTrending>false</trackTrending>
-        <type>LongTextArea</type>
-        <visibleLines>4</visibleLines>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Physical_Abuse__c</fullName>
@@ -6959,219 +6701,7 @@
         <label>Primary Language</label>
         <picklist>
             <picklistValues>
-                <fullName>English</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>English creoles- Belize, Guyanese</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Jamaican Creole</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Italian</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>French</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Patois</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>French Creole</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Haitian Creole</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Cajun</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Spanish</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Portuguese</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Greek</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Albanian</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Russian</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Bielorussian</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>German</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Austrian</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Swiss</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Swedish</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Danish</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Norwegian</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Icelandic</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Romanian</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Ukrainian</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Czech</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Polish</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Bosnian</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Croatian</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Serbian</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Armenian</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>India, n.e.c</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Hindi</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Bengali</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Afghani</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Pakistan, n.e.c.</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Turkish</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Chinese</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Cantonese</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Mandarin</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Taiwanese</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Shanghainese</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Miao, Hmong</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Hmong</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Japanese</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Korean</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Laotian</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Mon-Khmer, Cambodian</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Cambodian</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Khmer</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Vietnamese</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Muong</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Indonesian</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Arabic</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Hebrew</fullName>
+                <fullName>To be listed</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -7720,7 +7250,7 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>WFLs</fullName>
+                <fullName>WFLS</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -8004,115 +7534,7 @@
         <label>Religious Preference Details</label>
         <picklist>
             <picklistValues>
-                <fullName>Assembly Of God</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Baha&apos;i</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Baptist</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Buddhist</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Catholic</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Christian</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Church Of Christ</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Church Of God</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Episcopal</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Greek Orthodox</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Hindu</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Interdenominational</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Islam</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Jehovah&apos;s Witnesses</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Jewish</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Lutheran</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Mennonite</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Methodist</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Mormon</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Nazarene</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Non-Denominational</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Pentecostal</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Presbyterian</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Seventh-Day Adventist</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Atheist</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Other</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Not Disclosed</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Unknown</fullName>
+                <fullName>Avatar</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -8588,10 +8010,11 @@
         <fullName>Risk_to_Others_Describe__c</fullName>
         <externalId>false</externalId>
         <label>Risk to Others Describe</label>
-        <length>20000</length>
+        <length>255</length>
+        <required>false</required>
         <trackTrending>false</trackTrending>
-        <type>LongTextArea</type>
-        <visibleLines>4</visibleLines>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Risk_to_Others__c</fullName>
@@ -8605,10 +8028,11 @@
         <fullName>Risk_to_Self_Describe__c</fullName>
         <externalId>false</externalId>
         <label>Risk to Self Describe</label>
-        <length>20000</length>
+        <length>255</length>
+        <required>false</required>
         <trackTrending>false</trackTrending>
-        <type>LongTextArea</type>
-        <visibleLines>4</visibleLines>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Risk_to_Self__c</fullName>
@@ -8798,10 +8222,11 @@
         <fullName>Sexual_Abuse_Describe__c</fullName>
         <externalId>false</externalId>
         <label>Sexual Abuse Describe</label>
-        <length>20000</length>
+        <length>255</length>
+        <required>false</required>
         <trackTrending>false</trackTrending>
-        <type>LongTextArea</type>
-        <visibleLines>4</visibleLines>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Sexual_Abuse__c</fullName>
@@ -8841,7 +8266,7 @@
     </fields>
     <fields>
         <fullName>Shunt_Permacath__c</fullName>
-        <defaultValue>false</defaultValue>
+        <defaultValue>true</defaultValue>
         <externalId>false</externalId>
         <label>Shunt/Permacath</label>
         <trackTrending>false</trackTrending>
@@ -10153,38 +9578,12 @@
         <visibleLines>4</visibleLines>
     </fields>
     <fields>
-        <fullName>Urine_Color_Other__c</fullName>
-        <externalId>false</externalId>
-        <label>Urine Color (Other)</label>
-        <length>255</length>
-        <required>false</required>
-        <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
-    </fields>
-    <fields>
         <fullName>Urine_Color__c</fullName>
         <externalId>false</externalId>
         <label>Urine Color</label>
         <picklist>
             <picklistValues>
-                <fullName>Clear</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Straw</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Yellow</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Amber</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Other</fullName>
+                <fullName>Will define later</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -10680,7 +10079,7 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Return from Bedhold</fullName>
+                <fullName>Return from bedhold</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11118,11 +10517,11 @@
         <picklistValues>
             <picklist>Diagnostics_GYN_Experiences__c</picklist>
             <values>
-                <fullName>Delayed Onset of Puberty</fullName>
+                <fullName>Delayed onset of puberty</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>History of Implants</fullName>
+                <fullName>History of implants</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -11130,7 +10529,7 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Span of Several Months without Period</fullName>
+                <fullName>span of several months without period</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12068,11 +11467,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Poor</fullName>
+                <fullName>Unable to Determine</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Unable to Determine</fullName>
+                <fullName>poor</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12084,6 +11483,96 @@
             </values>
             <values>
                 <fullName>Regular</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>HeightFt__c</picklist>
+            <values>
+                <fullName>1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>10</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>3</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>4</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>5</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>6</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>7</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>8</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>9</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>HeightInches__c</picklist>
+            <values>
+                <fullName>1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>10</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>11</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>3</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>4</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>5</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>6</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>7</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>8</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>9</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -13305,219 +12794,7 @@
         <picklistValues>
             <picklist>Primary_Language__c</picklist>
             <values>
-                <fullName>Afghani</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Albanian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Arabic</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Armenian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Austrian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Bengali</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Bielorussian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Bosnian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Cajun</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Cambodian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Cantonese</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Chinese</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Croatian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Czech</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Danish</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>English</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>English creoles- Belize%2C Guyanese</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>French</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>French Creole</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>German</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Greek</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Haitian Creole</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Hebrew</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Hindi</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Hmong</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Icelandic</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>India%2C n%2Ee%2Ec</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Indonesian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Italian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Jamaican Creole</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Japanese</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Khmer</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Korean</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Laotian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Mandarin</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Miao%2C Hmong</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Mon-Khmer%2C Cambodian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Muong</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Norwegian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pakistan%2C n%2Ee%2Ec%2E</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Patois</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Polish</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Portuguese</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Romanian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Russian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Serbian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Shanghainese</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Spanish</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Swedish</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Swiss</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Taiwanese</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Turkish</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Ukrainian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Vietnamese</fullName>
+                <fullName>To be listed</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -13888,115 +13165,7 @@
         <picklistValues>
             <picklist>Religious_Preference_Details__c</picklist>
             <values>
-                <fullName>Assembly Of God</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Atheist</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Baha%27i</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Baptist</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Buddhist</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Catholic</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Christian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Church Of Christ</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Church Of God</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Episcopal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Greek Orthodox</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Hindu</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Interdenominational</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Islam</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Jehovah%27s Witnesses</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Jewish</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Lutheran</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Mennonite</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Methodist</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Mormon</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Nazarene</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Non-Denominational</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Not Disclosed</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pentecostal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Presbyterian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Seventh-Day Adventist</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Unknown</fullName>
+                <fullName>Avatar</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -14816,7 +13985,7 @@
         <picklistValues>
             <picklist>Urine_Color__c</picklist>
             <values>
-                <fullName>Clear</fullName>
+                <fullName>Will define later</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -14994,7 +14163,7 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Return from Bedhold</fullName>
+                <fullName>Return from bedhold</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -15436,11 +14605,11 @@
         <picklistValues>
             <picklist>Diagnostics_GYN_Experiences__c</picklist>
             <values>
-                <fullName>Delayed Onset of Puberty</fullName>
+                <fullName>Delayed onset of puberty</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>History of Implants</fullName>
+                <fullName>History of implants</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -15448,7 +14617,7 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Span of Several Months without Period</fullName>
+                <fullName>span of several months without period</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -16346,11 +15515,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Poor</fullName>
+                <fullName>Unable to Determine</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Unable to Determine</fullName>
+                <fullName>poor</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -16362,6 +15531,96 @@
             </values>
             <values>
                 <fullName>Regular</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>HeightFt__c</picklist>
+            <values>
+                <fullName>1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>10</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>3</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>4</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>5</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>6</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>7</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>8</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>9</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>HeightInches__c</picklist>
+            <values>
+                <fullName>1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>10</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>11</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>3</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>4</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>5</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>6</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>7</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>8</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>9</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -17493,7 +16752,7 @@
             <picklist>Pain_Present__c</picklist>
             <values>
                 <fullName>No</fullName>
-                <default>true</default>
+                <default>false</default>
             </values>
             <values>
                 <fullName>Yes</fullName>
@@ -17615,219 +16874,7 @@
         <picklistValues>
             <picklist>Primary_Language__c</picklist>
             <values>
-                <fullName>Afghani</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Albanian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Arabic</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Armenian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Austrian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Bengali</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Bielorussian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Bosnian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Cajun</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Cambodian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Cantonese</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Chinese</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Croatian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Czech</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Danish</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>English</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>English creoles- Belize%2C Guyanese</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>French</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>French Creole</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>German</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Greek</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Haitian Creole</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Hebrew</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Hindi</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Hmong</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Icelandic</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>India%2C n%2Ee%2Ec</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Indonesian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Italian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Jamaican Creole</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Japanese</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Khmer</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Korean</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Laotian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Mandarin</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Miao%2C Hmong</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Mon-Khmer%2C Cambodian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Muong</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Norwegian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pakistan%2C n%2Ee%2Ec%2E</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Patois</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Polish</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Portuguese</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Romanian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Russian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Serbian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Shanghainese</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Spanish</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Swedish</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Swiss</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Taiwanese</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Turkish</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Ukrainian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Vietnamese</fullName>
+                <fullName>To be listed</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -18067,6 +17114,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Impaired</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Therapist to Determine</fullName>
                 <default>false</default>
             </values>
@@ -18101,7 +17152,7 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>WFLs</fullName>
+                <fullName>WFLS</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -18230,115 +17281,7 @@
         <picklistValues>
             <picklist>Religious_Preference_Details__c</picklist>
             <values>
-                <fullName>Assembly Of God</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Atheist</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Baha%27i</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Baptist</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Buddhist</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Catholic</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Christian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Church Of Christ</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Church Of God</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Episcopal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Greek Orthodox</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Hindu</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Interdenominational</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Islam</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Jehovah%27s Witnesses</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Jewish</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Lutheran</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Mennonite</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Methodist</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Mormon</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Nazarene</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Non-Denominational</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Not Disclosed</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pentecostal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Presbyterian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Seventh-Day Adventist</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Unknown</fullName>
+                <fullName>Avatar</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -19162,23 +18105,7 @@
         <picklistValues>
             <picklist>Urine_Color__c</picklist>
             <values>
-                <fullName>Amber</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Clear</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Straw</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Yellow</fullName>
+                <fullName>Will define later</fullName>
                 <default>false</default>
             </values>
         </picklistValues>

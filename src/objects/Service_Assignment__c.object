@@ -54,13 +54,25 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>NOTES Service Assignments describe the services that can be performed for a Person Being Served. This object is master-detail to Admissions.</description>
     <enableActivities>true</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>true</enableHistory>
     <enableReports>true</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fields>
         <fullName>Admission__c</fullName>
         <externalId>false</externalId>
         <label>Admission</label>
+        <lookupFilter>
+            <active>true</active>
+            <filterItems>
+                <field>Admission__c.Person_Being_Served__c</field>
+                <operation>equals</operation>
+                <valueField>$Source.Person_Being_Served__c</valueField>
+            </filterItems>
+            <isOptional>false</isOptional>
+        </lookupFilter>
         <referenceTo>Admission__c</referenceTo>
         <relationshipLabel>Service Assignment</relationshipLabel>
         <relationshipName>Service_Agreements</relationshipName>
@@ -412,20 +424,6 @@
         <type>Picklist</type>
     </fields>
     <fields>
-        <fullName>Medical_Record_Number__c</fullName>
-        <description>Service Assignment Record number in the format as follows:
-[nine-digit unique number assigned to the program string] – [ten-digit PBS Unique Number] – [2 digit sequence number starting with 01]</description>
-        <externalId>false</externalId>
-        <formula>IF(PBS_ServiceLocation_Count__c &gt; 0, Service_Location__r.ProgramID__c &amp; &apos;-&apos; &amp; Person_Being_Served__r.PBS_Identifier__c &amp; &apos;-&apos; &amp; LPAD(TEXT(PBS_ServiceLocation_Count__c), 2, &apos;0&apos;), &apos;&apos;)</formula>
-        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
-        <label>Service Record Number</label>
-        <required>false</required>
-        <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
-    </fields>
-    <fields>
         <fullName>Model__c</fullName>
         <description>used for NC and FL</description>
         <externalId>false</externalId>
@@ -458,18 +456,6 @@
         <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>4</visibleLines>
-    </fields>
-    <fields>
-        <fullName>PBS_ServiceLocation_Count__c</fullName>
-        <externalId>false</externalId>
-        <label>PBS ServiceLocation Count</label>
-        <precision>2</precision>
-        <required>false</required>
-        <scale>0</scale>
-        <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>Number</type>
-        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Person_Being_Served__c</fullName>
@@ -976,17 +962,6 @@
         <unique>false</unique>
     </fields>
     <fields>
-        <fullName>Service_Assignment_Closure_Count__c</fullName>
-        <description>A field that sums the number of child Service Assignment Closure records for the Service Assignment, used in a validation rule to insure that no more than one Service Assignment Closure is created per Service Assignment.</description>
-        <externalId>false</externalId>
-        <label>Service Assignment Closure Count</label>
-        <summaryForeignKey>Service_Assignment_Closure__c.Service_Assignment__c</summaryForeignKey>
-        <summaryOperation>count</summaryOperation>
-        <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>Summary</type>
-    </fields>
-    <fields>
         <fullName>Service_Assignment_Number__c</fullName>
         <displayFormat>SA - {000000}</displayFormat>
         <externalId>false</externalId>
@@ -1101,19 +1076,6 @@
         <trackHistory>true</trackHistory>
         <type>Text</type>
     </nameField>
-    <namedFilters>
-        <fullName>nf_01IJ00000000JNEMA2_00NJ0000000IM6oMAG</fullName>
-        <active>true</active>
-        <field>Progress_Note__c.Service_Assignment__c</field>
-        <filterItems>
-            <field>Service_Assignment__c.Admission__c</field>
-            <operation>equals</operation>
-            <valueField>$Source.Admission__c</valueField>
-        </filterItems>
-        <isOptional>false</isOptional>
-        <name>Progress Note_Service Assignment</name>
-        <sourceObject>Progress_Note__c</sourceObject>
-    </namedFilters>
     <pluralLabel>Service Assignment</pluralLabel>
     <recordTypeTrackHistory>false</recordTypeTrackHistory>
     <recordTypes>
