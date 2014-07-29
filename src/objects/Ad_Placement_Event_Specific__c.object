@@ -48,12 +48,9 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>PMC</description>
     <enableActivities>false</enableActivities>
-    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableReports>true</enableReports>
-    <enableSharing>true</enableSharing>
-    <enableStreamingApi>true</enableStreamingApi>
     <fields>
         <fullName>Cost__c</fullName>
         <externalId>false</externalId>
@@ -157,6 +154,19 @@
         <label>Ad Placement / Event Specifics</label>
         <type>Text</type>
     </nameField>
+    <namedFilters>
+        <fullName>nf_01IU0000000Fc0bMAC_00NU0000002UlWIMA0</fullName>
+        <active>true</active>
+        <field>Prospects__c.Outreach_Event__c</field>
+        <filterItems>
+            <field>$Source.Outreach_Source__c</field>
+            <operation>equals</operation>
+            <valueField>Ad_Placement_Event_Specific__c.Outreach_Dictionary__c</valueField>
+        </filterItems>
+        <isOptional>false</isOptional>
+        <name>Prospect_Outreach Event</name>
+        <sourceObject>Prospects__c</sourceObject>
+    </namedFilters>
     <pluralLabel>Ad Placement / Event Specifics</pluralLabel>
     <searchLayouts>
         <customTabListAdditionalFields>Outreach_Dictionary__c</customTabListAdditionalFields>

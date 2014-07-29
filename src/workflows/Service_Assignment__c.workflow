@@ -42,7 +42,8 @@
     <fieldUpdates>
         <fullName>Update_Service_Assignment_Name</fullName>
         <field>Name</field>
-        <formula>LEFT(Person_Being_Served__r.FirstName, 1) &amp; &quot;. &quot; &amp; Person_Being_Served__r.LastName &amp; &quot; - SA&quot; &amp; TEXT(SA_Hidden__c) &amp; IF(Program__c &lt;&gt; &apos;&apos;, &quot; - &quot; &amp;  Program__c, &quot;&quot;) &amp; IF(TEXT(Location_Region__c) &lt;&gt; &apos;&apos;, &quot; - &quot;&amp; TEXT(Location_Region__c), &quot;&quot;) &amp; IF (Service_Line__c &lt;&gt; &apos;&apos;,  &quot; - &quot; &amp;Service_Line__c,&quot;&quot;)</formula>
+        <formula>LEFT(LEFT(Person_Being_Served__r.FirstName, 1) &amp; &quot;. &quot; &amp; Person_Being_Served__r.LastName &amp; &quot; - SA&quot; &amp; TEXT(SA_Hidden__c) &amp; IF(Service_Location__c &lt;&gt; &apos;&apos;, &quot; - &quot; &amp; Service_Location__r.Alias__c, IF (Program__c &lt;&gt; &apos;&apos;, &quot; - &quot; + Program__c, &quot;&quot;)) &amp; IF(TEXT(Location_Region__c) &lt;&gt; &apos;&apos;, &quot; - &quot; 
+&amp; TEXT(Location_Region__c), &quot;&quot;) &amp; IF (Service_Line__c &lt;&gt; &apos;&apos;, &quot; - &quot; &amp;Service_Line__c,&quot;&quot;), 80)</formula>
         <name>Update Service Assignment Name</name>
         <notifyAssignee>false</notifyAssignee>
         <operation>Formula</operation>
