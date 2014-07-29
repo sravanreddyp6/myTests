@@ -1,6 +1,7 @@
 <apex:page controller="CatalogAndPrograms" sidebar="false">
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+    
     <style>
         .thinking{
             opacity:0.8;
@@ -57,7 +58,7 @@
 	                <apex:actionSupport event="onchange" reRender="page" action="{!refreshHere}" status="myStatus"/>                                            
 	                </apex:selectList>
                 </apex:actionRegion>
-                <apex:inputField value="{!curr_catalog.Catalog_Name__c}" rendered="{!curCtlg == 'Create_New_Plan_code'}" style="margin:10px;"/>
+                <apex:inputField value="{!curr_catalog.Catalog_Name__c}" rendered="{!curCtlg != null }" required="true" style="margin:10px;"/>
             </apex:outputPanel>
          </apex:pageBlock>
 
