@@ -1,0 +1,39 @@
+<apex:page title="Admission Edit: {!admission.Name}" standardController="Admission__c" extensions="AdmissionEditExtension" standardStylesheets="false" sidebar="false" tabStyle="Persons_Being_Served_New__tab">
+<apex:stylesheet value="{!$Resource.mentoresdcss}" />
+
+    <c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" parentPage="Admission" admId="{!Admission__c.Id}" rendered="{!showPersonalCard}"/>
+    <br />
+    <apex:form >
+    <apex:pageMessages id="msgs"/>
+        <apex:pageBlock title="Admission Edit" id="detail" mode="edit">
+            <div class="pbHeaderButton" id="buttons">
+            	<apex:actionStatus id="mySaveStatus">
+				<apex:facet name="stop">
+					<apex:commandButton value="Save" id="btnSave" action="{!save}" status="mySaveStatus" rerender="msgs, detail"/>
+ 				</apex:facet>
+				<apex:facet name="start">
+					<apex:commandButton value="Save" disabled="true"/>
+				</apex:facet>
+				</apex:actionStatus>
+			    <apex:commandButton action="{!cancel}" value="Cancel"/>
+            </div>
+            <apex:pageBlockSection title="Information" columns="2">
+                <apex:outputField value="{!admission.Name}" />
+                <apex:inputField value="{!admission.Status__c}" />
+                <apex:outputField value="{!admission.Person_Being_Served__c}" />
+                <apex:inputField value="{!admission.Effective_Date__c}" required="true" />
+                <apex:inputField value="{!admission.Network_Offering__c}" required="true" />
+                <apex:inputField value="{!admission.Discharged_Date__c}" />
+                <apex:inputField value="{!admission.State__c}" required="true" />
+                <apex:inputField value="{!admission.Discharged_Status__c}" />
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{!admission.Reason_for_Discharge__c}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Referred-Out Details" columns="1">
+                <apex:inputField value="{!admission.Referred_Out_Date__c}" />
+                <apex:inputField value="{!admission.Referred_Out_Agency_Name__c}" />
+                <apex:inputField value="{!admission.Referred_Out_Reason__c}" />
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
