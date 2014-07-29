@@ -54,9 +54,12 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>NOTES Progress Notes are the notes taken for a Person Being Served on their progress towards meeting the goals on a Plan. Progress Notes are Master-detail to Plans.</description>
     <enableActivities>true</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>true</enableHistory>
     <enableReports>true</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fieldSets>
         <fullName>NewForm</fullName>
         <description>the Fields that get displayed on the new form</description>
@@ -146,6 +149,15 @@
         <deleteConstraint>Restrict</deleteConstraint>
         <externalId>false</externalId>
         <label>Admission</label>
+        <lookupFilter>
+            <active>true</active>
+            <filterItems>
+                <field>$Source.Person_Being_Served__c</field>
+                <operation>equals</operation>
+                <valueField>Admission__c.Person_Being_Served__c</valueField>
+            </filterItems>
+            <isOptional>false</isOptional>
+        </lookupFilter>
         <referenceTo>Admission__c</referenceTo>
         <relationshipLabel>Progress Notes</relationshipLabel>
         <relationshipName>Progress_Notes</relationshipName>
@@ -2282,6 +2294,15 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
         <label>Plan</label>
+        <lookupFilter>
+            <active>false</active>
+            <filterItems>
+                <field>Plan__c.Admission__c</field>
+                <operation>equals</operation>
+                <valueField>$Source.Person_Being_Served__c</valueField>
+            </filterItems>
+            <isOptional>false</isOptional>
+        </lookupFilter>
         <referenceTo>Plan__c</referenceTo>
         <relationshipLabel>Progress Notes</relationshipLabel>
         <relationshipName>Progress_Notes</relationshipName>
@@ -2585,6 +2606,15 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
         <label>Service Assignment</label>
+        <lookupFilter>
+            <active>true</active>
+            <filterItems>
+                <field>Service_Assignment__c.Admission__c</field>
+                <operation>equals</operation>
+                <valueField>$Source.Admission__c</valueField>
+            </filterItems>
+            <isOptional>false</isOptional>
+        </lookupFilter>
         <referenceTo>Service_Assignment__c</referenceTo>
         <relationshipLabel>Progress Notes</relationshipLabel>
         <relationshipName>Progress_Notes</relationshipName>
@@ -3338,44 +3368,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <columns>CREATEDBY_USER</columns>
         <filterScope>Mine</filterScope>
         <label>My Progress Notes</label>
-    </listViews>
-    <listViews>
-        <fullName>My_Progress_Notes_Unfinalized</fullName>
-        <columns>Date_of_Service_String__c</columns>
-        <columns>Total_Time__c</columns>
-        <columns>NAME</columns>
-        <columns>Auth_Service_Code__c</columns>
-        <columns>Start_Time__c</columns>
-        <columns>End_Time__c</columns>
-        <columns>Program_Detail__c</columns>
-        <columns>Approval_Status__c</columns>
-        <columns>Disregard_Note__c</columns>
-        <columns>CREATEDBY_USER</columns>
-        <columns>Created_by_Title__c</columns>
-        <filterScope>Mine</filterScope>
-        <filters>
-            <field>Status__c</field>
-            <operation>equals</operation>
-            <value>In Progress</value>
-        </filters>
-        <label>My Progress Notes-Unfinalized</label>
-        <sharedTo>
-            <roleAndSubordinates>FL_Broward_Plantation</roleAndSubordinates>
-            <roleAndSubordinates>FL_Broward_Plantation_Clinical_Users</roleAndSubordinates>
-            <roleAndSubordinates>FL_Miami_Dade</roleAndSubordinates>
-            <roleAndSubordinates>FL_Miami_Dade_Clinical_Users</roleAndSubordinates>
-            <roleAndSubordinates>NC</roleAndSubordinates>
-            <roleAndSubordinates>NCGreensboro</roleAndSubordinates>
-            <roleAndSubordinates>NCRockingham</roleAndSubordinates>
-            <roleAndSubordinates>NC_Charlotte</roleAndSubordinates>
-            <roleAndSubordinates>NC_Charlotte_Clinical_Users</roleAndSubordinates>
-            <roleAndSubordinates>NC_Greensboro_Clinical_Users</roleAndSubordinates>
-            <roleAndSubordinates>NC_Raleigh</roleAndSubordinates>
-            <roleAndSubordinates>NC_Raleigh_Clinical_Users</roleAndSubordinates>
-            <roleAndSubordinates>NC_Rockingham_Clinical_Users</roleAndSubordinates>
-            <roleAndSubordinates>NC_Wilmington</roleAndSubordinates>
-            <roleAndSubordinates>NC_Wilmington_Clinical_Users</roleAndSubordinates>
-        </sharedTo>
     </listViews>
     <listViews>
         <fullName>Progress_Note_Approval_Queue</fullName>
@@ -16825,7 +16817,7 @@ var value = &apos;{!Progress_Note__c.FCT_Phase_at_Note_Creation__c}&apos;;
  if ({!ISBLANK(Progress_Note__c.People_Present__c)}){
     errors.push(&apos;You must enter a value in &quot;People Present&quot; before continuing.&apos;);
    }
- value = &apos;{!JSENCODE(Progress_Note__c.Staff_Name__c)}&apos;;
+ value = &apos;{!Progress_Note__c.Staff_Name__c}&apos;;
  if (value == &apos;&apos;){
     errors.push(&apos;You must select a value for &quot;Staff Name&quot; before continuing.&apos;); 
    }

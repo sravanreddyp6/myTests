@@ -37,6 +37,22 @@
         </picklistValues>
     </fields>
     <fields>
+        <label><!-- Adjudicated Offense Status --></label>
+        <name>Adjudicated_offense_status__c</name>
+    </fields>
+    <fields>
+        <label><!-- Adjudicated offenses --></label>
+        <name>Adjudicated_offenses__c</name>
+        <picklistValues>
+            <masterLabel>Felony/ies</masterLabel>
+            <translation><!-- Felony/ies --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Misdemeanor/s</masterLabel>
+            <translation><!-- Misdemeanor/s --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
         <label><!-- Admission Location --></label>
         <name>Admission_Location__c</name>
         <picklistValues>
@@ -52,8 +68,12 @@
             <translation><!-- Bermuda --></translation>
         </picklistValues>
         <picklistValues>
-            <masterLabel>Cowan Hieghts</masterLabel>
-            <translation><!-- Cowan Hieghts --></translation>
+            <masterLabel>Cowan Heights</masterLabel>
+            <translation><!-- Cowan Heights --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Elk Grove</masterLabel>
+            <translation><!-- Elk Grove --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Escondido</masterLabel>
@@ -92,12 +112,12 @@
             <translation><!-- Laramie --></translation>
         </picklistValues>
         <picklistValues>
-            <masterLabel>Las Vegas</masterLabel>
-            <translation><!-- Las Vegas --></translation>
-        </picklistValues>
-        <picklistValues>
             <masterLabel>Las Vegas Buffalo</masterLabel>
             <translation><!-- Las Vegas Buffalo --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Las Vegas Carmen</masterLabel>
+            <translation><!-- Las Vegas Carmen --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Littleton</masterLabel>
@@ -106,10 +126,6 @@
         <picklistValues>
             <masterLabel>Ludlow</masterLabel>
             <translation><!-- Ludlow --></translation>
-        </picklistValues>
-        <picklistValues>
-            <masterLabel>Magnolia</masterLabel>
-            <translation><!-- Magnolia --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Marin</masterLabel>
@@ -144,10 +160,6 @@
             <translation><!-- Pleasanton --></translation>
         </picklistValues>
         <picklistValues>
-            <masterLabel>Sacremento</masterLabel>
-            <translation><!-- Sacremento --></translation>
-        </picklistValues>
-        <picklistValues>
             <masterLabel>Santiago</masterLabel>
             <translation><!-- Santiago --></translation>
         </picklistValues>
@@ -177,7 +189,8 @@
         </picklistValues>
     </fields>
     <fields>
-        <label><!-- Agency Name --></label>
+        <help><!-- If the Referral Source is a Hospital, enter the Hospital name here. If the Referral Source is a Payor, enter the Company name here. --></help>
+        <label><!-- Referral Source --></label>
         <name>Agency_Name__c</name>
     </fields>
     <fields>
@@ -293,8 +306,128 @@
         <name>Cause_Of_Injury_Previous__c</name>
     </fields>
     <fields>
+        <label><!-- Specify Other --></label>
+        <name>Cause_of_Injury_Other__c</name>
+    </fields>
+    <fields>
         <label><!-- Cause of Injury --></label>
         <name>Cause_of_Injury__c</name>
+    </fields>
+    <fields>
+        <label><!-- Cause of Injury --></label>
+        <name>Cause_of_Injury_pick__c</name>
+        <picklistValues>
+            <masterLabel>ATV</masterLabel>
+            <translation><!-- ATV --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Abuse</masterLabel>
+            <translation><!-- Abuse --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Accident - Other</masterLabel>
+            <translation><!-- Accident - Other --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Assault</masterLabel>
+            <translation><!-- Assault --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>At Birth</masterLabel>
+            <translation><!-- At Birth --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Bicycle Accident</masterLabel>
+            <translation><!-- Bicycle Accident --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Blast Injury</masterLabel>
+            <translation><!-- Blast Injury --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Brain Tumor</masterLabel>
+            <translation><!-- Brain Tumor --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>CVA</masterLabel>
+            <translation><!-- CVA --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Cardiac Arrest</masterLabel>
+            <translation><!-- Cardiac Arrest --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Disease</masterLabel>
+            <translation><!-- Disease --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Drowning</masterLabel>
+            <translation><!-- Drowning --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Drugs</masterLabel>
+            <translation><!-- Drugs --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Fall</masterLabel>
+            <translation><!-- Fall --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Gunshot</masterLabel>
+            <translation><!-- Gunshot --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Military - Combat</masterLabel>
+            <translation><!-- Military - Combat --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Military - Other</masterLabel>
+            <translation><!-- Military - Other --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Motor Vehicle - Driver</masterLabel>
+            <translation><!-- Motor Vehicle - Driver --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Motor Vehicle - Passenger</masterLabel>
+            <translation><!-- Motor Vehicle - Passenger --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Motorcycle</masterLabel>
+            <translation><!-- Motorcycle --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Other</masterLabel>
+            <translation><!-- Other --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Pedestrian Car</masterLabel>
+            <translation><!-- Pedestrian Car --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Self-Inflicted</masterLabel>
+            <translation><!-- Self-Inflicted --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Shaken Baby</masterLabel>
+            <translation><!-- Shaken Baby --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Sports Injury</masterLabel>
+            <translation><!-- Sports Injury --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Stroke</masterLabel>
+            <translation><!-- Stroke --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Struck by Object</masterLabel>
+            <translation><!-- Struck by Object --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Unknown</masterLabel>
+            <translation><!-- Unknown --></translation>
+        </picklistValues>
     </fields>
     <fields>
         <label><!-- Chemical Dependency Treatment --></label>
@@ -509,12 +642,20 @@
             <translation><!-- LTAC --></translation>
         </picklistValues>
         <picklistValues>
+            <masterLabel>Nursing Home</masterLabel>
+            <translation><!-- Nursing Home --></translation>
+        </picklistValues>
+        <picklistValues>
             <masterLabel>Other</masterLabel>
             <translation><!-- Other --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Other LTC</masterLabel>
             <translation><!-- Other LTC --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Post-Hospital Brain Injury Program</masterLabel>
+            <translation><!-- Post-Hospital Brain Injury Program --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>SNF</masterLabel>
@@ -558,6 +699,10 @@
         <name>Diagnosis_Date__c</name>
     </fields>
     <fields>
+        <label><!-- Effective Date --></label>
+        <name>Diagnosis_Effective_Date__c</name>
+    </fields>
+    <fields>
         <label><!-- Diagnosis III --></label>
         <name>Diagnosis_III__c</name>
         <picklistValues>
@@ -586,6 +731,34 @@
         </picklistValues>
     </fields>
     <fields>
+        <label><!-- Diagnosis II (Multi) --></label>
+        <name>Diagnosis_II_Multi__c</name>
+        <picklistValues>
+            <masterLabel>Diabetes</masterLabel>
+            <translation><!-- Diabetes --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Diagnosed Anxiety Disorder</masterLabel>
+            <translation><!-- Diagnosed Anxiety Disorder --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Diagnosed Depressive Disorder</masterLabel>
+            <translation><!-- Diagnosed Depressive Disorder --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>High Cholesterol</masterLabel>
+            <translation><!-- High Cholesterol --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Hypertension</masterLabel>
+            <translation><!-- Hypertension --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Seizure</masterLabel>
+            <translation><!-- Seizure --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
         <label><!-- Diagnosis II --></label>
         <name>Diagnosis_II__c</name>
         <picklistValues>
@@ -593,12 +766,48 @@
             <translation><!-- ABI/TBI --></translation>
         </picklistValues>
         <picklistValues>
+            <masterLabel>Attention Deficit Disorder</masterLabel>
+            <translation><!-- Attention Deficit Disorder --></translation>
+        </picklistValues>
+        <picklistValues>
             <masterLabel>Autism (ASD)</masterLabel>
             <translation><!-- Autism (ASD) --></translation>
         </picklistValues>
         <picklistValues>
+            <masterLabel>Developmental Disorder</masterLabel>
+            <translation><!-- Developmental Disorder --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Diabetes</masterLabel>
+            <translation><!-- Diabetes --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Diagnosed Anxiety Disorder</masterLabel>
+            <translation><!-- Diagnosed Anxiety Disorder --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Diagnosed Depressive Disorder</masterLabel>
+            <translation><!-- Diagnosed Depressive Disorder --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Diagnosed Psychotic Disorder</masterLabel>
+            <translation><!-- Diagnosed Psychotic Disorder --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>High Cholesterol</masterLabel>
+            <translation><!-- High Cholesterol --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Hypertension</masterLabel>
+            <translation><!-- Hypertension --></translation>
+        </picklistValues>
+        <picklistValues>
             <masterLabel>Intellectual Disability (ID)</masterLabel>
             <translation><!-- Intellectual Disability (ID) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Learning Disability</masterLabel>
+            <translation><!-- Learning Disability --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Mental Health (MH)</masterLabel>
@@ -607,6 +816,14 @@
         <picklistValues>
             <masterLabel>Other</masterLabel>
             <translation><!-- Other --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Seizure</masterLabel>
+            <translation><!-- Seizure --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Thyroid Disease</masterLabel>
+            <translation><!-- Thyroid Disease --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Unknown</masterLabel>
@@ -625,8 +842,28 @@
             <translation><!-- Autism (ASD) --></translation>
         </picklistValues>
         <picklistValues>
+            <masterLabel>Brain Tumor</masterLabel>
+            <translation><!-- Brain Tumor --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Encephalitis</masterLabel>
+            <translation><!-- Encephalitis --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Encephalopathy</masterLabel>
+            <translation><!-- Encephalopathy --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Hypoxia/Anoxia</masterLabel>
+            <translation><!-- Hypoxia/Anoxia --></translation>
+        </picklistValues>
+        <picklistValues>
             <masterLabel>Intellectual Disability (ID)</masterLabel>
             <translation><!-- Intellectual Disability (ID) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Meningitis</masterLabel>
+            <translation><!-- Meningitis --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Mental Health (MH)</masterLabel>
@@ -635,6 +872,22 @@
         <picklistValues>
             <masterLabel>Other</masterLabel>
             <translation><!-- Other --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Seizures</masterLabel>
+            <translation><!-- Seizures --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Spinal Cord Injury</masterLabel>
+            <translation><!-- Spinal Cord Injury --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Stroke/ CVA</masterLabel>
+            <translation><!-- Stroke/ CVA --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Traumatic Brain Injury</masterLabel>
+            <translation><!-- Traumatic Brain Injury --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Unknown</masterLabel>
@@ -678,6 +931,22 @@
         <name>Discharge_Outcome__c</name>
     </fields>
     <fields>
+        <label><!-- Discrimination Reason --></label>
+        <name>Discrimination_Reason__c</name>
+        <picklistValues>
+            <masterLabel>Gender</masterLabel>
+            <translation><!-- Gender --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Race</masterLabel>
+            <translation><!-- Race --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Sexual Orientation</masterLabel>
+            <translation><!-- Sexual Orientation --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
         <label><!-- Drug Possession/Distribution --></label>
         <name>Drug_Possession_Distribution__c</name>
     </fields>
@@ -701,6 +970,10 @@
     <fields>
         <label><!-- Evaluated By (External) --></label>
         <name>Evaluated_By_External__c</name>
+    </fields>
+    <fields>
+        <label><!-- Evaluated By (Internal - Other) --></label>
+        <name>Evaluated_By_Internal_Other__c</name>
     </fields>
     <fields>
         <label><!-- Evaluated By (Internal) --></label>
@@ -751,6 +1024,18 @@
     <fields>
         <label><!-- Felony --></label>
         <name>Felony__c</name>
+        <picklistValues>
+            <masterLabel>No</masterLabel>
+            <translation><!-- No --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Yes</masterLabel>
+            <translation><!-- Yes --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Felony/ies --></label>
+        <name>Felony_ies__c</name>
     </fields>
     <fields>
         <label><!-- Financial Resources --></label>
@@ -873,6 +1158,78 @@
         <name>Geographic_Restrictions__c</name>
     </fields>
     <fields>
+        <label><!-- Glasgow Coma Scale --></label>
+        <name>Glasgow_Coma_Scale__c</name>
+        <picklistValues>
+            <masterLabel>10</masterLabel>
+            <translation><!-- 10 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>11</masterLabel>
+            <translation><!-- 11 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>12</masterLabel>
+            <translation><!-- 12 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>13</masterLabel>
+            <translation><!-- 13 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>14</masterLabel>
+            <translation><!-- 14 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>15</masterLabel>
+            <translation><!-- 15 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>3</masterLabel>
+            <translation><!-- 3 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>4</masterLabel>
+            <translation><!-- 4 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>5</masterLabel>
+            <translation><!-- 5 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>6</masterLabel>
+            <translation><!-- 6 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>7</masterLabel>
+            <translation><!-- 7 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>8</masterLabel>
+            <translation><!-- 8 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>9</masterLabel>
+            <translation><!-- 9 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>N/A</masterLabel>
+            <translation><!-- N/A --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Goals from the Referral Source --></label>
+        <name>Goals_from_the_Referral_Source__c</name>
+    </fields>
+    <fields>
+        <label><!-- Grade --></label>
+        <name>Grade__c</name>
+    </fields>
+    <fields>
+        <label><!-- Has Evaluation --></label>
+        <name>Has_Evaluation__c</name>
+    </fields>
+    <fields>
         <label><!-- Has Pets --></label>
         <name>Has_Pets__c</name>
     </fields>
@@ -968,12 +1325,24 @@
         <label><!-- How did referrer learn about us? --></label>
         <name>How_did_they_learn__c</name>
         <picklistValues>
+            <masterLabel>Advertisement</masterLabel>
+            <translation><!-- Advertisement --></translation>
+        </picklistValues>
+        <picklistValues>
             <masterLabel>Advertisement (commercial, email, mailing, print based)</masterLabel>
             <translation><!-- Advertisement (commercial, email, mailing, print based) --></translation>
         </picklistValues>
         <picklistValues>
+            <masterLabel>Colleague</masterLabel>
+            <translation><!-- Colleague --></translation>
+        </picklistValues>
+        <picklistValues>
             <masterLabel>Conference</masterLabel>
             <translation><!-- Conference --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Email/Mailing</masterLabel>
+            <translation><!-- Email/Mailing --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Internet Search</masterLabel>
@@ -984,8 +1353,16 @@
             <translation><!-- Marketer/ Clinical Evaluator --></translation>
         </picklistValues>
         <picklistValues>
+            <masterLabel>NeuroRestorative Clinical Evaluator / Marketer</masterLabel>
+            <translation><!-- NeuroRestorative Clinical Evaluator / Marketer --></translation>
+        </picklistValues>
+        <picklistValues>
             <masterLabel>Other Program/ Colleague</masterLabel>
             <translation><!-- Other Program/ Colleague --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Past Participant&apos;s Family</masterLabel>
+            <translation><!-- Past Participant&apos;s Family --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Referred Before</masterLabel>
@@ -994,6 +1371,22 @@
         <picklistValues>
             <masterLabel>Speaker/ CEU Event</masterLabel>
             <translation><!-- Speaker/ CEU Event --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Web Site</masterLabel>
+            <translation><!-- Web Site --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- ICC Care Plan Submitted --></label>
+        <name>ICC_Care_Plan_Submitted__c</name>
+        <picklistValues>
+            <masterLabel>No</masterLabel>
+            <translation><!-- No --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Yes</masterLabel>
+            <translation><!-- Yes --></translation>
         </picklistValues>
     </fields>
     <fields>
@@ -1119,6 +1512,18 @@
     <fields>
         <label><!-- Is Information Release Signed --></label>
         <name>Is_Information_Release_Signed__c</name>
+    </fields>
+    <fields>
+        <label><!-- Is Reunification Process --></label>
+        <name>Is_Reunification_Process__c</name>
+        <picklistValues>
+            <masterLabel>No</masterLabel>
+            <translation><!-- No --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Yes</masterLabel>
+            <translation><!-- Yes --></translation>
+        </picklistValues>
     </fields>
     <fields>
         <label><!-- Law Enforcement Involvement --></label>
@@ -1343,6 +1748,22 @@
             <masterLabel>D/C Other than Honorable</masterLabel>
             <translation><!-- D/C Other than Honorable --></translation>
         </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Misdemeanor --></label>
+        <name>Misdemeanor__c</name>
+        <picklistValues>
+            <masterLabel>No</masterLabel>
+            <translation><!-- No --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Yes</masterLabel>
+            <translation><!-- Yes --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Misdemeanor/s --></label>
+        <name>Misdemeanor_s__c</name>
     </fields>
     <fields>
         <label><!-- Mobility --></label>
@@ -1609,6 +2030,18 @@
             <masterLabel>Placement Pending</masterLabel>
             <translation><!-- Placement Pending --></translation>
         </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Parental Disability --></label>
+        <name>Parental_Disability__c</name>
+    </fields>
+    <fields>
+        <label><!-- Payer Medical Record Number Description --></label>
+        <name>Payer_Medical_Record_Number_Description__c</name>
+    </fields>
+    <fields>
+        <label><!-- Payer Medical Record Number --></label>
+        <name>Payer_Medical_Record_Number__c</name>
     </fields>
     <fields>
         <label><!-- Person Being Referred --></label>
@@ -1929,8 +2362,12 @@
             <translation><!-- Bermuda --></translation>
         </picklistValues>
         <picklistValues>
-            <masterLabel>Cowan Hieghts</masterLabel>
-            <translation><!-- Cowan Hieghts --></translation>
+            <masterLabel>Cowan Heights</masterLabel>
+            <translation><!-- Cowan Heights --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Elk Grove</masterLabel>
+            <translation><!-- Elk Grove --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Escondido</masterLabel>
@@ -2029,12 +2466,12 @@
             <translation><!-- Laramie --></translation>
         </picklistValues>
         <picklistValues>
-            <masterLabel>Las Vegas</masterLabel>
-            <translation><!-- Las Vegas --></translation>
-        </picklistValues>
-        <picklistValues>
             <masterLabel>Las Vegas Buffalo</masterLabel>
             <translation><!-- Las Vegas Buffalo --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Las Vegas Carmen</masterLabel>
+            <translation><!-- Las Vegas Carmen --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Littleton</masterLabel>
@@ -2059,10 +2496,6 @@
         <picklistValues>
             <masterLabel>ME</masterLabel>
             <translation><!-- ME --></translation>
-        </picklistValues>
-        <picklistValues>
-            <masterLabel>Magnolia</masterLabel>
-            <translation><!-- Magnolia --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Marin</masterLabel>
@@ -2115,10 +2548,6 @@
         <picklistValues>
             <masterLabel>RI</masterLabel>
             <translation><!-- RI --></translation>
-        </picklistValues>
-        <picklistValues>
-            <masterLabel>Sacremento</masterLabel>
-            <translation><!-- Sacremento --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Santiago</masterLabel>
@@ -2446,6 +2875,42 @@
         <name>Psychiatric_Mental_Hospitalization__c</name>
     </fields>
     <fields>
+        <label><!-- Ranchos Los Amigos Scale --></label>
+        <name>Ranchos_Los_Amigos_Scale__c</name>
+        <picklistValues>
+            <masterLabel>Level I – No Response</masterLabel>
+            <translation><!-- Level I – No Response --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Level II – Generalized Response</masterLabel>
+            <translation><!-- Level II – Generalized Response --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Level III – Localized Response</masterLabel>
+            <translation><!-- Level III – Localized Response --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Level IV – Confused and Agitated</masterLabel>
+            <translation><!-- Level IV – Confused and Agitated --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Level V – Confused and Inappropriate</masterLabel>
+            <translation><!-- Level V – Confused and Inappropriate --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Level VI – Confused and Appropriate</masterLabel>
+            <translation><!-- Level VI – Confused and Appropriate --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Level VII – Automatic and Appropriate</masterLabel>
+            <translation><!-- Level VII – Automatic and Appropriate --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Level VIII – Purposeful and Appropriate</masterLabel>
+            <translation><!-- Level VIII – Purposeful and Appropriate --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
         <label><!-- Reason Category: Behavioral Problems --></label>
         <name>Reason_Category_Behavioral_Problems__c</name>
         <picklistValues>
@@ -2500,6 +2965,10 @@
             <masterLabel>Physical Disability</masterLabel>
             <translation><!-- Physical Disability --></translation>
         </picklistValues>
+        <picklistValues>
+            <masterLabel>Victim of Discrimination</masterLabel>
+            <translation><!-- Victim of Discrimination --></translation>
+        </picklistValues>
     </fields>
     <fields>
         <label><!-- Reason Category: Mental Health/Emotional --></label>
@@ -2547,6 +3016,10 @@
         <picklistValues>
             <masterLabel>Victim of Bullying</masterLabel>
             <translation><!-- Victim of Bullying --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Victim of Discrimination</masterLabel>
+            <translation><!-- Victim of Discrimination --></translation>
         </picklistValues>
     </fields>
     <fields>
@@ -2626,6 +3099,7 @@
         <name>Referral_Date__c</name>
     </fields>
     <fields>
+        <help><!-- The name of the person giving the referral should be entered here. --></help>
         <label><!-- Referrer Name --></label>
         <name>Referral_Name__c</name>
     </fields>
@@ -2666,12 +3140,36 @@
         <label><!-- Referral Source Type --></label>
         <name>Referral_Source_Type__c</name>
         <picklistValues>
+            <masterLabel>Administrator</masterLabel>
+            <translation><!-- Administrator --></translation>
+        </picklistValues>
+        <picklistValues>
             <masterLabel>Attorney</masterLabel>
             <translation><!-- Attorney --></translation>
         </picklistValues>
         <picklistValues>
-            <masterLabel>Case Manager</masterLabel>
-            <translation><!-- Case Manager --></translation>
+            <masterLabel>Case Manager – Hospital</masterLabel>
+            <translation><!-- Case Manager – Hospital --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Case Manager – Military</masterLabel>
+            <translation><!-- Case Manager – Military --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Case Manager – Non Public (includes all WC, Accident and Health, Private funds Case Managers)</masterLabel>
+            <translation><!-- Case Manager – Non Public (includes all WC, Accident and Health, Private funds Case Managers) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Case Manager – Public (includes all Medicaids)</masterLabel>
+            <translation><!-- Case Manager – Public (includes all Medicaids) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Case Manager – Treatment Facility</masterLabel>
+            <translation><!-- Case Manager – Treatment Facility --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Case Manager – Veterans Administration</masterLabel>
+            <translation><!-- Case Manager – Veterans Administration --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Counselor</masterLabel>
@@ -2682,8 +3180,16 @@
             <translation><!-- Family --></translation>
         </picklistValues>
         <picklistValues>
-            <masterLabel>Hospital</masterLabel>
-            <translation><!-- Hospital --></translation>
+            <masterLabel>Hospital Case Manager</masterLabel>
+            <translation><!-- Hospital Case Manager --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Hospital Discharge Planner</masterLabel>
+            <translation><!-- Hospital Discharge Planner --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Independent Case Manager</masterLabel>
+            <translation><!-- Independent Case Manager --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Internal</masterLabel>
@@ -2694,6 +3200,14 @@
             <translation><!-- Juvenile Justice --></translation>
         </picklistValues>
         <picklistValues>
+            <masterLabel>Life Care Planner</masterLabel>
+            <translation><!-- Life Care Planner --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Nurse</masterLabel>
+            <translation><!-- Nurse --></translation>
+        </picklistValues>
+        <picklistValues>
             <masterLabel>Other</masterLabel>
             <translation><!-- Other --></translation>
         </picklistValues>
@@ -2702,12 +3216,16 @@
             <translation><!-- Other therapist --></translation>
         </picklistValues>
         <picklistValues>
-            <masterLabel>Payor</masterLabel>
-            <translation><!-- Payor --></translation>
+            <masterLabel>Payor Case Manager</masterLabel>
+            <translation><!-- Payor Case Manager --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Physician</masterLabel>
             <translation><!-- Physician --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Professional</masterLabel>
+            <translation><!-- Professional --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Rehab/Hospital</masterLabel>
@@ -2722,8 +3240,16 @@
             <translation><!-- Self --></translation>
         </picklistValues>
         <picklistValues>
+            <masterLabel>Service Coordinator</masterLabel>
+            <translation><!-- Service Coordinator --></translation>
+        </picklistValues>
+        <picklistValues>
             <masterLabel>Social Worker</masterLabel>
             <translation><!-- Social Worker --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Therapist</masterLabel>
+            <translation><!-- Therapist --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Unknown</masterLabel>
@@ -2975,6 +3501,14 @@
         </picklistValues>
     </fields>
     <fields>
+        <label><!-- Referrer Street 2 --></label>
+        <name>Referrer_Street_2__c</name>
+    </fields>
+    <fields>
+        <label><!-- Referrer Street --></label>
+        <name>Referrer_Street__c</name>
+    </fields>
+    <fields>
         <label><!-- Referrer Zip --></label>
         <name>Referrer_Zip__c</name>
     </fields>
@@ -3164,6 +3698,10 @@
         </picklistValues>
     </fields>
     <fields>
+        <label><!-- Safe Plan --></label>
+        <name>Safe_Plan__c</name>
+    </fields>
+    <fields>
         <label><!-- Safety Measures Required --></label>
         <name>Safety_Measures_Required__c</name>
     </fields>
@@ -3191,8 +3729,12 @@
             <translation><!-- Bermuda --></translation>
         </picklistValues>
         <picklistValues>
-            <masterLabel>Cowan Hieghts</masterLabel>
-            <translation><!-- Cowan Hieghts --></translation>
+            <masterLabel>Cowan Heights</masterLabel>
+            <translation><!-- Cowan Heights --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Elk Grove</masterLabel>
+            <translation><!-- Elk Grove --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Escondido</masterLabel>
@@ -3291,12 +3833,12 @@
             <translation><!-- Laramie --></translation>
         </picklistValues>
         <picklistValues>
-            <masterLabel>Las Vegas</masterLabel>
-            <translation><!-- Las Vegas --></translation>
-        </picklistValues>
-        <picklistValues>
             <masterLabel>Las Vegas Buffalo</masterLabel>
             <translation><!-- Las Vegas Buffalo --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Las Vegas Carmen</masterLabel>
+            <translation><!-- Las Vegas Carmen --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Littleton</masterLabel>
@@ -3321,10 +3863,6 @@
         <picklistValues>
             <masterLabel>ME</masterLabel>
             <translation><!-- ME --></translation>
-        </picklistValues>
-        <picklistValues>
-            <masterLabel>Magnolia</masterLabel>
-            <translation><!-- Magnolia --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Marin</masterLabel>
@@ -3377,10 +3915,6 @@
         <picklistValues>
             <masterLabel>RI</masterLabel>
             <translation><!-- RI --></translation>
-        </picklistValues>
-        <picklistValues>
-            <masterLabel>Sacremento</masterLabel>
-            <translation><!-- Sacremento --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Santiago</masterLabel>
@@ -3608,12 +4142,80 @@
             <translation><!-- Community Employment --></translation>
         </picklistValues>
         <picklistValues>
+            <masterLabel>Community Partners - Budgeting</masterLabel>
+            <translation><!-- Community Partners - Budgeting --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Community Partners - Crisis Counseling</masterLabel>
+            <translation><!-- Community Partners - Crisis Counseling --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Community Partners - Home-making</masterLabel>
+            <translation><!-- Community Partners - Home-making --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Community Partners - Mentoring</masterLabel>
+            <translation><!-- Community Partners - Mentoring --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Community Partners - Parent Support Grp</masterLabel>
+            <translation><!-- Community Partners - Parent Support Grp --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Community Partners - Parenting</masterLabel>
+            <translation><!-- Community Partners - Parenting --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Community Partners - Respite</masterLabel>
+            <translation><!-- Community Partners - Respite --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Community Partners - Transportation</masterLabel>
+            <translation><!-- Community Partners - Transportation --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Community-Based - Counseling (Medicaid)</masterLabel>
+            <translation><!-- Community-Based - Counseling (Medicaid) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Community-Based - Family Preparation</masterLabel>
+            <translation><!-- Community-Based - Family Preparation --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Community-Based - Home-based Case Mgt</masterLabel>
+            <translation><!-- Community-Based - Home-based Case Mgt --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Community-Based - Home-based Therapy</masterLabel>
+            <translation><!-- Community-Based - Home-based Therapy --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Community-Based - Homemaker Parent Aid</masterLabel>
+            <translation><!-- Community-Based - Homemaker Parent Aid --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Community-Based - Parent Education</masterLabel>
+            <translation><!-- Community-Based - Parent Education --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Community-Based - Supervised Visitation</masterLabel>
+            <translation><!-- Community-Based - Supervised Visitation --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Community-Based - Truancy Termination</masterLabel>
+            <translation><!-- Community-Based - Truancy Termination --></translation>
+        </picklistValues>
+        <picklistValues>
             <masterLabel>County Specific Court Bed</masterLabel>
             <translation><!-- County Specific Court Bed --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Crisis Response Team</masterLabel>
             <translation><!-- Crisis Response Team --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Crisis Stabilization</masterLabel>
+            <translation><!-- Crisis Stabilization --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Crisis/Respite Services</masterLabel>
@@ -4082,6 +4684,10 @@
         <picklistValues>
             <masterLabel>TRA - Transportation</masterLabel>
             <translation><!-- TRA - Transportation --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Therapeutic Support</masterLabel>
+            <translation><!-- Therapeutic Support --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Traditional</masterLabel>
@@ -4644,6 +5250,62 @@
         <name>Theft__c</name>
     </fields>
     <fields>
+        <label><!-- Type of Encephalopathy --></label>
+        <name>Type_of_Encephalopathy__c</name>
+        <picklistValues>
+            <masterLabel>Chronic Traumatic (multiple brain traumas)</masterLabel>
+            <translation><!-- Chronic Traumatic (multiple brain traumas) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Glycine (Glycine level)</masterLabel>
+            <translation><!-- Glycine (Glycine level) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Hashimoto’s (Thyroid Disease)</masterLabel>
+            <translation><!-- Hashimoto’s (Thyroid Disease) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Hepatic (Liver Disease)</masterLabel>
+            <translation><!-- Hepatic (Liver Disease) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Hypertensive (very high blood pressure)</masterLabel>
+            <translation><!-- Hypertensive (very high blood pressure) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Hypoxic (reduced oxygen)</masterLabel>
+            <translation><!-- Hypoxic (reduced oxygen) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Lyme (Lyme Disease)</masterLabel>
+            <translation><!-- Lyme (Lyme Disease) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Static (Loss of oxygen, fetal alcohol)</masterLabel>
+            <translation><!-- Static (Loss of oxygen, fetal alcohol) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Toxic-Metabolic (infection-toxins, organ failure)</masterLabel>
+            <translation><!-- Toxic-Metabolic (infection-toxins, organ failure) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Transmissible Spongiform (Abnormal proteins, Creutzfeldt-Jakob)</masterLabel>
+            <translation><!-- Transmissible Spongiform (Abnormal proteins, Creutzfeldt-Jakob) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Unspecified</masterLabel>
+            <translation><!-- Unspecified --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Uremic (Kidney Disease)</masterLabel>
+            <translation><!-- Uremic (Kidney Disease) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Wernicke’s (Vitamin B1 Deficiency; Long-term Alcohol abuse)</masterLabel>
+            <translation><!-- Wernicke’s (Vitamin B1 Deficiency; Long-term Alcohol abuse) --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
         <label><!-- Type of Injury(Previous) --></label>
         <name>Type_of_Injury_Previous__c</name>
         <picklistValues>
@@ -4748,7 +5410,7 @@
         <name>Update_Notes__c</name>
     </fields>
     <fields>
-        <label><!-- Uses Tobacco --></label>
+        <label><!-- Tobacco Use (Current) --></label>
         <name>Uses_Tobacco__c</name>
     </fields>
     <fields>
@@ -4758,6 +5420,10 @@
     <fields>
         <label><!-- Verbally Aggressive --></label>
         <name>Verbally_Aggressive__c</name>
+    </fields>
+    <fields>
+        <label><!-- Victim of Domestic Violence --></label>
+        <name>Victim_of_Domestic_Violence__c</name>
     </fields>
     <fields>
         <label><!-- Vision --></label>
@@ -4896,12 +5562,28 @@
         <name>Cambridge_Georgia</name>
     </recordTypes>
     <recordTypes>
+        <label><!-- Cambridge Indiana --></label>
+        <name>Cambridge_IN</name>
+    </recordTypes>
+    <recordTypes>
         <label><!-- Cambridge Maryland --></label>
         <name>Cambridge_Maryland</name>
     </recordTypes>
     <recordTypes>
+        <label><!-- Cambridge Massachusetts --></label>
+        <name>Cambridge_Massachusetts</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Cambridge North Carolina --></label>
+        <name>Cambridge_NC</name>
+    </recordTypes>
+    <recordTypes>
         <label><!-- Cambridge New Jersey --></label>
         <name>Cambridge_New_Jersey</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Cambridge Ohio --></label>
+        <name>Cambridge_Ohio</name>
     </recordTypes>
     <recordTypes>
         <label><!-- CareMeridian --></label>

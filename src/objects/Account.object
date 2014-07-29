@@ -317,6 +317,10 @@
         <label>PBS Financial</label>
     </fieldSets>
     <fields>
+        <fullName>AccountNumber</fullName>
+        <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
         <fullName>AccountSource</fullName>
         <picklist>
             <picklistValues>
@@ -365,7 +369,16 @@
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
+        <trackHistory>false</trackHistory>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>AnnualRevenue</fullName>
+        <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
+        <fullName>BillingAddress</fullName>
+        <trackHistory>false</trackHistory>
     </fields>
     <fields>
         <fullName>Custom_Account_Contact__c</fullName>
@@ -391,6 +404,14 @@
         <trackHistory>false</trackHistory>
         <type>Text</type>
         <unique>true</unique>
+    </fields>
+    <fields>
+        <fullName>Description</fullName>
+        <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
+        <fullName>Fax</fullName>
+        <trackHistory>false</trackHistory>
     </fields>
     <fields>
         <fullName>First_Name_SoundEx_Key__c</fullName>
@@ -535,7 +556,12 @@
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
+        <trackHistory>false</trackHistory>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Jigsaw</fullName>
+        <trackHistory>false</trackHistory>
     </fields>
     <fields>
         <fullName>Last_Name_SoundEx_Key__c</fullName>
@@ -548,7 +574,16 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Name</fullName>
+        <trackHistory>true</trackHistory>
+    </fields>
+    <fields>
+        <fullName>NumberOfEmployees</fullName>
+        <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
         <fullName>OwnerId</fullName>
+        <trackHistory>false</trackHistory>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -585,11 +620,55 @@
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
+        <trackHistory>false</trackHistory>
         <type>Picklist</type>
     </fields>
     <fields>
         <fullName>ParentId</fullName>
-        <type>Lookup</type>
+        <trackHistory>false</trackHistory>
+        <type>Hierarchy</type>
+    </fields>
+    <fields>
+        <fullName>PersonAssistantName</fullName>
+        <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
+        <fullName>PersonAssistantPhone</fullName>
+        <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
+        <fullName>PersonBirthdate</fullName>
+        <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
+        <fullName>PersonDepartment</fullName>
+        <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
+        <fullName>PersonDoNotCall</fullName>
+        <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
+        <fullName>PersonEmail</fullName>
+        <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
+        <fullName>PersonHasOptedOutOfEmail</fullName>
+        <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
+        <fullName>PersonHasOptedOutOfFax</fullName>
+        <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
+        <fullName>PersonHomePhone</fullName>
+        <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
+        <fullName>PersonLastCURequestDate</fullName>
+    </fields>
+    <fields>
+        <fullName>PersonLastCUUpdateDate</fullName>
     </fields>
     <fields>
         <fullName>PersonLeadSource</fullName>
@@ -640,7 +719,32 @@
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
+        <trackHistory>false</trackHistory>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>PersonMailingAddress</fullName>
+        <trackHistory>true</trackHistory>
+    </fields>
+    <fields>
+        <fullName>PersonMobilePhone</fullName>
+        <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
+        <fullName>PersonOtherAddress</fullName>
+        <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
+        <fullName>PersonOtherPhone</fullName>
+        <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
+        <fullName>PersonTitle</fullName>
+        <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
+        <fullName>Phone</fullName>
+        <trackHistory>true</trackHistory>
     </fields>
     <fields>
         <fullName>Rating</fullName>
@@ -659,7 +763,28 @@
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
+        <trackHistory>false</trackHistory>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>ShippingAddress</fullName>
+        <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
+        <fullName>Sic</fullName>
+        <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
+        <fullName>SicDesc</fullName>
+        <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
+        <fullName>Site</fullName>
+        <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
+        <fullName>TickerSymbol</fullName>
+        <trackHistory>false</trackHistory>
     </fields>
     <fields>
         <fullName>Type</fullName>
@@ -706,7 +831,12 @@
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
+        <trackHistory>false</trackHistory>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Website</fullName>
+        <trackHistory>false</trackHistory>
     </fields>
     <listViews>
         <fullName>AllAccounts</fullName>
@@ -1032,17 +1162,18 @@
         <searchResultsAdditionalFields>ACCOUNT.PHONE1</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>CORE.USERS.ALIAS</searchResultsAdditionalFields>
     </searchLayouts>
+    <sharingModel>Private</sharingModel>
     <validationRules>
         <fullName>Other_ID_Filled_In_For_NC_PBS</fullName>
         <active>true</active>
         <description>Ensures that the Other ID field is filled in for persons being served with a Mailing State of North Carolina.</description>
-        <errorConditionFormula>AND(ISPICKVAL(PersonMailingStateCode , &apos;NC&apos;), OR(ISBLANK( Other_ID__pc ), ISBLANK( Other_ID_Description__pc) ), NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;)))</errorConditionFormula>
+        <errorConditionFormula>AND(ISPICKVAL(PersonMailingStateCode , &apos;NC&apos;), OR(ISBLANK( Other_ID__pc ), ISBLANK( Other_ID_Description__pc) ))</errorConditionFormula>
         <errorMessage>The Other ID and Other ID Description fields must be filled in for a person being served with a Mailing State of North Carolina.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Req_Mailing_Address_State</fullName>
         <active>true</active>
-        <errorConditionFormula>AND(  RecordType.DeveloperName =&apos;Person_Being_Served&apos;, ISBLANK(PersonMailingState))</errorConditionFormula>
+        <errorConditionFormula>AND( RecordTypeId = &apos;012U0000000Dbif&apos;, ISBLANK(PersonMailingState))</errorConditionFormula>
         <errorDisplayField>PersonMailingState</errorDisplayField>
         <errorMessage>State is required.</errorMessage>
     </validationRules>
