@@ -54,12 +54,9 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>NOTES Admissions track a Person Being Served&apos;s relationship with The MENTOR Network. There is a validation rule that allows only one active Admission per state per person.</description>
     <enableActivities>false</enableActivities>
-    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>true</enableHistory>
     <enableReports>true</enableReports>
-    <enableSharing>true</enableSharing>
-    <enableStreamingApi>true</enableStreamingApi>
     <fields>
         <fullName>Active__c</fullName>
         <defaultValue>false</defaultValue>
@@ -430,6 +427,32 @@
         <trackHistory>true</trackHistory>
         <type>Text</type>
     </nameField>
+    <namedFilters>
+        <fullName>nf_01IJ00000000JNEMA2_00NJ0000000IB5tMAG</fullName>
+        <active>true</active>
+        <field>Progress_Note__c.Admission__c</field>
+        <filterItems>
+            <field>$Source.Person_Being_Served__c</field>
+            <operation>equals</operation>
+            <valueField>Admission__c.Person_Being_Served__c</valueField>
+        </filterItems>
+        <isOptional>false</isOptional>
+        <name>Progress Note_Admission</name>
+        <sourceObject>Progress_Note__c</sourceObject>
+    </namedFilters>
+    <namedFilters>
+        <fullName>nf_01IJ00000000Jb3MAE_00NJ0000000IDCDMA4</fullName>
+        <active>true</active>
+        <field>Service_Assignment__c.Admission__c</field>
+        <filterItems>
+            <field>Admission__c.Person_Being_Served__c</field>
+            <operation>equals</operation>
+            <valueField>$Source.Person_Being_Served__c</valueField>
+        </filterItems>
+        <isOptional>false</isOptional>
+        <name>Service Assignment_Admission</name>
+        <sourceObject>Service_Assignment__c</sourceObject>
+    </namedFilters>
     <pluralLabel>Admissions</pluralLabel>
     <searchLayouts>
         <customTabListAdditionalFields>Person_Being_Served__c</customTabListAdditionalFields>

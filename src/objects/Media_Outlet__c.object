@@ -48,12 +48,9 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>PMC</description>
     <enableActivities>false</enableActivities>
-    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableReports>true</enableReports>
-    <enableSharing>true</enableSharing>
-    <enableStreamingApi>true</enableStreamingApi>
     <fields>
         <fullName>National__c</fullName>
         <defaultValue>false</defaultValue>
@@ -152,6 +149,19 @@
         <label>Ad Campaign / Event Type</label>
         <type>Text</type>
     </nameField>
+    <namedFilters>
+        <fullName>nf_01IU0000000Fc0bMAC_00NU0000002UuoVMAS</fullName>
+        <active>true</active>
+        <field>Prospects__c.Outreach_Source__c</field>
+        <filterItems>
+            <field>$Source.How_did_you_hear_about_us__c</field>
+            <operation>equals</operation>
+            <valueField>Media_Outlet__c.Type__c</valueField>
+        </filterItems>
+        <isOptional>false</isOptional>
+        <name>Prospect_Outreach Source</name>
+        <sourceObject>Prospects__c</sourceObject>
+    </namedFilters>
     <pluralLabel>Ad Campaigns / Event Types</pluralLabel>
     <searchLayouts>
         <customTabListAdditionalFields>Type__c</customTabListAdditionalFields>

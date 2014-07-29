@@ -51,6 +51,11 @@
         <visible>false</visible>
     </applicationVisibilities>
     <applicationVisibilities>
+        <application>NeuroRestorative_Contracts</application>
+        <default>false</default>
+        <visible>false</visible>
+    </applicationVisibilities>
+    <applicationVisibilities>
         <application>PMC</application>
         <default>true</default>
         <visible>true</visible>
@@ -61,54 +66,9 @@
         <visible>false</visible>
     </applicationVisibilities>
     <applicationVisibilities>
-        <application>Recruiting</application>
-        <default>false</default>
-        <visible>false</visible>
-    </applicationVisibilities>
-    <applicationVisibilities>
         <application>Redwood_Contracts</application>
         <default>false</default>
         <visible>false</visible>
-    </applicationVisibilities>
-    <applicationVisibilities>
-        <application>standard__AppLauncher</application>
-        <default>false</default>
-        <visible>true</visible>
-    </applicationVisibilities>
-    <applicationVisibilities>
-        <application>standard__Chatter</application>
-        <default>false</default>
-        <visible>true</visible>
-    </applicationVisibilities>
-    <applicationVisibilities>
-        <application>standard__Community</application>
-        <default>false</default>
-        <visible>true</visible>
-    </applicationVisibilities>
-    <applicationVisibilities>
-        <application>standard__Content</application>
-        <default>false</default>
-        <visible>true</visible>
-    </applicationVisibilities>
-    <applicationVisibilities>
-        <application>standard__Marketing</application>
-        <default>false</default>
-        <visible>true</visible>
-    </applicationVisibilities>
-    <applicationVisibilities>
-        <application>standard__Platform</application>
-        <default>false</default>
-        <visible>false</visible>
-    </applicationVisibilities>
-    <applicationVisibilities>
-        <application>standard__Sales</application>
-        <default>false</default>
-        <visible>true</visible>
-    </applicationVisibilities>
-    <applicationVisibilities>
-        <application>standard__Service</application>
-        <default>false</default>
-        <visible>true</visible>
     </applicationVisibilities>
     <classAccesses>
         <apexClass>AccountEditExtension</apexClass>
@@ -263,11 +223,23 @@
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>Assessment_FAD_Form_Ex</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>Assessment_FAD_Form_Ex_Test</apexClass>
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>Assessment_FAD_Notifications</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>Assessment_FAD_NotificationsRunBat_Test</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>Assessment_FAD_NotificationsRunBatch</apexClass>
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
@@ -279,19 +251,11 @@
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>Assessment_IssaForm</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>Assessment_RiskForm</apexClass>
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>Assessment_RiskFormTest</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>Assessment_RiskForm_Redirect_Test</apexClass>
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
@@ -363,18 +327,6 @@
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>CatalogAndPrograms</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>CatalogBase</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>CatalogSelector</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>ChangePasswordController</apexClass>
         <enabled>false</enabled>
     </classAccesses>
@@ -415,6 +367,14 @@
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>Create_LogHistory</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>Create_LogHistory_Test</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>CredentialAdd</apexClass>
         <enabled>false</enabled>
     </classAccesses>
@@ -444,22 +404,6 @@
     </classAccesses>
     <classAccesses>
         <apexClass>CustomLookupTest</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>DataConvert</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>DataConvertTest</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>DataCreate</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>DataCreateTest</apexClass>
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
@@ -515,14 +459,6 @@
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>DocumentedActualStaffHrsReportTest</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>DocumentedActualStaffHrsRpt</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>ESD_DetermineParentRoles</apexClass>
         <enabled>false</enabled>
     </classAccesses>
@@ -548,10 +484,6 @@
     </classAccesses>
     <classAccesses>
         <apexClass>FAD_Assessment_Form</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>Fancy_Tree</apexClass>
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
@@ -747,10 +679,6 @@
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>Notes_ProgressNote_InfoExtras</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>Notes_ProgressNote_Svc_Code_Selection</apexClass>
         <enabled>false</enabled>
     </classAccesses>
@@ -764,22 +692,6 @@
     </classAccesses>
     <classAccesses>
         <apexClass>Notes_ServiceAssignment_CodeSelection</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>NursingEvaluationEditController</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>NursingEvaluationEditTest</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>NursingEvaluationViewController</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>NursingEvaluationViewTest</apexClass>
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
@@ -879,10 +791,6 @@
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>Progress_NoteHandler</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>ProspectInsert</apexClass>
         <enabled>false</enabled>
     </classAccesses>
@@ -944,10 +852,6 @@
     </classAccesses>
     <classAccesses>
         <apexClass>Referral_CreateTestData</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>Report_KidTraksExport_Controller</apexClass>
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
@@ -1083,15 +987,7 @@
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>TMN_Generic_Core_TestData</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>TMN_Reset_Password</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>TMN_Tree</apexClass>
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
@@ -1151,23 +1047,11 @@
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>allTabs</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>allTabs_Test</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>attachPDF</apexClass>
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>attachPDFTEST</apexClass>
-        <enabled>false</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>catalog_builder_beta</apexClass>
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
@@ -1250,7 +1134,6 @@
         <apexClass>uploaderTest</apexClass>
         <enabled>false</enabled>
     </classAccesses>
-    <custom>false</custom>
     <fieldPermissions>
         <editable>false</editable>
         <field>Account.AccountNumber</field>
@@ -1613,6 +1496,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Action_Behavior_Result__c.Action_Plan_Objective__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Action_Behavior_Result__c.Day_time__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -1628,6 +1516,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Action_Plan_Action__c.Action_Plan_Objective__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Action_Plan_Action__c.Description__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -1639,6 +1532,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Action_Plan_Action__c.Sort_Order__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Action_Plan_Goal__c.Action_Plan__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1659,6 +1557,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Action_Plan_Goal__c.Sort_Order__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Action_Plan_Objective__c.Action_Plan_Goal__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1699,6 +1602,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Action_Plan_Objective__c.Type__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Action_Plan_Worksheet__c.Action_Plan__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Action_Plan_Worksheet__c.Start_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1763,7 +1676,17 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Action_Skill_Result__c.Action_Plan_Objective__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Action_Skill_Result__c.Attempts__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Action_Skill_Result__c.Day__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1793,6 +1716,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Action_Summary__c.End_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Action_Summary__c.No_Approval_Needed__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -1804,6 +1732,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Action_Summary__c.Service_Assignment__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Action_Summary__c.Start_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1834,6 +1767,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Ad_Placement_Event_Specific__c.Outreach_Dictionary_Event__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Ad_Placement_Event_Specific__c.Outreach_Dictionary__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1889,6 +1827,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Admission__c.Network_Offering__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Admission__c.Person_Being_Served__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1988,7 +1931,17 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Assessment_Domain_Result__c.Assessment_Domain__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Assessment_Domain_Result__c.Assessment_Type__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Assessment_Domain_Result__c.Assessment__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -2055,6 +2008,11 @@
         <editable>false</editable>
         <field>Assessment_Question_Option__c.QT__c</field>
         <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Assessment_Question_Option__c.Question__c</field>
+        <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
@@ -2130,6 +2088,16 @@
         <editable>true</editable>
         <field>Assessment_Question__c.external_id__c</field>
         <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Assessment_Response__c.Assessment_Domain_Result__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Assessment_Response__c.Assessment__c</field>
+        <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
@@ -2453,7 +2421,17 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Authorization_ServiceCode_JO__c.Authorization__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Authorization_ServiceCode_JO__c.Code__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Authorization_ServiceCode_JO__c.Service_Code__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -2538,6 +2516,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Authorization__c.Person_Being_Served__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Authorization__c.Remaining_Dollars__c</field>
         <readable>false</readable>
     </fieldPermissions>
@@ -2554,6 +2537,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Campaign.ActualCost</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Campaign.AmountAllOpportunities</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Campaign.AmountWonOpportunities</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -2652,6 +2645,36 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>Campaign.NumberOfContacts</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Campaign.NumberOfConvertedLeads</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Campaign.NumberOfLeads</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Campaign.NumberOfOpportunities</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Campaign.NumberOfResponses</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Campaign.NumberOfWonOpportunities</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>Campaign.NumberSent</field>
         <readable>true</readable>
@@ -2679,6 +2702,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>CareMeridian_Contract_Rate_and_Level__c.Bed_Holds__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract_Rate_and_Level__c.CareMeridian_Contract__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -2728,7 +2756,52 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>CareMeridian_Contract__c.Ancillary_Details__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Ancillary__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>CareMeridian_Contract__c.Bill_Rate__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.BilledRate_Level_1__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.BilledRate_Level_2__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.BilledRate_Level_3__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.BilledRate_Level_4__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.BilledRate_Level_5__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.BilledRate_Level_6__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.BilledRate_Level_7__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -2763,6 +2836,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>CareMeridian_Contract__c.Billing_Format__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>CareMeridian_Contract__c.Business_Line__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -2779,6 +2857,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>CareMeridian_Contract__c.Contract_Type__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Counselling_Services_Details__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Counselling_Services__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -2853,6 +2941,21 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>CareMeridian_Contract__c.Formal_Education_Program_Details__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Formal_Education_Program__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Guarantor__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>CareMeridian_Contract__c.Initial__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -2883,7 +2986,62 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>CareMeridian_Contract__c.Level_6_Name__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Level_7_Name__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>CareMeridian_Contract__c.Location__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Medical_Equipment_Supplies_Details__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Medical_Equipment_Supplies__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Medications_Details__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Medications__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Need_to_get_Notified__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>CareMeridian_Contract__c.Neuro_Term_Notice_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>CareMeridian_Contract__c.Neuro_Termination_Not_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Neuropsych_Eval_Beh_Anal_Therapy_Detail__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Neuropsych_Eval_Beh_Analysis_Therapy__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -2899,6 +3057,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>CareMeridian_Contract__c.Non_CareMeridian_Radiology_Services__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Nursing_Services_Details__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Nursing_Services__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -3003,6 +3171,16 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>CareMeridian_Contract__c.Physician_Services_Consultations_Details__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Physician_Services_Consultations__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>CareMeridian_Contract__c.Physician_Visits_Details__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -3023,7 +3201,52 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>CareMeridian_Contract__c.Reimbursement_Details__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>CareMeridian_Contract__c.Reimbursement_Rate_Bed_Holds__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Reimbursement_Rate_Charges_1__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Reimbursement_Rate_Charges_2__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Reimbursement_Rate_Charges_3__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Reimbursement_Rate_Charges_4__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Reimbursement_Rate_Charges_5__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Reimbursement_Rate_Charges_6__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Reimbursement_Rate_Charges_7__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Reimbursement_Rate_Charges_Bed_Holds__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -3049,6 +3272,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>CareMeridian_Contract__c.Reimbursement_Rate_Level_5__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Reimbursement_Rate_Level_6__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Reimbursement_Rate_Level_7__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -3084,6 +3317,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>CareMeridian_Contract__c.Resubmission_Deadline__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Room_Board_Details__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Room_Board__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -3128,12 +3371,22 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>CareMeridian_Contract__c.TIN_NPI__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>CareMeridian_Contract__c.Term_Begin_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>CareMeridian_Contract__c.Term_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Term_Type__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -3154,6 +3407,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>CareMeridian_Contract__c.Termination_Notice__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Therapies_Details__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.Therapies__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -3203,6 +3466,16 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>CareMeridian_Contract__c.X1_1_Supervision_Details__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CareMeridian_Contract__c.X1_1_Supervision__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>CareMeridian_Contract__c.email_temp_is_record_new__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -3214,6 +3487,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Case.AssetId</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Case.BusinessHoursId</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -3314,86 +3592,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Case.Type</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Clinical_Catalog_Element__c.Description__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Clinical_Catalog_Element__c.Status__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Clinical_Catalog_Element__c.Type__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Clinical_Catalog_Program__c.Program_Custom_Setting__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Clinical_Catalog_Tree_Node__c.Catalog_Element__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Clinical_Catalog_Tree_Node__c.Catalog__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>Clinical_Catalog_Tree_Node__c.Eley_Type__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Clinical_Catalog_Tree_Node__c.ID_Action__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Clinical_Catalog_Tree_Node__c.ID_Goal__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Clinical_Catalog_Tree_Node__c.ID_Objective__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>Clinical_Catalog_Tree_Node__c.Sort_Oder__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Clinical_Catalog_Tree_Node__c.Status__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Clinical_Catalog__c.Catalog_Name__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Clinical_Catalog__c.Category__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Clinical_Catalog__c.Item_Category__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Clinical_Catalog__c.Item_Category_del__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -3933,6 +4131,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>ContractAmendment__c.Contract__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>ContractAmendment__c.EffectiveDate__c</field>
         <readable>false</readable>
     </fieldPermissions>
@@ -3963,6 +4166,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Contract_Compliance__c.Contract__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Contract_Compliance__c.ReviewDate__c</field>
         <readable>false</readable>
     </fieldPermissions>
@@ -3970,6 +4178,21 @@
         <editable>false</editable>
         <field>Contract_Compliance__c.Reviewer__c</field>
         <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contract_Document_JO__c.Contract__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contract_Document_JO__c.Document__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contract_ServiceLocation_JO__c.Contract__c</field>
+        <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
@@ -4262,6 +4485,11 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>Credential_Record__c.Credential_Profile__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
         <field>Credential_Record__c.DHR_Documented_Field__c</field>
         <readable>true</readable>
@@ -4343,6 +4571,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Credential_Record__c.TMN_Contact__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Credential_Record__c.Type_of_Conviction_Federal__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -4379,6 +4612,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Diagnosis__c.Comments__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Diagnosis__c.Effective_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -4573,6 +4811,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Evaluation_Response__c.Evaluation__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Evaluation_Response__c.Fracture_Type__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -4609,11 +4852,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Evaluation_Response__c.K_plus__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation_Response__c.Length_of_Time__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -4659,11 +4897,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Evaluation_Response__c.Paper_Id__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation_Response__c.Position__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -4733,41 +4966,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Abdomen__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Able_to_make_Needs_Known__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Accompanied_By__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Activity_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Activity__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Admit_Date_Time__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Admit_Status__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Advanced_Directives_Attached__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -4783,27 +4981,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Alcohol_Abuse_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Alcohol_Abuse__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Alcoholic_drinks_per_day__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Alert__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Alleviating_Factors__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -4833,17 +5011,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Assessed_for_Readiness_to_Learn__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Auditory_Stim__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Autonomic_Dysreflexia__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -4868,27 +5036,12 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Barriers_to_DC__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Bed_Alarm__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Bed_Craddle__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Bed_Mobility__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Beliefs_that_could_affect_Treatment__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -4899,16 +5052,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Evaluation__c.BiPAP__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Blink_to_Threat_R_L__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Blood_Tinged__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -4948,21 +5091,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Breath__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Breathe_Sound_Other__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Breathe_Sounds__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Burns_Area__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -4974,26 +5102,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Evaluation__c.CPAP__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Can_Resident_Participate_In_Education__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Can_he_she_hear__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Can_he_she_read__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Can_he_she_write__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -5033,52 +5141,12 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Causative_factors_Diarrhea__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Central__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Checkbox__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Cheeks_Sores_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Cheeks__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Chest_Restraint__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Chest_Restraint_restrict_Freedom__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Chest_restraint_can_be_removed__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Clinical_Course__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Closest_Relationship_with__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -5108,37 +5176,12 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Consent_for_Restraints_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Contacts_Type__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Cooperative__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Creamy__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Cuffed__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Cultural_Preference_Specify__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Cultural_Preferences__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -5153,37 +5196,12 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Current_Pain_Treatment__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.DC_Plan__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.DME_Needs__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>Evaluation__c.Date_of_Injury_Onset__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Date_of_Last_menstrual_Period__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Date_of_last_mamogram__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Date_of_last_pap__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -5203,67 +5221,12 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Denture_Usage_Other__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Dentures_Type__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Dentures_Usage_Details__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Dentures__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Depression_History__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Depression_Patient_received_Treatment__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Depression_desire_to_hurt_themsleves__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Desire_to_hurt_themselves__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Details_Section_Completed__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Diabetic__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.DiagnosisIsolation_Type__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Diagnostics_Comments__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Diagnostics_GYN_Experiences__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -5298,37 +5261,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Dietary_supplement_describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Diplopia__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Discharge_Info_From__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Discharge_Nursing__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Discharge_OT__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Discharge_PT__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Discharge_Physician__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -5339,11 +5272,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Evaluation__c.Discharge_Plan_Home_Situation__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Discharge_ST__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -5368,16 +5296,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Domestic_Abuse_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Domestic_Abuse__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Dressing_LE__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -5388,47 +5306,12 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Drug_Abuse_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Drug_Abuse__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Duration_of_Incontinence__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Dysphagia__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>Evaluation__c.ELOS__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Ear_Infections__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Ear_infection_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Educated_Regarding_AD__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Elastic_Hose__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -5468,42 +5351,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Elopement_Risk_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Elopement_Risk__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Employed__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.EmploymentDisabled__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.EmploymentFT__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.EmploymentPT__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.EmploymentRetired__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.EmploymentUnknown__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -5513,47 +5361,12 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Enclosure_Bed__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Enclosure_Bed_can_be_removed__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Enclosure_bed_restrict_freedom__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Endovascular_Filter__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Endurance__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Enema_or_Suppository_use_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Evaluation_Date__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Expression_Other__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Expression__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -5588,107 +5401,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Family_Commu_Status_other__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Family_Communication_Status__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Family_Emotional_Barrier_Other__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Family_Mem_Physical_cognitive_Barriers__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Family_Member_Education_Level__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Family_Member_Education_Participation__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Family_Member_s_Cultural_Influences__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Family_Member_s_Emotional_Barriers__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Family_Member_s_Learning_related_to__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Family_Member_s_Readiness_To_Learn__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Family_Member_s_Religious_Influences__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Family_Member_s_Vision__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Family_Member_s_knowledge_on_Disease__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Family_Members_Learning_Other__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Family_he_She_hear__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Family_he_She_read__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Family_he_she_Write__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Feeding__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Financial_Abuse_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Financial_Abuse__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Fluid_Intake__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -5698,32 +5411,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Frequency_of_menstrual_cycles__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Front_Wheeled_Walker__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Frothy__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Gait__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Given_Explanation_in_plan_of_Care__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Given_explanation_of_Infection_Control__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -5758,102 +5446,12 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Glasses_for_other__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Gums_Sores_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Gums__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.HHN__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Hallucination_Types__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Hallucinations_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Hallucinations__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Hand_Dominance__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Hand_Rolls__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Harm_Date_and_Time_Reported__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Harm_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Harm_Reported_to__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Head_Circumference_cm__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Hearing_Aid_Left__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Hearing_Aid_Right__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Hearing__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Heart_Sound_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Heart_Sounds__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.HeightFt__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.HeightInches__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -5868,36 +5466,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.History_of_Constipation__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.History_of_Diarrhea__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.History_of_Enema_or_Suppository_Use__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.History_of_Falls_Last_3_Months__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.History_of_Laxative_Use__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.History_of_Pressure_Ulcers_Flap_Surge__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.History_of_Psycho_Social_Issues__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -5908,32 +5476,12 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.ICP_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.IPPB__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>Evaluation__c.If_ICP_Q__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.If_Intermittent_Schedule__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.If_yes_Glucose_meter_Reading__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Immunization_N_A__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -5953,82 +5501,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.InContinent_Child_toilet_training__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Inappropriate__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Incontinent_Age_Appropriate__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Incontinent_Bowel_Age_Appropriate__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Incontinent_Bowel_ChildTraining_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Incontinent_Bowel_Child_Training__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Incontinent_Last_Void__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Incontinent_Neuro_Bowel_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Incontinent_Neurogenic_Bowel__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Incontinent_toilet_training_describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Indwelling_Suprapubic_Date_Unknown__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Indwelling_Suprapubic_Date__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Indwelling_Suprapubic_type_size__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Influenza_Text__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Influenza__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Influenza_where_and_when__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -6058,87 +5531,12 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Isolation_Reason_and_Site__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Isolation_Type__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>Evaluation__c.Isolation__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Jaw_Wires__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.LE_Device_can_be_removed__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.LE_Device_restrict_freedom__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.LE__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.LLE__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.LLQ_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.LLQ__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.LL_Teeth_Condition__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.LL_of_Teeth_Present__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.LR_Teeth_Condition__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.LR_of_Teeth_Present__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.LUE__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.LUQ_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.LUQ__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -6183,51 +5581,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Lap_Tray_Can_be_removed__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Lap_Tray__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Lap_Tray_restrict_freedom__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Last_BM__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Laxative_Use_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Level_of_Conciousness__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Lipids__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Lips_Sores_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Lips__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Liters_Min__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -6244,11 +5597,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Evaluation__c.Location_of_Stairs__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Low_Bed__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -6273,27 +5621,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Manner_of_Expressing_Pain__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Mask_Type__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Mask__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Members_Visit__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Memory__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -6308,62 +5636,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Mist_Type__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Mist__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Mitt_Device_can_be_removed__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Mitt_Device_restrict_freedom__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Mitt__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Mood__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Motivation_Towards_Rehab__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.NKDA__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Name_of_Representative_present__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Nasal_Cannula__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Neck__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Negative_Impact_on_ADLs__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -6383,92 +5656,12 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Neuro_Pain_Activity__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Neuro_Pain_Alleviating_Factors__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Neuro_Pain_Manner_of_Exp__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Neuro_Pain_None__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Neuro_Pain_Position_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Neuro_Pain_Position__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Neuro_Pain_Severity__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Neuro_Pain_Time_of_Day__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Neuro_Pain_Types__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Neuro_Pain_neg_Impact_on_ADLs__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Neuro_Section_Completed__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Neuro_pain_Activity_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Neuro_pain_Descriptors__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Neuro_pain_time_of_day_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Neurogenic_Bladder__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Neurological_Confused__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Non_Responsive__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.None__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -6508,11 +5701,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.O2_Type__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.O2__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -6533,22 +5721,12 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Odor__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.One_step__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>Evaluation__c.One_to_One_Sitter__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Orientation__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -6568,16 +5746,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Oriented_to_the_Following__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Ortho_Cast_Location__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Ortho_Comments__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -6588,57 +5756,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Orthodics_Other__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Orthodics_Types__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Orthodics__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Orthopedic_Medications__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Orthopedic_diagnostic_types__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Other_Dental_Appliance__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Other_Languages_Spoken__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Other_Religious_Effect__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Other_Special_Equipment_Details__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Out_of_Bed_Tolerance__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Overhead_Trapaze__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -6654,31 +5772,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Evaluation__c.PCA__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.PEDS_History_of_Tonsils__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.PEDS_Pacifier_Type_Usage__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.PEDS_Pacifier__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.PEDS_Teething__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.PEDS_Tonsil_History_Describe__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -6713,32 +5806,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Pacemaker__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Packs_Day_Years__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Pain_Description__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Pain_History__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Pain_Level_Requiring_Intervention__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Pain_Present__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -6778,72 +5846,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Perception_of_Need_to_Defecate__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Perception_of_Need_to_Void__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Peripheral_Capillary_Refill_Location__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Peripheral_Capillary_Refill_of_Seconds__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Peripheral_Pulses_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Peripheral_Pulses_Present__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Physical_Abuse_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Physical_Abuse__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Physical_emotional_or_Financial_harm__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Physician__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Plan_to_Harm_themselves__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Pneumococcal_Text__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Pneumococcal_Where_and_when__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Pneumococcal__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -6854,16 +5857,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Evaluation__c.PoA_Type__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Position_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Position__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -6888,22 +5881,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Preferred_Method_of_Learning__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Pressure_Ulcer_Flap_Surgery_describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Primary_Diagnosis__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Primary_Language__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -6923,57 +5901,12 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Prosthetic_Types__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Prosthetics_Other__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Prosthetics__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Psycho_Social_Comments__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>Evaluation__c.Psycho_Social_Section_Completed__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Pulse_Ox_Details__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Pulse_Ox_Schedule__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Pulse_Ox__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.RLE__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.RLQ_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.RLQ__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -6994,21 +5927,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Evaluation__c.ROM__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.RUE__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.RUQ_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.RUQ__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -7058,11 +5976,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Rancho_level_Resident_Orientation__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Rash_Description__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -7074,11 +5987,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Evaluation__c.Rash__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Ready_for_Teaching_and_Learning__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -7103,137 +6011,12 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Rehab_Cane__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Rehab_Comments__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Rehab_Equipment_Other_Details__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Rehab_Equipment_Other__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Rehab_Other_Equipment_Needed__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Rehab_Section_Completed__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Rehab_WFLs__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Religious_Preference_Details__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Religious_Preference__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Representative_present_at_Admission__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Resident_Contacts_Glasses_at_Facility__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Resident_Coping_Well__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Resident_Demonstrating_Issues__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Resident_Education_Level__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Resident_have_aid_s_at_Facility__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Resident_s_Communication_Status__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Resident_s_Cultural_Influences__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Resident_s_Emotional_Barriers__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Resident_s_Existing_Knowledge_of_Disease__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Resident_s_Learning_needs_related_to__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Resident_s_Physical_Cognitive_Barriers__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Resident_s_Readiness_to_Learn__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Resident_s_Religious_Influences__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Resident_s_Vision__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Resident_s_communication_Status_Other__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Resident_s_emotional_barrier_other__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Residents_Learning_relate_to_other__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -7253,26 +6036,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Risk_to_Others_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Risk_to_Others__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Risk_to_Self_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Risk_to_Self__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.ST__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -7283,32 +6046,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Saliva__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Seat_Belt__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Seat_Belt_can_be_removed__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Seat_Belt_restrict_Freedom__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Secondary_Diagnosis__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Seizure_History__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -7319,21 +6057,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Evaluation__c.Sensation_Not_Tested__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.ServiceAssignment__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Sexual_Abuse_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Sexual_Abuse__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -7353,77 +6076,12 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Shunt_Permacath__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Side_Rails_Half_full__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Side_Rails_can_be_removed__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Side_rails_can_restrict_freedom__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Signed_Consent_for_Restraints__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Skin_Behavior__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Skin_Body_Comments__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Skin_Color__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Skin_Edema_Location__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Skin_Edema__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Skin_Moisture__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Skin_Section_Completed__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Skin_Temperature__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Skin_Turgor__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Smoking_History__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -7443,17 +6101,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Spiritual_Care_Visits__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Sputum_Appearance__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Sputum_Color__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -7464,11 +6112,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Evaluation__c.Stairs__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Sticky__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -7518,21 +6161,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.TDAP_Text__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.TDAP_Where_and_When__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.TDAP__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.TV__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -7544,16 +6172,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Evaluation__c.Tactile_Stim__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Tactile__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Teaching_Instructions_were_discussed__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -7588,26 +6206,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Thick__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Thin__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Time_of_Day_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Time_of_Day__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Tolerating_Current_Diet__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -7619,16 +6217,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Evaluation__c.Tone_Not_Tested__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Tongue_Sores_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Tongue__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -7653,17 +6241,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Trach_Size_Other__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Trach_Size__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Trach_Type_Other__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -7718,11 +6296,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Transported_By__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Treatment_Plan_Other__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -7739,26 +6312,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Evaluation__c.Treatments__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Trunk_Supports__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Trunk__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Trunk_supports_can_be_removed__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Trunk_supports_restrict_freedom__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -7788,127 +6341,12 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Type_of_Constipation__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Type_of_Restraints__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Typeof_Spiritual_belief_Effects__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.UE_Device_can_be_removed__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.UE_Device_restrict_freedom__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.UE__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.UL_Teeth_Condition__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.UL_of_Teeth_Present__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.UR_Teeth_Condition__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.UR_of_Teeth_Present__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Unresponsive__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Urinary_Issues__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Urine_Clarity_Other__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Urine_Clarity__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Urine_Color__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Urine_Odor__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Use_of_Dietary_Supplements__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Usual_Elimination_Frequeny__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.VP_Shunt_Describe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.VP_Shunt__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Vaccination_Flu__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Vaccination_Info_Sheet_Provided__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Vaccination_Pneumococcal__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Ventilator_Mode__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Ventilator_Other__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -7919,11 +6357,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Evaluation__c.Ventilator_Results__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Ventilator_Type__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -7943,17 +6376,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Vision__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Visual_Perceptual__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Visual__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -7968,11 +6391,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.WeightKg__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Weight_Bearing_Precautions__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -7983,27 +6401,12 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Evaluation__c.Weightlbs__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Weightoz__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Evaluation__c.Wheel_Chair__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>Evaluation__c.Will_be_DC_d_prior_to_transfer__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.Wire_Cutters_at_Bedside__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -8024,16 +6427,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Evaluation__c.Wound__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>Evaluation__c.isNurses__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Evaluation__c.one_to_One_Sitter_of_Hours_per_day__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -8193,11 +6586,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Funding_Source__c.Auth_given_method__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Funding_Source__c.Authorization_Comments__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -8218,11 +6606,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Funding_Source__c.Authorization_Type__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Funding_Source__c.Basis__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -8239,11 +6622,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Funding_Source__c.Benefit_Year_Start_Date__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Funding_Source__c.CM_Contract_Used_Lookup__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -8578,11 +6956,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Funding_Source__c.Other_Authorization_Type__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Funding_Source__c.Out_patient_Visit_Limit__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -8704,6 +7077,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Funding_Source__c.Reference_Number__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Funding_Source__c.Referral__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -8889,6 +7267,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Intervention__c.Intervention_Name__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Intervention__c.Objective__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -9273,6 +7656,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Issuing_Agency_Contact__c.Issuing_Agency__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Issuing_Agency_Contact__c.Phone__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -9445,6 +7833,11 @@
         <editable>false</editable>
         <field>Media_Outlet__c.Type__c</field>
         <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Metadata__c.Credential_Profile__c</field>
+        <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
@@ -9699,6 +8092,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Mentor_Tracking_Report_Record__c.Submitted_Once_Closed__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mentor_Tracking_Report_Record__c.TMN_Contact__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -10608,6 +9006,16 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Objective_Summary_Comment__c.Action_Plan_Objective__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Objective_Summary_Comment__c.Action_Summary__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Objective_Summary_Comment__c.Comment__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -10678,6 +9086,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Objective__c.Short_term_Goal__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Objective__c.Start_Date__c</field>
         <readable>false</readable>
     </fieldPermissions>
@@ -10700,11 +9113,6 @@
         <editable>true</editable>
         <field>Opportunity.CampaignId</field>
         <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>Opportunity.ContractId</field>
-        <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
@@ -10734,6 +9142,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Opportunity.NextStep</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Opportunity.Probability</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -10963,6 +9376,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Plan_ServiceAssignment_mJO__c.Service_Assignment__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Plan_ServiceAssignment_mJO__c.Short_term_Goal__c</field>
         <readable>false</readable>
     </fieldPermissions>
@@ -10970,6 +9388,11 @@
         <editable>false</editable>
         <field>Plan__c.Account_Owner_Name__c</field>
         <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Plan__c.Admission__c</field>
+        <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
@@ -11000,6 +9423,11 @@
         <editable>false</editable>
         <field>Plan__c.Days_Till_Expiration__c</field>
         <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Plan__c.Effective_Date__c</field>
+        <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
@@ -11172,11 +9600,6 @@
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
-        <field>Position__c.Date_Closed__c</field>
-        <readable>false</readable>
-    </fieldPermissions>
-    <fieldPermissions>
         <editable>true</editable>
         <field>Product2.Description</field>
         <readable>true</readable>
@@ -11189,6 +9612,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Product2.ProductCode</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Program_Document_Xref__c.Document__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -11227,6 +9655,11 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>ProgressNote_ActionPlanChildren_mjo__c.Progress_Note__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
         <field>ProgressNote_ServiceAssignment_mJO__c.Intervention__c</field>
         <readable>false</readable>
@@ -11234,6 +9667,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>ProgressNote_ServiceAssignment_mJO__c.Objective__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>ProgressNote_ServiceAssignment_mJO__c.Progress_Note__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -11265,6 +9703,11 @@
         <editable>false</editable>
         <field>Progress_Note__c.Admission__c</field>
         <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Progress_Note__c.Alias__c</field>
+        <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
@@ -11738,6 +10181,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Progress_Note__c.End_Time__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Progress_Note__c.Eye_Contact__c</field>
         <readable>false</readable>
     </fieldPermissions>
@@ -11750,11 +10198,6 @@
         <editable>false</editable>
         <field>Progress_Note__c.FCT_Fidelity_Measure__c</field>
         <readable>false</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>Progress_Note__c.FCT_Phase_String_At_Note_Creation__c</field>
-        <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
@@ -11792,12 +10235,7 @@
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
-        <field>Progress_Note__c.Funding_Source2__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Progress_Note__c.Funding_Source_Number__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -11975,11 +10413,6 @@
         <editable>false</editable>
         <field>Progress_Note__c.Member_Transportation_by_Staff__c</field>
         <readable>false</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Progress_Note__c.Mileage__c</field>
-        <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
@@ -12162,11 +10595,6 @@
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>true</editable>
-        <field>Progress_Note__c.Primary_Diagnosis__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
         <editable>false</editable>
         <field>Progress_Note__c.Procedure_Code_MA__c</field>
         <readable>false</readable>
@@ -12252,11 +10680,6 @@
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>true</editable>
-        <field>Progress_Note__c.Secondary_Diagnosis__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
         <editable>false</editable>
         <field>Progress_Note__c.Service_Assignment__c</field>
         <readable>false</readable>
@@ -12269,11 +10692,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Progress_Note__c.Service_Code_Modifier_2__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Progress_Note__c.Service_Code_Modifier_3__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12327,18 +10745,8 @@
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
-        <field>Progress_Note__c.Staff_Credentials_Current__c</field>
-        <readable>false</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Progress_Note__c.Staff_Credentials__c</field>
-        <readable>false</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>Progress_Note__c.Staff_Employee_ID__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12349,6 +10757,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Progress_Note__c.Start_Time_Only__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Progress_Note__c.Start_Time__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12480,6 +10893,11 @@
         <editable>false</editable>
         <field>Project_Task__c.Progress__c</field>
         <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Project_Task__c.Project__c</field>
+        <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
@@ -13663,6 +12081,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Redwood_Contract_Change_Log__c.Redwood_Contract__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Redwood_Contract_Change_Log__c.Start_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -13883,6 +12306,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Referral_Assignment__c.Referral__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Referral_Assignment__c.Staff__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -13894,6 +12322,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Referral_Location__c.Location__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Referral_Location__c.Referral__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -14473,16 +12906,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Referral__c.Goals_from_the_Referral_Source__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Grade__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Referral__c.Has_Evaluation__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -14534,11 +12957,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Referral__c.How_did_they_learn__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.ICC_Care_Plan_Submitted__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -14749,21 +13167,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Referral__c.Out_of_Home_Placement_Risk_Level__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Parental_Disability__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Payer_Medical_Record_Number_Description__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Payer_Medical_Record_Number__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -14993,11 +13396,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Referral__c.Ranchos_Los_Amigos_Scale__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Referral__c.Reason_Category_Behavioral_Problems__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -15193,11 +13591,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Referral__c.Safe_Plan__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Referral__c.Safety_Measures_Required__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -15358,11 +13751,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Referral__c.Type_of_Encephalopathy__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Referral__c.Type_of_Injury_Previous__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -15404,11 +13792,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Referral__c.Verbally_Aggressive__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Referral__c.Victim_of_Domestic_Violence__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -15623,27 +14006,12 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Related_Party__c.Age__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Related_Party__c.Assessment__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Related_Party__c.Comments__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>Related_Party__c.Email__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Related_Party__c.Gender__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -15693,21 +14061,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Related_Party__c.Received_FCT_services_before__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Related_Party__c.Relationship_to_Person_Being_Served_Othe__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Related_Party__c.Relationship_to_Person_Being_Served__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Related_Party__c.Type_String__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -15743,7 +14096,22 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Response__c.Email__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Response__c.First_Name__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Response__c.Job_Title__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Response__c.Last_Name__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -15784,6 +14152,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Response__c.Time_Stamp__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>ServiceAssignment_Contract_JO__c.Contract__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>ServiceAssignment_Contract_JO__c.Service_Assignment__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -15839,6 +14217,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>ServiceAssignment_Document_JO__c.Document_Waived_or_N_A__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>ServiceAssignment_Document_JO__c.Document__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -15907,14 +14290,29 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>ServiceAssignment_Document_JO__c.Service_Assignment__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
         <field>ServiceAssignment_ServiceCode_JO__c.Code_Selection_txt__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>Service_Assignment__c.Alias__c</field>
-        <readable>true</readable>
+        <field>ServiceAssignment_ServiceCode_JO__c.Service_Assignment__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>ServiceAssignment_ServiceCode_JO__c.Service_Code__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Service_Assignment__c.Admission__c</field>
+        <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
@@ -16197,6 +14595,11 @@
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>Service_Code__c.Start_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
         <field>Service_Code__c.State__c</field>
         <readable>false</readable>
@@ -16213,7 +14616,17 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Service_Location__c.Alias__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Service_Location__c.City__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Service_Location__c.FacilityID__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -16224,6 +14637,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Service_Location__c.Phone__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Service_Location__c.ProgramID__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Service_Location__c.Program__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -16249,6 +14672,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Service_Location__c.TIN__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Service_Location__c.UniqueID__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -16284,6 +14712,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Short_Term_Goal__c.Plan_Name__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Short_Term_Goal__c.Plan__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -16358,7 +14791,27 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Supplier__c.Contact_Email__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Supplier__c.Contact_Fax__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Supplier__c.Contact_Name__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Supplier__c.Contact_Phone__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Supplier__c.Contact_Title__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -16378,7 +14831,17 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Supplier__c.Supplier_Address_1__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Supplier__c.Supplier_Address_2__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Supplier__c.Supplier_City__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -16398,12 +14861,27 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Supplier__c.Supplier_Phone__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Supplier__c.Supplier_State__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Supplier__c.Supplier_Tax_ID_Number__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
         <field>Supplier__c.Supplier_Website__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Supplier__c.Supplier_Zip__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -18048,6 +16526,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Weekly_Clinical_Note__c.Service_Assignment__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Weekly_Clinical_Note__c.Type_Of_Contact__c</field>
         <readable>false</readable>
     </fieldPermissions>
@@ -18226,32 +16709,24 @@
         <layout>CareMeridian_Contract__c-CareMeridian Contract Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>CareMeridian_Contract__c-CareMeridian Contract Layout</layout>
+        <recordType>CareMeridian_Contract__c.CareMeridian_Contracts</recordType>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>CareMeridian_Contract__c-CareMeridian Contract Layout</layout>
+        <recordType>CareMeridian_Contract__c.NeuroRestorative_Contracts</recordType>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>Case-Case Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>CaseClose-Close Case Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Clinical_Catalog_Element__c-Clinical Catalog Element Layout</layout>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Clinical_Catalog_Program__c-Clinical Catalog Program Layout</layout>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Clinical_Catalog_Tree_Node__c-Clinical Catalog Tree Node Layout</layout>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Clinical_Catalog__c-Clinical Catalog Layout</layout>
-    </layoutAssignments>
-    <layoutAssignments>
         <layout>CollaborationGroup-Group Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Contact-Contact Layout</layout>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>ContentVersion-Application Help Doc</layout>
-        <recordType>ContentVersion.Application_Help_Doc</recordType>
     </layoutAssignments>
     <layoutAssignments>
         <layout>ContentVersion-Control</layout>
@@ -18263,6 +16738,10 @@
     <layoutAssignments>
         <layout>ContentVersion-General</layout>
         <recordType>ContentVersion.Form</recordType>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>ContentVersion-General TMN</layout>
+        <recordType>ContentVersion.Application_Help_Doc</recordType>
     </layoutAssignments>
     <layoutAssignments>
         <layout>ContentVersion-IT Systems</layout>
@@ -18344,14 +16823,6 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>Evaluation_Response__c-Evaluation Response Layout</layout>
-        <recordType>Evaluation_Response__c.Orthostatic_BP</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Evaluation_Response__c-Evaluation Response Layout</layout>
-        <recordType>Evaluation_Response__c.PressureUlcer_Detail</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Evaluation_Response__c-Evaluation Response Layout</layout>
         <recordType>Evaluation_Response__c.Radiology_Detail</recordType>
     </layoutAssignments>
     <layoutAssignments>
@@ -18368,14 +16839,6 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>Evaluation__c-Evaluation Layout</layout>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Evaluation__c-Evaluation Layout</layout>
-        <recordType>Evaluation__c.CareMeridian</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Evaluation__c-Evaluation Layout</layout>
-        <recordType>Evaluation__c.NursesAssessment</recordType>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Event-Event Layout</layout>
@@ -18408,27 +16871,11 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>Funding_Source__c-Funding Source Layout</layout>
-        <recordType>Funding_Source__c.Cambridge_IN</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Funding_Source__c-Funding Source Layout</layout>
         <recordType>Funding_Source__c.Cambridge_Maryland</recordType>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Funding_Source__c-Funding Source Layout</layout>
-        <recordType>Funding_Source__c.Cambridge_Massachusetts</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Funding_Source__c-Funding Source Layout</layout>
-        <recordType>Funding_Source__c.Cambridge_NC</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Funding_Source__c-Funding Source Layout</layout>
         <recordType>Funding_Source__c.Cambridge_New_Jersey</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Funding_Source__c-Funding Source Layout</layout>
-        <recordType>Funding_Source__c.Cambridge_Ohio</recordType>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Funding_Source__c-Funding Source Layout</layout>
@@ -18568,13 +17015,7 @@
         <recordType>Plan__c.PA_Periodic_Services</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Position__c-Position Layout</layout>
-    </layoutAssignments>
-    <layoutAssignments>
         <layout>Pricebook2-Price Book Layout</layout>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>PricebookEntry-Price Book Entry Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Product2-Product Layout</layout>
@@ -18597,6 +17038,22 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>Progress_Note__c-BACKUP Progress Note Layout</layout>
+        <recordType>Progress_Note__c.IN_FCT</recordType>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Progress_Note__c-BACKUP Progress Note Layout</layout>
+        <recordType>Progress_Note__c.MA_FCT</recordType>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Progress_Note__c-BACKUP Progress Note Layout</layout>
+        <recordType>Progress_Note__c.MD_FCT</recordType>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Progress_Note__c-BACKUP Progress Note Layout</layout>
+        <recordType>Progress_Note__c.OH_FCT</recordType>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Progress_Note__c-BACKUP Progress Note Layout</layout>
         <recordType>Progress_Note__c.Shift_Note</recordType>
     </layoutAssignments>
     <layoutAssignments>
@@ -18604,20 +17061,8 @@
         <recordType>Progress_Note__c.FL_FSS_Progress_Note</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Progress_Note__c-IN - FCT Progress Note Layout</layout>
-        <recordType>Progress_Note__c.IN_FCT</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Progress_Note__c-MA - FCT Progress Note</layout>
-        <recordType>Progress_Note__c.MA_FCT</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
         <layout>Progress_Note__c-MA - IFCS Progress Note Layout</layout>
         <recordType>Progress_Note__c.MA_IFCS_Progress_Note</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Progress_Note__c-MD - FCT Progress Note</layout>
-        <recordType>Progress_Note__c.MD_FCT</recordType>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Progress_Note__c-MD IFCS-Progress Note</layout>
@@ -18646,10 +17091,6 @@
     <layoutAssignments>
         <layout>Progress_Note__c-NJ Progress Note Layout</layout>
         <recordType>Progress_Note__c.NJ_Progress_Note</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Progress_Note__c-OH - FCT Progress Note</layout>
-        <recordType>Progress_Note__c.OH_FCT</recordType>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Progress_Note__c-PA - BHRS %28BSC%29 Progress Note Layout</layout>
@@ -18747,27 +17188,11 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>Referral__c-Referral Layout</layout>
-        <recordType>Referral__c.Cambridge_IN</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Referral__c-Referral Layout</layout>
         <recordType>Referral__c.Cambridge_Maryland</recordType>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Referral__c-Referral Layout</layout>
-        <recordType>Referral__c.Cambridge_Massachusetts</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Referral__c-Referral Layout</layout>
-        <recordType>Referral__c.Cambridge_NC</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Referral__c-Referral Layout</layout>
         <recordType>Referral__c.Cambridge_New_Jersey</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Referral__c-Referral Layout</layout>
-        <recordType>Referral__c.Cambridge_Ohio</recordType>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Referral__c-Referral Layout</layout>
@@ -19112,7 +17537,7 @@
         <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
-        <apexPage>Assessment_IssaForm</apexPage>
+        <apexPage>Assessment_FAD_Form</apexPage>
         <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
@@ -19153,10 +17578,6 @@
     </pageAccesses>
     <pageAccesses>
         <apexPage>CareMeridianEvaluationView</apexPage>
-        <enabled>false</enabled>
-    </pageAccesses>
-    <pageAccesses>
-        <apexPage>CatalogAndPrograms</apexPage>
         <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
@@ -19217,10 +17638,6 @@
     </pageAccesses>
     <pageAccesses>
         <apexPage>Document_Edit</apexPage>
-        <enabled>false</enabled>
-    </pageAccesses>
-    <pageAccesses>
-        <apexPage>Documented_Actual_Staff_Hrs_Rpt</apexPage>
         <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
@@ -19408,10 +17825,6 @@
         <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
-        <apexPage>Notes_ProgressNote_InfoExtras</apexPage>
-        <enabled>false</enabled>
-    </pageAccesses>
-    <pageAccesses>
         <apexPage>Notes_ProgressNote_PDF_AZ_OPT</apexPage>
         <enabled>false</enabled>
     </pageAccesses>
@@ -19492,14 +17905,6 @@
         <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
-        <apexPage>NursesAssessmentEsign</apexPage>
-        <enabled>false</enabled>
-    </pageAccesses>
-    <pageAccesses>
-        <apexPage>NursingEvaluationPDF</apexPage>
-        <enabled>false</enabled>
-    </pageAccesses>
-    <pageAccesses>
         <apexPage>PBSCreate</apexPage>
         <enabled>false</enabled>
     </pageAccesses>
@@ -19540,10 +17945,6 @@
         <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
-        <apexPage>Progress_Notes_List_View</apexPage>
-        <enabled>false</enabled>
-    </pageAccesses>
-    <pageAccesses>
         <apexPage>ProjectTabLayout</apexPage>
         <enabled>false</enabled>
     </pageAccesses>
@@ -19573,10 +17974,6 @@
     </pageAccesses>
     <pageAccesses>
         <apexPage>ReferralHome</apexPage>
-        <enabled>false</enabled>
-    </pageAccesses>
-    <pageAccesses>
-        <apexPage>Report_KidTraksExport</apexPage>
         <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
@@ -19668,23 +18065,11 @@
         <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
-        <apexPage>allTabs</apexPage>
-        <enabled>false</enabled>
-    </pageAccesses>
-    <pageAccesses>
         <apexPage>assessment_CANSdetail</apexPage>
         <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
         <apexPage>assessment_tab</apexPage>
-        <enabled>false</enabled>
-    </pageAccesses>
-    <pageAccesses>
-        <apexPage>catalog_builder_beta</apexPage>
-        <enabled>false</enabled>
-    </pageAccesses>
-    <pageAccesses>
-        <apexPage>catalog_builder_beta_hack</apexPage>
         <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
@@ -19753,6 +18138,16 @@
     <recordTypeVisibilities>
         <default>false</default>
         <recordType>Action_Plan_Worksheet__c.Weekly_Skill_Result</recordType>
+        <visible>false</visible>
+    </recordTypeVisibilities>
+    <recordTypeVisibilities>
+        <default>false</default>
+        <recordType>CareMeridian_Contract__c.CareMeridian_Contracts</recordType>
+        <visible>false</visible>
+    </recordTypeVisibilities>
+    <recordTypeVisibilities>
+        <default>false</default>
+        <recordType>CareMeridian_Contract__c.NeuroRestorative_Contracts</recordType>
         <visible>false</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
@@ -19832,16 +18227,6 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>false</default>
-        <recordType>Evaluation_Response__c.Orthostatic_BP</recordType>
-        <visible>false</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <default>false</default>
-        <recordType>Evaluation_Response__c.PressureUlcer_Detail</recordType>
-        <visible>false</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <default>false</default>
         <recordType>Evaluation_Response__c.Radiology_Detail</recordType>
         <visible>false</visible>
     </recordTypeVisibilities>
@@ -19858,16 +18243,6 @@
     <recordTypeVisibilities>
         <default>false</default>
         <recordType>Evaluation_Response__c.Wound_Detail</recordType>
-        <visible>false</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <default>false</default>
-        <recordType>Evaluation__c.CareMeridian</recordType>
-        <visible>false</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <default>false</default>
-        <recordType>Evaluation__c.NursesAssessment</recordType>
         <visible>false</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
@@ -19897,32 +18272,12 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>false</default>
-        <recordType>Funding_Source__c.Cambridge_IN</recordType>
-        <visible>false</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <default>false</default>
         <recordType>Funding_Source__c.Cambridge_Maryland</recordType>
         <visible>false</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>false</default>
-        <recordType>Funding_Source__c.Cambridge_Massachusetts</recordType>
-        <visible>false</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <default>false</default>
-        <recordType>Funding_Source__c.Cambridge_NC</recordType>
-        <visible>false</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <default>false</default>
         <recordType>Funding_Source__c.Cambridge_New_Jersey</recordType>
-        <visible>false</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <default>false</default>
-        <recordType>Funding_Source__c.Cambridge_Ohio</recordType>
         <visible>false</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
@@ -20188,32 +18543,12 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>false</default>
-        <recordType>Referral__c.Cambridge_IN</recordType>
-        <visible>false</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <default>false</default>
         <recordType>Referral__c.Cambridge_Maryland</recordType>
         <visible>false</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>false</default>
-        <recordType>Referral__c.Cambridge_Massachusetts</recordType>
-        <visible>false</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <default>false</default>
-        <recordType>Referral__c.Cambridge_NC</recordType>
-        <visible>false</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <default>false</default>
         <recordType>Referral__c.Cambridge_New_Jersey</recordType>
-        <visible>false</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <default>false</default>
-        <recordType>Referral__c.Cambridge_Ohio</recordType>
         <visible>false</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
@@ -20351,10 +18686,6 @@
     <tabVisibilities>
         <tab>HELP_Sample</tab>
         <visibility>DefaultOn</visibility>
-    </tabVisibilities>
-    <tabVisibilities>
-        <tab>Position__c</tab>
-        <visibility>DefaultOff</visibility>
     </tabVisibilities>
     <tabVisibilities>
         <tab>Project_Task__c</tab>

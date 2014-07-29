@@ -4,18 +4,11 @@
     <c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" parentPage="Admission" admId="{!Admission__c.Id}" rendered="{!showPersonalCard}"/>
     <br />
     <apex:form >
-    <apex:pageMessages id="msgs"/>
-        <apex:pageBlock title="Admission Edit" id="detail" mode="edit">
-            <div class="pbHeaderButton" id="buttons">
-            	<apex:actionStatus id="mySaveStatus">
-				<apex:facet name="stop">
-					<apex:commandButton value="Save" id="btnSave" action="{!save}" status="mySaveStatus" rerender="msgs, detail"/>
- 				</apex:facet>
-				<apex:facet name="start">
-					<apex:commandButton value="Save" disabled="true"/>
-				</apex:facet>
-				</apex:actionStatus>
-			    <apex:commandButton action="{!cancel}" value="Cancel"/>
+    <apex:pageMessages />
+        <apex:pageBlock title="Admission Edit" mode="edit">
+            <div class="pbHeaderButton">
+                <apex:commandButton action="{!save}" value="Save"/>
+                <apex:commandButton action="{!cancel}" value="Cancel"/>
             </div>
             <apex:pageBlockSection title="Information" columns="2">
                 <apex:outputField value="{!admission.Name}" />
