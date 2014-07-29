@@ -2,7 +2,7 @@
 private class PBS_ControllerTest {
 
 // Testing Cambridge flavor
-    static testMethod void insertPBSTestforCambridge() {
+/*    static testMethod void insertPBSTestforCambridge() {
         
         //Creating a User and TMN User with 'System Admin' Profile
         User admin = TMN_Generic_Core_TestData.createUser('System Administrator', 'cam', 'srn@tmn.com', 'firt Fname', 'Last LName', 'Cambridge');
@@ -321,6 +321,6 @@ private class PBS_ControllerTest {
             System.assertEquals( false, PBS_controller_helper.isUserLevel1or2());
             
             }
-        } 
+        } */
         
 }

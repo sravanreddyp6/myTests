@@ -2,7 +2,7 @@
 public class PBSedit_controllerTest{
     
 //Testing Cambridge Flavor
-public static testmethod void testPBSEditforCambridge(){
+/*public static testmethod void testPBSEditforCambridge(){
     //Creating a User with System Admin Profile.
     User admin = TMN_Generic_Core_TestData.createUser('System Administrator', 'cam', 'srn@tmn.com', 'first Fname', 'Last LName', 'Cambridge');
     TMN_User__c admintmnUser = [SELECT ID, Name FROM TMN_User__c WHERE Salesforce_User_Account__c =: admin.id];
@@ -239,5 +239,5 @@ public static testmethod void testPBSEditforRedwood(){
         Test.StopTest();
         }
 
-    }
+    }*/
 }
