@@ -30,7 +30,6 @@ public with sharing class Assessment_RiskForm_Redirect {
         }      
         
         return null;
-
     } 
 
 }
