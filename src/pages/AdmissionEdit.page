@@ -1,5 +1,5 @@
 <apex:page title="Admission Edit: {!admission.Name}" standardController="Admission__c" extensions="AdmissionEditExtension" standardStylesheets="false" sidebar="false" tabStyle="Persons_Being_Served_New__tab">
-<apex:stylesheet value="{!$Resource.mentoresdcss}" />
+<apex:stylesheet  value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 
     <c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" parentPage="Admission" admId="{!Admission__c.Id}" rendered="{!showPersonalCard}"/>
     <br />
