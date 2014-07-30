@@ -80,12 +80,28 @@ String h = EncodingUtil.ConvertTohex(b);
         return testServiceAssignmentClosure;
     }
     
-    public static Assessment__c createAssessment(Admission__c adm, Service_Assignment__c sa, String type, String status, String phase, Boolean disregard) {
+    /*public static Assessment__c createAssessment(Admission__c adm, Service_Assignment__c sa, String type, String status, String phase, Boolean disregard) {
         Assessment__c thisAssessment = new Assessment__c(Admission__c = adm.Id, Service_Assignment__c = sa.Id, Type__c = type, Status__c = status, Phase__c = phase, Disregard__c = disregard);
         insert thisAssessment;
         Assessment__c testAssessment = [ SELECT Id, Admission__c, Service_Assignment__c, Type__c, Status__c, Phase__c, Disregard__c FROM Assessment__c WHERE Id = :thisAssessment.Id ];
         return testAssessment;
+    }*/
+    
+    public static Assessment__c createAssessment(Admission__c adm, Service_Assignment__c sa, String type, String status, String phase, Boolean disregard) {
+        Assessment__c thisAssessment = new Assessment__c(Admission__c = adm.Id, Service_Assignment__c = sa.Id, Type__c = type, Status__c = status, Phase__c = phase, Disregard__c = disregard);
+        if(type == 'CANS' || type == 'RISK'){
+            assessment_type__c tmpType = new assessment_type__c (name = type);
+            insert tmpType;
+            thisAssessment.assessment_type__c = tmpType.id;
+        }
+        thisAssessment.Assessment_Date__c = system.today();
+        thisAssessment.TFC_Family_Vistas__c = 'Yes';
+        thisAssessment.Interval__c = 'Intake';
+        insert thisAssessment;
+        Assessment__c testAssessment = [ SELECT Id, Service_Assignment__c, Type__c, Status__c, Phase__c, Assessment_Type__c, Assessment_Type__r.name,  Disregard__c FROM Assessment__c WHERE Id = :thisAssessment.Id ];
+        return testAssessment;
     }
+    
  
     public static User createUser(string profileName,string userAlias, string userName, string firstName, string lastName, string OperatingGroup){
         Map<String,Profile> profileMap = new Map<String,Profile>();
