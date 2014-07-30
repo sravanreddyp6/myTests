@@ -1,6 +1,5 @@
-
 @isTest
-public class Assessment_RiskForm_Redirect_Test {    
+private class Assessment_RiskForm_Redirect_Test {    
     
     static testMethod void myUnitTest() {
         TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();        
@@ -14,27 +13,30 @@ public class Assessment_RiskForm_Redirect_Test {
         for(String item: assessmentList) {             
                 
             if (item == 'CANS') {         
-                assessment = TMN_Generic_Core_TestData.createAssessment(myData.theAdm, myData.theSA, 'CANS', 'Inactive Draft', 'Locked', false);                
-                myPage = new PageReference('/apex/Assessment_RiskForm_Redirect?id=' + assessment.id);
-                //System.assertEquals(myPage, myPage.getURL());
+                assessment = TMN_Generic_Core_TestData.createAssessment(myData.theAdm, myData.theSA, 'CANS', null, null, false);                                                                                             
+                Assessment_RiskForm_Redirect redirectObj = new Assessment_RiskForm_Redirect(new ApexPages.StandardController(assessment));
+                myPage = redirectObj.assessmentRedirect(); 
             } 
             
             if (item == 'Risk') {         
-                assessment = TMN_Generic_Core_TestData.createAssessment(myData.theAdm, myData.theSA, 'Risk', 'Inactive Draft', 'Locked', false);
-                myPage = new PageReference('/apex/Assessment_RiskForm_Redirect?id=' + assessment.id);
+                assessment = TMN_Generic_Core_TestData.createAssessment(myData.theAdm, myData.theSA, 'Risk', null, null, false);                                                                              
+                Assessment_RiskForm_Redirect redirectObj = new Assessment_RiskForm_Redirect(new ApexPages.StandardController(assessment)); 
+                myPage = redirectObj.assessmentRedirect(); 
             }           
                         
             if (item == 'FAD Summary') {            	
-                assessment = TMN_Generic_Core_TestData.createAssessment(myData.theAdm, myData.theSA, 'FAD Summary', 'Inactive Draft', 'Locked', false);
-                myPage = new PageReference('/apex/Assessment_RiskForm_Redirect?id=' + assessment.id);
+                assessment = TMN_Generic_Core_TestData.createAssessment(myData.theAdm, myData.theSA, 'FAD Summary', null, null, false);                                                                              
+                Assessment_RiskForm_Redirect redirectObj = new Assessment_RiskForm_Redirect(new ApexPages.StandardController(assessment)); 
+                myPage = redirectObj.assessmentRedirect(); 
             }
             
     	    if (item == 'ISSA') {
-    	        assessment = TMN_Generic_Core_TestData.createAssessment(myData.theAdm, myData.theSA, 'ISSA', 'Inactive Draft', 'Locked', false);
-    	        myPage = new PageReference('/apex/Assessment_RiskForm_Redirect?id=' + assessment.id); 
+    	        assessment = TMN_Generic_Core_TestData.createAssessment(myData.theAdm, myData.theSA, 'ISSA', null, null, false);                                                                              
+                Assessment_RiskForm_Redirect redirectObj = new Assessment_RiskForm_Redirect(new ApexPages.StandardController(assessment)); 
+                myPage = redirectObj.assessmentRedirect(); 
     	    }    
     	    
-    	    Test.setCurrentPageReference(myPage);    
+    	    Test.setCurrentPage(myPage);    
         }      
                 
     }
