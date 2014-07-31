@@ -121,13 +121,13 @@ public pageReference upsertEley(){
     
     if (CurEley.status__c == 'Inactive') {
 	    for (Clinical_Catalog_Tree_Node__c n :nodes){
-            if(curEleyType == 'Goal' && n.ID_Goal__c.toPlainString() == CurEley.name && n.Status__c == 'Active'){
+            if(curEleyType == 'Goal' && Integer.valueOf(n.ID_Goal__c) == Integer.valueOf(CurEley.name) && n.Status__c == 'Active'){
                 inactivateNodes.add(n);
             }
-            if(curEleyType == 'Objective' && n.ID_Objective__c.toPlainString() == CurEley.name && n.Status__c == 'Active'){
+            if(curEleyType == 'Objective' && Integer.valueOf(n.ID_Objective__c) == Integer.valueOf(CurEley.name) && n.Status__c == 'Active'){
                 inactivateNodes.add(n);
             }
-            if(curEleyType == 'Action' && n.ID_Action__c.toPlainString()== CurEley.name && n.Status__c == 'Active'){
+            if(curEleyType == 'Action' && Integer.valueOf(n.ID_Action__c) == Integer.valueOf(CurEley.name) && n.Status__c == 'Active'){
                 inactivateNodes.add(n);
             }            
         }        
@@ -141,13 +141,13 @@ public pageReference upsertEley(){
     list<Clinical_Catalog_Tree_Node__c > activateNodes = new list<Clinical_Catalog_Tree_Node__c >();    
     if (CurEley.status__c == 'Active') {
         for (Clinical_Catalog_Tree_Node__c n :nodes){
-            if(curEleyType == 'Goal' && n.ID_Goal__c.toPlainString() == CurEley.name && n.Status__c == 'Inactive'){
+            if(curEleyType == 'Goal' && Integer.valueOf(n.ID_Goal__c) == Integer.valueOf(CurEley.name) && n.Status__c == 'Inactive'){
                 activateNodes.add(n);
             }
-            if(curEleyType == 'Objective' && n.ID_Objective__c.toPlainString() == CurEley.name && n.Status__c == 'Inactive'){
+            if(curEleyType == 'Objective' && Integer.valueOf(n.ID_Objective__c) == Integer.valueOf(CurEley.name) && n.Status__c == 'Inactive'){
                 activateNodes.add(n);
             }
-            if(curEleyType == 'Action' && n.ID_Action__c.toPlainString()== CurEley.name && n.Status__c == 'Inactive'){
+            if(curEleyType == 'Action' && Integer.valueOf(n.ID_Action__c)== Integer.valueOf(CurEley.name) && n.Status__c == 'Inactive'){
                 activateNodes.add(n);
             }            
         }        
