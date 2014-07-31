@@ -655,6 +655,7 @@ public pagereference mySave(){
                 tmpG.Action_Plan__c = newAP.id;
                 tmpG.Former_ID__c = g.id;
                 tmpG.sort_order__c = g.sort_order__c;
+                tmpG.ReferenceID__c = g.ReferenceID__c;
                 copiedGoals.add(tmpG);
                         for(Action_Plan_Objective__c o: G.Action_Plan_Objectives__r){
                                 Action_Plan_Objective__c tmpO = new Action_Plan_Objective__c();
@@ -670,6 +671,7 @@ public pagereference mySave(){
                                 tmpO.status__c = o.status__c;
                                 tmpO.type__c = o.type__c;
                                 tmpO.sort_order__c = o.sort_order__c;
+                                tmpO.ReferenceID__c = o.ReferenceID__c;
                                 copiedObjs.add(tmpO);
                         }
 
@@ -683,6 +685,7 @@ public pagereference mySave(){
                                 tmpOref.Former_Id__c = o.id;
                                 tmpA.Description__c = a.Description__c;
                                 tmpA.sort_order__c = a.sort_order__c;
+                                tmpA.ReferenceID__c = a.ReferenceID__c;
                                 tmpA.Action_Plan_Objective__r = tmpOref;
                                         copiedActions.add(tmpA);
                 }

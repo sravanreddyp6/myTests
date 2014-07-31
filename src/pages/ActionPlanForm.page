@@ -71,6 +71,7 @@ function maxCatalog(){
     j$("#cata-maximize").addClass('nodisplay');
     var h = j$( window ).height() - 150;
     j$(".catalog_tree").css({'max-height': h});
+    j$('body').addClass('noscroll');
     
 
 }
@@ -84,6 +85,7 @@ function minCatalog(){
     j$(".catalog_tree").css({'height': '350px'}); 
     j$("#cata-minimize").addClass('nodisplay');
     j$("#cata-maximize").removeClass('nodisplay');
+    j$('body').removeClass('noscroll');
     
     
     
@@ -137,6 +139,7 @@ function highlightButtons ( btype, sfid, on )
     margin:10px;
     font-weight:bold;
 }
+.noscroll{    overflow:hidden;}
 .dateFormat{ display: none;}
 .thinking{
     opacity:0.8;
@@ -238,6 +241,7 @@ function highlightButtons ( btype, sfid, on )
     background: #e3e6ef /*#BDC4D9*/;
     border: 3px solid #BDC4D9;
     border-radius: 7px;
+    box-shadow: 7px 7px 3px #888888;
 } 
 .catalog_tree{
     height: 350px;
