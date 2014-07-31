@@ -80,12 +80,6 @@ String h = EncodingUtil.ConvertTohex(b);
         return testServiceAssignmentClosure;
     }
     
-    /*public static Assessment__c createAssessment(Admission__c adm, Service_Assignment__c sa, String type, String status, String phase, Boolean disregard) {
-        Assessment__c thisAssessment = new Assessment__c(Admission__c = adm.Id, Service_Assignment__c = sa.Id, Type__c = type, Status__c = status, Phase__c = phase, Disregard__c = disregard);
-        insert thisAssessment;
-        Assessment__c testAssessment = [ SELECT Id, Admission__c, Service_Assignment__c, Type__c, Status__c, Phase__c, Disregard__c FROM Assessment__c WHERE Id = :thisAssessment.Id ];
-        return testAssessment;
-    }*/
     
     public static Assessment__c createAssessment(Admission__c adm, Service_Assignment__c sa, String type, String status, String phase, Boolean disregard) {
         Assessment__c thisAssessment = new Assessment__c(Admission__c = adm.Id, Service_Assignment__c = sa.Id, Type__c = type, Status__c = status, Phase__c = phase, Disregard__c = disregard);
