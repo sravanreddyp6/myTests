@@ -80930,6 +80930,14 @@
         <errorMessage>Number of Sibling Group is required if Maintain Sibling Group field is checked.</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>NC_Req_HighRisk_Must_FCT</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL(State_for_Preferred_Service__c,&apos;North Carolina&apos;) &amp;&amp; 
+INCLUDES(Services_Requested__c, &apos;FCT - Family Centered Treatment&apos;) &amp;&amp; 
+(!ISPICKVAL(Risk_of_Out_of_Home_Placement__c, &apos;Yes&apos;) || !ISPICKVAL(Out_of_Home_Placement_Risk_Level__c,&apos;High&apos;))</errorConditionFormula>
+        <errorMessage>A referral is only eligible for FCT services in North Carolina when there is a high risk of out of home placement. Please correct and resubmit.</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>No_Referral_Date_In_The_Future</fullName>
         <active>true</active>
         <errorConditionFormula>Referral_Date__c &gt; TODAY()</errorConditionFormula>
