@@ -102,7 +102,7 @@ $(function() {
  
     <apex:pageBlock id="fullTree">
         <apex:pageBlockButtons >
-            <apex:commandButton action="{!newEley}" value="New Component" reRender="eleyForm" status="myStatus"/>
+            <apex:commandButton action="{!newEley}" value="New Component" reRender="eleyForm"/>
         </apex:pageBlockButtons>
         <apex:outputPanel id="tree2" layout="block" >
 <!--    <apex:outputlabel > Please select a component to edit:</apex:outputlabel> -->
@@ -117,7 +117,6 @@ $(function() {
     </apex:pageBlock>
 </apex:outputPanel><!-- end left col -->
 </apex:form>
-
 
 <apex:form >
 <apex:outputPanel layout="block" styleClass="lcol">
@@ -179,4 +178,14 @@ $(function() {
 </apex:outputPanel><!-- end right col -->
 </apex:form>
 </apex:outputPanel>
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+    <div class="thinking">
+    <div class="thinkingwheel">    
+        <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+    </div>
+    </div>   
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus>
 </apex:page>
