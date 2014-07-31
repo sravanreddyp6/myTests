@@ -1260,7 +1260,7 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Could Not Meet Needs</fullName>
+                <fullName>Another Provider Chosen</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -1268,11 +1268,7 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>No Vacancies</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Not Eligible</fullName>
+                <fullName>Could Not Meet Needs</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -1280,15 +1276,11 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Other</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Another Provider Chosen</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
                 <fullName>Host Home Provider Refusal</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Legal Reason</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -1316,11 +1308,27 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
+                <fullName>No Response</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
                 <fullName>No suitable placement available</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
+                <fullName>Not Eligible</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No Vacancies</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
                 <fullName>Referral Withdrawn</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Referral Withdrawn Family Decision</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -1329,6 +1337,10 @@
             </picklistValues>
             <picklistValues>
                 <fullName>Referred to this program for evaluation</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -60999,6 +61011,14 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Legal Reason</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Response</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>No Vacancies</fullName>
                 <default>false</default>
             </values>
@@ -61008,6 +61028,10 @@
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referral Withdrawn Family Decision</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -80928,14 +80952,6 @@
         <errorConditionFormula>AND( Maintain_Sibling_Group__c  == True, ISPICKVAL( If_Yes_How_Many__c, &apos;&apos;) )</errorConditionFormula>
         <errorDisplayField>If_Yes_How_Many__c</errorDisplayField>
         <errorMessage>Number of Sibling Group is required if Maintain Sibling Group field is checked.</errorMessage>
-    </validationRules>
-    <validationRules>
-        <fullName>NC_Req_HighRisk_Must_FCT</fullName>
-        <active>true</active>
-        <errorConditionFormula>ISPICKVAL(State_for_Preferred_Service__c,&apos;North Carolina&apos;) &amp;&amp; 
-INCLUDES(Services_Requested__c, &apos;FCT - Family Centered Treatment&apos;) &amp;&amp; 
-(!ISPICKVAL(Risk_of_Out_of_Home_Placement__c, &apos;Yes&apos;) || !ISPICKVAL(Out_of_Home_Placement_Risk_Level__c,&apos;High&apos;))</errorConditionFormula>
-        <errorMessage>A referral is only eligible for FCT services in North Carolina when there is a high risk of out of home placement. Please correct and resubmit.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>No_Referral_Date_In_The_Future</fullName>
