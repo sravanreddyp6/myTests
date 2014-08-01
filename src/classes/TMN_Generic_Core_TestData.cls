@@ -92,7 +92,7 @@ String h = EncodingUtil.ConvertTohex(b);
         thisAssessment.TFC_Family_Vistas__c = 'Yes';
         thisAssessment.Interval__c = 'Intake';
         insert thisAssessment;
-        Assessment__c testAssessment = [ SELECT Id, Service_Assignment__c, Type__c, Status__c, Phase__c, Assessment_Type__c, Assessment_Type__r.name,  Disregard__c FROM Assessment__c WHERE Id = :thisAssessment.Id ];
+        Assessment__c testAssessment = [ SELECT Id, Service_Assignment__c,Admission__c, Type__c, Status__c, Phase__c, Assessment_Type__c, Assessment_Type__r.name,  Disregard__c FROM Assessment__c WHERE Id = :thisAssessment.Id ];
         return testAssessment;
     }
     
