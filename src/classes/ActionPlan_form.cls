@@ -213,7 +213,7 @@ public pagereference createrShiftNote(){
         
         if(curCtlg != null){
             curr_catalog = [select id, Catalog_Name__c from Clinical_Catalog__c where id = :curCtlg];
-            nodes = [select id, name, Catalog_Element__c, Catalog_Element__r.name, Catalog_Element__r.type__c, Catalog_Element__r.description__c, ID_Goal__c, ID_Objective__c, ID_Action__c, Status__c  from Clinical_Catalog_Tree_Node__c Where Catalog__r.id =:curr_catalog.id AND Status__c ='Active' Order By ID_Goal__c , ID_Objective__c , ID_Action__c ];
+            nodes = [select id, name, Catalog_Element__c, Catalog_Element__r.name, Catalog_Element__r.type__c, Catalog_Element__r.description__c, ID_Goal__c, ID_Objective__c, ID_Action__c, Status__c  from Clinical_Catalog_Tree_Node__c Where Catalog__r.id =:curr_catalog.id AND Status__c ='Active' AND Catalog_Element__r.Status__c = 'Active' Order By ID_Goal__c , ID_Objective__c , ID_Action__c ];
             
                 string goalID ='';
                 string objID ='';
@@ -456,7 +456,15 @@ public pagereference mySave(){
 
                 
     try{
+        //remove any goals taht are blank, they will not be saved
+        for(string g: planStuff.keySet()){    
+            if(planStuff.get(g).theGoal.Description__c == null){
+                planStuff.remove(g);
+            } 
+        }   
+    
         for(clsGoal g: planStuff.values()){    
+
             if(g.isNew && g.theGoal.id==null)
                 {goalsToInsert.add(g.theGoal);}
             else
