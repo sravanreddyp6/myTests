@@ -68,6 +68,10 @@
   <script type="text/javascript">
 
    j$ = jQuery.noConflict();
+
+	// a variable to hold the list of related Parties... need this so we can refresh it using ajax
+	var relPartyData = '{!relPartiesJSON}';   
+   
      //disable enter key
 function stopRKey(evt) {
    var evt = (evt) ? evt : ((event) ? event : null);
@@ -81,7 +85,8 @@ function stopRKey(evt) {
     if (j$('input[id$=relatedPartyEntry_Name]').val() == '') {
         errors += '<li>Party Name is a required field.</li>';
     }
-    if (j$('select[id$=relatedPartyEntry_Type]').val() =='') {
+    var partyType = j$('select[id$=relatedPartyEntry_Type]').val();    
+    if (partyType =='') {
         errors += '<li>Type is a required field.</li>';
     }
     var x = j$('input[id$=relatedPartyEntry_Email]').val();
@@ -90,6 +95,25 @@ function stopRKey(evt) {
         var dotpos=x.lastIndexOf(".");
         if (atpos<1 || dotpos<atpos+2 || dotpos+2>=x.length) {
             errors += '<li>Email is not a valid Email address</li>';
+        }
+    }
+    var partyID = j$('input[id$=relatedPartyEntry_Id]').val();
+    str = "Physician - Primary";
+    var obj = JSON.parse(relPartyData);
+    
+    var isPrimaryPhysician = false;    
+    for (var i = 0; i < obj.length; i++) {
+        if ( obj[i].Type__c === str ) {
+            isPrimaryPhysician = true;
+            break;
+        }
+    }
+     
+    for (var i = 0; i < obj.length; i++) {
+        if ( (!partyID && isPrimaryPhysician ) ||           // adding a new related party and one already exists thats primary physician .
+             (partyID === obj[i].Id && isPrimaryPhysician && obj[i].Type__c != str && partyType === str ) ) {       // editing existing one and changing its type to primary physician but one already present. 
+            errors += '<li>Only one "Physician - Primary" allowed. Please edit Type on this entry or change the Type assigned to existing Related Party.</li>';
+            break;
         }
     }
     j$('#relatedPartyErrors').html(errors);
@@ -555,9 +579,11 @@ function stopRKey(evt) {
           <apex:column value="{!relParty.Phone_2_Type__c}"/>
           <apex:column value="{!relParty.Comments__c}"/>
         </apex:pageBlockTable>
-
+        
+        <script type="text/javascript">
+            relPartyData = '{!relPartiesJSON}';
+        </script>
       </apex:pageBlockSection>
-
     </apex:pageBlock>
 
     <!-- Add Related Party modal. -->
