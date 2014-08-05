@@ -91,12 +91,12 @@
     <apex:form id="frm" >
         <apex:outputPanel layout="block" id="runPanel" style="width: 1000px" >
             <apex:pageBlock title="Discharge Data Backlog Report" >
-                <apex:commandButton value="Run Report" action="{!runReport}" rendered="{!!displayResult}"/>
-                <apex:commandButton value="Take me Home" action="{!hideReport}" rendered="{!displayResult}"/>
+                <apex:commandButton value="Run Report" action="{!runReport}"/>
+                
             </apex:pageBlock>
         </apex:outputPanel>
         
-        <apex:outputPanel layout="block" id="dataTable" style="width : 1500px;" rendered="{!displayResult}" >
+        <apex:outputPanel layout="block" id="dataTable" style="width : 1400px;" rendered="{!displayResult}" >
             <apex:pageBlock title="Results" >
                 <apex:pageBlockButtons >
                     <div style="float: right"><input class="btn" type="button" onclick="tableToExcel('mytbl','W3C Example Table')" value="Export to Excel" /></div>
@@ -105,31 +105,34 @@
                 <table id="mytbl" cellpadding="0" cellspacing="0">
                     <thead class="headRow">
                         <tr class="headRow">
-                            <td style="width: 150px;" class="headRow">Service Assignment Name</td>
-                            <td style="width: 130px;" class="headRow">Person Being Served</td>
+                            <td class="headRow">Service Assignment Name</td>
+                            <td class="headRow">Person Being Served</td>
+                            <td class="headRow" > Admission State  </td>
                             <td class="headRow"> Alias </td>
-                            <td class="headRow"> Status </td>
-                            <td style="width: 130px;" class="headRow"> Program Detail </td>
-                            <td class="headRow"> Closure Status </td>
-                            <td class="headRow">Start Date </td>
-                            <td class="headRow"> End Date </td>
-                            <td class="headRow">Prog Note Start Time</td>
+                            <td class="headRow"> Program Detail </td>
+                            <td class="headRow"> Service Assignment Start Date </td>
+                            <td class="headRow">Service Assignment Status </td>
+                            <td class="headRow">Service Assignment Closure Status </td>
+                            <td class="headRow">Last Progress Note Start Date/Time</td>
                        </tr>                 
                     </thead>
                         <apex:repeat value="{!servAssigns}" var="SA">
                         <tr>
                             <td>{!SA.Name}</td>
                             <td>{!SA.Admission__r.Person_Being_Served__r.Name}</td>
+                            <td>{!SA.Admission__r.State__c} </td>
                             <td>{!SA.Alias__c} </td>
-                            <td>{!SA.Status__c} </td>
                             <td> {!SA.Program_Detail__c} </td>
+                            <td><apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+                            		<apex:param value="{!SA.Start_Date__c}" />
+                            	</apex:outputText>	
+                            </td>
+                            <td>{!SA.Status__c}</td>
                             <td>
                                 <apex:repeat value="{!SA.Service_Assignment_Closures__r}" var="sc">
                                     <apex:outputField value="{!sc.Status__c}" />
                                 </apex:repeat>
                             </td>
-                            <td>{!SA.Start_Date__c}</td>
-                            <td>{!SA.End_Date__c}</td>
                             <td>
                                 <apex:repeat value="{!SA.Progress_Notes__r}" var="pn">
                                     <apex:outputField value="{!pn.Start_Time__c}" />
