@@ -46,6 +46,9 @@ private boolean TMNUser_set = false;
   }
   
   public List<Related_Party__c> relParties { get; set; }
+  public String relPartiesJSON {get {
+    return JSON.serialize(relParties);}
+  }  
   public List<Agency_Involved_With_Individual__c> relAgencies { get; set; }
 
 

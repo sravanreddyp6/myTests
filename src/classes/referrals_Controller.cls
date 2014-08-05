@@ -57,6 +57,10 @@ public with sharing class referrals_Controller{
   }
 
   public List<Related_Party__c> relParties { get; set; }
+  public String relPartiesJSON {get {
+    return JSON.serialize(relParties);}
+  }
+  
   public Attachment relPartyFile {
     get {
       if (relPartyFile == null)
