@@ -100,6 +100,9 @@ function stopRKey(evt) {
 
 document.onkeypress = stopRKey;
 
+// a variable to hold the list of related Parties... need this so we can refresh it using ajax
+var relPartyData = '{!relPartiesJSON}';
+
 // ERNS-7 enable the diagnosis effective date when diagnosis is chosen
 function enableDiagEff() {
 	if ( j$('[id$=diagIdrop]').val() != '') {
@@ -123,7 +126,8 @@ function enableDiagEff() {
     if (j$('input[id$=relatedPartyEntry_Name]').val() == '') {
         errors += '<li>Party Name is a required field.</li>';
     }
-    if (j$('select[id$=relatedPartyEntry_Type]').val() =='') {
+    var partyType = j$('select[id$=relatedPartyEntry_Type]').val();    
+    if (partyType =='') {
         errors += '<li>Type is a required field.</li>';
     }
     var x = j$('input[id$=relatedPartyEntry_Email]').val();
@@ -132,6 +136,14 @@ function enableDiagEff() {
         var dotpos=x.lastIndexOf(".");
         if (atpos<1 || dotpos<atpos+2 || dotpos+2>=x.length) {
             errors += '<li>Email is not a valid Email address</li>';
+        }
+    }
+    str = "Physician - Primary";
+    var obj = JSON.parse(relPartyData); 
+    for (var i = 0; i < obj.length; i++) {
+        if (obj[i].Type__c === str && partyType === str) {
+            errors += '<li>Only one "Physician - Primary" allowed. Please edit Type on this entry or change the Type assigned to existing Related Party.</li>';
+            break;
         }
     }
     j$('#relatedPartyErrors').html(errors);
@@ -579,6 +591,9 @@ function enableDiagEff() {
               <apex:inputHidden value="{!relParty.Phone_2_Type_String__c}" id="relatedPartyPhone_2_Type"/>
               <apex:inputHidden value="{!relParty.Comments__c}" id="relatedPartyComments"/>
           </apex:outputpanel>
+            <script type="text/javascript">
+                relPartyData = '{!relPartiesJSON}';
+            </script>
       </apex:pageBlockSection>
 
     </apex:pageBlock>
