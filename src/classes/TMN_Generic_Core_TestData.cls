@@ -42,7 +42,8 @@ String h = EncodingUtil.ConvertTohex(b);
             //Status__c = 'Discharged',
             //Discharged_Status__c = 'Positive',
             //Reason_for_Discharge__c = 'TEST REASON FOR DISCHARGE',
-            Network_Offering__c = 'ARY'
+            Network_Offering__c = 'ARY',
+            state__c = mystate
         );
         insert theAdm; 
         
