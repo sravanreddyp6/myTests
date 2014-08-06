@@ -14,6 +14,8 @@ public with sharing class DocumentedActualStaffHrsRpt {
        
        getStateList();
        getProgramList();
+       selStates = new List<String>();
+       selPrograms = new List<String>();
        
     } 
     
@@ -63,7 +65,6 @@ public with sharing class DocumentedActualStaffHrsRpt {
             return null;
         }
                        
-        
         PNResults.clear();
         listStaffHrsInfo.clear();                                                                                     
         
