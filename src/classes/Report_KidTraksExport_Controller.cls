@@ -62,37 +62,6 @@ public with sharing class Report_KidTraksExport_Controller {
 		}
 	}
 	
-	public class ProgressNoteWrapper_CullKidTraksLineItems implements Comparable {
-		
-		public Progress_Note__c thePn;
-		
-		public ProgressNoteWrapper_CullKidTraksLineItems(Progress_Note__c p) { 
-			thePn = p;	
-		}
-		
-		public Integer compareTo(Object compareTo) {
-			
-			ProgressNoteWrapper_CullKidTraksLineItems compareToPnw = (ProgressNoteWrapper_CullKidTraksLineItems) compareTo; 
-			
-			Integer returnValue = 0;
-			if(thePn.Person_Being_Served__c==compareToPnw.thePn.Person_Being_Served__c && thePn.Start_Time__c.date() > compareToPnw.thePn.Start_Time__c.date()) {
-				returnValue = 1;
-			}
-			if(thePn.Person_Being_Served__c==compareToPnw.thePn.Person_Being_Served__c && thePn.Start_Time__c.date() < compareToPnw.thePn.Start_Time__c.date()) {
-				returnValue = -1;
-			}
-			if(thePn.Person_Being_Served__c > compareToPnw.thePn.Person_Being_Served__c) {
-				returnValue = 1;
-			}
-			if(thePn.Person_Being_Served__c < compareToPnw.thePn.Person_Being_Served__c) {
-				returnValue = -1;
-			}
-
-			return returnValue;
-		}
-		
-	}
-	
     
     public PageReference runReport(){
     	lineItems = new List<KidTraksLineItem>();
@@ -109,149 +78,121 @@ public with sharing class Report_KidTraksExport_Controller {
 		// be finalized notes for this code on the same day as the Service Assignment End Date, or if there are, the business must think of such as non-billable given the requirements
 		// they gave us. I'm noting this here, though, in case we ever have issues with the way the first day of the report and notes / Service Assignment End Dates on that day are
 		// handled.  J. Gilliam, 7/18/14 
-    	List<Progress_Note__c> progressNotesThisReport = [ SELECT Start_Time__c, End_Time__c, Person_Being_Served__c, Person_Being_Served__r.Name, Person_Being_Served__r.Avatar_ID__c,
-    														Person_Being_Served__r.Other_ID__c, Service_Assignment__r.Start_Date__c, Service_Assignment__r.End_Date__c FROM Progress_Note__c 
-    															WHERE Status__c = 'Final' 
-    																	AND Service_Code__r.Service_Code__c = '10942.1161' 
-    																	AND Start_Time__c >= :reportStartDateTime 
-    																	AND End_Time__c <= :reportEndDateTime
-    																	AND Program_Detail__c = :reportProgram
+    	
+    	List<Service_Assignment__c> servAssignsToBecomeLineItems = [ SELECT Id, Person_Being_Served__c, Person_Being_Served__r.Name, Person_Being_Served__r.Avatar_ID__c,
+    																	Person_Being_Served__r.Other_ID__c, End_Date__c
+    																	FROM Service_Assignment__c
+    																	WHERE Start_Date__c <= :reportEndDate
     																	AND (
-    																		Service_Assignment__r.End_Date__c > :reportStartDate
-    																		OR Service_Assignment__r.End_Date__c = null
-    																	) ];    	
+    																			End_Date__c = null
+    																			OR End_Date__c >= :reportStartDate
+    																		)
+    																	AND Id IN  (
+    																					SELECT Service_Assignment__c 
+    																					FROM Progress_Note__c 
+		    																			WHERE Status__c = 'Final' 
+		    																			AND Service_Code__r.Service_Code__c = '10942.1161'
+		    																			AND Program_Detail__c = :reportProgram
+		    																			AND Start_Time__c <= :reportEndDateTime
+		    																	 )
+    																	];
     	
-    	List<ProgressNoteWrapper_CullKidTraksLineItems> listWrappedPns = new List<ProgressNoteWrapper_CullKidTraksLineItems>();
+    	System.debug('servAssignsToBecomeLineItems.size(): ' + servAssignsToBecomeLineItems.size());
     	
-    	for(Progress_Note__c p : progressNotesThisReport) {
-    		listWrappedPns.add(new ProgressNoteWrapper_CullKidTraksLineItems(p)); 
-    	}
+    	if(servAssignsToBecomeLineItems.size()==0) return null;
     	
-    	listWrappedPns.sort();
-    	for(ProgressNoteWrapper_CullKidTraksLineItems p : listWrappedPns) {
-    		System.debug('WRAPPED PN CHECK: ' + p);
-    	}
+    	List<Progress_Note__c> progressNotesTheseServAssigns = [ SELECT Start_Time__c, End_Time__c, Person_Being_Served__c, Person_Being_Served__r.Name, Person_Being_Served__r.Avatar_ID__c,
+    																Person_Being_Served__r.Other_ID__c, Service_Assignment__c, Service_Assignment__r.Start_Date__c, Service_Assignment__r.End_Date__c 
+    																FROM Progress_Note__c 
+    																WHERE Status__c = 'Final' 
+    																AND Service_Code__r.Service_Code__c = '10942.1161' 
+    																//AND Start_Time__c >= :reportStartDateTime 
+    																//AND End_Time__c <= :reportEndDateTime
+    																AND Program_Detail__c = :reportProgram
+    																AND (
+    																	Service_Assignment__r.End_Date__c > :reportStartDate
+    																	OR Service_Assignment__r.End_Date__c = null
+    																)
+    																ORDER BY Start_Time__c ];    	
+
+		List<Progress_Note__c> progressNotesThisReport = new List<Progress_Note__c>();
+		for(Progress_Note__c p : progressNotesTheseServAssigns) {
+			// IF THE NOTE STARTS WITHIN THE REPORT DATE RANGE
+			if(p.Start_Time__c >= reportStartDateTime && p.Start_Time__c <= reportEndDateTime) {
+				progressNotesThisReport.add(p);
+			}
+		}
+		System.debug('progressNotesThisReport.size(): ' + progressNotesThisReport.size());
+
+		Set<Id> servAssignsThisNoteSet = new Set<Id>();
+		for(Progress_Note__c p : progressNotesTheseServAssigns) {
+			servAssignsThisNoteSet.add(p.Service_Assignment__c);
+		}
+		System.debug('servAssignsThisNoteSet.size()' + servAssignsThisNoteSet.size());
+    	
+    	List<Progress_Note__c> notesBeforeReportTheseServAssigns = [ SELECT Service_Assignment__c 
+    																	FROM Progress_Note__c 
+		    															WHERE Status__c = 'Final' 
+		    															AND Service_Code__r.Service_Code__c = '10942.1161'
+		    															AND Program_Detail__c = :reportProgram
+		    															AND Service_Assignment__c = :servAssignsThisNoteSet 
+		    															AND Start_Time__c < :reportStartDate ];
+    	
+    	System.debug('notesBeforeReportTheseServAssigns.size()' + notesBeforeReportTheseServAssigns.size());
     	
 
-    	ProgressNoteWrapper_CullKidTraksLineItems thePreviousWrappedPn;
-    	Date theFirstNotesStartDate;
-    	// Commenting out the following line because it is not needed for flagging incrementation of the unitsCounter variable if we're just subtracting the
-    	// dates of the first and last notes to get the unit count.  But, we may need to come back and count units / notes as we refine the algorithm for
-    	// the "per diem continuous" concept (per diem billed daily whether or not a visit happens), so I'm leaving the line just in case.  J. Gilliam, 7-9-14, CTEAE-143
-    		//Date thePreviousNotesStartDate;
-    	Date thePreviousNotesStartDate;
-    	Date theLastNotesStartDate;
-    	Id thePreviousNotesPbsId;
-    	// Commenting out the following line because it is not needed for if we're just subtracting the
-    	// dates of the first and last notes to get the unit count.  But, we may need to come back and count units / notes as we refine the algorithm for
-    	// the "per diem continuous" concept (per diem billed daily whether or not a visit happens), so I'm leaving the line just in case.  J. Gilliam, 7-9-14, CTEAE-143
-    		//Integer unitsCounter = 0;
+    	Date lineItemStartDate;
+    	Date lineItemEndDate;
+
     	Integer unitsFromDateSubtract;
     	Integer loopCounter = 0;
     	
-    	for(ProgressNoteWrapper_CullKidTraksLineItems pWrapped : listWrappedPns) {
-    		Integer 	numberOfWrappedNotes = listWrappedPns.size();
-    		loopCounter++;
+    	for(Service_Assignment__c s : servAssignsToBecomeLineItems) {
     		
-	    	// Commenting out the following section because it is not needed for if we're just subtracting the
-	    	// dates of the first and last notes to get the unit count.  But, we may need to come back and count units / notes as we refine the algorithm for
-	    	// the "per diem continuous" concept (per diem billed daily whether or not a visit happens), so I'm leaving the line just in case.  J. Gilliam, 7-9-14, CTEAE-143
-	    		//if(thePreviousNotesPbsId==pWrapped.thePn.Person_Being_Served__c || thePreviousNotesPbsId==null) {
-	    		//	if(pWrapped.thePn.Start_Time__c.date()!=thePreviousNotesStartDate) {
-	    		//		unitsCounter++;
-	    		//	}
-	    		//}
-	    		
-	    	// IF THIS LOOP IS ON A DIFFERENT PBS, AND THERE WAS A PREVIOUS NOTE...	
-    		if(thePreviousNotesPbsId!=pWrapped.thePn.Person_Being_Served__c && thePreviousNotesPbsId!=null) {
-    			theFirstNotesStartDate = null;
-    			System.debug('MARKER 1');
-    			System.debug('What is pWrapped.thePn.Service_Assignment__r.Start_Date__c at MARKER 1: ' + pWrapped.thePn.Service_Assignment__r.Start_Date__c);
-    			System.debug('What is pWrapped.thePn.Service_Assignment__r.End_Date__c at MARKER 1: ' + pWrapped.thePn.Service_Assignment__r.End_Date__c);
-    			//if(theFirstNotesStartDate==null) {
-    				if(pWrapped.thePn.Service_Assignment__r.Start_Date__c < reportStartDate) {
-    					theFirstNotesStartDate = reportStartDate;
-    				}
-    				else {
-    					theFirstNotesStartDate = pWrapped.thePn.Start_Time__c.date();
-    				}
-    			//}
-
-    			if(pWrapped.thePn.Service_Assignment__r.End_Date__c!=null) {
-    				System.debug('DAYS BETWEEN CHECK: ' + pWrapped.thePn.Service_Assignment__r.End_Date__c.daysBetween(reportEndDate));
+    		Boolean thisServAssignHasNotesBeforeReportStartDate = false;
+    		
+    		for(Progress_Note__c p : notesBeforeReportTheseServAssigns) {
+    			System.debug('p.Service_Assignment__c: ' + p.Service_Assignment__c);
+    			System.debug('s.Id: ' + s.Id);
+    			if(p.Service_Assignment__c==s.Id) {
+    				thisServAssignHasNotesBeforeReportStartDate = true;
+    				lineItemStartDate = reportStartDate;
     			}
-    			
-    			if(thePreviousWrappedPn!=null) {
-	    			if(thePreviousWrappedPn.thePn.Service_Assignment__r.End_Date__c==null) {
-	    				theLastNotesStartDate = reportEndDate;		
-	    			}
-	    			else if (thePreviousWrappedPn.thePn.Service_Assignment__r.End_Date__c.daysBetween(reportEndDate) < 0) {
-	    				theLastNotesStartDate = reportEndDate;
-	    			}	
-		    		else {
-		    				theLastNotesStartDate = thePreviousWrappedPn.thePn.Service_Assignment__r.End_Date__c - 1;
-		    		}
-    			}
-				else {
-					theLastNotesStartDate = reportEndDate;
+    		}
+    		System.debug('thisServAssignHasNotesBeforeReportStartDate after loop through notesBeforeReportTheseServAssigns: ' + thisServAssignHasNotesBeforeReportStartDate);
+			if(!thisServAssignHasNotesBeforeReportStartDate) {
+				List<Progress_Note__c> thisPersonsProgressNotesThisReport = new List<Progress_Note__c>();
+				for(Progress_Note__c p2 : progressNotesThisReport) {
+					if(p2.Service_Assignment__c == s.Id) {
+						thisPersonsProgressNotesThisReport.add(p2);
+					}
 				}
+				System.debug('thisPersonsProgressNotesThisReport.size(): ' + thisPersonsProgressNotesThisReport.size());
+				lineItemStartDate = thisPersonsProgressNotesThisReport[0].Start_Time__c.date();
+			}
+    			
+    		    	
+    		
+    		if(s.End_Date__c <= reportEndDate) {
+    			lineItemEndDate = s.End_Date__c;
+    		}
+    		else {
+    			lineItemEndDate = reportEndDate;	
+    		}
 
-    			
-    			unitsFromDateSubtract = theFirstNotesStartDate.daysBetween(theLastNotesStartDate) + 1;
-    			lineItems.add(new KidTraksLineItem(theFirstNotesStartDate, theLastNotesStartDate, theUser, thePreviousWrappedPn.thePn.Person_Being_Served__r.Name, thePreviousWrappedPn.thePn.Person_Being_Served__r.Avatar_ID__c, thePreviousWrappedPn.thePn.Person_Being_Served__r.Other_ID__c, unitsFromDateSubtract));
-		    	// Commenting out the following line because it is not needed for if we're just subtracting the
-		    	// dates of the first and last notes to get the unit count.  But, we may need to come back and count units / notes as we refine the algorithm for
-		    	// the "per diem continuous" concept (per diem billed daily whether or not a visit happens), so I'm leaving the line just in case.  J. Gilliam, 7-9-14, CTEAE-143
-    				//unitsCounter=0;
-    		}
-    		
-    		// IF THIS IS THE LAST NOTE OF THE ENTIRE LOOP...
-    		if(numberOfWrappedNotes==loopCounter) {
-    			System.debug('MARKER 2');
-    			System.debug('What is pWrapped.thePn.Service_Assignment__r.Start_Date__c at MARKER 2: ' + pWrapped.thePn.Service_Assignment__r.Start_Date__c);
-    			System.debug('What is pWrapped.thePn.Service_Assignment__r.End_Date__c at MARKER 2: ' + pWrapped.thePn.Service_Assignment__r.End_Date__c);
-    			if(pWrapped.thePn.Service_Assignment__r.End_Date__c!=null) {
-    				System.debug('DAYS BETWEEN CHECK: ' + pWrapped.thePn.Service_Assignment__r.End_Date__c.daysBetween(reportEndDate));
-    			}    			
-    			if(pWrapped.thePn.Service_Assignment__r.End_Date__c==null) {
-    				theLastNotesStartDate = reportEndDate;
-    			}
-    			else if(pWrapped.thePn.Service_Assignment__r.End_Date__c.daysBetween(reportEndDate) < 0) {
-    				theLastNotesStartDate = reportEndDate;
-    			}
-    			else {
-    				theLastNotesStartDate = pWrapped.thePn.Service_Assignment__r.End_Date__c - 1;
-    			}    			
-    			
-    			unitsFromDateSubtract = theFirstNotesStartDate.daysBetween(theLastNotesStartDate) + 1;
-    			lineItems.add(new KidTraksLineItem(theFirstNotesStartDate, theLastNotesStartDate, theUser, pWrapped.thePn.Person_Being_Served__r.Name, pWrapped.thePn.Person_Being_Served__r.Avatar_ID__c, pWrapped.thePn.Person_Being_Served__r.Other_ID__c, unitsFromDateSubtract));
-		    	// Commenting out the following line because it is not needed for if we're just subtracting the
-		    	// dates of the first and last notes to get the unit count.  But, we may need to come back and count units / notes as we refine the algorithm for
-		    	// the "per diem continuous" concept (per diem billed daily whether or not a visit happens), so I'm leaving the line just in case.  J. Gilliam, 7-9-14, CTEAE-143
-    				//unitsCounter=0;  // This probably doesn't matter, since this should be the last iteration of the containing loop.
-    		}
-    		
-    		// IF THIS IS THE FIRST NOTE WE LOOP OVER...
-    		if(thePreviousNotesPbsId==null) {
-    			System.debug('FIRST NOTE DATE CONDITION EXECUTING'); 			
-				if(pWrapped.thePn.Service_Assignment__r.Start_Date__c < reportStartDate) {
-					theFirstNotesStartDate = reportStartDate;
+			Boolean thisServAssignHasNotesBeforeReportStartDateButNoNotesDuringReportRange = true;
+			System.debug('progressNotesTheseServAssigns.size(): ' + progressNotesTheseServAssigns.size());
+			for(Progress_Note__c p : progressNotesTheseServAssigns) {
+				if(s.Id == p.Service_Assignment__c && p.Start_Time__c >= reportStartDateTime && p.Start_Time__c <= reportEndDateTime) {
+					thisServAssignHasNotesBeforeReportStartDateButNoNotesDuringReportRange = false;
 				}
-				else {
-					theFirstNotesStartDate = pWrapped.thePn.Start_Time__c.date();
-				}    			
-    		}
-    		
-			thePreviousNotesPbsId = pWrapped.thePn.Person_Being_Served__c;
-	    	// Commenting out the following line because it is not needed for flagging incrementation of the unitsCounter variable if we're just subtracting the
-	    	// dates of the first and last notes to get the unit count.  But, we may need to come back and count units / notes as we refine the algorithm for
-	    	// the "per diem continuous" concept (per diem billed daily whether or not a visit happens), so I'm leaving the line just in case.  J. Gilliam, 7-9-14, CTEAE-143
-				//thePreviousNotesStartDate = pWrapped.thePn.Start_Time__c.date();
-			thePreviousNotesStartDate = pWrapped.thePn.Start_Time__c.date();
-    		thePreviousWrappedPn = new ProgressNoteWrapper_CullKidTraksLineItems(pWrapped.thePn);
-
-    	}
-    	      
+			}
+			
+			unitsFromDateSubtract = lineItemStartDate.daysBetween(lineItemEndDate) + 1;
+	    	
+	    	lineItems.add(new KidTraksLineItem(lineItemStartDate, lineItemEndDate, theUser, s.Person_Being_Served__r.Name, s.Person_Being_Served__r.Avatar_ID__c, s.Person_Being_Served__r.Other_ID__c, unitsFromDateSubtract));
+	    	
+    	}      
         return null;
     }
     
