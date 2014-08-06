@@ -105,9 +105,9 @@
                 <table id="mytbl" cellpadding="0" cellspacing="0">
                     <thead class="headRow">
                         <tr class="headRow">
-                            <td class="headRow">Service Assignment Name</td>
                             <td class="headRow">Person Being Served</td>
                             <td class="headRow" > Admission State  </td>
+                            <td class="headRow">Service Assignment Name</td>
                             <td class="headRow"> Alias </td>
                             <td class="headRow"> Program Detail </td>
                             <td class="headRow"> Service Assignment Start Date </td>
@@ -116,11 +116,13 @@
                             <td class="headRow">Last Progress Note Start Date/Time</td>
                        </tr>                 
                     </thead>
-                        <apex:repeat value="{!servAssigns}" var="SA">
+                        <apex:repeat value="{!lineItems}" var="SA">
                         <tr>
-                            <td>{!SA.Name}</td>
                             <td>{!SA.Admission__r.Person_Being_Served__r.Name}</td>
                             <td>{!SA.Admission__r.State__c} </td>
+                            <td>
+                            	<apex:outputlink value="/{!SA.Id}" target="_blank">{!SA.Name}</apex:outputlink>
+                            </td>
                             <td>{!SA.Alias__c} </td>
                             <td> {!SA.Program_Detail__c} </td>
                             <td><apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
