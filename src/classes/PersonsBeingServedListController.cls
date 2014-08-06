@@ -21,7 +21,6 @@ public with sharing class PersonsBeingServedListController {
     transient public Map<String, Integer> admissionIdToServiceAssignmentSize { get; set; }
     private string pfilterID;
     public boolean canCreateNew { get; set; }
-    transient public List<String> newAccountIds { get; set; }
     public boolean seeWorksheets { get {
         boolean isRedwood = false;
         
@@ -151,7 +150,6 @@ public with sharing class PersonsBeingServedListController {
         String oldFilterId = null;
         contactIds = new List<String>();
         accountIds = new List<String>();
-        newAccountIds = new List<String>(); 
         accountIdMap = new Map<String, Account>();
         accountIdToJO = new Map<String, List<Action_Plan__c>>();
         accountIdToJOSize = new Map<String, Integer>();
@@ -301,18 +299,6 @@ public with sharing class PersonsBeingServedListController {
             }                                                       	
                                                            
         }                
-        
-        // We want to limit the PBS list to ones that are Active or do not yet have an admission.
-        for(String key : accountIdToAdmission.keySet()) {
-            List<Admission__c> adms = accountIdToAdmission.get(key);                                             
-            if (adms.size() == 0)
-                newAccountIds.add(key);
-                            
-            for (Admission__c adm : adms) {    	            	            	
-                if (adm.Status__c == 'Active') 
-                    newAccountIds.add(key);                      
-            }             
-        }   
             
     }
     
