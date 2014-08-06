@@ -21,6 +21,7 @@ public with sharing class PersonsBeingServedListController {
     transient public Map<String, Integer> admissionIdToServiceAssignmentSize { get; set; }
     private string pfilterID;
     public boolean canCreateNew { get; set; }
+    transient public List<String> newAccountIds { get; set; }
     public boolean seeWorksheets { get {
         boolean isRedwood = false;
         
@@ -150,6 +151,7 @@ public with sharing class PersonsBeingServedListController {
         String oldFilterId = null;
         contactIds = new List<String>();
         accountIds = new List<String>();
+        newAccountIds = new List<String>(); 
         accountIdMap = new Map<String, Account>();
         accountIdToJO = new Map<String, List<Action_Plan__c>>();
         accountIdToJOSize = new Map<String, Integer>();
@@ -218,9 +220,9 @@ public with sharing class PersonsBeingServedListController {
         for (String ID: accountIds) {
             accountIdToJO.put(ID, new List<Action_Plan__c>());
             accountIdToJOSize.put(ID, 0);
-            accountIdToAdmission.put(ID, new List<Admission__c>());
+            accountIdToAdmission.put(ID, new List<Admission__c>());            
             accountIdToAdmissionSize.put(ID, 0);
-        }
+        }        
 
         // This is a many-to-many model, so in order to uniquely identify
         // 1 pair of records we'll concatenate their IDs together
@@ -265,11 +267,12 @@ public with sharing class PersonsBeingServedListController {
                 FROM Admission__c
                 WHERE Person_Being_Served__c IN :contactIds
             ]
-        ) {
+        ) {        	                 	               	        	     	             	         
             if (!admissionIdToServiceAssignmentSize.containsKey(admission.ID)) {
                 admissionIdToServiceAssignmentSize.put(admission.ID, 0);
                 admissionIdToServiceAssignment.put(admission.ID, new List<Service_Assignment__c>());
-            }
+            }            
+            
             admissionIdToServiceAssignment.put(admission.ID, new List<Service_Assignment__c>());
             if (admission.Service_Agreements__r.size()==0) {
                 accountIdToAdmission.get(admission.Person_Being_Served__r.Account.ID).add(admission);
@@ -281,7 +284,7 @@ public with sharing class PersonsBeingServedListController {
                 
                 // EB-116: do not show inactive assessment only
                 if ( (sa.RecordType.Id == ASSESSMENT_ONLY_REC_TYPE_ID) &&  (sa.Status__c != 'Active') )
-                    continue;
+                    continue;                   
                 
                 if (!saWithPlans.contains(sa.ID)) { // don't display duplicated stuff
                     if (index == 1) {
@@ -294,8 +297,23 @@ public with sharing class PersonsBeingServedListController {
                         admissionIdToServiceAssignmentSize.get(admission.ID) + 1);
                     index++;
                 }
-            }
-        }
+                 
+            }                                                       	
+                                                           
+        }                
+        
+        // We want to limit the PBS list to ones that are Active or do not yet have an admission.
+        for(String key : accountIdToAdmission.keySet()) {
+            List<Admission__c> adms = accountIdToAdmission.get(key);                                             
+            if (adms.size() == 0)
+                newAccountIds.add(key);
+                            
+            for (Admission__c adm : adms) {    	            	            	
+                if (adm.Status__c == 'Active') 
+                    newAccountIds.add(key);                      
+            }             
+        }   
+            
     }
     
     @RemoteAction
