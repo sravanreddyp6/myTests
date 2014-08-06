@@ -205,9 +205,9 @@ table#persons_table.dataTable {
                     </tr>
                 </thead>
                 <tbody>
-                    <apex:repeat value="{!accountIds}" var="acct">
+                    <apex:repeat value="{!newAccountIds}" var="acct">
                         <apex:outputPanel layout="none"
-                            rendered="{!(accountIdToJOSize[acct]=0 && accountIdToAdmissionSize[acct]=0)}">
+                            rendered="{!(accountIdToJOSize[acct]=0 && accountIdToAdmissionSize[acct]=0) }"> 
                             <tr
                                 data-name="{!(accountIdMap[acct].LastName + ', ' +accountIdMap[acct].FirstName)}">
                                 <td><a href="/{!accountIdMap[acct].PersonContactId}"
