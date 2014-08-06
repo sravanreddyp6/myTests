@@ -45,8 +45,8 @@
     <apex:pageBlock id="treeList">    
         <apex:pageMessages ></apex:pageMessages>
         <apex:pageBlockButtons location="bottom">
-            <apex:commandButton action="{!updatePrgAssoc}" value="Save" reRender="page" status="pageProcessing"/>
-            <apex:commandButton value="View/Modify Catalog" action="{!editCatalog}" />            
+            <apex:commandButton action="{!updatePrgAssoc}" value="Save" reRender="page" status="pageProcessing" disabled="{!curCtlg == null }"/>
+            <apex:commandButton value="View/Modify Catalog" action="{!editCatalog}" disabled="{!curr_catalog.id == null }"/>
         </apex:pageBlockButtons>
                    
         <apex:pageBlock mode="maindetail">

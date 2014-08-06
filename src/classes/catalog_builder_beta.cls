@@ -49,6 +49,15 @@ public with sharing class catalog_builder_beta extends CatalogBase {
        
 public pageReference upsertEley(){
 
+    //import the keys the fancy tree gave us
+    list<string> items = new list<string>();
+    items = selectedKeys.split(',');        
+
+    if ((CurEley.Type__c == 'Objective' || CurEley.Type__c == 'Action' ) && selectedKeys.length() == 0){
+    	ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,'You must associate this to atleast one component from the catalog.'));
+    	return null;
+    } 
+
     upsert CurEley;
     CurEley = [select name, id, Type__c, Description__c, status__c from Clinical_Catalog_Element__c Where id =:CurEley.id];
     string curEleyType = CurEley.Type__c;
@@ -66,9 +75,8 @@ public pageReference upsertEley(){
         NewNodes.add(newNode); 
     }
     
-    //import the keys the fancy tree gave us
-    list<string> items = new list<string>();
-    items = selectedKeys.split(',');        
+
+
     formTree.inputSelectedKeys(items, true);  
     //loop over goals  
     

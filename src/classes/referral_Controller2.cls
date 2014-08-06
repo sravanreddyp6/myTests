@@ -37,7 +37,9 @@ public with sharing class referral_Controller2 {
   public Map<Id, Boolean> editableTasks { get; set; }
   public Boolean isCambridge { get; set; }
   public Boolean isCareMeridian{get; set;}
-  
+  public String relPartiesJSON {get {
+    return JSON.serialize(relParties);}
+  }
      
     public List<Attachment> Attachments{
         get{

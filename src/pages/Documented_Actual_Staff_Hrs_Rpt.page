@@ -60,7 +60,6 @@
 .mytbl{
 
     border: 1px #dbdbdb solid;
-    width: 850px;
     margin-left: 3%;
 }
 .tblheader{
@@ -85,7 +84,7 @@
 <apex:actionRegion >
 <apex:form id="frm" >
     <apex:pageBlock title="Filters" >
-        <apex:pageBlockSection columns="1" >
+        <apex:pageBlockSection columns="2" >
         
         <apex:inputText id="start_date" 
                         size="10" 
@@ -101,7 +100,13 @@
                         styleClass="datepicker" 
                         label="End Date"  
                         value="{!fEndDate}"
-                        required="true" />                        
+                        required="true" />  
+        <apex:selectList value="{!selStates}" multiselect="true" size="5" label="State" id="statelist" onchange="filterPrograms()">
+            <apex:selectOptions value="{!states}"/>
+        </apex:selectList>                     
+         <apex:selectList value="{!selprograms}" multiselect="true" size="5" label="Program" id="programlist" >
+            <apex:selectOptions value="{!programs}"/>
+        </apex:selectList>
         <apex:pageBlockSectionItem >
             <apex:outputPanel ></apex:outputPanel>
             <apex:commandButton value="Run" action="{!runreport}" reRender="dataTable, msgs" status="myStatus" oncomplete="test()"/> 
@@ -119,7 +124,7 @@
             <div style="float: right"><input class="btn" type="button" onclick="tableToExcel('mytbl', 'Documented Actual Staff Hours Report')" value="Export to Excel"/></div>
         </apex:pageBlockButtons> 
         <br />
-        <table id="mytbl" class="mytbl"  cellpadding="7" cellspacing="0" width="100%">
+        <table id="mytbl" class="mytbl"  cellpadding="7" cellspacing="0" width="90%">
                 <tr class="tblheader">
                     <td class="tblheader" style="text-align: left; width: 20%;"><strong>Clinician</strong></td>
                     <td class="tblheader" style="text-align: left;"><strong>Person Being Served</strong></td>
@@ -127,15 +132,23 @@
                     <td class="tblheader" style="text-align: left;"><strong>Phase</strong></td>
                     <td class="tblheader" style="text-align: right;"><strong>Total Minutes</strong></td>
                     <td class="tblheader" style="text-align: right;"><strong>Hours (conversion)</strong></td>
+                    <td class="tblheader" style="text-align: left;"><strong>PBS Owner</strong></td>
+                    <td class="tblheader" style="text-align: left;"><strong>State</strong></td>
+                    <td class="tblheader" style="text-align: left;"><strong>Model</strong></td>
+                    <td class="tblheader" style="text-align: left;"><strong>Program Detail</strong></td>
                 </tr>
             <apex:repeat value="{!listStaffHrsInfo}" var="item">
                 <tr>
                     <td class="tblrow" style="text-align: left; width: 20%;">{!item.clinician}</td>
-                    <td class="tblrow" style="text-align: left; width: 20%;">{!item.pbs}</td>
-                    <td class="tblrow" style="text-align: left;" ></td>                   
+                    <td class="tblrow" style="text-align: left;"><a href="/{!item.pbsId}">{!item.pbs}</a></td>
+                    <td class="tblrow"></td>
                     <td class="tblrow" style="text-align: left;">{!item.phase}</td>
                     <td class="tblrow" style="text-align: right;">{!item.totalMinutes}</td>
                     <td class="tblrow" style="text-align: right;">{!item.hours}</td>
+                    <td class="tblrow" style="text-align: left;" >{!item.pbsOwner}</td>                   
+                    <td class="tblrow" style="text-align: left;">{!item.admissionState}</td>
+                    <td class="tblrow" style="text-align: left;">{!item.model}</td>
+                    <td class="tblrow" style="text-align: left;"><nobr>{!item.programDetail}</nobr></td>
                 </tr>            
             </apex:repeat>
 
@@ -164,6 +177,10 @@ function createtbl(){
 }
 j$(document).ready(function(){
     createtbl();
+    
+    // disable program list until state is chosen
+    j$('select[id$=programlist]').prop('disabled', j$('select[id$=statelist]').val() == null);
+    
 });
 var tableToExcel = (function() {
   var uri = 'data:application/vnd.ms-excel;base64,'
@@ -175,7 +192,35 @@ var tableToExcel = (function() {
     var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
     window.location.href = uri + base64(format(template, ctx))
   }
-})()
+});
+
+function filterPrograms() {
+
+	// clear the selected programs
+	var proglist = j$('select[id$=programlist]');
+	proglist.val('');
+	
+	// add the programs for each selected state
+	var selectedStates = j$('select[id$=statelist]').val();
+	var progs = j$('select[id$=programlist] option');
+	var i, j;
+	
+    // for each state, match to the program desc
+	for (i = 0; i < selectedStates.length; i++ ) {
+   		j$.each( progs, function( index, element ) {
+   			if (j$(element).attr('value').indexOf(selectedStates[i] + '-') >=0 )
+   				j$(element).attr('selected','selected');
+   				});
+	}
+	
+	// enable programs list
+	proglist.prop('disabled',false);
+	
+}
+
+ 
+
+
 </script>
 
 </apex:page>
