@@ -3,6 +3,7 @@ public with sharing class PersonsBeingServedListController {
     private final String ASSESSMENT_ONLY_REC_TYPE_ID = [select Id from RecordType where (DeveloperName='Assessment_Only') and (SobjectType='Service_Assignment__c') Limit 1].Id;
 
 	private ID argID;
+	public boolean defaultToActive { get; set; }
 	private List<Account> accountlist = new List<Account>();
 	
     public String letterToStart { get; set; }
@@ -67,10 +68,12 @@ public with sharing class PersonsBeingServedListController {
         	// get just this 1 account 
         	accountlist= [SELECT ID, FirstName, LastName, Owner.ID, Owner.Name, PersonContactId From Account WHERE RecordTypeID=:PBS_REC_TYPE_ID and ID=:argID];	
 			System.Debug( 'Incoming account id: ' + argID );
+			defaultToActive  = false;
         	
     	} else {
     		// get the default view - recently viewed
     		accountlist = [SELECT ID, FirstName, LastName, Owner.ID, Owner.Name, PersonContactId From Account WHERE RecordTypeID=:PBS_REC_TYPE_ID and lastvieweddate != null order by lastvieweddate desc LIMIT 200];
+    		defaultToActive  = true;
         }
 		
         // We call this here simply to get the filterId of the View
