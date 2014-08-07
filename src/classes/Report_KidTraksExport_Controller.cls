@@ -184,7 +184,7 @@ public with sharing class Report_KidTraksExport_Controller {
 			// If the Service Assignment's end date is before or on the report's end date, use the Service Assignment end date as the line item's end date.
 			// This takes into account the case in which the Service Assignment End_Date__c value is null, as the if condition will evaluate to false in that case. 
     		if(s.End_Date__c <= reportEndDate) {
-    			lineItemEndDate = s.End_Date__c;
+    			lineItemEndDate = s.End_Date__c - 1;
     		}
     		// Otherwise, use the report's end date as the line item end date.
     		else {
