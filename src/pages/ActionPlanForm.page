@@ -35,32 +35,26 @@ function printpage(radioObj) {
        
 function hideStuff(cls, cls2, option, newtopion){
     j$("."+cls).slideUp(400);   
-    j$("."+cls2).slideUp(400); 
-    
+    j$("."+cls2).slideUp(400);     
     j$("."+option).slideUp(0); 
-    j$("."+newtopion).slideDown(0); 
-     
+    j$("."+newtopion).slideDown(0);      
 };
 
 function showStuff(cls, cls2, option, newtopion){
     j$("."+cls).slideDown(400);   
-    j$("."+cls2).slideDown(400); 
-    
+    j$("."+cls2).slideDown(400);     
     j$("."+option).slideUp(0); 
-    j$("."+newtopion).slideDown(0);     
-     
+    j$("."+newtopion).slideDown(0);  
 };
 
 function gotoend(div){
     j$('html, body').animate({scrollTop: j$("#"+div).offset().top}, 1000); 
-
 };    
     
 function toggleById(id, ms){
     j$(document.getElementById(id)).toggle(ms);
 };
-function maxCatalog(){
-    
+function maxCatalog(){    
     j$("#catalog-flyout").addClass('nodisplay');
     j$("#catalog-wrapper").addClass('catmaxWRAP');
     j$("#catalog-bg").addClass('catmaxBG');
@@ -71,12 +65,10 @@ function maxCatalog(){
     j$("#cata-maximize").addClass('nodisplay');
     var h = j$( window ).height() - 150;
     j$(".catalog_tree").css({'max-height': h});
-    j$('body').addClass('noscroll');
-    
-
+    //j$("#tree2").addClass('fullH');    
+    j$('body').addClass('noscroll'); 
 }
 function minCatalog(){
-
     j$("#catalog-flyout").removeClass('nodisplay');
     j$("#catalog-wrapper").removeClass('catmaxWRAP');
     j$("#catalog-bg").removeClass('catmaxBG');
@@ -85,13 +77,8 @@ function minCatalog(){
     j$(".catalog_tree").css({'height': '350px'}); 
     j$("#cata-minimize").addClass('nodisplay');
     j$("#cata-maximize").removeClass('nodisplay');
+    //j$("#tree2").removeClass('fullH');
     j$('body').removeClass('noscroll');
-    
-    
-    
-     
-      
-
 }
 function toggleByClass(showcls, hidecls){
     j$("."+hidecls).slideUp(0);
@@ -111,12 +98,15 @@ function highlightButtons ( btype, sfid, on )
     }        
     
 }
-   
+ 
 </script>
 <style>
 .nodisplay{display: none; }
 #catalog_sticky::-webkit-scrollbar {
     width: 12px;
+}
+#tree2{
+    width: 100%;
 }
 /* Track */
 #catalog_sticky::-webkit-scrollbar-track {
@@ -138,6 +128,9 @@ function highlightButtons ( btype, sfid, on )
 .label{
     margin:10px;
     font-weight:bold;
+}
+.fullH{
+    height: 90%;
 }
 .noscroll{    overflow:hidden;}
 .dateFormat{ display: none;}
@@ -430,7 +423,7 @@ function highlightButtons ( btype, sfid, on )
                         <apex:outputLabel value="Catalog: " styleClass="label" style="margin-bottom: 7px;"/>
                                     <apex:selectList id="choosePlan" value="{!curCtlg}" required="false" size="1" multiselect="false">
                                         <apex:selectOptions value="{!ctlgs}"/>
-                                        <apex:actionSupport event="onchange" reRender="fullTree" action="{!refreshHere}" status="myCatalogStatus"/>                                            
+                                        <apex:actionSupport event="onchange" reRender="fullTree" action="{!refreshSelectedCatalog}" status="myCatalogStatus"/>
                                     </apex:selectList>                           
                             <apex:actionStatus id="myCatalogStatus" >
                                 <apex:facet name="start">    
@@ -450,14 +443,14 @@ function highlightButtons ( btype, sfid, on )
                         <apex:pageBlock id="fullTree" mode="mainDetail">
                             <apex:outputPanel id="tree2" layout="block" >
                                 <div id="tree-wrapper">
-                                   <c:Fancy_Tree showIcons="false" TreeString="{!allGoals.Fancy_Tree_JSon_String_LongText}" allowInactiveNode="false" mode="3" checkbox="true" ID_PageSideStorage="catalog_items" TreeID="tree2" debug="false" />    
+                                   <c:Fancy_Tree forceParents="true" showIcons="false" TreeString="{!allGoals.Fancy_Tree_JSon_String_LongText}" allowInactiveNode="false" mode="2" checkbox="true" ID_PageSideStorage="catalog_items" TreeID="tree2" debug="false" />    
                                 </div>
                             </apex:outputPanel>                
                         </apex:pageBlock>
                     </apex:outputPanel>    
                     
                     <apex:outputPanel >
-                        <apex:commandButton oncomplete="gotoend('planend'); minCatalog(); " status="myStatus" reRender="goalwrapper" style="float: right; margin-top: 0px; " action="{!addItemsFromTree}" value="Add to Plan"/>
+                        <apex:commandButton oncomplete="gotoend('planend'); minCatalog(); " status="myStatus" reRender="goalwrapper" style="float: right; margin-top: 0px; " action="{!addItemsFromCatalog}" value="Add to Plan"/>
      
                     
                     </apex:outputPanel>
