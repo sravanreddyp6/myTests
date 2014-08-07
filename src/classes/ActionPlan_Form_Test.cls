@@ -75,7 +75,7 @@ static testMethod void myUnitTest() {
     Clinical_Catalog__c cat = new Clinical_Catalog__c(); 
     cat = createCatalog();
     contrl.curCtlg = cat.id;
-    contrl.refreshHere();
+    contrl.refreshSelectedCatalog();
     contrl.catalog_selections = '';
     for(tmn_tree.node goal : contrl.allGoals.root.nodes){
         contrl.catalog_selections += goal.key;
@@ -92,7 +92,7 @@ static testMethod void myUnitTest() {
             }
         }
     }    
-    contrl.addItemsFromTree();
+    contrl.addItemsFromCatalog();
 
     
     contrl.deleteGid = contrl.goalID;
