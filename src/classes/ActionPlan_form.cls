@@ -115,8 +115,14 @@ public pagereference createrShiftNote(){
     PageReference ref = new PageReference('/apex/shiftnote_basic_form?planId='+actionplan.id + '&admID=' + actionplan.Service_Assignment__r.Admission__c);
     return ref ;
 }
-
-    public pagereference addItemsFromTree(){
+//Catalog items
+    public pagereference addItemsFromCatalog(){
+            //remove any goals taht are blank, they will not be saved
+        for(string g: planStuff.keySet()){    
+            if(planStuff.get(g).theGoal.Description__c == null){
+                planStuff.remove(g);
+            } 
+        }  
         list<string> items = new list<string>();
         items = catalog_selections.split(',');        
         allGoals.inputSelectedKeys(items, true);  
@@ -207,7 +213,7 @@ public pagereference createrShiftNote(){
         
         return null;
     }
-    public pageReference refreshHere(){
+    public pageReference refreshSelectedCatalog(){
         List<Clinical_Catalog_Tree_Node__c> nodes;
         allGoals = new TMN_Tree();
         
@@ -294,7 +300,7 @@ public pagereference createrShiftNote(){
         return myObj;
     }
 
-
+//End catalog items
 public pagereference myCancel(){
     list<Action_plan__c> APs = [select id from action_plan__c where Service_assignment__c = :actionplan.service_assignment__c];
         
@@ -500,7 +506,7 @@ public pagereference mySave(){
                             {addStatusError =true;hadStatusErr = true;}
                     }
                     if(addStatusError ){
-                        o.theObj.Status__c.addError('Status is required when an Action is provided');
+                        o.theObj.Status__c.addError('Status is required when an ' + ActAlias + ' is provided');
                     }
                 }
             

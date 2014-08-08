@@ -68,21 +68,16 @@ public with sharing class Report_KidTraksExport_Controller {
 
 		Datetime reportStartDateTime = datetime.newInstance(reportStartDate, Time.newInstance(0,0,0,0));
 		Datetime reportEndDateTime = datetime.newInstance(reportEndDate,Time.newInstance(23,59,59,59));
-
-		// In the query below, the WHERE condition "Service_Assignment__r.End_Date__c > :reportStartDate" requires that the Service Assignment End Date be AFTER the first day
-		// in the report date range so that we never bill for a client whose service assignment ends on the first day of a report range.  This is in keeping with the requirements,
-		// and also prevents us from getting the case in which a Service Assignment ends on the first day of the report, and the code below that figures out the value of
-		// "theLastNotesStartDate" (a misleading variable name in that it's meaning evolved over time; study code below to see what I mean) would do things like give you 
-		// 7/1/14 as the first day billed for a client, and 6/30/14 as the last day billed, resulting in 0 units and $0.  This filter will result in finalized notes for the 
-		// first day of the report being excluded if the Service Assignment's End Date is also on the day of the report.  Based on the info from the business, there probably shouldn't
-		// be finalized notes for this code on the same day as the Service Assignment End Date, or if there are, the business must think of such as non-billable given the requirements
-		// they gave us. I'm noting this here, though, in case we ever have issues with the way the first day of the report and notes / Service Assignment End Dates on that day are
-		// handled.  J. Gilliam, 7/18/14 
     	
+    	//Create a list of Service Assignments that:
+		//	a.	Started before the report’s end date, and either haven’t ended or ended after or on the report’s start date.
+		//	b.	Are for the program selected for the report
+		//	c.	Have at least one finalized Progress Note for the 10942.1161 code with a Start Time prior to the report’s end date   	
     	List<Service_Assignment__c> servAssignsToBecomeLineItems = [ SELECT Id, Person_Being_Served__c, Person_Being_Served__r.Name, Person_Being_Served__r.Avatar_ID__c,
     																	Person_Being_Served__r.Other_ID__c, End_Date__c
     																	FROM Service_Assignment__c
     																	WHERE Start_Date__c <= :reportEndDate
+    																	AND Program_Detail__c = :reportProgram
     																	AND (
     																			End_Date__c = null
     																			OR End_Date__c >= :reportStartDate
@@ -95,19 +90,18 @@ public with sharing class Report_KidTraksExport_Controller {
 		    																			AND Program_Detail__c = :reportProgram
 		    																			AND Start_Time__c <= :reportEndDateTime
 		    																	 )
-    																	];
-    	
+    																	];  	
     	System.debug('servAssignsToBecomeLineItems.size(): ' + servAssignsToBecomeLineItems.size());
     	
+    	// If there are no Service Assignments that fit those criteria (in other words, if there are no line items expected for the report), exit!
     	if(servAssignsToBecomeLineItems.size()==0) return null;
     	
+    	// Create a list of ALL finalized progress notes for code 10942.1161 for Service Assignments for this program that either haven't ended or ended after the report's start date.
     	List<Progress_Note__c> progressNotesTheseServAssigns = [ SELECT Start_Time__c, End_Time__c, Person_Being_Served__c, Person_Being_Served__r.Name, Person_Being_Served__r.Avatar_ID__c,
     																Person_Being_Served__r.Other_ID__c, Service_Assignment__c, Service_Assignment__r.Start_Date__c, Service_Assignment__r.End_Date__c 
     																FROM Progress_Note__c 
     																WHERE Status__c = 'Final' 
-    																AND Service_Code__r.Service_Code__c = '10942.1161' 
-    																//AND Start_Time__c >= :reportStartDateTime 
-    																//AND End_Time__c <= :reportEndDateTime
+    																AND Service_Code__r.Service_Code__c = '10942.1161'
     																AND Program_Detail__c = :reportProgram
     																AND (
     																	Service_Assignment__r.End_Date__c > :reportStartDate
@@ -115,6 +109,8 @@ public with sharing class Report_KidTraksExport_Controller {
     																)
     																ORDER BY Start_Time__c ];    	
 
+		// Create a list of progress notes from list progressNotesTheseServAssigns that represents the list of notes for the code and program
+		// that fall within the report date range.
 		List<Progress_Note__c> progressNotesThisReport = new List<Progress_Note__c>();
 		for(Progress_Note__c p : progressNotesTheseServAssigns) {
 			// IF THE NOTE STARTS WITHIN THE REPORT DATE RANGE
@@ -124,31 +120,33 @@ public with sharing class Report_KidTraksExport_Controller {
 		}
 		System.debug('progressNotesThisReport.size(): ' + progressNotesThisReport.size());
 
+		// Create a set of IDs for the Service Assignments that have finalized notes for the code and program, which also either haven't ended or end after the report's start date.
 		Set<Id> servAssignsThisNoteSet = new Set<Id>();
 		for(Progress_Note__c p : progressNotesTheseServAssigns) {
 			servAssignsThisNoteSet.add(p.Service_Assignment__c);
 		}
 		System.debug('servAssignsThisNoteSet.size()' + servAssignsThisNoteSet.size());
     	
+    	// Create a list of progress notes for Service Assignments that have finalized notes for the code and program, which also either haven't ended or end after the report's start date,
+    	// but only include notes from before the report start date.
     	List<Progress_Note__c> notesBeforeReportTheseServAssigns = [ SELECT Service_Assignment__c 
     																	FROM Progress_Note__c 
 		    															WHERE Status__c = 'Final' 
 		    															AND Service_Code__r.Service_Code__c = '10942.1161'
 		    															AND Program_Detail__c = :reportProgram
 		    															AND Service_Assignment__c = :servAssignsThisNoteSet 
-		    															AND Start_Time__c < :reportStartDate ];
-    	
+		    															AND Start_Time__c < :reportStartDate ];  	
     	System.debug('notesBeforeReportTheseServAssigns.size()' + notesBeforeReportTheseServAssigns.size());
     	
 
     	Date lineItemStartDate;
     	Date lineItemEndDate;
-
     	Integer unitsFromDateSubtract;
-    	Integer loopCounter = 0;
     	
+    	// Loop through our Service Assignments in scope, as defined above, that will each become a line item on the report.
     	for(Service_Assignment__c s : servAssignsToBecomeLineItems) {
     		
+    		// START: Figure out if the Service Assignment has finalized notes for the code and program before the report's start date. 
     		Boolean thisServAssignHasNotesBeforeReportStartDate = false;
     		
     		for(Progress_Note__c p : notesBeforeReportTheseServAssigns) {
@@ -156,40 +154,48 @@ public with sharing class Report_KidTraksExport_Controller {
     			System.debug('s.Id: ' + s.Id);
     			if(p.Service_Assignment__c==s.Id) {
     				thisServAssignHasNotesBeforeReportStartDate = true;
+    				// If the Service Assignment DOES have finalized notes for the code and program before the report's start date, then
+    				// we want to use the report's start date as the start date for our billing line item, per the requirements from the business (CTEAE-143; attached email).
     				lineItemStartDate = reportStartDate;
     			}
     		}
     		System.debug('thisServAssignHasNotesBeforeReportStartDate after loop through notesBeforeReportTheseServAssigns: ' + thisServAssignHasNotesBeforeReportStartDate);
+    		// END: Figure out if the Service Assignment has finalized notes for the code and program before the report's start date. 
+    		
+    		// If the Service Assignment DOES NOT have finalized notes for the code and program before the report's start date...
 			if(!thisServAssignHasNotesBeforeReportStartDate) {
+				// Create a list of this person's progress notes that fall within the report date range.
 				List<Progress_Note__c> thisPersonsProgressNotesThisReport = new List<Progress_Note__c>();
+				//  We get that list by looping through the progressNotesThisReport, which is already ordered by note Start_Time__c from the original query for notes above.
 				for(Progress_Note__c p2 : progressNotesThisReport) {
+					// Check to make sure the notes getting added are only notes for the service assignment for this loop iteration.
 					if(p2.Service_Assignment__c == s.Id) {
 						thisPersonsProgressNotesThisReport.add(p2);
 					}
 				}
 				System.debug('thisPersonsProgressNotesThisReport.size(): ' + thisPersonsProgressNotesThisReport.size());
+				// Set the start date for the report line item to the first note in the list, which should be the earliest based on the query sorting.
 				lineItemStartDate = thisPersonsProgressNotesThisReport[0].Start_Time__c.date();
 			}
     			
     		    	
-    		
+    		// START:  Figure out the line item end date.
+			
+			// If the Service Assignment's end date is before or on the report's end date, use the Service Assignment end date as the line item's end date.
+			// This takes into account the case in which the Service Assignment End_Date__c value is null, as the if condition will evaluate to false in that case. 
     		if(s.End_Date__c <= reportEndDate) {
-    			lineItemEndDate = s.End_Date__c;
+    			lineItemEndDate = s.End_Date__c - 1;
     		}
+    		// Otherwise, use the report's end date as the line item end date.
     		else {
     			lineItemEndDate = reportEndDate;	
     		}
-
-			Boolean thisServAssignHasNotesBeforeReportStartDateButNoNotesDuringReportRange = true;
-			System.debug('progressNotesTheseServAssigns.size(): ' + progressNotesTheseServAssigns.size());
-			for(Progress_Note__c p : progressNotesTheseServAssigns) {
-				if(s.Id == p.Service_Assignment__c && p.Start_Time__c >= reportStartDateTime && p.Start_Time__c <= reportEndDateTime) {
-					thisServAssignHasNotesBeforeReportStartDateButNoNotesDuringReportRange = false;
-				}
-			}
+    		// END: Figure out the line item end date.
 			
+			// Calculate the number of units to be billed for the line item by getting the daysBetween value for the lineItemStartDate and lineItemEndDate, and adding 1.
 			unitsFromDateSubtract = lineItemStartDate.daysBetween(lineItemEndDate) + 1;
 	    	
+	    	// Create a single line item for the Service Assignment.
 	    	lineItems.add(new KidTraksLineItem(lineItemStartDate, lineItemEndDate, theUser, s.Person_Being_Served__r.Name, s.Person_Being_Served__r.Avatar_ID__c, s.Person_Being_Served__r.Other_ID__c, unitsFromDateSubtract));
 	    	
     	}      

@@ -1,32 +1,55 @@
 <apex:component selfClosing="true" controller="Fancy_Tree">
 
-	<apex:attribute name="TreeID" assignTo="{!TreeName}" required="true" type="string" description="the id of the fancy tree" />
-	<apex:attribute name="TreeString" assignTo="{!TreeStr}" required="true" type="string" description="the Json String of the tree" />
-	<apex:attribute name="SelectedKeysString" assignTo="{!SelectedKeys}" type="string" description="a string for the selected keys to be stored" />
-	<apex:attribute name="checkbox" type="boolean" default="true" description="Checkbox to select items from tree" />
-	<apex:attribute name="activateActionSignature" type="string" description="The signature of the function to call on select of tree node" />
-	<apex:attribute name="mode" type="string" default="3" description="mode of the tree" />
-	<apex:attribute name="debug" type="boolean" default="false" description="show extra divs to sees of selections" />		
-	<apex:attribute name="ID_PageSideStorage" type="string" description="Id of the element the the tree will push selected keys to" />
+    <apex:attribute name="TreeID" assignTo="{!TreeName}" required="true" type="string" description="the id of the fancy tree" />
+    <apex:attribute name="TreeString" assignTo="{!TreeStr}" required="true" type="string" description="the Json String of the tree" />
+    <apex:attribute name="SelectedKeysString" assignTo="{!SelectedKeys}" type="string" description="a string for the selected keys to be stored" />
+    <apex:attribute name="checkbox" type="boolean" default="true" description="Checkbox to select items from tree" />
+    <apex:attribute name="activateActionSignature" type="string" description="The signature of the function to call on select of tree node" />
+    <apex:attribute name="mode" type="string" default="3" description="mode of the tree" />
+    <apex:attribute name="debug" type="boolean" default="false" description="show extra divs to sees of selections" />      
+    <apex:attribute name="ID_PageSideStorage" type="string" description="Id of the element the the tree will push selected keys to" />
     <apex:attribute name="allowInactiveNode" assignTo="{!allowInactive}" type="boolean" default="true" description="show Inactive nodes in the tree" />
     <apex:attribute name="showIcons" type="boolean" default="true" description="Show icons for the tree nodes" />
-		
-	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
-	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
-	<apex:stylesheet value="{!URLFOR($Resource.fancytree, 'skin-win7/ui.fancytree.css')}" />
-	<apex:includescript value="{!URLFOR($Resource.fancytree, 'jquery.fancytree.js')}" />
-	<apex:includescript value="{!URLFOR($Resource.fancytree, 'src/jquery.fancytree.filter.js')}" />
-	<style>
-		.display_off {
-			display: none;
-		}
-		
-		.display_on {
-			display: block;
-		}
+    <apex:attribute name="forceParents" type="boolean" default="false" description="Force Parents to be selected useful when in mode 2"/>
+        
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.fancytree, 'skin-win7/ui.fancytree.css')}" />
+    <apex:includescript value="{!URLFOR($Resource.fancytree, 'jquery.fancytree.js')}" />
+    <apex:includescript value="{!URLFOR($Resource.fancytree, 'src/jquery.fancytree.filter.js')}" />
+    <style>
+        .display_off {
+            display: none;
+        }
+        
+        .display_on {
+            display: block;
+        }
     </style>
-    
-	<script type="text/javascript">
+    <script type="text/javascript">
+        function addAllParents(theList){
+        
+            var i;
+            //alert(theList.length);
+            for(i = 0; i < theList.length; i++){
+        
+               //$("#tree3").fancytree("getTree").getNodeByKey(s[i]).setSelected();
+               theList[i].setSelected(true);
+            }  
+        }  
+        function removeAllChildren(theList){
+        
+            var i;
+            //alert(theList.length);
+            if(theList != null){
+                for(i = 0; i < theList.length; i++){
+            
+                   //$("#tree3").fancytree("getTree").getNodeByKey(s[i]).setSelected(false);
+                   theList[i].setSelected(false);
+                   removeAllChildren(theList[i].getChildren());
+                }  
+            }
+        }          
     $ = jQuery.noConflict();
     
     var treeData = [{!TreeStr}];
@@ -42,6 +65,15 @@
                 var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
                     return node.key;
                 });
+                
+                if({!forceParents}){
+                    var lst = data.tree.getSelectedNodes();
+                    var i;
+                    for(i = 0; i < lst.length; i++){
+                       addAllParents(lst[i].getParentList()); 
+                    }  
+                }                 
+                
                 $('[id*={!TreeName}echoSelection3]').text(selKeys.join(", "));
                 $('[id*={!ID_PageSideStorage}]').val(selKeys.join(","));
                 // Get a list of all selected TOP nodes
@@ -53,6 +85,17 @@
                 $('[id*={!TreeName}echoSelectionRootKeys3]').text(selRootKeys.join(", "));
                 $('[id*={!TreeName}echoSelectionRoots3]').text(selRootNodes.join(", "));
             },
+            beforeSelect: function(event, data) {
+                //logEvent(event, event.originalEvent);
+                //this function ios only needed when parents are being forced it allows a user to unselect a top node and remove its selected chilren or else the function that selects aprtents will jsut re-select it
+                if({!forceParents}){
+                console.log(data.node.key + ' - '+ data.node.isSelected());
+                console.log(data.node.key + ' - '+ data.node.getChildren());
+                if(data.node.isSelected()){
+                    removeAllChildren(data.node.getChildren());
+                }
+                }
+              },            
             filter: {
                 mode: "hide"
             },
@@ -106,14 +149,7 @@
             }            
         });        
         
-    });
-    
-//    function resetSelectedNodes(){
-//    $('[id*={!TreeName}]').fancytree("getTree").getSelectedNodes(function(node){
-//                node.toggleSelected(); 
-//                });
-//    }
-            
+    });    
     </script>
 
     <apex:outputPanel layout="block" rendered="{!allowInactive}" >
@@ -124,11 +160,11 @@
 <!-- <div class="{!if(showInactiveSelector, 'display_on','display_off')}"> <input type="checkbox" id="{!TreeName}showAllNode" >Show Inactive Items</input> </div> -->
     
 <!-- <div id="{!TreeName}"></div> -->
-	<div class="{!if(debug, 'display_on','display_off')}">Selected keys: <span id="{!TreeName}echoSelection3">-</span></div>
-	<div class="{!if(debug, 'display_on','display_off')}">Selected root keys: <span id="{!TreeName}echoSelectionRootKeys3">-</span></div>
-	<div class="{!if(debug, 'display_on','display_off')}">Selected root nodes: <span id="{!TreeName}echoSelectionRoots3">-</span></div>
-	<div class="{!if(debug, 'display_on','display_off')}">JSon String <br /> {!TreeStr}</div>
-	<p/>
-	<p/>
+    <div class="{!if(debug, 'display_on','display_off')}">Selected keys: <span id="{!TreeName}echoSelection3">-</span></div>
+    <div class="{!if(debug, 'display_on','display_off')}">Selected root keys: <span id="{!TreeName}echoSelectionRootKeys3">-</span></div>
+    <div class="{!if(debug, 'display_on','display_off')}">Selected root nodes: <span id="{!TreeName}echoSelectionRoots3">-</span></div>
+    <div class="{!if(debug, 'display_on','display_off')}">JSon String <br /> {!TreeStr}</div>
+    <p/>
+    <p/>
 
 </apex:component>

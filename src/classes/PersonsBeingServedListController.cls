@@ -3,6 +3,7 @@ public with sharing class PersonsBeingServedListController {
     private final String ASSESSMENT_ONLY_REC_TYPE_ID = [select Id from RecordType where (DeveloperName='Assessment_Only') and (SobjectType='Service_Assignment__c') Limit 1].Id;
 
 	private ID argID;
+	public boolean defaultToActive { get; set; }
 	private List<Account> accountlist = new List<Account>();
 	
     public String letterToStart { get; set; }
@@ -67,10 +68,12 @@ public with sharing class PersonsBeingServedListController {
         	// get just this 1 account 
         	accountlist= [SELECT ID, FirstName, LastName, Owner.ID, Owner.Name, PersonContactId From Account WHERE RecordTypeID=:PBS_REC_TYPE_ID and ID=:argID];	
 			System.Debug( 'Incoming account id: ' + argID );
+			defaultToActive  = false;
         	
     	} else {
     		// get the default view - recently viewed
     		accountlist = [SELECT ID, FirstName, LastName, Owner.ID, Owner.Name, PersonContactId From Account WHERE RecordTypeID=:PBS_REC_TYPE_ID and lastvieweddate != null order by lastvieweddate desc LIMIT 200];
+    		defaultToActive  = true;
         }
 		
         // We call this here simply to get the filterId of the View
@@ -218,9 +221,9 @@ public with sharing class PersonsBeingServedListController {
         for (String ID: accountIds) {
             accountIdToJO.put(ID, new List<Action_Plan__c>());
             accountIdToJOSize.put(ID, 0);
-            accountIdToAdmission.put(ID, new List<Admission__c>());
+            accountIdToAdmission.put(ID, new List<Admission__c>());            
             accountIdToAdmissionSize.put(ID, 0);
-        }
+        }        
 
         // This is a many-to-many model, so in order to uniquely identify
         // 1 pair of records we'll concatenate their IDs together
@@ -265,11 +268,12 @@ public with sharing class PersonsBeingServedListController {
                 FROM Admission__c
                 WHERE Person_Being_Served__c IN :contactIds
             ]
-        ) {
+        ) {        	                 	               	        	     	             	         
             if (!admissionIdToServiceAssignmentSize.containsKey(admission.ID)) {
                 admissionIdToServiceAssignmentSize.put(admission.ID, 0);
                 admissionIdToServiceAssignment.put(admission.ID, new List<Service_Assignment__c>());
-            }
+            }            
+            
             admissionIdToServiceAssignment.put(admission.ID, new List<Service_Assignment__c>());
             if (admission.Service_Agreements__r.size()==0) {
                 accountIdToAdmission.get(admission.Person_Being_Served__r.Account.ID).add(admission);
@@ -281,7 +285,7 @@ public with sharing class PersonsBeingServedListController {
                 
                 // EB-116: do not show inactive assessment only
                 if ( (sa.RecordType.Id == ASSESSMENT_ONLY_REC_TYPE_ID) &&  (sa.Status__c != 'Active') )
-                    continue;
+                    continue;                   
                 
                 if (!saWithPlans.contains(sa.ID)) { // don't display duplicated stuff
                     if (index == 1) {
@@ -294,8 +298,11 @@ public with sharing class PersonsBeingServedListController {
                         admissionIdToServiceAssignmentSize.get(admission.ID) + 1);
                     index++;
                 }
-            }
-        }
+                 
+            }                                                       	
+                                                           
+        }                
+            
     }
     
     @RemoteAction

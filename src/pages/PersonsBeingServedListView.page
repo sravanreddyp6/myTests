@@ -162,13 +162,24 @@ table#persons_table.dataTable {
             </apex:selectList>
             <!-- <apex:outputLink value="/ui/list/FilterEditPage?ftype=a&retURL={!$CurrentPage.URL}">Create New View</apex:outputLink>-->
         </apex:form>
-        <apex:form onsubmit="return false;">
-            <div id="table_filter">
+        <apex:form rendered="{! (!defaultToActive)}" onsubmit="return false;">
+            <div id="table_filter1">
                 <b>Find a Person&nbsp;</b>
                 <input type="text" name="table_filter_box" id="table_filter_box" />
                 from <select id="table_status_filter_box">
                     <option value="">All</option>
+                    <option value="^Active$">Active</option>                    
+                    <option value="^((?!Active).*)$">Inactive</option>
+                </select>
+            </div>
+        </apex:form>
+        <apex:form rendered="{!defaultToActive}" onsubmit="return false;">
+            <div id="table_filter2">
+                <b>Find a Person&nbsp;</b>
+                <input type="text" name="table_filter_box" id="table_filter_box" />
+                from <select id="table_status_filter_box">
                     <option value="^Active$">Active</option>
+                    <option value="">All</option>                    
                     <option value="^((?!Active).*)$">Inactive</option>
                 </select>
             </div>
@@ -207,7 +218,7 @@ table#persons_table.dataTable {
                 <tbody>
                     <apex:repeat value="{!accountIds}" var="acct">
                         <apex:outputPanel layout="none"
-                            rendered="{!(accountIdToJOSize[acct]=0 && accountIdToAdmissionSize[acct]=0)}">
+                            rendered="{!(accountIdToJOSize[acct]=0 && accountIdToAdmissionSize[acct]=0) }"> 
                             <tr
                                 data-name="{!(accountIdMap[acct].LastName + ', ' +accountIdMap[acct].FirstName)}">
                                 <td><a href="/{!accountIdMap[acct].PersonContactId}"
