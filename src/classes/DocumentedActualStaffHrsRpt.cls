@@ -57,6 +57,8 @@ public with sharing class DocumentedActualStaffHrsRpt {
     public List<SelectOption> programs { get; set; }
     public List<String> selStates {get; set;}
     public List<String> selPrograms {get; set;}
+    public string uiselStates { get; set;}
+    public string uiselProgs { get; set; }
     
     public PageReference runReport(){
         if(fEndDate < fStartDate){
@@ -66,8 +68,11 @@ public with sharing class DocumentedActualStaffHrsRpt {
         }
                        
         PNResults.clear();
-        listStaffHrsInfo.clear();                                                                                     
-        
+        listStaffHrsInfo.clear();         
+        selStates = uiselStates.split(',');
+        selPrograms = uiselProgs.split(',');                                                                            
+        system.debug('selstates: ' + selStates);
+        system.debug('selprograms:' + selPrograms);
         List<Service_Assignment__c> SAResults = [ SELECT Id, phase__c, admission__r.state__c
          			from Service_Assignment__c where 
         					((Start_Date__c <= :fStartDate  AND (end_date__c >= :fStartDate or end_date__c = null)) OR   
@@ -152,10 +157,9 @@ public with sharing class DocumentedActualStaffHrsRpt {
            
             	pSA = SAMap.get( (ID)pn.get('service_assignment__c'));        	            	
             	
-            	     		                                
+            	dataRow.saID = pSA.ID;     		                                
             	dataRow.clinician = (String)pn.get('clinician');
                 dataRow.pbs = (String)pn.get('pbsname');
-                dataRow.pbsId = (ID)pn.get('person_being_served__c');
                 dataRow.pbsOwner = (String)pn.get('pbsowner');
                 
                 Decimal totalMinutes = (Decimal)pn.get('sum'); 
@@ -198,7 +202,7 @@ public with sharing class DocumentedActualStaffHrsRpt {
     public class StaffHrsInfo  implements comparable {
         public String clinician {get; set;}
         public String pbs {get; set;}
-        public ID pbsId { get; set;}
+        public ID saId { get; set;}
         public String phase {get; set;}
         public String totalMinutes {get; set;} 
         public String hours{get; set;}

@@ -83,6 +83,9 @@
 <apex:pageMessages id="msgs" ></apex:pageMessages>
 <apex:actionRegion >
 <apex:form id="frm" >
+
+<apex:inputhidden id="selStates" value="{!uiselStates}" />
+<apex:inputhidden id="selPrograms" value="{!uiselProgs}" />
     <apex:pageBlock title="Filters" >
         <apex:pageBlockSection columns="2" >
         
@@ -101,15 +104,47 @@
                         label="End Date"  
                         value="{!fEndDate}"
                         required="true" />  
-        <apex:selectList value="{!selStates}" multiselect="true" size="5" label="State" id="statelist" onchange="filterPrograms()">
+        <apex:pageBlockSectionItem>
+        <apex:outputLabel for="statelist" value="State" />
+        <apex:outputpanel>
+        <table>
+        <tr><td>
+        <apex:selectList multiselect="true" size="5" label="State" id="statelist" style="width:100px">
             <apex:selectOptions value="{!states}"/>
-        </apex:selectList>                     
-         <apex:selectList value="{!selprograms}" multiselect="true" size="5" label="Program" id="programlist" >
+        </apex:selectList>
+        </td><td style="vertical-align:middle">
+       	<a href="#" id="add" class="btn">Add</a><br /><br />
+        <a href="#" id="remove" class="btn">Remove</a>
+        </td><td>
+        <select multiple="multiple" id="select2" size="5" style="width:100px;"></select>
+        </td>  
+        </tr>
+ 		</table>                   
+        </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem />
+        <apex:pageBlockSectionItem>
+        <apex:outputLabel for="statelist" value="Program" />
+        <apex:outputpanel>
+        <table>
+        <tr><td> 
+         <apex:selectList multiselect="true" size="5" label="Program" id="programlist" style="width:400px">
             <apex:selectOptions value="{!programs}"/>
         </apex:selectList>
+        </td><td style="vertical-align:middle">
+        <a href="#" id="add2" class="btn">Add</a><br /><br />  
+  		<a href="#" id="remove2" class="btn">Remove</a>
+  		</td><td>  
+ 		<select multiple="multiple" id="select4" size="5"  style="width:400px;"></select>  
+ 		</td>
+ 		</tr>
+ 		</table>
+ 		</apex:outputpanel>
+ 		</apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem />
         <apex:pageBlockSectionItem >
             <apex:outputPanel ></apex:outputPanel>
-            <apex:commandButton value="Run" action="{!runreport}" reRender="dataTable, msgs" status="myStatus" oncomplete="test()"/> 
+            <apex:commandButton value="Run" action="{!runreport}" onclick="setSelectedVals();" reRender="dataTable, msgs" status="myStatus" oncomplete="test()"/> 
         </apex:pageBlockSectionItem>                
                        
         </apex:pageBlockSection>
@@ -140,7 +175,7 @@
             <apex:repeat value="{!listStaffHrsInfo}" var="item">
                 <tr>
                     <td class="tblrow" style="text-align: left; width: 20%;">{!item.clinician}</td>
-                    <td class="tblrow" style="text-align: left;"><a href="/{!item.pbsId}">{!item.pbs}</a></td>
+                    <td class="tblrow" style="text-align: left;"><a href="/{!item.saID}">{!item.pbs}</a></td>
                     <td class="tblrow"></td>
                     <td class="tblrow" style="text-align: left;">{!item.phase}</td>
                     <td class="tblrow" style="text-align: right;">{!item.totalMinutes}</td>
@@ -181,13 +216,29 @@ j$(document).ready(function(){
     // disable program list until state is chosen
     j$('select[id$=programlist]').prop('disabled', j$('select[id$=statelist]').val() == null);
     
+    // set up the move of items from unselected to selected
+ 	j$('#add').click(function() {
+ 		filterPrograms();
+  		return !j$('select[id$=statelist] option:selected').remove().appendTo('#select2');
+	 });
+ 	j$('#remove').click(function() {
+ 		removeStatePrograms();
+  		return !j$('#select2 option:selected').remove().appendTo('select[id$=statelist]');
+	 });
+	j$('#add2').click(function() {
+ 		return !j$('select[id$=programlist] option:selected').remove().appendTo('#select4');
+	 }); 
+	j$('#remove2').click(function() {
+  		return !j$('#select4 option:selected').remove().appendTo('select[id$=programlist]');
+	 });
+	 
+	 
+	
 });
 
 function filterPrograms() {
-
-	// clear the selected programs
-	var proglist = j$('select[id$=programlist]');
-	proglist.val('');
+	
+	var proglist = j$('[id$=programlist]');
 	
 	// add the programs for each selected state
 	var selectedStates = j$('select[id$=statelist]').val();
@@ -197,16 +248,76 @@ function filterPrograms() {
     // for each state, match to the program desc
 	for (i = 0; i < selectedStates.length; i++ ) {
    		j$.each( progs, function( index, element ) {
-   			if (j$(element).attr('value').indexOf(selectedStates[i] + '-') >=0 )
+   			if (j$(element).attr('value').indexOf(selectedStates[i] + '-') ==0 || j$(element).attr('value').indexOf('PA-' + selectedStates[i] + '-') ==0) {
    				j$(element).attr('selected','selected');
-   				});
+   				
+   				}
+   		});
 	}
 	
 	// enable programs list
 	proglist.prop('disabled',false);
+	j$('select[id$=programlist] option:selected').remove().appendTo('#select4')
+
+	j$('#select4').val('');
+	j$('#select2').val('');
+	
+	return true;
+}
+
+function removeStatePrograms() {
+
+	// clear the selected programs
+	var proglist = j$('#select4');
+	proglist.val('');
+	
+	// remove the programs for the states in the right-hand window
+	var selectedStates = j$('#select2').val();
+	var progs = j$('#select4 option');
+	var i, j;
+	
+    // for each state, match to the program desc
+	for (i = 0; i < selectedStates.length; i++ ) {
+   		j$.each( progs, function( index, element ) {
+   			if (j$(element).attr('value').indexOf(selectedStates[i] + '-') ==0  || j$(element).attr('value').indexOf('PA-' + selectedStates[i] + '-') ==0 ) {
+   				j$(element).attr('selected','selected');
+   				}
+   				});
+	}
+	
+	j$('#select4 option:selected').remove().appendTo('select[id$=programlist]');
+	j$('#select4').val('');
+	j$('select[id$=programlist]').val('');
+	//var tmpstring = j$('select[id$=programlist] option').sort(selectSort);
+	//j$('select[id$=programlist]').html(tmpstring);
 	
 }
 
+
+function selectSort(a,b){
+    a = a.value;
+    b = b.value;
+    return a.value == b.value ? 0 : a.value < b.value ? -1 : 1;
+};
+
+function setSelectedVals() {
+
+	var statelist = [];
+	j$('#select2 option').each(function() {
+    	statelist.push(j$(this).val());
+	});
+	
+	j$('[id$=selStates]').val( statelist.join(',') );
+	
+	var proglist = [];
+	j$('#select4 option').each(function() {
+    	proglist.push(j$(this).val());
+	});
+	
+	j$('[id$=selPrograms]').val( proglist.join(',') );
+	
+
+}
 var tableToExcel = (function() {
   var uri = 'data:application/vnd.ms-excel;base64,'
     , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
