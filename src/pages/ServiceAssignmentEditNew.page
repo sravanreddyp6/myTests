@@ -36,6 +36,18 @@
         color:#000000;
         cursor: text;
     }        
+    
+    select[readonly]{
+    border: none;
+    background: none;
+    -webkit-appearance: none;
+    cursor: text;
+    }
+
+	select[readonly] option{
+	    display:none;
+    }
+    
 </style>
 
 <c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" servAssignId="{!theServAssign.Id}" parentPage="ServAssign" servAssignNew="{!newSA}" admId="{!admissionId}"  />
@@ -197,19 +209,15 @@
                              columns="3"
                              collapsible="false"
                              id="ContractAssoc"
-                             rendered="{!!showLocation && !AssessmentOnly}">
-            <apex:pageBlockTable value="{!contractRows}" var="c" id="ContractTable">
-                <apex:column headerValue="Select" >
-                    <apex:inputCheckbox value="{!c.selectedContract}" disabled="{!!editSA}">
-                         <!-- <apex:actionSupport event="onchange" reRender="myFRM" status="
-                         "  action="{!saveContractSelections}"/> -->
-                    </apex:inputCheckbox>
-                </apex:column>
-                <apex:column value="{!c.theContract.Name}" />
-            </apex:pageBlockTable>
-            
+                             rendered="{!!showLocation && !AssessmentOnly}">            
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Contract" />
+            <apex:selectList id="chooseContract" value="{!associatedContractID}" size="1" multiselect="false" readonly="{!!editSA}">
+                <apex:selectOptions value="{!contractsList}"/>
+            </apex:selectList>
+        </apex:pageBlockSectionItem>        
     </apex:pageBlockSection>
-    
+     
     <apex:pageBlockSection title="Program Association"
                              showHeader="true"
                              columns="1"

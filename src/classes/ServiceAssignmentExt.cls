@@ -30,9 +30,11 @@ public class ServiceAssignmentExt {
 
     // Get/set info for contracts
     public List<TMN_Contract__c> contractsForThisServAssignsState { get; set; }
-    public List<ContractWrapper> contractRows { get; set; }
     public List<ServiceAssignment_Contract_JO__c> servAssignContractXrefs {get;set;}
+    public List<SelectOption> contractsList { get; set; }
+    public String associatedContractID { get; set; }    
     public Boolean refreshPage { get; set; }
+
 
     // Get/set for Programs
     public String SelectedProgram {get; set;}
@@ -359,11 +361,11 @@ public class ServiceAssignmentExt {
 
 
         getContractsAndXrefs();
-        contractRows = new List<ContractWrapper>();
+        contractsList = new List<SelectOption>();
+        contractsList.add(new SelectOption('','--None--'));
         for(TMN_Contract__c contract: contractsForThisServAssignsState){
-            contractRows.add(new ContractWrapper(contract, servAssignContractXrefs));
+            contractsList.add(new SelectOption(contract.id,contract.Name));
         }
-        contractRows.sort();
 
         pdxs.sort();
 
@@ -456,36 +458,6 @@ public class ServiceAssignmentExt {
         programRows.add(new ProgramAssociationTableWrapper(999,docsRunningCount.intValue(),docsFiledRunningCount.intValue(),totalPhasePercentage));
     }
 // END: CONSTRUCTOR
-
-// START:  Contract Grid Wrapper Class.  Each instance represents a row in the contract selection grid.
-    class ContractWrapper implements Comparable {
-        public TMN_Contract__c theContract { get; private set; }
-        public Boolean selectedContract { get; set; }
-        public Boolean checkedBeforeSave { get; set; }
-        public Id xrefId { get; set; }
-
-        public ContractWrapper(TMN_Contract__c aContract, List<ServiceAssignment_Contract_JO__c> xrefList){
-            this.theContract = aContract;
-
-            selectedContract = false;
-            for(ServiceAssignment_Contract_JO__c checkSacj : xrefList) {
-                System.debug('THE TWO IDs: ' + checkSacj.Contract__c + '; ' + theContract.Id);
-                if(checkSacj.Contract__c == theContract.Id){
-                    this.selectedContract = true;
-                    this.xrefId = checkSacj.Id;
-                }
-            }
-        }
-
-        public Integer compareTo(Object compareTo) {
-                ContractWrapper contract = (ContractWrapper) compareTo;
-                if(theContract.Name==contract.theContract.Name) return 0;
-                if(theContract.Name > contract.theContract.Name) return 1;
-                return -1;
-        }
-
-    }
-// END: Contract Grid Wrapper Class.
 
 
 // START:  Program Association Table Wrapper Class.
@@ -642,9 +614,12 @@ public class ServiceAssignmentExt {
             servAssignContractXrefs = [ SELECT Id, Name, Service_Assignment__c, Contract__c
                                                                         FROM ServiceAssignment_Contract_JO__c
                                                                         WHERE Service_Assignment__c = :theServAssign.Id ];
-
+                                                                        
+            if (servAssignContractXrefs.size() > 0)
+                associatedContractID = servAssignContractXrefs[0].Contract__c;
+            
             List<Service_Assignment__c> listOfServAssignsToGetStateOfAdmission = [ SELECT Admission__r.State__c
-                                                                                    FROM Service_Assignment__c WHERE Id = :theServAssign.Id LIMIT 1];
+                                                                                    FROM Service_Assignment__c WHERE Id = :theServAssign.Id LIMIT 1];                		                                                                                    
             String stateOfAdmission;
 
             for(Service_Assignment__c servAssignToGetStateofAdmission : listOfServAssignsToGetStateOfAdmission){
@@ -689,54 +664,24 @@ public class ServiceAssignmentExt {
       Savepoint sp = Database.setSavepoint();
 
       try {
-
-        List<ServiceAssignment_Contract_JO__c> theSacjsToDelete = new List<ServiceAssignment_Contract_JO__c>();
         List<ServiceAssignment_Contract_JO__c> newXrefs = new List<ServiceAssignment_Contract_JO__c>();
 
-        for (ContractWrapper c : contractRows) {
-            System.debug('IN THE WRAPPER: ' + c.selectedContract);
-            if(c.selectedContract==c.checkedBeforeSave){
-                //DO NOTHING
-            }
-            else if (c.selectedContract==false && c.xrefId!=null){
-
-                ServiceAssignment_Contract_JO__c theSacjToDelete = [ SELECT Id, Name FROM ServiceAssignment_Contract_JO__c WHERE Id = :c.xrefId ];
-
-                System.debug('theSacjToDelete = ' + theSacjToDelete);
-
-                theSacjsToDelete.add(theSacjToDelete);
-            }
-            else if (c.selectedContract==true && c.xrefId==null){
-                ServiceAssignment_Contract_JO__c newXref = new ServiceAssignment_Contract_JO__c(
-                    Service_Assignment__c = theServAssign.Id,
-                    Contract__c = c.theContract.Id
-                );
-                newXrefs.add(newXref);
-            }
-
+        if ((servAssignContractXrefs.size() > 0 && servAssignContractXrefs[0].Contract__c != associatedContractID && associatedContractID != null) ||  // Contract changed
+            (servAssignContractXrefs.size() == 0 && associatedContractID != null)) {      // New addition
+        	ServiceAssignment_Contract_JO__c newXref = new ServiceAssignment_Contract_JO__c(Service_Assignment__c = theServAssign.Id,
+        	                                           Contract__c = associatedContractID );
+            newXrefs.add(newXref);
+            delete servAssignContractXrefs;
+            insert newXrefs;            
+        } else if (associatedContractID == null || associatedContractID ==''){
+            delete servAssignContractXrefs;
         }
-
-        delete theSacjsToDelete;
-        insert newXrefs;
-
-
-        //List<Service_Assignment__c> saListForDocPop = new List<Service_Assignment__c>();
-        //saListForDocPop = [ SELECT Id, Name, Person_Being_Served__c, Admission__c, End_Date__c, Projected_Treatment_End_Date__c, Start_Date__c, Location_Region__c, Program__c, Service_Line__c FROM Service_Assignment__c WHERE Id = :theServAssign.Id ];
-
-       // DocumentMethods.docPop(saListForDocPop);
-
-
-
+                
       }
       catch(DmlException e) {
           addError('Could not save changes: ' + e.getMessage());
           Database.rollback(sp);
       }
-      //refreshPage = true;
-
-      //PageReference saPage = new ApexPages.StandardController(theServAssign).view();
-
-      //return null;
     }
 // END:  Contract / Service Assignment Cross-Reference Methods
 
@@ -1093,9 +1038,10 @@ public void loadProgramList() {
         theServAssign = initialRecord;
         LoadData(theServAssign);
         getContractsAndXrefs();
-        contractRows = new List<ContractWrapper>();
+        contractsList = new List<SelectOption>();
+        contractsList.add(new SelectOption('','--None--'));
         for(TMN_Contract__c contract: contractsForThisServAssignsState){
-            contractRows.add(new ContractWrapper(contract, servAssignContractXrefs));
+            contractsList.add(new SelectOption(contract.id,contract.Name));
         }
         return null;
 
