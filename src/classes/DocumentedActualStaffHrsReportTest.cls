@@ -44,7 +44,8 @@ private class DocumentedActualStaffHrsReportTest {
         dashRpt.getListStaffHrsInfo();
         dashRpt.fStartDate = Date.newInstance(2013, 1, 1);
         dashRpt.fEndDate = Date.newInstance(2014, 6, 1);
-        dashRpt.selStates = new List<string>{'AZ'};
+        dashRpt.uiselStates = 'AZ';
+        dashRpt.uiselProgs = 'New Service Location 1a, New Service Location 1b';
         
         ID slId = createServiceLocation( '123456', '123456001', 'New Service Location 1a', 1, 'AZ', '1-123456a' );
         
@@ -62,23 +63,21 @@ private class DocumentedActualStaffHrsReportTest {
         myData.theSA.program_detail__c = 'New Service Location 1a';
         update myData.theSA;
         
-        dashRpt.selPrograms = new List<string>{'New Service Location 1a'};
-        
         // create a progress note
         Progress_note__c myPN = TMN_Generic_Core_TestData.createProgressNote(myData.theSA, myData.theAdm, theServiceCode, myData.theSA.Person_being_served__c);
        
-        dashRpt.runReport();         
+        dashRpt.runReport();  
+        System.AssertEquals( dashRpt.allCount, 1);
+               
         
-        DocumentedActualStaffHrsRpt.StaffHrsInfo staffHrsInfo =
-        new DocumentedActualStaffHrsRpt.staffHrsInfo();
+        DocumentedActualStaffHrsRpt.StaffHrsInfo staffHrsInfo = new DocumentedActualStaffHrsRpt.staffHrsInfo();
         System.assertEquals(null, staffHrsInfo.clinician);
         System.assertEquals(null, staffHrsInfo.pbs);
         System.assertEquals(null, staffHrsInfo.phase);
         System.assertEquals(null, staffHrsInfo.totalMinutes); 
         System.assertEquals(null, staffHrsInfo.hours);         
         
-        DocumentedActualStaffHrsRpt.StaffHrsInfo staffHrsInfo2 =
-            new DocumentedActualStaffHrsRpt.staffHrsInfo();
+        DocumentedActualStaffHrsRpt.StaffHrsInfo staffHrsInfo2 = new DocumentedActualStaffHrsRpt.staffHrsInfo();
             
         staffHrsInfo2.clinician = 'Jack Jones';
         staffHrsInfo2.pbs = myData.theSA.Person_Being_Served__c;
@@ -86,8 +85,7 @@ private class DocumentedActualStaffHrsReportTest {
         staffHrsInfo2.totalMinutes = '120'; 
         staffHrsInfo2.hours = '2';    
         
-        DocumentedActualStaffHrsRpt.StaffHrsInfo staffHrsInfo3 =
-            new DocumentedActualStaffHrsRpt.staffHrsInfo();
+        DocumentedActualStaffHrsRpt.StaffHrsInfo staffHrsInfo3 = new DocumentedActualStaffHrsRpt.staffHrsInfo();
             
         staffHrsInfo3.clinician = 'Jack Jones';
         staffHrsInfo3.pbs = myData.theSA.Person_Being_Served__c;
