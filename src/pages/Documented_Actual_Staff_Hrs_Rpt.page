@@ -231,7 +231,7 @@ j$(document).ready(function(){
  		return !j$('select[id$=programlist] option:selected').remove().appendTo('#select4');
 	 }); 
 	j$('#remove2').click(function() {
-  		return !j$('#select4 option:selected').remove().appendTo('select[id$=programlist]');
+  		j$('#select4 option:selected').remove().appendTo('select[id$=programlist]');
         selectSort(j$('select[id$=programlist]'), j$('select[id$=programlist] option') );
 	 });
 	 
