@@ -22,6 +22,9 @@
         <field>Person_Being_Referred__c.Referrals__r$Close_Reason__c</field>
     </columns>
     <columns>
+        <field>Person_Being_Referred__c.Referrals__r$Close_Comment__c</field>
+    </columns>
+    <columns>
         <field>Person_Being_Referred__c.Referrals__r$Referral_Name__c</field>
     </columns>
     <columns>
@@ -45,6 +48,14 @@
     <columns>
         <field>Person_Being_Referred__c.Referrals__r$Assigned_Users__c</field>
     </columns>
+    <description>Shows all Referrals that have a status equal to Close based on timeframe choosen and includes all Close Reasons</description>
+    <filter>
+        <criteriaItems>
+            <column>Person_Being_Referred__c.Referrals__r$Referral_Status__c</column>
+            <operator>equals</operator>
+            <value>Closed</value>
+        </criteriaItems>
+    </filter>
     <format>Tabular</format>
     <name>Closed Referral Tracking</name>
     <params>
@@ -54,8 +65,12 @@
     <reportType>Person_Being_Referred__c</reportType>
     <scope>organization</scope>
     <showDetails>true</showDetails>
+    <sortColumn>Person_Being_Referred__c.Referrals__r$Close_Comment__c</sortColumn>
+    <sortOrder>Desc</sortOrder>
     <timeFrameFilter>
-        <dateColumn>Person_Being_Referred__c.Referrals__r$Close_Date__c</dateColumn>
-        <interval>INTERVAL_CURRENT</interval>
+        <dateColumn>Person_Being_Referred__c.Referrals__r$Referral_Date__c</dateColumn>
+        <endDate>2014-08-11</endDate>
+        <interval>INTERVAL_CUSTOM</interval>
+        <startDate>2014-07-01</startDate>
     </timeFrameFilter>
 </Report>
