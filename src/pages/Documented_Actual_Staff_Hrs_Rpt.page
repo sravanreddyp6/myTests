@@ -223,13 +223,16 @@ j$(document).ready(function(){
 	 });
  	j$('#remove').click(function() {
  		removeStatePrograms();
-  		return !j$('#select2 option:selected').remove().appendTo('select[id$=statelist]');
+  		j$('#select2 option:selected').remove().appendTo('select[id$=statelist]');
+  		selectSort(j$('select[id$=statelist]'), j$('select[id$=statelist] option') );
+  		j$('select[id$=programlist]').prop('disabled', j$('select[id$=select2] option').length == 0);
 	 });
 	j$('#add2').click(function() {
  		return !j$('select[id$=programlist] option:selected').remove().appendTo('#select4');
 	 }); 
 	j$('#remove2').click(function() {
-  		return !j$('#select4 option:selected').remove().appendTo('select[id$=programlist]');
+  		j$('#select4 option:selected').remove().appendTo('select[id$=programlist]');
+        selectSort(j$('select[id$=programlist]'), j$('select[id$=programlist] option') );
 	 });
 	 
 	 
@@ -287,17 +290,17 @@ function removeStatePrograms() {
 	
 	j$('#select4 option:selected').remove().appendTo('select[id$=programlist]');
 	j$('#select4').val('');
-	j$('select[id$=programlist]').val('');
-	//var tmpstring = j$('select[id$=programlist] option').sort(selectSort);
-	//j$('select[id$=programlist]').html(tmpstring);
-	
+	j$('select[id$=programlist]').val('');	
+    selectSort(j$('select[id$=programlist]'), j$('select[id$=programlist] option') );	
 }
 
-
-function selectSort(a,b){
-    a = a.value;
-    b = b.value;
-    return a.value == b.value ? 0 : a.value < b.value ? -1 : 1;
+function selectSort(mySelect, myOptions){
+	myOptions.sort(function(a,b) {
+	    if (a.text > b.text) return 1;
+	    else if (a.text < b.text) return -1;
+	    else return 0
+	})
+	j$(mySelect).empty().append( myOptions );
 };
 
 function setSelectedVals() {

@@ -1,0 +1,155 @@
+<apex:page standardController="Project__c" extensions="proj_nr_form" sidebar="false" >
+<apex:includeScript value="{!URLFOR($Resource.jqGrid, 'js/jquery-1.11.0.min.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<style>
+.dateFormat{display: none;}
+.fRight{float: right;}
+.errMsgContainer{position: fixed; top: 0px; left: 0px; width: 100%; z-index: 200;}
+.txtBox{width: 300px; height: 75px}
+.fogBG{opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;}
+.noscroll{overflow:hidden;}
+.thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;}
+.maxSelector{
+    background-image: url("{!URLFOR($Resource.min_max_imgs,'max.png')}");
+    background-repeat: no-repeat;
+    width: 16px;
+    height: 16px;
+    background-size: 16px 16px;
+    float: right; 
+    padding-right: 5px; 
+    cursor: pointer;
+    margin: 3px;
+    position: relative;
+    top: 0;
+    right: 0;   
+}
+#taskTbl{width: 100%; vertical-align: top;}
+#taskTbl td{vertical-align: top;}
+#actTbl{width: 100%; border: 1px solid black;}
+.taskTitle{width: 300px;}
+.percentBox{width: 35px;}
+</style>
+<div id="fog"/>
+
+
+<apex:form id="FRM">
+    <apex:outputPanel layout="block" styleClass="errMsgContainer">
+        <apex:pageMessages ></apex:pageMessages>
+    </apex:outputPanel>
+    <apex:pageBlock mode="mainDetail" title="{!Project__c.Name}">
+        <apex:pageblockButtons >
+            <div class="fRight">
+                <apex:commandButton action="{!save}" value="Save" reRender="FRM" status="myStatus"/>
+                <apex:commandButton action="{!cancel}" value="Cancel"/>
+            </div>
+        </apex:pageblockButtons>
+        <apex:pageBlock title="Details" id="details">
+            <apex:pageBlockSection columns="1">
+                <apex:selectRadio layout="pageDirection" label="I would like to..." rendered="{!Project__c.id == null}" value="{!startingOption}">
+                    <apex:selectOptions value="{!StartOptions}"></apex:selectOptions>
+                    <apex:actionSupport event="onclick" reRender="details"/>
+                </apex:selectRadio>
+                <apex:selectList size="1" label="Select Template" value="{!selectedTemplate}" rendered="{!startingOption = 'create_from_temp'}">
+                    <apex:selectOptions value="{!Templates}"></apex:selectOptions>
+                    <apex:actionSupport event="onchange" reRender="FRM" status="myStatus" action="{!CopyFromTemp}"/>
+                </apex:selectList>
+                <apex:inputField label="Name" value="{!Project__c.Name}"/>
+                <apex:inputField value="{!Project__c.Status__c}"/>
+                <apex:inputField value="{!Project__c.State__c}"/>
+                <apex:inputTextarea styleClass="txtBox" value="{!Project__c.Description__c}"/>                
+                <apex:inputField value="{!Project__c.Start_Date__c}"/>
+                <apex:inputField value="{!Project__c.Due_Date__c}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        
+        <apex:pageBlock title="Project Tasks and Activities">
+            <apex:pageBlockButtons location="top">
+                <div class="fRight">
+                    <apex:commandButton value="Add Task" action="{!AddProjectTask}" reRender="FRM" status="myStatus"/>
+                </div>
+            </apex:pageBlockButtons> 
+            <div id="taskContainer">
+                <table id="taskTbl">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Start Date</th>
+                            <th>Due Date</th>
+                            <th>% Complete</th>
+                        </tr>
+                    </thead>
+                    <apex:repeat value="{!projTree.root.nodes}" var="t">
+                        <tr>
+                            <td><apex:inputField styleClass="taskTitle" value="{!t.ProjTask.Name}"/></td>
+                            <td><apex:inputTextarea styleClass="txtBox" value="{!t.ProjTask.Description__c}"/></td>
+                            <td><apex:inputField value="{!t.ProjTask.Start_Date__c}"/> </td>
+                            <td><apex:inputField value="{!t.ProjTask.Due_Date__c}"/></td>
+                            <td><apex:inputField styleClass="percentBox" value="{!t.ProjTask.Complete__c}"/> </td>
+                        </tr>
+                        <tr>
+                            <td colspan="5">
+                                <div class="fRight">
+                                    <apex:commandButton value="+ Activity" action="{!AddProjectTaskActivity}" reRender="FRM" status="myStatus">
+                                        <apex:param assignTo="{!PTid}" value="{!t.ProjTask.External_ID__c}" name="PTid"  /> 
+                                    </apex:commandButton>
+                                </div>
+                                <table id="actTbl">
+                                    <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Description</th>
+                                            <th>Start Date</th>
+                                            <th>Due Date</th>
+                                            <th>% Complete</th>
+                                        </tr>
+                                    </thead> 
+                                    <apex:repeat value="{!t.nodes}" var="a"> 
+                                        <tr>
+                                            <td><apex:inputField styleClass="taskTitle" value="{!a.ProjTaskAct.Name}"/> </td>
+                                            <td><apex:inputTextarea styleClass="txtBox" value="{!a.ProjTaskAct.Description__c}"/></td>
+                                            <td><apex:inputField value="{!a.ProjTaskAct.Start_Date__c}"/> </td>
+                                            <td><apex:inputField value="{!a.ProjTaskAct.Due_Date__c}"/></td>
+                                            <td><apex:inputField styleClass="percentBox" value="{!a.ProjTaskAct.Complete__c}"/> </td>                                        
+                                        </tr> 
+                                    </apex:repeat>         
+                                </table>
+                            </td>
+                        </tr>
+                    </apex:repeat>
+                </table>
+            
+            </div>
+        </apex:pageBlock>        
+    </apex:pageBlock>
+</apex:form>
+<script>
+var j$ = jQuery.noConflict();
+
+function minmax(eley, selector){
+
+    j$("#fog").toggleClass('fogBG');
+    j$("#"+eley+"_form").toggleClass('maxDiv');
+    j$("#"+eley+"_content").toggleClass('nodisplay');
+    j$("#"+selector).toggleClass('maxSelector');
+    j$("#"+selector).toggleClass('minSelector');
+    j$('body').toggleClass('noscroll');    
+}
+function tester(){
+    j$('#test').toggleClass('open');
+    j$('#test').toggleClass('close');
+}
+</script>
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <div class="fogBG"/>
+        <div class="thinkingwheel">    
+            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+        </div> 
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus>
+
+
+</apex:page>
