@@ -39,18 +39,21 @@ public with sharing class DocumentedActualStaffHrsRpt {
      private List<SelectOption> getProgramList() {
     	
     	programs = new List<selectoption>();
-    	List<Service_Location__c> proglist = [ select program__c from service_location__c order by program__c ];
+    	proglistStates = new List<ServiceLocPrograms>();
+    	List<Service_Location__c> proglist = [ select program__c, state__c from service_location__c where state__c <> '' order by program__c ];
     	
     	
     	for (Service_Location__c sl : proglist )
     	{
-    	    
+    	    proglistStates.add(new ServiceLocPrograms(sl.program__c, sl.state__c));
     		programs.Add( new selectOption( sl.Program__c, sl.program__c) ) ;
     	}
     	
     	
     	return programs;
     }
+    
+
     
     public integer allCount{get; set;}
     public List<SelectOption> states { get;set; }
@@ -59,6 +62,8 @@ public with sharing class DocumentedActualStaffHrsRpt {
     public List<String> selPrograms {get; set;}
     public string uiselStates { get; set;}
     public string uiselProgs { get; set; }
+    private List<ServiceLocPrograms> proglistStates;
+    public String prgmsWithStates {get { return JSON.serialize(proglistStates);} }
     
     public PageReference runReport(){
         if(fEndDate < fStartDate){
@@ -225,4 +230,12 @@ public with sharing class DocumentedActualStaffHrsRpt {
     
     }   
 
+    private class ServiceLocPrograms{
+    	String program;
+    	String state;
+    	ServiceLocPrograms(String program, String state){
+    		this.program = program;
+    		this.state = state;
+    	}
+    }
 }

@@ -207,6 +207,9 @@
 
 <script>
 j$ = jQuery.noConflict();
+var prgmsStr = '{!JSENCODE(prgmsWithStates)}';
+var prgmsWithStates = JSON.parse(prgmsStr);
+
 function createtbl(){
     j$('#mytbl').dataTable({"bPaginate": false, "bFilter": false});
 }
@@ -246,17 +249,12 @@ function filterPrograms() {
 	// add the programs for each selected state
 	var selectedStates = j$('select[id$=statelist]').val();
 	var progs = j$('select[id$=programlist] option');
-	var i, j;
-	
-    // for each state, match to the program desc
-	for (i = 0; i < selectedStates.length; i++ ) {
-   		j$.each( progs, function( index, element ) {
-   			if (j$(element).attr('value').indexOf(selectedStates[i] + '-') ==0 || j$(element).attr('value').indexOf('PA-' + selectedStates[i] + '-') ==0) {
-   				j$(element).attr('selected','selected');
-   				
-   				}
-   		});
-	}
+    var selectedPrgms = getProgramsForStates(selectedStates);
+    j$.each( progs, function( index, element ) {
+         if (selectedPrgms.indexOf(element.value) != -1 ) {
+                j$(element).attr('selected','selected');
+            } 
+    }); 
 	
 	// enable programs list
 	proglist.prop('disabled',false);
@@ -277,22 +275,33 @@ function removeStatePrograms() {
 	// remove the programs for the states in the right-hand window
 	var selectedStates = j$('#select2').val();
 	var progs = j$('#select4 option');
-	var i, j;
-	
-    // for each state, match to the program desc
-	for (i = 0; i < selectedStates.length; i++ ) {
-   		j$.each( progs, function( index, element ) {
-   			if (j$(element).attr('value').indexOf(selectedStates[i] + '-') ==0  || j$(element).attr('value').indexOf('PA-' + selectedStates[i] + '-') ==0 ) {
-   				j$(element).attr('selected','selected');
-   				}
-   				});
-	}
+    var selectedPrgms = getProgramsForStates(selectedStates);
+    j$.each( progs, function( index, element ) {
+         if (selectedPrgms.indexOf(element.value) != -1 ) {
+                j$(element).attr('selected','selected');
+            } 
+    }); 
 	
 	j$('#select4 option:selected').remove().appendTo('select[id$=programlist]');
 	j$('#select4').val('');
 	j$('select[id$=programlist]').val('');	
     selectSort(j$('select[id$=programlist]'), j$('select[id$=programlist] option') );	
 }
+
+
+function getProgramsForStates(selectedStates){
+    var prgmslist = [];
+    if (selectedStates!= null && selectedStates.length > 0 ){
+        j$.each(selectedStates, function( index, state ) {
+	        j$.each( prgmsWithStates, function( index, ele ) {
+	            if (ele.state === state){prgmslist.push(ele.program)};
+	        });
+        });
+        return prgmslist;    
+    }
+    else return null;
+}
+
 
 function selectSort(mySelect, myOptions){
 	myOptions.sort(function(a,b) {
