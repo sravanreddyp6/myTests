@@ -5,6 +5,11 @@ public with sharing class proj_nr_form {
     public string PTid {get; set;}
     public string startingOption {get; set;}
     public string selectedTemplate{get; set;}
+    ID NR_RTid(){
+        
+    
+        return [select id from recordtype where DeveloperName = 'Neuro_Restorative' AND SobjectType = 'Project__c'].id;
+    }
 
     //construct
     public proj_nr_form(ApexPages.StandardController controller) {
@@ -16,6 +21,9 @@ public with sharing class proj_nr_form {
             projTree.root.refID = cur_proj.external_id__c; 
             projTree.root.IsNew = true;
             projTree.root.IsInserted = true;
+            cur_proj.recordtypeid = NR_RTid();
+            
+            
         }
         else{
             projTree.root.refID = cur_proj.id;
@@ -221,7 +229,7 @@ public with sharing class proj_nr_form {
                      
          ProjTree.root.nodes.clear();            
          for(Project_Task__c t : PTs){
-             TMN_Tree.node tN = new TMN_Tree.node(t.id, 'task');
+             TMN_Tree.node tN = new TMN_Tree.node(t.external_id__c, 'task');
              tN.ProjTask = t;
              tN.isNew = false;
              tN.isInserted = true;
@@ -231,7 +239,7 @@ public with sharing class proj_nr_form {
                  aN.ProjTaskAct = a;
                  aN.isNew = false;
                  aN.isInserted = true;
-                 integer i = projTree.root.getNode_Key(t.id);
+                 integer i = projTree.root.getNode_Key(t.external_id__c);
                  ProjTree.root.nodes.get(i).nodes.add(aN);             
              }
          }
