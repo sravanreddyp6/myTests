@@ -1,0 +1,39 @@
+<apex:component >
+    <apex:attribute name="onChange" description="Function to call when the value of the slider is changed"
+        type="String" required="true" />
+    <apex:attribute name="options" description="The options on the slider"
+        type="String[]" required="true" />
+    <apex:attribute name="initial" description="The initial value for the slider"
+        type="String" required="true" />
+    <apex:attribute name="disabled" description="Whether the slider is disabled or not"
+        type="Boolean" default="false" />
+
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+    <script>
+    jQuery(document).ready(function($) {
+        var options = [];
+        var initialIndex = 1;
+        var i = 1;
+        <apex:repeat value="{!options}" var="option">
+        options.push("{!option}");
+        if ("{!option}" == "{!initial}") {
+            initialIndex = i;
+        }
+        i = i + 1;
+        </apex:repeat>
+        $(document.getElementById('{!$Component.slider}')).slider({
+            min: 1,
+            max: {!options.size},
+            step: 1,
+            value: initialIndex,
+            disabled: {!disabled},
+            change: function (event, ui) {
+                ({!onChange})(options[ui.value - 1]);
+            }
+        });
+    });
+    </script>
+    <apex:outputPanel style="margin-left: 30px; margin-right: 40px;" id="slider" layout="block" />
+</apex:component>

@@ -1,0 +1,275 @@
+<apex:page standardController="Project__c" extensions="proj_nr_form" sidebar="false" >
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<style>
+.dateFormat{display: none;}
+.fRight{float: right;}
+.nodisplay{ display: none; }
+.errMsgContainer{position: fixed; top: 0px; left: 0px; width: 100%; z-index: 200;}
+.txtBox{width: 300px; height: 75px}
+.fogBG{opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;}
+.noscroll{overflow:hidden;}
+.thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;}
+.maxSelector{
+    background-image: url("{!URLFOR($Resource.min_max_imgs,'max.png')}");
+    background-repeat: no-repeat;
+    width: 16px;
+    height: 16px;
+    background-size: 16px 16px;
+    float: right; 
+    padding-right: 5px; 
+    cursor: pointer;
+    margin: 3px;
+    position: relative;
+    top: 0;
+    right: 0;   
+}
+.tbl{width: 100%; vertical-align: top;}
+.tbl td{vertical-align: top;}
+.tbl tr:hover{
+    background: lightblue; 
+    background: -webkit-linear-gradient(lightblue, #F9F9F9);
+
+}
+.tbl thead tr:hover{background: none ;}
+.tbl td{padding-top: 5px; padding-bottom: 5px;}
+input, textarea, select {font-size: 16px; padding: 2px; /*background: #F9F9F9 !important;*/}
+[id*=details_view] span{font-size: 16px;}
+.btn{ font-size: 11px !important; }
+.taskTitle{width: 300px;}
+.percentBox{width: 35px;}
+.non-temp-field{}
+.actpad{ padding-left: 50px;}
+.mode_selector{cursor: pointer;}
+.selected{border-bottom: 1px solid black;}
+#mode_selctor_container{width: 100%; text-align: center; padding: 7px; }
+.mode_selector{
+    font-size: 25px;
+    background: -webkit-linear-gradient(#3A2632, red);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    //text-transform: uppercase;
+ }
+.proj_title, .task_act_letter{
+    font-size: 30px;
+    font-weight: bold;
+    padding: 5px;
+    background: -webkit-linear-gradient(#AEAEAE, #3a7728);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; 
+    cursor: default;
+    text-transform: uppercase;
+ 
+}
+.proj_title{padding-left: 20px;}
+.task_act_letter{text-align: center; cursor: pointer;}
+.task_act_letter:hover{padding: 4px; border: 1px solid black;}
+#bodyTable, #contentWrapper, body, #AppBodyHeader, #AppBodyHeader tr{ 
+    //background: #1f1f1f !important;
+}
+#bodyTable{
+    background: #AEAEAE !important;
+
+}
+body{border-top: none;}
+</style>
+
+
+<div id="mode_selctor_container">
+    <span id="view_mode_selector" class="mode_selector" onclick="viewMode(0)">Summary</span>
+    &nbsp;&nbsp;&nbsp;
+    <span id="edit_mode_selector" class="mode_selector selected" onclick="editMode(0)">Edit</span>
+</div>
+<apex:form id="FRM">
+    <apex:outputPanel layout="block" styleClass="errMsgContainer">
+        <apex:pageMessages ></apex:pageMessages>
+    </apex:outputPanel>
+    <apex:pageBlock mode="detail" >
+        <apex:facet name="header">
+            <div class="proj_title">
+            {!Project__c.Name}           
+            </div>
+        </apex:facet>
+            <div class="fRight">
+                <apex:commandButton styleClass="edit" action="{!save}" value="Save" reRender="FRM" status="myStatus" oncomplete="setMode();"/>
+                <apex:commandButton styleClass="edit" action="{!cancel}" value="Cancel"/>
+            </div> 
+        <!--details start-->
+        <!-- detail edit -->
+        <apex:pageBlock mode="mainDetail"  title="Details" id="details_edit">
+            <apex:pageBlockSection columns="1">
+                <apex:selectRadio id="startOption" layout="pageDirection" label="I would like to..." rendered="{!Project__c.id == null}" value="{!startingOption}" onchange="checkforIsTemplate(this); return false;">
+                    <apex:selectOptions value="{!StartOptions}"></apex:selectOptions>
+                    <apex:actionSupport event="onclick" reRender="details_edit"/>
+                </apex:selectRadio>
+                <apex:selectList size="1" label="Select Template" value="{!selectedTemplate}" rendered="{!startingOption = 'create_from_temp'}">
+                    <apex:selectOptions value="{!Templates}"></apex:selectOptions>
+                    <apex:actionSupport event="onchange" reRender="FRM" status="myStatus" action="{!CopyFromTemp}"/>
+                </apex:selectList>
+                <apex:inputField label="Name" styleClass="edit" value="{!Project__c.Name}"/>
+                <apex:inputField styleClass="non-temp-field edit" value="{!Project__c.Status__c}" rendered="{!startingOption != 'new_temp'}"/>
+                <apex:inputField styleClass="edit" value="{!Project__c.State__c}"/>
+                <apex:inputTextarea styleClass="txtBox edit" value="{!Project__c.Description__c}"/>                
+                <apex:inputField styleClass="non-temp-field edit" value="{!Project__c.Start_Date__c}" rendered="{!startingOption != 'new_temp'}"/>
+                <apex:inputField styleClass="non-temp-field edit" value="{!Project__c.Due_Date__c}" rendered="{!startingOption != 'new_temp'}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <!-- edn details edit-->
+        <!-- detail view start -->
+        <apex:pageBlock mode="detail" title="Details" id="details_view">
+            <apex:pageBlockSection columns="1">
+                <apex:selectList size="1" label="Select Template" value="{!selectedTemplate}" rendered="{!startingOption = 'create_from_temp'}">
+                    <apex:selectOptions value="{!Templates}"></apex:selectOptions>
+                    <apex:actionSupport event="onchange" reRender="FRM" status="myStatus" action="{!CopyFromTemp}"/>
+                </apex:selectList>
+                <apex:outputField label="Name" styleClass="view" value="{!Project__c.Name}"/>
+                <apex:outputField styleClass="non-temp-field view" value="{!Project__c.Status__c}" rendered="{!startingOption != 'new_temp'}"/>
+                <apex:outputField styleClass="view" value="{!Project__c.State__c}"/>
+                <apex:outputField styleClass="txtBox view" value="{!Project__c.Description__c}"/>                
+                <apex:outputField styleClass="non-temp-field view" value="{!Project__c.Start_Date__c}" rendered="{!startingOption != 'new_temp'}"/>
+                <apex:outputField styleClass="non-temp-field view" value="{!Project__c.Due_Date__c}" rendered="{!startingOption != 'new_temp'}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <!-- edn details view -->
+        <!-- end details -->
+        <apex:pageBlock mode="mainDetail" title="Project Tasks and Activities">
+            <apex:pageBlockButtons location="top">
+                <div class="fRight">
+                    <apex:commandButton styleClass="edit" value="Add Task" action="{!AddProjectTask}" reRender="FRM" status="myStatus" oncomplete="setMode();"/>
+                </div>
+            </apex:pageBlockButtons> 
+            <div class="edit">
+                <table id="taskTbl" callpadding="0" cellspacing="0" class="edit tbl">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Assigned To</th>
+                            <th>Start Date</th>
+                            <th>Due Date</th>
+                            <th>% Complete</th>
+                        </tr>
+                    </thead>
+                    <apex:repeat value="{!projTree.root.nodes}" var="t">
+                        <tr>
+                            <td><div class="task_act_letter">T</div></td>
+                            <td><apex:inputField styleClass="taskTitle edit" value="{!t.ProjTask.Name}"/>
+                            
+                                <div class="fRight">
+                                    <apex:commandButton styleClass="edit" value="+ Activity" action="{!AddProjectTaskActivity}" reRender="FRM" status="myStatus" oncomplete="setMode();">
+                                        <apex:param assignTo="{!PTid}" value="{!t.ProjTask.External_ID__c}" name="PTid"  /> 
+                                    </apex:commandButton>
+                                </div>                            
+                            </td>
+                            <td><apex:inputTextarea styleClass="txtBox edit" value="{!t.ProjTask.Description__c}"/></td>
+                            <td><apex:inputField styleClass="edit" value="{!t.ProjTask.Assigned_To__c}"/></td>
+                            <td><apex:inputField styleClass="non-temp-field edit" value="{!t.ProjTask.Start_Date__c}"/></td>
+                            <td><apex:inputField styleClass="non-temp-field edit" value="{!t.ProjTask.Due_Date__c}"/></td>
+                            <td><apex:inputField styleClass="percentBox non-temp-field edit" value="{!t.ProjTask.Complete__c}"/> </td>
+                        </tr>
+                        <tr>
+
+                            <apex:repeat value="{!t.nodes}" var="a"> 
+                                <tr>
+                                    <td><div class="task_act_letter">A</div></td>
+                                    <td class="actpad"><apex:inputField styleClass="taskTitle edit" value="{!a.ProjTaskAct.Name}"/> </td>
+                                    <td><apex:inputTextarea styleClass="txtBox edit" value="{!a.ProjTaskAct.Description__c}"/></td>
+                                    <td><apex:inputField styleClass="edit" value="{!t.ProjTaskAct.Assigned_To__c}"/></td>
+                                    <td><apex:inputField styleClass="non-temp-field edit" value="{!a.ProjTaskAct.Start_Date__c}"/> </td>
+                                    <td><apex:inputField styleClass="non-temp-field edit" value="{!a.ProjTaskAct.Due_Date__c}"/></td>
+                                    <td><apex:inputField styleClass="percentBox non-temp-field edit" value="{!a.ProjTaskAct.Complete__c}"/> </td>                                        
+                                </tr> 
+                            </apex:repeat>         
+
+                        </tr>
+                    </apex:repeat>
+                </table> 
+            </div>
+                                              
+        </apex:pageBlock>        
+    </apex:pageBlock>
+</apex:form>
+<script>
+var j$ = jQuery.noConflict();
+
+function minmax(eley, selector){
+
+    j$("#fog").toggleClass('fogBG');
+    j$("#"+eley+"_form").toggleClass('maxDiv');
+    j$("#"+eley+"_content").toggleClass('nodisplay');
+    j$("#"+selector).toggleClass('maxSelector');
+    j$("#"+selector).toggleClass('minSelector');
+    j$('body').toggleClass('noscroll');    
+}
+function tester(){
+    j$('#test').toggleClass('open');
+    j$('#test').toggleClass('close');
+}
+function checkforIsTemplate(field){
+//alert(j$(field).val());
+    if(j$(field).val() == 'new_temp'){
+        j$(".non-temp-field").addClass('nodisplay');
+    }
+    else{
+        j$(".non-temp-field").removeClass('nodisplay');
+    }
+
+}
+function viewMode(time){
+    //j$(".edit").addClass('nodisplay', 500);
+    //j$(".view").removeClass('nodisplay', 500);
+    //j$("[id*=details_edit]").addClass('nodisplay');
+    //j$("[id*=details_view]").removeClass('nodisplay');
+    
+    //show    
+    j$(".view").slideDown(time);
+    j$("[id*=details_view]").slideDown(time);   
+    //hide
+    j$("[id*=details_edit]").slideUp(time);  
+    j$(".edit").slideUp(time);  
+    
+    
+    j$("#edit_mode_selector").removeClass('selected');
+    j$("#view_mode_selector").addClass('selected');
+}
+function editMode(time){
+    //j$(".edit").removeClass('nodisplay');
+    //j$(".view").addClass('nodisplay');
+    //j$("[id*=details_edit]").removeClass('nodisplay');
+    //j$("[id*=details_view]").addClass('nodisplay');    
+    
+    //show
+    j$(".edit").slideDown(time);
+    j$("[id*=details_edit]").slideDown(time);
+    //hide
+    j$("[id*=details_view]").slideUp(time);  
+    j$(".view").slideUp(time);       
+
+    
+    j$("#edit_mode_selector").addClass('selected');
+    j$("#view_mode_selector").removeClass('selected');
+}
+function setMode(){
+    editMode(0);
+}
+j$( document ).ready(function() {
+  setMode();
+});
+</script>
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <div class="fogBG"/>
+        <div class="thinkingwheel">    
+            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+        </div> 
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus>
+<div id="fog"/>
+<apex:outputPanel styleClass="nodisplay">
+    <apex:outputField value="{!Project__c.External_ID__c}" />
+</apex:outputPanel>
+
+</apex:page>
