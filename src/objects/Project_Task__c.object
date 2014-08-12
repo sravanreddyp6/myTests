@@ -54,6 +54,19 @@
     <enableHistory>true</enableHistory>
     <enableReports>true</enableReports>
     <fields>
+        <fullName>Assigned_To__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Assigned To</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Project_Tasks</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
         <fullName>Complete__c</fullName>
         <defaultValue>0</defaultValue>
         <externalId>false</externalId>
@@ -100,6 +113,18 @@
         <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>External_ID__c</fullName>
+        <externalId>true</externalId>
+        <label>External ID</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Incomplete__c</fullName>
@@ -172,7 +197,7 @@ TEXT( Complete__c *100)
         <type>Text</type>
         <unique>false</unique>
     </fields>
-    <label>Task</label>
+    <label>Project Task</label>
     <listViews>
         <fullName>All</fullName>
         <columns>NAME</columns>

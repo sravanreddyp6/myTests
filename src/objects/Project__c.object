@@ -150,6 +150,18 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>External_ID__c</fullName>
+        <externalId>true</externalId>
+        <label>External ID</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>HeaderTxt__c</fullName>
         <externalId>false</externalId>
         <formula>Name</formula>
@@ -407,6 +419,16 @@ TEXT(Complete__c*100)
         <type>Summary</type>
     </fields>
     <fields>
+        <fullName>isTemplate__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>isTemplate</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>sysReminder__c</fullName>
         <defaultValue>&quot;*&quot;</defaultValue>
         <externalId>false</externalId>
@@ -450,6 +472,7 @@ TEXT(Complete__c*100)
         <columns>Executive_Director__c</columns>
         <columns>Start_Date__c</columns>
         <columns>Due_Date__c</columns>
+        <columns>isTemplate__c</columns>
         <columns>Progress__c</columns>
         <columns>OWNER.ALIAS</columns>
         <columns>CREATED_DATE</columns>
@@ -819,6 +842,159 @@ TEXT(Complete__c*100)
             </values>
             <values>
                 <fullName>On Hold</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Neuro_Restorative</fullName>
+        <active>true</active>
+        <label>Neuro Restorative</label>
+        <picklistValues>
+            <picklist>Executive_Director__c</picklist>
+            <values>
+                <fullName>Brenda Niess</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Connie Menne</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lisa Pakkebier</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Nita Hayes</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Pat Masyga</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Shelley Hansen-Blake</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yemonja Smalls</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Regional_Director__c</picklist>
+            <values>
+                <fullName>Amy Chartier</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Chrissy Tauber</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>David Wilson</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Eileen Holm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Jean Feia</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Karina Schmitz</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lisa Thelen</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lori Larson</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lori Wirtzfeld</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lori Wright</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mary Braun-Kapsner</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Paul Jaeger</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Peg Dallman</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Scott Rodwell</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stephanie Kalbach</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Teresa Rhodes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>State__c</picklist>
+            <values>
+                <fullName>IA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IL</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MN</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ND</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>WI</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Status__c</picklist>
+            <values>
+                <fullName>Active</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Awarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Complete</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Awarded</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>On Hold</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Submitted</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
