@@ -3,7 +3,7 @@ public with sharing class DocumentedActualStaffHrsRpt {
     public Date fStartDate{get{return fStartDate;} set;}
     public Date fEndDate{get{return fEndDate;} set;}
     
-    public List<StaffHrsInfo> listStaffHrsInfo = new List<StaffHrsInfo>();
+    public transient List<StaffHrsInfo> listStaffHrsInfo;
     public List<StaffHrsInfo> getListStaffHrsInfo(){return listStaffHrsInfo;}
         
     List<AggregateResult> PNResults = new List<AggregateResult>();            
@@ -62,8 +62,12 @@ public with sharing class DocumentedActualStaffHrsRpt {
     public List<String> selPrograms {get; set;}
     public string uiselStates { get; set;}
     public string uiselProgs { get; set; }
-    private List<ServiceLocPrograms> proglistStates;
-    public String prgmsWithStates {get { return JSON.serialize(proglistStates);} }
+    private transient List<ServiceLocPrograms> proglistStates;
+    public transient String prgmsWithStates;
+    
+    public String getPrgmsWithStates() {
+    	return JSON.serialize(proglistStates);
+    } 
     
     public PageReference runReport(){
         if(fEndDate < fStartDate){
@@ -73,7 +77,7 @@ public with sharing class DocumentedActualStaffHrsRpt {
         }
                        
         PNResults.clear();
-        listStaffHrsInfo.clear();         
+        listStaffHrsInfo = new List<StaffHrsInfo>();         
         selStates = uiselStates.split(',');
         selPrograms = uiselProgs.split(',');                                                                            
         system.debug('selstates: ' + selStates);
