@@ -168,7 +168,8 @@ public with sharing class proj_nr_form {
     
     //helper methods
     public pageReference CopyFromTemp(){
-        if(selectedTemplate == 'none'){
+    system.debug('temp was - ' + selectedTemplate);
+        if(selectedTemplate == null || selectedTemplate == 'none'){
             ProjTree.root.nodes.clear();
             return null;
         }
@@ -177,8 +178,10 @@ public with sharing class proj_nr_form {
             PTs = [select ID, name, description__c, start_date__c, due_date__c, Complete__c, Project__c, Assigned_To__c, External_ID__c,
                      (select id, name, description__c, complete__c, start_date__c, due_date__c, Assigned_To__c, Project_Task__c from Project_Task_Activities__r) 
                          From Project_Task__c Where Project__c = :selectedTemplate];
-            project__c pr = [select id, name, description__c from project__c where id = :selectedTemplate];
+            project__c pr = [select id, name, description__c, service_line__c, Operating_group__c from project__c where id = :selectedTemplate];
             ProjTree.root.Proj.Description__c = pr.description__c;
+            ProjTree.root.Proj.service_line__c = pr.service_line__c;
+            ProjTree.root.Proj.Operating_group__c = pr.Operating_group__c ;
             
                          
             ProjTree.root.nodes.clear();            
