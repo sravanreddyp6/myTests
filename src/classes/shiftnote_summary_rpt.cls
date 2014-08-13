@@ -6,7 +6,7 @@ public with sharing class shiftnote_summary_rpt {
     public datetime  endDateTime{get; set;}    
     public string HCMCfilter {get; set;}
     public List<id> selectedPBS {get; set;}
-    public List<account> allPBS {get; set;}
+    public transient List<account> allPBS {get; set;}
     public list<SelectOption> PBSlsit = new list<SelectOption>();
     public list<SelectOption> getPBSlsit(){ return PBSlsit ;}
     public boolean hasRunOnce {get; set;}
@@ -17,7 +17,7 @@ public with sharing class shiftnote_summary_rpt {
         return note_plan_joins;
     }
     
-    public list<progress_note__c> notes = new list<progress_note__c>();
+    public transient list<progress_note__c> notes = new list<progress_note__c>();
     public list<progress_note__c> getnotes(){                                                 
         return notes ;
     }
@@ -37,7 +37,6 @@ public with sharing class shiftnote_summary_rpt {
         allPBS = new List<account>();
         
         for(account a : [SELECT ID, FirstName, LastName, Owner.ID, Owner.Name, PersonContactId From Account WHERE RecordTypeID=:PBS_REC_TYPE_ID Order BY LastName]){
-        
             PBSlsit.add(new SelectOption(a.PersonContactId, a.LastName + ', ' + a.FirstName)); 
             allPBS.add(a);
         }
@@ -140,7 +139,8 @@ public with sharing class shiftnote_summary_rpt {
     }
     public pagereference selectAllPbs(){
         selectedPBS.clear();
-        for(account a : allPBS){        
+        
+        for(account a : [SELECT ID, FirstName, LastName, Owner.ID, Owner.Name, PersonContactId From Account WHERE RecordTypeID=:PBS_REC_TYPE_ID Order BY LastName]){        
             selectedPBS.add(a.PersonContactId);
         }       
         return null;
