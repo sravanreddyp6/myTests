@@ -186,11 +186,11 @@
    <apex:pageBlock title="Approvals">
        <a href="/04i">View All</a> <br /> <br />
         <apex:pageBlockTable value="{!ListApprovals}" var="app">
-            <apex:column headerValue="Action"><a href="/{!app.TAction}/e?et=REASSIGN&retURL=%2Fhome%2Fhome.jsp"> Reassign</a> | <a href="/p/process/ProcessInstanceWorkitemWizardStageManager?id={!app.TAction}"> Approve / Reject</a></apex:column>
+            <apex:column headerValue="Action"><a href="/{!app.TAction}/e?et=REASSIGN&retURL=%2Fhome%2Fhome.jsp"> Reassign</a> | <a href="/{!app.TRelated}"> Review</a></apex:column>
             <apex:column headerValue="Related To"><a href="/{!app.TRelated}">{!app.TobjName}</a></apex:column>
             <apex:column headerValue="Type">{!app.TType}</apex:column>
             <apex:column headerValue="Most Recent Approvers"><a href="/{!app.MostRecent}">{!app.LMName}</a></apex:column>
-            <apex:column headerValue="Date Submitted">{!app.cDate}</apex:column>
+            <apex:column headerValue="Date Submitted"><apex:outputText Value=" {!app.cDate}"></apex:outputText></apex:column>
         </apex:pageBlockTable>    
     </apex:pageBlock>
   
