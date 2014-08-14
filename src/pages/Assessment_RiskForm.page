@@ -1,0 +1,613 @@
+<apex:page title="Asesssment: {!Assessment__c.Name}" standardController="Assessment__c" 
+    extensions="Assessment_RiskForm" 
+    standardStylesheets="true" 
+    sidebar="false" 
+    tabStyle="Persons_Being_Served_New__tab" 
+    showheader="{! if($CurrentPage.parameters.pdf =='1',false, true)}" 
+    applyBodyTag="{! if($CurrentPage.parameters.pdf =='1', false, true)}" 
+    renderAs="{!if($CurrentPage.parameters.pdf ='1', 'PDF', '')}" 
+     >
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<!--
+<apex:variable var="mode" value="{!if(ISBLANK($CurrentPage.parameters.mode) ,'edit',$CurrentPage.parameters.mode)}"/>
+<apex:variable var="mode" value="{!if($CurrentPage.parameters.pdf='1' || Assessment__c.Status__c !='Inactive Draft'  || !editMode ,'view',mode)}"/>
+<apex:variable var="mode" value="{!if($CurrentPage.parameters.summary ='1' ,'summary',mode)}"/>
+-->
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+
+<apex:variable var="printmode" value="{!if($CurrentPage.parameters.pdf ='1' ,true,false)}"/>
+
+<apex:stylesheet value="{!if ($CurrentPage.parameters.pdf !='1', URLFOR($Resource.mentoresd,'/mentoresd.css'), $Resource.mentoresdprint)}" />
+
+<head>
+<style>
+    body .bPageBlock[id*=main_detail] {
+        margin-bottom: 5px;
+    }
+.thinking{
+    opacity:0.8;
+    background-color:#ccc;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}    
+.thinkingwheel{
+position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+}
+  .myradiotable{
+
+        }
+         .myradiotable td {
+            width: 175px;
+            text-align: center;        
+        }
+         .myradiotableheader{
+            margin-left:290px;
+            margin-top:-15px;
+
+        }          
+        .myrow{
+            height: 100%;
+        
+        }
+        
+        .dateFormat{
+           visibility:hidden;
+        } 
+    
+    div.removeFromFlow {
+        position: absolute;
+    }
+    [id*=staffingRatioOther] {
+        position: relative;
+        top: -20px;
+        left: 70px;
+    }
+    table[id*=dayServiceSupportIntervalRadio] {
+        position: relative;
+        top: -95px;
+        left: 370px;
+    }
+    input[id*=dayServiceSupportIntervalTextbox] {
+        position: relative;
+        top: -90px;
+        left: 630px;
+    }
+    input[id*=dayServiceWithoutCaregiverDuration] {
+        position: relative;
+        top: -70px;
+        left: 185px;
+    }
+    table[id*=dayServiceWithoutCaregiverRadio] {
+        position: relative;
+        top: -71px;
+        left: 220px;
+    }
+    textarea[id*=dayServiceSpecificPlan] {
+        margin-left: 25px;
+        position: relative; /* Without this, the textinput is put behind the absolute divs that are removed from flow */
+    }
+    input[id*=residentialServiceUnsupervisedHomeDuration] {
+        position: relative;
+        top: -100px;
+        left: 220px;
+    }
+    table[id*=residentialServiceUnsupervisedHomeInterval] {
+        position:relative;
+        top: -102px;
+        left: 260px;
+    }
+    input[id*=residentialServiceUnsupervisedCommunityDuration] {
+        position: relative;
+        top: -48px;
+        left: 268px;
+    }
+    table[id*=residentialServiceUnsupervisedCommunityInterval] {
+        position:relative;
+        top: -49px;
+        left: 305px;
+    }
+    textarea[id*=residentialServiceSpecificPlan] {
+        margin-left: 25px;
+        position: relative;
+    }
+    
+    textarea { width:400px; height:72px;}
+
+.popupform{
+    position:absolute; left:35%; top:40%; background-color: white; border: 2px solid gray; padding: 2px;
+    width: 343px;
+    opacity: 1;
+
+}
+.hbbg{
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}    
+    
+</style>
+</head>
+<script>
+function scrollWindow()
+  {
+  window.scrollTo(0,0)
+  }
+
+jQuery.noConflict();
+var j$ = jQuery.noConflict();
+function toggleOptions( rb, divopt ) {
+    if ( rb.value.toLowerCase() == 'presents a risk' )
+        document.getElementById( divopt).style.display = 'block';
+    else
+        document.getElementById( divopt).style.display = 'none';
+};
+function toggleById(id, ms){
+    j$(document.getElementById(id)).toggle(ms);
+};
+</script>
+<script>function setFocusOnLoad() {}</script>
+<apex:outputPanel style="display: none;" rendered="false">
+  
+    <apex:outputField value="{!Assessment__c.Recommended_Day_Services_Staffing_Ratio__c}"/>
+    <apex:outputField value="{!Assessment__c.Services_Required_Level_Day_Services__c }"/>
+    <apex:outputField value="{!Assessment__c.Support_Required_Level_Residential__c }"/>
+    <apex:outputField value="{!Assessment__c.Admission__r.State__c }"/>
+    <apex:outputField value="{!Assessment__c.Previous__c }"/>
+    <apex:outputField value="{!Assessment__c.Status__c }"/>
+    <apex:outputField value="{!Assessment__c.Type__c}"/>
+    <apex:repeat value="{!Assessment__c.Acknowledgments__r}" var="c">
+        {!c.Assessment__c} {!c.User__c}
+    </apex:repeat>
+</apex:outputPanel>
+
+<c:PersonalRecord pbsId="{!Assessment__c.Admission__r.Person_Being_Served__c}" parentPage="Assessment" admId="{!Assessment__c.Admission__c}" asmtType="{!Assessment__c.Assessment_Type__r.Name}" asmtId="{!Assessment__c.Id}"  rendered="{!!printmode }" />
+<br />
+
+<apex:form id="myfrm" >
+    <apex:pageMessages />
+    <apex:pageBlock id="main_detail" title="{!if ($CurrentPage.parameters.pdf ='1', Assessment__c.Admission__r.Person_Being_Served__r.Name + ' - ', '') }Risk Assessment {!if (mode == 'summary', 'Summary', 'Detail')}">
+  
+    <div class="pbHeaderButton">
+        <apex:outputPanel rendered="{!!printmode}" >
+            <apex:actionStatus id="myStatus" >
+                <apex:facet name="start">
+                <div  class="thinking">
+                    <div class="thinkingwheel">
+                        <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp;Processing...</span>
+                    </div>
+                </div>
+                </apex:facet>  
+                <apex:facet name="stop">     </apex:facet>         
+            </apex:actionStatus>     
+            <apex:commandButton action="{!myEdit}" value="Edit" reRender="myfrm" status="myStatus" rendered="{! mode='view' && (Assessment__c.Status__c = 'Inactive Draft') && canEditRisk }"/>&nbsp;
+            <apex:commandButton action="{!mySave}" value="Save" reRender="myfrm" status="myStatus" rendered="{!mode='edit' || mode = 'new'}" />&nbsp; 
+            <apex:commandButton action="{!myApprove}" value="Finalize" status="myStatus" rendered="{!mode='view' && (Assessment__c.Status__c = 'Inactive Draft' ) && canFinalize }" />&nbsp;
+
+            <apex:commandButton value="Acknowledge" styleClass="ackbtn" onClick="toggleById('ackfrom'); return false;" rendered="{!(mode='view' && showConfirmationButton)}" >             
+                &nbsp;
+            </apex:commandButton>
+            <apex:commandButton action="{!myRevise}" 
+                    value="Revise" status="myStatus"  rendered="{!mode='view' && CanReviseAssess && $ObjectType.Assessment__c.createable}" onclick="if(!confirm('Are you sure you wish to revise the current version of the Risk Assessment?')){return false};">
+                &nbsp;
+            </apex:commandButton>  
+            <apex:commandButton onclick="window.open('/apex/assessment_riskform?id={!Assessment__c.id}&Summary=1', '_self'); return false;" 
+                    value="View Summary" status="myStatus" rendered="{!mode != 'new' && mode!='summary'  && mode != 'edit'}">
+                &nbsp;
+            </apex:commandButton>  
+            <apex:commandButton onclick="window.open('/apex/assessment_riskform?id={!Assessment__c.id}&PDF=1{!if($CurrentPage.parameters.summary ='1' ,'&Summary=1','')}', '_blank'); return false;" 
+                    value="Print" status="myStatus" rendered="{!mode != 'new' && mode != 'edit'}">
+                &nbsp;
+            </apex:commandButton>  
+            <apex:commandButton onclick="window.open('/apex/assessment_riskform?id={!Assessment__c.id}', '_self'); return false;" 
+                    value="View Detail" status="myStatus" rendered="{!mode='summary'}">
+                &nbsp;
+            </apex:commandButton> 
+            
+             <apex:commandButton action="{!cancel}" value="Cancel" status="myStatus" rendered="{!$CurrentPage.parameters.new !='1' && mode='edit'}"/>
+             <apex:commandButton action="{!mycancel}" value="Cancel" status="myStatus" rendered="{!if($CurrentPage.parameters.new ='1' ,'true','false')}"/>           
+        </apex:outputPanel>     
+    </div>     
+                 
+            <apex:pageBlockSection columns="2" collapsible="false" title="Information">
+                <!--  row1 -->
+                <apex:outputField value="{!Assessment__c.Name}"/>
+                <apex:outputField value="{!Assessment__c.Admission__c}" rendered="{!!printmode}"/>    
+                <apex:outputText value="{!Assessment__c.Admission__r.Name}" rendered="{!printmode}"/>
+                
+                <apex:outputField value="{!Assessment__c.Approval_Date__c}"   rendered="{!mode!='edit' && mode !='new'}"/>
+                <apex:inputField value="{!Assessment__c.Approval_Date__c}"   rendered="{!mode='edit' || mode ='new'}" />
+                
+                <apex:pageBlockSectionItem rendered="{!!printmode}" >
+                    <apex:outputPanel >Created By</apex:outputPanel>
+                    <apex:outputPanel rendered="{!!printmode}">
+                        <apex:outputField value="{!Assessment__c.CreatedByid}"/>&nbsp;
+                        <apex:outputField value="{!Assessment__c.CreatedDate}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!printmode}" >
+                    <apex:outputPanel >Created By</apex:outputPanel>
+                    <apex:outputPanel >
+                        <apex:outputField value="{!Assessment__c.CreatedBy.Name}"/>&nbsp;
+                        <!-- leave the space in the value attribute of below - forces local time display -->
+                        <apex:outputText value=" {!Assessment__c.CreatedDate}"/>&nbsp;
+                        <!-- <apex:outputText value="{0, date, MM/dd/yyyy hh:mm a}">
+                            <apex:param value="{!Assessment__c.CreatedDate}"/>
+                        </apex:outputText> -->
+                    </apex:outputPanel> 
+                </apex:pageBlockSectionItem>
+
+                <apex:outputField value="{!Assessment__c.Status__c}"/>               
+                
+                <apex:pageBlockSectionItem labelStyle="width: 13%; dataStyle: 20%;" rendered="{!!printmode}">
+                    <apex:outputPanel >Last Modified By</apex:outputPanel>
+                    <apex:outputPanel ><apex:outputField value="{!Assessment__c.LastModifiedByid}"/>&nbsp;<apex:outputField value="{!Assessment__c.LastModifiedDate}"/></apex:outputPanel>  
+                </apex:pageBlockSectionItem> 
+                
+                <apex:pageBlockSectionItem labelStyle="width: 13%; dataStyle: 20%;" rendered="{!printmode}">
+                    <apex:outputPanel >Last Modified By</apex:outputPanel>
+                    <apex:outputPanel ><apex:outputText value="{!Assessment__c.LastModifiedBy.Name}"/>&nbsp;<apex:outputText value=" {!Assessment__c.LastModifiedDate}"/></apex:outputPanel>  
+                </apex:pageBlockSectionItem> 
+
+ 				<apex:pageBlockSectionItem />
+                
+                <apex:pageBlockSectionItem rendered="{!!printmode}">
+                    <apex:outputPanel >Finalized By</apex:outputPanel>
+                    <apex:outputPanel ><apex:outputField value="{!Assessment__c.Approved_By__c}" />&nbsp;<apex:outputField value="{!Assessment__c.Finalized_Date__c}"/></apex:outputPanel>  
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!printmode}">
+                    <apex:outputPanel >Finalized By</apex:outputPanel>
+                    <apex:outputPanel ><apex:outputText value="{!Assessment__c.Approved_By__r.Name}" />&nbsp;<apex:outputText value="{0, date, MM/dd/yyyy}"><apex:param value="{!Assessment__c.Finalized_Date__c}"/></apex:outputText></apex:outputPanel>  
+                </apex:pageBlockSectionItem>
+                      
+                <apex:pageBlockSectionItem rendered="{! (mode=='edit'|| mode=='new')}">
+                    <apex:outputPanel >Verbal Approval Obtained From</apex:outputPanel>
+                    <apex:inputField value="{!Assessment__c.Verbal_Approval_Obtained_From__c}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!(mode!='edit' && mode !='new')}">
+                    <apex:outputPanel >Verbal Approval Obtained From</apex:outputPanel>
+                    <apex:outputField value="{!Assessment__c.Verbal_Approval_Obtained_From__c}"  />
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!(mode=='edit'|| mode=='new')}">
+                    <apex:outputPanel >Verbal Approval Obtained On</apex:outputPanel>
+                    <apex:inputField value="{!Assessment__c.Verbal_Approval_Obtained_On__c}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{! (mode!='edit' && mode !='new')}">
+                    <apex:outputPanel >Verbal Approval Obtained On</apex:outputPanel>
+                    <apex:outputField value="{!Assessment__c.Verbal_Approval_Obtained_On__c}"  />
+                </apex:pageBlockSectionItem>
+                              
+                &nbsp;                                 
+            </apex:pageBlockSection>   
+            <br/>
+            <br/>
+        <apex:variable value="" var="currentHeader" />
+        <apex:repeat value="{!DomainsInScope}" var="Domain">
+            <apex:outputPanel layout="block" rendered="{!Domain.Header__c != currentHeader && (mapDomainHasRisk[Domain.id] || mode!='summary')}"  >
+        <hr class="branded-hr"/>
+           
+                <apex:outputPanel layout="block" styleClass="risk-section-header">{!Domain.Header__c}</apex:outputPanel>
+                <br/>
+            </apex:outputPanel>
+            <div class="risk-domain">
+            <apex:outputPanel style="{!IF(mode == 'edit', 'position:relative; top:2px', '')}" rendered="{!mapDomainHasRisk[Domain.id] || mode!='summary'}" >{!Domain.Name}<c:HelpTooltip helpText="{!Domain.Description__c}"  rendered="{!Domain.Description__c !='' && !printmode}"/>
+            </apex:outputPanel>
+            <apex:variable value="{!Domain.Header__c}" var="currentHeader" />
+            
+            <apex:outputPanel rendered="{!mode = 'edit'}"> 
+                <table class="myradiotable" style="margin-left:410px; margin-top:-18px;">                    
+                        <tr><td><b>Presents a Risk</b></td>
+                            <td><b>Does Not Present a Risk</b></td>        
+                        </tr>            
+                </table>   
+            </apex:outputPanel>
+            </div>
+            
+            <!-- output questions within domain -->
+            <apex:dataTable value="{!Domain.Question__r}" var="Question" width="100%" rowClasses="risk-question-odd, risk-question-even">
+                
+                    <!--  if the question presents a risk in summary mode, or if editing -->
+                    <apex:column style="{!if (printmode, 'width:30%;padding-left:0px;','width:400px;padding-left:20px')} ;vertical-align:top;" >
+                        <apex:outputPanel layout="block" rendered="{! (mode='summary' && (LOWER(mapCurrentResps[Question.ID].Rating__c) ='presents a risk')) || mode !='summary'}" style="padding-top:5px">
+                        {!Question.Question_Title__c}
+                        <c:HelpTooltip helpText="{!Question.Question_Description__c}" rendered="{!Question.Question_Description__c !='' && !printmode}"/>
+                        </apex:outputPanel> 
+                    </apex:column>
+                    
+                    <apex:column >                   
+                        <apex:outputPanel layout="block" >
+                            <apex:selectRadio value="{!mapCurrentResps[Question.ID].Rating__c}" styleClass="myradiotable" style="{!if(hasErrorOnFinalize && mapCurrentResps[Question.ID].Rating__c ='', 'border: 1px red solid','')}"  onclick="toggleOptions(this, '{!Question.id}_options');" rendered="{!mode = 'edit'}"   >
+                                <apex:selectOptions value="{!mapOptions[Question.id]}"></apex:selectOptions>                        
+                            </apex:selectRadio>
+                            <apex:outputPanel style="color: red;" rendered="{! hasErrorOnFinalize && mapCurrentResps[Question.ID].Rating__c ='' && mode = 'edit'}">Answer Missing</apex:outputPanel>
+                            <apex:outputText style="position:relative;top:5px;padding-left:7px;" value="{!mapCurrentResps[Question.ID].Rating__c}" rendered="{!mode = 'view' || (mode='summary' && (LOWER(mapCurrentResps[Question.ID].Rating__c) ='presents a risk'))}"/>
+                            <apex:outputPanel id="xQuestions" >
+
+                                <div id="{!Question.id}_options" style="{!if (LOWER(mapCurrentResps[Question.ID].Rating__c) !='presents a risk','display:none;','')} padding-bottom:20px;">  
+                                   
+                                    <apex:repeat value="{!mapQuestions[Question.id+mapCurrentResps[Question.ID].Rating__c]}" var="g">                            
+                                        <apex:outputPanel rendered="{!g !='false'}" layout="block" >
+                                            <apex:dataTable value="{!g}" var="h" style="position:relative;{! if (!printmode, 'left:-200px;','left:0px')};top:20px;">                                
+                                                <apex:column style="vertical-align: top; width:140px; margin-bottom:7px" rendered="{!!printmode}"> 
+                                                    <span style="font-weight:bold">{!$ObjectType.Assessment_Response__c.fields[h].Label}</span>
+                                                </apex:column>
+                                                <apex:column style="vertical-align: top; width:700px;padding-bottom:5px">
+                                                    <apex:inputfield value="{!mapCurrentResps[Question.ID][h]}" rendered="{!mode == 'edit'}"/>
+                                                    <apex:outputtext value="{!mapCurrentResps[Question.ID][h]}" rendered="{! (mode == 'summary' || mode == 'view') && !printmode  }"/>
+                                                    <apex:outputpanel layout="none" rendered="{! printmode  }"><span style="width:80%; display:block; margin-left:10px"><i>{!$ObjectType.Assessment_Response__c.fields[h].Label}:</i> {!mapCurrentResps[Question.ID][h]}</span></apex:outputpanel>
+                                                </apex:column>
+                                                
+                                            </apex:dataTable>
+                                        </apex:outputPanel>
+                                    </apex:repeat> 
+                                 </div>
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                    </apex:column>
+                </apex:dataTable>
+        </apex:repeat> 
+        
+        
+        
+    </apex:pageBlock>
+
+  <apex:outputPanel layout="none" rendered="{!Assessment__c.Id!=null}">
+  <apex:outputPanel layout="block" style="margin-bottom: 10px;" rendered="{!(mode!='summary' || Assessment__c.Additional_Areas_of_Concern__c != '')}">
+        <hr class="branded-hr"/>
+            <div class="risk-section-header">Additional Areas of Concern
+            <c:HelpTooltip helpText="This area would be used to include any risk areas of the person which are not defined or asked in other sections of this assessment.
+                    Describe training for the person to reduce the risk and specific verbal and/or physical assistance to ensure safety." rendered="{!!printmode}" />
+            </div>
+        <apex:inputTextarea value="{!Assessment__c.Additional_Areas_of_Concern__c}" cols="180" rows="5" rendered="{!mode='edit'}" />
+        <apex:outputPanel style="padding-left: 20px;" rendered="{!(mode!='edit' && Assessment__c.Additional_Areas_of_Concern__c!='')}">{!Assessment__c.Additional_Areas_of_Concern__c}</apex:outputPanel>
+        <apex:outputText style="padding-left: 20px;" rendered="{!mode!='edit' && Assessment__c.Additional_Areas_of_Concern__c=''}" value="None" />
+    </apex:outputPanel>
+    </apex:outputPanel>
+    <apex:outputPanel layout="none" rendered="{!Assessment__c.Id!=null}" >
+        <apex:pageBlock id="extraQs" rendered="{!mode!='summary' || 
+                                ( Assessment__c.Staffing_Supervision_Needs__c != ''  ||
+                                ( staffingRatioInFlavor && recommendedDayServicesStaffingRatioFull != '') ||
+                                ( dayServicesInFlavor && levelRequiredDayServicesFull != '') ||
+                                levelRequiredResidentialFull != ''
+                                )}">
+            <apex:outputPanel layout="none" rendered="{!(mode!='summary' || Assessment__c.Staffing_Supervision_Needs__c != '')}">
+            
+                <span class="risk-section-subhead">Staffing/Supervision Needs &nbsp;</span> 
+                <apex:outputPanel rendered="{!ISBLANK(Assessment__c.Staffing_Supervision_Needs__c)  && mode !='edit'}"><br/>None</apex:outputPanel>
+                <!--Assessment__c.Staffing_Supervision_Needs__c-->
+                <apex:outputPanel layout="block" rendered="{!mode!='edit'}">
+                
+                    <apex:repeat value="{!Staffing_Supervision_Needs}" var="item">
+                         &nbsp;{!item}
+                        <br/>
+                    </apex:repeat>
+                    
+                </apex:outputPanel>
+                <apex:selectCheckBoxes value="{!Staffing_Supervision_Needs}" layout="pageDirection" rendered="{!(mode='edit')}">
+                    <apex:selectOption itemValue="Person accesses support as needed"
+                        itemLabel="Person accesses support as needed" />
+                    <apex:selectOption itemValue="Person requires some services, doesn't require 24 hours of care"
+                        itemLabel="Person requires some services, doesn't require 24 hours of care" />
+                    <apex:selectOption itemValue="Person needs 24 hour plan of care (May not require supervision at all times but there is someone identified/assigned that is responsible and accessible to the consumer in case of emergency. 24 hour plan of care required for individiual in ICF-MR and waiver eligible individuals)"
+                        itemLabel="Person needs 24 hour plan of care (May not require supervision at all times but there is someone identified/assigned that is responsible and accessible to the consumer in case of emergency. 24 hour plan of care required for individiual in ICF-MR and waiver eligible individuals)" />
+                    <apex:selectOption itemValue="Person requires overnight supervision"
+                        itemLabel="Person requires overnight supervision" />
+                    <apex:selectOption itemValue="Person requires 24 hour awake supervision"
+                        itemLabel="Person requires 24 hour awake supervision" />
+                
+                </apex:selectCheckBoxes>
+            </apex:outputPanel>
+            <br/>
+            <apex:outputPanel layout="none" rendered="{!(staffingRatioInFlavor && (mode!='summary' || RecDayServicesStaffingRatio.size > 0))}">
+                <b>Recommended Day Services Staffing Ratio (Rule 38 for DT&amp;H)</b> &nbsp; 
+                <apex:outputPanel rendered="{! RecDayServicesStaffingRatio.size==0  && mode !='edit'}"><br/>None</apex:outputPanel>
+                
+                <apex:outputPanel layout="block" rendered="{!mode!='edit'}">
+                    <apex:repeat value="{!RecDayServicesStaffingRatio}" var="item">&nbsp;{!SUBSTITUTE(item,glbItemSeperator , ' ')}  <br/> </apex:repeat>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!mode='edit'}">
+                <!--
+                {!recommendedDayServicesStaffingRatioFull}
+                recommendedDayServicesStaffingRatio
+                        <apex:selectOption itemValue="1 to 4" itemLabel="1 to 4" />
+                        <apex:selectOption itemValue="1 to 6" itemLabel="1 to 6" />
+                        <apex:selectOption itemValue="1 to 8" itemLabel="1 to 8" />
+                        <apex:selectOption itemValue="Other" itemLabel="Other" />   
+ 
+                                     Assessment__c.Recommended_Day_Services_Staffing_Ratio__c
+                -->
+                    <apex:selectCheckboxes value="{!RecDayServicesStaffingRatio}" id="staffingRatioRadios" layout="pageDirection" label="Recommended Day Services Staffing Ratio">
+                            <apex:selectOptions value="{!SOrecommendedDayServicesStaffingRatio}"/>
+                    </apex:selectCheckboxes>                    
+                    <apex:inputText value="{!recommendedDayServicesStaffingRatioOther}" id="staffingRatioOther" />
+                </apex:outputPanel>
+                <br/>
+            </apex:outputPanel>
+            <apex:outputPanel layout="none" rendered="{!(dayServicesInFlavor && (mode!='summary' || displayLevel_Required_DayServices.size >0))}">
+                <span class="risk-section-subhead">Level of Services Required for Day Services</span>           
+                <apex:outputPanel rendered="{! displayLevel_Required_DayServices.size ==0 && mode!='edit' }"><br/>None</apex:outputPanel>
+                
+                <apex:outputPanel layout="block" rendered="{!mode!='edit'}">
+                
+
+                    <apex:repeat value="{!displayLevel_Required_DayServices}" var="item">&nbsp;{!SUBSTITUTE(item,glbItemSeperator , ' ')}  <br/> </apex:repeat>                
+                  
+                   </apex:outputPanel>
+                <apex:outputPanel rendered="{!mode='edit'}"><br/>
+                <!-- {!levelRequiredDayServicesFull}
+                levelRequiredDayServices
+                    <apex:selectOption itemValue="Current level of services required for health and safety supports"
+                            itemLabel="Current level of services required for health and safety supports" />
+                        <apex:selectOption itemValue="Can be without caregiver for"
+                            itemLabel="Can be without caregiver for" />
+                        <apex:selectOption itemValue="Other" itemLabel="Other" />
+                        <apex:selectOption itemValue="Specific Plan"
+                            itemLabel="Specific Plan (Identify in detail any special arrangements which would need to be implemented in order for person to remain alone or unsupervised or identify where specific plan is located)" />
+                   
+                
+                
+                -->
+                    <apex:selectCheckboxes layout="pageDirection" label="Level of Services Required for Day Services" value="{!Level_Required_DayServices}" id="dayServiceOptions">
+                        <apex:selectOptions value="{!SOLevel_Required_DayServices}"></apex:selectOptions>
+                     </apex:selectCheckboxes>
+                    <div class="removeFromFlow">
+                        <apex:selectRadio value="{!levelRequiredDayServicesSupport}" id="dayServiceSupportIntervalRadio">
+                            <apex:selectOption itemValue="Full Day" itemLabel="Full Day" />
+                            <apex:selectOption itemValue="Partial Day" itemLabel="Partial Day" />
+                            <apex:selectOption itemValue="Other" itemLabel="other, specify:" />
+                        </apex:selectRadio>
+                    </div>
+                    <div class="removeFromFlow">
+                        <apex:inputText value="{!levelRequiredDayServicesSupportOtherInterval}" id="dayServiceSupportIntervalTextbox"  />
+                    </div>
+                    <div class="removeFromFlow">
+                        <apex:inputText size="3" value="{!levelRequiredDayServicesWithoutCaregiverDuration}" id="dayServiceWithoutCaregiverDuration" />
+                    </div>
+                    <div class="removeFromFlow" style="padding-left:20px;">
+                        <apex:selectRadio value="{!levelRequiredDayServicesWithoutCaregiverInterval}" id="dayServiceWithoutCaregiverRadio">
+                            <apex:selectOption itemValue=" Minutes" itemLabel="Minutes" />
+                            <apex:selectOption itemValue=" Hours" itemLabel="Hours" />
+                        </apex:selectRadio>
+                    </div>
+                    <apex:inputTextarea value="{!levelRequiredDayServicesSpecificPlan}" id="dayServiceSpecificPlan" cols="180" /><br /><br />
+                </apex:outputPanel>
+                <br />
+            </apex:outputPanel>
+            <apex:outputPanel layout="none" rendered="{!(mode!='summary' || displayLevel_Required_ResidentialServices.size >0)}">
+
+                <span class="risk-section-subhead">Level of Support Required for Residential Services</span>
+                <apex:outputPanel rendered="{! displayLevel_Required_ResidentialServices.size==0  && mode !='edit'}"><br/>None</apex:outputPanel>
+                                
+                <apex:outputPanel layout="block" rendered="{!mode!='edit'}">
+                    <apex:repeat value="{!displayLevel_Required_ResidentialServices}" var="item">&nbsp;{!SUBSTITUTE(item,glbItemSeperator , ' ')}  <br/> </apex:repeat>
+             
+                </apex:outputPanel>
+                <!--
+                       {!levelRequiredResidentialFull}
+                  <apex:selectOptions value="{!SOLevel_Required_ResidentialServices}"></apex:selectOptions> 
+                levelRequiredResidential
+                -->
+                
+                <apex:outputPanel rendered="{!mode='edit'}">
+                    <apex:selectCheckboxes layout="pageDirection" value="{!Level_Required_ResidentialServices}" label="Level of Support Required for Residential Services" id="residentialServiceOptions">
+                     <apex:selectOption itemValue="Support person on premises at all times when individual is home"
+                            itemLabel="Support person on premises at all times when individual is home" />
+                        <apex:selectOption itemValue="Can be unsupervised at home for" itemEscaped="false"
+                            itemLabel="Can be unsupervised at home for <br /><br /> &nbsp; &nbsp; &nbsp; &nbsp; <i>Specify details of alone time if there are specific limitations or plans associated with alone time under the 'Specific Plan' section below.</i>" />
+                        <apex:selectOption itemValue="Can be unsupervised in the community for"
+                            itemLabel="Can be unsupervised in the community for" />
+                        <apex:selectOption itemValue="Specific Plan"
+                            itemLabel="Specific Plan (Identify in detail any special arrangements which would need to be implemented in order for person to remain alone or unsupervised)" />    
+                    
+                    </apex:selectCheckboxes>
+                    <div class="removeFromFlow" >
+                        <apex:inputText size="3" value="{!levelRequiredResidentialUnsupervisedHome}" id="residentialServiceUnsupervisedHomeDuration" />
+                    </div>
+                    <div class="removeFromFlow" style="padding-left:10px">
+                        <apex:selectRadio value="{!levelRequiredResidentialUnsupervisedHomeInterval}" id="residentialServiceUnsupervisedHomeInterval">
+                            <apex:selectOption itemValue=" Minutes" itemLabel="Minutes" />
+                            <apex:selectOption itemValue=" Hours" itemLabel="Hours" />
+                        </apex:selectRadio>
+                    </div>
+                    <div class="removeFromFlow" style="padding-right:5px">
+                        <apex:inputText size="3" value="{!levelRequiredResidentialUnsupervisedCommunity}" id="residentialServiceUnsupervisedCommunityDuration" />
+                    </div>
+                    <div class="removeFromFlow" style="padding-left:10px">
+                        <apex:selectRadio value="{!levelRequiredResidentialUnsupervisedCommunityInterval}" id="residentialServiceUnsupervisedCommunityInterval">
+                            <apex:selectOption itemValue=" Minutes" itemLabel="Minutes" />
+                            <apex:selectOption itemValue=" Hours" itemLabel="Hours" />
+                        </apex:selectRadio>
+                    </div>
+                    <apex:inputTextarea value="{!levelRequiredResidentialSpecificPlan}" id="residentialServiceSpecificPlan" cols="180" /><br /><br />
+                </apex:outputPanel>
+            </apex:outputPanel>
+            </apex:pageBlock>
+         
+        <div style="float:right">
+        <apex:outputPanel rendered="{!!printmode}" >
+            <apex:commandButton action="{!myEdit}" value="Edit" reRender="myfrm" status="myStatus" rendered="{! mode='view' && Assessment__c.Status__c = 'Inactive Draft' && canEditRisk}"/>&nbsp;
+            <apex:commandButton action="{!mySave}" value="Save" reRender="myfrm" status="myStatus" rendered="{!mode='edit' || mode = 'new'}" />&nbsp; 
+            <apex:commandButton action="{!myApprove}" value="Finalize" status="myStatus" rendered="{!mode='view' && (Assessment__c.Status__c = 'Inactive Draft') && canFinalize}" />&nbsp;
+            <apex:commandButton value="Acknowledge" styleClass="ackbtn" onClick="toggleById('ackfrom'); return false;" rendered="{!(mode='view' && showConfirmationButton)}" >             
+                &nbsp;
+            </apex:commandButton>  
+            <apex:commandButton action="{!myRevise}" 
+                    value="Revise" status="myStatus"  rendered="{!mode='view' && CanReviseAssess && $ObjectType.Assessment__c.createable}" onclick="if(!confirm('Are you sure you wish to revise the current version of the Risk Assessment?')){return false};">
+                &nbsp;
+            </apex:commandButton>  
+            <apex:commandButton onclick="window.open('/apex/assessment_riskform?id={!Assessment__c.id}&Summary=1', '_self'); return false;" 
+                    value="View Summary" status="myStatus" rendered="{!mode != 'new' && mode!='summary'  && mode != 'edit'}">
+                &nbsp;
+            </apex:commandButton>  
+            <apex:commandButton onclick="window.open('/apex/assessment_riskform?id={!Assessment__c.id}&PDF=1{!if($CurrentPage.parameters.summary ='1' ,'&Summary=1','')}', '_blank'); return false;" 
+                    value="Print" status="myStatus" rendered="{!mode != 'new' && mode != 'edit'}">
+                &nbsp;
+            </apex:commandButton>  
+            <apex:commandButton onclick="window.open('/apex/assessment_riskform?id={!Assessment__c.id}', '_self'); return false;" 
+                    value="View Detail" status="myStatus" rendered="{!mode='summary'}">
+                &nbsp;
+            </apex:commandButton> 
+            
+             <apex:commandButton action="{!cancel}" value="Cancel" status="myStatus" rendered="{!$CurrentPage.parameters.new !='1' && mode='edit'}"/>
+             <apex:commandButton action="{!mycancel}" value="Cancel" status="myStatus" rendered="{!if($CurrentPage.parameters.new ='1' ,'true','false')}"/>           
+        </apex:outputPanel>     
+    </div>     
+            
+            
+        
+        <apex:pageBlock title="Acknowledgment History" rendered="{!!printmode}">
+            <apex:pageBlockTable style="width: 100%; " value="{!Assessment__c.Acknowledgments__r}" var="item">
+                <apex:column style="width: 40%; padding-right: 10px;" headerValue="Staff Member" value="{!item.User__r.Name}" />
+                <apex:column headerValue="Acknowledgment Date & Time" value="{!item.CreatedDate}" />
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:outputPanel>
+<div id="ackfrom" class="hbbg" style="display: none;">
+<div id="p" class="popupform" >
+    <apex:pageBlock >
+        <apex:pageBlockSection columns="1">
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel >
+                    Staff Name
+                </apex:outputLabel>
+                {! $User.myFullName__c} 
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel >Date</apex:outputLabel>
+                 <apex:outputText value="{0, date, E - MM/dd/yyyy}">
+                    <apex:param value="{!TODAY()}" />
+                </apex:outputText>               
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                
+                I have received training on this Risk Assessment, and I know whom to contact if I have questions regarding it.
+                
+            </apex:pageBlockSectionItem>
+
+            <apex:outputPanel layout="block" style="width: 100%; text-align: center;" >
+                            <apex:commandButton action="{!myConfirm}" accesskey=""
+                    value="Acknowledge" status="myStatus" />
+                &nbsp;
+                <apex:commandButton onclick="toggleById('ackfrom', '500'); return false;"  value="Cancel" />
+                
+                
+            </apex:outputPanel>
+            
+        </apex:pageBlockSection>
+        
+    </apex:pageBlock>
+</div>    
+</div>
+</apex:form>
+<c:SObjectNotesAndAttachments parentId="{!Assessment__c.ID}" rendered="{!!printmode}"  showAction="false"/>
+</apex:page>
