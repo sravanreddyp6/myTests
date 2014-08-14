@@ -1,6 +1,6 @@
 public with sharing class Assessment_RiskForm_Redirect {
-	
-	public Assessment__c assessment { get; set; }
+    
+    public Assessment__c assessment { get; set; }
 
     PageReference ref;
     
@@ -31,5 +31,31 @@ public with sharing class Assessment_RiskForm_Redirect {
         
         return null;
     } 
+    //this is if the user clicked the edit link
+    public PageReference assessmentRedirectEdit() {
+        string prefix = string.valueof(assessment.id);
+        prefix = prefix.left(3);
+        if (assessment.Assessment_Type__r.name == 'CANS') {
+            PageReference ref = new PageReference('/' + prefix + '/e?id='+ assessment.id +'&retURL=/' + assessment.id);            
+            return ref;
+        }
+        
+        if (assessment.Assessment_Type__r.name == 'Risk') {
+            PageReference ref = new PageReference('/apex/Assessment_RiskForm?id=' + assessment.id);           
+            return ref;
+        }        
+       
+        if (assessment.type__c == 'FAD Summary') {
+            ref = new PageReference('/apex/Assessment_FAD_Form?id=' + assessment.id);
+            return ref;       
+        }
+       
+        if (assessment.type__c == 'ISSA') {
+            ref = new PageReference('/apex/Assessment_IssaForm?id=' + assessment.id);
+            return ref;       
+        }      
+        
+        return null;
+    }    
 
 }

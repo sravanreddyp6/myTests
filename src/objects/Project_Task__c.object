@@ -188,7 +188,7 @@ TEXT( Complete__c *100)
     <fields>
         <fullName>Status__c</fullName>
         <externalId>false</externalId>
-        <formula>IF( Complete__c =1, &quot;Completed&quot;, &quot;Incomplete&quot;)</formula>
+        <formula>IF( Complete__c =1, &quot;Completed&quot;, IF( Due_Date__c &lt; TODAY(),&quot;OVERDUE&quot;,&quot;Incomplete&quot;))</formula>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Status</label>
         <required>false</required>

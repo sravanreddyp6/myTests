@@ -3,8 +3,10 @@ public with sharing class proj_nr_form {
     public TMN_Tree projTree {get; set;}
     public boolean hasError{ get; set;}
     public string PTid {get; set;}
+    public string PTAid {get; set;}
     public string startingOption {get; set;}
     public string selectedTemplate{get; set;}
+    public string feedID{ get; set;}
     ID NR_RTid(){
         
     
@@ -15,6 +17,7 @@ public with sharing class proj_nr_form {
     public proj_nr_form(ApexPages.StandardController controller) {
         cur_proj = (Project__c)controller.getRecord(); 
         startingOption = 'blank';
+        feedID = cur_proj.id;
         projTree = new TMN_Tree();        
         if(cur_proj.id == null){
             cur_proj.external_id__c = GenID(16);
@@ -39,7 +42,7 @@ public with sharing class proj_nr_form {
         List<SelectOption> options = new List<SelectOption>();
         options.add(new SelectOption('blank','Create a Blank Project'));
         options.add(new SelectOption('new_temp','Create a new Project Template'));
-        options.add(new SelectOption('create_from_temp','Create a new Project Based a Template'));
+        options.add(new SelectOption('create_from_temp','Create a new Project from an existing Template'));
 
         return options;
     }    
@@ -54,7 +57,7 @@ public with sharing class proj_nr_form {
     } 
     //end starting options 
         
-    //methods to ad items to the project tree
+    //methods to add/remove items to the project tree
     public pageReference AddProjectTask(){
         Project_task__c PT = new Project_task__c();
         string tmpID = GenId(16);
@@ -90,7 +93,18 @@ public with sharing class proj_nr_form {
         tmpPTnode.ProjTaskAct = PTA;
         projTree.root.nodes.get(i).nodes.add(tmpPTnode);
         return null;
-    }  
+    }
+    public pageReference DeleteProjectTask(){      
+        integer i = projTree.root.getNode_Key(PTid);
+        ProjTree.root.nodes.get(i).DeleteRecord = true;         
+        return null;
+    }    
+    public pageReference DeleteProjectTaskActivity(){      
+        integer i = projTree.root.getNode_Key(PTid);
+        integer i2 = projTree.root.nodes.get(i).getNode_Key(PTAid);
+        ProjTree.root.nodes.get(i).nodes.get(i2).DeleteRecord = true;     
+        return null;
+    }
     //end methods to add to tree        
     //methods to save the project
     public pageReference Save(){
@@ -98,11 +112,16 @@ public with sharing class proj_nr_form {
         hasError = false;
         if(projTree.root.Proj.id == null){
             saveNewProj();
-            //ApexPages.currentPage().getParameters().get('id') = '123';
+            if(!hasError){
+               PageReference ref = new PageReference('/apex/proj_nr_form?id=' + projTree.root.Proj.id);            
+               ref.setRedirect(true);
+               return ref; 
+           }
         }
         else{updateProj();}
-        
-        refreshProjTree();
+        if(!hasError){
+            refreshProjTree();
+        }
         return null;
     }
     public void updateProj(){
@@ -110,16 +129,20 @@ public with sharing class proj_nr_form {
         list<Project_Task__c> PTs = new list<Project_Task__c>();
         list<Project_Task_Activity__c> PTAs = new list<Project_Task_Activity__c>();
         list<Project_Task__c> newPTs = new list<Project_Task__c>();
-        list<Project_Task_Activity__c> newPTAs = new list<Project_Task_Activity__c>();        
+        list<Project_Task_Activity__c> newPTAs = new list<Project_Task_Activity__c>(); 
+        list<Project_Task__c> delPTs = new list<Project_Task__c>();
+        list<Project_Task_Activity__c> delPTAs = new list<Project_Task_Activity__c>();                
         
         try{
             for(TMN_Tree.Node t: ProjTree.root.Nodes){
-                if(t.isNew){newPTs.add(t.ProjTask);}
-                else{PTs.add(t.ProjTask);}
+                if(t.isNew && !t.deleteRecord){newPTs.add(t.ProjTask);}
+                else if(t.DeleteRecord && t.ProjTask.id != null){delPTs.add(t.ProjTask);}
+                else if(t.ProjTask.id != null){PTs.add(t.ProjTask);}
                 
                 for(tmn_tree.node a: t.nodes){
-                    if(a.isNew){newPTAs.add(a.ProjTaskAct);}
-                    else{PTAs.add(a.ProjTaskAct);}
+                    if(a.isNew && !a.DeleteRecord){newPTAs.add(a.ProjTaskAct);}
+                    else if(a.DeleteRecord && a.ProjTaskAct.id != null){delPTAs.add(a.ProjTaskAct);}
+                    else if(a.ProjTaskAct.id != null){PTAs.add(a.ProjTaskAct);}
                 }
             }
             
@@ -128,6 +151,8 @@ public with sharing class proj_nr_form {
             update PTAs;
             insert newPTs;
             insert newPTAs;
+            delete delPTs;
+            delete delPTAs;
         }
         
         catch(Exception e){
@@ -143,9 +168,13 @@ public with sharing class proj_nr_form {
         
         try{
             for(TMN_Tree.Node t: ProjTree.root.Nodes){
-                PTs.add(t.ProjTask);
+                if( !t.DeleteRecord){
+                    PTs.add(t.ProjTask);
+                }
                 for(tmn_tree.node a: t.nodes){
-                    PTAs.add(a.ProjTaskAct);
+                    if( !a.DeleteRecord){
+                        PTAs.add(a.ProjTaskAct);
+                    }
                 }
             }
             
@@ -155,6 +184,7 @@ public with sharing class proj_nr_form {
             insert ProjTree.root.Proj;
             insert PTs;
             insert PTAs;
+
         }
         
         catch(Exception e){
@@ -175,9 +205,9 @@ public with sharing class proj_nr_form {
         }
         else{
             list<Project_Task__c> PTs = new list<Project_Task__c>();
-            PTs = [select ID, name, description__c, start_date__c, due_date__c, Complete__c, Project__c, Assigned_To__c, External_ID__c,
-                     (select id, name, description__c, complete__c, start_date__c, due_date__c, Assigned_To__c, Project_Task__c from Project_Task_Activities__r) 
-                         From Project_Task__c Where Project__c = :selectedTemplate];
+            PTs = [select ID, name, status__c, description__c, start_date__c, due_date__c, Complete__c, Project__c, Assigned_To__c, External_ID__c,
+                     (select id, name, status__c, description__c, complete__c, start_date__c, due_date__c, Assigned_To__c, Project_Task__c from Project_Task_Activities__r Order By CreatedDate) 
+                         From Project_Task__c Where Project__c = :selectedTemplate Order By CreatedDate] ;
             project__c pr = [select id, name, description__c, service_line__c, Operating_group__c from project__c where id = :selectedTemplate];
             ProjTree.root.Proj.Description__c = pr.description__c;
             ProjTree.root.Proj.service_line__c = pr.service_line__c;
@@ -226,8 +256,8 @@ public with sharing class proj_nr_form {
     }
     public void refreshProjTree(){
         list<Project_Task__c> PTs = new list<Project_Task__c>();
-        PTs = [select ID, name, description__c, start_date__c, due_date__c, Complete__c, Project__c, Assigned_To__c, External_ID__c ,
-                 (select id, name, description__c, complete__c, start_date__c, due_date__c, Assigned_To__c, Project_Task__c from Project_Task_Activities__r) 
+        PTs = [select ID, name, description__c, status__c, start_date__c, due_date__c, Complete__c, Project__c, Assigned_To__c, External_ID__c ,
+                 (select id, name, description__c, status__c, complete__c, start_date__c, due_date__c, Assigned_To__c, Project_Task__c from Project_Task_Activities__r) 
                      From Project_Task__c Where Project__c = :ProjTree.root.Proj.id];
                      
          ProjTree.root.nodes.clear();            
@@ -255,8 +285,12 @@ public with sharing class proj_nr_form {
         return h.substring(0,len);
     
     }
+    public pageReference showChatter(){
+        //a method to refresh a div on screen does need any logic, reRender does it all
+        return null;
     
+    }
     
     //end help methods
-    public class myException extends Exception {}
+   // public class myException extends Exception {}
 }

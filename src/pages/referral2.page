@@ -5,7 +5,7 @@
 
   <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}"/>
     <!--<p>{!$Component.referralForm.ReferralLocationModalBlock.referralLocationEntry.sectionItem.sl.comp.lookupElement_lkid}</p>-->
-<apex:pageMessage rendered="{!Referral__c.Service_Location__c == null}" title="Warning - Alias missing please add an Alias" severity="warning"></apex:pageMessage>
+<apex:pageMessage rendered="{!Referral__c.Service_Location__c == null  && Referral__c.id != null}" title="Warning - Alias missing please add an Alias" severity="warning"></apex:pageMessage>
   <style type="text/css">
     .dialogLoadingSpinner {
       margin-left: 5px;
