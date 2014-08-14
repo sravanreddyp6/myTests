@@ -10,7 +10,7 @@ public with sharing class PersonalRecordController {
             this.con = [
                 SELECT Id, FirstName, LastName, Phone, Ethnicity_Picklist__c,
                        Birthdate, Guardian1_Name__c, Guardian_Phone_Number__c,
-                       Gender__c, Age__c, Family_Member_Other__c, PBS_Identifier__c
+                       Gender__c, Age__c, Family_Member_Other__c, PBS_Identifier__c, Primary_Language__c, Advanced_Directives__c, Code_Status__c
                 FROM Contact WHERE id=:value
             ];
             
@@ -61,6 +61,47 @@ public with sharing class PersonalRecordController {
     public PersonalRecordController() {
       
     }
+    
+    public String primaryDiagnosis {    	
+    	get {
+            Diagnosis__c[] d = [select Primary_Diagnosis__c from Diagnosis__c where Service_Assignment__r.Admission__r.Person_Being_Served__c=:con.Id And Service_Assignment__r.Status__c = 'Active' order by Effective_Date__c desc limit 1];    		
+    		if (opGrp =='Redwood' || opGrp =='Cambridge') {
+                if (d.size() > 0) {
+                    return d[0].primary_diagnosis__c;
+                } else
+                return null;
+    		}
+            else
+                return null;    	
+        }    
+    }
+    
+    public String primaryPhysician{
+    	get{
+    		Related_Party__c[] party = [select id, Name, Phone__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c from Related_Party__c where Person_Being_Served__c = :con.Id And Type__c =: 'Physician - Primary' limit 1];
+            if (party.size() > 0 ) {
+                return party[0].Name;
+            } else
+    		  return null;
+    	}
+    }
+
+    public String primaryPhysicianPhone{
+        get{
+        	String physicianPhone;
+            Related_Party__c[] party = [select id, Name, Phone__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c from Related_Party__c where Person_Being_Served__c = :con.Id And Type__c =: 'Physician - Primary' limit 1];
+            if (party.size() > 0 ) {
+            	if (party[0].Phone_1_Type__c == 'Work'){
+                    physicianPhone = party[0].Phone__c;
+            	}
+                else if(party[0].Phone_2_Type__c == 'Work'){
+                    physicianPhone = party[0].Phone_2__c;
+                }
+                return physicianPhone;
+            } else
+              return null;
+        }
+    }    
 
     public void uploadPhoto(){
         Attachment objA=new Attachment();

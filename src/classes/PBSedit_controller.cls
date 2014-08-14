@@ -59,6 +59,11 @@ public string dontShowFields {
 		if (TMNUser == null || TMNUser.Operating_Group__c != 'Cambridge'){
 			dontshow.Add('Current_Medications__c');
 		}
+		
+		if ( (TMNUser.Operating_Group__c.indexOf('Care') < 0) && (TMNUser.Operating_Group__c.indexOf('Meridian') < 0) ) {
+            dontshow.Add('Advanced_Directives__c');
+            dontshow.Add('Code_Status__c');			
+		}
 		return ' ' + String.Join(dontshow, ',');
 	}
 }
