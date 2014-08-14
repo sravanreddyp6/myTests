@@ -9,9 +9,33 @@
     <apex:attribute name="apId" description="The id of the action plan" type="String" required="false" assignTO="{!planId}" />
     <apex:attribute name="servAssignClose" description="The id of the current Service Assignment Closure" type="String" required="false" assignTo="{!servAssignClosure}" />
     <apex:stylesheet value="{!$Resource.pbscardcss}" />
+<!--     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/> -->
+
+    <style type="text/css">
+/*         .dropDown{ */
+/*             display:none; */
+/* 	    } */
+/* 	    .selector{ */
+/* 	        position: absolute; */
+/* 	        padding:.12em; */
+/* 	        left: 50%; */
+/* 	        /*border-radius: 10px;*/ */
+/* 	        background-color: #99ccff; */
+/* 	        border-bottom-left-radius: 1em; */
+/* 	        border-bottom-right-radius: 1em; */
+/* 	        cursor: pointer; */
+/* 	    } */
+    </style>
+
+    <script type="text/javascript">
+//        jQuery(document).ready(function(){
+//	        jQuery('.selector').click(function () {
+//	            jQuery('.dropDown').slideToggle(300);
+//	            });
+//       });
+    </script>
 
     <!--  breadcrumb -->
-    
     <div id="breadcrumb" class="breadcrumb"><a href="/">Home</a>&nbsp;>&nbsp;
     <a href="/apex/PersonsBeingServedListView">Persons Being Served</a>&nbsp;>&nbsp;
     <apex:outputLink rendered="{!parentPage != 'PBS'}" value="/apex/PersonBeingServedEditnew?id={!con.Id}">{!con.FirstName} {!con.LastName}</apex:outputLink><apex:outputText value="{!con.FirstName} {!con.LastName}" rendered="{!parentPage == 'PBS'}" />
@@ -32,16 +56,13 @@
     <apex:outputPanel id="fidelityChecklistText" rendered="{!parentPage == 'FidelityChecklist'}">&nbsp;>&nbsp;Fidelity Checklist</apex:outputPanel>
     <apex:outputPanel id="servAssignCloseText" rendered="{!parentPage == 'ServAssignClose'}">&nbsp;>&nbsp;Service Assignment Closure</apex:outputPanel>
     <apex:outputPanel id="servAssignCloseApprovalLink" rendered="{!parentPage == 'ServAssignCloseApproval'}">&nbsp;>&nbsp;<a href="/{!servAssignClose}">Service Assignment Closure</a></apex:outputPanel>
-    <apex:outputPanel id="servAssignCloseApprovalText" rendered="{!parentPage == 'ServAssignCloseApproval'}">&nbsp;>&nbsp;Service Assignment Closure: Approval</apex:outputPanel>
-    
-       </div>  
+    <apex:outputPanel id="servAssignCloseApprovalText" rendered="{!parentPage == 'ServAssignCloseApproval'}">&nbsp;>&nbsp;Service Assignment Closure: Approval</apex:outputPanel>    
+    </div>  
     <br />
     
-    
-
     <div style="background-color:#99ccff !important;">        
     <apex:form >
-                    <table style="vertical-align:middle" width="100%" border="0" >
+        <table style="vertical-align:middle" width="100%" border="0" >
                         <tr>
                         <apex:outputLabel rendered="{!hasPhoto}">
                         <td style="text-align:left; width:110px;padding-left:10px" ><!--  photo -->
@@ -50,33 +71,47 @@
                         </apex:outputLabel>
                         
                         <td style="text-align:left; padding-left:10px;" ><!--  personal info -->
-                        <span class="pbstitle">Person Being Served</span><br />
                         <span class="pbsname">{!con.FirstName}  {!con.LastName}</span>
                         <table cellpadding="5" >
                         <tr>
-                            <td colspan="2"><b>Person Number:</b>&nbsp;<apex:outputText value="{!con.PBS_Identifier__c}" />&nbsp;&nbsp;<b>DOB:</b>&nbsp;<apex:outputText id="txtdob" value="{0, date, MM/dd/yyyy}"><apex:param value="{!con.Birthdate}" /></apex:outputText>&nbsp;&nbsp;
-                            <b>Age:</b>&nbsp;<apex:outputText id="txtage" value="{!con.Age__c}" />
-                            </td>
-                            <td><b>Phone:</b></td><td style="white-space: nowrap;"><apex:outputText value="{!con.phone}"/></td>
+                            <td><b>Person Number:</b>&nbsp;<apex:outputText value="{!con.PBS_Identifier__c}" /></td>
+                            <td><b>Ethnicity:</b>&nbsp;<apex:OutputText value="{!con.Ethnicity_Picklist__c}"/></td>
                             <apex:outputLabel rendered="{!guardianCount>0}">
-                            <td><b>Guardian:</b></td><td><apex:OutputText value="{!con.Guardian1_Name__c}"/></td>
+                            <td><b>Guardian Name:</b>&nbsp;<apex:OutputText value="{!con.Guardian1_Name__c}"/></td>
                             </apex:outputLabel>
-                            <apex:outputLabel rendered="{!con.Family_Member_Other__c != ''}">
-                            <td><b>Other Family Members:</b></td><td><apex:OutputText value="{!con.Family_Member_Other__c}"/></td>
+                            <apex:outputLabel rendered="{!primaryPhysician != ''}">
+                            <td><b>Primary Physician Name:</b>&nbsp;<apex:outputText value="{!primaryPhysician}" /></td>
                             </apex:outputLabel>
                         </tr>
                         <tr>
-                            <td colspan="2"><b>Ethnicity:</b>&nbsp;<apex:OutputText value="{!con.Ethnicity_Picklist__c}"/></td>
-                            <td><b>Gender:</b></td><td><apex:OutputText value="{!con.Gender__c}"/></td>
+                            <td><b>DOB:</b>&nbsp;<apex:outputText id="txtdob" value="{0, date, MM/dd/yyyy}"><apex:param value="{!con.Birthdate}" /></apex:outputText></td>
+                            <td><b>Primary Language:</b>&nbsp;<apex:OutputText value="{!con.Primary_Language__c}"/></td>
                             <apex:outputLabel rendered="{!guardianCount>0}">
-                            <td><b>Guardian Phone:</b></td><td style="white-space: nowrap;"><apex:OutputText value="{!con.Guardian_Phone_Number__c}"/></td>
+                            <td><b>Guardian Phone:</b>&nbsp;<apex:OutputText value="{!con.Guardian_Phone_Number__c}"/></td>
                             </apex:outputLabel>
-                            <apex:outputLabel rendered="{!con.Family_Member_Other__c != ''}">
-                            <td>&nbsp;</td>
+                            <apex:outputLabel rendered="{!primaryPhysicianPhone != ''}">
+                            <td><b>Primary Physician Phone:</b>&nbsp;<apex:outputText value="{!primaryPhysicianPhone}" /></td>
                             </apex:outputLabel>
                         </tr>
-                        </table><br />
-                        </td> <!--  personal info -->
+                        <tr>
+                            <td><b>Age:</b>&nbsp;<apex:outputText id="txtage" value="{!con.Age__c}" /></td>
+                            <td><b>Primary Diagnosis:</b>&nbsp;<apex:outputText value="{!primaryDiagnosis}" /></td>
+                            <apex:outputLabel rendered="{!con.Family_Member_Other__c != ''}">
+                            <td><b>Other Family Members:</b>&nbsp;<apex:OutputText value="{!con.Family_Member_Other__c}"/></td>
+                            </apex:outputLabel>
+                            <apex:outputLabel rendered="{!con.Advanced_Directives__c}">
+                            <td><b>Advanced Directives:</b>&nbsp;<apex:outputLabel value="{!HTMLENCODE('Yes')}" /></td>
+                            </apex:outputLabel>
+                        </tr>
+                        <tr>
+                            <td><b>Gender:</b>&nbsp;<apex:OutputText value="{!con.Gender__c}"/></td>
+                            <td></td>
+                            <td></td>
+                            <apex:outputLabel rendered="{!con.Code_Status__c != ''}">
+                            <td><b>Code Status:</b>&nbsp;<apex:outputLabel value="{!con.Code_Status__c}" /></td>
+                            </apex:outputLabel>                            
+                        </tr> </table>
+                        </td>
                         
                         <td style="padding-right:100px; vertical-align:middle"> <!--  service links -->
                         
@@ -116,10 +151,19 @@
                         </table>    
                         </td>
                        </tr>
-                       </table>    
-
-            
-    </apex:form>
-    </div>
-    
+<!--  below row can be used to put some more additional info on the blueCard. Logic is added into this component to toggle hide for this row. -->
+<!--                     <tr class = "dropDown"> -->
+<!--                        <td></td> -->
+<!--                        <td style="text-align:left; padding-left:10px;" >  -->
+<!-- 	                       <table cellpadding="5"> -->
+<!-- 	                        <tr><td></td></tr></table> -->
+<!--                        </td> -->
+<!--                        <td></td> -->
+<!--                     </tr>  dropdown row -->
+        </table>
+<!-- 	    <span class="selector"> -->
+<!-- 	        <apex:image url="{!URLFOR($Resource.arrowUpDown)}" style="height:1.2em"/> -->
+<!-- 	    </span>	     -->
+	</apex:form>
+	</div>
 </apex:component>
