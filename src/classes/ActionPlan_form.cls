@@ -560,7 +560,7 @@ public pagereference mySave(){
         
     public ActionPlan_Form(ApexPages.StandardController controller) {
         if(!test.isRunningTest()){
-            controller.addFields(new List<String> {'Service_Assignment__r.Service_Location__r.Service_Value__c'});
+            controller.addFields(new List<String> {'Service_Assignment__r.Service_Location__r.Service_Value__c', 'Service_Assignment__r.Service_location__r.ProgramID__c'});
         }
         ActionPlan = (Action_Plan__c)controller.getRecord();
         
@@ -576,7 +576,8 @@ public pagereference mySave(){
         GoalAlias = 'Goal';
         ObjAlias = 'Objective';
         ActAlias = 'Action';
-        if(ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c != null && ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c =='ABI'){        
+        system.debug( 'Program is: ' + ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c );
+        if(ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c != null && ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c =='ABI' && ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c != '114165002'){        
             GoalAlias = 'Problem';
             ObjAlias = 'Goal';
             ActAlias = 'Intervention';

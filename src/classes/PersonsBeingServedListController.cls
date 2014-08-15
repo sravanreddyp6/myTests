@@ -243,7 +243,8 @@ public with sharing class PersonsBeingServedListController {
                     Service_Assignment__c,
                     Service_Assignment__r.Person_Being_Served__r.Account.OwnerID,
                     Service_Assignment__r.Admission__r.State__c,
-                    Service_Assignment__r.Admission__r.Status__c
+                    Service_Assignment__r.Admission__r.Status__c,
+                    Service_assignment__r.service_location__r.programid__c
                 FROM action_plan__c
                 WHERE Service_Assignment__r.Person_Being_Served__r.ID in :contactIds
                 and     status__c = 'Active Final'
