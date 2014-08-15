@@ -6,6 +6,7 @@
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 <apex:variable value="{!$ObjectType.Action_Plan_Worksheet__c.accessible}" var="vfVarCanAccessWS"/>
 <apex:variable value="{!$User.Operating_Group__c == 'Cambridge'}" var="vfVarIsCB"/>
+<apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM"/>
 
 <style>
     .pbButton {
@@ -145,10 +146,10 @@
         <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!!editSA || (editSA && serviceLocation != null)}"  />
         <apex:inputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA && serviceLocation = null}"  />
         <apex:outputField value="{!theServAssign.Medical_Record_Number__c}" />
-        <apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA}"  />
-        <apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA}"  required="{!episodeReq}"/>
-        <apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation}" />
-        <apex:pageblocksectionitem rendered="{!editSA && !showLocation}"  >
+        <apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA && !vfVarIsCM}"  />
+        <apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !vfVarIsCM}"  required="{!episodeReq}"/>
+        <apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM}" />
+        <apex:pageblocksectionitem rendered="{!editSA && !showLocation && !vfVarIsCM}"  >
         <apex:outputLabel value="Model" for="modelfield" />
         <apex:actionregion >
         <apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" >
@@ -199,7 +200,7 @@
         <apex:outputField value="{!theServAssign.Medical_Record_Number__c}" />        
         <apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA}"  />        
-        <apex:pageblocksectionitem rendered="{!editSA}"  >
+        <apex:pageblocksectionitem rendered="{!editSA && !vfVarIsCM}"  >
         <apex:outputLabel value="Model" for="modelfield" />
         <apex:actionregion >
         <apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" >
