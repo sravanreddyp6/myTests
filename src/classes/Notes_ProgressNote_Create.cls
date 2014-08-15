@@ -18,6 +18,8 @@ public with sharing class Notes_ProgressNote_Create {
 	public RecordType defaultRt { get; set; }
 
     private Final Progress_Note__c pn;
+    
+    
 
 
 //contructs
@@ -42,11 +44,20 @@ public with sharing class Notes_ProgressNote_Create {
             
         }
         pn = (Progress_Note__c) controller.getRecord();
-        // If Progress Note is AZ-OPT, we have to default some fields here
+        
+        ID saID = ApexPages.currentPage().getParameters().get('service_assignment');
+        Service_Assignment__c sa = [select id, name, service_location__r.programid__c from service_assignment__c where id = :saID LIMIT 1];
+        
+        // If Progress Note is AZ-OPT, we have to default some fields here, but only for non-CM AZ
         if (myState == 'AZ') {
-            pn.Number_of_Required_Signatures__c = 1;
-            pn.RecordTypeId = AZ_OPT_ID;
-        } 
+        	if ( sa.service_location__r.programid__c != '114165002') {
+            	pn.Number_of_Required_Signatures__c = 1;
+            	pn.RecordTypeId = AZ_OPT_ID;
+        	} else {
+        		pn.RecordTypeId = SHIFT_NOTE_ID;
+        	}
+        } 	
+        
         
         // get the user's operating group
         //TMN_User__c currUserTMN = [ select operating_group__c from TMN_User__c where Salesforce_User_Account__c = :UserInfo.getUserId() LIMIT 1];
@@ -55,7 +66,7 @@ public with sharing class Notes_ProgressNote_Create {
         if (currUser != null ) {
             if (( myState == 'MN' || myState == 'IN' || myState == 'CA') && currUser.Operating_Group__c == 'Redwood') {
                 pn.RecordTypeId = SHIFT_NOTE_ID;
-                
+                // special case for CM Ludlow is handled above in AZ
             }
         } else {
             // add error to page that shift note cannot be created
