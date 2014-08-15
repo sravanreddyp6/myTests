@@ -80898,6 +80898,12 @@
         <errorMessage>Age Requirement is required when Can Be Placed With Other Children option is checked.</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>Closed_Admitted_NoServiceLoc</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;Closed&apos;) &amp;&amp; ISPICKVAL(  Close_Reason__c , &apos;Admitted&apos;) &amp;&amp; ISBLANK(Service_Location__c)</errorConditionFormula>
+        <errorMessage>An Alias is required when closing and admitted referral</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>Closed_Date_Required_when_status_is_clos</fullName>
         <active>true</active>
         <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;Closed&apos;)  &amp;&amp;  ISNULL(Close_Date__c)</errorConditionFormula>
