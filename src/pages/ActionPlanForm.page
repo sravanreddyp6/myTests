@@ -5,7 +5,7 @@
 <apex:includeScript value="{!URLFOR($Resource.jQueryTabSlideOut, 'js/jquery.tabSlideOut.v1.3.js')}"/>
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 
-<apex:variable value="{!Action_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__r.MailingState = 'Arizona' || $User.Operating_Group__c ='Cambridge'}" var="hideObjType"/>
+<apex:variable value="{! (Action_Plan__c.Service_Assignment__r.Admission__r.State__c = 'Arizona' && Action_Plan__c.Service_Assignment__r.Service_location__r.ProgramID__c != '114165002') || $User.Operating_Group__c ='Cambridge'}" var="hideObjType"/>
 
 <apex:variable value="{!$ObjectType.Action_Plan_Worksheet__c.accessible}" var="vfVarCanAccessWS"/>
 
@@ -557,7 +557,7 @@ function highlightButtons ( btype, sfid, on )
                     </td>                    
                     <td>
                     
-                        <apex:outputLabel styleClass="tmnHelpText" >What measurable achievements will demonstrate this Person Being Served’s progress towards this {!GoalAlias}?<br /></apex:outputLabel>       
+                        <apex:outputLabel styleClass="tmnHelpText" >What measurable achievements will demonstrate this Person Being Served's progress towards this {!GoalAlias}?<br /></apex:outputLabel>       
                         <apex:outputPanel layout="block" id="theObj" style="padding-bottom:20px">
                             <apex:inputField styleClass="txtarea" rendered="{!editMode}" value="{!planStuff[g].GoalObjs[o].theObj.Description__c}"/>  
                             <apex:outputField rendered="{! !editMode}" value="{!planStuff[g].GoalObjs[o].theObj.Description__c}"/> 
