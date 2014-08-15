@@ -143,7 +143,8 @@ public with sharing class PBS_Controller_EditcontrollerTest {
 			//Flavor Specific assertions
 			system.assert(editcontroller.canViewFamilyInfo); //Cambridge flavor can see Family info
 			system.assert(editcontroller.showDiagnosis); // Cambrdige flavor can see Diagnosis Section
-			system.assertEquals(string.ISBLANK(editcontroller.dontShowFields), True); // No fields are hidden specifically for Cambridge flavor
+			system.assertEquals(editcontroller.dontShowFields.Contains('Advanced_Directives__c'), True); //this is available for CM only
+			system.assertEquals(editcontroller.dontShowFields.Contains('Code_Status__c'), True); //this is available for CM only
 			system.assertEquals(editcontroller.TMNUser.id,cambridgetmnUser.id); // Making sure the returned TMN User in controller is same as the one created in test class
 		}
 	        
@@ -246,7 +247,9 @@ public with sharing class PBS_Controller_EditcontrollerTest {
 			system.Assert( editcontroller.currentURL.contains('edit') == true);
 	        system.assertEquals(false, editcontroller.canViewFamilyInfo); //Redwood flavor cannot see Family info
 	        system.assert(editcontroller.showDiagnosis); // Redwood flavor should see Diagnosis Section
-	        system.assertEquals(editcontroller.dontShowFields.Contains('Current_Medications__c'), True); // Checking the hidden fields for Care Meridian flavor 
+	        system.assertEquals(editcontroller.dontShowFields.Contains('Current_Medications__c'), True); // Checking the hidden fields for Redwood flavor
+            system.assertEquals(editcontroller.dontShowFields.Contains('Advanced_Directives__c'), True); //this is available for CM only
+            system.assertEquals(editcontroller.dontShowFields.Contains('Code_Status__c'), True); //this is available for CM only	         
 	        system.assertEquals(editcontroller.TMNUser.id,redwoodtmnUser.id); // Making sure the returned TMN User in controller is same as the one created in test class
 		}
 	}
