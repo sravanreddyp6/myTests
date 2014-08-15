@@ -121,9 +121,12 @@
         <apex:pageBlockSectionItem rendered="{!editSA && serviceLocation = null}" >
             <apex:outputlabel value="Location of Service" />
             <apex:actionregion >
+                <apex:outputPanel layout="block" styleClass="requiredInput">
+                <apex:outputpanel styleClass="requiredBlock"/>            
                 <c:CustomLookup id="sl" formID="myFRM" uniqueId="searchLocation" type="Service_Location__c" parentId="{!theServAssign.Service_Location__c}"
                                 parentName="{!serviceLocation.Name}" filters="name,city__c,state__c"
                                 return="ID, program__c,setting__c,service_value__c,phone__c,street__c,city__c,state__c,zip__c" />
+                </apex:outputPanel>
             </apex:actionregion>
         </apex:pageBlockSectionItem>
         <apex:pageblocksectionitem rendered="{!!editSA || (editSA && serviceLocation != null) }"  >        
@@ -172,9 +175,12 @@
         <apex:pageBlockSectionItem rendered="{!editSA && serviceLocation = null}" >
             <apex:outputlabel value="Location of Service" />
             <apex:actionregion >
+                <apex:outputPanel layout="block" styleClass="requiredInput">
+                <apex:outputpanel styleClass="requiredBlock"/>            
                 <c:CustomLookup id="sl" formID="myFRM" uniqueId="searchLocation" type="Service_Location__c" parentId="{!theServAssign.Service_Location__c}"
                                 parentName="{!serviceLocation.Name}" filters="name,city__c,state__c"
                                 return="ID, program__c,setting__c,service_value__c,phone__c,street__c,city__c,state__c,zip__c" />
+                </apex:outputPanel>
             </apex:actionregion>
         </apex:pageBlockSectionItem>
         <apex:pageblocksectionitem rendered="{!!editSA || (editSA && serviceLocation != null) }"  >        
