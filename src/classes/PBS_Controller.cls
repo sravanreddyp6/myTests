@@ -36,8 +36,8 @@ public string dontShowFields {
 			dontshow.Add('Current_Medications__pc');
 		}
         if ( (TMNUser.Operating_Group__c.indexOf('Care') < 0) && (TMNUser.Operating_Group__c.indexOf('Meridian') < 0) ) {
-            dontshow.Add('Advanced_Directives__c');
-            dontshow.Add('Code_Status__c');         
+            dontshow.Add('Advanced_Directives__pc');
+            dontshow.Add('Code_Status__pc');         
         }
 		return ' ' + String.Join(dontshow, ',');
 	}
