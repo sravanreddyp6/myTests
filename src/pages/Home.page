@@ -151,6 +151,9 @@
 	    background: #7AC143 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_desc_disabled.png') }') no-repeat center right !important;
 	    padding-right: 20px !important;
 	}
+	.sorting_disabled {
+		background: #7AC143 !important;
+	}
 	.paginate_button {
 		margin-left: 5px;
 	    border-radius: 12%; 
@@ -254,7 +257,7 @@
    <apex:pageBlock title="Approvals">
        <!-- a href="/04i">View All</a> <br /> <br /--->
         <apex:pageBlockTable value="{!ListApprovals}" var="app" id="approvalTable" styleClass="dataTable" >
-            <apex:column headerValue="Action"><a href="/{!app.TAction}/e?et=REASSIGN&retURL=%2Fhome%2Fhome.jsp"> Reassign</a> | <a href="/{!app.TRelated}" target="_blank"> Review</a></apex:column>
+            <apex:column headerValue="Action" ><a href="/{!app.TAction}/e?et=REASSIGN&retURL=%2Fhome%2Fhome.jsp"> Reassign</a> | <a href="/{!app.TRelated}" target="_blank"> Review</a></apex:column>
             <apex:column headerValue="Item to Approve"><a href="/{!app.TRelated}">{!app.TobjName}</a></apex:column>
             <apex:column headerValue="Type">{!app.TType}</apex:column>
             <apex:column headerValue="Created By"><a href="/{!app.MostRecent}">{!app.LMName}</a></apex:column>
@@ -317,13 +320,17 @@
     });
   </script>
   
-  <script type="text/javascript" language="javascript" src="{!URLFOR($Resource.jquery, 'js/jquery.js')}"></script>
-  <script type="text/javascript" language="javascript" src="{!URLFOR($Resource.dataTables, 'js/jquery.dataTables.js')}"></script>
   <script type="text/javascript" language="javascript">
   	  var j$ = jQuery.noConflict();
 	   j$('table.dataTable').dataTable({
-	    sPaginationType: "full_numbers"
-	    
+	    'aoColumnDefs': [{
+        'bSortable': false,
+        'aTargets': [0]
+    	}],
+    	
+    	sPaginationType: "full_numbers"
+	     
 	});
+	
   </script>
 </apex:page>
