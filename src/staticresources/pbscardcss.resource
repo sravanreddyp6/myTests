@@ -17,3 +17,4 @@
         
         .breadcrumb, .breadcrumb a, .breadcrumb a.visited { color: #6699ff !important; text-decoration: none }
         .breadcrumb a:hover { text-decoration: underline }
+        .stick { position:fixed !important; top:0px; width:100%; z-index:3000; left:0;}
