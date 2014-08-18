@@ -55,9 +55,15 @@ private boolean TMNUser_set = false;
 // Filter some of the Additional Info Fields
 public string dontShowFields {
 	get {
+		system.debug('OpGroup:' + TMNUser.Operating_Group__c);
 		List<string> dontshow = new List<string>();
 		if (TMNUser == null || TMNUser.Operating_Group__c != 'Cambridge'){
 			dontshow.Add('Current_Medications__c');
+		}
+		
+		if ( (TMNUser.Operating_Group__c.indexOf('Care') < 0) && (TMNUser.Operating_Group__c.indexOf('Meridian') < 0) ) {
+            dontshow.Add('Advanced_Directives__c');
+            dontshow.Add('Code_Status__c');			
 		}
 		return ' ' + String.Join(dontshow, ',');
 	}

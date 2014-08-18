@@ -18,7 +18,7 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>Edit</actionName>
-        <content>Assessment_RiskForm_Redirect</content>
+        <content>Assessment_RiskForm_Redirect_Edit</content>
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
         <type>Visualforce</type>
     </actionOverrides>
@@ -701,6 +701,12 @@ Delete Me</description>
         <errorMessage>You must select an Interval value to create a new CANS assessment.</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>Locked</fullName>
+        <active>true</active>
+        <errorConditionFormula>Locked__c</errorConditionFormula>
+        <errorMessage>Locked Assessments Can Not be Updated</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>RISK_Locked</fullName>
         <active>true</active>
         <errorConditionFormula>LOWER(TEXT(Status__c))=&apos;active final&apos; &amp;&amp;
@@ -759,6 +765,6 @@ ISBLANK(Approval_Date__c) &amp;&amp;
         <masterLabel>View Assessment</masterLabel>
         <openType>sidebar</openType>
         <protected>false</protected>
-        <url>/apex/AssessmentForm?id={!Assessment__c.Id}</url>        
+        <url>/apex/AssessmentForm?id={!Assessment__c.Id}</url>
     </webLinks>
 </CustomObject>

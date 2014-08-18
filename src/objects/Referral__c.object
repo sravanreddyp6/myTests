@@ -1243,7 +1243,6 @@
     </fields>
     <fields>
         <fullName>Close_Date__c</fullName>
-        <defaultValue>TODAY()</defaultValue>
         <externalId>false</externalId>
         <label>Close Date</label>
         <required>false</required>
@@ -80897,6 +80896,12 @@
         <errorConditionFormula>AND( Can_Be_Placed_With_Other_Children__c == True,  ISPICKVAL(If_Yes_Age_Requirements__c, &apos;&apos;))</errorConditionFormula>
         <errorDisplayField>If_Yes_Age_Requirements__c</errorDisplayField>
         <errorMessage>Age Requirement is required when Can Be Placed With Other Children option is checked.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Closed_Admitted_NoServiceLoc</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;Closed&apos;) &amp;&amp; ISPICKVAL(  Close_Reason__c , &apos;Admitted&apos;) &amp;&amp; ISBLANK(Service_Location__c)</errorConditionFormula>
+        <errorMessage>An Alias is required when closing and admitted referral</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Closed_Date_Required_when_status_is_clos</fullName>
