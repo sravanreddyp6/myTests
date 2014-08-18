@@ -7,12 +7,12 @@ private class Notes_ProgressNote_Create_TEST {
 		TMN_Generic_Core_TestData coredata = new TMN_Generic_Core_TestData();
 		coredata.loadData( 'AZ');
 		
-		ID newSLid1a = createServiceLocation( '123456', '123456001', 'New Service Location 1a', 1, 'AZ', '1-123456a' );
-		coredata.theSA.service_location__c = newSLid1a;
+		ID newSLid1 = createServiceLocation( '123456', '123456001', 'New Service Location 1', 1, 'AZ', '1-123456' );
+		ID newSLid1a = createServiceLocation( '114165', '114165002', 'New Service Location 1a', 1, 'AZ', '1-123456a' );
+		coredata.theSA.service_location__c = newSLid1;
 		update coredata.theSA;
 		
 		Progress_Note__c p = new Progress_Note__c();
-        
         ApexPages.StandardController sc = new ApexPages.StandardController(p);
 
         PageReference pageRef = Page.Notes_ProgressNote_Create;
@@ -27,6 +27,22 @@ private class Notes_ProgressNote_Create_TEST {
         System.Assert( objNpncTest.getrtoptions().size() > 0 );
         System.Assert( objNpncTest.rtOptions.size() > 0 );
         System.AssertEquals(null, objNpncTest.redirect());
+
+		coredata.theSA.service_location__c = newSLid1a;
+		update coredata.theSA;
+
+		Progress_Note__c p2 = new Progress_Note__c();
+        ApexPages.StandardController sc2 = new ApexPages.StandardController(p2);
+
+        PageReference pageRef2 = Page.Notes_ProgressNote_Create;
+        Test.setCurrentPageReference(pageRef2);
+
+        ApexPages.currentPage().getParameters().put('state', 'AZ');
+        ApexPages.currentPage().getParameters().put('person', coredata.contactID);
+        ApexPages.currentPage().getParameters().put('service_assignment', coredata.theSA.ID);
+        Notes_ProgressNote_Create objNpncTest2 = new Notes_ProgressNote_Create(sc2);
+		
+		System.Assert(objNpncTest2.redirect() != null); // redirect to shift note
 
         }
         
