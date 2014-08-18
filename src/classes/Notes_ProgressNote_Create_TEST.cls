@@ -1,0 +1,42 @@
+@isTest(SeeAllData=true)
+private class Notes_ProgressNote_Create_TEST {
+
+    static testMethod void myUnitTest() {
+
+
+		TMN_Generic_Core_TestData coredata = new TMN_Generic_Core_TestData();
+		coredata.loadData( 'AZ');
+		
+		ID newSLid1a = createServiceLocation( '123456', '123456001', 'New Service Location 1a', 1, 'AZ', '1-123456a' );
+		coredata.theSA.service_location__c = newSLid1a;
+		update coredata.theSA;
+		
+		Progress_Note__c p = new Progress_Note__c();
+        
+        ApexPages.StandardController sc = new ApexPages.StandardController(p);
+
+        PageReference pageRef = Page.Notes_ProgressNote_Create;
+        Test.setCurrentPageReference(pageRef);
+
+        ApexPages.currentPage().getParameters().put('state', 'AZ');
+        ApexPages.currentPage().getParameters().put('person', coredata.contactID);
+        ApexPages.currentPage().getParameters().put('service_assignment', coredata.theSA.ID);
+        Notes_ProgressNote_Create objNpncTest = new Notes_ProgressNote_Create(sc);
+        System.Assert( objNpncTest.myRTs.size() > 0 );
+        System.Assert( objNpncTest.getmyrts().size() > 0 );
+        System.Assert( objNpncTest.getrtoptions().size() > 0 );
+        System.Assert( objNpncTest.rtOptions.size() > 0 );
+        System.AssertEquals(null, objNpncTest.redirect());
+
+        }
+        
+        static ID createServiceLocation( string alias, string pgmCode, string pgmVal, integer facility, string slState, string uid ) {
+		
+		Service_location__c newSL = new Service_location__c( alias__c = alias, programid__c = pgmCode, program__c = pgmVal, facilityid__c = facility, state__c = slState, uniqueid__c = uid);
+		insert newSL;
+		
+		return newSL.Id;
+		
+	}
+	
+}
