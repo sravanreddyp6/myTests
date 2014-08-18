@@ -12,53 +12,32 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
        //fStartDate = system.today();
        allCount = 0;
        
-       getStateList();
-       getProgramList();
-       selStates = new List<String>();
-       selPrograms = new List<String>();
+       getUserList();
+       selUsers = new List<String>();
        
     } 
     
-    private List<SelectOption> getStateList() {
-    	
-    	states = new List<selectoption>();
-    	List<AggregateResult> statelist = [ select state__c, count(id) from service_location__c where state__c <> '' group by state__c order by state__c ];
-    	string statecode = '';
-    	
-    	// look up in custom settings table to get state name
-    	
-    	for (AggregateResult ag : statelist )
-    	{
-    	    statecode = (string)ag.get('state__c');
-    		states.Add( new selectOption( statecode, statecode) ) ;
-    	}
-    
-    	return states;
-    }
-    
-     private List<SelectOption> getProgramList() {
-    	
-    	programs = new List<selectoption>();
-    	List<Service_Location__c> proglist = [ select program__c from service_location__c order by program__c ];
-    	
-    	
-    	for (Service_Location__c sl : proglist )
-    	{
-    	    
-    		programs.Add( new selectOption( sl.Program__c, sl.program__c) ) ;
-    	}
-    	
-    	
-    	return programs;
-    }
-    
     public integer allCount{get; set;}
-    public List<SelectOption> states { get;set; }
-    public List<SelectOption> programs { get; set; }
-    public List<String> selStates {get; set;}
-    public List<String> selPrograms {get; set;}
-    public string uiselStates { get; set;}
-    public string uiselProgs { get; set; }
+    public List<SelectOption> users { get; set; }
+    public List<String> selUsers {get; set;}
+    public string uiselUsers { get; set; }
+
+
+    private List<SelectOption> getUserList() {
+    	
+    	users = new List<selectoption>();
+    	//proglistStates = new List<ServiceLocPrograms>();
+    	List<User> userList = [ select Id, FirstName, LastName from User ];
+    	
+    	for (User u : userList)
+    	{
+    		users.Add( new selectOption( u.Id, u.LastName) ) ;
+    	}
+    	
+    	
+    	return users;
+    }
+    
     
     public PageReference runReport(){
         if(fEndDate < fStartDate){
@@ -69,30 +48,11 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
                        
         PNResults.clear();
         listDataForCDU.clear();         
-        selStates = uiselStates.split(',');
-        selPrograms = uiselProgs.split(',');                                                                            
-        system.debug('selstates: ' + selStates);
-        system.debug('selprograms:' + selPrograms);
-        List<Service_Assignment__c> SAResults = [ SELECT Id, phase__c, admission__r.state__c
-         			from Service_Assignment__c where 
-        					((Start_Date__c <= :fStartDate  AND (end_date__c >= :fStartDate or end_date__c = null)) OR   
-                             start_date__c <= :fEndDate)  
-                             and admission__r.state__c in :selStates
-                             and program_detail__c in :selPrograms
-                         ];
-        
-        System.debug('SAs in SAResults: ' + SAResults.size());
-                       
-        // create a map of the service assignments
-        Map<Id, Service_Assignment__c> SAMap = new Map<ID, Service_Assignment__c>();
-        for ( Service_Assignment__c s : SAResults) {
-        	SAMap.put(s.id, s);
-        }
+        selUsers = uiselUsers.split(',');                                                                           
                                       
                                       
         Datetime startdt = DateTime.newInstance( fStartDate, Time.newInstance(0,0,0,0));
         Datetime enddt = DateTime.newInstance ( fEndDate, Time.newInstance(23, 59, 59, 999));        
-        system.debug( 'states:' + selStates + ', programs:' + selPrograms);
         System.debug( 'starting: ' + startdt + ' ending: ' + enddt );                          
         PNResults = [ SELECT 
         				service_assignment__c,
@@ -108,14 +68,12 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
            			 	Total_Time__c      
                        FROM Progress_Note__c 
                        WHERE 
-                         service_assignment__c in :SAResults
-                         and disregard_note__c = false
+                         disregard_note__c = false
                          and Start_time__c >= :startdt  AND  
                             Start_time__c <= :enddt ];
  
                                            
-            DataForCDU dataForACdu;
-            Service_Assignment__c pSA;                                                                   
+            DataForCDU dataForACdu;                                                              
             
             List<WrappedPn> tempPnList = new List<WrappedPn>();
 			Set<Id> users = new Set<Id>();
@@ -176,7 +134,6 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
 				if(counter==1) {
 					clinician = p.thePn.CreatedBy.Name;
 					pbs = p.thePn.Person_Being_Served__r.Name;
-					saId = p.thePn.Service_Assignment__c;
 					totalMinutes = p.thePn.Total_Time__c.format();
 					hours = (p.thePn.Total_Time__c / 60).format();
 				}
