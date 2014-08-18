@@ -1,0 +1,73 @@
+<apex:page standardController="Project__c" extensions="proj_nr_activity_rpt" sidebar="false" >
+<style>
+#wrapper{ padding: 10px;}
+.tbl{width: 100%; font-size: 15px;  border: 1px solid black; border-collapse: collapse;}
+.tbl tr:hover{ outline: blue 2px solid;}
+.tbl th{border-bottom: 2px solid black; padding: 10px; }
+.tbl td{ vertical-align: top;}
+.tbl td{ padding: 5px;}
+.taskPad{padding-left: 15px !important;}
+.actPad{padding-left: 25px !important;}
+.projRow td{background: lightblue; border-bottom: 1px solid black;}
+.taskRow td{border-bottom: 1px solid gray;}
+.actRow td{border-bottom: 1px solid gray;}
+</style>
+<h1>Project Activty Report </h1>
+<br/>
+<br/>
+<div id="wrapper">
+<table class="tbl" cellspacing="0">
+    <thead>
+        <th></th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Start</th>
+        <th>Due</th> 
+        <th>Progress</th>     
+        <th>Interested Parties</th>      
+        <th>Service Line</th> 
+    </thead>
+
+    <apex:repeat value="{!allData.root.nodes}" var="p">
+        <tr class="projRow">
+            <td></td>
+            <td><apex:outputLink value="/{!p.proj.id}"><apex:outputField value="{!p.Proj.Name}"/></apex:outputLink> </td>
+            <td>{!p.Proj.Description__c}</td>
+            <td><apex:outputField value="{!p.Proj.Start_Date__c}"/></td>
+            <td><apex:outputField value="{!p.Proj.Due_Date__c}"/></td>        
+            <td><apex:outputField value="{!p.Proj.Complete__c}"/></td> 
+            <td><apex:outputField value="{!p.Proj.Interested_Party_1__c}"/>
+                <br/><apex:outputField value="{!p.Proj.Interested_Party_2__c}"/>
+                <br/><apex:outputField value="{!p.Proj.Interested_Party_3__c}"/></td>
+            <td><apex:outputField value="{!p.Proj.Service_Line__c}"/></td>
+        </tr>
+            <apex:repeat value="{!p.nodes}" var="t">
+                <tr class="taskRow">
+                    <td></td>
+                    <td class="taskPad"><apex:outputField value="{!t.ProjTask.Name}"/></td>
+                    <td>{!t.ProjTask.Description__c}</td>
+                    <td><apex:outputField value="{!t.ProjTask.Start_Date__c}"/></td>
+                    <td><apex:outputField value="{!t.ProjTask.Due_Date__c}"/></td>        
+                    <td><apex:outputField value="{!t.ProjTask.Complete__c}"/></td>
+                    <td></td>  
+                    <td></td> 
+                </tr> 
+                <apex:repeat value="{!t.nodes}" var="a">
+                    <tr class="actRow">
+                        <td></td>
+                        <td class="actPad"><apex:outputField value="{!a.ProjTaskAct.Name}"/></td>
+                        <td>{!a.ProjTaskAct.Description__c}</td>
+                        <td><apex:outputField value="{!a.ProjTaskAct.Start_Date__c}"/></td>
+                        <td><apex:outputField value="{!a.ProjTaskAct.Due_Date__c}"/></td>        
+                        <td><apex:outputField value="{!a.ProjTaskAct.Complete__c}"/></td> 
+                        <td></td> 
+                        <td></td> 
+                    </tr>
+                </apex:repeat>               
+            </apex:repeat>
+    </apex:repeat>
+
+
+</table>
+</div>
+</apex:page>
