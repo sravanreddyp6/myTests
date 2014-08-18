@@ -132,12 +132,12 @@ String h = EncodingUtil.ConvertTohex(b);
         
     } 
     
-    public static Progress_Note__c createProgressNote(Service_Assignment__c sa, Admission__c adm, Service_Code__c sc, String contactId) {
+    public static Progress_Note__c createProgressNote(Service_Assignment__c sa, Admission__c adm, Service_Code__c sc, String contactId, Datetime startDateTime, Datetime endDateTime) {
         Progress_Note__c thisProgressNote = new Progress_Note__c(Service_Assignment__c = sa.Id,
                                                                     Service_Code__c = sc.Id, 
                                                                     Admission__c = adm.ID,
-                                                                    Start_Time__c = datetime.newInstance(2013, 1, 2, 13, 0, 0),
-                                                                    End_Time__c = datetime.newInstance(2013, 1, 2, 15, 0, 0),
+                                                                    Start_Time__c = startDateTime,
+                                                                    End_Time__c = endDateTime,
                                                                     Person_Being_Served__c = contactId,
                                                                     No_Approval_Needed__c = true,
                                                                     Approval_Status__c = 'Approved',
