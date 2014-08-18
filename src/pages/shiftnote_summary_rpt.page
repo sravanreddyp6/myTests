@@ -71,8 +71,8 @@
        <apex:actionRegion >
        <apex:pageBlockSection id="pbsOPTS"  title="Person Being Served" columns="1" collapsible="false" >
            <apex:outputPanel layout="block" style="padding-left: 159px;" >
-               <apex:commandLink action="{!selectAllPbs}" value="Select All" reRender="pbsOPTS, tbl_maker" oncomplete="createtbl()" />
-               <br/><apex:commandLink action="{!clearSelectedPbs}" value="Clear Selected" reRender="pbsOPTS, tbl_maker" oncomplete="createtbl()" />
+               <apex:commandLink action="{!selectAllPbs}" value="Select All" reRender="pbsOPTS, tbl_maker" status="myStatus" oncomplete="createtbl()" />
+               <br/><apex:commandLink action="{!clearSelectedPbs}" value="Clear Selected" reRender="pbsOPTS, tbl_maker" status="myStatus" oncomplete="createtbl()" />
             </apex:outputPanel>
         <apex:outputPanel >
            <br/>               
@@ -205,7 +205,7 @@
 <script>
 j$ = jQuery.noConflict();
 function createtbl(){
-    j$('.mytbl2').dataTable({"bPaginate": false, "bFilter": true, "aoColumnDefs": [
+    j$('.mytbl2').dataTable({"bPaginate": false, "bFilter": true, "bRetrieve": true, "aoColumnDefs": [
       { "sTitle": " ", "aTargets": [ 0 ] },],
 "oLanguage": {
     "sSearch": " "

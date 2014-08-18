@@ -39,6 +39,7 @@ public class TMN_Tree{
             public string helpText {get; set;}
             public boolean isNew {get; set;}
             public boolean isInserted {get; set;}
+            public boolean DeleteRecord {get; set;}
             
             //fancy tree settings            
             public boolean isSelected {get; set;}
@@ -54,6 +55,10 @@ public class TMN_Tree{
             //custom supported Objects - used for increased code readibility 
             public Clinical_Catalog_Tree_Node__c CatTreeNode {get; set;}
             public Clinical_Catalog_Element__c CatTreeEley {get; set;}
+            public Project__c Proj {get; set;}
+            public Project_Task__c ProjTask {get; set;}
+            public Task theTask {get; set;}
+            public Project_Task_Activity__c ProjTaskAct {get; set;}
             
             //end Custom objects
         //construct
@@ -70,6 +75,7 @@ public class TMN_Tree{
                 isselected = false;
                 hideCheckbox = false;
                 isNew = true;
+                DeleteRecord = false;
                 CatTreeNode = new Clinical_Catalog_Tree_Node__c ();
                 CatTreeEley = new Clinical_Catalog_Element__c ();
                             

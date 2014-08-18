@@ -59,7 +59,7 @@ public with sharing class HomePageController{
         sObjNamesSet = gSchema.keyset();
         for(String sobj:sObjNamesSet){
                  Schema.DescribeSObjectResult oSchema = gSchema.get(sobj).getDescribe();
-                 String tempName = oSchema.getName();
+                 String tempName = oSchema.getLabel();
                  String tempPrefix = oSchema.getKeyPrefix();   
                  sObjNamesMap.put(tempPrefix, tempName);   
                

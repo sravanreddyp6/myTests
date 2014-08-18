@@ -19,7 +19,7 @@ public static Id getAccountRecordType(){
             PersonBirthdate = myDate,
             PersonMailingPostalCode='12345',
             PersonMailingCity='SFO',
-            PersonMailingStateCode='AZ',
+            PersonMailingStateCode='NC',
             PersonEmail=EncodingUtil.convertToHex(crypto.generateAesKey(128)).substring(1,5).toUpperCase() + '_test@yahoo.com',
             PersonHomePhone='1234567',
             PersonMobilePhone='12345678'
@@ -57,9 +57,12 @@ public static Id getAccountRecordType(){
     }
     
     public static Referral__c createReferral(String recordType, string Status, string ReferralName, string State, Person_Being_Referred__c pbr) {
+             Service_location__c SL = new Service_location__c(name = '123', UniqueID__c ='123', FacilityID__c =123,Alias__c ='123',ProgramID__c ='123',Program__c='123');
+         insert SL;
         Referral__c ref = new Referral__c(RecordTypeId=Utility.getRecordTypeForReferral(recordType),
                                           Referral_Status__c=Status,
                                           Referral_Name__c=ReferralName,
+                                          Service_location__c = SL.id,                                          
                                           Person_Being_Referred__c=pbr.Id);
         insert ref;    
         Referral__c testRef = [SELECT Id, Name, RecordTypeId, RecordType.Name, Street_1__c, Street_2__c, City__c, State__c, Zip_Code__c, Phone__c, Email_Address__c, 
