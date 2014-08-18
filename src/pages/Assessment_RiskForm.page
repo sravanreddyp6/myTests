@@ -97,6 +97,11 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         top: -100px;
         left: 220px;
     }
+    input[id*=residentialServiceUnsupervisedHomeDuration2] {
+        position: relative;
+        top: -100px;
+        left: 220px;
+    }
     table[id*=residentialServiceUnsupervisedHomeInterval] {
         position:relative;
         top: -102px;
@@ -113,6 +118,10 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         left: 305px;
     }
     textarea[id*=residentialServiceSpecificPlan] {
+        margin-left: 25px;
+        position: relative;
+    }
+    textarea[id*=residentialServiceSpecificPlan2] {
         margin-left: 25px;
         position: relative;
     }
@@ -407,7 +416,9 @@ function toggleById(id, ms){
                 </apex:selectCheckBoxes>
             </apex:outputPanel>
             <br/>
-            <apex:outputPanel layout="none" rendered="{!(staffingRatioInFlavor && (mode!='summary' || RecDayServicesStaffingRatio.size > 0))}">
+            <!-- If state not AZ -->
+            <apex:outputPanel layout="none" rendered="{!(staffingRatioInFlavor && (mode!='summary' || RecDayServicesStaffingRatio.size > 0)
+                                                               && Assessment__c.Admission__r.State__c != 'AZ')}">
                 <b>Recommended Day Services Staffing Ratio (Rule 38 for DT&amp;H)</b> &nbsp; 
                 <apex:outputPanel rendered="{! RecDayServicesStaffingRatio.size==0  && mode !='edit'}"><br/>None</apex:outputPanel>
                 
@@ -431,8 +442,9 @@ function toggleById(id, ms){
                     <apex:inputText value="{!recommendedDayServicesStaffingRatioOther}" id="staffingRatioOther" />
                 </apex:outputPanel>
                 <br/>
-            </apex:outputPanel>
-            <apex:outputPanel layout="none" rendered="{!(dayServicesInFlavor && (mode!='summary' || displayLevel_Required_DayServices.size >0))}">
+            </apex:outputPanel>            
+            <apex:outputPanel layout="none" rendered="{!(dayServicesInFlavor && (mode!='summary' || displayLevel_Required_DayServices.size >0)
+                                                      && Assessment__c.Admission__r.State__c != 'AZ')}">
                 <span class="risk-section-subhead">Level of Services Required for Day Services</span>           
                 <apex:outputPanel rendered="{! displayLevel_Required_DayServices.size ==0 && mode!='edit' }"><br/>None</apex:outputPanel>
                 
@@ -482,6 +494,8 @@ function toggleById(id, ms){
                 </apex:outputPanel>
                 <br />
             </apex:outputPanel>
+            <!-- If state not AZ ends -->
+            
             <apex:outputPanel layout="none" rendered="{!(mode!='summary' || displayLevel_Required_ResidentialServices.size >0)}">
 
                 <span class="risk-section-subhead">Level of Support Required for Residential Services</span>
@@ -497,7 +511,8 @@ function toggleById(id, ms){
                 levelRequiredResidential
                 -->
                 
-                <apex:outputPanel rendered="{!mode='edit'}">
+                <!-- If state not AZ -->
+                <apex:outputPanel rendered="{!mode='edit' && Assessment__c.Admission__r.State__c != 'AZ'}">
                     <apex:selectCheckboxes layout="pageDirection" value="{!Level_Required_ResidentialServices}" label="Level of Support Required for Residential Services" id="residentialServiceOptions">
                      <apex:selectOption itemValue="Support person on premises at all times when individual is home"
                             itemLabel="Support person on premises at all times when individual is home" />
@@ -529,6 +544,19 @@ function toggleById(id, ms){
                     </div>
                     <apex:inputTextarea value="{!levelRequiredResidentialSpecificPlan}" id="residentialServiceSpecificPlan" cols="180" /><br /><br />
                 </apex:outputPanel>
+                <!-- If state AZ -->
+                 <apex:outputPanel rendered="{!mode='edit' && Assessment__c.Admission__r.State__c == 'AZ'}">
+                    <apex:selectCheckboxes layout="pageDirection" value="{!Level_Required_ResidentialServices}" label="Level of Support Required for Residential Services" id="residentialServiceOptions2">
+                        <apex:selectOption itemValue="Specific Plan"
+                            itemLabel="Specific Plan (Identify in detail any special arrangements which would need to be implemented in order for person to remain alone or unsupervised)" />                        
+                    </apex:selectCheckboxes>
+                    <div class="removeFromFlow" >
+                        <apex:inputText size="3" value="{!levelRequiredResidentialUnsupervisedHome}" id="residentialServiceUnsupervisedHomeDuration2" />
+                    </div>
+                    <apex:inputTextarea value="{!levelRequiredResidentialSpecificPlan}" id="residentialServiceSpecificPlan2" cols="180" /><br /><br />
+                </apex:outputPanel>
+                
+                
             </apex:outputPanel>
             </apex:pageBlock>
          
