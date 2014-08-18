@@ -1063,6 +1063,11 @@ public void loadProgramList() {
 
 
     public PageReference SaveServAssign() {
+        
+	    if (theServAssign.Service_Location__c == null || String.valueOf(theServAssign.Service_Location__c) == ''){
+	        ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,'Location of Service: You must select a value.'));
+	        return null;
+	    } 
 
       Savepoint servAssignSaveSp = Database.setSavepoint();
 
