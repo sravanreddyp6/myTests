@@ -205,13 +205,16 @@ public with sharing class proj_nr_form {
         }
         else{
             list<Project_Task__c> PTs = new list<Project_Task__c>();
-            PTs = [select ID, name, status__c, description__c, start_date__c, due_date__c, Complete__c, Project__c, Assigned_To__c, External_ID__c,
-                     (select id, name, status__c, description__c, complete__c, start_date__c, due_date__c, Assigned_To__c, Project_Task__c from Project_Task_Activities__r Order By CreatedDate) 
+            PTs = [select ID, name, status__c, description__c, start_date__c, due_date__c, Complete__c, Project__c, Assigned_To__c, External_ID__c, Reminder_Date__c, 
+                     (select id, name, status__c, description__c, complete__c, start_date__c, due_date__c, Assigned_To__c, Reminder_Date__c , Project_Task__c from Project_Task_Activities__r Order By CreatedDate) 
                          From Project_Task__c Where Project__c = :selectedTemplate Order By CreatedDate] ;
-            project__c pr = [select id, name, description__c, service_line__c, Operating_group__c from project__c where id = :selectedTemplate];
+            project__c pr = [select id, name, description__c, service_line__c, Interested_Party_1__c, Interested_Party_2__c, Interested_Party_3__c, Operating_group__c from project__c where id = :selectedTemplate];
             ProjTree.root.Proj.Description__c = pr.description__c;
             ProjTree.root.Proj.service_line__c = pr.service_line__c;
             ProjTree.root.Proj.Operating_group__c = pr.Operating_group__c ;
+            ProjTree.root.Proj.Interested_Party_1__c= pr.Interested_Party_1__c;
+            ProjTree.root.Proj.Interested_Party_2__c= pr.Interested_Party_2__c;
+            ProjTree.root.Proj.Interested_Party_3__c= pr.Interested_Party_3__c;
             
                          
             ProjTree.root.nodes.clear();            
@@ -256,8 +259,8 @@ public with sharing class proj_nr_form {
     }
     public void refreshProjTree(){
         list<Project_Task__c> PTs = new list<Project_Task__c>();
-        PTs = [select ID, name, description__c, status__c, start_date__c, due_date__c, Complete__c, Project__c, Assigned_To__c, External_ID__c ,
-                 (select id, name, description__c, status__c, complete__c, start_date__c, due_date__c, Assigned_To__c, Project_Task__c from Project_Task_Activities__r) 
+        PTs = [select ID, name, description__c, status__c, start_date__c, due_date__c, Complete__c, Project__c, Assigned_To__c, External_ID__c , Reminder_Date__c , 
+                 (select id, name, description__c, status__c, complete__c, start_date__c, Reminder_Date__c ,  due_date__c, Assigned_To__c, Project_Task__c from Project_Task_Activities__r) 
                      From Project_Task__c Where Project__c = :ProjTree.root.Proj.id];
                      
          ProjTree.root.nodes.clear();            

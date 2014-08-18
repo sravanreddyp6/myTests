@@ -42,6 +42,9 @@
                 <apex:inputField styleClass="edit" value="{!Project__c.Operating_Group__c}"/>
                 <apex:inputField styleClass="edit" value="{!Project__c.State__c}"/>
                 <apex:inputField styleClass="edit" value="{!Project__c.Service_Line__c}"/>                
+                <apex:inputField styleClass="edit" value="{!Project__c.Interested_Party_1__c}"/> 
+                <apex:inputField styleClass="edit" value="{!Project__c.Interested_Party_2__c}"/> 
+                <apex:inputField styleClass="edit" value="{!Project__c.Interested_Party_3__c}"/> 
                 <apex:inputTextarea styleClass="txtBox edit" value="{!Project__c.Description__c}"/>                
                 <apex:inputField styleClass="non-temp-field edit" value="{!Project__c.Start_Date__c}" rendered="{!startingOption != 'new_temp'}"/>
                 <apex:inputField styleClass="non-temp-field edit" value="{!Project__c.Due_Date__c}" rendered="{!startingOption != 'new_temp'}"/>
@@ -56,6 +59,9 @@
                 <apex:outputField styleClass="view" value="{!Project__c.Operating_Group__c}"/>
                 <apex:outputField styleClass="view" value="{!Project__c.State__c}"/>
                 <apex:outputField styleClass="view" value="{!Project__c.Service_Line__c}"/>
+                <apex:outputField styleClass="view" value="{!Project__c.Interested_Party_1__c}"/>
+                <apex:outputField styleClass="view" value="{!Project__c.Interested_Party_2__c}"/>
+                <apex:outputField styleClass="view" value="{!Project__c.Interested_Party_3__c}"/>
                 <apex:outputField styleClass="txtBox view" value="{!Project__c.Description__c}"/>                
                 <apex:outputField styleClass="non-temp-field view" value="{!Project__c.Start_Date__c}" rendered="{!startingOption != 'new_temp'}"/>
                 <apex:outputField styleClass="non-temp-field view" value="{!Project__c.Due_Date__c}" rendered="{!startingOption != 'new_temp'}"/>
@@ -82,6 +88,7 @@
                             <th>Assigned To</th>
                             <th>Start</th>
                             <th>Due</th>
+                            <th>Reminder</th>
                             <th>% Complete</th>
                         </tr>
                     </thead>
@@ -118,10 +125,9 @@
                             <td><apex:inputField styleClass="non-temp-field edit" value="{!t.ProjTask.Assigned_To__c}"/></td>
                             <td><apex:inputField styleClass="non-temp-field edit" value="{!t.ProjTask.Start_Date__c}"/></td>
                             <td><apex:inputField styleClass="non-temp-field edit" value="{!t.ProjTask.Due_Date__c}"/></td>
+                            <td><apex:inputField styleClass="non-temp-field edit" value="{!t.ProjTask.Reminder_Date__c}"/></td>
                             <td>
                                 <apex:inputField styleClass="percentBox non-temp-field edit" value="{!t.ProjTask.Complete__c}"/> 
-                                
-                            
                             </td>
                         </tr>
                         <!---->
@@ -150,6 +156,7 @@
                                     <td><apex:inputField styleClass="non-temp-field edit" value="{!a.ProjTaskAct.Assigned_To__c}"/></td>
                                     <td><apex:inputField styleClass="non-temp-field edit" value="{!a.ProjTaskAct.Start_Date__c}"/> </td>
                                     <td><apex:inputField styleClass="non-temp-field edit" value="{!a.ProjTaskAct.Due_Date__c}"/></td>
+                                    <td><apex:inputField styleClass="non-temp-field edit" value="{!a.ProjTaskAct.Reminder_Date__c}"/></td>
                                     <td><apex:inputField styleClass="percentBox non-temp-field edit" value="{!a.ProjTaskAct.Complete__c}"/> </td> 
                                 </tr>                                                
                             </apex:repeat>
@@ -172,8 +179,9 @@
                             <th class="tblTitle">Title</th>
                             <th class="tblDesc">Description</th>
                             <th>Assigned To</th>
-                            <th>Start Date</th>
-                            <th>Due Date</th>
+                            <th>Start</th>
+                            <th>Due</th>
+                            <th>Reminder</th>
                             <th class="prog_bar"></th>
                         </tr>
                     </thead>
@@ -185,6 +193,7 @@
                             <td><apex:outputField styleClass="view" value="{!t.ProjTask.Assigned_To__c}"/></td>
                             <td><apex:outputField styleClass="non-temp-field " value="{!t.ProjTask.Start_Date__c}"/></td>
                             <td><apex:outputField styleClass="non-temp-field " value="{!t.ProjTask.Due_Date__c}"/></td>
+                            <td><apex:outputField styleClass="non-temp-field " value="{!t.ProjTask.Reminder_Date__c}"/></td>
                             <td>
                                 
                                 <apex:outputField style="float: left;" styleClass="percentBox non-temp-field " value="{!t.ProjTask.Complete__c}"/>
@@ -203,6 +212,7 @@
                                     <td><apex:outputField styleClass="non-temp-field " value="{!a.ProjTaskAct.Assigned_To__c}"/></td>
                                     <td><apex:outputField styleClass="non-temp-field " value="{!a.ProjTaskAct.Start_Date__c}"/> </td>
                                     <td><apex:outputField styleClass="non-temp-field " value="{!a.ProjTaskAct.Due_Date__c}"/></td>
+                                    <td><apex:outputField styleClass="non-temp-field " value="{!a.ProjTaskAct.Reminder_Date__c}"/></td>
                                     <td>
                                         <apex:outputField styleClass="percentBox non-temp-field " value="{!a.ProjTaskAct.Complete__c}"/> 
                                         <div class="progBarOutter">                                
