@@ -106,19 +106,18 @@
 </apex:facet>
 </apex:actionStatus>
       </div>
-    <apex:pageBlockSection id="ServAssignDetail" columns="1" collapsible="false" title="Service Assignment Detail" rendered="{!!AssessmentOnly}">
+    <apex:pageBlockSection id="ServAssignDetail" collapsible="false" title="Service Assignment Detail" rendered="{!!AssessmentOnly}">
         <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!!editSA}" />
         <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!editSA}" />
-        <apex:outputField value="{!theServAssign.Name}" rendered="{!!editSA}" />
-        <apex:outputField value="{!theServAssign.Name}" rendered="{!editSA}" />
         <apex:outputField value="{!theServAssign.Status__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Status__c}" rendered="{!editSA}"  />
+        <apex:outputField value="{!theServAssign.Name}" rendered="{!!editSA}" />
+        <apex:outputField value="{!theServAssign.Name}" rendered="{!editSA}" />
         <apex:outputField value="{!theServAssign.Start_Date__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Start_Date__c}" required="true" id="startdate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
+        <apex:outputField value="{!theServAssign.Medical_Record_Number__c}" />
         <apex:outputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!editSA}"  />
-        <apex:outputField value="{!theServAssign.End_Date__c}" rendered="{!!editSA}"  />
-        <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
         <apex:pageBlockSectionItem rendered="{!editSA && serviceLocation = null}" >
             <apex:outputlabel value="Location of Service" />
             <apex:actionregion >
@@ -134,20 +133,22 @@
                 <apex:outputlabel value="Location of Service" for="locationDisplay"/>                
                 <apex:outputPanel id="locationDisplay" layout="inline" rendered="{! serviceLocation != null}" >
                       <table>
-                        <tr><td><apex:outputlabel value="Alias" styleclass="labelCol"/></td><td><apex:outputField value="{!serviceLocation.Name}"/><br/></td>
-                            <td><apex:outputlabel value="Setting" styleclass="labelCol"/></td><td><apex:outputField value="{!serviceLocation.Setting__c}"/></td></tr>
+                        <tr><td><apex:outputlabel value="Alias" styleclass="labelCol"/></td><td><apex:outputField value="{!serviceLocation.Name}"/><br/></td></tr>
                         <tr><td><apex:outputLabel value="Address" styleclass="labelCol"/>
                             </td><td><c:AddressDisplay Street1="{!serviceLocation.Street__c}" City="{!serviceLocation.City__c}"
-                                        State="{!serviceLocation.State__c}" Zip="{!serviceLocation.Zip__c}"/></td>
-                            <td><apex:outputlabel value="Phone" styleclass="labelCol"/></td><td><apex:outputField value="{!serviceLocation.Phone__c}"/></td></tr>
+                                        State="{!serviceLocation.State__c}" Zip="{!serviceLocation.Zip__c}"/></td></tr>
+                        <tr><td><apex:outputlabel value="Setting" styleclass="labelCol"/></td><td><apex:outputField value="{!serviceLocation.Setting__c}"/></td></tr>
+                        <tr><td><apex:outputlabel value="Phone" styleclass="labelCol"/></td><td><apex:outputField value="{!serviceLocation.Phone__c}"/></td></tr>
                       </table>                 
                 </apex:outputPanel>                
-        </apex:pageblocksectionitem>        
+        </apex:pageblocksectionitem>
+        <apex:outputField value="{!theServAssign.End_Date__c}" rendered="{!!editSA}"  />
+        <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
         <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!!editSA || (editSA && serviceLocation != null)}"  />
         <apex:inputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA && serviceLocation = null}"  />
-        <apex:outputField value="{!theServAssign.Medical_Record_Number__c}" />
         <apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA && !vfVarIsCM}"  />
         <apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !vfVarIsCM}"  required="{!episodeReq}"/>
+        <apex:pageblocksectionitem />
         <apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM}" />
         <apex:pageblocksectionitem rendered="{!editSA && !showLocation && !vfVarIsCM}"  >
         <apex:outputLabel value="Model" for="modelfield" />
@@ -160,19 +161,24 @@
      
     </apex:pageBlockSection>
 
-    <apex:pageBlockSection id="AOServAssignDetail" columns="1" collapsible="false" title="Service Assignment Detail" rendered="{!AssessmentOnly}">
+    <apex:pageBlockSection id="AOServAssignDetail" collapsible="false" title="Service Assignment Detail" rendered="{!AssessmentOnly}">
         <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!!editSA}" />
         <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!editSA}" />
-        <apex:outputField value="{!theServAssign.Name}" rendered="{!!editSA}" />
-        <apex:outputField value="{!theServAssign.Name}" rendered="{!editSA}" />
+        
         <apex:outputField value="{!theServAssign.Status__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Status__c}" rendered="{!editSA}"  />
+        
+        <apex:outputField value="{!theServAssign.Name}" rendered="{!!editSA}" />
+        <apex:outputField value="{!theServAssign.Name}" rendered="{!editSA}" />
+        
         <apex:outputField value="{!theServAssign.Start_Date__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Start_Date__c}" id="startdate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
+        
+        <apex:outputField value="{!theServAssign.Medical_Record_Number__c}" />
+                        
         <apex:outputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!editSA}"  />
-        <apex:outputField value="{!theServAssign.End_Date__c}" rendered="{!!editSA}"  />
-        <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}"  onblur="changeEffectiveDates();" />
+                
         <apex:pageBlockSectionItem rendered="{!editSA && serviceLocation = null}" >
             <apex:outputlabel value="Location of Service" />
             <apex:actionregion >
@@ -188,18 +194,23 @@
                 <apex:outputlabel value="Location of Service" for="locationDisplay"/>                
                 <apex:outputPanel id="locationDisplay" layout="inline" rendered="{! serviceLocation != null}" >
                       <table>
-                        <tr><td><apex:outputlabel value="Alias" styleclass="labelCol"/></td><td><apex:outputField value="{!serviceLocation.Name}"/><br/></td>
-                            <td><apex:outputlabel value="Setting" styleclass="labelCol"/></td><td><apex:outputField value="{!serviceLocation.Setting__c}"/></td></tr>
+                        <tr><td><apex:outputlabel value="Alias" styleclass="labelCol"/></td><td><apex:outputField value="{!serviceLocation.Name}"/><br/></td></tr>
                         <tr><td><apex:outputLabel value="Address" styleclass="labelCol"/>
                             </td><td><c:AddressDisplay Street1="{!serviceLocation.Street__c}" City="{!serviceLocation.City__c}"
-                                        State="{!serviceLocation.State__c}" Zip="{!serviceLocation.Zip__c}"/></td>
-                            <td><apex:outputlabel value="Phone" styleclass="labelCol"/></td><td><apex:outputField value="{!serviceLocation.Phone__c}"/></td></tr>
+                                        State="{!serviceLocation.State__c}" Zip="{!serviceLocation.Zip__c}"/></td></tr>
+                        <tr><td><apex:outputlabel value="Setting" styleclass="labelCol"/></td><td><apex:outputField value="{!serviceLocation.Setting__c}"/></td></tr>
+                        <tr><td><apex:outputlabel value="Phone" styleclass="labelCol"/></td><td><apex:outputField value="{!serviceLocation.Phone__c}"/></td></tr>
                       </table>
                 </apex:outputPanel>                
         </apex:pageblocksectionitem>
-        <apex:outputField value="{!theServAssign.Medical_Record_Number__c}" />        
+
+        <apex:outputField value="{!theServAssign.End_Date__c}" rendered="{!!editSA}"  />
+        <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}"  onblur="changeEffectiveDates();" />
+
+        
         <apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA}"  />
-        <apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA}"  />        
+        <apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA}"  /> 
+
         <apex:pageblocksectionitem rendered="{!editSA && !vfVarIsCM}"  >
         <apex:outputLabel value="Model" for="modelfield" />
         <apex:actionregion >
@@ -210,7 +221,7 @@
         </apex:pageblocksectionitem>
     </apex:pageBlockSection>
     
-
+    
     <apex:pageBlockSection title="Contract Association" 
                              showHeader="true"
                              columns="3"
