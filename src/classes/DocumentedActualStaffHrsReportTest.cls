@@ -63,8 +63,11 @@ private class DocumentedActualStaffHrsReportTest {
         myData.theSA.program_detail__c = 'New Service Location 1a';
         update myData.theSA;
         
+        Datetime startDateForNote = Datetime.newInstance(2014, 1, 1, 13, 0, 0);
+        Datetime endDateForNote = Datetime.newInstance(2014, 1, 1, 15, 0, 0);
+        
         // create a progress note
-        Progress_note__c myPN = TMN_Generic_Core_TestData.createProgressNote(myData.theSA, myData.theAdm, theServiceCode, myData.theSA.Person_being_served__c);
+        Progress_note__c myPN = TMN_Generic_Core_TestData.createProgressNote(myData.theSA, myData.theAdm, theServiceCode, myData.theSA.Person_being_served__c, startDateForNote, endDateForNote);
        
         dashRpt.runReport();  
         System.AssertEquals( dashRpt.allCount, 1);
