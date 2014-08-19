@@ -55,6 +55,7 @@
 
         function unpinPbs(){
             var s = jQuery("#pbsBlueCard");
+            s.removeClass("stickBlueCard");
             jQuery('.unstickPbs').css({"display":"none"});
             jQuery('.stickPbs').css({"display":"inherit"});
             jQuery(window).scroll(function() {
@@ -144,7 +145,7 @@
                         <td> <!--  service links -->
                         
                         <div style="padding-right: 1em;">
-	                        <apex:image styleClass="stickPbs" url="{!URLFOR($Resource.pin)}" style="height:1.2em; float: right" onclick="pinPbs()"/>
+	                        <apex:image styleClass="stickPbs" url="{!URLFOR($Resource.pin)}" style="height:1.2em; float: right; display: none;" onclick="pinPbs()"/>
 	                        <apex:image styleClass="unstickPbs" url="{!URLFOR($Resource.unpin)}" style="height:1.2em; float: right" onclick="unpinPbs()"/>
                         </div>
                         <div style="padding-right:100px; vertical-align:middle">
