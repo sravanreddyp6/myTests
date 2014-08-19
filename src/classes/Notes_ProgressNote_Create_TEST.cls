@@ -3,32 +3,24 @@ private class Notes_ProgressNote_Create_TEST {
 
     static testMethod void myUnitTest() {
 
-         String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
-        Account Accnt = new Account(
-            RecordTypeID=RecTypeId,
-            FirstName= 'Test FNamefff',
-            LastName='Test LNamefff',
-            PersonMailingStreet='10 Main St.',
-            PersonMailingPostalCode='12345',
-            PersonMailingCity='SF',
-            PersonMailingStateCode='CA',
-            PersonEmail='test@yahoo.com2222',
-            PersonHomePhone='1234567',
-            PersonMobilePhone='12345678',
-            PersonBirthdate= date.parse('08/01/1980')
-        );
-        insert Accnt;
-        Accnt = [ select id, personcontactid from account where id= :Accnt.id ];
 
-
-        Progress_Note__c p = new Progress_Note__c();
+		TMN_Generic_Core_TestData coredata = new TMN_Generic_Core_TestData();
+		coredata.loadData( 'AZ');
+		
+		ID newSLid1 = createServiceLocation( '123456', '123456001', 'New Service Location 1', 1, 'AZ', '1-123456' );
+		ID newSLid1a = createServiceLocation( '114165', '114165002', 'New Service Location 1a', 1, 'AZ', '1-123456a' );
+		coredata.theSA.service_location__c = newSLid1;
+		update coredata.theSA;
+		
+		Progress_Note__c p = new Progress_Note__c();
         ApexPages.StandardController sc = new ApexPages.StandardController(p);
 
         PageReference pageRef = Page.Notes_ProgressNote_Create;
         Test.setCurrentPageReference(pageRef);
 
-        ApexPages.currentPage().getParameters().put('state', 'NC');
-        ApexPages.currentPage().getParameters().put('person', Accnt.personcontactid);
+        ApexPages.currentPage().getParameters().put('state', 'AZ');
+        ApexPages.currentPage().getParameters().put('person', coredata.contactID);
+        ApexPages.currentPage().getParameters().put('service_assignment', coredata.theSA.ID);
         Notes_ProgressNote_Create objNpncTest = new Notes_ProgressNote_Create(sc);
         System.Assert( objNpncTest.myRTs.size() > 0 );
         System.Assert( objNpncTest.getmyrts().size() > 0 );
@@ -36,11 +28,31 @@ private class Notes_ProgressNote_Create_TEST {
         System.Assert( objNpncTest.rtOptions.size() > 0 );
         System.AssertEquals(null, objNpncTest.redirect());
 
-        ApexPages.currentPage().getParameters().put('state', '');
-        objNpncTest = new Notes_ProgressNote_Create(sc);
+		coredata.theSA.service_location__c = newSLid1a;
+		update coredata.theSA;
+
+		Progress_Note__c p2 = new Progress_Note__c();
+        ApexPages.StandardController sc2 = new ApexPages.StandardController(p2);
+
+        PageReference pageRef2 = Page.Notes_ProgressNote_Create;
+        Test.setCurrentPageReference(pageRef2);
 
         ApexPages.currentPage().getParameters().put('state', 'AZ');
-        objNpncTest = new Notes_ProgressNote_Create(sc);
-        System.AssertEquals(1, p.Number_of_Required_Signatures__c);
-    }
+        ApexPages.currentPage().getParameters().put('person', coredata.contactID);
+        ApexPages.currentPage().getParameters().put('service_assignment', coredata.theSA.ID);
+        Notes_ProgressNote_Create objNpncTest2 = new Notes_ProgressNote_Create(sc2);
+		
+		System.Assert(objNpncTest2.redirect() != null); // redirect to shift note
+
+        }
+        
+        static ID createServiceLocation( string alias, string pgmCode, string pgmVal, integer facility, string slState, string uid ) {
+		
+		Service_location__c newSL = new Service_location__c( alias__c = alias, programid__c = pgmCode, program__c = pgmVal, facilityid__c = facility, state__c = slState, uniqueid__c = uid);
+		insert newSL;
+		
+		return newSL.Id;
+		
+	}
+	
 }
