@@ -6,7 +6,7 @@
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 
 <apex:variable value="{! (Action_Plan__c.Service_Assignment__r.Admission__r.State__c = 'Arizona' && Action_Plan__c.Service_Assignment__r.Service_location__r.ProgramID__c != '114165002') || $User.Operating_Group__c ='Cambridge'}" var="hideObjType"/>
-
+<apex:variable value="{!$User.Operating_Group__c ='Care Meridian'}" var="isCM"/>
 <apex:variable value="{!$ObjectType.Action_Plan_Worksheet__c.accessible}" var="vfVarCanAccessWS"/>
 
 <script>
@@ -616,7 +616,17 @@ function highlightButtons ( btype, sfid, on )
                                 <apex:outputLabel styleClass="tmnHelpText">How will staff support this Person Being Served to meet the {!ObjAlias}?<br/></apex:outputLabel>     
                                 <apex:outputPanel layout="block" id="theAction" style="padding-bottom:20px">
                                     <apex:inputField styleClass="txtarea" rendered="{!editMode}" value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Description__c}"/>  
-                                    <apex:outputField rendered="{! !editMode}" value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Description__c}"/>         
+                                    <apex:outputField rendered="{! !editMode}" value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Description__c}"/>   
+                                        <apex:panelGrid columns="8" style="width:100%" rules="groups" columnClasses="innerLabel, innerData" rendered="{!isCM}">
+                                            <apex:outputPanel layout="block" styleClass="innerLabel" > Status</apex:outputPanel>  
+                                            <apex:outputField value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Status__c}"  rendered="{!!editMode}"/> 
+                                            <apex:inputField value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Status__c}"  rendered="{!editMode}"/> 
+                                                                                    
+                                            <apex:outputPanel layout="block" styleClass="innerLabel" > Effective Date</apex:outputPanel>
+                                            <apex:outputField value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Effective_Date__c}" rendered="{!!editMode}"/>
+                                            <apex:inputField value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Effective_Date__c}" rendered="{!editMode}"/>    
+                                            
+                                        </apex:panelGrid>                                           
                                 </apex:outputPanel>
                             </td>
     </tr>                    
