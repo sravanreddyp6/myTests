@@ -97,11 +97,6 @@ position:absolute; left:50%; top:50%; background-color: white; border: 2px solid
         top: -100px;
         left: 220px;
     }
-    input[id*=residentialServiceUnsupervisedHomeDuration2] {
-        position: relative;
-        top: -100px;
-        left: 220px;
-    }
     table[id*=residentialServiceUnsupervisedHomeInterval] {
         position:relative;
         top: -102px;
@@ -416,7 +411,6 @@ function toggleById(id, ms){
                 </apex:selectCheckBoxes>
             </apex:outputPanel>
             <br/>
-            <!-- If state not AZ -->
             <apex:outputPanel layout="none" rendered="{!(staffingRatioInFlavor && (mode!='summary' || RecDayServicesStaffingRatio.size > 0)
                                                                && Assessment__c.Admission__r.State__c != 'AZ')}">
                 <b>Recommended Day Services Staffing Ratio (Rule 38 for DT&amp;H)</b> &nbsp; 
@@ -550,9 +544,6 @@ function toggleById(id, ms){
                         <apex:selectOption itemValue="Specific Plan"
                             itemLabel="Specific Plan (Identify in detail any special arrangements which would need to be implemented in order for person to remain alone or unsupervised)" />                        
                     </apex:selectCheckboxes>
-                    <div class="removeFromFlow" >
-                        <apex:inputText size="3" value="{!levelRequiredResidentialUnsupervisedHome}" id="residentialServiceUnsupervisedHomeDuration2" />
-                    </div>
                     <apex:inputTextarea value="{!levelRequiredResidentialSpecificPlan}" id="residentialServiceSpecificPlan2" cols="180" /><br /><br />
                 </apex:outputPanel>
                 
