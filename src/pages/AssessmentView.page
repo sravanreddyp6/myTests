@@ -26,7 +26,7 @@ function openWin(url){
         to reference the OwnerId field. J.Gilliam, 2/6/12. -->
     <apex:outputField value="{!Assessment__c.OwnerId}" rendered="false" />
     
-    <apex:commandButton value="Edit" action="{!edit}" />
+    <apex:commandButton value="Edit" action="{!edit}" rendered="{! NOT(Assessment__c.Locked__c)}" />
     <apex:commandButton value="View Assessment" action="/apex/AssessmentForm?id={!Assessment__c.Id}" />
     <apex:commandButton value="Print Assessment" onclick="openWin('/apex/PDF_Assessment_CANS_Scoresheet?id={!Assessment__c.Id}')" />
     <apex:commandButton value="Return to Admission" action="/{!Assessment__c.Admission__r.Id}" />

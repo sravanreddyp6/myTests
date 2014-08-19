@@ -703,7 +703,7 @@ Delete Me</description>
     <validationRules>
         <fullName>Locked</fullName>
         <active>true</active>
-        <errorConditionFormula>Locked__c</errorConditionFormula>
+        <errorConditionFormula>Locked__c &amp;&amp; IF(PRIORVALUE(Locked__c),true,false)</errorConditionFormula>
         <errorMessage>Locked Assessments Can Not be Updated</errorMessage>
     </validationRules>
     <validationRules>
