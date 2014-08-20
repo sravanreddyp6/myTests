@@ -57,7 +57,7 @@ public static Id getAccountRecordType(){
     }
     
     public static Referral__c createReferral(String recordType, string Status, string ReferralName, string State, Person_Being_Referred__c pbr) {
-             Service_location__c SL = new Service_location__c(name = '123', UniqueID__c ='123', FacilityID__c =123,Alias__c ='123',ProgramID__c ='123',Program__c='123');
+             Service_location__c SL = new Service_location__c(name = '123', UniqueID__c =String.valueOf(Math.abs(Math.random())), FacilityID__c =123,Alias__c ='123',ProgramID__c ='123',Program__c='123');
          insert SL;
         Referral__c ref = new Referral__c(RecordTypeId=Utility.getRecordTypeForReferral(recordType),
                                           Referral_Status__c=Status,
