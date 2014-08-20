@@ -26,16 +26,16 @@
         <criteriaItems>
             <column>Progress_Note__c.Approval_Status__c</column>
             <operator>notEqual</operator>
-            <value></value>
+            <value>,Not Submitted,Bypass</value>
         </criteriaItems>
     </filter>
     <format>Summary</format>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>
-        <field>Progress_Note__c.Approver__c</field>
+        <field>Progress_Note__c.Approval_User__c</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>AZ Weekly Activity</name>
+    <name>Progress Note Approval Summary Report</name>
     <params>
         <name>co</name>
         <value>1</value>
