@@ -26,7 +26,9 @@ String h = EncodingUtil.ConvertTohex(b);
             PersonMailingStateCode= myState,
             PersonEmail='test@yahoo.com',
             PersonHomePhone='12345678',
-            PersonMobilePhone='12345678'
+            PersonMobilePhone='12345678',
+            Other_ID__pc = '12345-111',
+            Other_ID_description__pc = 'other Id'
         );
         insert theAccount;
         
@@ -105,7 +107,7 @@ String h = EncodingUtil.ConvertTohex(b);
             profileMap.put(p.Name, P);
         }
         User testUser = new User(alias = userAlias,
-                                email='sravan@TMN.com',
+                                email='testuser@TMN.com',
                                 emailencodingkey='UTF-8',
                                 lastname=lastName,firstname=firstName, languagelocalekey='en_US',
                                 localesidkey='en_US',
@@ -118,6 +120,13 @@ String h = EncodingUtil.ConvertTohex(b);
         Tmn_User__c tmnUser= new Tmn_User__c(operating_group__c=OperatingGroup, Salesforce_User_Account__c=testUser.id);
         insert tmnUser;
         
+        // to overcome trigger that doesn't run during test
+        if (Test.isRunningTest()) {	
+        	System.Debug('running test, updating operating group on user manually');
+        	testUser = [ select id, operating_group__c from User where id = :testUser.Id];
+        	testUser.Operating_Group__c = OperatingGroup;
+        	update testUser; 
+        }
         return testUser;
     } 
     
