@@ -1,0 +1,2160 @@
+<apex:page standardController="NPA_Audit__c" showChat="false" extensions="NPA_Form" cache="false"  >
+<head>
+
+
+<script>
+function scrollWindow()
+  {
+  window.scrollTo(0,0)
+  }
+</script>
+<script>function setFocusOnLoad() {}</script>
+
+</head>
+
+
+<style type="text/css">
+.dateFormat{
+   visibility:hidden;
+}
+</style>
+<style>
+.btnSave{
+    background: none; border: 1px solid black;
+}
+.myMenu {
+        width: 335px;  
+        position: fixed;
+        vertical-align: top;
+        background-color: #f8f8f8;
+        border-bottom-radius: 5px;
+      
+        border: 2px solid #3f6075;
+        border-top: 2px solid #00335b;
+        padding-top: 7px;
+        margin-top: -10px;
+        margin-left: 5px;
+        
+}
+.Scorecard{
+
+}
+.MenuValueFont{
+    font-size: 14pt;
+}
+    .qHeader{
+        font-weight: normal;
+        color: #4A4A56;
+        font-size: 11pt;
+        border-bottom: 1px dotted gray;        
+    }
+        .qHeader2{
+            font-weight: normal;
+            color: #4A4A56;
+            font-size: 12pt;    
+        }
+            .qHeader3{
+                font-weight: normal;
+                color: #4A4A56;
+                font-size: 14pt;
+                border-bottom: 1px solid gray;     
+            }
+    .abc{       
+        font-weight: bold;
+        color: #4A4A56;
+        font-size: 91%;
+        padding: 3px 3px 0px 0px; 
+    }
+        .abcRated{       
+            font-weight: bold;
+            color: #4A4A56;
+            font-size: 91%;
+            padding: 3px 3px 0px 0px; 
+            border-left: 3px solid #faa027;         
+        }    
+            .abcRated2{       
+                background-color: #CFEEF8;
+               border-bottom: 1px solid #CFEEF8;
+            }    
+        .abcDetail{       
+            font-style: italic;
+            font-weight: bold;
+            color: gray;
+            font-size: 9pt;
+            padding: 3px 0px 0px 0px; 
+        }
+            .abcDetailLarge{
+                font-weight: bold;
+                color: gray;
+                font-size: 10pt;
+                padding: 3px 0px 0px 0px;    
+            }  
+    .myTable{
+        width: 100%;
+    }      
+    .c1{
+        width: 50px;
+        text-align: right;
+        padding-right: 15px;
+        font-weight: bold;
+        font-size: 11pt;
+    }    
+    .c2{
+        padding-bottom: 5px;
+        width: 1005;
+    }
+    .r1{ 
+        padding: 5px;
+        
+    }
+    
+        .r2{
+            border-bottom: 1px solid #E3DEB8;
+            
+
+
+        }
+    .txtArea{
+        height: 55px;
+        width: 95%;
+        font-size: 11pt;
+    }
+    .cc1{        
+        vertical-align: middle;
+        text-align: left;
+        width: 50px;
+        height: 100%; 
+    }
+        .leftNumber{
+            color: gray;
+            font-size: 26pt;     
+        }
+        .leftNumberSmaller{
+            color: gray;
+            font-size: 22pt; 
+            padding-top: 5px;        
+        }
+
+    .myH1{
+        font-size: 14pt;
+        font-weight: bold;
+        text-decoration: underline; 
+               
+    }
+    .myH2{
+        font-size: 12pt;
+        font-weight: bold;    
+    }
+    .myH3{
+        font-size: 10pt;
+        color: #4A4A56;
+    }
+    .filler{
+
+    }
+    .fullWidth{
+        width: 450px;
+    }
+    .tbLeft{
+        width: 625px;
+    }
+    .tbRight{
+        vertical-align: top;
+        width: 250px; 
+    }
+    .ReviewerHeader{
+        font-weight: bold;
+        font-size: 10pt;
+    }
+    .waitingImage{
+        width: 20px;
+        height: 20px;
+    }
+
+    .waitingHolder{
+        font-weight: bold;
+        padding: 3px;
+    }
+    .helpText{
+        width:450px;
+        font-size: 11pt;
+    }
+
+</style>
+<c:TabStyle effect="true" activeFontColor="white" ActiveColor="#3f6075" inactiveColor="#ced7dc" fSize="12pt" hColor="#66c0f2"></c:TabStyle>
+<apex:outputPanel layout="block" id="wrapper">
+<apex:variable var="btnStyle" value="height: 30px; width:50px;   font-size:9pt; "/>
+<apex:variable var="btnStyle2" value="height: 30px; width: 50%;"/>
+<!-- 
+
+
+
+
+-->
+
+<apex:variable var="bExTab" value="{!AND(AuditFrmFields.Bill_Exceptions__c != 0, NPA_Audit__c.Billing_Audit__c)}"/>
+<apex:variable var="qExTab" value="{!AND(OR(AuditFrmFields.QualityExceptions__c != 0, AuditFrmFields.QualityExceptions_ClientFunds__c != 0), NPA_Audit__c.QA_Audit__c)}"/>
+<apex:variable var="hExTab" value="{!AND(OR(AuditFrmFields.HHPExceptions__c != 0, AuditFrmFields.HHPExceptions_BgCheck__c != 0), NPA_Audit__c.HHP_Audit__c)}"/>
+<apex:variable var="newRec" value="{!ISBLANK(NPA_Audit__c.id)}"/>
+<apex:variable var="ExTabText" value="Exc"/>
+<apex:variable var="ExTabStyle" value="margin-right: 10px; margin-left:-6px;"/>
+<apex:variable var="HHpHelp" value="
+The Host Home Provider (a.k.a., HHP, Mentor, Foster Parent) is an independent contractor who cares for the Individual in the contractor's home 24/7, and the program has control/responsibility over the placement. Record audits for the same HHP can be submitted 1x per quarter and up to 4x per fiscal year, provided that a different client name is associated with each HHP record audit.
+"></apex:variable>
+
+<apex:variable var="menuNumStyle" value="font-size: 10pt; color: #3f6075;"/>
+
+<apex:form styleClass="myFrm" id="mee" > 
+
+<table >
+<tr>
+<td class="tbLeft">
+
+<apex:sectionHeader title="Audit" subtitle="{!NPA_Audit__c.name}">
+
+</apex:sectionHeader>    
+<!--    
+<apex:inputField style="float: right; margin-right: 45px; margin-bottom: 7px; " value="{!NPA_Audit__c.Status__c}">
+    <apex:actionSupport event="onchange" action="{!chkFields}" reRender="meee" status="myAction"/>
+</apex:inputField>
+-->
+
+    
+        
+   
+    <apex:tabPanel width="625" id="Tabs" switchType="client" contentClass="tabContent" activeTabClass="activeTab" inactiveTabClass="inactiveTab"  >
+        <apex:tab label="Core" >
+       
+        
+            <apex:pageBlock mode="maindetail" >
+                    <apex:outputPanel styleClass="myH1" layout="block" style="padding-left: 3px; padding-top: 3px;" >NPA</apex:outputPanel> 
+                        <apex:outputLabel styleClass="myH2" >Consumer Record</apex:outputLabel>  
+                        <br/>                   
+                    <apex:outputLabel styleClass="myH3" style="padding-left: 3px;">
+                        A client record may be reviewed only for a <u>current client</u>, who has been in care for <u>at least 30 days.</u> 
+                    </apex:outputLabel> 
+
+                <apex:pageBlockSection columns="1"  collapsible="false">
+                        <apex:pageBlockSectionItem >
+                            <apex:inputField id="billcb" value="{!NPA_Audit__c.Billing_Audit__c}"  > 
+                                <apex:actionSupport event="onclick" action="{!chkFields}" reRender="pageM"  />
+                            </apex:inputField>    
+                            <apex:outputLabel for="billcb" >Billing Audit Section</apex:outputLabel>
+                        </apex:pageBlockSectionItem>                            
+
+                        <apex:pageBlockSectionItem >
+                            <apex:inputField id="qacb" value="{!NPA_Audit__c.QA_Audit__c}" label="Quality Audit Section" > 
+                                <apex:actionSupport event="onclick" action="{!chkFields}" reRender="pageM"  />
+                            </apex:inputField>                             
+                            <apex:outputLabel for="qacb" >Quality Audit Section</apex:outputLabel>
+                        </apex:pageBlockSectionItem>
+                        <apex:outputLabel styleClass="myH2">
+                        Host Home Provider Record
+                        </apex:outputLabel>               
+
+
+                    <apex:outputLabel styleClass="myH3">{!HHpHelp}
+                       <!--  The Host Home Provider (a.k.a., HHP, Mentor, Foster Parent) is an independent contractor who cares for the Individual in the contractor&apos;s home 24/7, and the program has control/responsibility over the placement. Record audits for the same HHP can be submitted <u>1x per quarter</u> and up to 4x per fiscal year, provided that a different client name is associated with each HHP record audit.                 -->
+                        </apex:outputLabel>                        
+                        <apex:pageBlockSectionItem >
+                            <apex:inputField id="hhpcb" value="{!NPA_Audit__c.HHP_Audit__c}"  > 
+                                <apex:actionSupport event="onclick" action="{!chkFields}" reRender="pageM"  />
+                            </apex:inputField>                             
+                            <apex:outputLabel for="hhpcb" >HHP Core Requirements Audit Section</apex:outputLabel>
+                        </apex:pageBlockSectionItem> 
+              
+                </apex:pageBlockSection>
+
+                    <apex:pageBlock title="Reviewer Info"  >
+                        <b>Date of Review</b> (date that the audit was started)<br />
+                        <apex:inputfield value="{!NPA_Audit__c.Review_Date__c}" />
+                        <apex:panelGrid columns="3" >
+                                    <apex:outputLabel styleClass="ReviewerHeader"  >Reviewers</apex:outputLabel>
+                                    <apex:outputLabel styleClass="ReviewerHeader" >Name</apex:outputLabel>
+                                    <apex:outputLabel styleClass="ReviewerHeader" >Title</apex:outputLabel>
+                        
+                                     <apex:inputfield value="{!NPA_Audit__c.Reviewer_Type_1__c}"></apex:inputfield>
+                                     <apex:inputfield value="{!NPA_Audit__c.Reviewer_Name_1__c}"></apex:inputfield>
+                                     <apex:inputfield value="{!NPA_Audit__c.Reviewer_Title_1__c}"></apex:inputfield>
+                                     
+                                     <apex:inputfield value="{!NPA_Audit__c.Reviewer_Type_2__c}"></apex:inputfield>
+                                     <apex:inputfield value="{!NPA_Audit__c.Reviewer_Name_2__c}"></apex:inputfield>
+                                     <apex:inputfield value="{!NPA_Audit__c.Reviewer_Title_2__c}"></apex:inputfield>
+                                     
+                                     <apex:inputfield value="{!NPA_Audit__c.Reviewer_Type_3__c}"></apex:inputfield>
+                                     <apex:inputfield value="{!NPA_Audit__c.Reviewer_Name_3__c}"></apex:inputfield>
+                                     <apex:inputfield value="{!NPA_Audit__c.Reviewer_Title_3__c}"></apex:inputfield>  
+                                     
+                                     <apex:inputfield value="{!NPA_Audit__c.Reviewer_Type_4__c}"></apex:inputfield>
+                                     <apex:inputfield value="{!NPA_Audit__c.Reviewer_Name_4__c}"></apex:inputfield>
+                                     <apex:inputfield value="{!NPA_Audit__c.Reviewer_Title_4__c}"></apex:inputfield>                                                 
+                        </apex:panelGrid>         
+                    </apex:pageBlock>
+
+                <apex:pageblockSection columns="1" title="Program Info" collapsible="false">
+                    <apex:inputField value="{!NPA_Audit__c.Operating_Group__c}" />
+                    <apex:inputField value="{!NPA_Audit__c.Operating_Region__c}" />
+                    <apex:inputField label="Sub-contracted to Alliance Health & Human Services" value="{!NPA_Audit__c.AllianceHealth_HumanServices__c}" />
+                    <apex:inputField value="{!NPA_Audit__c.State__c}" />
+                    <apex:inputField value="{!NPA_Audit__c.Partner_Company__c}" />
+                    <apex:inputField value="{!NPA_Audit__c.Program_Category__c}" />
+                    <apex:inputField value="{!NPA_Audit__c.Program_Population__c}" />
+                    <apex:inputField value="{!NPA_Audit__c.Alias__c}" />
+                    <apex:outputField label=" " value="{!NPA_Audit__c.Alias_Description__c}" />
+                </apex:pageblockSection>
+            
+            
+                <apex:pageBlockSection columns="1" title="Audited Service" collapsible="false" >
+                    <apex:inputfield value="{!NPA_Audit__c.Start_Date__c}" />
+                    <apex:inputfield value="{!NPA_Audit__c.End_Date__c}"  />
+                </apex:pageBlockSection>
+                        <apex:pageBlockSection columns="2" >
+                            <apex:inputfield value="{!NPA_Audit__c.Bill_Type__c}"></apex:inputfield>
+                            <apex:inputfield value="{!NPA_Audit__c.AR_Episide_number__c}"></apex:inputfield>                    
+                        </apex:pageBlockSection>
+                <apex:pageBlockSection columns="1" >
+                    <apex:inputfield value="{!NPA_Audit__c.Service_Scope__c}"></apex:inputfield>
+                    <apex:inputField value="{!NPA_Audit__c.Service_Type__c}" />
+                    <apex:inputfield value="{!NPA_Audit__c.Services_Audited__c}" styleClass="fullWidth"></apex:inputfield>
+                    <apex:inputField value="{!NPA_Audit__c.Service_Setting__c}"  />
+                         
+                </apex:pageBlockSection> 
+                    
+                <apex:pageBlockSection title="Records" columns="1" collapsible="false">
+                    <apex:inputField value="{!NPA_Audit__c.Population__c}" />
+                    <apex:inputfield value="{!NPA_Audit__c.Placement_in_HHP__c}" />
+                    <apex:inputfield value="{!NPA_Audit__c.Client_First_Name__c}" />
+                    <apex:inputfield value="{!NPA_Audit__c.Client_Last_Name__c}" />
+                    <apex:inputfield value="{!NPA_Audit__c.HHP_First_Name__c}" />
+                    <apex:inputfield value="{!NPA_Audit__c.HHP_Last_Name__c}" />
+              
+                </apex:pageBlockSection>
+            
+            </apex:pageBlock>
+          
+        </apex:tab>
+<!--
+////////////Billing tab
+-->    
+        <apex:tab label="Billing" id="BillTab" rendered="{!NPA_Audit__c.Billing_Audit__c}"  >
+        <apex:panelGrid columns="1" styleClass="myTable"> 
+               <apex:outputPanel styleClass="myH1" layout="block" >Consumer Record: Billing Audit Section </apex:outputPanel> 
+               <apex:outputPanel styleClass="myH2" layout="block" >AR RECONCILIATION – AVATAR / ORACLE / OTHER</apex:outputPanel>
+               <apex:outputPanel styleClass="myH3" layout="block" >
+                   Audit Objective: Ensure that revenue billed and recorded is supported by documentation as is required by the applicable contract/service authorization.
+                       <br/>
+                   Finance completes questions 1-5, and 10a-d, and other questions where it makes sense to do so.
+                       <br/>
+                   QA completes questions 6-9 and 10e 
+                       <p/>
+           </apex:outputPanel>
+       </apex:panelGrid>
+        
+<!--
+**********************
+Billing 1
+**********************
+-->    
+<apex:pageBlock mode="maindetail"  >
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>    
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumber" >
+            1
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+            Ensure that revenue recorded for consumer per Accounts Receivable Aging current balance agrees to actual payer invoices processed for each month under review. (SOX 404) 
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >a</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.B1A__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One if 1A is No:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.B1B__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >c</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.B1C__c}"/>
+        </apex:panelGrid>
+    </apex:panelGrid>  
+<!--
+**********************
+Billing 2
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>   
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+        
+        <apex:outputPanel layout="block" styleClass="leftNumber" > 2</apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+                     Ensure that Operations Management (OM) approved the units of service billed on the payer invoice as evidenced by OM&#39;s dated signature on the source billing data. 
+                     Source billing data for TMN CIS is Trended Units &#38; <!--this is '&'--> Revenue Report and for non TMN-CIS is local documents used to collect units of service data for billing. (SOX 404)
+                     
+        </apex:outputPanel> 
+        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>           
+        <apex:panelGrid columns="2" columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" rules="groups" styleClass="myTable" >
+           
+                <apex:outputPanel layout="block" styleClass="abcRated" >a</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.B2A__c}"/>
+                
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>       
+                <apex:inputField styleClass="txtArea" label="c" value="{!NPA_Audit__c.B2B__c}"/>
+        </apex:panelGrid>
+    </apex:panelGrid>           
+<!--
+**********************
+Billing 3
+**********************
+--> 
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>   
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+        
+        <apex:outputPanel layout="block" styleClass="leftNumber" >3</apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+                    <p/>
+                    Ensure that units of service on source billing data agree to units of service billed on payer invoice. (SOX 404)                                                                                                                                        
+        </apex:outputPanel>
+        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>                    
+        <apex:panelGrid columns="2" columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" rules="groups" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >a</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.B3A__c}"/>
+                
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>       
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.B3B__c}"/>
+        </apex:panelGrid>
+    </apex:panelGrid>     
+
+
+<!--
+**********************
+Billing 4
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>    
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+        
+        <apex:outputPanel layout="block" styleClass="leftNumber" >4</apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+                    SERVICE AUTHORIZATION: Ensure that units of service provided to consumer and billed on the payer invoice are authorized via a current service authorization (document that authorizes payment for services). List all. (SOX 404)                                                                                                                                                                                                                                                                         
+        </apex:outputPanel> 
+        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>                  
+        <apex:panelGrid columns="2" columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" rules="groups" styleClass="myTable" >
+        
+                <apex:outputPanel layout="block" styleClass="abcRated" >a</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.B4A__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Authorized Service Period Dates</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.B4B__c}"/>
+
+                <apex:outputPanel layout="block" styleClass="abc" >c</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Type(s) of Service Authorization (e.g., Contract, Billing Authorization, Individual Authorization, Letter of Agreement, etc.)</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.B4C__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >d</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.B4D__c}"/>
+        </apex:panelGrid>
+    </apex:panelGrid>        
+<!--
+**********************
+Billing 5
+************
+-->   
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>   
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+        
+        <apex:outputPanel layout="block" styleClass="leftNumber" >5</apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+                    Ensure that the billing rate per unit of service on payer invoice agrees to 3rd party support (i.e., authorization, contract, published billing rate, etc.) (SOX 404)                                                                                                                                                                                                                                                                                                                                                                                                                    
+        </apex:outputPanel> 
+                   
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>                        
+        <apex:panelGrid columns="2" columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" rules="groups" styleClass="myTable" >
+           
+                <apex:outputPanel layout="block" styleClass="abcRated" >a</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.B5A__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose one if 5A is No:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.B5B__c}"/>
+
+                <apex:outputPanel layout="block" styleClass="abc" >c</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Note the billing rate per unit of service on Service Authorization: Billing Rate / Unit of Service ($ / Unit):</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.B5C__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >d</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.B5D__c}"/>
+        </apex:panelGrid>
+    </apex:panelGrid>  
+<!--
+**********************
+Billing 6
+************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+        
+        <apex:outputPanel layout="block" styleClass="leftNumber" >6</apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+                         If a current plan of care is required to bill for services, is it in place? <br/>
+        </apex:outputPanel>  
+                 
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>                            
+        <apex:panelGrid columns="2"  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+           
+                <apex:outputPanel layout="block" styleClass="abcRated" >a</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.B6A__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One if 1A is No:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.B6B__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >c</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.B6C__c}"/>
+        </apex:panelGrid>
+    </apex:panelGrid>  
+<!--
+**********************
+Billing 7
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>    
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumber" >
+            7
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+            Service Documentation meets all external auditing requirements to substantiate billing and to comply with licensing and contractual requirements for billing. If the program cannot bill for or retain revenue due to service documentation not meeting external requirements, the reviewer should choose "No".                                                                                                                                         
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >a <br/> </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.B7A__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One if 7A is No:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.B7B__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >c</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.B7C__c}"/>
+        </apex:panelGrid>
+    </apex:panelGrid>     
+<!--
+**********************
+Billing 8
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>    
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumber" >
+            8
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+            <br/>SERVICE PROVIDED:                                                                                                                                    
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abc" >a <br/> </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetailLarge" > Identify required service documentation as per contract/source documents.</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.B8A__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetailLarge" >Indicate what actual documentation was reviewed (date and description).</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.B8B__c}"/>
+
+        </apex:panelGrid>
+    </apex:panelGrid>         
+<!--
+**********************
+Billing 9
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>    
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumber" >
+            9
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+            <br/>
+            Dates and type of service documentation match the dates and type of service billed for.                                                                                                                                     
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >a <br/> </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.B9A__c}"/>
+                
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.B9B__c}"/>
+        </apex:panelGrid>
+    </apex:panelGrid>         
+</apex:pageBlock>
+</apex:tab>
+
+<!--
+*******************************
+End of Billing required section
+    End of the page block
+*******************************
+
+*******************************
+Start of Billing Execptions
+*******************************
+
+*******************************
+10
+    Start of new page block
+*******************************
+-->
+
+<!--
+**********************
+Billing 10
+**********************
+-->    
+<apex:tab label="{!ExTabText}" rendered="{!bExTab}" style="{!ExTabStyle}" > 
+<apex:pageBlock title="Billing Exceptions" > 
+     
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abc" >a</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Is revenue reserved in an Unauthorized Sales account?</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.BExcA__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Do billing standards audit results require a corrective action plan?</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.BExcB__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >c</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Has the Business Manager been notified of exceptions?</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField value="{!NPA_Audit__c.BExcC__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >d</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Has the states operations leadership (Executive/State or Operations Director) been notified of exceptions?</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField value="{!NPA_Audit__c.BExcD__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >e</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Has the QA Director (regional) been notified of exceptions?</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField value="{!NPA_Audit__c.BExcE__c}"/>                                
+        </apex:panelGrid>
+
+</apex:pageBlock>
+        </apex:tab>
+<!--
+/////// QA Tab
+-->        
+        <apex:tab label="Quality" rendered="{!NPA_Audit__c.QA_Audit__c}">
+       
+        <apex:panelGrid columns="1" styleClass="myTable"> 
+               <apex:outputPanel styleClass="myH1" layout="block" >Consumer Record: Quality Audit Section</apex:outputPanel> 
+               <apex:outputPanel styleClass="myH3" layout="block" >
+                    Audit Objective: Assess that documentation of service quality meets the expectations set by the Quality of Care Standards, regulatory and licensing requirements.                                                                                                                                            
+               </apex:outputPanel>
+       </apex:panelGrid>   
+     <br/>
+
+
+<apex:pageBlock mode="maindetail"  >
+
+        
+<!--
+**********************
+QA 1
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>    
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumber" >
+            1
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+The plan of care document is signed by the Individual, guardian and/or funder (DSS, etc.), or the record contains documentation that a request for a signature has been made for the current plan of care.                                                                                                                                                                                                                                                                        
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >a</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q1A__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One if 1A is No:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q1B__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >c</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.Q1C__c}"/>
+        </apex:panelGrid>
+    </apex:panelGrid>  
+<!--
+**********************
+QA 2
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>    
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumber" >
+            2
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+<BR/>Consumer participation in service planning is documented in the record. Choose Not Applicable only if consumer is &lt; 14 years old.                                                                                                                                                                                                                                                                                 
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >a</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q2A__c}"/>
+
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.Q2B__c}"/>
+        </apex:panelGrid>
+    </apex:panelGrid>          
+<!--
+**********************
+QA 3
+**********************
+--> 
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>   
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+        
+        <apex:outputPanel layout="block" styleClass="leftNumber" >3</apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+<BR/>Progress towards service goals (active treatment) and/or individual outcomes is documented in the client&apos;s record.        
+        </apex:outputPanel>
+        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>                    
+        <apex:panelGrid columns="2" columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" rules="groups" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >a</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q3A__c}"/>
+                
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>       
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.Q3B__c}"/>
+        </apex:panelGrid>
+    </apex:panelGrid>     
+<!--
+**********************
+QA 4
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>    
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumber" >
+            4
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+The Health &amp; Safety Assessment (environmental assessment) is documented. The assessment is Not Applicable IF audited services are periodic OR IF, per the service type, the client has not been in care long enough.                                                                                                                                        
+                                                                                                                                        
+        
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >a</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q4A__c}"/>
+
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose if 4a is No</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField value="{!NPA_Audit__c.Q4B__c}"/>
+
+                <apex:outputPanel layout="block" styleClass="abc" >c</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose if 4a is N/A</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q4C__c}"/>
+
+                
+                <apex:outputPanel layout="block" styleClass="abc" >d</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >If 4C indicated that not enough months of service were provided, specify # of months of service.</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField value="{!NPA_Audit__c.Q4D__c}"/>                
+
+                <apex:outputPanel layout="block" styleClass="abc" >e</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Did environment meet or exceed standards?</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q4E__c}"/>
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >f</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Does documentation verify that unmet standards were resolved? (Rated)</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q4F__c}"/> 
+
+                <apex:outputPanel layout="block" styleClass="abc" >g</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.Q4G__c}"/>                               
+        </apex:panelGrid>
+    </apex:panelGrid>            
+<!--
+**********************
+QA 5
+************
+-->   
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>   
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+        
+        <apex:outputPanel layout="block" styleClass="leftNumber" >5</apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+<BR/>A Personal Safety Individual Interview/Assessment is documented. Choose Not Applicable only if auditing a periodic service.
+         </apex:outputPanel> 
+                   
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>                        
+        <apex:panelGrid columns="2" columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" rules="groups" styleClass="myTable" >
+           
+                <apex:outputPanel layout="block" styleClass="abcRated" >a</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q5A__c}"/>
+
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Did the Personal Safety Individual Interview/Assessment identify concerns?</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q5B__c}"/>
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >c</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Does documentation verify that identified concerns were addressed?</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q5C__c}"/>                
+                                
+                <apex:outputPanel layout="block" styleClass="abc" >d</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.Q5D__c}"/>
+
+        </apex:panelGrid>
+    </apex:panelGrid>  
+<!--
+**********************
+QA 6
+************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+        
+        <apex:outputPanel layout="block" styleClass="leftNumber" >6</apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+Documentation of current Physical Exam is found in the record (a document issued by the physician&apos;s office that meets the funder&apos;s standards).                                                                                                                                      
+                                                                                                                                               
+        </apex:outputPanel>  
+                 
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>                            
+        <apex:panelGrid columns="2"  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+           
+                <apex:outputPanel layout="block" styleClass="abcRated" >a</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q6A__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.Q6B__c}"/>
+
+        </apex:panelGrid>
+    </apex:panelGrid>  
+<!--
+**********************
+QA 7
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>    
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumber" >
+            7
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+<BR/>Documentation of current Dental Exam is found in the record (a document issued by the dentist&apos;s office that meets the funder&apos;s standards).                                                                                                                                            
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >a </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q7A__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.Q7B__c}"/>
+
+        </apex:panelGrid>
+    </apex:panelGrid>     
+<!--
+**********************
+QA 8
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>    
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumber" >
+            8
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+<BR/>Medication Administration Record (MAR) is completed according to all applicable requirements (policy, licensing, and contractual).                                                                                                                                  
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >a <br/> </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q8A__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >
+                    Specify the medical intervention that was taken as a result of the most serious medication error that had occurred within the timeframe being reviewed. If no medication error required a medical intervention, select Not Applicable.
+                    </apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q8B__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >c</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.Q8C__c}"/>
+        </apex:panelGrid>
+    </apex:panelGrid>         
+<!--
+**********************
+QA 9
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>    
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumber" >
+            9
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+If the service plan indicates that the Individual requires nursing supports, is there documentation to show that the supports are being provided? Choose Not Applicable only if the service plan does not indicate that nursing supports are required.                                                                                                                                      
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >a <br/> </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q9A__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.Q9B__c}"/>
+
+        </apex:panelGrid>
+    </apex:panelGrid>         
+<!--
+**********************
+QA 10
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>    
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumber" >
+            10
+        </apex:outputPanel>
+        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abc" >a </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >
+                    If behavioral support needs have been identified for this person, are there documented strategies in place to address the identified behaviors? Select Not Applicable only if behavioral supports have not been identified.                                                                                                                                                                                                                                                                               
+                </apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q10A__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abcRated" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >
+                    If this individual has a written plan in place to address a behavior, then is the data being collected to monitor the effectiveness of the interventions? Select Not Applicable if a written plan is not in place OR if data collection is not required.                                                                                                                                     
+                </apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q10B__c}"/>
+
+                <apex:outputPanel layout="block" styleClass="abc" >c</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >
+                    If a written plan is in place to address a behavior, have all consents been signed by appropriate parties as is required by regulation? Select Not Applicable IF there is no written plan OR if regulations do not require consents.                                                                                                                                        
+                </apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q10C__c}"/>
+                                
+                <apex:outputPanel layout="block" styleClass="abc" >d</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.Q10D__c}"/>
+        </apex:panelGrid>
+    </apex:panelGrid> 
+<!--
+**********************
+QA 11
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>    
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumber" >
+            11
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+            <br/>
+Frequency of host home vists meets requirements and is documented in the file.                                                                                                                                  
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >a <br/> </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q11A__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.Q11B__c}"/>
+                
+        </apex:panelGrid>
+    </apex:panelGrid> 
+<!--
+**********************
+QA 12A
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false" columns="1">
+               <apex:outputPanel styleClass="qHeader2" layout="block" >
+                 12 - Oversight / Reconciliation of Client Funds. Refer to Network Policy for Management of Individual&apos;s Funds.                                                                                                                                             
+               </apex:outputPanel>
+    </apex:pageBlockSection>    
+    
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumberSmaller" >
+            12a
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+<br/> Specify the Company&apos;s responsibility over the Individual&apos;s personal funds.                                                                                                 
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" ></apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+     
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q12A__c}"/>
+
+        </apex:panelGrid>
+    </apex:panelGrid> 
+<!--
+**********************
+QA 12B
+**********************
+-->    
+   
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumberSmaller" >
+            12b
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+            <br/>
+            Are all required consents regarding client funds in place?                                                                                                                                
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" > </apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+      
+                <apex:outputPanel layout="block" styleClass="abcRated" >&nbsp;</apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q12B__c}"/>
+
+        </apex:panelGrid>
+    </apex:panelGrid> 
+<!--
+**********************
+QA 12C
+**********************
+-->    
+  <br/> 
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumberSmaller" >
+            12c
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+
+CHECKING ACCOUNT: If the Company has or shares responsibility over the Individual&apos;s checking account: 
+<br/>
+<apex:outputPanel layout="block" styleClass="abcDetail" >
+*Accounts must be reconciled only by a person who is either NOT a signatory OR who is NOT responsible for making entries into the ledger.                                                                                                                                       
+</apex:outputPanel>                                                                                                                                         
+                                                                                                                                                                                                                                                                      
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" > </apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >i </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Is there documentation that this account has been reconciled as required?</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q12C1__c}"/>
+
+                <apex:outputPanel layout="block" styleClass="abc" >ii</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Is there documentation that variances were identified in the reconciliation?</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q12C2__c}"/>
+
+                <apex:outputPanel layout="block" styleClass="abc" >iii</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Is there documentation that the variances were addressed?</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q12C3__c}"/>
+
+        </apex:panelGrid>
+    </apex:panelGrid>
+<!--
+**********************
+QA 12D
+**********************
+-->    
+   
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumberSmaller" >
+            12d
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+            <br/>
+SAVINGS ACCOUNT: If the Company has or shares responsibility over the Individual&apos;s savings account:                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                          
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" > </apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >i </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Is there documentation that this account has been reconciled as required?</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q12D1__c}"/>
+
+                <apex:outputPanel layout="block" styleClass="abc" >ii</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Is there documentation that variances were identified in the reconciliation?</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q12D2__c}"/>
+
+                <apex:outputPanel layout="block" styleClass="abc" >iii</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Is there documentation that the variances were addressed?</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q12D3__c}"/>
+
+        </apex:panelGrid>
+    </apex:panelGrid>
+<!--
+**********************
+QA 12e
+**********************
+-->    
+   
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumberSmaller" >
+            12e
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+<br/>SECURED CASH ON-HAND: If the Company has or shares responsibility over the Individual&apos;s personal funds, which are secured on-hand:                                                                                                                                      
+                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" > </apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >i </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Is there documentation that this account has been reconciled as required?</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q12E1__c}"/>
+
+                <apex:outputPanel layout="block" styleClass="abc" >ii</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Is there documentation that variances were identified in the reconciliation?</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q12E2__c}"/>
+
+                <apex:outputPanel layout="block" styleClass="abc" >iii</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Is there documentation that the variances were addressed?</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q12E3__c}"/>
+
+        </apex:panelGrid>
+    </apex:panelGrid>
+<!--
+**********************
+QA 12f
+**********************
+-->    
+   
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumberSmaller" >
+            12f
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+Is there documentation that the CHILD receives his/her allowance as per requirements? 
+<br/>
+Choose Not Applicable if the person is an adult OR if allowance distribution is not a requirement.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" > </apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+      
+                <apex:outputPanel layout="block" styleClass="abcRated" >&nbsp;</apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q12F__c}"/>
+
+        </apex:panelGrid>
+    </apex:panelGrid>
+<!--
+**********************
+QA 12g
+**********************
+-->    
+   
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumberSmaller" >
+            12g
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader" >Details</apex:outputPanel>
+<!-- filler plus abc questions-->        
+         <apex:outputPanel layout="block" styleClass="fillerOuter" > </apex:outputPanel>       
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable">       
+                <apex:outputPanel layout="block" styleClass="fillerOuter" > </apex:outputPanel> 
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.Q12G__c}"/>
+
+        </apex:panelGrid>
+    </apex:panelGrid>
+<!--
+**********************
+QA 13
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>     
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumberSmaller" >
+            13
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+VOCATIONAL ENGAGEMENT: Indicate the Individual&apos;s current level of vocational engagement. If vocational engagement is not part of the service scope, select 11 (Not Applicable). Choose one:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" > </apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+      
+                <apex:outputPanel layout="block" styleClass="abc" >a</apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q13A__c}"/>
+
+        </apex:panelGrid>
+    </apex:panelGrid>
+<!--
+**********************
+QA 14
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>     
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumberSmaller" >
+            14
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+            COMMUNITY INCLUSION: How frequently does the Individual participate in integrated community activities? 
+            <br/>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >
+                    Community activities include social or leisure activities (church, sports team, neighborhood group, social club, etc.) and functional errands (grocery shopping, bank, etc.) that occur outside the person&apos;s home or day program. If the Individual&apos;s service plan documents that s/he is not able to be in the community for medical or other reasons, a visit or activity with a non-paid community member at the home or day program can also be considered an integrated community activity.
+                </apex:outputPanel>
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" > </apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+      
+                <apex:outputPanel layout="block" styleClass="abc" >a</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q14A__c}"/>
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >The Individual&apos;s plan of care specifies the frequency of community activities that The Network is required to provide</apex:outputPanel> 
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q14B__c}"/>
+                <apex:outputPanel layout="block" styleClass="abc" >c</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >The Individual participated in community activities in compliance with his / her plan of care. Choose Not Applicable if 14B is No</apex:outputPanel> 
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.Q14c__c}"/>
+
+        </apex:panelGrid>
+    </apex:panelGrid>
+
+</apex:pageBlock>
+
+<!--
+*******************************
+End of QA required section
+End of the page block
+*******************************
+
+*******************************
+Start of QA Execptions
+*******************************
+
+*******************************
+    Start of new page block
+*******************************
+-->
+</apex:tab>
+<apex:tab label="{!ExTabText}" rendered="{!qExTab}" style="{!ExTabStyle}" >
+<!--
+**********************
+QA 15
+**********************
+-->    
+<apex:pageBlock title="Quality Exceptions" >  
+       
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abc" >a</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Do Quality audit results require a corrective action plan?</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.QExcA__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Has the director/manager of the audited service been notified of the exceptions?</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.QExcB__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >c</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Has the state&apos;s operations leadership (Executive/State or Operations Director) been notified of exceptions?</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField value="{!NPA_Audit__c.QExcC__c}"/>
+                                             
+        </apex:panelGrid>
+ 
+</apex:pageBlock>        
+        </apex:tab>
+<!--
+///////////Host Home Tab
+-->        
+        <apex:tab label="HHP" rendered="{!NPA_Audit__c.HHP_Audit__c}">
+        
+        <apex:panelGrid columns="1" styleClass="myTable"> 
+               <apex:outputPanel styleClass="myH1" layout="block" >Host Home Provider Record: HHP Core Requirements Audit Section</apex:outputPanel> 
+               <apex:outputPanel styleClass="myH3" layout="block" >
+                   Audit Objective: To make sure that documentation of Host Home Providers (a.k.a, HHP, Mentors, Foster Parents) meets licensing and company requirements.                                                                                                                                             
+               </apex:outputPanel>
+       </apex:panelGrid>   
+    <br/>
+
+<apex:pageBlock mode="maindetail"  >
+
+        
+<!--
+**********************
+Host Home 1
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>    
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumber" >
+            1
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+            <br/>
+            Executed General Mentor Provider Agreement (Correct company, signed and dated)                                                                                                                                      
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >a</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H1A__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One if 1A is No:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H1B__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >c</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.H1C__c}"/>
+        </apex:panelGrid>
+    </apex:panelGrid>  
+<!--
+**********************
+Host Home 2
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>    
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumber" >
+            2
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader"><br/>Executed Individual Placement (Service) Agreement (Correct company, signed and dated)</apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >a</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H2A__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One if 2A is No:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H2B__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >c</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.H2C__c}"/>
+        </apex:panelGrid>
+    </apex:panelGrid>          
+<!--
+**********************
+Host Home 3
+**********************
+--> 
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>   
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+        
+        <apex:outputPanel layout="block" styleClass="leftNumber" >3</apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader"><p/>Signed signature sheet of the Code of Conduct</apex:outputPanel>
+        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>                    
+        <apex:panelGrid columns="2" columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" rules="groups" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >a</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H3A__c}"/>
+                
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>       
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.H3B__c}"/>
+        </apex:panelGrid>
+    </apex:panelGrid>     
+<!--
+**********************
+Host Home 4
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>    
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumber" >
+            4
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader"><br/>Signed and dated signature sheet of the Provider Manual for Independent </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >a</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H4A__c}"/>
+
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.H4B__c}"/>
+        </apex:panelGrid>
+    </apex:panelGrid>            
+<!--
+**********************
+Host Home 5
+************
+-->   
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>   
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+        
+        <apex:outputPanel layout="block" styleClass="leftNumber" >5</apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader"><br/>References that meet internal and external requirements (The Network minimum is 3 written, non-relative references for each adult in the household) </apex:outputPanel> 
+                   
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>                        
+        <apex:panelGrid columns="2" columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" rules="groups" styleClass="myTable" >
+           
+                <apex:outputPanel layout="block" styleClass="abcRated" >a</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H5A__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose if 5A is No</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H5B__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >c</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.H5c__c}"/>                
+
+        </apex:panelGrid>
+    </apex:panelGrid>  
+<!--
+**********************
+Host Home 6
+************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+        
+        <apex:outputPanel layout="block" styleClass="leftNumber" >6</apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader"><br/>Documentation showing that Pre-Service Overview has been completed.</apex:outputPanel>  
+                 
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>                            
+        <apex:panelGrid columns="2"  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+           
+                <apex:outputPanel layout="block" styleClass="abcRated" >a</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H6A__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One if 6A is No:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H6B__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >c</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.H6C__c}"/>
+        </apex:panelGrid>
+    </apex:panelGrid>  
+<!--
+**********************
+Host Home 7
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>    
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumber" >
+            7
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader"><br/>Required Continuing Education. Choose Not Applicable only if HHP has been contracted for less than 6 months at time of this review.                                                                                                                                       
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >a <br/> </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H7A__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One if 7A is No:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H7B__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >c</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.H7C__c}"/>
+        </apex:panelGrid>
+    </apex:panelGrid>     
+<!--
+**********************
+Host Home 8
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>    
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumber" >
+            8
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+            <br/>All required medical clearances are no older than 2 years                                                                                                                                   
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >a <br/> </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H8A__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One if 8A is No:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H8B__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >c</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.H8C__c}"/>
+        </apex:panelGrid>
+    </apex:panelGrid>         
+<!--
+**********************
+Host Home 9
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>    
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumber" >
+            9
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+            <br/>
+            A current Annual Home Study. Choose Not Applicable only if HHP has been contracted for less than 1 year at the time of this review.                                                                                                                                    
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >a <br/> </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H9A__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One if 9A is No:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H9B__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >c</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.H9C__c}"/>
+        </apex:panelGrid>
+    </apex:panelGrid>         
+<!--
+**********************
+Host Home 10
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>    
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumber" >
+            10
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+<br/>A current Annual Review of Contractual Compliance. Choose Not Applicable only if HHP has been contracted for less than 1 year at the time of this review.                                                                                                                                 
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >a <br/> </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H10A__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One if 10A is No:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H10B__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >c</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.H10C__c}"/>
+        </apex:panelGrid>
+    </apex:panelGrid> 
+<!--
+**********************
+Host Home 11
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false"></apex:pageBlockSection>    
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumber" >
+            11
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+            <br/>
+            At least one unannounced host home visit that has occurred in the past year (12 months)                                                                                                                                   
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" >&nbsp;</apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >a <br/> </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H11A__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One if 11A is No:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H11B__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >c</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Details</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField styleClass="txtArea" value="{!NPA_Audit__c.H11C__c}"/>
+        </apex:panelGrid>
+    </apex:panelGrid> 
+<!--
+**********************
+Host Home 12A
+**********************
+-->    
+<apex:pageBlockSection title=" " collapsible="false" columns="1">
+               <apex:outputPanel styleClass="qHeader2" layout="block" >
+                  12 - BACKGROUND CHECKS - Indicate whether each check was found in the Host Home Provider &#13; s record.                                                                                                                                             
+               </apex:outputPanel>
+    </apex:pageBlockSection>    
+    
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumberSmaller" >
+            12a
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+            <br/>
+            OIG                                                                                                                                  
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" ></apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >i <br/> </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H12A__c}"/>
+
+                <apex:outputPanel layout="block" styleClass="abc" >ii</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One if i is No:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H12A2__c}"/>
+
+        </apex:panelGrid>
+    </apex:panelGrid> 
+<!--
+**********************
+Host Home 12B
+**********************
+-->    
+   
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumberSmaller" >
+            12b
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+            <br/>
+            Abuse Registry / Protective Services                                                                                                                                 
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" > </apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >i <br/> </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H12B1__c}"/>
+
+                <apex:outputPanel layout="block" styleClass="abc" >ii</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One if i is No:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H12B2__c}"/>
+
+        </apex:panelGrid>
+    </apex:panelGrid> 
+<!--
+**********************
+Host Home 12C
+**********************
+-->    
+   
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumberSmaller" >
+            12c
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+            <br/>
+Federal Criminal Check                                                                                                                                                                                                                                                                       
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" > </apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >i <br/> </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H12C1__c}"/>
+
+                <apex:outputPanel layout="block" styleClass="abc" >ii</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One if i is No:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H12C2__c}"/>
+
+        </apex:panelGrid>
+    </apex:panelGrid>
+<!--
+**********************
+Host Home 12D
+**********************
+-->    
+   
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumberSmaller" >
+            12d
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+            <br/>
+Fingerprinting                                                                                                                                                                                                                                                                                                                                                                                                           
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" > </apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >i <br/> </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H12D1__c}"/>
+
+                <apex:outputPanel layout="block" styleClass="abc" >ii</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One if i is No:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H12D2__c}"/>
+
+        </apex:panelGrid>
+    </apex:panelGrid>
+<!--
+**********************
+Host Home 12e
+**********************
+-->    
+   
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumberSmaller" >
+            12e
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+            <br/>
+Sex Offender Registry                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" > </apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >i <br/> </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H12E1__c}"/>
+
+                <apex:outputPanel layout="block" styleClass="abc" >ii</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One if i is No:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H12E2__c}"/>
+
+        </apex:panelGrid>
+    </apex:panelGrid>
+<!--
+**********************
+Host Home 12f
+**********************
+-->    
+   
+    <apex:panelGrid columns="2" columnClasses="cc1, cc2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable"  >
+
+        <apex:outputPanel layout="block" styleClass="leftNumberSmaller" >
+            12f
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" styleClass="qHeader">
+            <br/>
+State / Local Criminal Check                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+        </apex:outputPanel>
+<!-- filler plus abc questions-->        
+        <apex:outputPanel layout="block" styleClass="fillerOuter" > </apex:outputPanel>        
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abcRated" >i <br/> </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H12F1__c}"/>
+
+                <apex:outputPanel layout="block" styleClass="abc" >ii</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Choose One if i is No:</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.H12F2__c}"/>
+
+        </apex:panelGrid>
+    </apex:panelGrid>
+</apex:pageBlock>
+
+<!--
+*******************************
+End of Host Home required section
+End of the page block
+*******************************
+
+*******************************
+Start of Host Home Execptions
+*******************************
+
+*******************************
+    Start of new page block
+*******************************
+-->
+</apex:tab>
+<apex:tab label="{!ExTabText}" rendered="{!hExTab}" style="{!ExTabStyle}" >
+<!--
+**********************
+Host Home 13
+**********************
+-->    
+<apex:pageBlock title="Host Home Provider Exceptions " >  
+
+        <apex:outputPanel layout="block" styleClass="myH2">
+            
+       </apex:outputPanel>        
+ 
+
+<!-- filler plus abc questions-->        
+     
+        <apex:panelGrid columns="2" headerClass=""  columnClasses="c1, c2" rowClasses="r1, r2" cellpadding="0" cellspacing="0" border="0" rules="groups"  frame="none" styleClass="myTable" >
+
+                <apex:outputPanel layout="block" styleClass="abc" >a</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Do audit results require a corrective action plan?</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.HExcA__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >b</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Has the director/manager of the audited service been notified of the exceptions?</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
+                <apex:inputField value="{!NPA_Audit__c.HExcB__c}"/>
+                
+                <apex:outputPanel layout="block" styleClass="abc" >c</apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="abcDetail" >Has the states operations leadership (Executive/State or Operations Director) been notified of exceptions?</apex:outputPanel>        
+                <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>      
+                <apex:inputField value="{!NPA_Audit__c.HExcC__c}"/>
+                                             
+        </apex:panelGrid> 
+</apex:pageBlock>        
+        </apex:tab>
+      
+      
+      
+      <apex:tab label="System Info"  style="margin-left: 10px;" >
+      
+            <apex:pageblock >
+                <apex:pageblockSection columns="2">
+                <apex:outputField value="{!NPA_Audit__c.OwnerID}"/> 
+                <apex:outputField value="{!NPA_Audit__c.Locked__c}"/>
+
+                        
+
+                <apex:outputLabel ></apex:outputLabel>    <apex:outputLabel ></apex:outputLabel>   
+                <apex:outputField label="Last Modified" value="{!NPA_Audit__c.LastModifiedByID}"/>
+                <apex:outputField label=" " value="{!NPA_Audit__c.LastModifiedDate}"/>                
+                <apex:outputField label="Created" value="{!NPA_Audit__c.CreatedByID}"/>
+                <apex:outputField label=" " value="{!NPA_Audit__c.CreatedDate}"/>
+                
+                <apex:commandButton style="{!btnStyle2}" value="Share This Record" action="/p/share/CustomObjectSharingDetail?parentId={!NPA_Audit__c.Id}" rendered="{!$ObjectType.NPA_Audit__c.Fields.Locked__c.updateable}" /> 
+                <apex:commandButton style="{!btnStyle2}" value="Change Owner" action="/{!NPA_Audit__c.Id}/a?retURL={!NPA_Audit__c.Id}" rendered="{!$ObjectType.NPA_Audit__c.Fields.Locked__c.updateable}"/>
+                <apex:commandButton style="{!btnStyle2}" value="Delete" action="{!Delete}" onclick="return confirm('Are you sure?')"/>
+                <apex:commandButton style="{!btnStyle2}" value="Unlock" action="{!Unlock}" onclick="return confirm('Are you sure?')"/>
+                
+            </apex:pageblockSection>
+        
+            </apex:pageblock>
+                    
+      </apex:tab>        
+      <apex:tab label="Preview" >
+          <apex:commandButton value="Refresh" />
+          
+          <apex:detail subject="{!NPA_Audit__c.id}" inlineEdit="false" relatedList="true" showChatter="false" title="false"/>
+      </apex:tab>      
+      
+    </apex:tabPanel> 
+</td>
+<td class="tbRight"> 
+<apex:outputPanel layout="block" styleClass="tbRight"></apex:outputPanel>
+
+<apex:outputPanel layout="block" styleClass="myMenu" id="meee">
+    <apex:pageBlock mode="maindetail" >
+    <apex:outputPanel styleClass="abcRated" style="float: right; margin-top: 6px; ">&nbsp;= Rated Question</apex:outputPanel>
+   &nbsp; | &nbsp;
+            <apex:commandButton styleClass="btnSave" style="{!btnStyle}" action="{!myUpdate}" value="Update" status="myAction" rendered="{! !newRec}" reRender="wrapper, sc" /> 
+             <apex:commandButton styleClass="btnSave" style="{!btnStyle}" action="{!save}" value="Save" rendered="{!newRec}" reRender="mee, Tabs, meee, SC"/ >
+             
+            <apex:commandButton style="{!btnStyle}" action="{!cancel}" value="Cancel" />&nbsp; | &nbsp;
+            <apex:inputField value="{!NPA_Audit__c.Status__c}">
+            </apex:inputField>
+            
+            <p/>
+             <apex:actionStatus id="myAction">
+            <apex:facet name="start">
+                <div class="waitingHolder" >
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                </div>
+            </apex:facet>
+            <apex:facet name="stop"><apex:PageMessages escape="false"  id="pageM"/></apex:facet>
+        </apex:actionStatus>
+        
+        
+
+
+<apex:outputPanel layout="block" styleClass="Scorecard" id="SC">
+
+<apex:outputPanel styleClass="myH3"  rendered="false">Rated Questions</apex:outputPanel> 
+<apex:pageBlock mode="maindetail">
+        <apex:pageBlockSection collapsible="true" columns="1" title="Billing" rendered="{!NPA_Audit__c.Billing_Audit__c}"> 
+               
+            <apex:pageBlockSectionItem labelStyle="{!menuNumStyle}" >
+                <apex:outputField label="Null Rated Questions" value="{!AuditFrmFields.IncompleteBillingRatedQuestions__c}"/>
+                <apex:outputLabel styleClass="MenuFont">Null Rated Questions</apex:outputLabel> 
+            </apex:pageBlockSectionItem>                                      
+            <apex:pageBlockSectionItem labelStyle="{!menuNumStyle}" >
+                <apex:outputField label="Exceptions" value="{!AuditFrmFields.Bill_Exceptions__c}"/>
+                <apex:outputLabel styleClass="MenuFont">Exceptions</apex:outputLabel>
+            </apex:pageBlockSectionItem>          
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection collapsible="true" columns="1" title="Quality" rendered="{!NPA_Audit__c.QA_Audit__c}">
+            <apex:pageBlockSectionItem labelStyle="{!menuNumStyle}" >
+                <apex:outputField styleClass="MenuValueFont" label="Null Rated Questions" value="{!AuditFrmFields.IncompleteQualityRatedQuestions__c}"/> 
+                <apex:outputLabel styleClass="MenuFont">Null Rated Questions</apex:outputLabel>
+            </apex:pageBlockSectionItem>         
+            <apex:pageBlockSectionItem labelStyle="{!menuNumStyle}" >
+                <apex:outputField styleClass="MenuValueFont" label="Exceptions" value="{!AuditFrmFields.QualityExceptions__c}"/>
+                <apex:outputLabel styleClass="MenuFont">Exceptions</apex:outputLabel>        
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem labelStyle="{!menuNumStyle}" > 
+                <apex:outputField styleClass="MenuValueFont" label="Exceptions (Client Funds)" value="{!AuditFrmFields.QualityExceptions_ClientFunds__c}"/>
+                <apex:outputLabel styleClass="MenuFont">Exceptions (Client Funds)</apex:outputLabel>       
+            </apex:pageBlockSectionItem>        
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection collapsible="true" columns="1"  title="HHP" rendered="{!NPA_Audit__c.HHP_Audit__c}">
+                    <apex:pageBlockSectionItem labelStyle="{!menuNumStyle}" >
+                        <apex:outputField styleClass="MenuValueFont" label="Null Rated Questions" value="{!AuditFrmFields.IncompleteHHPRatedQuestions__c}"/> 
+                        <apex:outputLabel styleClass="MenuFont">Null Rated Questions</apex:outputLabel>
+                        </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem labelStyle="{!menuNumStyle}" >
+                    <apex:outputField styleClass="MenuValueFont" label="Exceptions" value="{!AuditFrmFields.HHPExceptions__c}"/>
+                    <apex:outputLabel styleClass="MenuFont">Exceptions</apex:outputLabel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem labelStyle="{!menuNumStyle}" >
+                    <apex:outputField styleClass="MenuValueFont" style="color:blue;"  value="{!AuditFrmFields.HHPExceptions_BgCheck__c}"/>
+                    <apex:outputLabel styleClass="MenuFont">Exceptions (BG Check)</apex:outputLabel>
+                </apex:pageBlockSectionItem>        
+        </apex:pageBlockSection> 
+     </apex:pageBlock>  
+             
+     </apex:outputPanel>
+    </apex:pageBlock>
+        <center><apex:outputLink value="#" onclick="scrollWindow()">back to top</apex:outputLink> </center>
+    </apex:outputPanel> 
+</td>
+</tr>
+</table>
+</apex:form> 
+
+</apex:outputPanel>
+</apex:page>
