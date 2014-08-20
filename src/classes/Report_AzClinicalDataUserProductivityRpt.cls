@@ -31,7 +31,7 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
     	
     	for (User u : userList)
     	{
-    		users.Add( new selectOption( u.Id, u.LastName) ) ;
+    		users.Add( new selectOption( u.Id, u.FirstName + ' ' + u.LastName) ) ;
     	}
     	
     	
@@ -49,13 +49,17 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
         PNResults.clear();
         listDataForCDU.clear();         
         selUsers = uiselUsers.split(',');                                                                           
-                                      
+        
+        for(String s : selUsers) {
+        	System.debug('selUsers entry: ' + s);
+        }
+        System.debug('uiselUsers: ' + uiselUsers);                              
                                       
         Datetime startdt = DateTime.newInstance( fStartDate, Time.newInstance(0,0,0,0));
         Datetime enddt = DateTime.newInstance ( fEndDate, Time.newInstance(23, 59, 59, 999));        
         System.debug( 'starting: ' + startdt + ' ending: ' + enddt );                          
         PNResults = [ SELECT 
-        				service_assignment__c,
+        				Service_Assignment__c,
         				Person_Being_Served__r.Name,
         				person_being_served__c,
         				person_being_served__r.Owner.Name,
@@ -68,9 +72,10 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
            			 	Total_Time__c      
                        FROM Progress_Note__c 
                        WHERE 
-                         disregard_note__c = false
-                         and Start_time__c >= :startdt  AND  
-                            Start_time__c <= :enddt ];
+                         Disregard_Note__c = false
+                         AND Start_time__c >= :startdt  
+                         AND Start_time__c <= :enddt
+                         AND CreatedBy.Id = :selUsers ];
  
                                            
             DataForCDU dataForACdu;                                                              
@@ -111,8 +116,9 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
     	public List<WrappedPn> pns { get; set; }
     	public SummaryRow sumRow { get; set; }
         public String clinician {get; set;}
+        public String clinicianUserId {get; set;}
         public String pbs {get; set;}
-        public ID saId { get; set;}
+        public String pbsID {get; set;}
         public String totalMinutes {get; set;}
         public Decimal tempMinutes { get; set; }
         public Decimal tempBillableHours { get; set; }
@@ -133,7 +139,9 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
 				
 				if(counter==1) {
 					clinician = p.thePn.CreatedBy.Name;
+					clinicianUserId = p.thePn.CreatedBy.Id;
 					pbs = p.thePn.Person_Being_Served__r.Name;
+					pbsID = p.thePn.Person_Being_Served__c;
 					totalMinutes = p.thePn.Total_Time__c.format();
 					hours = (p.thePn.Total_Time__c / 60).format();
 				}
@@ -195,6 +203,10 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
 	        if (thePn.CreatedByID > wpn.thePn.CreatedByID ) return 1;
 	        return -1;        
     	}
+		
+	}
+	
+	public void doNothing() {
 		
 	}
 
