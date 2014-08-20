@@ -22,7 +22,9 @@ public static Id getAccountRecordType(){
             PersonMailingStateCode='NC',
             PersonEmail=EncodingUtil.convertToHex(crypto.generateAesKey(128)).substring(1,5).toUpperCase() + '_test@yahoo.com',
             PersonHomePhone='1234567',
-            PersonMobilePhone='12345678'
+            PersonMobilePhone='12345678',
+            Other_ID__pc = 'Other', 
+            Other_ID_Description__pc = 'Other Description' 
         );
         insert Accnt;
         List<Account> testAcct = [Select Id, PersonContactId, RecordTypeID From Account a WHERE a.Id = :Accnt.Id];
