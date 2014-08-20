@@ -3,7 +3,6 @@
 <apex:includeScript value="{!$Resource.jquery}"/>
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
-<apex:includeScript value="{!$Resource.jquery_BlockUI}" />
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 <apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables_themeroller.css')}"/>
 <apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables.css')}"/>
@@ -247,11 +246,7 @@ j$(document).ready(function(){
   		selectSort(j$('select[id$=userlist]'), j$('select[id$=userlist] option') );
 	 });
 	j$('#addUsers').click(function() {
-		j$.blockUI({ message: '<h1><img src="/img/loading.gif" /> Please Wait...</h1>' }), function() {
- 			return !j$('select[id$=userlist] option:selected').remove().appendTo('#selectUsersId'), function() {
- 				j$.unblockUI();
- 			};
-	 	};
+ 		return !j$('select[id$=userlist] option:selected').remove().appendTo('#selectUsersId');
 	 }); 	
 	j$('#removeUsers').click(function() {
   		j$('#selectUsersId option:selected').remove().appendTo('select[id$=userlist]');
@@ -267,14 +262,6 @@ function selectSort(mySelect, myOptions){
 	})
 	j$(mySelect).empty().append( myOptions );
 };
-
-function blockTheUi() {
-	j$.blockUI({ message: '<h1><img src="/img/loading.gif" /> Please Wait...</h1>' });
-}
-
-function unblockTheUi() {
-	j$.unblockUI();
-}
 
 function setSelectedVals() {
 
