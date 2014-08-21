@@ -41,6 +41,8 @@ public class TMN_Tree{
             public boolean isInserted {get; set;}
             public boolean DeleteRecord {get; set;}
             
+            
+            
             //fancy tree settings            
             public boolean isSelected {get; set;}
             public boolean isUnselectable {get; set;} 
@@ -60,6 +62,7 @@ public class TMN_Tree{
             public Task theTask {get; set;}
             public Project_Task_Activity__c ProjTaskAct {get; set;}
             
+            public list<Attachment> Attaches { get; set;}
             //end Custom objects
         //construct
             public node(string k, string t){

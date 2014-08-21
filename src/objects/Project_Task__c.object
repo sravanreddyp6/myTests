@@ -54,6 +54,16 @@
     <enableHistory>true</enableHistory>
     <enableReports>true</enableReports>
     <fields>
+        <fullName>Actual_Due_Date__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(ISBLANK( Revised_Due_Date__c ), Due_Date__c , Revised_Due_Date__c )</formula>
+        <label>Actual Due Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
         <fullName>Assigned_To__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
@@ -78,6 +88,16 @@
         <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Completed_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Completed Date</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
     </fields>
     <fields>
         <fullName>Completed__c</fullName>
@@ -141,6 +161,17 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Notes__c</fullName>
+        <externalId>false</externalId>
+        <label>Notes</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
         <fullName>Progress__c</fullName>
         <externalId>false</externalId>
         <formula>IMAGE(&quot;https://c.na12.content.force.com/servlet/servlet.ImageServer?id=015U00000002LpJ&amp;oid=00DJ0000002lsfT&amp;lastMod=1334720899000&quot;, &quot;P&quot;, 10, Complete__c *100 ) 
@@ -185,6 +216,16 @@ TEXT( Complete__c *100)
         <type>Date</type>
     </fields>
     <fields>
+        <fullName>Revised_Due_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Revised Due Date</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
         <fullName>Start_Date__c</fullName>
         <defaultValue>today()</defaultValue>
         <externalId>false</externalId>
@@ -198,7 +239,7 @@ TEXT( Complete__c *100)
     <fields>
         <fullName>Status__c</fullName>
         <externalId>false</externalId>
-        <formula>IF( Complete__c =1, &quot;Completed&quot;, IF( Due_Date__c &lt; TODAY(),&quot;OVERDUE&quot;,&quot;Incomplete&quot;))</formula>
+        <formula>IF( Complete__c =1, &quot;Completed&quot;, IF( Actual_Due_Date__c &lt; TODAY(),&quot;OVERDUE&quot;,&quot;Incomplete&quot;))</formula>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Status</label>
         <required>false</required>
@@ -207,6 +248,31 @@ TEXT( Complete__c *100)
         <type>Text</type>
         <unique>false</unique>
     </fields>
+    <fields>
+        <fullName>Total_Activities_Completed__c</fullName>
+        <externalId>false</externalId>
+        <label>Total Activities Completed</label>
+        <summaryFilterItems>
+            <field>Project_Task_Activity__c.Complete__c</field>
+            <operation>equals</operation>
+            <value>100</value>
+        </summaryFilterItems>
+        <summaryForeignKey>Project_Task_Activity__c.Project_Task__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>Total_Activities__c</fullName>
+        <externalId>false</externalId>
+        <label>Total Activities</label>
+        <summaryForeignKey>Project_Task_Activity__c.Project_Task__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Summary</type>
+    </fields>
     <label>Project Task</label>
     <listViews>
         <fullName>All</fullName>
@@ -214,6 +280,8 @@ TEXT( Complete__c *100)
         <columns>Project__c</columns>
         <columns>Due_Date__c</columns>
         <columns>Progress__c</columns>
+        <columns>Total_Activities__c</columns>
+        <columns>Total_Activities_Completed__c</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>
