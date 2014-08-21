@@ -409,7 +409,7 @@ public with sharing class Assessment_IssaForm {
             update mapCurrentResps.values() ;
 			
             try {
-                Assessment__c currFinal = [select id, status__c from assessment__c where Admission__c = :assessment.Admission__c AND Assessment_Type__c = :assessment.Assessment_Type__c and status__C = 'Active Final' LIMIT 1];
+                Assessment__c currFinal = [select id, status__c from assessment__c where Admission__c = :assessment.Admission__c AND Type__c = :assessment.Type__c and status__C = 'Active Final' LIMIT 1];
                 currFinal.Status__c = 'Inactive Final';
                 update currFinal;
             }
