@@ -820,7 +820,7 @@ public pagereference mySave(){
                      from Action_Plan_Objectives__r Order By CreatedDate) 
                         from Action_Plan_Goal__c where action_plan__c = :ActionPlan.id Order By CreatedDate]; 
         objectives = [select id, Action_plan_goal__c, name, ReferenceID__c, Description__c, CreatedDate, sort_order__c, Action_Plan_Goal__r.Sort_Order__c,
-                    (select id, description__c, ReferenceID__c, name, CreatedDate, sort_order__c, status__c, effective_date__c
+                    (select id, description__c, ReferenceID__c, name, CreatedDate, sort_order__c, status__c, Start_Date__c, End_date__c
                         from Action_Plan_Actions__r Order By sort_order__c) 
                             from Action_Plan_Objective__c where Action_Plan_Goal__r.Action_Plan__c = :ActionPlan.id];        
     
