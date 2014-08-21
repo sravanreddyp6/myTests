@@ -51,6 +51,15 @@
     <enableHistory>false</enableHistory>
     <enableReports>true</enableReports>
     <fields>
+        <fullName>Actual_Due_Date__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(ISBLANK( Revised_Due_Date__c ), Due_Date__c , Revised_Due_Date__c )</formula>
+        <label>Actual Due Date</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
         <fullName>Assigned_To__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
@@ -74,6 +83,15 @@
         <type>Percent</type>
     </fields>
     <fields>
+        <fullName>Completed_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Completed Date</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
         <fullName>Description__c</fullName>
         <externalId>false</externalId>
         <label>Description</label>
@@ -91,6 +109,16 @@
         <trackFeedHistory>false</trackFeedHistory>
         <trackTrending>false</trackTrending>
         <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Notes__c</fullName>
+        <externalId>false</externalId>
+        <label>Notes</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
     </fields>
     <fields>
         <fullName>Project_Task__c</fullName>
@@ -116,6 +144,15 @@
         <type>Date</type>
     </fields>
     <fields>
+        <fullName>Revised_Due_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Revised Due Date</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
         <fullName>Start_Date__c</fullName>
         <externalId>false</externalId>
         <label>Start Date</label>
@@ -127,7 +164,7 @@
     <fields>
         <fullName>Status__c</fullName>
         <externalId>false</externalId>
-        <formula>IF( Complete__c =1, &quot;Completed&quot;, IF( Due_Date__c &lt; TODAY(),&quot;OVERDUE&quot;,&quot;Incomplete&quot;))</formula>
+        <formula>IF( Complete__c =1, &quot;Completed&quot;, IF( Actual_Due_Date__c &lt; TODAY(),&quot;OVERDUE&quot;,&quot;Incomplete&quot;))</formula>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Status</label>
         <required>false</required>

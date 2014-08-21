@@ -187,40 +187,15 @@
         <type>Summary</type>
     </fields>
     <fields>
-        <fullName>Interested_Party_1__c</fullName>
+        <fullName>Interested_Parties_email_address__c</fullName>
         <externalId>false</externalId>
-        <label>Interested Party 1</label>
-        <length>255</length>
-        <required>false</required>
+        <label>Interested Parties e-mail address</label>
+        <length>32768</length>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
-    </fields>
-    <fields>
-        <fullName>Interested_Party_2__c</fullName>
-        <externalId>false</externalId>
-        <label>Interested Party 2</label>
-        <length>255</length>
-        <required>false</required>
-        <trackFeedHistory>false</trackFeedHistory>
-        <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
-    </fields>
-    <fields>
-        <fullName>Interested_Party_3__c</fullName>
-        <externalId>false</externalId>
-        <label>Interested Party 3</label>
-        <length>255</length>
-        <required>false</required>
-        <trackFeedHistory>false</trackFeedHistory>
-        <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
     </fields>
     <fields>
         <fullName>Operating_Group__c</fullName>
@@ -680,12 +655,77 @@ TEXT(Complete__c*100)
         <type>Date</type>
     </fields>
     <fields>
+        <fullName>Total_Activities_Completed__c</fullName>
+        <externalId>false</externalId>
+        <label>Total Activities Completed</label>
+        <summarizedField>Project_Task__c.Total_Activities_Completed__c</summarizedField>
+        <summaryForeignKey>Project_Task__c.Project__c</summaryForeignKey>
+        <summaryOperation>sum</summaryOperation>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>Total_Activities__c</fullName>
+        <externalId>false</externalId>
+        <label>Total Activities</label>
+        <summarizedField>Project_Task__c.Total_Activities__c</summarizedField>
+        <summaryForeignKey>Project_Task__c.Project__c</summaryForeignKey>
+        <summaryOperation>sum</summaryOperation>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>Total_Items_Completed__c</fullName>
+        <externalId>false</externalId>
+        <formula>Total_Activities_Completed__c +  Total_Task_Completed__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Total Items Completed</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Total_Items__c</fullName>
+        <externalId>false</externalId>
+        <formula>Total_Activities__c +  Total_Tasks__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Total Items</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Total_Per_Complete__c</fullName>
         <externalId>false</externalId>
         <label>Total % Complete</label>
         <summarizedField>Project_Task__c.Complete__c</summarizedField>
         <summaryForeignKey>Project_Task__c.Project__c</summaryForeignKey>
         <summaryOperation>sum</summaryOperation>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>Total_Task_Completed__c</fullName>
+        <externalId>false</externalId>
+        <label>Total Task Completed</label>
+        <summaryFilterItems>
+            <field>Project_Task__c.Complete__c</field>
+            <operation>equals</operation>
+            <value>100</value>
+        </summaryFilterItems>
+        <summaryForeignKey>Project_Task__c.Project__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Summary</type>
@@ -750,14 +790,17 @@ TEXT(Complete__c*100)
         <columns>NAME</columns>
         <columns>RECORDTYPE</columns>
         <columns>Status__c</columns>
-        <columns>Regional_Director__c</columns>
-        <columns>Executive_Director__c</columns>
         <columns>Start_Date__c</columns>
         <columns>Due_Date__c</columns>
-        <columns>isTemplate__c</columns>
         <columns>Progress__c</columns>
         <columns>OWNER.ALIAS</columns>
         <columns>CREATED_DATE</columns>
+        <columns>Total_Per_Complete__c</columns>
+        <columns>Total_Tasks__c</columns>
+        <columns>Complete__c</columns>
+        <columns>Incomplete_Tasks__c</columns>
+        <columns>Total_Activities__c</columns>
+        <columns>Total_Activities_Completed__c</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>

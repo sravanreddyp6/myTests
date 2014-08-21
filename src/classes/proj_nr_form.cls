@@ -7,6 +7,8 @@ public with sharing class proj_nr_form {
     public string startingOption {get; set;}
     public string selectedTemplate{get; set;}
     public string feedID{ get; set;}
+    public string attachParentID{ get; set;}
+    public project__c pStats {get; set;}
     ID NR_RTid(){
         
     
@@ -16,6 +18,7 @@ public with sharing class proj_nr_form {
     //construct
     public proj_nr_form(ApexPages.StandardController controller) {
         cur_proj = (Project__c)controller.getRecord(); 
+        pStats = new Project__c();
         startingOption = 'blank';
         feedID = cur_proj.id;
         projTree = new TMN_Tree();        
@@ -33,6 +36,7 @@ public with sharing class proj_nr_form {
         }
         projTree.root.Proj = cur_proj;
         refreshProjTree();
+        refreshPStats();
         
     }
     //end contruct
@@ -121,6 +125,7 @@ public with sharing class proj_nr_form {
         else{updateProj();}
         if(!hasError){
             refreshProjTree();
+            refreshPStats();
         }
         return null;
     }
@@ -205,16 +210,14 @@ public with sharing class proj_nr_form {
         }
         else{
             list<Project_Task__c> PTs = new list<Project_Task__c>();
-            PTs = [select ID, name, status__c, description__c, start_date__c, due_date__c, Complete__c, Project__c, Assigned_To__c, External_ID__c, Reminder_Date__c, 
-                     (select id, name, status__c, description__c, complete__c, start_date__c, due_date__c, Assigned_To__c, Reminder_Date__c , Project_Task__c from Project_Task_Activities__r Order By CreatedDate) 
+            PTs = [select ID, name, status__c, description__c, start_date__c, due_date__c, Complete__c, Completed_Date__c, Revised_Due_Date__c, Project__c, Assigned_To__c, External_ID__c, Reminder_Date__c, 
+                     (select id, name, status__c, description__c, complete__c, start_date__c, due_date__c, Completed_Date__c, Assigned_To__c, Revised_Due_Date__c, Reminder_Date__c , Project_Task__c from Project_Task_Activities__r Order By CreatedDate) 
                          From Project_Task__c Where Project__c = :selectedTemplate Order By CreatedDate] ;
-            project__c pr = [select id, name, description__c, service_line__c, Interested_Party_1__c, Interested_Party_2__c, Interested_Party_3__c, Operating_group__c from project__c where id = :selectedTemplate];
+            project__c pr = [select id, name, description__c, service_line__c, Interested_Parties_email_address__c, Operating_group__c from project__c where id = :selectedTemplate];
             ProjTree.root.Proj.Description__c = pr.description__c;
             ProjTree.root.Proj.service_line__c = pr.service_line__c;
             ProjTree.root.Proj.Operating_group__c = pr.Operating_group__c ;
-            ProjTree.root.Proj.Interested_Party_1__c= pr.Interested_Party_1__c;
-            ProjTree.root.Proj.Interested_Party_2__c= pr.Interested_Party_2__c;
-            ProjTree.root.Proj.Interested_Party_3__c= pr.Interested_Party_3__c;
+            ProjTree.root.Proj.Interested_Parties_email_address__c= pr.Interested_Parties_email_address__c;
             
                          
             ProjTree.root.nodes.clear();            
@@ -258,27 +261,55 @@ public with sharing class proj_nr_form {
     
     }
     public void refreshProjTree(){
+        set<id> allIDs = new set<id>();
         list<Project_Task__c> PTs = new list<Project_Task__c>();
-        PTs = [select ID, name, description__c, status__c, start_date__c, due_date__c, Complete__c, Project__c, Assigned_To__c, External_ID__c , Reminder_Date__c , 
-                 (select id, name, description__c, status__c, complete__c, start_date__c, Reminder_Date__c ,  due_date__c, Assigned_To__c, Project_Task__c from Project_Task_Activities__r) 
+        PTs = [select ID, name, description__c, status__c, notes__c, start_date__c, due_date__c, Completed_Date__c, Revised_Due_Date__c, Complete__c, Project__c, Assigned_To__c,Assigned_To__r.name , External_ID__c , Reminder_Date__c , 
+                 (select id, name, description__c, status__c, notes__c, complete__c, start_date__c,Completed_Date__c, Revised_Due_Date__c, Reminder_Date__c ,  due_date__c, Assigned_To__c,Assigned_To__r.name, Project_Task__c from Project_Task_Activities__r) 
                      From Project_Task__c Where Project__c = :ProjTree.root.Proj.id];
                      
-         ProjTree.root.nodes.clear();            
+         ProjTree.root.nodes.clear();  
+         allIDs.add(ProjTree.root.Proj.id);
+         for(Project_Task__c t : PTs){
+             allIDs.add(t.ID);
+             for(Project_Task_Activity__c a : t.Project_Task_Activities__r){
+                 allIDS.add(a.id);
+             }
+         }
+         //create blank attachment lists for all items
+         map<id, list<attachment>> attMap = new map<id, list<attachment>>();
+         for(id item: allIDs){
+             list<attachment> a = new list<attachment>();
+             attMap.put(item, a);         
+         }
+         list<Attachment> att = [select id, name, parentid from attachment where parentID in : allIDs];
+         for(attachment a : att){
+             attMap.get(a.parentID).add(a);
+         }
+         
+                   
          for(Project_Task__c t : PTs){
              TMN_Tree.node tN = new TMN_Tree.node(t.external_id__c, 'task');
              tN.ProjTask = t;
              tN.isNew = false;
              tN.isInserted = true;
+             tN.Attaches = attMap.get(t.id);
              ProjTree.root.nodes.add(tN);
              for(Project_Task_Activity__c a : t.Project_Task_Activities__r){
                  TMN_Tree.node aN = new TMN_Tree.node(a.id, 'task');
                  aN.ProjTaskAct = a;
                  aN.isNew = false;
                  aN.isInserted = true;
+                 aN.Attaches = attMap.get(a.id);
                  integer i = projTree.root.getNode_Key(t.external_id__c);
                  ProjTree.root.nodes.get(i).nodes.add(aN);             
              }
          }
+    
+    }
+    public void refreshPStats(){
+        if(cur_proj.id != null){
+            pStats = [select Total_Activities_Completed__c, Total_Activities__c,Total_Tasks__c , Total_Task_Completed__c  from project__c where id =:cur_proj.id];
+        }
     
     }
     public string GenId(integer len){
@@ -293,6 +324,11 @@ public with sharing class proj_nr_form {
         return null;
     
     }
+    public pageReference blankRef(){
+        //a method to refresh a div on screen does need any logic, reRender does it all
+        return null;
+    
+    }    
     
     //end help methods
    // public class myException extends Exception {}

@@ -2,12 +2,14 @@
     <apex:attribute name="parentId" assignTo="{!parent}" type="ID" description="The ID of the parent SObject" />
     <apex:attribute name="showAction" type="Boolean" default="true" description="Whether to show the Action column or not" />
     <apex:attribute name="showType" type="Boolean" default="true" description="Whether to show the Type column or not" />
+    <apex:attribute name="retURL" type="string" description="Specify a return url, usefull if this comp is renendered"/>
+    <apex:variable value="{!if(retURL != null, retURL ,$CurrentPage.URL)}" var="theRetUrl"/>
     <apex:form id="wholeForm">
         <apex:pageBlock title="Attachments">
             <apex:pageBlockButtons location="top">
                <!-- <apex:commandButton value="New Note" onclick="window.location='/002/e?parent_id={!LEFT(parentId, 15)}&retURL={!$CurrentPage.URL}'; return false;" />-->
-                <apex:commandButton value="Attach File" onclick="window.location='/p/attach/NoteAttach?pid={!LEFT(parentId, 15)}&retURL={!$CurrentPage.URL}';return false;" />
-                <apex:commandButton rendered="{!entries.size>0}" onclick="window.location='/ui/content/ViewAllNotesPage?id={!LEFT(parentID, 15)}&retURL={!$CurrentPage.URL}'; return false;" value="View All" />
+                <apex:commandButton value="Attach File" onclick="window.location='/p/attach/NoteAttach?pid={!LEFT(parentId, 15)}&retURL={!theRetUrl}';return false;" />
+                <apex:commandButton rendered="{!entries.size>0}" onclick="window.location='/ui/content/ViewAllNotesPage?id={!LEFT(parentID, 15)}&retURL={!theRetUrl}'; return false;" value="View All" />
             </apex:pageBlockButtons>
             <apex:outputText rendered="{!entries.size=0}" value="No records to display" />
             <apex:pageBlockTable style="width: 100%;" id="NotesAndAttachments" value="{!entries}" var="entry" styleClass="list" rendered="{!entries.size>0}">
