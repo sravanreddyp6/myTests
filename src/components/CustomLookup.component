@@ -57,7 +57,7 @@
   
   <apex:inputText style="display:none" value="{!parentId}" id="lookupElement_lkid" styleClass="{!uniqueId}LookupElement_lkid"/>
   
-  <apex:inputText value="{!parentName}" id="lookupElement" styleClass="{!uniqueId}LookupElement"/>
+  <apex:inputText value="{!parentName}" id="lookupElement" styleClass="{!uniqueId}LookupElement" html-readonly="readonly"/>
       <a onClick="j$('input[id$=nameFilter]').val(j$(getIdSelector('{!$Component.comp.lookupElement}')).val());
           openMD('{!$Component.comp.searchDialog}', 'span', 'Lookup','custom-lookup-dialog'); return false;">
                                     <img valign="bottom" src="/s.gif" alt="Custom Lookup" class="lookupIcon" 
