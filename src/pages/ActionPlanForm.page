@@ -560,12 +560,12 @@ function highlightButtons ( btype, sfid, on )
                     </td>                    
                     <td>
                     
-                        <apex:outputLabel styleClass="tmnHelpText" >What measurable achievements will demonstrate this Person Being Served's progress towards this {!GoalAlias}?<br /></apex:outputLabel>       
+                        <apex:outputLabel styleClass="tmnHelpText" >What measurable achievements will demonstrate this Person Being Served's progress towards {!if(isCM,'overcoming','')} this {!GoalAlias}?<br /></apex:outputLabel>       
                         <apex:outputPanel layout="block" id="theObj" style="padding-bottom:20px">
                             <apex:inputField styleClass="txtarea" rendered="{!editMode}" value="{!planStuff[g].GoalObjs[o].theObj.Description__c}"/>  
                             <apex:outputField rendered="{! !editMode}" value="{!planStuff[g].GoalObjs[o].theObj.Description__c}"/> 
                             
-                            <apex:panelGrid columns="8" style="width:100%" rules="groups" columnClasses="innerLabel, innerData">
+                            <apex:panelGrid columns="8" style="" rules="groups" columnClasses="innerLabel, innerData">
                                 <apex:outputPanel layout="block" styleClass="innerLabel" > Status</apex:outputPanel>  
                                 <apex:outputField value="{!planStuff[g].GoalObjs[o].theObj.Status__c}"  rendered="{!!editMode}"/> 
                                 <apex:inputField value="{!planStuff[g].GoalObjs[o].theObj.Status__c}"  rendered="{!editMode}"/> 
@@ -621,7 +621,7 @@ function highlightButtons ( btype, sfid, on )
                                     <apex:inputField styleClass="txtarea" rendered="{!editMode}" value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Description__c}"/>  
                                     <apex:outputField rendered="{! !editMode}" value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Description__c}"/>   
                                         
-                                        <apex:panelGrid columns="8" style="width:100%" rules="groups" columnClasses="innerLabel, innerData" rendered="{!isCM}">
+                                        <apex:panelGrid columns="8" style="" rules="groups" columnClasses="innerLabel, innerData" rendered="{!isCM}">
                                             <apex:outputPanel layout="block" styleClass="innerLabel" > Status</apex:outputPanel>  
                                             <apex:outputField value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Status__c}"  rendered="{!!editMode}"/> 
                                             <apex:inputField value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Status__c}"  rendered="{!editMode}"/> 
