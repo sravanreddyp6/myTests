@@ -20,6 +20,96 @@
  
  
  <script language="javascript">
+    jQuery(document).ready(function ($) {
+        String.prototype.endsWith = function (suffix) {
+                return this.indexOf(suffix, this.length - suffix.length) !== -1;
+            };
+          
+        $.fn.realVal = function() {
+                // This function is here to put all the value-getting functionalities
+                // in one place. This is because calling val() on a checkbox input
+                // will only return the default value.
+                var $obj = $(this);
+                var val = $obj.val();
+                var type = $obj.attr('type');
+                if (type && type==='checkbox') {
+                    return $obj.prop('checked') ? '1' : '0';
+                } else {
+                    return val;
+                }
+            };
+            
+        // Do the field disable/enable functionality here
+        // When values are in map -> will be enabled when key is changed
+        enableDisableField = function (element) {
+                var $element = $(element);
+                // For multi-picklist, apparently the data- passthrough also
+                // exist in the selected and unselected checkboxes, which confuse
+                // the script, so we check for their existence here.
+                if ($element.attr('multiple') == 'multiple' && ($element.attr('id').endsWith('_selected') || $element.attr('id').endsWith('_unselected'))) {
+                    return;
+                }
+                var rules = $element.data("rules");
+                rules && $.each(rules, function (key, value) {
+                    var $targets = [];
+                    if (value instanceof Array) {
+                        $.each(value, function (_, selector) {
+                            $targets.push($(document.getElementById(selector)));
+                        });
+                    } else {
+                        $targets.push($(document.getElementById(value)));
+                    }
+                    var val = $element.realVal();
+                    if (val == key || (val instanceof Array && $.inArray(key, val)!=-1)) {
+                        // Enable fields
+                        $.each($targets, function (_, $target) {
+                            if ($target.attr("multiple")) {
+                                $target.parent().find("select").prop("disabled", false);
+                            } else {
+                                $target.prop("disabled", false);
+                            }
+                        });
+                    } else {
+                        // Disable fields
+                        $.each($targets, function (_, $target) {
+                            // We also need to revert the field(s) to their original state
+                            if ($target.attr("multiple")) {
+                                // Simulate removing all the selected options
+                                $(document.getElementById($target.attr('id') + '_selected')).find('option').attr('selected', 'selected');
+                                // Fake clicking the Remove button here
+                                location.href = $target.parent().find("a[title=Remove]").attr("href");
+                                $target.parent().find("select").prop("disabled", true);
+                            } else {
+                                $target.prop("disabled", true);
+                                var type = $target.attr('type');
+                                if (type && type==='checkbox') {
+                                    $target.prop('checked', false);
+                                } else {
+                                    $target.val('');
+                                }
+                            }
+                            $target.trigger('change');
+                        });
+                    }
+                });
+        } 
+            
+        setUpFields = function () {
+                $('body input').on("change", function (event) {
+                    enableDisableField(event.target);
+                });
+                $('body select').on("change", function (event) {
+                    enableDisableField(event.target);
+                });
+                $('body input').each(function (_, target) {
+                    enableDisableField(target);
+                });
+                $('body select').each(function (_, target) {
+                    enableDisableField(target);
+                });
+        }
+        setUpFields();
+    });   //end "ready" function
 
    j$ = jQuery.noConflict();
    
@@ -27,11 +117,11 @@
     var relPartyData = '{!relPartiesJSON}';  
        
      //disable enter key
-function stopRKey(evt) {
-   var evt = (evt) ? evt : ((event) ? event : null);
-   var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
-   if ((evt.keyCode == 13) && (node.type=="text")) {return false;}
-}
+	function stopRKey(evt) {
+	   var evt = (evt) ? evt : ((event) ? event : null);
+	   var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+	   if ((evt.keyCode == 13) && (node.type=="text")) {return false;}
+	}
 
   //opens the dialog
   function openDialog(dialogId, tagType, titleString)
@@ -266,6 +356,11 @@ function stopRKey(evt) {
         <apex:outputField value="{!Contact[f]}"  rendered="{!NOT(pbsEditModeOn) && !Contains(dontShowFields, f.FieldPath)}" />
         <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn && !Contains(dontShowFields, f.FieldPath)}" required="{!OR(f.required, f.dbrequired)}"/>
     </apex:repeat>
+    
+    <apex:outputField value="{!Contact.Code_Status__c}" rendered="{!NOT(pbsEditModeOn) && !Contains(dontShowFields, 'Code_Status__c')}"/>
+    <apex:inputField value="{!Contact.Code_Status__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.codeStatusOther}&quot;}" rendered="{!pbsEditModeOn && !Contains(dontShowFields, 'Code_Status__c')}"/>
+    <apex:outputField value="{!Contact.Code_Status_Other__c}" label="Specify Other" rendered="{!NOT(pbsEditModeOn) && !Contains(dontShowFields, 'Code_Status_Other__c')}"/>
+    <apex:inputField value="{!Contact.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" rendered="{!pbsEditModeOn && !Contains(dontShowFields, 'Code_Status_Other__c')}"/>
     
     <apex:pageBlockSectionItem >
     <apex:outputLabel value="Created By" />
