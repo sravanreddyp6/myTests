@@ -63,7 +63,8 @@ public string dontShowFields {
 		
 		if ( (TMNUser.Operating_Group__c.indexOf('Care') < 0) && (TMNUser.Operating_Group__c.indexOf('Meridian') < 0) ) {
             dontshow.Add('Advanced_Directives__c');
-            dontshow.Add('Code_Status__c');			
+            dontshow.Add('Code_Status__c');
+            dontshow.Add('Code_Status_Other__c');
 		}
 		return ' ' + String.Join(dontshow, ',');
 	}
