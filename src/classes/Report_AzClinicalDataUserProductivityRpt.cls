@@ -27,7 +27,12 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
     	
     	users = new List<selectoption>();
     	//proglistStates = new List<ServiceLocPrograms>();
-    	List<User> userList = [ select Id, FirstName, LastName from User ];
+    	UserRole userRole = [ SELECT Id, (SELECT Id, FirstName, LastName FROM Users) FROM UserRole WHERE DeveloperName = 'AZ_Phoenix_Clinical_Users' ];
+    	System.debug('User Role: ' + userRole);
+    	for(User u : userRole.Users) {
+    		System.debug('User FirstName: ' + u.FirstName);
+    	}
+    	List<User> userList = userRole.Users;
     	
     	for (User u : userList)
     	{
@@ -121,8 +126,8 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
         public String pbsID {get; set;}
         public String totalMinutes {get; set;}
         public Decimal tempMinutes { get; set; }
-        public Decimal tempBillableHours { get; set; }
-        public Decimal tempNonBillableHours { get; set; } 
+        public Decimal tempBillableMinutes { get; set; }
+        public Decimal tempNonBillableMinutes { get; set; } 
         public String hours{get; set;}
 
 		public DataForCDU(List<WrappedPn> pnList) {
@@ -130,8 +135,8 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
 			pns = pnList;
 			sumRow = new SummaryRow();
 			tempMinutes = 0;
-			tempBillableHours = 0;
-			tempNonBillableHours = 0;
+			tempBillableMinutes = 0;
+			tempNonBillableMinutes = 0;
 			
 			Integer counter = 1;
 			
@@ -147,10 +152,10 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
 				}
 				
 				if(p.thePn.Purpose_Service_is_Billable__c) {
-					tempBillableHours = tempBillableHours + (p.thePn.Total_Time__c / 60);
+					tempBillableMinutes = tempBillableMinutes + p.thePn.Total_Time__c;
 				}
 				else {
-					tempNonBillableHours = tempNonBillableHours + (p.thePn.Total_Time__c / 60);
+					tempNonBillableMinutes = tempNonBillableMinutes + p.thePn.Total_Time__c;
 				}
 				
 				tempMinutes = tempMinutes + p.thePn.Total_Time__c;
@@ -161,10 +166,9 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
 		
 			}
 		
-			sumRow.billableHours = tempBillableHours.format();
-			sumRow.nonBillableHours = tempNonBillableHours.format();
+			sumRow.billableMinutes = tempBillableMinutes.format();
+			sumRow.nonBillableMinutes = tempNonBillableMinutes.format();
 			sumRow.totalMinutes = tempMinutes.format();
-			sumRow.totalHours = (tempMinutes / 60).format();
 		
 		}        
     
@@ -172,10 +176,9 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
 
 
 	public class SummaryRow {
-		public String billableHours { get; set; }
-		public String nonBillableHours { get; set; }
-		public String totalMinutes { get; set; }
-		public String totalHours { get; set; }		
+		public String billableMinutes { get; set; }
+		public String nonBillableMinutes { get; set; }
+		public String totalMinutes { get; set; }		
 	}
 	
 	public class WrappedPn implements comparable {
@@ -187,8 +190,8 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
 		
 		public WrappedPn(Progress_Note__c p) {
 			thePn = p;
-			localStartTime = thePn.Start_Time__c.format('h:m a');
-			localEndTime = thePn.End_Time__c.format('h:m a');	
+			localStartTime = thePn.Start_Time__c.format('h:mm a');
+			localEndTime = thePn.End_Time__c.format('h:mm a');	
 			localDate = thePn.Start_Time__c.format('M/d/yyyy');
 		}
 		
@@ -203,10 +206,6 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
 	        if (thePn.CreatedByID > wpn.thePn.CreatedByID ) return 1;
 	        return -1;        
     	}
-		
-	}
-	
-	public void doNothing() {
 		
 	}
 
