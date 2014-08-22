@@ -1,4 +1,4 @@
-<apex:page controller="Report_AzClinicalDataUserProductivityRpt" title="Clinical Data User Productivity Report" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab"  docType="html-5.0"  readOnly="true">
+<apex:page controller="Report_AzClinicalDataUserProductivityRpt" title="Clinical Data User Productivity Report" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab"  docType="html-5.0">
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:includeScript value="{!$Resource.jquery}"/>
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
@@ -6,8 +6,9 @@
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 <apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables_themeroller.css')}"/>
 <apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables.css')}"/>
+<apex:stylesheet value="{!$Resource.pbscardcss}" />
 
-
+<head>
 <script>
     function setFocusOnLoad() {}
 </script>
@@ -77,6 +78,7 @@
     padding: 12px;
 }
 </style>
+</head>
 
 <div class="header">Clinical Data User Productivity Report</div>
 
@@ -155,10 +157,9 @@
                     <td class="tblheader" style="text-align: left;"><strong>Start Time</strong></td>
                     <td class="tblheader" style="text-align: left;"><strong>End Time</strong></td>
                     <td class="tblheader" style="text-align: left;"><strong>Billable?</strong></td>
-                    <td class="tblheader" style="text-align: right;"><strong>Billable Hours</strong></td>
-                    <td class="tblheader" style="text-align: right;"><strong>Non-Billable Hours</strong></td>
                     <td class="tblheader" style="text-align: right;"><strong>Total Minutes</strong></td>
-                    <td class="tblheader" style="text-align: right;"><strong>Hours (conversion)</strong></td>
+                    <td class="tblheader" style="text-align: right;"><strong>Billable Minutes</strong></td>
+                    <td class="tblheader" style="text-align: right;"><strong>Non-Billable Minutes</strong></td>
                 </tr>
             <apex:repeat value="{!listDataForCDU}" var="item">
                 <apex:repeat value="{!item.pns}" var="pn">
@@ -191,10 +192,9 @@
 						-->
 						</td>
 						<td class="tblrow" style="text-align: right;">{!IF(pn.thePn.Purpose_Service_is_Billable__c,'Yes','No')}</td>
-	                    <td class="tblrow" style="text-align: right;">{!IF(pn.thePn.Purpose_Service_is_Billable__c,(pn.thePn.Total_Time__c / 60),0)}</td>
-	                    <td class="tblrow" style="text-align: right;">{!IF(!pn.thePn.Purpose_Service_is_Billable__c,(pn.thePn.Total_Time__c / 60),0)}</td>
-	                    <td class="tblrow" style="text-align: right;">{!pn.thePn.Total_Time__c}</td>
-	                    <td class="tblrow" style="text-align: right;">{!pn.thePn.Total_Time__c / 60}</td>
+						<td class="tblrow" style="text-align: right;">{!pn.thePn.Total_Time__c}</td>
+	                    <td class="tblrow" style="text-align: right;">{!IF(pn.thePn.Purpose_Service_is_Billable__c,pn.thePn.Total_Time__c,0)}</td>
+	                    <td class="tblrow" style="text-align: right;">{!IF(!pn.thePn.Purpose_Service_is_Billable__c,pn.thePn.Total_Time__c,0)}</td>
                 	</tr>
                 </apex:repeat>
                 <tr style="font-weight:bold;">
@@ -205,10 +205,9 @@
 	                    <td class="tblrow"></td>
 	                    <td class="tblrow"></td>
 	                    <td class="tblrow"></td>
-	                    <td class="tblrow" style="text-align: right;">{!item.sumRow.billableHours}</td>
-	                    <td class="tblrow" style="text-align: right;">{!item.sumRow.nonBillableHours}</td>
+	                    <td class="tblrow" style="text-align: right;">{!item.sumRow.billableMinutes}</td>
+	                    <td class="tblrow" style="text-align: right;">{!item.sumRow.nonBillableMinutes}</td>
 	                    <td class="tblrow" style="text-align: right;">{!item.sumRow.totalMinutes}</td>
-	                    <td class="tblrow" style="text-align: right;">{!item.sumRow.totalHours}</td>
                 </tr>           
             </apex:repeat>
 
