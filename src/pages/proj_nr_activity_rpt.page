@@ -1,7 +1,14 @@
 <apex:page standardController="Project__c" extensions="proj_nr_activity_rpt" sidebar="false" readOnly="true" >
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+
 <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/js/dataTables.tableTools.js')}" />
+
+<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/css/dataTables.tableTools.css')}"/>
+<!--
+<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}"/>
+-->
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 <style>
 .nodisplay{display: none;}
@@ -16,17 +23,14 @@
     //outline: #E6E6FA 1px solid;
 
 }
-.OVERDUE-row, .OVERDUE_sim{
-    //background: #FF9B9B; 
-    //background: -webkit-linear-gradient( #FF9B9B, #F9F9F9);
-    //outline: RED 1px solid;    
+.OVERDUE-row, .OVERDUE_sim{   
     border-left: 3px Red solid;
 }
 .Completed-row, .Completed_sim{
-    border-left: 3px Green solid;
+    border-left: 3px #32CD32   double;
 }
 .Incomplete-row, .Incomplete_sim{
-    border-left: 3px #B0D9E7 solid;
+    border-left: 3px #4682B4   double;
 }
 #wrapper{ padding: 10px;}
 .fRight{float: right;}
@@ -38,7 +42,7 @@
 .tbl td{ padding: 5px;}
 .taskPad{padding-left: 15px !important;}
 .actPad{padding-left: 25px !important;}
-.projRow{border-left: 3px solid gray;}
+.projRow{border-left: 3px solid lightblue;}
 .projRow td{background: lightblue; border-bottom: 1px solid black; }
 
 .taskRow td{border-bottom: 1px solid gray;}
@@ -92,11 +96,32 @@ function toggleClass(cName, item){
         j$(".OVERDUE").addClass('nodisplay');
     }
 }
+function createtbl(){
+    console.log('starting tables');
+    var table = j$('#tbl-data').dataTable({ 
+            "bPaginate": false, 
+            "ordering": false,
+            "bFilter": true,
+             "info": false, 
+            dom: 'T<"clear">lfrtip',
+            "tableTools": {
+               "aButtons": [ "xls", {
+                    "sExtends": "pdf",
+                    "sPdfOrientation": "landscape"
+                }],         
+               "sSwfPath": "{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/swf/copy_csv_xls_pdf.swf')}"
+            } 
+        });
+}
+j$( document ).ready(function() {
+
+    createtbl();
+});
 </script>
 <div id="rptHeader">
     <h1>Project Activty Report </h1>
     <div class="fRight">                    
-        <input class="btn view" type="button" onclick="tableToExcel('tbl-data', 'tasks')" value="Export to Excel"/>
+        <!--<input class="btn view" type="button" onclick="tableToExcel('tbl-data', 'tasks')" value="Export to Excel"/>-->
     </div> 
     <div id="tnaFilters">
         <h2>Filters </h2><br/>

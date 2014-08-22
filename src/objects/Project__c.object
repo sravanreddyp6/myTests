@@ -40,7 +40,9 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>Tab</actionName>
-        <type>Default</type>
+        <content>proj_tab</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
@@ -80,7 +82,7 @@
     <fields>
         <fullName>Complete__c</fullName>
         <externalId>false</externalId>
-        <formula>IF(Total_Tasks__c&gt;0, ROUND(Total_Per_Complete__c /Total_Tasks__c ,2), 0)</formula>
+        <formula>IF(Total_Items__c&gt;0, ROUND( Total_Items_Completed__c /Total_Items__c,2), 0)</formula>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>% Complete</label>
         <precision>18</precision>
@@ -793,11 +795,12 @@ TEXT(Complete__c*100)
         <columns>Start_Date__c</columns>
         <columns>Due_Date__c</columns>
         <columns>Progress__c</columns>
-        <columns>OWNER.ALIAS</columns>
-        <columns>CREATED_DATE</columns>
-        <columns>Total_Per_Complete__c</columns>
-        <columns>Total_Tasks__c</columns>
         <columns>Complete__c</columns>
+        <columns>Total_Per_Complete__c</columns>
+        <columns>Total_Items__c</columns>
+        <columns>Total_Items_Completed__c</columns>
+        <columns>Total_Tasks__c</columns>
+        <columns>Total_Task_Completed__c</columns>
         <columns>Incomplete_Tasks__c</columns>
         <columns>Total_Activities__c</columns>
         <columns>Total_Activities_Completed__c</columns>
@@ -3116,6 +3119,7 @@ TEXT(Complete__c*100)
         <customTabListAdditionalFields>Start_Date__c</customTabListAdditionalFields>
         <customTabListAdditionalFields>Due_Date__c</customTabListAdditionalFields>
         <customTabListAdditionalFields>Complete__c</customTabListAdditionalFields>
+        <listViewButtons>Activity_Report</listViewButtons>
         <lookupDialogsAdditionalFields>Start_Date__c</lookupDialogsAdditionalFields>
         <lookupDialogsAdditionalFields>Due_Date__c</lookupDialogsAdditionalFields>
         <lookupDialogsAdditionalFields>Status__c</lookupDialogsAdditionalFields>
@@ -3133,4 +3137,16 @@ TEXT(Complete__c*100)
         <errorDisplayField>Status__c</errorDisplayField>
         <errorMessage>Status is required</errorMessage>
     </validationRules>
+    <webLinks>
+        <fullName>Activity_Report</fullName>
+        <availability>online</availability>
+        <displayType>massActionButton</displayType>
+        <encodingKey>UTF-8</encodingKey>
+        <linkType>url</linkType>
+        <masterLabel>Activity Report</masterLabel>
+        <openType>replace</openType>
+        <protected>false</protected>
+        <requireRowSelection>false</requireRowSelection>
+        <url>/apex/proj_nr_activity_rpt</url>
+    </webLinks>
 </CustomObject>
