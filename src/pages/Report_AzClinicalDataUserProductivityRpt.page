@@ -165,7 +165,7 @@
                 <apex:repeat value="{!item.pns}" var="pn">
                 	<tr>
 	                    <td class="tblrow" style="text-align: left; width: 20%;"><a href="/{!item.clinicianUserID}">{!item.clinician}</a></td>
-	                    <td class="tblrow" style="text-align: left;"><a href="/{!item.pbsID}">{!item.pbs}</a></td>
+	                    <td class="tblrow" style="text-align: left;"><a href="/{!pn.pbsID}">{!pn.pbs}</a></td>
 	                    <td class="tblrow">
 	                    {!pn.localDate}
 	                    <!--
@@ -199,7 +199,7 @@
                 </apex:repeat>
                 <tr style="font-weight:bold;">
 	                    <td class="tblrow" style="text-align: left; width: 20%;">Total for {!item.clinician}:</td>
-	                    <td class="tblrow" style="text-align: left;"><a href="/{!item.pbsID}"></a></td>
+	                    <td class="tblrow"></td>
 	                    <td class="tblrow"></td>
 	                    <td class="tblrow"></td>
 	                    <td class="tblrow"></td>
