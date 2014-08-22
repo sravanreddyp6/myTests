@@ -122,8 +122,6 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
     	public SummaryRow sumRow { get; set; }
         public String clinician {get; set;}
         public String clinicianUserId {get; set;}
-        public String pbs {get; set;}
-        public String pbsID {get; set;}
         public String totalMinutes {get; set;}
         public Decimal tempMinutes { get; set; }
         public Decimal tempBillableMinutes { get; set; }
@@ -145,8 +143,6 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
 				if(counter==1) {
 					clinician = p.thePn.CreatedBy.Name;
 					clinicianUserId = p.thePn.CreatedBy.Id;
-					pbs = p.thePn.Person_Being_Served__r.Name;
-					pbsID = p.thePn.Person_Being_Served__c;
 					totalMinutes = p.thePn.Total_Time__c.format();
 					hours = (p.thePn.Total_Time__c / 60).format();
 				}
@@ -187,9 +183,13 @@ public with sharing class Report_AzClinicalDataUserProductivityRpt {
 		public String localStartTime { get; set; }
 		public String localEndTime { get; set; }
 		public String localDate { get; set; }
+        public String pbs {get; set;}
+        public String pbsID {get; set;}		
 		
 		public WrappedPn(Progress_Note__c p) {
 			thePn = p;
+			pbs = thePn.Person_Being_Served__r.Name;
+			pbsID = thePn.Person_Being_Served__c;			
 			localStartTime = thePn.Start_Time__c.format('h:mm a');
 			localEndTime = thePn.End_Time__c.format('h:mm a');	
 			localDate = thePn.Start_Time__c.format('M/d/yyyy');
