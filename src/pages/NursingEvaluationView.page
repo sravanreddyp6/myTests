@@ -16,6 +16,8 @@
         [id$=bodyMapOtherComments] {
             clear: both;
         }
+
+        
         .hr {
             color: #ECECEC;
             background-color: #ECECEC;
@@ -182,92 +184,89 @@
                     </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:tab>  
+            
          <apex:tab label="Diagnostics" name="diagnosticTab" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
          	<apex:pageBlock >
          		<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Vitals Detail" formId="{!$Component.wholePage}" uniqueId="Vitals" />
          		<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Orthostatic BP" formId="{!$Component.wholePage}" uniqueId="orthostatic" />
-	         		<apex:pageBlockSection title="GYN" columns="2" rendered="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Gender__c ='Female'}" collapsible="False" >
-	         				<apex:outputField value="{!Evaluation__c.Date_of_Last_menstrual_Period__c}" />
-	                    	<apex:outputField value="{!Evaluation__c.Frequency_of_menstrual_cycles__c}" />
-	                    	<apex:outputField value="{!Evaluation__c.Date_of_last_pap__c}" />
-	                    	<apex:outputField value="{!Evaluation__c.Date_of_last_mamogram__c}" />
-	                    	<apex:pageBlockSectionitem >
-	                            <apex:outputText value="Have you Experienced Any of the Following:" styleClass="labelCol" />
+         		<apex:pageBlockSection title="Diabetes" columns="2" >
+         			<apex:outputField value="{!Evaluation__c.Diabetic__c}"/>
+	            	<apex:outputField value="{!Evaluation__c.If_yes_Glucose_meter_Reading__c}"  />
+	            </apex:pageBlockSection>
+         		<apex:pageBlockSection title="GYN" columns="2" rendered="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Gender__c ='Female'}"  >
+	         		<apex:outputField value="{!Evaluation__c.Date_of_Last_menstrual_Period__c}" />
+	                <apex:outputField value="{!Evaluation__c.Frequency_of_menstrual_cycles__c}" />
+	                <apex:outputField value="{!Evaluation__c.Date_of_last_pap__c}" />
+	                <apex:outputField value="{!Evaluation__c.Date_of_last_mamogram__c}" />
+	                <apex:pageBlockSectionitem >
+	                			<apex:outputTExt value="" />
 	                            <apex:selectCheckboxes value="{!selectedExperiences}" layout="pageDirection" disabled="True">
 	                                <apex:selectOptions value="{!experienceValues}" />
 	                            </apex:selectCheckboxes>
-	                        </apex:pageBlockSectionItem>
+	                </apex:pageBlockSectionItem>
 	                </apex:pageBlockSection>
-	                <hr />
-	                <apex:pageBlockSection columns="2" Title="Immunization History" collapsible="False">
-	                       <apex:outputField value="{!Evaluation__c.Pneumococcal__c}"  />
-	                       <apex:outputField value="{!Evaluation__c.Diabetic__c}"/>
-	                       <apex:outputField value="{!Evaluation__c.Pneumococcal_Text__c}" label="Describe" />
-	                       <apex:outputField value="{!Evaluation__c.If_yes_Glucose_meter_Reading__c}"  />
-	                       <apex:outputField value="{!Evaluation__c.Pneumococcal_Where_and_when__c}" label="Where and When" />
-	                       <apex:pageBlockSectionItem />
-	                       <apex:outputField value="{!Evaluation__c.Influenza__c}" />
-	                  	   <apex:pageBlockSectionItem />
-	                       <apex:outputPanel layout="block">
-	                       	<apex:outputlabel value="Describe" styleClass="labelCol" style="margin-left: 5cm;"/>
-	                        <apex:outputField value="{!Evaluation__c.Influenza_Text__c}" label="Describe"  />
-	                        <pre/>
-	                        <apex:outputlabel value="Where and When" styleClass="labelCol" style="margin-left: 4cm;" />
-	                        <apex:outputField value="{!Evaluation__c.Influenza_where_and_when__c}" label="Where and When" />
-	                       </apex:outputPanel>
-	                       <apex:pageBlockSectionItem />
-	                       <apex:outputField value="{!Evaluation__c.TDAP__c}" />
-	                       <apex:pageBlockSectionItem />
-	                       <apex:outputField value="{!Evaluation__c.TDAP_Text__c}" label="Explain" id="tdapExplain" />
-	                       <apex:pageBlockSectionItem />
-	                       <apex:outputField value="{!Evaluation__c.TDAP_Where_and_When__c}" label="Where and When"  />
-	                       <apex:pageBlockSectionItem />
-	                       <apex:outputField value="{!Evaluation__c.Immunization_N_A__c}" label="N/A" />
-	                </apex:pageBlockSection>
-	                <hr />
-					<apex:pageBlockSection columns="1" title="Pediatric Immunization History" collapsible="True" >
-						<apex:pageBlockSectionItem >
-							<a href="/apex/uploader?parentid={!evaluation.id}">Add/Remove</a>
-						</apex:pageBlockSectionItem>
-						<apex:pageBlockTable value="{!immuneAttachments}" var="a" rendered="{!(immuneAttachments.size>0)}" >
-							<apex:column headerValue="Attachment Name"><a href= "/{!a.Id}">{!a.Name}</a></apex:column>
-						</apex:pageBlockTable>
-						<apex:outputText value="No pediatric Immunization History to Display" rendered="{!(immuneAttachments.size=0)}" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.Vaccination_Info_Sheet_Provided__c}" />
-						<apex:outputField value="{!Evaluation__c.Vaccination_Pneumococcal__c}" label="Pneumococcal"  />
-						<apex:outputField value="{!Evaluation__c.Vaccination_Flu__c}" label="Flu"  />
-					</apex:pageBlockSection>
-					<hr />
-					<apex:pageBlockSection Columns="1" >
+	                
+                <apex:pageBlockSection columns="2" Title="Immunization History" >
+                	<apex:outputField value="{!Evaluation__c.Vaccination_Info_Sheet_Provided__c}" />
+					<apex:outputField value="{!Evaluation__c.Immunization_N_A__c}" label="N/A" />
+                	<apex:pageBlockSectionItem >
+                		<apex:outputLabel for="pneumo" value="Pneumococcal" />
+                		<apex:outputPanel >
+                       		<apex:outputField value="{!Evaluation__c.Pneumococcal__c}"  id="pneumo"/>
+                       		<apex:outputField value="{!Evaluation__c.Pneumococcal_Where_and_when__c}" label="Where and When" />
+                       	</apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                    	<apex:outputLabel for="flu" value="Influenza" />
+                    	<apex:outputPanel >
+                       	<apex:outputField value="{!Evaluation__c.Influenza__c}" id="flu"/>
+                        <apex:outputField value="{!Evaluation__c.Influenza_where_and_when__c}" label="Where and When" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                    	<apex:outputLabel for="tdap" value="TDAP" />
+                    	<apex:outputPanel >
+                       	<apex:outputField value="{!Evaluation__c.TDAP__c}" />
+                       	<apex:outputField value="{!Evaluation__c.TDAP_Where_and_When__c}" label="Where and When"  />
+                       	</apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:outputText value="" />
+                    
+                    
+                </apex:pageBlockSection>
+                
+					<apex:pageBlockSection Columns="1" title="Isolation">
 						<apex:outputField value="{!Evaluation__c.Isolation__c}" label="Requires Isolation"  />
 						<apex:outputField value="{!Evaluation__c.DiagnosisIsolation_Type__c}"  />
 						<apex:outputField value="{!Evaluation__c.Isolation_Reason_and_Site__c}"  />
 					</apex:pageBlockSection>
-					<hr />
-					<apex:pageBlockSection columns="2">
-                        <apex:pageBlockSectionItem >
-                            <apex:outputText value="IV Type" />
-                            <apex:outputText value="" />
-                        </apex:pageBlockSectionItem>
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.PICC__c}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Central__c}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.HepLock__c}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.PCA__c}"  />
-                        <apex:outputField value="{!Evaluation__c.PCA_Rx__c}"  />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.PCA_Rate__c}"  />
+				
+					<apex:pageBlockSection columns="2" title="IV">
+					<apex:pageBlockSectionItem >
+						<apex:outputLabel value="IV Type" />
+						<apex:outputPanel >
+							<apex:outputText styleClass="labelCol" value="PICC" /><apex:outputField value="{!Evaluation__c.PICC__c}" />
+							<apex:outputText styleClass="labelCol" value="Central" style="margin-left:20px;"/><apex:outputField value="{!Evaluation__c.Central__c}" />
+                        	<apex:outputText styleClass="labelCol" value="HepLock" style="margin-left:20px;"/><apex:outputField value="{!Evaluation__c.HepLock__c}" />
+                        	<apex:outputText styleClass="labelCol" value="PCA" style="margin-left:20px;"/><apex:outputField value="{!Evaluation__c.PCA__c}" />
+                        	<apex:outputText styleClass="labelCol" value="PCA Rx" style="margin-left:20px;" rendered="{!Evaluation__c.PCA__c == true}"/><apex:outputField value="{!Evaluation__c.PCA_Rx__c}"  />
+							<apex:outputText styleClass="labelCol" value="PCA Rate" style="margin-left:20px;" rendered="{!Evaluation__c.PCA__c == true}"/><apex:outputField value="{!Evaluation__c.PCA_Rate__c}"  />
+                        	
+                        </apex:outputPanel>
+                     </apex:pageBlockSectionItem>
+                        <apex:outputText value="" />
+                        
+                        </apex:pageBlockSection>
+                        
+                        <apex:pageBlockSection columns="2" title="MAR">
                         <apex:outputField value="{!Evaluation__c.MARs_Attached__c}"  />
                         <apex:outputField value="{!Evaluation__c.Recent_Changes__c}"  />
+                        <apex:outputText value="{!Evaluation__c.MAR_Comments__c}"  />
+                        <apex:pageBlockSectionItem />
+                        
                     </apex:pageBlockSection>
                     <hr />
                    	<apex:pageBlockSection columns="1">
-		                 <apex:outputText value="{!Evaluation__c.MAR_Comments__c}"  />
-		                 <!--  apex:inputField value="{!Evaluation__c.MAR_Section_Completed__c}" /-->
 		                 <apex:outputText value="{!Evaluation__c.Diagnostics_Comments__c}"  />
 		                 <apex:outputField value="{!Evaluation__c.Diagnostics_Section_Completed__c}" />
                     </apex:pageBlockSection>
@@ -275,37 +274,104 @@
          </apex:tab>
          	<apex:tab label="Cardiopulmonary" name="cardioTab" styleClass="{!IF(Evaluation__c.Cardio_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
          		<apex:pageBlock >
-         			<apex:pageBlockSection columns="2" title="Trach">
+  			    <apex:pageBlockSection columns="2" title="Cardio">
+					<apex:pageBlockSectionItem >
+					         <apex:outputLabel for="pulseox" value="Pulse Ox" />
+	                		 <apex:outputField id="pulseox" value="{!Evaluation__c.Pulse_Ox__c}" />
+	                </apex:pageBlockSectionItem>
+	                <apex:pageBlockSectionItem >
+	                		 <apex:outputLabel for="podetails" value="Pulse Ox Details" />
+					         <apex:outputText id="podetails" value="{! Evaluation__c.Pulse_Ox_Details__c & ' ' & if (Evaluation__c.Pulse_Ox_Details__c == 'Intermittent', ' - schedule: ' & Evaluation__c.Pulse_Ox_Schedule__c, '' ) }" />
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem >	                         
+							 <apex:outputLabel for="smokinghist" value="Smoking History" />
+							 <apex:outputText id="smokinghist" value="{!Evaluation__c.Smoking_History__c & if( Evaluation__c.Smoking_History__c == 'Yes', '- #Packs/Day, Years: ' & Evaluation__c.Packs_Day_Years__c, '')}" />
+	                </apex:pageBlockSectionItem>
+	                <apex:outputField value="{!Evaluation__c.Pacemaker__c}" />         
+					<apex:pageBlockSectionItem >
+							 <apex:outputLabel for="heartsounds" value="Heart Sounds" />
+							 <apex:outputText id="heartsounds" value="{!Evaluation__c.Heart_Sounds__c & if( Evaluation__c.Heart_Sounds__c == 'Irregular', '- ' & Evaluation__c.Heart_Sound_Describe__c, '')}" />
+	                </apex:pageBlockSectionItem>
+	                <apex:outputField value="{!Evaluation__c.Endovascular_Filter__c}" />         
+					<apex:pageBlockSectionItem >	                         
+							 <apex:outputLabel for="periph" value="Peripheral Pulses" />
+							 <apex:outputText id="periph" value="{! Evaluation__c.Peripheral_Pulses_Present__c & if(Evaluation__c.Peripheral_Pulses_Present__c == 'No', ' - ' & Evaluation__c.Peripheral_Pulses_Describe__c, '')}" />
+					</apex:pageBlockSectionItem>
+	                <apex:outputField value="{!Evaluation__c.Autonomic_Dysreflexia__c}" />
+	                <apex:outputText value="" />         
+                    <apex:outputField value="{!Evaluation__c.Educated_Regarding_AD__c}" label="Has resident been educated regarding AD symptoms" rendered="{!Evaluation__c.Autonomic_Dysreflexia__c == 'Yes'}"  />
+         		</apex:pageBlockSection>
+               
+	            <apex:pageBlockSection columns="2" title="Sputum">
+	                <apex:outputField value="{!Evaluation__c.Sputum_Quantity__c}"  />
+	                <apex:outputField value="{!Evaluation__c.Sputum_Color__c}"  />
+	                <apex:outputField value="{!Evaluation__c.Blood_Tinged__c}" />
+	                <apex:outputField value="{!Evaluation__c.Odor__c}"  />
+ 					<apex:pageBlockSectionItem >
+	                         <apex:outputLabel for="sputum" value="Sputum Consistency" />
+	                         <apex:outputText id="sputum"
+	                         value="{! if( Evaluation__c.Thick__c, 'Thick;', '') &
+	                         			if (Evaluation__c.Thin__c, 'Thin;', '') &
+	                         			if (Evaluation__c.Frothy__c, 'Frothy;', '') &
+	                         			if (Evaluation__c.Sticky__c, 'Sticky;', '') &
+	                         			if (Evaluation__c.Creamy__c, 'Creamy;', '')}" 
+	                        />
+	                 </apex:pageBlockSectionItem>       
+	                 <apex:pageBlockSectionItem >
+	                         <apex:outputLabel for="breathsounds" value="Breath Sounds" />
+                         	 <apex:outputText id="breathsounds" value="{!Evaluation__c.Breathe_Sounds__c & if( CONTAINS(Evaluation__c.Breathe_Sounds__c,  'Other'), ' (' & Evaluation__c.Breathe_Sound_Other__c & ')', '')}"  />
+                     </apex:pageBlockSectionItem>
+               </apex:pageBlockSection>
+
+               <apex:pageBlockSection columns="2" title="Trach">
          			<apex:pageBlockSectionItem >
-         			<apex:outputLabel for="trach" value="Has Trach" />
-         			<apex:outputField id="trach" value="{!Evaluation__c.Trach__c}" />
+         				<apex:outputLabel for="trach" value="Has Trach" />
+         				<apex:outputField id="trach" value="{!Evaluation__c.Trach__c}" />
          			</apex:pageBlockSectionItem>
  					<apex:outputField value="{!Evaluation__c.Trach_Placement_Date__c}" />
 				 	<apex:pageBlockSectionItem >
-				 	<apex:outputLabel for="trachtype" value="Trach Type"/> 
-				 	<apex:outputText id="trachtype" value="{! if (Evaluation__c.Trach_Type__c == 'Other' , Evaluation__c.Trach_Type_Other__c, Evaluation__c.Trach_Type__c) }" />  
+				 		<apex:outputLabel for="trachtype" value="Trach Type"/> 
+				 		<apex:outputText id="trachtype" value="{! if (Evaluation__c.Trach_Type__c == 'Other' , Evaluation__c.Trach_Type_Other__c, Evaluation__c.Trach_Type__c) }" />  
                 	</apex:pageBlockSectionItem>
 				 	<apex:pageBlockSectionItem >
-				 	<apex:outputLabel for="trachsize" value="Trach Size" /> 
-				 	<apex:outputText id="trachsize" value="{! if (Evaluation__c.Trach_Size__c =='Other', Evaluation__c.Trach_Size_Other__c, Evaluation__c.Trach_Size__c) }" />  
+				 		<apex:outputLabel for="trachsize" value="Trach Size" /> 
+				 		<apex:outputText id="trachsize" value="{! if (Evaluation__c.Trach_Size__c =='Other', Evaluation__c.Trach_Size_Other__c, Evaluation__c.Trach_Size__c) }" />  
                 	</apex:pageBlockSectionItem>
 	                <apex:outputField value="{!Evaluation__c.Cuffed__c}" />
 	                <apex:outputField value="{!Evaluation__c.PMV__c}" /> 
 	                <apex:outputField value="{!Evaluation__c.Trach_Plugged__c}" />
 	                <apex:pageBlockSectionItem />
-	                <apex:outputField value="{!Evaluation__c.Trach_Plugged_Initiated__c}" rendered="{!Evaluation__c.Trach_Plugged__c == true}" />
+	                <apex:outputField value="{!Evaluation__c.Trach_Plugged_Initiated__c}" />
 	                <apex:pageBlockSectionItem />
-	                <apex:outputField value="{!Evaluation__c.Trach_Plugged_Duration__c}" rendered="{!Evaluation__c.Trach_Plugged__c == true}" />
+	                <apex:outputField value="{!Evaluation__c.Trach_Plugged_Duration__c}" />
 	                                
-	     			</apex:pageBlockSection>
-	     		<apex:pageBlockSection columns="2" title="Ventilator" >                    
+	     	</apex:pageBlockSection>
+	     	
+	     	 <apex:pageBlockSection columns="2" title="O2">         
+ 					<apex:outputField label="Uses O2" value="{!Evaluation__c.O2__c}" />
+					<apex:outputField value="{!Evaluation__c.O2_Type__c}" />
+					<apex:outputField value="{!Evaluation__c.Liters_Min__c}"  />
+	                <apex:outputField value="{!Evaluation__c.Nasal_Cannula__c}"  />
+	                <apex:pageBlockSectionItem >
+	                         <apex:outputLabel for="mask" value="Mask" />
+	                         <apex:outputText id="mask" value="{! if(Evaluation__c.Mask__c, Evaluation__c.Mask_type__c, '')}" />
+	                </apex:pageBlockSectionItem>
+	                <apex:outputField value="{!Evaluation__c.T_Piece__c}" />
+	                <apex:pageBlockSectionItem >
+	                         <apex:outputLabel for="mist" value="Mist" />
+	                         <apex:outputText id="mist" value="{! if(Evaluation__c.Mist__c,  Evaluation__c.Mist_Type__c, '')}"  />
+	                </apex:pageBlockSectionItem>
+	                <apex:outputText value="" />
+	           </apex:pageBlockSection>
+	            
+	     	   <apex:pageBlockSection columns="2" title="Ventilator" >                    
          			<apex:pageBlockSectionItem >
-         			<apex:outputLabel for="vent" value="Uses Ventilator" />
-         			<apex:outputField id="vent" value="{!Evaluation__c.Ventilator__c}" />
+         				<apex:outputLabel for="vent" value="Uses Ventilator" />	
+         				<apex:outputField id="vent" value="{!Evaluation__c.Ventilator__c}" />
          			</apex:pageBlockSectionItem>
          			<apex:pageBlockSectionItem >
-         			<apex:outputLabel for="venttype" value="Ventilator Type" />
- 					<apex:outputText id="venttype" value="{!Evaluation__c.Ventilator_Type__c & if( Evaluation__c.Ventilator_Type__c == 'Intermittent', ' - schedule: ' & Evaluation__c.If_Intermittent_Schedule__c, '' )}" />
+         				<apex:outputLabel for="venttype" value="Ventilator Type" />
+ 						<apex:outputText id="venttype" value="{!Evaluation__c.Ventilator_Type__c & if( Evaluation__c.Ventilator_Type__c == 'Intermittent', ' - schedule: ' & Evaluation__c.If_Intermittent_Schedule__c, '' )}" />
  					</apex:pageBlockSectionItem>
 	                <apex:outputField value="{!Evaluation__c.Ventilator_Mode__c}"  />
 	                <apex:outputField value="{!Evaluation__c.Ventilator_Rate__c}"  />
@@ -318,76 +384,6 @@
 	                <apex:outputField value="{!Evaluation__c.Ventilator_Other__c}" />
 	                         
 	            </apex:pageBlockSection>
-	            <apex:pageBlockSection columns="2" title="O2">         
- 					<apex:outputField label="Uses O2" value="{!Evaluation__c.O2__c}" />
-					         <apex:outputField value="{!Evaluation__c.O2_Type__c}" />
-					         <apex:outputField value="{!Evaluation__c.Liters_Min__c}"  />
-	                         <apex:outputField value="{!Evaluation__c.Nasal_Cannula__c}"  />
-	                         <apex:pageBlockSectionItem >
-	                         <apex:outputLabel for="mask" value="Mask" />
-	                         <apex:outputText id="mask" value="{! if(Evaluation__c.Mask__c, Evaluation__c.Mask_type__c, '')}" />
-	                         </apex:pageBlockSectionItem>
-	                         <apex:outputField value="{!Evaluation__c.T_Piece__c}" />
-	                         <apex:pageBlockSectionItem >
-	                         <apex:outputLabel for="mist" value="Mist" />
-	                         <apex:outputText id="mist" value="{! if(Evaluation__c.Mist__c,  Evaluation__c.Mist_Type__c, '')}"  />
-	                         </apex:pageBlockSectionItem>
-	                         <apex:outputText value="" />
-	                         <apex:outputField value="{!Evaluation__c.Suctioning__c}" />
-	                        <apex:outputText value="" />
-	                         <apex:outputField value="{!Evaluation__c.Sputum_Quantity__c}"  />
-	                         <apex:outputText value="" />
-	                         <apex:outputField value="{!Evaluation__c.Sputum_Color__c}"  />
-	                         <apex:outputField value="{!Evaluation__c.Blood_Tinged__c}" />
- 							<apex:pageBlockSectionItem >
-	                         <apex:outputLabel for="sputum" value="Sputum Consistency" />
-	                         <apex:outputText id="sputum"
-	                         value="{! if( Evaluation__c.Thick__c, 'Thick;', '') &
-	                         			if (Evaluation__c.Thin__c, 'Thin;', '') &
-	                         			if (Evaluation__c.Frothy__c, 'Frothy;', '') &
-	                         			if (Evaluation__c.Sticky__c, 'Sticky;', '') &
-	                         			if (Evaluation__c.Creamy__c, 'Creamy;', '')}" 
-	                        />
-	                        </apex:pageBlockSectionItem>
-	                        <apex:outputField value="{!Evaluation__c.Odor__c}"  />
-	                         
-                         </apex:pageBlockSection>
-				         <apex:pageBlockSection columns="2" title="Pulse Ox">
-					         <apex:pageBlockSectionItem >
-					         <apex:outputLabel for="pulseox" value="Pulse Ox" />
-	                		 <apex:outputField id="pulseox" value="{!Evaluation__c.Pulse_Ox__c}" />
-	                		 </apex:pageBlockSectionItem>
-	                		 <apex:pageBlockSectionItem >
-	                		 <apex:outputLabel for="podetails" value="Pulse Ox Details" />
-					         <apex:outputText id="podetails" value="{! Evaluation__c.Pulse_Ox_Details__c & ' ' & if (Evaluation__c.Pulse_Ox_Details__c == 'Intermittent', ' - schedule: ' & Evaluation__c.Pulse_Ox_Schedule__c, '' ) }" />
-							 </apex:pageBlockSectionItem>
-							 <apex:pageBlockSectionItem >	                         
-							 <apex:outputLabel for="smokinghist" value="Smoking History" />
-							 <apex:outputText id="smokinghist" value="{!Evaluation__c.Smoking_History__c & if( Evaluation__c.Smoking_History__c == 'Yes', '- #Packs/Day, Years: ' & Evaluation__c.Packs_Day_Years__c, '')}" />
-	                         </apex:pageBlockSectionItem>
-	                         
-	                         <apex:outputField label="Consumes > 2 alcoholic drinks/day" value="{!Evaluation__c.Alcoholic_drinks_per_day__c}" />
-	                         <apex:pageBlockSectionItem >
-							 <apex:outputLabel for="heartsounds" value="Heart Sounds" />
-							 <apex:outputText id="heartsounds" value="{!Evaluation__c.Heart_Sounds__c & if( Evaluation__c.Heart_Sounds__c == 'Irregular', '- ' & Evaluation__c.Heart_Sound_Describe__c, '')}" />
-	                         </apex:pageBlockSectionItem>
-	                         
-	                         <apex:outputField value="{!Evaluation__c.Pacemaker__c}" />
-	                         
-	                         <apex:pageBlockSectionItem >	                         
-							 <apex:outputLabel for="periph" value="Peripheral Pulses" />
-							 <apex:outputText id="periph" value="{! Evaluation__c.Peripheral_Pulses_Present__c & if(Evaluation__c.Peripheral_Pulses_Present__c == 'No', ' - ' & Evaluation__c.Peripheral_Pulses_Describe__c, '')}" />
-							 </apex:pageBlockSectionItem>
-	                         <apex:outputField value="{!Evaluation__c.Endovascular_Filter__c}" />
-	                         
-	                         <apex:outputField value="{!Evaluation__c.Autonomic_Dysreflexia__c}" />
-	                         <apex:pageBlockSectionItem >
-	                         <apex:outputLabel for="breathsounds" value="Breath Sounds" />
-                         	 <apex:outputText id="breathsounds" value="{!Evaluation__c.Breathe_Sounds__c & if( CONTAINS(Evaluation__c.Breathe_Sounds__c,  'Other'), ' (' & Evaluation__c.Breathe_Sound_Other__c & ')', '')}"  />
-                         	 </apex:pageBlockSectionItem>
-                         	 <apex:outputField value="{!Evaluation__c.Educated_Regarding_AD__c}" label="Has resident been educated regarding AD symptoms" rendered="{!Evaluation__c.Autonomic_Dysreflexia__c == 'Yes'}"  />
-                         	 <apex:outputText value="" /> 
-         			</apex:pageBlockSection>
 					<hr/>
 					<apex:pageBlockSection Columns="1">
 						<apex:outputField value="{!Evaluation__c.Cardio_Comments__c}" />
@@ -665,50 +661,75 @@
 	                    });
 	                });
 	                </script>
-					<apex:pageblockSection columns="1" >
-						<apex:outputField value="{!Evaluation__c.Intact__c}" />
-					</apex:pageblockSection>
-					<hr />
+					
 					<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" />
-					<apex:pageBlockSection columns="1" >
-						<apex:outputField value="{!Evaluation__c.History_of_Pressure_Ulcers_Flap_Surge__c}"  />
-						<apex:outputField value="{!Evaluation__c.Pressure_Ulcer_Flap_Surgery_describe__c}" label="Describe"  />
-					</apex:pageBlockSection>
-					<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Pressure Ulcer Detail" formId="{!$Component.wholePage}" uniqueId="decubiti" />
-					<apex:pageBlockSection columns="2" >
-						<apex:outputText value="General Skin Condition" styleClass="labelCol" style="margin-left: 2cm;" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.Skin_Color__c}" label="Color" />
-						<apex:outputField value="{!Evaluation__c.Wound_Vac__c}"  />
-						<apex:outputField value="{!Evaluation__c.Skin_Temperature__c}" label="Temperature" />
-						<apex:outputField value="{!Evaluation__c.Wound_Vac_Frequency__c}"  />
-						<apex:outputField value="{!Evaluation__c.Skin_Moisture__c}" label="Mositure" />
-						<apex:outputField value="{!Evaluation__c.Wound_Vac_Duration__c}"  />
-						<apex:outputField value="{!Evaluation__c.Skin_Turgor__c}" label="Turgor" />
-						<apex:outputField value="{!Evaluation__c.Specialty_Bed__c}"  />
-						<apex:outputField value="{!Evaluation__c.Skin_Edema__c}" label="Edema"  />
-						<apex:outputField value="{!Evaluation__c.Specialty_Bed_Type__c}" />
-						<apex:outputField value="{!Evaluation__c.Skin_Edema_Location__c}" label="Edema Location" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.Skin_Behavior__c}" label="Behavior" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.Peripheral_Capillary_Refill_Location__c}" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField Value="{!Evaluation__c.Peripheral_Capillary_Refill_of_Seconds__c}" />
-					</apex:pageBlockSection>
-					<hr />
-					 <h2 style="display: block; margin: 10px;">Body Map</h2>
+					
+					<apex:pageBlockSection title="Additional Wound Detail" columns="2">
+                    <apex:pageBlockSectionItem>
+                    <apex:outputLabel value="Wound Vac" />
+                    <apex:outputPanel>
+                    <apex:outputField value="{!Evaluation__c.Wound_Vac__c}" />
+                    <apex:outputText value="Frequency" styleClass="labelCol" rendered="{!Evaluation__c.Wound_Vac__c == true}" /><apex:outputField value="{!Evaluation__c.Wound_Vac_Frequency__c}" id="woundVacFrequency" rendered="{!Evaluation__c.Wound_Vac__c == true}" />
+                    <apex:outputText value="Duration" styleClass="labelCol" style="margin-left:20px;"  rendered="{!Evaluation__c.Wound_Vac__c == true}" /><apex:outputField value="{!Evaluation__c.Wound_Vac_Duration__c}" id="woundVacDuration" rendered="{!Evaluation__c.Wound_Vac__c == true}" />
+                    </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem>
+                    <apex:outputLabel value="Specialty Bed" />
+                    <apex:outputPanel>
+                    <apex:inputField value="{!Evaluation__c.Specialty_Bed__c}" />
+                    <apex:outputText value="Type" styleClass="labelCol" rendered="{!Evaluation__c.Specialty_Bed__c == true}"/><apex:outputField value="{!Evaluation__c.Specialty_Bed_Type__c}" id="specialtyBedType" rendered="{!Evaluation__c.Specialty_Bed__c == true}" />
+                    </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    </apex:pageBlockSection>
+                    
+                    <apex:pageBlockSection title="Body Map" columns="1">
+                    <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="History of Pressure Ulcers/Flap Surgery" />
+                    <apex:outputPanel >
+						<apex:outputField value="{!Evaluation__c.History_of_Pressure_Ulcers_Flap_Surge__c}" />
+                    	<apex:outputText styleClass="labelCol" value="Describe" rendered="{!Evaluation__c.History_of_Pressure_Ulcers_Flap_Surge__c == 'Yes'}"/><apex:inputField value="{!Evaluation__c.Pressure_Ulcer_Flap_Surgery_describe__c}" label="Describe" id="ulcersurgeryDescribe"  rendered="{!Evaluation__c.History_of_Pressure_Ulcers_Flap_Surge__c == 'Yes'}"/>
+                    </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:inputField value="{!Evaluation__c.Intact__c}" html-data-rules="{&quot;0&quot; : [&quot;#divBodyMap&quot;]}"/>
+                     
                     <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
                         <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!baseUrl + URLFOR($Resource.WholeBodyNoGrid)}" id="bodyMap" />
                     </div>
-                    <div style="margin-left: 420px; height: 298px; overflow: auto;">
+                   <div style="margin-left: 420px; height: 298px; overflow: auto;">
                         <table id="annotations">
                             <tbody>
                             </tbody>
                         </table>
                     </div>
-                    <apex:pageBlockSection columns="1" id="bodyMapOtherComments">
                         <apex:outputField value="{!Evaluation__c.Body_Map_Comments__c}" label="Other Body Map Comments"  />
+                    </apex:pageBlockSection>
+                    
+					<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Pressure Ulcer Detail" formId="{!$Component.wholePage}" uniqueId="decubiti" />
+					
+					 <apex:pageBlockSection columns="2" title="General Skin Condition" >
+                        
+                        <apex:outputField value="{!Evaluation__c.Skin_Color__c}" label="Color" />
+                        <apex:outputField value="{!Evaluation__c.Skin_Temperature__c}" label="Temperature" />
+                        <apex:outputField value="{!Evaluation__c.Skin_Moisture__c}" label="Mositure" />
+                        <apex:outputField value="{!Evaluation__c.Skin_Turgor__c}" label="Turgor" />
+                        <apex:pageBlockSectionItem>
+                        <apex:outputLabel value="Edema" />
+                        <apex:outputPanel>
+                        <apex:outputField value="{!Evaluation__c.Skin_Edema__c}" label="Edema" html-data-rules="{&quot;Yes&quot;: [&quot;{!$Component.edemaLocation}&quot;]}" />
+                        <apex:outputText styleClass="labelCol" value="Location" rendered="{!Evaluation__c.Skin_Edema__c == 'Yes'}" /><apex:outputField value="{!Evaluation__c.Skin_Edema_Location__c}" label="Edema Location" id="edemaLocation" rendered="{!Evaluation__c.Skin_Edema__c == 'Yes'}"  />
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:outputField value="{!Evaluation__c.Skin_Behavior__c}" label="Behavior" />
+                        <apex:pageBlockSectionItem>
+                        <apex:outputLabel value="Peripheral Capillary Refill Location" />
+                        <apex:outputPanel>
+                        <apex:outputField value="{!Evaluation__c.Peripheral_Capillary_Refill_Location__c}" />
+                        <apex:outputText value="# of Seconds" styleClass="labelCol" style="margin-left:20px" />
+                        <apex:outputField Value="{!Evaluation__c.Peripheral_Capillary_Refill_of_Seconds__c}" />
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        
                     </apex:pageBlockSection>
                     <hr />
                        <apex:pageBlockSection columns="1" id="skinBodyFooter">
@@ -755,9 +776,9 @@
 	                        	</apex:selectCheckboxes>
 	                        </apex:pageBlockSectionItem>
 	                        <apex:outputField value="{!Evaluation__c.Depression_History__c}"  />
-	                        <apex:outputField value="{!Evaluation__c.Desire_to_hurt_themselves__c}" label="If Sad or Flat - Has Resident Expressed Desire to Hurt Themselves"  />
-	                        <apex:outputField value="{!Evaluation__c.Depression_desire_to_hurt_themsleves__c}" label="If Yes, Does Resident Have a Desire to Hurt Themselves?" />
-	                        <apex:outputField value="{!Evaluation__c.Plan_to_Harm_themselves__c}" label="If Yes, does Resident Have a Plan to Harm Themselves?"  />
+	                        <apex:outputField value="{!Evaluation__c.Desire_to_hurt_themselves__c}" label="If Sad or Flat - Has Resident Expressed Desire to Hurt Him/Herself?"  />
+	                        <apex:outputField value="{!Evaluation__c.Depression_desire_to_hurt_themsleves__c}" label="If Yes, Does Resident Have a Desire to Hurt Him/Herself?" />
+	                        <apex:outputField value="{!Evaluation__c.Plan_to_Harm_themselves__c}" label="If Yes, does Resident Have a Plan to Harm Him/Hersel?"  />
 	                        <apex:outputField value="{!Evaluation__c.Depression_Patient_received_Treatment__c}" label="Has Patient Received Treatment?" />
 	                    </apex:pageBlockSection>
 	                    <hr />
@@ -911,7 +932,7 @@
 	                    <hr />
 	                    <apex:pageBlockSection columns="2" >
 	                    	<apex:outputField value="{!Evaluation__c.Pain_History__c}" />
-	                    	<apex:outputText value="Aggrivating Factors" styleClass="labelCol" style="margin-left: 3cm;"/>
+	                    	<apex:outputText value="Aggravating Factors" styleClass="labelCol" style="margin-left: 3cm;"/>
 	                    	<apex:outputField value="{!Evaluation__c.Pain_Level_Requiring_Intervention__c}" />
 	                    	<apex:outputField value="{!Evaluation__c.Activity__c}" />
 	                    	<apex:pageblockSectionItem />
@@ -1239,6 +1260,8 @@
          				<apex:pageBlockSection columns="1">
 			 			<apex:outputField value="{!Evaluation__c.History_of_Psycho_Social_Issues__c}" label="History of Psycho/Social Issues (Drug/ Alcohol/ Legal)" /> 
 			 			</apex:pageBlockSection>
+			 			<apex:outputField label="Consumes > 2 alcoholic drinks/day" value="{!Evaluation__c.Alcoholic_drinks_per_day__c}" />
+			 			
 				 		<apex:pageBlockSection columns="2" title="Does Resident exhibit signs or relate a history of any of the following:" Collapsible="False">
 				 			<apex:outputField value="{!Evaluation__c.Alcohol_Abuse__c}" />
 				 			<apex:outputField value="{!Evaluation__c.Drug_Abuse__c}" />
@@ -1346,18 +1369,18 @@
 				 		</apex:pageBlockSection>
 				 		<apex:pageBlockSection columns="2" title="Family/Significant Other Relationships" collapsible="false">
 				 			<apex:outputField value="{!Evaluation__c.Members_Visit__c}" />
-				 			<apex:outputField value="{!Evaluation__c.Representative_present_at_Admission__c}" label="Is family/SO/Authorized Representative present at admission" />
+				 			<apex:outputField value="{!Evaluation__c.Representative_present_at_Admission__c}" label="Is Family/SO/Authorized Representative Present at Admission" />
 				 			<apex:outputField value="{!Evaluation__c.Closest_Relationship_with__c}" />
 				 			<apex:outputField value="{!Evaluation__c.Name_of_Representative_present__c}" label="if Yes, Name"  />
 				 			<apex:pageBlockSectionItem />
-				 			<apex:outputField value="{!Evaluation__c.Given_Explanation_in_plan_of_Care__c}" label="Given explanation of/Involved in Plan of Care?" />
+				 			<apex:outputField value="{!Evaluation__c.Given_Explanation_in_plan_of_Care__c}" label="Given Explanation of/Involved in Plan of Care?" />
 				 			<apex:pageBlockSectionItem />
-				 			<apex:outputField value="{!Evaluation__c.Given_explanation_of_Infection_Control__c}" label="Given explanation of Infection Control/Safety Precautions?" />
+				 			<apex:outputField value="{!Evaluation__c.Given_explanation_of_Infection_Control__c}" label="Given Explanation of Infection Control/Safety Precautions?" />
 				 			<apex:pageBlockSectionItem />
-				 			<apex:outputField value="{!Evaluation__c.Teaching_Instructions_were_discussed__c}" label="Teaching instructions were discussed?" />
+				 			<apex:outputField value="{!Evaluation__c.Teaching_Instructions_were_discussed__c}" label="Teaching Instructions Were Discussed?" />
 				 			<apex:pageBlockSectionItem />
 				 			<apex:outputField value="{!Evaluation__c.Assessed_for_Readiness_to_Learn__c}" label="Assessed for Readiness to Learn on Admission" />
-				 			<apex:outputText value="If Rancho Level is>2 or LOC is Alert/Delayed/Lethargic" styleClass="labelCol"/>
+				 			<apex:outputText value="If Rancho Level is > 2 or LOC is Alert/Delayed/Lethargic" styleClass="labelCol"/>
 				 			<apex:outputField value="{!Evaluation__c.Ready_for_Teaching_and_Learning__c}" label="Ready for Teaching and Learning?" />
 				 			<apex:pageBlockSectionItem >
 				 				<apex:outputText value="Resident Oriented to the following" styleClass="labelCol" />
@@ -1378,9 +1401,9 @@
 				 			<apex:outputField value="{!Evaluation__c.Family_Member_s_Readiness_To_Learn__c}" />
 				 			<apex:outputField value="{!Evaluation__c.Family_Member_Education_Level__c}" />
 				 			<apex:outputField value="{!Evaluation__c.Family_Member_s_Religious_Influences__c}" />
-				 			<apex:outputField value="{!Evaluation__c.Family_Mem_Physical_cognitive_Barriers__c}" label="Family Member's Physical/Cognitive barriers"/>
+				 			<apex:outputField value="{!Evaluation__c.Family_Mem_Physical_cognitive_Barriers__c}" label="Family Member's Physical/Cognitive Barriers"/>
 				 			<apex:outputField value="{!Evaluation__c.Family_Member_s_Cultural_Influences__c}" />
-				 			<apex:outputField value="{!Evaluation__c.Family_he_She_hear__c}" label="Can She/he hear?" />
+				 			<apex:outputField value="{!Evaluation__c.Family_he_She_hear__c}" label="Can He/She Hear?" />
 				 			<apex:pageBlockSectionItem >
 				 				<apex:outputText value="Family Member's Emotional Barriers/Recent Changes in Life" styleClass="labelCol" />
 				 				<apex:selectCheckboxes value="{!selectedFambarriers}" disabled="True">

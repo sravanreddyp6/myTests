@@ -263,6 +263,16 @@
         <type>Lookup</type>
     </fields>
     <fields>
+        <fullName>Suppress_External_Update__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>Whether or not this record is updated nightly from Oracle.  If the value is true, none of the fields will update, and any changes made in SF will remain until this box is reset to false.  This flag is used for the case when a user&apos;s operating group is temporary in Force (such as CM Ludlow).</description>
+        <externalId>false</externalId>
+        <label>Suppress External Update</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>Unique_Id__c</fullName>
         <caseSensitive>false</caseSensitive>
         <description>For now, this will be a duplicate of the Employee Id from Oracle. At some point, this will probably be a value that is unique for both employees and non-employees.</description>
