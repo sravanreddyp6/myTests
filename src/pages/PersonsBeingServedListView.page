@@ -341,7 +341,7 @@ table#persons_table.dataTable {
                                             View Current Worksheets
                                         </apex:outputLink>
                                         <!-- WVPN-18: Used seeWorksheets variable to distinguish between Redwood IN and Cambridge IN.  If Redwood, seeWorksheets is set to true as of the date of this note.  J. Gilliam, 04-21-14 -->
-                                        <apex:variable value="{!jo.Service_Assignment__r.Admission__r.State__c == 'MN' || (jo.Service_Assignment__r.Admission__r.State__c == 'IN' && seeWorksheets == true) || jo.Service_Assignment__r.Admission__r.State__c == 'CA'}" 
+                                        <apex:variable value="{!jo.Service_Assignment__r.Admission__r.State__c == 'MN' || (jo.Service_Assignment__r.Admission__r.State__c == 'IN' && seeWorksheets == true) || jo.Service_Assignment__r.Admission__r.State__c == 'CA' || jo.Service_Assignment__r.Service_location__r.programid__c == '114165002'}" 
                                                         var="HideNoteLink"/>                                                                                                             
                                         
                                         <apex:outputLink styleClass="servicelink" value="/{!jo.Service_Assignment__r.Id}#Notes"
