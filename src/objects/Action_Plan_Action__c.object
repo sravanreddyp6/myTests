@@ -191,4 +191,18 @@
         <errorDisplayField>Description__c</errorDisplayField>
         <errorMessage>Description is Required</errorMessage>
     </validationRules>
+    <validationRules>
+        <fullName>Start_Date_b4_plan_start</fullName>
+        <active>true</active>
+        <errorConditionFormula>Start_Date__c &lt; Action_Plan_Objective__r.Action_Plan_Goal__r.Action_Plan__r.Effective_Date__c</errorConditionFormula>
+        <errorDisplayField>Start_Date__c</errorDisplayField>
+        <errorMessage>Start Date must be on or after the Action Plan Effective Date</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>end_date_b4_plan_target_date</fullName>
+        <active>true</active>
+        <errorConditionFormula>End_Date__c &gt; Action_Plan_Objective__r.Action_Plan_Goal__r.Action_Plan__r.Target_Date__c</errorConditionFormula>
+        <errorDisplayField>End_Date__c</errorDisplayField>
+        <errorMessage>End Date must be on or before the Action Plan Target Date</errorMessage>
+    </validationRules>
 </CustomObject>
