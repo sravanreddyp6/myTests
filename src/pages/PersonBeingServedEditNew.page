@@ -20,6 +20,7 @@
  
  
  <script language="javascript">
+    var inputsDisabled = []; // global variable to hold the list of inputs disabled unsing below script. These needs to be enabled before submit or else they dont get submitted.
     jQuery(document).ready(function ($) {
         String.prototype.endsWith = function (suffix) {
                 return this.indexOf(suffix, this.length - suffix.length) !== -1;
@@ -81,9 +82,10 @@
                                 $target.parent().find("select").prop("disabled", true);
                             } else {
                                 $target.prop("disabled", true);
+                                inputsDisabled.push($target);    // add to the list so at the time of form submit, disabled will be removed from these 
                                 var type = $target.attr('type');
                                 if (type && type==='checkbox') {
-                                    $target.prop('checked', false);
+                                    $target.prop('checked', false);                                    
                                 } else {
                                     $target.val('');
                                 }
@@ -109,6 +111,14 @@
                 });
         }
         setUpFields();
+        
+        // this is to remove the disabled property from 
+	    $('form').bind('submit', function() {
+	        $.each(inputsDisabled, function(_,$inDis) {
+	            $inDis.prop("disabled", false);
+	        })
+	    });
+    
     });   //end "ready" function
 
    j$ = jQuery.noConflict();
