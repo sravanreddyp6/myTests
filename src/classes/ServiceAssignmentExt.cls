@@ -297,6 +297,7 @@ public class ServiceAssignmentExt {
                 admissionId = admission.Id;
                 theServAssign.Admission__c = admission.Id;
                 theServAssign.Name = 'TBD - Autofilled';
+                theServAssign.Program_Detail__c = 'TBD - Autofilled';
                 theServAssign.Person_Being_Served__c = admission.Person_Being_Served__c;
                 theServAssign.Phase__c = 0;
                 diagnoses = new List<Diagnosis__c>();
@@ -307,6 +308,7 @@ public class ServiceAssignmentExt {
                 //recordTypeId = theServAssign.RecordTypeId;
                 initialRecord.Admission__c = admission.Id;
                 initialRecord.Name = 'TBD - Autofilled';
+                initialRecord.Program_Detail__c = 'TBD - Autofilled';
                 initialRecord.Person_Being_Served__c = admission.Person_Being_Served__c;
                 initialRecord.RecordTypeId = theRecordType.Id;
                 pbsOwner = admission.Person_Being_Served__r.OwnerId;
