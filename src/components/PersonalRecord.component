@@ -39,27 +39,28 @@
         });
 
         function pinPbs(){
-            var s = jQuery("#pbsBlueCard");
-            var pos = s.position();
+            var s1 = jQuery("#pbsBlueCard");
+            var pos1 = s1.position();
+
             jQuery('.stickPbs').css({"display":"none"});
             jQuery('.unstickPbs').css({"display":"inherit"});
             jQuery(window).scroll(function() {
                 var windowpos = jQuery(window).scrollTop();
-                if (windowpos - 120 >= pos.top) {
-                    s.addClass("stickBlueCard");
+                if (windowpos - 168 >= pos1.top) {
+                    s1.addClass("stickBlueCard");
                 } else {
-                    s.removeClass("stickBlueCard");
+                    s1.removeClass("stickBlueCard");
                 }
             });
-        }
-
+         }   
+         
         function unpinPbs(){
-            var s = jQuery("#pbsBlueCard");
-            s.removeClass("stickBlueCard");
+            var s2 = jQuery("#pbsBlueCard");
+            s2.removeClass("stickBlueCard");
             jQuery('.unstickPbs').css({"display":"none"});
             jQuery('.stickPbs').css({"display":"inherit"});
             jQuery(window).scroll(function() {
-                s.removeClass("stickBlueCard");
+                s2.removeClass("stickBlueCard");
             });
         }        
     </script>
@@ -89,27 +90,27 @@
     </div>  
     <br />
     
-    <div id="pbsBlueCard" style="background-color:#99ccff !important;">        
+    <div id="pbsBlueCard" style="background-color:#99ccff !important; font-size:11px;">        
     <apex:form >
-        <table style="vertical-align:middle" width="100%" border="0" >
+        <table style="vertical-align:top" width="100%" border="0" >
                         <tr>
                         <apex:outputLabel rendered="{!hasPhoto}">
-                        <td style="text-align:left; width:110px;padding-left:10px" ><!--  photo -->
+                        <td style="text-align:left; width:110px;padding-left:10px;vertical-align: top;" ><!--  photo -->
                         <apex:image url="{!photourl}" styleclass="pbsimg" / >    
                         </td>
                         </apex:outputLabel>
                         
                         <td style="text-align:left; padding-left:10px;" ><!--  personal info -->
                         <span class="pbsname">{!con.FirstName}  {!con.LastName}</span>
-                        <table cellpadding="5" >
+                        <table cellpadding="5" style="border-collapse:collapse; border-spacing:0;" >
                         <tr>
-                            <td><b>Person Number:</b>&nbsp;<apex:outputText value="{!con.PBS_Identifier__c}" /></td>
+                            <td><b>Person #:</b>&nbsp;<apex:outputText value="{!con.PBS_Identifier__c}" /></td>
                             <td><b>Ethnicity:</b>&nbsp;<apex:OutputText value="{!con.Ethnicity_Picklist__c}"/></td>
                             <apex:outputLabel rendered="{!guardianCount>0}">
-                            <td><b>Guardian Name:</b>&nbsp;<apex:OutputText value="{!con.Guardian1_Name__c}"/></td>
+                            <td><b>Guardian:</b>&nbsp;<apex:OutputText value="{!con.Guardian1_Name__c}"/></td>
                             </apex:outputLabel>
                             <apex:outputLabel rendered="{!primaryPhysician != ''}">
-                            <td><b>Primary Physician Name:</b>&nbsp;<apex:outputText value="{!primaryPhysician}" /></td>
+                            <td><b>Primary Physician:</b>&nbsp;<apex:outputText value="{!primaryPhysician}" /></td>
                             </apex:outputLabel>
                         </tr>
                         <tr>
@@ -142,14 +143,14 @@
                         </tr> </table>
                         </td>
                         
-                        <td> <!--  service links -->
+                        <td valign="top" align="right"> <!--  service links -->
                         
-                        <div style="padding-right: 1em;">
-	                        <apex:image styleClass="stickPbs" url="{!URLFOR($Resource.pin)}" style="height:1.2em; float: right; display: none;" onclick="pinPbs()"/>
-	                        <apex:image styleClass="unstickPbs" url="{!URLFOR($Resource.unpin)}" style="height:1.2em; float: right" onclick="unpinPbs()"/>
+                        <div>
+	                        <apex:image styleClass="stickPbs" url="{!URLFOR($Resource.pin)}" style="height:1.2em; display: none;" onclick="pinPbs()"/>
+	                        <apex:image styleClass="unstickPbs" url="{!URLFOR($Resource.unpin)}" style="height:1.2em;" onclick="unpinPbs()"/>
                         </div>
-                        <div style="padding-right:100px; vertical-align:middle">
-	                        <table style="border:1px solid #6699cc; background-color:white; padding-bottom:10px;float:right">
+                        <div style="padding:0px 35px 0px 0px;" >
+	                        <table style="border:1px solid #6699cc; background-color:white; padding-bottom:10px">
 	                        <tr>
 	                        <td colspan="2"><b>Service Links:</b></td>
 	                        </tr>
