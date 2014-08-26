@@ -12,11 +12,11 @@ after update, before delete, before insert, before update) {
         handler.OnAfterInsert(Trigger.new);
     }
     /* Before Update */
-    else if(Trigger.isUpdate && Trigger.isBefore && !system.ISFUTURE()){
+    else if(Trigger.isUpdate && Trigger.isBefore && !system.isFuture() && !system.isBatch()){
         handler.OnBeforeUpdate(Trigger.old, Trigger.new, Trigger.newMap, Trigger.oldMap);
     }
     /* After Update */
-    else if(Trigger.isUpdate && Trigger.isAfter &&  !system.ISFUTURE()){
+    else if(Trigger.isUpdate && Trigger.isAfter &&  !system.isFuture() && !system.isBatch()){
         handler.OnAfterUpdate(Trigger.old, Trigger.new, Trigger.newMap);
     }
     /* Before Delete */

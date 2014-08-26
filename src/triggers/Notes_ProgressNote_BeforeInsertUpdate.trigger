@@ -1,5 +1,5 @@
 trigger Notes_ProgressNote_BeforeInsertUpdate on Progress_Note__c (before insert, before update) {
-	if(!system.ISFUTURE()){
+	if(!system.isFuture() && !system.isBatch()){
 		
 	    list<Progress_Note__c > PNs= new list<Progress_Note__c >();    
 	    PNs = trigger.new;
