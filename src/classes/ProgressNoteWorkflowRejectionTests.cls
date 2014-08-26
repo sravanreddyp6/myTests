@@ -40,7 +40,7 @@ public with sharing class ProgressNoteWorkflowRejectionTests {
        	system.debug('Approval Status '+notetoTest.Approval_status__c);
        	Test.stopTest();
        	
-        notetoTest = [SELECT id, Approval_user__c, Approval_Status__c,Approval_Comment__c FROM Progress_Note__c WHERE id=:notetoTest.Id];
+        notetoTest = [SELECT id, Approval_user__c, Approval_Status__c FROM Progress_Note__c WHERE id=:notetoTest.Id];
        	system.assertEquals(notetoTest.Approval_User__c, UserInfo.getUserID());
        	
        	List<id> newWorkItemIds = result.getNewWorkitemIds();

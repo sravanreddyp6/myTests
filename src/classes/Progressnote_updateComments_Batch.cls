@@ -1,7 +1,7 @@
 global class Progressnote_updateComments_Batch implements Database.Batchable<sObject> {
 	
 	global Database.QueryLocator start(Database.BatchableContext BC){
-		string query = 'SELECT id,Approval_Comment__c,Approval_User__c,(SELECT ID, TargetObjectID,Comments,ActorId FROM ProcessSteps Order by SystemModstamp desc LIMIT 1 ) FROM Progress_Note__c WHERE Approval_Status__c IN(\'Needs Refinement\',\'Approved\') AND Admission__r.State__c = \'AZ\'';
+		string query = 'SELECT id,Approval_User__c,(SELECT ID, TargetObjectID,Comments,ActorId FROM ProcessSteps Order by SystemModstamp desc LIMIT 1 ) FROM Progress_Note__c WHERE Approval_Status__c IN(\'Needs Refinement\',\'Approved\') AND Admission__r.State__c = \'AZ\'';
 		return Database.getQueryLocator(query);
 	}
 	
@@ -12,7 +12,7 @@ global class Progressnote_updateComments_Batch implements Database.Batchable<sOb
 	    List<ProcessInstanceHistory> history = pn.ProcessSteps;
 	    if(history.size()>0){
 	    	Progress_Note__c p = pnMap.get(history[0].TargetObjectId);
-            p.Approval_comment__c = history[0].Comments;
+           // p.Approval_comment__c = history[0].Comments;
             p.Approval_User__c = history[0].ActorId;
 	    	
 	    	}
