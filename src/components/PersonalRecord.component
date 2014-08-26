@@ -104,41 +104,42 @@
                         <span class="pbsname">{!con.FirstName}  {!con.LastName}</span>
                         <table cellpadding="5" style="border-collapse:collapse; border-spacing:0;" >
                         <tr>
-                            <td><b>Person #:</b>&nbsp;<apex:outputText value="{!con.PBS_Identifier__c}" /></td>
-                            <td><b>Ethnicity:</b>&nbsp;<apex:OutputText value="{!con.Ethnicity_Picklist__c}"/></td>
+                            <td width="25%"><b>Person #:</b>&nbsp;<apex:outputText value="{!con.PBS_Identifier__c}" /></td>
+                            <td width="25%"><b>Ethnicity:</b>&nbsp;<apex:OutputText value="{!con.Ethnicity_Picklist__c}"/></td>
                             <apex:outputLabel rendered="{!guardianCount>0}">
-                            <td><b>Guardian:</b>&nbsp;<apex:OutputText value="{!con.Guardian1_Name__c}"/></td>
+                            <td width="25%"><b>Guardian:</b>&nbsp;<apex:OutputText value="{!con.Guardian1_Name__c}"/></td>
                             </apex:outputLabel>
                             <apex:outputLabel rendered="{!primaryPhysician != ''}">
-                            <td><b>Primary Physician:</b>&nbsp;<apex:outputText value="{!primaryPhysician}" /></td>
+                            <td width="25%"><b>Primary Physician:</b>&nbsp;<apex:outputText value="{!primaryPhysician}" /></td>
                             </apex:outputLabel>
                         </tr>
                         <tr>
-                            <td><b>DOB:</b>&nbsp;<apex:outputText id="txtdob" value="{0, date, MM/dd/yyyy}"><apex:param value="{!con.Birthdate}" /></apex:outputText></td>
-                            <td><b>Primary Language:</b>&nbsp;<apex:OutputText value="{!con.Primary_Language__c}"/></td>
+                            <td width="25%"><b>DOB:</b>&nbsp;<apex:outputText id="txtdob" value="{0, date, MM/dd/yyyy}"><apex:param value="{!con.Birthdate}" /></apex:outputText></td>
+                            <td width="25%"><b>Primary Language:</b>&nbsp;<apex:OutputText value="{!con.Primary_Language__c}"/></td>
                             <apex:outputLabel rendered="{!guardianCount>0}">
-                            <td><b>Guardian Phone:</b>&nbsp;<apex:OutputText value="{!con.Guardian_Phone_Number__c}"/></td>
+                            <td width="25%"><b>Guardian Phone:</b>&nbsp;<apex:OutputText value="{!con.Guardian_Phone_Number__c}"/></td>
                             </apex:outputLabel>
                             <apex:outputLabel rendered="{!primaryPhysicianPhone != ''}">
-                            <td><b>Primary Physician Phone:</b>&nbsp;<apex:outputText value="{!primaryPhysicianPhone}" /></td>
+                            <td width="25%"><b>Primary Physician Phone:</b>&nbsp;<apex:outputText value="{!primaryPhysicianPhone}" /></td>
                             </apex:outputLabel>
                         </tr>
                         <tr>
-                            <td><b>Age:</b>&nbsp;<apex:outputText id="txtage" value="{!con.Age__c}" /></td>
-                            <td><b>Primary Diagnosis:</b>&nbsp;<apex:outputText value="{!primaryDiagnosis}" /></td>
-                            <apex:outputLabel rendered="{!con.Family_Member_Other__c != ''}">
-                            <td><b>Other Family Members:</b>&nbsp;<apex:OutputText value="{!con.Family_Member_Other__c}"/></td>
-                            </apex:outputLabel>
+                            <td width="25%"><b>Age:</b>&nbsp;<apex:outputText id="txtage" value="{!con.Age__c}" /></td>
+                            <td width="25%"><b>Primary Diagnosis:</b>&nbsp;<apex:outputText value="{!primaryDiagnosis}" /></td>
+                            <td width="25%"></td>
+<!--                             <apex:outputLabel rendered="{!con.Family_Member_Other__c != ''}"> -->
+<!--                             <td><b>Other Family Members:</b>&nbsp;<apex:OutputText value="{!con.Family_Member_Other__c}"/></td> -->
+<!--                             </apex:outputLabel> -->
                             <apex:outputLabel rendered="{!con.Advanced_Directives__c}">
-                            <td><b>Advanced Directives:</b>&nbsp;<apex:outputLabel value="{!HTMLENCODE('Yes')}" /></td>
+                            <td width="25%"><b>Advanced Directives:</b>&nbsp;<apex:outputLabel value="{!HTMLENCODE('Yes')}" /></td>
                             </apex:outputLabel>
                         </tr>
                         <tr>
-                            <td><b>Gender:</b>&nbsp;<apex:OutputText value="{!con.Gender__c}"/></td>
-                            <td></td>
-                            <td></td>
+                            <td width="25%"><b>Gender:</b>&nbsp;<apex:OutputText value="{!con.Gender__c}"/></td>
+                            <td width="25%"></td>
+                            <td width="25%"></td>
                             <apex:outputLabel rendered="{!con.Code_Status__c != ''}">
-                            <td><b>Code Status:</b>&nbsp;<apex:outputLabel value="{!con.Code_Status__c}" /></td>
+                            <td width="25%"><b>Code Status:</b>&nbsp;<apex:outputLabel value="{!con.Code_Status__c}" /></td>
                             </apex:outputLabel>                            
                         </tr> </table>
                         </td>
