@@ -17,12 +17,12 @@ trigger ProgressNoteWorkflowRejection on Progress_Note__c (before update) {
 	    
 	 //Added by Sravan to copy Approval comments from approval process to Approval_Comment__c field on Progress Notes EB-186,08/08/2014   
 	    if(pnMap.size()>0){
-		    List<Progress_Note__c> notes = [SELECT id,Approval_User__c,(SELECT ID, TargetObjectID,Comments,ActorId,ProcessInstanceId FROM ProcessSteps Order by SystemModstamp desc LIMIT 1 ) FROM Progress_Note__c WHERE ID IN: pnMap.KeySet()];
+		    List<Progress_Note__c> notes = [SELECT id,Approval_User__c,Approval_comment__c,(SELECT ID, TargetObjectID,Comments,ActorId,ProcessInstanceId FROM ProcessSteps Order by SystemModstamp desc LIMIT 1 ) FROM Progress_Note__c WHERE ID IN: pnMap.KeySet()];
 		    		for(Progress_Note__c n : notes){
 		    			List<ProcessInstanceHistory> history = n.ProcessSteps;
 		    			if(history.size()>0){
 			    			Progress_Note__c p = pnMap.get(history[0].TargetObjectId);
-			    		//	p.Approval_comment__c = history[0].Comments;
+			    			p.Approval_comment__c = history[0].Comments;
 			    			p.Approval_User__c = history[0].ActorId;
 			    			//processinstanceIds.put(history[0].ProcessInstanceId,history[0].TargetObjectID);
 		    			}
