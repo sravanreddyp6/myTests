@@ -8,26 +8,22 @@ public with sharing class ServiceAssignmentTriggeredActions {
 
 	public void OnBeforeInsert(Service_Assignment__c[] newObjects){
         boolean found;
-        List<SAaggregates> currCounts = getSAaggregateList();	
+        Map<String,SAaggregates> currCounts = getSAaggregateMap();
 		// loop through all the inserted service assignments
 		for(Service_Assignment__c sa :newObjects ){
 			// update the ServiceLocationCount only if the sevice location is present
 			if (sa.Service_Location__c != null){
 				found = false;
-				// loop through the aggregate count resluts, if found, that means this person had been at this location before, so increment the count to +1. And update the same in the lookup results
-				for (SAaggregates res : currCounts){
-					if (sa.Person_Being_Served__c == res.personBeingServed  &&  sa.Service_Location__c == res.serviceLocation ){
-						sa.PBS_ServiceLocation_Count__c = res.totalPlusOne();
-						found = true;
-						break;
-					}
+				if (currCounts.containsKey(String.valueOf(sa.Service_Location__c) + String.valueOf(sa.Person_Being_Served__c))){
+                		sa.PBS_ServiceLocation_Count__c = currCounts.get(String.valueOf(sa.Service_Location__c) + String.valueOf(sa.Person_Being_Served__c)).totalPlusOne();
+                        found = true;
 				}
 	            // if not found in the existing list, then mark it as the first entry into this service location; 
 	            // Also, need to add this service assignment to the aggregate results
 	            if (!found){
 	                sa.PBS_ServiceLocation_Count__c = 1;
-	                currCounts.add(new SAaggregates(sa.Service_Location__c, sa.Person_Being_Served__c, 1));             
-	            }
+	                currCounts.put(String.valueOf(sa.Service_Location__c) + String.valueOf(sa.Person_Being_Served__c), new SAaggregates(sa.Service_Location__c, sa.Person_Being_Served__c, 1));
+	            } 
             }            
 		}
 		
@@ -36,51 +32,41 @@ public with sharing class ServiceAssignmentTriggeredActions {
 
     public void OnBeforeUpdate(Service_Assignment__c[] oldObjects, Service_Assignment__c[] updatedObjects, Map<Id,Service_Assignment__c> oldObjMap){
         boolean found;
-        List<SAaggregates> currCounts = getSAaggregateList();
-        
+        Map<String,SAaggregates> currCounts = getSAaggregateMap();
         // loop through all the updated service assignments
         for(Service_Assignment__c sa :updatedObjects){
             // update the ServiceLocationCount if the service location was added to the service assignment
             if (sa.Service_Location__c != null && oldObjMap.get(sa.id).Service_Location__c == null && sa.PBS_ServiceLocation_Count__c == null ){
                 found = false;
-                // loop through the aggregate count resluts, if found, that means this person had been at this location before, so increment the count to +1. And update the same in the lookup results
-                for (SAaggregates res : currCounts){
-                    if (sa.Person_Being_Served__c == res.personBeingServed  &&  sa.Service_Location__c == res.serviceLocation ){
-                        sa.PBS_ServiceLocation_Count__c = res.totalPlusOne();
+				if (currCounts.containsKey(String.valueOf(sa.Service_Location__c) + String.valueOf(sa.Person_Being_Served__c))){
+                		sa.PBS_ServiceLocation_Count__c = currCounts.get(String.valueOf(sa.Service_Location__c) + String.valueOf(sa.Person_Being_Served__c)).totalPlusOne();
                         found = true;
-                        break;
-                    }
-                }
+				}
 	            // if not found in the existing list, then mark it as the first entry into this service location; 
 	            // Also, need to add this service assignment to the aggregate results
 	            if (!found){
 	                sa.PBS_ServiceLocation_Count__c = 1;
-	                currCounts.add(new SAaggregates(sa.Service_Location__c, sa.Person_Being_Served__c, 1));             
+	                currCounts.put(String.valueOf(sa.Service_Location__c) + String.valueOf(sa.Person_Being_Served__c), new SAaggregates(sa.Service_Location__c, sa.Person_Being_Served__c, 1));
 	            }                
             }
             // To update the exisiting service assignment records.
             else if (sa.Service_Location__c != null && (sa.PBS_ServiceLocation_Count__c == null || sa.PBS_ServiceLocation_Count__c == 0 )){
-                for (SAaggregates res : currCounts){
-                    if (sa.Person_Being_Served__c == res.personBeingServed  &&  sa.Service_Location__c == res.serviceLocation ){
-                        sa.PBS_ServiceLocation_Count__c = res.total;
-	                    --res.total;
-	                    break;
-                    }
-                }            	
+				if (currCounts.containsKey(String.valueOf(sa.Service_Location__c) + String.valueOf(sa.Person_Being_Served__c))){
+						sa.PBS_ServiceLocation_Count__c = currCounts.get(String.valueOf(sa.Service_Location__c) + String.valueOf(sa.Person_Being_Served__c)).total;
+	                    --currCounts.get(String.valueOf(sa.Service_Location__c) + String.valueOf(sa.Person_Being_Served__c)).total;
+				}
             }
         }
     }
 
-    private List<SAaggregates> getSAaggregateList(){
-    	List<SAaggregates> aggregates = new List<SAaggregates>();
+    private Map<String,SAaggregates> getSAaggregateMap(){
+    	Map<String,SAaggregates> aggregates = new Map<String,SAaggregates>();
         List<AggregateResult> currCounts = [SELECT Service_Location__r.id slID, Person_Being_Served__c, count (id) total FROM Service_Assignment__c where Service_Location__c != null group by Person_Being_Served__c, Service_Location__r.id];
         for (AggregateResult res : currCounts) {
-        	aggregates.add(new SAaggregates( (Id) res.get('slID'), String.valueOf(res.get('Person_Being_Served__c')), Integer.valueOf(res.get('total'))));
-        	
+        	aggregates.put(String.valueOf(res.get('slID')) + String.valueOf(res.get('Person_Being_Served__c')), new SAaggregates( (Id) res.get('slID'), String.valueOf(res.get('Person_Being_Served__c')), Integer.valueOf(res.get('total'))));
         }
         return aggregates;          	
     }    
-    
     
     class SAaggregates{
     	public Id serviceLocation; 
