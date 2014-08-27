@@ -233,14 +233,14 @@
     <validationRules>
         <fullName>Effective_req</fullName>
         <active>true</active>
-        <errorConditionFormula>ISBLANK( Effective_Date__c ) &amp;&amp;  $User.Operating_Group__c == &apos;Redwood&apos; &amp;&amp; !ISBLANK(Description__c)</errorConditionFormula>
+        <errorConditionFormula>ISBLANK( Effective_Date__c ) &amp;&amp;  ($User.Operating_Group__c == &apos;Redwood&apos; || $User.Operating_Group__c == &apos;Care Meridian&apos;) &amp;&amp; !ISBLANK(Description__c)</errorConditionFormula>
         <errorDisplayField>Effective_Date__c</errorDisplayField>
         <errorMessage>Effective Date is required</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Status_Req</fullName>
         <active>true</active>
-        <errorConditionFormula>ISblank(TEXT(Status__c)) &amp;&amp;  $User.Operating_Group__c == &apos;Redwood&apos; &amp;&amp; !ISBLANK(Description__c)</errorConditionFormula>
+        <errorConditionFormula>ISblank(TEXT(Status__c)) &amp;&amp;   ($User.Operating_Group__c == &apos;Redwood&apos; || $User.Operating_Group__c == &apos;Care Meridian&apos;) &amp;&amp; !ISBLANK(Description__c)</errorConditionFormula>
         <errorDisplayField>Status__c</errorDisplayField>
         <errorMessage>Status is required</errorMessage>
     </validationRules>
@@ -268,7 +268,7 @@
     <validationRules>
         <fullName>Target_req</fullName>
         <active>true</active>
-        <errorConditionFormula>ISBLANK(  Target_End_Date__c ) &amp;&amp;  $User.Operating_Group__c == &apos;Redwood&apos; &amp;&amp; !ISBLANK(Description__c)</errorConditionFormula>
+        <errorConditionFormula>ISBLANK(  Target_End_Date__c ) &amp;&amp;   ($User.Operating_Group__c == &apos;Redwood&apos; || $User.Operating_Group__c == &apos;Care Meridian&apos;) &amp;&amp; !ISBLANK(Description__c)</errorConditionFormula>
         <errorDisplayField>Target_End_Date__c</errorDisplayField>
         <errorMessage>Target Date is required</errorMessage>
     </validationRules>
