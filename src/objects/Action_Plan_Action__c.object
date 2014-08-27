@@ -124,7 +124,7 @@
     <fields>
         <fullName>Status__c</fullName>
         <externalId>false</externalId>
-        <label>Status__c</label>
+        <label>Status</label>
         <picklist>
             <picklistValues>
                 <fullName>New</fullName>
@@ -211,6 +211,13 @@
         <errorConditionFormula>Start_Date__c &lt; Action_Plan_Objective__r.Action_Plan_Goal__r.Action_Plan__r.Effective_Date__c</errorConditionFormula>
         <errorDisplayField>Start_Date__c</errorDisplayField>
         <errorMessage>Start Date must be on or after the Action Plan Effective Date</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Status_Req</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISblank(TEXT(Status__c)) &amp;&amp; $User.Operating_Group__c == &apos;Care Meridian&apos; &amp;&amp; !ISBLANK(Description__c)</errorConditionFormula>
+        <errorDisplayField>Status__c</errorDisplayField>
+        <errorMessage>Status is required</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>end_date_b4_plan_target_date</fullName>

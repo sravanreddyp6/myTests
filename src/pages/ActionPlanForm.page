@@ -57,6 +57,9 @@ function gotoend(div){
 function toggleById(id, ms){
     j$(document.getElementById(id)).toggle(ms);
 };
+function toggleCatalogCell(){
+    j$('#catalog-cell').toggleClass('cat-cell-width');
+};
 function maxCatalog(){    
     j$("#catalog-flyout").addClass('nodisplay');
     j$("#catalog-wrapper").addClass('catmaxWRAP');
@@ -134,6 +137,9 @@ function highlightButtons ( btype, sfid, on )
 }
 .fullH{
     height: 90%;
+}
+.cat-cell-width{
+    width: 400px;
 }
 .noscroll{    overflow:hidden;}
 .dateFormat{ display: none;}
@@ -294,7 +300,7 @@ function highlightButtons ( btype, sfid, on )
 }
 .stick {
     position:fixed;
-    top:0px;
+    top:120px;
     margin-top: 5px;
 }
 .widthfull{
@@ -411,7 +417,7 @@ function highlightButtons ( btype, sfid, on )
 <apex:outputPanel id="apchildren_wrapper">
 <table id="wrappertbl" >
 <tr>
-<td>
+<td id="catalog-cell">
     <div id="catalog-bg"/>
     <div id="catalog-wrapper">
         <apex:outputPanel layout="block" style="display: {!if(editMode, 'block','none')}" rendered="{!$Setup.SystemSettings__c.ActionPlan_CatalogSelectorEnabled__c}" >
@@ -459,7 +465,7 @@ function highlightButtons ( btype, sfid, on )
                     </apex:outputPanel>
                         
                 </div>
-                <span id="catalog-flyout" onclick="toggleById('clinical-catalog', 250); toggleById('catalog_filler',0);  return false;" style="cursor:pointer;"><apex:image url="{!$Resource.catalogIMG}"/></span>
+                <span id="catalog-flyout" onclick="toggleById('clinical-catalog', 250); toggleById('catalog_filler',0); toggleCatalogCell();  return false;" style="cursor:pointer;"><apex:image url="{!$Resource.catalogIMG}"/></span>
             </div>
     
             <script>
