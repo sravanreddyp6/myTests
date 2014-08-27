@@ -9,6 +9,12 @@
     <columns>
         <field>Contact.Episodes__r.Service_Agreements__r$Name</field>
     </columns>
+    <crossFilters>
+        <operation>without</operation>
+        <primaryTableColumn>Contact.Episodes__r.Service_Agreements__r$Id</primaryTableColumn>
+        <relatedTable>Action_Plan__c</relatedTable>
+        <relatedTableJoinColumn>Service_Assignment__c</relatedTableJoinColumn>
+    </crossFilters>
     <description>#notes</description>
     <filter>
         <criteriaItems>
@@ -17,9 +23,9 @@
             <value>Active</value>
         </criteriaItems>
         <criteriaItems>
-            <column>Contact.Episodes__r.Service_Agreements__r.Action_Plans__r$Id</column>
+            <column>Contact.Episodes__r.Service_Agreements__r$Status__c</column>
             <operator>equals</operator>
-            <value></value>
+            <value>Active</value>
         </criteriaItems>
     </filter>
     <format>Tabular</format>
@@ -29,7 +35,7 @@
         <value>1</value>
     </params>
     <reportType>Contacts_Admissions_SA_Action_Plan__c</reportType>
-    <scope>user</scope>
+    <scope>organization</scope>
     <showDetails>true</showDetails>
     <timeFrameFilter>
         <dateColumn>Contact.Episodes__r$CreatedDate</dateColumn>
