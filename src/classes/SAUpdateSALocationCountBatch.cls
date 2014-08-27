@@ -1,7 +1,7 @@
 global class SAUpdateSALocationCountBatch implements Database.Batchable<sObject> {
 	
 	global Database.QueryLocator start(Database.BatchableContext BC){
-		string query = 'SELECT id, Service_Location__c, Person_Being_Served__c, PBS_ServiceLocation_Count__c FROM Service_Assignment__c where Service_Location__c != null and (PBS_ServiceLocation_Count__c = null OR PBS_ServiceLocation_Count__c = 0) order by id desc';
+		string query = 'SELECT id, Service_Location__c, Person_Being_Served__c, PBS_ServiceLocation_Count__c FROM Service_Assignment__c where Service_Location__c != null order by id desc';
 		return Database.getQueryLocator(query);
 	}
 	
