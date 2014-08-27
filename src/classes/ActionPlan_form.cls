@@ -695,7 +695,7 @@ public pagereference mySave(){
                         
 
         List<Action_Plan_Objective__c> objectives = [select id, ReferenceID__c, Former_ID__c,
-                    (select id, description__c, Sort_Order__c,  ReferenceID__c 
+                    (select id, description__c, Sort_Order__c,  ReferenceID__c, start_date__c, end_date__c, status__c
                         from Action_Plan_Actions__r Order By CreatedDate) 
                             from Action_Plan_Objective__c where Action_Plan_Goal__r.Action_Plan__c = :ActionPlan.id AND Status__c in :okstatus];
 
@@ -750,6 +750,9 @@ public pagereference mySave(){
                                 tmpA.Description__c = a.Description__c;
                                 tmpA.sort_order__c = a.sort_order__c;
                                 tmpA.ReferenceID__c = a.ReferenceID__c;
+                                tmpA.start_date__c = a.start_date__c;
+                                tmpA.end_date__c = a.end_date__c;
+                                tmpA.status__c = a.status__c;
                                 tmpA.Action_Plan_Objective__r = tmpOref;
                                         copiedActions.add(tmpA);
                 }
