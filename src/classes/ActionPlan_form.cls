@@ -611,16 +611,8 @@ public pagereference mySave(){
             if (TU.Operating_Group__c == 'Redwood'){isRedwood = true;} 
         }
         refreshPlan(); 
-        
-        GoalAlias = 'Goal';
-        ObjAlias = 'Objective';
-        ActAlias = 'Action';
-        system.debug( 'Program is: ' + ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c );
-        if(ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c != null && ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c =='ABI' && ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c != '114165002'){        
-            GoalAlias = 'Problem';
-            ObjAlias = 'Goal';
-            ActAlias = 'Intervention';
-        }
+        aliasChildrenTitles();
+
         if(goals.size() ==0){
             editMode = true;
             addGoal();
@@ -665,7 +657,25 @@ public pagereference mySave(){
              
                                   
     }
-
+    public void aliasChildrenTitles(){
+    
+        GoalAlias = 'Goal';
+        ObjAlias = 'Objective';
+        ActAlias = 'Action';
+        
+        SystemSettings__c mc = SystemSettings__c.getInstance(UserInfo.getUserId());
+        boolean showThis = mc.ActionPlan_CatalogSelectorEnabled__c;
+        system.debug('catalog enabled - ' + showThis);
+        system.debug( 'Program is: ' + ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c );
+        if(showThis){
+            if(ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c != null && ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c =='ABI' && ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c != '114165002'){        
+                GoalAlias = 'Problem';
+                ObjAlias = 'Goal';
+                ActAlias = 'Intervention';
+            }    
+        }
+    
+    }
       
 
     
