@@ -957,7 +957,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
         hasError3 = checkForBlankFields( referralRecord, 'Referral__c', new list<string>{'referral_provided_by_external__c'}, 'A value for {0} is required to close/admit');
     //EB-199 for some reason == null didn't work here so i used string.valueof()
     if(string.IsBlank(string.valueof(this.referralRecord.Service_Location__c))){
-            ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,'A value for Alias is required to close/admit - ' + this.referralRecord.Service_Location__c); 
+            ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,'A value for Alias is required to close/admit'); 
             ApexPages.addMessage(myMsg);    
             hasError3 = true;
     
