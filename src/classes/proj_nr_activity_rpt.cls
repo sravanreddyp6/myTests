@@ -6,6 +6,10 @@ public with sharing class proj_nr_activity_rpt {
         TMN_Tree allData = new TMN_Tree();
         runRpt();
     }
+    public proj_nr_activity_rpt() {
+        TMN_Tree allData = new TMN_Tree();
+        runRpt();
+    }    
     
     public pagereference RunRpt(){
         allData = new TMN_Tree();
