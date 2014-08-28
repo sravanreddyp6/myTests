@@ -1,5 +1,5 @@
 trigger ServiceAssignmentTrigger on Service_Assignment__c (before insert, before update) {
-
+  if(!system.isBatch()){
      ServiceAssignmentTriggeredActions handler = new ServiceAssignmentTriggeredActions();
     
     /* Before Insert */
@@ -10,5 +10,5 @@ trigger ServiceAssignmentTrigger on Service_Assignment__c (before insert, before
     else if(Trigger.isUpdate && Trigger.isBefore){
         handler.OnBeforeUpdate(Trigger.old, Trigger.new, Trigger.oldMap);
     }
-
+  }
 }
