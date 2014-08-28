@@ -1,5 +1,5 @@
 @isTest(SeeAllData = True) 
-//Using SeeAllData as Salesforce will throw an internal server when trying to reassign approval process in test class. The test data required
+//Using SeeAllData as Salesforce will throw an internal server error when trying to reassign approval process in test class. The test data required
 //for batch class cannot be created and hence used SeeAllData+ true to get the batch class covered.
 private class Progressnote_updateApproval_User_TEST {
     static testmethod void runTests(){
