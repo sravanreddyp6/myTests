@@ -27,6 +27,7 @@ private class ServiceLocationTriggerHandler_TEST {
         system.AssertEquals( rollupafter, sl.program_rollup__c);
         system.AssertEquals( detailafter, sl.program__c);
         
+        
     }
     
     

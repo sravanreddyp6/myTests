@@ -29,6 +29,7 @@ public with sharing class ServiceLocationTriggerHandler {
 		
 		for ( Service_code__c sc : servcodes ) {
 			
+			//update from service location
 			sc.Program_Rollup__c = slMap.get( sc.Program_code__c ).Program_Rollup__c;
 			sc.Program_Value__c = slMap.get(sc.Program_code__c).Program__c;
 			
