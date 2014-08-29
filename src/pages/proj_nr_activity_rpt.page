@@ -44,7 +44,7 @@
 .actPad{padding-left: 25px !important;}
 .projRow{border-left: 3px solid lightblue;}
 .projRow td{background: lightblue; border-bottom: 1px solid black; }
-
+.date-width{width: 125px;}
 .taskRow td{border-bottom: 1px solid gray;}
 .actRow td{border-bottom: 1px solid gray;}
 .row-letter{
@@ -67,7 +67,7 @@ function toggleClass(cName, item){
     var incomp = j$("#incomp").prop('checked');
     var overdue = j$("#overdue").prop('checked');
     var onlymine = j$("#onlymine").prop('checked');
-    
+
     if(onlymine){ 
         j$(".notCurUserRow").addClass('nodisplay');          
     }
@@ -75,11 +75,15 @@ function toggleClass(cName, item){
         j$(".notCurUserRow").removeClass('nodisplay');         
     }     
     
-    if(comp){   
+    if(comp){ 
+        //j$(".Completed").css('display','table-row');   
         j$(".Completed").removeClass('nodisplay');
+       
     }
     else{
+       // j$(".Completed").css('display','none');
         j$(".Completed").addClass('nodisplay');
+
     }
     
     if(incomp){   
@@ -105,10 +109,20 @@ function createtbl(){
              "info": false, 
             dom: 'T<"clear">lfrtip',
             "tableTools": {
-               "aButtons": [ "xls", {
+               "aButtons": [ "xls", 
+                   {
                     "sExtends": "pdf",
-                    "sPdfOrientation": "landscape"
-                }],         
+                    "sPdfOrientation": "landscape",
+                    "sTitle": "Project Export"
+                    },
+                    {
+                    "sExtends": "pdf",
+                    "sPdfSize": "legal",
+                    "sPdfOrientation": "landscape",
+                    "sButtonText": "PDF - Legal",
+                    "sTitle": "Project Export",
+                    }                
+                ],         
                "sSwfPath": "{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/swf/copy_csv_xls_pdf.swf')}"
             } 
         });
@@ -140,11 +154,11 @@ j$( document ).ready(function() {
         <th>Description</th>
         <th>Notes</th>
         <th>Assigned To</th>
-        <th>Start</th>
-        <th>Due</th>
-        <th>Revised</th> 
+        <th class="date-width">Start</th>
+        <th class="date-width">Due</th>
+        <th class="date-width">Revised</th> 
         <th>Progress</th>
-        <th>Completed on</th>     
+        <th class="date-width">Completed on</th>     
         <th>Total Items</th>      
         <th>Completed Items</th> 
     </thead>
@@ -168,7 +182,7 @@ j$( document ).ready(function() {
                 <apex:variable value="{!if($User.Id = t.ProjTask.Assigned_To__c,'isCurUserRow','notCurUserRow')}" var="tMine"/>
                 <tr class="taskRow {!tMine} {!t.ProjTask.Status__c}-row">
                     <td class="{!t.ProjTask.Status__c}"><span class="row-letter">T</span></td>
-                    <td class="taskPad {!t.ProjTask.Status__c}"><apex:outputLink value="/apex/proj_nr_form?id={!p.proj.id}&gotoID={!t.ProjTask.id}"><apex:outputField value="{!t.ProjTask.Name}"/></apex:outputLink></td>
+                    <td class="taskPad {!t.ProjTask.Status__c}"><apex:outputLink value="/{!t.ProjTask.id}"><apex:outputField value="{!t.ProjTask.Name}"/></apex:outputLink></td>
                     <td class="{!t.ProjTask.Status__c}">{!t.ProjTask.Description__c}</td>
                     <td class="{!t.ProjTask.Status__c}">{!t.ProjTask.Notes__c}</td>
                     <td class="{!t.ProjTask.Status__c}"><apex:outputField value="{!t.ProjTask.Assigned_To__r.name}"/></td>

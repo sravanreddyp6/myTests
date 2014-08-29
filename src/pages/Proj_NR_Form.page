@@ -1,7 +1,6 @@
 <apex:page standardController="Project__c" extensions="proj_nr_form" sidebar="false" >
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
-
 <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
 <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/js/dataTables.tableTools.min.js')}" />
 
@@ -10,7 +9,12 @@
 <apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}"/>
 -->
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
-
+<!--
+to improve performce i have decided to make one check on a task field to prevent the Project - Nuero - Restricted User from changing fields they should be able to.
+see for more info as wo way Feidl level security isn't auto enforced on things like textarea fields- 
+https://developer.salesforce.com/page/Enforcing_CRUD_and_FLS
+-->
+<apex:variable value="{!$ObjectType.Project_Task__c.fields.Assigned_To__c.Updateable}" var="genericFieldCheck"/>
 
 <apex:variable value="150px;" var="btnwdith"/>
 
@@ -21,18 +25,18 @@
     <span id="view_mode_selector" class="mode_selector" onclick="viewMode(0)">Summary</span>
     &nbsp;&nbsp;&nbsp;
     <span id="edit_mode_selector" class="mode_selector selected" onclick="editMode(0)">Edit</span>
-    
+            <div class="fRight mainbtns">
+                <apex:commandButton styleClass="edit" value="Add Task" rendered="{!$ObjectType.Project_Task__c.createable}" action="{!AddProjectTask}" reRender="FRM" status="myStatus" oncomplete="editMode(0); goto('#end'); commonReRen();"/>            
+                <apex:commandButton styleClass="edit" action="{!save}" value="Save" reRender="FRM" status="myStatus" oncomplete="{!if(hasError,'editMode(0);','viewMode(0);')} commonReRen(); "/>
+                <apex:commandButton styleClass="edit" action="{!cancel}" value="Cancel"/>
+            </div>     
     <span style="display: none;">
                 <apex:outputField styleClass="view" value="{!pStats.Total_Tasks__c }"/>                
                 <apex:outputField styleClass="view" value="{!pStats.Total_Task_Completed__c  }"/>
                 <apex:outputField styleClass="view" value="{!pStats.Total_Activities__c}"/>
                 <apex:outputField styleClass="view" value="{!pStats.Total_Activities_Completed__c}"/>     
     </span>
-            <div class="fRight mainbtns">
-                <apex:commandButton styleClass="edit" value="Add Task" action="{!AddProjectTask}" reRender="FRM" status="myStatus" oncomplete="editMode(0); goto('#end'); commonReRen();"/>            
-                <apex:commandButton styleClass="edit" action="{!save}" value="Save" reRender="FRM" status="myStatus" oncomplete="{!if(hasError,'editMode(0);','viewMode(0);')} commonReRen(); "/>
-                <apex:commandButton styleClass="edit" action="{!cancel}" value="Cancel"/>
-            </div>     
+    
 </div>
     <apex:outputPanel layout="block" styleClass="errMsgContainer"></apex:outputPanel>
         <apex:pageMessages ></apex:pageMessages>
@@ -61,8 +65,8 @@
                 <apex:inputField styleClass="edit" value="{!Project__c.Operating_Group__c}"/>
                 <apex:inputField styleClass="non-temp-field edit" value="{!Project__c.State__c}"  rendered="{!startingOption != 'new_temp'}"/>
                 <apex:inputField styleClass="edit" value="{!Project__c.Service_Line__c}"/>                
-                <apex:inputTextarea styleClass="non-temp-field txtBox edit" value="{!Project__c.Interested_Parties_email_address__c}"   rendered="{!startingOption != 'new_temp'}"/> 
-                <apex:inputTextarea label="Project Description" styleClass="txtBox edit" value="{!Project__c.Description__c}"/>                
+                <apex:inputTextarea disabled="{! !$ObjectType.Project__c.fields.Interested_Parties_email_address__c.Updateable}" styleClass="non-temp-field txtBox edit" value="{!Project__c.Interested_Parties_email_address__c}"   rendered="{!startingOption != 'new_temp'}"/> 
+                <apex:inputTextarea disabled="{! !$ObjectType.Project__c.fields.Description__c.Updateable}" label="Project Description" styleClass="txtBox edit" value="{!Project__c.Description__c}"/>                
                 <apex:inputField styleClass="non-temp-field edit" value="{!Project__c.Start_Date__c}" rendered="{!startingOption != 'new_temp'}"/>
                 <apex:inputField styleClass="non-temp-field edit" value="{!Project__c.Due_Date__c}" rendered="{!startingOption != 'new_temp'}"/>
             </apex:pageBlockSection>
@@ -142,7 +146,7 @@
                             <td class="task_act_title {!tMine}">
                                 <apex:inputField styleClass="taskTitle edit" html-placeholder="title" value="{!t.ProjTask.Name}"/>
                                 <br/>
-                                <apex:inputTextarea styleClass="descTxtBox edit" html-placeholder="add task description" value="{!t.ProjTask.Description__c}"/>
+                                <apex:inputTextarea disabled="{! !$ObjectType.Project_Task__c.fields.Description__c.Updateable}" styleClass="descTxtBox edit" html-placeholder="add task description" value="{!t.ProjTask.Description__c}"/>
                          
                             </td>
                             <td class="tblDesc {!tMine}"><apex:inputTextarea styleClass="txtBox edit" html-placeholder="notes..." value="{!t.ProjTask.Notes__c}"/></td>
@@ -182,9 +186,10 @@
                                     </div>                                      
                                     </td>
                                     <td class="actpad task_act_title {!aMine}">
-                                        <apex:inputField styleClass="taskTitle edit" html-placeholder="title..." value="{!a.ProjTaskAct.Name}"/> 
+                                        <apex:inputField styleClass="taskTitle edit" html-placeholder="title..." value="{!a.ProjTaskAct.Name}"/>
+                                         
                                         <br/>
-                                        <apex:inputTextarea styleClass="descTxtBox edit" html-placeholder="add activity description" value="{!a.ProjTaskAct.Description__c}"/>
+                                        <apex:inputTextarea disabled="{! !$ObjectType.Project_Task_Activity__c.fields.Description__c.Updateable}" styleClass="descTxtBox edit" html-placeholder="add activity description" value="{!a.ProjTaskAct.Description__c}"/>
                                     </td>
                                     <td class="{!aMine}"><apex:inputTextarea html-placeholder="notes..." styleClass="txtBox edit" value="{!a.ProjTaskAct.Notes__c}"/></td>
                                     <td class="{!aMine} non-temp-field"><apex:inputField html-placeholder="assign to..." styleClass="non-temp-field edit" value="{!a.ProjTaskAct.Assigned_To__c}"/></td>
@@ -217,11 +222,12 @@
                             <th class="tblTitle">Title</th>
                             <th class="tblDesc">Notes</th>
                             <th>Assigned To</th>
-                            <th>Start</th>
-                            <th>Due</th>
-                            <th>Revised</th>
-                            <th>Reminder</th>
-                            <th class="prog_bar">% Complete</th>
+                            <th class="date-width">Start</th>
+                            <th class="date-width">Due</th>
+                            <th class="date-width">Revised</th>
+                            <th class="date-width">Reminder</th>
+                            <th class="prog_bar">%</th>
+                            <th class="date-width">Completed On</th>                            
                             <th class="attachCol non-temp-field"><apex:image url="{!$Resource.attachICO}" height="16" width="16"/></th>
                         </tr>
                     </thead>
@@ -229,17 +235,38 @@
                         <apex:variable value="{!if($User.Id = t.ProjTask.Assigned_To__c,'isCurUserRow','notCurUserRow')}" var="tMine"/>
                         <tr class="task_row {!t.ProjTask.Status__c} " >
                             <td class="{!tMine}"><div class="task_act_letter" onclick="goto('#{!t.ProjTask.id}row', '0', 'true');" >T</div></td>                            
-                            <td class="{!tMine}"><div><apex:outputField styleClass="taskTitle " value="{!t.ProjTask.Name}"/>&nbsp;<br/>{!t.ProjTask.Description__c}</div></td>
+                            <td class="{!tMine}"><div><apex:outputField styleClass="taskTitle " value="{!t.ProjTask.Name}"/>&nbsp;<br/>
+                                {!t.ProjTask.Description__c}</div></td>
                             <td class="{!tMine}">{!t.ProjTask.Notes__c}</td>
                             <td class="{!tMine}"><apex:outputField styleClass="view" value="{!t.ProjTask.Assigned_To__r.name}"/></td>
-                            <td class="{!tMine}"><apex:outputField styleClass="non-temp-field " value="{!t.ProjTask.Start_Date__c}"/></td>
-                            <td class="{!tMine}"><apex:outputField styleClass="non-temp-field " value="{!t.ProjTask.Due_Date__c}"/></td>
-                            <td class="{!tMine}"><apex:outputField styleClass="non-temp-field " value="{!t.ProjTask.Revised_Due_Date__c}"/></td>
-                            <td class="{!tMine}"><apex:outputField styleClass="non-temp-field " value="{!t.ProjTask.Reminder_Date__c}"/></td>
-                            <td class="{!tMine}">                                
-                                <apex:outputField style="float: left;" styleClass="percentBox non-temp-field " value="{!t.ProjTask.Complete__c}"/><br/>
-                                <div class="progBarOutter"><div class="progBarInner" style="width: {!t.ProjTask.Complete__c}px;"></div></div><br/>
-                                <apex:outputField styleClass="non-temp-field " value="{!t.ProjTask.Completed_Date__c}"/>
+                            <td class="{!tMine}">
+                                <apex:outputText value="{0,date,MM'/'dd'/'yy}">
+                                    <apex:param value="{!t.ProjTask.Start_Date__c}" /> 
+                                </apex:outputText>
+                            </td>
+                            <td class="{!tMine}">
+                                <apex:outputText value="{0,date,MM'/'dd'/'yy}">
+                                    <apex:param value="{!t.ProjTask.Due_Date__c}" /> 
+                                </apex:outputText>                                                        
+                            </td>
+                            <td class="{!tMine}">
+                                <apex:outputText value="{0,date,MM'/'dd'/'yy}">
+                                    <apex:param value="{!t.ProjTask.Revised_Due_Date__c}" /> 
+                                </apex:outputText>                            
+                            </td>
+                            <td class="{!tMine}">
+                                <apex:outputText value="{0,date,MM'/'dd'/'yy}">
+                                    <apex:param value="{!t.ProjTask.Reminder_Date__c}" /> 
+                                </apex:outputText>                            
+                            </td>
+                            <td class="{!tMine} percentBox-view">                                
+                                <apex:outputField style="float: left;" styleClass=" non-temp-field " value="{!t.ProjTask.Complete__c}"/><br/>
+                                <div class="progBarOutter"><div class="progBarInner" style="width: {!t.ProjTask.Complete__c/2}px;"></div></div>
+                            </td>
+                            <td>
+                                <apex:outputText value="{0,date,MM'/'dd'/'yy}">
+                                    <apex:param value="{!t.ProjTask.Completed_Date__c}" /> 
+                                </apex:outputText>                              
                             </td>
                             <td class="attachCol {!tMine} non-temp-field" >
                                 <div>                                
@@ -254,20 +281,43 @@
                                 <apex:variable value="{!if($User.Id = a.ProjTaskAct.Assigned_To__c,'isCurUserRow','notCurUserRow')}" var="aMine"/>
                                 <tr class="act_row {!a.ProjTaskAct.Status__c} ">
                                     <td class="{!aMine}"><div class="task_act_letter"  onclick="goto('#{!a.ProjTaskAct.id}row', '0', 'true');">A</div></td>                                    
-                                    <td class="actpad {!aMine}"><apex:outputField styleClass="taskTitle view" value="{!a.ProjTaskAct.Name}"/>&nbsp;<br/>{!a.ProjTaskAct.Description__c} </td>
+                                    <td class="actpad {!aMine}"><apex:outputField styleClass="taskTitle view" value="{!a.ProjTaskAct.Name}"/>&nbsp;<br/>
+                                    <apex:outputField value="{!a.ProjTaskAct.Description__c}"/>  </td>
                                     <td class="{!aMine}"><apex:outputField value="{!a.ProjTaskAct.Notes__c}"/></td>
                                     <td class="{!aMine}"><apex:outputField styleClass="non-temp-field " value="{!a.ProjTaskAct.Assigned_To__r.name}"/></td>
-                                    <td class="{!aMine}"><apex:outputField styleClass="non-temp-field " value="{!a.ProjTaskAct.Start_Date__c}"/> </td>
-                                    <td class="{!aMine}"><apex:outputField styleClass="non-temp-field " value="{!a.ProjTaskAct.Due_Date__c}"/></td>
-                                    <td class="{!aMine}"><apex:outputField styleClass="non-temp-field " value="{!a.ProjTaskAct.Revised_Due_Date__c}"/></td>
-                                    <td class="{!aMine}"><apex:outputField styleClass="non-temp-field " value="{!a.ProjTaskAct.Reminder_Date__c}"/></td>
                                     <td class="{!aMine}">
-                                        <apex:outputField styleClass="percentBox non-temp-field " value="{!a.ProjTaskAct.Complete__c}"/><br/> 
+                                        <apex:outputText value="{0,date,MM'/'dd'/'yy}">
+                                            <apex:param value="{!a.ProjTaskAct.Start_Date__c}" /> 
+                                        </apex:outputText>                                    
+                                    </td>
+                                    <td class="{!aMine}">
+                                        <apex:outputText value="{0,date,MM'/'dd'/'yy}">
+                                            <apex:param value="{!a.ProjTaskAct.Due_Date__c}" /> 
+                                        </apex:outputText>                                    
+                                    </td>
+                                    <td class="{!aMine}">
+                                        <apex:outputText value="{0,date,MM'/'dd'/'yy}">
+                                            <apex:param value="{!a.ProjTaskAct.Revised_Due_Date__c}" /> 
+                                        </apex:outputText>                                    
+                                    </td>
+                                    <td class="{!aMine}">
+                                        <apex:outputText value="{0,date,MM'/'dd'/'yy}">
+                                            <apex:param value="{!a.ProjTaskAct.Reminder_Date__c}" /> 
+                                        </apex:outputText>                                    
+                                    </td>
+                                    <td class="{!aMine} percentBox-view">
+                                        <apex:outputField styleClass=" non-temp-field " value="{!a.ProjTaskAct.Complete__c}"/><br/> 
                                         <div class="progBarOutter">                                
-                                            <div class="progBarInner" style="width: {!a.ProjTaskAct.Complete__c}px;">
+                                            <div class="progBarInner" style="width: {!a.ProjTaskAct.Complete__c/2}px;">
+                                            
                                             </div>                                    
-                                        </div> <br/>
-                                        <apex:outputField styleClass="non-temp-field " value="{!a.ProjTaskAct.Completed_Date__c}"/>                                       
+                                            
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <apex:outputText value="{0,date,MM'/'dd'/'yy}">
+                                            <apex:param value="{!a.ProjTaskAct.Completed_Date__c}" /> 
+                                        </apex:outputText>                                                                            
                                     </td>
                                     <td class="attachCol {!aMine} non-temp-field">
                                         <apex:commandButton rendered="{!a.ProjTaskAct.id != null}" styleClass="view attach-btn"  style="width: 30px" value="{!a.attaches.size}" action="{!blankRef}" reRender="attachDiv" status="myStatus" oncomplete="toggleAttaches();">
@@ -395,8 +445,11 @@ function createtbl(){
             "tableTools": {
                "aButtons": [ "xls", {
                     "sExtends": "pdf",
-                    "sPdfOrientation": "landscape"
-                }],         
+                    "sPdfOrientation": "landscape",
+                    "sTitle": "{!Project__c.name}",
+                    "mColumns": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+                }
+                ],         
                "sSwfPath": "{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/swf/copy_csv_xls_pdf.swf')}"
             } 
         });
@@ -445,7 +498,7 @@ function toggleClass(cName, item){
     var incomp = j$("#incomp").prop('checked');
     var overdue = j$("#overdue").prop('checked');
     var onlymine = j$("#onlymine").prop('checked');
-    
+    var timing = 500;
     if(onlymine){ 
         j$(".notCurUserRow").addClass('nodisplay');          
     }
@@ -456,10 +509,12 @@ function toggleClass(cName, item){
     if(comp){ 
         //j$(".Completed").css('display','table-row');   
         j$(".Completed").removeClass('nodisplay');
+       //j$(".Completed").slideDown(timing);
     }
     else{
        // j$(".Completed").css('display','none');
         j$(".Completed").addClass('nodisplay');
+       //j$(".Completed").slideUp(timing);
     }
     
     if(incomp){ 
@@ -493,6 +548,13 @@ function pinTopMenu(){
 
             });
         }
+function checkDisable(dis, result){
+    console.log('trying to disable - ' + result + dis );
+
+    j$(dis).prop("disabled", result);
+    
+    console.log('result acpeted - ' + result + dis );
+}
 function checkScroll(){        
             var s = jQuery("#mode_selctor_container");
             var pos = s.position();
@@ -732,6 +794,7 @@ input, textarea, select {font-size: 15px; padding: 2px; /*background: #F9F9F9 !i
 .btn{ font-size: 11px !important; }
 .task_act_title input, .descTxtBox{width: 320px; }
 .percentBox{width: 35px;}
+.percentBox-view{width: 75px;}
 
 .actpad{ padding-left: 20px;}
 .mode_selector{cursor: pointer; }
@@ -765,9 +828,9 @@ body{border-top: none;}
 .btnhover{z-index: 10; margin-top: -1px; margin-left: -10px; background: lightgray; border-radius: 3px; border: 1px solid gray; padding: 5px; text-align: center; }
 .mainbtns{margin-right: 10px;}
 .mainbtns input{ padding: 5px;}
-.progBarOutter{float: left; width:100px; border: 1px solid red; margin: 3px;}
+.progBarOutter{float: left; width:50px; border: 1px solid red; margin: 3px;}
 .progBarInner{background: orange; width: 0px; height: 7px;}
-.prog_bar{width: 150px;}
+.prog_bar{width: 50px;}
 .maxDiv{
     position: fixed;
     left: 2%;
@@ -797,6 +860,7 @@ body{border-top: none;}
 }
 .highlightROW{/*-webkit-animation: myfirst 2s;*/ background: yellow; background: -webkit-linear-gradient(white, rgb(255,255,203));}
 .highlightROW:hover{/*-webkit-animation: myfirst 2s;*/ background: yellow; background: -webkit-linear-gradient(white, rgb(255,255,203));}
+.date-width{width: 125px;}
 </style>
 
 <apex:actionStatus id="myStatus" >
