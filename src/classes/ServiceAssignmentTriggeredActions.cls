@@ -8,7 +8,7 @@ public with sharing class ServiceAssignmentTriggeredActions {
 
 	public void OnBeforeInsert(Service_Assignment__c[] newObjects){
         boolean found;
-        Map<String,SAaggregates> currCounts = getSAaggregateMap();
+        Map<String,SAaggregates> currCounts = getSAaggregateMap(newObjects);
 		// loop through all the inserted service assignments
 		for(Service_Assignment__c sa :newObjects ){
 			// update the ServiceLocationCount only if the sevice location is present
@@ -32,7 +32,7 @@ public with sharing class ServiceAssignmentTriggeredActions {
 
     public void OnBeforeUpdate(Service_Assignment__c[] oldObjects, Service_Assignment__c[] updatedObjects, Map<Id,Service_Assignment__c> oldObjMap){
         boolean found;
-        Map<String,SAaggregates> currCounts = getSAaggregateMap();
+        Map<String,SAaggregates> currCounts = getSAaggregateMap(updatedObjects);
         // loop through all the updated service assignments
         for(Service_Assignment__c sa :updatedObjects){
             // update the ServiceLocationCount if the service location was added to the service assignment
@@ -59,9 +59,13 @@ public with sharing class ServiceAssignmentTriggeredActions {
         }
     }
 
-    private Map<String,SAaggregates> getSAaggregateMap(){
+    private Map<String,SAaggregates> getSAaggregateMap(Service_Assignment__c[] modifiedObjs){    	
+    	List<Id> pbsIds = new List<Id>();
+    	for (Service_Assignment__c sa :modifiedObjs){
+    		pbsIds.add(sa.Person_Being_Served__c);
+    	}
     	Map<String,SAaggregates> aggregates = new Map<String,SAaggregates>();
-        List<AggregateResult> currCounts = [SELECT Service_Location__r.id slID, Person_Being_Served__c, count (id) total FROM Service_Assignment__c where Service_Location__c != null group by Person_Being_Served__c, Service_Location__r.id];
+        List<AggregateResult> currCounts = [SELECT Service_Location__r.id slID, Person_Being_Served__c, count (id) total FROM Service_Assignment__c where Service_Location__c != null AND Person_Being_Served__c IN :pbsIds group by Person_Being_Served__c, Service_Location__r.id];
         for (AggregateResult res : currCounts) {
         	aggregates.put(String.valueOf(res.get('slID')) + String.valueOf(res.get('Person_Being_Served__c')), new SAaggregates( (Id) res.get('slID'), String.valueOf(res.get('Person_Being_Served__c')), Integer.valueOf(res.get('total'))));
         }
