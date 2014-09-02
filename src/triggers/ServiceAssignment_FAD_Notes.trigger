@@ -1,4 +1,5 @@
 trigger ServiceAssignment_FAD_Notes on Service_Assignment__c (before update) {
+if(!system.isBatch()){
  boolean HasRecordInScope = false;
  List<Service_Assignment__c> ScopedSAs = new List<Service_Assignment__c>();
  for (Service_Assignment__c SA : Trigger.new) {
@@ -83,4 +84,5 @@ trigger ServiceAssignment_FAD_Notes on Service_Assignment__c (before update) {
         }
       }
   }
+ }
 }

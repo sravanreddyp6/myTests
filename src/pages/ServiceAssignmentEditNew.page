@@ -66,6 +66,7 @@
 <br />
 
 <apex:form id="myFRM">
+<apex:actionFunction action="{!changeToModel}" name="changeToModel" rerender="ContractAssoc, ProgAssoc" status="SaveStatus1"/>
 <apex:inputhidden value="{!theServAssign.Person_Being_Served__c}" />
 <!-- To set focus on Top -->
 <input id="hiddenElementId" type="hidden" />
@@ -144,19 +145,19 @@
         </apex:pageblocksectionitem>
         <apex:outputField value="{!theServAssign.End_Date__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
-        <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!!editSA || (editSA && serviceLocation != null)}"  />
-        <apex:inputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA && serviceLocation = null}"  />
+        <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!!editSA}" />
+        <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}" />
         <apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA && !vfVarIsCM}"  />
         <apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !vfVarIsCM}"  required="{!episodeReq}"/>
         <apex:pageblocksectionitem />
         <apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM}" />
         <apex:pageblocksectionitem rendered="{!editSA && !showLocation && !vfVarIsCM}"  >
         <apex:outputLabel value="Model" for="modelfield" />
-        <apex:actionregion >
-        <apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" >
-             <apex:actionsupport event="onchange" action="{!changeToModel}" rerender="ContractAssoc, ProgAssoc" />
-        </apex:inputField>
-        </apex:actionregion>
+<!--         <apex:actionregion > -->
+        <apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" onchange="changeToModel()"/>
+<!--              <apex:actionsupport event="onchange" action="{!changeToModel}" rerender="ContractAssoc, ProgAssoc" /> -->
+<!--         </apex:inputField> -->
+<!--         </apex:actionregion> -->
         </apex:pageblocksectionitem>
      
     </apex:pageBlockSection>
@@ -210,14 +211,15 @@
         
         <apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA}"  />
         <apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA}"  /> 
-
+        
+        <apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM}" />
         <apex:pageblocksectionitem rendered="{!editSA && !vfVarIsCM}"  >
         <apex:outputLabel value="Model" for="modelfield" />
-        <apex:actionregion >
-        <apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" >
-             <apex:actionsupport event="onchange" action="{!changeToModel}" rerender="ContractAssoc, ProgAssoc" />
-        </apex:inputField>
-        </apex:actionregion>
+<!--         <apex:actionregion > -->
+        <apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" onchange="changeToModel()" />
+<!--              <apex:actionsupport event="onchange" action="{!changeToModel}" rerender="ContractAssoc, ProgAssoc" /> -->
+<!--         </apex:inputField> -->
+<!--         </apex:actionregion> -->
         </apex:pageblocksectionitem>
     </apex:pageBlockSection>
     

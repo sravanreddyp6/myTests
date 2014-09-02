@@ -1,5 +1,5 @@
 trigger ServiceAssignmentVALIDATION on Service_Assignment__c (after delete, after insert, after undelete, after update, before delete, before insert, before update) {
-
+  if(!system.isBatch()){
     ServiceAssignmentValidation handler = new ServiceAssignmentValidation(true);
 
     /* Before Insert */
@@ -31,5 +31,6 @@ trigger ServiceAssignmentVALIDATION on Service_Assignment__c (after delete, afte
     else if(Trigger.isUnDelete){
         handler.OnUndelete(Trigger.new);
     }
-
+  }
+  
 }

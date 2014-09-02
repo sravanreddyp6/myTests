@@ -470,13 +470,14 @@ public pagereference mySave(){
         }   
     
         for(clsGoal g: planStuff.values()){    
-
+            system.debug('1st goal check - ' + g.theGoal.id);
             if(g.isNew && g.theGoal.id==null)
-                {goalsToInsert.add(g.theGoal);}
+                {goalsToInsert.add(g.theGoal); system.debug('1st goal check needs to be inserted? - true');}
             else
-                {goalsToUpdate.add(g.theGoal);}
+                {goalsToUpdate.add(g.theGoal); system.debug('1st goal check needs to be updated? - true');}
             
             for(clsObj o: g.GoalObjs.values()){
+                system.debug('1st obj check - ' + o.theobj.id);
                 if(o.isNew && o.theObj.id==null)
                     {objToInsert.add(o.theObj);}
                 else
@@ -490,13 +491,12 @@ public pagereference mySave(){
                 }
             
             }
-        
-        
         }
         //this next section looks for objectives with blank status that have actions that have a description
         boolean addStatusError = false;
         boolean hadStatusErr = false;
-        for(clsGoal g: planStuff.values()){              
+        for(clsGoal g: planStuff.values()){  
+            system.debug('2nd goal check - ' + g.theGoal.id);            
             for(clsObj o: g.GoalObjs.values()){
                 addStatusError =false;
                 if(o.theObj.status__c == null){
@@ -540,17 +540,56 @@ public pagereference mySave(){
            }
            catch(DMLException e){
                ApexPages.addMessages(e); 
+
+                for(clsGoal g: planStuff.values()){    
+                    system.debug('3rd goal check - ' + g.theGoal.id);            
+                    for(clsObj o: g.GoalObjs.values()){
+                        system.debug('3rd obj check - ' + o.theobj.id);
+                        for(clsAction a: o.objActs.values()){
+                        }
+                    }
+                }               
+               
                Database.rollback(sp);//
-               map<id,action_plan_goal__c> tmpgoals = new map<id, action_plan_goal__c>();
-               for(action_plan_goal__c g: [select id from action_plan_goal__c where action_plan__c = :Actionplan.id]){
-                   tmpgoals.put (g.id,g);
-               }
+                for(clsGoal g: planStuff.values()){    
+                    system.debug('4th goal check - ' + g.theGoal.id);            
+                    for(clsObj o: g.GoalObjs.values()){
+                        system.debug('4th obj check - ' + o.theobj.id);
+                        for(clsAction a: o.objActs.values()){
+                        }
+                    }
+                }                
+               //due to the database rollback it is nessessary to clear out any ids that may have been generated for item in the planstuff list
+               map<id,action_plan_goal__c> tmpgoals = new map<id, action_plan_goal__c>([select id from action_plan_goal__c where action_plan__c = :Actionplan.id]);
+               map<id,action_plan_objective__c> tmpobjs = new map<id, action_plan_objective__c>([select id from action_plan_objective__c where action_plan_goal__r.action_plan__c = :Actionplan.id]);
+               map<id,action_plan_action__c> tmpacts = new map<id, action_plan_action__c>([select id from action_plan_action__c where action_plan_objective__r.action_plan_goal__r.action_plan__c = :Actionplan.id]);
+               
+
                for(clsGoal g: planStuff.values()){    
-                    if(g.theGoal.id!=null && !tmpgoals.containskey(g.theGoal.id))
-                        {g.theGoal.id = null;}
-                } 
+                    if(g.theGoal.id!=null && !tmpgoals.containskey(g.theGoal.id)){g.theGoal.id = null;}
+                    
+                    for(clsObj o: g.GoalObjs.values()){
+                        if(o.theObj.id != null && !tmpObjs.containskey(o.theObj.id)){o.theObj.id = null;}    
+                        
+                        for(clsAction a: o.objActs.values()){
+                            if(a.theAction.id != null && !tmpActs.containskey(a.theAction.id)){a.theAction.id = null;}
+                        }                    
+                    
+                    } 
+                                    
+
+              }
+           }   
+           
+                for(clsGoal g: planStuff.values()){    
+                    system.debug('5th goal check - ' + g.theGoal.id);            
+                    for(clsObj o: g.GoalObjs.values()){
+                        system.debug('5th obj check - ' + o.theobj.id);
+                        for(clsAction a: o.objActs.values()){
+                        }
+                    }
+                }             
               
-           }      
        return null;    
 
 
@@ -572,16 +611,8 @@ public pagereference mySave(){
             if (TU.Operating_Group__c == 'Redwood'){isRedwood = true;} 
         }
         refreshPlan(); 
-        
-        GoalAlias = 'Goal';
-        ObjAlias = 'Objective';
-        ActAlias = 'Action';
-        system.debug( 'Program is: ' + ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c );
-        if(ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c != null && ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c =='ABI' && ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c != '114165002'){        
-            GoalAlias = 'Problem';
-            ObjAlias = 'Goal';
-            ActAlias = 'Intervention';
-        }
+        aliasChildrenTitles();
+
         if(goals.size() ==0){
             editMode = true;
             addGoal();
@@ -626,7 +657,25 @@ public pagereference mySave(){
              
                                   
     }
-
+    public void aliasChildrenTitles(){
+    
+        GoalAlias = 'Goal';
+        ObjAlias = 'Objective';
+        ActAlias = 'Action';
+        
+        SystemSettings__c mc = SystemSettings__c.getInstance(UserInfo.getUserId());
+        boolean showThis = mc.ActionPlan_CatalogSelectorEnabled__c;
+        system.debug('catalog enabled - ' + showThis);
+        system.debug( 'Program is: ' + ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c );
+        if(showThis){
+            if(ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c != null && ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c =='ABI' && ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c != '114165002'){        
+                GoalAlias = 'Problem';
+                ObjAlias = 'Goal';
+                ActAlias = 'Intervention';
+            }    
+        }
+    
+    }
       
 
     
@@ -646,7 +695,7 @@ public pagereference mySave(){
                         
 
         List<Action_Plan_Objective__c> objectives = [select id, ReferenceID__c, Former_ID__c,
-                    (select id, description__c, Sort_Order__c,  ReferenceID__c 
+                    (select id, description__c, Sort_Order__c,  ReferenceID__c, start_date__c, end_date__c, status__c
                         from Action_Plan_Actions__r Order By CreatedDate) 
                             from Action_Plan_Objective__c where Action_Plan_Goal__r.Action_Plan__c = :ActionPlan.id AND Status__c in :okstatus];
 
@@ -701,6 +750,9 @@ public pagereference mySave(){
                                 tmpA.Description__c = a.Description__c;
                                 tmpA.sort_order__c = a.sort_order__c;
                                 tmpA.ReferenceID__c = a.ReferenceID__c;
+                                tmpA.start_date__c = a.start_date__c;
+                                tmpA.end_date__c = a.end_date__c;
+                                tmpA.status__c = a.status__c;
                                 tmpA.Action_Plan_Objective__r = tmpOref;
                                         copiedActions.add(tmpA);
                 }

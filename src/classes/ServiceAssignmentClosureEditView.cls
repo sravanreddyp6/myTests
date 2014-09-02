@@ -65,7 +65,7 @@ public with sharing class ServiceAssignmentClosureEditView {
 			integer maxLen;
 			for(Action_Plan_Goal__c apg : actionPlanGoals) {
 				maxLen = Math.min(apg.Description__c.Length(), 255);
-				actionPlanGoalSelectOptions.add(new SelectOption(apg.Description__c.substring(0, maxLen), apg.Description__c.substring(0, maxLen)));
+				actionPlanGoalSelectOptions.add(new SelectOption(apg.Description__c.substring(0, maxLen).escapeJava(), apg.Description__c.substring(0, maxLen).escapeJava()));
 			}
 		}
 		
@@ -81,8 +81,9 @@ public with sharing class ServiceAssignmentClosureEditView {
 	public PageReference save() {
 		
 		Savepoint servAssignCloseSaveSp = Database.setSavepoint();
-		
+		System.debug('ALPHA; theServAssignClose.Primary_Treatment_Goal__c: ' + theServAssignClose.Primary_Treatment_Goal__c);
 		try {
+			System.debug('BETA; theServAssignClose.Primary_Treatment_Goal__c: ' + theServAssignClose.Primary_Treatment_Goal__c);
 			if(theServAssignClose.Primary_Treatment_Goal__c=='--None--') {
 				theServAssignClose.Primary_Treatment_Goal__c = null;
 			}
@@ -112,7 +113,7 @@ public with sharing class ServiceAssignmentClosureEditView {
 				theServAssignClose.Continuing_Service_Delivery_Model_s__c=null;
 				theServAssignClose.Compared_to_FCT_aftercare_services_are__c=null;
 			}
-						
+			System.debug('GAMMA; theServAssignClose.Primary_Treatment_Goal__c: ' + theServAssignClose.Primary_Treatment_Goal__c);			
 			upsert theServAssignClose;
 			editMode = false;
 			return null;
@@ -221,10 +222,12 @@ public with sharing class ServiceAssignmentClosureEditView {
 				if(missingAFad==true) {
 					addError('Before a Service Assignment Closure can be submitted for approval, non-disregarded Initial, 3 Month, and Final FAD Assessments with a status of "Locked" must exist for the Service Assignment.  One or more of those FAD Assessments are either not present or do not meet the requirements.  Please review and update the FAD Assessments to meet the criteria, then attempt the approval submission again.');
 					errorsExist = true;
-				}		
+				}
+				System.debug('MADE IT TO CHECK FOR ANY ERRORS; theServAssignClose.Primary_Treatment_Goal__c: ' + theServAssignClose.Primary_Treatment_Goal__c);		
 				if(errorsExist) {
 					return null;
 				}
+				System.debug('theServAssignClose.Primary_Treatment_Goal__c: ' + theServAssignClose.Primary_Treatment_Goal__c);
 	            update theServAssignClose;
 	            return new PageReference('/apex/ServiceAssignmentClosureApproval?ServAssignCloseId='+theServAssignClose.id);
 			}
