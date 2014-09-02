@@ -1,0 +1,742 @@
+<apex:page title="Persons Being Served"
+    controller="PersonsBeingServedListController" standardStylesheets="true" sidebar="false"  
+    tabStyle="Persons_Being_Served_New__tab" readOnly="true">
+    <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.css')}" />
+    
+    <style>
+#table_filter h1 {
+    font-size: 14px;
+    display: inline-block;
+    margin: 10px 10px 10px 0;
+}
+
+input#table_filter_box {
+    padding-top: 1px;
+}
+
+[id *=view_filter] {
+    margin-bottom: 10px;
+}
+
+[id *=view_filter] select {
+    margin-right: 5px;
+}
+
+[id *=view_filter] a {
+    color: #015BA7;
+    text-decoration: none;
+}
+
+[id *=view_filter] a:hover {
+    color: #015BA7;
+}
+
+table#persons_table {
+    border-collapse: collapse;
+    border: 1px solid;
+    width: 100%;
+}
+
+table#persons_table thead,table#persons_table thead td {
+    border: 1px solid;
+}
+
+table#persons_table thead tr {
+    background-color: #F2F3F3;
+}
+
+table#persons_table thead td {
+    font-weight: bold;
+    background-color: #ededed;
+}
+
+table#persons_table tbody tr:hover {
+    background-color: #E3F3FF;
+}
+
+table#persons_table td {
+    padding: 6px 10px;
+}
+
+div#table_start_filter {
+    padding: 5px 10px;
+}
+
+div#table_start_filter a {
+    text-decoration: none;
+    padding: 6px 6px 5px 5px;
+}
+
+div#table_start_filter a.active {
+    background-color: #C6E1FF;
+    font-weight: bold;
+}
+
+[id *=table_commands] {
+    float: right;
+}
+
+.paginate_disabled_previous,.paginate_disabled_next,.paginate_enabled_previous,.paginate_enabled_next
+    {
+    padding: 0 5px;
+}
+
+.paginate_disabled_previous:hover,.paginate_disabled_next:hover,.paginate_enabled_previous:hover,.paginate_enabled_next:hover
+    {
+    cursor: pointer;
+    color: blue;
+}
+
+[id *=table_div] {
+    min-width: 800px; /* Make sure the table is not too small */
+}
+
+table#persons_table.dataTable {
+    border-bottom: 0;
+}
+
+#persons_table_wrapper .bottom {
+    border: 1px solid;
+    border-top: 0;
+    padding-bottom: 5px;
+}
+
+.dataTables_paginate {
+    display: inline-block;
+    position: relative;
+    left: 150px;
+}
+
+.dataTables_record_info {
+    display: inline-block;
+}
+
+#persons_table_info {
+    display: inline-block;
+    float: left;
+    margin-left: 50px;
+}
+
+.dataTables_page_info {
+    display: inline-block;
+    position: relative;
+    left: 600px;
+}
+#loading_modal {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    /* IE Hack */
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale, src='{!URLFOR($Resource.TransparentBG)}');
+    background-image:url({!URLFOR($Resource.TransparentBG)});    
+    z-index: 99999;
+    text-align: center;
+}
+[id*=table_block] {
+    position: relative;  /* In order for loading model to be absolute positioned */
+}
+
+</style>
+    <apex:pageBlock id="table_block">
+        <div id="loading_modal">
+            <img style="position: relative; top: 30px;" src="/img/loading32.gif" />
+        </div>
+        <apex:form id="table_commands">
+            <apex:commandButton value="Add New Person"
+                onclick="window.open('{!URLFOR($Action.Account.New)}', '_self'); return false;" rendered="{!canCreateNew}"/>
+            <!-- This is a workaround - We can't just rerender the table, because all the map variables are transient and
+            thus are not stored in the View state. -->
+            <apex:commandButton value="Refresh" onclick="showLoadingModal()" oncomplete="refreshDataTable()" action="{!updateCon}"
+                rerender="table_div" />
+        </apex:form>
+        <apex:form id="view_filter" style="width: 50%;">
+            <b>Selected View&nbsp;</b>
+            <apex:selectList value="{!filterId}" size="1">
+                <apex:actionSupport onsubmit="showLoadingModal()" oncomplete="refreshDataTable()" event="onchange"
+                    rerender="table_div" />
+                <apex:selectOptions value="{!listviewoptions}" />
+            </apex:selectList>
+            <!-- <apex:outputLink value="/ui/list/FilterEditPage?ftype=a&retURL={!$CurrentPage.URL}">Create New View</apex:outputLink>-->
+        </apex:form>
+        <apex:form rendered="{! (!defaultToActive)}" onsubmit="return false;">
+            <div id="table_filter1">
+                <b>Find a Person&nbsp;</b>
+                <input type="text" name="table_filter_box" id="table_filter_box" />
+                from <select id="table_status_filter_box">
+                    <option value="">All</option>
+                    <option value="^Active$">Active</option>                    
+                    <option value="^((?!Active).*)$">Inactive</option>
+                </select>
+            </div>
+        </apex:form>
+        <apex:form rendered="{!defaultToActive}" onsubmit="return false;">
+            <div id="table_filter2">
+                <b>Find a Person&nbsp;</b>
+                <input type="text" name="table_filter_box" id="table_filter_box" />
+                from <select id="table_status_filter_box">
+                    <option value="^Active$">Active</option>
+                    <option value="">All</option>                    
+                    <option value="^((?!Active).*)$">Inactive</option>
+                </select>
+            </div>
+        </apex:form>
+            <div id="table_start_filter" >
+                Browse by Name 
+                <a href="#" data-filter='[A]'>A</a>&nbsp;|&nbsp;<a href="#" data-filter='[B]'>B</a>&nbsp;|&nbsp;
+                <a href="#" data-filter='[C]'>C</a>&nbsp;|&nbsp;<a href="#" data-filter='[D]'>D</a>&nbsp;|&nbsp;
+                <a href="#" data-filter='[E]'>E</a>&nbsp;|&nbsp;<a href="#" data-filter='[F]'>F</a>&nbsp;|&nbsp;
+                <a href="#" data-filter='[G]'>G</a>&nbsp;|&nbsp;<a href="#" data-filter='[H]'>H</a>&nbsp;|&nbsp;
+                <a href="#" data-filter='[I]'>I</a>&nbsp;|&nbsp;<a href="#" data-filter='[J]'>J</a>&nbsp;|&nbsp;
+                <a href="#" data-filter='[K]'>K</a>&nbsp;|&nbsp;<a href="#" data-filter='[L]'>L</a>&nbsp;|&nbsp;
+                <a href="#" data-filter='[M]'>M</a>&nbsp;|&nbsp;<a href="#" data-filter='[N]'>N</a>&nbsp;|&nbsp;
+                <a href="#" data-filter='[O]'>O</a>&nbsp;|&nbsp;<a href="#" data-filter='[P]'>P</a>&nbsp;|&nbsp;
+                <a href="#" data-filter='[Q]'>Q</a>&nbsp;|&nbsp;<a href="#" data-filter='[R]'>R</a>&nbsp;|&nbsp;
+                <a href="#" data-filter='[S]'>S</a>&nbsp;|&nbsp;<a href="#" data-filter='[T]'>T</a>&nbsp;|&nbsp;
+                <a href="#" data-filter='[U]'>U</a>&nbsp;|&nbsp;<a href="#" data-filter='[V]'>V</a>&nbsp;|&nbsp;
+                <a href="#" data-filter='[W]'>W</a>&nbsp;|&nbsp;<a href="#" data-filter='[XYZ]'>XYZ</a>&nbsp;|&nbsp;
+                <a href="#" class="active" data-filter='.'>All</a>
+            </div>
+            
+        <apex:outputPanel layout="block" id="table_div">
+            
+            <table id="persons_table">
+                <thead>
+                    <tr>
+                        <td style="width: 15%">Persons Being Served</td>
+                        <td style="width: 10%">Admission</td>
+                        <td style="width: 35%">Service Assignment</td>
+                        <td style="width: 10%">Plan</td>
+                        <td style="width: 15%">Owner</td>
+                        <td style="width: 15%">Action</td>
+                        <td style="display:none;">Admission Status</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <apex:repeat value="{!accountIds}" var="acct">
+                        <apex:outputPanel layout="none"
+                            rendered="{!(accountIdToJOSize[acct]=0 && accountIdToAdmissionSize[acct]=0) }"> 
+                            <tr
+                                data-name="{!(accountIdMap[acct].LastName + ', ' +accountIdMap[acct].FirstName)}">
+                                <td><a href="/{!accountIdMap[acct].PersonContactId}"
+                                    data-record-id="{!acct}" class="account_link">{!(accountIdMap[acct].LastName
+                                        + ', ' +accountIdMap[acct].FirstName)}</a></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><a href="/{!accountIdMap[acct].Owner.ID}"
+                                    data-record-id="{!accountIdMap[acct].Owner.ID}">
+                                        {!accountIdMap[acct].Owner.Name} </a></td>
+                                <td></td>
+                                <td style="display:none;"></td>
+                            </tr>
+                        </apex:outputPanel>
+                        <apex:outputPanel layout="none"
+                            rendered="{!(accountIdToAdmissionSize[acct]>0)}">
+                            <apex:repeat value="{!accountIdToAdmission[acct]}"
+                                var="admission">
+                                <apex:repeat value="{!admissionIdToServiceAssignment[admission.ID]}"
+                                    rendered="{!(admissionIdToServiceAssignmentSize[admission.ID]>0)}"
+                                    var="sa">
+                                    <tr
+                                        data-name="{!(accountIdMap[acct].LastName + ', ' +accountIdMap[acct].FirstName)}">
+                                        <td><a href="/{!accountIdMap[acct].PersonContactId}"
+                                            data-record-id="{!acct}" class="account_link">{!(accountIdMap[acct].LastName
+                                                + ', ' +accountIdMap[acct].FirstName)}</a></td>
+                                        <td><a href="/{!admission.ID}"
+                                            data-record-id="{!admission.ID}" class="admission_link">
+                                                <apex:outputText value="{0, date, MM/dd/yyyy}">
+                                                    <apex:param value="{!admission.Effective_date__c}" />
+                                                </apex:outputText> </a></td>
+                                        <td><a href="/{!sa.ID}" data-record-id="{!sa.ID}"
+                                            class="service_assignment_link"> {!sa.Name} </a></td>
+                                        <td></td>
+                                        <td><a
+                                            href="/{!admission.Person_Being_Served__r.Account.Owner.ID}"
+                                            data-record-id="{!admission.Person_Being_Served__r.Account.Owner.ID}">
+                                                {!admission.Person_Being_Served__r.Account.Owner.Name} </a></td>
+                                        <td><apex:outputLink styleClass="servicelink" value="{!$Page.Notes_ProgressNote_Create}"
+                                                rendered="{!(sa.RecordType.ID=assessmentOnlyRecTypeId)}">
+                                                New Note
+                                                <apex:param value="{!sa.ID}" name="service_assignment" />
+                                                <apex:param value="{!admission.ID}" name="admission" />
+                                                <apex:param value="{!admission.Person_Being_Served__r.ID}"
+                                                    name="person" />
+                                                <apex:param value="{!admission.State__c}" name="State" />
+                                            </apex:outputLink></td>
+                                        <td style="display:none;">{!admission.Status__c}</td>
+                                    </tr>
+                                </apex:repeat>
+                                <apex:outputPanel layout="none"
+                                    rendered="{!(admissionIdToServiceAssignmentSize[admission.ID]=0)}">
+                                    <tr
+                                        data-name="{!(accountIdMap[acct].LastName + ', ' +accountIdMap[acct].FirstName)}">
+                                        <td><a href="/{!accountIdMap[acct].PersonContactId}"
+                                            data-record-id="{!acct}" class="account_link">{!(accountIdMap[acct].LastName
+                                                + ', ' +accountIdMap[acct].FirstName)}</a></td>
+                                        <td><a href="/{!admission.ID}"
+                                            data-record-id="{!admission.ID}" class="admission_link">
+                                                <apex:outputText value="{0, date, MM/dd/yyyy}">
+                                                    <apex:param value="{!admission.Effective_date__c}" />
+                                                </apex:outputText> </a></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td><a
+                                            href="/{!admission.Person_Being_Served__r.Account.Owner.ID}"
+                                            data-record-id="{!admission.Person_Being_Served__r.Account.Owner.ID}">
+                                                {!admission.Person_Being_Served__r.Account.Owner.Name} </a></td>
+                                        <td></td>
+                                        <td style="display:none;">{!admission.Status__c}</td>
+                                    </tr>
+                                </apex:outputPanel>
+                            </apex:repeat>
+                        </apex:outputPanel>
+                        <apex:outputPanel layout="none"
+                            rendered="{!(accountIdToJOSize[acct]>0)}">
+                            <apex:repeat value="{!accountIdToJO[acct]}" var="jo">
+                                <tr
+                                    data-name="{!(accountIdMap[acct].LastName + ', ' +accountIdMap[acct].FirstName)}">
+                                    <td><a href="/{!accountIdMap[acct].PersonContactId}"
+                                        data-record-id="{!acct}" class="account_link">{!(accountIdMap[acct].LastName
+                                            + ', ' +accountIdMap[acct].FirstName)}</a></td>
+                                    <td><a href="/{!jo.Service_Assignment__r.Admission__r.ID}"
+                                        data-record-id="{!jo.Service_Assignment__r.Admission__r.ID}"
+                                        class="admission_link"> <apex:outputText value="{0, date, MM/dd/yyyy}">
+                                                <apex:param value="{!jo.Service_Assignment__r.Admission__r.Effective_date__c}" />
+                                            </apex:outputText> </a></td>
+                                    <td><a href="/{!jo.Service_Assignment__r.ID}"
+                                        data-record-id="{!jo.Service_Assignment__r.ID}"
+                                        class="service_assignment_link">
+                                            {!jo.Service_Assignment__r.Name} </a></td>
+                                    <td><a href="/{!jo.ID}"
+                                        data-record-id="{!jo.ID}"
+                                        class="plan_link"> <apex:outputText value="{0, date, MM/dd/yyyy}">
+                                                <apex:param value="{!jo.Effective_Date__c}" />
+                                            </apex:outputText> </a></td>
+                                    <td><a
+                                        href="/{!jo.Service_Assignment__r.Person_Being_Served__r.Account.Owner.ID}"
+                                        data-record-id="{!jo.Service_Assignment__r.Person_Being_Served__r.Account.Owner.ID}">
+                                            {!jo.Service_Assignment__r.Person_Being_Served__r.Account.Owner.Name}
+                                    </a></td>
+                                    <td><apex:outputLink styleClass="servicelink" value="{!$Page.Notes_ProgressNote_Create}"
+                                            rendered="{!(jo.Service_Assignment__r.RecordType.ID=assessmentOnlyRecTypeId || jo.Status__c='Active Final')}">
+                                            New Note
+                                            <apex:param value="{!jo.Service_Assignment__r.ID}"
+                                                name="service_assignment" />
+                                            <apex:param value="{!jo.ID}"
+                                                name="plan" />
+                                            <apex:param value="{!jo.Service_Assignment__r.Admission__r.ID}"
+                                                name="admission" />
+                                            <apex:param value="{!jo.Service_Assignment__r.Person_Being_Served__r.ID}"
+                                                name="person" />
+                                            <apex:param value="{!jo.Service_Assignment__r.Admission__r.State__c}"
+                                                name="State" />
+                                        </apex:outputLink>&nbsp;
+                                        <!-- EC-23 - special casing for CM Ludlow  -->
+                                        <apex:outputLink styleClass="servicelink" value="/{!jo.Id}#worksheets"
+                                            rendered="{! jo.Status__c='Active Final' && seeWorksheets && ( jo.Service_Assignment__r.Admission__r.State__c != 'AZ' || jo.Service_Assignment__r.Service_location__r.programid__c == '114165002') }"> 
+                                            View Current Worksheets
+                                        </apex:outputLink>
+                                        <!-- WVPN-18: Used seeWorksheets variable to distinguish between Redwood IN and Cambridge IN.  If Redwood, seeWorksheets is set to true as of the date of this note.  J. Gilliam, 04-21-14 -->
+                                        <apex:variable value="{!jo.Service_Assignment__r.Admission__r.State__c == 'MN' || (jo.Service_Assignment__r.Admission__r.State__c == 'IN' && seeWorksheets == true) || jo.Service_Assignment__r.Admission__r.State__c == 'CA' || jo.Service_Assignment__r.Service_location__r.programid__c == '114165002'}" 
+                                                        var="HideNoteLink"/>                                                                                                             
+                                        
+                                        <apex:outputLink styleClass="servicelink" value="/{!jo.Service_Assignment__r.Id}#Notes"
+                                            rendered="{! jo.Status__c='Active Final' && !HideNoteLink}">
+                                            View Current Notes
+                                            
+                                        </apex:outputLink></td>
+                                    <td style="display:none;">{!jo.Service_Assignment__r.Admission__r.Status__c}</td>
+                                </tr>
+                            </apex:repeat>
+                        </apex:outputPanel>
+                    </apex:repeat>
+                </tbody>
+            </table>
+        </apex:outputPanel>
+    </apex:pageBlock>
+    <apex:outputPanel layout="block"
+        style="float: left; width: 49%; padding-right: 10px;" id="divReports" >
+        <apex:pageBlock rendered="{! $user.Operating_Group__c = 'Redwood'}" title="Shift Note Report">
+            <apex:outputLink value="/apex/shiftnote_summary_rpt">Shift Note Summary Report</apex:outputLink>
+        
+        </apex:pageBlock>
+        <apex:pageBlock rendered="{! $user.Operating_Group__c = 'Cambridge'}" >
+            <apex:outputLink value="/apex/IFCS_Active_MoreThanSixMonths_RPT">Active Persons Being Served Open Over 6 Months Report</apex:outputLink><br/>
+            <apex:outputLink value="/apex/IFCS_PBS_Count_Rpt">Count Persons Being Served in a Month Report</apex:outputLink><Br />
+            <apex:outputLink value="/apex/Documented_Actual_Staff_Hrs_Rpt">Documented Actual Staff Hours Report</apex:outputLink><Br />
+            <apex:outputLink value="/apex/Assessment_FADResearchSummaryRpt">FAD Research Summary Report</apex:outputLink><Br />
+            <apex:outputLink value="/apex/Report_KidTraksExport">KidTraks Export</apex:outputLink>
+        </apex:pageBlock>        
+        <c:TMN_List_Reports filterFor="%#notes%" OpenInEdit="false"  removeSFHeader="true"  TitleColor="black" Title="Reports" />
+    </apex:outputPanel>
+
+    <apex:outputPanel layout="block" style="float: left; width: 49%; ">
+        <c:TMN_List_Docs filterFor="Notes" TitleColor="#097709"
+            Title="Help and Training" />
+    </apex:outputPanel>
+    <script type="text/javascript">
+    $j = jQuery.noConflict();
+    function checkUndefined(field) {
+        if (field !== undefined) {
+            return field;
+        }
+        return "-";
+    }
+    function refreshQtips() {
+    
+        // All qtips share the same config, so we refactor it here.
+        var qtip_options = function (selector, fn) {
+            return $j(selector).qtip({
+                style: { classes: 'bPageBlock' },
+                show: {
+                    delay: 1000
+                },
+                hide: {
+                    fixed: true,
+                    delay: 500
+                },
+                content: {
+                    text: fn
+                },
+                position: {
+                    my: 'top left',
+                    at: 'bottom center',
+                    adjust: {
+                       y: 15 // because site-wide CSS applies a 15px border-top for <body>
+                    }
+                }
+            });
+        }
+        var epoch_to_time = function (miliseconds) {
+            // Returns string representation of an epoch time.
+            // Because UTC epoch is sent back, we have to parse the time like
+            // this. See: http://stackoverflow.com/questions/4631928/convert-utc-epoch-to-local-date-with-javascript
+            if (miliseconds === undefined) {
+                return "-";
+            }
+            var d = new Date(0);
+            d.setUTCMilliseconds(miliseconds);
+            return (d.getUTCMonth()+1) + '/' + d.getUTCDate() + '/' + d.getUTCFullYear();
+        }
+        qtip_options(".account_link", function(e, api) {
+            var account_id = $j(e.target).data("record-id");
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.PersonsBeingServedListController.getPersonBeingServed}',
+                account_id,
+                function (result, event) {
+                    if (event.status) { // Success
+                        api.set('content.text',
+                            '<div class="pbHeader"><h2 class="mainTitle">Person Being Served</h2></div>' + 
+                            '<div class="pbBody"><table class="detailList">' + 
+                            '<tr><td class="labelCol">Name:</td><td class="dataCol">' + checkUndefined(result.Name) + '</td></tr>' +
+                            '<tr><td class="labelCol">Birthdate:</td><td class="dataCol">' + epoch_to_time(result.Birthdate) + '</td></tr>' +
+                            '<tr><td class="labelCol">Age:</td><td class="dataCol">' + checkUndefined(result.Age__c) + '</td></tr>' +
+                            '<tr><td class="labelCol">Ethnicity:</td><td class="dataCol">' + checkUndefined(result.Ethnicity_Picklist__c) + '</td></tr>' +
+                            '<tr><td class="labelCol">Phone:</td><td class="dataCol">' + checkUndefined(result.Phone) + '</td></tr>' +
+                            '<tr><td class="labelCol">Guardian:</td><td class="dataCol">' + checkUndefined(result.Guardian1_Name__c) + '</td></tr>' +
+                            '<tr><td class="labelCol">Guardian Phone#:</td><td class="dataCol">' + checkUndefined(result.Guardian_Phone_Number__c) + '</td></tr>' +
+                            '<tr><td class="labelCol">Other Notes:</td><td class="dataCol">' + checkUndefined(result.Family_Member_Other__c) + '</td></tr></table>' +
+                            '<br /><div style="width:100% text-align:center;"><a class="btn" href="/' + result.Id + '">View Person Record</a>' +
+                            '&nbsp;&nbsp;<a class="btn" href="/' + result.Id + '#RP">View Related Parties</a><br /><Br /></div></div>'
+                        );
+                    } else if (event.type === 'exception') {
+                        api.set('content.text', 'Error: <br/>' + event.message);
+                        console.log(event);
+                    } else {
+                        api.set('content.text', event.message);
+                    }
+                }
+            );
+            return "Loading ...";
+        });
+        qtip_options(".admission_link", function(e, api) {
+            var admission_id = $j(e.target).data("record-id");
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.PersonsBeingServedListController.getAdmission}',
+                admission_id,
+                function (result, event) {
+                    if (event.status) { // Success
+                        api.set('content.text',
+                            '<div class="pbHeader"><h2 class="mainTitle">Admission</h2></div>' + 
+                            '<div class="pbBody"><table class="detailList">' + 
+                            '<tr><td class="labelCol">Name:</td><td class="dataCol">' + $j(e.target).parent().parent().data('name') + '</td></tr>' +
+                            '<tr><td class="labelCol">Admission:</td><td class="dataCol">' + checkUndefined(result.Name) + '<br />' + '</td></tr>' + 
+                            '<tr><td class="labelCol">Effective Date:</td><td class="dataCol">' + epoch_to_time(result.Effective_Date__c) + '</td></tr>' +
+                            '<tr><td class="labelCol">Network Offering:</td><td class="dataCol">' + checkUndefined(result.Network_Offering__c)+ '</td></tr>' +
+                            '<tr><td class="labelCol">State:</td><td class="dataCol">' + checkUndefined(result.State__c) + '</td></tr>' +
+                            '<tr><td class="labelCol">Status:</td><td class="dataCol">' + checkUndefined(result.Status__c) + '</td></tr></table>' +
+                            '<br /><div style="width:100% text-align:center;"><a class="btn"  href="/' + admission_id + '">View Admission</a>' +
+                            '&nbsp;&nbsp;<a class="btn" href="/' + admission_id + '/e">Edit Admission</a><br /><Br /></div></div>'
+                        );
+                    } else if (event.type === 'exception') {
+                        api.set('content.text', 'Error: <br/>' + event.message);
+                        console.log(event);
+                    } else {
+                        api.set('content.text', event.message);
+                    }
+                }
+            );
+            return "Loading ...";
+        });     
+        qtip_options(".service_assignment_link", function(e, api) {
+            var service_assignment_id = $j(e.target).data("record-id");
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.PersonsBeingServedListController.getServiceAssignment}',
+                service_assignment_id,
+                function (result, event) {
+                    if (event.status) { // Success
+                        api.set('content.text',
+                            '<div class="pbHeader"><h2 class="mainTitle">Service Assignment</h2></div>' + 
+                            '<div class="pbBody"><table class="detailList">' + 
+                            '<tr><td class="labelCol">Name:</td><td class="dataCol">' + $j(e.target).parent().parent().data('name') + '</td></tr>' +
+                            '<tr><td class="labelCol">Service Assignment:</td><td class="dataCol">' + checkUndefined(result.Name) + '</td></tr>' +
+                            '<tr><td class="labelCol">Admission:</td><td class="dataCol">' + checkUndefined(result.Admission__r.Name) + '</td></tr>' +
+                            '<tr><td class="labelCol">Start Date:</td><td class="dataCol">' + epoch_to_time(result.Start_Date__c) + '</td></tr>' +
+                            '<tr><td class="labelCol">Status:</td><td class="dataCol">' + checkUndefined(result.Status__c) + '</td></tr></table>' +
+                            '<br /><div style="width:100% text-align:center;"><a class="btn" href="/' + service_assignment_id + '">View Service Assignment</a><br /><Br /></div></div>'
+                            //'<a href="/' + service_assignment_id + '">View Case Document</a><br />' +
+                            //'<a href="/' + service_assignment_id + '">View Program Documents</a>'
+                        );
+                    } else if (event.type === 'exception') {
+                        api.set('content.text', 'Error: <br/>' + event.message);
+                        console.log(event);
+                    } else {
+                        api.set('content.text', event.message);
+                    }
+                }
+            );
+            return "Loading ...";
+        });
+        qtip_options(".plan_link", function(e, api) {
+            var plan_id = $j(e.target).data("record-id");
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.PersonsBeingServedListController.getPlan}',
+                plan_id,
+                function (result, event) {
+                    if (event.status) { // Success
+                        api.set('content.text',
+                            '<div class="pbHeader"><h2 class="mainTitle">Action Plan</h2></div>' + 
+                            '<div class="pbBody"><table class="detailList">' + 
+                            '<tr><td class="labelCol">Name:</td><td class="dataCol">' + $j(e.target).parent().parent().data('name') + '</td></tr>' +
+                            '<tr><td class="labelCol">Plan:</td><td class="dataCol">' + checkUndefined(result.Name) + '</td></tr>' +
+                            '<tr><td class="labelCol">Admission:</td><td class="dataCol">' + checkUndefined(result.Service_Assignment__r.Admission__r.Name) + '</td></tr>' +
+                            '<tr><td class="labelCol">Service Assignment:</td><td class="dataCol">' + checkUndefined(result.Service_Assignment__r.Name) + '</td></tr>' +
+                            '<tr><td class="labelCol">Effective Date:</td><td class="dataCol">' + epoch_to_time(result.Effective_Date__c) + '</td></tr>' +
+                            '<tr><td class="labelCol">Target Date:</td><td class="dataCol">' + epoch_to_time(result.Target_Date__c) + '</td></tr>' +
+                            '<tr><td class="labelCol">Status:</td><td class="dataCol">' + checkUndefined(result.Status__c) + '</td></tr></table>' +
+                            '<br /><div style="width:100% text-align:center;"><a class="btn" href="/' + plan_id + '">View Action Plan</a><br /><Br /></div></div>'
+                        );
+                    } else if (event.type === 'exception') {
+                        api.set('content.text', 'Error: <br/>' + event.message);
+                        console.log(event);
+                    } else {
+                        api.set('content.text', event.message);
+                    }
+                }
+            );
+            return "Loading ...";
+        });
+    }
+    function showLoadingModal() {
+        $j("#loading_modal").css("display", "block");
+    }
+    function refreshDataTable() {
+        refreshQtips();
+        // Have to make this var global in order for filter to work
+        table = $j("#persons_table").dataTable({
+            "bProcessing": true,
+            "bAutoWidth": false,
+            "sDom": '<"top">t<"bottom"rpi><"clear">',
+            "sPaginationType": "four_button",
+            "iDisplayLength": 25,
+            "fnInfoCallback": function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
+                var info = this.fnPagingInfo();
+                if (iEnd == 0) {
+                    iStart = 0; // Otherwise it displays as 1 - 0 of ...
+                }
+                return "<div class='dataTables_record_info'>" + iStart + " - " + iEnd + " of " + iTotal + "</div><div class='dataTables_page_info'>Page " + info.iPage +" of "+ info.iTotalPages + '</div>';
+            },
+            "fnInitComplete": function () {
+                filterByStatus(this);
+                $j("#loading_modal").css("display", "none");
+            },
+            "oLanguage": {
+                 "sInfo": "_START_ - _END_ of _TOTAL_",
+                 "sZeroRecords": "No records to display",
+                 "sInfoEmpty": "No Records",
+                 "oPaginate": {
+                     "sFirst": "<<",
+                     "sLast": ">>",
+                     "sNext": "Next >",
+                     "sPrevious": "< Previous"
+                }
+            },
+            "aoColumns": [
+                null, // Persons Being Served
+                null, // Admission
+                null, // Service Assignment
+                null, // Eff Date
+                null, // Owner
+                null, // Action
+                { "bVisible": false } // Admission Status
+            ]
+        });
+        table.fnSort( [ [0,'asc'] ] );
+        $j("#table_filter_box").keyup();
+    }
+    $j.fn.dataTableExt.afnFiltering.push(function( oSettings, aData, iDataIndex ) {
+        var textToSearch = $j('#table_filter_box').val().toLowerCase();
+        if (aData[0].toLowerCase().indexOf(textToSearch)!==-1 ||
+            aData[1].toLowerCase().indexOf(textToSearch)!==-1 ||
+            aData[2].toLowerCase().indexOf(textToSearch)!==-1 ||
+            aData[3].toLowerCase().indexOf(textToSearch)!==-1 ||
+            aData[4].toLowerCase().indexOf(textToSearch)!==-1) {
+            return true;
+        }
+        return false;
+    });
+    var filterByStatus = function (injectedTable) {
+        var statusToSearch = $j('#table_status_filter_box :selected').val();
+        if (statusToSearch === 'All') {
+            statusToSearch = '';
+        }
+        if (injectedTable) {
+            injectedTable.fnFilter(statusToSearch, 6, true);
+        } else {
+            table.fnFilter(statusToSearch, 6, true);
+        }
+    }
+    $j(document).ready(function() {
+        refreshDataTable();
+        filterByStatus();
+        $j('#table_filter_box').on('keyup', function () {
+            table.fnFilter('', 0, true);  // Clear the column-based filter first
+            table.fnFilter($j('#table_filter_box').val());
+            $j('#table_start_filter a.active').removeClass('active');
+            $j('#table_start_filter a:contains("All")').addClass('active');
+            return false;
+        });
+        $j('#table_status_filter_box').on('change', function (event) {
+            filterByStatus();
+        });
+        $j('body').on('click', '#table_start_filter a', function (event) {
+            $j('#table_filter_box').val('');  // Remove the text in filter box
+            table.fnFilter('');  // Clear the global filter
+            var regex = '^' + $j(event.target).data('filter');
+            table.fnFilter(regex, 0, true);
+            $j('#table_start_filter a.active').removeClass('active');
+            $j(event.target).addClass('active');
+            return false;
+        });
+    });
+    
+    (function ($) {
+        $.fn.dataTableExt.oPagination.four_button = {
+            "fnInit": function ( oSettings, nPaging, fnCallbackDraw )
+            {
+                nFirst = document.createElement( 'span' );
+                nPrevious = document.createElement( 'span' );
+                nNext = document.createElement( 'span' );
+                nLast = document.createElement( 'span' );
+                  
+                nFirst.appendChild( document.createTextNode( oSettings.oLanguage.oPaginate.sFirst ) );
+                nPrevious.appendChild( document.createTextNode( oSettings.oLanguage.oPaginate.sPrevious ) );
+                nNext.appendChild( document.createTextNode( oSettings.oLanguage.oPaginate.sNext ) );
+                nLast.appendChild( document.createTextNode( oSettings.oLanguage.oPaginate.sLast ) );
+                  
+                nFirst.className = "paginate_button first";
+                nPrevious.className = "paginate_button previous";
+                nNext.className="paginate_button next";
+                nLast.className = "paginate_button last";
+                  
+                nPaging.appendChild( nFirst );
+                nPaging.appendChild( nPrevious );
+                nPaging.appendChild( nNext );
+                nPaging.appendChild( nLast );
+                  
+                $(nFirst).click( function () {
+                    oSettings.oApi._fnPageChange( oSettings, "first" );
+                    fnCallbackDraw( oSettings );
+                } );
+                  
+                $(nPrevious).click( function() {
+                    oSettings.oApi._fnPageChange( oSettings, "previous" );
+                    fnCallbackDraw( oSettings );
+                } );
+                  
+                $(nNext).click( function() {
+                    oSettings.oApi._fnPageChange( oSettings, "next" );
+                    fnCallbackDraw( oSettings );
+                } );
+                  
+                $(nLast).click( function() {
+                    oSettings.oApi._fnPageChange( oSettings, "last" );
+                    fnCallbackDraw( oSettings );
+                } );
+                  
+                /* Disallow text selection */
+                $(nFirst).bind( 'selectstart', function () { return false; } );
+                $(nPrevious).bind( 'selectstart', function () { return false; } );
+                $(nNext).bind( 'selectstart', function () { return false; } );
+                $(nLast).bind( 'selectstart', function () { return false; } );
+            },
+             
+             
+            "fnUpdate": function ( oSettings, fnCallbackDraw )
+            {
+                if ( !oSettings.aanFeatures.p )
+                {
+                    return;
+                }
+                  
+                /* Loop over each instance of the pager */
+                var an = oSettings.aanFeatures.p;
+                for ( var i=0, iLen=an.length ; i<iLen ; i++ )
+                {
+                    var buttons = an[i].getElementsByTagName('span');
+                    if ( oSettings._iDisplayStart === 0 )
+                    {
+                        buttons[0].className = "paginate_disabled_previous";
+                        buttons[1].className = "paginate_disabled_previous";
+                    }
+                    else
+                    {
+                        buttons[0].className = "paginate_enabled_previous";
+                        buttons[1].className = "paginate_enabled_previous";
+                    }
+                      
+                    if ( oSettings.fnDisplayEnd() == oSettings.fnRecordsDisplay() )
+                    {
+                        buttons[2].className = "paginate_disabled_next";
+                        buttons[3].className = "paginate_disabled_next";
+                    }
+                    else
+                    {
+                        buttons[2].className = "paginate_enabled_next";
+                        buttons[3].className = "paginate_enabled_next";
+                    }
+                }
+            }
+        };
+        $.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings )
+        {
+            return {
+                "iStart":         oSettings._iDisplayStart,
+                "iEnd":           oSettings.fnDisplayEnd(),
+                "iLength":        oSettings._iDisplayLength,
+                "iTotal":         oSettings.fnRecordsTotal(),
+                "iFilteredTotal": oSettings.fnRecordsDisplay(),
+                "iPage":          oSettings.fnRecordsDisplay() === 0 ?
+                    0 : Math.ceil( (oSettings._iDisplayStart+1) / oSettings._iDisplayLength ),
+                "iTotalPages":    oSettings.fnRecordsTotal() === 0 ?
+                    0 : Math.ceil( oSettings.fnRecordsDisplay() / oSettings._iDisplayLength )
+            };
+        };
+    } ($j))
+    </script>
+
+</apex:page>
