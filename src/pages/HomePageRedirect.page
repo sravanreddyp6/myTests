@@ -1,0 +1,15 @@
+<apex:page controller="HomePageRedirect">
+
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+    
+<script>
+$j = jQuery.noConflict();
+$j(document).ready(function() {
+	// if this content is framed (on SF home page), pop to top frame
+    if ( window.top !== window.self ) {
+		window.top.location.href = '/apex/home';
+		}
+	})
+	
+</script>
+</apex:page>
