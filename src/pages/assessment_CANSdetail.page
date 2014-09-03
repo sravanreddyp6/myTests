@@ -4,11 +4,16 @@
 
     function setFocusOnLoad() {}
     </script>
-<apex:form >
+    <style>
+.fogBG{opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;}
+.noscroll{overflow:hidden;}
+.thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;}    
+    </style>
+<apex:form id="frm">
 <apex:pageMessages ></apex:pageMessages>
 <apex:pageBlock title="New Assessment">
 <apex:pageBlockButtons >
-    <apex:commandButton action="{!save}" value="Save"/>
+    <apex:commandButton action="{!save}" value="Save" status="myStatus" reRender="frm"/>
     <apex:commandButton action="{!cancel}" value="Cancel"/>
 </apex:pageBlockButtons>
 
@@ -32,5 +37,13 @@
 
 </apex:pageBlock>
 </apex:form>
-
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <div class="fogBG"/>
+        <div class="thinkingwheel">    
+            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+        </div> 
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus>
 </apex:page>
