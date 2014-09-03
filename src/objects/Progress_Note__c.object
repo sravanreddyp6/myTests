@@ -16446,6 +16446,13 @@ If this is selected, please fill out the appropriate check boxes to the right.</
     </searchLayouts>
     <sharingModel>Private</sharingModel>
     <validationRules>
+        <fullName>Arizona_ProgressNote_Length</fullName>
+        <active>true</active>
+        <description>Restrict Users Ability to Submit Note Longer than 120 mins</description>
+        <errorConditionFormula>AND(RecordType.DeveloperName == &apos;AZ_OPT&apos;,  (End_Time__c - Start_Time__c)*24*60 &gt; 120, NOT( $User.Alias =&apos;inte&apos;))</errorConditionFormula>
+        <errorMessage>The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy.</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>Arizona_Signature_Count_must_be_positive</fullName>
         <active>true</active>
         <description>When creating a new Progress Note for AZ, the user must set a positive number of signatures required.</description>
