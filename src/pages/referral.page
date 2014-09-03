@@ -443,9 +443,9 @@ function enableDiagEff() {
         <apex:pageBlockSectionItem >
           <apex:outputText value="Name"/>
           <apex:outputPanel styleClass="nowrap">
-            <apex:inputText label="" value="{!personBeingRefRecord.First_Name__c}" />&nbsp;&nbsp;
+            <apex:inputText label="" value="{!personBeingRefRecord.First_Name__c}" required="{!ReferralRecordType =='NeuroRestorative'}"/>&nbsp;&nbsp;
             <apex:inputText label="" value="{!personBeingRefRecord.Middle_Initial__c}"  size="1"/>&nbsp;&nbsp;
-            <apex:inputText label="" value="{!personBeingRefRecord.Last_Name__c}" />
+            <apex:inputText label="" value="{!personBeingRefRecord.Last_Name__c}"  required="{!ReferralRecordType =='NeuroRestorative'}"/>
           </apex:outputPanel>
         </apex:pageBlockSectionItem>
         <apex:inputField value="{!personBeingRefRecord.Ethnicity__c}"/>
@@ -1310,7 +1310,7 @@ function enableDiagEff() {
                   <apex:pageBlockSectionItem >
                       <apex:outputLabel for="refSourceTypeField" value="Referral Source Type" />
                       <apex:actionRegion >
-                    <apex:inputField id="refSourceTypeField" value="{!Referral__c.Referral_Source_Type__c}">
+                    <apex:inputField id="refSourceTypeField" value="{!Referral__c.Referral_Source_Type__c}"  required="{!ReferralRecordType =='NeuroRestorative'}">
                          <apex:actionStatus id="statusRefSourceType">
                              <apex:facet name="start">
                                  <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
@@ -1337,13 +1337,13 @@ function enableDiagEff() {
         <!-- <apex:inputField value="{!Referral__c.Agency_Name__c}" label="Referral Source" /> -->
         <apex:pageBlockSectionItem helpText="{!$ObjectType.Referral__c.fields.Agency_Name__c.InlineHelpText}">
             <apex:outputlabel for="referralSource" value="Referral Source" />
-            <apex:inputField id="referralSource" value="{!Referral__c.Agency_Name__c}" />
+            <apex:inputField id="referralSource" value="{!Referral__c.Agency_Name__c}" required="{!ReferralRecordType == 'NeuroRestorative'}"/>
             </apex:pageBlockSectionItem>
         <!-- ERC-97: End --> 
-        <apex:inputField value="{!Referral__c.How_did_they_learn__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" />
+        <apex:inputField value="{!Referral__c.How_did_they_learn__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" required = "True"/>
 
         <apex:pageBlockSectionItem rendered="{! ReferralRecordType == 'CareMeridian'}"  />
-        <apex:inputField value="{!Referral__c.Referral_Name__c}" />
+        <apex:inputField value="{!Referral__c.Referral_Name__c}" required="{!ReferralRecordType == 'NeuroRestorative'}"/>
         <apex:inputText id="referrerPhone" label="Referrer Phone Number" value="{!Referral__c.Referral_Phone_Number__c}" onblur="j$('input[id$=referrerPhone]').val(this.value.replace(/(\d\d\d)(\d\d\d)(\d\d\d\d)/, '$1-$2-$3'))"/>
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType != 'CareMeridian'}" />
         <apex:inputField value="{!Referral__c.Financial_Status__c}" rendered="{!ReferralRecordType == 'CareMeridian'}" />
@@ -1388,25 +1388,29 @@ function enableDiagEff() {
         <apex:inputText id="referrerFax" value="{!Referral__c.Referrer_Fax__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" onblur="j$('input[id$=referrerFax]').val(this.value.replace(/(\d\d\d)(\d\d\d)(\d\d\d\d)/, '$1-$2-$3'))"/>
         <apex:inputField value="{!Referral__c.Case_Manager_Name__c}"  rendered="{!ReferralRecordType!='NeuroRestorative'}" /> <!-- ERNS-26 -->
         <apex:inputField value="{!Referral__c.Case_Manager_Phone__c}"  rendered="{!ReferralRecordType!='NeuroRestorative'}" />
-        <!--apex:inputField value="{!Referral__c.Evaluation_Date__c}" rendered="{!referralRecordType=='CareMeridian'}"/-->
-        
-            
+        <!--apex:inputField value="{!Referral__c.Evaluation_Date__c}" rendered="{!referralRecordType=='CareMeridian'}"/-->            
+  
             
 <!--  START NEURO EvalBy and RefBy SECTION -->
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
-        <apex:inputField value="{!Referral__c.Evaluated_By_Source__c}" rendered="{!referralRecordType=='NeuroRestorative'}">
-            <apex:actionStatus id="statusEvalBy">
-                 <apex:facet name="start">
-                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
-                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
-                     </div>
-                 </apex:facet>
-                 <apex:facet name="stop"></apex:facet>
-             </apex:actionStatus>
-            <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusEvalBy" />
-        </apex:inputField>
+        <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}">
+        <apex:actionRegion>
+        	<apex:outputLabel for="evaluatedbySource" value="Evaluated By Source" styleClass="labelCol" style="margin-left: 5%;"/>
+	        <apex:inputField value="{!Referral__c.Evaluated_By_Source__c}" id="evaluatedbySource" >
+	            <apex:actionStatus id="statusEvalBy">
+	                 <apex:facet name="start">
+	                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+	                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+	                     </div>
+	                 </apex:facet>
+	                 <apex:facet name="stop"></apex:facet>
+	             </apex:actionStatus>
+	            <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusEvalBy" />
+	        </apex:inputField>
+        </apex:actionRegion>
+        </apex:pageBlockSectionItem>
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
         <apex:inputField value="{!Referral__c.Evaluated_By_Internal__c}" html-disabled="true" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Evaluated_By_Source__c != 'Internal'}" />
         <apex:inputField value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Evaluated_By_Source__c == 'Internal'}" />
