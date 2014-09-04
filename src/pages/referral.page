@@ -350,6 +350,13 @@ function enableDiagEff() {
   }
 
   function unsetAdditionalFields(value){
+            var d = new Date();
+            
+            var month = d.getMonth()+1;
+            var day = d.getDate();
+            var year = d.getFullYear();
+            
+            var fulldate = month + '/' + day + '/' + year ;  
       if(value != 'Closed'){
           j$('select[id$=closeReason]').val('');
           j$('input[id$=closeDate]').val('');
@@ -361,14 +368,11 @@ function enableDiagEff() {
           j$('input[id$=reviewOn]').val('');
       }
       if(value =='Closed'){
-            var d = new Date();
-            
-            var month = d.getMonth()+1;
-            var day = d.getDate();
-            var year = d.getFullYear();
-            
-            var fulldate = month + '/' + day + '/' + year ;
+
           j$('input[id$=closeDate]').val(fulldate);
+      }
+      if(value == 'On Hold'){
+          j$('input[id$=holdDate]').val(fulldate );
       }
   }
   function clearReason_MentalHealth(){
@@ -1276,10 +1280,12 @@ function enableDiagEff() {
     <!-- Referral Detail -->
     <apex:pageBlock mode="edit" id="referralDetailBlock" rendered="{!OR(!ISNULL(personBeingRefRecord.Id), !ISNULL(personBeingServedRecord.Id))}">
       <apex:pageblockButtons location="bottom">
+      <!-- on this button status will not work b/c it doesn't invoke an action it uses onclick js-->
         <apex:commandButton value="Save Referral"
                             id="saveRefButton"
                             onclick="checkRedFlags();return false;"
-                           rendered="{!OR(!ISNULL(personBeingRefRecord.Id), !ISNULL(personBeingServedRecord.Id))}" />
+                           rendered="{!OR(!ISNULL(personBeingRefRecord.Id), !ISNULL(personBeingServedRecord.Id))}"
+                            oncomplete="unsetAdditionalFields(j$('select[id$=referralStatus]').val());" />
 
         <apex:commandButton value="Cancel" id="cancelButton" action="{!cancel}"/>
       </apex:pageblockButtons>
@@ -1340,7 +1346,7 @@ function enableDiagEff() {
             <apex:inputField id="referralSource" value="{!Referral__c.Agency_Name__c}" required="{!ReferralRecordType == 'NeuroRestorative'}"/>
             </apex:pageBlockSectionItem>
         <!-- ERC-97: End --> 
-        <apex:inputField value="{!Referral__c.How_did_they_learn__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" required = "True"/>
+        <apex:inputField value="{!Referral__c.How_did_they_learn__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" required="True"/>
 
         <apex:pageBlockSectionItem rendered="{! ReferralRecordType == 'CareMeridian'}"  />
         <apex:inputField value="{!Referral__c.Referral_Name__c}" required="{!ReferralRecordType == 'NeuroRestorative'}"/>
@@ -1396,19 +1402,19 @@ function enableDiagEff() {
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}">
-        <apex:actionRegion>
-        	<apex:outputLabel for="evaluatedbySource" value="Evaluated By Source" styleClass="labelCol" style="margin-left: 5%;"/>
-	        <apex:inputField value="{!Referral__c.Evaluated_By_Source__c}" id="evaluatedbySource" >
-	            <apex:actionStatus id="statusEvalBy">
-	                 <apex:facet name="start">
-	                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
-	                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
-	                     </div>
-	                 </apex:facet>
-	                 <apex:facet name="stop"></apex:facet>
-	             </apex:actionStatus>
-	            <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusEvalBy" />
-	        </apex:inputField>
+        <apex:actionRegion >
+            <apex:outputLabel for="evaluatedbySource" value="Evaluated By Source" styleClass="labelCol" style="margin-left: 5%;"/>
+            <apex:inputField value="{!Referral__c.Evaluated_By_Source__c}" id="evaluatedbySource" >
+                <apex:actionStatus id="statusEvalBy">
+                     <apex:facet name="start">
+                         <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                             <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                         </div>
+                     </apex:facet>
+                     <apex:facet name="stop"></apex:facet>
+                 </apex:actionStatus>
+                <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusEvalBy" />
+            </apex:inputField>
         </apex:actionRegion>
         </apex:pageBlockSectionItem>
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />

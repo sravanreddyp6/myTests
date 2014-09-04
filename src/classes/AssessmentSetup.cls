@@ -62,32 +62,32 @@ public with sharing class AssessmentSetup {
       for (Assessment__c a: theseAssessments){
         if (a.Previous__c==null) {
             for( ID assmtDomainLoopID : domainMap.keySet() ){
-				// START: RBO-289
-            	if(a.Type__c=='ISSA') {
-                	// Might be possible to refactor there is less redundancy between this if block and the else if below.  J. Gilliam
-                	// copied the block as a quick solution for RBO-289, July '14. 
-                	if(domainMap.get(assmtDomainLoopId).Assessment_Type2__c=='ISSA') {
-	                    dummyAdr = new Assessment_Domain_Result__c();
-	                    dummyAdr.Assessment__c = a.Id; 
-	                    dummyAdr.Assessment_Domain__c = domainMap.get(assmtDomainLoopId).Id;
-	                    insert dummyAdr;              	    				
-					
-	                    for(Assessment_Question__c q : domainMap.get(assmtDomainLoopID).Question__r){
-	                      // Check if this assessment admission's state is in the
-	                      // excluded list for this question
-	                      if (q.Excluded_States__c==null || assessmentMap.get(a.ID).Admission__r.State__c==null || q.Excluded_States__c.indexOf(assessmentMap.get(a.ID).Admission__r.State__c)==-1) {
-	                        dummyAr.add(new Assessment_Response__c(
-	                          Assessment__c = a.Id,
-	                          Question__c = q.ID,
-	                          Assessment_Domain_Result__c = dummyAdr.Id,
-	                          Rating__c = NULL,
-	                          Color__c = NULL)
-	                        );
-	                      }
-	                    }
-                	}
-            	}
-            	// END: RBO-289       
+                // START: RBO-289
+                if(a.Type__c=='ISSA') {
+                    // Might be possible to refactor there is less redundancy between this if block and the else if below.  J. Gilliam
+                    // copied the block as a quick solution for RBO-289, July '14. 
+                    if(domainMap.get(assmtDomainLoopId).Assessment_Type2__c=='ISSA') {
+                        dummyAdr = new Assessment_Domain_Result__c();
+                        dummyAdr.Assessment__c = a.Id; 
+                        dummyAdr.Assessment_Domain__c = domainMap.get(assmtDomainLoopId).Id;
+                        insert dummyAdr;                                    
+                    
+                        for(Assessment_Question__c q : domainMap.get(assmtDomainLoopID).Question__r){
+                          // Check if this assessment admission's state is in the
+                          // excluded list for this question
+                          if (q.Excluded_States__c==null || assessmentMap.get(a.ID).Admission__r.State__c==null || q.Excluded_States__c.indexOf(assessmentMap.get(a.ID).Admission__r.State__c)==-1) {
+                            dummyAr.add(new Assessment_Response__c(
+                              Assessment__c = a.Id,
+                              Question__c = q.ID,
+                              Assessment_Domain_Result__c = dummyAdr.Id,
+                              Rating__c = NULL,
+                              Color__c = NULL)
+                            );
+                          }
+                        }
+                    }
+                }
+                // END: RBO-289       
                 else if (a.Assessment_Type__c == domainMap.get(assmtDomainLoopId).Assessment_Type__c){
                     dummyAdr = new Assessment_Domain_Result__c();
                     dummyAdr.Assessment__c = a.Id; 
@@ -270,7 +270,7 @@ public with sharing class AssessmentSetup {
         
         for ( Assessment__c a : assessments ){
         
-            List<Assessment__c> allAssmtsOfTypeForAdmission = [SELECT Id, Interval__c, Quarter__c FROM Assessment__c WHERE AccountPerson__c = :a.AccountPerson__c AND Admission__c = :a.Admission__c AND Assessment_Type__c = :a.Assessment_Type__c ORDER BY Quarter__c];
+            List<Assessment__c> allAssmtsOfTypeForAdmission = [SELECT Id, Interval__c, Quarter__c FROM Assessment__c WHERE AccountPerson__c = :a.AccountPerson__c AND Admission__c = :a.Admission__c AND Assessment_Type__c = :a.Assessment_Type__c AND Disregard__c = false ORDER BY Quarter__c];
             System.Debug('List allAssmtsOfTypeForAdmission: ' + allAssmtsOfTypeForAdmission);
             
             // START: Confirm Intake is first assessment of type        
