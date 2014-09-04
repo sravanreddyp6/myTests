@@ -1,4 +1,5 @@
 <apex:page standardController="Progress_Note__c" extensions="Notes_ProgressNote_Create" action="{!redirect}">
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 <apex:variable var="State" value="{!if(ISBLANK($CurrentPage.parameters.state) ,'',$CurrentPage.parameters.state)}"/>
 <style>
 .dateFormat{display: none;}
@@ -16,9 +17,24 @@
 .thinkingwheel{
     position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
 }
+.timePastNoon{
+    background: lightblue;
+}
 </style>
 <script>
 function setFocusOnLoad() {};
+
+j$ = jQuery.noConflict();
+j$(document).ready(function(){
+	j$('.dateInput input').change(function(){
+		if(j$(this).val().indexOf('PM') > 0 ){
+			j$(this).addClass("timePastNoon");
+		}else{
+			j$(this).removeClass("timePastNoon");
+		}            
+	})
+	j$('.dateInput input').trigger('change');
+});
 </script>
 
 
