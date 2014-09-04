@@ -591,49 +591,30 @@
                 <apex:pageBlock >
                 <apex:pageBlockSection columns="2" title="Cardio">
                          <apex:inputField value="{!Evaluation__c.Pulse_Ox__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.pulseDetails}&quot;}"/>
-                         <apex:pageblocksectionitem >
-                            <apex:outputLabel for="pulseDetails" style="color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.Pulse_Ox_Details__c.label}</apex:outputLabel>
-                         <apex:outputPanel >
-                            <apex:inputField value="{!Evaluation__c.Pulse_Ox_Details__c}" id="pulseDetails" html-data-rules="{&quot;Intermittent&quot;: &quot;{!$Component.pulseSchedule}&quot;}"/>
-                         	<apex:outputLabel for="pulseSchedule" style="margin-left:15px; color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.Pulse_Ox_Schedule__c.label}</apex:outputLabel>
-                            <apex:inputField value="{!Evaluation__c.Pulse_Ox_Schedule__c}" id="pulseSchedule" style="margin-left:10px;"/>
-                        </apex:outputPanel> 
-						</apex:pageblocksectionitem>
-						
-						<apex:pageBlockSectionItem >
-                            <apex:outputLabel for="smoke" style="color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.Smoking_History__c.label}</apex:outputLabel>
-                         <apex:outputPanel >
-                         <apex:inputField id="smoke" value="{!Evaluation__c.Smoking_History__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.packDay}&quot;}"/>
-                         <apex:outputLabel for="packDay" style="margin-left:15px; color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.Packs_Day_Years__c.label}</apex:outputLabel>
-                         <apex:inputField value="{!Evaluation__c.Packs_Day_Years__c}" id="packDay"/>
-                         </apex:outputPanel>
-                         </apex:pageBlockSectionItem>
-						
-                       	<apex:inputField value="{!Evaluation__c.Pacemaker__c}" /> 
-                        <apex:pageBlockSectionItem >
-                            <apex:outputLabel for="heartsounds" style="color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.Heart_Sounds__c.label}</apex:outputLabel>
-                         <apex:outputPanel >
-                         <apex:inputField value="{!Evaluation__c.Heart_Sounds__c}" html-data-rules="{&quot;Irregular&quot;: &quot;{!$Component.irregularSound}&quot;}"/>
-                         <apex:outputLabel for="irregularsound" style="margin-left:15px; color: #4A4A56; font-size: 10px; font-weight: Bold;" value="If Irregular, Describe" />
-                         <apex:inputField value="{!Evaluation__c.Heart_Sound_Describe__c}" id="irregularSound" />
-                         </apex:outputPanel>
-                         </apex:pageBlockSectionItem>
-						 <apex:inputField value="{!Evaluation__c.Endovascular_Filter__c}" />
+                         <apex:outputText value="" />
                          
-                        
-                        <apex:pageBlockSectionItem >
-                            <apex:outputLabel for="pulses" style="color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.Peripheral_Pulses_Present__c.label}</apex:outputLabel>
-                         <apex:outputPanel >
-                         <apex:inputField value="{!Evaluation__c.Peripheral_Pulses_Present__c}" html-data-rules="{&quot;No&quot;: &quot;{!$Component.noPulses}&quot;}"/>
-                         <apex:outputLabel for="noPulses" style="margin-left:15px; color: #4A4A56; font-size: 10px; font-weight: Bold;" value="If No, Describe" />
-                        <apex:inputField id="noPulses" value="{!Evaluation__c.Peripheral_Pulses_Describe__c}" />
+                         <apex:pageblocksectionitem>
+                         <apex:outputLabel for="pulseDetails" value = "Pulse Ox Details" />
+                         <apex:outputPanel>
+                         <apex:inputField value="{!Evaluation__c.Pulse_Ox_Details__c}" id="pulseDetails" html-data-rules="{&quot;Intermittent&quot;: &quot;{!$Component.pulseSchedule}&quot;}"/> 
+                         <br />
+                         <apex:inputField value="{!Evaluation__c.Pulse_Ox_Schedule__c}" id="pulseSchedule"/>
                          </apex:outputPanel>
-                         </apex:pageBlockSectionItem>
-						 
-						 
-						 
+                         </apex:pageblocksectionitem>
+                         
+                         <apex:inputField id="smoke" value="{!Evaluation__c.Smoking_History__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.packDay}&quot;}"/>
+                        
+                         <apex:inputField value="{!Evaluation__c.Packs_Day_Years__c}" id="packDay"/>
+                         
+                         <apex:inputField value="{!Evaluation__c.Heart_Sounds__c}" html-data-rules="{&quot;Irregular&quot;: &quot;{!$Component.irregularSound}&quot;}"/>
+                         <apex:inputField value="{!Evaluation__c.Peripheral_Pulses_Present__c}" html-data-rules="{&quot;No&quot;: &quot;{!$Component.noPulses}&quot;}"/>
+                         <apex:inputField value="{!Evaluation__c.Heart_Sound_Describe__c}" id="irregularSound" />
+                        <apex:inputField id="noPulses" value="{!Evaluation__c.Peripheral_Pulses_Describe__c}" />
+                        
+                        <apex:inputField value="{!Evaluation__c.Pacemaker__c}" />
+                       	<apex:inputField value="{!Evaluation__c.Endovascular_Filter__c}" />
+                         
                          <apex:inputField value="{!Evaluation__c.Autonomic_Dysreflexia__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.educatedAD}&quot;}"/>
-                         <apex:pageblocksectionitem />
                          <apex:inputField value="{!Evaluation__c.Educated_Regarding_AD__c}" label="Has resident been educated regarding AD symptoms" id="educatedAD"/>
                     </apex:pageBlockSection> 
                     <apex:pageBlockSection columns="2" title="Sputum">
@@ -672,24 +653,13 @@
                          <apex:inputField value="{!Evaluation__c.Trach__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.trachPlacementDate}&quot;, &quot;{!$Component.trachType}&quot;, &quot;{!$Component.trachSize}&quot;, &quot;{!$Component.cuffed}&quot;, &quot;{!$Component.pmv}&quot;,&quot;{!$Component.cuffed}&quot;, &quot;{!$Component.trachPlugged}&quot;]}" />
                          <apex:inputField value="{!Evaluation__c.Trach_Placement_Date__c}" id="trachPlacementDate" />
                         
-                         <apex:pageblocksectionitem >
-                         <apex:outputLabel for="trachType" style="color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.Trach_Type__c.label}</apex:outputLabel>
-                         <apex:outputPanel >
-                       		 <apex:inputField value="{!Evaluation__c.Trach_Type__c}" id="trachType" style="margin-left:10px;" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.trackTypeOther}&quot;}"/>
-                        	 <apex:outputLabel for="trackTypeOther" style="margin-left:10px;color: #4A4A56; font-size: 10px; font-weight: Bold;" >{!$ObjectType.Evaluation__c.Fields.Trach_Type_Other__c.label}</apex:outputLabel>
-                        	 <apex:inputField Value="{!Evaluation__c.Trach_Type_Other__c}" id="trackTypeOther" style="margin-left:10px;"/>
-                        </apex:outputPanel>    
-                        </apex:pageblocksectionitem>
+                         <apex:inputField value="{!Evaluation__c.Trach_Type__c}" id="trachType" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.trackTypeOther}&quot;}"/>
+                         <apex:inputField value="{!Evaluation__c.Trach_Size__c}" id="trachSize" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.trachOtherSize}&quot;}"/>
                         
-                        <apex:pageblocksectionitem >
-                        <apex:outputLabel for="trachSize" style="color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.Trach_Size__c.label}</apex:outputLabel>
-                        <apex:outputPanel >
-                        <apex:inputField value="{!Evaluation__c.Trach_Size__c}" id="trachSize" style="margin-left:10px;" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.trachOtherSize}&quot;}"/>
-                        <apex:outputLabel for="trachOtherSize" style="margin-left:15px; color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.Trach_Size_Other__c.label}</apex:outputLabel>
-                        <apex:inputField value="{!Evaluation__c.Trach_Size_Other__c}" id="trachOtherSize" style="margin-left:10px;"/>
-                        </apex:outputPanel>
-                        </apex:pageblocksectionitem>
-                         <apex:inputField value="{!Evaluation__c.Cuffed__c}" id="cuffed" />
+                        <apex:inputField Value="{!Evaluation__c.Trach_Type_Other__c}" id="trackTypeOther" />
+                        <apex:inputField value="{!Evaluation__c.Trach_Size_Other__c}" id="trachOtherSize" />
+                        
+						 <apex:inputField value="{!Evaluation__c.Cuffed__c}" id="cuffed" />
 						 <apex:inputField value="{!Evaluation__c.PMV__c}" id="pmv" /> 
                          <apex:inputField value="{!Evaluation__c.Trach_Plugged__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.plugInitiated}&quot;, &quot;{!$Component.plugDuration}&quot;]}" id="trachPlugged"/>
                          <apex:outputText value="" />
@@ -724,15 +694,11 @@
                   </apex:pageBlockSection>
                 <apex:pageBlockSection columns="2" title="Ventilator">
                          <apex:inputField value="{!Evaluation__c.Ventilator__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.ventilatorMode}&quot;, &quot;{!$Component.ventilatorRate}&quot;, &quot;{!$Component.FIO2}&quot;, &quot;{!$Component.peep}&quot;, &quot;{!$Component.tv}&quot;, &quot;{!$Component.ps}&quot;, &quot;{!$Component.cpap}&quot;, &quot;{!$Component.bipap}&quot;, &quot;{!$Component.bipapRate}&quot;, &quot;{!$Component.patientToBringBiPAP}&quot;, &quot;{!$Component.weaningTrial}&quot;, &quot;{!$Component.ventilatorResults}&quot;, &quot;{!$Component.ventilatorType}&quot;, &quot;{!$Component.ventilatorType}&quot;, &quot;{!$Component.ventilatorOther}&quot;]}" />
-                         <apex:pageblocksectionitem >
-                            <apex:outputLabel for="ventilatorType" style="color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.Ventilator_Type__c.label}</apex:outputLabel>
-                         <apex:outputPanel >
-                            <apex:inputField value="{!Evaluation__c.Ventilator_Type__c}" id="ventilatorType" style="margin-left:10px;" html-data-rules="{&quot;Intermittent&quot;: &quot;{!$Component.interSchedule}&quot;}"/>
-                            <apex:outputLabel for="interSchedule" style="margin-left:15px; color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.If_Intermittent_Schedule__c.label}</apex:outputLabel>
-                            <apex:inputField value="{!Evaluation__c.If_Intermittent_Schedule__c}" id="interSchedule" style="margin-left:10px;"/>
-                        </apex:outputPanel> 
-						</apex:pageblocksectionitem>
+                         <apex:outputtext value="" />
+                         <apex:inputField value="{!Evaluation__c.Ventilator_Type__c}" id="ventilatorType" style="margin-left:10px;" html-data-rules="{&quot;Intermittent&quot;: &quot;{!$Component.interSchedule}&quot;}"/>
                          <apex:inputField value="{!Evaluation__c.Ventilator_Mode__c}" id="ventilatorMode" />
+                         <apex:inputField value="{!Evaluation__c.If_Intermittent_Schedule__c}" id="interSchedule" style="margin-left:10px;"/>
+                        
                          <apex:inputField value="{!Evaluation__c.Ventilator_Rate__c}" id="ventilatorRate" />
                          <apex:inputField value="{!Evaluation__c.FIO2__c}" id="FIO2" />
                          <apex:inputField value="{!Evaluation__c.PEEP__c}" id="peep" />
@@ -1059,18 +1025,18 @@
 
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" />
                     <apex:pageBlockSection title="Additional Wound Detail" columns="2">
-                    <apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
                     <apex:outputLabel value="Wound Vac" />
-                    <apex:outputPanel>
+                    <apex:outputPanel >
                     <apex:inputField value="{!Evaluation__c.Wound_Vac__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.woundVacFrequency}&quot;, &quot;{!$Component.woundVacDuration}&quot;]}" />
                     <apex:outputText value="Frequency" styleClass="labelCol" /><apex:inputField value="{!Evaluation__c.Wound_Vac_Frequency__c}" id="woundVacFrequency" />
                     <apex:outputText value="Duration" styleClass="labelCol" style="margin-left:20px;" /><apex:inputField value="{!Evaluation__c.Wound_Vac_Duration__c}" id="woundVacDuration" />
                     </apex:outputPanel>
                     </apex:pageBlockSectionItem>
                     
-                    <apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
                     <apex:outputLabel value="Specialty Bed" />
-                    <apex:outputPanel>
+                    <apex:outputPanel >
                     <apex:inputField value="{!Evaluation__c.Specialty_Bed__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.specialtyBedType}&quot;}" />
                     <apex:outputText value="Type" styleClass="labelCol" /><apex:inputField value="{!Evaluation__c.Specialty_Bed_Type__c}" id="specialtyBedType" />
                     </apex:outputPanel>
@@ -1110,17 +1076,17 @@
                         <apex:inputField value="{!Evaluation__c.Skin_Temperature__c}" label="Temperature" />
                         <apex:inputField value="{!Evaluation__c.Skin_Moisture__c}" label="Mositure" />
                         <apex:inputField value="{!Evaluation__c.Skin_Turgor__c}" label="Turgor" />
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Edema" />
-                        <apex:outputPanel>
+                        <apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Skin_Edema__c}" label="Edema" html-data-rules="{&quot;Yes&quot;: [&quot;{!$Component.edemaLocation}&quot;]}" />
                         <apex:outputText styleClass="labelCol" value="Location" /><apex:inputField value="{!Evaluation__c.Skin_Edema_Location__c}" label="Edema Location" id="edemaLocation" />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:inputField value="{!Evaluation__c.Skin_Behavior__c}" label="Behavior" />
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Peripheral Capillary Refill Location" />
-                        <apex:outputPanel>
+                        <apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Peripheral_Capillary_Refill_Location__c}" />
                         <apex:outputTExt value="# of Seconds" styleClass="labelCol" style="margin-left:20px" />
                         <apex:inputField Value="{!Evaluation__c.Peripheral_Capillary_Refill_of_Seconds__c}" />
