@@ -65,7 +65,7 @@ public with sharing class PersonalRecordController {
     public String primaryDiagnosis {    	
     	get {
             Diagnosis__c[] d = [select Primary_Diagnosis__c from Diagnosis__c where Service_Assignment__r.Admission__r.Person_Being_Served__c=:con.Id And Service_Assignment__r.Status__c = 'Active' order by Effective_Date__c desc limit 1];    		
-    		if (opGrp =='Redwood' || opGrp =='Cambridge') {
+    		if (opGrp =='Redwood' || opGrp =='Cambridge' || opGrp == 'Care Meridian') {
                 if (d.size() > 0) {
                     return d[0].primary_diagnosis__c;
                 } else
