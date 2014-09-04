@@ -1,0 +1,750 @@
+<apex:page standardController="Contact" extensions="PBSedit_controller,PBS_controller_helper" standardStylesheets="true" sidebar="false"  tabStyle="Persons_Being_Served_New__tab">
+  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+  
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+   <style type="text/css">
+    .nowrap {
+      white-space: nowrap;
+    }
+    .fixed-dialog{
+        position: fixed;
+        top:75px;
+        left:100px;
+        overflow-y:scroll;
+        max-height:400px;
+    }
+  </style>
+
+ 
+ 
+ <script language="javascript">
+    var inputsDisabled = []; // global variable to hold the list of inputs disabled unsing below script. These needs to be enabled before submit or else they dont get submitted.
+    jQuery(document).ready(function ($) {
+        String.prototype.endsWith = function (suffix) {
+                return this.indexOf(suffix, this.length - suffix.length) !== -1;
+            };
+          
+        $.fn.realVal = function() {
+                // This function is here to put all the value-getting functionalities
+                // in one place. This is because calling val() on a checkbox input
+                // will only return the default value.
+                var $obj = $(this);
+                var val = $obj.val();
+                var type = $obj.attr('type');
+                if (type && type==='checkbox') {
+                    return $obj.prop('checked') ? '1' : '0';
+                } else {
+                    return val;
+                }
+            };
+            
+        // Do the field disable/enable functionality here
+        // When values are in map -> will be enabled when key is changed
+        enableDisableField = function (element) {
+                var $element = $(element);
+                // For multi-picklist, apparently the data- passthrough also
+                // exist in the selected and unselected checkboxes, which confuse
+                // the script, so we check for their existence here.
+                if ($element.attr('multiple') == 'multiple' && ($element.attr('id').endsWith('_selected') || $element.attr('id').endsWith('_unselected'))) {
+                    return;
+                }
+                var rules = $element.data("rules");
+                rules && $.each(rules, function (key, value) {
+                    var $targets = [];
+                    if (value instanceof Array) {
+                        $.each(value, function (_, selector) {
+                            $targets.push($(document.getElementById(selector)));
+                        });
+                    } else {
+                        $targets.push($(document.getElementById(value)));
+                    }
+                    var val = $element.realVal();
+                    if (val == key || (val instanceof Array && $.inArray(key, val)!=-1)) {
+                        // Enable fields
+                        $.each($targets, function (_, $target) {
+                            if ($target.attr("multiple")) {
+                                $target.parent().find("select").prop("disabled", false);
+                            } else {
+                                $target.prop("disabled", false);
+                            }
+                        });
+                    } else {
+                        // Disable fields
+                        $.each($targets, function (_, $target) {
+                            // We also need to revert the field(s) to their original state
+                            if ($target.attr("multiple")) {
+                                // Simulate removing all the selected options
+                                $(document.getElementById($target.attr('id') + '_selected')).find('option').attr('selected', 'selected');
+                                // Fake clicking the Remove button here
+                                location.href = $target.parent().find("a[title=Remove]").attr("href");
+                                $target.parent().find("select").prop("disabled", true);
+                            } else {
+                                $target.prop("disabled", true);
+                                inputsDisabled.push($target);    // add to the list so at the time of form submit, disabled will be removed from these 
+                                var type = $target.attr('type');
+                                if (type && type==='checkbox') {
+                                    $target.prop('checked', false);                                    
+                                } else {
+                                    $target.val('');
+                                }
+                            }
+                            $target.trigger('change');
+                        });
+                    }
+                });
+        } 
+            
+        setUpFields = function () {
+                $('body input').on("change", function (event) {
+                    enableDisableField(event.target);
+                });
+                $('body select').on("change", function (event) {
+                    enableDisableField(event.target);
+                });
+                $('body input').each(function (_, target) {
+                    enableDisableField(target);
+                });
+                $('body select').each(function (_, target) {
+                    enableDisableField(target);
+                });
+        }
+        setUpFields();
+        
+        // this is to remove the disabled property from 
+	    $('form').bind('submit', function() {
+	        $.each(inputsDisabled, function(_,$inDis) {
+	            $inDis.prop("disabled", false);
+	        })
+	    });
+    
+    });   //end "ready" function
+
+   j$ = jQuery.noConflict();
+   
+    // a variable to hold the list of related Parties... need this so we can refresh it using ajax
+    var relPartyData = '{!relPartiesJSON}';  
+       
+     //disable enter key
+	function stopRKey(evt) {
+	   var evt = (evt) ? evt : ((event) ? event : null);
+	   var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+	   if ((evt.keyCode == 13) && (node.type=="text")) {return false;}
+	}
+
+  //opens the dialog
+  function openDialog(dialogId, tagType, titleString)
+  {
+   selector = tagType + '[id$=' + dialogId + ']';
+
+   j$(selector).dialog({dialogClass: 'fixed-dialog',title:titleString,modal:true, width:800, closeOnEscape:false}).parent().appendTo(j$('form[id$=referralForm]'));
+      j$(selector).parent().find('a.ui-dialog-titlebar-close').remove();
+  }
+  function closeDialog(dialogId, tagType)
+  {
+   selector = tagType + '[id$=' + dialogId + ']';
+
+   j$(selector).dialog('destroy');
+  }
+
+ function validateRelatedParty() {
+    var errors = '';
+    j$('#relatedPartyErrors').html(errors);
+    if (j$('input[id$=relatedPartyEntry_Name]').val() == '') {
+        errors += '<li>Party Name is a required field.</li>';
+    }
+    var partyType = j$('select[id$=relatedPartyEntry_Type]').val();    
+    if (partyType =='') {
+        errors += '<li>Type is a required field.</li>';
+    }
+    var x = j$('input[id$=relatedPartyEntry_Email]').val();
+    if (x.length > 0) {
+        var atpos=x.indexOf("@");
+        var dotpos=x.lastIndexOf(".");
+        if (atpos<1 || dotpos<atpos+2 || dotpos+2>=x.length) {
+            errors += '<li>Email is not a valid Email address</li>';
+        }
+    } 
+    var partyID = j$('input[id$=relatedPartyEntry_Id]').val();
+    str = "Physician - Primary";
+    var obj = JSON.parse(relPartyData);
+    
+    var isPrimaryPhysician = false;    
+    for (var i = 0; i < obj.length; i++) {
+        if ( obj[i].Type__c === str ) {
+            isPrimaryPhysician = true;
+            break;
+        }
+    }
+     
+    for (var i = 0; i < obj.length; i++) {
+        if ( (!partyID && isPrimaryPhysician && partyType === str) ||           // adding a new related party and one already exists thats primary physician .
+             (partyID === obj[i].Id && isPrimaryPhysician && obj[i].Type__c != str && partyType === str ) ) {       // editing existing one and changing its type to primary physician but one already present. 
+            errors += '<li>Only one "Physician - Primary" allowed. Please edit Type on this entry or change the Type assigned to existing Related Party.</li>';
+            break;
+        }
+    }
+    j$('#relatedPartyErrors').html(errors);
+    return (errors == '');
+  }
+
+ //copies relatedParty fields from dialog for postback
+  function relatedPartySave(isDialogClose) {
+      if (validateRelatedParty()) {
+          var partyID = j$('input[id$=relatedPartyEntry_Id]').val();
+          var partyName = j$('input[id$=relatedPartyEntry_Name]').val();
+          var partyType = j$('select[id$=relatedPartyEntry_Type]').val();
+          var partyEmail = j$('input[id$=relatedPartyEntry_Email]').val();
+          var partyPhone1 = j$('input[id$=relatedPartyEntry_Phone]').val();
+          var partyAddress = j$('textarea[id$=relatedPartyEntry_Address]').val();
+          var partyPhone2 = j$('input[id$=relatedPartyEntry_Phone_2]').val();
+          var partyPhone1Type = j$('select[id$=relatedPartyEntry_Phone_1_Type]').val();
+          var partyPhone2Type = j$('select[id$=relatedPartyEntry_Phone_2_Type]').val();
+          var partyComments = j$('textarea[id$=relatedPartyEntry_Comments]').val();
+          var pbsID = '{!Contact.Id}';
+          PBS_controller_helper.saveRelatedParty(partyID, partyName, partyType, partyPhone1, partyEmail,
+             partyAddress, partyPhone2, partyPhone1Type, partyPhone2Type, partyComments,pbsID,
+             function(result, event){
+                    saveRelParty();
+                    if (isDialogClose) {
+                        closeDialog('relatedPartyModal', 'span');
+                    }
+             },
+             {escape: true}
+           );
+      }
+      return false;
+  }
+
+    function loadRelatedParty(partyId) {
+        PBS_controller_helper.loadRelatedParty(partyId,
+          function(result, event){
+            if (event.status) {
+                j$('input[id$=relatedPartyEntry_Id]').val(result.Id);
+                j$('input[id$=relatedPartyEntry_Name]').val(result.Name);
+                j$('select[id$=relatedPartyEntry_Type]').val(result.Type__c);
+                j$('input[id$=relatedPartyEntry_Email]').val(result.Email__c);
+                j$('input[id$=relatedPartyEntry_Phone]').val(result.Phone__c);
+                j$('textarea[id$=relatedPartyEntry_Address]').val(result.Address__c);
+                j$('input[id$=relatedPartyEntry_Phone_2]').val(result.Phone_2__c);
+                j$('select[id$=relatedPartyEntry_Phone_1_Type]').val(result.Phone_1_Type__c);
+                j$('select[id$=relatedPartyEntry_Phone_2_Type]').val(result.Phone_2_Type__c);
+                j$('textarea[id$=relatedPartyEntry_Comments]').val(result.Comments__c);
+
+                openDialog('relatedPartyModal', 'span', 'Add Related Party');
+            }
+          },
+          {escape: true}
+        );
+      }
+</script>
+
+
+  <c:PersonalRecord pbsId="{!PBSId}" parentPage="PBS" />
+  <br />
+  <apex:form id="FormId" >
+      <apex:actionFunction name="saveRelParty" action="{!saveRelParty}" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs"/>
+    <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs"/>
+    <!-- START: CTEAE-39; siblings -->
+    <apex:actionFunction name="showAddSibling" action="{!showAddSibling}" rerender="siblings,msgs"/>    
+    <!-- END: CTEAE-39; siblings -->
+  <apex:pageMessages />         
+   
+ <!--Person Being Served Section-->
+ <apex:pageBlock id="PBSDetailID" title="Person Being Served">
+ <div class="pbHeaderButton">
+ <apex:commandButton value="Edit Person Being Served" action="{!showEditMode}" rendered="{! AND(NOT(pbsEditModeOn), isEditor)}"  />
+ <apex:commandButton value="Save" id="SavePBSId"  action="{!save}" rendered="{!AND(pbsEditModeOn, isEditor)}"/>
+ <apex:commandButton value="Cancel" id="CancelPBSId" action="{!cancelPBSController}" rendered="{!AND(pbsEditModeOn, isEditor)}"/>
+ </div>
+ 
+ <apex:pageBlockSection title="Person Being Served"
+                             showHeader="false"
+                             columns="2"
+                             collapsible="false"    
+                             id="pbsOutPutsectionId" >
+
+    <apex:repeat value="{!$ObjectType.Contact.FieldSets.PBS_Basic}" var="f">
+        
+            <apex:outputField value="{!Contact[f]}"  rendered="{! NOT(pbsEditModeOn) && (f != 'Primary_Language__c')}" />
+            <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn && (f != 'Primary_Language__c') }" required="{!OR(f.required, f.dbrequired)}"/>
+            
+            
+            <apex:pageBlockSectionItem rendered="{! f== 'Primary_Language__c'}" /><!--  blank space on left of primary language -->            
+            <apex:pageBlockSectionItem rendered="{!  NOT(pbsEditModeOn) && (f == 'Primary_Language__c')}">
+            
+            <apex:outputText value="Primary Language"/>
+            <apex:outputPanel styleClass="nowrap">
+            <apex:outputField value="{!Contact[f]}"  /> &nbsp;&nbsp;
+            <apex:outputLabel value="Non-Verbal" />&nbsp;
+            <apex:outputField value="{!Contact.Non_Verbal__c}"  rendered="{! NOT(pbsEditModeOn) && (f == 'Primary_Language__c')}" />&nbsp;
+            <apex:outputLabel value="Sign Language" />&nbsp;
+            <apex:outputField value="{!Contact.Sign_Language__c}"  rendered="{! NOT(pbsEditModeOn) && (f == 'Primary_Language__c')}" />
+            </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem rendered="{!  pbsEditModeOn && (f == 'Primary_Language__c')}">
+            <apex:outputText value="Primary Language"/>
+            <apex:outputPanel styleClass="nowrap">
+            <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn && (f == 'Primary_Language__c')}" required="{!OR(f.required, f.dbrequired)}"/> &nbsp;&nbsp;
+            <apex:outputLabel value="Non-Verbal" />&nbsp;
+            <apex:inputField value="{!Contact.Non_Verbal__c}"  rendered="{!pbsEditModeOn && (f == 'Primary_Language__c')}" />&nbsp;
+            <apex:outputLabel value="Sign Language" />&nbsp;
+            <apex:inputField value="{!Contact.Sign_Language__c}"  rendered="{!pbsEditModeOn && (f == 'Primary_Language__c')}" />
+            </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            
+        
+        
+        
+    </apex:repeat>
+    </apex:pageBlockSection>
+      
+ <apex:pageBlockSection title="Funding Information"
+                             showHeader="true"
+                             columns="2"
+                             collapsible="true"   
+                             id="pbsOutputFundingSection" >
+    
+    <apex:repeat value="{!$ObjectType.Contact.FieldSets.Funding_Information}" var="f">
+
+        <apex:outputField value="{!Contact[f]}"  rendered="{! NOT(pbsEditModeOn) && (f != 'UCI_ID__c')}" />
+        <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn && (f != 'UCI_ID__c')}" required="{!OR(f.required, f.dbrequired)}"/>
+
+        <apex:outputField value="{!Contact[f]}"  rendered="{! NOT(pbsEditModeOn) && (f == 'UCI_ID__c') && (Contact.MailingStateCode == 'CA')}" />
+        <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn && (f != 'UCI_ID__c') &&  (Contact.MailingStateCode == 'CA')}" required="{!OR(f.required, f.dbrequired)}"/>
+    
+    </apex:repeat>
+    </apex:pageBlockSection>      
+    
+    <!--Contact Information Section-->
+      
+      <apex:pageBlockSection title="Contact Information"
+                             showHeader="true"
+                             columns="2"
+                             collapsible="true"  
+                             id="pbsOutputContactInfo"
+                             >
+
+    <apex:repeat value="{!$ObjectType.Contact.FieldSets.PBS_Contactinfo}" var="f">
+        <apex:outputField value="{!Contact[f]}"  rendered="{!(!pbsEditModeOn) && (f != 'HomePhone')}" />
+        <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn && (f != 'HomePhone')}" required="{!OR(f.required, f.dbrequired)}" />
+        
+        <apex:outputField value="{!contact.phone}"  label="Home Phone"  rendered="{!(!pbsEditModeOn) && (f = 'HomePhone')}"/>
+        <apex:inputField value="{!contact.phone}"  label="Home Phone" rendered="{!pbsEditModeOn && (f = 'HomePhone')}" required="{!OR(f.required, f.dbrequired)}"/>
+    </apex:repeat>
+    </apex:pageBlockSection> 
+    
+<apex:pageBlockSection title="Financial Information"
+                             showHeader="true"
+                             columns="2"
+                             collapsible="true"  
+                             id="pbsOutputFinancialInfo"
+                             rendered="{! showDiagnosis && !isUserLevel1or2 && !canViewFamilyInfo}"
+                             >
+
+    <apex:repeat value="{!$ObjectType.Contact.FieldSets.PBS_Financial}" var="f">
+    
+        <apex:outputField value="{!Contact[f]}"  rendered="{! NOT(pbsEditModeOn)}" />
+        <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn}" required="{!OR(f.required, f.dbrequired)}"/>
+        
+        
+    </apex:repeat>
+</apex:pageBlockSection>   
+  
+
+<!--Additional Information Section-->
+
+<apex:pageBlockSection columns="2" 
+                             title="Additional Information" 
+                             showHeader="true" 
+                             collapsible="False"   
+                             id="pbsOutputAdditionalInfo"> 
+    <apex:repeat value="{!$ObjectType.Contact.FieldSets.Additional_Information}" var="f">
+        <apex:outputField value="{!Contact[f]}"  rendered="{!NOT(pbsEditModeOn) && !Contains(dontShowFields, f.FieldPath)}" />
+        <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn && !Contains(dontShowFields, f.FieldPath)}" required="{!OR(f.required, f.dbrequired)}"/>
+    </apex:repeat>
+    
+    <apex:outputField value="{!Contact.Code_Status__c}" rendered="{!NOT(pbsEditModeOn) && !Contains(dontShowFields, 'Code_Status__c')}"/>
+    <apex:inputField value="{!Contact.Code_Status__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.codeStatusOther}&quot;}" rendered="{!pbsEditModeOn && !Contains(dontShowFields, 'Code_Status__c')}"/>
+    <apex:outputField value="{!Contact.Code_Status_Other__c}" label="Specify Other" rendered="{!NOT(pbsEditModeOn) && !Contains(dontShowFields, 'Code_Status_Other__c')}"/>
+    <apex:inputField value="{!Contact.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" rendered="{!pbsEditModeOn && !Contains(dontShowFields, 'Code_Status_Other__c')}"/>
+    
+    <apex:pageBlockSectionItem >
+    <apex:outputLabel value="Created By" />
+    <apex:outputPanel layout="none">
+    <apex:outputField value="{!Contact.CreatedById}"  />,&nbsp;<apex:outputText value=" {!Contact.CreatedDate}" />
+    </apex:outputPanel>
+    </apex:pageBlockSectionItem>
+    
+     <apex:pageBlockSectionItem >
+    <apex:outputLabel value="Last Modified By" />
+    <apex:outputPanel layout="none">
+     <apex:outputField value="{!Contact.LastModifiedById}"  />,&nbsp;<apex:outputText value=" {!Contact.LastModifiedDate}" />
+    </apex:outputPanel>
+    </apex:pageBlockSectionItem>
+
+     <apex:pageBlockSectionItem >
+     <apex:outputLabel value="Owner" />
+    <apex:outputPanel layout="none">
+    <apex:outputField value="{!Contact.OwnerId}" rendered="{!NOT(pbsEditModeOn)}" />
+    <apex:inputField value="{!Contact.OwnerId}"  rendered="{!pbsEditModeOn}" /> 
+    <i>to change, click on Edit Person Being Served</i>
+    </apex:outputPanel>
+    </apex:pageBlockSectionItem>
+    
+  </apex:pageBlockSection> 
+    
+<!--Family Information Section-->
+
+        <apex:pageBlockSection columns="2" rendered="{!canViewFamilyInfo}"
+                                     title="Family Information" 
+                                     showHeader="true" 
+                                     collapsible="True"   
+                                     id="pbsOutputFamilyInfo">
+            <!-- hiding via CTEAE -114
+            <apex:inputfield value="{!Contact.Family_Annual_Income__c}" rendered="{!pbsEditModeOn}" />
+            <apex:outputfield value="{!Contact.Family_Annual_Income__c}" rendered="{!!pbsEditModeOn}" />
+            -->
+            <span/>
+            <apex:inputfield value="{!Contact.Family_Military_Involvement__c}" rendered="{!pbsEditModeOn}" />
+            <apex:outputfield value="{!Contact.Family_Military_Involvement__c}" rendered="{!!pbsEditModeOn}" />
+            <apex:inputfield value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!pbsEditModeOn}" />
+            <apex:outputfield value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!!pbsEditModeOn && Contact.Family_Military_Involvement__c = 'Prior'}" />
+            <apex:inputfield value="{!Contact.Family_Military_Involvement_Branch__c}" rendered="{!pbsEditModeOn}" />
+            <apex:outputfield value="{!Contact.Family_Military_Involvement_Branch__c}" rendered="{!!pbsEditModeOn && Contact.Family_Military_Involvement__c != 'None'}" />
+            
+            
+            <apex:PageBlockSectionitem >
+             <apex:outputLabel Value="Family Native American Tribe" for="nativetribe"/>
+            <apex:outputpanel id="familynativeamericantribe" >
+             <apex:inputfield value="{!Contact.Family_Native_American_Tribe__c}" rendered="{!pbsEditModeOn && NOT(Contact.Family_Native_American_Ancestry__c)}" html-disabled="true"/>
+             <apex:inputfield value="{!Contact.Family_Native_American_Tribe__c}" required="{!Contact.Family_Native_American_Ancestry__c}" rendered="{!pbsEditModeOn && Contact.Family_Native_American_Ancestry__c}"/>
+             
+             </apex:outputpanel>
+             </apex:PageBlockSectionitem>
+            
+            
+            <apex:outputfield value="{!Contact.Family_Native_American_Tribe__c}" rendered="{!!pbsEditModeOn && Contact.Family_Native_American_Ancestry__c}" />
+            
+            <apex:pageBlockSectionItem rendered="{!pbsEditModeOn}">
+                      <apex:outputLabel for="nativeancestry" value="Family Native American Ancestry"/>
+                      <apex:actionRegion >
+                    <apex:inputField id="nativeancestry" value="{!Contact.Family_Native_American_Ancestry__c}">
+                         <apex:actionStatus id="statusnativeancestry">
+                             <apex:facet name="start">
+                                 <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                                     <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                                 </div>
+                             </apex:facet>
+                             <apex:facet name="stop"></apex:facet>
+                         </apex:actionStatus>
+                        <apex:actionSupport event="onchange" rerender="familynativeamericantribe" status="statusnativeancestry" />
+                    </apex:inputField>
+                    </apex:actionRegion>
+                    </apex:pageBlockSectionItem>
+            <apex:outputfield value="{!Contact.Family_Native_American_Ancestry__c}" rendered="{!!pbsEditModeOn}" />
+            
+        </apex:pageBlockSection>
+    
+  </apex:pageBlock>
+    <!--Related Parties Section-->
+    <a name="RP" id="RP"></a>
+
+    <apex:pageBlock id="relatedPartiesListId">
+        <div class="pbSubHeadButton">
+                            <apex:commandButton onclick="window.open('/{!RelatedPartyReport}?pv0={!Contact.Name}', '_self'); return false;" value="Related Parties Report" />
+                            <apex:commandButton value="Add Related Party"
+                              onClick="showAddRelParty();openDialog('relatedPartyModal', 'span', 'Add Related Party'); return false;" rendered="{!AND(isEditor, canEdit)}"/>
+                              </div>
+      <apex:pageBlockSection columns="1"
+                             title="Related Parties" id="relatedParties" collapsible="false">
+        <apex:pageBlockSectionItem >
+          
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockTable value="{!relParties}" var="relParty">
+            <apex:column headerValue="Action"><apex:outputPanel rendered="{!$ObjectType.Related_Party__c.updateable}"> <a href="#" onclick="loadRelatedParty('{!relParty.Id}');return false; ">Edit</a></apex:outputPanel></apex:column>
+          <apex:column value="{!relParty.Type__c}"/>
+          <apex:column value="{!relParty.Name}"/>
+          <apex:column value="{!relParty.Address__c}"/>
+          <apex:column value="{!relParty.Email__c}"/>
+          <apex:column value="{!relParty.Phone__c}"/>
+          <apex:column value="{!relParty.Phone_1_Type__c}"/>
+          <apex:column value="{!relParty.Phone_2__c}"/>
+          <apex:column value="{!relParty.Phone_2_Type__c}"/>
+          <apex:column value="{!relParty.Comments__c}"/>
+        </apex:pageBlockTable>
+        <script type="text/javascript">
+            relPartyData = '{!relPartiesJSON}';
+        </script>
+      </apex:pageBlockSection>
+</apex:pageBlock>
+
+    <!-- Add Related Party modal. -->
+    <apex:outputPanel id="relatedPartyModal" style="display:none">
+
+      <apex:pageBlock title="Add Related Party">
+        <apex:pageblockButtons location="bottom">
+          <input type="button" value="Save" onClick="relatedPartySave(true); " class="btn" />
+          <input type="button" value="Save & New" onClick="relatedPartySave(false);"  class="btn"/ >
+          <input type="button" value="Cancel" onClick="closeDialog('relatedPartyModal', 'span'); j$('#relatedPartyErrors').html('');return false;"  class="btn"/>
+        </apex:pageblockButtons>
+
+        <apex:facet name="header">
+          <p><strong>Add a related party below:</strong></p>
+        </apex:facet>
+
+        <div id="relatedPartyErrors" style="color:red" />
+
+        <apex:pageBlockSection columns="2" id="relatedPartyEntry">
+
+          <apex:inputField value="{!relParty.Name}" id="relatedPartyEntry_Name"/>
+          <apex:inputField value="{!relParty.Type__c}" id="relatedPartyEntry_Type"/>
+
+          <apex:inputField value="{!relParty.Address__c}" id="relatedPartyEntry_Address"/>
+          <apex:inputField value="{!relParty.Email__c}" id="relatedPartyEntry_Email"/>
+
+          <apex:inputField value="{!relParty.Phone__c}" id="relatedPartyEntry_Phone"/>
+          <apex:inputField value="{!relParty.Phone_1_Type__c}" id="relatedPartyEntry_Phone_1_Type"/>
+
+          <apex:inputField value="{!relParty.Phone_2__c}" id="relatedPartyEntry_Phone_2"/>
+          <apex:inputField value="{!relParty.Phone_2_Type__c}" id="relatedPartyEntry_Phone_2_Type"/>
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="1" id="relatedPartyEntry2">
+          <apex:inputField value="{!relParty.Comments__c}" style="width: 90%;" id="relatedPartyEntry_Comments"/>
+            <apex:outputPanel style="display:none" >
+              <apex:inputHidden value="{!relParty.Id}" id="relatedPartyEntry_Id"/>
+            </apex:outputPanel>
+        </apex:pageBlockSection>
+      </apex:pageBlock>
+    </apex:outputPanel>
+
+<!-- START: CTEAE-39; Siblings Section
+
+    <a name="SIB" id="SIB"></a>
+     
+    <apex:pageBlock id="siblingsListId">
+            <div class="pbSubHeadButton">
+                                <apex:commandButton onclick="window.open('/{!RelatedPartyReport}?pv0={!Contact.Name}', '_self'); return false;" value="Siblings Report" />
+                                <apex:commandButton value="Add Sibling"
+                                  onClick="showAddSibling();openDialog('siblingModal', 'span', 'Add Sibling'); return false;" rendered="{!AND(isEditor, canEdit)}"/>
+                                  </div>
+          <apex:pageBlockSection columns="1"
+                                 title="Siblings" id="siblings" collapsible="false">
+            TEST
+            <apex:pageBlockSectionItem >
+            
+            </apex:pageBlockSectionItem>
+    
+          </apex:pageBlockSection>
+    </apex:pageBlock>
+    
+    <apex:outputPanel id="siblingModal" style="display:none">
+
+      <apex:pageBlock title="Add Sibling">
+        <apex:pageblockButtons location="bottom">
+          <input type="button" value="Save" onClick="siblingSave(true); " class="btn" />
+          <input type="button" value="Save & New" onClick="siblingSave(false);"  class="btn"/ >
+          <input type="button" value="Cancel" onClick="closeDialog('siblingModal', 'span'); j$('#siblingErrors').html('');return false;"  class="btn"/>
+        </apex:pageblockButtons>
+
+        <apex:facet name="header">
+          <p><strong>Add a sibling below:</strong></p>
+        </apex:facet>
+
+        <div id="relatedPartyErrors" style="color:red" />
+
+        <apex:pageBlockSection columns="2" id="siblingEntry">
+            TEST
+        </apex:pageBlockSection>
+      </apex:pageBlock>
+    </apex:outputPanel>
+
+<!-- END: CTEAE-39; Siblings Section --> 
+    
+     <!--Agencies Related to Person Section-->
+    <a name="Agency" id="Agency"></a>
+
+    <apex:pageBlock id="relatedAgenciesId" rendered="{!showDiagnosis}">
+    <!--     <div class="pbSubHeadButton">
+                            <apex:commandButton value="Add Related Party"
+                              onClick="showAddRelParty();openDialog('relatedPartyModal', 'span', 'Add Related Party'); return false;" rendered="{!AND(isEditor, canEdit)}"/>
+                              </div> -->
+      <apex:pageBlockSection columns="1"
+                             title="Agencies Related to Individual" id="relatedAgencies" collapsible="false">
+        <apex:pageBlockSectionItem >
+          
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockTable value="{!relAgencies}" var="relAgency">
+            <apex:column headerValue="Action"><a href="#" onclick="loadAgency('{!relParty.Id}');return false; ">Edit</a></apex:column>
+          <apex:column value="{!relAgency.Name}"/>
+          <apex:column value="{!relAgency.Address__c}"/>
+          <apex:column value="{!relAgency.Phone__c}"/>
+          <apex:column value="{!relAgency.Reason_for_Involvement__c}"/>
+        </apex:pageBlockTable>
+
+      </apex:pageBlockSection>
+</apex:pageBlock>
+    
+    
+        
+    <!--Diagnosis Section -->
+    <a name="Diag" id="Diag" />
+    <apex:pageBlock id="Diagnosis" rendered="{!showDiagnosis && contact.MailingState != 'Arizona'}">
+  
+    <apex:pageBlockSection title="Diagnosis"
+                             showHeader="true"
+                             columns="1"
+                             collapsible="false">
+                             
+     <apex:pageblockTable value="{!diagnosis}" var="diag" rendered="{!(diagnosis.size>0)}" >
+   
+     <apex:column headerValue="Effective Date" value="{!diag.Effective_Date__c}"/>
+     <apex:column headerValue="Service Assignment"><a href="/{!diag.Service_Assignment__c}">{!diag.Service_Assignment__r.Name}</a></apex:column>
+     <apex:column value="{!diag.Primary_Diagnosis__c}"  headerValue="Primary" />
+     <apex:column value="{!diag.Secondary_Diagnosis__c}"  headerValue="Secondary" />
+     <apex:column value="{!diag.Axis_I__c}"  headerValue="Axis I" />
+     <apex:column value="{!diag.Axis_II__c}" headerValue="Axis II" />
+     <apex:column value="{!diag.Axis_III__c}" headerValue="Axis III" />
+     <apex:column value="{!diag.Axis_IV__c}" headerValue="Axis IV" />
+     <apex:column value="{!diag.Axis_V__c}" headerValue="Axis V" />
+     <apex:column value="{!diag.Comments__c}" headerValue="Comments" />
+     
+     
+     </apex:pageblockTable>
+     <apex:outputText value="No diagnoses to display" rendered="{!(diagnosis.size=0)}" />
+     
+    </apex:pageBlockSection> 
+    </apex:pageBlock>
+   
+    <!--Admissions Section-->
+    <a name="Adm" id="Adm"></a>
+    <apex:pageBlock id="AdmissionListId" >
+    <div class="pbSubHeadButton"><apex:commandButton Value="Add New Admission" onclick="window.open('/apex/AdmissionEdit?pbsId={!Contact.Id}&retURL={!URLENCODE(currentUrl)}', '_self'); return false;" rendered="{!AND(canCreateAdm, isEditor)}" /></div>
+    <apex:pageBlockSection title="Admissions"
+                           showHeader="true"
+                           columns="1"
+                           collapsible="false">
+   
+  <apex:pageblockTable value="{!admissions}" var="admsns" id="adminsId" rendered="{!(admissions.size>0)}" >
+    <apex:column headerValue="Action" >
+    <a href="/apex/AdmissionEdit?id={!admsns.ID}">Edit</a>
+     
+    </apex:column>
+    <apex:column headerValue="Admission Name"><a href="/apex/AdmissionView?id={!admsns.ID}">{!admsns.Name}</a></apex:column>
+    <apex:column value="{!admsns.Effective_Date__c}" headerValue="Effective Date"/>
+    <apex:column value="{!admsns.Discharged_Date__c}" headerValue="Discharge Date"/>
+    <apex:column value="{!admsns.Status__c}" headerValue="Status"/>
+    </apex:pageblockTable>
+     <apex:outputText value="No admissions to display" rendered="{!(admissions.size=0)}" />
+   
+ 
+</apex:pageBlockSection>
+</apex:pageBlock>
+
+<apex:pageBlock >
+<!--Activity History Section-->
+      <!--Open Activities Section--->
+      <apex:pageBlockSection title="Open Activities"
+                             showHeader="true"
+                             columns="1"
+                             collapsible="true">
+                             
+     <apex:pageBlockTable value="{!taskOnCurrentPBSAccount}" var="OpenActivity" rendered="{!(taskOnCurrentPBSAccount.size>0)}">
+     
+     
+     
+     <apex:column >
+               <apex:outputlink value="/{!OpenActivity.Id}">{!OpenActivity.Subject}</apex:outputLink>
+               <apex:facet name="header"> Subject </apex:facet>
+             </apex:column>
+              <apex:column >
+               <apex:outputLink value="/{!OpenActivity.WhoId}">{!OpenActivity.Who.Name}</apex:outputLink>
+               <apex:facet name="header"> Name</apex:facet>  
+             </apex:column>   
+              <apex:column >
+               <apex:outputLink value="/{!OpenActivity.OwnerId}">{!OpenActivity.Owner.Name}</apex:outputLink>
+               <apex:facet name="header"> Assigned To </apex:facet>  
+             </apex:column>
+             <apex:column value="{!OpenActivity.LastModifiedDate}"/>
+             
+             <apex:column value="{!OpenActivity.Status}"/>  
+      
+     
+      </apex:pageBlockTable>
+       <apex:outputText value="No Tasks to display" rendered="{!(taskOnCurrentPBSAccount.size=0)}" /> 
+       <apex:outputPanel rendered="{!taskOnCurrentPBSAccount.size!=0}">Showing the 10 most recent tasks click&nbsp;<apex:outputLink value="/00T?id={!currentContact.AccountID}&rlid=RelatedActivityList" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel> 
+       </apex:pageBlockSection>                                       
+
+<apex:pageBlockSection title="Activity History"
+                             showHeader="true"
+                             columns="1"
+                             collapsible="true">
+                             
+     <apex:pageBlockTable value="{!eventOnCurrentPBSAccount}" var="ActiveHis" rendered="{!(eventOnCurrentPBSAccount.size>0)}">
+     
+     <apex:column >
+               <apex:outputlink value="/{!ActiveHis.Id}">{!ActiveHis.Subject}</apex:outputLink>
+               <apex:facet name="header"> Subject </apex:facet>
+             </apex:column>
+             <apex:column >
+               <apex:outputLink value="/{!ActiveHis.ID}">
+                 <apex:outputText value="{0}">
+                   <apex:param value="{!ActiveHis.ActivityDate}" />
+                 </apex:outputText>
+               </apex:outputLink>
+               <apex:facet name="header"> Due Date</apex:facet>  
+             </apex:column>
+              <apex:column >
+               <apex:outputLink value="/{!ActiveHis.WhoId}">{!ActiveHis.Who.Name}</apex:outputLink>
+               <apex:facet name="header"> Name</apex:facet>  
+             </apex:column>   
+              <apex:column >
+               <apex:outputLink value="/{!ActiveHis.OwnerId}">{!ActiveHis.Owner.Name}</apex:outputLink>
+               <apex:facet name="header"> Assigned To </apex:facet>  
+             </apex:column>
+             <apex:column value="{!ActiveHis.LastModifiedDate}"/>
+             
+      </apex:pageBlockTable>
+        <apex:outputText value="No Activities to display" rendered="{!(eventOnCurrentPBSAccount.size=0)}" />
+        <apex:outputPanel rendered="{!eventOnCurrentPBSAccount.size!=0}">Showing the 10 most recent events click&nbsp;<apex:outputLink value="/00T?id={!currentContact.AccountID}&rlid=RelatedActivityList" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel> 
+
+      </apex:pageBlockSection>
+       </apex:pageBlock>
+       <apex:pageBlock >  
+    <!--Notes & Attachments-->
+   <apex:pageBlockSection columns="1" title="Attachments" showHeader="true" collapsible="true">
+            <apex:pageBlockSectionItem >
+                <a href="/apex/uploader?parentid={!Contact.id}">Add/Remove</a>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockTable value="{!attachments}" var="a" rendered="{!(attachments.size>0)}">
+                <apex:column headerValue="Attachment Name"><a href="/{!a.Id}">{!a.Name}</a></apex:column>
+            </apex:pageBlockTable>
+             <apex:outputText value="No Attachments to display" rendered="{!(attachments.size=0)}" /> 
+        </apex:pageBlockSection> 
+   </apex:pageBlock>
+   <apex:pageBlock >
+     <!--PersonBeing Served History Section-->
+        <apex:pageBlockSection title="Person Being Served History"
+                             showHeader="true"
+                             columns="1"
+                             collapsible="false">
+                           <apex:outputText />
+         <apex:pageBlockTable value="{!personHistory}" var="PBSHistory" rendered="{!(personHistory.size>0)}" >
+            <apex:column headerValue="Date" value=" {!PBSHistory.createddate}"/>
+            <apex:column headerValue="User" value="{!PBSHistory.CreatedBy.Name}"/>
+            <apex:column headerValue="Action">
+                <apex:outputText rendered="{!(PBSHistory.field!='created')}">Changed <b>{!fieldMap[Lower(PBSHistory.field)]}</b> from <b>{!PBSHistory.oldvalue}</b> to <b>{!PBSHistory.newvalue}</b></apex:outputText>
+                <apex:outputText rendered="{!(PBSHistory.field='created')}">Created.</apex:outputText>
+            </apex:column>
+        </apex:pageBlockTable>
+        <apex:outputText value="No Recent History to display" rendered="{!(personHistory.size=0)}" /> 
+                
+</apex:pageBlockSection>            
+    </apex:pageBlock>
+  </apex:form>
+</apex:page>
