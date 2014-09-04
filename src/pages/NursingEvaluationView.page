@@ -275,10 +275,8 @@
          	<apex:tab label="Cardiopulmonary" name="cardioTab" styleClass="{!IF(Evaluation__c.Cardio_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
          		<apex:pageBlock >
   			    <apex:pageBlockSection columns="2" title="Cardio">
-					<apex:pageBlockSectionItem >
-					         <apex:outputLabel for="pulseox" value="Pulse Ox" />
-	                		 <apex:outputField id="pulseox" value="{!Evaluation__c.Pulse_Ox__c}" />
-	                </apex:pageBlockSectionItem>
+					<apex:outputField id="pulseox" value="{!Evaluation__c.Pulse_Ox__c}" />
+	                <apex:outputText value="" />
 	                <apex:pageBlockSectionItem >
 	                		 <apex:outputLabel for="podetails" value="Pulse Ox Details" />
 					         <apex:outputText id="podetails" value="{! Evaluation__c.Pulse_Ox_Details__c & ' ' & if (Evaluation__c.Pulse_Ox_Details__c == 'Intermittent', ' - schedule: ' & Evaluation__c.Pulse_Ox_Schedule__c, '' ) }" />
@@ -287,19 +285,24 @@
 							 <apex:outputLabel for="smokinghist" value="Smoking History" />
 							 <apex:outputText id="smokinghist" value="{!Evaluation__c.Smoking_History__c & if( Evaluation__c.Smoking_History__c == 'Yes', '- #Packs/Day, Years: ' & Evaluation__c.Packs_Day_Years__c, '')}" />
 	                </apex:pageBlockSectionItem>
-	                <apex:outputField value="{!Evaluation__c.Pacemaker__c}" />         
 					<apex:pageBlockSectionItem >
 							 <apex:outputLabel for="heartsounds" value="Heart Sounds" />
 							 <apex:outputText id="heartsounds" value="{!Evaluation__c.Heart_Sounds__c & if( Evaluation__c.Heart_Sounds__c == 'Irregular', '- ' & Evaluation__c.Heart_Sound_Describe__c, '')}" />
 	                </apex:pageBlockSectionItem>
-	                <apex:outputField value="{!Evaluation__c.Endovascular_Filter__c}" />         
 					<apex:pageBlockSectionItem >	                         
 							 <apex:outputLabel for="periph" value="Peripheral Pulses" />
 							 <apex:outputText id="periph" value="{! Evaluation__c.Peripheral_Pulses_Present__c & if(Evaluation__c.Peripheral_Pulses_Present__c == 'No', ' - ' & Evaluation__c.Peripheral_Pulses_Describe__c, '')}" />
 					</apex:pageBlockSectionItem>
-	                <apex:outputField value="{!Evaluation__c.Autonomic_Dysreflexia__c}" />
-	                <apex:outputText value="" />         
-                    <apex:outputField value="{!Evaluation__c.Educated_Regarding_AD__c}" label="Has resident been educated regarding AD symptoms" rendered="{!Evaluation__c.Autonomic_Dysreflexia__c == 'Yes'}"  />
+	                <apex:outputField value="{!Evaluation__c.Pacemaker__c}" />         
+	                <apex:outputField value="{!Evaluation__c.Endovascular_Filter__c}" />
+                         <apex:pageBlockSectionItem >
+                         <apex:outputLabel for="autodys" value="Autonomic Dysreflexia<br /><br />Resident Educated Regarding AD Symptoms" escape="False" />
+                         <apex:outputPanel >
+                         <apex:outputField id="autodys" value="{!Evaluation__c.Autonomic_Dysreflexia__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.educatedAD}&quot;}"/>
+                         <br />
+                         <apex:outputField value="{!Evaluation__c.Educated_Regarding_AD__c}" label="Has resident been educated regarding AD symptoms" id="educatedAD"/>
+                         </apex:outputPanel>
+                         </apex:pageBlockSectionItem>
          		</apex:pageBlockSection>
                
 	            <apex:pageBlockSection columns="2" title="Sputum">
@@ -665,18 +668,18 @@
 					<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" />
 					
 					<apex:pageBlockSection title="Additional Wound Detail" columns="2">
-                    <apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
                     <apex:outputLabel value="Wound Vac" />
-                    <apex:outputPanel>
+                    <apex:outputPanel >
                     <apex:outputField value="{!Evaluation__c.Wound_Vac__c}" />
                     <apex:outputText value="Frequency" styleClass="labelCol" rendered="{!Evaluation__c.Wound_Vac__c == true}" /><apex:outputField value="{!Evaluation__c.Wound_Vac_Frequency__c}" id="woundVacFrequency" rendered="{!Evaluation__c.Wound_Vac__c == true}" />
                     <apex:outputText value="Duration" styleClass="labelCol" style="margin-left:20px;"  rendered="{!Evaluation__c.Wound_Vac__c == true}" /><apex:outputField value="{!Evaluation__c.Wound_Vac_Duration__c}" id="woundVacDuration" rendered="{!Evaluation__c.Wound_Vac__c == true}" />
                     </apex:outputPanel>
                     </apex:pageBlockSectionItem>
-                    <apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
                     <apex:outputLabel value="Specialty Bed" />
-                    <apex:outputPanel>
-                    <apex:inputField value="{!Evaluation__c.Specialty_Bed__c}" />
+                    <apex:outputPanel >
+                    <apex:outputField value="{!Evaluation__c.Specialty_Bed__c}" />
                     <apex:outputText value="Type" styleClass="labelCol" rendered="{!Evaluation__c.Specialty_Bed__c == true}"/><apex:outputField value="{!Evaluation__c.Specialty_Bed_Type__c}" id="specialtyBedType" rendered="{!Evaluation__c.Specialty_Bed__c == true}" />
                     </apex:outputPanel>
                     </apex:pageBlockSectionItem>
@@ -691,7 +694,7 @@
                     </apex:outputPanel>
                     </apex:pageBlockSectionItem>
                     
-                    <apex:inputField value="{!Evaluation__c.Intact__c}" html-data-rules="{&quot;0&quot; : [&quot;#divBodyMap&quot;]}"/>
+                    <apex:outputField value="{!Evaluation__c.Intact__c}" html-data-rules="{&quot;0&quot; : [&quot;#divBodyMap&quot;]}"/>
                      
                     <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
                         <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!baseUrl + URLFOR($Resource.WholeBodyNoGrid)}" id="bodyMap" />
@@ -713,17 +716,17 @@
                         <apex:outputField value="{!Evaluation__c.Skin_Temperature__c}" label="Temperature" />
                         <apex:outputField value="{!Evaluation__c.Skin_Moisture__c}" label="Mositure" />
                         <apex:outputField value="{!Evaluation__c.Skin_Turgor__c}" label="Turgor" />
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Edema" />
-                        <apex:outputPanel>
+                        <apex:outputPanel >
                         <apex:outputField value="{!Evaluation__c.Skin_Edema__c}" label="Edema" html-data-rules="{&quot;Yes&quot;: [&quot;{!$Component.edemaLocation}&quot;]}" />
                         <apex:outputText styleClass="labelCol" value="Location" rendered="{!Evaluation__c.Skin_Edema__c == 'Yes'}" /><apex:outputField value="{!Evaluation__c.Skin_Edema_Location__c}" label="Edema Location" id="edemaLocation" rendered="{!Evaluation__c.Skin_Edema__c == 'Yes'}"  />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:outputField value="{!Evaluation__c.Skin_Behavior__c}" label="Behavior" />
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Peripheral Capillary Refill Location" />
-                        <apex:outputPanel>
+                        <apex:outputPanel >
                         <apex:outputField value="{!Evaluation__c.Peripheral_Capillary_Refill_Location__c}" />
                         <apex:outputText value="# of Seconds" styleClass="labelCol" style="margin-left:20px" />
                         <apex:outputField Value="{!Evaluation__c.Peripheral_Capillary_Refill_of_Seconds__c}" />
