@@ -2348,7 +2348,6 @@
     </fields>
     <fields>
         <fullName>Hold_Date__c</fullName>
-        <defaultValue>TODAY()</defaultValue>
         <externalId>false</externalId>
         <label>Hold Date</label>
         <required>false</required>
@@ -80927,6 +80926,20 @@
         <errorMessage>Family Involvement Level is required when Family Involvement Restrictions option is checked.</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>HoldDate_Required_when_status_is_OnHold</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;On Hold&apos;)  &amp;&amp;  ISNULL(Hold_Date__c)</errorConditionFormula>
+        <errorDisplayField>Hold_Date__c</errorDisplayField>
+        <errorMessage>Hold Date is required when the status equals On Hold.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>HoldReasn_Required_when_status_is_OnHold</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;On Hold&apos;)  &amp;&amp;  ISBLANK(TEXT  (Hold_Reason__c ))</errorConditionFormula>
+        <errorDisplayField>Hold_Reason__c</errorDisplayField>
+        <errorMessage>A Hold Reason is required when the status equals On Hold.</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>Kind_of_Pet_Validation</fullName>
         <active>true</active>
         <description>Kind of Pet is required when Has Pets option is checked.</description>
@@ -81006,5 +81019,12 @@ INCLUDES(Services_Requested__c, &apos;FCT - Family Centered Treatment&apos;) &am
         <errorConditionFormula>AND( ISPICKVAL( Residential_Support_Rate_Established__c ,&apos;Yes&apos;) , Residential_Support_Rate__c ==&apos;&apos;)</errorConditionFormula>
         <errorDisplayField>Residential_Support_Rate__c</errorDisplayField>
         <errorMessage>Residential support rate field is required if Residential support rate established field is set to Yes</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>ReviewOnD_Required_when_status_is_OnHold</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;On Hold&apos;)  &amp;&amp;  ISNULL( Review_On__c )</errorConditionFormula>
+        <errorDisplayField>Review_On__c</errorDisplayField>
+        <errorMessage>Review Date is required when the status equals On Hold.</errorMessage>
     </validationRules>
 </CustomObject>

@@ -190,7 +190,7 @@ public class ServiceAssignmentExt {
                 pshowNurseAssessment = false;
             } else {
                 pOpGroup = tmnUsers[0].Operating_Group__c;
-                pshowDiag = pOpGroup =='Redwood' || pOpGroup =='Cambridge';
+                pshowDiag = pOpGroup =='Redwood' || pOpGroup =='Cambridge' || pOpGroup == 'Care Meridian';
                 pshowLocation =  ( pOpGroup =='Redwood' ); // CTEAE-86 && admission.State__c != 'AZ');
                 pshowCodes = ( pOpGroup != 'Redwood' || (admission.State__c == 'AZ' && theservassign.service_location__r.programid__c != '114165002'));
                 pshowNurseAssessment = (pOpGroup == 'Care Meridian');
