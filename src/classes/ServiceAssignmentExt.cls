@@ -323,6 +323,11 @@ public class ServiceAssignmentExt {
                 
         }
         else {
+        		
+                if( ApexPages.currentPage() != null && ApexPages.currentPage().getParameters().get('edit_link')=='1'){
+                	//editSA = true;
+                	EditServAssign(); //Added by Sravan for EC-29 09/05/2014 12:05 PM.
+                }
                 pageHeader = 'Service Assignment Detail';
                 newSA = false;
                 theServAssign = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
