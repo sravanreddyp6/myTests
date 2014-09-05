@@ -125,7 +125,7 @@
         </div>
         
         <apex:pageBlockTable styleclass="pbBody-list" value="{!admission.Service_Agreements__r}" var="item" rendered="{!(admission.Service_Agreements__r!= null && admission.Service_Agreements__r.size>0)}">
-            <apex:column headerValue="Action"><apex:outputLink value="/{!item.ID}/e?retURL={!$CurrentPage.Url}">Edit</apex:outputLink></apex:column>
+            <apex:column headerValue="Action"><apex:outputLink value="/apex/ServiceAssignmentEditNew?id={!item.ID}&edit_link=1">Edit</apex:outputLink></apex:column>
             <apex:column headervalue="Name"><apex:outputLink value="/{!item.ID}">{!item.name}</apex:outputLink></apex:column>
             <apex:column value="{!item.Status__c}"/>
             <apex:column headerValue="Start Date">
