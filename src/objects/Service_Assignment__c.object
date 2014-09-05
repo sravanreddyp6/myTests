@@ -1659,6 +1659,12 @@
         <errorMessage>A Service Assignment with status Active cannot be saved with an End Date.  Please review the data and adjust accordingly.</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>Prevent_Inactive_without_End_Date</fullName>
+        <active>true</active>
+        <errorConditionFormula>TEXT(Status__c) = &apos;Inactive&apos; &amp;&amp; ISBLANK(End_Date__c)</errorConditionFormula>
+        <errorMessage>Service Assignment Cannot be Inactivated without End Date.</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>SA_Dates_Within_ADM_Range</fullName>
         <active>true</active>
         <description>A validation rule to ensure that the service assignment start and end dates are within the admission&apos;s date range (account for NULL Admission End Date, etc.).</description>
