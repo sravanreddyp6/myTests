@@ -1104,22 +1104,21 @@
          		</apex:tab>
          		<apex:tab label="Ortho" name="orthoTab" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
          			<apex:pageBlock >
-         				<apex:pageBlockSection columns="2">
+         				<apex:pageBlockSection columns="2" title="Orthopedics">
 							<apex:pageBlockSectionItem >
-								<apex:outputText value="Does patient have a diagnosis of any of the following" styleClass="labelCol" />
-								<apex:selectCheckboxes value="{!selectedDiagnosis}" layout="pageDirection" disabled="True">
-									<apex:selectOptions value="{!diagnosisValues}" />
-								</apex:selectCheckboxes>
+								<apex:outputLabel value="Patient Has a Diagnosis of" />
+								<apex:outputText value="{!Evaluation__c.Orthopedic_diagnostic_types__c}" />
 							</apex:pageBlockSectionItem>
 							<apex:pageBlockSectionItem >
-								<apex:outputText value="Is the Individual taking any of the following medications?" styleClass="labelCol" />
-								<apex:selectCheckboxes value="{!selectedMedications}" layout="pageDirection" disabled="True">
-									<apex:selectOptions value="{!medicationValues}" />
-								</apex:selectCheckboxes>
+								<apex:outputLabel value="Individual is Taking" />
+								<apex:outputText value="{!Evaluation__c.Orthopedic_medications__c}" />
 							</apex:pageBlockSectionItem>
 							<apex:outputField value="{!Evaluation__c.Weight_Bearing_Precautions__c}" label="Weight Bearing" />
 							<apex:pageBlockSectionItem />
+							
+							
 							<apex:outputField value="{!Evaluation__c.Prosthetics__c}" />
+							
 							<apex:outputField value="{!Evaluation__c.Orthodics__c}" />
 							<apex:pageBlockSectionItem >
 								<apex:selectCheckboxes value="{!selectedProsthetics}" layout="pageDirection" style="margin-left: 5cm;" disabled="True" >

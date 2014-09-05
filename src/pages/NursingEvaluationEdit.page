@@ -1,4 +1,4 @@
-<apex:page standardController="Evaluation__c" extensions="NursingEvaluationEditController">
+<apex:page standardController="Evaluation__c" extensions="NursingEvaluationEditController" >
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/> 
@@ -1521,23 +1521,29 @@
              </apex:tab>
              <apex:tab label="Ortho" name="orthoTab" ontabenter="changeTab('orthoTab'); return false;" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
-                    <apex:pageBlockSection columns="2">
+                    <apex:pageBlockSection columns="2" title="Orthopedics" >
                         <apex:pageBlockSectionItem >
-                            <apex:outputText value="Does patient have a diagnosis of any of the following" styleClass="labelCol" />
+                            <apex:outputLabel value="Does Patient Have a Diagnosis of Any of the Following" />
                             <apex:selectCheckboxes value="{!selectedDiagnosis}" layout="pageDirection" >
                                 <apex:selectOptions value="{!diagnosisValues}" />
                             </apex:selectCheckboxes>
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem >
-                            <apex:outputText value="Is the Individual taking any of the following medications?" styleClass="labelCol" />
+                            <apex:outputLabel value="Is the Individual Taking Any of the Following Medications" />
                             <apex:selectCheckboxes value="{!selectedMedications}" layout="pageDirection" >
                                 <apex:selectOptions value="{!medicationValues}" />
                             </apex:selectCheckboxes>
                         </apex:pageBlockSectionItem>
-                        <apex:inputField value="{!Evaluation__c.Weight_Bearing_Precautions__c}" label="Weight Bearing" />
-                        <apex:pageBlockSectionItem />
+                        
+                        <apex:pageBLockSEctionItem helpText="{!$ObjectType.Evaluation__c.Fields.Weight_Bearing_Precautions__c.inlineHelpText}" >
+                        <apex:outputLabel value="Weight Bearing" for="weightbearing" />
+                        <apex:inputField id="weightbearing" value="{!Evaluation__c.Weight_Bearing_Precautions__c}" />
+                        </apex:pageBLockSEctionItem>
+                        
+                        <apex:outputText value = "" />
+                        
                          <apex:pageBlockSectionItem >
-                        	<apex:outputlabel value="Prosthetics" styleClass="labelCol" />
+                        	<apex:outputlabel value="Prosthetics" />
                         	<apex:actionRegion >
                         	<apex:inputField value="{!Evaluation__c.Prosthetics__c}" >
                         		<apex:actionStatus id="prostheticStatus" >
@@ -1553,7 +1559,7 @@
                         	</apex:actionRegion>
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem >
-                        	<apex:outputlabel value="Orthodics" styleClass="labelCol" />
+                        	<apex:outputlabel value="Orthotics" />
                         	<apex:actionRegion >
                         	<apex:inputField value="{!Evaluation__c.Orthodics__c}" >
                         		<apex:actionStatus id="orthodicStatus" >
@@ -1568,48 +1574,89 @@
                         	</apex:inputField>
                         	</apex:actionRegion>
                         </apex:pageBlockSectionItem>
-                        <apex:outputPanel layout="block" id="prostheticsPanel" >
-                            <apex:selectCheckboxes value="{!dummyString}" layout="pageDirection" style="margin-left: 5cm;" disabled="True" rendered="{!Evaluation__c.Prosthetics__c != 'Yes'}" >
+                        <apex:pageBlockSectionItem>
+                        <apex:outputLabel value="" />
+                        <apex:outputPanel id="prostheticsPanel" >
+                            <apex:selectCheckboxes value="{!dummyString}" layout="pageDirection" disabled="True" rendered="{!Evaluation__c.Prosthetics__c != 'Yes'}" >
                                 <apex:selectOptions value="{!prostheticValues}" />
                             </apex:selectCheckboxes>
-                            <apex:selectCheckboxes value="{!selectedProsthetics}" layout="pageDirection" style="margin-left: 5cm;" rendered="{!Evaluation__c.Prosthetics__c == 'Yes'}" >
+                            <apex:selectCheckboxes value="{!selectedProsthetics}" layout="pageDirection" rendered="{!Evaluation__c.Prosthetics__c == 'Yes'}" >
                                 <apex:selectOptions value="{!prostheticValues}" />
                             </apex:selectCheckboxes>
-                            <apex:outputlabel value="Other" styleClass="labelCol" style="margin-left: 5cm;"/>
+                            <apex:outputlabel value="Other"  />
                             <apex:inputField value="{!Evaluation__c.Prosthetics_Other__c}" label="Other" />
                         </apex:outputPanel>
-                        <apex:outputPanel id="orthodicsPanel" layout="block" >
-                            <apex:selectCheckBoxes value="{!dummyString}" layout="pageDirection" style="margin-left: 5cm;" disabled="True" rendered="{!Evaluation__c.Orthodics__c != 'Yes'}">
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBLockSEctionItem>
+                        <apex:outputLabel value="" />
+                        <apex:outputPanel id="orthodicsPanel" >
+                            <apex:selectCheckBoxes value="{!dummyString}" layout="pageDirection" disabled="True" rendered="{!Evaluation__c.Orthodics__c != 'Yes'}">
                                 <apex:selectOptions value="{!orthodicsValues}" />
                             </apex:selectCheckBoxes>
-                            <apex:selectCheckBoxes value="{!selectedOrthodics}" layout="pageDirection" style="margin-left: 5cm;" rendered="{!Evaluation__c.Orthodics__c == 'Yes'}" >
+                            <apex:selectCheckBoxes value="{!selectedOrthodics}" layout="pageDirection" rendered="{!Evaluation__c.Orthodics__c == 'Yes'}" >
                                 <apex:selectOptions value="{!orthodicsValues}" />
                             </apex:selectCheckBoxes>
-                            <apex:outputlabel value="Other" styleClass="labelCol" style="margin-left: 5cm;" />
+                            <apex:outputlabel value="Other" />
                             <apex:inputField value="{!Evaluation__c.Orthodics_Other__c}" label="Other" />
                         </apex:outputPanel>
-                    </apex:pageBlockSection>
-                    <hr />
-                    <apex:pageBlockSection columns="2" >
-                        <apex:inputField value="{!Evaluation__c.Cast__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.castLocation}&quot;]}"  />
-                        <apex:outputText value="ROM Limitations" styleClass="labelCol" style="margin-left: 2cm;"/>
-                        <apex:inputField value="{!Evaluation__c.Ortho_Cast_Location__c}" id="castLocation" label="Location" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.OthercastLocation}&quot;}" />
-                        <apex:inputField value="{!Evaluation__c.Neck__c}" />
-                        <apex:inputField value="{!Evaluation__c.Cast_Location__c}" id="OthercastLocation" label="Location (other)" />
-                        <apex:inputField value="{!Evaluation__c.RUE__c}" />
-                        <apex:inputField value="{!Evaluation__c.Traction__c}"  html-data-rules="{&quot;1&quot;: [&quot;{!$Component.tractionLocation}&quot;, &quot;{!$Component.tractionType}&quot;, &quot;{!$Component.tractionWeight}&quot;]}" />
-                        <apex:inputField value="{!Evaluation__c.LUE__c}" />
-                        <apex:inputField value="{!Evaluation__c.Traction_Location__c}" id="tractionLocation" label="Location" />
-                        <apex:inputField value="{!Evaluation__c.Trunk__c}" />
-                        <apex:inputField value="{!Evaluation__c.Traction_Type__c}" id="tractionType" label="Type" />
-                        <apex:inputField value="{!Evaluation__c.RLE__c}" />
-                        <apex:inputField value="{!Evaluation__c.Traction_Weight__c}" id="tractionWeight" label="Weight" />
-                        <apex:inputField value="{!Evaluation__c.LLE__c}" />
+						</apex:pageBLockSectionItem>
+						
+                    	<apex:pageBlockSectionItem>
+                    	<apex:outputLabel for="cast" value="Cast<br /><br />Location<br /><br />Other" escape="false" />
+                    	<apex:outputPanel>
+                        	<apex:inputField  id="cast" value="{!Evaluation__c.Cast__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.castLocation}&quot;]}" />
+                        	<br />
+                        	<apex:inputField value="{!Evaluation__c.Ortho_Cast_Location__c}" id="castLocation" label="Location" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.OthercastLocation}&quot;}" />
+                        	<br />
+                        	 <apex:inputField value="{!Evaluation__c.Cast_Location__c}" id="OthercastLocation" label="Location (other)" />
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        	
+                    	<apex:pageBlockSectionItem>
+                    	<apex:outputLabel for="traction" value="Traction<br /><br />Location<br /><br />Type<br /><br />Weight" escape="false" />
+                    	<apex:outputPanel>
+                        	<apex:inputField id="traction" value="{!Evaluation__c.Traction__c}"  html-data-rules="{&quot;1&quot;: [&quot;{!$Component.tractionLocation}&quot;, &quot;{!$Component.tractionType}&quot;, &quot;{!$Component.tractionWeight}&quot;]}" />
+                        	<br />
+                        	<apex:inputField value="{!Evaluation__c.Traction_Location__c}" id="tractionLocation" label="Location" />
+                        	<br />
+                        	<apex:inputField value="{!Evaluation__c.Traction_Type__c}" id="tractionType" label="Type" />
+                        	<br />
+                        	<apex:inputField value="{!Evaluation__c.Traction_Weight__c}" id="tractionWeight" label="Weight" />
+                        
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+
+						<apex:pageBlockSectionItem>
+						<apex:outputLabel for="extdev" value="External Devices<br /><br />Location<br /><br />Type" escape="false" />
+                    	<apex:outputPanel>
                         <apex:inputField value="{!Evaluation__c.External_Devices__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.externalDevicesLocation}&quot;, &quot;{!$Component.externalDevicesType}&quot;, &quot;{!$Component.externalDevicesPinCare}&quot;]}"/>
-                        <apex:pageblockSectionItem />
+                        <br />
                         <apex:inputField value="{!Evaluation__c.External_Devices_Location__c}" id="externalDevicesLocation" label="Location" />
-                        <apex:pageBlockSectionItem />
+                        <br />
                         <apex:inputField value="{!Evaluation__c.External_Devices_Type__c}" id="externalDevicesType" label="Type" />
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+
+
+						<apex:pageBlockSectionItem>
+                        <apex:outputLabel value="ROM Limitations<br /><br />Neck<br /><br />RUE<br /><br />LUE<br /><br />Trunk<br /><br />RLE<br /><br />LLE" escape="false"/>
+                        <apex:outputPanel>
+                        <apex:outputtext value="" />
+                        <br />
+                        <apex:inputField value="{!Evaluation__c.Neck__c}" />
+                        <br/>
+                        <apex:inputField value="{!Evaluation__c.RUE__c}" />
+                        <br/>
+                        <apex:inputField value="{!Evaluation__c.LUE__c}" />
+                        <br/>
+                        <apex:inputField value="{!Evaluation__c.Trunk__c}" />
+                        <br/>
+                        <apex:inputField value="{!Evaluation__c.RLE__c}" />
+                        <br/>
+                        <apex:inputField value="{!Evaluation__c.LLE__c}" />
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+
                     </apex:pageBlockSection>
                     <hr />
                     <apex:pageBlockSection columns="1">
