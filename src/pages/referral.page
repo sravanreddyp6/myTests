@@ -141,7 +141,7 @@ function enableDiagEff() {
     str = "Physician - Primary";
     var obj = JSON.parse(relPartyData); 
     for (var i = 0; i < obj.length; i++) {
-        if (obj[i].Type__c === str && partyType === str) {
+        if (obj[i].TypeC === str && partyType === str) {
             errors += '<li>Only one "Physician - Primary" allowed. Please edit Type on this entry or change the Type assigned to existing Related Party.</li>';
             break;
         }
