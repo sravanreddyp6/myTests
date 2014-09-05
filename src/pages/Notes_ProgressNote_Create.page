@@ -23,7 +23,14 @@
 </style>
 <script>
 function setFocusOnLoad() {};
+</script>
 
+
+
+<apex:sectionHeader title="New Progress Note"/>
+<!-- wraps the buttons<apex:repeat value="{!SA_SC_JO}" var="t">t.name</apex:repeat>-->
+<apex:pageBlock mode="mainDetail" id="mainData">
+<script type="text/javascript">
 j$ = jQuery.noConflict();
 j$(document).ready(function(){
 	j$('.dateInput input').change(function(){
@@ -37,11 +44,6 @@ j$(document).ready(function(){
 });
 </script>
 
-
-
-<apex:sectionHeader title="New Progress Note"/>
-<!-- wraps the buttons<apex:repeat value="{!SA_SC_JO}" var="t">t.name</apex:repeat>-->
-<apex:pageBlock mode="mainDetail" id="mainData">
     <apex:pagemessages ></apex:pagemessages>
 <apex:form id="myFRM" >
 <apex:pageBlock >
