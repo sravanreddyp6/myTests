@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>Prospects__c$ReferredByLast__c</field>
+    </columns>
+    <columns>
+        <field>Prospects__c$Referral_Type__c</field>
+    </columns>
+    <columns>
+        <field>Prospects__c$First_Name__c</field>
+    </columns>
+    <columns>
+        <field>Prospects__c$Name</field>
+    </columns>
+    <columns>
+        <field>Prospects__c$State__c</field>
+    </columns>
+    <columns>
+        <field>Prospects__c$Program__c</field>
+    </columns>
+    <columns>
+        <field>Prospects__c$Outreach_Event__c.Outreach_Dictionary__c</field>
+    </columns>
+    <columns>
+        <field>Prospects__c$Status__c</field>
+    </columns>
+    <columns>
+        <field>Prospects__c$Owner</field>
+    </columns>
+    <description>List of prospects with referral type grouped by operating group and associated referrer&apos;s name</description>
+    <filter>
+        <criteriaItems>
+            <column>Prospects__c$How_did_you_hear_about_us__c</column>
+            <operator>equals</operator>
+            <value>Referred by someone</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Prospects__c$Status__c</column>
+            <operator>notContain</operator>
+            <value>closed</value>
+        </criteriaItems>
+    </filter>
+    <format>Summary</format>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>Prospects__c$Region__c.Operating_Group__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>Prospects from Referrals</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>Prospects__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <sortColumn>Prospects__c$ReferredByLast__c</sortColumn>
+    <sortOrder>Asc</sortOrder>
+    <timeFrameFilter>
+        <dateColumn>Prospects__c$Date_of_Inquiry__c</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>
