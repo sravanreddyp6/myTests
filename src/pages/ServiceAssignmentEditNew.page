@@ -707,7 +707,7 @@ END: Uncomment to have the element collapsed by default -->
   <a name="Plan" id="Plan" ></a>
     <apex:pageBlock id="Plan" title="Action Plans" rendered="{! !AssessmentOnly && !editSA}">
     <div class="pbHeaderButton">
-        <apex:commandButton action="{!NewPlan}" value="New Plan"  rendered="{!(plans.size=0) && canCreatePlan && !editSA}" immediate="true"/>
+        <apex:commandButton action="{!NewPlan}" value="New Plan"  rendered="{!(plans.size=0) && canCreatePlan && !editSA }" immediate="true"/>
         <apex:commandButton onclick="window.open('/{!Ack_Overview}?pv0={!Service_Assignment__c.Name}', '_self'); return false;" rendered="{! plans.size!=0 && !editSA}" value="Acknowledgment Overview" />
 
     </div>
@@ -794,7 +794,7 @@ END: Uncomment to have the element collapsed by default -->
     </apex:pageBlock>
     <apex:pageBlock title="Nurses Assessment" rendered="{!showNurseAssessment && !editSA}">
     		<div class="pbHeaderButton">
-    			<apex:CommandButton value="Nurses Assessment" rendered="{!evaluations == null || evaluations.size=0}" action="{!addNurAssessment}"/>
+    			<apex:CommandButton value="Nurses Assessment" rendered="{!(evaluations == null || evaluations.size=0) && Service_Assignment__c.Status__c!='Inactive'}" action="{!addNurAssessment}"/>
     		</div>
     		<apex:pageBlockTable styleclass="pcBody-list" value="{!evaluations}" var="evs" rendered="{!evaluations.size>0}">
     			<apex:column headerValue="Action"><a href="/apex/NursingEvaluationEdit?id={!evs.Id}&tab=demographicsTab">Edit</a></apex:column>

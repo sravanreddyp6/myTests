@@ -104,6 +104,9 @@ public class ServiceAssignmentExt {
     private void setcanCreatePlan() {
         Schema.DescribeSObjectResult oSchema = Action_Plan__c.sObjectType.getDescribe();
         canCreatePlan = oSchema.IsCreateable();
+        if(currentRecord.Status__c=='Inactive')
+        canCreatePlan = false;
+        
     }
     private void setcanCreateSummary() {
         Schema.DescribeSObjectResult oSchema = Action_Summary__c.sObjectType.getDescribe();
@@ -692,7 +695,7 @@ public class ServiceAssignmentExt {
     public void LoadData(Service_Assignment__c localRecord){
        currentID = localRecord.Id;
        if(newSA==false) {
-            currentRecord = [Select start_date__c, end_date__c, Model__c, Program_code__c, Program__c, RecordType.Name, Service_Line__c, Admission__r.State__c, Location_Region__c, service_location__c  From Service_Assignment__c Where Id = :currentID Limit 1];
+            currentRecord = [Select start_date__c, end_date__c, Model__c, Program_code__c, Program__c, RecordType.Name, Service_Line__c, Admission__r.State__c, Location_Region__c, service_location__c,Status__c  From Service_Assignment__c Where Id = :currentID Limit 1];
             currentState = currentRecord.Admission__r.State__c;
        }
        else {
@@ -1060,6 +1063,7 @@ public void loadProgramList() {
                 backToServAssignPage = new PageReference('/apex/ServiceAssignmentEditNew?id=' + theServAssign.Id);
                 editSA = false;
         }
+        backToServAssignPage.setRedirect(true); //added by Sravan to flush out the view State 09/04/2014 4:38 PM.
         return backToServAssignPage;
     }
 
@@ -1189,8 +1193,8 @@ public void loadProgramList() {
                         return backToServAssignPage;
             }
         }
-        catch(Exception e) {
-                addError(e.getMessage());
+         catch(Exception e){
+               ApexPages.addMessages(e);
                 Database.rollback(servAssignSaveSp);
                 return null;
         }
