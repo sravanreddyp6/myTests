@@ -27,7 +27,7 @@ function setFocusOnLoad() {};
 j$ = jQuery.noConflict();
 j$(document).ready(function(){
 	j$('.dateInput input').change(function(){
-		if(j$(this).val().indexOf('PM') > 0 ){
+		if(j$(this).val().toUpperCase().indexOf('PM') > 0 ){
 			j$(this).addClass("timePastNoon");
 		}else{
 			j$(this).removeClass("timePastNoon");
