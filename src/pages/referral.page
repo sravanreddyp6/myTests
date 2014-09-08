@@ -3,7 +3,7 @@
   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
   <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}"/>
   <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
-  <apex:pageMessage rendered="{!Referral__c.Service_Location__c == null && locations.size == 0 && Referral__c.id != null}" title="WARNING-Alias Field is blank: No Location has been selected, please add an Anticipated Admission Location OR the section with 'Add Location' button to the Referral." severity="warning"></apex:pageMessage>  
+  <apex:pageMessage rendered="{!Referral__c.Service_Location__c == null && locations.size == 0 && Referral__c.id != null}" title="WARNING-Alias Field is blank: No Location has been selected, please add an Anticipated Admission Location OR the section with 'Add Location' button to the Referral." severity="warning"></apex:pageMessage>
   <style type="text/css">
     .dialogLoadingSpinner {
       margin-left: 5px;
@@ -1413,37 +1413,52 @@ function enableDiagEff() {
                      </apex:facet>
                      <apex:facet name="stop"></apex:facet>
                  </apex:actionStatus>
-                <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusEvalBy" />
+                <apex:actionSupport event="onchange" rerender="refevaluatedsource" status="statusEvalBy" />
             </apex:inputField>
         </apex:actionRegion>
         </apex:pageBlockSectionItem>
+       
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
-        <apex:inputField value="{!Referral__c.Evaluated_By_Internal__c}" html-disabled="true" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Evaluated_By_Source__c != 'Internal'}" />
-        <apex:inputField value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Evaluated_By_Source__c == 'Internal'}" />
-        <apex:inputField value="{!Referral__c.Evaluated_By_External__c}" html-disabled="true" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Evaluated_By_Source__c != 'External'}" />
-        <apex:inputField value="{!Referral__c.Evaluated_By_External__c}" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Evaluated_By_Source__c == 'External'}" />
-        <apex:inputField value="{!Referral__c.Evaluated_By_Internal_Other__c}" html-disabled="true" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Evaluated_By_Source__c != 'Internal'}" />
-        <apex:inputField value="{!Referral__c.Evaluated_By_Internal_Other__c}" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Evaluated_By_Source__c == 'Internal'}" />
+        <apex:pageBlockSection id="refevaluatedsource" rendered="{!referralRecordType=='NeuroRestorative'}">
+        <apex:inputField value="{!Referral__c.Evaluated_By_Internal__c}" html-disabled="true" rendered="{!Referral__c.Evaluated_By_Source__c != 'Internal'}" />
+        <apex:inputField value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!Referral__c.Evaluated_By_Source__c == 'Internal'}" />
+        <apex:inputField value="{!Referral__c.Evaluated_By_External__c}" html-disabled="true" rendered="{!Referral__c.Evaluated_By_Source__c != 'External'}" />
+        <apex:inputField value="{!Referral__c.Evaluated_By_External__c}" rendered="{!Referral__c.Evaluated_By_Source__c == 'External'}" />
+        <apex:inputField value="{!Referral__c.Evaluated_By_Internal_Other__c}" html-disabled="true" rendered="{!Referral__c.Evaluated_By_Source__c != 'Internal'}" />
+        <apex:inputField value="{!Referral__c.Evaluated_By_Internal_Other__c}" rendered="{!Referral__c.Evaluated_By_Source__c == 'Internal'}" />
+		</apex:pageBlockSection>
+		 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+		 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+		 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+		 
+		<apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}">
+			<apex:actionRegion >
+				<apex:outputLabel value="Referral Provided By Source" styleClass="labelCol" />
+		        <apex:inputField value="{!referralRecord.Referral_Provided_By_Source__c}" >
+		           <apex:actionStatus id="statusRefBy">
+		                 <apex:facet name="start">
+		                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+		                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+		                     </div>
+		                 </apex:facet>
+		                 <apex:facet name="stop"></apex:facet>
+		             </apex:actionStatus>
+		            <apex:actionSupport event="onchange" rerender="refprovidedsource" status="statusRefBy" />
+		        </apex:inputField>
+	        </apex:actionRegion>
+        </apex:pageBlockSectionItem>
+        
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
-
-        <apex:inputField value="{!referralRecord.Referral_Provided_By_Source__c}" rendered="{!referralRecordType=='NeuroRestorative'}">
-           <apex:actionStatus id="statusRefBy">
-                 <apex:facet name="start">
-                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
-                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
-                     </div>
-                 </apex:facet>
-                 <apex:facet name="stop"></apex:facet>
-             </apex:actionStatus>
-            <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusRefBy" />
-        </apex:inputField>
-        <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
-        <apex:inputField value="{!Referral__c.Referral_Provided_By__c}" html-disabled="true" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Referral_Provided_By_Source__c != 'Internal'}" />
-        <apex:inputField value="{!Referral__c.Referral_Provided_By__c}" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Referral_Provided_By_Source__c == 'Internal'}" />
-        <apex:inputField value="{!Referral__c.Referral_Provided_By_External__c}" html-disabled="true" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Referral_Provided_By_Source__c != 'External'}" />
-        <apex:inputField value="{!Referral__c.Referral_Provided_By_External__c}" rendered="{!referralRecordType=='NeuroRestorative' && Referral__c.Referral_Provided_By_Source__c == 'External'}" />
+        <apex:pageBlocksection rendered="{!referralRecordType=='NeuroRestorative'}" id="refprovidedsource" >
+        <apex:inputField value="{!Referral__c.Referral_Provided_By__c}" html-disabled="true" rendered="{!Referral__c.Referral_Provided_By_Source__c != 'Internal'}" />
+        <apex:inputField value="{!Referral__c.Referral_Provided_By__c}" rendered="{!Referral__c.Referral_Provided_By_Source__c == 'Internal'}" />
+        <apex:inputField value="{!Referral__c.Referral_Provided_By_External__c}" html-disabled="true" rendered="{!Referral__c.Referral_Provided_By_Source__c != 'External'}" />
+        <apex:inputField value="{!Referral__c.Referral_Provided_By_External__c}" rendered="{!Referral__c.Referral_Provided_By_Source__c == 'External'}" />
+        </apex:pageBlocksection>
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
         <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+        <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+        
 <!--  END NEURO EvalBy and RefBy SECTION -->
 
 
