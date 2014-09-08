@@ -9,6 +9,7 @@ public with sharing class HomePageController{
     public String LstName{get;set;}
     public boolean displayPop{get;set;}
      public String objectName{get;set;}
+     public string opGroup {get; set;}
      
    private static Set<String> sObjNamesSet; 
       //declaration of variables
@@ -32,7 +33,7 @@ public with sharing class HomePageController{
       public boolean DocView{get;set;}
       public boolean Refresh=false;
 
-	  //report folders      
+      //report folders      
       public String RefId;
       public String ESDbillingId;
       public String ESDActivityId;
@@ -107,7 +108,7 @@ public with sharing class HomePageController{
              }else if(tmn.Operating_Group__c=='Redwood'){
                 oSchema4 = Redwood_Contract__c.sObjectType.getDescribe();
              }else{
-             	oSchema4=null;
+                oSchema4=null;
              }
          
          }
@@ -168,7 +169,7 @@ public with sharing class HomePageController{
             return personsBeingServedViews;
         }
         personsBeingServedViews = new Map<String, String>();
-        String query = 'SELECT ID FROM Account limit 100';	// 05/06/14 - set limit to prevent governor limit overrun
+        String query = 'SELECT ID FROM Account limit 100';  // 05/06/14 - set limit to prevent governor limit overrun
         ApexPages.StandardSetController con = new ApexPages.StandardSetController(Database.getQueryLocator(query));
         SelectOption[] options = con.getListViewOptions();
         for (SelectOption option : options) {
@@ -262,9 +263,9 @@ public with sharing class HomePageController{
   }
    
    public List<Report> reports() {
-   	      String ESDAct='',ref,Care,ESDbill,ESDsup,Red;
+          String ESDAct='',ref,Care,ESDbill,ESDsup,Red;
           VF_Reports__c vf = VF_Reports__c.getInstance();
-          VFReportlst = [SELECT Name,Id,Name__c,Description__c,link__c from VF_Reports__c];
+          VFReportlst = [SELECT Name,Id,Name__c,Description__c,link__c, groups__c from VF_Reports__c];
           for(Folder tmp:[SELECT AccessType,Id,IsReadonly,Name,DeveloperName,Type FROM Folder WHERE Type = 'Report']){
       
               if(tmp.DeveloperName=='Referrals'){
@@ -277,9 +278,9 @@ public with sharing class HomePageController{
                     CntrctId = tmp.Id;
                  }         
                  else if ( tmp.DeveloperName == 'Contract_Reports' && operatinggroup == 'Cambridge')
-                 	CntrctId = tmp.Id;
+                    CntrctId = tmp.Id;
                  else if ( tmp.DeveloperName == 'Redwood_Contracts' && operatinggroup == 'Redwood')
-                 	CntrctId = tmp.Id;
+                    CntrctId = tmp.Id;
                 else if(tmp.DeveloperName=='ESD_Activity'){
                     ESDActivityId = tmp.Id;
                     ESDAct = 'ESDAct';
@@ -291,64 +292,64 @@ public with sharing class HomePageController{
                     ESDSupyId = tmp.Id;
                  }
                  else if ( tmp.DeveloperName == 'Credentialing')
-                 	CredID = tmp.Id;
+                    CredID = tmp.Id;
             }
             
             refrportlst = new List<Report>();
             for(Report rpt:report(RefId, null)){
-            	if ( canSeeReport( rpt.Id ))
-                	refrportlst.add(rpt);
+                if ( canSeeReport( rpt.Id ))
+                    refrportlst.add(rpt);
             }
             
             contractrportlst = new List<Report>();
             for(Report rpt:report(CntrctId, null)){
-            	if ( canSeeReport( rpt.Id ))
-                	contractrportlst.add(rpt);
+                if ( canSeeReport( rpt.Id ))
+                    contractrportlst.add(rpt);
             }
             
             
             credrportlst = new List<Report>();
             for(Report rpt:report(CredId,null)){
-            	if ( canSeeReport( rpt.Id ))
-                	credrportlst.add(rpt);
+                if ( canSeeReport( rpt.Id ))
+                    credrportlst.add(rpt);
             }
 
-			docrportlst = new List<Report>();
-			for(Report rpt:report(ESDActivityId,'Docs')){
-             	if ( canSeeReport( rpt.Id))
-                	docrportlst.add(rpt);
+            docrportlst = new List<Report>();
+            for(Report rpt:report(ESDActivityId,'Docs')){
+                if ( canSeeReport( rpt.Id))
+                    docrportlst.add(rpt);
             }
-			            
+                        
             PBSrportlst = new List<Report>();
             for(Report rpt:report(ESDActivityId,ESDAct)){
-             	if ( canSeeReport( rpt.Id))
-                	PBSrportlst.add(rpt);
+                if ( canSeeReport( rpt.Id))
+                    PBSrportlst.add(rpt);
             }
             
              for(Report rpt1:report(ESDbillingId,ESDbill)){
-             	if ( canSeeReport( rpt1.Id))
-                	PBSrportlst.add(rpt1);
+                if ( canSeeReport( rpt1.Id))
+                    PBSrportlst.add(rpt1);
             }
             
              for(Report rpt2:report(ESDSupyId,ESDsup)){
-             	if ( canSeeReport( rpt2.Id))
-                	PBSrportlst.add(rpt2);
+                if ( canSeeReport( rpt2.Id))
+                    PBSrportlst.add(rpt2);
             }
            
             return null;
  }
  public List<Report> report(Id ownId,String ReportText){
- 	String query = 'SELECT Name, Id,OwnerId, description, DeveloperName, SystemModstamp FROM report where OwnerId=:ownId';
- 	if(ReportText!=null && ReportText=='ESDAct'){
- 		query+=' and description like \'%#notes%\'' ;
- 	} else if (ReportText != null && ReportText=='Docs') {
- 		query+=' and (description like \'%Case Document%\' or description like \'%Fidelity Document%\')';
- 	}
- 	
- 	query+= ' order by name';
- 	
- 	List<Report> tempreport = database.query(query);
- 	return tempreport;
+    String query = 'SELECT Name, Id,OwnerId, description, DeveloperName, SystemModstamp FROM report where OwnerId=:ownId';
+    if(ReportText!=null && ReportText=='ESDAct'){
+        query+=' and description like \'%#notes%\'' ;
+    } else if (ReportText != null && ReportText=='Docs') {
+        query+=' and (description like \'%Case Document%\' or description like \'%Fidelity Document%\')';
+    }
+    
+    query+= ' order by name';
+    
+    List<Report> tempreport = database.query(query);
+    return tempreport;
  }
   
 
@@ -398,24 +399,24 @@ public with sharing class HomePageController{
   public PageReference getsearchNames(){
   
     try {
-    	  if((FrstName!=null && FrstName!='') || (LstName!=null && LstName!='')){
-           	system.debug('coming here');
-           	 displayPop = false;
-           	  PageReference newocp= new PageReference('/apex/HomePage_Search?FirstNM='+FrstName+'&&LastNM='+LstName);
+          if((FrstName!=null && FrstName!='') || (LstName!=null && LstName!='')){
+            system.debug('coming here');
+             displayPop = false;
+              PageReference newocp= new PageReference('/apex/HomePage_Search?FirstNM='+FrstName+'&&LastNM='+LstName);
               newocp.setRedirect(true);
               return newocp;
-  	      }
+          }
       
          else{
        
-          	displayPop = true;
-          	return null;
+            displayPop = true;
+            return null;
           }
                 
     } catch (DMLException e) {
-    	
-		      ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Error opening the Search Results.'));
-		      return null;
+        
+              ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Error opening the Search Results.'));
+              return null;
     
     }
       
@@ -428,20 +429,20 @@ public with sharing class HomePageController{
  // We can put the page instantiation into a try/catch block and return appropriately
  // We can remove this function when the bug is fixed.
  Boolean canSeeReport( ID reportid ) {
- 	return true;
- 	// tests to see whether user can view report
- 	try {
- 		PageReference pr = new PageReference( '/' + string.valueof( reportID));
- 	
- 		return (!pr.getContent().toString().contains('Data Not Available'));
- 	}
- 	catch(DmlException e) {
-	    // DmlException handling code here.
-	    return false;
-	} catch(Exception e) {
-	    // Generic exception handling code here.
-	    return false;
- 	}	
+    return true;
+    // tests to see whether user can view report
+    try {
+        PageReference pr = new PageReference( '/' + string.valueof( reportID));
+    
+        return (!pr.getContent().toString().contains('Data Not Available'));
+    }
+    catch(DmlException e) {
+        // DmlException handling code here.
+        return false;
+    } catch(Exception e) {
+        // Generic exception handling code here.
+        return false;
+    }   
  }
   
 }
