@@ -39,6 +39,7 @@
     </style>
 
 <apex:outputPanel id="page">
+<a href="/">Home</a>
 <apex:form >
 <apex:outputPanel layout="block" styleClass="rcol">
   
@@ -53,39 +54,39 @@
             <apex:outputPanel layout="block">
                 <apex:outputLabel value="Select Catalog" styleClass="label"/>
                 <apex:actionRegion >                
-	                <apex:selectList id="choosePlan" value="{!curCtlg}" required="false" size="1" multiselect="false">
-	                <apex:selectOptions value="{!ctlgs}"/>
-	                <apex:actionSupport event="onchange" reRender="page" action="{!refreshHere}" status="myStatus"/>                                            
-	                </apex:selectList>
+                    <apex:selectList id="choosePlan" value="{!curCtlg}" required="false" size="1" multiselect="false">
+                    <apex:selectOptions value="{!ctlgs}"/>
+                    <apex:actionSupport event="onchange" reRender="page" action="{!refreshHere}" status="myStatus"/>                                            
+                    </apex:selectList>
                 </apex:actionRegion>
                 <apex:inputField value="{!curr_catalog.Catalog_Name__c}" rendered="{!curCtlg != null }" required="true" style="margin:10px;"/>
             </apex:outputPanel>
          </apex:pageBlock>
 
-	    <apex:pageBlock id="relatedTo" mode="maindetail">
+        <apex:pageBlock id="relatedTo" mode="maindetail">
             <apex:outputPanel layout="block" rendered="{!curCtlg != null}" >
-            <apex:outputLabel value="Associated Service Settings" styleClass="label"/>	    
-	        <apex:pageBlockSection >
-	        <apex:pageBlockSectionItem >
-		        <apex:pageBlockTable value="{!prgms}" var="p">
-		            <apex:column value="{!p.clincalPrgm.Program_Name__c}"/>
-		            <apex:column >
-		                <apex:inputCheckbox value="{!p.isSelected}" />
-		            </apex:column>
-		        </apex:pageBlockTable>
-		       </apex:pageBlockSectionItem>
-		       <apex:pageBlockSectionItem /> 
-	        </apex:pageblocksection>        
-	        </apex:outputPanel>
-	    </apex:pageBlock>
+            <apex:outputLabel value="Associated Service Settings" styleClass="label"/>      
+            <apex:pageBlockSection >
+            <apex:pageBlockSectionItem >
+                <apex:pageBlockTable value="{!prgms}" var="p">
+                    <apex:column value="{!p.clincalPrgm.Program_Name__c}"/>
+                    <apex:column >
+                        <apex:inputCheckbox value="{!p.isSelected}" />
+                    </apex:column>
+                </apex:pageBlockTable>
+               </apex:pageBlockSectionItem>
+               <apex:pageBlockSectionItem /> 
+            </apex:pageblocksection>        
+            </apex:outputPanel>
+        </apex:pageBlock>
 
-<!-- 	    <apex:pageBlock id="SaveResults" mode="maindetail"> -->
-<!-- 	        <apex:outputPanel layout="block" rendered="{!showRes}"> -->
-<!-- 	        <apex:repeat value="{!prgms}" var="pr">  -->
-<!-- 	        {!pr.clincalPrgm.Program_Name__c} &nbsp; {!pr.clincalPrgm.ProgramID__c} &nbsp; {!pr.isSelected} -->
-<!-- 	        </apex:repeat>                  -->
-<!-- 	        </apex:outputPanel> -->
-<!-- 	    </apex:pageBlock> -->
+<!--        <apex:pageBlock id="SaveResults" mode="maindetail"> -->
+<!--            <apex:outputPanel layout="block" rendered="{!showRes}"> -->
+<!--            <apex:repeat value="{!prgms}" var="pr">  -->
+<!--            {!pr.clincalPrgm.Program_Name__c} &nbsp; {!pr.clincalPrgm.ProgramID__c} &nbsp; {!pr.isSelected} -->
+<!--            </apex:repeat>                  -->
+<!--            </apex:outputPanel> -->
+<!--        </apex:pageBlock> -->
     </apex:pageBlock>   
 
     <apex:actionStatus id="pageProcessing" >
@@ -99,16 +100,16 @@
         <apex:facet name="stop" />
     </apex:actionStatus>
 
-	<apex:actionStatus id="myStatus" >
-	    <apex:facet name="start">
-	        <div class="thinking">
-	            <div class="thinkingwheel">    
-	                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
-	            </div>
-	        </div>   
-	    </apex:facet>  
-	    <apex:facet name="stop"> </apex:facet>         
-	</apex:actionStatus> 
+    <apex:actionStatus id="myStatus" >
+        <apex:facet name="start">
+            <div class="thinking">
+                <div class="thinkingwheel">    
+                    <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+                </div>
+            </div>   
+        </apex:facet>  
+        <apex:facet name="stop"> </apex:facet>         
+    </apex:actionStatus> 
 
 </apex:outputPanel>
 </apex:form>
