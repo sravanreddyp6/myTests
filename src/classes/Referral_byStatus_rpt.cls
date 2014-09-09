@@ -15,7 +15,7 @@ public with sharing class Referral_byStatus_rpt {
         Referral_results = [select id, name,  Name_PBR__c, Street_1__c ,  
                                     Street_2__c,  city__c, Person_Being_Referred__r.age__c, 
                                     Person_Being_Referred__r.Gender__c, Mobility__c , 
-                                    Referral_Date__c, Service_Location__c , 
+                                    Referral_Date__c, Service_Location__r.name , 
                                     Service_Location_Program__c ,  Referral_Status__c , Referral_Name__c ,  
                                     Referral_Phone_Number__c , Referral_Source_Type__c , 
                                     Person_Being_Referred__r.Home_County__c, Case_Manager_Name__c , 
