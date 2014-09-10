@@ -67,10 +67,10 @@
 
 <apex:form id="myFRM">
 <apex:actionFunction action="{!changeToModel}" name="changeToModel" rerender="ContractAssoc, ProgAssoc" status="SaveStatus1"/>
-<apex:inputhidden value="{!theServAssign.Person_Being_Served__c}" />
+<apex:outputText value="{!theServAssign.Person_Being_Served__c}" rendered="false"/>
 <!-- To set focus on Top -->
 <input id="hiddenElementId" type="hidden" />
-<apex:inputHidden id="phaseToSave" value="{!theServAssign.Phase__c}" />
+<apex:outputText id="phaseToSave" value="{!theServAssign.Phase__c}" rendered="false"/>
     <apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}" rerender="pbDiagnosis,diagnosisModal,diagnosisEntry,diagnosisEntry2,msgs"/>
     <apex:actionFunction name="showAddDiagnosis" action="{!showAddDiagnosis}" oncomplete="openDialog('diagnosisModal', 'span', 'Add Diagnosis');" rerender="pbDiagnosis,modalWrapper,diagnosisEntry,diagnosisEntry2,ServAssignDetail,AOServAssignDetail,msgs" />
     <apex:actionFunction name="showEditDiagnosis" action="{!showEditDiagnosis}" oncomplete="loadDiagnosis('{!diagEditId}');" rerender="pbDiagnosis,modalWrapper,diagnosisEntry,diagnosisEntry2,ServAssignDetail,AOServAssignDetail,msgs" >
