@@ -1106,40 +1106,40 @@
          			<apex:pageBlock >
          				<apex:pageBlockSection columns="2" title="Orthopedics">
 							<apex:pageBlockSectionItem >
-								<apex:outputLabel value="Patient Has a Diagnosis of" />
+								<apex:outputLabel value="Patient Has Diagnosis of" />
 								<apex:outputText value="{!Evaluation__c.Orthopedic_diagnostic_types__c}" />
 							</apex:pageBlockSectionItem>
 							<apex:pageBlockSectionItem >
-								<apex:outputLabel value="Individual is Taking" />
-								<apex:outputText value="{!Evaluation__c.Orthopedic_medications__c}" />
+								<apex:outputLabel value="Patient Is Taking" />
+								<apex:outputText value="{!Evaluation__c.Orthopedic_Medications__c}" />
 							</apex:pageBlockSectionItem>
 							<apex:outputField value="{!Evaluation__c.Weight_Bearing_Precautions__c}" label="Weight Bearing" />
 							<apex:pageBlockSectionItem />
 							
-							
-							<apex:outputField value="{!Evaluation__c.Prosthetics__c}" />
-							
-							<apex:outputField value="{!Evaluation__c.Orthodics__c}" />
-							<apex:pageBlockSectionItem >
-								<apex:selectCheckboxes value="{!selectedProsthetics}" layout="pageDirection" style="margin-left: 5cm;" disabled="True" >
-									<apex:selectOptions value="{!prostheticValues}" />
-								</apex:selectCheckboxes>
-							</apex:pageBlockSectionItem>
-							<apex:pageBlockSectionItem >
-								<apex:selectCheckBoxes value="{!selectedOrthodics}" layout="pageDirection" style="margin-left: 5cm;" disabled="True" >
-									<apex:selectOptions value="{!orthodicsValues}" />
-								</apex:selectCheckBoxes>
-							</apex:pageBlockSectionItem>
-							<apex:outputField value="{!Evaluation__c.Prosthetics_Other__c}" label="Other" />
-							<apex:outputField value="{!Evaluation__c.Orthodics_Other__c}" label="Other" />
+							<apex:pageBlockSEctionItem>
+							<apex:outputLabel value="Prosthetics" />
+							<apex:outputText value="{!Evaluation__c.Prosthetic_Types__c & if( CONTAINS(Evaluation__c.Prosthetic_Types__c,  'Other'), ' (' & Evaluation__c.Prosthetics_Other__c & ')', '')}" />
+							</apex:pageBlockSEctionItem>
+
+							<apex:pageBlockSEctionItem>
+							<apex:outputLabel value="Orthotics" />
+							<apex:outputText value="{!Evaluation__c.Orthodics_Types__c & if( CONTAINS(Evaluation__c.Orthodics_Types__c,  'Other'), ' (' & Evaluation__c.Orthodics_Other__c & ')', '')}" />
+							</apex:pageBlockSEctionItem>
+														
 						</apex:pageBlockSection>
-						<hr />
+						
 						<apex:pageBlockSection columns="2" >
-							<apex:outputField value="{!Evaluation__c.Cast__c}" />
+							<apex:pageBlockSectionItem>
+							<apex:outputLabel value="Cast" />
+							<apex:outputPanel>
+							
+							<apex:outputField value="{!Evaluation__c.Ortho_Cast_Location__c}" rendered="{!Evaluation__c.Ortho_Cast_location__c != 'Other'}" />
+							<apex:outputField value="{!Evaluation__c.Cast_Location__c}" rendered="{!Evaluation__c.Ortho_Cast_location__c == 'Other'} "/>
+							</apex:outputPanel>
+							</apex:pageBlockSectionItem>
+							
 							<apex:outputText value="ROM Limitations" styleClass="labelCol" style="margin-left: 2cm;"/>
-							<apex:outputField value="{!Evaluation__c.Ortho_Cast_Location__c}"  label="Location" />
 							<apex:outputField value="{!Evaluation__c.Neck__c}" />
-							<apex:outputField value="{!Evaluation__c.Cast_Location__c}" label="Location (other)" />
 							<apex:outputField value="{!Evaluation__c.RUE__c}" />
 							<apex:outputField value="{!Evaluation__c.Traction__c}" />
 							<apex:outputField value="{!Evaluation__c.LUE__c}" />
