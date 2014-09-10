@@ -3868,35 +3868,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
                 <default>false</default>
             </values>
             <values>
-                <fullName>Court</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Day Program</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Home</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>MR Intermediate Care</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Medical Facility</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Office</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>School</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -4047,23 +4019,11 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <picklistValues>
             <picklist>Type_of_Contact__c</picklist>
             <values>
-                <fullName>Collateral</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Face-To-Face</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Phone</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Team</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -16445,6 +16405,25 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <searchResultsAdditionalFields>Plan__c</searchResultsAdditionalFields>
     </searchLayouts>
     <sharingModel>Private</sharingModel>
+    <validationRules>
+        <fullName>Arizona_Note_Required_Fields</fullName>
+        <active>true</active>
+        <description>Makes the following fields required for saving - Intervention, Progress, and Notes for Next Visit.  Checks recordtype in the validation rule to only apply for AZ-OPT.</description>
+        <errorConditionFormula>IF(  NOT(ISNEW()),
+AND(
+ RecordType.DeveloperName = &quot;AZ_OPT&quot;,
+  OR(
+   ISNULL(Interventions__c),
+   ISBLANK(Interventions__c),
+   ISNULL(Progress__c),
+   ISBLANK(Progress__c),
+   ISNULL(Notes_For_Next_Visit__c),
+   ISBLANK(Notes_For_Next_Visit__c)
+  )
+),
+false)</errorConditionFormula>
+        <errorMessage>The Interventions, Progress, and Notes for Next Visit fields are required for an AZ-OPT note.  Please confirm that values have been entered for those fields and try again.</errorMessage>
+    </validationRules>
     <validationRules>
         <fullName>Arizona_ProgressNote_Length</fullName>
         <active>true</active>
