@@ -651,13 +651,21 @@ public with sharing class referralConversion_Controller {
   * End of Sravan's Conversion Code
   */    
     
-    // link the funding sources that were on the referral
     Contact pbsmed = [select id, medicaid_id__c from contact where id = :idPBS ];
     Boolean trytoupdatePBS = String.IsBlank( pbsmed.medicaid_id__c );
     Boolean updatePBS = false;
-    List<Funding_Source__c> fundsrcList = [ select id, name, funding_source__c, Funding_Source_ID__c from funding_source__c where referral__c = :refCurr.Id];
+    // EC-13 - do not link the funding sources. instead copy them so they can be edited on the SA record.
+    string strSQL = Utility.getCreatableFieldsSOQL('funding_source__c','referral__c = \'' + refCurr.Id + '\'' );
+    system.debug( strSQL );
+    
+    List<Funding_Source__c> fundsrcList = (List<Funding_Source__c>)Database.query(strSQL);
+    
     if ( fundsrcList.size() > 0 ) {
-        for ( Funding_Source__c fs : fundsrcList ) {
+    	
+    	List<Funding_Source__c> newfunds = fundsrcList.deepClone();
+    	
+        for ( Funding_Source__c fs : newfunds ) {
+        	
             fs.Service_Assignment__c = newSA.Id;
             
             if ((fs.Funding_Source__c == 'Medicaid') && trytoupdatePBS ) {
@@ -667,11 +675,11 @@ public with sharing class referralConversion_Controller {
                 trytoupdatePBS = false;
             }
         }
-        update fundsrcList;
+        insert newfunds;
         if ( updatePBS )
             update pbsmed;
     }
-    
+   
     return newSA.Id;
  }
  
@@ -710,7 +718,6 @@ public with sharing class referralConversion_Controller {
     ref.Referral_Status__c = 'Closed';
     ref.Close_Reason__c = 'Admitted';
     ref.Close_Date__c = system.today();
-    
     update ref;
     
     return ref.Id;
