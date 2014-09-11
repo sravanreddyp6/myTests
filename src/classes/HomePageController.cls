@@ -9,7 +9,6 @@ public with sharing class HomePageController{
     public String LstName{get;set;}
     public boolean displayPop{get;set;}
      public String objectName{get;set;}
-     public string opGroup {get; set;}
      
    private static Set<String> sObjNamesSet; 
       //declaration of variables
@@ -296,9 +295,17 @@ public with sharing class HomePageController{
             }
             
             refrportlst = new List<Report>();
-            for(Report rpt:report(RefId, null)){
-                if ( canSeeReport( rpt.Id ))
-                    refrportlst.add(rpt);
+            system.debug('op grounp ' + OperatingGroup  );
+            if(OperatingGroup != null){
+                set<string> okRefRpts = getReportsToShow(OperatingGroup );
+                system.debug('reports in scope - ' + okRefRpts);
+                for(Report rpt:report(RefId, null)){
+                    if ( canSeeReport( rpt.Id )){
+                        if(okRefRpts.contains(rpt.DeveloperName)){
+                            refrportlst.add(rpt);
+                            }
+                    }
+                }
             }
             
             contractrportlst = new List<Report>();
@@ -444,5 +451,43 @@ public with sharing class HomePageController{
         return false;
     }   
  }
+    public set<string> getReportsToShow(string og){
+        set<string> items = new set<string>();
+        
+        items.add('All_Active_Referrals_Report');
+        items.add('All_Referrals');
+        items.add('Closed_Referral_Tracking');
+        items.add('Locations_Working_Ref_by_Ref_Number');
+        items.add('Referral_Conversion_Time_Report');
+        items.add('Referrals_By_Location_Working_Referral');
+        items.add('Referrals_Requiring_Action');
+        
+        if(og == 'Cambridge'){
+            items.add('Active_Referrals_With_Diagnosis');
+            items.add('Daily_Referrals');
+            items.add('Red_Flagged_Referrals');
+            items.add('Weekly_Referrals');
+            items.add('Avatar_GA_Referrals');
+            items.add('GA_Referrals_FIT_Program');        
+        }
+        if(og == 'Redwood'){
+            items.add('Active_Referrals_With_Diagnosis');
+            items.add('Daily_Referrals');
+            items.add('Red_Flagged_Referrals');
+            items.add('Weekly_Referrals');        
+        }
+        if(og == 'Care Meridian'){
+        
+        }
+        if(og == 'NeuroRestorative'){
+            items.add('Daily_Referrals');
+            items.add('Weekly_Referrals');                    
+        } 
+        
+    
+    
+        return items;
+    
+    }
   
 }
