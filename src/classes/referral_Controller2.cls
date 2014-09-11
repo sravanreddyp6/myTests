@@ -542,7 +542,7 @@ public with sharing class referral_Controller2 {
 
                 if ( !hasGuardian ) {
                     hasReq = false;
-                    messages.Add( 'Person Being Referred is under 18 and requires a related party of type Guardian');
+                    messages.Add( 'The person being referred is younger than 18 years old. Please add a person with the Type of Guardian to the Related Parties Section below.');
                 }
             }
 
