@@ -1,0 +1,234 @@
+<apex:page controller="Referral_byStatus_rpt" sidebar="false" docType="html-5.0" >
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery-1.11.1.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery-ui.min.js')}" />
+
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/js/dataTables.tableTools.min.js')}" />
+
+<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/css/dataTables.tableTools.css')}"/>
+
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/development-bundle/themes/custom-green/jquery-ui.min.css')}"/>
+
+<!--
+
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/development-bundle/ui/jquery-ui-1.8.21.custom.js')}" />
+
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/development-bundle/themes/base/jquery.ui.datepicker.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+
+-->
+<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}"/>
+
+<style>
+
+.tbl-wrapper{padding-top: 5px; padding-left: 10px;}
+table.dataTable thead th,
+table.dataTable thead td {
+  padding: 5px 18px;
+  border-bottom: 1px solid #111111;
+  word-wrap: break-word;
+}
+
+div.DTTT_container{
+//float: left; 
+//margin-top: -70px;
+}
+.dataTables_filter {
+ //float: left !important; 
+// margin-top: -70px;
+ //text-align: left !important; 
+}
+
+.fogBG{opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;}
+.noscroll{overflow:hidden;}
+.thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;}
+#filters{ width: 1000px;}
+
+.resultsHeader{font-size: 18px;  float: left; position: absolute; padding: 10px; padding-left: 0px;}
+
+.datefield{ background: rgba(255,255,255,.0); font-size: 14px; float: right; font-weight: bold; padding: 9px 0px 0 0; text-align: right;   border: none;/**/ }
+.green{color: #006666;}
+.bold{font-weight: bold;}
+//.ui-datepicker{margin-top: 20px;}
+//.ui-datepicker-today .ui-state-highlight{background: transparent;}
+//.ui-state-default{background: #dddddd url(images/ui-bg_glass_50_295bd6_1x400.png) 50% 50% repeat-x !important; color: black !important;}
+//.ui-state-active{background: #eaeaea url(images/ui-bg_glass_50_295bd6_1x400.png) 50% 50% repeat-x !important;}
+
+</style>
+<script>
+var j$ = jQuery.noConflict();
+
+function createtbl(){
+    console.log('starting tables');
+    var table = j$('#myTbl').dataTable({ 
+            "bPaginate": false, 
+            "order": [[ 1, "desc" ]],            
+            "ordering": true,
+            "bFilter": true,
+             "info": false, 
+            dom: 'T<"clear">lfrtip',
+            "tableTools": {
+               "aButtons": [ "xls", {
+                    "sExtends": "pdf",
+                    "sPdfOrientation": "landscape",
+                    "sTitle": "Referral by Status",
+                }
+                ],         
+               "sSwfPath": "{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/swf/copy_csv_xls_pdf.swf')}"
+            } 
+        });
+}
+function bindDates(){
+
+
+    j$("[id*=endDate]").datepicker({
+        changeMonth: true,
+        changeYear: true,
+    });
+    
+    j$("[id*=startDate]").datepicker({
+        changeMonth: true,
+        changeYear: true,
+    
+         
+    }); 
+    
+    j$( "[id*=rdo]" ).buttonset();
+
+    
+
+}
+
+function commonReady(){    
+    createtbl();
+    bindDates(); 
+}
+j$( document ).ready(function() { 
+    
+    commonReady();
+    
+});
+</script>
+<apex:form >
+<div id="filters">
+<apex:pageBlock title="Filters">
+    <apex:pageBlockButtons location="bottom">
+        <div style="float: right">
+        <apex:commandButton value="Run!" action="{!run}" status="myStatus" reRender="results" oncomplete="commonReady();"/>
+        </div>
+    </apex:pageBlockButtons>
+    <apex:pageBlockSection columns="1" >
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Referral Status</apex:outputLabel>
+            <apex:selectRadio id="rdo" required="true" value="{!status}">
+                <apex:selectOption itemLabel="New" itemValue="New" ></apex:selectOption>
+                <apex:selectOption itemLabel="Active" itemValue="Active"></apex:selectOption>
+                <apex:selectOption itemLabel="On Hold" itemValue="On Hold"></apex:selectOption>
+                <apex:selectOption itemLabel="Closed" itemValue="Closed"></apex:selectOption>            
+            </apex:selectRadio>           
+        
+        </apex:pageBlockSectionItem>
+      </apex:pageBlockSection>   
+      <apex:pageBlockSection columns="2"> 
+
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Start Date</apex:outputLabel>
+            <apex:outputPanel ><apex:inputText id="startDate" required="true" value="{!StartDate}"/></apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >End Date</apex:outputLabel>
+            <apex:outputPanel ><apex:inputText id="endDate" required="true" value="{!EndDate}" /></apex:outputPanel>
+        </apex:pageBlockSectionItem>        
+    </apex:pageBlockSection>
+
+</apex:pageBlock>
+</div>
+</apex:form>
+
+<apex:pageBlock id="results">
+<apex:pageMessages ></apex:pageMessages>
+<apex:outputPanel styleClass="resultsHeader" layout="block" rendered="{!startDate != null}">
+                Showing {!Referral_results.size}&nbsp;<span class="green bold">{!status}</span> Referrals between&nbsp;
+                    <apex:outputText styleClass="green bold" value="{0,date,MM'/'dd'/'yy}">
+                        <apex:param value="{!startDate}" /> 
+                    </apex:outputText>
+                    and&nbsp;
+                    <apex:outputText styleClass="green bold" value="{0,date,MM'/'dd'/'yy}">
+                        <apex:param value="{!endDate}" /> 
+                    </apex:outputText>
+                    
+</apex:outputPanel> 
+<apex:outputPanel layout="block" styleClass="tbl-wrapper" rendered="{!Referral_results.size > 0}">                   
+<table id="myTbl" style="width: 600px !important;" class="display" cellspacing="0" >
+        <thead>
+            <tr>
+                <th>Referral<br/> Number</th>
+                <th>Full Name</th>
+                <th>Street 1</th>
+                <th>Street 2</th>
+                <th>City</th>
+                <th>Age</th>
+                <th>Gender</th>
+                <th>Mobility</th>
+                <th>Referral<br/> Date</th>
+                <th>Anticipated Service<br/> Location</th>
+                <th>Anticipated<br/> Program</th>
+                <th>Referral<br/> Status</th>
+                <th>Referrer<br/> Name</th>
+                <th>Referrer<br/> Phone Number</th>
+                <th>Referral<br/> Source Type</th>
+                <th>Home<br/> County</th>
+                <th>Case Manager<br/> Name</th>
+                <th>Case Manager<br/> Phone</th>
+                <th>Services<br/> Requested</th>
+                <th>Assigned<br/> Users</th>
+            </tr>
+        </thead>
+            <apex:repeat value="{!Referral_results}" var="r">
+                <tr>
+                    <td><apex:outputLink value="/{!r.id}"><apex:outputField value="{!r.name}" ></apex:outputField></apex:outputLink></td>
+                    <td><apex:outputField value="{!r.Name_PBR__c}" ></apex:outputField></td>
+                    <td><apex:outputField value="{!r.Street_1__c }" ></apex:outputField></td>
+                    <td><apex:outputField value="{!r.Street_2__c }" ></apex:outputField></td>
+                    <td><apex:outputField value="{!r.City__c}" ></apex:outputField></td>
+                    <td><apex:outputField value="{!r.Person_Being_Referred__r.Age__c}" ></apex:outputField></td>
+                    <td><apex:outputField value="{!r.Person_Being_Referred__r.Gender__c}" ></apex:outputField></td>
+                    <td><apex:outputField value="{!r.Mobility__c }" ></apex:outputField></td>
+                    <td>
+                        <apex:outputText value="{0,date,MM'/'dd'/'yy}">
+                            <apex:param value="{!r.Referral_Date__c }" /> 
+                        </apex:outputText>                 
+                    </td>
+                    <td><apex:outputField value="{!r.Service_Location__r.name }" ></apex:outputField></td>
+                    <td><apex:outputField value="{!r.Service_Location_Program__c }" ></apex:outputField></td>
+                    <td><apex:outputField value="{!r.Referral_Status__c }" ></apex:outputField></td>
+                    <td><apex:outputField value="{!r.Referral_Name__c }" ></apex:outputField></td>
+                    <td><apex:outputField value="{!r.Referral_Phone_Number__c }" ></apex:outputField></td>
+                    <td><apex:outputField value="{!r.Referral_Source_Type__c }" ></apex:outputField></td>
+                    <td><apex:outputField value="{!r.Person_Being_Referred__r.Home_County__c}" ></apex:outputField></td>
+                    <td><apex:outputField value="{!r.Case_Manager_Name__c }" ></apex:outputField></td>
+                    <td><apex:outputField value="{!r.Case_Manager_Phone__c }" ></apex:outputField></td>
+                    <td><apex:outputField value="{!r.Services_Requested__c }" ></apex:outputField></td>
+                    <td><apex:outputField value="{!r.Assigned_Users__c }" ></apex:outputField></td>
+                </tr>
+            </apex:repeat>
+    </table>
+</apex:outputPanel>    
+</apex:pageBlock>    
+
+
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <div class="fogBG"/>
+        <div class="thinkingwheel">    
+            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+        </div> 
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus>
+
+
+
+</apex:page>
