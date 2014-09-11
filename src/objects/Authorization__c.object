@@ -65,6 +65,29 @@
         <type>Lookup</type>
     </fields>
     <fields>
+        <fullName>Auth_Given_Method__c</fullName>
+        <externalId>false</externalId>
+        <label>How Given</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Authorization_Status__c</fullName>
         <description>Facilitates tracking delivery of services immediately, before authorization process is complete, by providing a temporary status.</description>
         <externalId>false</externalId>
@@ -140,6 +163,16 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Comments__c</fullName>
+        <externalId>false</externalId>
+        <label>Comments</label>
+        <length>1024</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
         <fullName>Date_of_Last_Rollup__c</fullName>
         <externalId>false</externalId>
         <label>Date of Last Rollup</label>
@@ -180,6 +213,20 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Funding_Source__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>lookup to funding source - optional</description>
+        <externalId>false</externalId>
+        <label>Funding Source</label>
+        <referenceTo>Funding_Source__c</referenceTo>
+        <relationshipLabel>Authorizations</relationshipLabel>
+        <relationshipName>Authorizations</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
         <fullName>Number_Of_Authorized_Units__c</fullName>
         <description>Total number of units allocated for the specific authorized service beginning on the effective date</description>
         <externalId>false</externalId>
@@ -215,6 +262,49 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Payer_CM_Email__c</fullName>
+        <description>Payer case manager email</description>
+        <externalId>false</externalId>
+        <label>Payer CM Email</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Email</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Payer_CM_Fax__c</fullName>
+        <description>Payer case manager fax</description>
+        <externalId>false</externalId>
+        <label>Payer CM Fax</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Phone</type>
+    </fields>
+    <fields>
+        <fullName>Payer_CM_Name__c</fullName>
+        <description>Payer case manager name</description>
+        <externalId>false</externalId>
+        <label>Payer CM Name</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Payer_CM_Phone__c</fullName>
+        <description>Payer case manager phone</description>
+        <externalId>false</externalId>
+        <label>Payer CM Phone</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Phone</type>
+    </fields>
+    <fields>
         <fullName>Payer_Effective_Date__c</fullName>
         <description>Date the authorization is effective according to the payer</description>
         <externalId>false</externalId>
@@ -233,6 +323,18 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Payer_Name_FS__c</fullName>
+        <description>payer name coming from funding source</description>
+        <externalId>false</externalId>
+        <formula>Funding_Source__r.Payer_Name__c</formula>
+        <label>Payer Name</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Payer_Name__c</fullName>
@@ -259,6 +361,28 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
         <trackTrending>false</trackTrending>
         <type>MasterDetail</type>
         <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Received_From__c</fullName>
+        <externalId>false</externalId>
+        <label>Given By</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Reference_Number__c</fullName>
+        <externalId>false</externalId>
+        <label>Reference #</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Remaining_Dollars__c</fullName>
@@ -295,6 +419,135 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
         <type>Number</type>
         <unique>false</unique>
     </fields>
+    <fields>
+        <fullName>Representing_Received__c</fullName>
+        <externalId>false</externalId>
+        <label>Representing (Received)</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Representing_Request__c</fullName>
+        <externalId>false</externalId>
+        <label>Representing (Request)</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Request_Contact_Name__c</fullName>
+        <externalId>false</externalId>
+        <label>Spoke With</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Request_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Request Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Request_Fax__c</fullName>
+        <externalId>false</externalId>
+        <label>Request Fax</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Phone</type>
+    </fields>
+    <fields>
+        <fullName>Request_Phone__c</fullName>
+        <externalId>false</externalId>
+        <label>Request Phone</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Phone</type>
+    </fields>
+    <fields>
+        <fullName>Requested_By__c</fullName>
+        <externalId>false</externalId>
+        <label>Requested By</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Reviewed_By__c</fullName>
+        <externalId>false</externalId>
+        <label>Review Nurse</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Authorization Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Initial</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>1:1 Sitter</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
     <label>Authorization</label>
     <listViews>
         <fullName>All</fullName>
@@ -307,6 +560,141 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
         <type>Text</type>
     </nameField>
     <pluralLabel>Authorizations</pluralLabel>
+    <recordTypeTrackHistory>false</recordTypeTrackHistory>
+    <recordTypes>
+        <fullName>External_Import</fullName>
+        <active>true</active>
+        <description>Records imported from external billing system (AVATAR)</description>
+        <label>External Import</label>
+        <picklistValues>
+            <picklist>Auth_Given_Method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorized_Provider__c</picklist>
+            <values>
+                <fullName>Cambridge Family %26 Children%27s Service %28CFCS%29</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Funding_Source_Auth_CM</fullName>
+        <active>false</active>
+        <description>Authorization related to funding source</description>
+        <label>Funding Source Auth CM</label>
+        <picklistValues>
+            <picklist>Auth_Given_Method__c</picklist>
+            <values>
+                <fullName>No Auth Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verbal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorized_Provider__c</picklist>
+            <values>
+                <fullName>Cambridge Family %26 Children%27s Service %28CFCS%29</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>1%3A1 Sitter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Initial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stay - Open Ended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
     <searchLayouts/>
     <sharingModel>ControlledByParent</sharingModel>
     <startsWith>Vowel</startsWith>

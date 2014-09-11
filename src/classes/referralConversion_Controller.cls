@@ -654,6 +654,7 @@ public with sharing class referralConversion_Controller {
     Contact pbsmed = [select id, medicaid_id__c from contact where id = :idPBS ];
     Boolean trytoupdatePBS = String.IsBlank( pbsmed.medicaid_id__c );
     Boolean updatePBS = false;
+    
     // EC-13 - do not link the funding sources. instead copy them so they can be edited on the SA record.
     string strSQL = Utility.getCreatableFieldsSOQL('funding_source__c','referral__c = \'' + refCurr.Id + '\'' );
     system.debug( strSQL );
@@ -674,8 +675,66 @@ public with sharing class referralConversion_Controller {
                 updatePBS = true; 
                 trytoupdatePBS = false;
             }
+            
         }
-        insert newfunds;
+        
+        try {
+        	insert newfunds;
+        	
+        	// reselect to get ids populated
+        	strSQL = Utility.getCreatableFieldsSOQL('funding_source__c','service_assignment__c = \'' + newSA.Id + '\'' );
+        	newfunds = (List<Funding_Source__c>)Database.query(strSQL);
+        	
+        	List<Authorization__c> newauths = new List<Authorization__c>();
+        	
+        	// get the new recordtype for funding source related auths
+        	RecordType recType = [ select id from recordtype where sobjecttype='Authorization__c' and developername ='Funding_Source_Auth_CM' LIMIT 1 ];
+        	
+        	// now create auths for funding sources that have them
+			for ( Funding_Source__c fs : newfunds ) {
+				
+				// there's an auth if the status populated
+				if ( fs.status__c != '') {
+					 
+					// for now this will be for CM only.  working on other flavors.					
+					Authorization__c auth = new Authorization__c ( RecordTypeID = recType.ID, 
+																	authorization_status__c = fs.status__c, 
+																	funding_source__c = fs.Id, 
+																	type__c = fs.authorization_type__c,
+																	admission__c = newSA.Admission__c, 
+																	payer_authorization_date__c = fs.authorization_received_date__c, // might need to take date off the date/time received field
+																	payer_effective_date__c = fs.days_authorized_from__c,
+																	payer_end_date__c = fs.days_authorized_to__c,
+																	person_being_served__c = newSA.Person_being_served__c,
+																	requested_by__c = fs.requested_by__c,
+																	request_date__c = fs.request_date__c,
+																	request_contact_name__c = fs.request_contact_name__c,
+																	representing_request__c = fs.representing_request__c,
+																	reference_number__c = fs.reference_number__c,
+																	reviewed_by__c = fs.review_nurse__c,
+																	request_phone__c = fs.request_phone__c,
+																	request_fax__c = fs.request_fax__c,
+																	received_from__c = fs.given_by__c,
+																	representing_received__c = fs.representing_received__c,
+																	auth_given_method__c = fs.auth_given_method__c,
+																	payer_authorization_id__c = fs.authorization_number__c,
+																	payer_cm_name__c = fs.internal_contact__c,
+																	payer_cm_phone__c = fs.internal_phone__c,
+																	payer_cm_email__c = fs.internal_email__c,
+																	payer_cm_fax__c = fs.internal_fax__c,
+																	comments__c = fs.authorization_comments__c
+																	);
+					newauths.Add( auth);
+					
+				}
+			}
+			
+			if ( newauths.size() > 0)
+				insert newauths;        	
+        	
+        } catch (DMLException e ){
+        	system.debug('Could not copy over funding sources!');
+        }
         if ( updatePBS )
             update pbsmed;
     }
