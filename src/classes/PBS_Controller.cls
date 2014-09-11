@@ -91,7 +91,7 @@ public pageReference savePBS() {
 	system.debug( 'age is: ' + string.valueOf(age));	
 	if ( (age < 18.0 ) && ( this.personbeingserved.guardian1_name__pc == '' || this.personbeingserved.guardian1_name__pc == null)) {
 		ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
-        'The person being served is younger than 18 years old.  Please enter the name of a guardian.' ));
+        'The person being served is younger than 18 years old. Please add Guardian\'s information in the last section at the bottom of this page.' ));
         return null;
 	} else 	{
 		try {
