@@ -1,0 +1,245 @@
+<apex:page standardController="TMN_Contract__c" >
+<apex:variable var="btnIstyle" value="text-align: left; width: 150px"/><!--to control button width styling must be inline this makes for a common location to update styling-->
+<apex:variable var="Renew" value="{!IF(TMN_Contract__c.Status__c = 'Renewed', False, True)}"/><!-- used in renders-->
+<apex:variable var="Approve" value="{!IF(ISNULL(TMN_Contract__c.Approver_1__c),True,False)}"/>
+<!-- Styles -->
+<apex:stylesheet value="{!$Resource.ContractCss}"/>
+    <style>
+        .pbSubheader {font-size:9pt;}
+        .clAnswer{border-left: 2px solid white;}
+    </style>
+
+<!--decore-->
+    <apex:sectionHeader title="Record ID - {!TMN_Contract__c.ContractID__c}" subtitle="{!TMN_Contract__c.Name}" printUrl="/apex/Contract_Print?id={!TMN_Contract__c.id}"/>
+
+<!--Used to display a link to the compliance flow \\\\\\\\\\\\\\\\\-->
+    <apex:outputPanel rendered="{!TMN_Contract__c.zzShowSignOff__c}" styleClass="signOff" layout="block">
+        <br/> This Contract requires your sign off that critical indicators are being met, please follow the link.<br/>      
+            <a class="link" href="/apex/ContractComplianceSignOffFlow?varContractAppNumber={!TMN_Contract__c.ComplianceApproverNumber__c}&varContractID={!TMN_Contract__c.Id}&Id={!TMN_Contract__c.Id}">
+        Sign Off
+        </a><br/>        
+    </apex:outputPanel>
+
+<!--chatter-->    
+<chatter:feedWithFollowers entityId="{!TMN_Contract__c.id}"/><br/>
+
+
+
+<table><!--used to create two columns the left one for the tabs the right one for the addtional options-->
+<tr>
+<td class="tbLeft">
+<!--//////////////Tabs value will select a tab if the ?QS has a tab value that equals the ID of a tab\\\\\\\\\\\-->
+<apex:tabPanel switchType="client" contentClass="tabContent" value="{!$CurrentPage.parameters.tab}" >  
+<!--Details -->
+<apex:tab label="Details" style="font-size:9pt;" >
+    <apex:include pageName="incContractDetails"/>
+    <br/>Created on &nbsp;<apex:outputField value="{!TMN_Contract__c.createddate}"/><br/>
+    
+<!--
+/////////
+Table links to childs contracts.  Basically manually creating a related list
+\\\\\\\\\\\\\
+-->        
+    <apex:pageBlock >
+        <apex:pageBlockTable value="{!TMN_Contract__c.Previous_Contract__r}" var="PC" >
+            <apex:column headerValue="{!IF(ISNULL(PC.Id),'','Renewal')}" ><a href="/{!PC.Id}">View</a></apex:column>
+            <apex:column value="{!PC.Name}"/>
+            <apex:column value="{!PC.Start_Date__c}"/>
+            <apex:column value="{!PC.Termination_Date__c}"/>                                        
+        </apex:pageBlockTable>
+    </apex:pageBlock> 
+</apex:tab> 
+<!-- end details-->                   
+<!--Check list -->    
+<apex:tab label="Check List" name="CL" >    
+    <apex:pageBlock mode="mainDetail"  >
+            <apex:pageBlockSection title="General" collapsible="false" columns="1" />
+            <apex:panelGrid columns="1" columnClasses="clAnswer" > 
+                <apex:outputLabel styleClass="clQuestion">Is the company name and address on the contract correct? </apex:outputLabel>
+                <apex:outputField styleClass="clAnswer" label="" value="{!TMN_Contract__c.CompanyNameCorrect__c}"/>                         
+                <apex:outputField styleClass="clAnswer" label="" value="{!TMN_Contract__c.CompanyNameCorrectDetail__c}"/> 
+                
+                <apex:outputLabel styleClass="clQuestion">Do contract dates coincide with when you anticipate providing services? </apex:outputLabel> 
+                <apex:outputField styleClass="clAnswer" value="{!TMN_Contract__c.DatesCorrect__c}"/>                     
+                <apex:outputField styleClass="clAnswer" Label="" value="{!TMN_Contract__c.CL_DatesCorrectDetail__c}"/>
+                
+                <apex:outputLabel styleClass="clQuestion">Are any additional permits or licenses required other than ones that currently exist?  </apex:outputLabel>                                       
+                <apex:outputField styleClass="clAnswer" value="{!TMN_Contract__c.AdditionalPermits__c}"/>
+                <apex:outputField styleClass="clAnswer" Label="" value="{!TMN_Contract__c.AdditionalPermitsDetail__c}"/>
+                
+                <apex:outputLabel styleClass="clQuestion">Are there any subcontracting terms?</apex:outputLabel>   
+                <apex:outputField styleClass="clAnswer" value="{!TMN_Contract__c.SubcontractingTerms__c}"/>                                     
+                <apex:outputField styleClass="clAnswer" Label="" value="{!TMN_Contract__c.CL_SubcontractingTermsDetail__c}"/>
+                
+                <apex:outputLabel styleClass="clQuestion">Is there an annual funding limit (total contract amount) in the contract?</apex:outputLabel>        
+                <apex:outputField styleClass="clAnswer" value="{!TMN_Contract__c.AnnualFundingLimit__c}"/>                    
+                <apex:outputField styleClass="clAnswer" Label="" value="{!TMN_Contract__c.CL_AnnualFundingLimitDetail__c}"/>
+                                    
+                <apex:outputLabel styleClass="clQuestion">Are anticipated services in contract covered by limit?  </apex:outputLabel>                   
+                <apex:outputField styleClass="clAnswer" value="{!TMN_Contract__c.CL_CoveredByLimit__c}"/>
+                
+                <apex:outputLabel styleClass="clQuestion">Is there room for additional growth? </apex:outputLabel>                   
+                <apex:outputField styleClass="clAnswer" value="{!TMN_Contract__c.AdditionalGrowth__c}"/>                        
+            </apex:panelGrid>    
+            
+            <apex:pageBlockSection title="Accounting" collapsible="false" columns="1"/>                                    
+            <apex:panelGrid columns="1" columnClasses="clAnswer">
+                <apex:outputLabel styleClass="clQuestion">Do rates vary from budget? </apex:outputLabel>                 
+                <apex:outputField styleClass="clAnswer" value="{!TMN_Contract__c.RateChangeBudget__c}"/>
+                <apex:outputLabel styleClass="clQuestion">Is there an Auditing Payback Clause in the contract or language regarding Payment Reviews?  </apex:outputLabel>                  
+                <apex:outputField styleClass="clAnswer" value="{!TMN_Contract__c.CL_Payback_ReviewClause__c}"/>         
+            </apex:panelGrid> 
+            
+            <apex:pageBlockSection title="VPO Notification" collapsible="false" columns="1"/>
+            <apex:panelGrid columns="1" columnClasses="clAnswer">
+                <apex:outputLabel styleClass="clQuestion">Are the rates changed from the last contract?</apex:outputLabel>                
+                <apex:outputField styleClass="clAnswer" value="{!TMN_Contract__c.RateChangeLastContract__c}"/>
+                <apex:outputLabel styleClass="clQuestion">Have the amount of services changed from the last contract or does program design support scope of work and detail of services? </apex:outputLabel>                   
+                <apex:outputField styleClass="clAnswer" value="{!TMN_Contract__c.ServiceChange__c}"/> 
+                <apex:outputLabel styleClass="clQuestion">VPO</apex:outputLabel>
+                <apex:outputField label="" value="{!TMN_Contract__c.VPO__c}"/>                    
+            </apex:panelGrid>
+            
+            <apex:pageBlockSection title="Legal" collapsible="false" columns="1"/>
+            <apex:panelGrid columns="1" columnClasses="clAnswer">                        
+                <apex:outputLabel styleClass="clQuestion">Does the liability insurance (PLGL) exceed the limits of $1M/$3M or require additional insurances?</apex:outputLabel>                
+                <apex:outputField styleClass="clAnswer" value="{!TMN_Contract__c.LN_LiabilityInsuranceExceedLimits__c}"/>
+                
+                <apex:outputLabel styleClass="clQuestion">Can the contract be terminated by either party without notice? </apex:outputLabel>                   
+                <apex:outputField styleClass="clAnswer" value="{!TMN_Contract__c.LN_ContractTermNoNotice__c}"/>
+                
+                <apex:outputLabel styleClass="clQuestion">Is this a new payor or a new service?</apex:outputLabel>                   
+                <apex:outputField styleClass="clAnswer" value="{!TMN_Contract__c.LN_new_payor_or_a_new_service__c}"/>                  
+                   
+                <apex:outputLabel styleClass="clQuestion">Does the contract contain any Managed Care risk sharing? </apex:outputLabel>                   
+                <apex:outputField styleClass="clAnswer" value="{!TMN_Contract__c.LN_ManageCareRiskSharing__c}"/>
+                
+                      
+            </apex:panelGrid>    
+    </apex:pageBlock>
+
+
+
+</apex:tab>
+<!--end Checklist-->    
+<!--Critical Indicators-->        
+<apex:tab label="Critical Indicators" id="mytab" name="CI">
+    <apex:include pageName="incContractCritInd"/>        
+</apex:tab> 
+<!-- approvals-->            
+<apex:tab label="Approvals" name="approval" >
+    <apex:pageBlock mode="maindetail" >
+        <apex:pageBlockSection title="" collapsible="false" columns="1" >
+            <apex:outputField label="Stage" value="{!TMN_Contract__c.ApprovalStage__c}"/>
+            <apex:outputField value="{!TMN_Contract__c.Approver_1__c}" rendered="{!NOT(ISNULL(TMN_Contract__c.Approver_1__c))}">  <br/></apex:outputField>
+            <apex:outputField value="{!TMN_Contract__c.Approver_2__c}" rendered="{!NOT(ISNULL(TMN_Contract__c.Approver_2__c))}">  <br/></apex:outputField>
+            <apex:outputField value="{!TMN_Contract__c.Approver_3__c}" rendered="{!NOT(ISNULL(TMN_Contract__c.Approver_3__c))}">  <br/></apex:outputField>
+            <apex:outputField value="{!TMN_Contract__c.Approver4__c}" rendered="{!NOT(ISNULL(TMN_Contract__c.Approver4__c))}">  <br/></apex:outputField>
+            <apex:outputField value="{!TMN_Contract__c.Approver5__c}" rendered="{!NOT(ISNULL(TMN_Contract__c.Approver5__c))}">  <br/></apex:outputField>
+            <apex:outputField value="{!TMN_Contract__c.Approver7__c}" rendered="{!NOT(ISNULL(TMN_Contract__c.Approver6__c))}">  <br/></apex:outputField>
+            <apex:outputField value="{!TMN_Contract__c.Approver6__c}" rendered="{!NOT(ISNULL(TMN_Contract__c.Approver7__c))}">  <br/></apex:outputField>
+        </apex:pageBlockSection>
+        <br/><br/>
+        <apex:relatedList title="History" list="ProcessSteps" />
+    </apex:pageBlock> 
+</apex:tab>
+<!--end approvals -->
+<!--Compliance-->    
+
+<apex:tab label="Compliance" id="comp">
+    <apex:pageBlock >
+        <apex:pageBlockTable value="{!TMN_Contract__c.ContractCompliance__r}" var="CC" >
+            <apex:column ><a href="/{!CC.Id}">View</a></apex:column>
+            <apex:column value="{!CC.Name}"/>
+            <apex:column value="{!CC.CreatedBy.Name}"/>
+            <apex:column value="{!CC.Comments__c}"/>
+            <apex:column value="{!CC.ReviewDate__c}"/>
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+</apex:tab>
+<!--end compliance-->           
+<apex:tab label="Amendments">
+    <apex:relatedList title="History" list="ContractAmendments__r"/>
+</apex:tab>            
+<apex:tab label="Documents" id="docs">
+    <apex:form >
+        <br/><apex:commandButton value="Update" action="{!save}"/><apex:inputField value="{!TMN_Contract__c.FullyExecutedContractUploaded__c}"/>                    
+        Fully Executed Contract has been uploaded<p/>                                                
+    </apex:form>
+    <apex:relatedList list="NotesAndAttachments"/>
+</apex:tab>    
+</apex:tabPanel>        
+<!--End Tabs-->
+
+<!--Right Column-->    
+<!--
+/////
+Note: Styling in classes for button gets ovreriden by SF 
+-button style is inline (it doesn't point to a class) it points to an Apex:Varible so the styling of the buttons can be manged in one place
+////
+-->
+</td>
+<td class="tbRight">
+<apex:form >    
+    <apex:pageBlock title="Pre-Approval" rendered="{!NOT(TMN_Contract__c.Submitted_for_approval__c)}" >
+    <apex:pageBlockSection columns="1" >
+        <apex:pageBlockSectionItem >
+            <apex:outputField value="{!TMN_Contract__c.DetailsComplete__c}"/>
+            <apex:commandButton style="{!btnIstyle}" value="Edit Details" action="{!edit}"/>        
+        </apex:pageBlockSectionItem>            
+
+        <apex:pageBlockSectionItem >
+            <apex:outputField value="{!TMN_Contract__c.CheckListComplete__c}"/>
+            <apex:commandButton style="{!btnIstyle}" value="Edit Checklist" action="/apex/EditCheckListContract?id={!TMN_Contract__c.id}"/>        
+        </apex:pageBlockSectionItem>         
+
+        <apex:pageBlockSectionItem >
+            <apex:outputField value="{!TMN_Contract__c.CriticalIndicatorsComplete__c}"/>
+            <apex:commandButton style="{!btnIstyle}" value="Edit Critical Indicators" action="/apex/EditCritIndsContract?id={!TMN_Contract__c.id}"/>        
+        </apex:pageBlockSectionItem>         
+
+        <apex:pageBlockSectionItem >
+            <apex:outputField value="{!TMN_Contract__c.CompleteAssignedApprovers__c}"/>
+            <apex:commandButton style="{!btnIstyle}" value="Edit Approvers" action="/apex/editApproversContract?id={!TMN_Contract__c.id}"/>         
+        </apex:pageBlockSectionItem>         
+           
+        <apex:pageBlockSectionItem helpText="Contracts require legal approval if the annual value is over $1Mil or if there is Managed Care risk sharing" >
+            <apex:outputField value="{!TMN_Contract__c.LegalReviewRequired__c}"/>
+            <apex:outputLabel styleClass="btnCL">Legal Review Required</apex:outputLabel>        
+        </apex:pageBlockSectionItem>         
+
+        <apex:pageBlockSectionItem >
+            <apex:outputField value="{!TMN_Contract__c.ReadyForApproval__c}"/>
+            <apex:outputLabel styleClass="btnCL">Ready for Approval</apex:outputLabel>        
+        </apex:pageBlockSectionItem>         
+            
+    </apex:pageBlockSection>
+    </apex:pageBlock>            
+
+    <apex:pageBlock title="Approval">
+        <apex:outputLabel styleClass="btnCL"></apex:outputLabel>
+        <apex:commandButton rendered="{!NOT(TMN_Contract__c.Submitted_for_approval__c)}" disabled="{!NOT(TMN_Contract__c.ReadyForApproval__c)}" style="{!btnIstyle}" value="Submit For Approval" action="/p/process/Submit?id={!TMN_Contract__c.Id}" />            
+        <apex:outputPanel style="{!btnIstyle}"  rendered="{!TMN_Contract__c.Submitted_for_approval__c}" layout="block">
+        This Contract has been submitted for approval. 
+        <br/><br/>
+        The record may not be edited during the approval process.
+        </apex:outputPanel>
+    </apex:pageBlock>
+
+    <apex:pageBlock title="Renewal">
+    <!--See custom setting to change IDs of fields in this URL trick-->
+        <apex:commandButton style="{!btnIstyle}" disabled="{!Renew}" value="Renew this Contract" action="/{!TMN_Contract__c.Id}/e?clone=1&{!$Setup.ContractAppSettings__c.Previous_Contract_Field_ID__c}={!TMN_Contract__c.Name}&{!$Setup.ContractAppSettings__c.Previous_Contract_Field_LK_ID__c}={!TMN_Contract__c.Id}&{!$Setup.ContractAppSettings__c.TypeID__c}=renewal"/> 
+        <apex:outputPanel style="{!btnIstyle}" layout="block" rendered="{!Renew}">The status of this contract must be 'Renewed' before this button is enabled</apex:outputPanel>    
+    </apex:pageBlock>
+
+    <apex:pageBlock title="Actions" >
+        <apex:panelGrid columns="1">        
+            <apex:commandButton style="{!btnIstyle}" value="Change Owner" action="/{!TMN_Contract__c.Id}/a?retURL={!TMN_Contract__c.Id}"/>
+            <apex:commandButton style="{!btnIstyle}" value="Share This Contract" action="/p/share/CustomObjectSharingDetail?parentId={!TMN_Contract__c.Id}" />         
+        </apex:panelGrid>          
+    </apex:pageBlock> 
+</apex:form>
+</td>
+</tr>
+</table> 
+</apex:page>

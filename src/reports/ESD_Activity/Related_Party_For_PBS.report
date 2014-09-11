@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>Related_Party__c$Type__c</field>
+    </columns>
+    <columns>
+        <field>Related_Party__c$Name</field>
+    </columns>
+    <columns>
+        <field>Related_Party__c$Address__c</field>
+    </columns>
+    <columns>
+        <field>Related_Party__c$Email__c</field>
+    </columns>
+    <columns>
+        <field>Related_Party__c$Phone__c</field>
+    </columns>
+    <columns>
+        <field>Related_Party__c$Phone_1_Type__c</field>
+    </columns>
+    <columns>
+        <field>Related_Party__c$Phone_2__c</field>
+    </columns>
+    <columns>
+        <field>Related_Party__c$Phone_2_Type__c</field>
+    </columns>
+    <columns>
+        <field>Related_Party__c$Comments__c</field>
+    </columns>
+    <description>Related Parties for the Person being served</description>
+    <filter>
+        <criteriaItems>
+            <column>Related_Party__c$Person_Being_Served__c</column>
+            <operator>equals</operator>
+            <value>current</value>
+        </criteriaItems>
+    </filter>
+    <format>Tabular</format>
+    <name>Related Party For PBS</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>Related_Party__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <timeFrameFilter>
+        <dateColumn>Related_Party__c$CreatedDate</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>
