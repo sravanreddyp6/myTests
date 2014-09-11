@@ -438,18 +438,6 @@
         <unique>false</unique>
     </fields>
     <fields>
-        <fullName>Billing_System__c</fullName>
-        <externalId>false</externalId>
-        <formula>TEXT(Person_Being_Served__r.Avatar_Source_System__c)</formula>
-        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
-        <label>Billing System</label>
-        <required>false</required>
-        <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
-    </fields>
-    <fields>
         <fullName>Blank10__c</fullName>
         <externalId>false</externalId>
         <formula>&apos;&apos;</formula>
@@ -2877,6 +2865,15 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Sleep_Check_Conducted__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Sleep Check Conducted</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
     </fields>
     <fields>
         <fullName>Staff_Credentials_Current__c</fullName>
@@ -16472,6 +16469,13 @@ false)</errorConditionFormula>
         <errorConditionFormula>( Purpose_Service_is_Billable__c ) &amp;&amp; ( BEGINS(RecordType.DeveloperName, &apos;FL&apos;) )  &amp;&amp; ( Service_Assignment__r.RecordType.DeveloperName  = &apos;Assessment_Only&apos;) &amp;&amp; (DATEVALUE(Start_Time__c)   &gt; ( Service_Assignment__r.Start_Date__c  + 31))</errorConditionFormula>
         <errorDisplayField>Start_Time__c</errorDisplayField>
         <errorMessage>The Start Date/Time you have selected for this Progress Note is greater than 30 days from the start date of this Assessment Only Service Assignment and the note is flagged as Billable. Please check the Start Date/Time, or make the note non-billable.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>If_Sleep_Check_True_Prevent_Billable_Tru</fullName>
+        <active>true</active>
+        <description>A validation rule to pair with the workflow rule that changes &quot;Purpose/Service is Billable&quot; to false if &quot;Sleep Check Conducted&quot; is saved as True.  This rule prevents going in after that save and manually changing the &quot;Purpose/Service is Billable&quot; to true.</description>
+        <errorConditionFormula>AND( Sleep_Check_Conducted__c  = true ,  Purpose_Service_is_Billable__c = true)</errorConditionFormula>
+        <errorMessage>This progress note cannot have the &quot;Purpose/Service is Billable&quot; field checked if the &quot;Sleep Check Conducted&quot; field is also checked.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Locked</fullName>
