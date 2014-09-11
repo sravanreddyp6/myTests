@@ -4,6 +4,7 @@
   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
   <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery.tinysort.min.js')}" />
 
   <style type="text/css">
     .grid-container {
@@ -317,6 +318,12 @@
         }
         return false;
       });
+      
+      
+      j$('ul#refrpt>span').tsort();
+      j$('ul#PBSrpt>span').tsort();
+      console.log('items sorted');
+      
     });
   </script>
   

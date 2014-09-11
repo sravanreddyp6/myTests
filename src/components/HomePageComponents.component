@@ -84,28 +84,30 @@
                 
                     <ul id="{!if(objectName=='Referrals','refrpt',if(objectName=='Person Being Served','PBSrpt',if(objectName=='TMN Contacts','TMNrpt',if(objectName=='Contract Management','conrpt','docsrpt'))))}"> 
                         <apex:repeat value="{!(if(objectName=='Referrals',refrportlst,if(objectName=='Person Being Served',PBSrportlst,if(objectName=='TMN Contacts',credrportlst, if(objectName=='Contract Management',contractrportlst, docrportlst)))))}" var="report"> 
+                            <apex:outputPanel >
                             <li>
                                 <apex:outputLink value="{!'/' + report.id}" target="_blank" title="View this Report" >{!report.name}</apex:outputLink> 
                             </li>
+                            </apex:outputPanel>
                         </apex:repeat> 
-                        <apex:outputPanel rendered="{!objectName=='Person Being Served'}">
-                            <apex:repeat value="{!VFReportlst}" var="VFReport"> 
+
+                            <apex:repeat value="{!VFReportlst}" var="VFReport" rendered="{!objectName=='Person Being Served'}"> 
                                 <apex:outputPanel rendered="{!if(CONTAINS(VFReport.Groups__c, '#PBS'),'true','false')}">
                                 <li>
                                     <apex:outputLink value="{!'/apex/' + VFReport.link__c }" target="_blank" title="View this Report">{!VFReport.Name__c}</apex:outputLink>
                                 </li>
                                 </apex:outputPanel>
                             </apex:repeat>
-                        </apex:outputPanel>
-                        <apex:outputPanel rendered="{!objectName=='Referrals'}">
-                            <apex:repeat value="{!VFReportlst}" var="VFReport"> 
+                        
+
+                            <apex:repeat value="{!VFReportlst}" var="VFReport"  rendered="{!objectName=='Referrals'}"> 
                                 <apex:outputPanel rendered="{!if(CONTAINS(VFReport.Groups__c, '#Referral'),'true','false')}">
                                 <li>
                                     <apex:outputLink value="{!'/apex/' + VFReport.link__c }" target="_blank" title="View this Report">{!VFReport.Name__c}</apex:outputLink>
                                 </li>
                                 </apex:outputPanel>
                             </apex:repeat>
-                        </apex:outputPanel>                        
+                                               
                     </ul>
                 </li>
             </ul>
