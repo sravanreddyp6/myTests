@@ -62,8 +62,11 @@ var j$ = jQuery.noConflict();
 
 function createtbl(){
     console.log('starting tables');
-    var exTitle = '{!status} - Referrals ';
-    console.log("start date = {!StartDate}");
+    var sd = j$('[id*=sDate]').text();
+    var ed = j$('[id*=eDate]').text();
+    var st = j$('#thestatus').text();
+    var exTitle = st + ' Referrals from ' + sd + ' to ' + ed;
+    console.log("start date = " + sd);
     var table = j$('#myTbl').dataTable({ 
             "bPaginate": false, 
             "order": [[ 1, "desc" ]],            
@@ -155,12 +158,12 @@ j$( document ).ready(function() {
 <apex:pageBlock id="results">
 <apex:pageMessages ></apex:pageMessages>
 <apex:outputPanel styleClass="resultsHeader" layout="block" rendered="{!startDate != null}">
-                Showing {!Referral_results.size}&nbsp;<span class="green bold">{!status}</span> Referrals between&nbsp;
-                    <apex:outputText styleClass="green bold" value="{0,date,MM'/'dd'/'yy}">
+                Showing {!Referral_results.size}&nbsp;<span id="thestatus" class="green bold">{!status}</span> Referrals between&nbsp;
+                    <apex:outputText id="sDate" styleClass="green bold" value="{0,date,MM'-'dd'-'yy}">
                         <apex:param value="{!startDate}" /> 
                     </apex:outputText>
                     and&nbsp;
-                    <apex:outputText styleClass="green bold" value="{0,date,MM'/'dd'/'yy}">
+                    <apex:outputText id="eDate" styleClass="green bold" value="{0,date,MM'-'dd'-'yy}">
                         <apex:param value="{!endDate}" /> 
                     </apex:outputText>
                     
