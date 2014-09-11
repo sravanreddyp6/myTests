@@ -28,7 +28,6 @@ public with sharing class referralConversion_Controller {
   
   public referralConversion_Controller(ApexPages.standardController ctl){
 
-    //this.referralRecord = (Referral__c) ctl.getRecord();
     this.refRelParties = new List<Related_Party__c>();
     this.refAgencies = new List<Agency_Involved_With_Individual__c>();
     this.refLocations = new List<Referral_Location__c>();
@@ -72,15 +71,20 @@ public with sharing class referralConversion_Controller {
     
     string tmp;
     
-    if  ( (tmp = this.referralRecord.Service_Location_Program__c) != null ) {
+    // updated to mirror how the SA derives its program info
+    if (referralRecord.Service_location__c != null ) {
+    
+    	Service_location__c sl = [select id, alias__c, service_value__c from service_location__c where id = :referralRecord.Service_Location__c LIMIT 1];
+    
+    	program = sl.Alias__c;
+                            
+        location  = ''; 
+        integer dashpos = sl.Service_Value__c.indexOf('-');
+        if (dashpos > -1 ) 
+        	ServiceLine = (sl.Service_Value__c).substring(dashpos+1);
+        else
+        	ServiceLine = sl.Service_Value__c;
         
-        programInfo = tmp.split('-');
-        if (programInfo.size() > 3)
-            Location = programInfo[3]; 
-        //Program =  programInfo[1];
-        Program = referralRecord.service_location__r.alias__c;
-        //ServiceLine = programInfo[2];
-        ServiceLine = referralRecord.service_location__r.service_value__c;
     }   
   }
   
