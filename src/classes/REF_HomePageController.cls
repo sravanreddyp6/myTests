@@ -109,4 +109,76 @@ public with sharing class REF_HomePageController {
                             order by ActivityDate desc, Priority limit 25];
         return tasks;
     }
+  public List<Report> refReports2 {
+    get {
+            List<Report> refrportlst = new List<Report>();
+            system.debug('op grounp ' + OperatingGroup  );
+            if(OperatingGroup != null){
+                set<string> okRefRpts = getReportsToShow(OperatingGroup );
+                system.debug('reports in scope - ' + okRefRpts);
+                for(Report rpt:report([SELECT AccessType,Id,IsReadonly,Name,DeveloperName,Type FROM Folder WHERE Type = 'Report' AND DeveloperName = 'Referrals'].id, null)){
+                    
+                        if(okRefRpts.contains(rpt.DeveloperName)){
+                            refrportlst.add(rpt);
+                            }
+                }
+            }
+            return refrportlst ;
+    }
+    private set;
+  }   
+  public list<VF_Reports__c> getrefVfReports(){
+     return [SELECT Name,Id,Name__c,Description__c,link__c, groups__c from VF_Reports__c Where groups__c LIKE '%#Referral%'];
+  } 
+    public set<string> getReportsToShow(string og){
+        set<string> items = new set<string>();
+        
+        items.add('All_Active_Referrals_Report');
+        items.add('All_Referrals');
+        items.add('Closed_Referral_Tracking');
+        items.add('Locations_Working_Ref_by_Ref_Number');
+        items.add('Referral_Conversion_Time_Report');
+        items.add('Referrals_By_Location_Working_Referral');
+        items.add('Referrals_Requiring_Action');
+        
+        if(og == 'Cambridge'){
+            items.add('Active_Referrals_With_Diagnosis');
+            items.add('Daily_Referrals');
+            items.add('Red_Flagged_Referrals');
+            items.add('Weekly_Referrals');
+            items.add('Avatar_GA_Referrals');
+            items.add('GA_Referrals_FIT_Program');        
+        }
+        if(og == 'Redwood'){
+            items.add('Active_Referrals_With_Diagnosis');
+            items.add('Daily_Referrals');
+            items.add('Red_Flagged_Referrals');
+            items.add('Weekly_Referrals');        
+        }
+        if(og == 'CareMeridian'){
+        
+        }
+        if(og == 'NeuroRestorative'){
+            items.add('Daily_Referrals');
+            items.add('Weekly_Referrals');                    
+        } 
+        
+    
+    
+        return items;
+    
+    }    
+     public List<Report> report(Id ownId,String ReportText){
+    String query = 'SELECT Name, Id,OwnerId, description, DeveloperName, SystemModstamp FROM report where OwnerId=:ownId';
+    if(ReportText!=null && ReportText=='ESDAct'){
+        query+=' and description like \'%#notes%\'' ;
+    } else if (ReportText != null && ReportText=='Docs') {
+        query+=' and (description like \'%Case Document%\' or description like \'%Fidelity Document%\')';
+    }
+    
+    query+= ' order by name';
+    
+    List<Report> tempreport = database.query(query);
+    return tempreport;
+ }
 }
