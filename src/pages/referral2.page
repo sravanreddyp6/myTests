@@ -103,7 +103,7 @@ function stopRKey(evt) {
     
     var isPrimaryPhysician = false;    
     for (var i = 0; i < obj.length; i++) {
-        if ( obj[i].Type__c === str ) {
+        if ( obj[i].TypeC === str ) {
             isPrimaryPhysician = true;
             break;
         }
@@ -111,7 +111,7 @@ function stopRKey(evt) {
      
     for (var i = 0; i < obj.length; i++) {
         if ( (!partyID && isPrimaryPhysician && partyType === str) ||           // adding a new related party and one already exists thats primary physician .
-             (partyID === obj[i].Id && isPrimaryPhysician && obj[i].Type__c != str && partyType === str ) ) {       // editing existing one and changing its type to primary physician but one already present. 
+             (partyID === obj[i].Id && isPrimaryPhysician && obj[i].TypeC != str && partyType === str ) ) {       // editing existing one and changing its type to primary physician but one already present. 
             errors += '<li>Only one "Physician - Primary" allowed. Please edit Type on this entry or change the Type assigned to existing Related Party.</li>';
             break;
         }

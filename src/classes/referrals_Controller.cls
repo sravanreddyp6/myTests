@@ -58,7 +58,22 @@ public with sharing class referrals_Controller{
 
   public List<Related_Party__c> relParties { get; set; }
   public String relPartiesJSON {get {
-    return JSON.serialize(relParties);}
+   	List<RelatedParty> relPartiesData = new List<RelatedParty>();
+	if (relParties.size() > 0) {
+		for (Related_Party__c rp :relParties){
+			relPartiesData.add( new RelatedParty(rp.id, rp.Type__c) );
+		}
+	}	
+    return JSON.serialize(relPartiesData);}
+  }
+
+  public class RelatedParty{
+     Id Id;
+     String TypeC;
+     RelatedParty(Id id, String typeC){
+     	this.Id=id;
+     	this.TypeC = typeC;
+     }
   }
   
   public Attachment relPartyFile {
