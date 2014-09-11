@@ -49,26 +49,12 @@
              collapsible="false"
              id="ResultsSection">
           <apex:pageBlockTable value="{!refResults}" var="r">
-            <apex:column headerValue="Action">
-              <apex:outputPanel rendered="{!IF(AND(referralId == null,r.type == 'Person Being Referred'), 'true', 'false')}">
-                 <a href="/apex/referral?pbrID={!r.Id}">New Referral</a>
-              </apex:outputPanel>
-              <apex:outputPanel rendered="{!IF(AND(referralId == null,r.type == 'Person Being Served'), 'true', 'false')}">
-                 <a href="/apex/referral?pbsID={!r.Id}">New Referral</a>
-              </apex:outputPanel>
-              <apex:outputPanel rendered="{!IF(AND(referralId != null,r.type == 'Person Being Referred', pbrId != r.ID), 'true', 'false')}">
-                 <a href="/apex/referral?pbrID={!r.Id}&Id={!referralId}">Link Referral</a>
-              </apex:outputPanel>
-              <apex:outputPanel rendered="{!IF(AND(referralId != null,r.type == 'Person Being Served'), 'true', 'false')}">
-                 <a href="/apex/referral?pbsID={!r.Id}&Id={!referralId}">Link Referral</a>
-              </apex:outputPanel>
+            <apex:column headerValue="Referrals">
+               <apex:repeat value="{!r.Referrals}" var="ref">
+                  <a href="/{!ref.id}">{!ref.Name}</a><br/>
+               </apex:repeat>     
             </apex:column>
             <apex:column headerValue="Name">{!r.LastName}, {!r.FirstName}</apex:column>
-            <apex:column headerValue="DOB">
-              <apex:outputText value="{0, date, MM/dd/yyyy}">
-                <apex:param value="{!r.DateOfBirth}"/>
-              </apex:outputText>
-            </apex:column>
             <apex:column headerValue="Age">
               <apex:outputText value="{0, number, 0}">
                 <apex:param value="{!r.Age}"/>
@@ -82,12 +68,21 @@
                                 State="{!r.State}"
                                 Zip="{!r.ZipCode}"/>
             </apex:column>
-            <apex:column headerValue="Referrals">
-               <apex:repeat value="{!r.Referrals}" var="ref">
-                  <a href="/{!ref.id}">{!ref.Name}</a><br/>
-               </apex:repeat>     
-            </apex:column>
             <apex:column headerValue="Type">{!r.Type}</apex:column>
+            <apex:column headerValue="Action">
+              <apex:outputPanel rendered="{!IF(AND(referralId == null,r.type == 'Person Being Referred',r.pbsonPBR==null), 'true', 'false')}">
+                 <a href="/apex/referral?pbrID={!r.Id}">New Referral</a>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!IF(AND(referralId == null,r.type == 'Person Being Served'), 'true', 'false')}">
+                 <a href="/apex/referral?pbsID={!r.Id}">New Referral</a>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!IF(AND(referralId != null,r.type == 'Person Being Referred', pbrId != r.ID), 'true', 'false')}">
+                 <a href="/apex/referral?pbrID={!r.Id}&Id={!referralId}">Link Referral</a>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!IF(AND(referralId != null,r.type == 'Person Being Served'), 'true', 'false')}">
+                 <a href="/apex/referral?pbsID={!r.Id}&Id={!referralId}">Link Referral</a>
+              </apex:outputPanel>
+            </apex:column>
         </apex:pageBlockTable>
         </apex:pageBlockSection>
       </apex:outputPanel>

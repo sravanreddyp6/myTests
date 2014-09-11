@@ -13,9 +13,10 @@ public class ReferralSearchResults implements Comparable {
   public string Type {get;set;}
   public Integer MatchedItems {get;set;}
   public Double Age {get;set;}
+  public Id pbsonPBR {get;set;}
   public List<Referral__c> Referrals {
     get {
-    	if (Referrals == null && Type == 'Person Being Referred') {loadReferrals();}
+    	if (Referrals == null && (Type == 'Person Being Referred' || Type == 'Person Being Served')) {loadReferrals();}
     	return Referrals;
     }
   	set;
@@ -36,7 +37,7 @@ public class ReferralSearchResults implements Comparable {
       this.Type = 'Person Being Referred';
       this.matchedItems = matchedNum;
       this.age = pbr.Age__c;
-      
+      this.pbsonPBR = pbr.Person_Being_Served__c;
   }
   
   public ReferralSearchResults(Contact pbs, Integer matchedNum) {

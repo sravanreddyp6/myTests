@@ -8,22 +8,45 @@ public with sharing class SearchLogicOnPBSR {
            (referralNumber==null || referralNumber=='')){
             throw new CustomException('Both last and first name cannot be null');
         }
-        String searchString = '';
+        String searchStringPBR = '';
+        string searchStringPBS = '';
+       
         List<Person_Being_Referred__c> pbrs = new List<Person_Being_Referred__c>();
+        List<Contact> pbsList = new List<Contact>();
+        
         if ((lastname!= null && lastname!='') || (firstname!=null && firstname!='')) {
-            searchString= SearchLogicOnPBSR.buildCriteria(lastname,firstname,dob, age,gender,false, true);           
-            pbrs = Database.query(searchString);
+            searchStringPBR= SearchLogicOnPBSR.buildCriteria(lastname,firstname,dob, age,gender,false, true);
+            searchStringPBS= SearchLogicOnPBSR.buildCriteria(lastname,firstname,dob, age,gender,true, false);          
+            pbrs = Database.query(searchStringPBR);
+            pbsList = Database.query(searchStringPBS);
         }
         
+     /*  if ((lastname!= null && lastname!='') || (firstname!=null && firstname!='')) {
+           searchString= SearchLogicOnPBSR.buildCriteria(lastname,firstname,dob, age,gender,true, false);
+            pbsList = Database.query(searchString);
+            
+       }*/
+        
         if(referralNumber!=null && referralNumber!=''){
-            Person_Being_Referred__c tmpPbr=[Select name,first_name__c,last_name__c,gender__c,date_of_birth__c,city__c,state__c,zip_code__c,street_1__c,street_2__c,age__c  
+           List<Person_Being_Referred__c> tmpPbr=[Select name,first_name__c,last_name__c,gender__c,date_of_birth__c,city__c,state__c,zip_code__c,street_1__c,street_2__c,age__c,Person_being_served__c  
                     From person_being_referred__c 
                         Where id in 
                             (select person_being_referred__c from referral__c where name=:referralNumber)
                     limit 1];
-            if(tmpPbr!=null){
-                pbrs.add(tmpPbr);
-            }
+        //Sravan- Added extra query and changed the logic to display PBS if searched with refrral number. If no PBS exists person being referred record will be displayed EC-28  09/11/2014 1:32 PM           
+            List <Contact> tmpCon = [SELECT name,firstname,lastname,gender__c,birthdate,mailingcity,mailingstatecode,mailingpostalcode,mailingstreet,otherstreet,age__c
+            		 FROM Contact
+            		 	WHERE ID IN(SELECT Person_Being_Served__c from referral__c WHERE name=:referralNumber)
+            		 limit 1];
+                  
+	             if(tmpCon.size()>0){
+	                pbsList.addall(tmpCon);
+	              }
+	            
+	            else{
+	            	pbrs.addall(tmpPbr);	
+	            } 
+	             
         }
         
         for(Person_Being_Referred__c pbr : pbrs)
@@ -37,22 +60,18 @@ public with sharing class SearchLogicOnPBSR {
             results.add(new ReferralSearchResults(pbr, matchedItems));  
         }
         
-        if ((lastname!= null && lastname!='') || (firstname!=null && firstname!='')) {
-            searchString= SearchLogicOnPBSR.buildCriteria(lastname,firstname,dob, age,gender,true, false);
-            
-            List<Contact> pbsList = Database.query(searchString);
-            for(Contact pbs : pbsList)
-            {
-                Integer matchedItems = 0;
-                if (lastname!=null && lastname!='' && pbs.LastName == lastName) matchedItems +=1;
-                if (firstname!=null && firstname!='' && pbs.FirstName == firstName) matchedItems +=1;
-                if (dob!=null && pbs.Birthdate == dob) matchedItems +=1;
-                if (age!=null && age!=0 && pbs.Age__c == age) matchedItems +=1;
-                if (gender!=null && gender!='' && pbs.Gender__c == gender) matchedItems +=1;
-                            
-                results.add(new ReferralSearchResults(pbs, matchedItems));  
-            }
+        for(Contact pbs : pbsList)
+        {
+            Integer matchedItems = 0;
+            if (lastname!=null && lastname!='' && pbs.LastName == lastName) matchedItems +=1;
+            if (firstname!=null && firstname!='' && pbs.FirstName == firstName) matchedItems +=1;
+            if (dob!=null && pbs.Birthdate == dob) matchedItems +=1;
+            if (age!=null && age!=0 && pbs.Age__c == age) matchedItems +=1;
+            if (gender!=null && gender!='' && pbs.Gender__c == gender) matchedItems +=1;
+                        
+            results.add(new ReferralSearchResults(pbs, matchedItems));  
         }
+        
         
         results.sort();
         return results;
@@ -72,10 +91,11 @@ public with sharing class SearchLogicOnPBSR {
         String zipfield='';
         String street1field='';
         String street2field='';
-        
-        
         String ssnfield='';
         String agefield='';
+        
+        string criteria='';
+        string pbsonpbr='';
         if(isContact){
             namefield='name';
             lastnamefield='lastname';
@@ -89,6 +109,7 @@ public with sharing class SearchLogicOnPBSR {
             street2field='otherstreet';
             agefield='age__c';
             sobjecttype='contact';
+            criteria='Select '+namefield+','+firstnamefield+','+lastnamefield+','+genderfield+','+dobfield+','+cityfield+','+statefield+','+zipfield+','+street1field+','+street2field+','+agefield+' From '+ sobjecttype+' where (';
         }
         if(isPBR){
             namefield='name';
@@ -103,9 +124,11 @@ public with sharing class SearchLogicOnPBSR {
             street2field='street_2__c';
             agefield='age__c';
             ssnfield='ssn__c';
+            pbsonpbr='Person_Being_Served__c';
             sobjecttype='person_being_referred__c';
+            criteria='Select '+namefield+','+firstnamefield+','+lastnamefield+','+genderfield+','+dobfield+','+cityfield+','+statefield+','+zipfield+','+street1field+','+street2field+','+agefield+','+pbsonpbr+' From '+ sobjecttype+' where (';
         }
-        String criteria='Select '+namefield+','+firstnamefield+','+lastnamefield+','+genderfield+','+dobfield+','+cityfield+','+statefield+','+zipfield+','+street1field+','+street2field+','+agefield+' From '+ sobjecttype+' where (';
+       // String criteria='Select '+namefield+','+firstnamefield+','+lastnamefield+','+genderfield+','+dobfield+','+cityfield+','+statefield+','+zipfield+','+street1field+','+street2field+','+agefield+' From '+ sobjecttype+' where (';
         string lNameSearch = '';
         string fNameSearch = '';
         if(lastname!=null && lastname!=''){
