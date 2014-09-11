@@ -1,13 +1,11 @@
 public with sharing class Referral_byStatus_rpt {
     public string Results {get; set;}
-    public referral__c refStatus {get; set;}
     public string status {get; set;}
     public date StartDate {get; set;}
     public date EndDate { get; set;}
     public list<Referral__c> Referral_results {get; set;}
     public Referral_byStatus_rpt (){
         Referral_results = new list<Referral__c>();
-        refStatus = new referral__c();
         status = 'New';
     }
     
