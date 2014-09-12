@@ -143,6 +143,7 @@ public with sharing class REF_HomePageController {
         
         if(og == 'Cambridge'){
             items.add('Active_Referrals_With_Diagnosis');
+            items.add('Active_Referrals_With_Diagnosis_Axis');
             items.add('Daily_Referrals');
             items.add('Red_Flagged_Referrals');
             items.add('Weekly_Referrals');
@@ -151,6 +152,7 @@ public with sharing class REF_HomePageController {
         }
         if(og == 'Redwood'){
             items.add('Active_Referrals_With_Diagnosis');
+            items.add('Active_Referrals_With_Diagnosis_Axis');
             items.add('Daily_Referrals');
             items.add('Red_Flagged_Referrals');
             items.add('Weekly_Referrals');        
