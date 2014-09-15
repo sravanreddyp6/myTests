@@ -173,6 +173,19 @@
         <visibleLines>3</visibleLines>
     </fields>
     <fields>
+        <fullName>Contract_Used__c</fullName>
+        <description>CM contract</description>
+        <externalId>false</externalId>
+        <formula>Funding_Source__r.CM_Contract_Used_Lookup__r.Name</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Contract Used</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Date_of_Last_Rollup__c</fullName>
         <externalId>false</externalId>
         <label>Date of Last Rollup</label>
@@ -225,6 +238,41 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Justification__c</fullName>
+        <description>justification for contract rate and level</description>
+        <externalId>false</externalId>
+        <label>Justification</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Level_Confirmed__c</fullName>
+        <externalId>false</externalId>
+        <label>Did CM confirm level?</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Level__c</fullName>
+        <description>contract level used for auth</description>
+        <externalId>false</externalId>
+        <label>Level</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Number_Of_Authorized_Units__c</fullName>
@@ -361,6 +409,18 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
         <trackTrending>false</trackTrending>
         <type>MasterDetail</type>
         <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Rate__c</fullName>
+        <description>contract rate for auth</description>
+        <externalId>false</externalId>
+        <label>Rate</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Received_From__c</fullName>
@@ -630,7 +690,7 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
     </recordTypes>
     <recordTypes>
         <fullName>Funding_Source_Auth_CM</fullName>
-        <active>false</active>
+        <active>true</active>
         <description>Authorization related to funding source</description>
         <label>Funding Source Auth CM</label>
         <picklistValues>
