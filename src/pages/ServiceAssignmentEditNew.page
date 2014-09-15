@@ -4,11 +4,34 @@
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}"/>
 <apex:variable value="{!$ObjectType.Action_Plan_Worksheet__c.accessible}" var="vfVarCanAccessWS"/>
 <apex:variable value="{!$User.Operating_Group__c == 'Cambridge'}" var="vfVarIsCB"/>
 <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM"/>
 
 <style>
+    .dialogLoadingSpinner {
+      margin-left: 5px;
+    }
+    #fundingMessages {
+      margin-bottom: 10px;
+    }
+    #fundingMessages .error {
+      color: red;
+    }
+    #fundingMessages .success {
+      color: green;
+    }
+    .modalDialog {
+      max-height: 500px;
+      overflow: auto;
+    }
+    .modalDialog .modalSubheader {
+      font-weight: bold;
+    }
+    .modalDialog .pbHeader {
+      font-size: 0.9em;
+    }
     .pbButton {
     float: right;
     }
@@ -60,12 +83,57 @@
         j$('input[id$=phaseToSave]').val(thePhase);
     }
 
+	openModalDialog = function (dialogId, tagType, titleString, dClass, width) {
+        if (!width) {
+            width = 800;
+        }
+        if (!dClass) {
+            dClass = 'fixed-dialog';
+        }
+        selector = tagType + '[id$=' + dialogId + ']';
+        if (j$(selector).dialog("isOpen")!==true) {
+            j$(selector).dialog({
+                dialogClass: dClass,
+                title:titleString,
+                modal:true,
+                width: width,
+                resizable: false,
+                minHeight: 0,
+                dialogClass: 'modalDialog',
+                closeOnEscape:false,
+                position: {
+                    my: "center top",
+                    at: "center top"
+                },
+                open: function () {
+                    // Don't allow "background" to be scrollable when dialogs
+                    // are open.
+                    j$("body").css("overflow", "hidden");
+                }
+            }).parent().appendTo(j$('form[id$=myFRM]'));
+            j$(selector).parent().find('a.ui-dialog-titlebar-close').remove();
+        }
+    };
+    
+	fundingSourceSave = function (isClose) {
+		// We cant use Visualforce functions/variables in a Static Resource JS file, so we have to pass it in here.
+	    closeFundingSource = isClose;
+	    fundingSourceSaveHelper('{!JSENCODE(fundingSourceRecordType)}');
+  	}
 
+    function loadFundingSource(fundingId) {
+        // This provides backward-compatibility with code the Appirio wrote
+        showEditFundingSource(fundingId);
+    }
 </script>
 <apex:pagemessages id="msgs" />
 <br />
-
 <apex:form id="myFRM">
+<apex:actionFunction name="saveFundingSource" action="{!saveFundingSource}" status="saveFundingSourceStatus" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialog('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs"/>
+<apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" action="{!showAddFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
+<apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000);" rerender="fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs">
+	<apex:param name="fundingId" value="" assignTo="{!fundingSource.Id}" />
+</apex:actionFunction>
 <apex:actionFunction action="{!changeToModel}" name="changeToModel" rerender="ContractAssoc, ProgAssoc" status="SaveStatus1"/>
 <apex:outputText value="{!theServAssign.Person_Being_Served__c}" rendered="false"/>
 <!-- To set focus on Top -->
@@ -859,6 +927,323 @@ END: Uncomment to have the element collapsed by default -->
     </apex:pageBlockTable>
 </apex:pageBlock>
 <!-- end FAD Assessments -->
+
+<!--  Funding Sources section -->
+ <!-- Add Funding Source modal. -->
+    <apex:outputPanel id="FundingSourceModal" style="display:none">
+      <div id='fundingMessages'></div>
+      <apex:pageBlock title="Add Funding Source" rendered="{!fundingSourceRecordType != 'CareMeridian' && fundingSourceRecordType != 'NeuroRestorative'}">
+        <apex:pageBlockSection columns="1" id="fundingSourceEntry">
+            <apex:inputField value="{!fundingSource.Funding_Source__c}" id="fundingEntry_Source"/>
+            <apex:inputField value="{!fundingSource.Funding_Source_ID__c}" id="fundingEntry_SourceId"/>
+            <apex:inputField value="{!fundingSource.Service_Being_Funded__c}" id="fundingEntry_Service" rendered="{!fundingSourceRecordType!='CareMeridian'}"/>
+            <apex:inputField value="{!fundingSource.Payor__c}" id="fundingEntry_Payor" rendered="{!fundingSourceRecordType=='CareMeridian'}"/>
+            <apex:inputField value="{!fundingSource.Status__c}" id="fundingEntry_Status"/>
+            <apex:inputField value="{!fundingSource.Comment__c}"  id="fundingEntry_comment"/>
+            <apex:inputHidden value="{!fundingSource.Id}"  id="fundingEntry_Id"/>
+        </apex:pageBlockSection>
+      </apex:pageBlock>
+      <apex:pageBlock title="Payer Detail" id="fundingSourcePayerDetailEntry" rendered="{!fundingSourceRecordType == 'CareMeridian' || fundingSourceRecordType == 'NeuroRestorative'}">
+        <apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'CareMeridian'}">
+            <apex:outputField value="{!theServAssign.Person_Being_Served__r.Name}" />
+            <!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
+            <apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!theServAssign.Person_Being_Served__r.Age__c})">
+                <apex:param value="{!theServAssign.Person_Being_Served__r.Birthdate}"/>
+            </apex:outputText>
+            <apex:inputField value="{!fundingSource.Type_of_Coverage__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Payer_Name__c}" />
+            <apex:inputField value="{!fundingSource.Payer_Phone__c}" />
+            <apex:inputField value="{!fundingSource.TPA__c}" />
+            <apex:inputField value="{!fundingSource.TPA_Phone__c}" />
+            <apex:inputField value="{!fundingSource.Primary_Med_Ind_Phys_Group__c}" />
+            <apex:inputField value="{!fundingSource.Primary_Med_Ind_Phys_Group_Phone__c}" />
+            <apex:inputField value="{!fundingSource.Network__c}" />
+            <apex:inputField value="{!fundingSource.Network_Phone__c}" />
+            <apex:inputField value="{!fundingSource.Verified_By__c}" />
+            <apex:inputField value="{!fundingSource.Payer_Verification_Date__c}" />
+            <apex:inputField value="{!fundingSource.Verified_With__c}" />
+            <apex:inputField value="{!fundingSource.Representing__c}" />
+            <apex:inputField value="{!fundingSource.Funding_Source__c}" label="Payer Type" />
+            <apex:inputField value="{!fundingSource.Call_Reference_Number__c}" />
+            <apex:inputField value="{!fundingSource.Policy_Type__c}" />
+            <apex:inputField value="{!fundingSource.Policy_Number__c}" />
+            <apex:inputField value="{!fundingSource.Group_Name__c}" />
+            <apex:inputField value="{!fundingSource.Group_Number__c}" />
+            <apex:inputField value="{!fundingSource.Policy_Holder__c}" />
+            <apex:inputField value="{!fundingSource.Relationship_To_Patient__c}" id="policyHolderRelationship" />
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">
+            <apex:outputField value="{!theServAssign.Person_Being_Served__r.Name}" />
+            <!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
+            <apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!theServAssign.Person_Being_Served__r.Age__c})">
+                <apex:param value="{!theServAssign.Person_Being_Served__r.Birthdate}"/>
+            </apex:outputText>
+            <apex:inputField value="{!fundingSource.Type_of_Coverage__c}" />
+            <apex:inputField value="{!fundingSource.Payer_Type__c}" />
+            <apex:inputField value="{!fundingSource.Payer_Name__c}" />
+            <apex:inputField value="{!fundingSource.Payer_Phone__c}" />
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel for="policyHolder" value="Policy Holder" />
+                <apex:outputPanel >
+                <apex:inputField value="{!fundingSource.Policy_Holder__c}" id="policyHolder"/>
+                <apex:commandLink value="Same as PBS" onclick="assignValue('{!$Component.policyHolder}', '{!theServAssign.Person_Being_Served__r.Name}'); return false;" />
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            <apex:inputField value="{!fundingSource.Relationship_To_Patient__c}" />
+
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel for="insuredSSN" value="Insured SSN" />
+                <apex:outputPanel >
+                    <apex:inputField value="{!fundingSource.Insured_SSN__c}" id="insuredSSN" />
+                    <apex:commandLink value="Same as PBS" onclick="assignValue('{!$Component.insuredSSN}', '{!theServAssign.Person_Being_Served__r.SSN__c}'); return false;" />
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel for="insuredDOB" value="Insured DOB" />
+                <apex:outputPanel >
+                    <apex:inputField value="{!fundingSource.Insured_DOB__c}" id="insuredDOB" />
+                    <apex:commandLink value="Same as PBS" onclick="assignValue('{!$Component.insuredDOB}', '{!theServAssign.Person_Being_Served__r.Birthdate}'); return false;" />
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            <apex:inputField value="{!fundingSource.Policy_Number__c}" />
+            <apex:inputField value="{!fundingSource.Group_Number__c}" />
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="1" rendered="{!fundingSourceRecordType == 'CareMeridian'}">
+            <apex:inputField value="{!fundingSource.Additional_Coverage__c}" id="additionalCoverage" />
+            <apex:inputTextarea value="{!fundingSource.Additional_Coverage_Comments__c}" id="additionalCoverageDetail" label="" cols="80" />
+        </apex:pageBlockSection>
+               
+        <apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'CareMeridian'}">
+            <apex:outputText value="Benefit Information" styleClass="modalSubheader" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Effective_Date__c}" />
+            <apex:inputField value="{!fundingSource.Termination_Date__c}" />
+            <apex:inputField value="{!fundingSource.Benefit_Cycle__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Benefit_Year_Start_Date__c}" />
+            <apex:inputField value="{!fundingSource.Benefit_Year_End_Date__c}" />
+            <apex:inputField value="{!fundingSource.Deductible__c}" />
+            <apex:inputField value="{!fundingSource.Deductible_Met__c}" />
+            <apex:inputField value="{!fundingSource.Rate_of_Reimbursement__c}" />
+            <apex:inputField value="{!fundingSource.RoR_to_100_after_met_OOP_Max__c}" label="Rate of Reimbursement changes to 100% after OOP Max is met?" />
+            <apex:inputField value="{!fundingSource.OOP_Expense__c}" />
+            <apex:inputField value="{!fundingSource.OOP_Expense_Met__c}" />
+            <apex:inputField value="{!fundingSource.Deductible_Applicable_to_OOP__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Lifetime_Max__c}" />
+            <apex:inputField value="{!fundingSource.Lifetime_Max_Met__c}" />
+
+            <apex:outputText value="SNF" styleClass="modalSubheader" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Copay__c}" />
+            <apex:inputText value="{!fundingSource.Qualifying_Stay_Criteria__c}" />
+            <apex:inputField value="{!fundingSource.SNF_Day_Total__c}" />
+            <apex:inputField value="{!fundingSource.SNF_Days_Used__c}" />
+            <apex:inputField value="{!fundingSource.Precert_Required__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:outputText value="Acute Rehab" styleClass="modalSubheader" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.ARU_Day_Total__c}" />
+            <apex:inputField value="{!fundingSource.ARU_Days_Used__c}" />
+            
+            <apex:outputText value="Home Health" styleClass="modalSubheader" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.HH_Visits_Total__c}" />
+            <apex:inputField value="{!fundingSource.HH_Visits_Used__c}" />
+
+            <apex:outputText value="DME" styleClass="modalSubheader" />
+            <apex:pageBlockSectionItem />
+            <apex:inputText value="{!fundingSource.DME_Benefits__c}" />
+            <apex:inputField value="{!fundingSource.DME_Maximum__c}" />
+            <apex:inputField value="{!fundingSource.DME_Precert_Required__c}" />
+            <apex:pageBlockSectionItem />
+
+            <apex:outputText value="Transportation" styleClass="modalSubheader" />
+            <apex:pageBlockSectionItem />
+            <apex:inputText value="{!fundingSource.Transportation_Benefits__c}" />
+            <apex:inputField value="{!fundingSource.Transportation_Maximum__c}" />
+            <apex:inputField value="{!fundingSource.Transportation_Precert_Required__c}" />
+            <apex:pageBlockSectionItem />
+
+            <apex:inputField value="{!fundingSource.Precert_Company__c}" />
+            <apex:inputField value="{!fundingSource.SNF_Phone__c}" label="Precert Company Phone" />
+            <apex:inputField value="{!fundingSource.SNF_Fax__c}" label="Fax" />
+            <apex:pageBlockSectionItem />
+            
+            <apex:outputText value="Claims Submission" styleClass="modalSubheader" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Company__c}" label="Company" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Street_1__c}" label="Street 1" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Phone__c}" label="Phone" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Street_2__c}" label="Street 2" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Email__c}" label="Email Address" id="claimsSubmissionEmail" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_City__c}" label="City" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Fax__c}" label="Fax" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_State__c}" label="State" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Zip__c}" id="Claims_Submission_Zip" label="Zip" />        
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">
+            <apex:outputText value="Benefit Information" styleClass="modalSubheader" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Benefit_Cycle__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Effective_Date__c}" />
+            <apex:inputField value="{!fundingSource.Termination_Date__c}" />
+            <apex:inputField value="{!fundingSource.Copay__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.In_patient_Benefits_Limit__c}" />
+            <apex:inputField value="{!fundingSource.Out_patient_Visit_Limit__c}" />
+            <apex:inputField value="{!fundingSource.Deductible__c}" />
+            <apex:inputField value="{!fundingSource.Deductible_Met__c}" />
+            <apex:inputField value="{!fundingSource.Rate_of_Reimbursement__c}" />
+            <apex:inputField value="{!fundingSource.RoR_to_100_after_met_OOP_Max__c}" label="Rate of Reimbursement changes to 100% after OOP Max is met?" />
+            <apex:outputText value="SNF" styleClass="modalSubheader" />
+            <apex:pageBlockSectionItem />
+
+            <apex:inputField value="{!fundingSource.SNF_Day_Total__c}" />
+            <apex:inputField value="{!fundingSource.SNF_Days_Used__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Precert_Required__c}" />
+            <apex:inputField value="{!fundingSource.Precert_Company__c}" />
+            <apex:inputField value="{!fundingSource.SNF_Phone__c}" label="Precert Company Phone" />
+            <apex:inputField value="{!fundingSource.SNF_Fax__c}" label="Fax" />
+            <apex:pageBlockSectionItem />
+
+            <apex:outputText value="Claims Submission" styleClass="modalSubheader" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Company__c}" label="Company" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Street_1__c}" label="Street 1" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Phone__c}" label="Phone" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Street_2__c}" label="Street 2" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Email__c}" label="Email Address" id="claimsSubmissionEmail" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_City__c}" label="City" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Fax__c}" label="Fax" />
+            <apex:inputField value="{!fundingSource.Claims_Submission_State__c}" label="State" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Claims_Submission_Zip__c}" id="Claims_Submission_Zip" label="Zip" />
+        </apex:pageBlockSection>
+      </apex:pageBlock>
+      <apex:pageBlock title="Red Flags" id="fundingSourceRedFlagsEntry" rendered="{!fundingSourceRecordType == 'CareMeridian' || fundingSourceRecordType == 'NeuroRestorative'}">
+        <apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'CareMeridian'}">
+            <apex:inputField value="{!fundingSource.Month_to_Month__c}" id="field_validation1" />
+            <apex:inputField value="{!fundingSource.Basis__c}" id="field_check1" />
+            <apex:inputField value="{!fundingSource.Cobra__c}" id="field_validation2" />
+            <apex:inputField value="{!fundingSource.Payment_Detail__c}" id="field_check2" />
+            <apex:inputField value="{!fundingSource.Individual_Plan__c}" id="field_validation3" />
+            <apex:inputField value="{!fundingSource.Continued_Payment__c}" id="field_check3" />
+            <apex:inputField value="{!fundingSource.Under_Pre_Existing_Period__c}" id="field_validation4" />
+            <apex:inputField value="{!fundingSource.Dx_Pre_Existing__c}" id="field_check4" />
+            <apex:inputField value="{!fundingSource.Self_Inflicted__c}" id="field_validation5" />
+            <apex:inputField value="{!fundingSource.Covered__c}" id="field_check5" />
+            <apex:inputField value="{!fundingSource.Readmission__c}" id="field_validation6" />
+            <apex:inputField value="{!fundingSource.Prior_Pmt_Received__c}" id="field_check6" />
+            <apex:inputField value="{!fundingSource.Swing_Bed_Billing_at_SNF_Rate__c}" id="field_validation7" />
+            <apex:inputField value="{!fundingSource.Number_of_Days__c}" id="field_check7" />
+            <apex:inputField value="{!fundingSource.Medicare_is_Secondary_Coverage__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Patient_Over_26_and_On_Parent_s_Policy__c}" />
+            <apex:inputField value="{!fundingSource.Coverage_Details__c}" />
+            <apex:inputField value="{!fundingSource.Is_patient_policy_holder__c}" />
+            <apex:inputField value="{!fundingSource.Can_Patient_Return_to_Work__c}" id="canPatientReturnToWork" label="If Yes, Can Patient Return to Work?" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Patient_Has_Policy__c}" id="patientHasPolicy" label="If No, Does Patient Have Policy?" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Does_PH_Plan_to_Continue_Working__c}" label="If No, Does PH Plan to Continue Working?" />
+
+            <apex:outputText >
+                <div class="modalSubheader">Medicare Eligibility <c:HelpTooltip helpText="If any of the following check boxes are selected, patient is Medicare eligible." /></div>
+            </apex:outputText>
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.More_than_1_5_Yrs_of_Disability__c}" id="yearsOfDisability" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.ALS_ESRD_Black_Lung_Disease__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Patient_Over_64_Years_of_Age__c}" />
+
+            <apex:pageBlockSectionItem />
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">
+            <apex:inputField value="{!fundingSource.Cobra__c}" id="field_validation20" />
+            <apex:inputField value="{!fundingSource.Payment_Detail__c}" id="field_check20" />
+            <apex:inputField value="{!fundingSource.Self_Inflicted__c}" id="field_validation21" />
+            <apex:inputField value="{!fundingSource.Covered__c}" id="field_check21" />
+            <apex:inputField value="{!fundingSource.Self_Insured_Policy__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.Did_drugs_alcohol_contribute_to_injury__c}" id="field_validation22" />
+            <apex:inputField value="{!fundingSource.Are_injuries_covered__c}" id="field_check22" />
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="1" rendered="{!fundingSourceRecordType == 'CareMeridian'}">
+            <apex:inputTextArea value="{!fundingSource.Comment__c}" label="Additional Comments" cols="80" />
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="1" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">
+            <apex:inputTextArea value="{!fundingSource.Comment__c}" label="Red Flag Comments" cols="80" />
+        </apex:pageBlockSection>
+      </apex:pageBlock>
+
+      <apex:pageBlock >
+        <apex:pageblockButtons location="bottom">
+          <apex:commandButton value="Save" onclick="fundingSourceSave(true);return false;"/ >
+          <apex:commandButton value="Save & New" onclick="fundingSourceSave(false); return false;"/ >
+          <apex:commandButton value="Cancel" onclick="closeModalDialog('FundingSourceModal', 'span');j$('#fundingErrors').html('');return false;" />
+          <apex:actionStatus id="saveFundingSourceStatus">
+            <apex:facet name="start">
+              <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+            </apex:facet>
+            <apex:facet name="stop" />
+            </apex:actionStatus>
+        </apex:pageblockButtons>
+      </apex:pageBlock>
+    </apex:outputPanel>
+
+<a id="Funding_Sources" ></a>
+<apex:pageBlock id="fundingSources" title="Funding Sources">
+	<div class="pbHeaderButton">
+        <apex:commandButton value="Add Funding Source" onclick="showAddFundingSource(); return false;" />
+        <apex:actionStatus id="AddFundingSourceStatus">
+              <apex:facet name="start">
+                <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+              </apex:facet>
+              <apex:facet name="stop" />
+		</apex:actionStatus>
+    </div>
+	<apex:outputText value="No Funding Sources to display" rendered="{!(fundingSources.size=0)}" />
+        
+	<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType != 'CareMeridian' && fundingSourceRecordType != 'NeuroRestorative' && fundingSources.size!=0}">
+		<apex:column headerValue="Action"><a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a></apex:column>
+        <apex:column value="{!fundingSource.Funding_Source__c}"/>
+		<apex:column value="{!fundingSource.Funding_Source_ID__c}"/>
+        <apex:column value="{!fundingSource.Service_Being_Funded__c}" rendered="{!fundingSourceRecordType!='CareMeridian'}"/>
+        <apex:column value="{!fundingSource.Payor__c}" rendered="{!fundingSourceRecordType=='CareMeridian'}"/>
+        <apex:column value="{!fundingSource.Status__c}"/>
+        <apex:column value="{!fundingSource.Comment__c}"/>
+	</apex:pageBlockTable>
+
+	<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'CareMeridian' && fundingSources.size!=0}">
+		<apex:column headerValue="Action"><a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a></apex:column>
+		<apex:column value="{!fundingSource.Type_of_Coverage__c}"/>
+		<apex:column value="{!fundingSource.Payer_Name__c}"/>
+		<apex:column value="{!fundingSource.Effective_Date__c}"/>
+		<apex:column value="{!fundingSource.Termination_Date__c}"/>
+		<apex:column value="{!fundingSource.Status__c}"/>
+		<apex:column value="{!fundingSource.Comment__c}"/>
+    </apex:pageBlockTable>
+
+	<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'NeuroRestorative' && fundingSources.size!=0}">
+		<apex:column headerValue="Action"><a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a></apex:column>
+		<apex:column value="{!fundingSource.Type_of_Coverage__c}"/>
+		<apex:column value="{!fundingSource.Payer_Name__c}"/>
+		<apex:column value="{!fundingSource.Effective_Date__c}"/>
+		<apex:column value="{!fundingSource.Termination_Date__c}"/>
+		<apex:column value="{!fundingSource.Comment__c}" />
+		<apex:column value="{!fundingSource.Status__c}"/>
+    </apex:pageBlockTable>        
+</apex:pageBlock>
+<!-- end Funding sources section-->
+
  <apex:pageBlock title="Referral Detail" rendered="{!referral != null }">
  <apex:pageBlockSection columns="2" title="Originating Referral" collapsible="false">
  <apex:pageBlockSectionItem >
@@ -882,14 +1267,14 @@ END: Uncomment to have the element collapsed by default -->
 
  </apex:pageBlockSection>
  <apex:pageBlockSection title="Funding Source" collapsible="false" columns="1"><br />
- <apex:pageBlockTable styleclass="pbBody-list" value="{!fundingsource}" var="item" rendered="{!(fundingsource != null || fundingsource.size >0)}">
+ <apex:pageBlockTable styleclass="pbBody-list" value="{!referralFundingsources}" var="item" rendered="{!(referralFundingsources != null || referralFundingsources.size > 0)}">
             <apex:column headervalue="Name"><apex:outputLink value="/{!item.ID}">{!item.name}</apex:outputLink></apex:column>
             <apex:column value="{!item.Funding_Source__c}"/>
             <apex:column value="{!item.Payor__c}" rendered="{!item.recordtype.name == 'CareMeridian'}"/>
             <apex:column value="{!item.Service_Being_Funded__c}"/>
             <apex:column value="{!item.Status__c}"/>
  </apex:pageBlockTable>
-        <apex:outputText value="No records to display" rendered="{!(fundingsource == null || fundingsource.size=0)}" />
+        <apex:outputText value="No records to display" rendered="{!(referralFundingsources == null || referralFundingsources.size = 0)}" />
  </apex:pageBlockSection>
 
  </apex:pageBlock>

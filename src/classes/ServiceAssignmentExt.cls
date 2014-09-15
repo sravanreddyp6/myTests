@@ -282,7 +282,29 @@ public class ServiceAssignmentExt {
 
   }
 
-   public list<Funding_Source__c> fundingsource {get { return [select id, name, funding_source__c, payor__c, recordtype.name, service_being_funded__c, status__c from funding_source__C where service_Assignment__C = :theServAssign.id];} set;}
+  public list<Funding_Source__c> referralFundingsources {get { return [select id, name, funding_source__c, payor__c, recordtype.name, service_being_funded__c, status__c from funding_source__C where service_Assignment__C = :theServAssign.id and Referral__c != null];} set;}
+
+  public Funding_Source__c fundingSource {
+      get{
+          if (fundingSource == null) {
+            fundingSource = new Funding_Source__c();
+//            fundingSource.RecordTypeId = Utility.getFundingSourceRecordTypeFromReferral(this.ReferralRecord);
+			fundingSource.Service_Assignment__c = this.theServAssign.Id;
+          }
+          return fundingSource;
+      }
+      set; }
+  public List<Funding_Source__c> fundingSources { get; set; }
+  
+  public String fundingSourceRecordType{
+      get{
+          if(this.fundingsources.size() > 0 ){
+              fundingSourceRecordType = fundingsources.get(0).recordtype.name;
+          }
+          return fundingSourceRecordType;
+      }
+      set;
+  }  
 
 // END:  Parent level properties with get/set methods.
 
@@ -334,7 +356,7 @@ public class ServiceAssignmentExt {
                             End_Date__c, Episode__c, External_ID__c, Location_Region__c, Model__c, Outcomes__c, Person_Being_Served__c,Admission__r.Person_Being_Served__r.LastName, Phase__c, Phase_of_Treatment__c, Program__c,
                             Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
                             Start_Date__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
-                            Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c,
+                            Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c, Person_Being_Served__r.Name, Person_Being_Served__r.Age__c, Person_Being_Served__r.SSN__c, Person_Being_Served__r.Birthdate,
                             Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, referral__c, service_location__c, Medical_Record_Number__c, service_location__r.programid__c
                                 FROM Service_Assignment__c
                                 WHERE Id = :controller.getid()];
@@ -342,7 +364,7 @@ public class ServiceAssignmentExt {
                             End_Date__c, Episode__c, External_ID__c, Location_Region__c, Model__c, Outcomes__c, Person_Being_Served__c, Phase__c, Phase_of_Treatment__c, Program__c,
                             Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
                             Start_Date__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
-                            Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c,
+                            Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c, Person_Being_Served__r.Name, Person_Being_Served__r.Age__c, Person_Being_Served__r.SSN__c, Person_Being_Served__r.Birthdate,
                             Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, referral__c, service_location__c, Medical_Record_Number__c, service_location__r.programid__c
                                 FROM Service_Assignment__c
                                 WHERE Id = :controller.getid()];
@@ -743,6 +765,7 @@ public class ServiceAssignmentExt {
         else
             referral = null;
 
+        populateFundingSources();        
   if (!newSA) {
         admission = [ SELECT Id, Name, State__c, Person_Being_Served__c, Person_being_served__r.LastName FROM Admission__c WHERE Id = :theServAssign.Admission__c ];
         plans = [select name, id, createddate, status__c, effective_date__c, target_date__c from Action_Plan__c where Service_Assignment__c = :currentID Order by CreatedDate DESC];
@@ -1328,6 +1351,64 @@ public void loadProgramList() {
         PageReference ref =  new PageReference('/apex/Assessment_FAD_Form?id='+assess.id + '&edit=1&isnew=1');
             
         return ref;
+    }
+    
+  public void showAddFundingSource() {
+    fundingSource = new Funding_Source__c();
+    // fundingSource.RecordTypeId = Utility.getFundingSourceRecordTypeFromReferral(this.ReferralRecord);
+    
+    //List<RecordType> cmrt = [ select id from recordtype where sobjecttype='Funding_Source__c' and developername = 'CareMeridian_FS'];
+    // if (cmrt.size() > 0) {
+    //    ID CMID = cmrt[0].Id;
+    //    if ( fundingSource.RecordTypeId == CMID)
+    //        fundingSource.Authorization_type__c = 'Initial'; // set default value that is not being honored in late render on jquery dialog
+    // }
+    
+    fundingSource.Service_Assignment__c = this.theServAssign.Id;
+  }
+
+  public void showEditFundingSource() {
+    String query = 'SELECT ';
+    Set<String> fields = Schema.SObjectType.Funding_Source__c.fields.getMap().keySet();
+    for (String field: fields) {
+        query += field + ', ';
+    }
+    query = query.substring(0, query.length() - 2);
+    query += ' FROM Funding_Source__c WHERE Id=\'' + fundingSource.Id + '\' ORDER BY Type_of_Coverage__c LIMIT 1';
+    this.fundingSource = Database.query(query);       
+  }
+
+  public void saveFundingSource() {
+    System.debug('Before upsert, fundingSource: ' + this.fundingSource);
+    // When we use Id fields in conjunction with Visualforce's assignTo, it
+    // becomes a blank string - which will trigger a system error (because it's
+    // not a valid ID)
+    if (String.valueOf(this.fundingSource.Id) == '') {
+        this.fundingSource.Id = null;
+    }
+    
+    try {
+        upsert this.fundingSource;
+    }
+    catch (Exception e) {
+         ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+        'Please enter zip code in the format: XXXXX or XXXXX-XXXX'));
+    }
+    
+    populateFundingSources();
+    this.fundingSource = new Funding_Source__c();
+    // this.fundingSource.RecordTypeId = Utility.getFundingSourceRecordTypeFromReferral(this.ReferralRecord);
+    fundingSource.Service_Assignment__c = this.theServAssign.Id;
+  }
+  
+  private void populateFundingSources() {
+	this.fundingSources =
+    [select id, Payor__c, Funding_Source__c, Funding_Source_ID__c, Status__c, Service_Being_Funded__c, Comment__c,
+    		type_of_coverage__c, payer_name__c, effective_date__c, termination_date__c, recordtype.name
+	   from Funding_Source__c
+	  where Service_Assignment__c = :this.theServAssign.Id
+	  order by Type_of_Coverage__c
+	  limit 150];
     }
 
     @RemoteAction
