@@ -726,7 +726,11 @@ public with sharing class referralConversion_Controller {
 																	payer_cm_phone__c = fs.internal_phone__c,
 																	payer_cm_email__c = fs.internal_email__c,
 																	payer_cm_fax__c = fs.internal_fax__c,
-																	comments__c = fs.authorization_comments__c
+																	comments__c = fs.authorization_comments__c,
+																	level__c = fs.level__c,
+																	rate__c = fs.rate__c,
+																	justification__c = fs.justification__c,
+																	level_confirmed__c = fs.did_cm_confirm_level__c
 																	);
 					newauths.Add( auth);
 					
