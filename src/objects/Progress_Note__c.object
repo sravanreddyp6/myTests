@@ -16415,25 +16415,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
     </searchLayouts>
     <sharingModel>Private</sharingModel>
     <validationRules>
-        <fullName>Arizona_Note_Required_Fields</fullName>
-        <active>true</active>
-        <description>Makes the following fields required for saving - Intervention, Progress, and Notes for Next Visit.  Checks recordtype in the validation rule to only apply for AZ-OPT.</description>
-        <errorConditionFormula>IF(  NOT(ISNEW()),
-AND(
- RecordType.DeveloperName = &quot;AZ_OPT&quot;,
-  OR(
-   ISNULL(Interventions__c),
-   ISBLANK(Interventions__c),
-   ISNULL(Progress__c),
-   ISBLANK(Progress__c),
-   ISNULL(Notes_For_Next_Visit__c),
-   ISBLANK(Notes_For_Next_Visit__c)
-  )
-),
-false)</errorConditionFormula>
-        <errorMessage>The Interventions, Progress, and Notes for Next Visit fields are required for an AZ-OPT note.  Please confirm that values have been entered for those fields and try again.</errorMessage>
-    </validationRules>
-    <validationRules>
         <fullName>Arizona_ProgressNote_Length</fullName>
         <active>true</active>
         <description>Restrict Users Ability to Submit Note Longer than 120 mins</description>
@@ -16925,6 +16906,15 @@ if({!ISBLANK(Progress_Note__c.Staff_Credentials__c)}
 errors.push(&apos;You must populate the &quot;Staff Credentials&quot; field before continuing.&apos;); 
 } 
 // WVPN-19 : End
+
+
+// EB-197: START
+if({!ISBLANK(Progress_Note__c.Notes_For_Next_Visit__c)}
+&amp;&amp; curRtype[0].DeveloperName == &apos;AZ_OPT&apos;) {
+errors.push(&apos;You must populate the &quot;Notes For Next Visit&quot; field before continuing.&apos;);
+}
+// EB-197: END
+
 
 } 
 if(errors.length &lt;= 0){ 
