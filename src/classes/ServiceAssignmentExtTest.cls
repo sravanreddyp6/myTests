@@ -280,7 +280,7 @@ private class ServiceAssignmentExtTest {
     }
     
 	public testmethod static void showFundingSources(){
-        User tester = Referral_createTestData.createTestUser('astest', 'astest@test.com',  'Action', 'Summary', 'Redwood');
+        User tester = Referral_createTestData.createTestUser('astest', 'astest@test.com',  'Action', 'Summary', 'CareMeridian');
         System.runAs(tester){ 
 			CreateObjects();
 	

@@ -288,7 +288,7 @@ public class ServiceAssignmentExt {
       get{
           if (fundingSource == null) {
             fundingSource = new Funding_Source__c();
-//            fundingSource.RecordTypeId = Utility.getFundingSourceRecordTypeFromReferral(this.ReferralRecord);
+            fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource('CareMeridian');
 			fundingSource.Service_Assignment__c = this.theServAssign.Id;
           }
           return fundingSource;
@@ -298,10 +298,11 @@ public class ServiceAssignmentExt {
   
   public String fundingSourceRecordType{
       get{
-          if(this.fundingsources.size() > 0 ){
-              fundingSourceRecordType = fundingsources.get(0).recordtype.name;
-          }
-          return fundingSourceRecordType;
+//          if(this.fundingsources.size() > 0 ){
+//              fundingSourceRecordType = fundingsources.get(0).recordtype.name;
+//         }
+//          return fundingSourceRecordType;
+			return 'CareMeridian';
       }
       set;
   }  
@@ -1355,7 +1356,8 @@ public void loadProgramList() {
     
   public void showAddFundingSource() {
     fundingSource = new Funding_Source__c();
-    // fundingSource.RecordTypeId = Utility.getFundingSourceRecordTypeFromReferral(this.ReferralRecord);
+    fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource('CareMeridian');
+    fundingSource.Service_Assignment__c = this.theServAssign.Id;
     
     //List<RecordType> cmrt = [ select id from recordtype where sobjecttype='Funding_Source__c' and developername = 'CareMeridian_FS'];
     // if (cmrt.size() > 0) {
@@ -1363,8 +1365,6 @@ public void loadProgramList() {
     //    if ( fundingSource.RecordTypeId == CMID)
     //        fundingSource.Authorization_type__c = 'Initial'; // set default value that is not being honored in late render on jquery dialog
     // }
-    
-    fundingSource.Service_Assignment__c = this.theServAssign.Id;
   }
 
   public void showEditFundingSource() {
@@ -1397,8 +1397,8 @@ public void loadProgramList() {
     
     populateFundingSources();
     this.fundingSource = new Funding_Source__c();
-    // this.fundingSource.RecordTypeId = Utility.getFundingSourceRecordTypeFromReferral(this.ReferralRecord);
-    fundingSource.Service_Assignment__c = this.theServAssign.Id;
+    this.fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource('CareMeridian');
+    this.fundingSource.Service_Assignment__c = this.theServAssign.Id;
   }
   
   private void populateFundingSources() {
