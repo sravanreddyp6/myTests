@@ -125,13 +125,40 @@
         // This provides backward-compatibility with code the Appirio wrote
         showEditFundingSource(fundingId);
     }
+    
+    function fundingSourceAllowedEdit(){
+    	fundingSourceClearMessages();
+    	j$('[id*=FundingSourceModal] input[id*=saveFundingSource]').show();
+    	var fsTerminationDate = j$('[id*=FundingSourceModal] input[id*=fsTerminationDate]');
+    	if ((new Date(fsTerminationDate.val()).getTime() < new Date(getToday()).getTime())){
+    	 	j$('#fundingMessages').append('<li class="success">Edits are not allowed past the funding source termination date.</li>');
+    	 	j$('[id*=FundingSourceModal] input[id*=saveFundingSource]').hide();
+    	 }    
+    }
+    
+	function getToday(){    
+		var today = new Date();
+		var dd = today.getDate();
+		var mm = today.getMonth()+1; //January is 0!
+		var yyyy = today.getFullYear();
+		if(dd<10) {
+		    dd='0'+dd
+		} 	
+		if(mm<10) {
+		    mm='0'+mm
+		}
+		today = mm+'/'+dd+'/'+yyyy;
+		return today;
+	}
+
+    
 </script>
 <apex:pagemessages id="msgs" />
 <br />
 <apex:form id="myFRM">
 <apex:actionFunction name="saveFundingSource" action="{!saveFundingSource}" status="saveFundingSourceStatus" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialog('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs"/>
 <apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" action="{!showAddFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
-<apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000);" rerender="fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs">
+<apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000); fundingSourceAllowedEdit();" rerender="fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs">
 	<apex:param name="fundingId" value="" assignTo="{!fundingSource.Id}" />
 </apex:actionFunction>
 <apex:actionFunction action="{!changeToModel}" name="changeToModel" rerender="ContractAssoc, ProgAssoc" status="SaveStatus1"/>
@@ -951,7 +978,7 @@ END: Uncomment to have the element collapsed by default -->
                 <apex:param value="{!theServAssign.Person_Being_Served__r.Birthdate}"/>
             </apex:outputText>
             <apex:inputField value="{!fundingSource.Type_of_Coverage__c}" />
-            <apex:pageBlockSectionItem />
+            <apex:inputField id="contractused" value="{!fundingSource.CM_Contract_Used_Lookup__c}" />
             <apex:inputField value="{!fundingSource.Payer_Name__c}" />
             <apex:inputField value="{!fundingSource.Payer_Phone__c}" />
             <apex:inputField value="{!fundingSource.TPA__c}" />
@@ -1018,7 +1045,7 @@ END: Uncomment to have the element collapsed by default -->
             <apex:outputText value="Benefit Information" styleClass="modalSubheader" />
             <apex:pageBlockSectionItem />
             <apex:inputField value="{!fundingSource.Effective_Date__c}" />
-            <apex:inputField value="{!fundingSource.Termination_Date__c}" />
+            <apex:inputField value="{!fundingSource.Termination_Date__c}" id="fsTerminationDate"/>
             <apex:inputField value="{!fundingSource.Benefit_Cycle__c}" />
             <apex:pageBlockSectionItem />
             <apex:inputField value="{!fundingSource.Benefit_Year_Start_Date__c}" />
@@ -1186,8 +1213,8 @@ END: Uncomment to have the element collapsed by default -->
 
       <apex:pageBlock >
         <apex:pageblockButtons location="bottom">
-          <apex:commandButton value="Save" onclick="fundingSourceSave(true);return false;"/ >
-          <apex:commandButton value="Save & New" onclick="fundingSourceSave(false); return false;"/ >
+          <apex:commandButton id="saveFundingSource" value="Save" onclick="fundingSourceSave(true);return false;"/>
+          <apex:commandButton value="Save & New" onclick="fundingSourceSave(false); return false;" rendered="false" />
           <apex:commandButton value="Cancel" onclick="closeModalDialog('FundingSourceModal', 'span');j$('#fundingErrors').html('');return false;" />
           <apex:actionStatus id="saveFundingSourceStatus">
             <apex:facet name="start">
@@ -1202,7 +1229,7 @@ END: Uncomment to have the element collapsed by default -->
 <a id="Funding_Sources" ></a>
 <apex:pageBlock id="fundingSources" title="Funding Sources">
 	<div class="pbHeaderButton">
-        <apex:commandButton value="Add Funding Source" onclick="showAddFundingSource(); return false;" />
+        <apex:commandButton value="Add Funding Source" onclick="showAddFundingSource(); return false;" rendered="false"/>
         <apex:actionStatus id="AddFundingSourceStatus">
               <apex:facet name="start">
                 <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
@@ -1269,10 +1296,10 @@ END: Uncomment to have the element collapsed by default -->
  <apex:pageBlockSection title="Funding Source" collapsible="false" columns="1"><br />
  <apex:pageBlockTable styleclass="pbBody-list" value="{!referralFundingsources}" var="item" rendered="{!(referralFundingsources != null || referralFundingsources.size > 0)}">
             <apex:column headervalue="Name"><apex:outputLink value="/{!item.ID}">{!item.name}</apex:outputLink></apex:column>
-            <apex:column value="{!item.Funding_Source__c}"/>
-            <apex:column value="{!item.Payor__c}" rendered="{!item.recordtype.name == 'CareMeridian'}"/>
-            <apex:column value="{!item.Service_Being_Funded__c}"/>
-            <apex:column value="{!item.Status__c}"/>
+            <apex:column value="{!item.Funding_Source__c}" />
+            <apex:column value="{!item.Payor__c}" rendered="{!item.recordtype.name == 'CareMeridian'}" />
+            <apex:column value="{!item.Service_Being_Funded__c}" />
+            <apex:column value="{!item.Status__c}" />
  </apex:pageBlockTable>
         <apex:outputText value="No records to display" rendered="{!(referralFundingsources == null || referralFundingsources.size = 0)}" />
  </apex:pageBlockSection>
