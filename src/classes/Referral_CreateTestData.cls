@@ -59,7 +59,7 @@ public static Id getAccountRecordType(){
     }
     
     public static Referral__c createReferral(String recordType, string Status, string ReferralName, string State, Person_Being_Referred__c pbr) {
-             Service_location__c SL = new Service_location__c(name = '123', UniqueID__c =String.valueOf(Math.abs(Math.random())), FacilityID__c =123,Alias__c ='123',ProgramID__c ='123',Program__c='123');
+             Service_location__c SL = new Service_location__c(name = '123', UniqueID__c =String.valueOf(Math.abs(Math.random())), FacilityID__c =123,Alias__c ='123',ProgramID__c ='123',Program__c='123', service_value__c='CA-MNTR-SL-Rancho-IDD');
          insert SL;
         Referral__c ref = new Referral__c(RecordTypeId=Utility.getRecordTypeForReferral(recordType),
                                           Referral_Status__c=Status,
@@ -101,13 +101,14 @@ public static Id getAccountRecordType(){
                 Street__c = '10 Main St.', 
                 State__c = 'CA', 
                 Setting__c = 'Residential',
-                Service_Value__c = 'IDD', 
+                Service_Value__c = 'CA-MNTR-SL-Rancho-IDD', 
                 Program__c = 'Redwood Res', 
                 ProgramID__c = '1000', 
                 Phone__c = '213-555-5555',
                 FacilityID__c = 10,
                 City__c = 'Bakersfield',
                 Alias__c = '10101' + tmp.Substring(tmp.length()-6, tmp.length()-1)
+                
             );
        insert svcLoc;
        system.debug('NEW ALIAS = ' +  svcLoc.Id);      

@@ -1,17 +1,3 @@
-/*
-** This test class needs to:
-** 
-** - create a test referral on a person being referred
-** - call conversion routine
-** - verify a new PBS, Admission for PBS, and SErvice assignment for Admission for PBS are all created and have correct info.
-** 
-** - create a new referral on the new PBS
-** - call conversion routine
-** - verify only a new service assignment is created and that it is linked to the test PBS, and the admission
-** 
-** Use the test data methods available through Referral_CreateTestData class.
-** 
-*/
 @isTest
 private class referralConversion_Controller_Test {
 
@@ -80,15 +66,110 @@ private class referralConversion_Controller_Test {
             catch (Exception e){
                 
             }
-            }
-      
+        
+      	}
         }
-        Test.stopTest();
+        
+        Test.StopTest();
+    }
+    
+    static testMethod void testConvertwithEval() {
+    	
+    	
+      	User u2 = Referral_CreateTestData.createTestUser( 'testuzz', 'convuser@tmn.int','Conversion', 'TestUser2' );
+		Test.StartTest();
+		System.RunAs(u2)
+		
+		{
+			Person_Being_Referred__c pbr2 = Referral_CreateTestData.createPersonBeingReferred(28, Date.valueOf('1985-01-01'));
+			Referral__c evalRef = Referral_CreateTestData.createReferral('CareMeridian', 'Active', 'Conversion Test3', 'CA', pbr2);
+			Referral_CreateTestData.createRelatedParty('Mom', 'Guardian', pbr2);
+			pbr2.State__c = 'California';
+			pbr2.City__c = 'San Francisco';
+			pbr2.Street_1__c = '10 Main St.';
+			pbr2.Street_2__c = 'Suite 201';
+			pbr2.Zip_Code__c = '90024';
+			pbr2.Ethnicity__c = 'Caucasian';
+			pbr2.Primary_Language__c = 'English';
+			pbr2.Non_Verbal__c = false;
+			update pbr2;
+			
+			
+			ApexPages.StandardController sc = new ApexPages.StandardController( evalRef );
+			referralConversion_Controller conv = new referralConversion_Controller( sc );
+			PageReference pr;
+			
+			Evaluation__c exEval = new Evaluation__c();
+			exEval.Name = 'Test Eval';
+			exEval.RecordTypeId = Utility.getEValuationRecordType('CareMeridian');
+			exEval.Referral__c = evalRef.Id;
+			insert exEval;
+			pr = conv.convertReferral();
+        }
+    
+    	Test.StopTest();
     }
  
  
+ static testMethod void testConvertFundingSources() {
+    	
+    	
+      	User u2 = Referral_CreateTestData.createTestUser( 'testuzz', 'convuser@tmn.int','Conversion', 'TestUser2' );
+		Test.StartTest();
+		System.RunAs(u2)
+		
+		{
+			Person_Being_Referred__c pbr2 = Referral_CreateTestData.createPersonBeingReferred(28, Date.valueOf('1985-01-01'));
+			Referral__c fsRef = Referral_CreateTestData.createReferral('CareMeridian', 'Active', 'Conversion Test3', 'CA', pbr2);
+			Referral_CreateTestData.createRelatedParty('Mom', 'Guardian', pbr2);
+			pbr2.State__c = 'California';
+			pbr2.City__c = 'San Francisco';
+			pbr2.Street_1__c = '10 Main St.';
+			pbr2.Street_2__c = 'Suite 201';
+			pbr2.Zip_Code__c = '90024';
+			pbr2.Ethnicity__c = 'Caucasian';
+			pbr2.Primary_Language__c = 'English';
+			pbr2.Non_Verbal__c = false;
+			update pbr2;
+			
+			Funding_Source__c newfs= Referral_CreateTestData.createFundingSource('CareMeridian', 'Primary', '123', 'Pending', 
+                                                        'Service', 'Authorization comment', fsRef);
+            newfs.authorization_type__c = 'Inital';
+            newfs.authorization_number__c ='101010101';
+            update newfs;
+            
+            newfs = Referral_CreateTestData.createFundingSource('CareMeridian', 'Primary', '123', '', 
+                                                        'Service', 'Authorization comment', fsRef);
+            newfs.authorization_type__c = 'Inital';
+            newfs.authorization_number__c = '11111111111';
+            newfs.status__c = '';
+            update newfs;													
+                                                        
+			ApexPages.StandardController sc = new ApexPages.StandardController( fsRef );
+			referralConversion_Controller conv = new referralConversion_Controller( sc );
+			PageReference pr; 
+			pr = conv.convertReferral();
+			
+			// check for the funding source being attached to SA and newly created auth
+			// get the SA from the converted referral
+			fsref = [select id, name from referral__c where id = :fsref.id];
+			
+			List<Funding_Source__c> funds = [ select id, name, service_assignment__c from funding_source__c where service_assignment__r.referral__c = :fsref.Id];
+			System.AssertEquals( funds.size(), 2);
+			
+			
+			// should only convert one authorization with status non-empty
+			List<Authorization__c> auths = [ select id, name from authorization__c where funding_source__r.service_assignment__r.referral__c = :fsref.Id ];
+			System.AssertEquals( auths.size(), 1);
+			
+        }
+    
+    	Test.StopTest();
+    }
+    
+ 
  public static Referral__c createReferral2(String recordType, string Status, string ReferralName, string State, ID pbs) {
-         Service_location__c SL = new Service_location__c(name = '234', UniqueID__c ='234', FacilityID__c =234,Alias__c ='234',ProgramID__c ='234',Program__c='234');
+         Service_location__c SL = new Service_location__c(name = '234', UniqueID__c ='234', FacilityID__c =234,Alias__c ='234',ProgramID__c ='234',Program__c='234', Service_value__c = 'CA-MNTR-SL-Rancho-IDD');
          insert SL;
         Referral__c ref = new Referral__c(RecordTypeId=Utility.getRecordTypeForReferral(recordType),
                                           Referral_Status__c=Status,

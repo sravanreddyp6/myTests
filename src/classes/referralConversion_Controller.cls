@@ -79,12 +79,13 @@ public with sharing class referralConversion_Controller {
     	program = sl.Alias__c;
                             
         location  = ''; 
-        integer dashpos = sl.Service_Value__c.indexOf('-');
-        if (dashpos > -1 ) 
-        	ServiceLine = (sl.Service_Value__c).substring(dashpos+1);
-        else
-        	ServiceLine = sl.Service_Value__c;
-        
+        if (sl.service_value__c != '') {
+		    integer dashpos = sl.Service_Value__c.indexOf('-');
+		    if (dashpos > -1 ) 
+		    	ServiceLine = (sl.Service_Value__c).substring(dashpos+1);
+		    else
+		    	ServiceLine = sl.Service_Value__c;
+        }        
     }   
   }
   
@@ -698,8 +699,8 @@ public with sharing class referralConversion_Controller {
 			for ( Funding_Source__c fs : newfunds ) {
 				
 				// there's an auth if the status populated
-				if ( fs.status__c != '') {
-					 
+				if ( !String.IsEmpty(fs.status__c)) {
+					 System.Debug( 'funding source status is: ' + fs.status__c + ' - adding authorization');
 					// for now this will be for CM only.  working on other flavors.					
 					Authorization__c auth = new Authorization__c ( RecordTypeID = recType.ID, 
 																	authorization_status__c = fs.status__c, 
