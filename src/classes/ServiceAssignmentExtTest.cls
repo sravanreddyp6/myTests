@@ -279,6 +279,24 @@ private class ServiceAssignmentExtTest {
         }
     }
     
+	public testmethod static void showFundingSources(){
+        User tester = Referral_createTestData.createTestUser('astest', 'astest@test.com',  'Action', 'Summary', 'Redwood');
+        System.runAs(tester){ 
+			CreateObjects();
+	
+			ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
+			ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
+			controller.saveFundingSource();
+			controller.showAddFundingSource();
+			controller.saveFundingSource();
+			controller.fundingSource = controller.fundingSources.get(0);
+			controller.showEditFundingSource();
+			controller.saveFundingSource();
+			system.assert(controller.fundingSources.size() == 2, 'No funding sources');
+		}
+    }
+    
+    
     private static void CreateObjects(){
         // Get System Admin profile ID.
         String ProfileId = [select ProfileId from User where (Profile.Name='System Administrator') LIMIT 1].ProfileId;
