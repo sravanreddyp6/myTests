@@ -299,7 +299,7 @@
                          <apex:outputLabel for="autodys" value="Autonomic Dysreflexia<br /><br />Resident Educated Regarding AD Symptoms" escape="False" />
                          <apex:outputPanel >
                          <apex:outputField id="autodys" value="{!Evaluation__c.Autonomic_Dysreflexia__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.educatedAD}&quot;}"/>
-                         <br />
+                         <br /><Br />
                          <apex:outputField value="{!Evaluation__c.Educated_Regarding_AD__c}" label="Has resident been educated regarding AD symptoms" id="educatedAD"/>
                          </apex:outputPanel>
                          </apex:pageBlockSectionItem>
@@ -1114,7 +1114,7 @@
 								<apex:outputText value="{!Evaluation__c.Orthopedic_Medications__c}" />
 							</apex:pageBlockSectionItem>
 							<apex:outputField value="{!Evaluation__c.Weight_Bearing_Precautions__c}" label="Weight Bearing" />
-							<apex:pageBlockSectionItem />
+							<apex:outputText value="" />
 							
 							<apex:pageBlockSEctionItem>
 							<apex:outputLabel value="Prosthetics" />
@@ -1126,36 +1126,46 @@
 							<apex:outputText value="{!Evaluation__c.Orthodics_Types__c & if( CONTAINS(Evaluation__c.Orthodics_Types__c,  'Other'), ' (' & Evaluation__c.Orthodics_Other__c & ')', '')}" />
 							</apex:pageBlockSEctionItem>
 														
-						</apex:pageBlockSection>
-						
-						<apex:pageBlockSection columns="2" >
 							<apex:pageBlockSectionItem>
 							<apex:outputLabel value="Cast" />
 							<apex:outputPanel>
-							
 							<apex:outputField value="{!Evaluation__c.Ortho_Cast_Location__c}" rendered="{!Evaluation__c.Ortho_Cast_location__c != 'Other'}" />
 							<apex:outputField value="{!Evaluation__c.Cast_Location__c}" rendered="{!Evaluation__c.Ortho_Cast_location__c == 'Other'} "/>
 							</apex:outputPanel>
 							</apex:pageBlockSectionItem>
 							
-							<apex:outputText value="ROM Limitations" styleClass="labelCol" style="margin-left: 2cm;"/>
-							<apex:outputField value="{!Evaluation__c.Neck__c}" />
-							<apex:outputField value="{!Evaluation__c.RUE__c}" />
-							<apex:outputField value="{!Evaluation__c.Traction__c}" />
-							<apex:outputField value="{!Evaluation__c.LUE__c}" />
-							<apex:outputField value="{!Evaluation__c.Traction_Location__c}" label="Location" />
-							<apex:outputField value="{!Evaluation__c.Trunk__c}" />
-							<apex:outputField value="{!Evaluation__c.Traction_Type__c}" label="Type" />
-							<apex:outputField value="{!Evaluation__c.RLE__c}" />
-							<apex:outputField value="{!Evaluation__c.Traction_Weight__c}" label="Weight" />
-							<apex:outputField value="{!Evaluation__c.LLE__c}" />
-							<apex:outputField value="{!Evaluation__c.External_Devices__c}" />
-							<apex:pageBlockSectionItem />
-							<apex:outputField value="{!Evaluation__c.External_Devices_Location__c}"  label="Location" />
-							<apex:pageBlockSectionItem />
-							<apex:outputField value="{!Evaluation__c.External_Devices_Type__c}" label="Type" />
+							<apex:pageBlockSectionItem>
+							<apex:outputLabel value="{! if ( Evaluation__c.Traction__c == true, 'Traction<br /><br />Location<br /><br />Type<br /><br />Weight', 'Traction')}" escape="false" />
+							<apex:outputPanel rendered="{!Evaluation__c.Traction__c == true}">
+							<br /><br />
+							<apex:outputText id="tloc" value="{!Evaluation__c.Traction_Location__c}" /><br /><br />
+							<apex:outputText id="ttype" value="{!Evaluation__c.Traction_Type__c }" /><br /><br />
+							<apex:outputText id="tweight" value="{!Evaluation__c.Traction_Weight__c}" />
+							</apex:outputPanel>
+							</apex:pageBlockSectionItem>
+							
+							<apex:pageBlockSectionItem>
+							<apex:outputLabel value="{! if ( Evaluation__c.External_devices__c == true, 'External Devices<br /><br />Location<br /><br />Type<br />', 'External Devices')}" escape="false" />
+							<apex:outputPanel rendered="{!Evaluation__c.External_Devices__c == true}">
+							<br /><br />
+							<apex:outputText id="edloc" value="{!Evaluation__c.External_Devices_Location__c}" /><br /><br />
+							<apex:outputText id="edtype" value="{!Evaluation__c.External_Devices_Type__c }" /><br /><br />
+							</apex:outputPanel>
+							</apex:pageBlockSectionItem>
+							
+							<apex:pageBlockSectionItem>
+							<apex:outputLabel value="ROM Limitations" />
+							<apex:outputPanel>
+							<apex:outputLabel value="Neck - &nbsp;" escape="False" /><apex:outputField value="{!Evaluation__c.Neck__c}" /><br /><br />
+							<apex:outputLabel value="RUE - &nbsp;" escape="False" /><apex:outputField value="{!Evaluation__c.RUE__c}" /><br /><br />
+							<apex:outputLabel value="LUE - &nbsp;" escape="False" /><apex:outputField value="{!Evaluation__c.LUE__c}" /><br /><br />
+							<apex:outputLabel value="Trunk - &nbsp;" escape="False" /><apex:outputField value="{!Evaluation__c.Trunk__c}" /><br /><br />
+							<apex:outputLabel value="RLE - &nbsp;" escape="False" /><apex:outputField value="{!Evaluation__c.RLE__c}" /><br /><br />
+							<apex:outputLabel value="LLE - &nbsp;" escape="False" /><apex:outputField value="{!Evaluation__c.LLE__c}" />
+							</apex:outputPanel>
+							</apex:pageBlockSectionItem>
 						</apex:pageBlockSection>
-				 		<hr />
+				 		
 				 		<apex:pageBlockSection columns="1">
 	                        <apex:outputField value="{!Evaluation__c.Ortho_Comments__c}" />
 	                        <apex:outputField value="{!Evaluation__c.Ortho_Section_Completed__c}" />
