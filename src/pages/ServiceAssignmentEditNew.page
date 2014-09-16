@@ -129,10 +129,12 @@
     function fundingSourceAllowedEdit(){
     	fundingSourceClearMessages();
     	j$('[id*=FundingSourceModal] input[id*=saveFundingSource]').show();
+    	j$('[id*=FundingSourceModal] input[id*=saveAndNewFundingSource]').show();
     	var fsTerminationDate = j$('[id*=FundingSourceModal] input[id*=fsTerminationDate]');
     	if ((new Date(fsTerminationDate.val()).getTime() < new Date(getToday()).getTime())){
     	 	j$('#fundingMessages').append('<li class="success">Edits are not allowed past the funding source termination date.</li>');
     	 	j$('[id*=FundingSourceModal] input[id*=saveFundingSource]').hide();
+    	 	j$('[id*=FundingSourceModal] input[id*=saveAndNewFundingSource]').hide();
     	 }    
     }
     
@@ -1214,7 +1216,7 @@ END: Uncomment to have the element collapsed by default -->
       <apex:pageBlock >
         <apex:pageblockButtons location="bottom">
           <apex:commandButton id="saveFundingSource" value="Save" onclick="fundingSourceSave(true);return false;"/>
-          <apex:commandButton value="Save & New" onclick="fundingSourceSave(false); return false;" rendered="false" />
+          <apex:commandButton id="saveAndNewFundingSource" value="Save & New" onclick="fundingSourceSave(false); return false;"/>
           <apex:commandButton value="Cancel" onclick="closeModalDialog('FundingSourceModal', 'span');j$('#fundingErrors').html('');return false;" />
           <apex:actionStatus id="saveFundingSourceStatus">
             <apex:facet name="start">
@@ -1227,9 +1229,9 @@ END: Uncomment to have the element collapsed by default -->
     </apex:outputPanel>
 
 <a id="Funding_Sources" ></a>
-<apex:pageBlock id="fundingSources" title="Funding Sources">
+<apex:pageBlock id="fundingSources" title="Funding Sources" rendered="{!vfVarIsCM}">
 	<div class="pbHeaderButton">
-        <apex:commandButton value="Add Funding Source" onclick="showAddFundingSource(); return false;" rendered="false"/>
+        <apex:commandButton value="Add Funding Source" onclick="showAddFundingSource(); return false;"/>
         <apex:actionStatus id="AddFundingSourceStatus">
               <apex:facet name="start">
                 <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
