@@ -84,7 +84,7 @@ public with sharing class PBS_Controller_EditcontrollerTest {
 				List<ApexPages.Message> msgList = ApexPages.getMessages();
 				for(ApexPages.Message msg :  ApexPages.getMessages()) {
 					system.debug( msg.getSummary());
-	    			System.Assert(msg.getSummary().contains ('already exists') || msg.getSummary().contains('guardian'));
+	    			System.Assert(msg.getSummary().contains ('already exists') || msg.getSummary().contains('Guardian'));
 	    			System.assertEquals(ApexPages.Severity.ERROR, msg.getSeverity()); 
 				}
 			} catch (Exception e) {
