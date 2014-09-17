@@ -1407,6 +1407,7 @@ public void loadProgramList() {
     		type_of_coverage__c, payer_name__c, effective_date__c, termination_date__c, recordtype.name
 	   from Funding_Source__c
 	  where Service_Assignment__c = :this.theServAssign.Id
+	    And Referral__c = null
 	  order by Type_of_Coverage__c
 	  limit 150];
     }
