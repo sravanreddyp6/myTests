@@ -394,12 +394,12 @@ function enableDiagEff() {
   function alertUseraboutLocation() {
   
 	  	var refStatus = j$('select[id$=referralStatus]').val();
-	  	str = "Active";
+	  	str = "Closed"; 
 	  	var foundActive = false;
 	  	var obj = JSON.parse(locationsData);
 	  	 
 	    for (var i = 0; i < obj.length; i++) {
-	        if (obj[i].status === str) {
+	        if (obj[i].status !== str) {
 	            foundActive = true;
 	            break;
 	        }
