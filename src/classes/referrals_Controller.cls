@@ -86,6 +86,25 @@ public with sharing class referrals_Controller{
   }
   public Referral_Location__c location { get; set; }
   public List<Referral_Location__c> locations { get; set; }
+  public string locationsJSON {get {
+  	List<ReferralLocation> refLocData = new List<ReferralLocation>();
+  	if(locations.size() > 0){
+  		for(Referral_Location__c rl : locations){
+  			refLocData.add(new ReferralLocation(rl.Id,rl.Status__c) );
+  		 }
+  		
+  	   }
+  
+   	 return JSON.serialize(refLocData);}
+  }
+  public class ReferralLocation{
+  	Id id;
+  	String status;
+  	ReferralLocation(Id id, String status){
+  		this.Id = id;
+  		this.status = status;
+  	} 
+  }
   public Id currentRefId {
     get {
       return (currentRefId == null) ? null :

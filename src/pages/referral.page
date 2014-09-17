@@ -102,6 +102,7 @@ document.onkeypress = stopRKey;
 
 // a variable to hold the list of related Parties... need this so we can refresh it using ajax
 var relPartyData = '{!relPartiesJSON}';
+var locationsData = '{!locationsJSON}'; 
 
 // ERNS-7 enable the diagnosis effective date when diagnosis is chosen
 function enableDiagEff() {
@@ -387,6 +388,36 @@ function enableDiagEff() {
       j$('input[id$=Felony_ies]').prop("checked", false);
 
 
+  }
+  
+ //Added by Sravan for ERR-20  09/17/2014 10:25 AM
+  function alertUseraboutLocation() {
+  
+	  	var refStatus = j$('select[id$=referralStatus]').val();
+	  	str = "Active";
+	  	var foundActive = false;
+	  	var obj = JSON.parse(locationsData);
+	  	 
+	    for (var i = 0; i < obj.length; i++) {
+	        if (obj[i].status === str) {
+	            foundActive = true;
+	            break;
+	        }
+	    }
+	    
+	  	if(refStatus == 'Closed' && foundActive == true){
+	  		if(!window.confirm('There are Other Locations that are not closed, would you like to still close this referral?')){
+	  			if('{!Referral__c.Id}'){
+	  				return window.location = '/apex/referral2?id={!Referral__c.Id}';
+	  			}
+	  		}
+	  			
+	  		else checkRedFlags(); //This is the ActionFunction
+	  	}   
+	  	else{
+	  		checkRedFlags();
+	  	}
+  
   }
  </script>
 
@@ -1283,7 +1314,7 @@ function enableDiagEff() {
       <!-- on this button status will not work b/c it doesn't invoke an action it uses onclick js-->
         <apex:commandButton value="Save Referral"
                             id="saveRefButton"
-                            onclick="checkRedFlags();return false;"
+                            onclick="alertUseraboutLocation();return false;"
                            rendered="{!OR(!ISNULL(personBeingRefRecord.Id), !ISNULL(personBeingServedRecord.Id))}"
                             oncomplete="unsetAdditionalFields(j$('select[id$=referralStatus]').val());" />
 
@@ -1861,7 +1892,7 @@ function enableDiagEff() {
             </apex:actionStatus>
           </apex:outputPanel>
         </apex:pageBlockSectionItem>
-        <apex:pageBlockTable value="{!locations}" var="location">
+        <apex:pageBlockTable value="{!locations}" var="location" id="referralLocations" >
            <apex:column value="{!location.Service_Location__c}"/> 
             <apex:column value="{!location.Service_Location_Service_Value__c}"/>
             <apex:column value="{!location.Service_Location__r.Setting__c}"/>
@@ -1874,10 +1905,12 @@ function enableDiagEff() {
           </apex:column>
           <apex:column value="{!location.User_Assigned__c}" rendered="{! ReferralRecordType != 'CareMeridian'}"/>
           <apex:column value="{!location.Rank__c}" rendered="{! ReferralRecordType == 'CareMeridian'}"/>
-          <apex:column value="{!location.Status__c}" />
+          <apex:column value="{!location.Status__c}"  id="locationStatus"/>
           <apex:column value="{!location.LastModifiedDate}"/>
         </apex:pageBlockTable>
-
+			<script type="text/javascript">
+	            locationsData = '{!locationsJSON}';
+	        </script>
         <apex:outputpanel style="display:none">
 
   <apex:inputHidden value="{!location.User_Assigned__c}" id="locationUser"/>
