@@ -18,7 +18,7 @@
         }
 
         
-        .hr {
+        hr {
             color: #ECECEC;
             background-color: #ECECEC;
             margin-bottom: 20px;
@@ -1174,91 +1174,93 @@
          		</apex:tab>
          		<apex:tab label="Rehab" name="rehabTab" styleClass="{!IF(Evaluation__c.Rehab_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
          			<apex:pageBlock >
-         					<apex:pageBlockSection >
+        			<apex:pageBlockSection title="Physical Function" columns="1">
 			 			<apex:outputField value="{!Evaluation__c.Rehab_WFLs__c}" label="WFLs" />
-			 		</apex:pageBlockSection>
-			 		<hr />
-			 		<apex:pageBlockSection columns="2">
-                         <apex:OutputField value="{!Evaluation__c.Therapy_Ordered__c}" label="Further Assessment by Therapist Indicated?" />
-                         <apex:outputText value="Mobility Devices" styleClass="labelCol" style="margin-left: 3cm;"/>
-                         <apex:outputField value="{!Evaluation__c.Therapy_Ordered_PT__c}"  label="PT" />
-                         <apex:outputField value="{!Evaluation__c.Wheel_Chair__c}" />
-                         <apex:outputField value="{!Evaluation__c.Therapy_Ordered_OT__c}" label="OT" />
-                         <apex:outputField value="{!Evaluation__c.Front_Wheeled_Walker__c}" />
-                         <apex:outputField value="{!Evaluation__c.Therapy_Ordered_ST__c}"  label="ST" />
-                         <apex:outputField value="{!Evaluation__c.Rehab_Cane__c}"/>
-                         <apex:pageBlockSectionItem />
-                         <apex:outputField value="{!Evaluation__c.Current_Gait_Mobility_Other__c}" label="Other"  />
-                         <apex:pageBlockSectionItem />
-                         <apex:outputField value="{!Evaluation__c.Current_Gait_Mobility_Other_Comments__c}" label="Specify Other" />
-                    </apex:pageBlockSection>
-                    <hr/>
-                    <apex:pageBlockSection Columns="1">
-                    	 <apex:outputField value="{!Evaluation__c.Rehab_Other_Equipment_Needed__c}" label="Other Speial Equipment Needed" />
-                    	 <apex:outputField value="{!Evaluation__c.Elastic_Hose__c}" />
-                    	 <apex:outputField value="{!Evaluation__c.Hand_Rolls__c}" />
-                    	 <apex:outputField value="{!Evaluation__c.Bed_Craddle__c}" /> 
-                    	 <apex:outputField value="{!Evaluation__c.Overhead_Trapaze__c}" /> 
-                    	 <apex:outputField Value="{!Evaluation__c.Rehab_Equipment_Other__c}" label="Other" />
-                    	 <apex:outputField value="{!Evaluation__c.Rehab_Equipment_Other_Details__c}" label="Other Special Equipment Details" />
-                    </apex:pageBlockSection>
-			 		<hr />
-			 		<apex:pageBlockSection columns="2" >
+						<apex:outputText value="" />
+						
+						<apex:pageBlockSectionItem>
+						
+                         <apex:OutputLabel value="Further Assessment by Therapist Indicated?" />
+                         <apex:outputPanel>
+                         <apex:outputText value="PT; " rendered="{!Evaluation__c.Therapy_Ordered_PT__c && Evaluation__c.Therapy_Ordered__c}" />
+                         <apex:outputText value="OT; " rendered="{!Evaluation__c.Therapy_Ordered_OT__c && Evaluation__c.Therapy_Ordered__c}" />
+                         <apex:outputText value="ST;" rendered="{!Evaluation__c.Therapy_Ordered_ST__c && Evaluation__c.Therapy_Ordered__c}" />
+                         </apex:outputPanel>
+                         </apex:pageBlockSectionItem>
+                         
+                         <apex:pageBlockSectionItem>
+                         <apex:outputLabel value="Mobility Devices" />
+                         <apex:outputPanel>  
+                         <apex:outputText value="Wheel Chair; " rendered="{!Evaluation__c.Wheel_Chair__c}" />
+                         <apex:outputText value="Front-Wheeled Walker; " rendered="{!Evaluation__c.Front_Wheeled_Walker__c}" />
+                         <apex:outputText value="Cane; " rendered="{!Evaluation__c.Rehab_Cane__c}"/>
+                         <apex:outputText value="Other " rendered="{!Evaluation__c.Current_Gait_Mobility_Other__c}" />
+                         <apex:outputText value="{! '(' + Evaluation__c.Current_Gait_Mobility_Other_Comments__c + ')'}"  rendered="{!Evaluation__c.Current_Gait_Mobility_Other_Comments__c != '' && Evaluation__c.Current_Gait_Mobility_Other__c}"  />
+                         </apex:outputPanel>
+                         </apex:pageBlockSectionItem>
+                         
+                         <apex:pageBlockSectionItem>
+                         <apex:outputLabel value="Other Special Equipment Needed" />
+                         <apex:outputpanel>
+                          
+                    	 <apex:outputField value="{!Evaluation__c.Rehab_Other_Equipment_Needed__c}" />
+                    	 <apex:outputText value="Elastic Hose; " rendered="{!Evaluation__c.Elastic_Hose__c}" />
+                    	 <apex:outputText value="Hand Rolls; " rendered="{!Evaluation__c.Hand_Rolls__c}" />
+                    	 <apex:outputText value="Bed Cradle; " rendered="{!Evaluation__c.Bed_Craddle__c}" /> 
+                    	 <apex:outputText value="Overhead Trapeze; " rendered="{!Evaluation__c.Overhead_Trapaze__c}" /> 
+                    	 <apex:outputText Value="Other " rendered="{!Evaluation__c.Rehab_Equipment_Other__c}" />
+                    	 <apex:outputText value="{! '(' + Evaluation__c.Rehab_Equipment_Other_Details__c + ')'}" rendered="{!Evaluation__c.Rehab_Equipment_Other_Details__c != '' && Evaluation__c.Rehab_Equipment_Other__c}" />
+					</apex:outputpanel>
+					</apex:pageBlockSectionItem>
                     	<apex:pageBlockSectionItem >
                     		<apex:outputText value="" />
-                    		<apex:outputPanel layout="none" >
-                    			<table style="text-align: center; ">
-                    				<tr>
-                    					<td style="padding-left:0.3cm;"> Unknown </td>
-                                        <td style="padding-left: 1cm;">Impaired </td>
-                                        <td style="padding-left: 1cm;">WFLs</td>
-                                        <td style="padding-left: 1cm;">Therapist to <br/> Determine</td>
-                                        <td style="padding-left: 1cm;">N/A</td>
-                                	</tr>
+                    		 <apex:outputPanel layout="none" >
+                                <table style="width:56%">
+                                    <tr>
+                                        <td style="width:20%"> Unknown </td>
+                                        <td style="width:20%; text-align:center;padding-right:40px">Impaired </td>
+                                        <td style="width:20%; text-align:center">WFLs</td>
+                                        <td style="width:20%; text-align:center;padding-left:10px">Therapist to<br/>Determine</td>
+                                        <td style="width:20%;text-align:right;padding-right:40px">N/A</td>
+                                        
+                                    </tr>
                                 </table>
                                </apex:outputPanel>
                               </apex:pageBlockSectionItem>
-                              <apex:pageBlockSectionItem />
+                              
                               <apex:pageBlockSectionItem >
                             	<apex:outputText value="Bed Mobility" />
-                            	<c:Slider onChange="handleSliderChange('{!$Component.bedMobility}')" options="{!sliderOptions}" initial="{!Evaluation__c.Bed_Mobility__c}" disabled="true"/>
+                            	<c:Slider onChange="handleSliderChange('{!$Component.bedMobility}')" options="{!sliderOptions}" initial="{!Evaluation__c.Bed_Mobility__c}" disabled="true" morestyle="width:50%"/>
                        		 </apex:pageBlockSectionItem>
-                    		 <apex:pageBlockSectionItem />
                     		 <apex:pageBlockSectionItem >
                             	<apex:outputText value="Transfers" />
-                            	<c:Slider onChange="handleSliderChange('{!$Component.transfers}')" options="{!sliderOptions}" initial="{!Evaluation__c.Transfers__c}" disabled="true"/>
+                            	<c:Slider onChange="handleSliderChange('{!$Component.transfers}')" options="{!sliderOptions}" initial="{!Evaluation__c.Transfers__c}" disabled="true"  morestyle="width:50%"/>
                       		  </apex:pageBlockSectionItem>
-                        	  <apex:pageBlockSectionItem />
-                              <apex:pageBlockSectionItem >
+                        	  <apex:pageBlockSectionItem >
                             	<apex:outputText value="W/C" />
-                            	<c:Slider onChange="handleSliderChange('{!$Component.wcGait}')" options="{!sliderOptions}" initial="{!Evaluation__c.WC_Gait__c}" disabled="true" />
+                            	<c:Slider onChange="handleSliderChange('{!$Component.wcGait}')" options="{!sliderOptions}" initial="{!Evaluation__c.WC_Gait__c}" disabled="true"  morestyle="width:50%"/>
                        		  </apex:pageBlockSectionItem>
-                       		  <apex:pageBlockSectionItem />
                        		  <apex:pageBlockSectionItem >
                        		  	<apex:outputText value="Gait" />
-                       		  	<c:Slider onChange="handlerSliderChange('{!$Component.nursesGait}')" options="{!sliderOptions}" initial="{!Evaluation__c.Gait__c}" disabled="true" />
+                       		  	<c:Slider onChange="handlerSliderChange('{!$Component.nursesGait}')" options="{!sliderOptions}" initial="{!Evaluation__c.Gait__c}" disabled="true" morestyle="width:50%" />
                        		  </apex:pageBlockSectionItem>
-                       		  <apex:pageBlocksectionItem />
-                        	 <apex:pageBlockSectionItem >
+                       		 <apex:pageBlockSectionItem >
                             	<apex:outputText value="Feeding" />
-                            	<c:Slider onChange="handleSliderChange('{!$Component.feeding}')" options="{!sliderOptions}" initial="{!Evaluation__c.Feeding__c}" disabled="true" />
+                            	<c:Slider onChange="handleSliderChange('{!$Component.feeding}')" options="{!sliderOptions}" initial="{!Evaluation__c.Feeding__c}" disabled="true"  morestyle="width:50%"/>
                         	 </apex:pageBlockSectionItem>
-                        	 <apex:pageBlockSectionItem />
                         	 <apex:pageBlockSectionItem >
                             	<apex:outputText value="Hygiene" />
-                            	<c:Slider onChange="handleSliderChange('{!$Component.hygiene}')" options="{!sliderOptions}" initial="{!Evaluation__c.Hygiene__c}" disabled="true" />
+                            	<c:Slider onChange="handleSliderChange('{!$Component.hygiene}')" options="{!sliderOptions}" initial="{!Evaluation__c.Hygiene__c}" disabled="true"  morestyle="width:50%"/>
                         	 </apex:pageBlockSectionItem>
-                        	 <apex:pageBlockSectionItem />
                         	 <apex:pageBlockSectionItem >
                             	<apex:outputText value="Dressing UE" />
-                            	<c:Slider onChange="handleSliderChange('{!$Component.dressingUE}')" options="{!sliderOptions}" initial="{!Evaluation__c.Dressing_UE__c}" disabled="true" />
+                            	<c:Slider onChange="handleSliderChange('{!$Component.dressingUE}')" options="{!sliderOptions}" initial="{!Evaluation__c.Dressing_UE__c}" disabled="true"  morestyle="width:50%"/>
                         	 </apex:pageBlockSectionItem>
-                       	     <apex:pageBlockSectionItem />
-                        	 <apex:pageBlockSectionItem >
+                       	     <apex:pageBlockSectionItem >
                             	<apex:outputText value="Dressing LE" />
-                            	<c:Slider onChange="handleSliderChange('{!$Component.dressingLE}')" options="{!sliderOptions}" initial="{!Evaluation__c.Dressing_LE__c}" disabled="true" />
+                            	<c:Slider onChange="handleSliderChange('{!$Component.dressingLE}')" options="{!sliderOptions}" initial="{!Evaluation__c.Dressing_LE__c}" disabled="true"  morestyle="width:50%"/>
                         	 </apex:pageBlockSectionItem>
-                        	 <apex:pageBlockSectionItem />
+                        	 
                     	 </apex:pageBlockSection>
                     	 <hr />
                     	 <apex:pageBlockSection columns="1" >
@@ -1452,7 +1454,7 @@
          		</apex:tab>
          	   <apex:tab label="Discharge Plan" name="dischargePlanTab" styleClass="{!IF(Evaluation__c.Discharge_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
          			<apex:pageBlock >
-         				<apex:pageBlocksection columns="1">
+         				<apex:pageBlocksection columns="1" title="Discharge Plan Details">
 				 			<apex:outputField value="{!Evaluation__c.Discharge_Info_From__c}" />
 	                        <apex:outputField value="{!Evaluation__c.Prior_Living_Situation__c}" />
 				 			<apex:outputField value="{!Evaluation__c.Prior_Living_Situation_Other__c}" />

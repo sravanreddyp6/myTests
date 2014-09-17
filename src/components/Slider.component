@@ -7,6 +7,7 @@
         type="String" required="true" />
     <apex:attribute name="disabled" description="Whether the slider is disabled or not"
         type="Boolean" default="false" />
+    <apex:attribute name="morestyle" description="HTML style tags" type="String" required="False" />
 
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
@@ -35,5 +36,5 @@
         });
     });
     </script>
-    <apex:outputPanel style="margin-left: 30px; margin-right: 40px;" id="slider" layout="block" />
+    <apex:outputPanel style="margin-left: 30px; margin-right: 40px; {!morestyle}" id="slider" layout="block" />
 </apex:component>
