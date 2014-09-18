@@ -282,8 +282,8 @@ public class ServiceAssignmentExt {
 
   }
 
-  public list<Funding_Source__c> referralFundingsources {get { return [select id, name, funding_source__c, payor__c, recordtype.name, service_being_funded__c, status__c from funding_source__C where service_Assignment__C = null and Referral__c = :referral.id];} set;}
-
+  public list<Funding_Source__c> referralFundingsources {get { return [select id, name, funding_source__c,Type_of_Coverage__c, Payer_Name__c, recordtype.name, service_being_funded__c, Effective_Date__c,Termination_Date__c,Status__c,Comment__c from funding_source__C where service_Assignment__C = null and Referral__c = :referral.id];} set;}
+		
   public Funding_Source__c fundingSource {
       get{
           if (fundingSource == null) {
