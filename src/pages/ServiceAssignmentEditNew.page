@@ -1297,7 +1297,7 @@ END: Uncomment to have the element collapsed by default -->
  </apex:pageBlockSection>
  <apex:pageBlockSection title="Funding Source" collapsible="false" columns="1"><br />
 	 <apex:pageBlockTable value="{!referralFundingsources}" var="item" rendered="{!(referralFundingsources != null || referralFundingsources.size > 0)}">
-		<apex:column headervalue="Name"><apex:outputLink value="/{!item.ID}">{!item.name}</apex:outputLink></apex:column>
+		<apex:column value="{!item.name}"/>
 		<apex:column value="{!item.Type_of_Coverage__c}"/>
 		<apex:column value="{!item.Payer_Name__c}"/>
 		<apex:column value="{!item.Effective_Date__c}"/>
