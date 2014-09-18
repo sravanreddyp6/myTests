@@ -1203,7 +1203,7 @@
                          <apex:outputLabel value="Other Special Equipment Needed" />
                          <apex:outputpanel>
                           
-                    	 <apex:outputField value="{!Evaluation__c.Rehab_Other_Equipment_Needed__c}" />
+                    	 <apex:outputField value="{!Evaluation__c.Rehab_Other_Equipment_Needed__c}" rendered="{!Evaluation__c.Rehab_Other_Equipment_Needed__c != 'Yes'}"/>
                     	 <apex:outputText value="Elastic Hose; " rendered="{!Evaluation__c.Elastic_Hose__c}" />
                     	 <apex:outputText value="Hand Rolls; " rendered="{!Evaluation__c.Hand_Rolls__c}" />
                     	 <apex:outputText value="Bed Cradle; " rendered="{!Evaluation__c.Bed_Craddle__c}" /> 

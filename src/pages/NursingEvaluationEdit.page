@@ -67,12 +67,27 @@
            	
            		// get the value
            		if ( $('[id$=wfls]').val() == 'Yes') {
-           			//$('[id$=testsection]').attr('disabled','disabled');
-				} else {
-           			//$('[id$=testsection]').removeAttr('disabled');
-           		};
+           			// set all other checkboxes to negative - invalidate all answers
+           			// further assessment
+           			$('[id$=furtherind]').prop('checked', false);
+           			enableDisableField($('[id$=furtherind]'));
+           			
+           			// mobility devices
+           			$('[id$=wheelchair]').prop('checked', false);
+           			$('[id$=walker]').prop('checked', false);
+           			$('[id$=cane]').prop('checked', false);
+           			$('[id$=othermobility]').prop('checked', false);
+           			enableDisableField($('[id$=othermobility]'));
+           			
+           			// other special equipment
+           			$('[id$=specialequip]').val('');
+           			enableDisableField($('[id$=specialequip]'));
+           			
+           			// reset sliders
+           			
+				};
            	
-           	}
+           	};
            	
             handleSliderChange = function (inputIdToUpdate) {
                 
@@ -1709,10 +1724,10 @@
                         <apex:pageBlockSectionItem>
 						<apex:outputLabel value="Mobility Devices" />
 						<apex:outputPanel>
-                         <apex:outputLabel value="&nbsp;&nbsp;Wheel Chair&nbsp;" escape="false" /><apex:inputField value="{!Evaluation__c.Wheel_Chair__c}" />
-                         <apex:outputLabel value="&nbsp;&nbsp;Front-Wheeled Walker&nbsp;" escape="false" /><apex:inputField value="{!Evaluation__c.Front_Wheeled_Walker__c}" />
-                         <apex:outputLabel value="&nbsp;&nbsp;Cane&nbsp;" escape="false" /><apex:inputField value="{!Evaluation__c.Rehab_Cane__c}"/>
-                         <apex:outputLabel value="&nbsp;&nbsp;Other&nbsp;" escape="false" /><apex:inputField value="{!Evaluation__c.Current_Gait_Mobility_Other__c}" label="Other" html-data-rules="{&quot;1&quot;: &quot;{!$Component.currentGaitMobilityOther}&quot;}" />
+                         <apex:outputLabel value="&nbsp;&nbsp;Wheel Chair&nbsp;" escape="false" /><apex:inputField id="wheelchair" value="{!Evaluation__c.Wheel_Chair__c}" />
+                         <apex:outputLabel value="&nbsp;&nbsp;Front-Wheeled Walker&nbsp;" escape="false" /><apex:inputField id="walker" value="{!Evaluation__c.Front_Wheeled_Walker__c}" />
+                         <apex:outputLabel value="&nbsp;&nbsp;Cane&nbsp;" escape="false" /><apex:inputField id="cane" value="{!Evaluation__c.Rehab_Cane__c}"/>
+                         <apex:outputLabel value="&nbsp;&nbsp;Other&nbsp;" escape="false" /><apex:inputField id="othermobility" value="{!Evaluation__c.Current_Gait_Mobility_Other__c}" label="Other" html-data-rules="{&quot;1&quot;: &quot;{!$Component.currentGaitMobilityOther}&quot;}" />
                          <apex:inputField value="{!Evaluation__c.Current_Gait_Mobility_Other_Comments__c}" id="currentGaitMobilityOther" label="Specify Other" />
 						</apex:outputPanel>
 						</apex:pageBlockSectionItem>                        
@@ -1720,7 +1735,7 @@
                         <apex:pageBlockSectionItem>
 						<apex:outputLabel value="Other Special Equipment Needed" />
 						<apex:outputPanel>
-                    		<apex:inputField value="{!Evaluation__c.Rehab_Other_Equipment_Needed__c}" html-data-rules="{&quot;Yes&quot;: [&quot;{!$Component.elasticHose}&quot;, &quot;{!$Component.handRolls}&quot;, &quot;{!$Component.bedCraddle}&quot;, &quot;{!$Component.overheadTrapaze}&quot;, &quot;{!$Component.rehabOther}&quot;]}" />
+                    		<apex:inputField id="specialequip" value="{!Evaluation__c.Rehab_Other_Equipment_Needed__c}" html-data-rules="{&quot;Yes&quot;: [&quot;{!$Component.elasticHose}&quot;, &quot;{!$Component.handRolls}&quot;, &quot;{!$Component.bedCraddle}&quot;, &quot;{!$Component.overheadTrapaze}&quot;, &quot;{!$Component.rehabOther}&quot;]}" />
                     		<br />
                     	 	<apex:outputLabel value="Elastic Hose&nbsp;" escape="false" /><apex:inputField value="{!Evaluation__c.Elastic_Hose__c}" id="elasticHose"/>
                     	 	<apex:outputLabel value="&nbsp;&nbsp;Hand Rolls&nbsp;" escape="false" /><apex:inputField value="{!Evaluation__c.Hand_Rolls__c}" id="handRolls"/>
