@@ -1296,14 +1296,16 @@ END: Uncomment to have the element collapsed by default -->
 
  </apex:pageBlockSection>
  <apex:pageBlockSection title="Funding Source" collapsible="false" columns="1"><br />
- <apex:pageBlockTable styleclass="pbBody-list" value="{!referralFundingsources}" var="item" rendered="{!(referralFundingsources != null || referralFundingsources.size > 0)}">
-            <apex:column headervalue="Name"><apex:outputLink value="/{!item.ID}">{!item.name}</apex:outputLink></apex:column>
-            <apex:column value="{!item.Funding_Source__c}" />
-            <apex:column value="{!item.Payor__c}" rendered="{!item.recordtype.name == 'CareMeridian'}" />
-            <apex:column value="{!item.Service_Being_Funded__c}" />
-            <apex:column value="{!item.Status__c}" />
- </apex:pageBlockTable>
-        <apex:outputText value="No records to display" rendered="{!(referralFundingsources == null || referralFundingsources.size = 0)}" />
+	 <apex:pageBlockTable value="{!referralFundingsources}" var="item" rendered="{!(referralFundingsources != null || referralFundingsources.size > 0)}">
+		<apex:column headervalue="Name"><apex:outputLink value="/{!item.ID}">{!item.name}</apex:outputLink></apex:column>
+		<apex:column value="{!item.Type_of_Coverage__c}"/>
+		<apex:column value="{!item.Payer_Name__c}"/>
+		<apex:column value="{!item.Effective_Date__c}"/>
+		<apex:column value="{!item.Termination_Date__c}"/>
+		<apex:column value="{!item.Status__c}"/>
+		<apex:column value="{!item.Comment__c}"/>
+	 </apex:pageBlockTable>
+	<apex:outputText value="No records to display" rendered="{!(referralFundingsources == null || referralFundingsources.size = 0)}" />
  </apex:pageBlockSection>
 
  </apex:pageBlock>
