@@ -282,7 +282,7 @@ public class ServiceAssignmentExt {
 
   }
 
-  public list<Funding_Source__c> referralFundingsources {get { return [select id, name, funding_source__c, payor__c, recordtype.name, service_being_funded__c, status__c from funding_source__C where service_Assignment__C = :theServAssign.id and Referral__c != null];} set;}
+  public list<Funding_Source__c> referralFundingsources {get { return [select id, name, funding_source__c, payor__c, recordtype.name, service_being_funded__c, status__c from funding_source__C where service_Assignment__C = null and Referral__c = :referral.id];} set;}
 
   public Funding_Source__c fundingSource {
       get{
@@ -1407,7 +1407,6 @@ public void loadProgramList() {
     		type_of_coverage__c, payer_name__c, effective_date__c, termination_date__c, recordtype.name
 	   from Funding_Source__c
 	  where Service_Assignment__c = :this.theServAssign.Id
-	    And Referral__c = null
 	  order by Type_of_Coverage__c
 	  limit 150];
     }
