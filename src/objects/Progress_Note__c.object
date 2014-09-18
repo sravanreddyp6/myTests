@@ -1706,11 +1706,15 @@
         <fullName>Location_Type_AZ_Report_Map__c</fullName>
         <description>This field is used in the AZ Billing Report.</description>
         <externalId>false</externalId>
-        <formula>CASE (  Service_Location__c,
-        &apos;Home&apos;,&apos;12&apos;,
-        &apos;Office&apos;,&apos;11&apos;,
-        &apos;Community Mental Health Center&apos;,&apos;53&apos;,
-        &apos;99&apos;)</formula>
+        <formula>IF ( Admission_State__c = &quot;MD&quot;, 
+    CASE ( Service_Location__c, 
+      &apos;Office&apos;,&apos;52&apos;, 
+      &apos;15&apos;), 
+    CASE ( Service_Location__c, 
+      &apos;Home&apos;,&apos;12&apos;, 
+      &apos;Office&apos;,&apos;11&apos;, 
+      &apos;Community Mental Health Center&apos;,&apos;53&apos;, 
+      &apos;99&apos;))</formula>
         <label>Location / Type</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
