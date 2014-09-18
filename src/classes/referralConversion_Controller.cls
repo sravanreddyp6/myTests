@@ -672,7 +672,8 @@ public with sharing class referralConversion_Controller {
     	
         for ( Funding_Source__c fs : newfunds ) {
         	
-            fs.Service_Assignment__c = newSA.Id;
+            fs.Service_Assignment__c = newSA.Id;	// set SA for new funding source
+            fs.referral__c = null;					// clear our referral id
             
             if ((fs.Funding_Source__c == 'Medicaid') && trytoupdatePBS ) {
                 pbsmed.Medicaid_ID__c = fs.Funding_Source_ID__c;
@@ -707,7 +708,7 @@ public with sharing class referralConversion_Controller {
 																	funding_source__c = fs.Id, 
 																	type__c = fs.authorization_type__c,
 																	admission__c = newSA.Admission__c, 
-																	payer_authorization_date__c = fs.authorization_received_date__c, // might need to take date off the date/time received field
+																	payer_authorization_date__c = (fs.received_date_time__c).dateGMT(), 
 																	payer_effective_date__c = fs.days_authorized_from__c,
 																	payer_end_date__c = fs.days_authorized_to__c,
 																	person_being_served__c = newSA.Person_being_served__c,
