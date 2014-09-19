@@ -689,6 +689,9 @@ public with sharing class referralConversion_Controller {
         	
         	// reselect to get ids populated
         	strSQL = Utility.getCreatableFieldsSOQL('funding_source__c','service_assignment__c = \'' + newSA.Id + '\'' );
+        	// add the name field
+        	strSQL = strSQL.Replace('SELECT ', 'SELECT name, ');
+        	system.debug( strsql);
         	newfunds = (List<Funding_Source__c>)Database.query(strSQL);
         	
         	List<Authorization__c> newauths = new List<Authorization__c>();
@@ -701,6 +704,14 @@ public with sharing class referralConversion_Controller {
 				
 				// there's an auth if the status populated
 				if ( !String.IsEmpty(fs.status__c)) {
+					
+					// temporary authorization number
+					string authid = fs.authorization_number__c;
+					
+					// we can do this becuase there is only 1 auth at the time of conversion
+					if (fs.status__c == 'Pending')
+						authid= fs.name + ' - Auth Pending';
+					
 					 System.Debug( 'funding source status is: ' + fs.status__c + ' - adding authorization');
 					// for now this will be for CM only.  working on other flavors.					
 					Authorization__c auth = new Authorization__c ( RecordTypeID = recType.ID, 
@@ -708,7 +719,6 @@ public with sharing class referralConversion_Controller {
 																	funding_source__c = fs.Id, 
 																	type__c = fs.authorization_type__c,
 																	admission__c = newSA.Admission__c, 
-																	payer_authorization_date__c = (fs.received_date_time__c).dateGMT(), 
 																	payer_effective_date__c = fs.days_authorized_from__c,
 																	payer_end_date__c = fs.days_authorized_to__c,
 																	person_being_served__c = newSA.Person_being_served__c,
@@ -723,7 +733,7 @@ public with sharing class referralConversion_Controller {
 																	received_from__c = fs.given_by__c,
 																	representing_received__c = fs.representing_received__c,
 																	auth_given_method__c = fs.auth_given_method__c,
-																	payer_authorization_id__c = fs.authorization_number__c,
+																	payer_authorization_id__c = authid,
 																	payer_cm_name__c = fs.internal_contact__c,
 																	payer_cm_phone__c = fs.internal_phone__c,
 																	payer_cm_email__c = fs.internal_email__c,
@@ -734,6 +744,10 @@ public with sharing class referralConversion_Controller {
 																	justification__c = fs.justification__c,
 																	level_confirmed__c = fs.did_cm_confirm_level__c
 																	);
+																	
+					if ( fs.received_date_time__c != null )
+						auth.payer_authorization_date__c = (fs.received_date_time__c).dateGMT();
+																	
 					newauths.Add( auth);
 					
 				}
