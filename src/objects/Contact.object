@@ -391,7 +391,7 @@
     <fields>
         <fullName>Age__c</fullName>
         <externalId>false</externalId>
-        <formula>FLOOR(VALUE(TEXT((today()- Birthdate) /365.25)))</formula>
+        <formula>FLOOR((TODAY()-Birthdate +1)/365.2425)</formula>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Age</label>
         <precision>18</precision>
