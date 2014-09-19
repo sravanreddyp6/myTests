@@ -437,7 +437,7 @@
         <type>Text</type>
         <unique>false</unique>
     </fields>
-     <fields>
+    <fields>
         <fullName>Billing_System__c</fullName>
         <externalId>false</externalId>
         <formula>TEXT(Person_Being_Served__r.Avatar_Source_System__c)</formula>
@@ -1718,7 +1718,7 @@
         <fullName>Location_Type_AZ_Report_Map__c</fullName>
         <description>This field is used in the AZ Billing Report.</description>
         <externalId>false</externalId>
-        <formula>IF ( Admission_State__c = &quot;MD&quot;, 
+        <formula>IF ( AND(Admission_State__c = &quot;MD&quot;, ISPICKVAL(Service_Assignment__r.Model__c, &quot;FCT&quot;)), 
     CASE ( Service_Location__c, 
       &apos;Office&apos;,&apos;52&apos;, 
       &apos;15&apos;), 
