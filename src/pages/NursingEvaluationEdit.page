@@ -69,21 +69,49 @@
            		if ( $('[id$=wfls]').val() == 'Yes') {
            			// set all other checkboxes to negative - invalidate all answers
            			// further assessment
-           			$('[id$=furtherind]').prop('checked', false);
-           			enableDisableField($('[id$=furtherind]'));
+           			var furtherind = $('[id$=furtherind]');
+           			furtherind.prop('checked', false);
+           			furtherind.attr('disabled','disabled');
+           			enableDisableField(furtherind);
+           			
            			
            			// mobility devices
-           			$('[id$=wheelchair]').prop('checked', false);
-           			$('[id$=walker]').prop('checked', false);
-           			$('[id$=cane]').prop('checked', false);
-           			$('[id$=othermobility]').prop('checked', false);
+           			$('[id$=wheelchair]').prop('checked', false).attr('disabled','disabled');
+           			$('[id$=walker]').prop('checked', false).attr('disabled','disabled');
+           			$('[id$=cane]').prop('checked', false).attr('disabled','disabled');
+           			$('[id$=othermobility]').prop('checked', false).attr('disabled','disabled');
            			enableDisableField($('[id$=othermobility]'));
            			
            			// other special equipment
-           			$('[id$=specialequip]').val('');
+           			$('[id$=specialequip]').val('').attr('disabled','disabled');
            			enableDisableField($('[id$=specialequip]'));
            			
+           			
            			// reset sliders
+           			$.each($("[id*=slider]"), function (key) {
+           				var s = $(this).slider( "widget" );
+           				s.slider("value", 1);
+           				s.slider("disable");
+           			});
+           		} else {
+           		// set all other checkboxes to negative - invalidate all answers
+           			// further assessment
+           			$('[id$=furtherind]').removeAttr('disabled');
+           			
+           			// mobility devices
+           			$('[id$=wheelchair]').removeAttr('disabled');
+           			$('[id$=walker]').removeAttr('disabled');
+           			$('[id$=cane]').removeAttr('disabled');
+           			$('[id$=othermobility]').removeAttr('disabled');
+           			
+           			// other special equipment
+           			$('[id$=specialequip]').removeAttr('disabled');
+
+           			// reset sliders
+           			$.each($("[id*=slider]"), function (key) {
+           				var s = $(this).slider( "widget" );
+           				s.slider("enable");
+           			});	
            			
 				};
            	
@@ -1763,7 +1791,7 @@
                               </apex:pageBlockSectionItem>
                               <apex:pageBlockSectionItem >
                                 <apex:outputText value="Bed Mobility" />
-                                <c:Slider onChange="handleSliderChange('{!$Component.bedMobility}')" options="{!sliderOptions}" initial="{!Evaluation__c.Bed_Mobility__c}" morestyle="width:50%"/>
+                                <c:Slider id="bedmobility" onChange="handleSliderChange('{!$Component.bedMobility}')" options="{!sliderOptions}" initial="{!Evaluation__c.Bed_Mobility__c}" morestyle="width:50%"/>
                              </apex:pageBlockSectionItem>
                              <apex:pageBlockSectionItem >
                                 <apex:outputText value="Transfers" />
