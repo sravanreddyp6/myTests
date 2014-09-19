@@ -1737,9 +1737,9 @@
                     <apex:pageBlockSection columns="1" title="Physical Function">
                         <apex:inputField value="{!Evaluation__c.Rehab_WFLs__c}" label="WFLs" id="wfls" onchange="handleWFLsChange()"/>
 						
-						<apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem >
 						<apex:outputLabel value="Further Assessment by Therapist Indicated?" />
-						<apex:outputPanel>
+						<apex:outputPanel >
                          <apex:inputField value="{!Evaluation__c.Therapy_Ordered__c}" id="furtherind" label="Further Assessment by Therapist Indicated?"
                             html-data-rules="{&quot;1&quot;: [&quot;{!$Component.pt}&quot;, &quot;{!$Component.ot}&quot;, &quot;{!$Component.st}&quot;]}" />
                             <br />
@@ -1749,9 +1749,9 @@
                          </apex:outputPanel>
 						</apex:pageBlockSectionItem>
                             
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
 						<apex:outputLabel value="Mobility Devices" />
-						<apex:outputPanel>
+						<apex:outputPanel >
                          <apex:outputLabel value="&nbsp;&nbsp;Wheel Chair&nbsp;" escape="false" /><apex:inputField id="wheelchair" value="{!Evaluation__c.Wheel_Chair__c}" />
                          <apex:outputLabel value="&nbsp;&nbsp;Front-Wheeled Walker&nbsp;" escape="false" /><apex:inputField id="walker" value="{!Evaluation__c.Front_Wheeled_Walker__c}" />
                          <apex:outputLabel value="&nbsp;&nbsp;Cane&nbsp;" escape="false" /><apex:inputField id="cane" value="{!Evaluation__c.Rehab_Cane__c}"/>
@@ -1760,9 +1760,9 @@
 						</apex:outputPanel>
 						</apex:pageBlockSectionItem>                        
                    
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
 						<apex:outputLabel value="Other Special Equipment Needed" />
-						<apex:outputPanel>
+						<apex:outputPanel >
                     		<apex:inputField id="specialequip" value="{!Evaluation__c.Rehab_Other_Equipment_Needed__c}" html-data-rules="{&quot;Yes&quot;: [&quot;{!$Component.elasticHose}&quot;, &quot;{!$Component.handRolls}&quot;, &quot;{!$Component.bedCraddle}&quot;, &quot;{!$Component.overheadTrapaze}&quot;, &quot;{!$Component.rehabOther}&quot;]}" />
                     		<br />
                     	 	<apex:outputLabel value="Elastic Hose&nbsp;" escape="false" /><apex:inputField value="{!Evaluation__c.Elastic_Hose__c}" id="elasticHose"/>
@@ -1831,31 +1831,90 @@
              </apex:tab>
              <apex:tab label="Psycho/Social" name="psychoSocialTab" ontabenter="changeTab('psychoSocialTab'); return false;" styleClass="{!IF(Evaluation__c.Psycho_Social_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
-                    <apex:pageBlockSection columns="1">
+                    <apex:pageBlockSection columns="2" title="Psycho/Social History">
                         <apex:inputTextArea value="{!Evaluation__c.History_of_Psycho_Social_Issues__c}" cols="70" label="History of Psycho/Social Issues (Drug/ Alcohol/ Legal)" /> 
-                    </apex:pageBlockSection>
-                    <apex:pageBlockSection columns="2" title="Does Resident exhibit signs or relate a history of any of the following:" Collapsible="False">
-                      <apex:inputField value="{!Evaluation__c.Alcoholic_drinks_per_day__c}" label="Consumes >2 alcoholic drinks/day" />
-                       <apex:outputText value="" />
-                        <apex:inputField value="{!Evaluation__c.Alcohol_Abuse__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.alcoholAbuse}&quot;}" />
-                        <apex:inputField value="{!Evaluation__c.Drug_Abuse__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.drugAbuse}&quot;}"/>
+                      	<apex:outputText value="" />
+                      	<apex:outputLabel value="Does resident exhibit signs or relate a history of any of the following:" />
+                      	<apex:outputText value="" />
+                      	
+                      	<apex:pageBlockSectionItem >
+                      	<apex:outputLabel value="Alcohol Abuse<Br /><Br />Describe" escape="false" />
+                      	<apex:outputPanel >
+                        <apex:inputField value="{!Evaluation__c.Alcohol_Abuse__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.alcoholAbuse}&quot;}" /> <apex:outputLabel value="Consumes >2 alcoholic drinks/day" />&nbsp;<apex:inputField value="{!Evaluation__c.Alcoholic_drinks_per_day__c}" />
+                        <br />
                         <apex:inputTextArea value="{!Evaluation__c.Alcohol_Abuse_Describe__c}" label="Describe"  id="alcoholAbuse" cols="70"/>
-                        <apex:inputTextArea value="{!Evaluation__c.Drug_Abuse_Describe__c}" label="Describe" id="drugAbuse" cols="70"/>
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        
+                        <apex:pageBlockSectionItem >
+                      	<apex:outputLabel value="Drug Abuse<Br /><Br />Describe" escape="false" />
+                      	<apex:outputPanel >
+                        <apex:inputField value="{!Evaluation__c.Drug_Abuse__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.drugAbuse}&quot;}"/>
+                        <br /><apex:inputTextArea value="{!Evaluation__c.Drug_Abuse_Describe__c}" label="Describe" id="drugAbuse" cols="70"/>
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        
+                        <apex:pageBlockSectionItem >
+                      	<apex:outputLabel value="Sexual Abuse<Br /><Br />Describe" escape="false" />
+                      	<apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Sexual_Abuse__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.sexualAbuse}&quot;}" />
+                        <br /><apex:inputTextArea value="{!Evaluation__c.Sexual_Abuse_Describe__c}" label="Describe" id="sexualAbuse" cols="70"/>
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        
+                        <apex:pageBlockSectionItem >
+                      	<apex:outputLabel value="Domestic Abuse<Br /><Br />Describe" escape="false" />
+                      	<apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Domestic_Abuse__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.domesticAbuse}&quot;}" />
-                        <apex:inputTextArea value="{!Evaluation__c.Sexual_Abuse_Describe__c}" label="Describe" id="sexualAbuse" cols="70"/>
-                        <apex:inputTextArea value="{!Evaluation__c.Domestic_Abuse_Describe__c}" label="Describe" id="domesticAbuse" cols="70"/>
+                        <br /><apex:inputTextArea value="{!Evaluation__c.Domestic_Abuse_Describe__c}" label="Describe" id="domesticAbuse" cols="70"/>
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        
+                        <apex:pageBlockSectionItem >
+                      	<apex:outputLabel value="Financial Abuse<Br /><Br />Describe" escape="false" />
+                      	<apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Financial_Abuse__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.financialAbuse}&quot;}" />
+                        <br /><apex:inputTextArea value="{!Evaluation__c.Financial_Abuse_Describe__c}" label="Describe" id="financialAbuse" cols="70"/>
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        
+                        <apex:pageBlockSectionItem >
+                      	<apex:outputLabel value="Physical Abuse<Br /><Br />Describe" escape="false" />
+                      	<apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Physical_Abuse__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.physicalAbuse}&quot;}" />
-                        <apex:inputTextArea value="{!Evaluation__c.Financial_Abuse_Describe__c}" label="Describe" id="financialAbuse" cols="70"/>
-                        <apex:inputTextArea value="{!Evaluation__c.Physical_Abuse_Describe__c}" label="Describe" id="physicalAbuse" cols="70"/>
+                        <br /><apex:inputTextArea value="{!Evaluation__c.Physical_Abuse_Describe__c}" label="Describe" id="physicalAbuse" cols="70"/>
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        
+                        <apex:pageBlockSectionItem >
+                      	<apex:outputLabel value="Risk to Self<Br /><Br />Describe" escape="false" />
+                      	<apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Risk_to_Self__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.riskselfDescribe}&quot;}" />
+                        <br /><apex:inputTextArea value="{!Evaluation__c.Risk_to_Self_Describe__c}" id="riskselfDescribe" label="Describe" cols="70"/>
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        
+                        <apex:pageBlockSectionItem >
+                      	<apex:outputLabel value="Risk to Others<Br /><Br />Describe" escape="false" />
+                      	<apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Risk_to_Others__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.riskothersDescribe}&quot;}" />
-                        <apex:inputTextArea value="{!Evaluation__c.Risk_to_Self_Describe__c}" id="riskselfDescribe" label="Describe" cols="70"/>
-                        <apex:inputTextArea value="{!Evaluation__c.Risk_to_Others_Describe__c}" id="riskothersDescribe" label="Describe" cols="70"/>
+                        <br /><apex:inputTextArea value="{!Evaluation__c.Risk_to_Others_Describe__c}" id="riskothersDescribe" label="Describe" cols="70"/>
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        
+                        <apex:pageBlockSectionItem >
+                      	<apex:outputLabel value="Elopement Risk<Br /><Br />Describe" escape="false" />
+                      	<apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Elopement_Risk__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.elopementDescribe}&quot;}" />
+                        <br /><apex:inputTextArea value="{!Evaluation__c.Elopement_Risk_Describe__c}" id="elopementDescribe" label="Describe" cols="70" />
+	                    </apex:outputPanel>
+	                    </apex:pageBlockSectionItem>
+	                    
+	                    
                         <apex:pageblockSectionItem >
-	                        	<apex:outputlabel value="Hallucinations" styleClass="labelCol" />
+                        
+	                        	<apex:outputlabel value="Hallucinations<Br /><Br />Type<br /><br />Describe" escape="false" />
+	                        	<apex:outputPanel>
 		                        <apex:actionRegion >
 		                         <apex:inputField value="{!Evaluation__c.Hallucinations__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.hallucinationDescribe}&quot;]}" >
 		                         	<apex:actionStatus id="hallucinationStatus">
@@ -1869,26 +1928,24 @@
 				                 <apex:actionSupport event="onchange" rerender="panelpanelpanel" status="hallucinationStatus" />
 		                         </apex:inputField>
 		                         </apex:actionRegion>
-	                         </apex:pageblockSectionItem>
-                        <apex:inputTextArea value="{!Evaluation__c.Elopement_Risk_Describe__c}" id="elopementDescribe" label="Describe" cols="70" />
-	                    <apex:inputTextArea value="{!Evaluation__c.Hallucinations_Describe__c}" id="hallucinationDescribe" label="Describe" cols="70" />
-	                    <apex:pageBlockSectionItem />
-	                    <apex:outputpanel id="panelpanelpanel" layout="block">
-	                         <apex:pageBlockSectionItem >
-	                         	<apex:outputText Value="Hallucination Type" styleClass="labelCol" style="margin-left: 3cm;"/>
-	                         	<apex:actionRegion > 
-	                            <apex:selectCheckboxes value="{!dummyString}" disabled="True" rendered="{!!Evaluation__c.Hallucinations__c}" style="margin-left: 5cm;" >
+	                     	    <Br />
+	                     	    <apex:outputpanel id="panelpanelpanel" layout="block">
+	                         	<apex:selectCheckboxes value="{!dummyString}" disabled="True" rendered="{!!Evaluation__c.Hallucinations__c}"  style="margin-left:-13px" >
 	                                <apex:selectOptions value="{!hallValues}"/>
 	                            </apex:selectCheckboxes>
-	                            <apex:selectCheckboxes value="{!selectedHalls}" rendered="{!Evaluation__c.Hallucinations__c}" style="margin-left: 5cm;" >
+	                            <apex:selectCheckboxes value="{!selectedHalls}" rendered="{!Evaluation__c.Hallucinations__c}"  style="margin-left:-13px">
 	                                <apex:selectOptions value="{!hallValues}"/>
 	                            </apex:selectCheckboxes>
-	                            </apex:actionRegion>
-	                        </apex:pageBlockSectionItem>
-	                    </apex:outputpanel>
+			                    </apex:outputpanel>
+	    						              	    
+	                        	<apex:inputTextArea value="{!Evaluation__c.Hallucinations_Describe__c}" id="hallucinationDescribe" label="Describe" cols="70" />
+		                   		
+	                    </apex:outputPanel>
+	                    </apex:pageblockSectionItem>
+	                    
                     </apex:pageBlockSection>    
-                    <hr />
-                    <apex:pageBlockSection Columns="2" >
+                    
+                    <apex:pageBlockSection Columns="2" Title="Religion/Culture" >
                         <apex:inputField value="{!Evaluation__c.Religious_Preference__c}"  html-data-rules="{&quot;Yes&quot;: [&quot;{!$Component.Preferencedetails}&quot;, &quot;{!$Component.spiritualVisits}&quot;]}"/>
                         <apex:inputField value="{!Evaluation__c.Cultural_Preferences__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.culturalPrefrence}&quot;}"/>
                         <apex:inputField value="{!Evaluation__c.Religious_Preference_Details__c}" id="Preferencedetails"/>
@@ -1898,7 +1955,7 @@
                         </apex:pageBlockSection>
                         <apex:PageBlockSection id="beliefSection" Columns="2" >
 	                        <apex:pageBlockSectionItem >
-	                        	<apex:outputLabel value="Religious/Spiritual/Cultural beliefs that could affect care, treatment, or sevices?" styleClass="labelCol"/>
+	                        	<apex:outputLabel value="Religious/Spiritual/Cultural beliefs that could affect care, treatment, or sevices?" />
 	                        	<apex:actionRegion >
 	                        	<apex:inputField value="{!Evaluation__c.Beliefs_that_could_affect_Treatment__c}" id="beleifthatAffects">
 	                        		<apex:actionStatus id="statusbeliefTreat">
@@ -1915,15 +1972,15 @@
 	                        </apex:pageBlockSectionItem>
 	                        <apex:pageblockSectionItem />
 	                        <apex:pageBlockSectionItem >
-	                              <apex:outputText value="if Yes, Type?" styleClass="labelCol" />
-	                            <apex:actionRegion >
-	                            <apex:selectCheckboxes value="{!dummyString}" disabled="True" rendered="{!Evaluation__c.Beliefs_that_could_affect_Treatment__c !='Yes'}" >
+	                              <apex:outputLabel value="If Yes, Type?"  />
+	                              <apex:outputpanel>
+	                            <apex:selectCheckboxes value="{!dummyString}" disabled="True" rendered="{!Evaluation__c.Beliefs_that_could_affect_Treatment__c !='Yes'}" style="margin-left:-13px" >
 	                                <apex:selectOptions value="{!beliefValues}"/>
 	                            </apex:selectCheckboxes>  
-	                            <apex:selectCheckboxes value="{!selectedBeliefs}" rendered="{!Evaluation__c.Beliefs_that_could_affect_Treatment__c =='Yes'}" >
+	                            <apex:selectCheckboxes value="{!selectedBeliefs}" rendered="{!Evaluation__c.Beliefs_that_could_affect_Treatment__c =='Yes'}" style="margin-left:-13px" >
 	                                <apex:selectOptions value="{!beliefValues}"/>
 	                            </apex:selectCheckboxes>
-	                            </apex:actionRegion>                        
+	                            </apex:outputpanel>
 	                        </apex:pageBlockSectionItem>
 	                        <apex:pageBlockSectionItem />
 	                        <apex:inputField value="{!Evaluation__c.Other_Religious_Effect__c}" label="Other" />
@@ -1931,8 +1988,8 @@
                     <hr />
                     <apex:pageBlockSection columns="2">
                         <apex:pageBlockSectionItem >
-                            <apex:outputText value="Preferred Methods for Learning" styleClass="labelCol" />
-                            <apex:selectCheckBoxes value="{!selectedLearning}">
+                            <apex:outputLabel value="Preferred Methods for Learning" />
+                            <apex:selectCheckBoxes value="{!selectedLearning}" style="margin-left:-13px" >
                                 <apex:selectOptions value="{!learningValues}" />
                             </apex:selectCheckBoxes>
                         </apex:pageBlockSectionItem>
@@ -1942,8 +1999,8 @@
                         <apex:pageBlockSectionItem />   
                         <apex:inputField value="{!Evaluation__c.Harm_Reported_to__c}" label="Reported to" id="harmReported" />
                         <apex:pageBlockSectionItem >
-                            <apex:outputText value="Does Resident Appear Demonstrate any of the Following" styleClass="labelCol" />
-                            <apex:selectCheckboxes value="{!selectedCoping}" layout="pageDirection">
+                            <apex:outputLabel value="Does Resident Appear to Demonstrate Any of the Following" />
+                            <apex:selectCheckboxes value="{!selectedCoping}" layout="pageDirection" style="margin-left:-13px" >
                                 <apex:selectOptions value="{!copingValues}" />
                             </apex:selectCheckboxes>
                         </apex:pageBlockSectionItem>
