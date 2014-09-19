@@ -1718,7 +1718,7 @@
         <fullName>Location_Type_AZ_Report_Map__c</fullName>
         <description>This field is used in the AZ Billing Report.</description>
         <externalId>false</externalId>
-        <formula>IF ( AND(Admission_State__c = &quot;MD&quot;, ISPICKVAL(Service_Assignment__r.Model__c, &quot;FCT&quot;)), 
+        <formula>IF ((AND(Admission_State__c = &quot;MD&quot;, TEXT(Admission__r.Network_Offering__c) = &quot;ARY&quot;)), 
     CASE ( Service_Location__c, 
       &apos;Office&apos;,&apos;52&apos;, 
       &apos;15&apos;), 
