@@ -22,9 +22,11 @@ https://developer.salesforce.com/page/Enforcing_CRUD_and_FLS
 
 <apex:form id="FRM">
 <div id="mode_selctor_container">
+    <div class="fLeft">
     <span id="view_mode_selector" class="mode_selector" onclick="viewMode(0)">Summary</span>
     &nbsp;&nbsp;&nbsp;
     <span id="edit_mode_selector" class="mode_selector selected" onclick="editMode(0)">Edit</span>
+    </div>
             <div class="fRight mainbtns">
                 <apex:commandButton styleClass="edit" value="Add Task" rendered="{!$ObjectType.Project_Task__c.createable}" action="{!AddProjectTask}" reRender="FRM" status="myStatus" oncomplete="editMode(0); goto('#end'); commonReRen();"/>            
                 <apex:commandButton styleClass="edit" action="{!save}" value="Save" reRender="FRM" status="myStatus" oncomplete="{!if(hasError,'editMode(0);','viewMode(0);')} commonReRen(); "/>
@@ -60,7 +62,7 @@ https://developer.salesforce.com/page/Enforcing_CRUD_and_FLS
                     <apex:selectOptions value="{!Templates}"></apex:selectOptions>
                     <apex:actionSupport event="onchange" reRender="FRM" status="myStatus" action="{!CopyFromTemp}" oncomplete="editMode(0);"/>
                 </apex:selectList>
-                <apex:inputField label="Name" styleClass="edit" value="{!Project__c.Name}"/>
+                <apex:inputText label="Name" styleClass="edit" value="{!Project__c.Name}" maxlength="80"  disabled="{! !$ObjectType.Project__c.fields.Description__c.Updateable}" />
                 <apex:inputField styleClass="non-temp-field edit" value="{!Project__c.Status__c}" rendered="{!startingOption != 'new_temp'}"/>
                 <apex:inputField styleClass="edit" value="{!Project__c.Operating_Group__c}"/>
                 <apex:inputField styleClass="non-temp-field edit" value="{!Project__c.State__c}"  rendered="{!startingOption != 'new_temp'}"/>
@@ -144,7 +146,8 @@ https://developer.salesforce.com/page/Enforcing_CRUD_and_FLS
                                     </div> 
                             </td>
                             <td class="task_act_title {!tMine}">
-                                <apex:inputField styleClass="taskTitle edit" html-placeholder="title" value="{!t.ProjTask.Name}"/>
+                                
+                                <apex:inputText label="Name" styleClass="taskTitle edit" html-placeholder="title" value="{!t.ProjTask.Name}" maxlength="80"  disabled="{! !$ObjectType.Project_Task__c.fields.Description__c.Updateable}" />
                                 <br/>
                                 <apex:inputTextarea disabled="{! !$ObjectType.Project_Task__c.fields.Description__c.Updateable}" styleClass="descTxtBox edit" html-placeholder="add task description" value="{!t.ProjTask.Description__c}"/>
                          
@@ -186,7 +189,8 @@ https://developer.salesforce.com/page/Enforcing_CRUD_and_FLS
                                     </div>                                      
                                     </td>
                                     <td class="actpad task_act_title {!aMine}">
-                                        <apex:inputField styleClass="taskTitle edit" html-placeholder="title..." value="{!a.ProjTaskAct.Name}"/>
+                                        <apex:inputText label="Name" styleClass="taskTitle edit" html-placeholder="title..." value="{!a.ProjTaskAct.Name}" maxlength="80"  disabled="{! !$ObjectType.Project_Task_Activity__c.fields.Description__c.Updateable}" />
+                                        
                                          
                                         <br/>
                                         <apex:inputTextarea disabled="{! !$ObjectType.Project_Task_Activity__c.fields.Description__c.Updateable}" styleClass="descTxtBox edit" html-placeholder="add activity description" value="{!a.ProjTaskAct.Description__c}"/>
@@ -755,6 +759,7 @@ j$( document ).ready(function() {
 .sticky{position: fixed; z-index: 100; background-color:rgba(220,220,220, 1);  top:0px; left:0; border-bottom: 1px solid black; }
 .non-temp-field{ {!if(Project__c.isTemplate__c, 'display: none !important;','')} }
 .fRight{float: right;}
+.fLeft{float: left;}
 .nodisplay{ display: none; }
 .noscroll{overflow:hidden;}
 .errMsgContainer{position: fixed; top: 0px; left: 0px; width: 100%; z-index: 200;}
