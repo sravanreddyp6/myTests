@@ -77,21 +77,21 @@ fieldset {
 
 #demographics-div {
 	width: 800px;
-	height: 250px;
+	height: 260px;
 	align: left;
 	/* float: left; */ 
 }
 
 #demographics-div-left {
-	width: 365px;
-	height: 250px;
+	width: 50%;
+	height: 260px;
 	float: left;
 	/* float: left; */ 
 }
 
 #demographics-div-right {
-	width: 375px;
-	height: 250px;
+	width: 50%px;
+	height: 260px;
 	float: left;
 	/* float: left; */ 
 }
@@ -104,15 +104,15 @@ fieldset {
 }
 
 #mentor-div-left {
-	width: 365px;
-	height: 250px;
+	width: 385px;
+	height: 270px;
 	float: left;
 	/* float: left; */ 
 }
 
 #mentor-div-right {
 	width: 375px;
-	height: 250px;
+	height: 270px;
 	float: left;
 	/* float: left; */ 
 }
@@ -173,7 +173,7 @@ function convertFromSalesForceDate(mydate){
    var y = mydate.getFullYear();  
    return ''+ (m<=9?'0'+m:m) +'-' + (d<=9?'0'+d:d)+'-' + y;  
  }  
-
+ 
 j$ = jQuery.noConflict();
 	
 j$(function () {
@@ -373,16 +373,26 @@ function getTMNContacts(filterType, filter) {
 
 function getTMNContactDetail(id) {
 
+    getPickListalues(id);
+    
     Visualforce.remoting.Manager.invokeAction(
         '{!$RemoteAction.TMNContacts.getTMNContactDetail}', id,
         function(result, event){
             if (event.status) {
                 var gridData = JSON.stringify(result);
+                // alert(gridData);
                 var obj = JSON.parse(gridData); 
                 
-                var data = {"get-name": obj.Full_Name__c, "get-chessie-id": obj.Chessie_ID__c, "get-gender": obj.Gender__c, "get-dob": convertFromSalesForceDate(obj.Date_of_Birth__c), "get-marital-status": obj.Marital_Status__c, "get-race": obj.Race__c, "get-hisp": obj.Hispanic_Heritage__c, "get-dhr-cpa-1": obj.DHR_CPA_Race_1__c, "get-dhr-cpa-2": obj.DHR_CPA_Race_2__c}
+                var data = {"get-name": obj.Full_Name__c, "get-chessie-id": obj.Chessie_ID__c, "get-gender": obj.Gender__c, 
+                "get-age": obj.Age__c, "get-dob": convertFromSalesForceDate(obj.Date_of_Birth__c), "get-marital-status": obj.Marital_Status__c, 
+                "get-race": obj.Race__c, "get-hisp": obj.Hispanic_Heritage__c, "get-dhr-cpa-1": obj.DHR_CPA_Race_1__c, 
+                "get-dhr-cpa-2": obj.DHR_CPA_Race_2__c, "get-street-address" : obj.Street_1__c,"get-street-line-2" : obj.Street_2__c,
+                "get-city" : obj.City__c, "get-state" : obj.State__c, "get-zip-code" : obj.Zip_Code__c, 
+                "get-primary-phone" : obj.Primary_Phone__c, "get-secondary-phone" : obj.Secondary_Phone__c, "get-email" : obj.Email__c, 
+                "get-how" : obj.How_did_you_hear_about_us__c, "get-get-other" : obj.How_did_you_hear_Other_Describe__c, "get-referral-type" : obj.Referral_Type__c}
+                        
                 j$("#edit-contact-form").autofill( data, {restrict: false} );
-                j$( "#edit-contact-form" ).dialog( "open" );
+                j$("#edit-contact-form").dialog( "open" );
         
             } else if (event.type === 'exception') {
                     alert(event.where);
@@ -391,10 +401,63 @@ function getTMNContactDetail(id) {
                     }
                 },
             {escape: true}
-            );
-             
+            );             
 }
 
+getPickListalues = function(id) {
+    Visualforce.remoting.Manager.invokeAction(
+        '{!$RemoteAction.TMNContacts.getPickLists}', id, function(result, event){
+            if (event.status) {
+                var optionsData = JSON.stringify(result);
+               // alert(optionsData);
+                var obj = JSON.parse(optionsData); 
+                
+                var newOptions = j$('[name="get-gender"]');
+                obj.gender.forEach(function(gender) {
+                    newOptions.append(new Option(gender, gender));
+                });
+                newOptions = j$('[name="get-marital-status"]');
+                obj.maritalStatus.forEach(function(marital) {
+                    newOptions.append(new Option(marital, marital));
+                });
+                newOptions = j$('[name="get-race"]');
+                obj.race.forEach(function(race) {
+                    newOptions.append(new Option(race, race));
+                });
+                newOptions = j$('[name="get-hisp"]');
+                obj.hispHeritage.forEach(function(hispHeritage) {
+                    newOptions.append(new Option(hispHeritage, hispHeritage));
+                });
+                newOptions = j$('[name="get-dhr-cpa-1"]');
+                obj.dhrCpaRace1.forEach(function(dhrCpaRace) {
+                    newOptions.append(new Option(dhrCpaRace, dhrCpaRace));
+                });
+                newOptions = j$('[name="get-dhr-cpa-2"]');
+                obj.dhrCpaRace2.forEach(function(dhrCpaRace) {
+                    newOptions.append(new Option(dhrCpaRace, dhrCpaRace));
+                });
+                newOptions = j$('[name="get-how"]');
+                obj.hearAboutUs.forEach(function(hearAbt) {
+                    newOptions.append(new Option(hearAbt, hearAbt));
+                });
+                newOptions = j$('[name="get-referral-type"]');
+                obj.referralTyp.forEach(function(referr) {
+                    newOptions.append(new Option(referr, referr));
+                });
+                newOptions = j$('[name="get-home-assctn"]');
+                obj.homeAssctn.forEach(function(assctn) {
+                    newOptions.append(new Option(assctn, assctn));
+                });
+                
+            } else if (event.type === 'exception') {
+                    alert(event.where);
+                    } else {
+                        alert(event.message);
+                    }
+                },
+            {escape: true}
+            );
+}
 
 /*
  * This method is called only when the entire DOM is called
@@ -414,6 +477,12 @@ j$(function() {
   j$('#nonMentors').hide();
 
 
+  /*
+   * Add the date picker
+   */
+  j$(".datepicker").datepicker({ showOn: 'focus' });
+  
+  
    /*
     * Activate the hover over for the accordion
     */
@@ -500,13 +569,14 @@ j$(function() {
 				<fieldset>
 					<label for="get-name">Name:</label><input type="text" name="get-name"/><br/>
 					<label for="get-chessie-id">Chessie ID:</label><input type="text" name="get-chessie-id"/><br/>
-					<label for="get-gender">Gender:</label><input type="text" name="get-gender"/><br/>
-					<label for="get-dob">Date of Birth:</label><input type="text" name="get-dob"/><br/>
-					<label for="get-marital-status">Marital Status:</label><input type="text" name="get-marital-status"/><br/>
-					<label for="get-race">Race:</label><input type="text" name="get-race"/><br/>
-					<label for="get-hisp">Hispanic Heritage:</label><input type="text" name="get-hisp"/><br/>
-					<label for="get-dhr-cpa-1">DHR CPA Race 1:</label><input type="text" name="get-dhr-cpa-1"/><br/>
-					<label for="get-dhr-cpa-2">DHR CPA Race 2:</label><input type="text" name="get-dhr-cpa-2"/>
+					<label for="get-gender">Gender:</label><select name="get-gender" ></select><br/>
+                    <label for="get-age">Age:</label><input type="text" name="get-age" readonly="readonly"/><br/>					
+					<label for="get-dob">Date of Birth:</label><input type="text" name="get-dob" class="datepicker"/><br/>
+					<label for="get-marital-status">Marital Status:</label><select name="get-marital-status"></select><br/>
+					<label for="get-race">Race:</label><select name="get-race"></select><br/>
+					<label for="get-hisp">Hispanic Heritage:</label><select name="get-hisp"></select><br/>
+					<label for="get-dhr-cpa-1">DHR CPA Race 1:</label><select name="get-dhr-cpa-1"></select><br/>
+					<label for="get-dhr-cpa-2">DHR CPA Race 2:</label><select name="get-dhr-cpa-2"></select>
 				</fieldset>
 			</div>
 			<div id="demographics-div-right">
@@ -525,40 +595,40 @@ j$(function() {
 		<h3>Marketing Information</h3>
 		<div id="marketing-div">
 				<fieldset>
-					<label for="get-how">How did hear about us?</label><input type="text" name="get-how"/><br/>
-					<label for="get-referral-type">Referral Type:</label><input type="text" name="get-referral-type"/><br/>
-					<label for="get-get-other">Other-Describe:</label><input type="text" name="get-get-other"/><br/>
+					<label for="get-how">How did hear about us?</label><select name="get-how"></select><br/>
+                    <label for="get-get-other">Other-Describe:</label><input type="text" name="get-get-other"/><br/>
+					<label for="get-referral-type">Referral Type:</label><select name="get-referral-type"></select><br/>
 				</fieldset>
 		</div>
 		<h3>Mentor Status</h3>
 		<div id="mentor-div">
 			<div id="mentor-div-left">
 				<fieldset>
-					<label for="get-disregard">Disregard:</label><input type="text" name="get-disregard" size="10"/><br/>
-					<label for="get-home-assctn">Associated home population:</label><input type="text" name="get-home-assctn" size="10"/><br/>
-					<label for="get-in-progress">In Progress:</label><input type="text" name="get-in-progress" size="10"/><br/>
-					<label for="get-active">Active:</label><input type="text" name="get-active" size="10"/><br/>
-					<label for="get-suspended">Suspended:</label><input type="text" name="get-suspended" size="10"/><br/>
-					<label for="get-inactive">Inactive:</label><input type="text" name="get-inactive" size="10"/><br/>
-					<label for="get-denied">Denied:</label><input type="text" name="get-denied" size="10"/><br/>
-					<label for="get-blank"> </label><input type="text" name="get-blank" size="10" style="border: solid 1px #FFFFFF"/><br/>
-					<label for="get-withdrawn">Withdrawn:</label><input type="text" name="get-withdrawn" size="10"/><br/>
-					<label for="get-blank"> </label><input type="text" name="get-blank" size="10" style="border: solid 1px #FFFFFF"/><br/>
-					<label for="get-recertification">Recent Recertification Date:</label><input type="text" name="get-recertification" size="10"/><br/>
+					<label for="get-disregard">Disregard:</label><input type="checkbox" name="get-disregard"/><br/>
+					<label for="get-home-assctn">Associated home population:</label><select name="get-home-assctn"></select><br/>
+					<label for="get-in-progress">In Progress:</label><input type="checkbox" name="get-in-progress" /><br/>
+					<label for="get-active">Active:</label><input type="checkbox" name="get-active" /><br/>
+					<label for="get-suspended">Suspended:</label><input type="checkbox" name="get-suspended"/><br/>
+					<label for="get-inactive">Inactive:</label><input type="checkbox" name="get-inactive"/><br/>
+					<label for="get-denied">Denied:</label><input type="checkbox" name="get-denied"/><br/>
+					<label for="get-blank"> </label><input type="text" name="get-blank" style="border:none; height:20px; background:transparent;"/><br/>
+					<label for="get-withdrawn">Withdrawn:</label><input type="checkbox" name="get-withdrawn"/><br/>
+					<label for="get-blank"> </label><input type="text" name="get-blank" style="border:none; height:20px; background:transparent;"/><br/>
+					<label for="get-recertification">Recent Recertification Date:</label><input type="text" name="get-recertification" class="datepicker"/><br/>
 				</fieldset>
 			</div>
 			<div id="mentor-div-right">
 				<fieldset>
-					<label for="get-blank"> </label><input type="text" name="get-blank" size="10" style="border: solid 1px #FFFFFF"/><br/>
-					<label for="get-blank"> </label><input type="text" name="get-blank" size="10" style="border: solid 1px #FFFFFF"/><br/>
-					<label for="get-in-progress-date">Date:</label><input type="text" name="get-in-progress-date" size="10"/><br/>
-					<label for="get-active-date">Date:</label><input type="text" name="get-active-date" size="10"/><br/>
-					<label for="get-suspended-date">Date:</label><input type="text" name="get-suspended-date" size="10"/><br/>
-					<label for="get-inactive-date">Date:</label><input type="text" name="get-inactive-date" size="10"/><br/>
-					<label for="get-denied-date">Date:</label><input type="text" name="get-denied-date" size="10"/><br/>
-					<label for="get-denied-reason">Reason:</label><input type="text" name="get-denied-reason" size="10"/><br/>
-					<label for="get-withdrawn-date">Date:</label><input type="text" name="get-withdrawn-date" size="10"/><br/>
-					<label for="get-withdrawn-reason">Reason:</label><input type="text" name="get-withdrawn-reason" size="10"/><br/>
+					<label for="get-blank"> </label><input type="text" name="get-blank" style="border:none; height:20px; background:transparent;"/><br/>
+					<label for="get-blank"> </label><input type="text" name="get-blank" style="border:none; height:20px; background:transparent;"/><br/>
+					<label for="get-in-progress-date">Date:</label><input type="text" name="get-in-progress-date" class="datepicker"/><br/>
+					<label for="get-active-date">Date:</label><input type="text" name="get-active-date" class="datepicker"/><br/>
+					<label for="get-suspended-date">Date:</label><input type="text" name="get-suspended-date" class="datepicker"/><br/>
+					<label for="get-inactive-date">Date:</label><input type="text" name="get-inactive-date" class="datepicker"/><br/>
+					<label for="get-denied-date">Date:</label><input type="text" name="get-denied-date" class="datepicker"/><br/>
+					<label for="get-denied-reason">Reason:</label><input type="text" name="get-denied-reason" /><br/>
+					<label for="get-withdrawn-date">Date:</label><input type="text" name="get-withdrawn-date" class="datepicker"/><br/>
+					<label for="get-withdrawn-reason">Reason:</label><input type="text" name="get-withdrawn-reason"/><br/>
 				</fieldset>
 			</div>
 		</div>
@@ -704,7 +774,7 @@ j$(function() {
         var id = j$("#tmnContactsTBL").jqGrid('getGridParam','selrow');
         if (id) {
             var ret = jQuery("#tmnContactsTBL").jqGrid('getRowData',id);
-            alert("id="+ret.id);
+ //           alert("id="+ret.id);
             getTMNContactDetail(ret.id);
 //            j$( "#edit-contact-form" ).dialog( "open" );
         } else { alert("Please select row");}
