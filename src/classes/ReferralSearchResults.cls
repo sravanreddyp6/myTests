@@ -73,7 +73,7 @@ public class ReferralSearchResults implements Comparable {
     
     private void loadReferrals() {
     	if (Type == 'Person Being Referred') {
-    		Referrals = Database.query('select id,Name from Referral__c where Person_Being_Referred__c = :id');
+    		Referrals = Database.query('select id,Name from Referral__c where Person_Being_Referred__c = :id AND Person_Being_Served__c = null');
     	}
     	if (Type == 'Person Being Served' ) {
     		Referrals = Database.query('select id,Name from Referral__c where Person_Being_Served__c = :id');

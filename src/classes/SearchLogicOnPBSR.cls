@@ -28,7 +28,7 @@ public with sharing class SearchLogicOnPBSR {
        }*/
         
         if(referralNumber!=null && referralNumber!=''){
-           List<Person_Being_Referred__c> tmpPbr=[Select name,first_name__c,last_name__c,gender__c,date_of_birth__c,city__c,state__c,zip_code__c,street_1__c,street_2__c,age__c,Person_being_served__c  
+           List<Person_Being_Referred__c> tmpPbr=[Select name,first_name__c,last_name__c,gender__c,date_of_birth__c,city__c,(SELECT ID,Person_Being_Served__c FROM Referrals__r WHERE Person_Being_Served__c != null LIMIT 1),state__c,zip_code__c,street_1__c,street_2__c,age__c,Person_being_served__c  
                     From person_being_referred__c 
                         Where id in 
                             (select person_being_referred__c from referral__c where name=:referralNumber)
@@ -51,13 +51,32 @@ public with sharing class SearchLogicOnPBSR {
         
         for(Person_Being_Referred__c pbr : pbrs)
         {
-            Integer matchedItems = 0;
-            if (lastname!=null && lastname!='' && pbr.Last_Name__c == lastName) matchedItems +=1;
-            if (firstname!=null && firstname!='' && pbr.First_Name__c == firstName) matchedItems +=1;
-            if (dob!=null && pbr.Date_of_Birth__c == dob) matchedItems +=1;
-            if (age!=null && age!=0 && pbr.Age__c == age) matchedItems +=1;
-            if (gender!=null && gender!='' && pbr.Gender__c == gender) matchedItems +=1;
-            results.add(new ReferralSearchResults(pbr, matchedItems));  
+        	List<Referral__c> r = pbr.Referrals__r;
+        	system.debug('size'+r.size());
+        	if(pbr.Person_Being_Served__c == null && r.isEmpty()){
+	            Integer matchedItems = 0;
+	            if (lastname!=null && lastname!='' && pbr.Last_Name__c == lastName) matchedItems +=1;
+	            if (firstname!=null && firstname!='' && pbr.First_Name__c == firstName) matchedItems +=1;
+	            if (dob!=null && pbr.Date_of_Birth__c == dob) matchedItems +=1;
+	            if (age!=null && age!=0 && pbr.Age__c == age) matchedItems +=1;
+	            if (gender!=null && gender!='' && pbr.Gender__c == gender) matchedItems +=1;
+	            
+	        
+	            results.add(new ReferralSearchResults(pbr, matchedItems));
+        	}
+        	
+        	if(pbr.Person_Being_Served__c!=null && r.size()>0){
+        		Integer matchedItems = 0;
+	            if (lastname!=null && lastname!='' && pbr.Last_Name__c == lastName) matchedItems +=1;
+	            if (firstname!=null && firstname!='' && pbr.First_Name__c == firstName) matchedItems +=1;
+	            if (dob!=null && pbr.Date_of_Birth__c == dob) matchedItems +=1;
+	            if (age!=null && age!=0 && pbr.Age__c == age) matchedItems +=1;
+	            if (gender!=null && gender!='' && pbr.Gender__c == gender) matchedItems +=1;
+	            
+	        
+	            results.add(new ReferralSearchResults(pbr, matchedItems));
+        		
+        	}
         }
         
         for(Contact pbs : pbsList)
@@ -96,6 +115,7 @@ public with sharing class SearchLogicOnPBSR {
         
         string criteria='';
         string pbsonpbr='';
+        string referralSearch ='';
         if(isContact){
             namefield='name';
             lastnamefield='lastname';
@@ -126,7 +146,8 @@ public with sharing class SearchLogicOnPBSR {
             ssnfield='ssn__c';
             pbsonpbr='Person_Being_Served__c';
             sobjecttype='person_being_referred__c';
-            criteria='Select '+namefield+','+firstnamefield+','+lastnamefield+','+genderfield+','+dobfield+','+cityfield+','+statefield+','+zipfield+','+street1field+','+street2field+','+agefield+','+pbsonpbr+' From '+ sobjecttype+' where (';
+            referralSearch = '(SELECT ID,Person_Being_Served__c FROM Referrals__r WHERE Person_Being_Served__c = null LIMIT 1)';
+            criteria='Select '+namefield+','+firstnamefield+','+lastnamefield+','+genderfield+','+dobfield+','+cityfield+','+statefield+','+zipfield+','+street1field+','+street2field+','+agefield+','+referralSearch+','+pbsonpbr+' From '+ sobjecttype+' where (';
         }
        // String criteria='Select '+namefield+','+firstnamefield+','+lastnamefield+','+genderfield+','+dobfield+','+cityfield+','+statefield+','+zipfield+','+street1field+','+street2field+','+agefield+' From '+ sobjecttype+' where (';
         string lNameSearch = '';
