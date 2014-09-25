@@ -53,7 +53,7 @@ public with sharing class SearchLogicOnPBSR {
         {
         	List<Referral__c> r = pbr.Referrals__r;
         	system.debug('size'+r.size());
-        	if(pbr.Person_Being_Served__c == null && r.isEmpty()){
+        	if(pbr.Person_Being_Served__c == null){
 	            Integer matchedItems = 0;
 	            if (lastname!=null && lastname!='' && pbr.Last_Name__c == lastName) matchedItems +=1;
 	            if (firstname!=null && firstname!='' && pbr.First_Name__c == firstName) matchedItems +=1;
