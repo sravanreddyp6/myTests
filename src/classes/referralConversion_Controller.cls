@@ -554,6 +554,7 @@ public with sharing class referralConversion_Controller {
          !String.isEmpty(refCurr.Comments__c)
     )
     {
+    	//Sravan- Added Datetime instance for Effective_Date__c Field to resolve GMT timezone conflict EC-26. 09/25/2011
         Diagnosis__c newDiag = new Diagnosis__c (
                                         Service_Assignment__c = newSA.Id,
                                         Axis_I__c = refCurr.Axis_I__c,
@@ -561,7 +562,7 @@ public with sharing class referralConversion_Controller {
                                         Axis_III__c = refCurr.Axis_III__c,
                                         Axis_IV__c = refCurr.Axis_IV__c,
                                         Axis_V__c = refCurr.Axis_V__c,
-                                        Effective_Date__c = refCurr.Anticipated_Admission_Date__c,
+                                        Effective_Date__c = DateTime.newInstance(refCurr.Anticipated_Admission_Date__c, Time.newInstance(0, 0, 0, 0)),
                                         Primary_Diagnosis__c = refCurr.Primary_Diagnosis__c,
                                         Secondary_Diagnosis__c = refCurr.Secondary_Diagnosis__c,
                                         Level_of_Disability__c = refCurr.Level_of_Disability__c,
