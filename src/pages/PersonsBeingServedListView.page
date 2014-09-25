@@ -360,23 +360,23 @@ table#persons_table.dataTable {
     </apex:pageBlock>
     
 <!-- Originally removed for Ticket EB-225 (Kate M and SJ fealt this can't be done at this time because of Training users in Redwood -->
--    <apex:outputPanel layout="block" style="float: left; width: 49%; padding-right: 10px;" id="divReports" >
--        <apex:pageBlock rendered="{! $user.Operating_Group__c = 'Redwood'}" title="Shift Note Report">
--            <apex:outputLink value="/apex/shiftnote_summary_rpt">Shift Note Summary Report</apex:outputLink>
--        
--        </apex:pageBlock>
--        <apex:pageBlock rendered="{! $user.Operating_Group__c = 'Cambridge'}" >
--            <apex:outputLink value="/apex/IFCS_Active_MoreThanSixMonths_RPT">Active Persons Being Served Open Over 6 Months Report</apex:outputLink><br/>
--            <apex:outputLink value="/apex/IFCS_PBS_Count_Rpt">Count Persons Being Served in a Month Report</apex:outputLink><Br />
--            <apex:outputLink value="/apex/Documented_Actual_Staff_Hrs_Rpt">Documented Actual Staff Hours Report</apex:outputLink><Br />
--            <apex:outputLink value="/apex/Report_KidTraksExport">KidTraks Export</apex:outputLink>
--        </apex:pageBlock>        
--        <c:TMN_List_Reports filterFor="%#notes%" OpenInEdit="false"  removeSFHeader="true"  TitleColor="black" Title="Reports" />
--    </apex:outputPanel>
+    <apex:outputPanel layout="block" style="float: left; width: 49%; padding-right: 10px;" id="divReports" >
+        <apex:pageBlock rendered="{! $user.Operating_Group__c = 'Redwood'}" title="Shift Note Report">
+            <apex:outputLink value="/apex/shiftnote_summary_rpt">Shift Note Summary Report</apex:outputLink>
+        
+        </apex:pageBlock>
+        <apex:pageBlock rendered="{! $user.Operating_Group__c = 'Cambridge'}" >
+            <apex:outputLink value="/apex/IFCS_Active_MoreThanSixMonths_RPT">Active Persons Being Served Open Over 6 Months Report</apex:outputLink><br/>
+            <apex:outputLink value="/apex/IFCS_PBS_Count_Rpt">Count Persons Being Served in a Month Report</apex:outputLink><Br />
+            <apex:outputLink value="/apex/Documented_Actual_Staff_Hrs_Rpt">Documented Actual Staff Hours Report</apex:outputLink><Br />
+            <apex:outputLink value="/apex/Report_KidTraksExport">KidTraks Export</apex:outputLink>
+        </apex:pageBlock>        
+        <c:TMN_List_Reports filterFor="%#notes%" OpenInEdit="false"  removeSFHeader="true"  TitleColor="black" Title="Reports" />
+    </apex:outputPanel>
  
--    <apex:outputPanel layout="block" style="float: left; width: 49%; ">
--        <c:TMN_List_Docs filterFor="Notes" TitleColor="#097709" Title="Help and Training" />
--    </apex:outputPanel>    
+    <apex:outputPanel layout="block" style="float: left; width: 49%; ">
+        <c:TMN_List_Docs filterFor="Notes" TitleColor="#097709" Title="Help and Training" />
+    </apex:outputPanel>    
 
 <!-- Originally removed for Ticket EB-225 (Kate M and SJ fealt this can't be done at this time because of Training users in Redwood -->
 
