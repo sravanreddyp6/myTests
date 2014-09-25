@@ -211,8 +211,8 @@ public with sharing class proj_nr_form {
         else{
             list<Project_Task__c> PTs = new list<Project_Task__c>();
             PTs = [select ID, name, status__c, description__c, start_date__c, due_date__c, Complete__c, Completed_Date__c, Revised_Due_Date__c, Project__c, Assigned_To__c, External_ID__c, Reminder_Date__c, 
-                     (select id, name, status__c, description__c, complete__c, start_date__c, due_date__c, Completed_Date__c, Assigned_To__c, Revised_Due_Date__c, Reminder_Date__c , Project_Task__c from Project_Task_Activities__r Order By CreatedDate) 
-                         From Project_Task__c Where Project__c = :selectedTemplate Order By CreatedDate] ;
+                     (select id, name, status__c, description__c, complete__c, start_date__c, due_date__c, Completed_Date__c, Assigned_To__c, Revised_Due_Date__c, Reminder_Date__c , Project_Task__c from Project_Task_Activities__r Order By Name) 
+                         From Project_Task__c Where Project__c = :selectedTemplate Order By Name] ;
             project__c pr = [select id, name, description__c, service_line__c, Interested_Parties_email_address__c, Operating_group__c from project__c where id = :selectedTemplate];
             ProjTree.root.Proj.Description__c = pr.description__c;
             ProjTree.root.Proj.service_line__c = pr.service_line__c;
