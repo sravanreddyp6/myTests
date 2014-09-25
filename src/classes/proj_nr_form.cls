@@ -1,4 +1,5 @@
 public with sharing class proj_nr_form {
+    // TEST
     public project__c cur_proj {get; set;}
     public TMN_Tree projTree {get; set;}
     public boolean hasError{ get; set;}
@@ -264,8 +265,8 @@ public with sharing class proj_nr_form {
         set<id> allIDs = new set<id>();
         list<Project_Task__c> PTs = new list<Project_Task__c>();
         PTs = [select ID, name, description__c, status__c, notes__c, start_date__c, due_date__c, Completed_Date__c, Revised_Due_Date__c, Complete__c, Project__c, Assigned_To__c,Assigned_To__r.name , External_ID__c , Reminder_Date__c , 
-                 (select id, name, description__c, status__c, notes__c, complete__c, start_date__c,Completed_Date__c, Revised_Due_Date__c, Reminder_Date__c ,  due_date__c, Assigned_To__c,Assigned_To__r.name, Project_Task__c from Project_Task_Activities__r) 
-                     From Project_Task__c Where Project__c = :ProjTree.root.Proj.id];
+                 (select id, name, description__c, status__c, notes__c, complete__c, start_date__c,Completed_Date__c, Revised_Due_Date__c, Reminder_Date__c ,  due_date__c, Assigned_To__c,Assigned_To__r.name, Project_Task__c from Project_Task_Activities__r ORDER BY Name) 
+                     From Project_Task__c Where Project__c = :ProjTree.root.Proj.id ORDER BY Name];
                      
          ProjTree.root.nodes.clear();  
          allIDs.add(ProjTree.root.Proj.id);
