@@ -542,9 +542,137 @@ hr {
 					</apex:pageBlockSection>
 				</apex:pageBlock>
 			</apex:tab>
-			<apex:tab label="GU/GI/nutrition" name="nutritionTab"
-				styleClass="{!IF(Evaluation__c.Nutrition_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+			<apex:tab label="GU/GI/nutrition" name="nutritionTab" styleClass="{!IF(Evaluation__c.Nutrition_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock>
+				
+				<apex:pageBlockSection columns="2" title="Nutrition and Hydration">
+						<apex:outputText value="{!Evaluation__c.Nutrition_Route__c}"  label="Feeding Type" />
+						<apex:outputField value="{!Evaluation__c.Tube_Feed_Formula__c}" label="Formula" />
+						<apex:outputText value="" /> 
+						<apex:outputField value="{!Evaluation__c.Tube_Feed_Rate__c}" /> 
+						<apex:outputText value="" />
+						<apex:outputField value="{!Evaluation__c.Tube_Feed_PO_Type__c}" label="PO Type" />
+						<apex:outputText value="" />
+						<apex:outputField value="{!Evaluation__c.Tube_Feed_Texture__c}" label="PO Texture" />
+						<apex:outputText value="" />
+						<apex:outputField value="{!Evaluation__c.Fluid_Intake__c}" />
+						<apex:outputText value="" />
+						<apex:outputField value="{!Evaluation__c.Lipids__c}" />
+					</apex:pageBlockSection>
+					<hr />
+					<apex:pageBlockSection columns="2">
+						<apex:outputText value="Teeth - UR Quadrant" styleClass="labelCol"
+							style="margin-left: 2cm;" />
+						<apex:outputText value="Teeth - LR Quadrant" styleClass="labelCol"
+							style="margin-left: 2cm;" />
+						<apex:outputField value="{!Evaluation__c.UR_of_Teeth_Present__c}" />
+						<apex:outputField value="{!Evaluation__c.LR_of_Teeth_Present__c}" />
+						<apex:outputField value="{!Evaluation__c.UR_Teeth_Condition__c}" />
+						<apex:outputField value="{!Evaluation__c.LR_Teeth_Condition__c}" />
+						<apex:pageBlockSectionItem />
+						<apex:pageBlockSectionItem />
+						<apex:outputText value="Teeth - UL Quadrant" styleClass="labelCol"
+							style="margin-left: 2cm;" />
+						<apex:outputText value="Teeth - LL Quadrant" styleClass="labelCol"
+							style="margin-left: 2cm;" />
+						<apex:outputField value="{!Evaluation__c.UL_of_Teeth_Present__c}" />
+						<apex:outputField value="{!Evaluation__c.LL_of_Teeth_Present__c}" />
+						<apex:outputField value="{!Evaluation__c.UL_Teeth_Condition__c}" />
+						<apex:outputField value="{!Evaluation__c.LL_Teeth_Condition__c}" />
+						<apex:pageBlockSectionItem />
+						<apex:pageBlockSectionItem />
+						<apex:pageBlockSectionItem>
+							<apex:outputText value="Tongue" styleClass="labelCol" />
+							<apex:selectCheckboxes value="{!selectedTongues}"
+								layout="pageDirection" disabled="true">
+								<apex:selectOptions value="{!tongueValues}" />
+							</apex:selectCheckboxes>
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem>
+							<apex:outputText value="Gums" styleClass="labelCol" />
+							<apex:selectCheckboxes value="{!selectedGums}"
+								layout="pageDirection" disabled="True">
+								<apex:selectOptions value="{!gumValues}" />
+							</apex:selectCheckboxes>
+						</apex:pageBlockSectionItem>
+						<apex:outputField
+							value="{!Evaluation__c.Tongue_Sores_Describe__c}"
+							label="If Sores, Describe" />
+						<apex:outputField value="{!Evaluation__c.Gums_Sores_Describe__c}"
+							label="If Sores, Describe" />
+						<apex:pageBlockSectionItem>
+							<apex:outputText value="Cheeks" styleCLass="labelCol" />
+							<apex:selectCheckboxes value="{!selectedCheeks}"
+								layout="pageDirection" disabled="True">
+								<apex:selectOptions value="{!cheekValues}" />
+							</apex:selectCheckboxes>
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem>
+							<apex:outputText value="Lips" styleClass="labelCol" />
+							<apex:selectCheckboxes value="{!selectedLips}"
+								layout="pageDirection" disabled="True">
+								<apex:selectOptions value="{!lipValues}" />
+							</apex:selectCheckboxes>
+						</apex:pageBlockSectionItem>
+						<apex:outputField
+							value="{!Evaluation__c.Cheeks_Sores_Describe__c}"
+							label="If Sores, Describe" />
+						<apex:outputField value="{!Evaluation__c.Lips_Sores_Describe__c}"
+							label="If Sores, Describe" />
+						<apex:pageBlockSectionItem />
+						<apex:pageBlockSectionItem />
+						<apex:outputField Value="{!Evaluation__c.Breath__c}" />
+						<apex:outputField value="{!Evaluation__c.Dentures__c}" />
+						<apex:pageBlockSectionItem>
+							<apex:outputText value="Saliva" styleClass="labelCol" />
+							<apex:selectCheckboxes value="{!selectedSaliva}"
+								layout="pageDirection" disabled="True">
+								<apex:selectOptions value="{!salivaValues}" />
+							</apex:selectCheckboxes>
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem>
+							<apex:outputText value="if Yes, Denture Type"
+								styleClass="labelCol" />
+							<apex:selectCheckboxes value="{!selectedDentures}"
+								layout="pageDirection" disabled="True">
+								<apex:selectOptions value="{!dentureValues}" />
+							</apex:selectCheckboxes>
+						</apex:pageBlockSectionItem>
+						<apex:outputField value="{!Evaluation__c.Jaw_Wires__c}" />
+						<apex:outputField
+							value="{!Evaluation__c.Dentures_Usage_Details__c}"
+							label="Usage Details" />
+						<apex:outputField
+							value="{!Evaluation__c.Wire_Cutters_at_Bedside__c}" />
+						<apex:outputField value="{!Evaluation__c.Denture_Usage_Other__c}"
+							label="if Other, Describe" />
+						<apex:outputField
+							value="{!Evaluation__c.Other_Dental_Appliance__c}" />
+						<apex:pageBlockSectionItem />
+						<apex:pageBlockSectionItem />
+						<apex:outputText value="PEDS" styleClass="labelCol"
+							style="margin-left: 2cm;" />
+						<apex:pageBlockSectionItem />
+						<apex:outputField value="{!Evaluation__c.PEDS_Teething__c}"
+							label="Teething" />
+						<apex:pageBlockSectionItem />
+						<apex:outputField
+							value="{!Evaluation__c.PEDS_History_of_Tonsils__c}"
+							label="History of Tonsils" />
+						<apex:pageBlockSectionItem />
+						<apex:outputField
+							value="{!Evaluation__c.PEDS_Tonsil_History_Describe__c}"
+							label="If Yes, Describe Tonsil History" />
+						<apex:pageBlockSectionItem />
+						<apex:outputField value="{!Evaluation__c.PEDS_Pacifier__c}"
+							label="Pacifier" />
+						<apex:pageBlockSectionItem />
+						<apex:outputField
+							value="{!Evaluation__c.PEDS_Pacifier_Type_Usage__c}"
+							label="if Yes, Type & usage" />
+					</apex:pageBlockSection>
+					
+				
 					<apex:pageBlockSection columns="2">
 						<apex:pageBlocksectionItem>
 							<apex:outputText value="Elimination - Bladder" />
@@ -554,18 +682,10 @@ hr {
 							<apex:outputText value="Elimination - Bowel" />
 							<apex:outputText value="" />
 						</apex:pageBlockSectionItem>
-						<apex:outputField
-							value="{!Evaluation__c.Elimination_Bladder_Continent__c}"
-							label="Incontinent" />
-						<apex:outputField
-							value="{!Evaluation__c.Elimination_Bowel_Continent__c}"
-							label="Incontinent" />
-						<apex:outputField
-							value="{!Evaluation__c.Elimination_Bladder_No_Continent_Details__c}"
-							label="Details" />
-						<apex:outputField
-							value="{!Evaluation__c.Elimination_Bowel_No_Continent_Appliance__c}"
-							label="Appliance" />
+						<apex:outputField value="{!Evaluation__c.Elimination_Bladder_Continent__c}" label="Incontinent" />
+						<apex:outputField value="{!Evaluation__c.Elimination_Bowel_Continent__c}" label="Incontinent" />
+						<apex:outputField value="{!Evaluation__c.Elimination_Bladder_No_Continent_Details__c}" label="Details" />
+						<apex:outputField value="{!Evaluation__c.Elimination_Bowel_No_Continent_Appliance__c}" label="Appliance" />
 						<apex:outputField
 							value="{!Evaluation__c.Indwelling_Suprapubic_type_size__c}"
 							label="If Indwelling/Suprapubic, Type/size" />
@@ -694,140 +814,7 @@ hr {
 						<apex:outputField value="{!Evaluation__c.Last_BM__c}" />
 					</apex:pageBlockSection>
 					<hr />
-					<apex:pageBlockSection columns="2">
-						<apex:outputText value="Nutrition" styleClass="labelCol"
-							style="margin-left: 3cm;" />
-						<apex:outputText value="Tube Feed" styleClass="labelCol"
-							style="margin-left: 3cm;" />
-						<apex:outputField value="{!Evaluation__c.Nutrition_Route__c}"
-							label="Feeding Type" />
-						<apex:outputField value="{!Evaluation__c.Tube_Feed_Formula__c}"
-							label="Formula" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.Tube_Feed_Rate__c}" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.Tube_Feed_PO_Type__c}"
-							label="PO Type" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.Tube_Feed_Texture__c}"
-							label="PO Texture" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.Fluid_Intake__c}" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.Lipids__c}" />
-					</apex:pageBlockSection>
-					<hr />
-					<apex:pageBlockSection columns="2">
-						<apex:outputText value="Teeth - UR Quadrant" styleClass="labelCol"
-							style="margin-left: 2cm;" />
-						<apex:outputText value="Teeth - LR Quadrant" styleClass="labelCol"
-							style="margin-left: 2cm;" />
-						<apex:outputField value="{!Evaluation__c.UR_of_Teeth_Present__c}" />
-						<apex:outputField value="{!Evaluation__c.LR_of_Teeth_Present__c}" />
-						<apex:outputField value="{!Evaluation__c.UR_Teeth_Condition__c}" />
-						<apex:outputField value="{!Evaluation__c.LR_Teeth_Condition__c}" />
-						<apex:pageBlockSectionItem />
-						<apex:pageBlockSectionItem />
-						<apex:outputText value="Teeth - UL Quadrant" styleClass="labelCol"
-							style="margin-left: 2cm;" />
-						<apex:outputText value="Teeth - LL Quadrant" styleClass="labelCol"
-							style="margin-left: 2cm;" />
-						<apex:outputField value="{!Evaluation__c.UL_of_Teeth_Present__c}" />
-						<apex:outputField value="{!Evaluation__c.LL_of_Teeth_Present__c}" />
-						<apex:outputField value="{!Evaluation__c.UL_Teeth_Condition__c}" />
-						<apex:outputField value="{!Evaluation__c.LL_Teeth_Condition__c}" />
-						<apex:pageBlockSectionItem />
-						<apex:pageBlockSectionItem />
-						<apex:pageBlockSectionItem>
-							<apex:outputText value="Tongue" styleClass="labelCol" />
-							<apex:selectCheckboxes value="{!selectedTongues}"
-								layout="pageDirection" disabled="true">
-								<apex:selectOptions value="{!tongueValues}" />
-							</apex:selectCheckboxes>
-						</apex:pageBlockSectionItem>
-						<apex:pageBlockSectionItem>
-							<apex:outputText value="Gums" styleClass="labelCol" />
-							<apex:selectCheckboxes value="{!selectedGums}"
-								layout="pageDirection" disabled="True">
-								<apex:selectOptions value="{!gumValues}" />
-							</apex:selectCheckboxes>
-						</apex:pageBlockSectionItem>
-						<apex:outputField
-							value="{!Evaluation__c.Tongue_Sores_Describe__c}"
-							label="If Sores, Describe" />
-						<apex:outputField value="{!Evaluation__c.Gums_Sores_Describe__c}"
-							label="If Sores, Describe" />
-						<apex:pageBlockSectionItem>
-							<apex:outputText value="Cheeks" styleCLass="labelCol" />
-							<apex:selectCheckboxes value="{!selectedCheeks}"
-								layout="pageDirection" disabled="True">
-								<apex:selectOptions value="{!cheekValues}" />
-							</apex:selectCheckboxes>
-						</apex:pageBlockSectionItem>
-						<apex:pageBlockSectionItem>
-							<apex:outputText value="Lips" styleClass="labelCol" />
-							<apex:selectCheckboxes value="{!selectedLips}"
-								layout="pageDirection" disabled="True">
-								<apex:selectOptions value="{!lipValues}" />
-							</apex:selectCheckboxes>
-						</apex:pageBlockSectionItem>
-						<apex:outputField
-							value="{!Evaluation__c.Cheeks_Sores_Describe__c}"
-							label="If Sores, Describe" />
-						<apex:outputField value="{!Evaluation__c.Lips_Sores_Describe__c}"
-							label="If Sores, Describe" />
-						<apex:pageBlockSectionItem />
-						<apex:pageBlockSectionItem />
-						<apex:outputField Value="{!Evaluation__c.Breath__c}" />
-						<apex:outputField value="{!Evaluation__c.Dentures__c}" />
-						<apex:pageBlockSectionItem>
-							<apex:outputText value="Saliva" styleClass="labelCol" />
-							<apex:selectCheckboxes value="{!selectedSaliva}"
-								layout="pageDirection" disabled="True">
-								<apex:selectOptions value="{!salivaValues}" />
-							</apex:selectCheckboxes>
-						</apex:pageBlockSectionItem>
-						<apex:pageBlockSectionItem>
-							<apex:outputText value="if Yes, Denture Type"
-								styleClass="labelCol" />
-							<apex:selectCheckboxes value="{!selectedDentures}"
-								layout="pageDirection" disabled="True">
-								<apex:selectOptions value="{!dentureValues}" />
-							</apex:selectCheckboxes>
-						</apex:pageBlockSectionItem>
-						<apex:outputField value="{!Evaluation__c.Jaw_Wires__c}" />
-						<apex:outputField
-							value="{!Evaluation__c.Dentures_Usage_Details__c}"
-							label="Usage Details" />
-						<apex:outputField
-							value="{!Evaluation__c.Wire_Cutters_at_Bedside__c}" />
-						<apex:outputField value="{!Evaluation__c.Denture_Usage_Other__c}"
-							label="if Other, Describe" />
-						<apex:outputField
-							value="{!Evaluation__c.Other_Dental_Appliance__c}" />
-						<apex:pageBlockSectionItem />
-						<apex:pageBlockSectionItem />
-						<apex:outputText value="PEDS" styleClass="labelCol"
-							style="margin-left: 2cm;" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.PEDS_Teething__c}"
-							label="Teething" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField
-							value="{!Evaluation__c.PEDS_History_of_Tonsils__c}"
-							label="History of Tonsils" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField
-							value="{!Evaluation__c.PEDS_Tonsil_History_Describe__c}"
-							label="If Yes, Describe Tonsil History" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.PEDS_Pacifier__c}"
-							label="Pacifier" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField
-							value="{!Evaluation__c.PEDS_Pacifier_Type_Usage__c}"
-							label="if Yes, Type & usage" />
-					</apex:pageBlockSection>
+					
 					<hr />
 					<apex:pageBlockSection Columns="2">
 						<apex:outputText value="Bowel Sounds" styleClass="labelCol"
@@ -963,7 +950,7 @@ hr {
 									value="{!Evaluation__c.History_of_Pressure_Ulcers_Flap_Surge__c}" />
 								<apex:outputText styleClass="labelCol" value="Describe"
 									rendered="{!Evaluation__c.History_of_Pressure_Ulcers_Flap_Surge__c == 'Yes'}" />
-								<apex:inputField
+								<apex:outputField
 									value="{!Evaluation__c.Pressure_Ulcer_Flap_Surgery_describe__c}"
 									label="Describe" id="ulcersurgeryDescribe"
 									rendered="{!Evaluation__c.History_of_Pressure_Ulcers_Flap_Surge__c == 'Yes'}" />
@@ -1589,11 +1576,12 @@ hr {
 						<apex:pageBlockSectionItem>
 							<apex:outputLabel value="Cast" />
 							<apex:outputPanel>
-								<apex:outputField
+								<apex:outputText value="Yes" rendered="{!Evaluation__c.Cast__c = true && Evaluation__c.Ortho_Cast_location__C = '' && Evaluation__c.Cast_location__c = ''}" />
+								<apex:outputText 
 									value="{!Evaluation__c.Ortho_Cast_Location__c}"
 									rendered="{!Evaluation__c.Ortho_Cast_Location__c != 'Other'}" />
-								<apex:outputField value="{!Evaluation__c.Cast_Location__c}"
-									rendered="{!Evaluation__c.Ortho_Cast_Location__c == 'Other'} " />
+								<apex:outputText value="{!Evaluation__c.Cast_Location__c}"
+									rendered="{!Evaluation__c.Ortho_Cast_Location__c == 'Other'}" />
 							</apex:outputPanel>
 						</apex:pageBlockSectionItem>
 
@@ -1602,6 +1590,7 @@ hr {
 								value="{! if ( Evaluation__c.Traction__c == true, 'Traction<br /><br />Location<br /><br />Type<br /><br />Weight', 'Traction')}"
 								escape="false" />
 							<apex:outputPanel rendered="{!Evaluation__c.Traction__c == true}">
+								<apex:outputText value="Yes" />
 								<br />
 								<br />
 								<apex:outputText id="tloc"
@@ -1886,7 +1875,7 @@ hr {
 							value="{! if (Evaluation__c.Religious_Preference__c == 'Yes', Evaluation__c.Religious_Preference_Details__c,Evaluation__c.Religious_Preference__c) }"
 							label="Relgious Preference" />
 						<apex:outputText
-							value="{! if (Evaluation__c.Cultural_Preferences__c== 'Yes', Evaluation__c.Cultural_Preference_Specify__c, Evaluation__c.Cultural_Preferences__c) }"
+							value="{! if (Evaluation__c.Cultural_Preferences__c== 'Yes', if(Evaluation__c.Cultural_Preference_Specify__c!='', Evaluation__c.Cultural_Preference_Specify__c, Evaluation__c.Cultural_Preferences__c), Evaluation__c.Cultural_Preferences__c) }"
 							label="Cultural Preferences" />
 						<apex:outputField
 							value="{!Evaluation__c.Spiritual_Care_Visits__c}"

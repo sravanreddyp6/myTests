@@ -10,6 +10,12 @@ public with sharing class NursingEvaluationEditController {
     public List<string>selectedIssues {get; set;}
     public List<SelectOption>urineClarities ;
     public List<string>selectedClarities {get; set;}
+    public List<SelectOption>dialysisDays ;
+    public List<string>selectedDialysis {get; set;}
+    
+    public List<selectOption>feedingTypes;
+    public List<string>selectedFeedingTypes{get;set;}
+    
     public List<selectOption>tongueValues ;
     public List<string>selectedTongues {get;set;}
     public List<selectOption>gumValues ;
@@ -188,7 +194,10 @@ public with sharing class NursingEvaluationEditController {
                 urinaryIssues = new List<Selectoption>();
                 selectedIssues = new List<string>();
                 urineClarities = new List<selectOption>();
-                selectedClarities = new List<string>();
+                selectedDialysis = new List<string>();
+                dialysisDays = new List<selectOption>();
+                feedingTypes=new List<SelectOption>();
+                selectedFeedingTypes = new List<String>();
                 tongueValues = new List<SelectOption>();
                 selectedTongues = new List<String>();
                 gumValues = new List<SelectOption>();
@@ -265,6 +274,12 @@ public with sharing class NursingEvaluationEditController {
                 
                 if(!String.isBlank(this.evaluation.Urine_Clarity__c))
                 selectedClarities = this.evaluation.Urine_Clarity__c.split(';');
+                
+                if (!String.isBlank(this.evaluation.Dialysis_Days_of_the_Week__c))
+                selectedDialysis = this.evaluation.Dialysis_Days_of_the_Week__c.split(';');
+                
+                if (!String.isBlank(this.evaluation.Nutrition_Route__c))
+                selectedFeedingTypes = this.evaluation.Nutrition_Route__c.split(';');
                 
                 if(!String.isBlank(this.evaluation.Tongue__c))
                 selectedTongues = this.evaluation.Tongue__c.split(';');
@@ -466,6 +481,20 @@ public with sharing class NursingEvaluationEditController {
                 }
                 else
                 this.evaluation.Urinary_Issues__c ='';
+     
+      //for dialysis days
+        string ddays ='';
+        for(String u: selectedDialysis)
+        ddays  += u+';';
+        
+                if(ddays !=''){
+                        ddays = ddays.Substring (0,ddays.length() -1);
+                        this.evaluation.Dialysis_Days_of_the_Week__c = ddays;
+                        
+                }
+                else
+                this.evaluation.Dialysis_Days_of_the_Week__c ='';
+     
                 
      //for Urine Clarity Multi-picklist         
         string clr ='';
@@ -480,6 +509,20 @@ public with sharing class NursingEvaluationEditController {
                 else
                 this.evaluation.Urine_Clarity__c ='';
                 this.evaluation.Urine_Clarity_Other__c ='';
+
+    // for Feeding Types Multi-Picklist
+        string feedtype = '';
+        for (string t: selectedFeedingTypes)
+        feedtype += t+';';
+        
+                if(feedtype!=''){
+                        feedtype = feedtype.Substring(0,feedtype.length()-1);
+                        this.evaluation.Nutrition_Route__c = feedtype;
+                }
+                else{
+	                this.evaluation.Nutrition_Route__c = '';
+                }
+
                 
     // for Tongue Multi-Picklist
         string tng = '';
@@ -940,7 +983,16 @@ public with sharing class NursingEvaluationEditController {
                 List<Selectoption> urineClarity = Utility.getPicklistValues(evaluation, 'Urine_Clarity__c');
                 return urineClarity; 
    }
-   
+   public List<SelectOption> getfeedingTypes(){
+                List<Selectoption> feedingList = Utility.getPicklistValues(evaluation, 'Nutrition_Route__c');
+                return feedingList; 
+                        
+   }
+   public List<SelectOption> getdialysisDays(){
+                List<Selectoption> dayList = Utility.getPicklistValues(evaluation, 'Dialysis_Days_of_the_Week__c');
+                return dayList; 
+                        
+   }
    public List<selectoption> gettongueValues(){
                 List<Selectoption> tongueValue = Utility.getPicklistValues(evaluation, 'Tongue__c');
                 return tongueValue; 
