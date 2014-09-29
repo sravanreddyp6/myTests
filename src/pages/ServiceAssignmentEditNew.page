@@ -1293,8 +1293,11 @@ END: Uncomment to have the element collapsed by default -->
     </apex:outputPanel>
     </apex:pageBlockSectionItem>
  </apex:pageBlockSection>
- <apex:PageBlockSection title="Pre-Admission Evaluation" collapsible="false">
- 	<apex:outputText value="No Evaluation to display." rendered="{!!referral.Has_Evaluation__c}" />
+ <apex:PageBlockSection title="Pre-Admission Evaluation" collapsible="false" rendered="{!vfVarIsCM}">
+ 	<apex:pageBlockSectionItem rendered="{!!referral.Has_Evaluation__c}" >
+ 		<apex:outputLabel value="" />
+ 		<apex:outputText value="No Evaluation to display." />
+ 	</apex:pageBlockSectionItem>
  	<apex:pageBlockSectionItem rendered="{!referral.Has_Evaluation__c}">
  		<apex:outputLabel value="Evaluation" />
  		<apex:outputLink value="/{!referral.Evaluations__r[0].Id}" >{!referral.Evaluations__r[0].Name}</apex:outputLink>
