@@ -56,7 +56,7 @@
                         </apex:outputPanel>
                         
                         <apex:outputPanel rendered="{!objectName=='Person Being Served'}">
-                            <apex:outputText rendered="{!(PBSCreate==true)}"><li><a href="{!URLFOR($Action.Account.New)}">Add New Person Being Served</a></li></apex:outputText>
+                            <apex:outputText rendered="{!(PBSCreate==true) && $User.Operating_Group__c != 'Care Meridian'}"><li><a href="{!URLFOR($Action.Account.New)}">Add New Person Being Served</a></li></apex:outputText>
                             <li><a href="/apex/PersonsBeingServedListView?filterId={!personsBeingServedViews['recent']}">My Recently Viewed Persons Being Served</a></li>
                             <apex:outputPanel rendered="{!$ObjectType.Clinical_Catalog__c.updateable}"><li><apex:outputLink value="/apex/CatalogAndPrograms">Manage Plan Builder Content</apex:outputLink></li></apex:outputPanel>                    
                         </apex:outputPanel>
