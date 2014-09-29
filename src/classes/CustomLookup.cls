@@ -151,8 +151,11 @@ public class CustomLookup {
         String operatinggroup = [select operating_group__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1].operating_group__c;
         if (operatinggroup == 'NeuroRestorative') {
             queryFilter += 'FacilityId__c = 20 and ';
-        } else {
-            queryFilter += 'FacilityId__c != 20 and ';
+        } else if (operatinggroup == 'Care Meridian' || operatinggroup == 'CareMeridian'){
+			queryFilter += 'FacilityId__c = 13 and ';
+        }
+        else {
+            queryFilter += 'FacilityId__c Not In (20, 13) and ';
         }
 
         if(namefield.value!='' && namefield.value!=null && (namefield.value.length()>2 || (namefield.value.length() ==2 && !namefield.value.contains('*')))){
