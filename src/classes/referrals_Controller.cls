@@ -311,8 +311,12 @@ public with sharing class referrals_Controller{
             if ( qs != '') qs += ' and ';
             if (this.operatinggroup == 'NeuroRestorative') {
                 qs += 'FacilityId__c = 20';
-            } else {
-                qs += 'FacilityId__c != 20';
+            } 
+            else if (this.operatinggroup == 'CareMeridian'){
+                qs += 'FacilityId__c = 13';
+			}
+            else {
+                qs += 'FacilityId__c Not In (20, 13)';
             }
 
             tmpResults=Database.query(qs1 + qs);
@@ -458,10 +462,15 @@ public with sharing class referrals_Controller{
 
             if (this.operatinggroup == 'NeuroRestorative') {
                 qs += 'FacilityId__c = 20';
-            } else {
-                qs += 'FacilityId__c != 20';
+            } 
+            else if (this.operatinggroup == 'CareMeridian'){
+                qs += 'FacilityId__c = 13';
+			}
+            else {
+                qs += 'FacilityId__c Not In (20, 13)';
             }
-            System.debug('!@#$ '+qs);
+            
+			System.debug('!@#$ '+qs);
             tmpResults2=Database.query(qs1 + qs);
             countTotalRecords2=tmpResults2.size();
         }else{
