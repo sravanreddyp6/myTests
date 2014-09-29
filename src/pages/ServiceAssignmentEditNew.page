@@ -326,7 +326,7 @@
                              columns="3"
                              collapsible="false"
                              id="ContractAssoc"
-                             rendered="{!!showLocation && !AssessmentOnly}">            
+                             rendered="{!!showLocation && !AssessmentOnly && !vfVarIsCM}">            
         <apex:pageBlockSectionItem >
             <apex:outputLabel value="Contract" />
             <apex:selectList id="chooseContract" value="{!associatedContractID}" size="1" multiselect="false" readonly="{!!editSA}">
@@ -889,9 +889,9 @@ END: Uncomment to have the element collapsed by default -->
 
     </apex:pageBlockSection>
     </apex:pageBlock>
-    <apex:pageBlock title="Nurses Assessment" rendered="{!showNurseAssessment && !editSA}">
+    <apex:pageBlock title="Admission and Shift Assessments" rendered="{!showNurseAssessment && !editSA}">
     		<div class="pbHeaderButton">
-    			<apex:CommandButton value="Nurses Assessment" rendered="{!(evaluations == null || evaluations.size=0) && Service_Assignment__c.Status__c!='Inactive'}" action="{!addNurAssessment}"/>
+    			<apex:CommandButton value="Admission and Shift Assessment" rendered="{!(evaluations == null || evaluations.size=0) && Service_Assignment__c.Status__c!='Inactive'}" action="{!addNurAssessment}"/>
     		</div>
     		<apex:pageBlockTable styleclass="pcBody-list" value="{!evaluations}" var="evs" rendered="{!evaluations.size>0}">
     			<apex:column headerValue="Action"><a href="/apex/NursingEvaluationEdit?id={!evs.Id}&tab=demographicsTab">Edit</a></apex:column>
@@ -1286,15 +1286,20 @@ END: Uncomment to have the element collapsed by default -->
     <apex:outputField value="{!referral.CreatedById}"  />, <apex:outputText value=" {!referral.CreatedDate}"/>
     </apex:outputPanel>
     </apex:pageBlockSectionItem>
-
      <apex:pageBlockSectionItem >
     <apex:outputLabel value="Last Modified By" />
     <apex:outputPanel layout="none">
      <apex:outputField value="{!referral.LastModifiedById}"  />, <apex:outputText value=" {!referral.LastModifiedDate}" />
     </apex:outputPanel>
     </apex:pageBlockSectionItem>
-
  </apex:pageBlockSection>
+ <apex:PageBlockSection title="Pre-Admission Evaluation" collapsible="false">
+ 	<apex:outputText value="No Evaluation to display." rendered="{!!referral.Has_Evaluation__c}" />
+ 	<apex:pageBlockSectionItem rendered="{!referral.Has_Evaluation__c}">
+ 		<apex:outputLabel value="Evaluation" />
+ 		<apex:outputLink value="/{!referral.Evaluations__r[0].Id}" >{!referral.Evaluations__r[0].Name}</apex:outputLink>
+ 	</apex:pageBlockSectionItem>
+ </apex:PageBlockSection>
  <apex:pageBlockSection title="Funding Source" collapsible="false" columns="1"><br />
 	 <apex:pageBlockTable value="{!referralFundingsources}" var="item" rendered="{!(referralFundingsources != null || referralFundingsources.size > 0)}">
 		<apex:column value="{!item.name}"/>
