@@ -21,6 +21,7 @@ public with sharing class CareMeridianEvaluationEditController {
     public Related_Party__c currentRelatedParty { get; set; }
     public Id currentRelatedPartyId { get; set; }
     public Person_Being_Referred__c pbr { get; set; }  // Here to save DOB
+    public Referral__c ref {get; set; } //to update Primary and Secondary Diagnosis
 
     public List<String> sliderOptions { set;
         get {
@@ -55,6 +56,10 @@ public with sharing class CareMeridianEvaluationEditController {
         pbr = [
             SELECT ID, Date_of_Birth__c FROM Person_Being_Referred__c
             WHERE Id=:evaluation.Referral__r.Person_Being_Referred__c
+        ];
+        ref = [
+        	SELECT Id, Primary_Diagnosis__c,Secondary_Diagnosis__c,Date_of_Injury__c FROM Referral__c
+        	WHERE Id=:evaluation.Referral__c
         ];
         if (ApexPages.currentPage().getParameters().get('tab') != null) {
             selectedTab = ApexPages.currentPage().getParameters().get('tab');
@@ -164,7 +169,14 @@ public with sharing class CareMeridianEvaluationEditController {
 
         }
         update this.evaluation;
-        update this.pbr;
+        
+        if( ref.Primary_Diagnosis__c != evaluation.Primary_Diagnosis__c || ref.Secondary_Diagnosis__c != evaluation.Secondary_Diagnosis__c || ref.Date_of_Injury__c != evaluation.Date_of_Injury_Onset__c ){
+        	ref.Primary_Diagnosis__c = evaluation.Primary_Diagnosis__c;
+	        ref.Secondary_Diagnosis__c = evaluation.Secondary_Diagnosis__c;
+	        ref.Date_of_Injury__c = evaluation.Date_of_Injury_Onset__c;
+	        update this.pbr;
+        }
+        update this.ref;
         //return stdController.view();
         return new PageReference('/apex/CareMeridianEvaluationView?id=' + evaluation.Id + '&tab=' + selectedTab);
     }

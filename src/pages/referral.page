@@ -1920,7 +1920,7 @@ function enableDiagEff() {
         <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_I__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />
         <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian', referralRecordType != 'NeuroRestorative')}"/>
         <apex:inputField id="diagIdrop" value="{!Referral__c.Diagnosis_I__c}" label="Primary Diagnosis" rendered="{!ReferralRecordType == 'NeuroRestorative'}" onchange="enableDiagEff();"/>
-        <apex:inputField value="{!Referral__c.Date_of_Injury__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota',referralRecordType=='CareMeridian')}" />
+        <apex:inputField value="{!Referral__c.Date_of_Injury__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota',referralRecordType=='CareMeridian')}" html-disabled="{!referralRecordType=='CareMeridian'}"/>
 
         <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_II__c}"  rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />
         <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian')}"/>
@@ -2119,10 +2119,10 @@ function enableDiagEff() {
 
         <!--Flavor Specific fields-->
 
-        <apex:inputField value="{!Referral__c.Primary_Diagnosis__c}" rendered="{! OR(referralRecordType=='CareMeridian',referralRecordType=='Wisconsin' ) }"/>
+        <apex:inputField value="{!Referral__c.Primary_Diagnosis__c}" rendered="{! OR(referralRecordType=='CareMeridian',referralRecordType=='Wisconsin' ) }" html-disabled="{!referralRecordType=='CareMeridian'}" />
         <apex:pageBlockSectionItem rendered="{!OR(referralRecordType=='CareMeridian',referralRecordType=='Wisconsin' )}"/>
 
-        <apex:inputField value="{!Referral__c.Secondary_Diagnosis__c}" rendered="{!OR(ReferralRecordType == 'California',referralRecordType=='CareMeridian', referralRecordType=='Wisconsin')}" />
+        <apex:inputField value="{!Referral__c.Secondary_Diagnosis__c}" rendered="{!OR(ReferralRecordType == 'California',referralRecordType=='CareMeridian', referralRecordType=='Wisconsin')}" html-disabled="{!referralRecordType=='CareMeridian'}" />
         <apex:pageBlockSectionItem rendered="{!OR(referralRecordType=='CareMeridian',referralRecordType=='Wisconsin' )}"/>
 
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'California'}"/>
@@ -3204,6 +3204,9 @@ function enableDiagEff() {
           <!-- TADA -->
         </apex:pageBlockSection>
         <apex:pageBlockSection columns="1" id="progConsiderationsDetail">
+          <apex:inputField value="{!Referral__c.Restricted_Health_Conditions__c}"
+            rendered="{!ReferralRecordType = 'California'}"
+          />
           <apex:inputField value="{!Referral__c.Restricted_Health_Conditions__c}" rendered="{!ReferralRecordType == 'Cambridge Georgia'}" />
           <apex:inputTextarea value="{!Referral__c.Programming_Considerations_Comments__c}" cols="80" rendered="{!isCambridge}" />
         </apex:pageBlockSection>
