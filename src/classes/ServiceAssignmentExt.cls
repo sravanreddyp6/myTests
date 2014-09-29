@@ -762,7 +762,7 @@ public class ServiceAssignmentExt {
        //loadProgramList();
         
          if ( theservassign.referral__c != null)
-            referral = [ select id, name, referral_date__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from referral__c where id= :theservassign.referral__c ];
+            referral = [ select id, name, referral_date__c,Has_Evaluation__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate,(Select Id, Name FROM Evaluations__r LIMIT 1) from referral__c where id= :theservassign.referral__c ];
         else
             referral = null;
 
