@@ -228,7 +228,11 @@ function validate() {
         text="TYPE OF CONTACT: {!Progress_Note__c.Type_of_contact__c}";
         context.fillText(text, 2, line );
 
-        text = "RECORD: {!Progress_Note__c.Person_Being_Served__r.Avatar_ID__c}"; 
+ 		/*
+         * Changed from Record to Record ID  per ticket EB-209 
+         */
+        //text = "RECORD: {!Progress_Note__c.Person_Being_Served__r.Avatar_ID__c}"; 
+        text = "RECORD ID: {!Progress_Note__c.Person_Being_Served__r.Avatar_ID__c}";         
         context.fillText(text, colmiddle + 2, line);
 
         line += fontsize*2;
@@ -392,7 +396,14 @@ function validate() {
         
         context.font = "12px sans-serif"
         context.rotate( Math.PI/2);     // rotate 90 degrees
-        var header = "Record ID: {!Progress_Note__c.Person_Being_Served__r.Avatar_ID__c}";
+        
+        
+        /*
+         * Changed from Record ID to Billing ID and mapped to Medicade ID per ticket EB-209 
+         */
+        //var header = "Record ID: {!Progress_Note__c.Person_Being_Served__r.Avatar_ID__c}";
+        var header = "Billing ID: {!Progress_Note__c.Person_Being_Served__r.Medicaid_ID__c}";        
+        
         metrics = context.measureText(header);
         
         // add header at line 10 and every 1210 lines

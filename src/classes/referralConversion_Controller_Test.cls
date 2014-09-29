@@ -138,10 +138,11 @@ private class referralConversion_Controller_Test {
             newfs.authorization_number__c ='101010101';
             update newfs;
             
-            newfs = Referral_CreateTestData.createFundingSource('CareMeridian', 'Primary', '123', '', 
+            newfs = Referral_CreateTestData.createFundingSource('CareMeridian', 'Primary', '123', 'Pending', 
                                                         'Service', 'Authorization comment', fsRef);
             newfs.authorization_type__c = 'Inital';
             newfs.authorization_number__c = '11111111111';
+            newfs.received_date_time__c = datetime.newinstance(2014, 9, 18);
             newfs.status__c = '';
             update newfs;													
                                                         
