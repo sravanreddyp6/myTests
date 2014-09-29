@@ -586,7 +586,7 @@ public with sharing class referralConversion_Controller {
     		if(pbslastName == null) pbslastName = '';
                 Evaluation__c nurseEval = new Evaluation__c(
     										ServiceAssignment__c = newSA.id,
-    										Name = pbslastName +'NursesAssessment'+ DateTime.Now().format('MMddyy'),
+    										Name = pbslastName +'AdmissionAssessment'+ DateTime.Now().format('MMddyy'),
     										RecordtypeId = Utility.getEvaluationRecordType('NursesAssessment')
     		
     		);
@@ -595,7 +595,7 @@ public with sharing class referralConversion_Controller {
     	else{
     		id evalID = refEval[0].id;
     		list<Evaluation_Response__c> tobeCreated = new List<Evaluation_Response__c>();
-    		String asmtName = refEval[0].Name.length()>10 ? refEval[0].Name.Substringbefore('Eval')+'NursesAssessment'+ DateTime.Now().format('MMddyy') : 'NursesAssessment'+ DateTime.Now().format('MMddyy');
+    		String asmtName = refEval[0].Name.length()>10 ? refEval[0].Name.Substringbefore('Eval')+'AdmissionAssessment'+ DateTime.Now().format('MMddyy') : 'AdmissionAssessment'+ DateTime.Now().format('MMddyy');
     		String query = 'SELECT ';
     		FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment;
     		
