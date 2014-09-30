@@ -419,6 +419,17 @@ function enableDiagEff() {
 	  	}
   
   }
+  
+clearDisableField = function(pageSectionId){
+
+	j$.each(j$('div[id$=' + pageSectionId + '] input[disabled=true]'), function(k,v){
+		j$(this).val('');
+		j$(this).trigger('change');
+	});
+	j$.each(j$('div[id$=' + pageSectionId + '] select[disabled=true]'), function(k,v){
+		j$(this).val('');
+	});
+}  
  </script>
 
   <apex:form id="referralForm">
@@ -1601,6 +1612,7 @@ function enableDiagEff() {
          </apex:inputField>
          <apex:inputField label="Other (specify)" value="{!Referral__c.Other_Placement_Type_Desc__c}" html-disabled="true" rendered="{!Referral__c.Placement_Type_Risk__c!='Other (specify)'}" />
          <apex:inputField label="Other (specify)" value="{!Referral__c.Other_Placement_Type_Desc__c}" rendered="{!Referral__c.Placement_Type_Risk__c=='Other (specify)'}" />
+		<script type="text/javascript">clearDisableField('placementRiskBlock');</script>
      </apex:pageBlockSection>
    
      <apex:pageBlockSection id="PlacementHxBlockSection" title="Placement History" rendered="{!referralRecordType=='Cambridge Florida' || 
@@ -1723,7 +1735,8 @@ function enableDiagEff() {
          </apex:pageBlocksectionItem>
          <apex:inputField value="{!Referral__c.Placement_Past_Other_Describe__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || Referral__c.Placement_Other_Count__c == null || Referral__c.Placement_Other_Count__c == 0}" />
          <apex:inputField value="{!Referral__c.Placement_Past_Other_Describe__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Other_Count__c != null && Referral__c.Placement_Other_Count__c > 0}" />
-         </apex:pageBlockSection>
+		<script type="text/javascript">clearDisableField('PlacementHxBlockSection');</script>         
+	 </apex:pageBlockSection>
 	</apex:actionRegion>
 	         
         <apex:pageBlockSection id="JuvBlockSection" title="Juvenile Services Info" rendered="{!referralRecordType=='Cambridge Florida' || 
