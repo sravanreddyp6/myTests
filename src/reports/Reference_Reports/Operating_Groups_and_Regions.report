@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>CUST_NAME</field>
+    </columns>
+    <columns>
+        <field>Region__c.Business_Name__c</field>
+    </columns>
+    <columns>
+        <field>Region__c.EmailTempQualifier__c</field>
+    </columns>
+    <columns>
+        <field>Region__c.Local_Office_Name__c</field>
+    </columns>
+    <columns>
+        <field>Region__c.Office_Phone__c</field>
+    </columns>
+    <columns>
+        <field>Region__c.State__c</field>
+    </columns>
+    <columns>
+        <field>Region__c.Type__c</field>
+    </columns>
+    <format>Summary</format>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>Region__c.frm_Operating_Group_Region__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>Operating Groups and Regions</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>CustomEntity$Region__c</reportType>
+    <scope>user</scope>
+    <showDetails>true</showDetails>
+    <timeFrameFilter>
+        <dateColumn>Region__c.Last_Undecided_Date__c</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>
