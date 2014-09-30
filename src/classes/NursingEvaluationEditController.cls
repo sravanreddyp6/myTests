@@ -10,6 +10,10 @@ public with sharing class NursingEvaluationEditController {
     public List<string>selectedIssues {get; set;}
     public List<SelectOption>urineClarities ;
     public List<string>selectedClarities {get; set;}
+    public List<SelectOption>bladderValues ;
+    public List<string>selectedBladder {get; set;}
+    public List<SelectOption>bowelValues ;
+    public List<string>selectedBowel {get; set;}
     public List<SelectOption>dialysisDays ;
     public List<string>selectedDialysis {get; set;}
     
@@ -194,6 +198,11 @@ public with sharing class NursingEvaluationEditController {
                 urinaryIssues = new List<Selectoption>();
                 selectedIssues = new List<string>();
                 urineClarities = new List<selectOption>();
+                selectedClarities = new List<string>();
+                bowelValues = new List<selectOption>();
+                selectedBowel = new List<String>();
+                bladderValues = new List<selectOption>();
+                selectedBladder = new List<String>();
                 selectedDialysis = new List<string>();
                 dialysisDays = new List<selectOption>();
                 feedingTypes=new List<SelectOption>();
@@ -275,6 +284,12 @@ public with sharing class NursingEvaluationEditController {
                 if(!String.isBlank(this.evaluation.Urine_Clarity__c))
                 selectedClarities = this.evaluation.Urine_Clarity__c.split(';');
                 
+                if(!String.isBlank(this.evaluation.Elimination_Bladder_No_Continent_Details__c))
+                selectedBladder = this.evaluation.Elimination_Bladder_No_Continent_Details__c.split(';');
+               
+                if(!String.isBlank(this.evaluation.Elimination_Bowel_No_Continent_Appliance__c))
+                selectedBowel = this.evaluation.Elimination_Bowel_No_Continent_Appliance__c.split(';');
+                                
                 if (!String.isBlank(this.evaluation.Dialysis_Days_of_the_Week__c))
                 selectedDialysis = this.evaluation.Dialysis_Days_of_the_Week__c.split(';');
                 
@@ -506,9 +521,35 @@ public with sharing class NursingEvaluationEditController {
                         if(!clr.Contains('Other'))
                         this.evaluation.Urine_Clarity_Other__c = '';
                 }
-                else
+                else {
                 this.evaluation.Urine_Clarity__c ='';
                 this.evaluation.Urine_Clarity_Other__c ='';
+                }
+                
+        //for Bladder incont Multi-picklist         
+        
+        for(string c: selectedBladder)
+        clr += c+';';
+                if(clr!=''){
+                        clr =clr.Substring(0,clr.length()-1);
+                        this.evaluation.Elimination_Bladder_No_Continent_Details__c= clr;
+                        
+                }
+                else
+                this.evaluation.Elimination_Bladder_No_Continent_Details__c ='';
+                
+                
+                
+       //for Bowel incont Multi-picklist         
+        for(string c: selectedBowel)
+        clr += c+';';
+                if(clr!=''){
+                        clr =clr.Substring(0,clr.length()-1);
+                        this.evaluation.Elimination_Bowel_No_Continent_Appliance__c= clr;
+                        
+                }
+                else
+                this.evaluation.Elimination_Bowel_No_Continent_Appliance__c ='';         
 
     // for Feeding Types Multi-Picklist
         string feedtype = '';
@@ -982,6 +1023,16 @@ public with sharing class NursingEvaluationEditController {
    public List<selectoption> geturineClarities(){
                 List<Selectoption> urineClarity = Utility.getPicklistValues(evaluation, 'Urine_Clarity__c');
                 return urineClarity; 
+   }
+   
+   public List<selectoption> getbladderValues(){
+                List<Selectoption> bladderValue = Utility.getPicklistValues(evaluation, 'Elimination_Bladder_No_Continent_Details__c');
+                return bladderValue; 
+   }
+   
+   public List<selectoption> getbowelValues(){
+                List<Selectoption> bowelValue = Utility.getPicklistValues(evaluation, 'Elimination_Bowel_No_Continent_Appliance__c');
+                return bowelValue; 
    }
    public List<SelectOption> getfeedingTypes(){
                 List<Selectoption> feedingList = Utility.getPicklistValues(evaluation, 'Nutrition_Route__c');

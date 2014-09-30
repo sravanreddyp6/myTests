@@ -76,42 +76,172 @@
            				feedtypes += $(element).val() + ';';
            		});
            		
-        		 		$('input[id$=formula]').prop('disabled','disabled');
-        		 		$('input[id$=tuberate]').prop('disabled','disabled');
-        		 		$('input[id$=potype]').prop('disabled','disabled');
-        		 		$('input[id$=potexture]').prop('disabled','disabled');
-        		 		$('[id$=lipids]').prop('disabled','disabled');
-        		
+   		 		$('input[id$=formula]').prop('disabled','disabled');
+   		 		$('input[id$=tuberate]').prop('disabled','disabled');
+   		 		$('input[id$=potype]').prop('disabled','disabled');
+   		 		$('input[id$=potexture]').prop('disabled','disabled');
+   		 		$('[id$=lipids]').prop('disabled','disabled');
+       		
            		
-           		if ( feedtypes.indexOf( 'GT' ) >= 0 ||
-           			 feedtypes.indexOf( 'JT' ) >= 0 ||
-           			 feedtypes.indexOf( 'PEG' ) >= 0 ||
-           			 feedtypes.indexOf( 'NG' ) >= 0 ) 
-           		 {
+           		if ( feedtypes.indexOf( 'GT;' ) >= 0 ||
+           			 feedtypes.indexOf( 'JT;' ) >= 0 ||
+           			 feedtypes.indexOf( 'PEG;' ) >= 0 ||
+           			 feedtypes.indexOf( 'NGT;' ) >= 0 ) 
+           		 {	
+           		 
            		 		$('input[id$=formula]').removeAttr('disabled');
            		 		$('input[id$=tuberate]').removeAttr('disabled');
-           		 		$('input[id$=potype]').prop('disabled','disabled');
-           		 		$('input[id$=potexture]').prop('disabled','disabled');
-           		 		$('[id$=lipids]').prop('disabled','disabled');
+        
            		 } 
-           		else if ( feedtypes.indexOf( 'PO' ) >= 0  ) 
+           		if ( feedtypes.indexOf( 'PO;' ) >= 0  ) 
            		 {
-           		 		$('input[id$=formula]').prop('disabled','disabled');
-           		 		$('input[id$=tuberate]').prop('disabled','disabled');
            		 		$('input[id$=potype]').removeAttr('disabled');
            		 		$('input[id$=potexture]').removeAttr('disabled');
-           		 		$('[id$=lipids]').prop('disabled','disabled');
            		 }
            		  
-           		else if ( feedtypes.indexOf( 'PPN') >= 0 ||
-           		 			feedtypes.indexOf( 'TPN') >= 0 ) {
-           		 		$('input[id$=formula]').prop('disabled','disabled');
-           		 		$('input[id$=tuberate]').prop('disabled','disabled');
-           		 		$('input[id$=potype]').prop('disabled','disabled');
-           		 		$('input[id$=potexture]').prop('disabled','disabled');
+           		if ( feedtypes.indexOf( 'PPN;') >= 0 ||
+           		 			feedtypes.indexOf( 'TPN;') >= 0 ) {
            		 		$('[id$=lipids]').removeAttr('disabled');
 	 			}
            		 
+        	};
+        	
+        	
+        	handleBladder = function() {
+        		// get the value
+           		var bladdertypes = '';
+           		$('input[id*=bladderDetailCheck]').each(function (index, element) {
+           			if ( $(element).prop('checked') == true )
+           				bladdertypes += $(element).val() + ';';
+           		});
+           		
+   		 		$('input[id$=ifICP]').prop('disabled','disabled');
+   		 		$('input[id$=ifICPQ]').prop('disabled','disabled');
+   		 		$('input[id$=icpDescribe]').prop('disabled','disabled');
+   		 		$('input[id$=indwelling]').prop('disabled','disabled');
+   		 		
+   		 		if ( bladdertypes.indexOf( 'Indwelling') >= 0  || 
+   		 			 bladdertypes.indexOf( 'Suprapubic') >= 0 ) {
+   		 			$('input[id$=indwelling]').removeAttr('disabled');
+   		 		} else {
+   		 			$('input[id$=indwelling]').val('');
+   		 			$('input[id$=undateindwelling]').removeAttr('checked');
+   		 			
+   		 		}
+   		 			
+   		 		
+   		 		if ( bladdertypes.indexOf('ICP') >= 0 ) {
+   		 			$('input[id$=ifICP]').removeAttr('disabled');
+   		 			$('input[id$=ifICPQ]').removeAttr('disabled');
+   		 			$('input[id$=icpDescribe]').removeAttr('disabled');
+   		 		} else {
+   		 			$('input[id$=ifICP]').val('');
+   		 			$('input[id$=ifICPQ]').val('');
+   		 			$('input[id$=icpDescribe]').val('');
+   		 		
+   		 		}
+   		 			
+        	};
+        	
+        	handleUrineClarity = function() {
+        		// get the value
+           		var urineclar = '';
+           		$('input[id*=urineClarity]').each(function (index, element) {
+           			if ( $(element).prop('checked') == true )
+           				urineclar += $(element).val() + ';';
+           		});
+           		
+           		if ( urineclar.indexOf('Other') >= 0 ) {
+           			$('input[id$=UrineClarityOther]').removeAttr('disabled');
+           		} else {
+           			$('input[id$=UrineClarityOther]').val('');
+           			$('input[id$=UrineClarityOther]').prop('disabled', 'disabled');
+           		}
+        	}
+        	
+        	handleBowel = function() {
+        		// get the value
+           		var bow = '';
+           		$('input[id*=bowelAppliance]').each(function (index, element) {
+           			if ( $(element).prop('checked') == true )
+           				bow += $(element).val() + ';';
+           		});
+           		
+           		if ( bow.indexOf('Other') >= 0 ) {
+           			$('input[id$=bowelApplianceOther]').removeAttr('disabled');
+           		} else {
+           			$('input[id$=bowelApplianceOther]').val('');
+           			$('input[id$=bowelApplianceOther]').prop('disabled', 'disabled');
+           		}
+        	}
+
+        	handleIncont  = function() {
+        		var incont = $('input[id$=bladderIncont]').prop('checked');
+        		if (incont) {
+        			// enable the set of checkboxes in bladderDetailCheck
+        			$('input[id*=bladderDetailCheck]').each(function (index, element) {
+           				$(element).removeAttr('disabled');
+           				
+           				});
+           			$('input[id$=ageAppropriate]').removeAttr('disabled');
+           			
+        		} else {
+        			// disable the set of checkboxes and uncheck them all
+        			$('input[id*=bladderDetailCheck]').each(function (index, element) {
+        				$(element).prop('disabled','disabled');
+        				$(element).prop('checked', false);
+        				});
+        		}
+        		handleBladder();
+        	};
+
+        	handleIncontBowel  = function() {
+        		var incont = $('input[id$=bowelIncont]').prop('checked');
+        		if (incont) {
+        			// enable the set of checkboxes
+        			$('input[id*=bowelAppliance]').each(function (index, element) {
+           				$(element).removeAttr('disabled');
+           				
+           				});
+           			
+        		} else {
+        			// disable the set of checkboxes and uncheck them all
+        			$('input[id*=bowelAppliance]').each(function (index, element) {
+        				$(element).prop('disabled','disabled');
+        				$(element).prop('checked', false);
+        				});
+        				
+        				
+        		}
+        		handleBowel();
+        		};
+
+
+        	handleDialysis = function() {
+        		
+           		var ischecked = $('input[id$=dialysisCheck]').prop('checked');
+        		if (ischecked) {
+        			// enable the set of checkboxes
+        			$('input[id*=dialysisDOW]').each(function (index, element) {
+           				$(element).removeAttr('disabled');
+           				});
+           			
+        		} else {
+        			// disable the set of checkboxes and uncheck them all
+        			$('input[id*=dialysisDOW]').each(function (index, element) {
+        				$(element).prop('disabled','disabled');
+        				$(element).prop('checked', false);
+        				});
+        		}
+        	}
+
+        	
+        	handleNutrition = function () {
+        		handleFeedingChange();
+        		handleIncont();
+        		handleIncontBowel();        		
+        		handleUrineClarity();
+        		handleDialysis();
         	};
         	
            	handleWFLsChange = function () {
@@ -173,7 +303,7 @@
            		handleSores( null, 'tongue');
            		handleSores( null, 'lips');
            		handleSores( null, 'cheeks');
-           		}
+           		};
            		
            	handleSores = function (typeofSelect, typeofsores) {
            	
@@ -261,7 +391,7 @@
                 );
                 
             });
-            
+            	
         String.prototype.endsWith = function (suffix) {
                 return this.indexOf(suffix, this.length - suffix.length) !== -1;
             };
@@ -356,8 +486,10 @@
                 });*/
             }
             setUpFields();
+            handleSoresAll(); 
+            handleNutrition();
             disablePain();
-            handleSoresAll();
+           
                 
         });   //end "ready" function
         
@@ -519,6 +651,8 @@
         <apex:inputhidden value="{!Evaluation__c.Urinary_Issues__c}" />
         <apex:inputhidden value="{!Evaluation__c.Breathe_Sounds__c}"/> 
         <apex:inputhidden value="{!Evaluation__c.Urine_Clarity__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Elimination_Bladder_No_Continent_Details__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Elimination_Bowel_No_Continent_Appliance__c}" />
         <apex:inputhidden value="{!Evaluation__c.Nutrition_Route__c}" />
         <apex:inputhidden value="{!Evaluation__c.Tongue__c}" />
         <apex:inputhidden value="{!Evaluation__c.Gums__c}" />
@@ -568,7 +702,7 @@
         <apex:inputHidden value="{!Evaluation__c.Dressing_LE__c}" id="dressingLE" />
         
         <apex:pageMessages id="pageMessages" />
-        <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); removeSpacer(); scrollToTop();" reRender="pageMessages, wholeTabPanel, buttons">
+        <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); removeSpacer(); scrollToTop(); handleSoresAll(); handleNutrition();" reRender="pageMessages, wholeTabPanel, buttons">
             <apex:param name="nextTab" assignTo="{!nextTab}" value="" />
         </apex:actionFunction>
      
@@ -932,10 +1066,10 @@
             </apex:tab>
             
             
-            <apex:tab label="GU/GI/Nutrition" name="nutritionTab" ontabenter="changeTab('nutritionTab'); handleFeedingChange(); return false;" styleClass="{!IF(Evaluation__c.Nutrition_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+            <apex:tab label="GU/GI/Nutrition" name="nutritionTab" ontabenter="changeTab('nutritionTab'); return false;" styleClass="{!IF(Evaluation__c.Nutrition_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
                  <apex:pageBlockSection columns="2" title="Nutrition and Hydration">
-                    	<apex:pageBlockSectionItem>
+                    	<apex:pageBlockSectionItem >
                         <apex:outputLabel value="Feeding Type" />
 						<apex:selectCheckboxes id="feedingtypes" value="{!selectedFeedingTypes}"  onchange="handleFeedingChange()" >
 								<apex:selectOptions value="{!feedingTypes}" />
@@ -951,31 +1085,31 @@
                         </apex:pageBlockSection>
 
                     <apex:pageBlockSection columns="2" title="Oral Health">
-                    	<apex:pageBlockSectionItem>
+                    	<apex:pageBlockSectionItem >
                     		<apex:outputLabel value="Teeth - UR Quadrant<br /><br />UR # of Teeth Present<br /><br />UR Teeth Condition" escape="False"/>
-                    		<apex:outputPanel>
+                    		<apex:outputPanel >
                     			<br /><apex:inputField value="{!Evaluation__c.UR_of_Teeth_Present__c}" />
                         		<br /><apex:inputField value="{!Evaluation__c.UR_Teeth_Condition__c}" />
                         	</apex:outputPanel>
                         </apex:pageBlockSectionItem>
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                         	<apex:outputLabel value="Teeth - LR Quadrant<br /><br />LR # of Teeth Present<br /><br />LR Teeth Condition" escape="false"/>
-                        	<apex:outputPanel>
+                        	<apex:outputPanel >
                         		<br /><apex:inputField value="{!Evaluation__c.LR_of_Teeth_Present__c}" />
                         		<Br /><apex:inputField value="{!Evaluation__c.LR_Teeth_Condition__c}" />
                         	</apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                     		<apex:outputLabel value="Teeth - UL Quadrant<br /><br />UL # of Teeth Present<br /><br />UL Teeth Condition" escape="False"/>
-                    		<apex:outputPanel>
+                    		<apex:outputPanel >
                     			<br /><apex:inputField value="{!Evaluation__c.UL_of_Teeth_Present__c}" />
                         		<br /><apex:inputField value="{!Evaluation__c.UL_Teeth_Condition__c}" />
                         	</apex:outputPanel>
                         </apex:pageBlockSectionItem>
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                         	<apex:outputLabel value="Teeth - LL Quadrant<br /><br />LL # of Teeth Present<br /><br />LL Teeth Condition" escape="false"/>
-                        	<apex:outputPanel>
+                        	<apex:outputPanel >
                         		<br /><apex:inputField value="{!Evaluation__c.LL_of_Teeth_Present__c}" />
                         		<Br /><apex:inputField value="{!Evaluation__c.LL_Teeth_Condition__c}" />
                         	</apex:outputPanel>
@@ -983,7 +1117,7 @@
                         
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Tongue" />
-                            <apex:outputPanel>
+                            <apex:outputPanel >
                             <apex:selectCheckboxes value="{!selectedTongues}" onchange="handleSores(this, 'tongue')" >
                                 <apex:selectOptions value="{!tongueValues}"/>
                             </apex:selectCheckboxes>
@@ -993,7 +1127,7 @@
                         
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Gums" />
-                            <apex:outputPanel>
+                            <apex:outputPanel >
                             <apex:selectCheckboxes value="{!selectedGums}" onchange="handleSores(this, 'gums')">
                                 <apex:selectOptions value="{!gumValues}"/>
                             </apex:selectCheckboxes>
@@ -1003,7 +1137,7 @@
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Cheeks" />
-                            <apex:outputPanel>
+                            <apex:outputPanel >
                             <apex:selectCheckboxes value="{!selectedCheeks}" onchange="handleSores(this, 'cheek')">
                                 <apex:selectOptions value="{!cheekValues}"/>
                             </apex:selectCheckboxes>
@@ -1012,7 +1146,7 @@
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Lips" />
-                        <apex:outputPanel>
+                        <apex:outputPanel >
                         	<apex:selectCheckboxes value="{!selectedLips}" onchange="handleSores(this, 'lips')">
                             <apex:selectOptions value="{!lipValues}"/>
                         </apex:selectCheckboxes>
@@ -1028,7 +1162,7 @@
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem >
                         	<apex:outputlabel value="Dentures<Br /><br />If Yes, Type" escape="false" />
-                        <apex:outputPanel>
+                        <apex:outputPanel >
                         	<apex:actionRegion >
                         	<apex:inputField value="{!Evaluation__c.Dentures__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.usageDetails}&quot;}" >
                         		<apex:actionStatus id="dentureStatus" >
@@ -1052,17 +1186,17 @@
 	                    </apex:outputPanel>
 	                    </apex:outputPanel>
                         </apex:pageBlockSectionItem>
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Denture Usage Details" />
-                        <apex:outputPanel>
+                        <apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Dentures_Usage_Details__c}" label="Usage Details" id="usageDetails" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.usageOther}&quot;}"/>
                         &nbsp;
                         <apex:inputField value="{!Evaluation__c.Denture_Usage_Other__c}" label="if Other, Describe" id="usageOther" />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
-                        <apex:pageBlockSEctionItem>
+                        <apex:pageBlockSEctionItem >
                         <apex:outputLabel value="Jaw Wires<br /><br />Wire Cutters at Bedside" escape="false" />
-                        <apex:outputpanel>
+                        <apex:outputpanel >
                         <apex:inputField value="{!Evaluation__c.Jaw_Wires__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.wireCutters}&quot;}" />
                         <br /><apex:inputField value="{!Evaluation__c.Wire_Cutters_at_Bedside__c}" id="wireCutters" />
                         </apex:outputpanel>
@@ -1074,17 +1208,17 @@
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.PEDS_Teething__c}" label="Teething"/>
                         <apex:outputText value="" />
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                         <apex:outputLabel value="History of Tonsilitis<br /><br />Describe" escape="false"/>
-                        <apex:outputPanel>
+                        <apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.PEDS_History_of_Tonsils__c}"  html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.tonsilDescribe}&quot;}"/>
                         <br />
                         <apex:inputField value="{!Evaluation__c.PEDS_Tonsil_History_Describe__c}" id="tonsilDescribe" />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Pacifier<Br /><br />Type and Usage" escape="false"/>
-                        <apex:outputPanel>
+                        <apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.PEDS_Pacifier__c}" label="Pacifier" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.pacifierUsage}&quot;}"/>
                         <br />
                         <apex:inputField value="{!Evaluation__c.PEDS_Pacifier_Type_Usage__c}" label="if Yes, Type & usage" id="pacifierUsage" />
@@ -1092,115 +1226,232 @@
                         </apex:pageBlockSectionItem>
                     </apex:pageBlockSection>
 
-                    
+                     <apex:pageBlockSection columns="2" title="Elimination - Bowel">
+                     
+                     <apex:outputText Label="Bowel Sounds" value=""/>
+                     
+                     	<apex:outputText value="" />
+                     	<apex:pageBlockSectionItem >
+                     	<apex:outputLabel value="RUQ<br /><br />Describe" escape="false" />
+                     	<apex:outputPanel >
+                        <apex:inputField value="{!Evaluation__c.RUQ__c}" html-data-rules="{&quot;Abnormal&quot;: &quot;{!$Component.ruqDescribe}&quot;}" />
+                        <br />
+                        <apex:inputField value="{!Evaluation__c.RUQ_Describe__c}" label="if Abnormal, Describe" id="ruqDescribe" />
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="LUQ<br /><br />Describe" escape="false" />
+                     	<apex:outputPanel >
+                        <apex:inputField value="{!Evaluation__c.LUQ__c}" html-data-rules="{&quot;Abnormal&quot;: &quot;{!$Component.luqDescribe}&quot;}" />
+                        <br />
+                        <apex:inputField value="{!Evaluation__c.LUQ_Describe__c}" label="if Abnormal, Describe" id="luqDescribe" />
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="RLQ<br /><br />Describe" escape="false" />
+                     	<apex:outputPanel >
+                     	<apex:inputField value="{!Evaluation__c.RLQ__c}"  html-data-rules="{&quot;Abnormal&quot;: &quot;{!$Component.rlqDescribe}&quot;}" /> 
+                        <br />
+                        <apex:inputField value="{!Evaluation__c.RLQ_Describe__c}" label="if Abnormal, Describe" id="rlqDescribe" />
+						</apex:outputPanel>
+						</apex:pageBlockSectionItem>
+						                        
+						<apex:pageBlockSectionItem >
+						<apex:outputLabel value="LLQ<br /><br />Describe" escape="false" />
+                     	<apex:outputPanel >                       
+						<apex:inputField Value="{!Evaluation__c.LLQ__c}" html-data-rules="{&quot;Abnormal&quot;: &quot;{!$Component.llqDescribe}&quot;}" />
+                        <br />
+                        <apex:inputField value="{!Evaluation__c.LLQ_Describe__c}" label="if Abnormal, Describe" id="llqDescribe" />
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Abdomen" />
+                            <apex:outputPanel >
+                            <apex:selectCheckboxes value="{!selectedAbdomen}"  >
+                                <apex:selectOptions value="{!AbdomenValues}"/>
+                            </apex:selectCheckboxes>
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:outputText value="" />
+                        
+                        
+                        <apex:pageBlockSectionItem >
+						<apex:outputLabel value="History of Constipation<br /><br />Type" escape="false" />
+                     	<apex:outputPanel >                       
+						<apex:inputField value="{!Evaluation__c.History_of_Constipation__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.constipationType}&quot;}"/>
+                        <br /><apex:inputField value="{!Evaluation__c.Type_of_Constipation__c}" label="if Yes, Type" id="constipationType" />
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        
+                        <apex:pageBlockSectionItem >
+						<apex:outputLabel value="History of Laxative Use<br /><br />Describe" escape="false" />
+                     	<apex:outputPanel >                       
+						<apex:inputField value="{!Evaluation__c.History_of_Laxative_Use__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.laxativeDescribe}&quot;}" />
+                        <br /><apex:inputField value="{!Evaluation__c.Laxative_Use_Describe__c}" label="if Yes, Describe" id="laxativeDescribe" />
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        
+                        <apex:pageBlockSectionItem >
+						<apex:outputLabel value="History of Enema or Suppository Use<br /><br />Describe" escape="false" />
+                     	<apex:outputPanel >                       
+						<apex:inputField value="{!Evaluation__c.History_of_Enema_or_Suppository_Use__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.suppositoryUseDescribe}&quot;}" />
+                        <br /><apex:inputField value="{!Evaluation__c.Enema_or_Suppository_use_Describe__c}" label="if yes, Describe" id="suppositoryUseDescribe" />
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        
+                        <apex:pageBlockSectionItem >
+						<apex:outputLabel value="Use of Dietary Supplements<br /><br />Describe" escape="false" />
+                     	<apex:outputPanel >                       
+                        <apex:inputField value="{!Evaluation__c.Use_of_Dietary_Supplements__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.dietaryDescribe}&quot;}"/>
+                        <br /><apex:inputField value="{!Evaluation__c.Dietary_supplement_describe__c}" label="if Yes, Describe" id="dietaryDescribe" />
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        
+                        <apex:pageBlockSectionItem >
+						<apex:outputLabel value="History of Diarrhea<br /><br />Causative Factors" escape="false" />
+                     	<apex:outputPanel >                       
+                        <apex:inputField value="{!Evaluation__c.History_of_Diarrhea__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.causativeFactors}&quot;}" />
+                        <br />
+                        <apex:inputField value="{!Evaluation__c.Causative_factors_Diarrhea__c}" label="if yes, Causative Factors" id="causativeFactors" />
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:outputText value="" />
+                        
+                        <apex:inputField value="{!Evaluation__c.Last_BM__c}" />  
+                        <apex:inputField value="{!Evaluation__c.Usual_Elimination_Frequeny__c}" />
+                        <apex:inputField value="{!Evaluation__c.Elimination_Bowel_Continent__c}"
+                            label="Incontinent"
+                            html-data-rules="{&quot;1&quot;: &quot;{!$Component.bowelToiletTrain.bowelAgeAppropriate}&quot;}"
+                            id="bowelIncont"
+	                        onclick="handleIncontBowel();"/>  
+                        <apex:outputText Value="" />
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Appliance" />
+                        <apex:outputPanel >
+                        <apex:selectCheckboxes value="{!selectedBowel}" id="bowelAppliance" onchange="handleBowel();">
+                                <apex:selectOptions value="{!BowelValues}"/>
+                            </apex:selectCheckboxes>
+                        </apex:outputPanel>
+                        
+                        </apex:pageBlockSectionItem>
+                        <apex:inputField value="{!Evaluation__c.Elimination_Bowel_No_Appliance_Other__c}" label="Specify Other" id="bowelApplianceOther" />
+                        
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Neurogenic Bowel<br /><br />Describe" escape="False" />
+                        <apex:outputPanel >
+                        <apex:inputField value="{!Evaluation__c.Incontinent_Neurogenic_Bowel__c}" label="Neurogenic Bowel" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.neuroBowelDescribe}&quot;}" />
+                        <br /><apex:inputField value="{!Evaluation__c.Incontinent_Neuro_Bowel_Describe__c}" label="if yes, Describe program" id="neuroBowelDescribe" />
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        
+                        <apex:inputField value="{!Evaluation__c.Perception_of_Need_to_Defecate__c}" />
+                        <apex:pageBLockSectionItem id="bowelToiletTrain">
+                        <apex:outputLabel value="Age Appropriate<br /><br />Has Child begun Toilet Training<Br /><br />Describe(Process, Equipment, Timing, Etc.,)" escape="false"/>
+                        <apex:outputPanel >
+                        <apex:inputField value="{!Evaluation__c.Incontinent_Bowel_Age_Appropriate__c}" label="Age Appropriate" id="bowelAgeAppropriate" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.toiletTrain.toiletTraining}&quot;}"/>
+                        <br />
+                        <apex:inputField value="{!Evaluation__c.Incontinent_Bowel_Child_Training__c}" id="bowelToiletTrain" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.toiletTrain.trainingDescribe}&quot;}"/>
+                        <br />
+                        <apex:inputField value="{!Evaluation__c.Incontinent_Bowel_ChildTraining_Describe__c}" id="bowelTrainingDescribe"/>
+                        </apex:outputPanel>
+                        </apex:pageBLockSectionItem>
+                        
+                        </apex:pageBlockSection>
+                        
                     <apex:pageBlockSection columns="2" title="Elimination - Bladder">
                         <apex:inputField value="{!Evaluation__c.Elimination_Bladder_Continent__c}"
                             label="Incontinent"
-                            html-data-rules="{&quot;1&quot;: [&quot;{!$Component.eliminationBladderNoContinentDetails}&quot;,&quot;{!$Component.ageAppropriate}&quot;]}" />
-                        <apex:inputField value="{!Evaluation__c.Elimination_Bladder_No_Continent_Details__c}"
-                            id="eliminationBladderNoContinentDetails"
-                            onchange="enableDisableField(document.getElementById('{!$Component.eliminationBladderNoContinentDetails}'));"
-                            label="Details" html-data-rules="{&quot;ICP&quot;: [&quot;{!$Component.ifICPQ}&quot;,&quot;{!$Component.icpDescribe}&quot;]}" />
-                            <apex:selectCheckboxes value="{!dummyString}" >
-	                                <apex:selectOptions value="{!dentureValues}"/>
+                            html-data-rules="{&quot;1&quot;: &quot;{!$Component.toiletTrain.ageAppropriate}&quot;}" 
+                            onclick="handleIncont();" 
+                            id="bladderIncont"/>
+  							<apex:outputText value="" />
+  						<apex:pageBlockSectionItem >
+  						<apex:outputLabel value="Details" />	
+  						<apex:outputPanel id="bladderDetails">   
+  							    <apex:selectCheckboxes value="{!selectedBladder}" id="bladderDetailCheck" layout="pageDirection" onchange="handleBladder()">
+	                                <apex:selectOptions value="{!bladderValues}" />
 	                            </apex:selectCheckboxes>
-	                            
-                        <apex:inputField value="{!Evaluation__c.Indwelling_Suprapubic_type_size__c}" label="If Indwelling/Suprapubic, Type/size" id="sizeindwelling" />
-                        <apex:inputField value="{!Evaluation__c.Indwelling_Suprapubic_Date__c}" label="If Indwelling/Suprapubic, Date" id="dateindwelling" />
-                        <apex:inputField value="{!Evaluation__c.Indwelling_Suprapubic_Date_Unknown__c}" />
+	                            </apex:outputPanel>
+	                    </apex:pageBlockSectionItem>        
+	                    <apex:pageBlockSectionItem >
+	                    <apex:outputLabel value="<Br />Indwelling/Suprapubic: Type/Size<br /><br />Indwelling/Suprapubic: Date<br /><br />Indwelling/Suprapubic: Date Unknown<br /><br />ICP Q<br /><br />ICP Describe" escape="false" />
+	                    <apex:outputPanel >       
+	                    <apex:inputField value="{!Evaluation__c.Indwelling_Suprapubic_type_size__c}" id="sizeindwelling" />
+                        <br /> 
+                        <apex:inputField value="{!Evaluation__c.Indwelling_Suprapubic_Date__c}" id="dateindwelling"  html-data-rules="{&quot;&quot;:&quot;{!$Component.undateindwelling}&quot;}" />
+                        <br />
+                        <apex:inputField value="{!Evaluation__c.Indwelling_Suprapubic_Date_Unknown__c}" id="undateindwelling" html-data-rules="{&quot;0&quot;: &quot;{!$Component.dateindwelling}&quot;}" />
+                        <Br />
                         <apex:inputField value="{!Evaluation__c.If_ICP_Q__c}" id="ifICPQ" />
+                        <br />
                         <apex:inputField value="{!Evaluation__c.ICP_Describe__c}" label="If ICP,Describe Program" id="icpDescribe" />
-                        <apex:inputField value="{!Evaluation__c.Incontinent_Age_Appropriate__c}" label="Age Appropriate" id="ageAppropriate" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.toiletTrain}&quot;}"/>
-                        <apex:inputField value="{!Evaluation__c.InContinent_Child_toilet_training__c}" label="Has Child begun toilet training" id="toiletTrain" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.trainingDescribe}&quot;}"/>
-                        <apex:inputField value="{!Evaluation__c.Incontinent_toilet_training_describe__c}" label="Describe(Process, Equipment, timing etc.,)" id="trainingDescribe"/>
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                       
                         <apex:inputField value="{!Evaluation__c.Neurogenic_Bladder__c}"/>
                         <apex:inputField value="{!Evaluation__c.Incontinent_Last_Void__c}" label="Last Void" />
                         <apex:inputField value="{!Evaluation__c.Duration_of_Incontinence__c}" label="Duration of Incontinence" />
                         <apex:inputField value="{!Evaluation__c.Perception_of_Need_to_Void__c}" />
-                        <apex:pageBlockSectionItem>
+                        
+                        <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Urinary Issues"  />
-                        <apex:selectCheckboxes value="{!selectedIssues}" >
+                        <apex:selectCheckboxes value="{!selectedIssues}" layout="pageDirection">
                                 <apex:selectOptions value="{!urinaryIssues}" />
                          </apex:selectCheckboxes>
                         </apex:pageBlockSectionItem>
-                        <apex:inputField value="{!Evaluation__c.Urine_Color__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.urinecolorOther}&quot;}"/>
-                        <apex:inputField value="{!Evaluation__c.Urine_Color_Other__c}" label="Other" id="urinecolorOther"/>
                         <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Urine Clarity" />
-                        <apex:selectCheckboxes value="{!selectedClarities}" layout="pageDirection" >
+                        <apex:outputPanel >
+                        <apex:selectCheckboxes value="{!selectedClarities}" layout="pageDirection" id="urineClarity" onchange="handleUrineClarity()">
                                 <apex:selectOptions value="{!urineClarities}" />
                         </apex:selectCheckboxes>
-                        </apex:pageBlockSectionItem>
-                        <apex:pageBlockSectionItem helpText="{!$ObjectType.Evaluation__c.Fields.Urine_Clarity_Other__c.inlineHelpText}" >
-                        <apex:outputLabel for="urineClarityOther" value="if Other" />
+                        <br />
+                        <apex:outputLabel for="urineClarityOther" value="If Other" />
                         <apex:inputField value="{!Evaluation__c.Urine_Clarity_Other__c}" id="UrineClarityOther"  />
+                        </apex:outputPanel>
                         </apex:pageBlockSectionItem>
-                        <apex:inputfield value="{!Evaluation__c.Urine_Odor__c}" />   
-                    </apex:pageBlockSection>
-                    
-                    <apex:pageBlockSection columns="2" title="Elimination - Bowel">
-                        <apex:inputField value="{!Evaluation__c.Elimination_Bowel_Continent__c}"
-                            label="Incontinent"
-                            html-data-rules="{&quot;1&quot;: [&quot;{!$Component.eliminationBowelNoContinentAppliance}&quot;,&quot;{!$Component.bowelAgeAppropriate}&quot;]}" />  
-                        <!-- For multipicklist fields, we need to call enableDisableField directly, because the change
-                             event is not fired programmatically. -->
-                        <apex:inputField value="{!Evaluation__c.Elimination_Bowel_No_Continent_Appliance__c}"
-                            id="eliminationBowelNoContinentAppliance" label="Appliance"
-                            onchange="enableDisableField(document.getElementById('{!$Component.eliminationBowelNoContinentAppliance}'));"
-                            html-data-rules="{&quot;Other&quot;: &quot;{!$Component.eliminationBowelNoApplianceOther}&quot;}" />
-                        <apex:inputField value="{!Evaluation__c.Elimination_Bowel_No_Appliance_Other__c}" label="Specify Other" id="eliminationBowelNoApplianceOther" />
-                        <apex:inputField value="{!Evaluation__c.Incontinent_Bowel_Age_Appropriate__c}" label="Age Appropriate" id="bowelAgeAppropriate" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.bowelToiletTrain}&quot;}"/>
-                        <apex:inputField value="{!Evaluation__c.Incontinent_Bowel_Child_Training__c}" label="Has Child begun toilet training" id="bowelToiletTrain" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.bowelTrainingDescribe}&quot;}"/>
-                        <apex:inputField value="{!Evaluation__c.Incontinent_Bowel_ChildTraining_Describe__c}" label="Describe(Process, Equipment, timing etc.,)" id="bowelTrainingDescribe" />
-                        <apex:inputField value="{!Evaluation__c.Incontinent_Neurogenic_Bowel__c}" label="Neurogenic Bowel" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.neuroBowelDescribe}&quot;}" />
-                        <apex:inputField value="{!Evaluation__c.Incontinent_Neuro_Bowel_Describe__c}" label="if yes, Describe program" id="neuroBowelDescribe" />
-                        <apex:inputField value="{!Evaluation__c.Perception_of_Need_to_Defecate__c}" />
-                        <apex:inputField value="{!Evaluation__c.History_of_Constipation__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.constipationType}&quot;}"/>
-                        <apex:inputField value="{!Evaluation__c.History_of_Laxative_Use__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.laxativeDescribe}&quot;}" />
-                        <apex:inputField value="{!Evaluation__c.Type_of_Constipation__c}" label="if Yes, Type" id="constipationType" />
-                        <apex:inputField value="{!Evaluation__c.Laxative_Use_Describe__c}" label="if Yes, Describe" id="laxativeDescribe" />
-                        <apex:inputField value="{!Evaluation__c.History_of_Enema_or_Suppository_Use__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.suppositoryUseDescribe}&quot;}" />
-                        <apex:inputField value="{!Evaluation__c.Use_of_Dietary_Supplements__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.dietaryDescribe}&quot;}"/>
-                        <apex:inputField value="{!Evaluation__c.Enema_or_Suppository_use_Describe__c}" label="if yes, Describe" id="suppositoryUseDescribe" />
-                        <apex:inputField value="{!Evaluation__c.Dietary_supplement_describe__c}" label="if Yes, Describe" id="dietaryDescribe" />
-                        <apex:inputField value="{!Evaluation__c.History_of_Diarrhea__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.causativeFactors}&quot;}" />
-                        <apex:inputField value="{!Evaluation__c.Usual_Elimination_Frequeny__c}" />
-                        <apex:inputField value="{!Evaluation__c.Causative_factors_Diarrhea__c}" label="if yes, Causative Factors" id="causativeFactors" />
-                        <apex:inputField value="{!Evaluation__c.Last_BM__c}" />  
-                       <apex:outputText value="Bowel Sounds" styleClass="labelCol" style="margin-left: 2cm;" />
+                        
                         <apex:pageBlockSectionItem >
-                            <apex:outputText value="Abdomen" styleClass="labelCol" />
-                            <apex:selectCheckboxes value="{!selectedAbdomen}"  >
-                                <apex:selectOptions value="{!AbdomenValues}"/>
-                            </apex:selectCheckboxes>
+                        <apex:outputLabel value="Urine Color<br /><br/>Describe" escape="false" />
+                        <apex:outputPanel >
+                        <apex:inputField value="{!Evaluation__c.Urine_Color__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.urinecolorOther}&quot;}"/>
+                        <br />
+                        <apex:inputField value="{!Evaluation__c.Urine_Color_Other__c}" label="Other" id="urinecolorOther"/>
+                        </apex:outputPanel>
                         </apex:pageBlockSectionItem>
-                        <apex:inputField value="{!Evaluation__c.RUQ__c}" html-data-rules="{&quot;Abnormal&quot;: &quot;{!$Component.ruqDescribe}&quot;}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.RUQ_Describe__c}" label="if Abnormal, Describe" id="ruqDescribe" />
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.LUQ__c}" html-data-rules="{&quot;Abnormal&quot;: &quot;{!$Component.luqDescribe}&quot;}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.LUQ_Describe__c}" label="if Abnormal, Describe" id="luqDescribe" />
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.RLQ__c}"  html-data-rules="{&quot;Abnormal&quot;: &quot;{!$Component.rlqDescribe}&quot;}" /> 
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.RLQ_Describe__c}" label="if Abnormal, Describe" id="rlqDescribe" />
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField Value="{!Evaluation__c.LLQ__c}" html-data-rules="{&quot;Abnormal&quot;: &quot;{!$Component.llqDescribe}&quot;}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.LLQ_Describe__c}" label="if Abnormal, Describe" id="llqDescribe" />
+                        
+                        
+                        <apex:inputfield value="{!Evaluation__c.Urine_Odor__c}" />  
+                        <apex:pageBLockSectionItem id="toiletTrain">
+                        <apex:outputLabel value="Age Appropriate<br /><br />Has Child begun Toilet Training<Br /><br />Describe(Process, Equipment, Timing, Etc.,)" escape="false"/>
+                        <apex:outputPanel >
+                        <apex:inputField value="{!Evaluation__c.Incontinent_Age_Appropriate__c}" label="Age Appropriate" id="ageAppropriate" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.toiletTrain.toiletTraining}&quot;}"/>
+                        <br />
+                        <apex:inputField value="{!Evaluation__c.InContinent_Child_toilet_training__c}" id="toiletTraining" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.toiletTrain.trainingDescribe}&quot;}"/>
+                        <br />
+                        <apex:inputField value="{!Evaluation__c.Incontinent_toilet_training_describe__c}" id="trainingDescribe"/>
+                        </apex:outputPanel>
+                        </apex:pageBLockSectionItem>
                         </apex:pageBlockSection>
-                     
+                         
+                      
                       <apex:pageBlockSection columns="2" title="Dialysis">
-                        <apex:inputField value="{!Evaluation__c.Dialysis__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.dialysisType}&quot;, &quot;{!$Component.dialysisTypeDetails}&quot;, &quot;{!$Component.dialysisDaysOfTheWeek}&quot;]}"/>
-                        <apex:InputField value="{!Evaluation__c.Shunt_Permacath__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.shuntLocation}&quot;}" />
+                        <apex:inputField value="{!Evaluation__c.Dialysis__c}" 
+                        	html-data-rules="{&quot;1&quot;: [&quot;{!$Component.dialysisShunt}&quot;,&quot;{!$Component.dialysisType}&quot;, &quot;{!$Component.dialysisTypeDetails}&quot;, &quot;{!$Component.dialysisDaysOfTheWeek}&quot;]}"
+                        	onclick="handleDialysis()"
+                        	id="dialysisCheck"/>
+                        	                        
+                        <apex:InputField value="{!Evaluation__c.Shunt_Permacath__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.shuntLocation}&quot;}" id="dialysisShunt"/>
                         <apex:inputField value="{!Evaluation__c.Dialysis_Type__c}" id="dialysisType" />
                         <apex:inputField value="{!Evaluation__c.Shunt_Permacath_Location__c}" label="Location" id="shuntLocation" />
                         <apex:inputField value="{!Evaluation__c.Dialysis_Type_Details__c}" id="dialysisTypeDetails" />
                         <apex:pageBlockSectionItem />
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Days of the Week" />
-                        <apex:selectcheckboxes value="{!selectedDialysis}">
+                        <apex:selectcheckboxes value="{!selectedDialysis}" id="dialysisDOW">
                         	<apex:selectoptions value="{!dialysisDays}" />
                         	</apex:selectcheckboxes>
                         </apex:pageBlockSectionItem>	
@@ -2039,7 +2290,7 @@
                         <apex:pageblockSectionItem >
                         
 	                        	<apex:outputlabel value="Hallucinations<Br /><Br />Type<br /><br />Describe" escape="false" />
-	                        	<apex:outputPanel>
+	                        	<apex:outputPanel >
 		                        <apex:actionRegion >
 		                         <apex:inputField value="{!Evaluation__c.Hallucinations__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.hallucinationDescribe}&quot;]}" >
 		                         	<apex:actionStatus id="hallucinationStatus">
@@ -2112,9 +2363,9 @@
                     </apex:pageBlockSection>
                     
                     <apex:pageBlockSection columns="2" title="Coping">
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Is Anyone Causing You Physical, Emotional, or Financial Harm?<br /><br />Describe Harm<br /><br />Reported to<br /><br />Date and Time Reported" escape="false"/>
-                        <apex:outputPanel>
+                        <apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Physical_emotional_or_Financial_harm__c}" html-data-rules="{&quot;Yes&quot;: [&quot;{!$Component.harmDescribe}&quot;, &quot;{!$Component.harmReported}&quot;,&quot;{!$Component.harmDate}&quot;]}"/>
                         <br />
                         <apex:inputField value="{!Evaluation__c.Harm_Describe__c}" label="Describe Harm" id="harmDescribe" />
@@ -2127,7 +2378,7 @@
        				             	
                         <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Does Resident Appear to be Coping Well<br /><br />Does Resident Appear to Demonstrate Any of the Following" escape="false" />
-                        <apex:outputPanel>
+                        <apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Resident_Coping_Well__c}" />
                              <apex:selectCheckboxes value="{!selectedCoping}" layout="pageDirection" style="margin-left:-13px" >
                                 <apex:selectOptions value="{!copingValues}" />
@@ -2140,9 +2391,9 @@
                    
                     <apex:pageBlockSection columns="2" title="Family/Significant Other Relationships" >
                         <apex:inputField value="{!Evaluation__c.Members_Visit__c}" />
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
 	                        <apex:outputLabel value="Is Family/SO/Authorized Representative Present at Admission<Br /><br />If Yes, Name" escape= "false"/>
-	                        <apex:outputPanel>
+	                        <apex:outputPanel >
 	                        <apex:inputField value="{!Evaluation__c.Representative_present_at_Admission__c}" label="" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.representativeName}&quot;}"/>
 	                        <br />
 	                        <apex:inputField value="{!Evaluation__c.Name_of_Representative_present__c}" id="representativeName" />
@@ -2156,7 +2407,7 @@
                         <apex:inputField value="{!Evaluation__c.Given_explanation_of_Infection_Control__c}" label="Given Explanation of Infection Control/Safety Precautions?" />
                         <apex:inputField value="{!Evaluation__c.Teaching_Instructions_were_discussed__c}" label="Teaching Instructions Discussed?" />
                         <apex:inputField value="{!Evaluation__c.Assessed_for_Readiness_to_Learn__c}" label="Assessed for Readiness to Learn on Admission?" />
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                             <apex:outputText value="Family Member Oriented to the Following" />
                             <apex:selectCheckBoxes value="{!selectedOrients}" layout="pageDirection" style="margin-left:-13px" >
                                 <apex:selectOptions value="{!orientValues}" />
@@ -2186,7 +2437,7 @@
 						                        
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel value="If Rancho Level is>2 or LOC is Alert/Delayed/Lethargic<br />Resident Oriented to the Following" escape="false"/>
-                            <apex:outputPanel>
+                            <apex:outputPanel >
                             <apex:selectCheckboxes value="{!selectedOrientations}" layout="pageDirection">
                                 <apex:selectOptions value="{!orientationValues}" />
                             </apex:selectCheckboxes>
@@ -2195,7 +2446,7 @@
                         
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Resident's Emotional Barriers/Recent Changes in Life" />
-                            <apex:outputPanel>
+                            <apex:outputPanel >
                             <apex:selectCheckboxes value="{!selectedBarriers}" layout="pageDirection">
                                 <apex:selectoptions value="{!barrierValues}" />
                             </apex:selectCheckboxes>
@@ -2204,7 +2455,7 @@
                             </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Preferred Methods for Learning" />
                             <apex:selectCheckBoxes value="{!selectedLearning}" style="margin-left:-13px" >
                                 <apex:selectOptions value="{!learningValues}" />
@@ -2213,7 +2464,7 @@
                         <apex:outputText value="" />
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Resident's Communication Status" />
-                            <apex:outputPanel>
+                            <apex:outputPanel >
                             <apex:selectCheckboxes value="{!selectedCommunications}" layout="pageDirection">
                                 <apex:selectOptions value="{!communicationValues}" />
                             </apex:selectCheckboxes>
@@ -2222,7 +2473,7 @@
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Resident's Learning Needs Related to"  />
-                            <apex:outputPanel>
+                            <apex:outputPanel >
                             <apex:selectCheckboxes value="{!selectedNeeds}" layout="pageDirection">
                                 <apex:selectOptions value="{!needValues}" />
                             </apex:selectCheckboxes>
@@ -2252,7 +2503,7 @@
                         
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Family Member's Emotional Barriers/Recent Changes in Life" />
-                            <apex:outputPanel>
+                            <apex:outputPanel >
                             <apex:selectCheckboxes value="{!selectedFambarriers}">
                                 <apex:selectOptions value="{!fambarrierValues}" />
                             </apex:selectCheckboxes>
@@ -2264,7 +2515,7 @@
                         
                         <apex:pageblockSectionItem >
                             <apex:outputLabel value="Family Member's Communication Status" />
-                            <apex:outputPanel>
+                            <apex:outputPanel >
                             <apex:selectCheckboxes value="{!selectedFamcommunications}" layout="pageDirection">
                                 <apex:selectoptions value="{!famcommunicationValues}"/>
                             </apex:selectCheckboxes>
@@ -2274,7 +2525,7 @@
                         
                         <apex:pageblockSectionItem >
                             <apex:outputLabel value="Family Member's Learning Needs Related to" />
-                            <apex:outputPanel>
+                            <apex:outputPanel >
                             <apex:selectCheckboxes value="{!selectedFamlearnings}" layout="pageDirection">
                                 <apex:selectoptions value="{!famlearningValues}"/>
                             </apex:selectCheckboxes> 
