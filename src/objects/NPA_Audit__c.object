@@ -5239,9 +5239,10 @@ QualityExceptions_ClientFunds__c</formula>
 &amp;&amp;
 ISPICKVAL(  Q12C1__c  , &apos;Not Applicable&apos;) &amp;&amp;
 ISPICKVAL( Q12D1__c , &apos;Not Applicable&apos;)&amp;&amp;
-ISPICKVAL( Q12E1__c , &apos;Not Applicable&apos;)</errorConditionFormula>
+ISPICKVAL( Q12E1__c , &apos;Not Applicable&apos;) &amp;&amp;
+ISPICKVAL( Q12G1__c , &apos;Not Applicable&apos;)</errorConditionFormula>
         <errorDisplayField>Q12A__c</errorDisplayField>
-        <errorMessage>The quality fields 12c-i, 12d-i and 12e-i can&apos;t all be Not Applicable with the current 12a answer.</errorMessage>
+        <errorMessage>The quality fields 12c-i, 12d-i,12e-i and 12f-i can&apos;t all be Not Applicable with the current 12a answer.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>DatesEndLessThanStart</fullName>
@@ -5302,10 +5303,13 @@ ISPICKVAL( Q12E1__c , &apos;Not Applicable&apos;)</errorConditionFormula>
 ! ISPICKVAL( Q12D3__c ,&apos;Not Applicable&apos;) ||
 ! ISPICKVAL( Q12E1__c ,&apos;Not Applicable&apos;) ||
 ! ISPICKVAL( Q12E2__c ,&apos;Not Applicable&apos;) ||
-! ISPICKVAL( Q12E3__c ,&apos;Not Applicable&apos;) 
+! ISPICKVAL( Q12E3__c ,&apos;Not Applicable&apos;) ||
+! ISPICKVAL( Q12G1__c ,&apos;Not Applicable&apos;) ||
+! ISPICKVAL( Q12G2__c ,&apos;Not Applicable&apos;) ||
+! ISPICKVAL( Q12G3__c ,&apos;Not Applicable&apos;) 
 )</errorConditionFormula>
         <errorDisplayField>Q12A__c</errorDisplayField>
-        <errorMessage>Quality Tab - When 12a is &apos;Neither Rep-Payee nor Assists&apos;  All 9 questions 12C-i through 12E-iii must be Not Applicable</errorMessage>
+        <errorMessage>Quality Tab – When 12a is ‘Neither Rep-Payee nor Assists’, all 12 questions 12C-i through 12e-iii and 12gi through 12g-iii must be Not Applicable.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Q12c1_No_NA</fullName>
@@ -5340,14 +5344,28 @@ ISPICKVAL( Q12E1__c , &apos;Not Applicable&apos;)</errorConditionFormula>
         <active>true</active>
         <errorConditionFormula>( ISPICKVAL(Q12E1__c, &apos;No&apos;)  ||  ISPICKVAL(Q12E1__c, &apos;Not Applicable&apos;) )  &amp;&amp; ! ISPICKVAL( Q12E2__c, &apos;Not Applicable&apos; )</errorConditionFormula>
         <errorDisplayField>Q12E2__c</errorDisplayField>
-        <errorMessage>If Quality Tab 12d-ii is &apos;No&apos; or &apos;Not Applicable&apos;, then 12d-iii must be &apos;Not Applicable&apos;</errorMessage>
+        <errorMessage>If Quality Tab 12e-ii is &apos;No&apos; or &apos;Not Applicable&apos;, then 12e-iii must be &apos;Not Applicable&apos;</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Q12e2_No_NA</fullName>
         <active>true</active>
         <errorConditionFormula>( ISPICKVAL(Q12E2__c, &apos;No&apos;)  ||  ISPICKVAL(Q12E2__c, &apos;Not Applicable&apos;) )  &amp;&amp; ! ISPICKVAL( Q12E3__c, &apos;Not Applicable&apos; )</errorConditionFormula>
         <errorDisplayField>Q12E3__c</errorDisplayField>
-        <errorMessage>If Quality Tab 12d-ii is &apos;No&apos; or &apos;Not Applicable&apos;, then 12d-iii must be &apos;Not Applicable&apos;</errorMessage>
+        <errorMessage>If Quality Tab 12e-ii is &apos;No&apos; or &apos;Not Applicable&apos;, then 12e-iii must be &apos;Not Applicable&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Q12g1_No_NA</fullName>
+        <active>true</active>
+        <errorConditionFormula>( ISPICKVAL(Q12G1__c, &apos;No&apos;)  ||  ISPICKVAL(Q12G1__c, &apos;Not Applicable&apos;) )  &amp;&amp; ! ISPICKVAL( Q12G2__c, &apos;Not Applicable&apos; )</errorConditionFormula>
+        <errorDisplayField>Q12G2__c</errorDisplayField>
+        <errorMessage>If Quality Tab 12g-ii is &apos;No&apos; or &apos;Not Applicable&apos;, then 12g-iii must be &apos;Not Applicable&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Q12g2_No_NA</fullName>
+        <active>true</active>
+        <errorConditionFormula>( ISPICKVAL(Q12G2__c, &apos;No&apos;)  ||  ISPICKVAL(Q12G2__c, &apos;Not Applicable&apos;) )  &amp;&amp; ! ISPICKVAL( Q12G3__c, &apos;Not Applicable&apos; )</errorConditionFormula>
+        <errorDisplayField>Q12G3__c</errorDisplayField>
+        <errorMessage>If Quality Tab 12g-ii is &apos;No&apos; or &apos;Not Applicable&apos;, then 12g-iii must be &apos;Not Applicable&apos;</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Q15c_No_NA</fullName>
@@ -5845,6 +5863,20 @@ ISPICKVAL(Status__c,&apos;Final&apos;)</errorConditionFormula>
         <errorConditionFormula>ISPICKVAL(Q12E2__c,&apos;Yes&apos;)&amp;&amp;ISPICKVAL(Q12E3__c,&apos;Not Applicable&apos;)</errorConditionFormula>
         <errorDisplayField>Q12E3__c</errorDisplayField>
         <errorMessage>Quality Tab - 12E-iii must be Yes or No if 12E-ii is Yes.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>q12gi_block_NA_12gii</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL(Q12G1__c,&apos;Yes&apos;)&amp;&amp;ISPICKVAL(Q12G2__c,&apos;Not Applicable&apos;)</errorConditionFormula>
+        <errorDisplayField>Q12G2__c</errorDisplayField>
+        <errorMessage>Quality Tab - 12gii must be Yes or No if 12gi is Yes.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>q12gii_block_NA_12giii</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL(Q12G2__c,&apos;Yes&apos;)&amp;&amp; ISPICKVAL(Q12G3__c,&apos;Not Applicable&apos;)</errorConditionFormula>
+        <errorDisplayField>Q12G3__c</errorDisplayField>
+        <errorMessage>Quality Tab - 12g-iii must be Yes or No if 12g-ii is Yes.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>q1b</fullName>
