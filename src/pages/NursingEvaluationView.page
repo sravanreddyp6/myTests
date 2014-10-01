@@ -588,173 +588,66 @@ hr {
 						<apex:outputText value="{!if (Evaluation__c.History_of_Diarrhea__c =='Yes', Evaluation__c.History_of_Diarrhea__c + ' - Causative Factors: ' + Evaluation__c.Causative_factors_Diarrhea__c, Evaluation__c.History_of_Diarrhea__c)}" label="Use of Dietary Supplements" />
                         <apex:outputField value="{!Evaluation__c.Last_BM__c}" />  
                         <apex:outputField value="{!Evaluation__c.Usual_Elimination_Frequeny__c}" />
-                        <apex:outputField value="{!Evaluation__c.Elimination_Bowel_Continent__c}" />  
-                        <apex:outputField value="{!Evaluation__c.Elimination_Bowel_No_Continent_Appliance__c}" /> 
-                        <apex:outputField value="{!Evaluation__c.Elimination_Bowel_No_Appliance_Other__c}" label="Specify Other" id="bowelApplianceOther" />
+                        <apex:outputField value="{!Evaluation__c.Elimination_Bowel_Continent__c}" label="Incontinent"/>  
+                        <apex:outputField value="{!Evaluation__c.Elimination_Bowel_No_Continent_Appliance__c}" label="Appliance"/> 
+                        <apex:outputField value="{!Evaluation__c.Elimination_Bowel_No_Appliance_Other__c}" label="Specify Other" />
                         
-                        <apex:outputLabel value="Neurogenic Bowel<br /><br />Describe" escape="False" />
-                        <apex:outputPanel >
-                        <apex:outputField value="{!Evaluation__c.Incontinent_Neurogenic_Bowel__c}" label="Neurogenic Bowel"  />
-                        <br /><apex:outputField value="{!Evaluation__c.Incontinent_Neuro_Bowel_Describe__c}" label="if yes, Describe program" id="neuroBowelDescribe" />
-                        </apex:outputPanel>
+                        <apex:outputText value="{!if (Evaluation__c.Incontinent_Neurogenic_Bowel__c == 'Yes',Evaluation__c.Incontinent_Neurogenic_Bowel__c + ' - ' +Evaluation__c.Incontinent_Neuro_Bowel_Describe__c, Evaluation__c.Incontinent_Neurogenic_Bowel__c) }" label="Neurogenic Bowel"  />
+                        <apex:outputField value="{!Evaluation__c.Perception_of_Need_to_Defecate__c}" />
                         
-                        <apex:inputField value="{!Evaluation__c.Perception_of_Need_to_Defecate__c}" />
-                        <apex:pageBLockSectionItem id="bowelToiletTrain">
-                        <apex:outputLabel value="Age Appropriate<br /><br />Has Child begun Toilet Training<Br /><br />Describe(Process, Equipment, Timing, Etc.,)" escape="false"/>
-                        <apex:outputPanel >
-                        <apex:inputField value="{!Evaluation__c.Incontinent_Bowel_Age_Appropriate__c}" label="Age Appropriate" id="bowelAgeAppropriate" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.toiletTrain.toiletTraining}&quot;}"/>
-                        <br />
-                        <apex:inputField value="{!Evaluation__c.Incontinent_Bowel_Child_Training__c}" id="bowelToiletTrain" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.toiletTrain.trainingDescribe}&quot;}"/>
-                        <br />
-                        <apex:inputField value="{!Evaluation__c.Incontinent_Bowel_ChildTraining_Describe__c}" id="bowelTrainingDescribe"/>
-                        </apex:outputPanel>
-                        </apex:pageBLockSectionItem>
+                        <apex:outputField value="{!Evaluation__c.Incontinent_Bowel_Age_Appropriate__c}" label="Age Appropriate" />
+                        <apex:outputField value="{!Evaluation__c.Incontinent_Bowel_Child_Training__c}" id="bowelToiletTrain" label="Has Child Begun Toilet Training"/>
+                        <apex:outputField value="{!Evaluation__c.Incontinent_Bowel_ChildTraining_Describe__c}" label="Describe"/>
                         
                         </apex:pageBlockSection>
                         
+                        <apex:pageBlockSection columns="2" title="Elimination - Bladder">
+                        
+                        <apex:outputField value="{!Evaluation__c.Elimination_Bladder_Continent__c}" label="Incontinent"/>  
+                        <apex:outputText value="" />
+                        
+                        <apex:outputField value="{!Evaluation__c.Elimination_Bladder_No_Continent_Details__c}" label="Details" />
+	                    <apex:pageBlockSectionItem >
+	                    <apex:outputLabel value="{! IF (CONTAINS(Evaluation__c.Elimination_Bladder_No_Continent_Details__c,'Indwelling'), 'Indwelling/Suprapubic Type/Size<br />Indwelling/Suprapubic Date<br />','') + 
+	                    						    IF (CONTAINS(Evaluation__c.Elimination_Bladder_No_Continent_Details__c,'ICP'), 'ICP Q<br />ICP Program', '')
+	                    						}" escape="false" />
+	                    <apex:outputPanel>
+	                    <apex:outputText value="{! Evaluation__c.Indwelling_Suprapubic_type_size__c}" label="Indwelling/Suprapubic Type/Size" />
+	                    <apex:outputText value="<br />" rendered="{!CONTAINS(Evaluation__c.Elimination_Bladder_No_Continent_Details__c,'Indwelling')}" escape="false"/>
+                        <apex:outputText value="Unknown" rendered="{! Evaluation__c.Indwelling_Suprapubic_Date_Unknown__c == true}" />
+                        <apex:outputText value="{! Evaluation__c.Indwelling_Suprapubic_Date__c}" rendered="{!Evaluation__c.Indwelling_Suprapubic_Date_Unknown__c == false}"/>
+                        <apex:outputText value="<br />" rendered="{!CONTAINS(Evaluation__c.Elimination_Bladder_No_Continent_Details__c,'Indwelling')}" escape="false"/>
+                        <apex:outputText value="{!Evaluation__c.If_ICP_Q__c }" Label="If IPC, Q"/>
+                        <apex:outputText value="<br />" rendered="{!CONTAINS(Evaluation__c.Elimination_Bladder_No_Continent_Details__c,'ICP')}" escape="false"/>
+                        <apex:outputField value="{!Evaluation__c.ICP_Describe__c}" label="If ICP, Describe Program" />
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                       
+                        <apex:outputField value="{!Evaluation__c.Neurogenic_Bladder__c}" />
+                        <apex:outputField value="{!Evaluation__c.Incontinent_Last_Void__c}" label="Last Void" />
+                        <apex:outputField value="{!Evaluation__c.Duration_of_Incontinence__c}" label="Duration of Incontinence" />
+                        <apex:outputField value="{!Evaluation__c.Perception_of_Need_to_Void__c}" />
+                        
+                        <apex:outputField value="{!Evaluation.Urinary_Issues__c}"  />
+                        <apex:outputText value="{!if (CONTAINS(Evaluation.Urine_Clarity__c, 'Other'), Evaluation__c.Urine_Clarity__c + ' - ' + Evaluation__c.Urine_Clarity_Other__c, Evaluation__c.Urine_Clarity__c)}"  label="Urine Clarity"/>
+						<apex:outputText value="{!if (CONTAINS(Evaluation.Urine_Color__c, 'Other'), Evaluation__c.Urine_Color__c + ' - ' + Evaluation__c.Urine_Color_Other__c, Evaluation__c.Urine_Color__c)}"  label="Urine Color"/>
+                        <apex:outputfield value="{!Evaluation__c.Urine_Odor__c}" />
+                          
+                        <apex:outputField value="{!Evaluation__c.Incontinent_Age_Appropriate__c}" label="Age Appropriate" />
+                        <apex:outputField value="{!Evaluation__c.InContinent_Child_toilet_training__c}" label="Has Child Started Toilet Training"/>
+                        <apex:outputField value="{!Evaluation__c.Incontinent_toilet_training_describe__c}" label="Describe"/>
+                        </apex:pageBlockSection> 
 				
-					<apex:pageBlockSection columns="2">
-						<apex:pageBlocksectionItem >
-							<apex:outputText value="Elimination - Bladder" />
-							<apex:outputText value="" />
-						</apex:pageBlocksectionItem>
-						<apex:pageBlockSectionItem >
-							<apex:outputText value="Elimination - Bowel" />
-							<apex:outputText value="" />
-						</apex:pageBlockSectionItem>
-						<apex:outputField value="{!Evaluation__c.Elimination_Bladder_Continent__c}" label="Incontinent" />
-						<apex:outputField value="{!Evaluation__c.Elimination_Bowel_Continent__c}" label="Incontinent" />
-						<apex:outputField value="{!Evaluation__c.Elimination_Bladder_No_Continent_Details__c}" label="Details" />
-						<apex:outputField value="{!Evaluation__c.Elimination_Bowel_No_Continent_Appliance__c}" label="Appliance" />
-						<apex:outputField value="{!Evaluation__c.Indwelling_Suprapubic_type_size__c}"
-							label="If Indwelling/Suprapubic, Type/size" />
-						<apex:outputField value="{!Evaluation__c.Elimination_Bowel_No_Appliance_Other__c}"
-							label="Specify Other" id="eliminationBowelNoApplianceOther" />
-						<apex:outputField value="{!Evaluation__c.Indwelling_Suprapubic_Date__c}"
-							label="If Indwelling/Suprapubic, Date" />
-						<apex:outputField value="{!Evaluation__c.Incontinent_Bowel_Age_Appropriate__c}"
-							label="Age Appropriate" />
-						<apex:outputField value="{!Evaluation__c.Indwelling_Suprapubic_Date_Unknown__c}" />
-						<apex:outputField value="{!Evaluation__c.Incontinent_Bowel_Child_Training__c}"
-							label="Has Child begun toilet training" />
-						<apex:outputField value="{!Evaluation__c.If_ICP_Q__c}" />
-						<apex:outputField value="{!Evaluation__c.Incontinent_Bowel_ChildTraining_Describe__c}"
-							label="Describe(Process, Equipment, timing etc.,)" />
-						<apex:outputField value="{!Evaluation__c.ICP_Describe__c}"
-							label="If ICP,Describe Program" />
-						<apex:outputField value="{!Evaluation__c.Incontinent_Neurogenic_Bowel__c}"
-							label="Neurogenic Bowel" />
-						<apex:outputField value="{!Evaluation__c.Incontinent_Age_Appropriate__c}"
-							label="Age Appropriate" />
-						<apex:outputField value="{!Evaluation__c.Incontinent_Neuro_Bowel_Describe__c}"
-							label="if yes, Describe program" />
-						<apex:outputField value="{!Evaluation__c.InContinent_Child_toilet_training__c}"
-							label="Has Child begun toilet training" />
-						<apex:outputField value="{!Evaluation__c.Perception_of_Need_to_Defecate__c}" />
-						<apex:outputField value="{!Evaluation__c.Incontinent_toilet_training_describe__c}"
-							label="Describe(Process, Equipment, timing etc.,)" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.Neurogenic_Bladder__c}" />
-						<apex:pageblockSectionItem />
-						<apex:outputField value="{!Evaluation__c.Incontinent_Last_Void__c}"
-							label="Last Void" />
-						<apex:pageblockSectionItem />
-						<apex:outputField value="{!Evaluation__c.Duration_of_Incontinence__c}"
-							label="Duration of Incontinence" />
-						<apex:pageBlockSectionitem />
-						<apex:outputField value="{!Evaluation__c.Perception_of_Need_to_Void__c}" />
-						<apex:pageBlockSectionItem />
-						<apex:pageBlockSectionItem >
-							<apex:outputText value="Urinary Issues" styleclass="labelCol" />
-							<apex:selectCheckboxes value="{!selectedIssues}"
-								layout="pageDirection" disabled="True">
-								<apex:selectOptions value="{!urinaryIssues}" />
-							</apex:selectCheckboxes>
-						</apex:pageBlockSectionItem>
-						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.Urine_Color__c}" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.Urine_Color_Other__c}" />
-						<apex:pageBlockSectionItem />
-						<apex:pageBlockSectionItem >
-							<apex:outputText value="Urine Clarity" styleClass="labelCol" />
-							<apex:selectCheckboxes value="{!selectedClarities}"
-								layout="pageDirection" disabled="True">
-								<apex:selectOptions value="{!urineClarities}" />
-							</apex:selectCheckboxes>
-						</apex:pageBlockSectionItem>
-						<apex:pageBlockSectionItem />
-						<apex:pageBlockSectionItem helpText="{!$ObjectType.Evaluation__c.Fields.Urine_Clarity_Other__c.inlineHelpText}">
-							<apex:outputLabel for="urineClarityOther" value="if Other" />
-							<apex:outputField value="{!Evaluation__c.Urine_Clarity_Other__c}"
-								id="urineClarityOther" label="if Other" />
-						</apex:pageBlockSectionItem>
-						<apex:pageblocksectionitem />
-						<apex:outputfield value="{!Evaluation__c.Urine_Odor__c}" />
-					</apex:pageBlockSection>
-					<hr />
-					<apex:pageBlockSection columns="2">
+				
+                      
+					<apex:pageBlockSection columns="2" title="Dialysis">
 						<apex:outputField value="{!Evaluation__c.Dialysis__c}" />
 						<apex:outputField value="{!Evaluation__c.Shunt_Permacath__c}" />
 						<apex:outputField value="{!Evaluation__c.Dialysis_Type__c}" />
-						<apex:outputField value="{!Evaluation__c.Shunt_Permacath_Location__c}"
-							label="Location" />
+						<apex:outputField value="{!Evaluation__c.Shunt_Permacath_Location__c}"  label="Location" />
 						<apex:outputField value="{!Evaluation__c.Dialysis_Type_Details__c}" />
 						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.Dialysis_Days_of_the_Week__c}"
-							label="Days of the Week" />
-					</apex:pageBlockSection>
-					<hr />
-					<apex:pageBlockSection columns="2">
-						<apex:outputField value="{!Evaluation__c.History_of_Constipation__c}" />
-						<apex:outputField value="{!Evaluation__c.History_of_Laxative_Use__c}" />
-						<apex:outputField value="{!Evaluation__c.Type_of_Constipation__c}"
-							label="if Yes, Type" />
-						<apex:outputField value="{!Evaluation__c.Laxative_Use_Describe__c}"
-							label="if Yes, Describe" />
-						<apex:outputField value="{!Evaluation__c.History_of_Enema_or_Suppository_Use__c}" />
-						<apex:outputField value="{!Evaluation__c.Use_of_Dietary_Supplements__c}" />
-						<apex:outputField value="{!Evaluation__c.Enema_or_Suppository_use_Describe__c}"
-							label="if yes, Describe" />
-						<apex:outputField value="{!Evaluation__c.Dietary_supplement_describe__c}"
-							label="if Yes, Describe" />
-						<apex:outputField value="{!Evaluation__c.History_of_Diarrhea__c}" />
-						<apex:outputField value="{!Evaluation__c.Usual_Elimination_Frequeny__c}" />
-						<apex:outputField value="{!Evaluation__c.Causative_factors_Diarrhea__c}"
-							label="if yes, Causative Factors" />
-						<apex:outputField value="{!Evaluation__c.Last_BM__c}" />
-					</apex:pageBlockSection>
-					<hr />
-					
-					<hr />
-					<apex:pageBlockSection Columns="2">
-						<apex:outputText value="Bowel Sounds" styleClass="labelCol"
-							style="margin-left: 2cm;" />
-						<apex:pageBlockSectionItem >
-							<apex:outputText value="Abdomen" styleClass="labelCol" />
-							<apex:selectCheckboxes value="{!selectedAbdomen}" disabled="True">
-								<apex:selectOptions value="{!AbdomenValues}" />
-							</apex:selectCheckboxes>
-						</apex:pageBlockSectionItem>
-						<apex:outputField value="{!Evaluation__c.RUQ__c}" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.RUQ_Describe__c}"
-							label="if Abnormal, Describe" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.LUQ__c}" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.LUQ_Describe__c}"
-							label="if Abnormal, Describe" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.RLQ__c}" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.RLQ_Describe__c}"
-							label="if Abnormal, Describe" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField Value="{!Evaluation__c.LLQ__c}" />
-						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.LLQ_Describe__c}"
-							label="if Abnormal, Describe" />
+						<apex:outputField value="{!Evaluation__c.Dialysis_Days_of_the_Week__c}" label="Days of the Week" />
 					</apex:pageBlockSection>
 					<hr />
 					<apex:pageBlockSection Columns="1">
