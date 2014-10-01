@@ -1107,7 +1107,7 @@ public void loadProgramList() {
       Savepoint servAssignSaveSp = Database.setSavepoint();
 
         try {
-            Service_Assignment__c s = theServAssign;
+            Service_Assignment__c s = theServAssign;		
 			
 			// START: CTEAE-125 & 126:  Service Assignment Closures; prevent closure of FCT Service Assignments if a locked Service Assignment Closure is not presen
 			if(s.Model__c == 'FCT') {
@@ -1218,7 +1218,7 @@ public void loadProgramList() {
 
                 //return null;
                 PageReference backToServAssignPage = new PageReference('/apex/ServiceAssignmentEditNew?id=' + theServAssign.Id);
-                        backToServAssignPage.setRedirect(true);
+                        //backToServAssignPage.setRedirect(true);
                         return backToServAssignPage;
             }
         }
