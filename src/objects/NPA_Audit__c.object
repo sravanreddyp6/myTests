@@ -827,6 +827,11 @@
             <isRequired>false</isRequired>
         </displayedFields>
         <displayedFields>
+            <field>Q9A__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
             <field>Q10A__c</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>false</isRequired>
@@ -5382,6 +5387,14 @@ ISPICKVAL( Q12G1__c , &apos;Not Applicable&apos;)</errorConditionFormula>
         <errorMessage>Quality Tab -  If Q15b is “Yes”, then Q15c must be “Yes” or “No”.</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>Q16b</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL( Q16a__c , &apos;Not Applicable&apos;) &amp;&amp;
+Q16b__c = &apos;&apos;</errorConditionFormula>
+        <errorDisplayField>Q16b__c</errorDisplayField>
+        <errorMessage>Quality Tab: 16b is required when 16a is Not Applicable</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>Review_Date_greater_than_today</fullName>
         <active>true</active>
         <errorConditionFormula>Review_Date__c  &gt; today()</errorConditionFormula>
@@ -5542,6 +5555,14 @@ ISPICKVAL( HExcB__c , &apos;&apos;) ,
  HHP_Audit__c 
 )</errorConditionFormula>
         <errorMessage>HHP Tab rated question(s) are incomplete</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>StatusFinal_Q16a</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL( Status__c , &apos;Final&apos;) &amp;&amp;
+ISPICKVAL(  Q16a__c , &apos;&apos;)</errorConditionFormula>
+        <errorDisplayField>Q16a__c</errorDisplayField>
+        <errorMessage>Quality Tab: 16a is required to finalize an audit</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>StatusFinal_QAExcp</fullName>
