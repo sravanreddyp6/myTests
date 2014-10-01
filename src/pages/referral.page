@@ -429,6 +429,9 @@ clearDisableField = function(pageSectionId){
 	j$.each(j$('div[id$=' + pageSectionId + '] select[disabled=true]'), function(k,v){
 		j$(this).val('');
 	});
+	j$.each(j$('div[id$=' + pageSectionId + '] 	textarea[disabled=true]'), function(k,v){
+		j$(this).val('');
+	});
 }  
  </script>
 
@@ -1610,8 +1613,8 @@ clearDisableField = function(pageSectionId){
              </apex:actionStatus>
              <apex:actionSupport event="onchange" rerender="placementRiskBlock" status="statusPlaceTypeRisk" />
          </apex:inputField>
-         <apex:inputField label="Other (specify)" value="{!Referral__c.Other_Placement_Type_Desc__c}" html-disabled="true" rendered="{!Referral__c.Placement_Type_Risk__c!='Other (specify)'}" />
-         <apex:inputField label="Other (specify)" value="{!Referral__c.Other_Placement_Type_Desc__c}" rendered="{!Referral__c.Placement_Type_Risk__c=='Other (specify)'}" />
+         <apex:inputField label="Other (specify)" value="{!Referral__c.Other_Placement_Type_Desc__c}" html-disabled="true" rendered="{!Referral__c.Placement_Type_Risk__c!='Other (specify)' || Referral__c.Risk_of_Out_of_Home_Placement__c!='Yes'}" />
+         <apex:inputField label="Other (specify)" value="{!Referral__c.Other_Placement_Type_Desc__c}" rendered="{!Referral__c.Placement_Type_Risk__c=='Other (specify)' && Referral__c.Risk_of_Out_of_Home_Placement__c=='Yes'}" />
 		<script type="text/javascript">clearDisableField('placementRiskBlock');</script>
      </apex:pageBlockSection>
    
@@ -1852,6 +1855,7 @@ clearDisableField = function(pageSectionId){
          <apex:inputField id="supervised" label="Is this client receiving after care supervision?" value="{!Referral__c.After_Care__c}" rendered="{! Referral__c.Current_Juvenile_Services_Involvement__c=='Yes' && (Referral__c.Felony__c=='Yes' || Referral__c.Misdemeanor__c=='Yes')}" required="{! Referral__c.Current_Juvenile_Services_Involvement__c=='Yes' && (Referral__c.Felony__c=='Yes' || Referral__c.Misdemeanor__c=='Yes')}"/>
          <apex:inputField value="{!Referral__c.Repeat_Offender__c}" html-disabled="true" rendered="{! Referral__c.Current_Juvenile_Services_Involvement__c!='Yes' || (Referral__c.Felony__c!='Yes' && Referral__c.Misdemeanor__c!='Yes')}"/>
          <apex:inputField id="offender" value="{!Referral__c.Repeat_Offender__c}" rendered="{! Referral__c.Current_Juvenile_Services_Involvement__c=='Yes' && (Referral__c.Felony__c=='Yes' || Referral__c.Misdemeanor__c=='Yes')}" required="{! Referral__c.Current_Juvenile_Services_Involvement__c=='Yes' && (Referral__c.Felony__c=='Yes' || Referral__c.Misdemeanor__c=='Yes')}"/>
+		<script type="text/javascript">clearDisableField('JuvBlockSection');clearDisableField('HxBlock');clearDisableField('moreHxBlock');</script>         
      </apex:pageBlockSection>
      
      <apex:pageBlockSection showHeader="false" columns="2" collapsible="false" id="ReferralStatus">
