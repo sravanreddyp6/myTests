@@ -1352,7 +1352,7 @@ QA 16
                     If Not Applicable, please state reason.
                 </apex:outputPanel>        
                 <apex:outputPanel layout="block" styleClass="filler" ></apex:outputPanel>
-                <apex:inputField value="{!theAudit.Q16b__c}"/>
+                <apex:inputField style="width: 94%" value="{!theAudit.Q16b__c}"/>
 
         </apex:panelGrid>
     </apex:panelGrid>   
@@ -2057,15 +2057,15 @@ Host Home 13
 <apex:outputPanel layout="block" styleClass="myMenu" id="meee">
     <apex:pageBlock mode="maindetail" >
     <apex:outputPanel styleClass="abcRated" style="float: right; margin-top: 6px; ">&nbsp;= Rated Question</apex:outputPanel>
+            <apex:inputField style="float: right; margin-top: 5px" value="{!theAudit.Status__c}">
+            </apex:inputField>    
    &nbsp; | &nbsp;
             <apex:commandButton styleClass="btnSave" style="{!btnStyle}" action="{!myUpdate}" value="Update" status="myAction" rendered="{! !newRec}" reRender="wrapper, sc" oncomplete="commonReady();" /> 
              <apex:commandButton styleClass="btnSave" style="{!btnStyle}" action="{!save}" value="Save" rendered="{!newRec}" reRender="mee, Tabs, meee, SC" status="myAction" oncomplete="commonReady();" / >
              
             <apex:commandButton style="{!btnStyle}" action="{!cancel}" value="Cancel" />&nbsp; | &nbsp;
-            <apex:inputField value="{!theAudit.Status__c}">
-            </apex:inputField>
             
-            <p/>
+            
              <apex:actionStatus id="myAction">
             <apex:facet name="start">
                 <div class="waitingHolder" >
