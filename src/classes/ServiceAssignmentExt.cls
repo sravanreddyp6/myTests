@@ -759,7 +759,7 @@ public class ServiceAssignmentExt {
 //       loadAvailableCodesbyID(); - this is called by setting currentProgramID
 
        servCodeIdsForXrefsToDelete = new Set<Id>();
-       loadProgramList(); 
+      // loadProgramList(); 
         
          if ( theservassign.referral__c != null)
             referral = [ select id, name, referral_date__c,Has_Evaluation__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate,(Select Id, Name FROM Evaluations__r LIMIT 1) from referral__c where id= :theservassign.referral__c ];
