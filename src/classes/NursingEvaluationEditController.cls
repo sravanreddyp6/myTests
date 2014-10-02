@@ -48,6 +48,8 @@ public with sharing class NursingEvaluationEditController {
     public List<string>selectedBarriers {get;set;}
     public List<selectOption>needValues ;
     public List<string>selectedNeeds {get;set;}
+    public List<selectOption>neuroOrientValues ;
+    public List<string>selectedNeuroOrient{get;set;}
     public List<selectOption>orientValues ;
     public List<string>selectedOrients {get;set;}
     public List<selectOption>orientationValues ;
@@ -68,6 +70,9 @@ public with sharing class NursingEvaluationEditController {
     public List<string>selectedProsthetics {get;set;}
     public List<selectOption>orthodicsValues ;
     public List<string>selectedOrthodics {get;set;}
+    
+    public List<selectOption>seizureHistory;
+    public List<string>selectedSeizureHistory {get;set;}
     public List<selectOption>moodValues ;
     public List<string>selectedMoods {get;set;}
     public List<selectOption>alleviatorValues ;
@@ -235,6 +240,8 @@ public with sharing class NursingEvaluationEditController {
                 selectedBarriers = new List<String>();
                 needValues = new List<selectOption>();
                 selectedNeeds = new List<String>();
+                neuroOrientValues = new List<selectOption>();
+                selectedNeuroOrient = new List<string>();
                 orientValues = new List<selectOption>();
                 selectedOrients = new List<String>();
                 orientationValues = new List<selectOption>();
@@ -255,6 +262,8 @@ public with sharing class NursingEvaluationEditController {
                 selectedProsthetics = new List<String>();
                 orthodicsValues = new List<selectOption>();
                 selectedOrthodics = new List<String>();
+                seizureHistory = new List<selectOption>();
+                selectedSeizureHistory = new List<String>();
                 moodValues = new List<selectOption>();
                 selectedMoods = new List<String>();
                 alleviatorValues = new List<selectOption>();
@@ -371,6 +380,9 @@ public with sharing class NursingEvaluationEditController {
                 if(!String.isBlank(this.evaluation.Mood__c))
                 selectedMoods = this.evaluation.Mood__c.split(';');
                 
+                if(!String.isBlank(this.evaluation.Seizure_History__c))
+                selectedMoods = this.evaluation.Seizure_History__c.split(';');
+
                 if(!String.isBlank(this.evaluation.Alleviating_Factors__c))
                 selectedAlleviators = this.evaluation.Alleviating_Factors__c.split(';');
                 
@@ -889,6 +901,19 @@ public with sharing class NursingEvaluationEditController {
                         this.evaluation.Orthodics_Other__c = '';
                         }
                         
+// For Seizure Multi-picklist
+                string sei ='';
+                for(string md: selectedSeizureHistory)
+                sei += md+';';
+                        if(sei!=''){
+                                sei = sei.Substring(0,sei.length()-1);
+                                this.evaluation.Seizure_History__c = sei;
+                               
+                        }
+                        else{
+	                        this.evaluation.Seizure_History__c ='';
+                        }
+
 // For Mood Multi-picklist
                 string mod='';
                 for(string md: selectedMoods)
@@ -1164,10 +1189,22 @@ public with sharing class NursingEvaluationEditController {
                 return orthodicsValue; 
    }
    
+   public List<selectoption> getneuroOrientValues(){
+                List<Selectoption> orientValue = Utility.getPicklistValues(evaluation, 'Orientation__c');
+                return orientValue; 
+   }
+   
    public List<selectoption> getmoodValues(){
                 List<Selectoption> moodValue = Utility.getPicklistValues(evaluation, 'Mood__c');
                 return moodValue; 
    }
+
+
+   public List<selectoption> getseizureHistory(){
+                List<Selectoption> seiValue= Utility.getPicklistValues(evaluation, 'Seizure_History__c');
+                return seiValue; 
+   }
+
    
    public List<selectoption> getalleviatorValues(){
                 List<Selectoption> alleviatorValue = Utility.getPicklistValues(evaluation, 'Alleviating_Factors__c');
