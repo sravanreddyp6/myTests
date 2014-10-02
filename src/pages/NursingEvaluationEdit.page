@@ -778,9 +778,9 @@
                         <apex:inputField value="{!Evaluation__c.Admit_Date_Time__c}"/>
                         <apex:outPutField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Name}"/>
                         <apex:OutputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.BirthDate}"/>
-                        <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Advanced_Directives__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.advancedDirectivesAttached}&quot;}" />
-                        <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Code_Status__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.codeStatusOther}&quot;}" />
-                        <apex:inputField value="{!Evaluation__c.Advanced_Directives_Attached__c}" id="advancedDirectivesAttached" />
+                        <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Advanced_Directives__c}" />
+                        <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Code_Status__c}"  />
+                        <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_being_served__r.Advanced_Directives_Attached__c}" id="advancedDirectivesAttached" />
                         <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.admission__r.Person_Being_Served__r.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" />
                     </apex:pageBlockSection>
                     <apex:pageBlockSection columns="1" title="Related Party">
@@ -1657,26 +1657,26 @@
                 <apex:pageBlock >
                     <apex:pageBlockSection columns="1" title="Cognitive">
                     	
-                    	<apex:pageBlockSectionItem>
+                    	<apex:pageBlockSectionItem >
                     	<apex:outputLabel value="Seizure History" />
                     	<apex:selectCheckboxes value="{!selectedSeizureHistory}" style="margin-left:-13px" >
                         	<apex:selectOptions value="{!seizureHistory}" />
                         </apex:selectCheckboxes>
                         </apex:pageBlockSectionItem>
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                         <apex:outputLabel value="VP Shunt" />
-                        <apex:outputPanel>
+                        <apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.VP_Shunt__c}"  html-data-rules="{&quot;Yes&quot;: [&quot;{!$Component.vpshuntDescribe}&quot;,&quot;{!$Component.headcircumneuro}&quot;]}" />&nbsp;<apex:outputLabel value="Date Inserted if Known" />
                         <apex:inputField value="{!Evaluation__c.VP_Shunt_Describe__c}" id="vpshuntDescribe"/>
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         
-                        <apex:inputField value="{!Evaluation__c.Head_Circumference_Neuro__c}" id="headcircumneuro"/>
+                        <apex:inputField value="{!Evaluation__c.Head_circumference_neuro__c}" id="headcircumneuro"/>
                        
                     	<apex:inputField value="{!Evaluation__c.Rancho_Level__c}" onchange="handleRancho();" id="ranchoValue"/>
-                    	<apex:pageBlockSectionItem>
+                    	<apex:pageBlockSectionItem >
                         <apex:outputLabel value="Responds To" />
-                        <apex:outputPanel>
+                        <apex:outputPanel >
                         <apex:inputField id="vstimresponds" value="{!Evaluation__c.Verbal_Stim__c}" /><apex:outputLabel for="vstim" value="Verbal Stim" />&nbsp;
                         <apex:inputField id="astimresponds" value="{!Evaluation__c.Auditory_Stim__c}" /><apex:outputLabel for="astim" value="Auditory Stim" />&nbsp;
                         <apex:inputField id="tstimresponds" value="{!Evaluation__c.Tactile_Stim__c}" /><apex:outputLabel for="tstim" value="Tactile Stim" />&nbsp;
@@ -1693,9 +1693,9 @@
                             </apex:selectCheckboxes>
                         </apex:pageBlockSectionItem>
                         
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Behavior" />
-                        <apex:outputPanel>
+                        <apex:outputPanel >
                         <apex:inputField id="coop" value="{!Evaluation__c.Cooperative__c}" /><apex:outputLabel for="coop" value="Cooperative" />&nbsp;
                         <apex:inputField id="impulsive" value="{!Evaluation__c.Impulsive__c}" /><apex:outputLabel for="impulsive" value="Impulsive" />&nbsp;
                         <apex:inputField id="inapp" value="{!Evaluation__c.Inappropriate__c}" /><apex:outputLabel for="inapp" value="Inappropriate" />&nbsp;
@@ -1721,9 +1721,9 @@
                         <apex:inputField value="{!Evaluation__c.Memory__c}" />
                         <apex:inputField value="{!Evaluation__c.Motivation_Towards_Rehab__c}" />
                         <apex:inputField value="{!Evaluation__c.Awareness_of_Deficits__c}" />
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Expression<br /><br />Other" escape="False" />
-                        <apex:outputPanel>
+                        <apex:outputPanel >
 						<apex:inputField value="{!Evaluation__c.Expression__c}" html-data-rules="{&quot;Non-Verbal&quot;: [&quot;{!$Component.expressionOther}&quot;]}"/>
 						
                         <apex:inputField value="{!Evaluation__c.Expression_Other__c}" label="If Non-verbal, Other Expression" id="expressionOther"/>
@@ -1739,9 +1739,9 @@
                         <apex:inputField value="{!Evaluation__c.Tactile__c}" />
                        	<apex:outputText value="" />
                        	
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Hearing<br /><br/>Hearing Aid Right<br /><br />Hearing Aid Left<br /><br />Does Resident Have Aid(s) at the Facility?" escape="false"/>
-                        <apex:outputPanel>
+                        <apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Hearing__c}" />
                         <br />
                         <apex:inputField value="{!Evaluation__c.Hearing_Aid_Right__c}" label="Right" />
@@ -1752,9 +1752,9 @@
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Vision<br /><br />Tracking R<br /><br />Tracking L<br /><br />Blink to Threat R/L" escape="false" />
-                        <apex:outputPanel>
+                        <apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Vision__c}" />
                         <br />
                         <apex:inputField value="{!Evaluation__c.Tracking_R__c}" />
@@ -1765,18 +1765,18 @@
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                     	<apex:outputLabel value="Ear Infections<br /><br />Describe"  escape="false"/>
-                    	<apex:outputPanel>
+                    	<apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Ear_Infections__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.earinfectionHistory}&quot;]}" />
                         <br />
                         <apex:inputField value="{!Evaluation__c.Ear_infection_Describe__c}" label="Describe History" id="earinfectionHistory"/>
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                         <apex:outputLabel Value="Glasses/Contacts<Br /><br />For Reading<br /><br />For Distance<br /><br />Multifocal<br /><br />Other<br /><br />If Contacts, Type"  escape="False"/>
-                        <apex:outputPanel>
+                        <apex:outputPanel >
                         <br />
                         <br />
                         <apex:inputField value="{!Evaluation__c.Glasses_For_Reading__c}" label="For Reading" />
