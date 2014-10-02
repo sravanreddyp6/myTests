@@ -126,21 +126,23 @@
                         <tr>
                             <td width="25%"><b>Age:</b>&nbsp;<apex:outputText id="txtage" value="{!con.Age__c}" /></td>
                             <td width="25%"><b>Primary Diagnosis:</b>&nbsp;<apex:outputText value="{!primaryDiagnosis}" /></td>
-                            <td width="25%"></td>
 <!--                             <apex:outputLabel rendered="{!con.Family_Member_Other__c != ''}"> -->
 <!--                             <td><b>Other Family Members:</b>&nbsp;<apex:OutputText value="{!con.Family_Member_Other__c}"/></td> -->
 <!--                             </apex:outputLabel> -->
                             <apex:outputLabel rendered="{!con.Advanced_Directives__c}">
                             <td width="25%"><b>Advance Directives:</b>&nbsp;<apex:outputLabel value="{!HTMLENCODE('Yes')}" /></td>
+                            <td width="25%"></td>
                             </apex:outputLabel>
                         </tr>
                         <tr>
                             <td width="25%"><b>Gender:</b>&nbsp;<apex:OutputText value="{!con.Gender__c}"/></td>
                             <td width="25%"></td>
-                            <td width="25%"></td>
                             <apex:outputLabel rendered="{!con.Code_Status__c != ''}">
                             <td width="25%"><b>Code Status:</b>&nbsp;<apex:outputLabel value="{!con.Code_Status__c}" /></td>
-                            </apex:outputLabel>                            
+                            </apex:outputLabel>
+                            <apex:outputLabel rendered="{!con.Code_Status__c == 'Other'}" > 
+                            <td width="25%"><b>Code Status Other</b>&nbsp;<apex:outputLabel value="{!con.Code_Status_Other__c}" /></td>
+                            </apex:outputLabel>                           
                         </tr> </table>
                         </td>
                         
@@ -180,6 +182,10 @@
 	                            <apex:outputText rendered="{!(parentPage == 'ServAssign' && saNew == false && opGrp == 'Cambridge' )}">
 	                            <a href="/apex/ServAssignFidelityChecklist?id={!saId}" class="servicelink">View Fidelity Checklist</a><br />
 	                            </apex:outputText>
+	                            
+	                            <apex:outputText rendered="{!(parentPage == 'ServAssign' && opGrp == 'Care Meridian' )}" >
+	                            <a href="{!IF(parentPage != 'PBS', '/apex/PersonBeingServedEditNew?id=' + con.ID + '&edit=true', '')}#AI" class="servicelink">Edit Advanced Directives</a><br />
+	                            </apex:outputText > 
 	                                                        
 	                        </td>
 	                        </tr>

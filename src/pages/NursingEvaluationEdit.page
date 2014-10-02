@@ -725,10 +725,10 @@
                         <apex:inputField value="{!Evaluation__c.Admit_Date_Time__c}"/>
                         <apex:outPutField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Name}"/>
                         <apex:OutputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.BirthDate}"/>
-                        <apex:inputField value="{!Evaluation__c.Advanced_Directives__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.advancedDirectivesAttached}&quot;}" />
-                        <apex:inputField value="{!Evaluation__c.Code_Status__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.codeStatusOther}&quot;}" />
+                        <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Advanced_Directives__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.advancedDirectivesAttached}&quot;}" />
+                        <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Code_Status__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.codeStatusOther}&quot;}" />
                         <apex:inputField value="{!Evaluation__c.Advanced_Directives_Attached__c}" id="advancedDirectivesAttached" />
-                        <apex:inputField value="{!Evaluation__c.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" />
+                        <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.admission__r.Person_Being_Served__r.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" />
                     </apex:pageBlockSection>
                     <apex:pageBlockSection columns="1" title="Related Party">
                         <apex:actionFunction name="showAddRelatedParty" action="{!showAddRelatedParty}" status="loadingRelatedPartyStatus" rerender="relatedPartyDialogMainBlock" oncomplete="openModalDialog('{!$Component.relatedPartyDialog}', 'Add Related Party', '{!$Component.wholePage}');" />

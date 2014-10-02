@@ -142,10 +142,10 @@ hr {
 						<apex:outputField value="{!Evaluation__c.Admit_Date_Time__c}" />
 						<apex:outPutField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Name}" />
 						<apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.BirthDate}" />
-						<apex:outputField value="{!Evaluation__c.Advanced_Directives__c}" />
-						<apex:outputField value="{!Evaluation__c.Code_Status__c}" />
+						<apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_being_served__r.Advanced_Directives__c}" />
+						<apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_being_served__r.Code_Status__c}" />
 						<apex:outputField value="{!Evaluation__c.Advanced_Directives_Attached__c}" />
-						<apex:outputField value="{!Evaluation__c.Code_Status_Other__c}"
+						<apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_being_served__r.Code_Status_Other__c}"
 							label="Specify Other" />
 					</apex:pageBlockSection>
 					<apex:pageBlockSection columns="1" title="Related Party">
@@ -611,7 +611,7 @@ hr {
 	                    <apex:outputLabel value="{! IF (CONTAINS(Evaluation__c.Elimination_Bladder_No_Continent_Details__c,'Indwelling'), 'Indwelling/Suprapubic Type/Size<br />Indwelling/Suprapubic Date<br />','') + 
 	                    						    IF (CONTAINS(Evaluation__c.Elimination_Bladder_No_Continent_Details__c,'ICP'), 'ICP Q<br />ICP Program', '')
 	                    						}" escape="false" />
-	                    <apex:outputPanel>
+	                    <apex:outputPanel >
 	                    <apex:outputText value="{! Evaluation__c.Indwelling_Suprapubic_type_size__c}" label="Indwelling/Suprapubic Type/Size" />
 	                    <apex:outputText value="<br />" rendered="{!CONTAINS(Evaluation__c.Elimination_Bladder_No_Continent_Details__c,'Indwelling')}" escape="false"/>
                         <apex:outputText value="Unknown" rendered="{! Evaluation__c.Indwelling_Suprapubic_Date_Unknown__c == true}" />
