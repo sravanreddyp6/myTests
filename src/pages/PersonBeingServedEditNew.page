@@ -367,7 +367,11 @@
         <apex:outputField value="{!Contact[f]}"  rendered="{!NOT(pbsEditModeOn) && !Contains(dontShowFields, f.FieldPath)}" />
         <apex:inputField value="{!Contact[f]}"  rendered="{!pbsEditModeOn && !Contains(dontShowFields, f.FieldPath)}" required="{!OR(f.required, f.dbrequired)}"/>
     </apex:repeat>
-    
+    <apex:pageBlockSectionItem rendered="{!!Contains(dontShowFields, 'Advanced_Directives__c')}" />
+    <apex:outputField value="{!Contact.Advanced_Directives__c}" rendered="{!NOT(pbsEditModeOn) && !Contains(dontShowFields, 'Advanced_Directives__c')}" />
+    <apex:inputField value="{!Contact.Advanced_Directives__c}" rendered="{!(pbsEditModeOn) && !Contains(dontShowFields, 'Advanced_Directives__c')}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.advanceAttached}&quot;}"/>
+    <apex:outputField value="{!Contact.Advanced_Directives_Attached__c}" rendered="{!NOT(pbsEditModeOn) && !Contains(dontShowFields, 'Advanced_Directives_Attached__c')}" />
+    <apex:inputField value="{!Contact.Advanced_Directives_Attached__c}" rendered="{!(pbsEditModeOn) && !Contains(dontShowFields, 'Advanced_Directives_Attached__c')}" id="advanceAttached"/>
     <apex:outputField value="{!Contact.Code_Status__c}" rendered="{!NOT(pbsEditModeOn) && !Contains(dontShowFields, 'Code_Status__c')}"/>
     <apex:inputField value="{!Contact.Code_Status__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.codeStatusOther}&quot;}" rendered="{!pbsEditModeOn && !Contains(dontShowFields, 'Code_Status__c')}"/>
     <apex:outputField value="{!Contact.Code_Status_Other__c}" label="Specify Other" rendered="{!NOT(pbsEditModeOn) && !Contains(dontShowFields, 'Code_Status_Other__c')}"/>
