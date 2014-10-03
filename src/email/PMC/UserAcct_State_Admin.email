@@ -1,0 +1,18 @@
+{!Account_Administration__c.User_State_Administrator__c}: <br /> <br />
+
+{!Account_Administration__c.LoggedUser__c} has requested a change for {!Account_Administration__c.First_Name__c} {!Account_Administration__c.Name}. The requested change is a {!if(Account_Administration__c.Transfer_Prospects_To__c!="", "Transfer Prospects", "Route to Region")}{!if(and(Account_Administration__c.Region__c!="", Transfer_Prospects_To__c!="")," and a Route to Region", "")} request.
+<br/>
+<br/>
+{!if(Account_Administration__c.Region__c!="", "Route to Region Information: "+IF(ISPICKVAL(Account_Administration__c.Region_Add_Remove__c,"Add"),"Add", IF(ISPICKVAL(Account_Administration__c.Region_Add_Remove__c, "Remove"), "Remove", ""))+ " to/from region "+ Account_Administration__c.Region__c, "")}
+<br/>
+<br/>
+{!if(Account_Administration__c.Transfer_Prospects_To__c!="", "Transfer Prospects To: " +Account_Administration__c.Transfer_Prospects_To__c, "")}
+<br/>
+<br/>
+{!if(Account_Administration__c.Route_To_Change_Info__c !="","Notes for State Administrator: " +Account_Administration__c.Route_To_Change_Info__c, "")}
+<br/>
+<br/>
+<b>To ITSC:</b> Please create a new SDE ticket under category = Enterprise Apps > Salesforce > PMC / Prospective Mentor Connector: User account.  Then assign it to queue = “Salesforce Apps”.
+<br />
+<br/>
+Thank you.
