@@ -86,7 +86,7 @@ public class ServiceAssignmentExt {
         // Fidelity Document Properties / Info
     public List<ServiceAssignment_Document_JO__c> sadjos { get; set; }
     public Boolean hasFidDocs { get; set; }
-    public List<ProgramAssociationTableWrapper> programRows { get; set; }
+    public List<ProgramAssociationTableWrapper> programRows { get; set; } //Sravn - Commented for EC-40
 
         private void setcanEditSA() {
         List<UserRecordAccess> acls = [SELECT RecordId, HasEditAccess
@@ -425,7 +425,7 @@ public class ServiceAssignmentExt {
         Decimal docsRunningCount = 0;
         Decimal docsFiledRunningCount = 0;
 
-        programRows = new List<ProgramAssociationTableWrapper>();
+        programRows = new List<ProgramAssociationTableWrapper>();  // CTEAE-185: This line uncommented by J. Gilliam 10/2/14, as part of Phase grid restoration.
         if(uniquePhases.size()>0) {
 
             Boolean phaseCompleted = true;
@@ -470,7 +470,7 @@ public class ServiceAssignmentExt {
                         thisPhasePercentage = 0;
                 }
 
-                programRows.add(new ProgramAssociationTableWrapper(p, thisPhaseDocCounter.intValue(), thisPhaseFiledDocCounter.intValue(), thisPhasePercentage));
+                programRows.add(new ProgramAssociationTableWrapper(p, thisPhaseDocCounter.intValue(), thisPhaseFiledDocCounter.intValue(), thisPhasePercentage)); // CTEAE-185: This line restored by J. Gilliam, 10/2/14, as part of phase grid restoration.
 
                 docsRunningCount += thisPhaseDocCounter.intValue();
                 docsFiledRunningCount += thisPhaseFiledDocCounter.intValue();
@@ -488,13 +488,13 @@ public class ServiceAssignmentExt {
             totalPhasePercentage = 0;
         }
 
-        programRows.add(new ProgramAssociationTableWrapper(999,docsRunningCount.intValue(),docsFiledRunningCount.intValue(),totalPhasePercentage));
+        programRows.add(new ProgramAssociationTableWrapper(999,docsRunningCount.intValue(),docsFiledRunningCount.intValue(),totalPhasePercentage)); // CTEAE-185: This line restored by J. Gilliam, 10/2/14, as part of phase grid restoration.
     }
 // END: CONSTRUCTOR
 
 
-// START:  Program Association Table Wrapper Class.
-        class ProgramAssociationTableWrapper {
+// START:  Program Association Table Wrapper Class. Code related to ProgramAssociationTableWrapper is commented out by Sravan for EC-40  10/01/2014 3:30 PM
+      class ProgramAssociationTableWrapper {
                 public String paProgramName { get; set; }
                 public String paLocation { get; set; }
                 public String paServiceLine { get; set; }
@@ -511,8 +511,8 @@ public class ServiceAssignmentExt {
                         paPhasePercentage = phasePercentage;
                 }
 
-        }
-// END:  Program Association Table Wrapper Class.
+      }
+// END:  Program Association Table Wrapper Class. */
 
 
 // START:  Method for displaying error / message text in the message take on VF page.
@@ -759,10 +759,10 @@ public class ServiceAssignmentExt {
 //       loadAvailableCodesbyID(); - this is called by setting currentProgramID
 
        servCodeIdsForXrefsToDelete = new Set<Id>();
-       //loadProgramList();
+      // loadProgramList(); 
         
          if ( theservassign.referral__c != null)
-            referral = [ select id, name, referral_date__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from referral__c where id= :theservassign.referral__c ];
+            referral = [ select id, name, referral_date__c,Has_Evaluation__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate,(Select Id, Name FROM Evaluations__r LIMIT 1) from referral__c where id= :theservassign.referral__c ];
         else
             referral = null;
 
@@ -1098,7 +1098,7 @@ public void loadProgramList() {
 
 
     public PageReference SaveServAssign() {
-        
+        System.debug('START: SaveServAssign()');
 	    if (theServAssign.Service_Location__c == null || String.valueOf(theServAssign.Service_Location__c) == ''){
 	        ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,'Location of Service: You must select a value.'));
 	        return null;
@@ -1107,7 +1107,7 @@ public void loadProgramList() {
       Savepoint servAssignSaveSp = Database.setSavepoint();
 
         try {
-            Service_Assignment__c s = theServAssign;
+            Service_Assignment__c s = theServAssign;		
 			
 			// START: CTEAE-125 & 126:  Service Assignment Closures; prevent closure of FCT Service Assignments if a locked Service Assignment Closure is not presen
 			if(s.Model__c == 'FCT') {
@@ -1464,6 +1464,14 @@ public void loadProgramList() {
         sa.Service_Location__c = locID;
         upsert sa;
         return true;
+   }
+   
+   @RemoteAction
+   public static boolean savePhase(string saID, string phase) {
+   		 Service_Assignment__c sa = [ select id, Phase__c from Service_Assignment__c where id = :saID];
+   		 sa.Phase__c = Integer.valueOf(phase);
+   		 upsert sa;
+   		 return true;
    }
 
 }

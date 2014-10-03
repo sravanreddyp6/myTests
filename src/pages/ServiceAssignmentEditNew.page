@@ -78,9 +78,14 @@
 <script>
     j$ = jQuery.noConflict();
 
-    function SetHiddenPhase(thePhase)
+    function SetHiddenPhase(saId, thePhase)
     {
-        j$('input[id$=phaseToSave]').val(thePhase);
+        ServiceAssignmentExt.savePhase(saId,thePhase,function(result,event) {
+        	if(!result){
+        		alert('Something went wrong! Please take a screenshot of this message and send it to MENTOR IT Support. [ServiceAssignmentEditNew.page, SetHiddenPhase JS Error]');
+        	}
+        	location.reload();
+        });	
     }
 
 	openModalDialog = function (dialogId, tagType, titleString, dClass, width) {
@@ -164,10 +169,10 @@
 	<apex:param name="fundingId" value="" assignTo="{!fundingSource.Id}" />
 </apex:actionFunction>
 <apex:actionFunction action="{!changeToModel}" name="changeToModel" rerender="ContractAssoc, ProgAssoc" status="SaveStatus1"/>
-<apex:outputText value="{!theServAssign.Person_Being_Served__c}" rendered="false"/>
+
+<apex:outputText value="{!theServAssign.Person_Being_Served__c}" rendered="false" />
 <!-- To set focus on Top -->
 <input id="hiddenElementId" type="hidden" />
-<apex:outputText id="phaseToSave" value="{!theServAssign.Phase__c}" rendered="false"/>
     <apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}" rerender="pbDiagnosis,diagnosisModal,diagnosisEntry,diagnosisEntry2,msgs"/>
     <apex:actionFunction name="showAddDiagnosis" action="{!showAddDiagnosis}" oncomplete="openDialog('diagnosisModal', 'span', 'Add Diagnosis');" rerender="pbDiagnosis,modalWrapper,diagnosisEntry,diagnosisEntry2,ServAssignDetail,AOServAssignDetail,msgs" />
     <apex:actionFunction name="showEditDiagnosis" action="{!showEditDiagnosis}" oncomplete="loadDiagnosis('{!diagEditId}');" rerender="pbDiagnosis,modalWrapper,diagnosisEntry,diagnosisEntry2,ServAssignDetail,AOServAssignDetail,msgs" >
@@ -335,7 +340,9 @@
         </apex:pageBlockSectionItem>        
     </apex:pageBlockSection>
      
-    <apex:pageBlockSection title="Program Association"
+     <!--  Sravan erased the code related to Program Association Section EC-40 09/30/2014 1:48 PM   -->
+<!-- START: CTEAE-185: J. Gilliam, attempted restoration of Phase grid... -->
+   <apex:pageBlockSection title="Program Association"
                              showHeader="true"
                              columns="1"
                              collapsible="false"
@@ -396,10 +403,10 @@
                 <apex:pageBlockTable value="{!programRows}" var="pR" id="ProgramAssocTableNEW" rendered="{!theServAssign.Program__c=='IFCS'}">
                     <apex:column headerValue="{!IF(editSA,'Select','Selected')}">
                         <apex:outputPanel rendered="{!(pR.paPhase<>999 && pR.paPhase==theServAssign.Phase__c)}">
-                            <input id="PhaseRadio" name="PhaseRadioEdit" type="radio" value="{!theServAssign.Phase__c}" onclick="SetHiddenPhase({!pR.paPhase});" checked="checked" />
+                            <input id="PhaseRadio" name="PhaseRadioEdit" type="radio" value="{!theServAssign.Phase__c}" onclick="SetHiddenPhase('{!theServAssign.Id}','{!pR.paPhase}');" checked="checked" />
                         </apex:outputPanel>
                         <apex:outputPanel rendered="{!(pR.paPhase<>999 && pR.paPhase<>theServAssign.Phase__c)}">
-                            <input id="PhaseRadio" name="PhaseRadioEdit" type="radio" value="{!theServAssign.Phase__c}" onclick="SetHiddenPhase({!pR.paPhase});" />
+                            <input id="PhaseRadio" name="PhaseRadioEdit" type="radio" value="{!theServAssign.Phase__c}" onclick="SetHiddenPhase('{!theServAssign.Id}','{!pR.paPhase}');" />
                         </apex:outputPanel>
                     </apex:column>
                     <apex:column headerValue="Phase of Treatment">
@@ -424,7 +431,8 @@
              </apex:outputPanel>
 
  
-    </apex:pageBlockSection>
+    </apex:pageBlockSection>    
+<!-- END: CTEAE-185: J. Gilliam, attempted restoration of Phase grid... -->
 
 <apex:outputPanel style="display:none">
     <apex:actionregion >
