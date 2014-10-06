@@ -5,7 +5,7 @@ public with sharing class CareMeridianEvaluationEditTest {
         insert pbr;
         Referral__c referral = new Referral__c(Person_Being_Referred__c=pbr.Id);
         insert referral;
-        Evaluation__c evaluation = new Evaluation__c(Referral__c=referral.Id);
+        Evaluation__c evaluation = new Evaluation__c(Referral__c=referral.Id,Primary_Diagnosis__c='Test');
         insert evaluation;
         Related_party__c rp = new Related_Party__c(
             Name='Test Party',
@@ -14,7 +14,7 @@ public with sharing class CareMeridianEvaluationEditTest {
         );
         insert rp;
         evaluation = [
-            SELECT Id, Referral__c, Referral__r.Person_Being_Referred__c
+            SELECT Id, Referral__c, Referral__r.Person_Being_Referred__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Date_of_Injury_Onset__c
             FROM Evaluation__c WHERE Id=:evaluation.Id
         ];
         CareMeridianEvaluationEditController controller = new CareMeridianEvaluationEditController(
@@ -46,5 +46,7 @@ public with sharing class CareMeridianEvaluationEditTest {
         controller.nextTab = 'diagsnosticTab';
         controller.changeTab();
         controller.save();
+        referral = [SELECT ID, Primary_Diagnosis__c,Secondary_Diagnosis__c,Date_of_Injury__c FROM Referral__c WHERE Id=:evaluation.Referral__c];
+        system.assertEquals('Test',referral.Primary_Diagnosis__c);
     }
 }

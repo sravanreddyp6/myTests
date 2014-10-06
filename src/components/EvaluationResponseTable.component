@@ -51,10 +51,14 @@
                     <apex:actionFunction name="saveResponse{!uniqueId}" action="{!saveResponse}" rerender="responseTable,responseDialogMainBlock,responseDialogErrors" status="saveResponseStatus" oncomplete="afterSave('{!$Component.responseDialog}', request.options.parameters.keepDialogOpen, showAddResponse{!uniqueId});">
                         <apex:param name="keepDialogOpen" value="" />
                     </apex:actionFunction>
-                    <apex:commandButton value="Save" onClick="saveResponse{!uniqueId}(false); return false;" />
-                    <apex:commandButton value="Save & New" onClick="saveResponse{!uniqueId}(true); return false;" />
-                    <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.responseDialog}'); return false;" />
                     <apex:actionStatus id="saveResponseStatus">
+						<apex:facet name="stop">
+							<apex:outputPanel id="buttons">
+			                    <apex:commandButton value="Save" onClick="saveResponse{!uniqueId}(false); return false;" />
+	        		            <apex:commandButton value="Save & New" onClick="saveResponse{!uniqueId}(true); return false;" />
+	                		    <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.responseDialog}'); return false;" />
+							</apex:outputPanel>
+						</apex:facet>
                         <apex:facet name="start">
                             <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
                         </apex:facet>
