@@ -169,14 +169,15 @@ public with sharing class CareMeridianEvaluationEditController {
 
         }
         update this.evaluation;
+        update this.pbr;
         
         if( ref.Primary_Diagnosis__c != evaluation.Primary_Diagnosis__c || ref.Secondary_Diagnosis__c != evaluation.Secondary_Diagnosis__c || ref.Date_of_Injury__c != evaluation.Date_of_Injury_Onset__c ){
         	ref.Primary_Diagnosis__c = evaluation.Primary_Diagnosis__c;
 	        ref.Secondary_Diagnosis__c = evaluation.Secondary_Diagnosis__c;
 	        ref.Date_of_Injury__c = evaluation.Date_of_Injury_Onset__c;
-	        update this.pbr;
+	        
+	        update this.ref;
         }
-        update this.ref;
         //return stdController.view();
         return new PageReference('/apex/CareMeridianEvaluationView?id=' + evaluation.Id + '&tab=' + selectedTab);
     }
