@@ -55,7 +55,7 @@ private class Notes_ProgressNote_Create_Flavor_PDFTEST {
 	        insert testServCode;
 	        
 	        
-	        List<RecordType> pnRecordTypes = [SELECT Id, Name FROM RecordType WHERE SObjectType = 'Progress_Note__c'];
+	        List<RecordType> pnRecordTypes = [SELECT Id, Name FROM RecordType WHERE SObjectType = 'Progress_Note__c' AND IsActive = true];
 	        
 	        System.Debug('What is in pnRecordTypes: ' + pnRecordTypes);
 	        
