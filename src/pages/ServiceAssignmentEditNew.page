@@ -164,10 +164,10 @@
 	<apex:param name="fundingId" value="" assignTo="{!fundingSource.Id}" />
 </apex:actionFunction>
 <apex:actionFunction action="{!changeToModel}" name="changeToModel" rerender="ContractAssoc, ProgAssoc" status="SaveStatus1"/>
-<apex:outputText value="{!theServAssign.Person_Being_Served__c}" rendered="false"/>
+<apex:inputhidden value="{!theServAssign.Person_Being_Served__c}" rendered="{!canEditSA}" />
 <!-- To set focus on Top -->
 <input id="hiddenElementId" type="hidden" />
-<apex:outputText id="phaseToSave" value="{!theServAssign.Phase__c}" rendered="false"/>
+<apex:inputhidden id="phaseToSave" value="{!theServAssign.Phase__c}" rendered="{!canEditSA}" />
     <apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}" rerender="pbDiagnosis,diagnosisModal,diagnosisEntry,diagnosisEntry2,msgs"/>
     <apex:actionFunction name="showAddDiagnosis" action="{!showAddDiagnosis}" oncomplete="openDialog('diagnosisModal', 'span', 'Add Diagnosis');" rerender="pbDiagnosis,modalWrapper,diagnosisEntry,diagnosisEntry2,ServAssignDetail,AOServAssignDetail,msgs" />
     <apex:actionFunction name="showEditDiagnosis" action="{!showEditDiagnosis}" oncomplete="loadDiagnosis('{!diagEditId}');" rerender="pbDiagnosis,modalWrapper,diagnosisEntry,diagnosisEntry2,ServAssignDetail,AOServAssignDetail,msgs" >
@@ -319,8 +319,7 @@
 <!--         </apex:actionregion> -->
         </apex:pageblocksectionitem>
     </apex:pageBlockSection>
-    
-    
+   
     <apex:pageBlockSection title="Contract Association" 
                              showHeader="true"
                              columns="3"
@@ -334,8 +333,96 @@
             </apex:selectList>
         </apex:pageBlockSectionItem>        
     </apex:pageBlockSection>
-     
-     <!--  Sravan erased the code related to Program Association Section EC-40 09/30/2014 1:48 PM   -->
+    
+    <apex:pageBlockSection title="Program Association"
+                             showHeader="true"
+                             columns="1"
+                             collapsible="false"
+                             id="ProgAssocViewNEW"
+                             rendered="{!!editSA && !showLocation && vfVarIsCB}" >
+    <hr />
+                <apex:outputText id="saProgram" value="{!theServAssign.Program__c}" />
+        <apex:outputPanel id="ProgAssocPanelView2NEW" layout="block" styleClass="col" rendered="{!!editSA && !showLocation }" >
+            <apex:pageBlockTable value="{!programRows}" var="pR" id="ProgramAssocTableNEW" rendered="{!theServAssign.Program__c=='IFCS'}">
+                <apex:column headerValue="{!IF(editSA,'Select','Selected')}">
+                    <apex:outputPanel rendered="{!(pR.paPhase<>999 && pR.paPhase==theServAssign.Phase__c)}">
+                        <input type="radio" name="phaseRadio" checked="checked" disabled="disabled" />
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!(pR.paPhase<>999 && pR.paPhase<>theServAssign.Phase__c)}">
+                        <input type="radio" name="phaseRadio" disabled="disabled" />
+                    </apex:outputPanel>
+                </apex:column>
+                <apex:column headerValue="Phase of Treatment">
+                    {!IF(pR.paPhase==999,"Total",pR.paPhase)}
+                </apex:column>
+                <apex:column headerValue="# Docs Received" value="{!pR.paNumDocsReceived}" />
+                <apex:column headerValue="# Docs Expected" value="{!pR.paNumDocsExpected}" />
+                <apex:column headerValue="% Complete" value="{!pR.paPhasePercentage}" />
+                    <apex:column headerValue="Start Date">
+                         <apex:outputField value="{!theServAssign.Phase_1_Start_Date__c}" rendered="{!pR.paPhase==1}" />
+                         <apex:outputField value="{!theServAssign.Phase_2_Start_Date__c}" rendered="{!pR.paPhase==2}" />
+                         <apex:outputField value="{!theServAssign.Phase_3_Start_Date__c}" rendered="{!pR.paPhase==3}" />
+                         <apex:outputField value="{!theServAssign.Phase_4_Start_Date__c}" rendered="{!pR.paPhase==4}" />
+                    </apex:column>
+                    <apex:column headerValue="End Date">
+                         <apex:outputField value="{!theServAssign.Phase_1_End_Date__c}" rendered="{!pR.paPhase==1}" />
+                         <apex:outputField value="{!theServAssign.Phase_2_End_Date__c}" rendered="{!pR.paPhase==2}" />
+                         <apex:outputField value="{!theServAssign.Phase_3_End_Date__c}" rendered="{!pR.paPhase==3}" />
+                         <apex:outputField value="{!theServAssign.Phase_4_End_Date__c}" rendered="{!pR.paPhase==4}" />
+                    </apex:column>
+            </apex:pageBlockTable>
+        </apex:outputPanel>
+    </apex:pageBlockSection>
+    <apex:pageBlockSection title="Program Association"
+                             showHeader="true"
+                             columns="1"
+                             collapsible="false"
+                             id="ProgAssoc"
+                             rendered="{!editSA && !showLocation && vfVarIsCB}">
+                        
+            <apex:outputPanel id="ProgAssocPanelEdit" layout="block" styleClass="col" rendered="{!editSA}" >
+                <apex:actionStatus id="myStatus">
+                        <apex:facet name="start">
+                            <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                                <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                            </div>
+                        </apex:facet>
+                        
+                        <apex:facet name="stop">
+                            
+                        </apex:facet>
+                </apex:actionStatus>
+                <apex:pageBlockTable value="{!programRows}" var="pR" id="ProgramAssocTableNEW" rendered="{!theServAssign.Program__c=='IFCS'}">
+                    <apex:column headerValue="{!IF(editSA,'Select','Selected')}">
+                        <apex:outputPanel rendered="{!(pR.paPhase<>999 && pR.paPhase==theServAssign.Phase__c)}">
+                            <input id="PhaseRadio" name="PhaseRadioEdit" type="radio" value="{!theServAssign.Phase__c}" onclick="SetHiddenPhase('{!theServAssign.Id}','{!pR.paPhase}');" checked="checked" />
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!(pR.paPhase<>999 && pR.paPhase<>theServAssign.Phase__c)}">
+                            <input id="PhaseRadio" name="PhaseRadioEdit" type="radio" value="{!theServAssign.Phase__c}" onclick="SetHiddenPhase('{!theServAssign.Id}','{!pR.paPhase}');" />
+                        </apex:outputPanel>
+                    </apex:column>
+                    <apex:column headerValue="Phase of Treatment">
+                        {!IF(pR.paPhase==999,"Total",pR.paPhase)}
+                    </apex:column>
+                    <apex:column headerValue="# Docs Received" value="{!pR.paNumDocsReceived}" />
+                    <apex:column headerValue="# Docs Expected" value="{!pR.paNumDocsExpected}" />
+                    <apex:column headerValue="% Complete" value="{!pR.paPhasePercentage}" />
+                    <apex:column headerValue="Start Date">
+                         <apex:inputField value="{!theServAssign.Phase_1_Start_Date__c}" rendered="{!pR.paPhase==1}" />
+                         <apex:inputField value="{!theServAssign.Phase_2_Start_Date__c}" rendered="{!pR.paPhase==2}" />
+                         <apex:inputField value="{!theServAssign.Phase_3_Start_Date__c}" rendered="{!pR.paPhase==3}" />
+                         <apex:inputField value="{!theServAssign.Phase_4_Start_Date__c}" rendered="{!pR.paPhase==4}" />
+                    </apex:column>
+                    <apex:column headerValue="End Date">
+                         <apex:inputField value="{!theServAssign.Phase_1_End_Date__c}" rendered="{!pR.paPhase==1}" />
+                         <apex:inputField value="{!theServAssign.Phase_2_End_Date__c}" rendered="{!pR.paPhase==2}" />
+                         <apex:inputField value="{!theServAssign.Phase_3_End_Date__c}" rendered="{!pR.paPhase==3}" />
+                         <apex:inputField value="{!theServAssign.Phase_4_End_Date__c}" rendered="{!pR.paPhase==4}" />
+                    </apex:column>
+                </apex:pageBlockTable>
+             </apex:outputPanel>
+    </apex:pageBlockSection>    
+   
 <apex:outputPanel style="display:none">
     <apex:actionregion >
 	    <apex:inputText id="currentProgramID" value="{!currentProgramID}" >
@@ -1232,7 +1319,7 @@ END: Uncomment to have the element collapsed by default -->
     <a name="ShiftSummaries" id="shiftSummaries"></a>
     	<apex:pageBlock title="Shift Summaries" rendered="{!!editSA && vfVarIsCM}" >
     		<apex:outputText value="No Records to Display" />
-    	</apex:pageBlock >
+    	</apex:pageBlock>
  <!-- End Shift Summaries -->   
 
 <!-- START: Service Assignment Closure Section; CTEAE-125 & CTEAE-126 -->
