@@ -6,11 +6,16 @@ public with sharing class shiftnote_summary_rpt {
     public datetime  endDateTime{get; set;}    
     public string HCMCfilter {get; set;}
     public List<id> selectedPBS {get; set;}
-    public transient List<account> allPBS {get; set;}
     public list<SelectOption> PBSlsit = new list<SelectOption>();
     public list<SelectOption> getPBSlsit(){ return PBSlsit ;}
     public boolean hasRunOnce {get; set;}
     public boolean showAllPbs {get; set;}
+
+	public List<id> selectedPrograms {get; set;}
+    public list<SelectOption> programslist = new list<SelectOption>();
+    public list<SelectOption> getProgramslist(){                                                 
+        return programslist ;
+    }
     
     public list<ProgressNote_ActionPlanChildren_mjo__c> note_plan_joins = new list<ProgressNote_ActionPlanChildren_mjo__c>();
     public list<ProgressNote_ActionPlanChildren_mjo__c> getNote_plan_joins(){
@@ -32,25 +37,42 @@ public with sharing class shiftnote_summary_rpt {
     public Map<string, List<ProgressNote_ActionPlanChildren_mjo__c>> getNote_Objs(){
         return Note_Objs;
     }
-    
+
     public shiftnote_summary_rpt() {
-        allPBS = new List<account>();
-        
-        for(account a : [SELECT ID, FirstName, LastName, Owner.ID, Owner.Name, PersonContactId From Account WHERE RecordTypeID=:PBS_REC_TYPE_ID Order BY LastName]){
-            PBSlsit.add(new SelectOption(a.PersonContactId, a.LastName + ', ' + a.FirstName)); 
-            allPBS.add(a);
+		List<AggregateResult> slPrgms = [SELECT service_location__r.id slID, service_location__r.program__c prgm
+										   FROM service_assignment__c 
+										  GROUP BY service_location__r.id, service_location__r.program__c 
+										 HAVING COUNT(service_location__r.id) > 0
+										  ORDER BY service_location__r.program__c];
+		for (AggregateResult slPrgm : slPrgms) {
+			programslist.add(new SelectOption((Id)slPrgm.get('slID'), String.valueOf(slPrgm.get('prgm'))));
         }
+        selectedPrograms = new List<id>();
         selectedPBS = new List<id>();
         hasRunOnce =false;
         showAllPbs = false;
+    }
+
+	public pagereference UpdateProgramSelections(){
+		List<AggregateResult> aggrePbs = [SELECT Person_Being_Served__r.id pbsID, Person_Being_Served__r.Account.Lastname pbsLastName, Person_Being_Served__r.Account.Firstname pbsFirstName 
+				  FROM progress_note__c 
+				 WHERE recordType.Name = 'Shift Note'
+				   AND Service_Assignment__r.service_location__r.id In :selectedPrograms 
+				 GROUP BY Person_Being_Served__r.id, Person_Being_Served__r.Account.Lastname, Person_Being_Served__r.Account.Firstname
+				 ORDER BY Person_Being_Served__r.Account.Lastname, Person_Being_Served__r.Account.Firstname];
+		PBSlsit.clear();
+		for (AggregateResult pbs : aggrePbs) {
+			PBSlsit.add(new SelectOption((Id) pbs.get('pbsID'), String.valueOf(pbs.get('pbsLastName')) + ', ' + String.valueOf(pbs.get('pbsFirstName'))));
+        }		
+        return null;
     }
 
     public pagereference runReport(){
        if(selectedPBS.Size()==0    ){
             ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,
                     'ERROR: Please Select at least one Person Being Served ');
-                    ApexPages.addMessage(myMsg); 
-                    notes.clear();
+                    ApexPages.addMessage(myMsg);
+                    if (notes!=null && notes.Size() > 0) notes.clear();
                     return null;
           // showAllPbs =true;
          //  selectAllPbs();
