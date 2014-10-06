@@ -5,7 +5,7 @@ public with sharing class CareMeridianEvaluationEditTest {
         insert pbr;
         Referral__c referral = new Referral__c(Person_Being_Referred__c=pbr.Id);
         insert referral;
-        Evaluation__c evaluation = new Evaluation__c(Referral__c=referral.Id,Primary_Diagnosis__c='Test');
+        Evaluation__c evaluation = new Evaluation__c(Referral__c=referral.Id,Primary_Diagnosis__c='Test',RecordTypeId=Utility.getEValuationRecordType('CareMeridian'));
         insert evaluation;
         Related_party__c rp = new Related_Party__c(
             Name='Test Party',
@@ -14,7 +14,7 @@ public with sharing class CareMeridianEvaluationEditTest {
         );
         insert rp;
         evaluation = [
-            SELECT Id, Referral__c, Referral__r.Person_Being_Referred__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Date_of_Injury_Onset__c
+            SELECT Id, Referral__c, Referral__r.Person_Being_Referred__c, RecordtypeId, Primary_Diagnosis__c, Secondary_Diagnosis__c, Date_of_Injury_Onset__c
             FROM Evaluation__c WHERE Id=:evaluation.Id
         ];
         CareMeridianEvaluationEditController controller = new CareMeridianEvaluationEditController(
@@ -23,6 +23,8 @@ public with sharing class CareMeridianEvaluationEditTest {
         System.assertNotEquals(0, controller.sliderOptions.size());
         System.assertEquals(0, controller.annotations.size());
         System.assertNotEquals(null, controller.relatedParties);
+      //  string redirectedPage = controller.reDirect().getUrl();
+        system.assertEquals(null,controller.reDirect());
         controller.showAddRelatedParty();
         System.assertEquals(null, controller.currentRelatedParty.Id);
         controller.currentRelatedPartyId = rp.Id;

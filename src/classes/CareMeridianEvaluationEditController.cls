@@ -91,17 +91,14 @@ public with sharing class CareMeridianEvaluationEditController {
     }
     
     public pageReference reDirect() {
-        
         PageReference returnURL;
+        if(this.evaluation.RecordTypeId == Utility.getEValuationRecordType('NursesAssessment')) {
+	        returnURL = new PageReference ('/apex/NursingEvaluationEdit?id='+evaluation.id);
+	      	system.debug('UUUUUUUUUUUUUURRRRRRRRRRRRRRRRRRRRLLLLLLLLLLLLLLLLLLL'+returnURL);
+	        return returnURL;
+        }
         
-        if(this.evaluation.RecordTypeId == Utility.getEValuationRecordType('NursesAssessment')) 
-        returnURL = new PageReference ('/apex/NursingEvaluationEdit?id='+evaluation.id);
-        system.debug('UUUUUUUUUUUUUURRRRRRRRRRRRRRRRRRRRLLLLLLLLLLLLLLLLLLL'+returnURL);
-        
-        return returnURL;
-        
-        
-    
+        return null;
     }
 
     @RemoteAction
