@@ -86,7 +86,7 @@ public class ServiceAssignmentExt {
         // Fidelity Document Properties / Info
     public List<ServiceAssignment_Document_JO__c> sadjos { get; set; }
     public Boolean hasFidDocs { get; set; }
-   // public List<ProgramAssociationTableWrapper> programRows { get; set; } Sravn - Commented for EC-40
+    public List<ProgramAssociationTableWrapper> programRows { get; set; }
 
         private void setcanEditSA() {
         List<UserRecordAccess> acls = [SELECT RecordId, HasEditAccess
@@ -425,7 +425,7 @@ public class ServiceAssignmentExt {
         Decimal docsRunningCount = 0;
         Decimal docsFiledRunningCount = 0;
 
-    //    programRows = new List<ProgramAssociationTableWrapper>();
+        programRows = new List<ProgramAssociationTableWrapper>();
         if(uniquePhases.size()>0) {
 
             Boolean phaseCompleted = true;
@@ -470,7 +470,7 @@ public class ServiceAssignmentExt {
                         thisPhasePercentage = 0;
                 }
 
-           //     programRows.add(new ProgramAssociationTableWrapper(p, thisPhaseDocCounter.intValue(), thisPhaseFiledDocCounter.intValue(), thisPhasePercentage));
+                	programRows.add(new ProgramAssociationTableWrapper(p, thisPhaseDocCounter.intValue(), thisPhaseFiledDocCounter.intValue(), thisPhasePercentage));
 
                 docsRunningCount += thisPhaseDocCounter.intValue();
                 docsFiledRunningCount += thisPhaseFiledDocCounter.intValue();
@@ -488,13 +488,13 @@ public class ServiceAssignmentExt {
             totalPhasePercentage = 0;
         }
 
-       // programRows.add(new ProgramAssociationTableWrapper(999,docsRunningCount.intValue(),docsFiledRunningCount.intValue(),totalPhasePercentage)); 
+        	programRows.add(new ProgramAssociationTableWrapper(999,docsRunningCount.intValue(),docsFiledRunningCount.intValue(),totalPhasePercentage)); 
     }
 // END: CONSTRUCTOR
 
 
-// START:  Program Association Table Wrapper Class. Code related to ProgramAssociationTableWrapper is commented out by Sravan for EC-40  10/01/2014 3:30 PM
-      /*  class ProgramAssociationTableWrapper {
+// START:  Program Association Table Wrapper Class.
+        class ProgramAssociationTableWrapper {
                 public String paProgramName { get; set; }
                 public String paLocation { get; set; }
                 public String paServiceLine { get; set; }
@@ -512,7 +512,7 @@ public class ServiceAssignmentExt {
                 }
 
         }
-// END:  Program Association Table Wrapper Class. */
+// END:  Program Association Table Wrapper Class.
 
 
 // START:  Method for displaying error / message text in the message take on VF page.
@@ -1218,7 +1218,7 @@ public void loadProgramList() {
 
                 //return null;
                 PageReference backToServAssignPage = new PageReference('/apex/ServiceAssignmentEditNew?id=' + theServAssign.Id);
-                        //backToServAssignPage.setRedirect(true);
+                        backToServAssignPage.setRedirect(true);
                         return backToServAssignPage;
             }
         }
