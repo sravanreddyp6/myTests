@@ -56,7 +56,27 @@
     <enableReports>true</enableReports>
     <fieldSets>
         <fullName>NursingAssessment</fullName>
-        <description>This field set is used to carryover the field values from Referral Evaluation to Admission Assessment on ServiceAssignment for CareMeridian group.</description>
+        <description>This field set is used to carryover the field values from Referral Evaluation to NursesAssessment evaluation under ServiceAssignment for CareMeridian group.</description>
+        <displayedFields>
+            <field>Advanced_Directives__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Advanced_Directives_Attached__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Code_Status__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Code_Status_Other__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
         <displayedFields>
             <field>Isolation__c</field>
             <isFieldManaged>false</isFieldManaged>
@@ -578,7 +598,7 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Return from Bedhold</fullName>
+                <fullName>Return from bedhold</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -1873,11 +1893,11 @@
         <label>Diagnostics GYN Experiences</label>
         <picklist>
             <picklistValues>
-                <fullName>Delayed Onset of Puberty</fullName>
+                <fullName>Delayed onset of puberty</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Span of Several Months without Period</fullName>
+                <fullName>Span of several months without period</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -1885,7 +1905,7 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>History of Implants</fullName>
+                <fullName>History of implants</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -3795,7 +3815,7 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Poor</fullName>
+                <fullName>poor</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -3951,7 +3971,7 @@
     <fields>
         <fullName>History_of_Falls_Last_3_Months__c</fullName>
         <externalId>false</externalId>
-        <label>History of Falls (Last 3 Months)</label>
+        <label>Describe Falls</label>
         <length>255</length>
         <required>false</required>
         <trackTrending>false</trackTrending>
@@ -5757,6 +5777,24 @@
         <label>None</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Number_falls__c</fullName>
+        <externalId>false</externalId>
+        <label>History of Falls (Last 3 Months)</label>
+        <picklist>
+            <picklistValues>
+                <fullName>1-2</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>&gt; 2</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Number_of_Children__c</fullName>
@@ -10677,7 +10715,7 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Return from Bedhold</fullName>
+                <fullName>Return from bedhold</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11115,11 +11153,11 @@
         <picklistValues>
             <picklist>Diagnostics_GYN_Experiences__c</picklist>
             <values>
-                <fullName>Delayed Onset of Puberty</fullName>
+                <fullName>Delayed onset of puberty</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>History of Implants</fullName>
+                <fullName>History of implants</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -11127,7 +11165,7 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Span of Several Months without Period</fullName>
+                <fullName>Span of several months without period</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12065,11 +12103,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Poor</fullName>
+                <fullName>Unable to Determine</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Unable to Determine</fullName>
+                <fullName>poor</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12851,6 +12889,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Number_falls__c</picklist>
+            <values>
+                <fullName>%3E 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>1-2</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -14995,7 +15044,7 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Return from Bedhold</fullName>
+                <fullName>Return from bedhold</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -15437,11 +15486,11 @@
         <picklistValues>
             <picklist>Diagnostics_GYN_Experiences__c</picklist>
             <values>
-                <fullName>Delayed Onset of Puberty</fullName>
+                <fullName>Delayed onset of puberty</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>History of Implants</fullName>
+                <fullName>History of implants</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -15449,7 +15498,7 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Span of Several Months without Period</fullName>
+                <fullName>Span of several months without period</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -16347,11 +16396,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Poor</fullName>
+                <fullName>Unable to Determine</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Unable to Determine</fullName>
+                <fullName>poor</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -17165,6 +17214,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Number_falls__c</picklist>
+            <values>
+                <fullName>%3E 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>1-2</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
