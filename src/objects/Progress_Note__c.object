@@ -16547,7 +16547,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
 ,
 (($RecordType.DeveloperName  =  &apos;NC_Child_and_Family_Team&apos; ||  $RecordType.DeveloperName  = &apos;NC_IFCS_Progress_Note&apos;  ||  $RecordType.DeveloperName = &apos;NC_IIH_Progress_Note&apos; ||  $RecordType.DeveloperName = &apos;NC_IMAPP_Progress_Note&apos; || $RecordType.DeveloperName = &apos;NC_OPT_Progress_Note&apos;) &amp;&amp; (( DATEVALUE(CreatedDate )  -    DATEVALUE(Start_Time__c ) ) &gt; 7) &amp;&amp;  Purpose_Service_is_Billable__c = true)
 )</errorConditionFormula>
-        <errorMessage>Notes created 7 days or more after the start date for NC / IFCS-NC must have the Purpose/Service is Billable checkbox unchecked.  Please uncheck the Purpose/Service is Billable checkbox and attempt the save again.</errorMessage>
+        <errorMessage>Notes created more than 7 days after the start date for NC / IFCS-NC must have the Purpose/Service is Billable checkbox unchecked. Please uncheck the Purpose/Service is Billable checkbox and attempt the save again.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Start_Time_in_future</fullName>
