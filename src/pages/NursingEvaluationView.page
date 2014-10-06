@@ -149,11 +149,6 @@ hr {
 							label="Specify Other" />
 					</apex:pageBlockSection>
 					<apex:pageBlockSection columns="1" title="Related Party">
-						<apex:actionFunction name="showAddRelatedParty"
-							action="{!showAddRelatedParty}"
-							status="loadingRelatedPartyStatus"
-							rerender="relatedPartyDialogMainBlock"
-							oncomplete="openModalDialog('{!$Component.relatedPartyDialog}', 'Add Related Party', '{!$Component.wholePage}');" />
 						<apex:actionFunction name="showEditRelatedParty"
 							action="{!showEditRelatedParty}"
 							status="loadingRelatedPartyStatus"
@@ -162,23 +157,12 @@ hr {
 							<apex:param name="currentRelatedPartyId"
 								assignTo="{!currentRelatedPartyId}" value="" />
 						</apex:actionFunction>
-						<apex:outputPanel layout="none">
-							<apex:commandButton value="Add Related Party"
-								onclick="showAddRelatedParty(); return false;" />
-							<apex:actionStatus id="loadingRelatedPartyStatus">
-								<apex:facet name="start">
-									<apex:image height="16px" value="/img/loading32.gif"
-										styleClass="dialogLoadingSpinner" />
-								</apex:facet>
-								<apex:facet name="stop" />
-							</apex:actionStatus>
-						</apex:outputPanel>
 						<apex:pageBlockTable value="{!relatedParties}" var="relatedParty"
 							id="relatedPartyTable">
 							<apex:column headerValue="{!IF(relatedParties.size>0, 'Action', '')}"
 								width="50px">
 								<apex:commandLink onclick="showEditRelatedParty('{!relatedParty.Id}'); return false;"
-									value="Edit" />
+									value="View" />
 							</apex:column>
 							<apex:column value="{!relatedParty.Type__c}" />
 							<apex:column value="{!relatedParty.Name}" />
@@ -1784,20 +1768,9 @@ hr {
 			</apex:pageBlockButtons>
 		</apex:pageBlock>
 		<apex:outputPanel id="relatedPartyDialog" style="display:none">
-			<apex:pageBlock title="Add/Edit Related Party"
+			<apex:pageBlock title="View Related Party"
 				id="relatedPartyDialogMainBlock">
 				<apex:pageBlockButtons location="bottom">
-					<apex:actionFunction name="saveRelatedParty"
-						action="{!saveRelatedParty}"
-						reRender="relatedPartyTable,relatedPartyDialogMainBlock,relatedPartyDialogErrors"
-						status="saveRelatedPartyStatus"
-						oncomplete="afterSave('{!$Component.relatedPartyDialog}', request.options.parameters.keepDialogOpen, showAddRelatedParty);">
-						<apex:param name="keepDialogOpen" value="" />
-					</apex:actionFunction>
-					<apex:commandButton value="Save"
-						onclick="saveRelatedParty(false); return false;" />
-					<apex:commandButton value="Save & New"
-						onClick="saveRelatedParty(true); return false;" />
 					<apex:commandButton value="Cancel"
 						onClick="closeModalDialog('{!$Component.relatedPartyDialog}'); return false;" />
 					<apex:actionStatus id="saveRelatedPartyStatus">
