@@ -1611,10 +1611,10 @@
         <fullName>Clients_Current_Age__c</fullName>
         <externalId>false</externalId>
         <inlineHelpText>This question is required to finalize the audit, not while status is “In Progress”.</inlineHelpText>
-        <label>Client&apos;s Current Age</label>
-        <precision>18</precision>
+        <label>Client&apos;s Age at Time of Audit</label>
+        <precision>16</precision>
         <required>false</required>
-        <scale>2</scale>
+        <scale>0</scale>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Number</type>
@@ -5238,6 +5238,13 @@ QualityExceptions_ClientFunds__c</formula>
         <errorMessage>Core Tab - there must be at least one audit section</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>Birthday_After_Today</fullName>
+        <active>true</active>
+        <errorConditionFormula>Client_DOB__c &gt; TODAY()</errorConditionFormula>
+        <errorDisplayField>Client_DOB__c</errorDisplayField>
+        <errorMessage>The Client DOB can&apos;t be in the future</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>Conditional_Q12a</fullName>
         <active>true</active>
         <errorConditionFormula>(ISPICKVAL( Q12A__c , &apos;Rep-Payee&apos;) || ISPICKVAL( Q12A__c , &apos;Assists Individual with personal funds management&apos;))
@@ -5617,6 +5624,13 @@ ISBLANK(  Reviewer_Name_1__c ) ,
 )
 )</errorConditionFormula>
         <errorMessage>Core Tab Reviewer 1 fields are incomplete</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Status_Final_DoB</fullName>
+        <active>true</active>
+        <errorConditionFormula>(Billing_Audit__c || QA_Audit__c) &amp;&amp; ISPICKVAL( Status__c, &apos;Final&apos; )</errorConditionFormula>
+        <errorDisplayField>Client_DOB__c</errorDisplayField>
+        <errorMessage>Core Tab: Client DoB is required before the audit can be saved with  &apos;final&apos; status</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Status_Final_Record_not_Locked</fullName>
