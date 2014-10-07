@@ -234,6 +234,51 @@
                 }
             }
 
+
+			// if checkbox for None is selected, disables all others in group
+			handleNone = function( ids ) {
+			
+				var theval = $('[id$=' + ids + 'none]').prop('checked');
+				var subctrl = [];
+				
+				if ( ids == 'p' || ids == 'neuropain') {
+					
+						ctrl =  $('[id$=' + ids + 'timeday]');
+						subctrl.push( ctrl);
+
+						ctrl =  $('[id$=' + ids + 'activity]');
+						subctrl.push( ctrl);
+
+						ctrl =  $('[id$=' + ids + 'position]');
+						subctrl.push( ctrl);
+				} else {
+				
+					$('input[id*=' + ids + ']').each( function(index, element) {
+						if ( element.value.indexOf('None') < 0 )  
+							subctrl.push( $(element) );
+						else
+							theval = $(element).prop('checked');
+						});
+						
+					
+				
+				}
+				var ctrl;				
+				if (theval == true ) {
+                        $.each(subctrl, function (_, ctrl) {
+                        	ctrl.prop('checked', false );
+                        	ctrl.prop('disabled', 'disabled' );
+							enableDisableField(ctrl);
+							});
+				} else {
+                        $.each(subctrl, function (_, ctrl) {
+                        	ctrl.removeAttr('disabled');
+							enableDisableField(ctrl);
+							});
+				
+				}
+			
+			}
             
             handleNutrition = function () {
                 handleFeedingChange();
@@ -246,6 +291,11 @@
             handleNeuro = function() {
                 handleMood();
                 enableFalls('{!Evaluation__c.Number_Falls__c}');
+                handleNone('p');
+                handleNone('palleve');
+                handleNone('neuropain');
+                handleNone('neuropainalleve');
+                
             }
                         
             handleWFLsChange = function () {
@@ -1924,45 +1974,41 @@
                            </apex:pageBlockSection>
                     
                                                 
-                    <apex:pageBlockSection columns="2" Title="Supervision Level" >
-                        
-                        </apex:pageBlockSection>
-                        <apex:pageBlockSection columns="1" collapsible="false">
-                            
-                    </apex:pageBlockSection>
-
-                    <apex:pageBlockSection columns="2" >
+					<apex:pageBlockSection columns="2" title="Pain">
                         <apex:inputTextArea value="{!Evaluation__c.Pain_History__c}" label="Pain History" cols="80" />
-                        <apex:outputText value="Aggravating Factors" styleClass="labelCol" style="margin-left: 3cm;"/>
                         <apex:inputField value="{!Evaluation__c.Pain_Level_Requiring_Intervention__c}" />
-                        <apex:inputField value="{!Evaluation__c.Activity__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.activityDescribe}&quot;]}"/>
-                        <apex:pageblockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.Activity_Describe__c}" label="Describe" id="activityDescribe" />
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.Position__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.positionDescribe}&quot;]}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.Position_Describe__c}" label="Describe" id="positionDescribe"/>
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.Time_of_Day__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.timedayDescribe}&quot;]}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.Time_of_Day_Describe__c}" label="Describe" id="timedayDescribe" />
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.None__c}" />
+                        
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Aggravating Factors" />
+                        <apex:outputPanel >
+                        
+                        <apex:inputField value="{!Evaluation__c.Activity__c}" id="pactivity" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.activityDescribe}&quot;]}"/><apex:outputLabel value="Activity" />
+                        &nbsp;<apex:inputField value="{!Evaluation__c.Activity_Describe__c}" label="Describe" id="activityDescribe" />
+                        <Br />
+                        <apex:inputField value="{!Evaluation__c.Position__c}" id="pposition" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.positionDescribe}&quot;]}" /><apex:outputLabel value="Position" />
+                        &nbsp;<apex:inputField value="{!Evaluation__c.Position_Describe__c}" label="Describe" id="positionDescribe"/>
+                        <Br />
+                        <apex:inputField value="{!Evaluation__c.Time_of_Day__c}" id="ptimeday" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.timedayDescribe}&quot;]}" /><apex:outputLabel value="Time of Day" />
+                        &nbsp;<apex:inputField value="{!Evaluation__c.Time_of_Day_Describe__c}" label="Describe" id="timedayDescribe" />
+                        <Br /><apex:inputField value="{!Evaluation__c.None__c}" id="pnone" onchange="handleNone('p');"/><apex:outputLabel value="None" />
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        
                         <apex:pageBlocksectionItem >
-                            <apex:outputText value="Alleviating Factors" styleClass="labelCol" />
-                            <apex:selectCheckboxes value="{!selectedAlleviators}" layout="pageDirection">
+                            <apex:outputLabel value="Alleviating Factors" />
+                            <apex:selectCheckboxes value="{!selectedAlleviators}" id="palleve" onchange="handleNone('palleve');" >
                                 <apex:selectoptions value="{!alleviatorValues}" />
                             </apex:selectCheckboxes>
                         </apex:pageBlocksectionItem>
                         <apex:pageBlocksectionItem >
-                            <apex:outputText value="Negative Impact on ADLs" styleClass="labelCol" />
-                            <apex:selectCheckboxes value="{!selectedAdls}" layout="pageDirection" >
+                            <apex:outputLabel value="Negative Impact on ADLs" />
+                            <apex:selectCheckboxes value="{!selectedAdls}" >
                                 <apex:selectoptions value="{!adlValues}" />
                             </apex:selectCheckboxes>
                         </apex:pageBlocksectionItem>
                         <apex:pageBlocksectionItem >
-                            <apex:outputText value="Manner of Expressing Pain" styleClass="labelCol" />
-                            <apex:selectCheckboxes value="{!selectedExpressions}" layout="pageDirection" >
+                            <apex:outputLabel value="Manner of Expressing Pain" />
+                            <apex:selectCheckboxes value="{!selectedExpressions}" >
                                 <apex:selectoptions value="{!expressionValues}" />
                             </apex:selectCheckboxes>
                         </apex:pageBlocksectionItem>
@@ -2025,8 +2071,8 @@
                      </script>   
                    <apex:outputPanel id="painSection" layout="block" >  
                     <apex:pageblockSection columns="2" >
-                    <hr />
-                            <h2 style="display: block; margin: 10px;">Body Map</h2>
+                        <h2 style="display: block; margin: 10px;">Body Map</h2>
+                        
                         <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
                             <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!baseUrl + URLFOR($Resource.NeurotabBodyNoGrid)}" id="neurobodyMap" />
                         </div>
@@ -2036,65 +2082,77 @@
                                 </tbody>
                             </table>
                         </div>
+                        
                         <apex:pageBlockSectionItem />
-                        <apex:inputTextArea value="{!Evaluation__c.Neuro_Other_Body_Map_Comments__c}" cols="80" label="Other Body Map Comments" rows="7"/>
+                        
+                        <apex:inputTextArea value="{!Evaluation__c.Neuro_Other_Body_Map_Comments__c}" cols="80" label="Pain Body Map Comments" rows="7"/>
                         <apex:pageBlockSectionItem />
+                        
                         <apex:pageBlockSectionItem >
-                            <apex:outputText value="Specify Pain Level" styleClass="labelCol" />
-                            <apex:image url="{!URLFOR($Resource.Wongbakerfaces)}"  width="85%" height="110" style="margin-left: 0.75cm;"/>
+                            <apex:outputText value="Specify Pain Level" />
+                            <apex:image url="{!URLFOR($Resource.Wongbakerfaces)}" />
                         </apex:pageBlockSectionItem>
                         <apex:inputhidden value="{!Evaluation__c.Neuro_Pain_Level__c}" id="neuropainLevel" />
+                        
                         <apex:pageBlockSectionItem >
                                 <apex:outputText value="Pain Level" />
                                 <c:Slider onChange="handleSliderChange('{!$Component.neuropainLevel}')" options="{!painsliderOptions}" initial="{!Evaluation__c.Neuro_Pain_Level__c}"  />
                         </apex:pageBlockSectionItem>
-                        <apex:pageBlockSectionItem />
-                        <apex:outputText value="Pain Details" styleClass="labelCol" style="margin-left: 3cm;" />
-                        <apex:outputText value="Aggravating Factors" styleClass="labelCol" style="margin-left: 3cm;" />
                         <apex:inputField value="{!Evaluation__c.Neuro_Pain_Severity__c}" label="Severity" />
-                        <apex:inputField value="{!Evaluation__c.Neuro_Pain_Activity__c}" label="Activity" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.neuropainDescribe}&quot;]}"/>
+                        
                         <apex:pageBlocksectionItem >
-                            <apex:selectCheckboxes value="{!selectedPaintypes}" style="margin-left: 4cm;">
+                        <apex:outputLabel value="Pain Types" />
+                            <apex:selectCheckboxes value="{!selectedPaintypes}" >
                                 <apex:selectOptions value="{!paintypeValues}" />
                             </apex:selectCheckboxes>
                         </apex:pageBlocksectionItem>
-                        <apex:inputField value="{!Evaluation__c.Neuro_pain_Activity_Describe__c}" label="Describe" id="neuropainDescribe" />
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.Neuro_Pain_Position__c}" label="Position" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.neuropainpositionDescibe}&quot;]}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.Neuro_Pain_Position_Describe__c}" label="Describe" id="neuropainpositionDescibe"  />
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.Neuro_Pain_Time_of_Day__c}" label="Time of Day"  html-data-rules="{&quot;1&quot;: [&quot;{!$Component.neuropaindayDescribe}&quot;]}"  />
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.Neuro_pain_time_of_day_Describe__c}" label="Describe" id="neuropaindayDescribe"  />
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.Neuro_Pain_None__c}" label="None" />
-                        <apex:pageBlocksectionItem >
-                            <apex:outputText value="Pain Descriptors" styleClass="labelCol" />
-                            <apex:selectCheckboxes value="{!selectedpainDescriptors}" layout="pageDirection">
+                        
+                        <apex:pageBlockSectionItem>
+                        <apex:outputLabel value="Pain Descriptors" />
+                            <apex:selectCheckboxes value="{!selectedpainDescriptors}" >
                                 <apex:selectoptions value="{!paindescriptorValues}" />
                             </apex:selectCheckboxes>
-                        </apex:pageBlocksectionItem>
+                        </apex:pageBlockSectionItem>
+                        
+                        <apex:pageBlockSectionItem>
+                        <apex:outputLabel value="Aggravating Factors" />
+                        <apex:outputPanel>
+                        <apex:inputField value="{!Evaluation__c.Neuro_Pain_Activity__c}" id="neuropainactivity" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.neuropainactivityDescribe}&quot;]}"/><apex:outputLabel value="Activity" />
+                        &nbsp;<apex:inputField value="{!Evaluation__c.Neuro_Pain_Activity_Describe__c}" label="Describe" id="neuropainactivityDescribe" />
+                        <Br />
+                        <apex:inputField value="{!Evaluation__c.Neuro_Pain_Position__c}" id="neuropainposition" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.neuropainpositionDescribe}&quot;]}" /><apex:outputLabel value="Position" />
+                        &nbsp;<apex:inputField value="{!Evaluation__c.Neuro_Pain_Position_Describe__c}" label="Describe" id="neuropainpositionDescribe"/>
+                        <Br />
+                        <apex:inputField value="{!Evaluation__c.Neuro_Pain_Time_of_Day__c}" id="neuropaintimeday" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.neuropaintimedayDescribe}&quot;]}" /><apex:outputLabel value="Time of Day" />
+                        &nbsp;<apex:inputField value="{!Evaluation__c.Neuro_Pain_Time_of_Day_Describe__c}" label="Describe" id="neuropaintimedayDescribe" />
+                        <Br /><apex:inputField value="{!Evaluation__c.Neuro_Pain_None__c}" id="neuropainnone" onchange="handleNone('neuropain');"/><apex:outputLabel value="None" />
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        
                         <apex:pageBlocksectionItem >
-                            <apex:outputText value="Alleviating Factors" styleClass="labelCol" />
-                            <apex:selectCheckboxes value="{!selectedpainAlleviators}" layout="pageDirection">
+                            <apex:outputLabel value="Alleviating Factors" />
+                            <apex:selectCheckboxes value="{!selectedPainAlleviators}" id="neuropainalleve" onchange="handleNone('neuropainalleve');">
                                 <apex:selectoptions value="{!painalleviatorValues}" />
                             </apex:selectCheckboxes>
                         </apex:pageBlocksectionItem>
+                        
                         <apex:pageBlocksectionItem >
-                            <apex:outputText value="Negative Impact on ADLs" styleClass="labelCol" />
-                            <apex:selectCheckboxes value="{!selectedpainAdls}" layout="pageDirection" >
+                            <apex:outputLabel value="Negative Impact on ADLs" />
+                            <apex:selectCheckboxes value="{!selectedpainAdls}" >
                                 <apex:selectoptions value="{!painadlValues}" />
                             </apex:selectCheckboxes>
                         </apex:pageBlocksectionItem>
+                        
                         <apex:pageBlocksectionItem >
-                            <apex:outputText value="Manner of Expressing Pain" styleClass="labelCol" />
-                            <apex:selectCheckboxes value="{!selectedpainExpressions}" layout="pageDirection" >
+                            <apex:outputLabel value="Manner of Expressing Pain" />
+                            <apex:selectCheckboxes value="{!selectedpainExpressions}" >
                                 <apex:selectoptions value="{!painexpressionValues}" />
                             </apex:selectCheckboxes>
-                        </apex:pageBlocksectionItem>            
+                        </apex:pageBlocksectionItem>
                     </apex:pageblockSection>
                    </apex:outputPanel>
+                      
+                        
                    <hr />
                    <apex:pageBlockSection columns="1" >
                     <apex:inputTextArea value="{!Evaluation__c.Neuro_Comments__c}" cols="80" />
