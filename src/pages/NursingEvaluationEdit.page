@@ -2778,15 +2778,18 @@
                    <apex:actionFunction name="saveRelatedParty" action="{!saveRelatedParty}" rerender="relatedPartyTable,relatedPartyDialogMainBlock,relatedPartyDialogErrors" status="saveRelatedPartyStatus" oncomplete="afterSave('{!$Component.relatedPartyDialog}', request.options.parameters.keepDialogOpen, showAddRelatedParty);">
                         <apex:param name="keepDialogOpen" value="" />
                     </apex:actionFunction>
-                    <apex:commandButton value="Save" onClick="saveRelatedParty(false); return false;" />
-                    <apex:commandButton value="Save & New" onClick="saveRelatedParty(true); return false;" />
-                    <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.relatedPartyDialog}'); return false;" />
-                    <apex:actionStatus id="saveRelatedPartyStatus">
+					<apex:actionStatus id="saveRelatedPartyStatus">
+						<apex:facet name="stop">
+							<apex:outputPanel id="relPartyButtons">
+			                    <apex:commandButton value="Save" onClick="saveRelatedParty(false); return false;" />
+			                    <apex:commandButton value="Save & New" onClick="saveRelatedParty(true); return false;" />
+			                    <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.relatedPartyDialog}'); return false;" />
+							</apex:outputPanel>
+						</apex:facet>
                         <apex:facet name="start">
                             <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
                         </apex:facet>
-                        <apex:facet name="stop" />
-                    </apex:actionStatus>
+                    </apex:actionStatus>                    
                 </apex:pageblockButtons>
                 <apex:pageMessages id="relatedPartyDialogErrors" />
                 <apex:pageBlockSection columns="2">
