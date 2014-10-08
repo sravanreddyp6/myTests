@@ -324,85 +324,127 @@ private class TMN_ContactHandlerTEST {
 			Name='Birth Certificate', 
 			Required_for_Mentor__c=true, 
 			Required_for_Co_Applicant__c=true, 
-			Required_for_Foster_Parent_Child__c=true
+			Required_for_Foster_Parent_Child__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 1
 		);
 		testCredentialProfiles.add(birthCert);
 
 		Credential_Profile__c socialSecurity = new Credential_Profile__c(					
 			Name='Social Security (Copy of Card - only if over 18)', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 2
 		);
 		testCredentialProfiles.add(socialSecurity);		
 
 		Credential_Profile__c maritalStatusDoc = new Credential_Profile__c(					
 			Name='Marital Status Documentation', 
-			Required_for_Mentor__c=true 
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 3 
 		);
 		testCredentialProfiles.add(maritalStatusDoc);		
 
 		Credential_Profile__c faceSheet = new Credential_Profile__c(					
 			Name='Face Sheet', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 4
 		);
 		testCredentialProfiles.add(faceSheet);		
 
 		Credential_Profile__c certAnnualReLicensure = new Credential_Profile__c(					
 			Name='Certificate of Annual Re-Licensure', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 5
 		);
 		testCredentialProfiles.add(certAnnualReLicensure);		
 
 		Credential_Profile__c annualReview = new Credential_Profile__c(					
 			Name='Annual Review Completed', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 6
 		);
 		testCredentialProfiles.add(annualReview);		
 
 		Credential_Profile__c appAndConsent = new Credential_Profile__c(					
 			Name='Application & Consent', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 7
 		);
 		testCredentialProfiles.add(appAndConsent);		
 
 		Credential_Profile__c signedApp = new Credential_Profile__c(					
 			Name='Signed Application', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 8
 		);
 		testCredentialProfiles.add(signedApp);		
 
 		Credential_Profile__c driversLicense = new Credential_Profile__c(					
 			Name='Drivers License', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 9
 		);
 		testCredentialProfiles.add(driversLicense);		
 
 		Credential_Profile__c mvaDrivingRecord = new Credential_Profile__c(					
 			Name='MVA Driving Record', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 10
 		);
 		testCredentialProfiles.add(mvaDrivingRecord);		
 
 		Credential_Profile__c vehicleInsurance = new Credential_Profile__c(					
 			Name='Vehicle Insurance', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 11
 		);
 		testCredentialProfiles.add(vehicleInsurance);		
 
 		Credential_Profile__c vehicleRegistration = new Credential_Profile__c(					
 			Name='Vehicle Registration', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 12
 		);
 		testCredentialProfiles.add(vehicleRegistration);
 
 		Credential_Profile__c homeRentersInsurance = new Credential_Profile__c(					
 			Name='Home/Renters Insurance', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 13
 		);
 		testCredentialProfiles.add(homeRentersInsurance);		
 
 		Credential_Profile__c financialVerification = new Credential_Profile__c(					
 			Name='Financial Verification', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 14
 		);
 		testCredentialProfiles.add(financialVerification);		
 
@@ -421,7 +463,10 @@ private class TMN_ContactHandlerTEST {
         	Applies_CPS_Full_Disclosure__c = true,
         	Applies_Documented_Date__c = true,
         	Applies_Outcome_of_Clearance__c = true,
-        	DHR_Scope__c = 'Self Adult, Mentor Minors'
+        	DHR_Scope__c = 'Self Adult, Mentor Minors',
+        	Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 15
 		);
 		testCredentialProfiles.add(cpsClearance);				
 
@@ -438,7 +483,10 @@ private class TMN_ContactHandlerTEST {
         	Applies_Note__c = true,
         	Applies_Documented_Date__c = true,
         	Applies_Outcome_of_Clearance__c = true,
-        	DHR_Scope__c = 'Self Adult, Mentor Minors'
+        	DHR_Scope__c = 'Self Adult, Mentor Minors',
+        	Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 16
 		);
 		testCredentialProfiles.add(cpsFullDisclosure);
 
@@ -458,7 +506,10 @@ private class TMN_ContactHandlerTEST {
         	Applies_Type_of_Conviction_State__c = true,
         	Applies_State_Conviction__c = true,
         	Applies_Documented_Date__c = true,
-        	DHR_Scope__c = 'Self Adult, Mentor Minors'
+        	DHR_Scope__c = 'Self Adult, Mentor Minors',
+        	Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 17
 		);
 		testCredentialProfiles.add(stateCriminalHistory);
 
@@ -479,7 +530,10 @@ private class TMN_ContactHandlerTEST {
         	Applies_Federal_Conviction__c = true,
         	Applies_FBI_Full_Disclosure__c = true,
         	Applies_Documented_Date__c = true,
-        	DHR_Scope__c = 'Self Adult, Mentor Minors'
+        	DHR_Scope__c = 'Self Adult, Mentor Minors',
+        	Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 18
 		);
 		testCredentialProfiles.add(fbiCriminalHistory);
 
@@ -498,91 +552,136 @@ private class TMN_ContactHandlerTEST {
         	Applies_Type_of_Conviction_Federal__c = true,
         	Applies_Federal_Conviction__c = true,
         	Applies_Documented_Date__c = true,
-        	DHR_Scope__c = 'Self Adult, Mentor Minors'
+        	DHR_Scope__c = 'Self Adult, Mentor Minors',
+        	Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 19
 		);
 		testCredentialProfiles.add(fbiFullDisclosure);
 		
 		Credential_Profile__c historyOfPlacement = new Credential_Profile__c(					
 			Name='History of Placement', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 20
 		);
 		testCredentialProfiles.add(historyOfPlacement);		
 
 		Credential_Profile__c stateJudiciaryCaseSearch = new Credential_Profile__c(					
 			Name='State Judiciary Case Search', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 21
 		);
 		testCredentialProfiles.add(stateJudiciaryCaseSearch);
 
 		Credential_Profile__c sexOffenderRegistryCheck = new Credential_Profile__c(					
 			Name='Sex Offender Registry Check', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 22
 		);
 		testCredentialProfiles.add(sexOffenderRegistryCheck);
 
 		Credential_Profile__c schoolReference = new Credential_Profile__c(					
 			Name='School Reference', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 23
 		);
 		testCredentialProfiles.add(schoolReference);
 		
 		Credential_Profile__c individualReference = new Credential_Profile__c(					
 			Name='Individual Reference', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 24
 		);
 		testCredentialProfiles.add(individualReference);		
 
 		Credential_Profile__c agencyReference = new Credential_Profile__c(					
 			Name='Agency Reference', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 25
 		);
 		testCredentialProfiles.add(agencyReference);
 
 		Credential_Profile__c jointReference = new Credential_Profile__c(					
 			Name='Joint Reference', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 26
 		);
 		testCredentialProfiles.add(jointReference);
 
 		Credential_Profile__c childSupport = new Credential_Profile__c(					
 			Name='Child Support', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 27
 		);
 		testCredentialProfiles.add(childSupport);
 
 		Credential_Profile__c oigCheck = new Credential_Profile__c(					
 			Name='OIG (Office of Inspector General) Check', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 28
 		);
 		testCredentialProfiles.add(oigCheck);
 
 		Credential_Profile__c generalMentorProviderAgreement = new Credential_Profile__c(					
 			Name='General Mentor Provider Agreement', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 29
 		);
 		testCredentialProfiles.add(generalMentorProviderAgreement);
 
 		Credential_Profile__c ackFormProvManualIc = new Credential_Profile__c(					
 			Name='Acknowledgement Form-Provider Manual for IC', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 30
 		);
 		testCredentialProfiles.add(ackFormProvManualIc);
 
 		Credential_Profile__c cocAck = new Credential_Profile__c(					
 			Name='Code of Conduct Acknowledgement', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 31
 		);
 		testCredentialProfiles.add(cocAck);
 
 		Credential_Profile__c individualServiceAgreement = new Credential_Profile__c(					
 			Name='Individual Service Agreement', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 32
 		);
 		testCredentialProfiles.add(individualServiceAgreement);
 
 		Credential_Profile__c safeNarrative = new Credential_Profile__c(					
 			Name='SAFE Narrative', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 33
 		);
 		testCredentialProfiles.add(safeNarrative);
 
@@ -594,7 +693,10 @@ private class TMN_ContactHandlerTEST {
         	Applies_Received_Date__c = true,
         	Applies_Note__c = true,
         	Applies_Documented_Date__c = true,
-        	DHR_Scope__c = 'Household'
+        	DHR_Scope__c = 'Household',
+        	Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 34
 		);
 		testCredentialProfiles.add(healthInspection);
 
@@ -606,25 +708,37 @@ private class TMN_ContactHandlerTEST {
         	Applies_Received_Date__c = true,
         	Applies_Note__c = true,
         	Applies_Documented_Date__c = true,
-        	DHR_Scope__c = 'Household'
+        	DHR_Scope__c = 'Household',
+        	Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 35
 		);
 		testCredentialProfiles.add(healthInspectionMove);
 
 		Credential_Profile__c fireInspection = new Credential_Profile__c(					
 			Name='Fire Inspection', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 36
 		);
 		testCredentialProfiles.add(fireInspection);
 
 		Credential_Profile__c fireInspectionMove = new Credential_Profile__c(					
 			Name='Fire Inspection-Due to Move', 
-			Optional_for_Mentor__c=true
+			Optional_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 37
 		);
 		testCredentialProfiles.add(fireInspectionMove);
 
 		Credential_Profile__c petImmunization = new Credential_Profile__c(					
 			Name='Pet\'s Immunization', 
-			Required_for_Pet__c=true
+			Required_for_Pet__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 38
 		);
 		testCredentialProfiles.add(petImmunization);
 
@@ -641,211 +755,316 @@ private class TMN_ContactHandlerTEST {
         	Applies_Received_Date__c = true,
         	Applies_Note__c = true,
         	Applies_Documented_Date__c = true,
-        	DHR_Scope__c = 'Self'
+        	DHR_Scope__c = 'Self',
+        	Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 39
 		);
 		testCredentialProfiles.add(medicalExam);
 
 		Credential_Profile__c tbTest = new Credential_Profile__c(					
 			Name='TB Test', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 40
 		);
 		testCredentialProfiles.add(tbTest);
 
 		Credential_Profile__c trainingHours = new Credential_Profile__c(					
 			Name='Training Hours', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 41
 		);
 		testCredentialProfiles.add(trainingHours);
 
 		Credential_Profile__c preServiceCert = new Credential_Profile__c(					
 			Name='Pre-Service Certification', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 42
 		);
 		testCredentialProfiles.add(preServiceCert);
 
 		Credential_Profile__c cpr = new Credential_Profile__c(					
 			Name='CPR', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 43
 		);
 		testCredentialProfiles.add(cpr);
 
 		Credential_Profile__c firstAid = new Credential_Profile__c(					
 			Name='First Aid', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 44
 		);
 		testCredentialProfiles.add(firstAid);
 
 		Credential_Profile__c unannouncedHomeVisit = new Credential_Profile__c(					
 			Name='Unannounced Home Visit', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 45
 		);
 		testCredentialProfiles.add(unannouncedHomeVisit);
 
 		Credential_Profile__c has = new Credential_Profile__c(					
 			Name='HAS (Health and Safety Assessment)', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 46
 		);
 		testCredentialProfiles.add(has);
 
 		Credential_Profile__c unannouncedHas = new Credential_Profile__c(					
 			Name='Unannounced Health and Safety Assessment', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 47
 		);
 		testCredentialProfiles.add(unannouncedHas);
 
 		Credential_Profile__c homeEvaluationInitial = new Credential_Profile__c(					
 			Name='Home Evaluation-Initial', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 48
 		);
 		testCredentialProfiles.add(homeEvaluationInitial);
 
 		Credential_Profile__c homeEvaluationAnnual = new Credential_Profile__c(					
 			Name='Home Evaluation-Annual', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 49
 		);
 		testCredentialProfiles.add(homeEvaluationAnnual);
 		
 		Credential_Profile__c homeEvaluationMove = new Credential_Profile__c(					
 			Name='Home Evaluation (MENTOR FORM NPA)-Due to Move', 
-			Optional_for_Mentor__c=true
+			Optional_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 50
 		);
 		testCredentialProfiles.add(homeEvaluationMove);		
 
 		Credential_Profile__c safeEvaluationUpdate = new Credential_Profile__c(					
 			Name='SAFE Evaluation Update', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 51
 		);
 		testCredentialProfiles.add(safeEvaluationUpdate);
 
 		Credential_Profile__c safeEvaluationUpdateMove = new Credential_Profile__c(					
 			Name='SAFE Evaluation Update-Due to Move', 
-			Optional_for_Mentor__c=true
+			Optional_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 52
 		);
 		testCredentialProfiles.add(safeEvaluationUpdateMove);
 
 		Credential_Profile__c physEnvCheckInitial = new Credential_Profile__c(					
 			Name='Physical Environment Checklist-Initial', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 53
 		);
 		testCredentialProfiles.add(physEnvCheckInitial);
 
 		Credential_Profile__c physEnvCheckAnnual = new Credential_Profile__c(					
 			Name='Physical Environment Checklist-Annual', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 54
 		);
 		testCredentialProfiles.add(physEnvCheckAnnual);
 
 		Credential_Profile__c physEnvCheckMove = new Credential_Profile__c(					
 			Name='Physical Environment Checklist-Due to Move', 
-			Optional_for_Mentor__c=true
+			Optional_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 55
 		);
 		testCredentialProfiles.add(physEnvCheckMove);
 
 		Credential_Profile__c contractualComplianceFormInitial = new Credential_Profile__c(					
 			Name='Contractual Compliance Form-Initial', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 56
 		);
 		testCredentialProfiles.add(contractualComplianceFormInitial);
 
 		Credential_Profile__c contractualComplianceFormAnnual = new Credential_Profile__c(					
 			Name='Contractual Compliance Form-Annual', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 57
 		);
 		testCredentialProfiles.add(contractualComplianceFormAnnual);
 
 		Credential_Profile__c fireSafetyInformationFormInitial = new Credential_Profile__c(					
 			Name='Fire Safety Information Form-Initial', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 58
 		);
 		testCredentialProfiles.add(fireSafetyInformationFormInitial);
 
 		Credential_Profile__c fireSafetyInformationFormAnnual = new Credential_Profile__c(					
 			Name='Fire Safety Information Form-Annual', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 59
 		);
 		testCredentialProfiles.add(fireSafetyInformationFormAnnual);
 
 		Credential_Profile__c fireSafetyInformationFormMove = new Credential_Profile__c(					
 			Name='Fire Safety Information Form-Due to Move', 
-			Optional_for_Mentor__c=true
+			Optional_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 60
 		);
 		testCredentialProfiles.add(fireSafetyInformationFormMove);
 
 		Credential_Profile__c firePrevCheckInitial = new Credential_Profile__c(					
 			Name='Fire Prevention Checklist-Initial', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 61
 		);
 		testCredentialProfiles.add(firePrevCheckInitial);
 
 		Credential_Profile__c firePrevCheckAnnual = new Credential_Profile__c(					
 			Name='Fire Prevention Checklist-Annual', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 62
 		);
 		testCredentialProfiles.add(firePrevCheckAnnual);
 
 		Credential_Profile__c firePrevCheckMove = new Credential_Profile__c(					
 			Name='Fire Prevention Checklist-Due to Move', 
-			Optional_for_Mentor__c=true
+			Optional_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 63
 		);
 		testCredentialProfiles.add(firePrevCheckMove);
 
 		Credential_Profile__c fireEscPlanInitial = new Credential_Profile__c(					
 			Name='Fire Escape Plan-Initial', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 64
 		);
 		testCredentialProfiles.add(fireEscPlanInitial);
 
 		Credential_Profile__c fireEscPlanAnnual = new Credential_Profile__c(					
 			Name='Fire Escape Plan-Annual', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 65
 		);
 		testCredentialProfiles.add(fireEscPlanAnnual);
 
 		Credential_Profile__c fireEscPlanMove = new Credential_Profile__c(					
 			Name='Fire Escape Plan-Due to Move', 
-			Optional_for_Mentor__c=true
+			Optional_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 66
 		);
 		testCredentialProfiles.add(fireEscPlanMove);
 
 		Credential_Profile__c waterSafety = new Credential_Profile__c(					
 			Name='Water Safety Assessment', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 67
 		);
 		testCredentialProfiles.add(waterSafety);
 
 		Credential_Profile__c waterSafetyMove = new Credential_Profile__c(					
 			Name='Water Safety Assessment-Due to Move', 
-			Optional_for_Mentor__c=true
+			Optional_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 68
 		);
 		testCredentialProfiles.add(waterSafetyMove);
 
 		Credential_Profile__c animalSafety = new Credential_Profile__c(					
 			Name='Animal Safety Assessment', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 69
 		);
 		testCredentialProfiles.add(animalSafety);
 
 		Credential_Profile__c animalSafetyMove = new Credential_Profile__c(					
 			Name='Animal Safety Assessment-Due to Move', 
-			Optional_for_Mentor__c=true
+			Optional_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 70
 		);
 		testCredentialProfiles.add(animalSafetyMove);
 
 		Credential_Profile__c fireDrill = new Credential_Profile__c(					
 			Name='Fire Drill', 
-			Required_for_Mentor__c=true
+			Required_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 71
 		);
 		testCredentialProfiles.add(fireDrill);
 
 		Credential_Profile__c fireDrillMove = new Credential_Profile__c(					
 			Name='Fire Drill-Due to Move', 
-			Optional_for_Mentor__c=true
+			Optional_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 72
 		);
 		testCredentialProfiles.add(fireDrillMove);
 
 		Credential_Profile__c ssaTfcExceptionPacket = new Credential_Profile__c(					
 			Name='SSA TFC Exception Packet', 
-			Optional_for_Mentor__c=true
+			Optional_for_Mentor__c=true,
+			Section__c = 'Test',
+        	Section_Order__c = 1,
+        	Order__c = 73
 		);
 		testCredentialProfiles.add(ssaTfcExceptionPacket);
 
