@@ -31,10 +31,10 @@ public with sharing class ActionSummaryCreateForm extends ActionSummaryBase {
         String name = String.format('{0} - {1}'
                         , new List<String>{
                             sa.Person_being_served__r.name
-                            , Datetime.newInstance(actionSummary.Start_date__c, Time.newInstance(0,0,0,0)).format('MMMYYYY')
+                            , Datetime.newInstance(actionSummary.Start_date__c, Time.newInstance(0,0,0,0)).format('MMMyyyy')
                             });
         if (actionSummary.Start_Date__c.AddMonths(1) < actionSummary.End_Date__c){
-            name = name + ' - ' + Datetime.newInstance(actionSummary.End_date__c - 1, Time.newInstance(0,0,0,0)).format('MMMYYYY');
+            name = name + ' - ' + Datetime.newInstance(actionSummary.End_date__c - 1, Time.newInstance(0,0,0,0)).format('MMMyyyy'); //Changing the format from YYYY to yyyy as Capital Y represents Week year and we need actual Year Sravan 10/08/2014 11:30 AM
         }
         return name;
     }
