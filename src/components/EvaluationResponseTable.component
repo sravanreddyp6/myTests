@@ -1,6 +1,8 @@
 <apex:component controller="EvaluationResponseTableController" allowDML="true">
     <apex:attribute name="parentId" description="Id of the parent Evaluation record"
-        type="Id" required="true" assignTo="{!evaluationId}" />
+        type="Id" assignTo="{!evaluationId}" />
+    <apex:attribute name="pbsParentId" description="Id of the parent PBS record"
+        type="Id" assignTo="{!pbsId}" />
     <apex:attribute name="type" description="The type of this table"
         type="String" required="true" assignTo="{!responseType}" />
     <apex:attribute name="editEnabled" description="Whether Edit functionality is enabled"
@@ -37,15 +39,21 @@
                 <apex:facet name="stop" />
             </apex:actionStatus>
         </apex:outputPanel>
-        <apex:pageBlockTable value="{!responses}" var="response" id="responseTable">
-            <apex:column headerValue="{!IF(AND(responses.size>0,isPdf != true), 'Action', '')}" width="50px" rendered="{!editEnabled}">
-                <apex:commandLink onclick="{!onEdit}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit != null) && !isPdf}" />
-                <apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit == null) && !isPdf}" />
-            </apex:column>
-            <apex:repeat value="{!columnsToFetch}" var="column">
-                <apex:column value="{!response[column]}" />
-            </apex:repeat>
-        </apex:pageBlockTable>
+        <apex:outputPanel rendered="{!numberOfResponses > 0}">
+            <apex:pageBlockTable value="{!responses}" var="response" id="responseTable">
+                <apex:column headerValue="{!IF(AND(responses.size>0,isPdf != true), 'Action', '')}" width="50px" rendered="{!editEnabled}">
+                    <apex:commandLink onclick="{!onEdit}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit != null) && !isPdf}" />
+                    <apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit == null) && !isPdf}" />
+                </apex:column>
+                <apex:repeat value="{!columnsToFetch}" var="column">
+                    <apex:column value="{!response[column]}">
+                        <!-- Normally these header facets are not necessary (as they should be display based on the column values, but for some reason
+                        in the PBS page they come up empty, so we must manually show them. -->
+                        <apex:facet name="header">{!columnsToHeadersMap[column]}</apex:facet>
+                    </apex:column>
+                </apex:repeat>
+            </apex:pageBlockTable>
+        </apex:outputPanel>
 
         <!-- Dialog Modal -->
         <apex:outputPanel id="responseDialog" style="display: none;" rendered="{!!isPdf}">
