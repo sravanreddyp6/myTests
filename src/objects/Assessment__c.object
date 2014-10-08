@@ -737,7 +737,7 @@ Delete Me</description>
     </validationRules>
     <validationRules>
         <fullName>CANS_SerivceLine_Req</fullName>
-        <active>true</active>
+        <active>false</active>
         <errorConditionFormula>Assessment_Type__r.Name == &apos;CANS&apos; &amp;&amp; ISPICKVAL(Service_Line__c, &apos;&apos;)</errorConditionFormula>
         <errorDisplayField>Service_Line__c</errorDisplayField>
         <errorMessage>A value must be selected for Service Line when completing a CANS assessment.</errorMessage>
@@ -752,7 +752,7 @@ Delete Me</description>
     <validationRules>
         <fullName>Locked</fullName>
         <active>true</active>
-        <errorConditionFormula>Locked__c &amp;&amp; IF(PRIORVALUE(Locked__c),true,false)</errorConditionFormula>
+        <errorConditionFormula>Locked__c &amp;&amp; IF(PRIORVALUE(Locked__c),true,false) &amp;&amp;  !ISCHANGED( OwnerId )</errorConditionFormula>
         <errorMessage>Locked Assessments Can Not be Updated</errorMessage>
     </validationRules>
     <validationRules>
