@@ -1811,7 +1811,7 @@
                         <br />
                         <apex:inputField value="{!Evaluation__c.Hearing_Aid_Left__c}" label="Left" />
                         <br />
-                        <apex:inputField value="{!Evaluation__c.Resident_have_aid_s_at_Facility__c}" label="Does Resident Have Aid(s) at the Factility?" />
+                        <apex:inputField value="{!Evaluation__c.Resident_have_aid_s_at_Facility__c}" label="Does Resident Have Aid(s) at the Facility?" />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         
@@ -2107,24 +2107,24 @@
                             </apex:selectCheckboxes>
                         </apex:pageBlocksectionItem>
                         
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Pain Descriptors" />
                             <apex:selectCheckboxes value="{!selectedpainDescriptors}" >
                                 <apex:selectoptions value="{!paindescriptorValues}" />
                             </apex:selectCheckboxes>
                         </apex:pageBlockSectionItem>
                         
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Aggravating Factors" />
-                        <apex:outputPanel>
+                        <apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Neuro_Pain_Activity__c}" id="neuropainactivity" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.neuropainactivityDescribe}&quot;]}"/><apex:outputLabel value="Activity" />
-                        &nbsp;<apex:inputField value="{!Evaluation__c.Neuro_Pain_Activity_Describe__c}" label="Describe" id="neuropainactivityDescribe" />
+                        &nbsp;<apex:inputField value="{!Evaluation__c.Neuro_pain_Activity_Describe__c}" label="Describe" id="neuropainactivityDescribe" />
                         <Br />
                         <apex:inputField value="{!Evaluation__c.Neuro_Pain_Position__c}" id="neuropainposition" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.neuropainpositionDescribe}&quot;]}" /><apex:outputLabel value="Position" />
                         &nbsp;<apex:inputField value="{!Evaluation__c.Neuro_Pain_Position_Describe__c}" label="Describe" id="neuropainpositionDescribe"/>
                         <Br />
                         <apex:inputField value="{!Evaluation__c.Neuro_Pain_Time_of_Day__c}" id="neuropaintimeday" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.neuropaintimedayDescribe}&quot;]}" /><apex:outputLabel value="Time of Day" />
-                        &nbsp;<apex:inputField value="{!Evaluation__c.Neuro_Pain_Time_of_Day_Describe__c}" label="Describe" id="neuropaintimedayDescribe" />
+                        &nbsp;<apex:inputField value="{!Evaluation__c.Neuro_pain_time_of_day_Describe__c}" label="Describe" id="neuropaintimedayDescribe" />
                         <Br /><apex:inputField value="{!Evaluation__c.Neuro_Pain_None__c}" id="neuropainnone" onchange="handleNone('neuropain');"/><apex:outputLabel value="None" />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
