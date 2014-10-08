@@ -14,18 +14,18 @@ public with sharing class referralConversion_Controller {
   public String Program{ get; set;}
   public string Location{ get; set;}
   public string ServiceLine { get; set; }
-  
+
  public String ReferralRecordType{
-  	get{
-  		if(this.referralRecord.RecordTypeId!=null){
-  			referralRecordtype = Utility.getRecordTypeForReferral(Id.valueOf(this.referralRecord.RecordTypeId));
-  		}
-  		return referralRecordType;
-  	}
-  	set;
+      get{
+          if(this.referralRecord.RecordTypeId!=null){
+              referralRecordtype = Utility.getRecordTypeForReferral(Id.valueOf(this.referralRecord.RecordTypeId));
+          }
+          return referralRecordType;
+      }
+      set;
   }
-   
-  
+
+
   public referralConversion_Controller(ApexPages.standardController ctl){
 
     this.refRelParties = new List<Related_Party__c>();
@@ -33,26 +33,26 @@ public with sharing class referralConversion_Controller {
     this.refLocations = new List<Referral_Location__c>();
 
     this.referralRecord = getFullReferralRecord(((Referral__c) ctl.getRecord()).Id);
-    
-    ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 
+
+    ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING,
             'You have chosen to convert the referral ' + this.referralRecord.Name + '. Please confirm the information below and click Convert to Admission to continue the conversion process. If you would like to revise the referral, click Edit.' ));
 
     // get the referral location information
     parseLocationInfo();
     NetworkOffering = getNetworkOffering();
-    
+
     // get the person being referred id
     getPBRId();
     System.Debug('get PBRID=' + idPBR);
     getPBSId();
     System.Debug('get PBSID=' + idPBS);
-    
+
     // get the person being referred object and fill in its related lists
     if (idPBR != null) {
         this.personBeingRefRecord = getPBRRec();
         person = new personRecord( this.personBeingRefRecord);
         if (this.personBeingRefRecord != null ) {
-            
+
             getRelParties ();
             getLocations ();
             getAgencies ();
@@ -66,135 +66,135 @@ public with sharing class referralConversion_Controller {
     }
      System.Debug( person );
   }
-  
+
   private void parseLocationInfo( ) {
-    
+
     string tmp;
-    
+
     // updated to mirror how the SA derives its program info
     if (referralRecord.Service_location__c != null ) {
-    
-    	Service_location__c sl = [select id, alias__c, service_value__c from service_location__c where id = :referralRecord.Service_Location__c LIMIT 1];
-    
-    	program = sl.Alias__c;
-                            
-        location  = ''; 
+
+        Service_location__c sl = [select id, alias__c, service_value__c from service_location__c where id = :referralRecord.Service_Location__c LIMIT 1];
+
+        program = sl.Alias__c;
+
+        location  = '';
         if (sl.service_value__c != '') {
-		    integer dashpos = sl.Service_Value__c.indexOf('-');
-		    if (dashpos > -1 ) 
-		    	ServiceLine = (sl.Service_Value__c).substring(dashpos+1);
-		    else
-		    	ServiceLine = sl.Service_Value__c;
-        }        
-    }   
+            integer dashpos = sl.Service_Value__c.indexOf('-');
+            if (dashpos > -1 )
+                ServiceLine = (sl.Service_Value__c).substring(dashpos+1);
+            else
+                ServiceLine = sl.Service_Value__c;
+        }
+    }
   }
-  
+
   public string getLocation() {
     return Location;
   }
-  
+
   public string getProgram() {
     return Program;
   }
   public string getServiceLine() {
     return ServiceLine;
   }
-  
+
   private Referral__c getFullReferralRecord( ID idgetref )
   {
-    
+
     Referral__c refFull;
     try {
-      refFull = [Select r.Zip_Code__c, 
-                        r.Waiver_Funding_Source__c, 
-                        r.UCI_Number__c, 
-                        r.SystemModstamp, 
-                        r.Street_2__c, 
-                        r.Street_1__c, 
-                        r.State_for_Preferred_Service__c, 
-                        r.State__c, r.State_Specific_ID__c, 
-                        r.State_Specific_ID_Name__c, 
-                        r.Services_Requested__c, 
-                        r.Service_Location__c, 
-                        r.Service_Location_Zip__c, 
-                        r.Service_Location_Street__c, 
-                        r.Service_Location_State__c, 
-                        r.Service_Location_Setting__c, 
-                        r.Service_Location_Service_Value__c, 
-                        r.Service_Location_Program__c, 
-                        r.Service_Location_City__c, 
-                        r.service_location__r.alias__c, 
-                        service_location__r.service_value__c, 
-                        r.Secondary_Diagnosis__c, 
-                        r.Referring_Physician__c, 
-                        r.Referral_Status__c, r.Referral_Source_Type__c, 
-                        r.Referral_Phone_Number__c, 
-                        r.Referral_Name__c, 
-                        r.Referral_Date__c, 
-                        r.Refer_to_Provider__c, 
-                        r.RecordTypeId, 
-                        r.RecordCount__c, 
-                        r.Reason_for_Referral__c, 
-                        r.Program_Alias__c, 
-                        r.Prior_Program_Information__c, 
-                        r.Primary_Diagnosis__c, 
-                        r.Phone__c, 
-                        r.Person_Being_Served__c, 
-                        r.Person_Being_Referred__c, 
-                        r.OwnerId, 
-                        r.OldPBR__c, 
-                        r.Name_PBR__c, 
-                        r.Name, 
-                        r.Medicare_ID__c, 
-                        r.Medicaid_ID__c, 
+      refFull = [Select r.Zip_Code__c,
+                        r.Waiver_Funding_Source__c,
+                        r.UCI_Number__c,
+                        r.SystemModstamp,
+                        r.Street_2__c,
+                        r.Street_1__c,
+                        r.State_for_Preferred_Service__c,
+                        r.State__c, r.State_Specific_ID__c,
+                        r.State_Specific_ID_Name__c,
+                        r.Services_Requested__c,
+                        r.Service_Location__c,
+                        r.Service_Location_Zip__c,
+                        r.Service_Location_Street__c,
+                        r.Service_Location_State__c,
+                        r.Service_Location_Setting__c,
+                        r.Service_Location_Service_Value__c,
+                        r.Service_Location_Program__c,
+                        r.Service_Location_City__c,
+                        r.service_location__r.alias__c,
+                        service_location__r.service_value__c,
+                        r.Secondary_Diagnosis__c,
+                        r.Referring_Physician__c,
+                        r.Referral_Status__c, r.Referral_Source_Type__c,
+                        r.Referral_Phone_Number__c,
+                        r.Referral_Name__c,
+                        r.Referral_Date__c,
+                        r.Refer_to_Provider__c,
+                        r.RecordTypeId,
+                        r.RecordCount__c,
+                        r.Reason_for_Referral__c,
+                        r.Program_Alias__c,
+                        r.Prior_Program_Information__c,
+                        r.Primary_Diagnosis__c,
+                        r.Phone__c,
+                        r.Person_Being_Served__c,
+                        r.Person_Being_Referred__c,
+                        r.OwnerId,
+                        r.OldPBR__c,
+                        r.Name_PBR__c,
+                        r.Name,
+                        r.Medicare_ID__c,
+                        r.Medicaid_ID__c,
                         r.Level_of_Disability__c,
-                        r.Legal_Guardian_Status__c, 
-                        r.LastModifiedDate, 
-                        r.LastModifiedById, 
-                        r.LastActivityDate, 
-                        r.IsDeleted, 
-                        r.Id, 
-                        r.Financial_Resources__c, 
-                        r.Fax__c, 
-                        r.Estimated_Discharge_Date__c, 
-                        r.Email_Address__c, 
-                        r.Days_To_Convert_Referral__c, 
-                        r.Date_of_Injury__c, 
+                        r.Legal_Guardian_Status__c,
+                        r.LastModifiedDate,
+                        r.LastModifiedById,
+                        r.LastActivityDate,
+                        r.IsDeleted,
+                        r.Id,
+                        r.Financial_Resources__c,
+                        r.Fax__c,
+                        r.Estimated_Discharge_Date__c,
+                        r.Email_Address__c,
+                        r.Days_To_Convert_Referral__c,
+                        r.Date_of_Injury__c,
                         r.Current_Medical_Conditions__c,
-                        r.Current_Medications__c, 
-                        r.Current_Location__c, 
-                        r.CreatedDate, 
-                        r.CreatedById, 
-                        r.Comments__c, 
-                        r.Close_Reason__c, 
-                        r.Close_Date__c, 
-                        r.City__c, 
+                        r.Current_Medications__c,
+                        r.Current_Location__c,
+                        r.CreatedDate,
+                        r.CreatedById,
+                        r.Comments__c,
+                        r.Close_Reason__c,
+                        r.Close_Date__c,
+                        r.City__c,
                         r.Cause_of_Injury__c,
                         r.Case_Manager_Name__c,
-                        r.Case_Manager_Phone__c, 
+                        r.Case_Manager_Phone__c,
                         r.Billing_ID__c,
-                        r.Axis_V__c, 
-                        r.Axis_I__c, 
-                        r.Axis_IV__c, 
-                        r.Axis_II__c, 
-                        r.Axis_III__c, 
-                        r.Anticipated_Admission_Date__c, 
+                        r.Axis_V__c,
+                        r.Axis_I__c,
+                        r.Axis_IV__c,
+                        r.Axis_II__c,
+                        r.Axis_III__c,
+                        r.Anticipated_Admission_Date__c,
                         r.Agency_Name__c,
                         r.Payer_Medical_Record_Number__c ,
-                        r.Payer_Medical_Record_Number_Description__c                       
-                        
+                        r.Payer_Medical_Record_Number_Description__c
+
                         From Referral__c r
 
       where id = :idgetref];
     }
     catch (Exception e ){
-    
+
     ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
-        'An error occurred retrieving referral record. ' + e.getMessage()));        
+        'An error occurred retrieving referral record. ' + e.getMessage()));
     }
     return refFull;
   }
-  
+
    private Person_Being_Referred__c getPBRRec() {
     Person_Being_Referred__c pBRRec;
     try {
@@ -217,59 +217,59 @@ public with sharing class referralConversion_Controller {
     System.Debug('currpbr =' + pBRRec.Legal_Guardianship_Status__c);
     return pBRRec;
   }
-  
-  
+
+
   private Contact getPBSRec() {
     Contact pBSRec;
     try {
       pBSRec = [select MailingCity, BirthDate, Email,
                        Ethnicity_Picklist__c, Fax, FirstName, Gender__c,
-                       Mailing_County__c, LastName, 
+                       Mailing_County__c, LastName,
                        Middle_Name__c, Phone, Primary_Language__c, Race__c, SSN__c,
                        MailingState, MailingStreet, MailingPostalCode, uci_id__c, medicaid_id__c, Marital_Status__c, non_verbal__c, sign_language__c, legal_guardianship_status__c
-                       
+
                 from Contact
                 where Id = :idPBS
                 limit 1];
-                
+
     } catch (Exception e) {
       ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
         'The Person Being Served record id specified is invalid. ' + e.getMessage()));
     }
     return pBSRec;
   }
-  
-  
+
+
   private void getPBRId() {
 
     idPBR = this.referralRecord.Person_Being_Referred__c;
   }
-  
+
   private void getPBSId() {
     idPBS = this.referralRecord.Person_Being_Served__c;
   }
-  
- public PageReference convertReferral( ) { 
 
-    try {    
+ public PageReference convertReferral( ) {
+
+    try {
         idPBS = getPBS( referralRecord );
         idAdm = getAdmission ( idPBS, referralRecord );
         closeReferral( idPBS, referralRecord ); // need to do this first otherwise it won't have an admission location
         idSA = createServiceAssignment( idPBS, idAdm, referralRecord );
-        
+
         ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.CONFIRM, 'Your referral has been converted!' ));
-        
+
         PageReference pg = new PageReference('/' + idPBS);
         return pg;
         }
         catch (Exception e) {
             throw(e);
-    
+
         }
-    
-    
+
+
   }
-  
+
   private void getRelParties() {
     if (this.personBeingRefRecord.Id == null) {
       return;
@@ -286,7 +286,7 @@ public with sharing class referralConversion_Controller {
         'An error occurred retrieving Related Parties. ' + e.getMessage()));
     }
   }
-  
+
   private void getAgencies() {
     if (this.personBeingRefRecord.Id == null) {
       return;
@@ -303,47 +303,47 @@ public with sharing class referralConversion_Controller {
     }
   }
 
-  
+
   private void linkRelParties( ID idServ) {
     for ( Related_Party__c r:  refRelParties ) {
         r.Person_Being_Served__c = idServ;
     }
-    
+
     update refRelParties;
-    
+
     // add case manager in as related party of type "case worker"
     if ( !String.IsBlank(referralRecord.Case_Manager_Name__c) ) {
         Related_Party__c rpnew = new Related_Party__c( Name = referralRecord.Case_Manager_Name__c, Type__c='Case Worker', Phone__c = referralRecord.Case_Manager_Phone__c, Person_Being_Served__c = idServ );
-        insert rpnew;       
+        insert rpnew;
     }
 
-    
+
   }
-  
+
   private void linkAgencies( ID idServ) {
     for ( Agency_Involved_With_Individual__c r:  refAgencies ) {
         r.Person_Being_Served__c = idServ;
     }
-    
+
     update refAgencies;
-    
-    
+
+
     // add case manager in as related party of type "case worker"
-    
+
   }
-  
+
   private void getLocations() {
         this.refLocations =
         [select Id, Name, Referral__c, location__c, street_1__c, street_2__c, city__c, zip_code__c, state__c, user_assigned__c, status__c,
-            service_location_city__c,service_location_state__c,service_location_street__c,service_location_zip__c,service_location_program__c, 
+            service_location_city__c,service_location_state__c,service_location_street__c,service_location_zip__c,service_location_program__c,
             service_location_service_value__c, service_location_setting__c, service_location__c, LastModifiedDate
          from Referral_Location__c
          where Referral__c = :this.referralRecord.Id
         ];
   }
-  
-  
-  
+
+
+
  public ID getPBS( Referral__c currRef) {
 
     // if referral.PBSid then return it.
@@ -359,24 +359,24 @@ public with sharing class referralConversion_Controller {
             person = createNewPBS( currRef.Person_Being_Referred__c );
             this.personBeingRefRecord.Person_Being_Served__c = person;
             update this.personBeingRefRecord;
-            
+
         } catch ( Exception e ) {
             throw new referralConversionException('Unable to create new Person Being Served - ' + e);
         }
     }
     return person;
- 
+
  }
- 
- // Create a new person being served record.  return the contact id from the new person account.  
- private ID createNewPBS( ID pbrID) 
+
+ // Create a new person being served record.  return the contact id from the new person account.
+ private ID createNewPBS( ID pbrID)
  {
     ID idPBStype = [SELECT Id FROM RecordType WHERE SObjectType = 'Account' AND DeveloperName ='Person_Being_Served' and IsPersonType=true limit 1].Id;
-    
+
     Person_Being_Referred__c pbrCurr = this.personBeingRefRecord;
-    
+
     string sGuardian1Name= '', sGuardian1Address='', sGuardian1Email='', sGuardian1Phone='';
-    
+
     for ( Related_Party__c rp : this.refRelParties ) {
         if ( rp.Type__c == 'Guardian') {
             // get the info and put it into fields on account
@@ -386,40 +386,40 @@ public with sharing class referralConversion_Controller {
             sGuardian1Phone = rp.Phone__c;
             break;
         }
-        
-    }   
- 
+
+    }
+
     string strFullSt = pbrCurr.Street_1__c;
     if ( pbrCurr.Street_2__c != null)
         strFullSt += ', ' + pbrCurr.Street_2__c;
-        
-    // EB-145 - default Billing System to AVATAR if it is filled in on conversion   
+
+    // EB-145 - default Billing System to AVATAR if it is filled in on conversion
     String strBillingSystem = '';
     if ( !String.IsBlank(referralRecord.Billing_ID__c) && referralRecord.Billing_ID__c.length() == 6)
         strBillingSystem = 'AVATAR';
-            
-    Account accNew = new Account( RecordTypeID = idPBStype, 
-                                FirstName = pbrCurr.First_Name__c, 
+
+    Account accNew = new Account( RecordTypeID = idPBStype,
+                                FirstName = pbrCurr.First_Name__c,
                                 Middle_Name__pc = pbrCurr.Middle_Initial__c,
-                                LastName = pbrCurr.Last_Name__c, 
-                                ownerID = UserInfo.GetUserID(), 
-                                PersonBirthDate = pbrCurr.Date_of_Birth__c, 
-                                PersonEmail = pbrCurr.Email_Address__c, 
-                                Fax = pbrCurr.Fax__c, 
-                                Phone = pbrCurr.Phone__c, 
-                                PersonMailingStreet = strFullSt, 
-                                PersonMailingCity = pbrCurr.City__c, 
-                                PersonMailingPostalCode = pbrCurr.Zip_Code__c, 
-                                PersonMailingCountryCode= 'US', 
+                                LastName = pbrCurr.Last_Name__c,
+                                ownerID = UserInfo.GetUserID(),
+                                PersonBirthDate = pbrCurr.Date_of_Birth__c,
+                                PersonEmail = pbrCurr.Email_Address__c,
+                                Fax = pbrCurr.Fax__c,
+                                Phone = pbrCurr.Phone__c,
+                                PersonMailingStreet = strFullSt,
+                                PersonMailingCity = pbrCurr.City__c,
+                                PersonMailingPostalCode = pbrCurr.Zip_Code__c,
+                                PersonMailingCountryCode= 'US',
                                 PersonMailingStateCode = Utility.getStateCodeFromName( pbrCurr.State__c),
-                                Ethnicity_Picklist__pc = pbrCurr.Ethnicity__c, 
-                                Gender__pc = pbrCurr.Gender__c, 
-                                Mailing_County__pc = pbrCurr.Home_County__c, 
-                                Person_Being_Referred__pc = pbrCurr.Id, 
+                                Ethnicity_Picklist__pc = pbrCurr.Ethnicity__c,
+                                Gender__pc = pbrCurr.Gender__c,
+                                Mailing_County__pc = pbrCurr.Home_County__c,
+                                Person_Being_Referred__pc = pbrCurr.Id,
                                 Primary_Language__pc = pbrCurr.Primary_Language__c,
                                 Non_Verbal__pc = pbrCurr.Non_Verbal__c,
                                 Race__pc = pbrCurr.Race__c,
-                                Sign_Language__pc = pbrCurr.Sign_Language__c, 
+                                Sign_Language__pc = pbrCurr.Sign_Language__c,
                                 SSN__pc = pbrCurr.SSN__c,
                                 Guardian1_Name__pc =  sGuardian1Name,
                                 Guardian_1_Address__pc = sGuardian1Address,
@@ -432,50 +432,50 @@ public with sharing class referralConversion_Controller {
                                 Legal_Guardianship_Status__pc = referralRecord.Legal_Guardian_Status__c,
                                 Current_Medications__pc = referralRecord.Current_Medications__c,
                                 Other_id__pc = referralRecord.Payer_Medical_Record_Number__c ,
-                                Other_ID_Description__pc = referralRecord.Payer_Medical_Record_Number_Description__c                                  
+                                Other_ID_Description__pc = referralRecord.Payer_Medical_Record_Number_Description__c
                                 );
-                                
+
     insert accNew;
 
     accNew = [ select id, personcontactid, firstname, lastname from account where id = :accNew.ID ];
-    
+
     // link related parties to new Person Being Served
     linkRelParties( accNew.PersonContactId );
-    
+
     // link agencies to new Person Being Served
     linkAgencies( accNew.PersonContactId );
-    
+
     // return the contact id, not the account id
     return accNew.PersonContactId;
-        
+
  }
 
  // get the contact id from an existing person account object
- private ID getPBSContactId ( ID pbsID )    
- {  
-    
+ private ID getPBSContactId ( ID pbsID )
+ {
+
     Account acctCurr = [ select id, personcontactid from account where id = :pbsID limit 1];
     System.Debug('returning person id of ' + acctCurr.PersonContactId + ' for Account id ' + pbsID);
     return acctCurr.PersonContactId;
-    
+
  }
- 
+
  public ID getAdmission( ID idPBS, Referral__c refCurr)
  {
-    
+
     // use the PBS ID to get the single active admission
     // if no admission, create a new one using the info on the referral
     Admission__c currAdm;
-    
+
     try {
         currAdm = [ select id, name from Admission__c where Person_Being_served__c = :idPBS and status__c = 'Active' limit 1];
     } catch ( Exception e) {
-    
+
         if ( currAdm == null )
         {
             // no current admission - create one
-            currAdm = new Admission__c( 
-                Person_Being_Served__c = idPBS, 
+            currAdm = new Admission__c(
+                Person_Being_Served__c = idPBS,
                 Effective_date__c = refCurr.Anticipated_Admission_Date__c,
                 Network_Offering__c = NetworkOffering,
                 Program__c = refCurr.Service_Location_Program__c,
@@ -483,38 +483,38 @@ public with sharing class referralConversion_Controller {
                 State__c = refCurr.Service_Location_State__c,
                 Status__c = 'Active'
                 );
-            
+
              insert currAdm;
-        }        
-    }   
-    if ( currAdm != null )  
+        }
+    }
+    if ( currAdm != null )
         return currAdm.Id;
     else
         return null;
-    
-    
+
+
  }
- 
+
  public String getNetworkOffering() {
- 
+
         // pull network code off service value field
         String strNetwork = '';
-    
-        if ( this.referralRecord.Service_Location_Service_Value__c != null) 
+
+        if ( this.referralRecord.Service_Location_Service_Value__c != null)
             if ( (this.referralRecord.Service_Location_Service_Value__c).length() >=3 )
                 strNetwork = this.referralRecord.Service_Location_Service_Value__c.substring(0, 3);
- 
-        return strNetwork;      
+
+        return strNetwork;
  }
- 
+
  public ID createServiceAssignment( ID idPBS, ID idAdm, Referral__c refCurr )
  {
     // use the PBS id and the admission id to create a new service assignment using the info on the referral
-    
+
     ID idSAtype = [SELECT Id FROM RecordType WHERE SObjectType = 'Service_Assignment__c' AND DeveloperName ='Standard_Service_Assignment' limit 1].Id;
-    
+
     string strLoc = getLocation();
-    Service_Assignment__c newSA = new Service_Assignment__c(  
+    Service_Assignment__c newSA = new Service_Assignment__c(
                                             RecordTypeId = idSAtype,
                                             Admission__c = idAdm,
                                             Person_Being_Served__c = idPBS,
@@ -537,14 +537,14 @@ public with sharing class referralConversion_Controller {
                                             Prior_Location_Phone__c = refCurr.Phone__c,
                                             Prior_Location_Email__c = refCurr.Email_Address__c,
                                             Referral__c = refCurr.Id
-                                            
+
                                             );
-    
+
     insert newSA;
-    
-    // if none of the diagnosis fields are blank or null, create new diagnosis record and link to SA 
-    if ( !String.isEmpty(refCurr.Axis_I__c) || 
-         !String.isEmpty(refCurr.Axis_II__c) || 
+
+    // if none of the diagnosis fields are blank or null, create new diagnosis record and link to SA
+    if ( !String.isEmpty(refCurr.Axis_I__c) ||
+         !String.isEmpty(refCurr.Axis_II__c) ||
          !String.isEmpty(refCurr.Axis_III__c) ||
          !String.isEmpty(refCurr.Axis_IV__c) ||
          !String.isEmpty(refCurr.Axis_V__c) ||
@@ -554,7 +554,7 @@ public with sharing class referralConversion_Controller {
          !String.isEmpty(refCurr.Comments__c)
     )
     {
-    	//Sravan- Added Datetime instance for Effective_Date__c Field to resolve GMT timezone conflict EC-26. 09/25/2011
+        //Sravan- Added Datetime instance for Effective_Date__c Field to resolve GMT timezone conflict EC-26. 09/25/2011
         Diagnosis__c newDiag = new Diagnosis__c (
                                         Service_Assignment__c = newSA.Id,
                                         Axis_I__c = refCurr.Axis_I__c,
@@ -570,246 +570,245 @@ public with sharing class referralConversion_Controller {
         );
         insert newDiag;
     }
-    
-    
+
+
 /*
- * Sravan's Conversion code 
+ * Sravan's Conversion code
  */
- 
- 
+
+
     //Nurses Evaluation Creation - Sravan 5/15/2014
-   if(referralRecordType.startsWith('CareMeridian')){
-   List <Evaluation__c> refEval = [SELECT ID, NAME FROM Evaluation__c WHERE Referral__c =:refCurr.Id LIMIT 1]; //using List to avoid System.Query Exception when no records are returned
-    
-    	if(refEval.isEmpty()){
-    		string pbslastName =  this.referralRecord.Name_PBR__c.Substringbefore(','); //newSA.Admission__r.Person_Being_Served__r.LastName;
-    		if(pbslastName == null) pbslastName = '';
-                Evaluation__c nurseEval = new Evaluation__c(
-    										ServiceAssignment__c = newSA.id,
-    										Name = pbslastName +'AdmissionAssessment'+ DateTime.Now().format('MMddyy'),
-    										RecordtypeId = Utility.getEvaluationRecordType('NursesAssessment')
-    		
-    		);
-    		insert nurseEval;
-    	}
-    	else{
-    		id evalID = refEval[0].id;
-    		list<Evaluation_Response__c> tobeCreated = new List<Evaluation_Response__c>();
-    		String asmtName = refEval[0].Name.length()>10 ? refEval[0].Name.Substringbefore('Eval')+'AdmissionAssessment'+ DateTime.Now().format('MMddyy') : 'AdmissionAssessment'+ DateTime.Now().format('MMddyy');
-    		String query = 'SELECT ';
-    		FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment;
-    		
-    		for(Schema.FieldSetMember f : copyFields.getFields()) {
-    			query += f.getFieldPath() + ', ';
-    				
-    		}
-    		 query += 'Name FROM Evaluation__c WHERE ID =:evalID';
-    		// refEval = Database.query(query);
-    		// system.debug('REFEVALREFEVAL>>>'+refEval);
-    		 
-    		 SObject refEval1=database.query(query);
-    		 string evaluationObj='Evaluation__c';
-       		 sObject dynObjectEvaluationRecord= Schema.getGlobalDescribe().get(evaluationObj).newSObject() ;
-        
-        	 for(Schema.FieldSetMember f : copyFields.getFields()) {
-             dynObjectEvaluationRecord.put(f.getfieldPath(), refEval1.get(f.getfieldPath()));     
-                    
+    if(referralRecordType.startsWith('CareMeridian')){
+        List <Evaluation__c> refEval = [
+            SELECT ID, NAME FROM Evaluation__c
+            WHERE Referral__c =:refCurr.Id LIMIT 1
+        ]; //using List to avoid System.Query Exception when no records are returned
+
+        if(refEval.isEmpty()){
+            string pbslastName =  this.referralRecord.Name_PBR__c.Substringbefore(','); //newSA.Admission__r.Person_Being_Served__r.LastName;
+            if(pbslastName == null) pbslastName = '';
+            Evaluation__c nurseEval = new Evaluation__c(
+                                            ServiceAssignment__c = newSA.id,
+                                            Name = pbslastName +'AdmissionAssessment'+ DateTime.Now().format('MMddyy'),
+                                            RecordtypeId = Utility.getEvaluationRecordType('NursesAssessment')
+            );
+            insert nurseEval;
+        }
+        else {
+            id evalID = refEval[0].id;
+            list<Evaluation_Response__c> tobeCreated = new List<Evaluation_Response__c>();
+            String asmtName = refEval[0].Name.length()>10 ? refEval[0].Name.Substringbefore('Eval')+'AdmissionAssessment'+ DateTime.Now().format('MMddyy') : 'AdmissionAssessment'+ DateTime.Now().format('MMddyy');
+            String query = 'SELECT ';
+            FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment;
+
+            for(Schema.FieldSetMember f : copyFields.getFields()) {
+                query += f.getFieldPath() + ', ';
             }
-			dynObjectEvaluationRecord.put('RecordTypeID', Utility.getEvaluationRecordType('NursesAssessment'));
-			dynObjectEvaluationRecord.put('ServiceAssignment__c', newSA.id);
-			dynObjectEvaluationRecord.put('Name',asmtName );
-			
-        insert dynObjectEvaluationRecord;
-        
-	        if(tobeCreated.isEmpty()){
-	        	system.debug('inside the loop,,,,,,,,');
-		        
-		        list<string> respRectypes = new List<string>{'Allergy','Pressure Ulcer Detail','Wound Detail','Annotation'};
-		        String respQuery ='SELECT ';
-		        FieldSet copyrespFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses;
-		        
-		        	for(Schema.FieldSetMember f : copyrespFields.getFields()) {
-		        		respQuery +=f.getFieldPath() + ', ';
-		        	}
-		        
-		        	respQuery += 'Name FROM Evaluation_Response__c WHERE Evaluation__c =:evalID AND RecordType.Name IN:respRectypes';
-		        	List<Evaluation_Response__c> evalResponses = database.query(respQuery);
-		        	if(evalResponses!=null){
-		        		for(Evaluation_Response__c erp : evalResponses){
-		        			Evaluation_Response__c newRecord = erp.clone(false);
-		        			newRecord.Evaluation__c = dynobjectEvaluationRecord.Id;
-		        			tobeCreated.add(newRecord);
-		        			
-		        		}
-		        		
-		        		insert tobeCreated;
-		        		System.debug('Created Records+++++++'+tobeCreated);
-		        	}
-		        }
-        
-    	}
-    	
-    	
-    	
-    } 
- 
+            query += 'Name FROM Evaluation__c WHERE ID =:evalID';
+            // refEval = Database.query(query);
+            // system.debug('REFEVALREFEVAL>>>'+refEval);
+
+            SObject refEval1=database.query(query);
+            string evaluationObj='Evaluation__c';
+            sObject dynObjectEvaluationRecord= Schema.getGlobalDescribe().get(evaluationObj).newSObject() ;
+
+            for(Schema.FieldSetMember f : copyFields.getFields()) {
+                dynObjectEvaluationRecord.put(f.getfieldPath(), refEval1.get(f.getfieldPath()));
+            }
+            dynObjectEvaluationRecord.put('RecordTypeID', Utility.getEvaluationRecordType('NursesAssessment'));
+            dynObjectEvaluationRecord.put('ServiceAssignment__c', newSA.id);
+            dynObjectEvaluationRecord.put('Name',asmtName );
+
+            insert dynObjectEvaluationRecord;
+
+            if(tobeCreated.isEmpty()){
+                system.debug('inside the loop,,,,,,,,');
+
+                list<string> respRectypes = new List<string>{'Allergy','Pressure Ulcer Detail','Wound Detail','Annotation'};
+                String respQuery ='SELECT ';
+                FieldSet copyrespFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses;
+
+                for(Schema.FieldSetMember f : copyrespFields.getFields()) {
+                    respQuery +=f.getFieldPath() + ', ';
+                }
+
+                respQuery += 'Name, RecordType.Name FROM Evaluation_Response__c ';
+                respQuery += 'WHERE Evaluation__c =:evalID AND RecordType.Name IN:respRectypes';
+                List<Evaluation_Response__c> evalResponses = database.query(respQuery);
+                if(evalResponses!=null){
+                    for(Evaluation_Response__c erp : evalResponses){
+                        Evaluation_Response__c newRecord = erp.clone(false);
+                        newRecord.Evaluation__c = dynobjectEvaluationRecord.Id;
+                        if (newRecord.RecordType.Name == 'Allergy') {
+                            newRecord.Person_Being_Served__c = idPBS;
+                        }
+                        tobeCreated.add(newRecord);
+                    }
+
+                    insert tobeCreated;
+                    System.debug('Created Records+++++++'+tobeCreated);
+                }
+            }
+        }
+    }
+
  /*
   * End of Sravan's Conversion Code
-  */    
-    
+  */
+
     Contact pbsmed = [select id, medicaid_id__c from contact where id = :idPBS ];
     Boolean trytoupdatePBS = String.IsBlank( pbsmed.medicaid_id__c );
     Boolean updatePBS = false;
-    
+
     // EC-13 - do not link the funding sources. instead copy them so they can be edited on the SA record.
     string strSQL = Utility.getCreatableFieldsSOQL('funding_source__c','referral__c = \'' + refCurr.Id + '\'' );
     system.debug( strSQL );
-    
+
     List<Funding_Source__c> fundsrcList = (List<Funding_Source__c>)Database.query(strSQL);
-    
+
     if ( fundsrcList.size() > 0 ) {
-    	
-    	List<Funding_Source__c> newfunds = fundsrcList.deepClone();
-    	
+
+        List<Funding_Source__c> newfunds = fundsrcList.deepClone();
+
         for ( Funding_Source__c fs : newfunds ) {
-        	
+
             fs.Service_Assignment__c = newSA.Id;	// set SA for new funding source
             fs.referral__c = null;					// clear our referral id
-            
+
             if ((fs.Funding_Source__c == 'Medicaid') && trytoupdatePBS ) {
                 pbsmed.Medicaid_ID__c = fs.Funding_Source_ID__c;
                 system.debug('Updating PBS ' + idPBS + ' with Medicaid ID ' + fs.Funding_Source_ID__c + ' from funding source ' + fs.Id);
-                updatePBS = true; 
+                updatePBS = true;
                 trytoupdatePBS = false;
             }
-            
+
         }
-        
+
         try {
-        	insert newfunds;
-        	
-        	// reselect to get ids populated
-        	strSQL = Utility.getCreatableFieldsSOQL('funding_source__c','service_assignment__c = \'' + newSA.Id + '\'' );
-        	// add the name field
-        	strSQL = strSQL.Replace('SELECT ', 'SELECT name, ');
-        	system.debug( strsql);
-        	newfunds = (List<Funding_Source__c>)Database.query(strSQL);
-        	
-        	List<Authorization__c> newauths = new List<Authorization__c>();
-        	
-        	// get the new recordtype for funding source related auths
-        	RecordType recType = [ select id from recordtype where sobjecttype='Authorization__c' and developername ='Funding_Source_Auth_CM' LIMIT 1 ];
-        	
-        	// now create auths for funding sources that have them
-			for ( Funding_Source__c fs : newfunds ) {
-				
-				// there's an auth if the status populated
-				if ( !String.IsEmpty(fs.status__c)) {
-					
-					// temporary authorization number
-					string authid = fs.authorization_number__c;
-					
-					// we can do this becuase there is only 1 auth at the time of conversion
-					if (fs.status__c == 'Pending')
-						authid= fs.name + ' - Auth Pending';
-					
-					 System.Debug( 'funding source status is: ' + fs.status__c + ' - adding authorization');
-					// for now this will be for CM only.  working on other flavors.					
-					Authorization__c auth = new Authorization__c ( RecordTypeID = recType.ID, 
-																	authorization_status__c = fs.status__c, 
-																	funding_source__c = fs.Id, 
-																	type__c = fs.authorization_type__c,
-																	admission__c = newSA.Admission__c, 
-																	payer_effective_date__c = fs.days_authorized_from__c,
-																	payer_end_date__c = fs.days_authorized_to__c,
-																	person_being_served__c = newSA.Person_being_served__c,
-																	requested_by__c = fs.requested_by__c,
-																	request_date__c = fs.request_date__c,
-																	request_contact_name__c = fs.request_contact_name__c,
-																	representing_request__c = fs.representing_request__c,
-																	reference_number__c = fs.reference_number__c,
-																	reviewed_by__c = fs.review_nurse__c,
-																	request_phone__c = fs.request_phone__c,
-																	request_fax__c = fs.request_fax__c,
-																	received_from__c = fs.given_by__c,
-																	representing_received__c = fs.representing_received__c,
-																	auth_given_method__c = fs.auth_given_method__c,
-																	payer_authorization_id__c = authid,
-																	payer_cm_name__c = fs.internal_contact__c,
-																	payer_cm_phone__c = fs.internal_phone__c,
-																	payer_cm_email__c = fs.internal_email__c,
-																	payer_cm_fax__c = fs.internal_fax__c,
-																	comments__c = fs.authorization_comments__c,
-																	level__c = fs.level__c,
-																	rate__c = fs.rate__c,
-																	justification__c = fs.justification__c,
-																	level_confirmed__c = fs.did_cm_confirm_level__c
-																	);
-																	
-					if ( fs.received_date_time__c != null )
-						auth.payer_authorization_date__c = (fs.received_date_time__c).dateGMT();
-																	
-					newauths.Add( auth);
-					
-				}
-			}
-			
-			if ( newauths.size() > 0)
-				insert newauths;        	
-        	
+            insert newfunds;
+
+            // reselect to get ids populated
+            strSQL = Utility.getCreatableFieldsSOQL('funding_source__c','service_assignment__c = \'' + newSA.Id + '\'' );
+            // add the name field
+            strSQL = strSQL.Replace('SELECT ', 'SELECT name, ');
+            system.debug( strsql);
+            newfunds = (List<Funding_Source__c>)Database.query(strSQL);
+
+            List<Authorization__c> newauths = new List<Authorization__c>();
+
+            // get the new recordtype for funding source related auths
+            RecordType recType = [ select id from recordtype where sobjecttype='Authorization__c' and developername ='Funding_Source_Auth_CM' LIMIT 1 ];
+
+            // now create auths for funding sources that have them
+            for ( Funding_Source__c fs : newfunds ) {
+
+                // there's an auth if the status populated
+                if ( !String.IsEmpty(fs.status__c)) {
+
+                    // temporary authorization number
+                    string authid = fs.authorization_number__c;
+
+                    // we can do this becuase there is only 1 auth at the time of conversion
+                    if (fs.status__c == 'Pending')
+                        authid= fs.name + ' - Auth Pending';
+
+                     System.Debug( 'funding source status is: ' + fs.status__c + ' - adding authorization');
+                    // for now this will be for CM only.  working on other flavors.
+                    Authorization__c auth = new Authorization__c ( RecordTypeID = recType.ID,
+                                                                    authorization_status__c = fs.status__c,
+                                                                    funding_source__c = fs.Id,
+                                                                    type__c = fs.authorization_type__c,
+                                                                    admission__c = newSA.Admission__c,
+                                                                    payer_effective_date__c = fs.days_authorized_from__c,
+                                                                    payer_end_date__c = fs.days_authorized_to__c,
+                                                                    person_being_served__c = newSA.Person_being_served__c,
+                                                                    requested_by__c = fs.requested_by__c,
+                                                                    request_date__c = fs.request_date__c,
+                                                                    request_contact_name__c = fs.request_contact_name__c,
+                                                                    representing_request__c = fs.representing_request__c,
+                                                                    reference_number__c = fs.reference_number__c,
+                                                                    reviewed_by__c = fs.review_nurse__c,
+                                                                    request_phone__c = fs.request_phone__c,
+                                                                    request_fax__c = fs.request_fax__c,
+                                                                    received_from__c = fs.given_by__c,
+                                                                    representing_received__c = fs.representing_received__c,
+                                                                    auth_given_method__c = fs.auth_given_method__c,
+                                                                    payer_authorization_id__c = authid,
+                                                                    payer_cm_name__c = fs.internal_contact__c,
+                                                                    payer_cm_phone__c = fs.internal_phone__c,
+                                                                    payer_cm_email__c = fs.internal_email__c,
+                                                                    payer_cm_fax__c = fs.internal_fax__c,
+                                                                    comments__c = fs.authorization_comments__c,
+                                                                    level__c = fs.level__c,
+                                                                    rate__c = fs.rate__c,
+                                                                    justification__c = fs.justification__c,
+                                                                    level_confirmed__c = fs.did_cm_confirm_level__c
+                                                                    );
+
+                    if ( fs.received_date_time__c != null )
+                        auth.payer_authorization_date__c = (fs.received_date_time__c).dateGMT();
+
+                    newauths.Add( auth);
+
+                }
+            }
+
+            if ( newauths.size() > 0)
+                insert newauths;
+
         } catch (DMLException e ){
-        	system.debug('Could not copy over funding sources!');
+            system.debug('Could not copy over funding sources!');
         }
         if ( updatePBS )
             update pbsmed;
     }
-   
+
     return newSA.Id;
  }
- 
- public ID closeReferral( ID idPBS, Referral__c ref) 
+
+ public ID closeReferral( ID idPBS, Referral__c ref)
  {
     // find referral location in list of locations, close with reason of admitted
     List<Referral_Location__c> lstRefLoc = [ select id, status__c from referral_location__c where referral__c = :ref.ID ];
-    
+
     // no referral locations - need to add the anticipated location as a referral location for completeness
     if ( lstRefLoc.Size() == 0 ) {
         Referral_Location__c rlNew = new Referral_Location__c ( Service_Location__c = ref.Service_Location__c,
                                                                 Referral__c = ref.ID,
                                                                 User_Assigned__c = UserInfo.getUserId(),
                                                                 Status__c = 'Closed' );
-        insert rlNew;   
+        insert rlNew;
     } else {
         // loop through the referral locations and update the status to Closed
         for ( Referral_Location__c rlCurr : lstRefLoc ) {
-            
+
             rlCurr.Status__c = 'Closed';
             if  ( rlCurr.Id == ref.Service_Location__c )
             {
                 // set close reason to 'Admitted' - no field available yet
             }
-            
+
         }
         // update the list of locations in bulk
         update lstRefLoc;
     }
-    
-    
+
+
     // set PBSID on referral to new PBS
     ref.Person_Being_Served__c = idPBS;
-    
+
     // set referral status to closed with reason of Admitted
     ref.Referral_Status__c = 'Closed';
     ref.Close_Reason__c = 'Admitted';
     ref.Close_Date__c = system.today();
     update ref;
-    
+
     return ref.Id;
-     
+
  }
 
 public class personRecord {
-    
+
     private String fn, ln, mi, em, f, p, s1, s2, ci, st, z, ct, eth, gen, lang, ss, marstat, medid, legalstat;
     private Boolean nonverb, signlang;
     private String dob;
@@ -835,7 +834,7 @@ public class personRecord {
     public boolean NonVerbal { get { return nonverb;} set; }
     public boolean SignLanguage{ get { return signlang;} set; }
     public string LegalGuardianship { get {return legalstat;} set; }
-    
+
     public personRecord( Person_Being_Referred__c pbr ) {
         System.Debug('calling person record with referred: ' + pbr);
         fn = pbr.First_Name__c;
@@ -859,10 +858,10 @@ public class personRecord {
         legalstat = pbr.Legal_Guardianship_Status__c;
         nonverb = pbr.Non_Verbal__c;
         signlang = pbr.Sign_Language__c;
-        
+
     }
-    
-    
+
+
     public personRecord( Contact pbs ) {
         System.Debug('calling person record with served');
         fn = pbs.FirstName;
@@ -884,10 +883,10 @@ public class personRecord {
         legalstat = pbs.Legal_Guardianship_Status__c;
         nonverb = pbs.Non_Verbal__c;
         signlang = pbs.Sign_Language__c;
-        medid = pbs.Medicaid_Id__c; 
+        medid = pbs.Medicaid_Id__c;
     }
-    
-    
+
+
 }
 class referralConversionException extends Exception {
     }
