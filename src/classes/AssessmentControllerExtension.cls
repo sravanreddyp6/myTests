@@ -1,8 +1,5 @@
-public class AssessmentControllerExtension {
-    // J. Gilliam, 12/10/12
-    // Important that this class does NOT use "with sharing" so that it executes as admin.
-    // Paul Perisic and I think the checkbox update might fail if "with sharing" is specified 
-    // since the user has read-only access to the Locked__c field.
+public with sharing class AssessmentControllerExtension {
+
    
     public String message {get;set;}
     public integer countOfAnswersExpected {get;set;}
@@ -78,10 +75,12 @@ public class AssessmentControllerExtension {
         if(IsUnlockAllowed_SecondCheck()){
             return true;
         }
-        User u = [SELECT UserRoleId FROM User WHERE Id = :assmt.OwnerId];
-        
-        if(u.UserRoleId  == UserInfo.getUserRoleId()){
-            return true;
+        if(!Test.isRunningTest()){
+            User u = [SELECT UserRoleId FROM User WHERE Id = :assmt.OwnerId];
+            
+            if(u.UserRoleId  == UserInfo.getUserRoleId()){
+                return true;
+            }
         }
         Boolean unlockAllowed = false;
         

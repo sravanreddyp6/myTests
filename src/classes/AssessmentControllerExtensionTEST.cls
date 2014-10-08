@@ -2,49 +2,6 @@
 private class AssessmentControllerExtensionTEST {
 
     static testMethod void myUnitTest() {
-       /*
-        String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
-        
-        Account Accnt = new Account(
-            RecordTypeID=RecTypeId,
-            FirstName= 'Test FName',
-            LastName='Test LName',
-            PersonMailingStreet='123 Test Street',
-            PersonMailingPostalCode='12345',
-            PersonMailingCity='SFO',
-            PersonMailingStateCode='NC',
-            PersonEmail='test@yahoo.com',
-            PersonHomePhone='12345678',
-            PersonMobilePhone='12345678'
-        );
-        insert Accnt;
-        
-        //Profile p = [SELECT Id FROM Profile WHERE Name='Standard User'];
-        //User testUser = new User(
-        //    Alias = 'standt', 
-        //    Email='standarduser@testorg.com', 
-        //    EmailEncodingKey='UTF-8', 
-        //    LastName='Testing', 
-        //    LanguageLocaleKey='en_US', 
-        //    LocaleSidKey='en_US', 
-        //    ProfileId = p.Id, 
-        //    TimeZoneSidKey='America/Los_Angeles', 
-        //    UserName='tk421@testorg.com'
-        //);
-        //insert testUser;
-        
-        List<Account> testAcct = [Select Id, PersonContactId From Account a WHERE a.Id = :Accnt.Id];
-        System.Debug('What is in testAcct: ' + testAcct);
-        Id aContactId = testAcct[0].PersonContactId;
-        Id aAccountId = testAcct[0].Id;
-        
-        Admission__c Adm = new Admission__c(
-            Name = 'TEST ADM',
-            Person_Being_Served__c = aContactId,
-            Effective_Date__c = date.today()
-        );
-        insert Adm;
-        */
         TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
         
         Assessment_Type__c testAssmtType = new Assessment_Type__c(
@@ -93,7 +50,7 @@ private class AssessmentControllerExtensionTEST {
         System.Debug( 'AFter insert' + testAssmt2.TFC_Family_Vistas__c);
         PageReference pageRef = Page.AssessmentForm;
         Test.setCurrentPageReference(pageRef);
-        
+        system.debug('assess id = ' + testAssmt.id);
         ApexPages.StandardController sc = new ApexPages.StandardController(testAssmt);
         AssessmentControllerExtension testACE = new AssessmentControllerExtension(sc);
     
