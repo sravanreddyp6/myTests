@@ -3,6 +3,10 @@
         type="Id" required="true" assignTo="{!evaluationId}" />
     <apex:attribute name="type" description="The type of this table"
         type="String" required="true" assignTo="{!responseType}" />
+    <apex:attribute name="editEnabled" description="Whether Edit functionality is enabled"
+        type="Boolean" default="true" />
+    <apex:attribute name="addEnabled" description="Whether Add functionality is enabled"
+        type="Boolean" default="true" />
     <apex:attribute name="onEdit" description="The Javascript function to call when Edit is clicked"
         type="String" />
     <apex:attribute name="formId" description="Id of the form element that includes this component"
@@ -19,12 +23,12 @@
     <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
 
     <apex:pageBlockSection columns="1" title="{!type}">
-        <apex:actionFunction name="showAddResponse{!uniqueId}" action="{!showAddResponse}" status="loadingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Add {!type}', '{!formId}');" />
-        <apex:actionFunction name="showEditResponse{!uniqueId}" action="{!showEditResponse}" status="loadingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Edit {!type}', '{!formId}');">
+        <apex:actionFunction rendered="{!addEnabled}" name="showAddResponse{!uniqueId}" action="{!showAddResponse}" status="loadingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Add {!type}', '{!formId}');" />
+        <apex:actionFunction rendered="{!editEnabled}" name="showEditResponse{!uniqueId}" action="{!showEditResponse}" status="loadingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Edit {!type}', '{!formId}');">
             <apex:param name="currentResponseId" assignTo="{!currentResponseId}" value="" />
         </apex:actionFunction>
 
-        <apex:outputPanel layout="none">
+        <apex:outputPanel layout="none" rendered="{!addEnabled}">
             <apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" />
             <apex:actionStatus id="loadingStatus">
                 <apex:facet name="start">
@@ -34,9 +38,9 @@
             </apex:actionStatus>
         </apex:outputPanel>
         <apex:pageBlockTable value="{!responses}" var="response" id="responseTable">
-            <apex:column headerValue="{!IF(AND(responses.size>0,isPdf != true), 'Action', '')}" width="50px">
-                <apex:commandLink onclick="{!onEdit}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit != null) && (isPdf != true)}" />
-                <apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit == null) && (isPdf != true)}" />
+            <apex:column headerValue="{!IF(AND(responses.size>0,isPdf != true), 'Action', '')}" width="50px" rendered="{!editEnabled}">
+                <apex:commandLink onclick="{!onEdit}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit != null) && !isPdf}" />
+                <apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit == null) && !isPdf}" />
             </apex:column>
             <apex:repeat value="{!columnsToFetch}" var="column">
                 <apex:column value="{!response[column]}" />
@@ -52,13 +56,13 @@
                         <apex:param name="keepDialogOpen" value="" />
                     </apex:actionFunction>
                     <apex:actionStatus id="saveResponseStatus">
-						<apex:facet name="stop">
-							<apex:outputPanel id="buttons">
-			                    <apex:commandButton value="Save" onClick="saveResponse{!uniqueId}(false); return false;" />
-	        		            <apex:commandButton value="Save & New" onClick="saveResponse{!uniqueId}(true); return false;" />
-	                		    <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.responseDialog}'); return false;" />
-							</apex:outputPanel>
-						</apex:facet>
+                        <apex:facet name="stop">
+                            <apex:outputPanel id="buttons">
+                                <apex:commandButton value="Save" onClick="saveResponse{!uniqueId}(false); return false;" />
+                                <apex:commandButton value="Save & New" onClick="saveResponse{!uniqueId}(true); return false;" />
+                                <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.responseDialog}'); return false;" />
+                            </apex:outputPanel>
+                        </apex:facet>
                         <apex:facet name="start">
                             <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
                         </apex:facet>
