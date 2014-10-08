@@ -75,13 +75,7 @@ public with sharing class AssessmentControllerExtension {
         if(IsUnlockAllowed_SecondCheck()){
             return true;
         }
-        if(!Test.isRunningTest()){
-            User u = [SELECT UserRoleId FROM User WHERE Id = :assmt.OwnerId];
-            
-            if(u.UserRoleId  == UserInfo.getUserRoleId()){
-                return true;
-            }
-        }
+
         Boolean unlockAllowed = false;
         
         ESD_DetermineParentRoles parentRoleIds = new ESD_DetermineParentRoles(assmt.OwnerId);
@@ -95,18 +89,32 @@ public with sharing class AssessmentControllerExtension {
         
     }
     public boolean IsUnlockAllowed_SecondCheck(){
+        boolean inScope = false;
        List<PermissionSetAssignment> userperms = [ select id, permissionset.Name , assigneeid from PermissionSetAssignment where assigneeid = :UserInfo.getUserId()];
          
         for ( PermissionSetAssignment p : userperms ) {                        
             // user can only update if in one of these three permission sets
             system.debug('set = ' + p.PermissionSet.Name);
             if ( p.PermissionSet.Name == 'ESD_Notes_Supervisor' ) {
+                inScope = true;
+            }        
+        
+        }
+        if(inScope){
+                if(!Test.isRunningTest()){
+                    User u = [SELECT UserRoleId FROM User WHERE Id = :assmt.OwnerId];
+                    
+                    if(u.UserRoleId  == UserInfo.getUserRoleId()){
+                        return true;
+                    }
+                }  
                 
                 if(UserInfo.getUserId() == assmt.OWNERID){
                     return true;    
-                }
-            }
-        }        
+                }  
+
+        }
+                
     
     
         return false;
