@@ -783,16 +783,15 @@
     </fields>
     <fields>
         <fullName>Evaluation__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
         <label>Evaluation</label>
         <referenceTo>Evaluation__c</referenceTo>
         <relationshipLabel>Evaluation Responses</relationshipLabel>
         <relationshipName>Evaluation_Responses</relationshipName>
-        <relationshipOrder>0</relationshipOrder>
-        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <required>false</required>
         <trackTrending>false</trackTrending>
-        <type>MasterDetail</type>
-        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Fracture_Type__c</fullName>
@@ -983,6 +982,18 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>true</unique>
+    </fields>
+    <fields>
+        <fullName>Person_Being_Served__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Person Being Served</label>
+        <referenceTo>Contact</referenceTo>
+        <relationshipLabel>Evaluation Responses</relationshipLabel>
+        <relationshipName>Evaluation_Responses</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Position__c</fullName>
@@ -3046,5 +3057,5 @@
         </picklistValues>
     </recordTypes>
     <searchLayouts/>
-    <sharingModel>ControlledByParent</sharingModel>
+    <sharingModel>ReadWrite</sharingModel>
 </CustomObject>
