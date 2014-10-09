@@ -217,7 +217,7 @@ hr {
                     <apex:pageBlockSection columns="1">
                         <apex:outputField value="{!Evaluation__c.Head_Circumference_cm__c}" />
                     </apex:pageBlockSection>
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}"
+                    <c:EvaluationResponseTable pbsParentId="{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__c}"
                         type="Allergy" formId="{!$Component.wholePage}"
                         addEnabled="false" editEnabled="false" uniqueId="allergy" />
                     <apex:pageBlockSection columns="1">
@@ -819,7 +819,7 @@ hr {
 
                         <apex:outputField value="{!Evaluation__c.Seizure_History__c}" label="Seizure History" />
 
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                         <apex:outputLabel for="shunt" value="VP Shunt" />
                         <apex:outputText id="shunt" value="{! if (Evaluation__c.VP_Shunt__c == 'Yes', Evaluation__c.VP_Shunt__c + ' - ' + Evaluation__c.VP_Shunt_Describe__c, Evaluation__c.VP_Shunt__c)}"  />
                         </apex:pageBlockSectionItem>
@@ -895,7 +895,7 @@ hr {
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
 
-                        <apex:outputText label="Ear Infections" value="{!if (Evaluation__c.Ear_Infections__c, 'Yes - ' + Evaluation__c.Ear_Infection_Describe__c, Evaluation__c.Ear_Infection_Describe__c)}" />
+                        <apex:outputText label="Ear Infections" value="{!if (Evaluation__c.Ear_Infections__c, 'Yes - ' + Evaluation__c.Ear_infection_Describe__c, Evaluation__c.Ear_infection_Describe__c)}" />
 
                         <apex:pageBlockSectionItem >
                         <apex:outputLabel Value="Glasses/Contacts<Br /><br />For Reading<br /><br />For Distance<br /><br />Multifocal<br /><br />Other<br /><br />If Contacts, Type"  escape="False"/>
