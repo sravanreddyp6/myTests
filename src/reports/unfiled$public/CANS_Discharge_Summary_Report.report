@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Number of Intake &amp; Discharge Assessments by State</description>
+    <filter>
+        <criteriaItems>
+            <column>Assessment__c.Service_Line__c</column>
+            <operator>equals</operator>
+            <value>TFC Vistas</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Assessment__c.Assessment_Type__c</column>
+            <operator>equals</operator>
+            <value>CANS</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Assessment__c.Disregard__c</column>
+            <operator>equals</operator>
+            <value>0</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Assessment__c.Status__c</column>
+            <operator>equals</operator>
+            <value>Locked</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Assessment__c.Interval__c</column>
+            <operator>equals</operator>
+            <value>Intake,Discharge</value>
+        </criteriaItems>
+    </filter>
+    <format>Matrix</format>
+    <groupingsAcross>
+        <dateGranularity>Day</dateGranularity>
+        <field>Assessment__c.Interval__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsAcross>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>FK_$Admission__c.State__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>CANS Discharge Summary Report</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>CustomEntity$Assessment__c@Assessment__c.Admission__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <timeFrameFilter>
+        <dateColumn>CUST_CREATED_DATE</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>
