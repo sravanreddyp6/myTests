@@ -52,8 +52,8 @@
                     s1.removeClass("stickBlueCard");
                 }
             });
-         }   
-         
+         }
+
         function unpinPbs(){
             var s2 = jQuery("#pbsBlueCard");
             s2.removeClass("stickBlueCard");
@@ -62,7 +62,7 @@
             jQuery(window).scroll(function() {
                 s2.removeClass("stickBlueCard");
             });
-        }        
+        }
     </script>
 
     <!--  breadcrumb -->
@@ -86,110 +86,119 @@
     <apex:outputPanel id="fidelityChecklistText" rendered="{!parentPage == 'FidelityChecklist'}">&nbsp;>&nbsp;Fidelity Checklist</apex:outputPanel>
     <apex:outputPanel id="servAssignCloseText" rendered="{!parentPage == 'ServAssignClose'}">&nbsp;>&nbsp;Service Assignment Closure</apex:outputPanel>
     <apex:outputPanel id="servAssignCloseApprovalLink" rendered="{!parentPage == 'ServAssignCloseApproval'}">&nbsp;>&nbsp;<a href="/{!servAssignClose}">Service Assignment Closure</a></apex:outputPanel>
-    <apex:outputPanel id="servAssignCloseApprovalText" rendered="{!parentPage == 'ServAssignCloseApproval'}">&nbsp;>&nbsp;Service Assignment Closure: Approval</apex:outputPanel>    
-    </div>  
+    <apex:outputPanel id="servAssignCloseApprovalText" rendered="{!parentPage == 'ServAssignCloseApproval'}">&nbsp;>&nbsp;Service Assignment Closure: Approval</apex:outputPanel>
+    </div>
     <br />
-    
-    <div id="pbsBlueCard" style="background-color:#99ccff !important; font-size:11px;">        
+
+    <div id="pbsBlueCard" style="background-color:#99ccff !important; font-size:11px;">
     <apex:form >
         <table style="vertical-align:top" width="100%" border="0" >
                         <tr>
                         <apex:outputLabel rendered="{!hasPhoto}">
                         <td style="text-align:left; width:110px;padding-left:10px;vertical-align: top;" ><!--  photo -->
-                        <apex:image url="{!photourl}" styleclass="pbsimg" / >    
+                        <apex:image url="{!photourl}" styleclass="pbsimg" / >
                         </td>
                         </apex:outputLabel>
-                        
+
                         <td style="text-align:left; padding-left:10px;" ><!--  personal info -->
-                        <span class="pbsname">{!con.FirstName}  {!con.LastName}</span>
-                        <table cellpadding="5" style="border-collapse:collapse; border-spacing:0;" >
-                        <tr>
-                            <td width="25%"><b>Person #:</b>&nbsp;<apex:outputText value="{!con.PBS_Identifier__c}" /></td>
-                            <td width="25%"><b>Ethnicity:</b>&nbsp;<apex:OutputText value="{!con.Ethnicity_Picklist__c}"/></td>
-                            <apex:outputLabel rendered="{!guardianCount>0}">
-                            <td width="25%"><b>Guardian:</b>&nbsp;<apex:OutputText value="{!con.Guardian1_Name__c}"/></td>
-                            </apex:outputLabel>
-                            <apex:outputLabel rendered="{!primaryPhysician != ''}">
-                            <td width="25%"><b>Primary Physician:</b>&nbsp;<apex:outputText value="{!primaryPhysician}" /></td>
-                            </apex:outputLabel>
-                        </tr>
-                        <tr>
-                            <td width="25%"><b>DOB:</b>&nbsp;<apex:outputText id="txtdob" value="{0, date, MM/dd/yyyy}"><apex:param value="{!con.Birthdate}" /></apex:outputText></td>
-                            <td width="25%"><b>Primary Language:</b>&nbsp;<apex:OutputText value="{!con.Primary_Language__c}"/></td>
-                            <apex:outputLabel rendered="{!guardianCount>0}">
-                            <td width="25%"><b>Guardian Phone:</b>&nbsp;<apex:OutputText value="{!con.Guardian_Phone_Number__c}"/></td>
-                            </apex:outputLabel>
-                            <apex:outputLabel rendered="{!primaryPhysicianPhone != ''}">
-                            <td width="25%"><b>Primary Physician Phone:</b>&nbsp;<apex:outputText value="{!primaryPhysicianPhone}" /></td>
-                            </apex:outputLabel>
-                        </tr>
-                        <tr>
-                            <td width="25%"><b>Age:</b>&nbsp;<apex:outputText id="txtage" value="{!con.Age__c}" /></td>
-                            <td width="25%"><b>Primary Diagnosis:</b>&nbsp;<apex:outputText value="{!primaryDiagnosis}" /></td>
-                            <td width="25%"></td>
-<!--                             <apex:outputLabel rendered="{!con.Family_Member_Other__c != ''}"> -->
-<!--                             <td><b>Other Family Members:</b>&nbsp;<apex:OutputText value="{!con.Family_Member_Other__c}"/></td> -->
-<!--                             </apex:outputLabel> -->
-                            <apex:outputLabel rendered="{!con.Advanced_Directives__c}">
-                            <td width="25%"><b>Advance Directives:</b>&nbsp;<apex:outputLabel value="{!HTMLENCODE('Yes')}" /></td>
-                            </apex:outputLabel>
-                        </tr>
-                        <tr>
-                            <td width="25%"><b>Gender:</b>&nbsp;<apex:OutputText value="{!con.Gender__c}"/></td>
-                            <td width="25%"></td>
-                            <td width="25%"></td>
-                            <apex:outputLabel rendered="{!con.Code_Status__c != ''}">
-                            <td width="25%"><b>Code Status:</b>&nbsp;<apex:outputLabel value="{!con.Code_Status__c}" /></td>
-                            </apex:outputLabel>                      
-                        </tr> </table>
+                            <span class="pbsname">{!con.FirstName}  {!con.LastName}</span>
+                            <table cellpadding="5" style="border-collapse:collapse; border-spacing:0;" >
+                                <tr>
+                                    <td width="25%"><b>Person #:</b>&nbsp;<apex:outputText value="{!con.PBS_Identifier__c}" /></td>
+                                    <td width="25%"><b>Ethnicity:</b>&nbsp;<apex:OutputText value="{!con.Ethnicity_Picklist__c}"/></td>
+                                    <apex:outputLabel rendered="{!guardianCount>0}">
+                                    <td width="25%"><b>Guardian:</b>&nbsp;<apex:OutputText value="{!con.Guardian1_Name__c}"/></td>
+                                    </apex:outputLabel>
+                                    <apex:outputLabel rendered="{!primaryPhysician != ''}">
+                                    <td width="25%"><b>Primary Physician:</b>&nbsp;<apex:outputText value="{!primaryPhysician}" /></td>
+                                    </apex:outputLabel>
+                                </tr>
+                                <tr>
+                                    <td width="25%"><b>DOB:</b>&nbsp;<apex:outputText id="txtdob" value="{0, date, MM/dd/yyyy}"><apex:param value="{!con.Birthdate}" /></apex:outputText></td>
+                                    <td width="25%"><b>Primary Language:</b>&nbsp;<apex:OutputText value="{!con.Primary_Language__c}"/></td>
+                                    <apex:outputLabel rendered="{!guardianCount>0}">
+                                    <td width="25%"><b>Guardian Phone:</b>&nbsp;<apex:OutputText value="{!con.Guardian_Phone_Number__c}"/></td>
+                                    </apex:outputLabel>
+                                    <apex:outputLabel rendered="{!primaryPhysicianPhone != ''}">
+                                    <td width="25%"><b>Primary Physician Phone:</b>&nbsp;<apex:outputText value="{!primaryPhysicianPhone}" /></td>
+                                    </apex:outputLabel>
+                                </tr>
+                                <tr>
+                                    <td width="25%"><b>Age:</b>&nbsp;<apex:outputText id="txtage" value="{!con.Age__c}" /></td>
+                                    <td width="25%"><b>Primary Diagnosis:</b>&nbsp;<apex:outputText value="{!primaryDiagnosis}" /></td>
+                                    <td width="25%"></td>
+        <!--                             <apex:outputLabel rendered="{!con.Family_Member_Other__c != ''}"> -->
+        <!--                             <td><b>Other Family Members:</b>&nbsp;<apex:OutputText value="{!con.Family_Member_Other__c}"/></td> -->
+        <!--                             </apex:outputLabel> -->
+                                    <apex:outputLabel rendered="{!con.Advanced_Directives__c}">
+                                    <td width="25%"><b>Advance Directives:</b>&nbsp;<apex:outputLabel value="{!HTMLENCODE('Yes')}" /></td>
+                                    </apex:outputLabel>
+                                </tr>
+                                <tr>
+                                    <td width="25%"><b>Gender:</b>&nbsp;<apex:OutputText value="{!con.Gender__c}"/></td>
+                                    <td width="25%"></td>
+                                    <td width="25%"></td>
+                                    <apex:outputLabel rendered="{!con.Code_Status__c != ''}">
+                                    <td width="25%"><b>Code Status:</b>&nbsp;<apex:outputLabel value="{!con.Code_Status__c}" /></td>
+                                    </apex:outputLabel>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        <b>LTA:</b>
+                                        <apex:repeat value="{!evaluationResponses}" var="allergy">
+                                            <b>Type:</b> {!allergy.Allergy_Type__c}. <b>Details</b>: {!allergy.Allergy_Details__c}.
+                                        </apex:repeat>
+                                    </td>
+                                </tr>
+                            </table>
                         </td>
-                        
+
                         <td valign="top" align="right"> <!--  service links -->
-                        
+
                         <div>
-	                        <apex:image styleClass="stickPbs" url="{!URLFOR($Resource.pin)}" style="height:1.2em; display: none;" onclick="pinPbs()"/>
-	                        <apex:image styleClass="unstickPbs" url="{!URLFOR($Resource.unpin)}" style="height:1.2em;" onclick="unpinPbs()"/>
+                            <apex:image styleClass="stickPbs" url="{!URLFOR($Resource.pin)}" style="height:1.2em; display: none;" onclick="pinPbs()"/>
+                            <apex:image styleClass="unstickPbs" url="{!URLFOR($Resource.unpin)}" style="height:1.2em;" onclick="unpinPbs()"/>
                         </div>
                         <div style="padding:0px 35px 0px 0px;" >
-	                        <table style="border:1px solid #6699cc; background-color:white; padding-bottom:10px">
-	                        <tr>
-	                        <td colspan="2"><b>Service Links:</b></td>
-	                        </tr>
-	                        <tr>
-	                        <td style="vertical-align:top; text-align:left;line-height:20px">
-	                            <a href="{!IF(parentPage != 'PBS', '/apex/PersonBeingServedEditNew?id=' + con.ID, '')}#RP" class="servicelink">View Related Parties</a><br />
-	                            <a href="/apex/uploader?parentid={!con.Id}"  class="servicelink">Add/Edit Picture</a>
-	                        </td>
-	                            
-	                        <td style="vertical-align:top; padding-left:10px; padding-right:20px; line-height:20px">
-	                        	<apex:outputText rendered="{! parentPage != 'Assessment' && opGrp == 'Redwood' && !ISBLANK(admissionID)}">
-	                            <a href="{!IF(parentPage != 'Admission', '/apex/AdmissionView?id=' + admissionID, '')}#Asmt" class="servicelink">View Risk Assessment</a><Br />
-	                            </apex:outputText>
-	                            <apex:outputText rendered="{!(parentPage == 'Admission')}">
-	                            <a href="{!IF(parentPage != 'PBS', '/apex/PersonBeingServedEditNew?id=' + con.ID, '')}#Diag" class="servicelink">View Diagnosis</a><br />
-	                            </apex:outputText>
-	                            
-	                            <apex:outputText rendered="{!(parentPage != 'Admission')}">
-	                            <a href="{!IF(parentPage != 'PBS', '/apex/PersonBeingServedEditNew?id=' + con.ID, '')}#Adm" class="servicelink">View Admission</a><br />
-	                            </apex:outputText>
-	                            
-	                            <apex:outputText rendered="{!(parentPage == 'ServAssign' && saNew == false && opGrp == 'Cambridge' )}">
-	                            <a href="/apex/ServAssignExpectedDocs?id={!saId}" class="servicelink">View Case Documents</a><br />
-	                            </apex:outputText>
-	                            
-	                            <apex:outputText rendered="{!(parentPage == 'ServAssign' && saNew == false && opGrp == 'Cambridge' )}">
-	                            <a href="/apex/ServAssignFidelityChecklist?id={!saId}" class="servicelink">View Fidelity Checklist</a><br />
-	                            </apex:outputText>
-	                            
-	                            <apex:outputText rendered="{!((parentPage == 'ServAssign' || parentPage == 'Admission') && opGrp == 'Care Meridian' )}" >
-	                            <a href="{!IF(parentPage != 'PBS', '/apex/PersonBeingServedEditNew?id=' + con.ID, '')}#AI" class="servicelink">View/Edit Advanced Directives</a><br />
-	                            </apex:outputText > 
-	                                                        
-	                        </td>
-	                        </tr>
-	                        </table>
+                            <table style="border:1px solid #6699cc; background-color:white; padding-bottom:10px">
+                            <tr>
+                            <td colspan="2"><b>Service Links:</b></td>
+                            </tr>
+                            <tr>
+                            <td style="vertical-align:top; text-align:left;line-height:20px">
+                                <a href="{!IF(parentPage != 'PBS', '/apex/PersonBeingServedEditNew?id=' + con.ID, '')}#RP" class="servicelink">View Related Parties</a><br />
+                                <a href="/apex/uploader?parentid={!con.Id}"  class="servicelink">Add/Edit Picture</a>
+                            </td>
+
+                            <td style="vertical-align:top; padding-left:10px; padding-right:20px; line-height:20px">
+                                <apex:outputText rendered="{! parentPage != 'Assessment' && opGrp == 'Redwood' && !ISBLANK(admissionID)}">
+                                <a href="{!IF(parentPage != 'Admission', '/apex/AdmissionView?id=' + admissionID, '')}#Asmt" class="servicelink">View Risk Assessment</a><Br />
+                                </apex:outputText>
+                                <apex:outputText rendered="{!(parentPage == 'Admission')}">
+                                <a href="{!IF(parentPage != 'PBS', '/apex/PersonBeingServedEditNew?id=' + con.ID, '')}#Diag" class="servicelink">View Diagnosis</a><br />
+                                </apex:outputText>
+
+                                <apex:outputText rendered="{!(parentPage != 'Admission')}">
+                                <a href="{!IF(parentPage != 'PBS', '/apex/PersonBeingServedEditNew?id=' + con.ID, '')}#Adm" class="servicelink">View Admission</a><br />
+                                </apex:outputText>
+
+                                <apex:outputText rendered="{!(parentPage == 'ServAssign' && saNew == false && opGrp == 'Cambridge' )}">
+                                <a href="/apex/ServAssignExpectedDocs?id={!saId}" class="servicelink">View Case Documents</a><br />
+                                </apex:outputText>
+
+                                <apex:outputText rendered="{!(parentPage == 'ServAssign' && saNew == false && opGrp == 'Cambridge' )}">
+                                <a href="/apex/ServAssignFidelityChecklist?id={!saId}" class="servicelink">View Fidelity Checklist</a><br />
+                                </apex:outputText>
+
+                                <apex:outputText rendered="{!((parentPage == 'ServAssign' || parentPage == 'Admission') && opGrp == 'Care Meridian' )}" >
+                                <a href="{!IF(parentPage != 'PBS', '/apex/PersonBeingServedEditNew?id=' + con.ID, '')}#AI" class="servicelink">View/Edit Advanced Directives</a><br />
+                                </apex:outputText>
+
+                            </td>
+                            </tr>
+                            </table>
                         </div>
-                        
+
                         </td>
                        </tr>
 <!--  below row can be used to put some more additional info on the blueCard. Logic is added into this component to toggle hide for this row. -->
@@ -205,6 +214,6 @@
 <!-- 	    <span class="selector"> -->
 <!-- 	        <apex:image url="{!URLFOR($Resource.arrowUpDown)}" style="height:1.2em"/> -->
 <!-- 	    </span>	     -->
-	</apex:form>
-	</div>
+    </apex:form>
+    </div>
 </apex:component>
