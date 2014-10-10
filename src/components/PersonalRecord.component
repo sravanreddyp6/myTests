@@ -142,14 +142,16 @@
                                     <td width="25%"><b>Code Status:</b>&nbsp;<apex:outputLabel value="{!con.Code_Status__c}" /></td>
                                     </apex:outputLabel>
                                 </tr>
-                                <tr>
-                                    <td colspan="4">
-                                        <b>LTA:</b>
-                                        <apex:repeat value="{!evaluationResponses}" var="allergy">
-                                            <b>Type:</b> {!allergy.Allergy_Type__c}. <b>Details</b>: {!allergy.Allergy_Details__c}.
-                                        </apex:repeat>
-                                    </td>
-                                </tr>
+                                <apex:outputPanel layout="none" rendered="{!!evaluationResponses.empty}">
+                                    <tr>
+                                        <td colspan="4">
+                                            <b>LTA:</b>
+                                            <apex:repeat value="{!evaluationResponses}" var="allergy">
+                                                <b>Type:</b> {!allergy.Allergy_Type__c}. <b>Details</b>: {!allergy.Allergy_Details__c}.
+                                            </apex:repeat>
+                                        </td>
+                                    </tr>
+                                </apex:outputPanel>
                             </table>
                         </td>
 

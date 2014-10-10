@@ -43,8 +43,11 @@
 &nbsp;
 </apex:outputPanel>
 </apex:outputPanel>
-<apex:outputPanel layout="block" style="width: 401px; float: left; padding: 15px;">
-<apex:form ><apex:pageMessages id="messages" ></apex:pageMessages>
+<apex:outputPanel layout="block" style="width: 650px; float: left; padding: 15px;">
+<apex:form >
+<!-- <apex:actionFunction action="{!AddPrograms}" name="addPrograms" reRender="programs,pbsOPTS" status="myStatus" oncomplete="createtbl()" /> -->
+<!-- <apex:actionFunction action="{!UpdateProgramSelections}" name="updateProgramSelection" reRender="pbsOPTS" status="myStatus" oncomplete="createtbl()" /> -->
+<apex:pageMessages id="messages" ></apex:pageMessages>
 <apex:pageBlock title="Shift Note Summary Report">
     <apex:pageBlockButtons >
         
@@ -70,19 +73,38 @@
        </apex:pageBlockSection>
        <apex:actionRegion >
        
-       <apex:pageBlockSection id="programs" title="Programs" columns="1" collapsible="false" >
-        	<apex:outputPanel >
-               <apex:selectCheckboxes value="{!selectedPrograms}" layout="pageDirection">
-                   <apex:selectOptions value="{!programslist}"></apex:selectOptions>
-				   <apex:actionSupport event="onchange" action="{!UpdateProgramSelections}" reRender="pbsOPTS" status="myStatus" oncomplete="createtbl()" />
-               </apex:selectCheckboxes>
-			</apex:outputPanel>
+       <apex:pageBlockSection id="programs" title="Programs (Please select one or more Programs from the below list to view clients.)" columns="1" collapsible="false" >
+	    <apex:outputpanel >
+	    	<table>
+		        <tr><td>
+		        <apex:selectList id="selectprograms" value="{!selectedPrograms}" size="7" multiselect="true" style="width:235px">
+		            <apex:selectOptions value="{!programslist}"/>
+		        </apex:selectList>
+		        </td><td style="vertical-align:middle">
+		        <apex:commandButton value="add" 
+						            action="{!AddPrograms}" 
+						            reRender="programs, pbsOPTS" 
+						            status="myStatus"
+						            oncomplete="createtbl()"
+						            style="height: 25px; width: 35px;"/><br/>
+		        <apex:commandButton value="remove" 
+						            action="{!RemovePrograms}" 
+						            reRender="programs, pbsOPTS" 
+						            status="myStatus"
+						            oncomplete="createtbl()"
+						            style="height: 25px; width: 50px;"/>		             
+		        </td><td>
+		        <apex:selectList id="select2" value="{!select2PrmIds}" size="7" multiselect="true" style="width:235px;">
+		        	<apex:selectOptions value="{!select2list}" />
+				</apex:selectList>
+		        </td></tr>
+	 		</table>                   
+		</apex:outputPanel>
        </apex:pageBlockSection>       
        
        
-       
-       <apex:pageBlockSection id="pbsOPTS"  title="Person Being Served (select programs above to see the list of available person being served.)" columns="1" collapsible="false" >
-           <apex:outputPanel layout="block" style="padding-left: 159px;" >
+       <apex:pageBlockSection id="pbsOPTS"  title="Person Being Served (Please select one or more names from the list.)" columns="1" collapsible="false" >
+           <apex:outputPanel layout="block" style="padding-left: 200px;" >
                <apex:commandLink action="{!selectAllPbs}" value="Select All" reRender="pbsOPTS, tbl_maker" status="myStatus" oncomplete="createtbl()" />
                <br/><apex:commandLink action="{!clearSelectedPbs}" value="Clear Selected" reRender="pbsOPTS, tbl_maker" status="myStatus" oncomplete="createtbl()" />
             </apex:outputPanel>
@@ -199,10 +221,8 @@
       </table>              
      </apex:pageBlock>                                
      </apex:repeat> 
-     
 
 </apex:outputPanel>
-
        
 <apex:actionStatus id="myStatus" >
     <apex:facet name="start">
@@ -228,11 +248,37 @@ function createtbl(){
 }
 j$(document).ready(function(){
     createtbl();
-     j$('#int').fastLiveFilter('#search_list');
+    
+    j$('select[id$=select2]').empty();
+    
+    // set up the move of items from unselected to selected
+ 	j$('#add').click(function() {
+		// j$('select[id$=programs] option:selected').remove().appendTo(j$('select[id$=select2]'));
+  		// selectSort(j$('select[id$=select2]'), j$('select[id$=select2] option') );
+  		// updateProgramSelection();
+  		addPrograms();
+	 });
+
+ 	j$('#remove').click(function() {
+  		j$(j$('select[id$=select2] option:selected')).remove().appendTo('select[id$=programs]');
+  		selectSort(j$('select[id$=programs]'), j$('select[id$=programs] option') );
+  		updateProgramSelection();
+	 });
+
+
+	 
+	j$('#int').fastLiveFilter('#search_list');
     // j$('testing').filterTable();
-    
-    
 });
+
+function selectSort(mySelect, myOptions){
+	myOptions.sort(function(a,b) {
+	    if (a.text > b.text) return 1;
+	    else if (a.text < b.text) return -1;
+	    else return 0
+	})
+	j$(mySelect).empty().append( myOptions );
+};
 
     
 var tableToExcel = (function() {
