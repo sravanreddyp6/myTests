@@ -52,9 +52,7 @@ function bindDates(){
 
 -->
 
-<apex:variable var="bExTab" value="{!AND(AuditFrmFields.Bill_Exceptions__c != 0, NPA_Audit__c.Billing_Audit__c)}"/>
-<apex:variable var="qExTab" value="{!AND(OR(AuditFrmFields.QualityExceptions__c != 0, AuditFrmFields.QualityExceptions_ClientFunds__c != 0), NPA_Audit__c.QA_Audit__c)}"/>
-<apex:variable var="hExTab" value="{!AND(OR(AuditFrmFields.HHPExceptions__c != 0, AuditFrmFields.HHPExceptions_BgCheck__c != 0), NPA_Audit__c.HHP_Audit__c)}"/>
+
 <apex:variable var="newRec" value="{!ISBLANK(NPA_Audit__c.id)}"/>
 <apex:variable var="ExTabText" value="Exc"/>
 <apex:variable var="ExTabStyle" value="margin-right: 10px; margin-left:-6px;"/>
@@ -64,7 +62,11 @@ The Host Home Provider (a.k.a., HHP, Mentor, Foster Parent) is an independent co
 
 <apex:variable var="menuNumStyle" value="font-size: 10pt; color: #3f6075;"/>
 <script>function setFocusOnLoad() {}</script>
-<apex:form styleClass="myFrm" id="mee" > 
+<apex:form styleClass="myFrm" id="mee" >
+    <apex:variable var="bExTab" value="{!AND( (AuditFrmFields.Bill_Exceptions__c != 0 && AuditFrmFields.Bill_Exceptions__c != null) , NPA_Audit__c.Billing_Audit__c)}"/>
+    <apex:variable var="qExTab" value="{!AND( (AuditFrmFields.QualityExceptions__c != 0 && AuditFrmFields.QualityExceptions_ClientFunds__c != null) , NPA_Audit__c.QA_Audit__c)}"/>
+    <apex:variable var="hExTab" value="{!AND( (AuditFrmFields.HHPExceptions__c != 0 && AuditFrmFields.HHPExceptions_BgCheck__c != null) , NPA_Audit__c.HHP_Audit__c)}"/>
+
 
 <table >
 <tr>
