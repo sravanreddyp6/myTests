@@ -142,7 +142,7 @@
                                     <td width="25%"><b>Code Status:</b>&nbsp;<apex:outputLabel value="{!con.Code_Status__c}" /></td>
                                     </apex:outputLabel>
                                 </tr>
-                                <apex:outputPanel layout="none" rendered="{!evaluationResponses.size()>0}">
+                                <apex:outputPanel layout="none" rendered="{!!evaluationResponses.empty}">
                                     <tr>
                                         <td colspan="4">
                                             <b>LTA:</b>
