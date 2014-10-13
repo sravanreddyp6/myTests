@@ -39,8 +39,8 @@
                 <apex:facet name="stop" />
             </apex:actionStatus>
         </apex:outputPanel>
-        <apex:outputPanel rendered="{!numberOfResponses > 0}">
-            <apex:pageBlockTable value="{!responses}" var="response" id="responseTable">
+        <apex:outputPanel id="responseTableWrapper">
+            <apex:pageBlockTable value="{!responses}" var="response" id="responseTable" rendered="{!numberOfResponses>0}">
                 <apex:column headerValue="{!IF(AND(responses.size>0,isPdf != true), 'Action', '')}" width="50px" rendered="{!editEnabled}">
                     <apex:commandLink onclick="{!onEdit}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit != null) && !isPdf}" />
                     <apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit == null) && !isPdf}" />
@@ -60,7 +60,7 @@
             <span class="ui-helper-hidden-accessible"><input type="text"/></span>  <!-- Just so Jquery UI doesn't auto focus on the 1st field -->
             <apex:pageBlock title="{!type}" id="responseDialogMainBlock">
                 <apex:pageblockButtons location="bottom">
-                    <apex:actionFunction name="saveResponse{!uniqueId}" action="{!saveResponse}" rerender="responseTable,responseDialogMainBlock,responseDialogErrors" status="saveResponseStatus" oncomplete="afterSave('{!$Component.responseDialog}', request.options.parameters.keepDialogOpen, showAddResponse{!uniqueId});">
+                    <apex:actionFunction name="saveResponse{!uniqueId}" action="{!saveResponse}" rerender="responseTableWrapper,responseDialogMainBlock,responseDialogErrors" status="saveResponseStatus" oncomplete="afterSave('{!$Component.responseDialog}', request.options.parameters.keepDialogOpen, showAddResponse{!uniqueId});">
                         <apex:param name="keepDialogOpen" value="" />
                     </apex:actionFunction>
                     <apex:actionStatus id="saveResponseStatus">
