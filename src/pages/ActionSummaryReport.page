@@ -74,7 +74,49 @@
       width:100%;
       position:relative;
       }
+
+	.hbbg{
+	    position:fixed;
+	    width:100%;
+	    height:100%;
+	    top:0px;
+	    left:0px;
+	    background-color: gray;
+	    opacity: .6;
+	    z-index:1000;
+	}      
+	.popupform{
+	    position: fixed; 
+	    left:35%; 
+	    top:40%;
+	     /*background-color: white; border: 2px solid gray; padding: 7px;*/
+	    width: 343px;
+	    opacity: 1;
+	    z-index:1099;
+	
+	}      
   </style>
+  
+  
+  <script>
+    var j$ = jQuery.noConflict();
+    
+	function printpage(radioObj) {
+	    if(radioObj.value == 'WORD'){
+	        return window.open('/apex/ActionSummaryReport_Print?Id={!Action_Summary__c.Id}', '_blank');
+	    }
+	
+	    if(radioObj.value == 'PDF'){
+	        return window.open('/apex/ActionSummaryReport_Print?Id={!Action_Summary__c.Id}&pdf=1', '_blank');
+	    }    
+	    return '';
+	}
+	    
+	function toggleById(id, ms){
+	    j$(document.getElementById(id)).toggle(ms);
+	};
+</script>
+  
   <c:PersonalRecord pbsId="{!personId}" parentPage="ActionSummaryReport"
      servAssignId="{!Action_Summary__c.Service_Assignment__c}" 
      admId="{!Action_Summary__c.Service_Assignment__r.Admission__c}"/>
@@ -88,6 +130,8 @@
   <div class="pbHeaderButton">
           <apex:commandButton value="Save " action="{!SaveAll}" id="formSave" status="myStatus"  rendered="{!Action_Summary__c.Status__c != 'Final' && Editable }"/>
           <apex:commandButton value="Finalize" action="{!Finalize}"  rendered="{!(Action_Summary__c.Status__c != 'Final') && canFinalize}"/>
+          
+		  <apex:commandButton value="Print" onClick="toggleById('printform'); return false;" />          
   </div>
   <apex:pageBlockSection title="Summary Details" columns="3">
       <apex:outputField value="{!Action_Summary__c.Name}"/>
@@ -253,9 +297,36 @@
   <apex:commandButton value="Save " action="{!SaveAll}" id="formSave2" status="myStatus" rendered="{!Action_Summary__c.Status__c != 'Final'}"/>
   <apex:commandButton value="Finalize" action="{!Finalize}"  rendered="{!(Action_Summary__c.Status__c != 'Final') && canFinalize}"/>
   
+  <apex:commandButton value="Print" onClick="toggleById('printform'); return false;" />
+  
 	</div>
   </apex:PageBlock>
     </apex:Form>
+
+<div id="printform"  style="display: none;" >
+<div class="hbbg" > </div>
+<div id="p" class="popupform" >
+    <form name="radioExampleForm" method="get" action="" onsubmit="return false;">
+    <apex:pageBlock >
+        <apex:pageBlockButtons location="bottom">
+                <input type="button" class="btn" onclick="printpage(document.forms['radioExampleForm'].elements['type']);" value="Create"/>
+                <input type="button" class="btn" onclick="toggleById('printform', '500'); return false;" value="Cancel"/>          
+        </apex:pageBlockButtons>
+        <apex:pageBlockSection columns="1">
+            <apex:outputPanel >
+                Select the type of file you would like to create
+            </apex:outputPanel>
+            <apex:outputPanel >
+                <label for="number0"><input type="radio" value="PDF" name="type" id="number0" checked="checked"/> PDF</label>
+                <br/>
+                <label for="number1"><input type="radio" value="WORD" name="type" id="number1"/> Word Document</label> 
+            </apex:outputPanel>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    </form>
+</div>
+</div>	    
+
     <style>
     .relatedProcessHistory input{
         display: none;
