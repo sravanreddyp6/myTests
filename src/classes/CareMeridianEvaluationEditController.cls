@@ -58,8 +58,8 @@ public with sharing class CareMeridianEvaluationEditController {
             WHERE Id=:evaluation.Referral__r.Person_Being_Referred__c
         ];
         ref = [
-        	SELECT Id, Primary_Diagnosis__c,Secondary_Diagnosis__c,Date_of_Injury__c FROM Referral__c
-        	WHERE Id=:evaluation.Referral__c
+            SELECT Id, Primary_Diagnosis__c,Secondary_Diagnosis__c,Date_of_Injury__c FROM Referral__c
+            WHERE Id=:evaluation.Referral__c
         ];
         if (ApexPages.currentPage().getParameters().get('tab') != null) {
             selectedTab = ApexPages.currentPage().getParameters().get('tab');
@@ -88,17 +88,6 @@ public with sharing class CareMeridianEvaluationEditController {
             // SF will automatically create a PageMessage Error here, so we don't
             // have to do anything
         }
-    }
-    
-    public pageReference reDirect() {
-        PageReference returnURL;
-        if(this.evaluation.RecordTypeId == Utility.getEValuationRecordType('NursesAssessment')) {
-	        returnURL = new PageReference ('/apex/NursingEvaluationEdit?id='+evaluation.id);
-	      	system.debug('UUUUUUUUUUUUUURRRRRRRRRRRRRRRRRRRRLLLLLLLLLLLLLLLLLLL'+returnURL);
-	        return returnURL;
-        }
-        
-        return null;
     }
 
     @RemoteAction
@@ -167,14 +156,14 @@ public with sharing class CareMeridianEvaluationEditController {
         }
         update this.evaluation;
         update this.pbr;
-        
+
         if(ref.Primary_Diagnosis__c != evaluation.Primary_Diagnosis__c || ref.Secondary_Diagnosis__c != evaluation.Secondary_Diagnosis__c || ref.Date_of_Injury__c != evaluation.Date_of_Injury_Onset__c ){
-        	ref.Primary_Diagnosis__c = evaluation.Primary_Diagnosis__c;
-	        ref.Secondary_Diagnosis__c = evaluation.Secondary_Diagnosis__c;
-	        ref.Date_of_Injury__c = evaluation.Date_of_Injury_Onset__c;
-	        
-	        update this.ref;
-	        
+            ref.Primary_Diagnosis__c = evaluation.Primary_Diagnosis__c;
+            ref.Secondary_Diagnosis__c = evaluation.Secondary_Diagnosis__c;
+            ref.Date_of_Injury__c = evaluation.Date_of_Injury_Onset__c;
+
+            update this.ref;
+
         }
         //return stdController.view();
         return new PageReference('/apex/CareMeridianEvaluationView?id=' + evaluation.Id + '&tab=' + selectedTab);

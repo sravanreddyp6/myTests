@@ -52,12 +52,12 @@ public with sharing class CareMeridianEvaluationViewController {
         serializedAnnotations = JSON.serialize(annotations);
         currentRelatedParty = new Related_Party__c();
         selectedTab = ApexPages.currentPage().getParameters().get('tab');
-        
-       	string file;
-		file = 'Person Being Referred- '+ this.evaluation.Referral__r.Person_Being_Referred__r.Full_Name__c+'.pdf';
-		file = file.replaceAll('[|,||\\,||"||:|~|!|@|#|$|%|^|&|*|_|+|=|<|>|?|\\(|\\)|\\{|\\}|\\;|\\\'"]', ' ');	
-		// Assigns the person being referred Name to the PDF dynamically
-		Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename='+file);
+
+           string file;
+        file = 'Person Being Referred- '+ this.evaluation.Referral__r.Person_Being_Referred__r.Full_Name__c+'.pdf';
+        file = file.replaceAll('[|,||\\,||"||:|~|!|@|#|$|%|^|&|*|_|+|=|<|>|?|\\(|\\)|\\{|\\}|\\;|\\\'"]', ' ');
+        // Assigns the person being referred Name to the PDF dynamically
+        Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename='+file);
     }
 
     public void showAddRelatedParty() {
@@ -83,19 +83,4 @@ public with sharing class CareMeridianEvaluationViewController {
             // have to do anything
         }
     }
-    
-    public PageReference reDirect() {
-    	
-    	PageReference returnURL;
-    	
-    	if(evaluation.RecordTypeId == Utility.getEValuationRecordType('NursesAssessment')) 
-    	returnURL = new PageReference ('/apex/NursingEvaluationView?id='+evaluation.id);
-    	system.debug('UUUUUUUUUUUUUURRRRRRRRRRRRRRRRRRRRLLLLLLLLLLLLLLLLLLL'+returnURL);
-    	
-    	return returnURL;
-    	
-    	
-    
-    }
-    
 }
