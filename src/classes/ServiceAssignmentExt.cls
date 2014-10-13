@@ -32,7 +32,8 @@ public class ServiceAssignmentExt {
     public List<TMN_Contract__c> contractsForThisServAssignsState { get; set; }
     public List<ServiceAssignment_Contract_JO__c> servAssignContractXrefs {get;set;}
     public List<SelectOption> contractsList { get; set; }
-    public String associatedContractID { get; set; }    
+    public String associatedContractID { get; set; }
+    public String associatedContractName { get; set; }
     public Boolean refreshPage { get; set; }
 
 
@@ -648,8 +649,10 @@ public class ServiceAssignmentExt {
                                                                         FROM ServiceAssignment_Contract_JO__c
                                                                         WHERE Service_Assignment__c = :theServAssign.Id ];
                                                                         
-            if (servAssignContractXrefs.size() > 0)
+            if (servAssignContractXrefs.size() > 0){
                 associatedContractID = servAssignContractXrefs[0].Contract__c;
+                associatedContractName = [SELECT Name FROM TMN_Contract__c WHERE id = :associatedContractID LIMIT 1].Name;
+            }
             
             List<Service_Assignment__c> listOfServAssignsToGetStateOfAdmission = [ SELECT Admission__r.State__c
                                                                                     FROM Service_Assignment__c WHERE Id = :theServAssign.Id LIMIT 1];                		                                                                                    

@@ -59,19 +59,7 @@
         border:1px solid #cccccc; 
         color:#000000;
         cursor: text;
-    }        
-    
-    select[readonly]{
-    border: none;
-    background: none;
-    -webkit-appearance: none;
-    cursor: text;
-    }
-
-	select[readonly] option{
-	    display:none;
-    }
-    
+    }    
 </style>
 
 <c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" servAssignId="{!theServAssign.Id}" parentPage="ServAssign" servAssignNew="{!newSA}" admId="{!admissionId}"  />
@@ -326,12 +314,16 @@
                              collapsible="false"
                              id="ContractAssoc"
                              rendered="{!!showLocation && !AssessmentOnly && !vfVarIsCM}">            
-        <apex:pageBlockSectionItem >
+        <apex:pageBlockSectionItem rendered="{!editSA}">
             <apex:outputLabel value="Contract" />
-            <apex:selectList id="chooseContract" value="{!associatedContractID}" size="1" multiselect="false" readonly="{!!editSA}">
+            <apex:selectList id="chooseContract" value="{!associatedContractID}" size="1" multiselect="false">
                 <apex:selectOptions value="{!contractsList}"/>
             </apex:selectList>
-        </apex:pageBlockSectionItem>        
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem rendered="{!!editSA}">
+            <apex:outputLabel value="Contract" />
+            <apex:outputText value="{!associatedContractName}" />
+        </apex:pageBlockSectionItem>                
     </apex:pageBlockSection>
     
     <apex:pageBlockSection title="Program Association"
