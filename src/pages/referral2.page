@@ -1639,7 +1639,7 @@ function stopRKey(evt) {
           <apex:variable var="evaluationList" value="'{!Referral__c.Evaluations__r}'"/>
           <apex:commandButton value="Add Evaluation" action="{!addEvaluation}" rendered="{!evaluationList == emptyList && Referral__c.Person_Being_Served__c == null}" />
         </apex:outputPanel>
-        <apex:pageBlockTable value="{!Referral__c.Evaluations__r}" var="evaluation" rendered="{!Referral__c.Has_Evaluation__c}">
+        <apex:pageBlockTable value="{!Referral__c.Evaluations__r}" var="evaluation" >
           <apex:column headerValue="Action" >
           	  <apex:outputPanel rendered="{!evaluation.Referral__r.Person_Being_Served__c == null}">
                  <a href="/{!evaluation.Id}/e">Edit</a>
@@ -1649,7 +1649,6 @@ function stopRKey(evt) {
           <apex:column headerValue="Signed" value="{!evaluation.Is_Signed__c}"></apex:column>
           <apex:column headerValue="Last Modified" value="{!evaluation.LastModifiedDate}" />
         </apex:pageBlockTable>
-        <apex:outputText value="Evaluation is not Available for this Referral" rendered="{!!Referral__c.Has_Evaluation__c}"/>
       </apex:pageBlockSection>
 
       <apex:pageBlockSection columns="1"
