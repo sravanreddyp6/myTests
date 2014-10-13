@@ -1271,35 +1271,35 @@ END: Uncomment to have the element collapsed by default -->
 <!-- end Funding sources section-->
 
  <apex:pageBlock title="Referral Detail" rendered="{!referral != null }">
- <apex:pageBlockSection columns="2" title="Originating Referral" collapsible="false">
- <apex:pageBlockSectionItem >
-  <apex:outputLabel value="Name" />
-  <apex:outputlink value="/{!referral.Id}">{!referral.name}</apex:outputlink>
-  </apex:pageBlockSectionItem>
- <apex:outputField value="{!referral.Referral_Date__c}" />
-     <apex:pageBlockSectionItem >
-    <apex:outputLabel value="Created By" />
-    <apex:outputPanel layout="none">
-    <apex:outputField value="{!referral.CreatedById}"  />, <apex:outputText value=" {!referral.CreatedDate}"/>
-    </apex:outputPanel>
-    </apex:pageBlockSectionItem>
-     <apex:pageBlockSectionItem >
-    <apex:outputLabel value="Last Modified By" />
-    <apex:outputPanel layout="none">
-     <apex:outputField value="{!referral.LastModifiedById}"  />, <apex:outputText value=" {!referral.LastModifiedDate}" />
-    </apex:outputPanel>
-    </apex:pageBlockSectionItem>
+ 	<apex:pageBlockSection columns="2" title="Originating Referral" collapsible="false">
+ 		<apex:pageBlockSectionItem >
+  			<apex:outputLabel value="Name" />
+  			<apex:outputlink value="/{!referral.Id}">{!referral.name}</apex:outputlink>
+  		</apex:pageBlockSectionItem>
+ 		<apex:outputField value="{!referral.Referral_Date__c}" />
+		<apex:pageBlockSectionItem rendered="{!!referral.Has_Evaluation__c && vfVarIsCM}" >
+ 			<apex:outputLabel value="Evaluation" />
+ 			<apex:outputText value="No Evaluation to display." />
+ 		</apex:pageBlockSectionItem>
+ 		<apex:pageBlockSectionItem rendered="{!referral.Has_Evaluation__c}">
+ 			<apex:outputLabel value="Evaluation" />
+ 			<apex:outputLink value="/{!referral.Evaluations__r[0].Id}" >{!referral.Evaluations__r[0].Name}</apex:outputLink>
+ 		</apex:pageBlockSectionItem>
+ 		<apex:pageBlockSectionItem rendered="{!vfVarIsCM}" />
+     	<apex:pageBlockSectionItem >
+    		<apex:outputLabel value="Created By" />
+    	<apex:outputPanel layout="none">
+    		<apex:outputField value="{!referral.CreatedById}"  />, <apex:outputText value=" {!referral.CreatedDate}"/>
+    	</apex:outputPanel>
+    	</apex:pageBlockSectionItem>
+    	 <apex:pageBlockSectionItem >
+    	<apex:outputLabel value="Last Modified By" />
+    	<apex:outputPanel layout="none">
+     	<apex:outputField value="{!referral.LastModifiedById}"  />, <apex:outputText value=" {!referral.LastModifiedDate}" />
+    	</apex:outputPanel>
+    	</apex:pageBlockSectionItem>
  </apex:pageBlockSection>
- <apex:PageBlockSection title="Pre-Admission Evaluation" collapsible="false" rendered="{!vfVarIsCM}">
- 	<apex:pageBlockSectionItem rendered="{!!referral.Has_Evaluation__c}" >
- 		<apex:outputLabel value="" />
- 		<apex:outputText value="No Evaluation to display." />
- 	</apex:pageBlockSectionItem>
- 	<apex:pageBlockSectionItem rendered="{!referral.Has_Evaluation__c}">
- 		<apex:outputLabel value="Evaluation" />
- 		<apex:outputLink value="/{!referral.Evaluations__r[0].Id}" >{!referral.Evaluations__r[0].Name}</apex:outputLink>
- 	</apex:pageBlockSectionItem>
- </apex:PageBlockSection>
+ 
  <apex:pageBlockSection title="Funding Source" collapsible="false" columns="1"><br />
 	 <apex:pageBlockTable value="{!referralFundingsources}" var="item" rendered="{!(referralFundingsources != null || referralFundingsources.size > 0)}">
 		<apex:column value="{!item.name}"/>
