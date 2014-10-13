@@ -4,6 +4,7 @@
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
     <apex:includeScript value="{!$Resource.AnnotoriousDev}"/>
     <apex:includeScript value="{!$Resource.AnotoJS}"/>
+    <apex:variable value="{!$CurrentPage.parameters.SA == '1'}" var="openfromSA" />
     <script>
     function openWin(url){
         window.open(url);
@@ -38,9 +39,16 @@
             padding-top: 22px;
         }
     </style>
-    <div class="breadcrumb">
+    <apex:outputPanel rendered="{!$CurrentPage.parameters.SA_Id == null}">
+    <div class="breadcrumb" >
         <a href="/">Home</a> > <a href="/{!Evaluation__c.Referral__c}">Referral: {!Evaluation__c.Referral__r.Name}</a> > <a href="/{!Evaluation__c.Id}">Evaluation: {!Evaluation__c.Name}</a>
     </div>
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!$CurrentPage.parameters.SA_Id != null}">
+    <div class="breadcrumb" >
+        <a href="/">Home</a> ><a href="/apex/PersonsBeingServedListView">Person Being Served </a> ><a href="/{!SA.Admission__r.Person_Being_Served__c}">{!SA.Admission__r.Person_Being_Served__r.Name}</a> ><a href="/{!SA.Admission__c}">Admission</a> ><a href="/{!SA.Id}">Service Assignment</a> > {!Evaluation__c.Name}
+    </div>
+    </apex:outputPanel>
     <apex:form id="wholePage">
         <apex:outputPanel id="penUploadMessages">
             <apex:actionRegion >

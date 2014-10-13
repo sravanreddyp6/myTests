@@ -1283,7 +1283,7 @@ END: Uncomment to have the element collapsed by default -->
  		</apex:pageBlockSectionItem>
  		<apex:pageBlockSectionItem rendered="{!referral.Has_Evaluation__c}">
  			<apex:outputLabel value="Evaluation" />
- 			<apex:outputLink value="/{!referral.Evaluations__r[0].Id}" >{!referral.Evaluations__r[0].Name}</apex:outputLink>
+ 			<apex:outputLink value="/apex/CareMeridianEvaluationView?id={!referral.Evaluations__r[0].Id}&SA_Id={!theServAssign.Id}" >{!referral.Evaluations__r[0].Name}</apex:outputLink>
  		</apex:pageBlockSectionItem>
  		<apex:pageBlockSectionItem rendered="{!vfVarIsCM}" />
      	<apex:pageBlockSectionItem >
