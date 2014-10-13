@@ -48,7 +48,7 @@ public with sharing class shiftnote_summary_rpt {
 										 HAVING COUNT(service_location__r.id) > 0
 										  ORDER BY service_location__r.program__c];
 		for (AggregateResult slPrgm : slPrgms) {
-			programslist.add(new SelectOption((Id)slPrgm.get('slID'), String.valueOf(slPrgm.get('prgm')) + ' ' + String.valueOf(slPrgm.get('alias')) ));
+			programslist.add(new SelectOption((Id)slPrgm.get('slID'), String.valueOf(slPrgm.get('alias')) + '-' + String.valueOf(slPrgm.get('prgm')) ));
         }
         selectedPBS = new List<id>();
         hasRunOnce =false;

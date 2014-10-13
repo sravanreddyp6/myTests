@@ -21,17 +21,12 @@
     <columns>
         <field>Contact.Service_Assignment__r$Admission__c.CreatedBy</field>
     </columns>
-    <crossFilters>
-        <criteriaItems>
-            <column>Days_Since_Last_Modification__c</column>
-            <operator>greaterThan</operator>
-            <value>30</value>
-        </criteriaItems>
-        <operation>with</operation>
-        <primaryTableColumn>Contact.Service_Assignment__r$Id</primaryTableColumn>
-        <relatedTable>Progress_Note__c</relatedTable>
-        <relatedTableJoinColumn>Service_Assignment__c</relatedTableJoinColumn>
-    </crossFilters>
+    <columns>
+        <field>Contact.Service_Assignment__r$Name</field>
+    </columns>
+    <columns>
+        <field>Contact.Service_Assignment__r.Progress_Notes__r$Start_Time__c</field>
+    </columns>
     <description>#notes</description>
     <format>Tabular</format>
     <name>ESD No Note Activity on Active Admission</name>
@@ -46,8 +41,8 @@
     <sortOrder>Asc</sortOrder>
     <timeFrameFilter>
         <dateColumn>Contact.Service_Assignment__r.Progress_Notes__r$LastModifiedDate</dateColumn>
-        <endDate>2014-10-07</endDate>
+        <endDate>2014-10-09</endDate>
         <interval>INTERVAL_CUSTOM</interval>
-        <startDate>2014-09-30</startDate>
+        <startDate>2014-09-01</startDate>
     </timeFrameFilter>
 </Report>
