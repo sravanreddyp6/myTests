@@ -898,171 +898,22 @@ hr {
                         <apex:outputText label="Ear Infections" value="{!if (Evaluation__c.Ear_Infections__c, 'Yes - ' + Evaluation__c.Ear_infection_Describe__c, Evaluation__c.Ear_infection_Describe__c)}" />
 
                         <apex:pageBlockSectionItem >
-                        <apex:outputLabel Value="Glasses/Contacts<Br /><br />For Reading<br /><br />For Distance<br /><br />Multifocal<br /><br />Other<br /><br />If Contacts, Type"  escape="False"/>
+                        <apex:outputLabel Value="Glasses/Contacts" />
                         <apex:outputPanel >
-                        <br />
-                        <br />
-                        <apex:inputField value="{!Evaluation__c.Glasses_For_Reading__c}"  />
-                        <br /><apex:inputField value="{!Evaluation__c.Glasses_For_Distance__c}"  />
-                        <br /><apex:inputField value="{!Evaluation__c.Glasses_For_Multi_Focal_Use__c}" />
-                        <br /><apex:inputField value="{!Evaluation__c.Glasses_for_other__c}" />
-                        <br /><apex:inputField value="{!Evaluation__c.Contacts_Type__c}"  />
+                        <apex:outputText value="For Reading;" rendered="{!Evaluation__c.Glasses_For_Reading__c}" />
+                        <apex:outputText value="For Distance;" rendered="{!Evaluation__c.Glasses_For_Distance__c}" />
+                        <apex:outputText value="For Multifocal Use;" rendered="{!Evaluation__c.Glasses_For_Multi_Focal_Use__c}" />
+                        <apex:outputText value="For Other;" rendered="{!Evaluation__c.Glasses_for_other__c}" />
+                        <apex:outputField value="{!Evaluation__c.Contacts_Type__c}"  />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:outputText value="" />
-                        <apex:inputField value="{!Evaluation__c.Resident_Contacts_Glasses_at_Facility__c}" label="Does Resident Have Contacts or Glasses at Facility?" />
-
-
+                        <apex:outputField value="{!Evaluation__c.Resident_Contacts_Glasses_at_Facility__c}" label="Does Resident Have Contacts or Glasses at Facility?" />
                         </apex:pageBlockSection>
 
-
-
-
-
-
-
-                    <apex:pageBlockSection columns="2" Title="Supervision Level"
-                        collapsible="false">
-                        <apex:outputField value="{!Evaluation__c.Bed_Alarm__c}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.One_to_One_Sitter__c}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.one_to_One_Sitter_of_Hours_per_day__c}"
-                            label="# of Hours Per Day" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Low_Bed__c}" />
-                        <apex:pageBlockSectionItem />
-                    </apex:pageBlockSection>
-                    <apex:pageBlockSection columns="1" collapsible="false">
-                        <h2>Supportive Devices</h2>
-                        <apex:panelGrid columns="4" width="50%"
-                            style="text-align: center; ">
-                            <apex:outputText value="Device" StyleClass="labelCol" />
-                            <apex:outputText value="" />
-                            <apex:outputText value="Can Resident Easily Remove the Device"
-                                styleClass="labelCol" />
-                            <apex:outputText value="Does the Device Restrict Resident's Freedom of Movement?"
-                                styleClass="labelCol" />
-
-                            <apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.Mitt__c.Label}"
-                                styleClass="labelCol" />
-                            <apex:outputField value="{!Evaluation__c.Mitt__c}" />
-                            <apex:outputField value="{!Evaluation__c.Mitt_Device_can_be_removed__c}" />
-                            <apex:outputField value="{!Evaluation__c.Mitt_Device_restrict_freedom__c}" />
-
-                            <apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.UE__c.Label}"
-                                styleClass="labelCol" />
-                            <apex:outputField value="{!Evaluation__c.UE__c}" />
-                            <apex:outputField value="{!Evaluation__c.UE_Device_can_be_removed__c}" />
-                            <apex:outputField value="{!Evaluation__c.UE_Device_restrict_freedom__c}" />
-
-                            <apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.LE__c.Label}"
-                                styleClass="labelCol" />
-                            <apex:outputField value="{!Evaluation__c.LE__c}" />
-                            <apex:outputField value="{!Evaluation__c.LE_Device_can_be_removed__c}" />
-                            <apex:outputField value="{!Evaluation__c.LE_Device_restrict_freedom__c}" />
-
-                            <apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.Chest_Restraint__c.Label}"
-                                styleClass="labelCol" />
-                            <apex:outputField value="{!Evaluation__c.Chest_Restraint__c}" />
-                            <apex:outputField value="{!Evaluation__c.Chest_restraint_can_be_removed__c}" />
-                            <apex:outputField value="{!Evaluation__c.Chest_Restraint_restrict_Freedom__c}" />
-
-                            <apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.Seat_Belt__c.Label}"
-                                styleClass="labelCol" />
-                            <apex:outputField value="{!Evaluation__c.Seat_Belt__c}" />
-                            <apex:outputField value="{!Evaluation__c.Seat_Belt_can_be_removed__c}" />
-                            <apex:outputField value="{!Evaluation__c.Seat_Belt_restrict_Freedom__c}" />
-
-                            <apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.Lap_Tray__c.Label}"
-                                styleClass="labelCol" />
-                            <apex:outputField value="{!Evaluation__c.Lap_Tray__c}" />
-                            <apex:outputField value="{!Evaluation__c.Lap_Tray_Can_be_removed__c}" />
-                            <apex:outputField value="{!Evaluation__c.Lap_Tray_restrict_freedom__c}" />
-
-                            <apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.Trunk_Supports__c.Label}"
-                                styleClass="labelCol" />
-                            <apex:outputField value="{!Evaluation__c.Trunk_Supports__c}" />
-                            <apex:outputField value="{!Evaluation__c.Trunk_supports_can_be_removed__c}" />
-                            <apex:outputField value="{!Evaluation__c.Trunk_supports_restrict_freedom__c}" />
-
-                            <apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.Enclosure_Bed__c.Label}"
-                                styleClass="labelCol" />
-                            <apex:outputField value="{!Evaluation__c.Enclosure_Bed__c}" />
-                            <apex:outputField value="{!Evaluation__c.Enclosure_Bed_can_be_removed__c}" />
-                            <apex:outputField value="{!Evaluation__c.Enclosure_bed_restrict_freedom__c}" />
-
-                            <apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.Side_Rails_Half_full__c.Label}"
-                                styleClass="labelCol" />
-                            <apex:outputField value="{!Evaluation__c.Side_Rails_Half_full__c}" />
-                            <apex:outputField value="{!Evaluation__c.Side_Rails_can_be_removed__c}" />
-                            <apex:outputField value="{!Evaluation__c.Side_rails_can_restrict_freedom__c}" />
-                        </apex:panelGrid>
-                        <apex:outputField value="{!Evaluation__c.Signed_Consent_for_Restraints__c}"
-                            label="Resident Signed Consent for Restraints?" />
-                        <apex:outputField value="{!Evaluation__c.Consent_for_Restraints_Describe__c}"
-                            label="Describe" />
-                        <apex:outputField value="{!Evaluation__c.History_of_Falls_Last_3_Months__c}" />
-                    </apex:pageBlockSection>
-                    <hr />
-                    <apex:pageBlockSection columns="2">
-                        <apex:outputField value="{!Evaluation__c.Memory__c}" />
-                        <apex:outputField value="{!Evaluation__c.Expression__c}" />
-                        <apex:outputField value="{!Evaluation__c.Motivation_Towards_Rehab__c}" />
-                        <apex:outputField value="{!Evaluation__c.Expression_Other__c}"
-                            label="If Non-verbal, Other Expression" />
-                        <apex:outputField value="{!Evaluation__c.Awareness_of_Deficits__c}" />
-                        <apex:outputField value="{!Evaluation__c.Able_to_make_Needs_Known__c}" />
-                        <apex:outputField value="{!Evaluation__c.Safety_Awareness__c}" />
-                        <apex:outputField value="{!Evaluation__c.Primary_Language__c}" />
-                        <apex:pageBlockSectionitem />
-                        <apex:outputField value="{!Evaluation__c.Other_Languages_Spoken__c}" />
-                    </apex:pageBlockSection>
-                    <hr />
-                    <apex:pageBlockSection columns="2">
-                        <apex:outputText value="Sensory" styleClass="labelCol"
-                            style="margin-left: 3cm;" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Tactile__c}" />
-                        <apex:pageblockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Hearing__c}" />
-                        <apex:outputField value="{!Evaluation__c.Vision__c}" />
-                        <apex:outputText value="Hearing Aids?" style="margin-left: 3cm;" />
-                        <apex:outputField value="{!Evaluation__c.Tracking_R__c}" />
-                        <apex:outputField value="{!Evaluation__c.Hearing_Aid_Right__c}"
-                            label="Right" />
-                        <apex:outputField value="{!Evaluation__c.Tracking_L__c}" />
-                        <apex:outputField value="{!Evaluation__c.Hearing_Aid_Left__c}"
-                            label="Left" />
-                        <apex:outputField value="{!Evaluation__c.Blink_to_Threat_R_L__c}" />
-                        <apex:outputField value="{!Evaluation__c.Resident_have_aid_s_at_Facility__c}"
-                            label="Does Resident Have Aid(s) at the factility?" />
-                        <apex:outputText Value="Glasses/Contacts"
-                            style="margin-left: 3cm;" />
-                        <apex:outputField value="{!Evaluation__c.Ear_Infections__c}" />
-                        <apex:outputField value="{!Evaluation__c.Glasses_For_Reading__c}"
-                            label="For Reading" />
-                        <apex:outputField value="{!Evaluation__c.Ear_infection_Describe__c}"
-                            label="Describe History" />
-                        <apex:outputField value="{!Evaluation__c.Glasses_For_Distance__c}"
-                            label="For Distance" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Glasses_For_Multi_Focal_Use__c}"
-                            label="For Focal Use" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Glasses_for_other__c}"
-                            label="Other" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Contacts_Type__c}"
-                            label="If Contacts, Type" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Resident_Contacts_Glasses_at_Facility__c}"
-                            label="Does resident have contacts or glasses at facility?" />
-                    </apex:pageBlockSection>
-                    <hr />
-                    <h2>Neuro/Muscular</h2>
-                    <apex:panelGrid columns="6" width="80%"
-                        style="text-align: center; ">
+                   <apex:pageBlockSection columns="1" title="Motor" >
+                     <h2>Neuro/Muscular</h2>
+                    <apex:panelGrid columns="6" width="80%" style="text-align: center; ">
                         <apex:outputText />
                         <apex:outputText value="R Upper" />
                         <apex:outputText value="R Lower" />
@@ -1118,54 +969,110 @@ hr {
                         <apex:outputField value="{!Evaluation__c.Sensation_Comments__c}"
                             id="sensationComments" />
                     </apex:panelGrid>
-                    <hr />
-                    <apex:pageBlockSection columns="2">
-                        <apex:outputField value="{!Evaluation__c.Pain_History__c}" />
-                        <apex:outputText value="Aggravating Factors" styleClass="labelCol"
-                            style="margin-left: 3cm;" />
-                        <apex:outputField value="{!Evaluation__c.Pain_Level_Requiring_Intervention__c}" />
-                        <apex:outputField value="{!Evaluation__c.Activity__c}" />
-                        <apex:pageblockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Activity_Describe__c}"
-                            label="Describe" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Position__c}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Position_Describe__c}"
-                            label="Describe" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Time_of_Day__c}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Time_of_Day_Describe__c}"
-                            label="Describe" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.None__c}" />
-                        <apex:pageBlocksectionItem >
-                            <apex:outputText value="Alleviating Factors"
-                                styleClass="labelCol" />
-                            <apex:selectCheckboxes value="{!selectedAlleviators}"
-                                layout="pageDirection" disabled="True">
-                                <apex:selectoptions value="{!alleviatorValues}" />
-                            </apex:selectCheckboxes>
-                        </apex:pageBlocksectionItem>
-                        <apex:pageBlocksectionItem >
-                            <apex:outputText value="Negative Impact on ADLs"
-                                styleClass="labelCol" />
-                            <apex:selectCheckboxes value="{!selectedAdls}"
-                                layout="pageDirection" disabled="true">
-                                <apex:selectoptions value="{!adlValues}" />
-                            </apex:selectCheckboxes>
-                        </apex:pageBlocksectionItem>
-                        <apex:pageBlocksectionItem >
-                            <apex:outputText value="Manner of Expressing Pain"
-                                styleClass="labelCol" />
-                            <apex:selectCheckboxes value="{!selectedExpressions}"
-                                layout="pageDirection" disabled="True">
-                                <apex:selectoptions value="{!expressionValues}" />
-                            </apex:selectCheckboxes>
-                        </apex:pageBlocksectionItem>
                     </apex:pageBlockSection>
-                    <hr />
+                    
+                    
+                    <apex:pageBlockSection columns="2" collapsible="false" title="Safety">
+                    
+                   
+                        <apex:outputText value="{! if (Evaluation__c.Number_falls__c== 'Yes', 'Yes - ' + Evaluation__c.History_of_Falls_Last_3_Months__c, Evaluation__c.Number_falls__c)}"  label="History of Falls (Last 3 Months)" />
+                        <apex:outputField value="{!Evaluation__c.Safety_Awareness__c}" />
+                        <apex:outputField value="{!Evaluation__c.Bed_Alarm__c}" />
+                        <apex:outputField value="{!Evaluation__c.Low_Bed__c}" />
+                        <apex:outputText value="{!If ( Evaluation__c.One_to_One_Sitter__c, Evaluation__c.one_to_One_Sitter_of_Hours_per_day__c + ' hours per day', '')}" label="One to One Sitter"/>
+                        <apex:outputText value="" />
+                        
+                        <h2>Supportive Devices</h2>
+                        <apex:outputText value="" />
+                        
+                       <apex:panelGrid columns="4" style="text-align: center;" >
+                                
+                            <apex:outputLabel value="Device" />
+                            <apex:outputText value="" />
+                            <apex:outputLabel value="Can Resident Easily Remove the Device" styleClass="labelCol"/>
+                            <apex:outputLabel value="Does the Device Restrict Resident's Freedom of Movement?"  styleClass="labelCol"/>
+                            <apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.Mitt__c.Label}" styleClass="labelCol"/>
+                            <apex:outputField value="{!Evaluation__c.Mitt__c}" />
+                            <apex:outputField value="{!Evaluation__c.Mitt_Device_can_be_removed__c}" />
+                            <apex:outputField value="{!Evaluation__c.Mitt_Device_restrict_freedom__c}" />
+
+                            <apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.UE__c.Label}" styleClass="labelCol"/>
+                            <apex:outputField value="{!Evaluation__c.UE__c}" />
+                            <apex:outputField value="{!Evaluation__c.UE_Device_can_be_removed__c}" />
+                            <apex:outputField value="{!Evaluation__c.UE_Device_restrict_freedom__c}" />
+
+                            <apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.LE__c.Label}"
+                                styleClass="labelCol" />
+                            <apex:outputField value="{!Evaluation__c.LE__c}" />
+                            <apex:outputField value="{!Evaluation__c.LE_Device_can_be_removed__c}" />
+                            <apex:outputField value="{!Evaluation__c.LE_Device_restrict_freedom__c}" />
+
+                            <apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.Chest_Restraint__c.Label}"
+                                styleClass="labelCol" />
+                            <apex:outputField value="{!Evaluation__c.Chest_Restraint__c}" />
+                            <apex:outputField value="{!Evaluation__c.Chest_restraint_can_be_removed__c}" />
+                            <apex:outputField value="{!Evaluation__c.Chest_Restraint_restrict_Freedom__c}" />
+
+                            <apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.Seat_Belt__c.Label}"
+                                styleClass="labelCol" />
+                            <apex:outputField value="{!Evaluation__c.Seat_Belt__c}" />
+                            <apex:outputField value="{!Evaluation__c.Seat_Belt_can_be_removed__c}" />
+                            <apex:outputField value="{!Evaluation__c.Seat_Belt_restrict_Freedom__c}" />
+
+                            <apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.Lap_Tray__c.Label}"
+                                styleClass="labelCol" />
+                            <apex:outputField value="{!Evaluation__c.Lap_Tray__c}" />
+                            <apex:outputField value="{!Evaluation__c.Lap_Tray_Can_be_removed__c}" />
+                            <apex:outputField value="{!Evaluation__c.Lap_Tray_restrict_freedom__c}" />
+
+                            <apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.Trunk_Supports__c.Label}"
+                                styleClass="labelCol" />
+                            <apex:outputField value="{!Evaluation__c.Trunk_Supports__c}" />
+                            <apex:outputField value="{!Evaluation__c.Trunk_supports_can_be_removed__c}" />
+                            <apex:outputField value="{!Evaluation__c.Trunk_supports_restrict_freedom__c}" />
+
+                            <apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.Enclosure_Bed__c.Label}"
+                                styleClass="labelCol" />
+                            <apex:outputField value="{!Evaluation__c.Enclosure_Bed__c}" />
+                            <apex:outputField value="{!Evaluation__c.Enclosure_Bed_can_be_removed__c}" />
+                            <apex:outputField value="{!Evaluation__c.Enclosure_bed_restrict_freedom__c}" />
+
+                            <apex:outputLabel value="{!$ObjectType.Evaluation__c.Fields.Side_Rails_Half_full__c.Label}"
+                                styleClass="labelCol" />
+                            <apex:outputField value="{!Evaluation__c.Side_Rails_Half_full__c}" />
+                            <apex:outputField value="{!Evaluation__c.Side_Rails_can_be_removed__c}" />
+                            <apex:outputField value="{!Evaluation__c.Side_rails_can_restrict_freedom__c}" />
+                        </apex:panelGrid>
+                        <apex:outputField value="{!Evaluation__c.Signed_Consent_for_Restraints__c}" label="Resident Signed Consent for Restraints?" />
+
+                    </apex:pageBlockSection>
+                    
+                    <apex:pageBlockSection columns="2" title="Pain">
+                        <apex:outputField value="{!Evaluation__c.Pain_History__c}" />
+                        <apex:outputField value="{!Evaluation__c.Pain_Level_Requiring_Intervention__c}" />
+
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Aggravating Factors" />
+                        <apex:outputPanel >
+
+                        <apex:outputField value="{!Evaluation__c.Activity__c}" id="pactivity"/><apex:outputLabel value="Activity" />
+                        &nbsp;<apex:outputField value="{!Evaluation__c.Activity_Describe__c}" label="Describe" id="activityDescribe" />
+                        <Br />
+                        <apex:outputField value="{!Evaluation__c.Position__c}" id="pposition" /><apex:outputLabel value="Position" />
+                        &nbsp;<apex:outputField value="{!Evaluation__c.Position_Describe__c}" label="Describe" id="positionDescribe"/>
+                        <Br />
+                        <apex:outputField value="{!Evaluation__c.Time_of_Day__c}" id="ptimeday" /><apex:outputLabel value="Time of Day" />
+                        &nbsp;<apex:outputField value="{!Evaluation__c.Time_of_Day_Describe__c}" label="Describe" id="timedayDescribe" />
+                        <Br /><apex:outputField value="{!Evaluation__c.None__c}" id="pnone" /><apex:outputLabel value="None" />
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+
+                        <apex:outputField value="{!Evaluation__c.Alleviating_Factors__c}" label="Alleviating Factors" />
+                        <apex:outputField value="{!Evaluation__c.Negative_Impact_on_ADLs__c}" label="Negative Impact on ADLs" />
+                        <apex:outputField value="{!Evaluation__c.Manner_of_Expressing_Pain__c}" label="Manner of Expressing Pain" />
+                            
+                    </apex:pageBlockSection>
+   				<hr />
                     <apex:pageBlockSection Columns="1">
                         <apex:outputField value="{!Evaluation__c.Pain_Present__c}" />
                     </apex:pageBlockSection>
@@ -1237,86 +1144,43 @@ hr {
                                 </table>
                             </div>
                             <apex:pageBlockSectionItem />
-                            <apex:outputField value="{!Evaluation__c.Neuro_Other_Body_Map_Comments__c}"
-                                label="Other Body Map Comments" />
+                            <apex:outputField value="{!Evaluation__c.Neuro_Other_Body_Map_Comments__c}" 
+                                label="Pain Body Map Comments" />
                             <apex:pageBlockSectionItem />
                             <apex:pageBlockSectionItem >
-                                <apex:outputText value="Specify Pain Level"
-                                    styleClass="labelCol" />
-                                <apex:image url="{!URLFOR($Resource.Wongbakerfaces)}"
-                                    width="85%" height="110" style="margin-left: 0.75cm;" />
+                                <apex:outputLabel value="Specify Pain Level"  />
+                                <apex:image url="{!URLFOR($Resource.Wongbakerfaces)}" width="85%" height="110" style="margin-left: 0.75cm;" />
                             </apex:pageBlockSectionItem>
-                            <apex:inputhidden value="{!Evaluation__c.Neuro_Pain_Level__c}"
-                                id="neuropainLevel" />
+                            <apex:inputhidden value="{!Evaluation__c.Neuro_Pain_Level__c}" id="neuropainLevel" />
                             <apex:pageBlockSectionItem >
-                                <apex:outputText value="Pain Level" />
+                                <apex:outputLabel value="Pain Level" />
                                 <c:Slider onChange="handleSliderChange('{!$Component.neuropainLevel}')"
                                     options="{!painsliderOptions}"
                                     initial="{!Evaluation__c.Neuro_Pain_Level__c}" disabled="True" />
                             </apex:pageBlockSectionItem>
-                            <apex:pageBlockSectionItem />
-                            <apex:outputText value="Pain Details" styleClass="labelCol"
-                                style="margin-left: 3cm;" />
-                            <apex:outputText value="Aggravating Factors"
-                                styleClass="labelCol" style="margin-left: 3cm;" />
-                            <apex:outputField value="{!Evaluation__c.Neuro_Pain_Severity__c}"
-                                label="Severity" />
-                            <apex:outputField value="{!Evaluation__c.Neuro_Pain_Activity__c}"
-                                label="Activity" />
-                            <apex:pageBlocksectionItem >
-                                <apex:selectCheckboxes value="{!selectedPaintypes}"
-                                    style="margin-left: 4cm;" disabled="true">
-                                    <apex:selectOptions value="{!paintypeValues}" />
-                                </apex:selectCheckboxes>
-                            </apex:pageBlocksectionItem>
-                            <apex:outputField value="{!Evaluation__c.Neuro_pain_Activity_Describe__c}"
-                                label="Describe" />
-                            <apex:pageBlockSectionItem />
-                            <apex:outputField value="{!Evaluation__c.Neuro_Pain_Position__c}"
-                                label="Position" />
-                            <apex:pageBlockSectionItem />
-                            <apex:outputField value="{!Evaluation__c.Neuro_Pain_Position_Describe__c}"
-                                label="Describe" />
-                            <apex:pageBlockSectionItem />
-                            <apex:outputField value="{!Evaluation__c.Neuro_Pain_Time_of_Day__c}"
-                                label="Time of Day" />
-                            <apex:pageBlockSectionItem />
-                            <apex:outputField value="{!Evaluation__c.Neuro_pain_time_of_day_Describe__c}"
-                                label="Describe" />
-                            <apex:pageBlockSectionItem />
-                            <apex:outputField value="{!Evaluation__c.Neuro_Pain_None__c}"
-                                label="None" />
-                            <apex:pageBlocksectionItem >
-                                <apex:outputText value="Pain Descriptors" styleClass="labelCol" />
-                                <apex:selectCheckboxes value="{!selectedpainDescriptors}"
-                                    layout="pageDirection" disabled="True">
-                                    <apex:selectoptions value="{!paindescriptorValues}" />
-                                </apex:selectCheckboxes>
-                            </apex:pageBlocksectionItem>
-                            <apex:pageBlocksectionItem >
-                                <apex:outputText value="Alleviating Factors"
-                                    styleClass="labelCol" />
-                                <apex:selectCheckboxes value="{!selectedpainAlleviators}"
-                                    layout="pageDirection" disabled="true ">
-                                    <apex:selectoptions value="{!painalleviatorValues}" />
-                                </apex:selectCheckboxes>
-                            </apex:pageBlocksectionItem>
-                            <apex:pageBlocksectionItem >
-                                <apex:outputText value="Negative Impact on ADLs"
-                                    styleClass="labelCol" />
-                                <apex:selectCheckboxes value="{!selectedpainAdls}"
-                                    layout="pageDirection" disabled="true">
-                                    <apex:selectoptions value="{!painadlValues}" />
-                                </apex:selectCheckboxes>
-                            </apex:pageBlocksectionItem>
-                            <apex:pageBlocksectionItem >
-                                <apex:outputText value="Manner of Expressing Pain"
-                                    styleClass="labelCol" />
-                                <apex:selectCheckboxes value="{!selectedpainExpressions}"
-                                    layout="pageDirection" disabled="true">
-                                    <apex:selectoptions value="{!painexpressionValues}" />
-                                </apex:selectCheckboxes>
-                            </apex:pageBlocksectionItem>
+                            <apex:outputField value="{!Evaluation__c.Neuro_Pain_Severity__c}" label="Severity" />
+                            
+                            <apex:outputField value="{!Evaluation__c.Neuro_Pain_Types__c}" label="Pain Types"/>
+                            <apex:outputField value="{!Evaluation__c.Neuro_Pain_Descriptors__c}" label="Pain Descriptors"/>
+                            
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Aggravating Factors" />
+                        <apex:outputPanel >
+                           <apex:outputField value="{!Evaluation__c.Neuro_Pain_Activity__c}" /><apex:outputLabel value="Activity" />
+                        &nbsp;<apex:outputField value="{!Evaluation__c.Neuro_Pain_Activity_Describe__c}" label="Describe" />
+                        <Br />
+                        <apex:outputField value="{!Evaluation__c.Neuro_Pain_Position__c}"  /><apex:outputLabel value="Position" />
+                        &nbsp;<apex:outputField value="{!Evaluation__c.Neuro_Pain_Position_Describe__c}" label="Describe" />
+                        <Br />
+                        <apex:outputField value="{!Evaluation__c.Neuro_Pain_Time_of_Day__c}" /><apex:outputLabel value="Time of Day" />
+                        &nbsp;<apex:outputField value="{!Evaluation__c.Neuro_Pain_Time_of_Day_Describe__c}" label="Describe"  />
+                        <Br /><apex:outputField value="{!Evaluation__c.Neuro_Pain_None__c}" /><apex:outputLabel value="None" />
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+
+                        <apex:outputField value="{!Evaluation__c.Neuro_Pain_Alleviating_Factors__c}" label="Alleviating Factors" />
+                        <apex:outputField value="{!Evaluation__c.Neuro_Pain_neg_Impact_on_ADLs__c}" label="Negative Impact on ADLs" />
+                        <apex:outputField value="{!Evaluation__c.Neuro_Pain_Manner_of_Exp__c}" label="Manner of Expressing Pain" />
 
                         </apex:pageblockSection>
                     </apex:outputPanel>
