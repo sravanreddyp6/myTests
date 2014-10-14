@@ -62,10 +62,15 @@ public with sharing class ServiceAssignmentClosureEditView {
 			
 			List<Action_Plan_Goal__c> actionPlanGoals = [ SELECT Description__c FROM Action_Plan_Goal__c WHERE Action_Plan__c = :actionPlanId ];
 			
+			// CTEAE-147 and CTEAE-167 - truncate to either length of goal or 255, but AFTER whitespace is stripped
 			integer maxLen;
+			string strGoal = apg.Description__c;
 			for(Action_Plan_Goal__c apg : actionPlanGoals) {
-				maxLen = Math.min(apg.Description__c.Length(), 255);
-				actionPlanGoalSelectOptions.add(new SelectOption(apg.Description__c.substring(0, maxLen).escapeJava(), apg.Description__c.substring(0, maxLen).escapeJava()));
+				
+				strGoal = strGoal.replaceAll('[ \t\n\x0B\f\r]',' ');	//replace whitespace with space
+				maxLen = Math.min(strGoal.Length(), 255);
+				strGoal = strGoal.substring(0, maxLen);
+				actionPlanGoalSelectOptions.add(new SelectOption(strGoal, strGoal));
 			}
 		}
 		
