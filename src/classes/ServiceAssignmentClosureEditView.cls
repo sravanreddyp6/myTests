@@ -64,10 +64,12 @@ public with sharing class ServiceAssignmentClosureEditView {
 			
 			// CTEAE-147 and CTEAE-167 - truncate to either length of goal or 255, but AFTER whitespace is stripped
 			integer maxLen;
-			string strGoal = apg.Description__c;
+			string strGoal='';
+			Pattern whitespace = Pattern.compile('[ \t\n\f\r]');
+			
 			for(Action_Plan_Goal__c apg : actionPlanGoals) {
 				
-				strGoal = strGoal.replaceAll('[ \t\n\x0B\f\r]',' ');	//replace whitespace with space
+				strGoal = whitespace.matcher(apg.Description__c).replaceAll(' ');	//replace whitespace with space
 				maxLen = Math.min(strGoal.Length(), 255);
 				strGoal = strGoal.substring(0, maxLen);
 				actionPlanGoalSelectOptions.add(new SelectOption(strGoal, strGoal));
