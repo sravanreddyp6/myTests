@@ -80901,12 +80901,6 @@
         <errorMessage>Age Requirement is required when Can Be Placed With Other Children option is checked.</errorMessage>
     </validationRules>
     <validationRules>
-        <fullName>Closed_Admitted_NoServiceLoc</fullName>
-        <active>true</active>
-        <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;Closed&apos;) &amp;&amp; ISBLANK(Service_Location__c)</errorConditionFormula>
-        <errorMessage>Alias Field is blank: No Location has been selected, please add an Anticipated Admission Location.</errorMessage>
-    </validationRules>
-    <validationRules>
         <fullName>Closed_Date_Required_when_status_is_clos</fullName>
         <active>true</active>
         <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;Closed&apos;)  &amp;&amp;  ISNULL(Close_Date__c)</errorConditionFormula>
