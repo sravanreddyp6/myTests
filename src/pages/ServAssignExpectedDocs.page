@@ -1,0 +1,398 @@
+<apex:page standardController="Service_Assignment__c" extensions="ServAssignExpectedDocsExt" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab">
+<apex:stylesheet value="{!$Resource.mentoresdcss}" />
+<c:PersonalRecord pbsId="{!Service_Assignment__c.Admission__r.Person_Being_Served__c}" servAssignId="{!Service_Assignment__c.Id}" parentPage="CaseDocs" admId="{!Service_Assignment__c.Admission__c}" />
+<br />
+<head>
+<script>
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+
+$j = jQuery.noConflict();
+
+    //opens the dialog
+    function openDialog(dialogId, tagType, titleString)
+    {
+        selector = tagType + '[id$=' + dialogId + ']';
+        if ($j(selector).dialog("isOpen")!==true) {
+          $j(selector).dialog({dialogClass: 'fixed-dialog',title:titleString,modal:true, width:800, closeOnEscape:false}).parent().appendTo($j('form[id$=CaseDocsForm]'));
+          $j(selector).parent().find('a.ui-dialog-titlebar-close').remove();
+        }
+    } 
+    function closeDialog(dialogId, tagType)
+    {
+        selector = tagType + '[id$=' + dialogId + ']';
+        
+        $j(selector).dialog('destroy');
+    }
+
+    function pleaseWait(dialogId, tagType, titleString)
+    {
+        selector = tagType + '[id$=' + dialogId + ']';
+        if ($j(selector).dialog("isOpen")!==true) {
+          $j(selector).dialog({dialogClass: 'fixed-dialog',title:titleString,modal:true, width:800, closeOnEscape:false}).parent().appendTo($j('form[id$=CaseDocsForm]'));
+          $j(selector).parent().find('a.ui-dialog-titlebar-close').remove();
+        }
+    }
+    
+    
+    function loadSadjo(sadjoId, sadjoFileStatus) {
+        ServAssignExpectedDocsExt.loadSadjo(sadjoId,
+          function(result, event){
+            if (event.status) {
+                $j('textarea[id$=NaCommentReasonField]').val(result.N_A_Reason__c);
+                $j('input[id$=NaCommentIdField]').val(result.Id);
+                $j('input[id$=FileStatusField]').val(sadjoFileStatus);
+
+               if(sadjoFileStatus=='Waived' || sadjoFileStatus=='N/A' || sadjoFileStatus=='N/A - Non-FCT' || sadjoFileStatus=='N/A - Document In Initial File' || sadjoFileStatus=='N/A - File Transferred') {
+                   openDialog('NaCommentModal', 'span', 'Please enter a comment explaining the reason for this file status selection:');
+               }
+               else {
+                   sadjoSave(false);
+               }
+            }
+          },
+          {escape: true}
+        );
+      
+     }
+
+  //copies Sadjo fields from dialog for postback
+  function sadjoSave(isDialogClose) {
+
+          var sadjoId = $j('input[id$=NaCommentIdField]').val();
+          var sadjoNaReason = $j('textarea[id$=NaCommentReasonField]').val();
+          var sadjoFileStatus = $j('input[id$=FileStatusField]').val();
+    
+          ServAssignExpectedDocsExt.saveSadjoRemote(sadjoId, sadjoNaReason, sadjoFileStatus,
+             function(result, event){
+                    if (isDialogClose) {
+                        if(sadjoNaReason=='') {
+                            alert('The justification comment field is blank.  Please enter a comment in order to close this dialogue');
+                        }
+                        else {
+                            pleaseWait('PleaseWaitModal', 'span', 'Please wait...');
+                            refreshListOfDocFilings();
+                            //closeDialog('NaCommentModal', 'span');
+                        }
+                    }
+                    else {
+                        pleaseWait('PleaseWaitModal', 'span', 'Please wait...');
+                        refreshListOfDocFilings();
+                    }
+             },
+             {escape: true}
+           );
+ 
+      //refreshListOfDocFilings();
+ 
+      return false;
+  }      
+        
+</script>
+<style>
+.dataTables_paginate {
+    background-color:#f8f8f8 !important;
+    background-image:none !important;
+
+}
+
+.paging_full_numbers .ui-button {
+padding: 2px 6px;
+margin: 0;
+cursor: pointer;
+* cursor: hand;
+border: 0;
+background-color: #f8f8f8 !important;
+}
+.ui-state-default {
+    text-align:vertical; 
+    border: 0;
+    background-image:none !important;
+    color:black;
+    background-color:#99ccff !important;
+}
+.ui-widget-header {
+    width:100%; 
+    line-height:150%; 
+    text-align:vertical; 
+    background-color:#f8f8f8 !important;
+    border: 0;
+    background-image:none !important;
+    padding-left:10px; 
+    font-weight:bold;    
+}
+.contentArea a:link {
+    color:blue;
+} /* unvisited link */
+.contentArea a:visited {
+    color:purple;
+}  /* visited link */
+.contentArea a:hover {
+    color:#006699;
+}  /* mouse over link */
+.contentArea a:active {
+    color:#0000FF;
+}  /* selected link */
+.NotFiled {
+    background-color:white;
+    height:100%;
+}
+.Filed {
+    background-color:#ccffcc;
+    height:100%;
+}
+.Waived {
+    background-color:#cccccc;
+}
+.NA {
+    background-color:#cccccc;
+}
+.NA-Non-FCT {
+    background-color:#cccccc;
+}
+.NA-DocumentInInitialFile {
+    background-color:#cccccc;
+}
+.NA-FileTransferred {
+    background-color:#cccccc;
+}
+.Filed-NotContractCompliant {
+    background-color:#cccccc;
+}
+.NotFiled-Unrecoverable {
+    background-color:#cccccc;
+}
+.ComingDue {
+    background-color:#ffffcc;
+}
+.PastDue {
+    background-color:#ff9999;
+}
+.ERROR {
+    background-color:red;
+}
+.tableForDocs a:link {
+    color:black;
+}
+.tableForDocs tr {
+    border-bottom: 1px solid black;
+}
+.fixed-dialog{
+    position: fixed;
+    top:75px;
+    left:100px;
+    overflow-y:scroll;
+    max-height:400px;
+}
+    h3{font-size:1.3em;}
+    .list{margin-top:12px !important;}
+
+   /* .bPageBlock{border-top: 3px solid #1797C0 !important;}h2{display: none !important;}*/
+       .ui-icon { width: 16px; display:inline-block; height: 16px; background-image: url({!URLFOR($Resource.jquery, '/css/custom-theme/images/ui-icons_2e83ff_256x240.png')}); }
+    .ui-icon-triangle-1-n { background-position: 0 -16px; }
+    .ui-icon-triangle-1-s { background-position: -64px -16px; }
+    .ui-icon-triangle-2-n-s { background-position: -128px -16px; }
+    .ui-icon-carat-2-n-s { background-position: -128px 0; }
+    .DataTables_sort_wrapper div { float:left; }
+    .dataTables_scrollHeadInner {width: 100% !important;}  
+    .dataTable  {width: 100% !important;}
+    .ui-button {color: gray; padding: 3px;}
+    .dataTables_filter {width:50%;    !important;}
+    .dataTables_length{width:150px; float: right ;!important;}
+    //#myTable_length{}margin-top:-50px; margin-right:85px;
+    .dataTables_info {float:right; width: 250px;!important;}
+    
+    .row{border-bottom: 1px solid #EDEDED; padding: 3px;}
+    .header{border-bottom: 1px solid #9E9E9E; padding: 3px;  background-color:#EDEDED;}
+    .pbs{font-size: 15px; }
+    .pbs a{ color: #002966;}
+</style>
+</head>
+    <apex:form id="CaseDocsForm">
+        <!--<apex:actionFunction name="rerenderFunction" rerender="docColumn1,docColumn2,docColumn3,docColumn4,docColumn5,docColumn6,fileStatusSelectList" />-->
+        <apex:actionFunction name="refreshListOfDocFilings" action="{!refreshListOfDocFilings}" rerender="docColumn1,docColumn2,docColumn3,docColumn4,docColumn5,docColumn6" oncomplete="closeDialog('NaCommentModal', 'span');closeDialog('PleaseWaitModal', 'span');" />
+        <apex:pageBlock title="Case Documents">
+            <div class="pbHeaderButton">
+                <apex:commandButton action="/apex/AddDoc?ServAssignIdParam={!Service_Assignment__c.Id}" value="Add" />
+            </div>
+        <apex:pageBlockSection title="Case Documents Summary" collapsible="false" columns="2">
+            
+            <apex:outputField value="{!Service_Assignment__c.Admission__c}" />
+            <apex:outputField value="{!Service_Assignment__c.Admission__r.Effective_Date__c}" />
+            <apex:outputText value="{!Service_Assignment__c.Name}" />
+        </apex:pageBlockSection>    
+
+        <br />  
+            <table id="myTable" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+            <thead style="background-color:white; background-image:none;">
+                <tr>
+                    <th class="header">Document</th>
+                    <th class="header">Due Date</th>
+                    <th class="header">Due Date Resolved</th>
+                    <th class="header">Due From</th>
+                    <th class="header">File Status</th>
+                    <th class="header">Due Date Resolved (HIDDEN)</th> 
+                    <th class="header" />
+                    <th class="headed" />   
+                </tr>
+            </thead>
+            <apex:repeat value="{!listOfDocFilings}" var="d">
+            <tr class="row">
+                
+                <td> 
+                        <apex:outputPanel id="docColumn1" styleClass="{!d.fileStatusStyle}" layout="block" style="height:25px;">
+                            <a href="{!URLFOR($Action.Document__c.View,d.sadjToUpdate.Document__c)}">{!d.docName}</a>
+                        </apex:outputPanel>                                  
+                </td>                
+                <td>
+                    <apex:outputPanel id="docColumn2" styleClass="{!d.fileStatusStyle}" layout="block" style="height:25px;">
+                    <apex:outputLink value="{!$Page.DocumentDetails}?id={!d.sadjToUpdate.Id}">      
+                        <apex:outputText value="{!d.dueDateConcat}" />
+                    </apex:outputLink>
+                    </apex:outputPanel>                    
+                </td>
+                <td class="{!d.fileStatusStyle}">
+                    <apex:outputPanel id="docColumn3" styleClass="{!d.fileStatusStyle}" layout="block" style="height:25px;">
+                    <apex:outputLink value="{!$Page.DocumentDetails}?id={!d.sadjToUpdate.Id}">
+                        <apex:outputText value="{0,date,M'/'d'/'yyyy}">
+                            <apex:param value="{!d.rDDResolved}" />
+                        </apex:outputText>
+                    </apex:outputLink>
+                    </apex:outputPanel>                    
+                </td>
+                
+                 <td class="{!d.fileStatusStyle}">
+                    <apex:outputPanel id="docColumn4" styleClass="{!d.fileStatusStyle}" layout="block" style="height:25px;">
+                    <apex:outputLink value="{!$Page.DocumentDetails}?id={!d.sadjToUpdate.Id}">
+                        {!d.sAOwnerName}
+                    </apex:outputLink>                
+                    </apex:outputPanel>
+                </td>                
+                
+                <td class="{!d.fileStatusStyle}">
+                    <apex:outputPanel id="docColumn5" styleClass="{!d.fileStatusStyle}" layout="block" style="height:25px;"> 
+                            <apex:actionStatus id="myStatus">
+                                <apex:facet name="start">
+                                    <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                                        <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                                    </div>
+                                </apex:facet>
+                                <apex:facet name="stop"></apex:facet>
+                            </apex:actionStatus> 
+                        <apex:selectList id="fileStatusSelectList" value="{!d.fileStatus}" size="1">
+                            <!--<apex:actionSupport event="onchange" action="{!saveFilings}" reRender="docColumn1,docColumn2,docColumn3,docColumn4,docColumn5,docColumn6,fileStatusSelectList" status="myStatus">-->
+                            <apex:actionSupport event="onchange" onsubmit="loadSadjo('{!d.sadjToUpdate.Id}',$j(this).val());return false;" reRender="docColumn1,docColumn2,docColumn3,docColumn4,docColumn5,docColumn6,fileStatusSelectList" status="myStatus">
+                                <apex:param name="sadjToSave" assignTo="{!sadjToSave}" value="{!d.sadjToUpdate.Id}" />
+                            </apex:actionSupport>
+                            <apex:selectOptions value="{!d.fileStatusOptions}" />
+                        </apex:selectList>
+                    </apex:outputPanel>                
+                </td>
+                <td>
+                    {!d.rDDResolved}
+                </td>
+                <td>
+                    <apex:outputPanel id="docColumn6" styleClass="{!d.fileStatusStyle}" layout="block" style="height:25px;">
+                        <apex:outputPanel id="InteriorDocColumn6" rendered="{!!d.autoInclude}">
+                            <apex:commandLink value="REMOVE" action="{!RemoveDoc}">
+                                <apex:param name="sadjToDelete" assignTo="{!sadjToDelete}" value="{!d.sadjToUpdate.Id}" />
+                            </apex:commandLink>
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                </td>
+            </tr>                 
+            </apex:repeat>
+            </table>
+            
+               <apex:outputPanel id="NaCommentModal" style="display:none">
+                <apex:pageBlock >
+                 <apex:pageBlockSection columns="1" title="File Status Justification" id="sadjoSection" collapsible="false">
+                    Justification: <textarea id="NaCommentReasonField" style="height:80%;width:80%" maxlength="255"></textarea><br />
+                      <input type="hidden" id="FileStatusField" /> <br />
+                    <input type="hidden" id="NaCommentIdField" /><br />
+                    <div style="width:100%;text-align:center;">
+                        <input type="button" class="btn" value="Save" onclick="sadjoSave(true);" />            
+                    </div>
+                  </apex:pageBlockSection>
+                </apex:pageBlock>
+              </apex:outputPanel> 
+
+              <apex:outputPanel id="PleaseWaitModal" style="display:none">
+                    <div id="PleaseWaitModal" class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                        <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                    </div>          
+              </apex:outputPanel>
+        </apex:pageBlock>                 
+    </apex:form>
+
+<script type="text/javascript">
+    $j = jQuery.noConflict();
+
+/* Create an array with the values of all the select options in a column */
+$j.fn.dataTableExt.afnSortData['dom-select'] = function  ( oSettings, iColumn )
+{
+    return $j.map( oSettings.oApi._fnGetTrNodes(oSettings), function (tr, i) {
+        return $j('td:eq('+iColumn+') select', tr).val();
+    } );
+}
+
+    $j(document).ready(function() {
+        $j('[id$=myTable]').dataTable( {
+            "aoColumns": [ 
+                null,
+                null,
+                {"iDataSort": 5},
+                null,
+                {"sSortDataType": "dom-select"},
+                {"bVisible": false},
+                null
+            ],
+            "bPaginate": true,
+            "bFilter": false,
+            "sPaginationType": "full_numbers",
+            "bScrollCollapse": true,
+            "bJQueryUI": true,            
+            "aLengthMenu": [[5, 15, 25, 50, -1], [5, 15, 25, 50, "All"]],
+            "iDisplayLength": 15,
+            "oLanguage": { "sSearch": "Filter" }           
+        } );
+    } );
+
+
+
+    function reinitializeTable() {
+     $j = jQuery.noConflict();
+    $j(document).ready(function() {
+        $j('[id$=myTable]').dataTable( {
+            "aoColumns": [ 
+                null,
+                null,
+                {"iDataSort": 5},
+                null,
+                {"sSortDataType": "dom-select"},
+                {"bVisible": false},
+                null
+            ],
+            "bPaginate": true,
+            "bFilter": false,
+            "sPaginationType": "full_numbers",
+            "bScrollCollapse": true,
+            "bJQueryUI": true,            
+            "aLengthMenu": [[5, 15, 25, 50, -1], [5, 15, 25, 50, "All"]],
+            "iDisplayLength": 15,
+            "oLanguage": { "sSearch": "Filter" }           
+        } );
+    } );    
+    }
+    
+    
+    function commentCheck() {
+        openDialog('NaCommentModal', 'span', 'Add NA Comment');
+        return false;
+    }
+    
+</script>
+
+</apex:page>
