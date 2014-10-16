@@ -1,4 +1,4 @@
-public class CMContract_Form {
+public with sharing class CMContract_Form {
 
      class cSearchedServiceLocationResults {
          public Service_Location__c sl {get; set;}
