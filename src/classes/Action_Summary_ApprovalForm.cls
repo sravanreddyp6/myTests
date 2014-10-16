@@ -1,4 +1,4 @@
-public class Action_Summary_ApprovalForm {
+public without sharing class Action_Summary_ApprovalForm {
     private ApexPages.StandardController controller;
     private Action_Summary__c ActionSummary {get;set;}
     
