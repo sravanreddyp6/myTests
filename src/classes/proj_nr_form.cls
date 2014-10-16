@@ -13,7 +13,7 @@ public with sharing class proj_nr_form {
     ID NR_RTid(){
         
     
-        return [select id from recordtype where DeveloperName = 'Neuro_Restorative' AND SobjectType = 'Project__c'].id;
+        return ApexPages.currentPage().getParameters().get('RecordType');
     }
 
     //construct
