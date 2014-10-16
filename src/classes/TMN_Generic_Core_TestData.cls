@@ -152,7 +152,7 @@ String h = EncodingUtil.ConvertTohex(b);
                                                                     Approval_Status__c = 'Approved',
                                                                     Status__c = 'Final');
         insert thisProgressNote;
-        Progress_Note__c testProgressNote = [ SELECT Id, Service_Assignment__c FROM Progress_Note__c WHERE Id = :thisProgressNote.Id ];
+        Progress_Note__c testProgressNote = [ SELECT Id, Service_Assignment__c, Person_Being_Served__c FROM Progress_Note__c WHERE Id = :thisProgressNote.Id ];
         return testProgressNote;
     }
 
