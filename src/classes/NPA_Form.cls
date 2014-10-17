@@ -19,10 +19,43 @@ public with sharing class NPA_Form {
     public NPA_Form(ApexPages.StandardController controller) {
        stdCtrl=controller;
        theAudit = (NPA_Audit__c )stdCtrl.getRecord();
+       if(theAudit.id != null){
+        refreshAudit();
+       }
     }
 
+public void refreshAudit(){
+  theAudit = Database.query(getCreatableFieldsSOQL('NPA_Audit__c','id = \'' + theAudit.Id + '\'' ));
 
-
+}
+   public static string getCreatableFieldsSOQL(String objectName, String whereClause){
+         
+        String selects = '';
+         
+        if (whereClause == null || whereClause == ''){ return null; }
+         
+        // Get a map of field name and field token
+        Map<String, Schema.SObjectField> fMap = Schema.getGlobalDescribe().get(objectName.toLowerCase()).getDescribe().Fields.getMap();
+        list<string> selectFields = new list<string>();
+         
+        if (fMap != null){
+            for (Schema.SObjectField ft : fMap.values()){ // loop through all field tokens (ft)
+                Schema.DescribeFieldResult fd = ft.getDescribe(); // describe each field (fd)
+                    selectFields.add(fd.getName());
+            }
+        }
+         
+        if (!selectFields.isEmpty()){
+            for (string s:selectFields){
+                selects += s + ',';
+            }
+            if (selects.endsWith(',')){selects = selects.substring(0,selects.lastIndexOf(','));}
+             
+        }
+        system.debug('fields - ' + selects);
+        return 'SELECT ' + selects + ' FROM ' + objectName + ' WHERE ' + whereClause;
+         
+    }
 
     public PageReference chkFields(){
                  
@@ -97,6 +130,8 @@ public with sharing class NPA_Form {
         chkHHpFields(); 
 
         upsert theAudit;
+        refreshAudit();
+        //NPA_Form(stdCtrl);
         }
          
             catch (DMLException e) {
@@ -120,9 +155,19 @@ public with sharing class NPA_Form {
     }
 
     public PageReference save(){
-        stdCtrl.save(); 
-           
-        return stdCtrl.view();
+      try{
+        upsert theAudit; 
+        PageReference pageRef = new PageReference('/apex/NPA_Form?id=' + theAudit.id);
+        pageRef.setRedirect(true);
+        return pageRef;
+      }
+            catch (DMLException e) {
+                ApexPages.addMessages(e);
+                ApexPages.addmessage(new ApexPages.Message(ApexPages.Severity.INFO, ' The Record was not saved ')); 
+                return null;
+            }         
+        //return stdCtrl.view();
+        return null;
     }
     
     public PageReference UnLock(){
