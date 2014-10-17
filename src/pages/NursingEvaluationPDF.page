@@ -236,7 +236,7 @@
         <apex:inputhidden value="{!Evaluation__c.Urine_Odor__c}" />
         <apex:inputhidden value="{!Evaluation__c.Elimination_Bowel_Continent__c}" />
         <apex:inputhidden value="{!Evaluation__c.Elimination_Bowel_No_Continent_Appliance__c}" />
-        <apex:inputhidden value="{!Evaluation__c.elimination_bowel_no_appliance_other__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Elimination_Bowel_No_Appliance_Other__c}" />
         <apex:inputhidden value="{!Evaluation__c.Incontinent_Neurogenic_Bowel__c}" />
         <apex:inputhidden value="{!Evaluation__c.Perception_of_Need_to_Defecate__c}" />
 		<apex:inputhidden value="{!Evaluation__c.Dialysis__c}" />
@@ -336,6 +336,7 @@
         <apex:inputhidden value="{!Evaluation__c.Trunk_Supports__c}" />
         <apex:inputhidden value="{!Evaluation__c.Enclosure_Bed__c}"  />
         <apex:inputhidden value="{!Evaluation__c.Side_Rails_Half_full__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Number_falls__c}" />
         <apex:inputhidden value="{!Evaluation__c.History_of_Falls_Last_3_Months__c}" />
         <apex:inputhidden value="{!Evaluation__c.Signed_Consent_for_Restraints__c}" />
         <apex:inputhidden value="{!Evaluation__c.Memory__c}" />
@@ -359,6 +360,7 @@
         <apex:inputhidden value="{!Evaluation__c.Glasses_For_Distance__c}" />
         <apex:inputhidden value="{!Evaluation__c.Glasses_For_Multi_Focal_Use__c}" />
         <apex:inputhidden value="{!Evaluation__c.Glasses_for_other__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Contacts_Type__c}" />
         <apex:inputhidden value="{!Evaluation__c.Pain_History__c}" />
         <apex:inputhidden value="{!Evaluation__c.Pain_Level_Requiring_Intervention__c}" />
         <apex:inputhidden value="{!Evaluation__c.Alleviating_Factors__c}" />
@@ -573,14 +575,14 @@
 			</tr>
            <tr><td>
            <table><tr>
-				<td><apex:outputText value="{!Evaluation__c.weightlbs__c}" /> <apex:outputLabel styleClass="label" value="lbs" /></td>
-				<td><apex:outputText value="{!Evaluation__c.weightoz__c}" /> <apex:outputLabel styleClass="label" value="oz" /><apex:outputText value=" (or) "/> </td>
-				<td><apex:outputText value="{!Evaluation__c.weightkg__c}" /> <apex:outputLabel styleClass="label" value="kg" /></td>
+				<td><apex:outputText value="{!Evaluation__c.Weightlbs__c}" /> <apex:outputLabel styleClass="label" value="lbs" /></td>
+				<td><apex:outputText value="{!Evaluation__c.Weightoz__c}" /> <apex:outputLabel styleClass="label" value="oz" /><apex:outputText value=" (or) "/> </td>
+				<td><apex:outputText value="{!Evaluation__c.WeightKg__c}" /> <apex:outputLabel styleClass="label" value="kg" /></td>
 			</tr></table>
 			</td>
 			<td>
             <table><tr>
-				<td><apex:outputText value="{!Evaluation__c.heightft__c}" /> <apex:outputLabel styleClass="label" value="ft" /></td>
+				<td><apex:outputText value="{!Evaluation__c.HeightFt__c}" /> <apex:outputLabel styleClass="label" value="ft" /></td>
             	<td><apex:dynamiccomponent componentValue="{!ctlmap['heightinches__c']}" /></td>
             	<td><apex:outputText value=" (or) "/> <apex:dynamiccomponent componentValue="{!ctlmap['height_in_cms__c']}" /></td>
             </tr></table>
@@ -638,12 +640,12 @@
         </tr>
         <tr>
         <td><apex:dynamiccomponent componentValue="{!ctlmap['pneumococcal__c']}" />
-        <apex:outputField value="{!Evaluation__c.pneumococcal_where_and_when__c}"/></td>
+        <apex:outputField value="{!Evaluation__c.Pneumococcal_Where_and_when__c}"/></td>
         <td><apex:dynamiccomponent componentValue="{!ctlmap['influenza__c']}" /> 
-        <apex:outputField value="{!Evaluation__c.influenza_where_and_when__c}" /></td></tr>
+        <apex:outputField value="{!Evaluation__c.Influenza_where_and_when__c}" /></td></tr>
         <tr>
         <td><apex:dynamiccomponent componentValue="{!ctlmap['tdap__c']}" /> 
-        <apex:outputField value="{!Evaluation__c.tdap_where_and_when__c}" /></td>
+        <apex:outputField value="{!Evaluation__c.TDAP_Where_and_When__c}" /></td>
         <td></td>
         </tr>
         </table>
@@ -1029,12 +1031,12 @@
 	<tr>
 	<td>
 		<apex:outputLabel value="Usual Elimination Frequency" styleClass="label" />
-		<apex:outputField value="{!Evaluation__c.usual_elimination_frequeny__c}" /> 
+		<apex:outputField value="{!Evaluation__c.Usual_Elimination_Frequeny__c}" /> 
           
 	</td>
 	<td>
 		<apex:outputLabel value="Last BM" styleClass="label" />
-		<apex:outputfield value="{!Evaluation__c.last_bm__c}" />
+		<apex:outputfield value="{!Evaluation__c.Last_BM__c}" />
     </td>
     </tr>
     <tr>
@@ -1324,20 +1326,20 @@
         <apex:outputField value="{!Evaluation__c.Depression_Patient_received_Treatment__c}" /><br />
         
         <apex:outputLabel value="Memory" styleClass="label" />
-        <apex:outputfield value="{!Evaluation__c.memory__c}" /><br />
+        <apex:outputfield value="{!Evaluation__c.Memory__c}" /><br />
         <apex:outputLabel value="Motivation Towards Rehab" styleClass="label" />
-        <apex:outputfield value="{!Evaluation__c.Motivation_towards_rehab__c}" /><br />
+        <apex:outputfield value="{!Evaluation__c.Motivation_Towards_Rehab__c}" /><br />
         <apex:outputLabel value="Awareness of Deficits" styleClass="label" />
-        <apex:outputfield value="{!Evaluation__c.Awareness_of_deficits__c}" /><br />
+        <apex:outputfield value="{!Evaluation__c.Awareness_of_Deficits__c}" /><br />
 
 		<apex:outputLabel value="Expression" styleClass="label" />
         <apex:outputText value="{!if (CONTAINS(Evaluation__c.Expression__c, 'Other'), Evaluation__c.Expression__c + ' - ' + Evaluation__c.Expression_Other__c, Evaluation__c.Expression__c)}" label="Expression"/><Br />
         <apex:outputLabel value="Able to Make Needs Known" styleClass="label" />
-        <apex:outputfield value="{!Evaluation__c.Able_to_make_needs_known__c}" /><br />
+        <apex:outputfield value="{!Evaluation__c.Able_to_make_Needs_Known__c}" /><br />
         <apex:outputLabel value="Primary Language" styleClass="label" />
-        <apex:outputfield value="{!Evaluation__c.Primary_language__c}" /><br />
+        <apex:outputfield value="{!Evaluation__c.Primary_Language__c}" /><br />
         <apex:outputLabel value="Other Languages Spoken" styleClass="label" />
-        <apex:outputfield value="{!Evaluation__c.Other_languages_spoken__c}" />
+        <apex:outputfield value="{!Evaluation__c.Other_Languages_Spoken__c}" />
 </td>
 </tr>
 </table>                        
@@ -1349,62 +1351,136 @@
 </tr>
 <tr>
 <td>
-	<apex:outputLabel value="Tactile" styleClass="label"/>
-	<apex:outputField value="{!Evaluation__c.Tactile__c}" /><br/>
 	
-                  <apex:outputLabel value="Vision" styleclass="label"/>
-                  <apex:outputPanel >
-                  <apex:outputField value="{!Evaluation__c.Vision__c}" />&nbsp;
-                  <apex:outputText value="Tracking R;" rendered="{!Evaluation__c.Tracking_R__c}" />
-                  <apex:outputText value="Tracking L;" rendered="{!Evaluation__c.Tracking_L__c}" />
-                  <apex:outputText value="Blink to Threat R/L" rendered="{!Evaluation__c.Blink_to_Threat_R_L__c == 'Yes'}" />
-                  </apex:outputPanel><br />
+	 <apex:dynamiccomponent componentvalue="{!ctlmap['tactile__c']}" /> <br/>
+         <apex:dynamiccomponent componentvalue="{!ctlmap['vision__c']}" />&nbsp;
+         <apex:outputText value="Tracking R;" rendered="{!Evaluation__c.Tracking_R__c}" />
+         <apex:outputText value="Tracking L;" rendered="{!Evaluation__c.Tracking_L__c}" />
+         <apex:outputText value="Blink to Threat R/L" rendered="{!Evaluation__c.Blink_to_Threat_R_L__c == 'Yes'}" />
+         <br />
 
-                  <apex:outputLabel Value="Glasses/Contacts" styleclass="label"/>
-                  <apex:outputPanel >
-                  <apex:outputText value="For Reading;" rendered="{!Evaluation__c.Glasses_For_Reading__c}" />
-                  <apex:outputText value="For Distance;" rendered="{!Evaluation__c.Glasses_For_Distance__c}" />
-                  <apex:outputText value="For Multifocal Use;" rendered="{!Evaluation__c.Glasses_For_Multi_Focal_Use__c}" />
-                  <apex:outputText value="For Other;" rendered="{!Evaluation__c.Glasses_for_other__c}" />
-                  <apex:outputField value="{!Evaluation__c.Contacts_Type__c}"  />
-                  </apex:outputPanel><br />
-                  <apex:outputLabel value="Does Resident Have Contacts or Glasses at Facility?" styleclass="label"/>
-                  <apex:outputField value="{!Evaluation__c.Resident_Contacts_Glasses_at_Facility__c}" label="Does Resident Have Contacts or Glasses at Facility?" /><br />
-                   <apex:outputLabel value="Hearing" styleclass="label"/>
-                  <apex:outputPanel >
-                  <apex:outputField value="{!Evaluation__c.Hearing__c}" />&nbsp;
-                  <apex:outputText value="Hearing Aid Right;" rendered="{!Evaluation__c.Hearing_Aid_Right__c}" />
-                  <apex:outputText value="Hearing Aid Left;" rendered="{!Evaluation__c.Hearing_Aid_Left__c}" />
-                  <apex:outputText value="{! if (Evaluation__c.Resident_have_aid_s_at_Facility__c == 'Yes', 'Resident has hearing aids at facility', 'Resident does not have hearing aids at facility')}" />
-                  </apex:outputPanel><br />
-                  <apex:outputLabel value="Ear Infections" styleclass="label"/>
-                  <apex:outputText label="Ear Infections" value="{!if (Evaluation__c.Ear_Infections__c, 'Yes - ' + Evaluation__c.Ear_infection_Describe__c, Evaluation__c.Ear_infection_Describe__c)}" />
+         <apex:outputLabel Value="Glasses/Contacts" styleclass="label"/>
+         <apex:outputText value="For Reading;" rendered="{!Evaluation__c.Glasses_For_Reading__c}" />
+         <apex:outputText value="For Distance;" rendered="{!Evaluation__c.Glasses_For_Distance__c}" />
+         <apex:outputText value="For Multifocal Use;" rendered="{!Evaluation__c.Glasses_For_Multi_Focal_Use__c}" />
+         <apex:outputText value="For Other;" rendered="{!Evaluation__c.Glasses_for_other__c}" />
+         <apex:dynamiccomponent componentvalue="{!ctlmap['contacts_type__c']}" />
+         <br />
+         <apex:outputLabel value="Does Resident Have Contacts or Glasses at Facility?" styleclass="label"/>
+         <apex:outputField value="{!Evaluation__c.Resident_Contacts_Glasses_at_Facility__c}" label="Does Resident Have Contacts or Glasses at Facility?" /><br />
+          <apex:outputLabel value="Hearing" styleclass="label"/>
+         <apex:outputPanel >
+         <apex:outputField value="{!Evaluation__c.Hearing__c}" />&nbsp;
+         <apex:outputText value="Hearing Aid Right;" rendered="{!Evaluation__c.Hearing_Aid_Right__c}" />
+         <apex:outputText value="Hearing Aid Left;" rendered="{!Evaluation__c.Hearing_Aid_Left__c}" />
+         <apex:outputText value="{! if (Evaluation__c.Resident_have_aid_s_at_Facility__c == 'Yes', 'Resident has hearing aids at facility', 'Resident does not have hearing aids at facility')}" />
+         </apex:outputPanel><br />
+         <apex:outputLabel value="Ear Infections" styleclass="label"/>
+         <apex:outputText label="Ear Infections" value="{!if (Evaluation__c.Ear_Infections__c, 'Yes - ' + Evaluation__c.Ear_infection_Describe__c, Evaluation__c.Ear_infection_Describe__c)}" />
 </td>
     </tr>
     </table>
-                        
-    <apex:pageBlockSection columns="2" Title="Supervision Level">
-        <apex:dynamiccomponent componentvalue="{!ctlmap['bed_alarm__c']}" />
-        <apex:pageBlockSectionItem />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['one_to_one_sitter__c']}"  />
-        <apex:pageBlockSectionItem />
-        <apex:pageBlockSectionItem >
-            <apex:outputField value="{!Evaluation__c.one_to_One_Sitter_of_Hours_per_day__c}" label="# of hours per day" />
-        </apex:pageBlockSectionItem>            
-        <apex:pageBlockSectionItem />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['low_bed__c']}" />
-        <apex:pageBlockSectionItem />
-    </apex:pageBlockSection>
+              
+          <Br />    
+        <table style="width:80%">
+        <tr><td colspan="6" style="border:1px solid black"><apex:outputLabel value="Motor" styleClass="label" /></td></tr>
+        
+        <tr><td colspan="6" style="margin:10px;font-weight:bold;">Neuro/Muscular</td></tr>
+            <tr><td style="vertical-align:top">&nbsp;</td>
+            <td><apex:outputLabel value="R Upper" styleClass="label" /></td>
+            <td><apex:outputLabel value="R Lower" styleClass="label" /></td>
+            <td><apex:outputLabel value="L Upper" styleClass="label" /></td>
+            <td><apex:outputLabel value="L Lower" styleClass="label" /></td>
+            <td><apex:outputLabel value="Comments" styleClass="label" /></td>
+            </tr>
+    
+            <tr><td>
+                <apex:outputLabel value="ROM" styleClass="label" />
+                </td>            
+            <td>
+                <apex:outputText value="{!Evaluation__c.R_Upper_ROM__c}"/>            
+            </td><td>
+                <apex:outputText value="{!Evaluation__c.R_Lower_ROM__c}"/>
+            </td><td>
+                <apex:outputText value="{!Evaluation__c.L_Upper_ROM__c}"/>            
+            </td><td>
+                <apex:outputText value="{!Evaluation__c.L_Lower_ROM__c}"/>          
+            </td><td>
+                <apex:outputText value="{!Evaluation__c.ROM_Comments__c}"/>            
+            </td></tr>
 
-    <hr />
+             <tr><td>
+                <apex:outputLabel value="Tone" styleClass="label" />
+                </td>            
+            <td>
+                <apex:outputText value="{!Evaluation__c.R_Upper_Tone__c}"/>            
+            </td><td>
+                <apex:outputText value="{!Evaluation__c.R_Lower_Tone__c}"/>
+            </td><td>
+                <apex:outputText value="{!Evaluation__c.L_Upper_Tone__c}"/>            
+            </td><td>
+                <apex:outputText value="{!Evaluation__c.L_Lower_Tone__c}"/>          
+            </td><td>
+                <apex:outputText value="{!Evaluation__c.Tone_Comments__c}"/>            
+            </td></tr>
+            
+            <tr><td>
+                <apex:outputLabel value="Strength" styleClass="label" />
+                </td>            
+            <td>
+                <apex:outputText value="{!Evaluation__c.R_Upper_Strength__c}"/>            
+            </td><td>
+                <apex:outputText value="{!Evaluation__c.R_Lower_Strength__c}"/>
+            </td><td>
+                <apex:outputText value="{!Evaluation__c.L_Upper_Strength__c}"/>            
+            </td><td>
+                <apex:outputText value="{!Evaluation__c.L_Lower_Strength__c}"/>          
+            </td><td>
+                <apex:outputText value="{!Evaluation__c.Strength_Comments__c}"/>            
+            </td></tr>
+            
+            <tr><td>
+                <apex:outputLabel value="Sensation" styleClass="label" />
+                </td>            
+            <td>
+                <apex:outputText value="{!Evaluation__c.R_Upper_Sensation__c}"/>            
+            </td><td>
+                <apex:outputText value="{!Evaluation__c.R_Lower_Sensation__c}"/>
+            </td><td>
+                <apex:outputText value="{!Evaluation__c.L_Upper_Sensation__c}"/>            
+            </td><td>
+                <apex:outputText value="{!Evaluation__c.L_Lower_Sensation__c}"/>          
+            </td><td>
+                <apex:outputText value="{!Evaluation__c.Sensation_Comments__c}"/>            
+            </td></tr>
+    </table>
+    <br />
+    
+   <table style="width:80%">
+        <tr><td colspan="2" style="border:1px solid black"><apex:outputLabel value="Safety" styleClass="label" /></td></tr>
+       	<tr>
+       	<td>
+        <apex:dynamiccomponent componentvalue="{!ctlmap['number_falls__c']}" />
+		<apex:dynamiccomponent componentvalue="{!ctlmap['history_of_falls_last_3_months__c']}" /><br />
+        <apex:dynamiccomponent componentvalue="{!ctlmap['bed_alarm__c']}" /><br />
+        <apex:dynamiccomponent componentvalue="{!ctlmap['one_to_one_sitter__c']}"  />    <apex:outputText value="{!Evaluation__c.one_to_One_Sitter_of_Hours_per_day__c + ' hours per day'}" rendered="{!Evaluation__c.One_to_one_sitter__c == true}" />    
+        </td>
+        <td style="vertical-align:top">
+        <apex:dynamiccomponent componentvalue="{!ctlmap['safety_awareness__c']}" /><br />
+        <apex:dynamiccomponent componentvalue="{!ctlmap['low_bed__c']}" />
+        </td>
+        </tr>
+        </table>
+        
+    <br />
     <table style="width:80%">
-        <thead><tr><td style="margin:10px;font-weight:bold;">Supportive Devices</td></tr></thead>
-            <tr><td width="40%" style="vertical-align:top">
-                <apex:outputLabel value="Device" styleClass="label" />
-            </td><td width="30%">
-                <apex:outputLabel value="Can Resident easily remove the device" styleClass="label" />
-            </td><td width="30%">
-                <apex:outputLabel value="Does the device restrict Resident's freedom of Movement?" styleClass="label" />            
+        <tr><td><b>Supportive Devices</b></td></tr>
+            <tr><td width="40%" style="vertical-align:top"><b>
+                <apex:outputLabel value="Device" /></b>
+            </td><td width="30%"><b>
+                <apex:outputLabel value="Can Resident Easily Remove the Device" /></b>
+            </td><td width="30%"><b>
+                <apex:outputLabel value="Does the Device Restrict Resident's Freedom of Movement?" /></b>            
             </td></tr>
     
             <tr><td>
@@ -1481,150 +1557,8 @@
         </table>
         <br/>
         <apex:dynamiccomponent componentvalue="{!ctlmap['signed_consent_for_restraints__c']}" /><br/>
-        <apex:outputLabel value="Describe" styleClass="label" />
-        <apex:outputText value="{!Evaluation__c.Consent_for_Restraints_Describe__c}" label="Describe" /><br/>        
-        <apex:dynamiccomponent componentvalue="{!ctlmap['history_of_falls_last_3_months__c']}" />
-    
-    <hr />
-
-      <apex:pageBlockSection columns="2" >
-        <apex:dynamiccomponent componentvalue="{!ctlmap['memory__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['expression__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['motivation_towards_rehab__c']}" />
-        <apex:pageBlockSectionitem >
-            <apex:outputLabel value="If Non-verbal, Other Expression" styleClass="label"/>
-            <apex:outputText value="{!Evaluation__c.Expression_Other__c}" label="if Non-verbal, Other Expression"/>
-        </apex:pageBlockSectionitem>            
-        <apex:dynamiccomponent componentvalue="{!ctlmap['awareness_of_deficits__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['able_to_make_needs_known__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['safety_awareness__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['primary_language__c']}" />
-        <apex:pageBlockSectionitem />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['other_languages_spoken__c']}" />
-      </apex:pageBlockSection>
-    <hr />
-
-
-    <table style="width:80%">
-        <tr><td><apex:outputLabel value="Sensory"  styleClass="label"/></td></tr>
-        <tr>
-        <td style="width:50%">
-	        <apex:dynamiccomponent componentvalue="{!ctlmap['tactile__c']}" /> <br/>
-	        <apex:dynamiccomponent componentvalue="{!ctlmap['hearing__c']}" /> 
-        </td><td>
-            <apex:dynamiccomponent componentvalue="{!ctlmap['vision__c']}" /> <br/>        
-            <apex:dynamiccomponent componentvalue="{!ctlmap['tracking_r__c']}" /><br/>
-            <apex:dynamiccomponent componentvalue="{!ctlmap['tracking_l__c']}" /> 
-        </td>
-        </tr>
-        <tr>
-        <td></td>
-        </tr>
-
-        <tr><td><apex:outputLabel value="Hearing Aids?"  styleClass="label"/></td></tr>
-        <tr>
-        <td style="width:50%">
-            <apex:dynamiccomponent componentvalue="{!ctlmap['hearing_aid_right__c']}" /><br/>
-            <apex:dynamiccomponent componentvalue="{!ctlmap['hearing_aid_left__c']}" /> <br/>
-            <apex:outputLabel value="Does Resident Have aid(s) at the factility?" styleClass="label"/>
-            <apex:outputText value="{!Evaluation__c.Resident_have_aid_s_at_Facility__c}" label="Does Resident Have aid(s) at the factility?"/><br/>
-            <apex:dynamiccomponent componentvalue="{!ctlmap['ear_infections__c']}" /><br/>
-            <apex:outputLabel value="Describe History" styleClass="label"/>
-            <apex:outputText value="{!Evaluation__c.Ear_infection_Describe__c}" label="Describe History" />            
-        </td>
-        <td>
-            <apex:dynamiccomponent componentvalue="{!ctlmap['blink_to_threat_r_l__c']}" /><br/>
-            <apex:outputLabel value="Glasses/Contacts" styleClass="label"/><br/>
-            <apex:dynamiccomponent componentvalue="{!ctlmap['glasses_for_reading__c']}" /><br/>
-            <apex:dynamiccomponent componentvalue="{!ctlmap['glasses_for_distance__c']}" /><br/>
-            <apex:dynamiccomponent componentvalue="{!ctlmap['glasses_for_multi_focal_use__c']}" /><br/>
-            <apex:dynamiccomponent componentvalue="{!ctlmap['glasses_for_other__c']}" /><br/>
-            <apex:outputLabel value="If Contacts, Type" styleClass="label"/>
-            <apex:outputText value="{!Evaluation__c.Contacts_Type__c}" label="if Contacts, Type" /><br/>
-            <apex:outputLabel value="Does resident have contacts or glasses at facility?" styleClass="label"/>
-            <apex:outputText value="{!Evaluation__c.Resident_Contacts_Glasses_at_Facility__c}" label="Does resident have contacts or glasses at facility?" />
-        </td>
-        </tr>
-    </table>
-    <hr />
-
-
-    <table style="width:80%">
-        <thead><tr><td style="margin:10px;font-weight:bold;">Neuro/Muscular</td></tr></thead>
-            <tr><td style="vertical-align:top">
-            </td><td>
-                <apex:outputLabel value="R Upper" styleClass="label" />            
-            </td><td>
-                <apex:outputLabel value="R Lower" styleClass="label" />            
-            </td><td>
-                <apex:outputLabel value="L Upper" styleClass="label" />            
-            </td><td>
-                <apex:outputLabel value="L Lower" styleClass="label" />            
-            </td><td>
-                <apex:outputLabel value="Comments" styleClass="label" />            
-            </td></tr>
-    
-            <tr><td>
-            </td>
-                <apex:outputLabel value="ROM" styleClass="label" />            
-            <td>
-                <apex:outputText value="{!Evaluation__c.R_Upper_ROM__c}"/>            
-            </td><td>
-                <apex:outputText value="{!Evaluation__c.R_Lower_ROM__c}"/>
-            </td><td>
-                <apex:outputText value="{!Evaluation__c.L_Upper_ROM__c}"/>            
-            </td><td>
-                <apex:outputText value="{!Evaluation__c.L_Lower_ROM__c}"/>          
-            </td><td>
-                <apex:outputText value="{!Evaluation__c.ROM_Comments__c}"/>            
-            </td></tr>
-
-             <tr><td>
-            </td>
-                <apex:outputLabel value="Tone" styleClass="label" />            
-            <td>
-                <apex:outputText value="{!Evaluation__c.R_Upper_Tone__c}"/>            
-            </td><td>
-                <apex:outputText value="{!Evaluation__c.R_Lower_Tone__c}"/>
-            </td><td>
-                <apex:outputText value="{!Evaluation__c.L_Upper_Tone__c}"/>            
-            </td><td>
-                <apex:outputText value="{!Evaluation__c.L_Lower_Tone__c}"/>          
-            </td><td>
-                <apex:outputText value="{!Evaluation__c.Tone_Comments__c}"/>            
-            </td></tr>
-            
-            <tr><td>
-            </td>
-                <apex:outputLabel value="Strength" styleClass="label" />            
-            <td>
-                <apex:outputText value="{!Evaluation__c.R_Upper_Strength__c}"/>            
-            </td><td>
-                <apex:outputText value="{!Evaluation__c.R_Lower_Strength__c}"/>
-            </td><td>
-                <apex:outputText value="{!Evaluation__c.L_Upper_Strength__c}"/>            
-            </td><td>
-                <apex:outputText value="{!Evaluation__c.L_Lower_Strength__c}"/>          
-            </td><td>
-                <apex:outputText value="{!Evaluation__c.Strength_Comments__c}"/>            
-            </td></tr>
-            
-            <tr><td>
-            </td>
-                <apex:outputLabel value="Sensation" styleClass="label" />            
-            <td>
-                <apex:outputText value="{!Evaluation__c.R_Upper_Sensation__c}"/>            
-            </td><td>
-                <apex:outputText value="{!Evaluation__c.R_Lower_Sensation__c}"/>
-            </td><td>
-                <apex:outputText value="{!Evaluation__c.L_Upper_Sensation__c}"/>            
-            </td><td>
-                <apex:outputText value="{!Evaluation__c.L_Lower_Sensation__c}"/>          
-            </td><td>
-                <apex:outputText value="{!Evaluation__c.Sensation_Comments__c}"/>            
-            </td></tr>
-    </table>
-    <hr />
+           
+    <br />
 
     <table>
     <tr><td style="vertical-align:top">
@@ -1633,7 +1567,7 @@
         <apex:dynamiccomponent componentvalue="{!ctlmap['alleviating_factors__c']}" /><br/>
         <apex:dynamiccomponent componentvalue="{!ctlmap['manner_of_expressing_pain__c']}" />
     </td><td>
-        <apex:outputLabel value="Aggrivating Factors" styleClass="label"/><br/>
+        <apex:outputLabel value="Aggravating Factors" styleClass="label"/><br/>
         <apex:dynamiccomponent componentvalue="{!ctlmap['activity__c']}" /><br/>    
         <apex:dynamiccomponent componentvalue="{!ctlmap['activity_describe__c']}" /><br/>
         <apex:dynamiccomponent componentvalue="{!ctlmap['position__c']}" /><br/>
