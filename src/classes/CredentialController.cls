@@ -1,4 +1,6 @@
-public class CredentialController {
+public without sharing class CredentialController {
+	// SHAUN-50:  This code makes the assumption that it handles ONLY credential tracking / filings for a TMN_Contact__c. The "without sharing" declaration IS intended.
+	//  J. Gilliam, 10/17/14
 
 	public Id contactID = apexpages.currentpage().getparameters().get('contactid');
     public List<Credential_Record__c> allRecords  {get;set;}
