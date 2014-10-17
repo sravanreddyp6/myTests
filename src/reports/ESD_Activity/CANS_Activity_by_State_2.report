@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>Contact.Episodes__r.Assessments__r$Name</field>
+    </columns>
+    <columns>
+        <field>Contact.Episodes__r$State__c</field>
+    </columns>
+    <columns>
+        <field>Contact.Episodes__r.Assessments__r$Assessment_Date__c</field>
+    </columns>
+    <columns>
+        <field>Contact.Episodes__r.Assessments__r$CreatedDate</field>
+    </columns>
+    <columns>
+        <field>Contact.Episodes__r$Name</field>
+    </columns>
+    <columns>
+        <field>Contact.Episodes__r$Effective_Date__c</field>
+    </columns>
+    <columns>
+        <field>Contact.Episodes__r.Assessments__r$Status__c</field>
+    </columns>
+    <columns>
+        <field>Contact$Name</field>
+    </columns>
+    <columns>
+        <field>Contact$Gender__c</field>
+    </columns>
+    <columns>
+        <field>Contact$Age__c</field>
+    </columns>
+    <columns>
+        <field>Contact.Episodes__r.Assessments__r$CreatedBy</field>
+    </columns>
+    <description>This report shows CANS Assessments created by state where TFC/Family Vistas is equal to Yes.</description>
+    <filter>
+        <criteriaItems>
+            <column>Contact.Episodes__r.Assessments__r$Disregard__c</column>
+            <operator>equals</operator>
+            <value>0</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Contact.Episodes__r.Assessments__r$Service_Line__c</column>
+            <operator>equals</operator>
+            <value>TFC Vistas</value>
+        </criteriaItems>
+    </filter>
+    <format>Tabular</format>
+    <name>CANS Activity by State</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>PBS_Admission_Assessment__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <timeFrameFilter>
+        <dateColumn>Contact.Episodes__r.Assessments__r$Assessment_Date__c</dateColumn>
+        <interval>INTERVAL_THISWEEK</interval>
+    </timeFrameFilter>
+</Report>
