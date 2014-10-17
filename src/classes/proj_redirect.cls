@@ -11,7 +11,7 @@ public with sharing class proj_redirect {
             RecordType RT = [select id, DeveloperName from RecordType Where ID =:RTid];
             if(RT.DeveloperName  == 'Neuro_Restorative' || RT.DeveloperName  == 'ADH_Adult_Day_Health' || RT.DeveloperName == 'Cambridge'
             	|| RT.DeveloperName == 'CareMeridian' || RT.DeveloperName =='Redwood'){
-                PageReference ref = new PageReference('/apex/proj_nr_form');           
+                PageReference ref = new PageReference('/apex/proj_nr_form?RecordType='+RTid);           
                 return ref;
             } 
             else{

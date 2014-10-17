@@ -570,7 +570,7 @@ hr {
                         <apex:outputText value="{!if (Evaluation__c.History_of_Laxative_Use__c =='Yes', Evaluation__c.History_of_Laxative_Use__c + ' - ' + Evaluation__c.Laxative_Use_Describe__c, Evaluation__c.History_of_Laxative_Use__c)}" label="History of Laxative Use" />
                         <apex:outputText value="{!if (Evaluation__c.History_of_Enema_or_Suppository_Use__c =='Yes', Evaluation__c.History_of_Enema_or_Suppository_Use__c + ' - ' + Evaluation__c.Laxative_Use_Describe__c, Evaluation__c.History_of_Enema_or_Suppository_Use__c)}" label="History of Enema or Suppository Use" />
                         <apex:outputText value="{!if (Evaluation__c.Use_of_Dietary_Supplements__c =='Yes', Evaluation__c.Use_of_Dietary_Supplements__c + ' - ' + Evaluation__c.Dietary_supplement_describe__c, Evaluation__c.Use_of_Dietary_Supplements__c)}" label="Use of Dietary Supplements" />
-                        <apex:outputText value="{!if (Evaluation__c.History_of_Diarrhea__c =='Yes', Evaluation__c.History_of_Diarrhea__c + ' - Causative Factors: ' + Evaluation__c.Causative_factors_Diarrhea__c, Evaluation__c.History_of_Diarrhea__c)}" label="Use of Dietary Supplements" />
+                        <apex:outputText value="{!if (Evaluation__c.History_of_Diarrhea__c =='Yes', Evaluation__c.History_of_Diarrhea__c + ' - Causative Factors: ' + Evaluation__c.Causative_factors_Diarrhea__c, Evaluation__c.History_of_Diarrhea__c)}" label="History of Diarrhea" />
                         <apex:outputField value="{!Evaluation__c.Last_BM__c}" />
                         <apex:outputField value="{!Evaluation__c.Usual_Elimination_Frequeny__c}" />
                         <apex:outputField value="{!Evaluation__c.Elimination_Bowel_Continent__c}" label="Incontinent"/>
@@ -1072,7 +1072,8 @@ hr {
                         <apex:outputField value="{!Evaluation__c.Manner_of_Expressing_Pain__c}" label="Manner of Expressing Pain" />
                             
                     </apex:pageBlockSection>
-   				<hr />
+                    <hr />
+                    <hr />
                     <apex:pageBlockSection Columns="1">
                         <apex:outputField value="{!Evaluation__c.Pain_Present__c}" />
                     </apex:pageBlockSection>
