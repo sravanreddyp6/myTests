@@ -61,6 +61,12 @@ public with sharing class Notes_ProgressNote_Create_Flavor_PDF {
             else if(thePN.RecordType.DeveloperName=='PA_FBS_Progress_Note'){
                 pageRef = new PageReference('/apex/Notes_ProgressNote_PDF_PA_FBS');
             }
+            else if(thePN.RecordType.DeveloperName=='NC_TFC'){
+            	pageRef = new PageReference('/apex/Notes_ProgressNote_PDF_NC_TFC');
+            }
+            else if(thePN.RecordTYpe.DeveloperName=='NC_Wks_1_6_TFC') {
+            	pageRef = new PageReference('/apex/Notes_ProgressNOte_PDF_NC_Wks_16_TFC');	
+            }
             else if(thePN.RecordType.DeveloperName=='IN_FCT' || thePN.RecordType.DeveloperName=='MA_FCT' 
             		|| thePN.RecordType.DeveloperName=='MD_FCT' || thePN.RecordType.DeveloperName=='OH_FCT') {
             	

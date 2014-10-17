@@ -31,7 +31,7 @@ static testMethod void myUnitTest() {
         ap = new Action_Plan__c(
             Service_Assignment__c = myData.theSA.id,
             Target_Date__c = system.today()+365,
-            Effective_Date__c = system.today()-365
+            Effective_Date__c = system.today()
         );        
         insert ap; 
         
@@ -48,7 +48,7 @@ static testMethod void myUnitTest() {
             Description__c = 'an Objective',
             Type__c = 'skill',
             Target_End_Date__c = system.today()+365,
-            Effective_Date__c = system.today()-365,
+            Effective_Date__c = system.today(),
             sort_order__c = 'o'
         );
         insert apo;
@@ -57,6 +57,9 @@ static testMethod void myUnitTest() {
         apa.Action_Plan_Objective__c = apo.id;
         apa.Description__c = 'action';
         apa.sort_order__c = 'a';
+        apa.End_Date__c = system.today()+1;
+        apa.start_Date__c = system.today();
+        apa.status__c = 'N/A';
         insert apa;
         
         

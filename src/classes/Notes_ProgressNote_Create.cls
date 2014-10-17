@@ -24,7 +24,7 @@ public with sharing class Notes_ProgressNote_Create {
 
 //contructs
     public Notes_ProgressNote_Create(ApexPages.StandardController controller) {
-        myRTs = [select Name, Id, sObjectType, Description from RecordType where sObjectType = 'Progress_Note__c'];
+        myRTs = [select Name, Id, sObjectType, Description from RecordType where sObjectType = 'Progress_Note__c' ORDER BY Name];
         for (RecordType rt: myRTs) {
             if (rt.Name == 'AZ - OPT') {
                 AZ_OPT_ID = rt.Id;
@@ -75,7 +75,7 @@ public with sharing class Notes_ProgressNote_Create {
     }
     public Notes_ProgressNote_Create() {
         
-        myRTs = [select Name, Id, sObjectType, Description from RecordType where sObjectType = 'Progress_Note__c'];
+        myRTs = [select Name, Id, sObjectType, Description from RecordType where sObjectType = 'Progress_Note__c' ORDER BY Name];
         loadData();
         System.Debug('in void controller');
     }

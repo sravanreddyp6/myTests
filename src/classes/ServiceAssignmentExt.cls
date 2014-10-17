@@ -32,7 +32,8 @@ public class ServiceAssignmentExt {
     public List<TMN_Contract__c> contractsForThisServAssignsState { get; set; }
     public List<ServiceAssignment_Contract_JO__c> servAssignContractXrefs {get;set;}
     public List<SelectOption> contractsList { get; set; }
-    public String associatedContractID { get; set; }    
+    public String associatedContractID { get; set; }
+    public String associatedContractName { get; set; }
     public Boolean refreshPage { get; set; }
 
 
@@ -470,7 +471,7 @@ public class ServiceAssignmentExt {
                         thisPhasePercentage = 0;
                 }
 
-                programRows.add(new ProgramAssociationTableWrapper(p, thisPhaseDocCounter.intValue(), thisPhaseFiledDocCounter.intValue(), thisPhasePercentage));
+                	programRows.add(new ProgramAssociationTableWrapper(p, thisPhaseDocCounter.intValue(), thisPhaseFiledDocCounter.intValue(), thisPhasePercentage));
 
                 docsRunningCount += thisPhaseDocCounter.intValue();
                 docsFiledRunningCount += thisPhaseFiledDocCounter.intValue();
@@ -488,7 +489,7 @@ public class ServiceAssignmentExt {
             totalPhasePercentage = 0;
         }
 
-        programRows.add(new ProgramAssociationTableWrapper(999,docsRunningCount.intValue(),docsFiledRunningCount.intValue(),totalPhasePercentage));
+        	programRows.add(new ProgramAssociationTableWrapper(999,docsRunningCount.intValue(),docsFiledRunningCount.intValue(),totalPhasePercentage)); 
     }
 // END: CONSTRUCTOR
 
@@ -648,8 +649,10 @@ public class ServiceAssignmentExt {
                                                                         FROM ServiceAssignment_Contract_JO__c
                                                                         WHERE Service_Assignment__c = :theServAssign.Id ];
                                                                         
-            if (servAssignContractXrefs.size() > 0)
+            if (servAssignContractXrefs.size() > 0){
                 associatedContractID = servAssignContractXrefs[0].Contract__c;
+                associatedContractName = [SELECT Name FROM TMN_Contract__c WHERE id = :associatedContractID LIMIT 1].Name;
+            }
             
             List<Service_Assignment__c> listOfServAssignsToGetStateOfAdmission = [ SELECT Admission__r.State__c
                                                                                     FROM Service_Assignment__c WHERE Id = :theServAssign.Id LIMIT 1];                		                                                                                    
@@ -759,10 +762,10 @@ public class ServiceAssignmentExt {
 //       loadAvailableCodesbyID(); - this is called by setting currentProgramID
 
        servCodeIdsForXrefsToDelete = new Set<Id>();
-       //loadProgramList();
+      // loadProgramList(); 
         
          if ( theservassign.referral__c != null)
-            referral = [ select id, name, referral_date__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from referral__c where id= :theservassign.referral__c ];
+            referral = [ select id, name, referral_date__c,Has_Evaluation__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate,(Select Id, Name FROM Evaluations__r LIMIT 1) from referral__c where id= :theservassign.referral__c ];
         else
             referral = null;
 
@@ -1107,7 +1110,7 @@ public void loadProgramList() {
       Savepoint servAssignSaveSp = Database.setSavepoint();
 
         try {
-            Service_Assignment__c s = theServAssign;
+            Service_Assignment__c s = theServAssign;		
 			
 			// START: CTEAE-125 & 126:  Service Assignment Closures; prevent closure of FCT Service Assignments if a locked Service Assignment Closure is not presen
 			if(s.Model__c == 'FCT') {

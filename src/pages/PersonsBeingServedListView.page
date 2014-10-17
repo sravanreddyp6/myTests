@@ -147,7 +147,7 @@ table#persons_table.dataTable {
         </div>
         <apex:form id="table_commands">
             <apex:commandButton value="Add New Person"
-                onclick="window.open('{!URLFOR($Action.Account.New)}', '_self'); return false;" rendered="{!canCreateNew}"/>
+                onclick="window.open('{!URLFOR($Action.Account.New)}', '_self'); return false;" rendered="{!canCreateNew && $User.Operating_Group__c != 'Care Meridian'}"/>
             <!-- This is a workaround - We can't just rerender the table, because all the map variables are transient and
             thus are not stored in the View state. -->
             <apex:commandButton value="Refresh" onclick="showLoadingModal()" oncomplete="refreshDataTable()" action="{!updateCon}"
@@ -379,7 +379,6 @@ table#persons_table.dataTable {
     </apex:outputPanel>    
 
 <!-- Originally removed for Ticket EB-225 (Kate M and SJ fealt this can't be done at this time because of Training users in Redwood -->
-
 
     <script type="text/javascript">
     $j = jQuery.noConflict();
