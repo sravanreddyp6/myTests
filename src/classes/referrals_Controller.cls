@@ -115,6 +115,8 @@ public with sharing class referrals_Controller{
   private Id personBeingRefId {get; set;}
   public Id pBRId { get; set; }
   
+
+  public Boolean isErrorDisplayed { get; set; }
     
   private Id personBeingServedId {get; set;}
   public Id pBSId { get; set; }
@@ -572,6 +574,7 @@ public with sharing class referrals_Controller{
     if (!Test.isRunningTest()) {
         ctl.addFields(new String[]{'Service_Location__r.Alias__c'});
     }
+    this.isErrorDisplayed = false;
     this.isCambridge = false;
     this.referralRecord = (Referral__c) ctl.getRecord();
     this.agencies = new List<Agency_Involved_With_Individual__c>();
@@ -893,6 +896,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     	&& string.IsBlank(string.valueof(referralRecord.Service_Location__c))
     	&& locations.size() == 0 ) {
 		ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Please select at least 1 location Alias working the Referral. A location Alias is required for accurate reporting.'));
+		this.isErrorDisplayed = true;
 		return null;
     }
     // end EB-214
