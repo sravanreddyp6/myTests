@@ -13,7 +13,7 @@ public with sharing class proj_nr_form {
     ID NR_RTid(){
         
     
-        return cur_proj.RecordType.id;
+        return ApexPages.currentPage().getParameters().get('RecordType');
     }
 
     //construct
