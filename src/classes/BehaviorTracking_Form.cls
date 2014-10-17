@@ -1,4 +1,4 @@
-public class BehaviorTracking_Form{
+public with sharing class BehaviorTracking_Form{
     private ApexPages.StandardController Controller;
     private Action_Plan_Worksheet__c worksheet;
     private List<Action_Plan_Objective__c > privateobjectives;

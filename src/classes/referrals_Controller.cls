@@ -311,8 +311,12 @@ public with sharing class referrals_Controller{
             if ( qs != '') qs += ' and ';
             if (this.operatinggroup == 'NeuroRestorative') {
                 qs += 'FacilityId__c = 20';
-            } else {
-                qs += 'FacilityId__c != 20';
+            } 
+            else if (this.operatinggroup == 'CareMeridian'){
+                qs += 'FacilityId__c = 13';
+			}
+            else {
+                qs += 'FacilityId__c Not In (20, 13)';
             }
 
             tmpResults=Database.query(qs1 + qs);
@@ -458,10 +462,15 @@ public with sharing class referrals_Controller{
 
             if (this.operatinggroup == 'NeuroRestorative') {
                 qs += 'FacilityId__c = 20';
-            } else {
-                qs += 'FacilityId__c != 20';
+            } 
+            else if (this.operatinggroup == 'CareMeridian'){
+                qs += 'FacilityId__c = 13';
+			}
+            else {
+                qs += 'FacilityId__c Not In (20, 13)';
             }
-            System.debug('!@#$ '+qs);
+            
+			System.debug('!@#$ '+qs);
             tmpResults2=Database.query(qs1 + qs);
             countTotalRecords2=tmpResults2.size();
         }else{
@@ -877,6 +886,16 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     
     }
     // end CTEAE - 34
+    
+	// start EB-214 - Scenario 2
+    if (referralRecord.referral_status__c == 'Closed' 
+    	&& referralRecord.close_reason__c != 'Admitted' && !string.IsBlank(referralRecord.close_reason__c)
+    	&& string.IsBlank(string.valueof(referralRecord.Service_Location__c))
+    	&& locations.size() == 0 ) {
+		ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Please select at least 1 location Alias working the Referral. A location Alias is required for accurate reporting.'));
+		return null;
+    }
+    // end EB-214
     
     // ERNS-8 - when trying to close/admit Neuro referral, check for required fields
     if ( referralRecordType == 'NeuroRestorative') {

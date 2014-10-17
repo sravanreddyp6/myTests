@@ -5,8 +5,18 @@ private class proj_nr_form_test {
 
         project__c proj = new project__c();
 
+		// START: NPROJ-20:  Added record type information to test to support change for this ticket.  Just did enough to get the test to pass with the previously-expected record type.
+		// J. Gilliam, 10/16/14.
+        RecordType rt = [ SELECT Id FROM RecordType WHERE DeveloperName = 'Neuro_Restorative' ];
+        proj.RecordType = rt;
+        // END: NPROJ-20:  Added record type information to test to support change for this ticket.
         
         PageReference pageRef = Page.proj_nr_form;
+        
+        // START: NPROJ-20:  Added record type information to test to support change for this ticket.
+        pageRef.getParameters().put('RecordType', rt.Id);
+        Test.setCurrentPage(pageRef);
+        // END: NPROJ-20:  Added record type information to test to support change for this ticket.	
         
         ApexPages.StandardController sc = new ApexPages.StandardController(proj);
         proj_nr_form proj_control = new proj_nr_form (sc) ;   

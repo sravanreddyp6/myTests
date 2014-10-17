@@ -38,9 +38,16 @@
             padding-top: 22px;
         }
     </style>
-    <div class="breadcrumb">
+    <apex:outputPanel rendered="{!$CurrentPage.parameters.SA_Id == null}">
+    <div class="breadcrumb" >
         <a href="/">Home</a> > <a href="/{!Evaluation__c.Referral__c}">Referral: {!Evaluation__c.Referral__r.Name}</a> > <a href="/{!Evaluation__c.Id}">Evaluation: {!Evaluation__c.Name}</a>
     </div>
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!$CurrentPage.parameters.SA_Id != null}">
+    <div class="breadcrumb" >
+        <a href="/">Home</a> ><a href="/apex/PersonsBeingServedListView">Person Being Served </a> ><a href="/{!SA.Admission__r.Person_Being_Served__c}">{!SA.Admission__r.Person_Being_Served__r.Name}</a> ><a href="/{!SA.Admission__c}">Admission</a> ><a href="/{!SA.Id}">Service Assignment</a> > {!Evaluation__c.Name}
+    </div>
+    </apex:outputPanel>
     <apex:form id="wholePage">
         <apex:outputPanel id="penUploadMessages">
             <apex:actionRegion >
@@ -924,7 +931,7 @@
         </apex:tabPanel>
         <apex:pageBlock id="buttons">
             <apex:pageBlockButtons location="bottom">
-                <apex:commandButton onclick="window.location='/apex/CareMeridianEvaluationEdit?id={!Evaluation__c.Id}&tab={!selectedTab}'; return false;" value="Edit" />
+                <apex:commandButton onclick="window.location='/apex/CareMeridianEvaluationEdit?id={!Evaluation__c.Id}&tab={!selectedTab}'; return false;" value="Edit" rendered="{!Evaluation__c.Referral__r.Person_Being_Served__c == null}"/>
                 <apex:commandButton onclick="window.location='/apex/CareMeridianEvaluationEsign?id={!Evaluation__c.Id}'; return false;" value="E-Sign" rendered="{!selectedTab == 'dischargePlanTab'}" />
                 <!-- apex:commandButton value="Generate Paper Form" action="{!generatePaperForm}" rerender="pageMessages" onclick="jQuery('[id$=pdfGenerationSpinner]').show();" oncomplete="downloadPaperForm('{!pdfExistenceUrl}');" /-->
                 <apex:commandButton value="Generate PDF" onclick="openWin('/apex/CareMeridianEvaluationPDF?id={!Evaluation__c.Id}'); return false;" />
@@ -937,14 +944,17 @@
                    <apex:actionFunction name="saveRelatedParty" action="{!saveRelatedParty}" rerender="relatedPartyTable,relatedPartyDialogMainBlock,relatedPartyDialogErrors" status="saveRelatedPartyStatus" oncomplete="afterSave('{!$Component.relatedPartyDialog}', request.options.parameters.keepDialogOpen, showAddRelatedParty);">
                         <apex:param name="keepDialogOpen" value="" />
                     </apex:actionFunction>
-                    <apex:commandButton value="Save" onClick="saveRelatedParty(false); return false;" />
-                    <apex:commandButton value="Save & New" onClick="saveRelatedParty(true); return false;" />
-                    <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.relatedPartyDialog}'); return false;" />
                     <apex:actionStatus id="saveRelatedPartyStatus">
+						<apex:facet name="stop">
+							<apex:outputPanel id="relPartyButtons">
+			                    <apex:commandButton value="Save" onClick="saveRelatedParty(false); return false;" />
+			                    <apex:commandButton value="Save & New" onClick="saveRelatedParty(true); return false;" />
+			                    <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.relatedPartyDialog}'); return false;" />
+							</apex:outputPanel>
+						</apex:facet>
                         <apex:facet name="start">
                             <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
                         </apex:facet>
-                        <apex:facet name="stop" />
                     </apex:actionStatus>
                 </apex:pageblockButtons>
                 <apex:pageMessages id="relatedPartyDialogErrors" />

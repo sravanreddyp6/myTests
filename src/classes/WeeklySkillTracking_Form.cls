@@ -107,7 +107,12 @@ public with sharing class WeeklySkillTracking_Form {
 
     public PageReference myNewNote(){
         mySave();
-        PageReference page = new PageReference('/apex/Notes_ProgressNote_Create?plan=' + result.Action_plan__c + 
+        
+        if (ApexPages.hasMessages() ) {
+        	return null;
+        } 
+        else {
+        	PageReference page = new PageReference('/apex/Notes_ProgressNote_Create?plan=' + result.Action_plan__c + 
                                                 '&service_assignment=' + result.Action_plan__r.Service_Assignment__c +
                                                 '&admission=' + result.Action_Plan__r.Service_Assignment__r.Admission__c +
                                                 '&person=' + result.Action_Plan__r.Service_Assignment__r.Admission__r.Person_Being_Served__c +
@@ -115,8 +120,8 @@ public with sharing class WeeklySkillTracking_Form {
 
         
         
-        return page; 
-        
+        	return page; 
+        }        
     }
     
     public PageReference mySave()
