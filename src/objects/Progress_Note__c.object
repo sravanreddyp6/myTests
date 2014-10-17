@@ -19336,16 +19336,19 @@ errors.push(&apos;You must select a &quot;Service Location&quot; before continui
 if({! ISPICKVAL(Progress_Note__c.Type_of_Contact__c,&apos;&apos;)}){ 
 errors.push(&apos;You must select the &quot;Type of Contact&quot; before continuing.&apos;); 
 } 
+ 
 
 //Check to see if there is a Service Code selected 
-var progressFields = sforce.connection.query(&quot;SELECT id, RecordTypeId, Service_Code__c, Authorization__c, Short_Term_Goals_Placeholder__c from Progress_Note__c where id =&apos;{!Progress_Note__c.Id}&apos;&quot;); 
+var progressFields = sforce.connection.query(&quot;SELECT id, RecordTypeId, Service_Code__c, Authorization__c, Short_Term_Goals_Placeholder__c, Number_of_Required_Signatures__c from Progress_Note__c where id =&apos;{!Progress_Note__c.Id}&apos;&quot;); 
 records = progressFields.getArray(&quot;records&quot;); 
-if(records[0].Service_Code__c == null){ 
-errors.push(&apos;You must select a &quot;Service Code&quot; before continuing.&apos;); 
-} 
 
 var recordTypeQuery = sforce.connection.query(&quot;SELECT Id, Name, DeveloperName from RecordType where id = &apos;&quot; + records[0].RecordTypeId + &quot;&apos;&quot;); 
 curRtype = recordTypeQuery.getArray(&quot;records&quot;); 
+
+if(records[0].Service_Code__c == null &amp;&amp; curRtype[0].DeveloperName != &apos;NC_TFC&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;NC_Wks_1_6_TFC&apos;){ 
+errors.push(&apos;You must select a &quot;Service Code&quot; before continuing.&apos;); 
+} 
+
 
 // WVPN-21
 // Make the following fields required on finalization
@@ -19382,7 +19385,7 @@ errors.push(&apos;A Progress Note cannot be finalized without an Authorization. 
 */
 
 //Check to see if there is a signature on file
-if (curRtype[0].DeveloperName == &apos;AZ_OPT&apos; &amp;&amp; {! Progress_Note__c.Signature_on_File__c != &apos;Y&apos;}) {
+if (curRtype[0].DeveloperName == &apos;AZ_OPT&apos; || ((curRtype[0].DeveloperName == &apos;NC_TFC&apos; || curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos;) &amp;&amp; records[0].Number_of_Required_Signatures__c &gt; 0) &amp;&amp; {! Progress_Note__c.Signature_on_File__c != &apos;Y&apos;}) {
     errors.push(&apos;A Progress Note cannot be finalized without an Electronic Signature attached to the Progress Note. Please esign the document prior to finalization. If you have esigned the document, hit refresh on the browser page and then click Finalize this Progress Note.&apos;);
 }
 
@@ -19453,6 +19456,32 @@ errors.push(&apos;You must populate the &quot;Notes For Next Visit&quot; field b
 }
 // EB-197: END
 
+// START: EB-210: NC TFC Progress Note flavor field requirements
+if({!ISPICKVAL(Progress_Note__c.Purpose_of_this_Consultation__c,&apos;&apos;)}
+&amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+errors.push(&apos;You must populate the &quot;Purpose of this Consultation&quot; field before continuing.&apos;);
+}
+if({!ISPICKVAL(Progress_Note__c.Scheduling_Status__c,&apos;&apos;)}
+&amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+errors.push(&apos;You must populate the &quot;Scheduling Status&quot; field before continuing.&apos;);
+}
+if({!ISBLANK(Progress_Note__c.Foster_Parents__c)}
+&amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+errors.push(&apos;You must populate the &quot;Foster Parents&quot; field before continuing.&apos;);
+}
+if({!ISPICKVAL(Progress_Note__c.PCP_update_since_last_visit__c,&apos;&apos;)}
+&amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+errors.push(&apos;You must populate the &quot;PCP update since last visit?&quot; field before continuing.&apos;);
+}
+if({!ISPICKVAL(Progress_Note__c.PCP_update_since_last_visit__c,&apos;Yes&apos;) &amp;&amp; ISPICKVAL(Progress_Note__c.Provided_to_reviewed_w_foster_parents__c,&apos;&apos;)}
+&amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+errors.push(&apos;If the response to &quot;PCP update since last visit?&quot; is &quot;Yes,&quot; you must populate the &quot;Provided to/reviewed w/ foster parents?&quot; field before continuing.&apos;);
+}
+if({!ISBLANK(Progress_Note__c.Coord_support_for_Mentor_child__c)}
+&amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+errors.push(&apos;You must populate the &quot;Coord. support for Mentor &amp; child?&quot; field before continuing.&apos;);
+}
+// END: EB-210: NC TFC Progress Note flavor field requirements
 
 } 
 if(errors.length &lt;= 0){ 
