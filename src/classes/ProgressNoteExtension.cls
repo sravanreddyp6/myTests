@@ -1,4 +1,4 @@
-public class ProgressNoteExtension {
+public with sharing class ProgressNoteExtension {
 	
 	public string MedicaidIDClear{ get; set; }
 	public Progress_Note__c pn { get; set;}
