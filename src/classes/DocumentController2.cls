@@ -1,5 +1,7 @@
-public class DocumentController2 {
-
+public without sharing class DocumentController2 {
+	// SHAUN-50:  This code makes the assumption that it handles ONLY document filing for a Service Assignment. The "without sharing" declaration IS intended.
+	//  J. Gilliam, 10/17/14
+	
     public Document__c myDoc { get; set; }
     public List<TMN_Contract__c> contractsForThisDocumentsStates {get;set;}
     public List<Service_Code__c> servCodeList { get; set; }
