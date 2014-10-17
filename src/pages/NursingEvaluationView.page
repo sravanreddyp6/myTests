@@ -972,10 +972,10 @@ hr {
                     </apex:pageBlockSection>
                     
                     
-                    <apex:pageBlockSection columns="2" collapsible="false" title="Safety">
+                    <apex:pageBlockSection columns="2" title="Safety">
                     
                    
-                        <apex:outputText value="{! if (Evaluation__c.Number_falls__c== 'Yes', 'Yes - ' + Evaluation__c.History_of_Falls_Last_3_Months__c, Evaluation__c.Number_falls__c)}"  label="History of Falls (Last 3 Months)" />
+                        <apex:outputText value="{! if (Evaluation__c.Number_falls__c != '', Evaluation__c.Number_falls__c + ' - ' + Evaluation__c.History_of_Falls_Last_3_Months__c, Evaluation__c.Number_falls__c)}"  label="History of Falls (Last 3 Months)" />
                         <apex:outputField value="{!Evaluation__c.Safety_Awareness__c}" />
                         <apex:outputField value="{!Evaluation__c.Bed_Alarm__c}" />
                         <apex:outputField value="{!Evaluation__c.Low_Bed__c}" />
@@ -1162,19 +1162,19 @@ hr {
                             <apex:outputField value="{!Evaluation__c.Neuro_Pain_Severity__c}" label="Severity" />
                             
                             <apex:outputField value="{!Evaluation__c.Neuro_Pain_Types__c}" label="Pain Types"/>
-                            <apex:outputField value="{!Evaluation__c.Neuro_Pain_Descriptors__c}" label="Pain Descriptors"/>
+                            <apex:outputField value="{!Evaluation__c.Neuro_pain_Descriptors__c}" label="Pain Descriptors"/>
                             
                         <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Aggravating Factors" />
                         <apex:outputPanel >
                            <apex:outputField value="{!Evaluation__c.Neuro_Pain_Activity__c}" /><apex:outputLabel value="Activity" />
-                        &nbsp;<apex:outputField value="{!Evaluation__c.Neuro_Pain_Activity_Describe__c}" label="Describe" />
+                        &nbsp;<apex:outputField value="{!Evaluation__c.Neuro_pain_Activity_Describe__c}" label="Describe" />
                         <Br />
                         <apex:outputField value="{!Evaluation__c.Neuro_Pain_Position__c}"  /><apex:outputLabel value="Position" />
                         &nbsp;<apex:outputField value="{!Evaluation__c.Neuro_Pain_Position_Describe__c}" label="Describe" />
                         <Br />
                         <apex:outputField value="{!Evaluation__c.Neuro_Pain_Time_of_Day__c}" /><apex:outputLabel value="Time of Day" />
-                        &nbsp;<apex:outputField value="{!Evaluation__c.Neuro_Pain_Time_of_Day_Describe__c}" label="Describe"  />
+                        &nbsp;<apex:outputField value="{!Evaluation__c.Neuro_pain_time_of_day_Describe__c}" label="Describe"  />
                         <Br /><apex:outputField value="{!Evaluation__c.Neuro_Pain_None__c}" /><apex:outputLabel value="None" />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
