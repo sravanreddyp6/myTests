@@ -1,4 +1,4 @@
-public class TMN_DecryptMedicaidID {
+public with sharing class TMN_DecryptMedicaidID {
     public Progress_Note__c note = new Progress_Note__c();
     public Progress_Note__c getNote(){
         return note;
