@@ -3,6 +3,16 @@ public with sharing class NeuroEvaluationEditController {
     public ApexPages.standardController stdController;
     public String selectedTab { get; set; }
     public String nextTab { get; set; }
+
+    public List<String> dummyString{ get; set; }
+    public List<string>selectedHalls {get;set;}
+    public List<SelectOption> hallValues {
+        get {
+            return Utility.getPicklistValues(evaluation, 'Hallucination_Types__c');
+        }
+        set;
+    }
+
     public Related_Party__c[] relatedParties { set;
         get {
             return [
@@ -87,6 +97,12 @@ public with sharing class NeuroEvaluationEditController {
         if (ApexPages.currentPage().getParameters().get('tab') != null) {
             selectedTab = ApexPages.currentPage().getParameters().get('tab');
         }
+        dummyString = new List<String>();
+        selectedHalls = new List<String>();
+
+        if(!String.isBlank(this.evaluation.Hallucination_Types__c))
+            selectedHalls = this.evaluation.Hallucination_Types__c.split(';');
+
     }
 
     public void showAddRelatedParty() {
@@ -176,6 +192,18 @@ public with sharing class NeuroEvaluationEditController {
         // the user won't be able to save at all.
         if (submitted || selectedTab == 'detailsTab' || selectedTab == null) {
 
+        }
+        // Hallucination type multi-picklist
+        string hal ='';
+        for (string h: selectedHalls) {
+            hal += h + ';';
+        }
+        if (hal!='' && this.evaluation.Hallucinations__c){
+            hal = hal.Substring(0,hal.length()-1);
+            this.evaluation.Hallucination_Types__c = hal;
+        }
+        else {
+            this.evaluation.Hallucination_Types__c ='';
         }
         update this.evaluation;
         update this.pbr;
