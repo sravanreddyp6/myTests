@@ -20,15 +20,51 @@ public with sharing class NeuroEvaluationViewController {
     public Related_Party__c currentRelatedParty { get; set; }
     public Id currentRelatedPartyId { get; set; }
 
-    public List<String> sliderOptions { set;
+    public Evaluation_Response__c[] annotations { set;
         get {
-            if (sliderOptions == null) {
-                sliderOptions = new String[] {
-                    '', 'Dependent', 'Max Assist', 'Moderate Assist',
-                    'Minimum Assist', 'CGA', 'Supervised', 'Independent'
+            return [
+                SELECT ID, Annotation_Height__c, Annotation_Width__c,
+                       Annotation_X__c, Annotation_Y__c, Annotation_Source__c,
+                       Annotation_Shape__c, Annotation_Text__c
+                FROM Evaluation_Response__c WHERE Evaluation__c=:evaluation.Id
+                 AND RecordType.Name='Annotation'
+            ];
+        }
+    }
+    public String serializedAnnotations { get; set; }
+
+    public List<String> mobilitySliderOptions { set;
+        get {
+            if (mobilitySliderOptions == null) {
+                mobilitySliderOptions = new String[] {
+                    'Unknown', 'Total Assist', 'Max Assist', 'Moderate Assist',
+                    'Minimum Assist', 'Setup', 'Modified', 'Independent'
                 };
             }
-            return sliderOptions;
+            return mobilitySliderOptions;
+        }
+    }
+
+    public List<String> selfCareSliderOptions { set;
+        get {
+            if (selfCareSliderOptions == null) {
+                selfCareSliderOptions = new String[] {
+                    'Unknown', 'Total Assist', 'Max Assist', 'Moderate Assist',
+                    'Minimum Assist', 'Setup', 'Modified', 'Independent'
+                };
+            }
+            return selfCareSliderOptions;
+        }
+    }
+
+    public List<String> communicationSliderOptions { set;
+        get {
+            if (communicationSliderOptions == null) {
+                communicationSliderOptions = new String[] {
+                    'Unknown', 'Severe', 'Moderate', 'Mild', 'No Deficit'
+                };
+            }
+            return communicationSliderOptions;
         }
     }
 
@@ -39,6 +75,7 @@ public with sharing class NeuroEvaluationViewController {
         evaluation = (Evaluation__c) stdController.getRecord();
         currentRelatedParty = new Related_Party__c();
         selectedTab = ApexPages.currentPage().getParameters().get('tab');
+        serializedAnnotations = JSON.serialize(annotations);
 
         // Naming the PDF in case this controller is used for the PDF page
         String file = 'Person Being Referred- '+ this.evaluation.Referral__r.Person_Being_Referred__r.Full_Name__c+'.pdf';
