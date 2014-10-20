@@ -935,93 +935,138 @@
                 </apex:pageBlock>
             </apex:tab>
             <apex:tab label="Psycho/Social" name="psychoSocialTab" ontabenter="changeTab('psychoSocialTab'); return false;" styleClass="{!IF(Evaluation__c.Psycho_Social_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+                <apex:outputPanel rendered="false">
+                    <apex:inputhidden value="{!Evaluation__c.Hallucination_Types__c}" />
+                </apex:outputPanel>
                 <apex:pageBlock >
-                    <apex:pageBlockSection columns="1">
-                        <apex:inputField value="{!Evaluation__c.Patient_Deemed_Competent__c}" label="Has Psych deemed the patient competent to make medical and financial decisions?" />
-                        <apex:inputTextArea value="{!Evaluation__c.History_of_Psycho_Social_Issues__c}" cols="80" label="History of Psycho/Social Issues (Drug/ Alcohol/ Legal)" />
+                    <apex:pageBlockSection columns="2" title="Psycho/Social History">
+                        <apex:inputField value="{!Evaluation__c.Past_Psychiatric_History__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Past_Psychiatric_History_Description__c}" label="Describe" />
+                        <apex:pageBlockSectionItem />
+
+                        <apex:outputText label="Does Resident Exhibit Signs or Relate a History of Any of the Following"  value=""/>
+                        <apex:pageBlockSectionItem />
+
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Alcohol Abuse<Br /><Br />Describe" escape="false" />
+                        <apex:outputPanel >
+                        <apex:inputField value="{!Evaluation__c.Alcohol_Abuse__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.alcoholAbuse}&quot;}" /> <apex:outputLabel value="Consumes >2 alcoholic drinks/day" />&nbsp;<apex:inputField value="{!Evaluation__c.Alcoholic_drinks_per_day__c}" />
+                        <br />
+                        <apex:inputTextArea value="{!Evaluation__c.Alcohol_Abuse_Describe__c}" label="Describe"  id="alcoholAbuse" cols="70"/>
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Drug Abuse<Br /><Br />Describe" escape="false" />
+                        <apex:outputPanel >
+                        <apex:inputField value="{!Evaluation__c.Drug_Abuse__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.drugAbuse}&quot;}"/>
+                        <br /><apex:inputTextArea value="{!Evaluation__c.Drug_Abuse_Describe__c}" label="Describe" id="drugAbuse" cols="70"/>
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Sexual Abuse<Br /><Br />Describe" escape="false" />
+                        <apex:outputPanel >
+                        <apex:inputField value="{!Evaluation__c.Sexual_Abuse__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.sexualAbuse}&quot;}" />
+                        <br /><apex:inputTextArea value="{!Evaluation__c.Sexual_Abuse_Describe__c}" label="Describe" id="sexualAbuse" cols="70"/>
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Domestic Abuse<Br /><Br />Describe" escape="false" />
+                        <apex:outputPanel >
+                        <apex:inputField value="{!Evaluation__c.Domestic_Abuse__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.domesticAbuse}&quot;}" />
+                        <br /><apex:inputTextArea value="{!Evaluation__c.Domestic_Abuse_Describe__c}" label="Describe" id="domesticAbuse" cols="70"/>
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Financial Abuse<Br /><Br />Describe" escape="false" />
+                        <apex:outputPanel >
+                        <apex:inputField value="{!Evaluation__c.Financial_Abuse__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.financialAbuse}&quot;}" />
+                        <br /><apex:inputTextArea value="{!Evaluation__c.Financial_Abuse_Describe__c}" label="Describe" id="financialAbuse" cols="70"/>
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Physical Abuse<Br /><Br />Describe" escape="false" />
+                        <apex:outputPanel >
+                        <apex:inputField value="{!Evaluation__c.Physical_Abuse__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.physicalAbuse}&quot;}" />
+                        <br /><apex:inputTextArea value="{!Evaluation__c.Physical_Abuse_Describe__c}" label="Describe" id="physicalAbuse" cols="70"/>
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Risk to Self<Br /><Br />Describe" escape="false" />
+                        <apex:outputPanel >
+                        <apex:inputField value="{!Evaluation__c.Risk_to_Self__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.riskselfDescribe}&quot;}" />
+                        <br /><apex:inputTextArea value="{!Evaluation__c.Risk_to_Self_Describe__c}" id="riskselfDescribe" label="Describe" cols="70"/>
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Risk to Others<Br /><Br />Describe" escape="false" />
+                        <apex:outputPanel >
+                        <apex:inputField value="{!Evaluation__c.Risk_to_Others__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.riskothersDescribe}&quot;}" />
+                        <br /><apex:inputTextArea value="{!Evaluation__c.Risk_to_Others_Describe__c}" id="riskothersDescribe" label="Describe" cols="70"/>
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Elopement Risk<Br /><Br />Describe" escape="false" />
+                        <apex:outputPanel >
+                        <apex:inputField value="{!Evaluation__c.Elopement_Risk__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.elopementDescribe}&quot;}" />
+                        <br /><apex:inputTextArea value="{!Evaluation__c.Elopement_Risk_Describe__c}" id="elopementDescribe" label="Describe" cols="70" />
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+
+
+                        <apex:pageblockSectionItem >
+                            <apex:outputlabel value="Hallucinations<Br /><Br />Type<br /><br />Describe" escape="false" />
+                                <apex:outputPanel >
+                                <apex:actionRegion >
+                                 <apex:inputField value="{!Evaluation__c.Hallucinations__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.hallucinationDescribe}&quot;]}" >
+                                    <apex:actionStatus id="hallucinationStatus">
+                                             <apex:facet name="start">
+                                                 <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                                                     <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                                                 </div>
+                                             </apex:facet>
+                                             <apex:facet name="stop"></apex:facet>
+                                     </apex:actionStatus>
+                                 <apex:actionSupport event="onchange" rerender="panelpanelpanel" status="hallucinationStatus" />
+                                 </apex:inputField>
+                                 </apex:actionRegion>
+                                <Br />
+                                <apex:outputpanel id="panelpanelpanel" layout="block">
+                                <apex:selectCheckboxes value="{!dummyString}" disabled="True" rendered="{!!Evaluation__c.Hallucinations__c}"  style="margin-left:-13px" >
+                                    <apex:selectOptions value="{!hallValues}"/>
+                                </apex:selectCheckboxes>
+                                <apex:selectCheckboxes value="{!selectedHalls}" rendered="{!Evaluation__c.Hallucinations__c}"  style="margin-left:-13px">
+                                    <apex:selectOptions value="{!hallValues}"/>
+                                </apex:selectCheckboxes>
+                                </apex:outputpanel>
+                                <apex:inputTextArea value="{!Evaluation__c.Hallucinations_Describe__c}" id="hallucinationDescribe" label="Describe" cols="70" />
+                            </apex:outputPanel>
+                        </apex:pageblockSectionItem>
+                        <apex:outputText label="Offender History"  value=""/>
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Sexual_behavior_past_pending_charges__c}" label="Past or pending charges that have been brought against this person due to their sexual behavior" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Sexual_events_led_to_legal_action__c}" label="Are there sexual events that might have resulted in legal action" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.Other_significant_sexual_issues__c}" label="Are there any other sexual issues in this individual's past which clinical team may deem needs review" />
                     </apex:pageBlockSection>
                     <hr />
-                    <apex:pageBlockSection columns="1">
-                        <apex:inputTextArea value="{!Evaluation__c.Psycho_Social_Comments__c}" cols="80" />
+                    <apex:pageBlockSection Columns="1">
+                        <apex:inputtextArea value="{!Evaluation__c.Psycho_Social_Comments__c}" cols="80" />
                         <apex:inputField value="{!Evaluation__c.Psycho_Social_Section_Completed__c}" />
-                    </apex:pageBlockSection>
-                </apex:pageBlock>
-            </apex:tab>
-            <apex:tab label="Discharge Plan" name="dischargePlanTab" ontabenter="changeTab('dischargePlanTab'); return false;" styleClass="{!IF(Evaluation__c.Discharge_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
-                <apex:pageBlock >
-                    <apex:pageBlockSection columns="2">
-                        <!-- For multipicklist fields, we need to call enableDisableField directly, because the change
-                             event is not fired programmatically. -->
-                        <apex:inputField value="{!Evaluation__c.Prior_Living_Situation__c}" id="priorLivingSituation"
-                            onchange="enableDisableField(document.getElementById('{!$Component.priorLivingSituation}'));"
-                            html-data-rules="{&quot;Other&quot;: &quot;{!$Component.priorLivingSituationOther}&quot;}" />
-                        <apex:inputField value="{!Evaluation__c.Discharge_Plan_Home_Situation__c}" />
-                        <apex:inputField value="{!Evaluation__c.Prior_Living_Situation_Other__c}" id="priorLivingSituationOther" label="Specify Other" />
-                        <apex:inputField value="{!Evaluation__c.Patient_Family_Goals__c}" />
-                        <apex:inputField value="{!Evaluation__c.Return_to_Prior_Living_Situation__c}" label="Patient to Return to Prior Living Situation" />
-                    </apex:pageBlockSection>
-                    <hr />
-                    <apex:pageBlockSection columns="2">
-                        <apex:pageBlockSectionItem >
-                            <apex:outputText value="Treatment Plan" />
-                            <apex:outputText value="" />
-                        </apex:pageBlockSectionItem>
-                        <apex:pageBlockSectionItem >
-                            <apex:outputText value="Environmental Barriers" />
-                            <apex:outputText value="" />
-                        </apex:pageBlockSectionItem>
-                        <apex:inputField value="{!Evaluation__c.Discharge_Physician__c}"/>
-                        <apex:inputField value="{!Evaluation__c.Stairs__c}"
-                            html-data-rules="{&quot;1&quot;: [&quot;{!$Component.numberOfStairs}&quot;, &quot;{!$Component.locationOfStairs}&quot;]}" />
-                        <apex:inputField value="{!Evaluation__c.Physician__c}" style="Width: 370px; height: 57px;"/>
-                        <apex:inputField value="{!Evaluation__c.Number_of_Stairs__c}" id="numberOfStairs" />
-                        <apex:inputField value="{!Evaluation__c.Discharge_Nursing__c}"/>
-                        <apex:inputField value="{!Evaluation__c.Location_of_Stairs__c}" id="locationOfStairs" />
-                        <apex:inputField value="{!Evaluation__c.Nursing__c}" style="Width: 370px; height: 57px;"/>
-                        <apex:inputField value="{!Evaluation__c.Elevator__c}" />
-                        <apex:inputField value="{!Evaluation__c.Discharge_OT__c}"/>
-                        <apex:inputField value="{!Evaluation__c.Living_With__c}" />
-                        <apex:inputField value="{!Evaluation__c.OT__c}" style="Width: 370px; height: 57px;"/>
-                        <apex:inputField value="{!Evaluation__c.Living_With_Employment_Status__c}" />
-                        <apex:inputField Value="{!Evaluation__c.Discharge_PT__c}"/>
-                        <apex:PageBlockSection />
-                        <apex:inputField value="{!Evaluation__c.PT__c}" style="Width: 370px; height: 57px;" />
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.Discharge_ST__c}"/>
-                        <apex:PageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.ST__c}" style="Width: 370px; height: 57px;"/>
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.Treatment_Plan_Other__c}" label="Other" style="Width: 370px; height: 57px;"/>
-                        <apex:PageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.Interdisciplinary__c}" style="Width: 370px; height: 57px;"/>
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.ELOS__c}" />
-                    </apex:pageBlockSection>
-                    <hr />
-                    <apex:pageBlockSection columns="1">
-                        <!-- For multipicklist fields, we need to call enableDisableField directly, because the change
-                             event is not fired programmatically. -->
-                        <apex:inputField value="{!Evaluation__c.Discharge_To__c}" id="dischargeTo"
-                            onchange="enableDisableField(document.getElementById('{!$Component.dischargeTo}'));"
-                            html-data-rules="{&quot;Other&quot;: &quot;{!$Component.dischargeToOther}&quot;}" />
-                        <apex:inputField value="{!Evaluation__c.Discharge_To_Other__c}" label="Specify Other" id="dischargeToOther" />
-                        <apex:inputField value="{!Evaluation__c.Follow_Up_Appt_Required__c}" />
-                        <apex:inputField value="{!Evaluation__c.Appointment_Date_Time_1__c}" />
-                        <apex:inputField value="{!Evaluation__c.Appointment_Contact_1__c}" />
-                        <apex:inputField value="{!Evaluation__c.Appointment_Date_Time_2__c}" />
-                        <apex:inputField value="{!Evaluation__c.Appointment_Contact_2__c}" />
-                    </apex:pageBlockSection>
-                    <hr />
-                    <apex:pageBlockSection columns="1">
-                        <apex:inputTextArea value="{!Evaluation__c.Discharge_Plan_Comments__c}" cols="80" />
                         <apex:inputField value="{!Evaluation__c.Evaluation_Date__c}" />
-                        <apex:inputField value="{!Evaluation__c.Discharge_Section_Completed__c}" />
                     </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:tab>
         </apex:tabPanel>
-
-
 
         <apex:pageBlock id="buttons">
             <apex:pageBlockButtons location="bottom">
