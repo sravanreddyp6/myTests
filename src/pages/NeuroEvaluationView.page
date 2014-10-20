@@ -601,78 +601,70 @@
                 </apex:pageBlock>
             </apex:tab>
             <apex:tab label="Psycho/Social" name="psychoSocialTab" styleClass="{!IF(Evaluation__c.Psycho_Social_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+                <apex:outputPanel rendered="false">
+                    <apex:inputhidden value="{!Evaluation__c.Hallucination_Types__c}" />
+                </apex:outputPanel>
                 <apex:pageBlock >
-                    <apex:pageBlockSection columns="1">
-                        <apex:outputField value="{!Evaluation__c.Patient_Deemed_Competent__c}" label="Has Psych deemed the patient competent to make medical and financial decisions?" />
-                        <apex:outputField value="{!Evaluation__c.History_of_Psycho_Social_Issues__c}" label="History of Psycho/Social Issues (Drug/ Alcohol/ Legal)" />
+                    <apex:pageBlockSection columns="2" title="Psycho/Social History">
+                        <apex:outputField value="{!Evaluation__c.Past_Psychiatric_History__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Past_Psychiatric_History_Description__c}" label="Describe" />
+                        <apex:pageBlockSectionItem />
+
+                        <apex:outputText label="Does Resident Exhibit Signs or Relate a History of Any of the Following"
+                            value="" />
+                        <apex:outputText value="" />
+
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Alcohol Abuse" />
+                            <apex:outputPanel >
+                                <apex:outputLabel value="Consumes >2 alcoholic drinks/day"
+                                    rendered="{!Evaluation__c.Alcoholic_drinks_per_day__c == 'Yes' }" />
+                                <br />
+                                <apex:outputText value="{!Evaluation__c.Alcohol_Abuse_Describe__c}"
+                                    id="alcoholAbuse" />
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+
+                        <apex:outputField value="{!Evaluation__c.Drug_Abuse_Describe__c}"
+                            label="Drug Abuse" />
+                        <apex:outputField value="{!Evaluation__c.Sexual_Abuse_Describe__c}"
+                            label="Sexual Abuse" />
+                        <apex:outputField value="{!Evaluation__c.Domestic_Abuse_Describe__c}"
+                            label="Domestic Abuse" />
+                        <apex:outputField value="{!Evaluation__c.Financial_Abuse_Describe__c}"
+                            label="Financial Abuse" />
+                        <apex:outputField value="{!Evaluation__c.Physical_Abuse_Describe__c}"
+                            label="Physical Abuse" />
+                        <apex:outputField value="{!Evaluation__c.Risk_to_Self_Describe__c}"
+                            label="Risk to Self" />
+                        <apex:outputField value="{!Evaluation__c.Risk_to_Others_Describe__c}"
+                            label="Risk to Others" />
+                        <apex:outputField value="{!Evaluation__c.Elopement_Risk_Describe__c}"
+                            label="Elopement Risk" />
+
+                        <apex:pageblockSectionItem >
+                            <apex:outputlabel value="Hallucinations" />
+                            <apex:outputPanel >
+                                <apex:outputText value="{!selectedHalls}"
+                                    rendered="{!Evaluation__c.Hallucinations__c}" />
+                                <apex:outputField value="{!Evaluation__c.Hallucinations_Describe__c}"
+                                    rendered="{!Evaluation__c.Hallucinations__c}" />
+                            </apex:outputPanel>
+                        </apex:pageblockSectionItem>
+
+                        <apex:outputText label="Offender History"  value=""/>
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Sexual_behavior_past_pending_charges__c}" label="Past or pending charges that have been brought against this person due to their sexual behavior" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Sexual_events_led_to_legal_action__c}" label="Are there sexual events that might have resulted in legal action" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Other_significant_sexual_issues__c}" label="Are there any other sexual issues in this individual's past which clinical team may deem needs review" />
                     </apex:pageBlockSection>
                     <hr />
                     <apex:pageBlockSection columns="1">
                         <apex:outputField value="{!Evaluation__c.Psycho_Social_Comments__c}" />
                         <apex:outputField value="{!Evaluation__c.Psycho_Social_Section_Completed__c}" />
-                    </apex:pageBlockSection>
-                </apex:pageBlock>
-            </apex:tab>
-            <apex:tab label="Discharge Plan" name="dischargePlanTab" styleClass="{!IF(Evaluation__c.Discharge_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
-                <apex:pageBlock >
-                    <apex:pageBlockSection columns="2">
-                        <apex:outputField value="{!Evaluation__c.Prior_Living_Situation__c}" />
-                        <apex:outputField value="{!Evaluation__c.Discharge_Plan_Home_Situation__c}" />
-                        <apex:outputField value="{!Evaluation__c.Prior_Living_Situation_Other__c}" label="Specify Other" />
-                        <apex:outputField value="{!Evaluation__c.Patient_Family_Goals__c}" />
-                        <apex:outputField value="{!Evaluation__c.Return_to_Prior_Living_Situation__c}" label="Patient to Return to Prior Living Situation" />
-                    </apex:pageBlockSection>
-                    <hr />
-                    <apex:pageBlockSection columns="2">
-                        <apex:pageBlockSectionItem >
-                            <apex:outputText value="Treatment Plan" />
-                            <apex:outputText value="" />
-                        </apex:pageBlockSectionItem>
-                        <apex:pageBlockSectionItem >
-                            <apex:outputText value="Environmental Barriers" />
-                            <apex:outputText value="" />
-                        </apex:pageBlockSectionItem>
-                        <apex:outputField value="{!Evaluation__c.Discharge_Physician__c}"/>
-                        <apex:outputField value="{!Evaluation__c.Stairs__c}"/>
-                        <apex:outputField value="{!Evaluation__c.Physician__c}" />
-                        <apex:outputField value="{!Evaluation__c.Number_of_Stairs__c}" />
-                        <apex:outputField value="{!Evaluation__c.Discharge_Nursing__c}"/>
-                        <apex:outputField value="{!Evaluation__c.Location_of_Stairs__c}" />
-                        <apex:outputField value="{!Evaluation__c.Nursing__c}" />
-                        <apex:outputField value="{!Evaluation__c.Elevator__c}" />
-                        <apex:outputField value="{!Evaluation__c.Discharge_OT__c}"/>
-                        <apex:outputField value="{!Evaluation__c.Living_With__c}" />
-                        <apex:outputField value="{!Evaluation__c.OT__c}" />
-                        <apex:outputField value="{!Evaluation__c.Living_With_Employment_Status__c}" />
-                        <apex:outputField Value="{!Evaluation__c.Discharge_PT__c}"/>
-                        <apex:PageBlockSection />
-                        <apex:outputField value="{!Evaluation__c.PT__c}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Discharge_ST__c}"/>
-                        <apex:PageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.ST__c}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Treatment_Plan_Other__c}" label="Other" />
-                        <apex:PageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Interdisciplinary__c}" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.ELOS__c}" />
-                    </apex:pageBlockSection>
-                    <hr />
-                    <apex:pageBlockSection columns="1">
-                        <apex:outputField value="{!Evaluation__c.Discharge_To__c}" />
-                        <apex:outputField value="{!Evaluation__c.Discharge_To_Other__c}" label="Specify Other" />
-                        <apex:outputField value="{!Evaluation__c.Follow_Up_Appt_Required__c}" />
-                        <apex:outputField value="{!Evaluation__c.Appointment_Date_Time_1__c}" />
-                        <apex:outputField value="{!Evaluation__c.Appointment_Contact_1__c}" />
-                        <apex:outputField value="{!Evaluation__c.Appointment_Date_Time_2__c}" />
-                        <apex:outputField value="{!Evaluation__c.Appointment_Contact_2__c}" />
-                    </apex:pageBlockSection>
-                    <hr />
-                    <apex:pageBlockSection columns="1">
-                        <apex:outputField value="{!Evaluation__c.Discharge_Plan_Comments__c}" />
-                        <apex:outputField value="{!Evaluation__c.Evaluation_Date__c}" />
-                        <apex:outputField value="{!Evaluation__c.Discharge_Section_Completed__c}" />
                     </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:tab>

@@ -3,6 +3,14 @@ public with sharing class NeuroEvaluationViewController {
     public ApexPages.standardController stdController;
     public String selectedTab { get; set; }
 
+    public List<selectOption> hallValues {
+        get {
+            return Utility.getPicklistValues(evaluation, 'Hallucination_Types__c');
+        }
+        set;
+    }
+    public List<string> selectedHalls { get; set; }
+
     public Related_Party__c[] relatedParties { set;
         get {
             return [
@@ -76,6 +84,13 @@ public with sharing class NeuroEvaluationViewController {
         currentRelatedParty = new Related_Party__c();
         selectedTab = ApexPages.currentPage().getParameters().get('tab');
         serializedAnnotations = JSON.serialize(annotations);
+
+        hallValues = new List<SelectOption>();
+        selectedHalls = new List<String>();
+
+        if(!String.isBlank(this.evaluation.Hallucination_Types__c)) {
+            selectedHalls = this.evaluation.Hallucination_Types__c.split(';');
+        }
 
         // Naming the PDF in case this controller is used for the PDF page
         String file = 'Person Being Referred- '+ this.evaluation.Referral__r.Person_Being_Referred__r.Full_Name__c+'.pdf';
