@@ -19345,7 +19345,7 @@ records = progressFields.getArray(&quot;records&quot;);
 var recordTypeQuery = sforce.connection.query(&quot;SELECT Id, Name, DeveloperName from RecordType where id = &apos;&quot; + records[0].RecordTypeId + &quot;&apos;&quot;); 
 curRtype = recordTypeQuery.getArray(&quot;records&quot;); 
 
-if(records[0].Service_Code__c == null &amp;&amp; curRtype[0].DeveloperName != &apos;NC_TFC&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;NC_Wks_1_6_TFC&apos;){ 
+if(records[0].Service_Code__c == null){ 
 errors.push(&apos;You must select a &quot;Service Code&quot; before continuing.&apos;); 
 } 
 
