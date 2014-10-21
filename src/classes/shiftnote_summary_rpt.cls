@@ -30,13 +30,13 @@ public with sharing class shiftnote_summary_rpt {
         return notes ;
     }
     
-    public transient Map<string, List<ProgressNote_ActionPlanChildren_mjo__c>> Note_Goals = new Map<string, List<ProgressNote_ActionPlanChildren_mjo__c>>();    
+    public transient Map<string, List<ProgressNote_ActionPlanChildren_mjo__c>> Note_Goals;    
     public Map<string, List<ProgressNote_ActionPlanChildren_mjo__c>> getNote_Goals(){
         return Note_Goals;
     }
 
 
-    public transient Map<string, List<ProgressNote_ActionPlanChildren_mjo__c>> Note_Objs = new Map<string, List<ProgressNote_ActionPlanChildren_mjo__c>>();    
+    public transient Map<string, List<ProgressNote_ActionPlanChildren_mjo__c>> Note_Objs;    
     public Map<string, List<ProgressNote_ActionPlanChildren_mjo__c>> getNote_Objs(){
         return Note_Objs;
     }
@@ -131,6 +131,9 @@ public with sharing class shiftnote_summary_rpt {
        isHCfilter.put('true', true);
        isHCfilter.put('false',false);
        isHCfilter.remove(HCMCfilter);
+       
+       Note_Goals = new Map<string, List<ProgressNote_ActionPlanChildren_mjo__c>>();
+       Note_Objs = new Map<string, List<ProgressNote_ActionPlanChildren_mjo__c>>(); 
        
        // RBO-265 - filter out Disregarded notes
         notes = [Select Name, ID, Start_Time__c, Person_Being_Served__c, End_Time__c, CreatedByid, Healthcare_Medical_Note__c, Narrative__c 
