@@ -20,7 +20,7 @@ public with sharing class shiftnote_summary_rpt {
     public List<id> select2PrmIds {get; set;}
     
     
-    public list<ProgressNote_ActionPlanChildren_mjo__c> note_plan_joins = new list<ProgressNote_ActionPlanChildren_mjo__c>();
+    public transient list<ProgressNote_ActionPlanChildren_mjo__c> note_plan_joins = new list<ProgressNote_ActionPlanChildren_mjo__c>();
     public list<ProgressNote_ActionPlanChildren_mjo__c> getNote_plan_joins(){
         return note_plan_joins;
     }
@@ -30,13 +30,13 @@ public with sharing class shiftnote_summary_rpt {
         return notes ;
     }
     
-    public Map<string, List<ProgressNote_ActionPlanChildren_mjo__c>> Note_Goals = new Map<string, List<ProgressNote_ActionPlanChildren_mjo__c>>();    
+    public transient Map<string, List<ProgressNote_ActionPlanChildren_mjo__c>> Note_Goals = new Map<string, List<ProgressNote_ActionPlanChildren_mjo__c>>();    
     public Map<string, List<ProgressNote_ActionPlanChildren_mjo__c>> getNote_Goals(){
         return Note_Goals;
     }
 
 
-    public Map<string, List<ProgressNote_ActionPlanChildren_mjo__c>> Note_Objs = new Map<string, List<ProgressNote_ActionPlanChildren_mjo__c>>();    
+    public transient Map<string, List<ProgressNote_ActionPlanChildren_mjo__c>> Note_Objs = new Map<string, List<ProgressNote_ActionPlanChildren_mjo__c>>();    
     public Map<string, List<ProgressNote_ActionPlanChildren_mjo__c>> getNote_Objs(){
         return Note_Objs;
     }
