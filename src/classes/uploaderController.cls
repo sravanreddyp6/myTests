@@ -1,8 +1,8 @@
 /*
  * Controller for multi attachment component
  */
- 
-global class uploaderController 
+
+global with sharing class uploaderController
 {
     /**
      * This proxy class is used to add the Head Shot choosing ability, because
@@ -25,7 +25,7 @@ global class uploaderController
         }
     }
 
-    public Boolean showPersonalRecord{ get; set; } 
+    public Boolean showPersonalRecord{ get; set; }
 
 
     // the parent object it
@@ -42,13 +42,13 @@ global class uploaderController
 
     public Boolean showHeadShotSelection { get; set; }
     public String headShotPhotoIndex { get; set; }
-    
+
     // list of existing attachments - populated on demand
     public List<Attachment> attachments;
-    
+
     // list of new attachments to add
     public List<ProxyAttachment> newAttachments {get; set;}
-    
+
     // the number of new attachments to add to the list when the user clicks 'Add More'
     public static final Integer NUM_ATTACHMENTS_TO_ADD=5;
 
@@ -56,8 +56,8 @@ global class uploaderController
     {
         // instantiate the list with a single attachment
         newAttachments=new List<ProxyAttachment>{new ProxyAttachment(new Attachment())};
-    }   
-    
+    }
+
     // retrieve the existing attachments
     public List<Attachment> getAttachments()
     {
@@ -77,8 +77,8 @@ global class uploaderController
             newAttachments.add(new ProxyAttachment(new Attachment()));
         }
         return null;
-    }    
-    
+    }
+
     // Save action method
     public PageReference save()
     {
@@ -105,7 +105,7 @@ global class uploaderController
         insert toInsert;
         newAttachments.clear();
         newAttachments.add(new ProxyAttachment(new Attachment()));
-        
+
         // null the list of existing attachments - this will be rebuilt when the page is refreshed
         attachments=null;
         return null;
@@ -138,23 +138,23 @@ global class uploaderController
         }
         return '.' + nameParts[nameParts.size()-1];
     }
-    
+
     // Action method when the user is done
     public PageReference done()
     {
         // send the user to the detail page for the sobject
         return new PageReference('/' + sobjId);
     }
-    
+
 
    public  PageReference deleteFile()
     {
         string attachmentId = Apexpages.currentPage().getParameters().get('aId');
         Attachment thisAttachment = new Attachment(id=attachmentId);
         delete thisAttachment;
-        Attachments = null;     
+        Attachments = null;
         Attachments = getAttachments();
         return null;
     }
-    
+
 }
