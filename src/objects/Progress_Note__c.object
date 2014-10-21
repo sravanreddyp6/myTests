@@ -929,12 +929,10 @@
         <externalId>false</externalId>
         <inlineHelpText>What will the coordinator do to help support the Mentor and child?</inlineHelpText>
         <label>Coord. support for Mentor &amp; child?</label>
-        <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
+        <type>TextArea</type>
     </fields>
     <fields>
         <fullName>Coordinating__c</fullName>
@@ -1516,12 +1514,10 @@
         <fullName>Foster_Parents__c</fullName>
         <externalId>false</externalId>
         <label>Foster Parents</label>
-        <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
+        <type>TextArea</type>
     </fields>
     <fields>
         <fullName>Funding_Source2__c</fullName>
@@ -11769,6 +11765,33 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Collateral_Contact__c</picklist>
+            <values>
+                <fullName>Biological Parent</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Case MGR%2E</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Case Worker</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Client%27s School</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Juvenile Justice Case MGR%2E</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Communication__c</picklist>
             <values>
                 <fullName>Normal</fullName>
@@ -12415,6 +12438,33 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>99</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Collateral_Contact__c</picklist>
+            <values>
+                <fullName>Biological Parent</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Case MGR%2E</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Case Worker</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Client%27s School</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Juvenile Justice Case MGR%2E</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -19451,7 +19501,7 @@ errors.push(&apos;You must populate the &quot;Staff Credentials&quot; field befo
 
 // EB-197: START
 if({!ISBLANK(Progress_Note__c.Notes_For_Next_Visit__c)}
-&amp;&amp; curRtype[0].DeveloperName == &apos;AZ_OPT&apos;) {
+&amp;&amp; (curRtype[0].DeveloperName == &apos;AZ_OPT&apos; || curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos; || curRtype[0].DeveloperName == &apos;NC_TFC&apos; )) {
 errors.push(&apos;You must populate the &quot;Notes For Next Visit&quot; field before continuing.&apos;);
 }
 // EB-197: END
