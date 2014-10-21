@@ -22,12 +22,12 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
         admIdsFromScope.add(aFS.Admission__c);
       } 
       
-      List<Assessment__c> allAssmtsForTheScopeAdmissions = [SELECT Id, Admission__c, Admission__r.Name, Assessment_Date__c, 
+      List<Assessment__c> allAssmtsForTheScopeAdmissions = [SELECT Id, Admission__c, Admission__r.Name, Assessment_Date__c, Admission__r.status__c, 
                         OwnerId, Interval__c, Quarter__c, Assessment_Type__c, Assessment_Type__r.Name, 
                         Admission__r.Person_Being_Served__r.Account.LastName, Admission__r.Person_Being_Served__r.Account.FirstName,
                         Owner.LastName, Owner.FirstName, Owner.Email 
                             FROM Assessment__c 
-                                WHERE Admission__c = :admIdsFromScope AND Admission__r.status__c = 'Active'
+                                WHERE Admission__c = :admIdsFromScope
                                     ORDER BY Assessment_Date__c];
                                       
       
@@ -55,6 +55,8 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
    
  
     private void parseAdmission(Assessment__c a, List<Assessment__c> assmtsForThisAdmission){
+    
+    
         Integer admissionsAssmtsMinusIntakeCounter = 0;
         Date intakeAssmtDateForAdmission;
         Integer daysSinceIntake = 0;
@@ -94,7 +96,7 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
                 }
             }
             
-            if((dropThisAdmissionsAssmts == false) && (daysSinceLastFulfilledDueDate == 75 || daysSinceLastFulfilledDueDate == 85 || daysSinceLastFulfilledDueDate >= 90)){
+            if((dropThisAdmissionsAssmts == false) && (daysSinceLastFulfilledDueDate == 75 || daysSinceLastFulfilledDueDate == 85 || daysSinceLastFulfilledDueDate >= 90) && a.Admission__r.status__c == 'Active'){
                 System.Debug('WE NEED TO SEND AN EMAIL!');
                 goForEmail = true;
 
@@ -110,7 +112,7 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
                 daysSinceCreation = 30;
             }
             
-            if(a.Status__c <> 'Locked' && daysSinceCreation >= 30){
+            if(a.Status__c <> 'Locked' && daysSinceCreation >= 30 && a.Admission__r.status__c == 'Active'){
                 Messaging.sendEmail(sendIncompleteNotification(a, a.CreatedDate, a.Id));
             }       
       }
@@ -221,127 +223,127 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
                 regularNoticeEmails.add(mail);
             
                 // Create a task reminder for the action.
-                Task t = new Task(Subject = a.Assessment_Type__r.Name + ' Assessment Reminder', Status = 'In Progress', Priority = 'Normal', OwnerId = a.OwnerId, Description = 'You have a person being served who appears to have a ' + a.Assessment_Type__r.Name + ' assessment due or coming due: ' + System.Url.getSalesforceBaseUrl().toExternalForm() + '/' + a.Admission__r.Id, WhoId = a.AccountPerson__r.PersonContactId, WhatId = a.AccountPerson__r.Id, ActivityDate = dueDate);
+                Task t = new Task(Subject = a.Assessment_Type__r.Name + ' Assessment Reminder', Status = 'In Progress', Priority = 'Normal', OwnerId = a.OwnerId, Description = 'You have a person being served who appears to have a ' + a.Assessment_Type__r.Name + ' assessment due or coming due: ' + System.Url.getSalesforceBaseUrl().toExternalForm() + '/' + a.Admission__r.Id, WhoId = a.AccountPerson__r.PersonContactId, WhatId = a.Admission__r.Id, ActivityDate = dueDate);
                 insert t;
                 
                 return regularNoticeEmails;
         }
         catch(Exception e){
-	        Datetime prettyDueDate = date.newinstance(dueDate.year(), dueDate.month(), dueDate.day());  
-	        String newPrettyDueDate = prettyDueDate.format('MM/dd/yy');
-	        
-	        
-	                // Reserve email capacity for the current Apex transaction to ensure 
-	                // that we won't exceed our daily email limits when sending email after 
-	                // the current transaction is committed. 
-	                Messaging.reserveSingleEmailCapacity(1);
-	         
-	                
-	                // Processes and actions involved in the Apex transaction occur next, 
-	                // which conclude with sending a list of emails. 
-	                    
-	                // Now create a new single email message object 
-	                // that will send out a single email to the addresses in the To, CC & BCC list.          
-	                Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-	                
-	                // Set receiver of email to a User Id for a Salesforce user; the owner of the assessment for
-	                // which we are sending a notification.  
-	                
-	                User idForAssmtDeveloper = [ SELECT Id FROM User WHERE FirstName = 'Josh' AND LastName = 'Gilliam' LIMIT 1];
-	                
-	                mail.setTargetObjectId(idForAssmtDeveloper.Id);            
-	                      
-	                // Specify the address used when the recipients reply to the email.                 
-	                mail.setReplyTo('notifications@thementornetwork.com');
-	         
-	                
-	                // Specify the name used as the display name.      
-	                mail.setSenderDisplayName('FAILURE: MENTOR Assessment Notification');
-	         
-	                
-	                // Specify the subject line for the email.      
-	                mail.setSubject('FAILURE: MENTOR Assessment Notification');
-	                    
-	                // Set to True if you want to BCC yourself on the email.    
-	                mail.setBccSender(false);
-	                        
-	                // Optionally append the salesforce.com email signature to the email. 
-	                // The email address of the user executing the Apex Code will be used.             
-	                mail.setUseSignature(false);
-	           
-	                
-	                // Specify the text content of the email. 
-	                    
-	                mail.setPlainTextBody('Hello!' 
-	                    + '/r/n/r/nAn assessment notification to '
-	                    + + a.Owner.FirstName + ' ' + a.Owner.LastName 
-	                    + ' failed.  The intended message follows:  /r/n/r/n'
-	                    + 'Hello ' 
-	                    + a.Owner.FirstName + ' ' + a.Owner.LastName 
-	                    + ',/r/n/r/nA '
-	                    + a.Assessment_Type__r.Name
-	                    + ' assessment is due for client ' 
-	                    + a.AccountPerson__c
-	                    + ' for the admission '
-	                    + a.Admission__r.Id
-	                    + '. It seems to be for Quarter '
-	                    + qtr
-	                    + ' due on '
-	                    + newPrettyDueDate
-	                    + '. /r/n/r/nPlease go to '
-	                    + System.Url.getSalesforceBaseUrl().toExternalForm()
-	                    + '/'
-	                    + a.Admission__c
-	                    + ' to create the next assessment.'
-	                    +'/r/n/r/nThanks!/r/nThe MENTOR Salesforce Assessment App');
-	                
-	                mail.setHtmlBody('Hello!'
-	                	+ '<br /><br />An assessment notification to ' 
-	                    + a.Owner.FirstName + ' ' + a.Owner.LastName
-	                    + ' failed.  The intended message follows:  <br /><br />'
-	                    + 'Hello ' 
-                    	+ a.Owner.FirstName + ' ' + a.Owner.LastName 
-                    	+ ',<br /><br />A '
-	                    + a.Assessment_Type__r.Name
-	                    + ' assessment is due for client ' 
-	                    + a.AccountPerson__c
-	                    + ' for the admission '
-	                    + a.Admission__r.Id
-	                    + '. It seems to be for Quarter '
-	                    + qtr
-	                    + ' due on '
-	                    + newPrettyDueDate
-	                    + '. <br /><br />Please go to <a href="'
-	                    + System.Url.getSalesforceBaseUrl().toExternalForm()
-	                    + '/'
-	                    + a.Admission__c
-	                    + '">'
-	                    + a.Admission__c
-	                    + '</a> to create the next assessment.'
-	                    +'<br /><br />Thanks!<br />The MENTOR Salesforce Assessment App');
-	                
-	                
-	                mail.setSaveAsActivity(false);
-	                
-	                // Send the email you have created.
-	                // PLEASE NOTE:  It is IMPORTANT that we use this method of making one call to regularNoticeEmails.add()
-	                // because there is a limit on the number of email calls that can be made per execution of the batch.
-	                // I believe that limit is 10 calls.  Calling the method ONCE for a list of single emails only counts
-	                // as one call, but gets multiple messages sent.
-	                List<Messaging.SingleEmailMessage> regularNoticeEmails = new List<Messaging.SingleEmailMessage>();
-	                regularNoticeEmails.add(mail);
-	                
-	                User idForBP = [ SELECT Id FROM User WHERE FirstName = 'Michelle' AND LastName = 'Broadbent' LIMIT 1];
-	                mail.setTargetObjectId(idForBP.Id);
-	                regularNoticeEmails.add(mail);
-	            
-	                
-	                return regularNoticeEmails;
-	                /*
-	                // TEMPORARY:  Delete after uncommenting the lines immediately above.
-	            	List<Messaging.SingleEmailMessage> regularNoticeEmails = new List<Messaging.SingleEmailMessage>();
-	            	return regularNoticeEmails;
-	            	*/
+            Datetime prettyDueDate = date.newinstance(dueDate.year(), dueDate.month(), dueDate.day());  
+            String newPrettyDueDate = prettyDueDate.format('MM/dd/yy');
+            
+            
+                    // Reserve email capacity for the current Apex transaction to ensure 
+                    // that we won't exceed our daily email limits when sending email after 
+                    // the current transaction is committed. 
+                    Messaging.reserveSingleEmailCapacity(1);
+             
+                    
+                    // Processes and actions involved in the Apex transaction occur next, 
+                    // which conclude with sending a list of emails. 
+                        
+                    // Now create a new single email message object 
+                    // that will send out a single email to the addresses in the To, CC & BCC list.          
+                    Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+                    
+                    // Set receiver of email to a User Id for a Salesforce user; the owner of the assessment for
+                    // which we are sending a notification.  
+                    
+                    User idForAssmtDeveloper = [ SELECT Id FROM User WHERE FirstName = 'Paul' AND LastName = 'Perisic' LIMIT 1];
+                    
+                    mail.setTargetObjectId(idForAssmtDeveloper.Id);            
+                          
+                    // Specify the address used when the recipients reply to the email.                 
+                    mail.setReplyTo('notifications@thementornetwork.com');
+             
+                    
+                    // Specify the name used as the display name.      
+                    mail.setSenderDisplayName('FAILURE: MENTOR Assessment Notification');
+             
+                    
+                    // Specify the subject line for the email.      
+                    mail.setSubject('FAILURE: MENTOR Assessment Notification');
+                        
+                    // Set to True if you want to BCC yourself on the email.    
+                    mail.setBccSender(false);
+                            
+                    // Optionally append the salesforce.com email signature to the email. 
+                    // The email address of the user executing the Apex Code will be used.             
+                    mail.setUseSignature(false);
+               
+                    
+                    // Specify the text content of the email. 
+                        
+                    mail.setPlainTextBody('Hello!' 
+                        + '/r/n/r/nAn assessment notification to '
+                        + + a.Owner.FirstName + ' ' + a.Owner.LastName 
+                        + ' failed.  The intended message follows:  /r/n/r/n'
+                        + 'Hello ' 
+                        + a.Owner.FirstName + ' ' + a.Owner.LastName 
+                        + ',/r/n/r/nA '
+                        + a.Assessment_Type__r.Name
+                        + ' assessment is due for client ' 
+                        + a.AccountPerson__c
+                        + ' for the admission '
+                        + a.Admission__r.Id
+                        + '. It seems to be for Quarter '
+                        + qtr
+                        + ' due on '
+                        + newPrettyDueDate
+                        + '. /r/n/r/nPlease go to '
+                        + System.Url.getSalesforceBaseUrl().toExternalForm()
+                        + '/'
+                        + a.Admission__c
+                        + ' to create the next assessment.'
+                        +'/r/n/r/nThanks!/r/nThe MENTOR Salesforce Assessment App');
+                    
+                    mail.setHtmlBody('Hello!'
+                        + '<br /><br />An assessment notification to ' 
+                        + a.Owner.FirstName + ' ' + a.Owner.LastName
+                        + ' failed.  The intended message follows:  <br /><br />'
+                        + 'Hello ' 
+                        + a.Owner.FirstName + ' ' + a.Owner.LastName 
+                        + ',<br /><br />A '
+                        + a.Assessment_Type__r.Name
+                        + ' assessment is due for client ' 
+                        + a.AccountPerson__c
+                        + ' for the admission '
+                        + a.Admission__r.Id
+                        + '. It seems to be for Quarter '
+                        + qtr
+                        + ' due on '
+                        + newPrettyDueDate
+                        + '. <br /><br />Please go to <a href="'
+                        + System.Url.getSalesforceBaseUrl().toExternalForm()
+                        + '/'
+                        + a.Admission__c
+                        + '">'
+                        + a.Admission__c
+                        + '</a> to create the next assessment.'
+                        +'<br /><br />Thanks!<br />The MENTOR Salesforce Assessment App');
+                    
+                    
+                    mail.setSaveAsActivity(false);
+                    
+                    // Send the email you have created.
+                    // PLEASE NOTE:  It is IMPORTANT that we use this method of making one call to regularNoticeEmails.add()
+                    // because there is a limit on the number of email calls that can be made per execution of the batch.
+                    // I believe that limit is 10 calls.  Calling the method ONCE for a list of single emails only counts
+                    // as one call, but gets multiple messages sent.
+                    List<Messaging.SingleEmailMessage> regularNoticeEmails = new List<Messaging.SingleEmailMessage>();
+                    regularNoticeEmails.add(mail);
+                    
+                    User idForBP = [ SELECT Id FROM User WHERE FirstName = 'Michelle' AND LastName = 'Broadbent' LIMIT 1];
+                    mail.setTargetObjectId(idForBP.Id);
+                    regularNoticeEmails.add(mail);
+                
+                    
+                    return regularNoticeEmails;
+                    /*
+                    // TEMPORARY:  Delete after uncommenting the lines immediately above.
+                    List<Messaging.SingleEmailMessage> regularNoticeEmails = new List<Messaging.SingleEmailMessage>();
+                    return regularNoticeEmails;
+                    */
         }       
                 
             
@@ -349,8 +351,8 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
 
 
    private List<Messaging.SingleEmailMessage> sendIncompleteNotification(Assessment__c a, Datetime creationDate, Id admId){
-  		
-  	try {
+        
+    try {
         Datetime creationDueDate = creationDate + 30;
         Datetime prettyCreationDueDate = date.newinstance(creationDueDate.year(), creationDueDate.month(), creationDueDate.day());  
         Date creDate = date.newinstance(prettyCreationDueDate.year(), creationDueDate.month(), creationDueDate.day());  
@@ -467,130 +469,130 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
                 return incompleteNoticeEmails;   
         }
         catch(Exception e){
-	        Datetime creationDueDate = creationDate + 30;
-	        Datetime prettyCreationDueDate = date.newinstance(creationDueDate.year(), creationDueDate.month(), creationDueDate.day());  
-	        Date creDate = date.newinstance(prettyCreationDueDate.year(), creationDueDate.month(), creationDueDate.day());  
-	            
-	        String newPrettyCreationDueDate = prettyCreationDueDate.format('dd MMM yy');
-	            
-	        // 12/4/12: 7:15 AM
-	        // Send email for assessments that have been started but not completed at the 30 day mark.
-	    
-	        
-	                // Reserve email capacity for the current Apex transaction to ensure 
-	                // that we won't exceed our daily email limits when sending email after 
-	                // the current transaction is committed. 
-	                Messaging.reserveSingleEmailCapacity(1);
-	         
-	                
-	                // Processes and actions involved in the Apex transaction occur next, 
-	                // which conclude with sending a single email. 
-	                    
-	                // Now create a new single email message object 
-	                // that will send out a single email to the addresses in the To, CC & BCC list. 
-	                    
-	                Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-	         
-	                
-	                // Strings to hold the email addresses to which you are sending the email. 
-	                    
-	                User idForAssmtDeveloper = [ SELECT Id FROM User WHERE FirstName = 'Josh' AND LastName = 'Gilliam' LIMIT 1];
-	                
-	                mail.setTargetObjectId(idForAssmtDeveloper.Id);
-	                //String[] toAddresses = new String[] {a.Owner.Email}; 
-	                //String[] ccAddresses = new String[] {'rory.dela.paz@thementornetwork.com'};
-	                  
-	                
-	                // Assign the addresses for the To and CC lists to the mail object. 
-	                    
-	                //mail.setToAddresses(toAddresses);
-	                //mail.setCcAddresses(ccAddresses);
-	         
-	                
-	                // Specify the address used when the recipients reply to the email.                 
-	                mail.setReplyTo('notifications@thementornetwork.com');
-	         
-	                
-	                // Specify the name used as the display name.      
-	                mail.setSenderDisplayName('MENTOR Assessment Notification');
-	         
-	                
-	                // Specify the subject line the your email.      
-	                mail.setSubject('CANS Assessment');
-	          
-	                
-	                // Set to True if you want to BCC yourself on the email.    
-	                mail.setBccSender(false);
-	          
-	                
-	                // Optionally append the salesforce.com email signature to the email. 
-	                // The email address of the user executing the Apex Code will be used.             
-	                mail.setUseSignature(false);
-	           
-	                
-	                // Specify the text content of the email. 
-	                    
-	                mail.setPlainTextBody('Hello!' 
-	                    + '/r/n/r/nAn assessment notification to '
-	                    + + a.Owner.FirstName + ' ' + a.Owner.LastName 
-	                    + ' failed.  The intended message follows:  /r/n/r/n'
-	                	+ 'Hello ' 
-	                    + a.Owner.FirstName + ' ' + a.Owner.LastName 
-	                    + ',/r/n/r/nA '
-	                    + a.Assessment_Type__r.Name
-	                    + ' assessment was started for client ' 
-	                    + a.AccountPerson__c
-	                    + ' on '
-	                    + a.CreatedDate
-	                    + ' for the admission '
-	                    + a.Admission__r.Id
-	                    + ' but is in the Unlocked status as of the 30 day mark ('
-	                    + (a.CreatedDate + 30)
-	                    + ')./r/n/r/nPlease go to '
-	                    + System.Url.getSalesforceBaseUrl().toExternalForm()
-	                    + '/'
-	                    + a.Id
-	                    + ' to finalize the assessment.'
-	                    +'/r/n/r/nThanks!/r/nThe MENTOR Salesforce Assessment App');
-	                
-	                mail.setHtmlBody('Hello!'
-	                	+ '/r/n/r/nAn assessment notification to ' 
-	                    + a.Owner.FirstName + ' ' + a.Owner.LastName
-	                    + ' failed.  The intended message follows:  <br /><br />'
-	                	+ 'Hello ' 
-	                    + a.Owner.FirstName + ' ' + a.Owner.LastName 
-	                    + ',<br /><br />A '
-	                    + a.Assessment_Type__r.Name
-	                    + ' assessment was started for client ' 
-	                    + a.AccountPerson__c
-	                    + ' on '
-	                    + a.CreatedDate
-	                    + ' for the admission '
-	                    + a.Admission__r.Id
-	                    + ' but is in the Unlocked status as of the 30 day mark ('
-	                    + (a.CreatedDate + 30)
-	                    + ').<br /><br />Please go to <a href="'
-	                    + System.Url.getSalesforceBaseUrl().toExternalForm()
-	                    + '/'
-	                    + a.Id
-	                    + '">'
-	                    + a.Id
-	                    + '</a> to finalize the assessment.'
-	                    +'<br /><br />Thanks!<br />The MENTOR Salesforce Assessment App');
-	                
-	                mail.setSaveAsActivity(false);
-	                
-	                // Send the email you have created.            
-	                List<Messaging.SingleEmailMessage> incompleteNoticeEmails = new List<Messaging.SingleEmailMessage>();
-	                
-	                incompleteNoticeEmails.add(mail);
-	                
-	                User idForBP = [ SELECT Id FROM User WHERE FirstName = 'Michelle' AND LastName = 'Broadbent' LIMIT 1];
-	                mail.setTargetObjectId(idForBP.Id);
-	                incompleteNoticeEmails.add(mail);
-	                
-	                return incompleteNoticeEmails;
-		
+            Datetime creationDueDate = creationDate + 30;
+            Datetime prettyCreationDueDate = date.newinstance(creationDueDate.year(), creationDueDate.month(), creationDueDate.day());  
+            Date creDate = date.newinstance(prettyCreationDueDate.year(), creationDueDate.month(), creationDueDate.day());  
+                
+            String newPrettyCreationDueDate = prettyCreationDueDate.format('dd MMM yy');
+                
+            // 12/4/12: 7:15 AM
+            // Send email for assessments that have been started but not completed at the 30 day mark.
+        
+            
+                    // Reserve email capacity for the current Apex transaction to ensure 
+                    // that we won't exceed our daily email limits when sending email after 
+                    // the current transaction is committed. 
+                    Messaging.reserveSingleEmailCapacity(1);
+             
+                    
+                    // Processes and actions involved in the Apex transaction occur next, 
+                    // which conclude with sending a single email. 
+                        
+                    // Now create a new single email message object 
+                    // that will send out a single email to the addresses in the To, CC & BCC list. 
+                        
+                    Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+             
+                    
+                    // Strings to hold the email addresses to which you are sending the email. 
+                        
+                    User idForAssmtDeveloper = [ SELECT Id FROM User WHERE FirstName = 'Paul' AND LastName = 'Perisic' LIMIT 1];
+                    
+                    mail.setTargetObjectId(idForAssmtDeveloper.Id);
+                    //String[] toAddresses = new String[] {a.Owner.Email}; 
+                    //String[] ccAddresses = new String[] {'rory.dela.paz@thementornetwork.com'};
+                      
+                    
+                    // Assign the addresses for the To and CC lists to the mail object. 
+                        
+                    //mail.setToAddresses(toAddresses);
+                    //mail.setCcAddresses(ccAddresses);
+             
+                    
+                    // Specify the address used when the recipients reply to the email.                 
+                    mail.setReplyTo('notifications@thementornetwork.com');
+             
+                    
+                    // Specify the name used as the display name.      
+                    mail.setSenderDisplayName('MENTOR Assessment Notification');
+             
+                    
+                    // Specify the subject line the your email.      
+                    mail.setSubject('CANS Assessment');
+              
+                    
+                    // Set to True if you want to BCC yourself on the email.    
+                    mail.setBccSender(false);
+              
+                    
+                    // Optionally append the salesforce.com email signature to the email. 
+                    // The email address of the user executing the Apex Code will be used.             
+                    mail.setUseSignature(false);
+               
+                    
+                    // Specify the text content of the email. 
+                        
+                    mail.setPlainTextBody('Hello!' 
+                        + '/r/n/r/nAn assessment notification to '
+                        + + a.Owner.FirstName + ' ' + a.Owner.LastName 
+                        + ' failed.  The intended message follows:  /r/n/r/n'
+                        + 'Hello ' 
+                        + a.Owner.FirstName + ' ' + a.Owner.LastName 
+                        + ',/r/n/r/nA '
+                        + a.Assessment_Type__r.Name
+                        + ' assessment was started for client ' 
+                        + a.AccountPerson__c
+                        + ' on '
+                        + a.CreatedDate
+                        + ' for the admission '
+                        + a.Admission__r.Id
+                        + ' but is in the Unlocked status as of the 30 day mark ('
+                        + (a.CreatedDate + 30)
+                        + ')./r/n/r/nPlease go to '
+                        + System.Url.getSalesforceBaseUrl().toExternalForm()
+                        + '/'
+                        + a.Id
+                        + ' to finalize the assessment.'
+                        +'/r/n/r/nThanks!/r/nThe MENTOR Salesforce Assessment App');
+                    
+                    mail.setHtmlBody('Hello!'
+                        + '/r/n/r/nAn assessment notification to ' 
+                        + a.Owner.FirstName + ' ' + a.Owner.LastName
+                        + ' failed.  The intended message follows:  <br /><br />'
+                        + 'Hello ' 
+                        + a.Owner.FirstName + ' ' + a.Owner.LastName 
+                        + ',<br /><br />A '
+                        + a.Assessment_Type__r.Name
+                        + ' assessment was started for client ' 
+                        + a.AccountPerson__c
+                        + ' on '
+                        + a.CreatedDate
+                        + ' for the admission '
+                        + a.Admission__r.Id
+                        + ' but is in the Unlocked status as of the 30 day mark ('
+                        + (a.CreatedDate + 30)
+                        + ').<br /><br />Please go to <a href="'
+                        + System.Url.getSalesforceBaseUrl().toExternalForm()
+                        + '/'
+                        + a.Id
+                        + '">'
+                        + a.Id
+                        + '</a> to finalize the assessment.'
+                        +'<br /><br />Thanks!<br />The MENTOR Salesforce Assessment App');
+                    
+                    mail.setSaveAsActivity(false);
+                    
+                    // Send the email you have created.            
+                    List<Messaging.SingleEmailMessage> incompleteNoticeEmails = new List<Messaging.SingleEmailMessage>();
+                    
+                    incompleteNoticeEmails.add(mail);
+                    
+                    User idForBP = [ SELECT Id FROM User WHERE FirstName = 'Michelle' AND LastName = 'Broadbent' LIMIT 1];
+                    mail.setTargetObjectId(idForBP.Id);
+                    incompleteNoticeEmails.add(mail);
+                    
+                    return incompleteNoticeEmails;
+        
         }   
 
    }
@@ -611,7 +613,7 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
                 
                 // Get user Id of this script's author.  Assumes we'll only have one person with this full name.
                 // If changed to a more common name, recode for that.               
-                List<User> userIDs = [SELECT Id FROM User WHERE Name = 'Josh Gilliam'];     
+                List<User> userIDs = [SELECT Id FROM User WHERE Name = 'Paul Perisic'];     
                 Id userID = userIds[0].Id;
                 
                 // Set receiver of email "target" to the User Id of the script author.
