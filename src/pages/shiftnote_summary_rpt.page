@@ -45,8 +45,6 @@
 </apex:outputPanel>
 <apex:outputPanel layout="block" style="width: 650px; float: left; padding: 15px;">
 <apex:form >
-<!-- <apex:actionFunction action="{!AddPrograms}" name="addPrograms" reRender="programs,pbsOPTS" status="myStatus" oncomplete="createtbl()" /> -->
-<!-- <apex:actionFunction action="{!UpdateProgramSelections}" name="updateProgramSelection" reRender="pbsOPTS" status="myStatus" oncomplete="createtbl()" /> -->
 <apex:pageMessages id="messages" ></apex:pageMessages>
 <apex:pageBlock title="Shift Note Summary Report">
     <apex:pageBlockButtons >
@@ -144,9 +142,7 @@
                  Note: 
              </td>
              <td>
-                 <apex:outputLink value="/{!n.id}">
-                     {!n.name}
-                 </apex:outputLink>                 
+             <a href="/{!n.id}">{!n.name}</a>                 
              </td>             
          </tr>
          <tr>
@@ -154,7 +150,7 @@
                  Start Date/Time:
              </td>
              <td>
-                 <apex:outputField value="{!n.Start_Time__c}"/> 
+	             <apex:outputField value="{!n.Start_Time__c}"/>
              </td>
          </tr>  
          <tr>
@@ -162,7 +158,7 @@
                  End Date/Time:
              </td>
              <td>
-                 <apex:outputField value="{!n.End_Time__c}"/> 
+	             <apex:outputField value="{!n.End_Time__c}"/>
              </td>
          </tr>  
           
@@ -172,23 +168,19 @@
                  Written By:
              </td>
              <td>
-                 <apex:outputField value="{!n.CreatedById}"/> 
+	             <apex:outputField value="{!n.CreatedById}"/>
              </td>
          </tr> 
        
          
          <tr>
              <td class="left_col" >
-                  <apex:outputPanel layout="block"  style="width: 100%; text-align: left;">
                      Narrative:
-                 </apex:outputPanel>                   
              </td>
              <td>
-
-          
-                 <apex:outputPanel layout="block" style=" ">
-                     <apex:outputField value="{!n.Narrative__c}"/> 
-                 </apex:outputPanel>
+				<div>
+					{!n.Narrative__c}
+				</div>
              </td>
          </tr> 
          
@@ -201,18 +193,18 @@
                  <apex:outputField value="{!n.Healthcare_Medical_Note__c}"/> 
              </td>
          </tr> 
-         
-                  
+
          <tr>
              <td class="left_col">
                 Goals/Objectives :
              </td>         
              <td  >
                  <apex:repeat value="{!Note_Goals[n.id]}" var="g">
-                     <apex:outputField value="{!g.Goal__r.Description__c}" />
+                 	{!g.Goal__r.Description__c}
                      <br/>
                          <apex:repeat value="{!Note_Objs[n.id + g.Goal__c]}" var="o">
-                             &nbsp;&nbsp;<apex:outputField value="{!o.Objective__r.Description__c}" />
+                             &nbsp;&nbsp;
+                             {!o.Objective__r.Description__c}
                              <br/>
                          </apex:repeat>
                  </apex:repeat>
@@ -248,41 +240,10 @@ function createtbl(){
 }
 j$(document).ready(function(){
     createtbl();
-
-/*    
-    j$('select[id$=select2]').empty();
-    
-    // set up the move of items from unselected to selected
- 	j$('#add').click(function() {
-		// j$('select[id$=programs] option:selected').remove().appendTo(j$('select[id$=select2]'));
-  		// selectSort(j$('select[id$=select2]'), j$('select[id$=select2] option') );
-  		// updateProgramSelection();
-  		addPrograms();
-	 });
-
- 	j$('#remove').click(function() {
-  		j$(j$('select[id$=select2] option:selected')).remove().appendTo('select[id$=programs]');
-  		selectSort(j$('select[id$=programs]'), j$('select[id$=programs] option') );
-  		updateProgramSelection();
-	 });
-
-*/
-	 
 	j$('#int').fastLiveFilter('#search_list');
     // j$('testing').filterTable();
 });
 
-/*
-function selectSort(mySelect, myOptions){
-	myOptions.sort(function(a,b) {
-	    if (a.text > b.text) return 1;
-	    else if (a.text < b.text) return -1;
-	    else return 0
-	})
-	j$(mySelect).empty().append( myOptions );
-};
-*/
-    
 var tableToExcel = (function() {
   var uri = 'data:application/vnd.ms-excel;base64,'
     , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
