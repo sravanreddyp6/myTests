@@ -1,15 +1,11 @@
 public with sharing class shiftnote_summary_rpt {
-    private final String PBS_REC_TYPE_ID = [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
     public date StartDate {get; set;}
     public date EndDate {get; set;}
-    public datetime  startDateTime{get; set;}
-    public datetime  endDateTime{get; set;}    
     public string HCMCfilter {get; set;}
     public List<id> selectedPBS {get; set;}
     public list<SelectOption> PBSlsit = new list<SelectOption>();
     public list<SelectOption> getPBSlsit(){ return PBSlsit ;}
     public boolean hasRunOnce {get; set;}
-    public boolean showAllPbs {get; set;}
 
     public list<SelectOption> programslist = new list<SelectOption>();
     public list<SelectOption> getProgramslist(){ return programslist; }
@@ -52,7 +48,6 @@ public with sharing class shiftnote_summary_rpt {
         }
         selectedPBS = new List<id>();
         hasRunOnce =false;
-        showAllPbs = false;
     }
 
 
@@ -111,17 +106,14 @@ public with sharing class shiftnote_summary_rpt {
                     ApexPages.addMessage(myMsg);
                     if (notes!=null && notes.Size() > 0) notes.clear();
                     return null;
-          // showAllPbs =true;
-         //  selectAllPbs();
-       
        }        
        hasRunOnce = true;
        TimeZone zone = UserInfo.getTimeZone();
-       startDateTime = StartDate;
+       datetime startDateTime = StartDate;
        if(startDateTime !=null){startDateTime = startDateTime.addSeconds((zone.getOffset(startDateTime)/1000)*-1);}
        
        
-       endDateTime = endDate;
+       datetime endDateTime = endDate;
        if(endDateTime !=null){
            endDateTime = endDateTime.addSeconds((zone.getOffset(endDateTime)/1000)*-1);
            endDateTime = endDateTime.addDays(1);
@@ -200,6 +192,7 @@ public with sharing class shiftnote_summary_rpt {
         return null;
     }
     public pagereference selectAllPbs(){
+        String PBS_REC_TYPE_ID = [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;	
         selectedPBS.clear();
         
         for(account a : [SELECT ID, FirstName, LastName, Owner.ID, Owner.Name, PersonContactId From Account WHERE RecordTypeID=:PBS_REC_TYPE_ID Order BY LastName]){        
