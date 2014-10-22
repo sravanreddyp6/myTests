@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <aggregates>
+        <calculatedFormula>(Prospects__c.Info_Meeting_Attended__c:SUM / Prospects__c.Rpt_Inquiry__c:SUM ) * 100</calculatedFormula>
+        <datatype>number</datatype>
+        <description>Info Session %</description>
+        <developerName>FORMULA1</developerName>
+        <isActive>true</isActive>
+        <isCrossBlock>false</isCrossBlock>
+        <masterLabel>Info Session %</masterLabel>
+        <scale>0</scale>
+    </aggregates>
+    <aggregates>
+        <calculatedFormula>(Prospects__c.Rpt_Submitted_App__c:SUM / Prospects__c.Rpt_Inquiry__c:SUM ) * 100</calculatedFormula>
+        <datatype>number</datatype>
+        <description>App Received %</description>
+        <developerName>FORMULA2</developerName>
+        <isActive>true</isActive>
+        <isCrossBlock>false</isCrossBlock>
+        <masterLabel>App Received %</masterLabel>
+        <scale>0</scale>
+    </aggregates>
+    <aggregates>
+        <calculatedFormula>(Prospects__c.Rpt_Core_Reqs__c:SUM / Prospects__c.Rpt_Inquiry__c:SUM ) * 100</calculatedFormula>
+        <datatype>number</datatype>
+        <description>Screening %</description>
+        <developerName>FORMULA3</developerName>
+        <isActive>true</isActive>
+        <isCrossBlock>false</isCrossBlock>
+        <masterLabel>Screening %</masterLabel>
+        <scale>0</scale>
+    </aggregates>
+    <aggregates>
+        <calculatedFormula>(Prospects__c.Provider_Agreement_Signed__c:SUM / Prospects__c.Rpt_Inquiry__c:SUM ) * 100</calculatedFormula>
+        <datatype>number</datatype>
+        <description>Agreement %</description>
+        <developerName>FORMULA4</developerName>
+        <isActive>true</isActive>
+        <isCrossBlock>false</isCrossBlock>
+        <masterLabel>Agreement %</masterLabel>
+        <scale>0</scale>
+    </aggregates>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>Prospects__c$Rpt_Inquiry__c</field>
+    </columns>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>Prospects__c$Info_Meeting_Attended__c</field>
+    </columns>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>Prospects__c$Rpt_Submitted_App__c</field>
+    </columns>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>Prospects__c$Rpt_Core_Reqs__c</field>
+    </columns>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>Prospects__c$Provider_Agreement_Signed__c</field>
+    </columns>
+    <columns>
+        <field>Prospects__c$Name</field>
+    </columns>
+    <description>Prospect Pipeline</description>
+    <format>Matrix</format>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>Prospects__c$Rpt_State_Program__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>Prospect Pipeline</name>
+    <params>
+        <name>co</name>
+        <value>0</value>
+    </params>
+    <reportType>Prospects__c</reportType>
+    <scope>organization</scope>
+    <showDetails>false</showDetails>
+    <timeFrameFilter>
+        <dateColumn>Prospects__c$Date_of_Inquiry__c</dateColumn>
+        <interval>INTERVAL_CURFY</interval>
+    </timeFrameFilter>
+</Report>
