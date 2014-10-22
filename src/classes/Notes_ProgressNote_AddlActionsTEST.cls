@@ -24,7 +24,7 @@ private class Notes_ProgressNote_AddlActionsTEST {
         personAccountIds = [SELECT Id, Name from recordtype where SobjectType = 'Account' and IsPersonType = true and IsActive = true and Name = 'Person Being Served'];
         
         List<RecordType> rtypes =  new List<RecordType>();
-        rtypes = [SELECT id from RecordType where SobjectType = 'Progress_note__c' LIMIT 1];
+        rtypes = [SELECT id, DeveloperName from RecordType where SobjectType = 'Progress_note__c' AND IsActive = true AND DeveloperName Not IN ('NC_TFC','NC_Wks_1_6_TFC') LIMIT 1 ]; //Added by Sravan to Prevent validation error due to  Purpose_Service_is_Billable__c = true. 10/22/2014 4:15 PM.  
         Integer counter = 0;
         Boolean even = false;
         test.startTest();
@@ -86,10 +86,15 @@ private class Notes_ProgressNote_AddlActionsTEST {
                 Purpose_Service_is_Billable__c = true,
                 Disregard_note__c = false,
                 RecordTypeId = record_type.id,
-                Start_Time__c = myLoopData.theSA.start_date__c.addDays(1),
-                End_Time__c = myLoopData.theSA.start_date__c.addDays(2),
+              //  Start_Time__c = myLoopData.theSA.start_date__c.addDays(1),
+                Start_Time__c = DateTime.newInstance(myLoopData.theSA.start_date__c.addDays(1),Time.newInstance(0, 0, 0, 0)),
+              //  End_Time__c = myLoopData.theSA.start_date__c.addMinutes(30),
+                End_time__c = DateTime.newInstance(myLoopData.theSA.start_date__c.addDays(1),Time.newInstance(0, 0, 30, 0)),
                 Person_Being_Served__c = myLoopData.contactID ,
                 No_Approval_Needed__c = true,
+                Interventions__c = 'test',
+                Notes_For_Next_Visit__c ='test',
+                Progress__c ='test',
                 Approval_Status__c = 'Approved'
             );
             insert testPN;  

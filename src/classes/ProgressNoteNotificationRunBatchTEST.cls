@@ -89,7 +89,7 @@ private class ProgressNoteNotificationRunBatchTEST {
             insert testServCode;
             
             
-            List<RecordType> pnRecordTypes = [SELECT Id, Name FROM RecordType WHERE SObjectType = 'Progress_Note__c' AND IsActive = true];
+            List<RecordType> pnRecordTypes = [SELECT Id, Name, DeveloperName FROM RecordType WHERE SObjectType = 'Progress_Note__c' AND IsActive = true];
             
             System.Debug('What is in pnRecordTypes: ' + pnRecordTypes);
             
@@ -97,32 +97,64 @@ private class ProgressNoteNotificationRunBatchTEST {
             Integer pnsToInsertCounter = 0;             
             
             for(RecordType rt : pnRecordTypes){
-              pnsToInsert.add( 
-                new Progress_Note__c(
-                  Service_Assignment__c = testServAssignment.Id, 
-                  Service_Code__c = testServCode.Id, 
-                  Admission__c = testAdm.ID,
-                  Start_Time__c = datetime.now().addHours(-2),
-                  End_Time__c = datetime.now(),
-                  Person_Being_Served__c = aContactId,
-                  No_Approval_Needed__c = false,
-                  RecordTypeId = rt.Id,
-                  Status__c = 'In Progress',
-                  OwnerId = usr.Id)
-                );
-              pnsToInsert.add(
-                new Progress_Note__c(
-                  Service_Assignment__c = testServAssignment.Id, 
-                  Service_Code__c = testServCode.Id, 
-                  Admission__c = testAdm.ID,
-                  Start_Time__c = datetime.now().addHours(-2),
-                  End_Time__c = datetime.now(),
-                  Person_Being_Served__c = aContactId,
-                  No_Approval_Needed__c = false,
-                  RecordTypeId = rt.Id,
-                  Status__c = 'Final',
-                  OwnerId = usr.Id)
-              );            
+            	if(rt.DeveloperName != 'NC_TFC' && rt.DeveloperName != 'NC_Wks_1_6_TFC'){
+		              pnsToInsert.add( 
+		                new Progress_Note__c(
+		                  Service_Assignment__c = testServAssignment.Id, 
+		                  Service_Code__c = testServCode.Id, 
+		                  Admission__c = testAdm.ID,
+		                  Start_Time__c = datetime.now().addHours(-2),
+		                  End_Time__c = datetime.now(),
+		                  Person_Being_Served__c = aContactId,
+		                  No_Approval_Needed__c = false,
+		                  RecordTypeId = rt.Id,
+		                  Status__c = 'In Progress',
+		                  OwnerId = usr.Id)
+		                );
+		              pnsToInsert.add(
+		                new Progress_Note__c(
+		                  Service_Assignment__c = testServAssignment.Id, 
+		                  Service_Code__c = testServCode.Id, 
+		                  Admission__c = testAdm.ID,
+		                  Start_Time__c = datetime.now().addHours(-2),
+		                  End_Time__c = datetime.now(),
+		                  Person_Being_Served__c = aContactId,
+		                  No_Approval_Needed__c = false,
+		                  RecordTypeId = rt.Id,
+		                  Status__c = 'Final',
+		                  OwnerId = usr.Id)
+		              ); 
+            		}
+              	if(rt.DeveloperName == 'NC_TFC' || rt.DeveloperName == 'NC_Wks_1_6_TFC'){
+	              	pnsToInsert.add( 
+	                new Progress_Note__c(
+	                  Service_Assignment__c = testServAssignment.Id, 
+	                  Service_Code__c = testServCode.Id, 
+	                  Admission__c = testAdm.ID,
+	                  Start_Time__c = datetime.now().addHours(-2),
+	                  End_Time__c = datetime.now(),
+	                  Person_Being_Served__c = aContactId,
+	                  No_Approval_Needed__c = false,
+	                  RecordTypeId = rt.Id,
+	                  Status__c = 'In Progress',
+	                  Purpose_Service_is_Billable__c = false, //Avoid hitting validation rule.
+	                  OwnerId = usr.Id)
+	                );
+	              pnsToInsert.add(
+	                new Progress_Note__c(
+	                  Service_Assignment__c = testServAssignment.Id, 
+	                  Service_Code__c = testServCode.Id, 
+	                  Admission__c = testAdm.ID,
+	                  Start_Time__c = datetime.now().addHours(-2),
+	                  End_Time__c = datetime.now(),
+	                  Person_Being_Served__c = aContactId,
+	                  No_Approval_Needed__c = false,
+	                  RecordTypeId = rt.Id,
+	                  Status__c = 'Final',
+	                  Purpose_Service_is_Billable__c = false, //Avoid hitting validation rule.
+	                  OwnerId = usr.Id)
+	              ); 
+              	}           
             }
 
               pnsToInsert.add(
