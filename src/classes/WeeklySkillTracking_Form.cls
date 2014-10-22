@@ -116,7 +116,8 @@ public with sharing class WeeklySkillTracking_Form {
                                                 '&service_assignment=' + result.Action_plan__r.Service_Assignment__c +
                                                 '&admission=' + result.Action_Plan__r.Service_Assignment__r.Admission__c +
                                                 '&person=' + result.Action_Plan__r.Service_Assignment__r.Admission__r.Person_Being_Served__c +
-                                                '&state=' + result.Action_Plan__r.Service_Assignment__r.Admission__r.State__c);
+                                                '&state=' + result.Action_Plan__r.Service_Assignment__r.Admission__r.State__c +
+                                                '&retURL=' +ApexPages.currentPage().getURL());
 
         
         

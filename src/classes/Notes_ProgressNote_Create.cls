@@ -137,11 +137,13 @@ public with sharing class Notes_ProgressNote_Create {
         ID planID = ApexPages.currentPage().getParameters().get('plan');
         ID admID = ApexPages.currentPage().getParameters().get('admission');
         ID saID = ApexPages.currentPage().getParameters().get('service_assignment');
+        string retURL = ApexPages.currentPage().getParameters().get('retURL');
         if ( pn.RecordTypeId == SHIFT_NOTE_ID ) {
             PageReference prShiftNote = Page.shiftnote_basic_form;
             prShiftNote.getParameters().put('planID', planId);
             prShiftNote.getParameters().put('admID', admId);
             prShiftNote.getParameters().put('saID', saID);
+            prShiftNote.getParameters().put('retURL', retURL);
             prShiftNote.setRedirect(true);
             return prShiftNote;
         }
