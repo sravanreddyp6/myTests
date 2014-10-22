@@ -1,6 +1,7 @@
 public with sharing class Shift_Note_Basic {
     Progress_Note__c note = new Progress_Note__c();
     string userid  =UserInfo.getUserId() ;
+    private string retURL;
     public list<Action_Plan_Goal__c> allgoals = new list<Action_plan_Goal__c>();
     public list<Action_Plan_Goal__c> GETallgoals(){return allgoals;}
     public map<string, clsPlan_Goal> Goals = new map<string, clsPlan_Goal>();
@@ -39,6 +40,8 @@ public with sharing class Shift_Note_Basic {
             note.Person_Being_served__c = [select person_being_served__c from admission__c where id = :apexpages.currentpage().getparameters().get('admID')].person_being_served__c;    
             
         } 
+        
+        retURL = apexpages.currentpage().getparameters().get('retURL');
         //plan = [ select id, name, service_assignment__r.person_being_served__c, service_assignment__r.admission__c from action_plan__c where id = :note.Action_Plan__c ];
        // 
 
@@ -252,4 +255,13 @@ public with sharing class Shift_Note_Basic {
 //            }
         return null;
     }
+    
+    public pagereference myCancel(){
+    	
+    	// get the return URL from the page
+    	PageReference pr = new PageReference( retURL);
+    	return pr;
+    	
+    }    
+    
 }
