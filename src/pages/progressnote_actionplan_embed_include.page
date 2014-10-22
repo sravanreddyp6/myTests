@@ -15,7 +15,7 @@
                         {!g.Description__c}
                     </apex:outputLabel>
                 </apex:outputPanel> 
-                    <apex:outputPanel layout="block" styleClass="obj" rendered="{!g.action_plan_objectives__r.size>0 && bHasObj }">
+                    <apex:outputPanel layout="block" styleClass="obj" rendered="{!g.action_plan_objectives__r.size>0 && bHasObj && MapItemInNote[g.id]}"> <!-- Added MapItemInNote[g.id] to hide objectives heading if a user does not check the checkbox for Goal. Sravan-10/22/2014 EB-210  -->
                         <b>Objectives</b>  
                     </apex:outputPanel>
                               
