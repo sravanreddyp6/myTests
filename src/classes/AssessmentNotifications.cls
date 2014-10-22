@@ -223,7 +223,7 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
                 regularNoticeEmails.add(mail);
             
                 // Create a task reminder for the action.
-                Task t = new Task(Subject = a.Assessment_Type__r.Name + ' Assessment Reminder', Status = 'In Progress', Priority = 'Normal', OwnerId = a.OwnerId, Description = 'You have a person being served who appears to have a ' + a.Assessment_Type__r.Name + ' assessment due or coming due: ' + System.Url.getSalesforceBaseUrl().toExternalForm() + '/' + a.Admission__r.Id, WhoId = a.AccountPerson__r.PersonContactId, WhatId = a.Admission__r.Id, ActivityDate = dueDate);
+                Task t = new Task(Subject = a.Assessment_Type__r.Name + ' Assessment Reminder', Status = 'In Progress', Priority = 'Normal', OwnerId = a.OwnerId, Description = 'You have a person being served who appears to have a ' + a.Assessment_Type__r.Name + ' assessment due or coming due: ' + System.Url.getSalesforceBaseUrl().toExternalForm() + '/' + a.Admission__r.Id, WhoId = a.AccountPerson__r.PersonContactId, WhatId = a.AccountPerson__r.Id, ActivityDate = dueDate);
                 insert t;
                 
                 return regularNoticeEmails;
