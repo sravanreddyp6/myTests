@@ -89,19 +89,19 @@
                      feedtypes.indexOf( 'NGT;' ) >= 0 )
                  {
 
-                        $('input[id$=formula]').removeAttr('disabled');
-                        $('input[id$=tuberate]').removeAttr('disabled');
+                        $('input[id$=formula]').prop('disabled', false);
+                        $('input[id$=tuberate]').prop('disabled', false);
 
                  }
                 if ( feedtypes.indexOf( 'PO;' ) >= 0  )
                  {
-                        $('input[id$=potype]').removeAttr('disabled');
-                        $('input[id$=potexture]').removeAttr('disabled');
+                        $('input[id$=potype]').prop('disabled', false);
+                        $('input[id$=potexture]').prop('disabled', false);
                  }
 
                 if ( feedtypes.indexOf( 'PPN;') >= 0 ||
                             feedtypes.indexOf( 'TPN;') >= 0 ) {
-                        $('[id$=lipids]').removeAttr('disabled');
+                        $('[id$=lipids]').prop('disabled', false);
                 }
 
             };
@@ -115,25 +115,25 @@
                         bladdertypes += $(element).val() + ';';
                 });
 
-                $('input[id$=ifICP]').prop('disabled','disabled');
-                $('input[id$=ifICPQ]').prop('disabled','disabled');
-                $('input[id$=icpDescribe]').prop('disabled','disabled');
-                $('input[id$=indwelling]').prop('disabled','disabled');
+                $('input[id$=ifICP]').prop('disabled', true);
+                $('input[id$=ifICPQ]').prop('disabled', true);
+                $('input[id$=icpDescribe]').prop('disabled',true);
+                $('input[id$=indwelling]').prop('disabled',true);
 
                 if ( bladdertypes.indexOf( 'Indwelling') >= 0  ||
                      bladdertypes.indexOf( 'Suprapubic') >= 0 ) {
-                    $('input[id$=indwelling]').removeAttr('disabled');
+                    $('input[id$=indwelling]').prop('disabled', false);
                 } else {
                     $('input[id$=indwelling]').val('');
-                    $('input[id$=undateindwelling]').removeAttr('checked');
+                    $('input[id$=undateindwelling]').prop('checked', false);
 
                 }
 
 
                 if ( bladdertypes.indexOf('ICP') >= 0 ) {
-                    $('input[id$=ifICP]').removeAttr('disabled');
-                    $('input[id$=ifICPQ]').removeAttr('disabled');
-                    $('input[id$=icpDescribe]').removeAttr('disabled');
+                    $('input[id$=ifICP]').prop('disabled', false);
+                    $('input[id$=ifICPQ]').prop('disabled', false);
+                    $('input[id$=icpDescribe]').prop('disabled', false);
                 } else {
                     $('input[id$=ifICP]').val('');
                     $('input[id$=ifICPQ]').val('');
@@ -152,10 +152,10 @@
                 });
 
                 if ( urineclar.indexOf('Other') >= 0 ) {
-                    $('input[id$=UrineClarityOther]').removeAttr('disabled');
+                    $('input[id$=UrineClarityOther]').prop('disabled', false);
                 } else {
                     $('input[id$=UrineClarityOther]').val('');
-                    $('input[id$=UrineClarityOther]').prop('disabled', 'disabled');
+                    $('input[id$=UrineClarityOther]').prop('disabled', true);
                 }
             }
 
@@ -168,10 +168,10 @@
                 });
 
                 if ( bow.indexOf('Other') >= 0 ) {
-                    $('input[id$=bowelApplianceOther]').removeAttr('disabled');
+                    $('input[id$=bowelApplianceOther]').prop('disabled', false);
                 } else {
                     $('input[id$=bowelApplianceOther]').val('');
-                    $('input[id$=bowelApplianceOther]').prop('disabled', 'disabled');
+                    $('input[id$=bowelApplianceOther]').prop('disabled', true);
                 }
             }
 
@@ -180,14 +180,14 @@
                 if (incont) {
                     // enable the set of checkboxes in bladderDetailCheck
                     $('input[id*=bladderDetailCheck]').each(function (index, element) {
-                        $(element).removeAttr('disabled');
+                        $(element).prop('disabled', false);
                         });
-                    $('input[id$=ageAppropriate]').removeAttr('disabled');
+                    $('input[id$=ageAppropriate]').prop('disabled', false);
 
                 } else {
                     // disable the set of checkboxes and uncheck them all
                     $('input[id*=bladderDetailCheck]').each(function (index, element) {
-                        $(element).prop('disabled','disabled');
+                        $(element).prop('disabled',true);
                         $(element).prop('checked', false);
                         });
                 }
@@ -199,14 +199,14 @@
                 if (incont) {
                     // enable the set of checkboxes
                     $('input[id*=bowelAppliance]').each(function (index, element) {
-                        $(element).removeAttr('disabled');
+                        $(element).prop('disabled', false);
 
                         });
 
                 } else {
                     // disable the set of checkboxes and uncheck them all
                     $('input[id*=bowelAppliance]').each(function (index, element) {
-                        $(element).prop('disabled','disabled');
+                        $(element).prop('disabled', true);
                         $(element).prop('checked', false);
                         });
 
@@ -222,13 +222,13 @@
                 if (ischecked) {
                     // enable the set of checkboxes
                     $('input[id*=dialysisDOW]').each(function (index, element) {
-                        $(element).removeAttr('disabled');
+                        $(element).prop('disabled', false);
                         });
 
                 } else {
                     // disable the set of checkboxes and uncheck them all
                     $('input[id*=dialysisDOW]').each(function (index, element) {
-                        $(element).prop('disabled','disabled');
+                        $(element).prop('disabled',true);
                         $(element).prop('checked', false);
                         });
                 }
@@ -267,12 +267,16 @@
                 if (theval == true ) {
                         $.each(subctrl, function (_, ctrl) {
                             ctrl.prop('checked', false );
-                            ctrl.prop('disabled', 'disabled' );
+                            if (ctrl.is(':checkbox'))
+                            	ctrl.prop('disabled', true);
+                            else
+                            	ctrl.prop('readonly', true);
                             enableDisableField(ctrl);
                             });
                 } else {
                         $.each(subctrl, function (_, ctrl) {
-                            ctrl.removeAttr('disabled');
+                            ctrl.prop('readonly', false);
+                            ctrl.prop('disabled', false);
                             enableDisableField(ctrl);
                             });
 
@@ -306,19 +310,19 @@
                     // further assessment
                     var furtherind = $('[id$=furtherind]');
                     furtherind.prop('checked', false);
-                    furtherind.attr('disabled','disabled');
+                    furtherind.attr('disabled', true);
                     enableDisableField(furtherind);
 
 
                     // mobility devices
-                    $('[id$=wheelchair]').prop('checked', false).attr('disabled','disabled');
-                    $('[id$=walker]').prop('checked', false).attr('disabled','disabled');
-                    $('[id$=cane]').prop('checked', false).attr('disabled','disabled');
-                    $('[id$=othermobility]').prop('checked', false).attr('disabled','disabled');
+                    $('[id$=wheelchair]').prop('checked', false).prop('disabled',true);
+                    $('[id$=walker]').prop('checked', false).prop('disabled',true);
+                    $('[id$=cane]').prop('checked', false).prop('disabled',true);
+                    $('[id$=othermobility]').prop('checked', false).prop('disabled',true);
                     enableDisableField($('[id$=othermobility]'));
 
                     // other special equipment
-                    $('[id$=specialequip]').val('').attr('disabled','disabled');
+                    $('[id$=specialequip]').val('').prop('disabled',true);
                     enableDisableField($('[id$=specialequip]'));
 
 
@@ -331,16 +335,16 @@
                 } else {
                 // set all other checkboxes to negative - invalidate all answers
                     // further assessment
-                    $('[id$=furtherind]').removeAttr('disabled');
+                    $('[id$=furtherind]').prop('disabled', false);
 
                     // mobility devices
-                    $('[id$=wheelchair]').removeAttr('disabled');
-                    $('[id$=walker]').removeAttr('disabled');
-                    $('[id$=cane]').removeAttr('disabled');
-                    $('[id$=othermobility]').removeAttr('disabled');
+                    $('[id$=wheelchair]').prop('disabled', false);
+                    $('[id$=walker]').prop('disabled', false);
+                    $('[id$=cane]').prop('disabled', false);
+                    $('[id$=othermobility]').prop('disabled', false);
 
                     // other special equipment
-                    $('[id$=specialequip]').removeAttr('disabled');
+                    $('[id$=specialequip]').prop('disabled', false);
 
                     // reset sliders
                     $.each($("[id*=slider]"), function (key) {
@@ -383,9 +387,11 @@
                     }
 
                 if ( listtocheck.indexOf('Sores') >= 0 )
-                    $('[id$='+fieldtoupdate+']').removeAttr('disabled');
-                else
-                    $('[id$='+fieldtoupdate+']').attr('disabled','disabled');
+                    $('[id$='+fieldtoupdate+']').prop('readonly', false);
+                else {
+                    $('[id$='+fieldtoupdate+']').prop('readonly', true);
+                    $('[id$='+fieldtoupdate+']').val('');
+                    }
 
             };
 
@@ -405,11 +411,11 @@
                 // enable 'responds to' if rancho anything except 1
                 if ( ranchoScore.indexOf('1') < 0 ) {
                     $('[id$=responds]').each( function(index, element) {
-                        $(element).removeAttr('disabled');
+                        $(element).prop('disabled', false);
                     });
                 } else {
                     $('[id$=responds]').each( function(index, element) {
-                        $(element).prop('disabled','disabled');
+                        $(element).prop('disabled', true);
                         $(element).prop('checked', false);
 
                     });
@@ -428,11 +434,11 @@
 
                 if ( mood.indexOf('Sad') >=  0 || mood.indexOf('Flat') >=  0 ) {
                     $('[id$=responds]').each( function(index, element) {
-                        $('[id$=sadflatHurt]').removeAttr('disabled');
+                        $('[id$=sadflatHurt]').prop('disabled', false);
                     });
                 } else {
 
-                    $('[id$=sadflatHurt]').prop('disabled', 'disabled').val('');
+                    $('[id$=sadflatHurt]').prop('disabled', true).val('');
                     enableDisableField( $('[id$=sadflatHurt]'));
                 }
 
@@ -581,9 +587,9 @@
 
                 // disable age-based field
                 if ( {!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Age__c} <= 3 )
-                    $('input[id$=headcircum]').removeAttr('disabled');
+                    $('input[id$=headcircum]').prop('disabled', false);
                 else
-                    $('input[id$=headcircum]').prop('disabled','disabled');
+                    $('input[id$=headcircum]').prop('disabled', true);
 
 
             }
@@ -742,10 +748,10 @@
         function enableFalls( historyVal )  {
 
             if (historyVal != '')
-                   j$('[id$=fallsDetail]').removeAttr('disabled');
+                   j$('[id$=fallsDetail]').prop('disabled', false);
             else {
                 j$('[id$=fallsDetail]').val('');
-                j$('[id$=fallsDetail]').prop('disabled','disabled');
+                j$('[id$=fallsDetail]').prop('disabled',true);
 
             }
 
