@@ -266,6 +266,7 @@ table#persons_table.dataTable {
                                                 <apex:param value="{!admission.Person_Being_Served__r.ID}"
                                                     name="person" />
                                                 <apex:param value="{!admission.State__c}" name="State" />
+                                                <apex:param value="{!$CurrentPage.URL}" name="retURL" />
                                             </apex:outputLink></td>
                                         <td style="display:none;">{!admission.Status__c}</td>
                                     </tr>
@@ -334,6 +335,7 @@ table#persons_table.dataTable {
                                                 name="person" />
                                             <apex:param value="{!jo.Service_Assignment__r.Admission__r.State__c}"
                                                 name="State" />
+                                             <apex:param value="{!$CurrentPage.URL}" name="retURL" />
                                         </apex:outputLink>&nbsp;
                                         <!-- EC-23 - special casing for CM Ludlow  -->
                                         <apex:outputLink styleClass="servicelink" value="/{!jo.Id}#worksheets"

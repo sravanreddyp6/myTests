@@ -900,7 +900,7 @@ END: Uncomment to have the element collapsed by default -->
        <!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
            <apex:commandButton onclick="window.open('/apex/ActionPlan_GoalObjective_rpt?ID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{! notes.size!=0 && !vfVarIsCB}"  value="Goal/Objective Documentation" />
             <apex:commandButton rendered="{!ActivePlan.size = 1}" value="New Note"
-               onclick="window.open('{!$Page.Notes_ProgressNote_Create}?plan={!ActivePlan[0].id}&service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}', '_self'); return false;" />
+               onclick="window.open('{!$Page.Notes_ProgressNote_Create}?plan={!ActivePlan[0].id}&service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" />
     </div>
     <apex:pageBlockSection columns="1"
                              collapsible="false">
