@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Number of Intake &amp; Discharge Assessments by State</description>
+    <filter>
+        <criteriaItems>
+            <column>Contact.Episodes__r.Assessments__r$Service_Line__c</column>
+            <operator>equals</operator>
+            <value>TFC Vistas,TFC Non-Vistas,Basic,FCT,IIH,GH (Group Homes),Day TX,OPT</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Contact.Episodes__r.Assessments__r$Disregard__c</column>
+            <operator>equals</operator>
+            <value>0</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Contact.Episodes__r.Assessments__r$Status__c</column>
+            <operator>equals</operator>
+            <value>Locked</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Contact.Episodes__r.Assessments__r$Assessment_Type__c</column>
+            <operator>equals</operator>
+            <value>CANS</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Contact.Episodes__r.Assessments__r$Interval__c</column>
+            <operator>equals</operator>
+            <value>Intake,Discharge</value>
+        </criteriaItems>
+    </filter>
+    <format>Matrix</format>
+    <groupingsAcross>
+        <dateGranularity>Day</dateGranularity>
+        <field>Contact.Episodes__r.Assessments__r$Interval__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsAcross>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>Contact.Episodes__r$State__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>CANS Discharge Summary Report</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>PBS_Admission_Assessment__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <timeFrameFilter>
+        <dateColumn>Contact.Episodes__r.Assessments__r$Assessment_Date__c</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>
