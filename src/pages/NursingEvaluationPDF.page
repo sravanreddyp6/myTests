@@ -1849,13 +1849,16 @@
     </tr>
     <tr>
     <td width="50%" style="vertical-align:top">
+    <apex:outputLabel value="Religious Preference" styleClass="label" />
 		<apex:outputText value="{! if (Evaluation__c.Religious_Preference__c == 'Yes', Evaluation__c.Religious_Preference_Details__c,Evaluation__c.Religious_Preference__c) }"
-                            label="Relgious Preference" /> 
-       <apex:outputField value="{!Evaluation__c.Spiritual_Care_Visits__c}" label="Does Patient Request Spiritual Care Visits?" />
-      <apex:outputLabel value="Religious/Spiritual/Cultural Beliefs That Could Affect Care, Treatment, or Sevices?" />
+                            label="Relgious Preference" /> <br />
+       <apex:outputLabel value="Does Patient Request Spiritual Care Visits?" styleClass="label" />
+       <apex:outputField value="{!Evaluation__c.Spiritual_Care_Visits__c}" label="Does Patient Request Spiritual Care Visits?" /><br />
+      <apex:outputLabel value="Religious/Spiritual/Cultural Beliefs That Could Affect Care, Treatment, or Sevices?" styleClass="label" />
       <apex:outputField value="{!Evaluation__c.Typeof_Spiritual_belief_Effects__c}" />&nbsp;<apex:outputText value="{!Evaluation__c.Other_Religious_Effect__c}" />
     </td>
     <td style="vertical-align:top">
+    <apex:outputLabel value="Cultural Preferences" styleClass="label" />
 	<apex:outputText value="{! if (Evaluation__c.Cultural_Preferences__c== 'Yes', if(Evaluation__c.Cultural_Preference_Specify__c!='', Evaluation__c.Cultural_Preference_Specify__c, Evaluation__c.Cultural_Preferences__c), Evaluation__c.Cultural_Preferences__c) }"
                             label="Cultural Preferences" />
     </td>
