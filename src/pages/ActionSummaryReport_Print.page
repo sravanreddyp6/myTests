@@ -54,6 +54,7 @@
 }
 .fieldvalue {
 	font-weight: normal;
+    padding-left: 10px;
 }
 .fieldtitle {
 	font-weight: bold;
@@ -159,22 +160,27 @@ td{
                   	</apex:outputPanel> 
                   	<apex:outputText styleClass="goalVal" value="{!oresult.Plan_Objective.Description__c}"/>
                     <apex:outputPanel styleClass="details" layout="block">
-                        <apex:outputPanel layout="block">
-                            <apex:outputPanel styleClass="fieldtitle">Status&nbsp;</apex:outputPanel>
-                            <apex:outputPanel styleClass="fieldvalue">{!oresult.Plan_Objective.Status__c}</apex:outputPanel>
-                        </apex:outputPanel>
-                        <apex:outputPanel layout="block">
-                            <apex:outputPanel styleClass="fieldtitle">Effective Date&nbsp;</apex:outputPanel>
-                            <apex:outputPanel styleClass="fieldvalue"><apex:outputText value="{0, date, MM/dd/yyyy}"><apex:param value="{!oresult.Plan_Objective.Effective_Date__c}"/></apex:outputText></apex:outputPanel>
-                        </apex:outputPanel>
-                        <apex:outputPanel layout="block">
-                            <apex:outputPanel styleClass="fieldtitle">Target Date&nbsp;</apex:outputPanel>
-                            <apex:outputPanel styleClass="fieldvalue"><apex:outputText value="{0, date, MM/dd/yyyy}"><apex:param value="{!oresult.Plan_Objective.Target_End_Date__c}"/></apex:outputText></apex:outputPanel>
-                        </apex:outputPanel>
-                        <apex:outputPanel layout="block">
-                            <apex:outputPanel styleClass="fieldtitle">Type&nbsp;</apex:outputPanel>
-                            <apex:outputPanel styleClass="fieldvalue">{!oresult.Plan_Objective.Type__c}</apex:outputPanel>
-                        </apex:outputPanel>
+                        <table>
+                        <tr>
+                        <td Class="fieldtitle">Status</td>
+                        <td>{!oresult.Plan_Objective.Status__c}</td>                        
+                        </tr>
+                        
+						<tr>
+                        <td Class="fieldtitle">Effective Date</td>
+                        <td><apex:outputPanel ><apex:outputText value="{0, date, MM/dd/yyyy}"><apex:param value="{!oresult.Plan_Objective.Effective_Date__c}"/></apex:outputText></apex:outputPanel></td>
+                        </tr>
+                        
+						<tr>
+                        <td Class="fieldtitle">Target Date</td>
+                        <td><apex:outputPanel ><apex:outputText value="{0, date, MM/dd/yyyy}"><apex:param value="{!oresult.Plan_Objective.Target_End_Date__c}"/></apex:outputText></apex:outputPanel></td>
+                        </tr>
+                        
+						<tr>
+                        <td Class="fieldtitle">Type</td>
+                        <td>{!oresult.Plan_Objective.Type__c}</td>                        
+                        </tr>                                                
+                        </table>
                     </apex:outputPanel> 
                      <apex:outputPanel id="OtherSummaryComments" layout="block" rendered="{!oresult.OtherSummaryCommentsExist}">
                          <apex:repeat value="{!oresult.OtherSummaryComments}" var="summmarycomment">
