@@ -80,6 +80,12 @@ public with sharing class NeuroEvaluationViewController {
         this.stdController = stdController;
         // Put all the fields in context
         Map<String, Schema.SObjectField> fieldMap = Schema.SObjectType.Evaluation__c.fields.getMap();
+        if (!Test.isRunningTest()) {
+            List<Schema.DescribeSObjectResult> describelist = Schema.describeSObjects(new List<String>{ 'Evaluation__c' });
+            Schema.DescribeSObjectResult info = describelist[0];
+            Map<string,Schema.SObjectField> fmap = info.fields.getmap();
+            stdController.addFields(new List<String>(fmap.keySet()));
+        }
         evaluation = (Evaluation__c) stdController.getRecord();
         currentRelatedParty = new Related_Party__c();
         selectedTab = ApexPages.currentPage().getParameters().get('tab');
@@ -93,10 +99,10 @@ public with sharing class NeuroEvaluationViewController {
         }
 
         // Naming the PDF in case this controller is used for the PDF page
-        String file = 'Person Being Referred- '+ this.evaluation.Referral__r.Person_Being_Referred__r.Full_Name__c+'.pdf';
+        String file = 'Person Being Referred - '+ this.evaluation.Referral__r.Person_Being_Referred__r.Full_Name__c+'.pdf';
         file = file.replaceAll('[|,||\\,||"||:|~|!|@|#|$|%|^|&|*|_|+|=|<|>|?|\\(|\\)|\\{|\\}|\\;|\\\'"]', ' ');
         // Assigns the person being referred Name to the PDF dynamically
-        Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename='+file);
+        Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename="'+file+'"');
     }
 
     public void showAddRelatedParty() {
