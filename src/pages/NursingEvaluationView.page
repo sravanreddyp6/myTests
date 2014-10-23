@@ -1531,7 +1531,7 @@ hr {
                             <apex:outputLabel value="Does Resident Appear to be Coping Well<br /><br />Resident Appears to Demonstrate the Following"
                                 escape="false" />
                             <apex:outputPanel >
-                                <apex:outputField value="{!Evaluation__c.Resident_Coping_Well__c}" />
+                                <apex:outputField value="{!Evaluation__c.Resident_Coping_Well__c}" />&nbsp;<apex:outputfield value="{!Evaluation__c.Coping_Description__c}" rendered="{!Evaluation__c.Resident_Coping_Well__c == 'No'}" />
                                 <br />
                                 <br />
                                 <apex:outputField value="{!Evaluation__c.Resident_Demonstrating_Issues__c}" />
@@ -1581,7 +1581,7 @@ hr {
                         <apex:outputText value="" />
 
                         <apex:pageBlockSectionItem >
-                            <apex:outputLabel value="If Rancho Level is>2 or LOC is Alert/Delayed/Lethargic<br />Resident Oriented to the Following" escape="false"/>
+                            <apex:outputLabel value="Resident Oriented to the Following" />
                             <apex:outputField value="{!Evaluation__c.Rancho_level_Resident_Orientation__c}" />
                         </apex:pageBlockSectionItem>
 
@@ -1670,10 +1670,9 @@ hr {
                         <apex:outputField value="{!Evaluation__c.Discharge_Info_From__c}" />
                         <apex:outputField value="{!Evaluation__c.Prior_Living_Situation__c}" />
                         <apex:outputField value="{!Evaluation__c.Prior_Living_Situation_Other__c}" />
-                        <apex:outputField value="{!Evaluation__c.Barriers_to_DC__c}" />
                         <apex:outputField value="{!Evaluation__c.DC_Plan__c}" />
-                        <apex:outputField value="{!Evaluation__c.DC_Plan_Other__c}"
-                            label="Other" />
+                        <apex:outputField value="{!Evaluation__c.DC_Plan_Other__c}" label="Other" />
+                        <apex:outputField value="{!Evaluation__c.Barriers_to_DC__c}" />
                         </apex:pageBlockSection>
                         <hr />
                         <apex:pageBlockSection columns="1">

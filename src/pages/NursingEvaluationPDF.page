@@ -462,6 +462,7 @@
         <apex:inputhidden value="{!Evaluation__c.Cultural_Preferences__c}" />
         <apex:inputhidden value="{!Evaluation__c.Preferred_Method_of_Learning__c}" />
         <apex:inputhidden value="{!Evaluation__c.Resident_Coping_Well__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Coping_Description__c}" />
         <apex:inputhidden value="{!Evaluation__c.Resident_Demonstrating_Issues__c}" />
         <apex:inputhidden value="{!Evaluation__c.Harm_Describe__c}" />
         <apex:inputhidden value="{!Evaluation__c.Harm_Reported_to__c}" />
@@ -1881,6 +1882,7 @@
     </td>
     <td style="vertical-align:top">
     	<apex:dynamiccomponent componentvalue="{!ctlmap['resident_coping_well__c']}" /><br/>
+    	<apex:dynamiccomponent componentvalue="{!ctlmap['coping_description__c']}" /><br/>
         <apex:dynamiccomponent componentvalue="{!ctlmap['resident_demonstrating_issues__c']}" />
     </td>
     </tr>
@@ -1924,7 +1926,7 @@
         <apex:dynamiccomponent componentvalue="{!ctlmap['can_he_she_hear__c']}" /><br />
         <apex:dynamiccomponent componentvalue="{!ctlmap['can_he_she_read__c']}" /><br />
         <apex:dynamiccomponent componentvalue="{!ctlmap['can_he_she_write__c']}" /><br />
-        <apex:outputLabel value="If Rancho Level is>2 or LOC is Alert/Delayed/Lethargic<br />Resident Oriented to the Following" styleClass="label" escape="false"/>
+        <apex:outputLabel value="Resident Oriented to the Following" styleClass="label" />
         <apex:outputText value="{!Evaluation__c.Rancho_level_Resident_Orientation__c}" label="Resident Oriented to the following"/><br />
         <apex:dynamiccomponent componentvalue="{!ctlmap['preferred_method_of_learning__c']}" /><br/>
         <apex:dynamiccomponent componentvalue="{!ctlmap['resident_s_communication_status__c']}" />&nbsp;<apex:outputText value="{!Evaluation__c.Resident_s_communication_Status_Other__c}" />
@@ -1989,9 +1991,9 @@
         <apex:dynamiccomponent componentvalue="{!ctlmap['discharge_info_from__c']}" />
         <apex:dynamiccomponent componentvalue="{!ctlmap['prior_living_situation__c']}" />
         <apex:dynamiccomponent componentvalue="{!ctlmap['prior_living_situation_other__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['barriers_to_dc__c']}" />
         <apex:dynamiccomponent componentvalue="{!ctlmap['dc_plan__c']}" />
         <apex:dynamiccomponent componentvalue="{!ctlmap['dc_plan_other__c']}" />        
+        <apex:dynamiccomponent componentvalue="{!ctlmap['barriers_to_dc__c']}" />
     </apex:pageBlockSection>
     <br />        
         <apex:dynamiccomponent componentvalue="{!ctlmap['discharge_plan_comments__c']}" /><br/>
