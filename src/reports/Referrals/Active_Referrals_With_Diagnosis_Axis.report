@@ -44,21 +44,10 @@
     </columns>
     <description>Shows All Referrals that are not Closed where there is a diagnosis in either Axis I or II or both fields</description>
     <filter>
-        <booleanFilter>(1 AND 2) OR (1 AND 3)</booleanFilter>
         <criteriaItems>
             <column>Person_Being_Referred__c.Referrals__r$Referral_Status__c</column>
             <operator>notEqual</operator>
             <value>Closed</value>
-        </criteriaItems>
-        <criteriaItems>
-            <column>Person_Being_Referred__c.Referrals__r$Axis_I__c</column>
-            <operator>notEqual</operator>
-            <value></value>
-        </criteriaItems>
-        <criteriaItems>
-            <column>Person_Being_Referred__c.Referrals__r$Axis_II__c</column>
-            <operator>notEqual</operator>
-            <value></value>
         </criteriaItems>
     </filter>
     <format>Tabular</format>
