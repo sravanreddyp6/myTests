@@ -1,70 +1,93 @@
 <apex:page standardController="Action_Summary__c" extensions="ActionSummaryReportForm" sidebar="false" standardStylesheets="false" showHeader="false" applyBodyTag="false"
-			contentType="application/msWord#Plan-{!Action_Summary__c.name}.doc" renderAs="{!if($CurrentPage.parameters.pdf='1', 'pdf','')}" >
-			
+            contentType="application/msWord#Plan-{!Action_Summary__c.name}.doc" renderAs="{!if($CurrentPage.parameters.pdf='1', 'pdf','')}" >
+            
 <head>
 <style>
-.lblaction{
-    padding-left: 22px;
-}
-.lblobj{
-    padding-left: 11px;
-}
-.lblgoal{
-    padding-left: 0px;
-}
-.mylbl{
-    font-weight: bold;
-}
-.txtarea{
-    width: 95%;
-}
-.mytbl{
-    width: 100%;
-    margin-bottom:10px;
-    margin-top:10px
-}
+  .skillSummary table {
+      border: 1px solid white;
+      border-collapse: collapse;
+      background-color: #99ccff;
+      padding: 4px;
+      width: auto !important;
+      }
+  .skillSummary .sstable tbody tr th {
+      border: 1px solid white;
+      padding: 4px;
+      }
+  .skillSummary .sstable tbody tr td {
+      border: 1px solid white;
+      padding: 4px;
+      background-color: #e6e6e6;
+      }
+  .skillSummary .sstable .objectivecomment{
+      background-color: #cce5ff;
+      }
+  .objectivecommentinput {
+      width:100%;
+      }
+  .headertype {
+      width:140px;
+      float:left;
+      }
+  .headerdescription {
+      float:left;
+      font-weight: normal;
+      }
+  .pbSubheader img {
+      float:left;
+      }
+  div[id$="planheader"] > .pbSubheader{
+      background-color:#c5d3ef !important;
+      padding:7px !important;
+      }
+  .data2Col > .details {
+      padding-left:120px;
+      }
+  .details .detail{
+      width:220px;
+      float:left;
+      } 
+  .OtherSummaryComments{
+      padding-left:120px;
+      }
+  .detail .fieldvalue {
+      font-weight: normal;
+      }
+  .detail .fieldtitle {
+      font-weight: bold;
+      }
+  .leftandtherest {
+      padding-left:300px;
+      }
+  .recommendationblock {
+      float: left;
+      padding: 4px;
+      padding-left: 120px;
+      position:relative;
+      width:180px;
+      right:300px;
+      margin-left: -100%;
+      }
+  .commentblock {
+      float: left;
+      padding: 4px;
+      width:100%;
+      position:relative;
+      }
 
-.mytbl:nth-child(odd) {
-    background-color:#ccf;
-}
+    .hbbg{
+        position:fixed;
+        width:100%;
+        height:100%;
+        top:0px;
+        left:0px;
+        background-color: gray;
+        opacity: .6;
+        z-index:1000;
+    }      
 
-.mytbl:nth-child(even) {
-    background-color:#fff;
-}
-
-.leftcol{
-    width: 150px;
-}
-.innerLabel{
-    font-weight: bold;
-    text-align: right;
-    font-size: 14px;
-}
-.innerData{
-    width: 200px;
-}
-
-.hbbg{
-    position:fixed;
-    width:100%;
-    height:100%;
-    top:0px;
-    left:0px;
-    z-index:1000;
-}
-.fieldvalue {
-	font-weight: normal;
-    padding-left: 10px;
-}
 .fieldtitle {
-	font-weight: bold;
-}
-.goalVal{
-    padding-left: 10px;
-}
-
-td{
-    vertical-align: top;
+    font-weight: bold;
 }
 
 </style>
@@ -80,85 +103,85 @@ td{
 <br/>
 <center><h1>Action Plan Summary</h1></center>  
 <apex:panelGrid columns="2" style="width: 85%;">
-	<apex:facet name="caption"><strong>Summary Details</strong></apex:facet>   
-	<apex:outputPanel styleClass="fieldtitle">
-    	{!$ObjectType.Action_Summary__c.fields.Name.Label}
-	</apex:outputPanel>
-	<apex:outputField value="{!Action_Summary__c.Name}"/>
-	<apex:outputPanel styleClass="fieldtitle">
-		{!$ObjectType.Action_Summary__c.fields.Start_Date__c.Label}
-	</apex:outputPanel>            
-	<apex:outputField value="{!Action_Summary__c.Start_Date__c}"/>
-	<apex:outputPanel styleClass="fieldtitle">
-		Duration
-	</apex:outputPanel>
-	<apex:outputText value="{0}month(s)"> <apex:param value="{!Duration}"/> </apex:outputText>
-	<apex:outputPanel styleClass="fieldtitle">
-		{!$ObjectType.Action_Summary__c.fields.Status__c.Label}                
-	</apex:outputPanel> 
-	<apex:outputField value="{!Action_Summary__c.Status__c}"/>
-	<apex:outputPanel styleClass="fieldtitle">
-		{!$ObjectType.Service_Assignment__c.fields.Admission__c.Label}                
-	</apex:outputPanel> 
-	<apex:outputField value="{!Action_Summary__c.Service_Assignment__r.Admission__c}"/>
-	<apex:outputPanel styleClass="fieldtitle">
-		{!$ObjectType.Action_Summary__c.fields.Service_Assignment__c.Label}                
-	</apex:outputPanel> 
-	<apex:outputField value="{!Action_Summary__c.Service_Assignment__c}"/>
-	<apex:outputPanel styleClass="fieldtitle">
-		Status                
-	</apex:outputPanel> 
-	<apex:outputField value="{!Action_Summary__c.Service_Assignment__r.Status__c}"/>
+    <apex:facet name="caption"><strong>Summary Details</strong></apex:facet>   
+    <apex:outputPanel styleClass="fieldtitle">
+        {!$ObjectType.Action_Summary__c.fields.Name.Label}
+    </apex:outputPanel>
+    <apex:outputField value="{!Action_Summary__c.Name}"/>
+    <apex:outputPanel styleClass="fieldtitle">
+        {!$ObjectType.Action_Summary__c.fields.Start_Date__c.Label}
+    </apex:outputPanel>            
+    <apex:outputField value="{!Action_Summary__c.Start_Date__c}"/>
+    <apex:outputPanel styleClass="fieldtitle">
+        Duration
+    </apex:outputPanel>
+    <apex:outputText value="{0}month(s)"> <apex:param value="{!Duration}"/> </apex:outputText>
+    <apex:outputPanel styleClass="fieldtitle">
+        {!$ObjectType.Action_Summary__c.fields.Status__c.Label}                
+    </apex:outputPanel> 
+    <apex:outputField value="{!Action_Summary__c.Status__c}"/>
+    <apex:outputPanel styleClass="fieldtitle">
+        {!$ObjectType.Service_Assignment__c.fields.Admission__c.Label}                
+    </apex:outputPanel> 
+    <apex:outputField value="{!Action_Summary__c.Service_Assignment__r.Admission__c}"/>
+    <apex:outputPanel styleClass="fieldtitle">
+        {!$ObjectType.Action_Summary__c.fields.Service_Assignment__c.Label}                
+    </apex:outputPanel> 
+    <apex:outputField value="{!Action_Summary__c.Service_Assignment__c}"/>
+    <apex:outputPanel styleClass="fieldtitle">
+        Status                
+    </apex:outputPanel> 
+    <apex:outputField value="{!Action_Summary__c.Service_Assignment__r.Status__c}"/>
 </apex:panelGrid>    
 <br/>
 
 <apex:panelGrid columns="2" style="width: 75%;">
-	<apex:facet name="caption"><strong>Summary Comments</strong></apex:facet>
-	<apex:outputPanel styleClass="fieldtitle">
-    	{!$ObjectType.Action_Summary__c.fields.Recommendation__c.Label}
-	</apex:outputPanel>
-	<apex:outputField value="{!Action_Summary__c.Recommendation__c}"/>
-	<apex:outputPanel styleClass="fieldtitle">
-		{!$ObjectType.Action_Summary__c.fields.Comments__c.Label}
-	</apex:outputPanel>            
-	<apex:outputField value="{!Action_Summary__c.Comments__c}"/>
+    <apex:facet name="caption"><strong>Summary Comments</strong></apex:facet>
+    <apex:outputPanel styleClass="fieldtitle">
+        {!$ObjectType.Action_Summary__c.fields.Recommendation__c.Label}
+    </apex:outputPanel>
+    <apex:outputField value="{!Action_Summary__c.Recommendation__c}"/>
+    <apex:outputPanel styleClass="fieldtitle">
+        {!$ObjectType.Action_Summary__c.fields.Comments__c.Label}
+    </apex:outputPanel>            
+    <apex:outputField value="{!Action_Summary__c.Comments__c}"/>
 </apex:panelGrid>    
 <br/>
 
 <apex:outputPanel id="goalwrapper" layout="none">  
   <apex:repeat value="{!Plans}" var="plan">
-	<apex:panelGrid columns="4" style="width: 75%;">
-	<apex:facet name="caption"><strong>Plan Details</strong></apex:facet>	
-		<apex:outputPanel styleClass="fieldtitle">
-			Plan Name            
-		</apex:outputPanel> 
-		<apex:outputField value="{!plan.ActionPlan.Name}"/>		
-		<apex:outputPanel styleClass="fieldtitle">
-			Status           
-		</apex:outputPanel> 
-		<apex:outputField value="{!plan.ActionPlan.Status__c}"/>
-		<apex:outputPanel styleClass="fieldtitle">
-			Effective Date          
-		</apex:outputPanel> 
-		<apex:outputText value="{!plan.FormattedEffectiveDate}"/>		
-		<apex:outputPanel styleClass="fieldtitle">
-			Target Date
-		</apex:outputPanel> 
-		<apex:outputText value="{!plan.FormattedTargetDate}"/>
+    <apex:panelGrid columns="4" style="width: 75%;">
+    <apex:facet name="caption"><strong>Plan Details</strong></apex:facet>   
+        <apex:outputPanel styleClass="fieldtitle">
+            Plan Name            
+        </apex:outputPanel> 
+        <apex:outputField value="{!plan.ActionPlan.Name}"/>     
+        <apex:outputPanel styleClass="fieldtitle">
+            Status           
+        </apex:outputPanel> 
+        <apex:outputField value="{!plan.ActionPlan.Status__c}"/>
+        <apex:outputPanel styleClass="fieldtitle">
+            Effective Date          
+        </apex:outputPanel> 
+        <apex:outputText value="{!plan.FormattedEffectiveDate}"/>       
+        <apex:outputPanel styleClass="fieldtitle">
+            Target Date
+        </apex:outputPanel> 
+        <apex:outputText value="{!plan.FormattedTargetDate}"/>
   </apex:panelGrid>
-		
+        
       <apex:repeat value="{!plan.ActionPlanGoals}" var="goal">
           <apex:panelGrid columns="1">
-			<apex:outputPanel styleClass="fieldtitle">
-				Goal
-			</apex:outputPanel> 
-			<apex:outputText styleClass="goalVal" value="{!goal.ActionPlanGoal.Description__c}"/>
+            <apex:outputPanel styleClass="fieldtitle">
+                Goal
+            </apex:outputPanel> 
+            <apex:outputText styleClass="goalVal" value="{!goal.ActionPlanGoal.Description__c}"/>
               <apex:repeat value="{!goal.ActionPlanObjectives}" var="oresult">
                   <apex:panelGrid columns="1">
-                  	<apex:outputPanel styleClass="fieldtitle">
-                  		Objective
-                  	</apex:outputPanel> 
-                  	<apex:outputText styleClass="goalVal" value="{!oresult.Plan_Objective.Description__c}"/>
+                    <apex:outputPanel styleClass="fieldtitle">
+                        Objective
+                    </apex:outputPanel> 
+                    <apex:outputText styleClass="goalVal" value="{!oresult.Plan_Objective.Description__c}"/>
                     <apex:outputPanel styleClass="details" layout="block">
                         <table>
                         <tr>
@@ -166,17 +189,17 @@ td{
                         <td>{!oresult.Plan_Objective.Status__c}</td>                        
                         </tr>
                         
-						<tr>
+                        <tr>
                         <td Class="fieldtitle">Effective Date</td>
                         <td><apex:outputPanel ><apex:outputText value="{0, date, MM/dd/yyyy}"><apex:param value="{!oresult.Plan_Objective.Effective_Date__c}"/></apex:outputText></apex:outputPanel></td>
                         </tr>
                         
-						<tr>
+                        <tr>
                         <td Class="fieldtitle">Target Date</td>
                         <td><apex:outputPanel ><apex:outputText value="{0, date, MM/dd/yyyy}"><apex:param value="{!oresult.Plan_Objective.Target_End_Date__c}"/></apex:outputText></apex:outputPanel></td>
                         </tr>
                         
-						<tr>
+                        <tr>
                         <td Class="fieldtitle">Type</td>
                         <td>{!oresult.Plan_Objective.Type__c}</td>                        
                         </tr>                                                
