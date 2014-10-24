@@ -283,8 +283,7 @@
                 }
 
             }
-
-
+            
             // if checkbox for Other is selected, enable other field
             handleOther = function( ids ) {
 
@@ -320,7 +319,8 @@
                 handleNone('palleve');
                 handleNone('neuropain');
                 handleNone('neuropainalleve');
-
+                handleNone('seizurehistory');
+                
             }
             
             handlePsychoSocial = function() {
@@ -461,6 +461,7 @@
              };
 
              handleMood = function() {
+             
                 // if sad or flat, enable depression question
                 var mood = '';
                 $('input[id*=moodlist]').each(function (index, element) {
@@ -468,14 +469,29 @@
                         mood += $(element).val() + ';';
                 });
 
-                if ( mood.indexOf('Sad') >=  0 || mood.indexOf('Flat') >=  0 ) {
-                    $('[id$=responds]').each( function(index, element) {
-                        $('[id$=sadflatHurt]').prop('disabled', false);
-                    });
-                } else {
-
-                    $('[id$=sadflatHurt]').prop('disabled', true).val('');
-                    enableDisableField( $('[id$=sadflatHurt]'));
+				if ( mood.indexOf('Unable to Determine') >= 0 ) {
+					// disable all others
+	                $('input[id*=moodlist]').each(function (index, element) {
+	                	if ($(element).val() != 'Unable to Determine') {
+		                	$(element).prop('checked', false);
+		                	$(element).prop('disabled', true);
+						}
+					});
+				} else {
+				
+				    $('input[id*=moodlist]').each(function (index, element) {
+		                	$(element).prop('disabled', false);
+						});					
+				
+	                if ( mood.indexOf('Sad') >=  0 || mood.indexOf('Flat') >=  0 ) {
+	                    $('[id$=responds]').each( function(index, element) {
+	                        $('[id$=sadflatHurt]').prop('disabled', false);
+	                    });
+	                } else {
+	
+	                    $('[id$=sadflatHurt]').prop('disabled', true).val('');
+	                    enableDisableField( $('[id$=sadflatHurt]'));
+					}	
                 }
 
              };
@@ -622,10 +638,14 @@
                 });*/
 
                 // disable age-based field
-                if ( {!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Age__c} <= 3 )
+                if ( {!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Age__c} <= 3 ) {
                     $('input[id$=headcircum]').prop('disabled', false);
-                else
+                    $('input[id$=earinfhist]').prop('disabled', false);
+                }    
+                else {
                     $('input[id$=headcircum]').prop('disabled', true);
+                    $('input[id$=earinfhist]').prop('disabled', true);
+                    }
 
 
             }
@@ -1768,7 +1788,7 @@
 
                         <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Seizure History" />
-                        <apex:selectCheckboxes value="{!selectedSeizureHistory}" style="margin-left:-13px" >
+                        <apex:selectCheckboxes value="{!selectedSeizureHistory}" style="margin-left:-13px" id="seizurehistory" onchange="handleNone('seizurehistory');">
                             <apex:selectOptions value="{!seizureHistory}" />
                         </apex:selectCheckboxes>
                         </apex:pageBlockSectionItem>
@@ -1776,7 +1796,7 @@
                         <apex:outputLabel value="VP Shunt" />
                         <apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.VP_Shunt__c}"  html-data-rules="{&quot;Yes&quot;: [&quot;{!$Component.vpshuntDescribe}&quot;,&quot;{!$Component.headcircumneuro}&quot;]}" />&nbsp;<apex:outputLabel value="Date Inserted if Known" />
-                        <apex:inputField value="{!Evaluation__c.VP_Shunt_Describe__c}" id="vpshuntDescribe"/>
+                        <apex:inputField value="{!Evaluation__c.VP_Shunt_Describe__c}" id="vpshuntDescribe" />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
 
@@ -1794,7 +1814,7 @@
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
 
-                        <apex:inputField value="{!Evaluation__c.Level_of_Conciousness__c}" />
+                        <apex:inputField value="{!Evaluation__c.Level_of_Conciousness__c}" html-data-rules="{&quot;Unresponsive&quot;: [&quot;{!$Component.blinktothreat}&quot;]}"/>
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Orientation" />
                             <apex:selectCheckboxes value="{!selectedNeuroOrient}" style="margin-left:-13px" >
@@ -1870,21 +1890,21 @@
                         <br />
                         <apex:inputField value="{!Evaluation__c.Tracking_L__c}" />
                         <br />
-                        <apex:inputField value="{!Evaluation__c.Blink_to_Threat_R_L__c}" />
+                        <apex:inputField value="{!Evaluation__c.Blink_to_Threat_R_L__c}" id="blinktothreat"  />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
 
                         <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Ear Infections<br /><br />Describe"  escape="false"/>
                         <apex:outputPanel >
-                        <apex:inputField value="{!Evaluation__c.Ear_Infections__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.earinfectionHistory}&quot;]}" />
+                        <apex:inputField value="{!Evaluation__c.Ear_Infections__c}" id="earinfhist" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.earinfectionHistory}&quot;]}" />
                         <br />
                         <apex:inputField value="{!Evaluation__c.Ear_infection_Describe__c}" label="Describe History" id="earinfectionHistory"/>
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
 
                         <apex:pageBlockSectionItem >
-                        <apex:outputLabel Value="Glasses/Contacts<Br /><br />For Reading<br /><br />For Distance<br /><br />Multifocal<br /><br />Other<br /><br />If Contacts, Type"  escape="False"/>
+                        <apex:outputLabel Value="Glasses/Contacts<Br /><br />For Reading<br /><br />For Distance<br /><br />Multifocal<br /><br />Other<br /><br />If Contacts, Type<br />If Contacts, Max Wear Time"  escape="False"/>
                         <apex:outputPanel >
                         <br />
                         <br />
@@ -1892,7 +1912,8 @@
                         <br /><apex:inputField value="{!Evaluation__c.Glasses_For_Distance__c}" label="For Distance" />
                         <br /><apex:inputField value="{!Evaluation__c.Glasses_For_Multi_Focal_Use__c}" label="Multifocal" />
                         <br /><apex:inputField value="{!Evaluation__c.Glasses_for_other__c}" label="Other" />
-                        <br /><apex:inputField value="{!Evaluation__c.Contacts_Type__c}" label="If Contacts, Type" />
+                        <br /><apex:inputField value="{!Evaluation__c.Contacts_Type__c}" label="If Contacts, Type" html-data-rules="{&quot;Hard&quot;: [&quot;{!$Component.maxweartime}&quot;], &quot;Soft&quot;: [&quot;{!$Component.maxweartime}&quot;]}"/>
+                        <br /><apex:inputField value="{!Evaluation__c.Contacts_Maximum_Wear_Time__c}" id="maxweartime" />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:outputText value="" />
