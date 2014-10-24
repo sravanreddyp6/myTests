@@ -780,14 +780,19 @@ hr {
                             <apex:outputLabel value="Edema" />
                             <apex:outputPanel >
                                 <apex:outputField value="{!Evaluation__c.Skin_Edema__c}"
-                                    label="Edema"
-                                    html-data-rules="{&quot;Yes&quot;: [&quot;{!$Component.edemaLocation}&quot;]}" />
+                                    label="Edema" />
                                 <apex:outputText styleClass="labelCol" value="Location"
                                     rendered="{!Evaluation__c.Skin_Edema__c == 'Yes'}" />
                                 <apex:outputField value="{!Evaluation__c.Skin_Edema_Location__c}"
                                     label="Edema Location" id="edemaLocation"
                                     rendered="{!Evaluation__c.Skin_Edema__c == 'Yes'}" />
+                                <apex:outputText styleClass="labelCol" value="Pitting"
+                                    rendered="{!Evaluation__c.Skin_Edema__c == 'Yes'}" />
+                                <apex:outputField value="{!Evaluation__c.Skin_Edema_Pitting__c}"
+                                    label="Pitting" id="edemaPitting"
+                                    rendered="{!Evaluation__c.Skin_Edema__c == 'Yes'}" />
                             </apex:outputPanel>
+                            
                         </apex:pageBlockSectionItem>
                         <apex:outputField value="{!Evaluation__c.Skin_Behavior__c}"
                             label="Behavior" />
