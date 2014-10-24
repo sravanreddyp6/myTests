@@ -106,7 +106,20 @@
 
             };
 
-
+			handleIntact = function( val ) {
+			
+				var el = $('#bodyMap').get(0).src;
+				/*
+				if ( val == 1 && el ) {
+					// disable body map if intact is checked
+					anno.hideSelectionWidget( el );
+					anno.removeAll( el );
+				} else {
+					anno.showSelectionWidget( el );
+				}
+				*/				
+			
+			}
             handleBladder = function() {
                 // get the value
                 var bladdertypes = '';
@@ -988,8 +1001,8 @@
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Orthostatic BP" formId="{!$Component.wholePage}" uniqueId="orthostatic" />
 
                     <apex:pageBlockSection title="Diabetes" columns="2">
-                        <apex:inputField value="{!Evaluation__c.Diabetic__c}" html-data-="{&quot;Yes&quot;: &quot;{!$Component.glucoseReading}&quot;}"/>
-                        <apex:pageBlockSectionItem >
+                        <apex:inputField value="{!Evaluation__c.Diabetic__c}" html-data-rules="{&quot;Yes&quot;: &quot;{!$Component.gc.glucoseReading}&quot;}"/>
+                        <apex:pageBlockSectionItem id="gc">
                             <apex:outputLabel value="Glucose Meter Reading" for="glucoseReading"/>
                             <apex:inputField value="{!Evaluation__c.If_yes_Glucose_meter_Reading__c}"  id="glucoseReading"/>
                         </apex:pageBlockSectionItem>
@@ -1001,17 +1014,17 @@
                         <apex:inputField value="{!Evaluation__c.Date_of_last_pap__c}" />
                         <apex:inputField value="{!Evaluation__c.Date_of_last_mamogram__c}" />
                         <apex:pageBlockSectionitem >
-                            <apex:outputText value="Have You Experienced Any of the Following:" styleClass="labelCol" />
+                            <apex:outputLabel value="Have You Experienced Any of the Following" />
                             <apex:selectCheckboxes value="{!selectedExperiences}" layout="pageDirection">
                                 <apex:selectOptions value="{!experienceValues}" />
                             </apex:selectCheckboxes>
                         </apex:pageBlockSectionItem>
                    </apex:pageBlockSection>
-                   <hr />
+                   
                     <apex:pageBlockSection columns="2" Title="Immunization History" >
-                        <apex:inputField value="{!Evaluation__c.Vaccination_Info_Sheet_Provided__c}" />
-                        <apex:inputField value="{!Evaluation__c.Immunization_N_A__c}" label="N/A" />
-                        <apex:pageBlockSectionItem >
+                        
+                        <apex:inputField value="{!Evaluation__c.Immunization_N_A__c}" label="N/A" html-data-rules="{&quot;0&quot;:[&quot;{!$Component.vpneumo.pneumo}&quot;,&quot;{!$Component.vflu.flu}&quot;,&quot;{!$Component.vtdap.tdap}&quot;]}"/>
+                        <apex:pageBlockSectionItem id="vpneumo">
                         <apex:outputLabel for="pneumo" value="Pneumococcal" />
                         <apex:outputpanel >
                         <apex:inputField id="pneumo" value="{!Evaluation__c.Pneumococcal__c}"  html-data-rules="{&quot;1&quot;: [&quot;{!$Component.pneumoExplain}&quot;, &quot;{!$Component.pneumoWhere}&quot;]}"/>
@@ -1019,7 +1032,7 @@
                         <apex:inputField value="{!Evaluation__c.Pneumococcal_Where_and_when__c}" label="Where and When" id="pneumoWhere"/>
                         </apex:outputpanel>
                         </apex:pageBlockSectionItem>
-                        <apex:pageBlockSectionItem >
+                        <apex:pageBlockSectionItem id="vflu">
                         <apex:outputLabel for="flu" value="Influenza" />
                         <apex:outputpanel >
                         <apex:inputField id="flu" value="{!Evaluation__c.Influenza__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.influExplain}&quot;, &quot;{!$Component.influWhere}&quot;]}" />
@@ -1027,7 +1040,7 @@
                         <apex:inputField value="{!Evaluation__c.Influenza_where_and_when__c}" label="Where and When" id="influWhere" />
                         </apex:outputpanel>
                         </apex:pageBlockSectionItem>
-                        <apex:pageBlockSectionItem >
+                        <apex:pageBlockSectionItem id="vtdap">
                         <apex:outputLabel for="tdap" value="TDAP" />
                         <apex:outputpanel >
                         <apex:inputField id="tdap" value="{!Evaluation__c.TDAP__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.tdapExplain}&quot;, &quot;{!$Component.tdapWhere}&quot;]}" />
@@ -1035,11 +1048,14 @@
                         <apex:inputField value="{!Evaluation__c.TDAP_Where_and_When__c}" label="Where and When" id="tdapWhere" />
                         </apex:outputpanel>
                         </apex:pageBlockSectionItem>
-                        <apex:pageBlockSectionItem />
+
                     </apex:pageBlockSection>
 
-                    <apex:pageBlockSection Columns="1" title="Isolation">
-                        <apex:inputField value="{!Evaluation__c.Isolation__c}" label="Requires Isolation" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.isolationType}&quot;, &quot;{!$Component.isolationReason}&quot;]}" />
+                    <apex:pageBlockSection Columns="1" title="Pediatric Immunization History">
+                    	<apex:inputField value="{!Evaluation__c.Vaccination_Info_Sheet_Provided__c}" />	
+                    	<apex:inputField value="{!Evaluation__c.Vaccination_Pneumococcal__c}" />
+                    	<apex:inputField value="{!Evaluation__c.Vaccination_Flu__c}" />
+                    	<apex:inputField value="{!Evaluation__c.Isolation__c}" label="Requires Isolation" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.isolationType}&quot;, &quot;{!$Component.isolationReason}&quot;]}" />
                         <apex:inputField value="{!Evaluation__c.DiagnosisIsolation_Type__c}" id="isolationType" />
                         <apex:inputField value="{!Evaluation__c.Isolation_Reason_and_Site__c}" id="isolationReason" />
                     </apex:pageBlockSection>
@@ -1739,9 +1755,9 @@
                     </apex:outputPanel>
                     </apex:pageBlockSectionItem>
 
-                    <apex:inputField value="{!Evaluation__c.Intact__c}" html-data-rules="{&quot;0&quot; : [&quot;#divBodyMap&quot;]}"/>
+                    <apex:inputField value="{!Evaluation__c.Intact__c}" onchange="handleIntact(this.value);" />
 
-                    <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;" id="divBodyMap" >
+                    <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
                         <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!baseUrl + URLFOR($Resource.WholeBodyNoGrid)}" id="bodyMap" />
                     </div>
                     <div style="margin-left: 420px; height: 298px; overflow: auto;">

@@ -256,9 +256,8 @@ hr {
                     </apex:pageBlockSection>
 
                     <apex:pageBlockSection columns="2" Title="Immunization History">
-                        <apex:outputField value="{!Evaluation__c.Vaccination_Info_Sheet_Provided__c}" />
-                        <apex:outputField value="{!Evaluation__c.Immunization_N_A__c}"
-                            label="N/A" />
+                        <apex:outputField value="{!Evaluation__c.Immunization_N_A__c}" label="N/A" />
+                        <apex:outputText value="" />
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel for="pneumo" value="Pneumococcal" />
                             <apex:outputPanel >
@@ -289,7 +288,10 @@ hr {
 
                     </apex:pageBlockSection>
 
-                    <apex:pageBlockSection Columns="1" title="Isolation">
+                    <apex:pageBlockSection Columns="1" title="Pedatric Immunization History">
+                        <apex:outputField value="{!Evaluation__c.Vaccination_Info_Sheet_Provided__c}" />
+                        <apex:outputField value="{!Evaluation__c.Vaccination_Pneumococcal__c}" />
+                        <apex:outputField value="{!Evaluation__c.Vaccination_Flu__c}" />
                         <apex:outputField value="{!Evaluation__c.Isolation__c}"
                             label="Requires Isolation" />
                         <apex:outputField value="{!Evaluation__c.DiagnosisIsolation_Type__c}" />
@@ -743,8 +745,7 @@ hr {
                             </apex:outputPanel>
                         </apex:pageBlockSectionItem>
 
-                        <apex:outputField value="{!Evaluation__c.Intact__c}"
-                            html-data-rules="{&quot;0&quot; : [&quot;#divBodyMap&quot;]}" />
+                        <apex:outputField value="{!Evaluation__c.Intact__c}" />
 
                         <div
                             style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
