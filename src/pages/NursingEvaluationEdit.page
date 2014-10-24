@@ -1144,14 +1144,14 @@
 
                          <apex:pageblockSectionItem >
                             <apex:outputLabel value="Breath Sounds" styleClass="labelCol" />
-                            <apex:selectCheckboxes value="{!selectedSounds}" id="checkOther" layout="pageDirection">
+                            <apex:selectCheckboxes value="{!selectedSounds}" id="breathesound" layout="pageDirection" onchange="handleOther('breathesound')">
                                 <apex:selectOptions value="{!breatheSounds}" />
                             </apex:selectCheckboxes>
                          </apex:pageblockSectionItem>
                          <apex:outputtext value="" />
                          <apex:pageBLockSectionItem helpText="{!$ObjectType.Evaluation__c.Fields.Breathe_Sound_Other__c.inlineHelpText}">
-                            <apex:outputlabel for="breathesoundOther" value="If Other Describe" />
-                            <apex:inputField value="{!Evaluation__c.Breathe_Sound_Other__c}" id="breathesoundOther"/>
+                            <apex:outputlabel for="breathesoundother" value="If Other Describe" />
+                            <apex:inputField value="{!Evaluation__c.Breathe_Sound_Other__c}" id="breathesoundother"/>
                          </apex:pageBLockSectionItem>
                    </apex:pageBlockSection>
                  <apex:pageBlockSection columns="2" title="Trach">
@@ -1180,7 +1180,7 @@
 
 
                          <apex:inputField value="{!Evaluation__c.Cuffed__c}" id="cuffed" />
-                         <apex:inputField value="{!Evaluation__c.PMV__c}" id="pmv" />
+                         <apex:inputField value="{!Evaluation__c.PMV__c}" id="pmv"  html-data-rules="{&quot;1&quot;: [&quot;{!$Component.plugInitiated}&quot;, &quot;{!$Component.plugDuration}&quot;]}"/>
 
                          <apex:pageBlockSectionItem >
                          <apex:outputLabel for="trachplugged" value="Trach Plugged<br /><br />Initiated<br /><br />Duration" escape="False" />
@@ -1222,12 +1222,16 @@
 
                 <apex:pageBlockSection columns="2" title="Ventilator">
                          <apex:inputField value="{!Evaluation__c.Ventilator__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.ventilatorMode}&quot;, &quot;{!$Component.ventilatorRate}&quot;, &quot;{!$Component.FIO2}&quot;, &quot;{!$Component.peep}&quot;, &quot;{!$Component.tv}&quot;, &quot;{!$Component.ps}&quot;, &quot;{!$Component.cpap}&quot;, &quot;{!$Component.bipap}&quot;, &quot;{!$Component.bipapRate}&quot;, &quot;{!$Component.patientToBringBiPAP}&quot;, &quot;{!$Component.weaningTrial}&quot;, &quot;{!$Component.ventilatorResults}&quot;, &quot;{!$Component.ventilatorType}&quot;, &quot;{!$Component.ventilatorType}&quot;, &quot;{!$Component.ventilatorOther}&quot;]}" />
-                         <apex:outputtext value="" />
-
-                         <apex:inputField value="{!Evaluation__c.Ventilator_Type__c}" id="ventilatorType" style="margin-left:10px;" html-data-rules="{&quot;Intermittent&quot;: &quot;{!$Component.interSchedule}&quot;}"/>
-                         <apex:inputField value="{!Evaluation__c.Ventilator_Mode__c}" id="ventilatorMode" />
-                         <apex:inputField value="{!Evaluation__c.If_Intermittent_Schedule__c}" id="interSchedule" style="margin-left:10px;"/>
-
+                         <apex:pageBlockSectionItem>
+                         <apex:outputLabel value="Ventilator Type<br /><br />Schedule" escape="false" />
+                         <apex:outputPanel>
+                         <apex:inputField value="{!Evaluation__c.Ventilator_Type__c}" id="ventilatorType" style="margin-left:10px;" html-data-rules="{&quot;Intermittent&quot;: &quot;{!$Component.interSchedule}&quot;}" /><br />
+                          <apex:inputField value="{!Evaluation__c.If_Intermittent_Schedule__c}" id="interSchedule" style="margin-left:10px;"/>
+                         </apex:outputPanel>
+                         </apex:pageBlockSectionItem>
+                        <apex:outputText label ="Settings" value=""/><apex:outputText value="" />
+                         <apex:inputField value="{!Evaluation__c.Ventilator_Mode__c}" id="ventilatorMode" /><br />
+                         
                          <apex:inputField value="{!Evaluation__c.Ventilator_Rate__c}" id="ventilatorRate" />
                          <apex:inputField value="{!Evaluation__c.FIO2__c}" id="FIO2" />
                          <apex:inputField value="{!Evaluation__c.PEEP__c}" id="peep" />
