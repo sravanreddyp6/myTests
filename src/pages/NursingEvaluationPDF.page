@@ -361,6 +361,7 @@
         <apex:inputhidden value="{!Evaluation__c.Glasses_For_Multi_Focal_Use__c}" />
         <apex:inputhidden value="{!Evaluation__c.Glasses_for_other__c}" />
         <apex:inputhidden value="{!Evaluation__c.Contacts_Type__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Contacts_Maximum_Wear_Time__c}" />
         <apex:inputhidden value="{!Evaluation__c.Pain_History__c}" />
         <apex:inputhidden value="{!Evaluation__c.Pain_Level_Requiring_Intervention__c}" />
         <apex:inputhidden value="{!Evaluation__c.Alleviating_Factors__c}" />
@@ -1364,6 +1365,7 @@
          <apex:outputText value="For Multifocal Use;" rendered="{!Evaluation__c.Glasses_For_Multi_Focal_Use__c}" />
          <apex:outputText value="For Other;" rendered="{!Evaluation__c.Glasses_for_other__c}" />
          <apex:dynamiccomponent componentvalue="{!ctlmap['contacts_type__c']}" />
+         <apex:dynamiccomponent componentvalue="{!ctlmap['contacts_maximum_wear_time__c']}" />
          <br />
          <apex:outputLabel value="Does Resident Have Contacts or Glasses at Facility?" styleclass="label"/>
          <apex:outputField value="{!Evaluation__c.Resident_Contacts_Glasses_at_Facility__c}" label="Does Resident Have Contacts or Glasses at Facility?" /><br />
