@@ -361,6 +361,7 @@
         <apex:inputhidden value="{!Evaluation__c.Glasses_For_Multi_Focal_Use__c}" />
         <apex:inputhidden value="{!Evaluation__c.Glasses_for_other__c}" />
         <apex:inputhidden value="{!Evaluation__c.Contacts_Type__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Contacts_Maximum_Wear_Time__c}" />
         <apex:inputhidden value="{!Evaluation__c.Pain_History__c}" />
         <apex:inputhidden value="{!Evaluation__c.Pain_Level_Requiring_Intervention__c}" />
         <apex:inputhidden value="{!Evaluation__c.Alleviating_Factors__c}" />
@@ -462,6 +463,7 @@
         <apex:inputhidden value="{!Evaluation__c.Cultural_Preferences__c}" />
         <apex:inputhidden value="{!Evaluation__c.Preferred_Method_of_Learning__c}" />
         <apex:inputhidden value="{!Evaluation__c.Resident_Coping_Well__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Coping_Description__c}" />
         <apex:inputhidden value="{!Evaluation__c.Resident_Demonstrating_Issues__c}" />
         <apex:inputhidden value="{!Evaluation__c.Harm_Describe__c}" />
         <apex:inputhidden value="{!Evaluation__c.Harm_Reported_to__c}" />
@@ -1252,7 +1254,7 @@
         <apex:outputLabel value="Mositure" styleClass="label" /> 
         <apex:outputText value="{!Evaluation__c.Skin_Moisture__c}" label="Mositure"/><br/>
         <apex:outputLabel value="Edema" styleClass="label" /> 
-        <apex:outputText value="{!Evaluation__c.Skin_Edema__c}" label="Edema"/>&nbsp;<apex:outputLabel value="Location" styleClass="label" /><apex:outputText value="{!Evaluation__c.Skin_Edema_Location__c}" label="Edema Location"/><br/>
+        <apex:outputText value="{!Evaluation__c.Skin_Edema__c}" label="Edema"/>&nbsp;<apex:outputLabel value="Location" styleClass="label" /><apex:outputText value="{!Evaluation__c.Skin_Edema_Location__c}" label="Edema Location"/>&nbsp;<apex:outputLabel value="Pitting" styleClass="label" /><apex:outputText value="{!Evaluation__c.Skin_Edema_Pitting__c}" /><br/>
         <apex:dynamiccomponent componentvalue="{!ctlmap['peripheral_capillary_refill_location__c']}" />
         <apex:dynamiccomponent componentvalue="{!ctlmap['peripheral_capillary_refill_of_seconds__c']}" />
     </td><td width="50%" style="vertical-align:top">
@@ -1363,6 +1365,7 @@
          <apex:outputText value="For Multifocal Use;" rendered="{!Evaluation__c.Glasses_For_Multi_Focal_Use__c}" />
          <apex:outputText value="For Other;" rendered="{!Evaluation__c.Glasses_for_other__c}" />
          <apex:dynamiccomponent componentvalue="{!ctlmap['contacts_type__c']}" />
+         <apex:dynamiccomponent componentvalue="{!ctlmap['contacts_maximum_wear_time__c']}" />
          <br />
          <apex:outputLabel value="Does Resident Have Contacts or Glasses at Facility?" styleclass="label"/>
          <apex:outputField value="{!Evaluation__c.Resident_Contacts_Glasses_at_Facility__c}" label="Does Resident Have Contacts or Glasses at Facility?" /><br />
@@ -1881,6 +1884,7 @@
     </td>
     <td style="vertical-align:top">
     	<apex:dynamiccomponent componentvalue="{!ctlmap['resident_coping_well__c']}" /><br/>
+    	<apex:dynamiccomponent componentvalue="{!ctlmap['coping_description__c']}" /><br/>
         <apex:dynamiccomponent componentvalue="{!ctlmap['resident_demonstrating_issues__c']}" />
     </td>
     </tr>
@@ -1924,7 +1928,7 @@
         <apex:dynamiccomponent componentvalue="{!ctlmap['can_he_she_hear__c']}" /><br />
         <apex:dynamiccomponent componentvalue="{!ctlmap['can_he_she_read__c']}" /><br />
         <apex:dynamiccomponent componentvalue="{!ctlmap['can_he_she_write__c']}" /><br />
-        <apex:outputLabel value="If Rancho Level is>2 or LOC is Alert/Delayed/Lethargic<br />Resident Oriented to the Following" styleClass="label" escape="false"/>
+        <apex:outputLabel value="Resident Oriented to the Following" styleClass="label" />
         <apex:outputText value="{!Evaluation__c.Rancho_level_Resident_Orientation__c}" label="Resident Oriented to the following"/><br />
         <apex:dynamiccomponent componentvalue="{!ctlmap['preferred_method_of_learning__c']}" /><br/>
         <apex:dynamiccomponent componentvalue="{!ctlmap['resident_s_communication_status__c']}" />&nbsp;<apex:outputText value="{!Evaluation__c.Resident_s_communication_Status_Other__c}" />
@@ -1989,9 +1993,9 @@
         <apex:dynamiccomponent componentvalue="{!ctlmap['discharge_info_from__c']}" />
         <apex:dynamiccomponent componentvalue="{!ctlmap['prior_living_situation__c']}" />
         <apex:dynamiccomponent componentvalue="{!ctlmap['prior_living_situation_other__c']}" />
-        <apex:dynamiccomponent componentvalue="{!ctlmap['barriers_to_dc__c']}" />
         <apex:dynamiccomponent componentvalue="{!ctlmap['dc_plan__c']}" />
         <apex:dynamiccomponent componentvalue="{!ctlmap['dc_plan_other__c']}" />        
+        <apex:dynamiccomponent componentvalue="{!ctlmap['barriers_to_dc__c']}" />
     </apex:pageBlockSection>
     <br />        
         <apex:dynamiccomponent componentvalue="{!ctlmap['discharge_plan_comments__c']}" /><br/>

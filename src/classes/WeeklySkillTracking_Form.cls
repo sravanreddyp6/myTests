@@ -112,12 +112,19 @@ public with sharing class WeeklySkillTracking_Form {
         	return null;
         } 
         else {
+        	
+        	// clear viewstate off current page
+        	PageReference currpage = ApexPages.currentPage();
+        	Id id = currpage.getParameters().get('Id');
+       		currpage.getParameters().clear();
+       		currpage.getParameters().put('Id', id);  
+       
         	PageReference page = new PageReference('/apex/Notes_ProgressNote_Create?plan=' + result.Action_plan__c + 
                                                 '&service_assignment=' + result.Action_plan__r.Service_Assignment__c +
                                                 '&admission=' + result.Action_Plan__r.Service_Assignment__r.Admission__c +
                                                 '&person=' + result.Action_Plan__r.Service_Assignment__r.Admission__r.Person_Being_Served__c +
                                                 '&state=' + result.Action_Plan__r.Service_Assignment__r.Admission__r.State__c +
-                                                '&retURL=' +ApexPages.currentPage().getURL());
+                                                '&retURL=' + currpage.getURL());
 
         
         
