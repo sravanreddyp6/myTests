@@ -231,8 +231,14 @@
                              </tr>
                          </apex:repeat>
                      </apex:outputPanel>
-                     <apex:outputPanel rendered="{!oresult.isSkill}">                         
-                         <apex:outputPanel >
+                     <apex:outputPanel rendered="{!oresult.isSkill}">
+                         <apex:outputPanel rendered="{!editable}">
+                             <c:Skill_Summary_Table met_objective_count="{!oresult.asSkillResult.MetCount}" 
+                                    not_met_objective_count="{!oresult.asSkillResult.NotMetCount}"
+                                    effective_date="{!Action_Summary__c.Start_Date__c}"
+                                    target_date="{!Action_Summary__c.End_Date__c}"/>
+                         </apex:outputPanel>
+                         <apex:outputPanel rendered="{!!editable}">
                              <c:Skill_Summary_Table met_objective_count="{!oresult.Objective_Comment.Met_Objective_Count__c}" 
                                     not_met_objective_count="{!oresult.Objective_Comment.Not_Met_Count__c}"
                                     effective_date="{!Action_Summary__c.Start_Date__c}"
@@ -240,7 +246,12 @@
                          </apex:outputPanel>
                      </apex:outputPanel>
                      <apex:outputPanel rendered="{!oresult.isOccurrenceBehavior}">
-                         <apex:outputPanel >
+                         <apex:outputPanel rendered="{!editable}">
+                             <c:Skill_Summary_Table occurrences="{!oresult.asBehaviorResult.Occurrences}"
+                                    effective_date="{!Action_Summary__c.Start_Date__c}"
+                                    target_date="{!Action_Summary__c.End_Date__c}"/>
+                         </apex:outputPanel>
+                         <apex:outputPanel rendered="{!!editable}">
                              <c:Skill_Summary_Table occurrences="{!oresult.Objective_Comment.Occurrences__c}"
                                     effective_date="{!Action_Summary__c.Start_Date__c}"
                                     target_date="{!Action_Summary__c.End_Date__c}"/>
