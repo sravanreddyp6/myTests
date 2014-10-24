@@ -637,8 +637,8 @@
         
         <table style="width:80%">
         <tr><td colspan="2" style="border:1px solid black"><apex:outputText value="Immunization History" styleClass="labelCol"/></td></tr>
-        <tr><td><apex:dynamiccomponent componentValue="{!ctlmap['vaccination_info_sheet_provided__c']}" /></td>
-        <td><apex:dynamiccomponent componentValue="{!ctlmap['immunization_n_a__c']}" /></td>
+        <tr>
+        <td colspan="2"><apex:dynamiccomponent componentValue="{!ctlmap['immunization_n_a__c']}" /></td>
         </tr>
         <tr>
         <td><apex:dynamiccomponent componentValue="{!ctlmap['pneumococcal__c']}" />
@@ -652,14 +652,12 @@
         </tr>
         </table>
 
-        <apex:pageBlockSection columns="1">      
-		<apex:dynamiccomponent componentValue="{!ctlmap['vaccination_pneumococcal__c']}" />
-		<apex:dynamiccomponent componentValue="{!ctlmap['vaccination_flu__c']}" />
-		</apex:pageBlockSection>   
-		   
         <table style="width:80%">
-        <tr><td style="border:1px solid black"><apex:outputText value="Isolation" styleClass="labelCol"/></td></tr>
+        <tr><td style="border:1px solid black"><apex:outputText value="Pediatric Immunization History" styleClass="labelCol"/></td></tr>
+        <tr><td><apex:dynamiccomponent componentValue="{!ctlmap['vaccination_info_sheet_provided__c']}" /></td></tr>
         <tr><td>
+		<apex:dynamiccomponent componentValue="{!ctlmap['vaccination_pneumococcal__c']}" /><br />
+		<apex:dynamiccomponent componentValue="{!ctlmap['vaccination_flu__c']}" /><br />
         <apex:dynamiccomponent componentValue="{!ctlmap['isolation__c']}" id="isolation"/><br/>
         <apex:dynamiccomponent componentValue="{!ctlmap['diagnosisisolation_type__c']}" /><br />
         <apex:dynamiccomponent componentValue="{!ctlmap['isolation_reason_and_site__c']}" /><br />
