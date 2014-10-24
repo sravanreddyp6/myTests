@@ -216,6 +216,16 @@
                     eval(this.href);
                 });*/
             }
+            beforeEvaluationSave = function () {
+                // Temporarily enable all the disabled fields before saving the
+                // record, so that they are included in the POST to the server.
+                $('body select, body input').each(function (_, target) {
+                    $target = $(target);
+                    if ($target.prop("disabled")) {
+                        $target.prop("disabled", false);
+                    }
+                });
+            }
             setUpFields();
         });
 
@@ -242,8 +252,17 @@
                 nextTab = 'psychoSocialTab';
 
             return nextTab;
-            }
+        }
 
+        function saveRecord() {
+            beforeEvaluationSave();
+            saveAction();
+        }
+
+        function changeTab(tabName) {
+            beforeEvaluationSave();
+            changeTabAction(tabName);
+        }
     </script>
 
 
@@ -335,23 +354,18 @@
             if(inc!= null && inc!='')
                 inctocm = inc*2.54;
             return inctocm;
-
-
         }
-
-
-
      </script>
-
 
     <div class="breadcrumb">
         <a href="/">Home</a> > <a href="/{!Evaluation__c.Referral__c}">Referral: {!Evaluation__c.Referral__r.Name}</a> > <a href="/{!Evaluation__c.Id}">Evaluation: {!Evaluation__c.Name}</a>
     </div>
     <apex:form id="wholePage">
         <apex:pageMessages id="pageMessages" />
-        <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); removeSpacer(); scrollToTop();" rerender="pageMessages, wholeTabPanel, buttons">
+        <apex:actionFunction action="{!changeTab}" name="changeTabAction" status="pageProcessing" oncomplete="setUpFields(); removeSpacer(); scrollToTop();" rerender="pageMessages, wholeTabPanel, buttons">
             <apex:param name="nextTab" assignTo="{!nextTab}" value="" />
         </apex:actionFunction>
+        <apex:actionFunction action="{!save}" name="saveAction" />
         <apex:tabPanel value="{!selectedTab}" id="wholeTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
             <apex:tab label="Demographics" name="demographicsTab" ontabenter="changeTab('demographicsTab'); return false;" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
@@ -1076,7 +1090,7 @@
         <apex:pageBlock id="buttons">
             <apex:pageBlockButtons location="bottom">
                 <apex:commandButton value="Save & Continue" onclick="changeTab(getNextTab('{!selectedTab}')); return false;" rendered="{! selectedTab != 'psychoSocialTab'}" />
-                <apex:commandButton action="{!save}" value="Save" />
+                <apex:commandButton onclick="saveRecord(); " value="Save" />
                 <apex:commandButton onclick="window.location='/apex/NeuroEvaluationView?id={!Evaluation__c.Id}&tab={!selectedTab}'; return false;" value="Cancel" />
                 <!-- apex:commandButton value="Generate Paper Form" action="{!generatePaperForm}" rerender="pageMessages" onclick="jQuery('[id$=pdfGenerationSpinner]').show();" oncomplete="downloadPaperForm('{!pdfExistenceUrl}');" /-->
                 <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" style="display: none;" id="pdfGenerationSpinner" />
