@@ -200,12 +200,19 @@ public with sharing class BehaviorTracking_Form{
         	return null;
         } 
         else {
+        	
+        	// clear viewstate off current page
+        	PageReference currpage = ApexPages.currentPage();
+        	Id id = currpage.getParameters().get('Id');
+       		currpage.getParameters().clear();
+       		currpage.getParameters().put('Id', id);  
+       		
         	PageReference page = new PageReference('/apex/Notes_ProgressNote_Create?plan=' + worksheet.Action_plan__c + 
                                                 '&service_assignment=' + worksheet.Action_plan__r.Service_Assignment__c +
                                                 '&admission=' + worksheet.Action_Plan__r.Service_Assignment__r.Admission__c +
                                                 '&person=' + worksheet.Action_Plan__r.Service_Assignment__r.Admission__r.Person_Being_Served__c +
                                                 '&state=' + worksheet.Action_Plan__r.Service_Assignment__r.Admission__r.State__c +
-                                                '&retURL=' +ApexPages.currentPage().getURL());
+                                                '&retURL=' + currpage.getURL());
 
         
         
