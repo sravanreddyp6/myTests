@@ -463,6 +463,7 @@ hr {
                             <apex:outputText id="venttype"
                                 value="{!Evaluation__c.Ventilator_Type__c & if( Evaluation__c.Ventilator_Type__c == 'Intermittent', ' - schedule: ' & Evaluation__c.If_Intermittent_Schedule__c, '' )}" />
                         </apex:pageBlockSectionItem>
+                        <apex:outputText label="Settings" value=""/><apex:outputText value="" />
                         <apex:outputField value="{!Evaluation__c.Ventilator_Mode__c}" />
                         <apex:outputField value="{!Evaluation__c.Ventilator_Rate__c}" />
                         <apex:outputField value="{!Evaluation__c.FIO2__c}" />
