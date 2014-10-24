@@ -573,6 +573,7 @@
                 if ($element.attr('multiple') == 'multiple' && ($element.attr('id').endsWith('_selected') || $element.attr('id').endsWith('_unselected'))) {
                     return;
                 }
+                var enabledFields = [];
                 var rules = $element.data("rules");
                 rules && $.each(rules, function (key, value) {
                     var $targets = [];
@@ -592,11 +593,18 @@
                             } else {
                                 $target.prop("disabled", false);
                             }
+                            enabledFields.push($target.get(0));
                         });
                     } else {
                         // Disable fields
                         $.each($targets, function (_, $target) {
                             // We also need to revert the field(s) to their original state
+							// One exception: if the field has been enabled by one of the
+							// earlier rules, then don't disable it!
+							if ($.inArray($target.get(0), enabledFields) != -1) {
+     							return;
+							}
+                            
                             if ($target.attr("multiple")) {
                                 // Simulate removing all the selected options
                                 $(document.getElementById($target.attr('id') + '_selected')).find('option').attr('selected', 'selected');
