@@ -1754,8 +1754,8 @@
                         <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Edema" />
                         <apex:outputPanel >
-                        <apex:inputField value="{!Evaluation__c.Skin_Edema__c}" label="Edema" html-data-rules="{&quot;Yes&quot;: [&quot;{!$Component.edemaLocation}&quot;]}" />
-                        <apex:outputText styleClass="labelCol" value="Location" /><apex:inputField value="{!Evaluation__c.Skin_Edema_Location__c}" label="Edema Location" id="edemaLocation" />
+                        <apex:inputField value="{!Evaluation__c.Skin_Edema__c}" label="Edema" html-data-rules="{&quot;Yes&quot;: [&quot;{!$Component.edemaLocation}&quot;,&quot;{!$Component.edemaPitting}&quot;]}" />
+                        <apex:outputText styleClass="labelCol" value="Location" /><apex:inputField value="{!Evaluation__c.Skin_Edema_Location__c}" label="Edema Location" id="edemaLocation" />  <apex:outputText styleClass="labelCol" value="Pitting" /><apex:inputField value="{!Evaluation__c.Skin_Edema_Pitting__c}" label="Pitting" id="edemaPitting" />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:inputField value="{!Evaluation__c.Skin_Behavior__c}" label="Behavior" />
