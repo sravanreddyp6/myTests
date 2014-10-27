@@ -55,7 +55,7 @@ private class Notes_ProgressNote_Create_Flavor_PDFTEST {
 	        insert testServCode;
 	        
 	        
-	        List<RecordType> pnRecordTypes = [SELECT Id, Name FROM RecordType WHERE SObjectType = 'Progress_Note__c'];
+	        List<RecordType> pnRecordTypes = [SELECT Id, Name, DeveloperName FROM RecordType WHERE SObjectType = 'Progress_Note__c' AND IsActive = true];
 	        
 	        System.Debug('What is in pnRecordTypes: ' + pnRecordTypes);
 	        
@@ -66,7 +66,7 @@ private class Notes_ProgressNote_Create_Flavor_PDFTEST {
 	       		
 	       		pnsToInsertCounter++;
 	       		
-	       		  if(pnsToInsertCounter==pnRecordTypes.size()){
+	       		  if(pnsToInsertCounter==pnRecordTypes.size() && rt.DeveloperName!= 'NC_TFC' && rt.DeveloperName!= 'NC_Wks_1_6_TFC'){
 		       		  pnsToInsert.add( 
 			       		  new Progress_Note__c(
 				          Service_Assignment__c = testServAssignment.Id, 
@@ -80,8 +80,40 @@ private class Notes_ProgressNote_Create_Flavor_PDFTEST {
 				          RecordTypeId = rt.Id)
 			        );
 	       		}
-		        else {
+	       		 else if(pnsToInsertCounter==pnRecordTypes.size() && (rt.DeveloperName == 'NC_TFC' || rt.DeveloperName == 'NC_Wks_1_6_TFC')){
+	       			pnsToInsert.add( 
+			       		  new Progress_Note__c(
+				          Service_Assignment__c = testServAssignment.Id, 
+				          Service_Code__c = testServCode.Id, 
+				          Admission__c = testAdm.ID,
+				          Start_Time__c = datetime.now().addHours(-2),
+				          End_Time__c = datetime.now(),
+				          Person_Being_Served__c = testContact.Id,
+				          No_Approval_Needed__c = true,
+				          Approval_Status__c = 'Approved',
+				          Purpose_Service_is_Billable__c = false, //Avoid hitting validation rule.
+				          RecordTypeId = rt.Id)
+			        );
+	       			
+	       		}
+		        else if(pnsToInsertCounter!=pnRecordTypes.size() && (rt.DeveloperName == 'NC_TFC' || rt.DeveloperName == 'NC_Wks_1_6_TFC')){
 		       		  pnsToInsert.add( 
+			       		  new Progress_Note__c(
+				          Service_Assignment__c = testServAssignment.Id, 
+				          Service_Code__c = testServCode.Id, 
+				          Admission__c = testAdm.ID,
+				          Start_Time__c = datetime.now().addHours(-2),
+				          End_Time__c = datetime.now(),
+				          Person_Being_Served__c = testContact.Id,
+				          No_Approval_Needed__c = false,
+				          Approval_Status__c = 'Approved',
+				          Purpose_Service_is_Billable__c = false, //Avoid hitting validation rule.
+				          RecordTypeId = rt.Id)
+			        );
+		        } 
+		        
+		        else {
+		        	pnsToInsert.add( 
 			       		  new Progress_Note__c(
 				          Service_Assignment__c = testServAssignment.Id, 
 				          Service_Code__c = testServCode.Id, 
@@ -93,7 +125,8 @@ private class Notes_ProgressNote_Create_Flavor_PDFTEST {
 				          Approval_Status__c = 'Approved',
 				          RecordTypeId = rt.Id)
 			        );
-		        } 
+		        	
+		        }
 		        
 		             	
 	       	}

@@ -59,19 +59,7 @@
         border:1px solid #cccccc; 
         color:#000000;
         cursor: text;
-    }        
-    
-    select[readonly]{
-    border: none;
-    background: none;
-    -webkit-appearance: none;
-    cursor: text;
-    }
-
-	select[readonly] option{
-	    display:none;
-    }
-    
+    }    
 </style>
 
 <c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" servAssignId="{!theServAssign.Id}" parentPage="ServAssign" servAssignNew="{!newSA}" admId="{!admissionId}"  />
@@ -164,10 +152,10 @@
 	<apex:param name="fundingId" value="" assignTo="{!fundingSource.Id}" />
 </apex:actionFunction>
 <apex:actionFunction action="{!changeToModel}" name="changeToModel" rerender="ContractAssoc, ProgAssoc" status="SaveStatus1"/>
-<apex:outputText value="{!theServAssign.Person_Being_Served__c}" rendered="false"/>
+<apex:inputhidden value="{!theServAssign.Person_Being_Served__c}" rendered="{!canEditSA}" />
 <!-- To set focus on Top -->
 <input id="hiddenElementId" type="hidden" />
-<apex:outputText id="phaseToSave" value="{!theServAssign.Phase__c}" rendered="false"/>
+<apex:inputhidden id="phaseToSave" value="{!theServAssign.Phase__c}" rendered="{!canEditSA}" />
     <apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}" rerender="pbDiagnosis,diagnosisModal,diagnosisEntry,diagnosisEntry2,msgs"/>
     <apex:actionFunction name="showAddDiagnosis" action="{!showAddDiagnosis}" oncomplete="openDialog('diagnosisModal', 'span', 'Add Diagnosis');" rerender="pbDiagnosis,modalWrapper,diagnosisEntry,diagnosisEntry2,ServAssignDetail,AOServAssignDetail,msgs" />
     <apex:actionFunction name="showEditDiagnosis" action="{!showEditDiagnosis}" oncomplete="loadDiagnosis('{!diagEditId}');" rerender="pbDiagnosis,modalWrapper,diagnosisEntry,diagnosisEntry2,ServAssignDetail,AOServAssignDetail,msgs" >
@@ -319,28 +307,31 @@
 <!--         </apex:actionregion> -->
         </apex:pageblocksectionitem>
     </apex:pageBlockSection>
-    
-    
+   
     <apex:pageBlockSection title="Contract Association" 
                              showHeader="true"
                              columns="3"
                              collapsible="false"
                              id="ContractAssoc"
-                             rendered="{!!showLocation && !AssessmentOnly}">            
-        <apex:pageBlockSectionItem >
+                             rendered="{!!showLocation && !AssessmentOnly && !vfVarIsCM}">            
+        <apex:pageBlockSectionItem rendered="{!editSA}">
             <apex:outputLabel value="Contract" />
-            <apex:selectList id="chooseContract" value="{!associatedContractID}" size="1" multiselect="false" readonly="{!!editSA}">
+            <apex:selectList id="chooseContract" value="{!associatedContractID}" size="1" multiselect="false">
                 <apex:selectOptions value="{!contractsList}"/>
             </apex:selectList>
-        </apex:pageBlockSectionItem>        
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem rendered="{!!editSA}">
+            <apex:outputLabel value="Contract" />
+            <apex:outputText value="{!associatedContractName}" />
+        </apex:pageBlockSectionItem>                
     </apex:pageBlockSection>
-     
+    
     <apex:pageBlockSection title="Program Association"
                              showHeader="true"
                              columns="1"
                              collapsible="false"
                              id="ProgAssocViewNEW"
-                             rendered="{!!editSA && !showLocation}" >
+                             rendered="{!!editSA && !showLocation && vfVarIsCB}" >
     <hr />
                 <apex:outputText id="saProgram" value="{!theServAssign.Program__c}" />
         <apex:outputPanel id="ProgAssocPanelView2NEW" layout="block" styleClass="col" rendered="{!!editSA && !showLocation }" >
@@ -379,7 +370,7 @@
                              columns="1"
                              collapsible="false"
                              id="ProgAssoc"
-                             rendered="{!editSA && !showLocation}">
+                             rendered="{!editSA && !showLocation && vfVarIsCB}">
                         
             <apex:outputPanel id="ProgAssocPanelEdit" layout="block" styleClass="col" rendered="{!editSA}" >
                 <apex:actionStatus id="myStatus">
@@ -396,10 +387,10 @@
                 <apex:pageBlockTable value="{!programRows}" var="pR" id="ProgramAssocTableNEW" rendered="{!theServAssign.Program__c=='IFCS'}">
                     <apex:column headerValue="{!IF(editSA,'Select','Selected')}">
                         <apex:outputPanel rendered="{!(pR.paPhase<>999 && pR.paPhase==theServAssign.Phase__c)}">
-                            <input id="PhaseRadio" name="PhaseRadioEdit" type="radio" value="{!theServAssign.Phase__c}" onclick="SetHiddenPhase({!pR.paPhase});" checked="checked" />
+                            <input id="PhaseRadio" name="PhaseRadioEdit" type="radio" value="{!theServAssign.Phase__c}" onclick="SetHiddenPhase('{!theServAssign.Id}','{!pR.paPhase}');" checked="checked" />
                         </apex:outputPanel>
                         <apex:outputPanel rendered="{!(pR.paPhase<>999 && pR.paPhase<>theServAssign.Phase__c)}">
-                            <input id="PhaseRadio" name="PhaseRadioEdit" type="radio" value="{!theServAssign.Phase__c}" onclick="SetHiddenPhase({!pR.paPhase});" />
+                            <input id="PhaseRadio" name="PhaseRadioEdit" type="radio" value="{!theServAssign.Phase__c}" onclick="SetHiddenPhase('{!theServAssign.Id}','{!pR.paPhase}');" />
                         </apex:outputPanel>
                     </apex:column>
                     <apex:column headerValue="Phase of Treatment">
@@ -422,10 +413,8 @@
                     </apex:column>
                 </apex:pageBlockTable>
              </apex:outputPanel>
-
- 
-    </apex:pageBlockSection>
-
+    </apex:pageBlockSection>    
+   
 <apex:outputPanel style="display:none">
     <apex:actionregion >
 	    <apex:inputText id="currentProgramID" value="{!currentProgramID}" >
@@ -889,9 +878,9 @@ END: Uncomment to have the element collapsed by default -->
 
     </apex:pageBlockSection>
     </apex:pageBlock>
-    <apex:pageBlock title="Nurses Assessment" rendered="{!showNurseAssessment && !editSA}">
+    <apex:pageBlock title="Admission and Shift Assessments" rendered="{!showNurseAssessment && !editSA}">
     		<div class="pbHeaderButton">
-    			<apex:CommandButton value="Nurses Assessment" rendered="{!(evaluations == null || evaluations.size=0) && Service_Assignment__c.Status__c!='Inactive'}" action="{!addNurAssessment}"/>
+    			<apex:CommandButton value="Admission and Shift Assessment" rendered="{!(evaluations == null || evaluations.size=0) && Service_Assignment__c.Status__c!='Inactive'}" action="{!addNurAssessment}"/>
     		</div>
     		<apex:pageBlockTable styleclass="pcBody-list" value="{!evaluations}" var="evs" rendered="{!evaluations.size>0}">
     			<apex:column headerValue="Action"><a href="/apex/NursingEvaluationEdit?id={!evs.Id}&tab=demographicsTab">Edit</a></apex:column>
@@ -906,12 +895,12 @@ END: Uncomment to have the element collapsed by default -->
       
   <!--  Notes section -->
   <a name="Notes" id="Notes"></a>
-    <apex:pageBlock id="Notes" title="Notes" rendered="{! !editSA}" >
+    <apex:pageBlock id="Notes" title="{!if(vfVarIsCM,'Shift Notes','Notes')}" rendered="{! !editSA}" >
     <div class="pbHeaderButton">
        <!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
            <apex:commandButton onclick="window.open('/apex/ActionPlan_GoalObjective_rpt?ID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{! notes.size!=0 && !vfVarIsCB}"  value="Goal/Objective Documentation" />
             <apex:commandButton rendered="{!ActivePlan.size = 1}" value="New Note"
-               onclick="window.open('{!$Page.Notes_ProgressNote_Create}?plan={!ActivePlan[0].id}&service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}', '_self'); return false;" />
+               onclick="window.open('{!$Page.Notes_ProgressNote_Create}?plan={!ActivePlan[0].id}&service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" />
     </div>
     <apex:pageBlockSection columns="1"
                              collapsible="false">
@@ -933,7 +922,7 @@ END: Uncomment to have the element collapsed by default -->
      <apex:outputPanel rendered="{!notes.size!=0}">Showing the 10 most recent notes click&nbsp;<apex:outputLink value="/a0L?id={!Service_Assignment__c.id}&rlid=00NU00000036mQ0&lsr=0" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
     </apex:pageBlockSection>
     </apex:pageBlock>
-
+    
 <!-- Start FAD Assessments -->
 <a name="Assessments_fad" id="assess_fad"></a>
 <apex:pageBlock id="Assessments_FAD" title="FAD Assessment Summaries" rendered="{! !editSA && Service_Assignment__c.Program__c ='IFCS' }" >
@@ -1274,27 +1263,35 @@ END: Uncomment to have the element collapsed by default -->
 <!-- end Funding sources section-->
 
  <apex:pageBlock title="Referral Detail" rendered="{!referral != null }">
- <apex:pageBlockSection columns="2" title="Originating Referral" collapsible="false">
- <apex:pageBlockSectionItem >
-  <apex:outputLabel value="Name" />
-  <apex:outputlink value="/{!referral.Id}">{!referral.name}</apex:outputlink>
-  </apex:pageBlockSectionItem>
- <apex:outputField value="{!referral.Referral_Date__c}" />
-     <apex:pageBlockSectionItem >
-    <apex:outputLabel value="Created By" />
-    <apex:outputPanel layout="none">
-    <apex:outputField value="{!referral.CreatedById}"  />, <apex:outputText value=" {!referral.CreatedDate}"/>
-    </apex:outputPanel>
-    </apex:pageBlockSectionItem>
-
-     <apex:pageBlockSectionItem >
-    <apex:outputLabel value="Last Modified By" />
-    <apex:outputPanel layout="none">
-     <apex:outputField value="{!referral.LastModifiedById}"  />, <apex:outputText value=" {!referral.LastModifiedDate}" />
-    </apex:outputPanel>
-    </apex:pageBlockSectionItem>
-
+ 	<apex:pageBlockSection columns="2" title="Originating Referral" collapsible="false">
+ 		<apex:pageBlockSectionItem >
+  			<apex:outputLabel value="Name" />
+  			<apex:outputlink value="/{!referral.Id}">{!referral.name}</apex:outputlink>
+  		</apex:pageBlockSectionItem>
+ 		<apex:outputField value="{!referral.Referral_Date__c}" />
+		<apex:pageBlockSectionItem rendered="{!!referral.Has_Evaluation__c && vfVarIsCM}" >
+ 			<apex:outputLabel value="Evaluation" />
+ 			<apex:outputText value="No Evaluation to display." />
+ 		</apex:pageBlockSectionItem>
+ 		<apex:pageBlockSectionItem rendered="{!referral.Has_Evaluation__c}">
+ 			<apex:outputLabel value="Evaluation" />
+ 			<apex:outputLink value="/apex/CareMeridianEvaluationView?id={!referral.Evaluations__r[0].Id}&SA_Id={!theServAssign.Id}" >{!referral.Evaluations__r[0].Name}</apex:outputLink>
+ 		</apex:pageBlockSectionItem>
+ 		<apex:pageBlockSectionItem rendered="{!vfVarIsCM}" />
+     	<apex:pageBlockSectionItem >
+    		<apex:outputLabel value="Created By" />
+    	<apex:outputPanel layout="none">
+    		<apex:outputField value="{!referral.CreatedById}"  />, <apex:outputText value=" {!referral.CreatedDate}"/>
+    	</apex:outputPanel>
+    	</apex:pageBlockSectionItem>
+    	 <apex:pageBlockSectionItem >
+    	<apex:outputLabel value="Last Modified By" />
+    	<apex:outputPanel layout="none">
+     	<apex:outputField value="{!referral.LastModifiedById}"  />, <apex:outputText value=" {!referral.LastModifiedDate}" />
+    	</apex:outputPanel>
+    	</apex:pageBlockSectionItem>
  </apex:pageBlockSection>
+ 
  <apex:pageBlockSection title="Funding Source" collapsible="false" columns="1"><br />
 	 <apex:pageBlockTable value="{!referralFundingsources}" var="item" rendered="{!(referralFundingsources != null || referralFundingsources.size > 0)}">
 		<apex:column value="{!item.name}"/>
@@ -1309,6 +1306,13 @@ END: Uncomment to have the element collapsed by default -->
  </apex:pageBlockSection>
 
  </apex:pageBlock>
+ 
+  <!--  Shift Summaries section -->
+    <a name="ShiftSummaries" id="shiftSummaries"></a>
+    	<apex:pageBlock title="Shift Summaries" rendered="{!!editSA && vfVarIsCM}" >
+    		<apex:outputText value="No Records to Display" />
+    	</apex:pageBlock>
+ <!-- End Shift Summaries -->   
 
 <!-- START: Service Assignment Closure Section; CTEAE-125 & CTEAE-126 -->
     <apex:pageBlock id="pbServAssignClose" title="Service Assignment Closure" rendered="{!showServAssignClose}">

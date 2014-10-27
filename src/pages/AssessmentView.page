@@ -5,7 +5,7 @@ function openWin(url){
 } 
 </script> 
 <apex:pageMessages />
-
+<apex:outputField value="{!Assessment__c.OWNERID}" style="display: none;"/>
 <apex:outputPanel id="AssmtDetail">
 <apex:detail subject="{!Assessment__c.ID}" relatedList="true" />
 </apex:outputPanel>

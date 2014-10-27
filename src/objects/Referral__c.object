@@ -66284,6 +66284,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>ISLA-Supported Living Residential%28Adult%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>ISLA-Supported Living Residential%28Child%29</fullName>
                 <default>false</default>
             </values>
@@ -80899,7 +80903,7 @@
     <validationRules>
         <fullName>Closed_Admitted_NoServiceLoc</fullName>
         <active>true</active>
-        <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;Closed&apos;) &amp;&amp; ISBLANK(Service_Location__c)</errorConditionFormula>
+        <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;Closed&apos;) &amp;&amp; ISPICKVAL(  Close_Reason__c , &apos;Admitted&apos;) &amp;&amp; ISBLANK(Service_Location__c)</errorConditionFormula>
         <errorMessage>Alias Field is blank: No Location has been selected, please add an Anticipated Admission Location.</errorMessage>
     </validationRules>
     <validationRules>

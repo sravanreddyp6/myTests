@@ -1,5 +1,7 @@
-public class ServAssignFidelityChecklistExt  {
-
+public without sharing class ServAssignFidelityChecklistExt  {
+	// SHAUN-50:  This code makes the assumption that it handles ONLY fidelity checklist checkoffs / display for a Service Assignment. The "without sharing" declaration IS intended.
+	//  J. Gilliam, 10/17/14
+	
     public Service_Assignment__c theServAssign { get; set; }
     public List<ServiceAssignment_Contract_JO__c> servAssignContractXrefs { get; set; }
     public List<Contract_Document_JO__c> contractDocXrefs { get; set; }

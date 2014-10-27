@@ -368,7 +368,8 @@ function highlightButtons ( btype, sfid, on )
 <div class="pbHeaderButton" style="top: 0px;" >     
         
         
-        <apex:commandButton value="View Detail" onClick="toggleByClass('action_row','action_row_on' ); return false;" styleClass="action_row_on" style="display: none;" rendered="{! !editMode}" /> 
+        <apex:commandButton value="View Detail" onClick="toggleByClass('action_row','action_row_on' ); return false;" styleClass="action_row_on" style="display: none;" rendered="{! !editMode}" />
+        <apex:commandButton value="Print" onClick="toggleById('printform'); return false;" styleClass="action_row_on" style="display: none;" rendered="{! !editMode}" />
         <apex:outputPanel styleClass="action_row">
         <apex:variable value="{!Action_Plan__c.Service_Assignment__r.Admission__c}" var="admID"/>
         <apex:commandButton value="View Summary" onClick="toggleByClass('action_row_on','action_row' ); return false;" rendered="{! !editMode}" />                
@@ -723,7 +724,7 @@ function highlightButtons ( btype, sfid, on )
         <apex:pageBlockButtons location="top" >
             <div class="pbHeaderButton" style="top: 0px;" >    
                 <apex:commandButton value="New Note" rendered="{!Action_Plan__c.Status__c = 'Active Final'}"
-                    onclick="window.open('{!$Page.Notes_ProgressNote_Create}?plan={!Action_Plan__c}&service_assignment={!Action_Plan__c.Service_Assignment__c}&admission={!Action_Plan__c.Service_Assignment__r.Admission__c}&person={!Action_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}&state={!Action_Plan__c.Service_Assignment__r.Admission__r.State__c}', '_self'); return false;" >
+                    onclick="window.open('{!$Page.Notes_ProgressNote_Create}?plan={!Action_Plan__c}&service_assignment={!Action_Plan__c.Service_Assignment__c}&admission={!Action_Plan__c.Service_Assignment__r.Admission__c}&person={!Action_Plan__c.Service_Assignment__r.Admission__r.Person_Being_Served__c}&state={!Action_Plan__c.Service_Assignment__r.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" >
                     
                         <apex:param value="{!Action_Plan__c.Service_Assignment__c}" name="service_assignment" />
                         <apex:param value="{!Action_Plan__c.Service_Assignment__r.Admission__c}" name="admission" />

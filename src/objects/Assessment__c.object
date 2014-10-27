@@ -40,7 +40,9 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>Tab</actionName>
-        <type>Default</type>
+        <content>assessment_tab</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
@@ -517,6 +519,56 @@ Delete Me</description>
         <type>Lookup</type>
     </fields>
     <fields>
+        <fullName>Service_Line__c</fullName>
+        <externalId>false</externalId>
+        <label>Service Line</label>
+        <picklist>
+            <picklistValues>
+                <fullName>TFC Vistas</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>TFC Non-Vistas</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>CI</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Day TX</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>FCT</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>FTS</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>GH</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>IIH</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>OPT</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Services_Required_Level_Day_Services__c</fullName>
         <externalId>false</externalId>
         <label>Level of Services Required for Day Servi</label>
@@ -661,7 +713,9 @@ Delete Me</description>
         <type>Text</type>
     </nameField>
     <pluralLabel>Assessments</pluralLabel>
-    <searchLayouts/>
+    <searchLayouts>
+        <excludedStandardButtons>New</excludedStandardButtons>
+    </searchLayouts>
     <sharingModel>Private</sharingModel>
     <validationRules>
         <fullName>Admission_Required</fullName>
@@ -694,6 +748,13 @@ Delete Me</description>
         <errorMessage>Assessment Date is required</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>CANS_SerivceLine_Req</fullName>
+        <active>false</active>
+        <errorConditionFormula>Assessment_Type__r.Name == &apos;CANS&apos; &amp;&amp; ISPICKVAL(Service_Line__c, &apos;&apos;)</errorConditionFormula>
+        <errorDisplayField>Service_Line__c</errorDisplayField>
+        <errorMessage>A value must be selected for Service Line when completing a CANS assessment.</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>IntervalRequired</fullName>
         <active>true</active>
         <description>A rule to require selection of an interval for each new assessment.</description>
@@ -703,7 +764,7 @@ Delete Me</description>
     <validationRules>
         <fullName>Locked</fullName>
         <active>true</active>
-        <errorConditionFormula>Locked__c &amp;&amp; IF(PRIORVALUE(Locked__c),true,false)</errorConditionFormula>
+        <errorConditionFormula>Locked__c &amp;&amp; IF(PRIORVALUE(Locked__c),true,false) &amp;&amp;  !ISCHANGED( OwnerId )</errorConditionFormula>
         <errorMessage>Locked Assessments Can Not be Updated</errorMessage>
     </validationRules>
     <validationRules>
@@ -717,7 +778,7 @@ ISBLANK(Approval_Date__c) &amp;&amp;
     </validationRules>
     <validationRules>
         <fullName>TFC_Family_Vistas_Selection_Required</fullName>
-        <active>true</active>
+        <active>false</active>
         <description>A validation rule that requires a selection be made from the TFC/Family Vistas picklist</description>
         <errorConditionFormula>Assessment_Type__r.Name == &apos;CANS&apos; &amp;&amp; NOT(OR(ISPICKVAL( TFC_Family_Vistas__c , &apos;Yes&apos;) ,ISPICKVAL( TFC_Family_Vistas__c , &apos;No&apos;) ))</errorConditionFormula>
         <errorDisplayField>TFC_Family_Vistas__c</errorDisplayField>
