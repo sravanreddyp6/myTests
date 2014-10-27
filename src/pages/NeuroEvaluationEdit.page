@@ -711,12 +711,17 @@
                             <apex:outputText value="" />
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.Weight_Bearing_Precautions__c}" id="weightBearingPrecautions" />
-                        <apex:pageBlockSectionItem />
-                        <apex:inputField value="{!Evaluation__c.Weight_Bearing_Precautions_Not_Available__c}"
-                            label="N/A"
-                            html-data-rules="{&quot;0&quot;: &quot;{!$Component.weightBearingPrecautions}&quot;}"
-                        />
+                        <apex:pageBlockSectionItem>
+                            <apex:outputLabel value="Weight Bearing Precautions" />
+                            <apex:outputPanel>
+                                <apex:inputField value="{!Evaluation__c.Weight_Bearing_Precautions__c}" id="weightBearingPrecautions" />
+                                <apex:outputLabel value="N/a" />
+                                <apex:inputField value="{!Evaluation__c.Weight_Bearing_Precautions_Not_Available__c}"
+                                    label="N/A"
+                                    html-data-rules="{&quot;0&quot;: &quot;{!$Component.weightBearingPrecautions}&quot;}"
+                                />
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Splint__c}"
                             html-data-rules="{&quot;1&quot;: [&quot;{!$Component.splintLocation}&quot;, &quot;{!$Component.splintFollowUpRequired}&quot;]}" />
