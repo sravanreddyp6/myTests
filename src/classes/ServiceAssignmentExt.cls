@@ -1,4 +1,4 @@
-public with sharing class ServiceAssignmentExt {
+public without sharing class ServiceAssignmentExt {
 
     public Service_Assignment__c theServAssign { get; set; }
 
