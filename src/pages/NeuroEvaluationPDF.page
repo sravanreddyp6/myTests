@@ -327,5 +327,120 @@
             </table>
         </apex:pageBlock>
         <hr />
+        <apex:pageBlock>
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 50%;"><h3>Elimination - Bladder</h3></td>
+                    <td><h3>Elimination - Bowel</h3></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['elimination_bladder_continent__c']}" />
+                    </td>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['elimination_bowel_continent__c']}" />
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Details" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Elimination_Bladder_No_Continent_Details__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Appliance" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Elimination_Bowel_No_Continent_Appliance__c}" />
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 50%; ">
+                        <apex:dynamiccomponent componentValue="{!ctlmap['shunt__c']}" />
+                    </td>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['permacath__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Date Placed" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Shunt_Date_Placed__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Date Placed" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Permacath_Date_Placed__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Location" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Shunt_Location__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Location" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Permacath_Location__c}" />
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <table style="width: 100%">
+                <tr>
+                    <td><apex:dynamiccomponent componentValue="{!ctlmap['g_tube__c']}" /></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Date Placed" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.G_Tube_Date_Placed__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Location" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.G_Tube_Location__c}" />
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <table style="width: 100%; ">
+                <tr>
+                    <td><apex:dynamiccomponent componentValue="{!ctlmap['nutrition_route__c']}" /></td>
+                </tr>
+                <tr>
+                    <td><apex:dynamiccomponent componentValue="{!ctlmap['diet__c']}" /></td>
+                </tr>
+                <tr>
+                    <td><apex:dynamiccomponent componentValue="{!ctlmap['thicken_liquids__c']}" /></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="If Yes" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Thicken_Liquids_Details__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td><apex:dynamiccomponent componentValue="{!ctlmap['tube_feed__c']}" /></td>
+                </tr>
+                <tr>
+                    <td><apex:dynamiccomponent componentValue="{!ctlmap['planned_removal__c']}" /></td>
+                </tr>
+            </table>
+            <hr />
+            <table style="width: 100%; ">
+                <tr>
+                    <td>
+                        <apex:outputLabel value="GU/GI/Nutrition Comments" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Nutrition_Comments__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="GU/GI/Nutrition Section Complete" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Nutrition_Section_Completed__c}" />
+                    </td>
+                </tr>
+            </table>
+        </apex:pageBlock>
     </apex:form>
 </apex:page>
