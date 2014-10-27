@@ -442,5 +442,54 @@
                 </tr>
             </table>
         </apex:pageBlock>
+        <apex:pageBlock title="Skin/Body">
+            <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" isPdf="true" />
+            <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Pressure Ulcer Detail" formId="{!$Component.wholePage}" uniqueId="pressureUlcer" isPdf="true" />
+            <hr />
+
+            <div style="page-break-before:always;"></div>
+            <h2 style="display: block; margin: 10px;">Body Map</h2>
+            <br /><br />
+            <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 3px; margin-top: 50px; height: 298px; ">
+                <apex:image width="318" height="298" style="float: left; border: 3px solid #ECECEC;" value="{!IF(bodyMapUrl=null, URLFOR($Resource.WholeBodyNoGrid), bodyMapUrl)}" id="bodyMap" />
+
+                <apex:variable var="index" value="{!1}" />
+                <apex:repeat value="{!annotations}" var="annotation">
+                    <div class='annotation-number'
+                        style="pointer-events: none;
+                        position: absolute;
+                        text-align: center;
+                        left: {!annotation.Annotation_X__c * 100}%;
+                        width: {!annotation.Annotation_Width__c * 100}%;
+                        top: {!annotation.Annotation_Y__c * 100}%;
+                        height: {!annotation.Annotation_Height__c * 100}%;
+                        border: 1px black solid;">
+                        <span style="color: red; font-size: 1em;">{!index}</span>
+                    </div>
+                    <apex:variable var="index" value="{!index+1}" />
+                </apex:repeat>
+
+
+            </div>
+            <div style="margin-left: 420px; height: 298px;">
+                <table id="annotations">
+                    <tbody>
+                        <apex:variable id="index" var="index" value="{!0}" />
+                        <apex:repeat value="{!annotations}" var="annotation">
+                            <apex:variable id="index" var="index" value="{!index+1}" />
+                            <tr><td>{!index}</td><td>{!annotation.Annotation_Text__c}</td></tr>
+                        </apex:repeat>
+                    </tbody>
+                </table>
+            </div>
+            <hr />
+
+            <apex:pageBlockSection columns="1" id="skinBodyFooter">
+                <apex:outputField value="{!Evaluation__c.Body_Map_Comments__c}" label="Other Body Map Comments" />
+                <br />
+                <apex:dynamiccomponent componentvalue="{!ctlmap['skin_body_comments__c']}" />
+                <apex:dynamiccomponent componentvalue="{!ctlmap['skin_section_completed__c']}" />
+            </apex:pageBlockSection>
+        </apex:pageBlock>
     </apex:form>
 </apex:page>

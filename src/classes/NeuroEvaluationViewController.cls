@@ -2,6 +2,19 @@ public with sharing class NeuroEvaluationViewController {
     public Evaluation__c evaluation { get; set; }
     public ApexPages.standardController stdController;
     public String selectedTab { get; set; }
+    public String bodyMapUrl {
+        get {
+            Attachment[] attachments = [
+                SELECT Id FROM Attachment
+                WHERE ParentId=:evaluation.Referral__c
+                  AND Name='BodyMarkup.png'
+            ];
+            if (attachments.size() > 0) {
+                return '/servlet/servlet.FileDownload?file=' + attachments[0].Id;
+            }
+            return null;
+        }
+    }
 
     public List<selectOption> hallValues {
         get {
