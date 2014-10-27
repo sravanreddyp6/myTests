@@ -73,7 +73,8 @@
                         <apex:param value="{!plan.Short_term_Goal__r.Plan__c}"  name="plan"/>
                         <apex:param value="{!plan.Service_Assignment__r.Admission__c}"  name="admission"/>
                         <apex:param value="{!plan.Service_Assignment__r.Person_Being_Served__c}"  name="person"/>
-                        <apex:param value="{!plan.Service_Assignment__r.Admission__r.State__c}"  name="State"/> 
+                        <apex:param value="{!plan.Service_Assignment__r.Admission__r.State__c}"  name="State"/>
+                        <apex:param value="{!$CurrentPage.URL}"  name="retURL"/>  
                     </apex:outputLink>
                 </td>                
             </tr>
@@ -102,7 +103,8 @@
                         <apex:param value="{!SA.ID}"  name="service_assignment"/>
                         <apex:param value="{!SA.Admission__c}"  name="admission"/>
                         <apex:param value="{!SA.Person_Being_Served__c}"  name="person"/>
-                        <apex:param value="{!SA.Admission__r.State__c}"  name="State"/>                         
+                        <apex:param value="{!SA.Admission__r.State__c}"  name="State"/>    
+                        <apex:param value="{!$CurrentPage.URL}"  name="retURL"/>                     
                     </apex:outputLink>
                 </td>                
             </tr>

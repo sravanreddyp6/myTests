@@ -83,6 +83,7 @@ public string dontShowFields {
             dontshow.Add('Advanced_Directives__c');
             dontshow.Add('Code_Status__c');
             dontshow.Add('Code_Status_Other__c');
+            dontshow.Add('Advanced_Directives_Attached__c');
 		}
 		return ' ' + String.Join(dontshow, ',');
 	}

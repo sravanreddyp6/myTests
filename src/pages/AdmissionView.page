@@ -55,7 +55,7 @@
     </apex:pageBlock>
 
     <br />
-    <apex:pageBlock title="Authorizations" >
+    <apex:pageBlock title="Authorizations" rendered="{!!isCM}">
         <apex:pageBlockTable styleclass="pbBody-list"  value="{!admission.Authorized_Services__r}" var="item" rendered="{!(admission.Authorized_Services__r!=null && admission.Authorized_Services__r.size>0)}">
             <apex:column ><apex:facet name="header">Authorization ID</apex:facet><apex:outputlink value="/{!item.id}">{!item.name}</apex:outputlink></apex:column>
             <apex:column value="{!item.Authorization_Status__c}"/>
@@ -69,7 +69,7 @@
         <apex:outputText value="No records to display" rendered="{!(admission.Authorized_Services__r==null || admission.Authorized_Services__r.size=0)}" />
         </apex:pageBlock>
     <a name="Asmt" id="Asmt" ></a>
-<apex:pageBlock title="Assessments">
+<apex:pageBlock title="Assessments" rendered="{!!isCM}">
         <div class="pbHeaderButton">
             <!-- <apex:commandButton rendered="{!assessmentTypes['CANS']}" onclick="window.open('/a0d/e?CF00NU00000036vU3={!admission.Name}&CF00NU00000036vU3_lkid={!admission.ID}', '_self'); return false;" value="New CANS Assessment" />&nbsp;&nbsp; -->
             <apex:commandButton rendered="{!(assessmentTypes['CANS'] &&  canCreateAsmt )&& showCans }" onclick="window.open('/apex/assessment_CANSdetail?admission={!admission.ID}&type={!CANsID}', '_self'); return false;" value="New CANS Assessment" />&nbsp;&nbsp;

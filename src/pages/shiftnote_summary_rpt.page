@@ -43,8 +43,9 @@
 &nbsp;
 </apex:outputPanel>
 </apex:outputPanel>
-<apex:outputPanel layout="block" style="width: 401px; float: left; padding: 15px;">
-<apex:form ><apex:pageMessages id="messages" ></apex:pageMessages>
+<apex:outputPanel layout="block" style="width: 650px; float: left; padding: 15px;">
+<apex:form >
+<apex:pageMessages id="messages" ></apex:pageMessages>
 <apex:pageBlock title="Shift Note Summary Report">
     <apex:pageBlockButtons >
         
@@ -69,12 +70,45 @@
        </apex:selectList> 
        </apex:pageBlockSection>
        <apex:actionRegion >
-       <apex:pageBlockSection id="pbsOPTS"  title="Person Being Served" columns="1" collapsible="false" >
-           <apex:outputPanel layout="block" style="padding-left: 159px;" >
+       
+       <apex:pageBlockSection id="programs" title="Programs (Please select one or more Programs from the below list to view clients.)" columns="1" collapsible="false" >
+	    <apex:outputpanel >
+	    	<table>
+		        <tr><td>
+		        <apex:selectList id="selectprograms" value="{!selectedPrograms}" size="7" multiselect="true" style="min-width:235px">
+		            <apex:selectOptions value="{!programslist}"/>
+		        </apex:selectList>
+		        </td><td style="vertical-align:middle">
+		        <apex:commandButton value="add" 
+						            action="{!AddPrograms}" 
+						            reRender="programs, pbsOPTS" 
+						            status="myStatus"
+						            oncomplete="createtbl()"
+						            style="height: 25px; width: 35px;"/><br/>
+		        <apex:commandButton value="remove" 
+						            action="{!RemovePrograms}" 
+						            reRender="programs, pbsOPTS" 
+						            status="myStatus"
+						            oncomplete="createtbl()"
+						            style="height: 25px; width: 50px;"/>		             
+		        </td><td>
+		        <apex:selectList id="select2" value="{!select2PrmIds}" size="7" multiselect="true" style="min-width:235px">
+		        	<apex:selectOptions value="{!select2list}" />
+				</apex:selectList>
+		        </td></tr>
+	 		</table>                   
+		</apex:outputPanel>
+       </apex:pageBlockSection>       
+       
+       
+       <apex:pageBlockSection id="pbsOPTS"  title="Person Being Served (Please select one or more names from the list.)" columns="1" collapsible="false" >
+           <apex:outputPanel layout="block" style="padding-left: 200px;" >
                <apex:commandLink action="{!selectAllPbs}" value="Select All" reRender="pbsOPTS, tbl_maker" status="myStatus" oncomplete="createtbl()" />
                <br/><apex:commandLink action="{!clearSelectedPbs}" value="Clear Selected" reRender="pbsOPTS, tbl_maker" status="myStatus" oncomplete="createtbl()" />
             </apex:outputPanel>
         <apex:outputPanel >
+        
+        
            <br/>               
                <apex:selectCheckboxes html-class="mytbl2" value="{!selectedPBS }" layout="pageDirection" >
                    <apex:selectOptions value="{!PBSlsit }"></apex:selectOptions>
@@ -108,9 +142,7 @@
                  Note: 
              </td>
              <td>
-                 <apex:outputLink value="/{!n.id}">
-                     {!n.name}
-                 </apex:outputLink>                 
+             <a href="/{!n.id}">{!n.name}</a>                 
              </td>             
          </tr>
          <tr>
@@ -118,7 +150,7 @@
                  Start Date/Time:
              </td>
              <td>
-                 <apex:outputField value="{!n.Start_Time__c}"/> 
+	             <apex:outputField value="{!n.Start_Time__c}"/>
              </td>
          </tr>  
          <tr>
@@ -126,7 +158,7 @@
                  End Date/Time:
              </td>
              <td>
-                 <apex:outputField value="{!n.End_Time__c}"/> 
+	             <apex:outputField value="{!n.End_Time__c}"/>
              </td>
          </tr>  
           
@@ -136,23 +168,19 @@
                  Written By:
              </td>
              <td>
-                 <apex:outputField value="{!n.CreatedById}"/> 
+	             <apex:outputField value="{!n.CreatedById}"/>
              </td>
          </tr> 
        
          
          <tr>
              <td class="left_col" >
-                  <apex:outputPanel layout="block"  style="width: 100%; text-align: left;">
                      Narrative:
-                 </apex:outputPanel>                   
              </td>
              <td>
-
-          
-                 <apex:outputPanel layout="block" style=" ">
-                     <apex:outputField value="{!n.Narrative__c}"/> 
-                 </apex:outputPanel>
+				<div>
+					{!n.Narrative__c}
+				</div>
              </td>
          </tr> 
          
@@ -165,18 +193,18 @@
                  <apex:outputField value="{!n.Healthcare_Medical_Note__c}"/> 
              </td>
          </tr> 
-         
-                  
+
          <tr>
              <td class="left_col">
                 Goals/Objectives :
              </td>         
              <td  >
                  <apex:repeat value="{!Note_Goals[n.id]}" var="g">
-                     <apex:outputField value="{!g.Goal__r.Description__c}" />
+                 	{!g.Goal__r.Description__c}
                      <br/>
                          <apex:repeat value="{!Note_Objs[n.id + g.Goal__c]}" var="o">
-                             &nbsp;&nbsp;<apex:outputField value="{!o.Objective__r.Description__c}" />
+                             &nbsp;&nbsp;
+                             {!o.Objective__r.Description__c}
                              <br/>
                          </apex:repeat>
                  </apex:repeat>
@@ -185,10 +213,8 @@
       </table>              
      </apex:pageBlock>                                
      </apex:repeat> 
-     
 
 </apex:outputPanel>
-
        
 <apex:actionStatus id="myStatus" >
     <apex:facet name="start">
@@ -214,13 +240,10 @@ function createtbl(){
 }
 j$(document).ready(function(){
     createtbl();
-     j$('#int').fastLiveFilter('#search_list');
+	j$('#int').fastLiveFilter('#search_list');
     // j$('testing').filterTable();
-    
-    
 });
 
-    
 var tableToExcel = (function() {
   var uri = 'data:application/vnd.ms-excel;base64,'
     , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'

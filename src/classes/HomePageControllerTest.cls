@@ -155,4 +155,57 @@ private class HomePageControllerTest{
         Test.stopTest();
     }
 
+	// SHAUN-47:  Method added to test new code that checks for presence of TMN_User__c record, and throws error on ESD Home page if not present. J. Gilliam, 10/16/14.
+    static testMethod void testTmnUserCheck() { 
+        Profile prof = [select id, name from Profile where name ='System Administrator'];
+        User testUserAlpha = new User(alias = 'testAlp',
+                                email='testAlpha@thementornetwork.com',
+                                emailencodingkey='UTF-8',
+                                lastname='TestAlphaLastName',firstname='TestAlphaFirstName', languagelocalekey='en_US',
+                                localesidkey='en_US',
+                                profileid = prof.Id,
+                                timezonesidkey='America/New_York',
+                                username='testAlpha' + System.currentTimeMillis() + '@thementornetwork.com');
+        insert testUserAlpha;
+    	
+    	List<TMN_User__c> tmnUserRecs = [ SELECT Id FROM TMN_User__c WHERE Salesforce_User_Account__c = :testUserAlpha.Id LIMIT 1 ];
+    	Integer countTmnUsers = 0;
+    	for(TMN_User__c tu : tmnUserRecs) {
+    		countTmnUsers++;
+    	}
+    	
+    	System.assert(countTmnUsers==0);
+    	
+    	System.runAs(testUserAlpha) {
+	    	PageReference pageRef = Page.Home;
+	    	Test.setCurrentPage(pageRef);
+	    	
+	    	// Negative path test:  Confirm thrown error if user doesn't have a TMN_User__c record.
+	    	try {
+	    		HomePageController controller = new HomePageController();
+	    	}
+	    	catch(Exception e) {
+	    		Boolean expectedExceptionThrown =  e.getMessage().contains('ERROR: Your account must be reconfigured before you begin using the system. Please contact the Implementation Team at Implementation@thementornetwork.com or the IT Service Center at 888-774-4872.') ? true : false;
+				System.AssertEquals(expectedExceptionThrown, true);	
+	    	}
+	    	
+	    	TMN_User__c aTmnUserRec = new TMN_User__c(Salesforce_User_Account__c = testUserAlpha.Id);
+	    	insert aTmnUserRec;
+	    	
+	    	// Positive path test:  Confirm no error if user has a TMN_User__c record.
+	    	HomePageController controller2 = new HomePageController();	    	
+	    	
+	    	tmnUserRecs.clear();
+	    	tmnUserRecs = [ SELECT Id FROM TMN_User__c WHERE Salesforce_User_Account__c = :testUserAlpha.Id LIMIT 1 ];
+	    	countTmnUsers = 0;
+	    	for(TMN_User__c tu : tmnUserRecs) {
+	    		countTmnUsers++;
+	    	}
+	    	
+	    	// Further confirms that more than zero TMN_User__c records exist for our user when instantiation of the constructor succeeds.
+	    	System.assert(countTmnUsers>0);
+    	}
+    	
+    }
+
 }

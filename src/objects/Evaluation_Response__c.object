@@ -108,6 +108,11 @@
             <isFieldManaged>false</isFieldManaged>
             <isRequired>false</isRequired>
         </displayedFields>
+        <displayedFields>
+            <field>Life_Threatening__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
         <label>Allergy</label>
     </fieldSets>
     <fieldSets>
@@ -170,6 +175,11 @@
         </displayedFields>
         <displayedFields>
             <field>Allergy_Type__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Life_Threatening__c</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>false</isRequired>
         </displayedFields>
@@ -778,16 +788,15 @@
     </fields>
     <fields>
         <fullName>Evaluation__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
         <label>Evaluation</label>
         <referenceTo>Evaluation__c</referenceTo>
         <relationshipLabel>Evaluation Responses</relationshipLabel>
         <relationshipName>Evaluation_Responses</relationshipName>
-        <relationshipOrder>0</relationshipOrder>
-        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <required>false</required>
         <trackTrending>false</trackTrending>
-        <type>MasterDetail</type>
-        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Fracture_Type__c</fullName>
@@ -880,6 +889,14 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Life_Threatening__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Life Threatening</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>Location__c</fullName>
         <externalId>false</externalId>
         <label>Location</label>
@@ -970,6 +987,18 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>true</unique>
+    </fields>
+    <fields>
+        <fullName>Person_Being_Served__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Person Being Served</label>
+        <referenceTo>Contact</referenceTo>
+        <relationshipLabel>Evaluation Responses</relationshipLabel>
+        <relationshipName>Evaluation_Responses</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Position__c</fullName>
@@ -3033,5 +3062,5 @@
         </picklistValues>
     </recordTypes>
     <searchLayouts/>
-    <sharingModel>ControlledByParent</sharingModel>
+    <sharingModel>ReadWrite</sharingModel>
 </CustomObject>

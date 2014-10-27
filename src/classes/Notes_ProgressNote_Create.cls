@@ -24,7 +24,7 @@ public with sharing class Notes_ProgressNote_Create {
 
 //contructs
     public Notes_ProgressNote_Create(ApexPages.StandardController controller) {
-        myRTs = [select Name, Id, sObjectType, Description from RecordType where sObjectType = 'Progress_Note__c'];
+        myRTs = [select Name, Id, sObjectType, Description from RecordType where sObjectType = 'Progress_Note__c' ORDER BY Name];
         for (RecordType rt: myRTs) {
             if (rt.Name == 'AZ - OPT') {
                 AZ_OPT_ID = rt.Id;
@@ -75,7 +75,7 @@ public with sharing class Notes_ProgressNote_Create {
     }
     public Notes_ProgressNote_Create() {
         
-        myRTs = [select Name, Id, sObjectType, Description from RecordType where sObjectType = 'Progress_Note__c'];
+        myRTs = [select Name, Id, sObjectType, Description from RecordType where sObjectType = 'Progress_Note__c' ORDER BY Name];
         loadData();
         System.Debug('in void controller');
     }
@@ -137,11 +137,13 @@ public with sharing class Notes_ProgressNote_Create {
         ID planID = ApexPages.currentPage().getParameters().get('plan');
         ID admID = ApexPages.currentPage().getParameters().get('admission');
         ID saID = ApexPages.currentPage().getParameters().get('service_assignment');
+        string retURL = ApexPages.currentPage().getParameters().get('retURL');
         if ( pn.RecordTypeId == SHIFT_NOTE_ID ) {
             PageReference prShiftNote = Page.shiftnote_basic_form;
             prShiftNote.getParameters().put('planID', planId);
             prShiftNote.getParameters().put('admID', admId);
             prShiftNote.getParameters().put('saID', saID);
+            prShiftNote.getParameters().put('retURL', retURL);
             prShiftNote.setRedirect(true);
             return prShiftNote;
         }

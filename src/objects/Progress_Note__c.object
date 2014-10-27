@@ -925,6 +925,16 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Coord_support_for_Mentor_child__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>What will the coordinator do to help support the Mentor and child?</inlineHelpText>
+        <label>Coord. support for Mentor &amp; child?</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>TextArea</type>
+    </fields>
+    <fields>
         <fullName>Coordinating__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
@@ -1239,6 +1249,20 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Days_Since_Last_Modification__c</fullName>
+        <externalId>false</externalId>
+        <formula>TODAY() - datevalue( LastModifiedDate )</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Days Since Last Modification</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Dev_Impl_Home_Based_Support_Plan__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
@@ -1485,6 +1509,15 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Foster_Parents__c</fullName>
+        <externalId>false</externalId>
+        <label>Foster Parents</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>TextArea</type>
     </fields>
     <fields>
         <fullName>Funding_Source2__c</fullName>
@@ -2255,6 +2288,26 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <type>TextArea</type>
     </fields>
     <fields>
+        <fullName>PCP_update_since_last_visit__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>Was the PCP updated/edited/rewritten since the last visit?</inlineHelpText>
+        <label>PCP update since last visit?</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>People_Present__c</fullName>
         <description>Enter names of other people present with the person being served during this session.</description>
         <externalId>false</externalId>
@@ -2480,6 +2533,29 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <visibleLines>10</visibleLines>
     </fields>
     <fields>
+        <fullName>Provided_to_reviewed_w_foster_parents__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>If the PCP was updated/edited/rewritten since the last visit, was this provided to and reviewed with the foster parent?</inlineHelpText>
+        <label>Provided to/reviewed w/ foster parents?</label>
+        <picklist>
+            <controllingField>PCP_update_since_last_visit__c</controllingField>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <controllingFieldValues>Yes</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <controllingFieldValues>Yes</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Psychoeducation__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
@@ -2541,6 +2617,26 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <visibleLines>10</visibleLines>
     </fields>
     <fields>
+        <fullName>Purpose_of_this_Consultation__c</fullName>
+        <description>A field for NC TFC notes for storing a single purpose value from a picklist.  J. Gilliam used separate field form the multi-select purpose picklist because the requirement was for on option selected from a picklist for these TFC notes.</description>
+        <externalId>false</externalId>
+        <label>Purpose of this Consultation</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Ran_Away__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
@@ -2590,6 +2686,25 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Scheduling_Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Scheduling Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Unannounced Visit</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>School_Suspension__c</fullName>
@@ -3139,6 +3254,107 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Topic_Behavior_Management__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Behavior Management</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Topic_Diagnostic_Psycho_education__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Diagnostic Psycho-education</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Topic_Family_Interactions__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Family Interactions</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Topic_If_Other__c</fullName>
+        <externalId>false</externalId>
+        <label>If Other:</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Topic_Life_Book_Development__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Life Book Development</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Topic_Other__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Other</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Topic_Separation_Loss_and_Grief_Issues__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Separation, Loss and Grief Issues</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Topic_Shared_Parenting__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Shared Parenting</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Topic_Successful_Adaptation__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Successful Adaptation</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Topic_TFP_Rules_of_the_Road__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>TFP Rules of the Road</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Topic_Treatment_Goal_Review_PCP__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Treatment Goal Review (PCP)</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
     </fields>
     <fields>
         <fullName>Total_Time__c</fullName>
@@ -3783,6 +3999,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>PCP_update_since_last_visit__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Phases_of_Service_Delivery__c</picklist>
             <values>
                 <fullName>Phase 1</fullName>
@@ -3813,6 +4040,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Provided_to_reviewed_w_foster_parents__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Purpose_Nature_of_Service__c</picklist>
             <values>
                 <fullName>Care Coordination</fullName>
@@ -3836,6 +4074,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Purpose_of_this_Consultation__c</picklist>
+            <values>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Risk_Factors__c</picklist>
             <values>
                 <fullName>DENIED</fullName>
@@ -3847,6 +4096,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Scheduling_Status__c</picklist>
+            <values>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unannounced Visit</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -4384,6 +4644,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>PCP_update_since_last_visit__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Phases_of_Service_Delivery__c</picklist>
             <values>
                 <fullName>Phase 1</fullName>
@@ -4414,6 +4685,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Provided_to_reviewed_w_foster_parents__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Purpose_Nature_of_Service__c</picklist>
             <values>
                 <fullName>Care Coordination</fullName>
@@ -4437,6 +4719,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Purpose_of_this_Consultation__c</picklist>
+            <values>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Risk_Factors__c</picklist>
             <values>
                 <fullName>DENIED</fullName>
@@ -4448,6 +4741,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Scheduling_Status__c</picklist>
+            <values>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unannounced Visit</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -5025,6 +5329,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>PCP_update_since_last_visit__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Phases_of_Service_Delivery__c</picklist>
             <values>
                 <fullName>Phase 1</fullName>
@@ -5055,6 +5370,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Provided_to_reviewed_w_foster_parents__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Purpose_Nature_of_Service__c</picklist>
             <values>
                 <fullName>Care Coordination</fullName>
@@ -5078,6 +5404,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Purpose_of_this_Consultation__c</picklist>
+            <values>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Risk_Factors__c</picklist>
             <values>
                 <fullName>DENIED</fullName>
@@ -5089,6 +5426,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Scheduling_Status__c</picklist>
+            <values>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unannounced Visit</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -5666,6 +6014,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>PCP_update_since_last_visit__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Phases_of_Service_Delivery__c</picklist>
             <values>
                 <fullName>Phase 1</fullName>
@@ -5696,6 +6055,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Provided_to_reviewed_w_foster_parents__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Purpose_Nature_of_Service__c</picklist>
             <values>
                 <fullName>Care Coordination</fullName>
@@ -5719,6 +6089,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Purpose_of_this_Consultation__c</picklist>
+            <values>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Risk_Factors__c</picklist>
             <values>
                 <fullName>DENIED</fullName>
@@ -5730,6 +6111,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Scheduling_Status__c</picklist>
+            <values>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unannounced Visit</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -6001,7 +6393,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
     </recordTypes>
     <recordTypes>
         <fullName>MA_IFCS_Progress_Note</fullName>
-        <active>true</active>
+        <active>false</active>
         <description>Use this record type for Persons in MA for IFCS H2022 (IIH) service type.</description>
         <label>IFCS-MA - Progress Note</label>
         <picklistValues>
@@ -6281,6 +6673,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>PCP_update_since_last_visit__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Phases_of_Service_Delivery__c</picklist>
             <values>
                 <fullName>Phase 1</fullName>
@@ -6311,6 +6714,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Provided_to_reviewed_w_foster_parents__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Purpose_Nature_of_Service__c</picklist>
             <values>
                 <fullName>Care Coordination</fullName>
@@ -6334,6 +6748,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Purpose_of_this_Consultation__c</picklist>
+            <values>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Risk_Factors__c</picklist>
             <values>
                 <fullName>DENIED</fullName>
@@ -6345,6 +6770,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Scheduling_Status__c</picklist>
+            <values>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unannounced Visit</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -6910,6 +7346,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>PCP_update_since_last_visit__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Phases_of_Service_Delivery__c</picklist>
             <values>
                 <fullName>Phase 1</fullName>
@@ -6940,6 +7387,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Provided_to_reviewed_w_foster_parents__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Purpose_Nature_of_Service__c</picklist>
             <values>
                 <fullName>Care Coordination</fullName>
@@ -6963,6 +7421,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Purpose_of_this_Consultation__c</picklist>
+            <values>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Risk_Factors__c</picklist>
             <values>
                 <fullName>DENIED</fullName>
@@ -6974,6 +7443,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Scheduling_Status__c</picklist>
+            <values>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unannounced Visit</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7245,7 +7725,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
     </recordTypes>
     <recordTypes>
         <fullName>MD_IFCS_Progress_Note</fullName>
-        <active>true</active>
+        <active>false</active>
         <label>IFCS-MD - Progress Note</label>
         <picklistValues>
             <picklist>Appearance__c</picklist>
@@ -7524,6 +8004,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>PCP_update_since_last_visit__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Phases_of_Service_Delivery__c</picklist>
             <values>
                 <fullName>Phase 1</fullName>
@@ -7554,6 +8045,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Provided_to_reviewed_w_foster_parents__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Purpose_Nature_of_Service__c</picklist>
             <values>
                 <fullName>Care Coordination</fullName>
@@ -7577,6 +8079,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Purpose_of_this_Consultation__c</picklist>
+            <values>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Risk_Factors__c</picklist>
             <values>
                 <fullName>DENIED</fullName>
@@ -7588,6 +8101,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Scheduling_Status__c</picklist>
+            <values>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unannounced Visit</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -8139,6 +8663,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>PCP_update_since_last_visit__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Phases_of_Service_Delivery__c</picklist>
             <values>
                 <fullName>Phase 1</fullName>
@@ -8169,6 +8704,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Provided_to_reviewed_w_foster_parents__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Purpose_Nature_of_Service__c</picklist>
             <values>
                 <fullName>Care Coordination</fullName>
@@ -8192,6 +8738,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Purpose_of_this_Consultation__c</picklist>
+            <values>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Risk_Factors__c</picklist>
             <values>
                 <fullName>DENIED</fullName>
@@ -8203,6 +8760,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Scheduling_Status__c</picklist>
+            <values>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unannounced Visit</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -8750,6 +9318,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>PCP_update_since_last_visit__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Phases_of_Service_Delivery__c</picklist>
             <values>
                 <fullName>Phase 1</fullName>
@@ -8780,6 +9359,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Provided_to_reviewed_w_foster_parents__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Purpose_Nature_of_Service__c</picklist>
             <values>
                 <fullName>Care Coordination</fullName>
@@ -8803,6 +9393,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Purpose_of_this_Consultation__c</picklist>
+            <values>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Risk_Factors__c</picklist>
             <values>
                 <fullName>DENIED</fullName>
@@ -8814,6 +9415,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Scheduling_Status__c</picklist>
+            <values>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unannounced Visit</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -9357,6 +9969,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>PCP_update_since_last_visit__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Phases_of_Service_Delivery__c</picklist>
             <values>
                 <fullName>Phase 1</fullName>
@@ -9387,6 +10010,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Provided_to_reviewed_w_foster_parents__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Purpose_Nature_of_Service__c</picklist>
             <values>
                 <fullName>Care Coordination</fullName>
@@ -9410,6 +10044,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Purpose_of_this_Consultation__c</picklist>
+            <values>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Risk_Factors__c</picklist>
             <values>
                 <fullName>DENIED</fullName>
@@ -9421,6 +10066,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Scheduling_Status__c</picklist>
+            <values>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unannounced Visit</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -9964,6 +10620,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>PCP_update_since_last_visit__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Phases_of_Service_Delivery__c</picklist>
             <values>
                 <fullName>Phase 1</fullName>
@@ -9994,6 +10661,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Provided_to_reviewed_w_foster_parents__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Purpose_Nature_of_Service__c</picklist>
             <values>
                 <fullName>Care Coordination</fullName>
@@ -10017,6 +10695,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Purpose_of_this_Consultation__c</picklist>
+            <values>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Risk_Factors__c</picklist>
             <values>
                 <fullName>DENIED</fullName>
@@ -10028,6 +10717,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Scheduling_Status__c</picklist>
+            <values>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unannounced Visit</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -10546,6 +11246,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>PCP_update_since_last_visit__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Phases_of_Service_Delivery__c</picklist>
             <values>
                 <fullName>Phase 1</fullName>
@@ -10576,6 +11287,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Provided_to_reviewed_w_foster_parents__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Purpose_Nature_of_Service__c</picklist>
             <values>
                 <fullName>Care Coordination</fullName>
@@ -10599,6 +11321,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Purpose_of_this_Consultation__c</picklist>
+            <values>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Risk_Factors__c</picklist>
             <values>
                 <fullName>DENIED</fullName>
@@ -10610,6 +11343,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Scheduling_Status__c</picklist>
+            <values>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unannounced Visit</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -10880,8 +11624,1362 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         </picklistValues>
     </recordTypes>
     <recordTypes>
-        <fullName>NJ_Progress_Note</fullName>
+        <fullName>NC_TFC</fullName>
         <active>true</active>
+        <label>NC - TFC</label>
+        <picklistValues>
+            <picklist>Appearance__c</picklist>
+            <values>
+                <fullName>Casually Dressed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Disheveled</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Well Groomed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Approval_Status__c</picklist>
+            <values>
+                <fullName>Approved</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bypass</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Needs Refinement</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Submitted</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Pending</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Recalled by User</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Area_Family_Functioning__c</picklist>
+            <values>
+                <fullName>Affective Involvement</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Affective Responsiveness</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Behavior Control</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Communication</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Problem Solving</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Role Performance</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Behavior_Functioning__c</picklist>
+            <values>
+                <fullName>No Significant Changes Reported or Observed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Notable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Behavior__c</picklist>
+            <values>
+                <fullName>Agitated</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Calm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Cooperative</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Fidgety</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Silly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Uncooperative</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Child_Transported_Today__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Code__c</picklist>
+            <values>
+                <fullName>11</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>12</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>21</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>99</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Collateral_Contact__c</picklist>
+            <values>
+                <fullName>Biological Parent</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Case MGR%2E</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Case Worker</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Client%27s School</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Juvenile Justice Case MGR%2E</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Communication__c</picklist>
+            <values>
+                <fullName>Normal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Quiet</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Talkative</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>DYFS_Contacted__c</picklist>
+            <values>
+                <fullName>Case Worker</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hotline</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Eye_Contact__c</picklist>
+            <values>
+                <fullName>Fair</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Good</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Poor</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Level_of_Participation__c</picklist>
+            <values>
+                <fullName>Easily engaged</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Refused</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Resistant</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Condition__c</picklist>
+            <values>
+                <fullName>No Significant Changes Reported or Observed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Notable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medication_Informant__c</picklist>
+            <values>
+                <fullName>Assessed Medication Supply</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Reported by Consumer</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Reported by Other</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Mood_Affect__c</picklist>
+            <values>
+                <fullName>No Significant Changes Reported or Observed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Notable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Mood__c</picklist>
+            <values>
+                <fullName>Anxious</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Happy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sad</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>New_Issues_Presented__c</picklist>
+            <values>
+                <fullName>CA Updated Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>New Issue Resolved</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>None Reported</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>PCP_update_since_last_visit__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Phases_of_Service_Delivery__c</picklist>
+            <values>
+                <fullName>Phase 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Phase 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Phase 3</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Phase 4</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Procedure_Code_MA__c</picklist>
+            <values>
+                <fullName>H2019-HN</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>H2019-HO</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Provided_to_reviewed_w_foster_parents__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Purpose_Nature_of_Service__c</picklist>
+            <values>
+                <fullName>Care Coordination</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Collateral Contacts</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Member Outreach</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Member Transportation by Staff</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Telephone Crisis Response</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Purpose_of_this_Consultation__c</picklist>
+            <values>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Risk_Factors__c</picklist>
+            <values>
+                <fullName>DENIED</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hx of</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Scheduling_Status__c</picklist>
+            <values>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unannounced Visit</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Code_Modifier_1__c</picklist>
+            <values>
+                <fullName>GT</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HE</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HQ</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Code_Modifier_2__c</picklist>
+            <values>
+                <fullName>99</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>UK</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Frequency__c</picklist>
+            <values>
+                <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monthly %28TFC%29</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Location__c</picklist>
+            <values>
+                <fullName>Community</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Community Mental Health Center</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Court</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Day Program</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MR Intermediate Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical Facility</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Office</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>School</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Region_del__c</picklist>
+            <values>
+                <fullName>Central Region</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Cleveland Region</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Piedmont Region</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Triad Region</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Triangle Region</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>West Piedmont Region</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Winston Salem Region</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Signs_of_Decompensation__c</picklist>
+            <values>
+                <fullName>No signs of decomposition</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not able to assess at this time</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Status__c</picklist>
+            <values>
+                <fullName>Final</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>In Progress</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Substance_Abuse__c</picklist>
+            <values>
+                <fullName>NA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Significant Changes Reported or Observed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Notable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Taking_Medication_as_Prescribed__c</picklist>
+            <values>
+                <fullName>Not able to assess at this time</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not taking medication as prescribed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes taking medication as prescribed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Thought_Process_Orientation__c</picklist>
+            <values>
+                <fullName>No Significant Changes Reported or Observed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Notable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Thought_Process__c</picklist>
+            <values>
+                <fullName>Illogical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Logical</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type_of_Activity__c</picklist>
+            <values>
+                <fullName>Caregiver Education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Case Management Activities</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PCP-Development %28I%26O%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skill Building</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Therapy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly Team Meeting</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type_of_Contact__c</picklist>
+            <values>
+                <fullName>Collateral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Face-To-Face</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Phone</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type_of_Service__c</picklist>
+            <values>
+                <fullName>Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>NC_Wks_1_6_TFC</fullName>
+        <active>true</active>
+        <label>NC - Wks 1-6 TFC</label>
+        <picklistValues>
+            <picklist>Appearance__c</picklist>
+            <values>
+                <fullName>Casually Dressed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Disheveled</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Well Groomed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Approval_Status__c</picklist>
+            <values>
+                <fullName>Approved</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bypass</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Needs Refinement</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Submitted</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Pending</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Recalled by User</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Area_Family_Functioning__c</picklist>
+            <values>
+                <fullName>Affective Involvement</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Affective Responsiveness</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Behavior Control</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Communication</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Problem Solving</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Role Performance</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Behavior_Functioning__c</picklist>
+            <values>
+                <fullName>No Significant Changes Reported or Observed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Notable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Behavior__c</picklist>
+            <values>
+                <fullName>Agitated</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Calm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Cooperative</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Fidgety</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Silly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Uncooperative</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Child_Transported_Today__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Code__c</picklist>
+            <values>
+                <fullName>11</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>12</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>21</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>99</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Collateral_Contact__c</picklist>
+            <values>
+                <fullName>Biological Parent</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Case MGR%2E</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Case Worker</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Client%27s School</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Juvenile Justice Case MGR%2E</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Communication__c</picklist>
+            <values>
+                <fullName>Normal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Quiet</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Talkative</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>DYFS_Contacted__c</picklist>
+            <values>
+                <fullName>Case Worker</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hotline</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Eye_Contact__c</picklist>
+            <values>
+                <fullName>Fair</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Good</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Poor</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Level_of_Participation__c</picklist>
+            <values>
+                <fullName>Easily engaged</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Refused</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Resistant</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Condition__c</picklist>
+            <values>
+                <fullName>No Significant Changes Reported or Observed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Notable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medication_Informant__c</picklist>
+            <values>
+                <fullName>Assessed Medication Supply</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Reported by Consumer</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Reported by Other</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Mood_Affect__c</picklist>
+            <values>
+                <fullName>No Significant Changes Reported or Observed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Notable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Mood__c</picklist>
+            <values>
+                <fullName>Anxious</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Happy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sad</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>New_Issues_Presented__c</picklist>
+            <values>
+                <fullName>CA Updated Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>New Issue Resolved</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>None Reported</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>PCP_update_since_last_visit__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Phases_of_Service_Delivery__c</picklist>
+            <values>
+                <fullName>Phase 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Phase 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Phase 3</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Phase 4</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Procedure_Code_MA__c</picklist>
+            <values>
+                <fullName>H2019-HN</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>H2019-HO</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Provided_to_reviewed_w_foster_parents__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Purpose_Nature_of_Service__c</picklist>
+            <values>
+                <fullName>Care Coordination</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Collateral Contacts</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Member Outreach</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Member Transportation by Staff</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Telephone Crisis Response</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Purpose_of_this_Consultation__c</picklist>
+            <values>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Risk_Factors__c</picklist>
+            <values>
+                <fullName>DENIED</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hx of</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Scheduling_Status__c</picklist>
+            <values>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unannounced Visit</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Code_Modifier_1__c</picklist>
+            <values>
+                <fullName>GT</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HE</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HQ</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Code_Modifier_2__c</picklist>
+            <values>
+                <fullName>99</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>UK</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Frequency__c</picklist>
+            <values>
+                <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monthly %28TFC%29</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Location__c</picklist>
+            <values>
+                <fullName>Community</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Community Mental Health Center</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Court</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Day Program</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MR Intermediate Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical Facility</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Office</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>School</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Region_del__c</picklist>
+            <values>
+                <fullName>Central Region</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Cleveland Region</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Piedmont Region</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Triad Region</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Triangle Region</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>West Piedmont Region</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Winston Salem Region</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Signs_of_Decompensation__c</picklist>
+            <values>
+                <fullName>No signs of decomposition</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not able to assess at this time</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Status__c</picklist>
+            <values>
+                <fullName>Final</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>In Progress</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Substance_Abuse__c</picklist>
+            <values>
+                <fullName>NA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Significant Changes Reported or Observed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Notable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Taking_Medication_as_Prescribed__c</picklist>
+            <values>
+                <fullName>Not able to assess at this time</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not taking medication as prescribed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes taking medication as prescribed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Thought_Process_Orientation__c</picklist>
+            <values>
+                <fullName>No Significant Changes Reported or Observed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Notable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Thought_Process__c</picklist>
+            <values>
+                <fullName>Illogical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Logical</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type_of_Activity__c</picklist>
+            <values>
+                <fullName>Caregiver Education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Case Management Activities</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PCP-Development %28I%26O%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skill Building</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Therapy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly Team Meeting</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type_of_Contact__c</picklist>
+            <values>
+                <fullName>Collateral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Face-To-Face</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Phone</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type_of_Service__c</picklist>
+            <values>
+                <fullName>Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>NJ_Progress_Note</fullName>
+        <active>false</active>
         <description>Use this record type for Persons in NJ.</description>
         <label>NJ - Progress Note</label>
         <picklistValues>
@@ -11161,6 +13259,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>PCP_update_since_last_visit__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Phases_of_Service_Delivery__c</picklist>
             <values>
                 <fullName>Phase 1</fullName>
@@ -11191,6 +13300,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Provided_to_reviewed_w_foster_parents__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Purpose_Nature_of_Service__c</picklist>
             <values>
                 <fullName>Care Coordination</fullName>
@@ -11214,6 +13334,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Purpose_of_this_Consultation__c</picklist>
+            <values>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Risk_Factors__c</picklist>
             <values>
                 <fullName>DENIED</fullName>
@@ -11225,6 +13356,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Scheduling_Status__c</picklist>
+            <values>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unannounced Visit</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11790,6 +13932,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>PCP_update_since_last_visit__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Phases_of_Service_Delivery__c</picklist>
             <values>
                 <fullName>Phase 1</fullName>
@@ -11820,6 +13973,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Provided_to_reviewed_w_foster_parents__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Purpose_Nature_of_Service__c</picklist>
             <values>
                 <fullName>Care Coordination</fullName>
@@ -11843,6 +14007,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Purpose_of_this_Consultation__c</picklist>
+            <values>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Risk_Factors__c</picklist>
             <values>
                 <fullName>DENIED</fullName>
@@ -11854,6 +14029,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Scheduling_Status__c</picklist>
+            <values>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unannounced Visit</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12125,7 +14311,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
     </recordTypes>
     <recordTypes>
         <fullName>PA_BHRS_BSC</fullName>
-        <active>true</active>
+        <active>false</active>
         <description>Use this record type for Persons in Philadelphia and Delaware County for BHRS BSC service types.</description>
         <label>PA - BHRS (BSC) Progress Note</label>
         <picklistValues>
@@ -12405,6 +14591,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>PCP_update_since_last_visit__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Phases_of_Service_Delivery__c</picklist>
             <values>
                 <fullName>Phase 1</fullName>
@@ -12435,6 +14632,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Provided_to_reviewed_w_foster_parents__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Purpose_Nature_of_Service__c</picklist>
             <values>
                 <fullName>Care Coordination</fullName>
@@ -12458,6 +14666,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Purpose_of_this_Consultation__c</picklist>
+            <values>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Risk_Factors__c</picklist>
             <values>
                 <fullName>DENIED</fullName>
@@ -12469,6 +14688,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Scheduling_Status__c</picklist>
+            <values>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unannounced Visit</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12732,7 +14962,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
     </recordTypes>
     <recordTypes>
         <fullName>PA_BHRS_MT</fullName>
-        <active>true</active>
+        <active>false</active>
         <description>Use this record type for Persons in Philadelphia and Delaware County for BHRS MT service types.</description>
         <label>PA - BHRS (MT) Progress Note</label>
         <picklistValues>
@@ -13012,6 +15242,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>PCP_update_since_last_visit__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Phases_of_Service_Delivery__c</picklist>
             <values>
                 <fullName>Phase 1</fullName>
@@ -13042,6 +15283,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Provided_to_reviewed_w_foster_parents__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Purpose_Nature_of_Service__c</picklist>
             <values>
                 <fullName>Care Coordination</fullName>
@@ -13065,6 +15317,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Purpose_of_this_Consultation__c</picklist>
+            <values>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Risk_Factors__c</picklist>
             <values>
                 <fullName>DENIED</fullName>
@@ -13076,6 +15339,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Scheduling_Status__c</picklist>
+            <values>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unannounced Visit</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -13343,7 +15617,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
     </recordTypes>
     <recordTypes>
         <fullName>PA_CaseMgmnt_Progress_Note</fullName>
-        <active>true</active>
+        <active>false</active>
         <description>Use this record type for Persons in PA Case Management ICM/RC/CPS service types.</description>
         <label>PA - CaseMgmnt Progress Note</label>
         <picklistValues>
@@ -13623,6 +15897,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>PCP_update_since_last_visit__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Phases_of_Service_Delivery__c</picklist>
             <values>
                 <fullName>Phase 1</fullName>
@@ -13653,6 +15938,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Provided_to_reviewed_w_foster_parents__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Purpose_Nature_of_Service__c</picklist>
             <values>
                 <fullName>Care Coordination</fullName>
@@ -13676,6 +15972,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Purpose_of_this_Consultation__c</picklist>
+            <values>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Risk_Factors__c</picklist>
             <values>
                 <fullName>DENIED</fullName>
@@ -13687,6 +15994,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Scheduling_Status__c</picklist>
+            <values>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unannounced Visit</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -13950,7 +16268,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
     </recordTypes>
     <recordTypes>
         <fullName>PA_FBS_Progress_Note</fullName>
-        <active>true</active>
+        <active>false</active>
         <description>Use this record type for Persons in PA for FBS service types.</description>
         <label>PA - FBS Progress Note</label>
         <picklistValues>
@@ -14230,6 +16548,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>PCP_update_since_last_visit__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Phases_of_Service_Delivery__c</picklist>
             <values>
                 <fullName>Phase 1</fullName>
@@ -14260,6 +16589,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Provided_to_reviewed_w_foster_parents__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Purpose_Nature_of_Service__c</picklist>
             <values>
                 <fullName>Care Coordination</fullName>
@@ -14283,6 +16623,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Purpose_of_this_Consultation__c</picklist>
+            <values>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Risk_Factors__c</picklist>
             <values>
                 <fullName>DENIED</fullName>
@@ -14294,6 +16645,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Scheduling_Status__c</picklist>
+            <values>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unannounced Visit</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -14837,6 +17199,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>PCP_update_since_last_visit__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Phases_of_Service_Delivery__c</picklist>
             <values>
                 <fullName>Phase 1</fullName>
@@ -14867,6 +17240,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Provided_to_reviewed_w_foster_parents__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Purpose_Nature_of_Service__c</picklist>
             <values>
                 <fullName>Care Coordination</fullName>
@@ -14890,6 +17274,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Purpose_of_this_Consultation__c</picklist>
+            <values>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Risk_Factors__c</picklist>
             <values>
                 <fullName>DENIED</fullName>
@@ -14901,6 +17296,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Scheduling_Status__c</picklist>
+            <values>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unannounced Visit</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -15474,6 +17880,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>PCP_update_since_last_visit__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Phases_of_Service_Delivery__c</picklist>
             <values>
                 <fullName>Phase 1</fullName>
@@ -15504,6 +17921,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Provided_to_reviewed_w_foster_parents__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Purpose_Nature_of_Service__c</picklist>
             <values>
                 <fullName>Care Coordination</fullName>
@@ -15527,6 +17955,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Purpose_of_this_Consultation__c</picklist>
+            <values>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Risk_Factors__c</picklist>
             <values>
                 <fullName>DENIED</fullName>
@@ -15538,6 +17977,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Scheduling_Status__c</picklist>
+            <values>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unannounced Visit</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -15809,7 +18259,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
     </recordTypes>
     <recordTypes>
         <fullName>VA_IFCS_Progress_Note</fullName>
-        <active>true</active>
+        <active>false</active>
         <label>IFCS-VA - Progress Note</label>
         <picklistValues>
             <picklist>Appearance__c</picklist>
@@ -16088,6 +18538,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>PCP_update_since_last_visit__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Phases_of_Service_Delivery__c</picklist>
             <values>
                 <fullName>Phase 1</fullName>
@@ -16118,6 +18579,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Provided_to_reviewed_w_foster_parents__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Purpose_Nature_of_Service__c</picklist>
             <values>
                 <fullName>Care Coordination</fullName>
@@ -16141,6 +18613,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Purpose_of_this_Consultation__c</picklist>
+            <values>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Risk_Factors__c</picklist>
             <values>
                 <fullName>DENIED</fullName>
@@ -16152,6 +18635,17 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Scheduling_Status__c</picklist>
+            <values>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unannounced Visit</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -16526,6 +19020,14 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <errorMessage>Non-Payable Outcome checkbox is checked but no outcomes have been selected. Please select an outcome.</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>NC_TFC_Notes_Must_Be_Non_Billable</fullName>
+        <active>true</active>
+        <description>A validation rule to insure that Progress Notes with the &quot;NC - TFC&quot; or &quot;NC - Wks 1-6 TFC&quot; record types have Purpose_Service_is_Billable__c value of false.</description>
+        <errorConditionFormula>AND(OR(RecordType.DeveloperName = &apos;NC_TFC&apos;, RecordType.DeveloperName = &apos;NC_Wks_1_6_TFC&apos;), Purpose_Service_is_Billable__c = true)</errorConditionFormula>
+        <errorDisplayField>Purpose_Service_is_Billable__c</errorDisplayField>
+        <errorMessage>For NC - TFC and NC - Wks 1-6 TFC Progress Notes, the Purpose/Service is Billable field must be unchecked.  Please uncheck that field and try again.</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>No_future_dates</fullName>
         <active>true</active>
         <errorConditionFormula>RecordType.DeveloperName !=&apos;Shift_Note&apos; &amp;&amp; OR( (Date_of_Service__c &gt;  DATEVALUE( NOW() )),(  Start_Time__c   &gt; NOW() ) ,(   End_Time__c    &gt; NOW() ) )</errorConditionFormula>
@@ -16543,11 +19045,11 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <active>true</active>
         <description>A rule to make notes written 7 days or more after the start date non-billable by forcing an uncheck of the &quot;Purpose/Service is Billable&quot; checkbox if the state is NC.</description>
         <errorConditionFormula>IF( ISNEW() ,
-(($RecordType.DeveloperName  =  &apos;NC_Child_and_Family_Team&apos; ||  $RecordType.DeveloperName  = &apos;NC_IFCS_Progress_Note&apos;  ||  $RecordType.DeveloperName = &apos;NC_IIH_Progress_Note&apos; ||  $RecordType.DeveloperName = &apos;NC_IMAPP_Progress_Note&apos; || $RecordType.DeveloperName = &apos;NC_OPT_Progress_Note&apos;) &amp;&amp; ((  TODAY()   -     DATEVALUE(Start_Time__c  ) ) &gt;= 7) &amp;&amp;  Purpose_Service_is_Billable__c = true)
+(($RecordType.DeveloperName  =  &apos;NC_Child_and_Family_Team&apos; ||  $RecordType.DeveloperName  = &apos;NC_IFCS_Progress_Note&apos;  ||  $RecordType.DeveloperName = &apos;NC_IIH_Progress_Note&apos; ||  $RecordType.DeveloperName = &apos;NC_IMAPP_Progress_Note&apos; || $RecordType.DeveloperName = &apos;NC_OPT_Progress_Note&apos;) &amp;&amp; ((  TODAY()   -     DATEVALUE(Start_Time__c  ) ) &gt; 7) &amp;&amp;  Purpose_Service_is_Billable__c = true)
 ,
-(($RecordType.DeveloperName  =  &apos;NC_Child_and_Family_Team&apos; ||  $RecordType.DeveloperName  = &apos;NC_IFCS_Progress_Note&apos;  ||  $RecordType.DeveloperName = &apos;NC_IIH_Progress_Note&apos; ||  $RecordType.DeveloperName = &apos;NC_IMAPP_Progress_Note&apos; || $RecordType.DeveloperName = &apos;NC_OPT_Progress_Note&apos;) &amp;&amp; (( DATEVALUE(CreatedDate )  -    DATEVALUE(Start_Time__c ) ) &gt;= 7) &amp;&amp;  Purpose_Service_is_Billable__c = true)
+(($RecordType.DeveloperName  =  &apos;NC_Child_and_Family_Team&apos; ||  $RecordType.DeveloperName  = &apos;NC_IFCS_Progress_Note&apos;  ||  $RecordType.DeveloperName = &apos;NC_IIH_Progress_Note&apos; ||  $RecordType.DeveloperName = &apos;NC_IMAPP_Progress_Note&apos; || $RecordType.DeveloperName = &apos;NC_OPT_Progress_Note&apos;) &amp;&amp; (( DATEVALUE(CreatedDate )  -    DATEVALUE(Start_Time__c ) ) &gt; 7) &amp;&amp;  Purpose_Service_is_Billable__c = true)
 )</errorConditionFormula>
-        <errorMessage>Notes created 7 days or more after the start date for NC / IFCS-NC must have the Purpose/Service is Billable checkbox unchecked.  Please uncheck the Purpose/Service is Billable checkbox and attempt the save again.</errorMessage>
+        <errorMessage>Notes created more than 7 days after the start date for NC / IFCS-NC must have the Purpose/Service is Billable checkbox unchecked. Please uncheck the Purpose/Service is Billable checkbox and attempt the save again.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Start_Time_in_future</fullName>
@@ -16760,6 +19262,44 @@ window.location.href = &apos;/apex/Notes_ProgressNote_PDF_&apos; + recordType + 
         <url>/apex/Notes_ProgressNote_Esign_NC_OPT?id={!Progress_Note__c.Id}</url>
     </webLinks>
     <webLinks>
+        <fullName>E_Signature_NC_TFC</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <encodingKey>UTF-8</encodingKey>
+        <hasMenubar>false</hasMenubar>
+        <hasScrollbars>true</hasScrollbars>
+        <hasToolbar>false</hasToolbar>
+        <height>600</height>
+        <isResizable>true</isResizable>
+        <linkType>url</linkType>
+        <masterLabel>E-signature</masterLabel>
+        <openType>newWindow</openType>
+        <position>none</position>
+        <protected>false</protected>
+        <showsLocation>false</showsLocation>
+        <showsStatus>false</showsStatus>
+        <url>/apex/Notes_ProgressNote_Esign_NC_TFC?id={!Progress_Note__c.Id}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>E_Signature_NC_Wks16_TFC</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <encodingKey>UTF-8</encodingKey>
+        <hasMenubar>false</hasMenubar>
+        <hasScrollbars>true</hasScrollbars>
+        <hasToolbar>false</hasToolbar>
+        <height>600</height>
+        <isResizable>true</isResizable>
+        <linkType>url</linkType>
+        <masterLabel>E-signature</masterLabel>
+        <openType>newWindow</openType>
+        <position>none</position>
+        <protected>false</protected>
+        <showsLocation>false</showsLocation>
+        <showsStatus>false</showsStatus>
+        <url>/apex/Notes_ProgressNote_Esign_NC_Wks_16_TFC?id={!Progress_Note__c.Id}</url>
+    </webLinks>
+    <webLinks>
         <fullName>Finalize</fullName>
         <availability>online</availability>
         <displayType>button</displayType>
@@ -16827,16 +19367,19 @@ errors.push(&apos;You must select a &quot;Service Location&quot; before continui
 if({! ISPICKVAL(Progress_Note__c.Type_of_Contact__c,&apos;&apos;)}){ 
 errors.push(&apos;You must select the &quot;Type of Contact&quot; before continuing.&apos;); 
 } 
+ 
 
 //Check to see if there is a Service Code selected 
-var progressFields = sforce.connection.query(&quot;SELECT id, RecordTypeId, Service_Code__c, Authorization__c, Short_Term_Goals_Placeholder__c from Progress_Note__c where id =&apos;{!Progress_Note__c.Id}&apos;&quot;); 
+var progressFields = sforce.connection.query(&quot;SELECT id, RecordTypeId, Service_Code__c, Authorization__c, Short_Term_Goals_Placeholder__c, Number_of_Required_Signatures__c from Progress_Note__c where id =&apos;{!Progress_Note__c.Id}&apos;&quot;); 
 records = progressFields.getArray(&quot;records&quot;); 
+
+var recordTypeQuery = sforce.connection.query(&quot;SELECT Id, Name, DeveloperName from RecordType where id = &apos;&quot; + records[0].RecordTypeId + &quot;&apos;&quot;); 
+curRtype = recordTypeQuery.getArray(&quot;records&quot;); 
+
 if(records[0].Service_Code__c == null){ 
 errors.push(&apos;You must select a &quot;Service Code&quot; before continuing.&apos;); 
 } 
 
-var recordTypeQuery = sforce.connection.query(&quot;SELECT Id, Name, DeveloperName from RecordType where id = &apos;&quot; + records[0].RecordTypeId + &quot;&apos;&quot;); 
-curRtype = recordTypeQuery.getArray(&quot;records&quot;); 
 
 // WVPN-21
 // Make the following fields required on finalization
@@ -16873,7 +19416,7 @@ errors.push(&apos;A Progress Note cannot be finalized without an Authorization. 
 */
 
 //Check to see if there is a signature on file
-if (curRtype[0].DeveloperName == &apos;AZ_OPT&apos; &amp;&amp; {! Progress_Note__c.Signature_on_File__c != &apos;Y&apos;}) {
+if ((curRtype[0].DeveloperName == &apos;AZ_OPT&apos; || curRtype[0].DeveloperName == &apos;NC_TFC&apos; || curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos;) &amp;&amp; records[0].Number_of_Required_Signatures__c &gt; 0 &amp;&amp; {! Progress_Note__c.Signature_on_File__c != &apos;Y&apos;}) {
     errors.push(&apos;A Progress Note cannot be finalized without an Electronic Signature attached to the Progress Note. Please esign the document prior to finalization. If you have esigned the document, hit refresh on the browser page and then click Finalize this Progress Note.&apos;);
 }
 
@@ -16916,7 +19459,8 @@ errors.push(&apos;You must populate the &quot;Intervention&quot; field before co
 } 
 if({!ISBLANK(Progress_Note__c.Progress__c)}
 &amp;&amp; curRtype[0].DeveloperName != &apos;IN_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;MA_FCT&apos;
-&amp;&amp; curRtype[0].DeveloperName != &apos;MD_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;OH_FCT&apos;){ 
+&amp;&amp; curRtype[0].DeveloperName != &apos;MD_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;OH_FCT&apos;
+&amp;&amp; curRtype[0].DeveloperName != &apos;NC_Wks_1_6_TFC&apos;){ 
 errors.push(&apos;You must populate the &quot;Progress&quot; field before continuing.&apos;); 
 } 
 
@@ -16938,11 +19482,43 @@ errors.push(&apos;You must populate the &quot;Staff Credentials&quot; field befo
 
 // EB-197: START
 if({!ISBLANK(Progress_Note__c.Notes_For_Next_Visit__c)}
-&amp;&amp; curRtype[0].DeveloperName == &apos;AZ_OPT&apos;) {
+&amp;&amp; (curRtype[0].DeveloperName == &apos;AZ_OPT&apos; || curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos; || curRtype[0].DeveloperName == &apos;NC_TFC&apos; )) {
 errors.push(&apos;You must populate the &quot;Notes For Next Visit&quot; field before continuing.&apos;);
 }
 // EB-197: END
 
+// START: EB-210: NC TFC Progress Note flavor field requirements
+if({!ISPICKVAL(Progress_Note__c.Purpose_of_this_Consultation__c,&apos;&apos;)}
+&amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+errors.push(&apos;You must populate the &quot;Purpose of this Consultation&quot; field before continuing.&apos;);
+}
+if({!ISPICKVAL(Progress_Note__c.Scheduling_Status__c,&apos;&apos;)}
+&amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+errors.push(&apos;You must populate the &quot;Scheduling Status&quot; field before continuing.&apos;);
+}
+if({!ISBLANK(Progress_Note__c.Foster_Parents__c)}
+&amp;&amp; (curRtype[0].DeveloperName == &apos;NC_TFC&apos; || curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos;)) {
+errors.push(&apos;You must populate the &quot;Foster Parents&quot; field before continuing.&apos;);
+}
+if({!Progress_Note__c.Topic_Behavior_Management__c==false &amp;&amp; Progress_Note__c.Topic_Diagnostic_Psycho_education__c==false &amp;&amp; Progress_Note__c.Topic_Family_Interactions__c==false &amp;&amp; Progress_Note__c.Topic_Life_Book_Development__c==false &amp;&amp; Progress_Note__c.Topic_Other__c==false &amp;&amp; Progress_Note__c.Topic_Separation_Loss_and_Grief_Issues__c==false &amp;&amp; Progress_Note__c.Topic_Shared_Parenting__c==false &amp;&amp; Progress_Note__c.Topic_Successful_Adaptation__c==false &amp;&amp; Progress_Note__c.Topic_TFP_Rules_of_the_Road__c==false &amp;&amp; Progress_Note__c.Topic_Treatment_Goal_Review_PCP__c==false} &amp;&amp; curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos;) {
+errors.push(&apos;You must select at least one &quot;Clinical Consultation / Skill Enhancement Topic&quot; before continuing.&apos;);
+}
+if({!Progress_Note__c.Topic_Other__c==true &amp;&amp; Progress_Note__c.Topic_If_Other__c==&apos;&apos;}){
+errors.push(&apos;If the &quot;Clinical Consultation / Skill Enhancement Topic&quot; option &quot;Other&quot; has been selected, then you must make an entry in the &quot;If Other&quot; field before continuing.&apos;);
+}
+if({!ISPICKVAL(Progress_Note__c.PCP_update_since_last_visit__c,&apos;&apos;)}
+&amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+errors.push(&apos;You must populate the &quot;PCP update since last visit?&quot; field before continuing.&apos;);
+}
+if({!ISPICKVAL(Progress_Note__c.PCP_update_since_last_visit__c,&apos;Yes&apos;) &amp;&amp; ISPICKVAL(Progress_Note__c.Provided_to_reviewed_w_foster_parents__c,&apos;&apos;)}
+&amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+errors.push(&apos;If the response to &quot;PCP update since last visit?&quot; is &quot;Yes,&quot; you must populate the &quot;Provided to/reviewed w/ foster parents?&quot; field before continuing.&apos;);
+}
+if({!ISBLANK(Progress_Note__c.Coord_support_for_Mentor_child__c)}
+&amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+errors.push(&apos;You must populate the &quot;Coord. support for Mentor &amp; child?&quot; field before continuing.&apos;);
+}
+// END: EB-210: NC TFC Progress Note flavor field requirements
 
 } 
 if(errors.length &lt;= 0){ 
@@ -17154,6 +19730,44 @@ headElm[0].appendChild(errorDiv);
         <showsLocation>false</showsLocation>
         <showsStatus>false</showsStatus>
         <url>/apex/Notes_ProgressNote_PDF_NC_OPT?id={!Progress_Note__c.Id}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>PDF_NC_TFC</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <encodingKey>UTF-8</encodingKey>
+        <hasMenubar>false</hasMenubar>
+        <hasScrollbars>true</hasScrollbars>
+        <hasToolbar>false</hasToolbar>
+        <height>600</height>
+        <isResizable>true</isResizable>
+        <linkType>url</linkType>
+        <masterLabel>Create PDF</masterLabel>
+        <openType>newWindow</openType>
+        <position>none</position>
+        <protected>false</protected>
+        <showsLocation>false</showsLocation>
+        <showsStatus>false</showsStatus>
+        <url>/apex/Notes_ProgressNote_PDF_NC_TFC?id={!Progress_Note__c.Id}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>PDF_NC_WKS1_6_TFC</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <encodingKey>UTF-8</encodingKey>
+        <hasMenubar>false</hasMenubar>
+        <hasScrollbars>true</hasScrollbars>
+        <hasToolbar>false</hasToolbar>
+        <height>600</height>
+        <isResizable>true</isResizable>
+        <linkType>url</linkType>
+        <masterLabel>Create PDF</masterLabel>
+        <openType>newWindow</openType>
+        <position>none</position>
+        <protected>false</protected>
+        <showsLocation>false</showsLocation>
+        <showsStatus>false</showsStatus>
+        <url>/apex/Notes_ProgressNote_PDF_NC_Wks_16_TFC?id={!Progress_Note__c.Id}</url>
     </webLinks>
     <webLinks>
         <fullName>PDF_NJ</fullName>

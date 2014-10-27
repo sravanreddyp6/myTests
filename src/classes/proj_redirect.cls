@@ -9,8 +9,9 @@ public with sharing class proj_redirect {
         //myID = myID.substring(0,18);
         if(RTid != null){
             RecordType RT = [select id, DeveloperName from RecordType Where ID =:RTid];
-            if(RT.DeveloperName  == 'Neuro_Restorative'){
-                PageReference ref = new PageReference('/apex/proj_nr_form');           
+            if(RT.DeveloperName  == 'Neuro_Restorative' || RT.DeveloperName  == 'ADH_Adult_Day_Health' || RT.DeveloperName == 'Cambridge'
+            	|| RT.DeveloperName == 'CareMeridian' || RT.DeveloperName =='Redwood'){
+                PageReference ref = new PageReference('/apex/proj_nr_form?RecordType='+RTid);           
                 return ref;
             } 
             else{
@@ -31,7 +32,9 @@ public with sharing class proj_redirect {
         }
 
         if(myID != null){
-            if(cur_proj.recordtype.DeveloperName =='Neuro_Restorative'){
+            if(cur_proj.recordtype.DeveloperName =='Neuro_Restorative' || cur_proj.recordtype.DeveloperName  == 'ADH_Adult_Day_Health' 
+            	|| cur_proj.recordtype.DeveloperName == 'Cambridge' || cur_proj.recordtype.DeveloperName == 'CareMeridian' 
+            	|| cur_proj.recordtype.DeveloperName =='Redwood'){
                 PageReference ref = new PageReference('/apex/proj_nr_form?id=' + myID);           
                 return ref; 
             }

@@ -1637,10 +1637,14 @@ function stopRKey(evt) {
         <apex:outputPanel >
           <apex:variable var="emptyList" value="'[]'"/>
           <apex:variable var="evaluationList" value="'{!Referral__c.Evaluations__r}'"/>
-          <apex:commandButton value="Add Evaluation" action="{!addEvaluation}" rendered="{!evaluationList == emptyList}" />
+          <apex:commandButton value="Add Evaluation" action="{!addEvaluation}" rendered="{!evaluationList == emptyList && Referral__c.Person_Being_Served__c == null}" />
         </apex:outputPanel>
-        <apex:pageBlockTable value="{!Referral__c.Evaluations__r}" var="evaluation">
-          <apex:column headerValue="Action"><a href="/{!evaluation.Id}/e">Edit</a></apex:column>
+        <apex:pageBlockTable value="{!Referral__c.Evaluations__r}" var="evaluation" >
+          <apex:column headerValue="Action" >
+          	  <apex:outputPanel rendered="{!evaluation.Referral__r.Person_Being_Served__c == null}">
+                 <a href="/{!evaluation.Id}/e">Edit</a>
+              </apex:outputPanel>
+          </apex:column>
           <apex:column headerValue="Name"><a href="/{!evaluation.Id}">{!evaluation.Name}</a></apex:column>
           <apex:column headerValue="Signed" value="{!evaluation.Is_Signed__c}"></apex:column>
           <apex:column headerValue="Last Modified" value="{!evaluation.LastModifiedDate}" />
@@ -1726,7 +1730,7 @@ function stopRKey(evt) {
           <apex:column value="{!activity.OwnerId}" />
           <apex:column value="{!activity.Priority}" />
           <apex:column value="{!activity.Status}" />
-            <apex:column value="{!activity.Description}" />
+           <apex:column value="{!activity.Description}" />
         </apex:pageBlockTable>
       </apex:pageBlockSection>
 
