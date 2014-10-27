@@ -390,9 +390,14 @@
                             <apex:outputText value="" />
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Weight_Bearing_Precautions__c}" id="weightBearingPrecautions" />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Weight_Bearing_Precautions_Not_Available__c}" label="N/A" />
+                        <apex:pageBlockSectionItem>
+                            <apex:outputLabel value="Weight Bearing Precautions" />
+                            <apex:outputPanel>
+                                <apex:outputField value="{!Evaluation__c.Weight_Bearing_Precautions__c}" id="weightBearingPrecautions" />
+                                <apex:outputLabel value="N/a" rendered="{!Evaluation__c.Weight_Bearing_Precautions__c == ''}" />
+                                <apex:outputField value="{!Evaluation__c.Weight_Bearing_Precautions_Not_Available__c}" rendered="{!Evaluation__c.Weight_Bearing_Precautions__c == ''}" />
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem />
                         <apex:outputField value="{!Evaluation__c.Splint__c}" />
                         <apex:outputField value="{!Evaluation__c.Cast__c}" />
