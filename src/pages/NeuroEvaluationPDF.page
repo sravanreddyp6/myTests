@@ -491,5 +491,164 @@
                 <apex:dynamiccomponent componentvalue="{!ctlmap['skin_section_completed__c']}" />
             </apex:pageBlockSection>
         </apex:pageBlock>
+        <apex:pageBlock title="Neurological">
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 50%; "><h3>Cognitive</h3></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['seizure_history__c']}" />
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['date_of_last_seizure__c']}" />
+                    </td>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['eeg__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['frequency_of_seizure_activity__c']}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Within Normal Limits" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.EEG_Within_Normal_Limits__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['symptoms_of_seizure__c']}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Above Normal Limits" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.EEG_Above_Normal_Limits__c}" />
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 50%; "><h3>Sensory</h3></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['hearing__c']}" />
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['hearing_aid_right__c']}" />
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['hearing_aid_left__c']}" />
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><h3>Visual Impairment</h3></td>
+                    <td><h3>Glasses/Contacts</h3></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['impaired_acuity_r__c']}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="For Reading" styleClass="label" />
+                        <apex:outputText value="No" rendered="{!!Evaluation.Glasses_For_Reading__c}" />
+                        <apex:outputField value="{!Evaluation.Glasses_For_Reading__c}" rendered="{!Evaluation.Glasses_For_Reading__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['impaired_acuity_l__c']}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="For Distance" styleClass="label" />
+                        <apex:outputText value="No" rendered="{!!Evaluation.Glasses_For_Distance__c}" />
+                        <apex:outputField value="{!Evaluation.Glasses_For_Distance__c}" rendered="{!Evaluation.Glasses_For_Distance__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['neglect_r__c']}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="For Multi Focal Use" styleClass="label" />
+                        <apex:outputText value="No" rendered="{!!Evaluation.Glasses_For_Multi_Focal_Use__c}" />
+                        <apex:outputField value="{!Evaluation.Glasses_For_Multi_Focal_Use__c}" rendered="{!Evaluation.Glasses_For_Multi_Focal_Use__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['neglect_l__c']}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="If Contacts, Type" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Contacts_Type__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['diplopia__c']}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Does Resident Have Contacts or Glasses at Facility" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Resident_Contacts_Glasses_at_Facility__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['tracking_r__c']}" />
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['tracking_l__c']}" />
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+            <hr />
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 50%; ">
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['neuropsychological_evaluation_attached__c']}" />
+                    </td>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['neuropsychological_eval_completed_by__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['neuropsychological_eval_completed_date__c']}" />
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 100%; ">
+                        <apex:outputLabel value="Neurological Comments" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Neuro_Comments__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['neuro_section_completed__c']}" />
+                    </td>
+                </tr>
+            </table>
+        </apex:pageBlock>
     </apex:form>
 </apex:page>
