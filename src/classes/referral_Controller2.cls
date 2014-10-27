@@ -557,7 +557,8 @@ public with sharing class referral_Controller2 {
 
     System.Debug( ' anticipated service location = ' +this.referralRecord.Service_Location__c );
     //Added the And condtion to bypass the conversion error for CareMerdian Flavor - Sravan 5/15/2014.
-    if ( String.IsBlank(this.referralRecord.Service_Location_Program__c) && !isCareMeridian ) {
+	//EB214. Closing a referral with the reason 'admitted' mandates the admission location for all flavours. So be logic applies to all. - Neeraj 10/22/2014    
+    if ( String.IsBlank(this.referralRecord.Service_Location_Program__c) ) {
         messages.Add( 'Anticipated Service Location' );
         hasReq = false;
     }

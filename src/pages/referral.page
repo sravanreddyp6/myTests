@@ -1315,7 +1315,7 @@ clearDisableField = function(pageSectionId){
             <apex:inputField value="{!activity.ActivityDate}"  id="activityEntry_ActivityDate"/>
             <apex:inputField value="{!activity.Priority}"  id="activityEntry_Priority"/>
             <apex:inputField value="{!activity.Status}"  id="activityEntry_Status"/>
-            <apex:inputField value="{!activity.Comments__c}"  id="activityEntry_Comments__c"/>
+            <apex:inputField value="{!activity.Description}"  id="activityEntry_Comments__c"/>
 
         </apex:pageBlockSection>
       </apex:pageBlock>
@@ -2276,6 +2276,7 @@ clearDisableField = function(pageSectionId){
           <apex:column value="{!activity.OwnerId}" />
           <apex:column value="{!activity.Priority}" />
                 <apex:column value="{!activity.Status}" />
+                 <apex:column value="{!activity.Description}" />
         </apex:pageBlockTable>
         <apex:outputPanel style="display:none" rendered="{!activity != null}"  >
         <apex:inputHidden value="{!activity.Subject}" id="activitySubject"/>
@@ -2283,7 +2284,7 @@ clearDisableField = function(pageSectionId){
             <apex:inputHidden value="{!activity.Status}" id="activityStatus"/>
         <apex:inputHidden value="{!activity.OwnerId}" id="activityOwner"/>
         <apex:inputHidden value="{!activity.ActivityDate}" id="activityActivityDate"/>
-        <apex:inputHidden value="{!activity.Comments__c}" id="activityComments__c"/>
+        <apex:inputHidden value="{!activity.Description}" id="activityComments__c"/>
           </apex:outputPanel>
 
       </apex:pageBlockSection>

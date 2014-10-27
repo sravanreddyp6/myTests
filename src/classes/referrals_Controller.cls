@@ -719,7 +719,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
 
       this.activities =
           [select Subject, Priority, Status, WhatId, OwnerId, ActivityDate,
-                  Comments__c
+                  Description
            from Task
            where WhatId = :this.referralRecord.Id
            limit 150];

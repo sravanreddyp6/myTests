@@ -256,9 +256,8 @@ hr {
                     </apex:pageBlockSection>
 
                     <apex:pageBlockSection columns="2" Title="Immunization History">
-                        <apex:outputField value="{!Evaluation__c.Vaccination_Info_Sheet_Provided__c}" />
-                        <apex:outputField value="{!Evaluation__c.Immunization_N_A__c}"
-                            label="N/A" />
+                        <apex:outputField value="{!Evaluation__c.Immunization_N_A__c}" label="N/A" />
+                        <apex:outputText value="" />
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel for="pneumo" value="Pneumococcal" />
                             <apex:outputPanel >
@@ -289,7 +288,10 @@ hr {
 
                     </apex:pageBlockSection>
 
-                    <apex:pageBlockSection Columns="1" title="Isolation">
+                    <apex:pageBlockSection Columns="1" title="Pedatric Immunization History">
+                        <apex:outputField value="{!Evaluation__c.Vaccination_Info_Sheet_Provided__c}" />
+                        <apex:outputField value="{!Evaluation__c.Vaccination_Pneumococcal__c}" />
+                        <apex:outputField value="{!Evaluation__c.Vaccination_Flu__c}" />
                         <apex:outputField value="{!Evaluation__c.Isolation__c}"
                             label="Requires Isolation" />
                         <apex:outputField value="{!Evaluation__c.DiagnosisIsolation_Type__c}" />
@@ -463,6 +465,7 @@ hr {
                             <apex:outputText id="venttype"
                                 value="{!Evaluation__c.Ventilator_Type__c & if( Evaluation__c.Ventilator_Type__c == 'Intermittent', ' - schedule: ' & Evaluation__c.If_Intermittent_Schedule__c, '' )}" />
                         </apex:pageBlockSectionItem>
+                        <apex:outputText label="Settings" value=""/><apex:outputText value="" />
                         <apex:outputField value="{!Evaluation__c.Ventilator_Mode__c}" />
                         <apex:outputField value="{!Evaluation__c.Ventilator_Rate__c}" />
                         <apex:outputField value="{!Evaluation__c.FIO2__c}" />
@@ -742,8 +745,7 @@ hr {
                             </apex:outputPanel>
                         </apex:pageBlockSectionItem>
 
-                        <apex:outputField value="{!Evaluation__c.Intact__c}"
-                            html-data-rules="{&quot;0&quot; : [&quot;#divBodyMap&quot;]}" />
+                        <apex:outputField value="{!Evaluation__c.Intact__c}" />
 
                         <div
                             style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
@@ -780,14 +782,19 @@ hr {
                             <apex:outputLabel value="Edema" />
                             <apex:outputPanel >
                                 <apex:outputField value="{!Evaluation__c.Skin_Edema__c}"
-                                    label="Edema"
-                                    html-data-rules="{&quot;Yes&quot;: [&quot;{!$Component.edemaLocation}&quot;]}" />
+                                    label="Edema" />
                                 <apex:outputText styleClass="labelCol" value="Location"
                                     rendered="{!Evaluation__c.Skin_Edema__c == 'Yes'}" />
                                 <apex:outputField value="{!Evaluation__c.Skin_Edema_Location__c}"
                                     label="Edema Location" id="edemaLocation"
                                     rendered="{!Evaluation__c.Skin_Edema__c == 'Yes'}" />
+                                <apex:outputText styleClass="labelCol" value="Pitting"
+                                    rendered="{!Evaluation__c.Skin_Edema__c == 'Yes'}" />
+                                <apex:outputField value="{!Evaluation__c.Skin_Edema_Pitting__c}"
+                                    label="Pitting" id="edemaPitting"
+                                    rendered="{!Evaluation__c.Skin_Edema__c == 'Yes'}" />
                             </apex:outputPanel>
+                            
                         </apex:pageBlockSectionItem>
                         <apex:outputField value="{!Evaluation__c.Skin_Behavior__c}"
                             label="Behavior" />
@@ -905,6 +912,7 @@ hr {
                         <apex:outputText value="For Multifocal Use;" rendered="{!Evaluation__c.Glasses_For_Multi_Focal_Use__c}" />
                         <apex:outputText value="For Other;" rendered="{!Evaluation__c.Glasses_for_other__c}" />
                         <apex:outputField value="{!Evaluation__c.Contacts_Type__c}"  />
+                        <apex:outputField value="{!Evaluation__c.Contacts_Maximum_Wear_Time__c}" id="maxweartime" />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:outputText value="" />
@@ -1072,7 +1080,6 @@ hr {
                         <apex:outputField value="{!Evaluation__c.Manner_of_Expressing_Pain__c}" label="Manner of Expressing Pain" />
                             
                     </apex:pageBlockSection>
-                    <hr />
                     <hr />
                     <apex:pageBlockSection Columns="1">
                         <apex:outputField value="{!Evaluation__c.Pain_Present__c}" />
@@ -1466,7 +1473,9 @@ hr {
                         <apex:outputField value="{!Evaluation__c.Drug_Abuse_Describe__c}"
                             label="Drug Abuse" />
                         <apex:outputField value="{!Evaluation__c.Sexual_Abuse_Describe__c}"
-                            label="Domestica Abuse" />
+                            label="Sexual Abuse" />
+                        <apex:outputField value="{!Evaluation__c.Domestic_Abuse_Describe__c}"
+                            label="Domestic Abuse" />
                         <apex:outputField value="{!Evaluation__c.Financial_Abuse_Describe__c}"
                             label="Financial Abuse" />
                         <apex:outputField value="{!Evaluation__c.Physical_Abuse_Describe__c}"
@@ -1530,7 +1539,7 @@ hr {
                             <apex:outputLabel value="Does Resident Appear to be Coping Well<br /><br />Resident Appears to Demonstrate the Following"
                                 escape="false" />
                             <apex:outputPanel >
-                                <apex:outputField value="{!Evaluation__c.Resident_Coping_Well__c}" />
+                                <apex:outputField value="{!Evaluation__c.Resident_Coping_Well__c}" />&nbsp;<apex:outputfield value="{!Evaluation__c.Coping_Description__c}" rendered="{!Evaluation__c.Resident_Coping_Well__c == 'No'}" />
                                 <br />
                                 <br />
                                 <apex:outputField value="{!Evaluation__c.Resident_Demonstrating_Issues__c}" />
@@ -1580,7 +1589,7 @@ hr {
                         <apex:outputText value="" />
 
                         <apex:pageBlockSectionItem >
-                            <apex:outputLabel value="If Rancho Level is>2 or LOC is Alert/Delayed/Lethargic<br />Resident Oriented to the Following" escape="false"/>
+                            <apex:outputLabel value="Resident Oriented to the Following" />
                             <apex:outputField value="{!Evaluation__c.Rancho_level_Resident_Orientation__c}" />
                         </apex:pageBlockSectionItem>
 
@@ -1620,7 +1629,7 @@ hr {
                         <apex:outputField value="{!Evaluation__c.Family_Member_s_Readiness_To_Learn__c}" />
                         <apex:outputField value="{!Evaluation__c.Family_Member_Education_Level__c}" />
                         <apex:outputField value="{!Evaluation__c.Family_Member_s_Religious_Influences__c}" />
-                        <apex:outputField value="{!Evaluation__c.Family_Mem_Physical_cognitive_Barriers__c}" label="Family Member's Physical/Cognitive barriers"/>
+                        <apex:outputField value="{!Evaluation__c.Family_Mem_Physical_cognitive_Barriers__c}" label="Family Member's Physical/Cognitive Barriers"/>
                         <apex:outputField value="{!Evaluation__c.Family_Member_s_Cultural_Influences__c}" />
                         <apex:outputText value="" />
 
@@ -1669,10 +1678,9 @@ hr {
                         <apex:outputField value="{!Evaluation__c.Discharge_Info_From__c}" />
                         <apex:outputField value="{!Evaluation__c.Prior_Living_Situation__c}" />
                         <apex:outputField value="{!Evaluation__c.Prior_Living_Situation_Other__c}" />
-                        <apex:outputField value="{!Evaluation__c.Barriers_to_DC__c}" />
                         <apex:outputField value="{!Evaluation__c.DC_Plan__c}" />
-                        <apex:outputField value="{!Evaluation__c.DC_Plan_Other__c}"
-                            label="Other" />
+                        <apex:outputField value="{!Evaluation__c.DC_Plan_Other__c}" label="Other" />
+                        <apex:outputField value="{!Evaluation__c.Barriers_to_DC__c}" />
                         </apex:pageBlockSection>
                         <hr />
                         <apex:pageBlockSection columns="1">
