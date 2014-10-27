@@ -1,6 +1,285 @@
-<apex:page >
-<!-- Begin Default Content REMOVE THIS -->
-<h1>Congratulations</h1>
-This is your new Page
-<!-- End Default Content REMOVE THIS -->
+<apex:page standardController="Evaluation__c" extensions="NeuroEvaluationViewController,FieldPrintTransform" showHeader="false" applyHTMLTag="False" renderas="PDF">
+    <head>
+        <style>
+            [id$=skinBodyFooter] {
+                clear: both;
+            }
+            hr {
+                color: #ECECEC;
+                background-color: #ECECEC;
+                margin-bottom: 20px;
+                margin-top: 20px;
+                border: none;
+                height: 3px;
+            }
+            .hrSmall {
+                height: 1px;
+                border: 0;
+                color: black;
+                background-color: black;
+            }
+            h1 { font-size:16px;}
+            h2 { font-size: 16px;}
+            h3 { font-size:13px; padding-bottom:0px; margin-bottom:0px}
+            .pbHeader {
+                font-size:2em;
+                margin-bottom:3px;
+                display:block;
+                border-bottom:3px solid black;
+                border-collapse:collapse;
+                line-height:1.25%;
+                }
+            .pbSubheader {
+                font-size:1em;
+                border-collapse:collapse;
+                margin-bottom:0px !important;
+                padding-bottom:0px !important;
+            }
+
+            .labelCol, .label {
+                margin: 10px;
+                font-weight:bold;
+            }
+
+            body {
+                font-family:'Serif';
+                font-size:12px
+            }
+        </style>
+
+        <style type="text/css" media="print">
+            @page {
+                @top-center {
+                    content: element(header);
+                }
+                @bottom-left {
+                    content: element(footer);
+                }
+            }
+            div.header {
+                padding: 10px;
+                align:right;
+                width:100%;
+                position: running(header);
+            }
+            div.footer {
+                display: block;
+                padding: 5px;
+                position: running(footer);
+            }
+            .pagenumber:before {
+                content: counter(page);
+            }
+            .pagecount:before {
+                content: counter(pages);
+            }
+        </style>
+    </head>
+
+    <apex:pageMessages id="pageMessages" />
+    <div style="width:100%; text-align:right" class="header">
+        <b>Patient Name:&nbsp;</b><apex:outputText value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Full_Name__c}" /><b>, Page</b> <span class="pagenumber"/><b> of </b><span class="pagecount"/>
+    </div>
+    <div style="text-align: center;" class="footer">
+        <b>Internal Use Only</b>
+    </div>
+    <apex:form id="wholePage">
+        <apex:variable var="labelStyle" value="margin: 10px; font-weight: bold;" />
+
+        <h1 style="text-align:center;">PRE-ADMISSION EVALUATION FORM</h1>
+        <apex:pageBlock title="Demographics" >
+            <table style="width:100%">
+                <tr>
+                    <td width="50%">
+                        <apex:outputLabel for="FullNameField" value="{!$ObjectType.Person_Being_Referred__c.fields.Full_Name__c.Label}" style="{!labelStyle}" />
+                        <apex:outputText id="FullNameField" value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Full_Name__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel for="DobField" value="{!$ObjectType.Person_Being_Referred__c.fields.Date_of_Birth__c.Label}" style="{!labelStyle}" />
+                        <apex:outputField id="DobField" value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Date_of_Birth__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <apex:outputLabel for="AgeField" value="{!$ObjectType.Person_Being_Referred__c.fields.Age__c.Label}" style="{!labelStyle}" />
+                        <apex:outputField id="AgeField" value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Age__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['occupation__c']}" />
+                    </td>
+                    <td>
+                        <apex:outputText value="Employment Status" style="{!labelStyle}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <apex:dynamiccomponent id="EmploymentFT" componentValue="{!ctlmap['employmentft__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <apex:dynamiccomponent id="EmploymentPT" componentValue="{!ctlmap['employmentpt__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <apex:dynamiccomponent id="EmploymentRetired" componentValue="{!ctlmap['employmentretired__c']}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <apex:dynamiccomponent id="EmploymentDisabled" componentValue="{!ctlmap['employmentdisabled__c']}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <apex:dynamiccomponent id="EmploymentUnknown" componentValue="{!ctlmap['employmentunknown__c']}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['premorbid_living_status__c']}"/>
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+            <apex:pageBlockSection columns="1" title="Related Party">
+                <apex:outputText value="None" rendered="{!relatedParties.size == 0}" />
+                <apex:pageBlockTable value="{!relatedParties}" var="relatedParty" id="relatedPartyTable" border="1" rendered="{!relatedParties.size > 0}">
+                    <apex:column value="{!relatedParty.Type__c}"/>
+                    <apex:column value="{!relatedParty.Name}"/>
+                    <apex:column value="{!relatedParty.Address__c}"/>
+                    <apex:column value="{!relatedParty.Email__c}"/>
+                    <apex:column value="{!relatedParty.Phone__c}"/>
+                    <apex:column value="{!relatedParty.Phone_1_Type__c}"/>
+                    <apex:column value="{!relatedParty.Phone_2__c}"/>
+                    <apex:column value="{!relatedParty.Phone_2_Type__c}"/>
+                    <apex:column value="{!relatedParty.Comments__c}"/>
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+            <br />
+            <table width="100%">
+                <tr>
+                    <td width="50%">
+                        <apex:outputLabel value="Height at Admission" style="font-weight: Bold;"/>
+                        <table>
+                            <tr>
+                                <td>
+                                    <apex:dynamiccomponent id="HeightFtField" componentValue="{!ctlmap['heightft__c']}" />
+                                </td>
+                                <td>
+                                    <apex:dynamiccomponent id="HeightInchesField" componentValue="{!ctlmap['heightinches__c']}" />
+                                </td>
+                                <td>
+                                    <apex:dynamiccomponent id="HeightCMField" componentValue="{!ctlmap['height_in_cms__c']}" />
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Weight at Admission" style="font-weight: Bold;"/>
+                        <table>
+                            <tr>
+                                <td>
+                                    <apex:dynamiccomponent id="WeightlbsField" componentValue="{!ctlmap['weightlbs__c']}" />
+                                </td>
+                                <td>
+                                    <apex:dynamiccomponent id="WeightozField" componentValue="{!ctlmap['weightoz__c']}" />
+                                </td>
+                                <td>
+                                    <apex:dynamiccomponent id="WeightkgField" componentValue="{!ctlmap['weightkg__c']}" />
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+
+            <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" isPdf="true" />
+            <br />
+
+            <table>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['lomn_physician_referral_attached__c']}" />
+                    </td>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['plan_of_care_attached__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['lomn_physician_referral_attached_date__c']}" />
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+        </apex:pageBlock>
+        <hr />
+
+        <apex:pageBlock title="Diagnostics">
+            <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Micro Detail" formId="{!$Component.wholePage}" uniqueId="micro" isPdf="true" />
+            <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Radiology Detail" formId="{!$Component.wholePage}" uniqueId="radiology" isPdf="true" />
+            <br />
+            <table width="100%">
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['cancer__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['mars_attached__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['mar_comments__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['labs_attached__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['releases_signed_for_originating_h_p_d_c__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['originating_h_p_and_d_c_attached__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['diagnostics_comments__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['diagnostics_section_completed__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                    </td>
+                </tr>
+            </table>
+        </apex:pageBlock>
+        <hr />
+        <apex:pageBlock title="Cardiopulmonary">
+
+        </apex:pageBlock>
+        <hr />
+    </apex:form>
 </apex:page>
