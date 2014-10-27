@@ -650,5 +650,69 @@
                 </tr>
             </table>
         </apex:pageBlock>
+        <apex:pageBlock title="Ortho">
+            <table style="width: 100%">
+                <tr>
+                    <td style="width: 50%; "><h3>Orthopedics</h3></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Weight Bearing Precautions" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Weight_Bearing_Precautions__c}" rendered="{!Evaluation__c.Weight_Bearing_Precautions__c!=''}" />
+                        <apex:outputLabel value="N/a" rendered="{!Evaluation__c.Weight_Bearing_Precautions_Not_Available__c}" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Weight_Bearing_Precautions_Not_Available__c}" rendered="{!Evaluation__c.Weight_Bearing_Precautions_Not_Available__c}" />
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><apex:dynamiccomponent componentvalue="{!ctlmap['splint__c']}" /></td>
+                    <td><apex:dynamiccomponent componentvalue="{!ctlmap['cast__c']}" /></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Location" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Splint_Location__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Location" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Ortho_Cast_Location__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Other" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Splint_Location_Other__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Other" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Cast_Location__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Follow-up Required" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Splint_Follow_Up_Required__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Follow-up Required" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Cast_Follow_up_Required__c}" />
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 100%; ">
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['ortho_comments__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['ortho_section_completed__c']}" />
+                    </td>
+                </tr>
+            </table>
+        </apex:pageBlock>
     </apex:form>
 </apex:page>
