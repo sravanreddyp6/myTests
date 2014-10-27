@@ -81,7 +81,7 @@
         <b>Patient Name:&nbsp;</b><apex:outputText value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Full_Name__c}" /><b>, Page</b> <span class="pagenumber"/><b> of </b><span class="pagecount"/>
     </div>
     <div style="text-align: center;" class="footer">
-        <b>Internal Use Only</b>
+        <b>INTERNAL USE ONLY</b>
     </div>
     <apex:form id="wholePage">
         <apex:variable var="labelStyle" value="margin: 10px; font-weight: bold;" />
@@ -278,7 +278,53 @@
         </apex:pageBlock>
         <hr />
         <apex:pageBlock title="Cardiopulmonary">
-
+            <table width="100%">
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['hypertension__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['cardiac_disease__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['ekg__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['within_normal_limits__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['above_normal_limits__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['smoking_history__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['packs_day_years__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['cardio_comments__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['cardio_section_completed__c']}" />
+                    </td>
+                </tr>
+            </table>
         </apex:pageBlock>
         <hr />
     </apex:form>
