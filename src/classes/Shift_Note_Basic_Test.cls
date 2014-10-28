@@ -10,15 +10,17 @@ static testMethod void myUnitTest() {
 
   createData();
   
+  PageReference pageRef = Page.shiftnote_basic_form;
+   Test.setCurrentPage(pageRef);
+   pageRef.getParameters().put('retURL','%2F'+pn.id);
+   
   ApexPages.StandardController sc = new ApexPages.StandardController(pn);  
     
   Shift_Note_Basic contrl = new Shift_Note_Basic(sc);
-  PageReference pageRef = Page.shiftnote_basic_form;
-  	Apexpages.currentpage().getParameters().put('retURL','%2F'+pn.id);
-    Test.setCurrentPage(pageRef);
+  
     contrl.myEdit();
     system.assert(contrl.editMode);
-   // string cancelPage = contrl.myCancel().getUrl();
+    contrl.myCancel();
     contrl.myEdit();
     contrl.mySave();
     string nextpage = contrl.myFinal().getUrl();

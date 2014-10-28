@@ -232,7 +232,7 @@ public with sharing class Shift_Note_Basic {
             Attachment attachmentPDF = new Attachment();
             attachmentPDF.parentId = note.id;
             attachmentPDF.Name = note.Person_Being_Served__r.Name + ' - ' + note.RecordType.Name +' - (' + date.today().month() + '-' + date.today().day() + '-' + date.today().year() + ').pdf';
-            attachmentPDF.body = !Test.isRunningTest() ? Note_Pdf_ref.getContent() : Blob.valueOf('dummy content'); // Modified by Sravan as we cannot invoke getCOntent(0 method from test class-Salesforce bug. 10/28/2014 1:00 PM
+            attachmentPDF.body = !Test.isRunningTest() ? Note_Pdf_ref.getContent() : Blob.valueOf('dummy content'); // Modified by Sravan as we cannot invoke getCOntent() method from test class-Salesforce bug. 10/28/2014 1:00 PM
             insert attachmentPDF;
             /**/
             if(!note.No_approval_Needed__c){
