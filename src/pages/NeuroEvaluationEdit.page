@@ -638,12 +638,7 @@
             </apex:tab>
             <apex:tab label="Neurological" name="neuroTab" ontabenter="changeTab('neuroTab'); return false;" styleClass="{!IF(Evaluation__c.Neuro_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
-                    <apex:pageBlockSection columns="2">
-                        <apex:pageBlockSectionItem >
-                            <apex:outputText value="Cognitive" />
-                            <apex:outputText value="" />
-                        </apex:pageBlockSectionItem>
-                        <apex:pageBlockSectionItem />
+                    <apex:pageBlockSection columns="2" title="Cognitive">
                         <apex:inputField value="{!Evaluation__c.Seizure_History__c}" />
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Date_of_Last_Seizure__c}" />
@@ -654,12 +649,7 @@
                         <apex:inputField value="{!Evaluation__c.EEG_Above_Normal_Limits__c}" label="Above Normal Limits" />
                     </apex:pageBlockSection>
                     <hr />
-                    <apex:pageBlockSection columns="2">
-                        <apex:pageBlockSectionItem >
-                            <apex:outputText value="Sensory" />
-                            <apex:outputText value="" />
-                        </apex:pageBlockSectionItem>
-                        <apex:pageBlockSectionItem />
+                    <apex:pageBlockSection columns="2" title="Sensory">
                         <apex:inputField value="{!Evaluation__c.Hearing__c}" />
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Hearing_Aid_Right__c}" />
@@ -705,12 +695,7 @@
             </apex:tab>
             <apex:tab label="Ortho" name="orthoTab" ontabenter="changeTab('orthoTab'); return false;" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
-                    <apex:pageBlockSection columns="2">
-                        <apex:pageBlockSectionItem >
-                            <apex:outputText value="Orthopedics" />
-                            <apex:outputText value="" />
-                        </apex:pageBlockSectionItem>
-                        <apex:pageBlockSectionItem />
+                    <apex:pageBlockSection columns="2" title="Orthopedics">
                         <apex:pageBlockSectionItem>
                             <apex:outputLabel value="Weight Bearing Precautions" />
                             <apex:outputPanel>
@@ -779,11 +764,7 @@
                     <apex:inputHidden value="{!Evaluation__c.Mobility_Transfers__c}" id="mobilityTransfers" />
                     <apex:inputHidden value="{!Evaluation__c.Mobility_Toilet__c}" id="mobilityToilet" />
                     <apex:inputHidden value="{!Evaluation__c.Mobility_Tub_Shower__c}" id="mobilityTubShower" />
-                    <apex:pageBlockSection columns="1" id="mobilitySliderSection">
-                        <apex:pageBlockSectionItem >
-                            <apex:outputText value="Mobility" />
-                            <apex:outputText value="" />
-                         </apex:pageBlockSectionItem>
+                    <apex:pageBlockSection columns="1" id="mobilitySliderSection" title="Mobility">
                         <apex:pageBlockSectionItem id="mobilitySliderLegendsWrapper">
                             <apex:outputText value="" />
                             <apex:outputPanel id="mobilitySliderLegends" />
@@ -824,11 +805,7 @@
                     <apex:inputHidden value="{!Evaluation__c.Self_Care_Dressing_LE__c}" id="selfCareDressingLE" />
                     <apex:inputHidden value="{!Evaluation__c.Self_Care_Home_Skills__c}" id="selfCareHomeSkills" />
                     <apex:inputHidden value="{!Evaluation__c.Self_Care_Community_Skills__c}" id="selfCareCommunitySkills" />
-                    <apex:pageBlockSection columns="1" id="selfCareSliderSection">
-                        <apex:pageBlockSectionItem >
-                            <apex:outputText value="Self Care" />
-                            <apex:outputText value="" />
-                         </apex:pageBlockSectionItem>
+                    <apex:pageBlockSection columns="1" id="selfCareSliderSection" title="Self Care">
                         <apex:pageBlockSectionItem id="selfCareSliderLegendsWrapper">
                             <apex:outputText value="" />
                             <apex:outputPanel id="selfCareSliderLegends" />
@@ -885,11 +862,7 @@
                     <apex:inputHidden value="{!Evaluation__c.Communication_Awareness__c}" id="communicationAwareness" />
                     <apex:inputHidden value="{!Evaluation__c.Communication_Safety_Judgment__c}" id="communicationSafetyJudgment" />
                     <apex:inputHidden value="{!Evaluation__c.Communication_Swallowing__c}" id="communicationSwallowing" />
-                    <apex:pageBlockSection columns="1" id="communicationSliderSection">
-                        <apex:pageBlockSectionItem >
-                            <apex:outputText value="Communication/Executive Function" />
-                            <apex:outputText value="" />
-                        </apex:pageBlockSectionItem>
+                    <apex:pageBlockSection columns="1" id="communicationSliderSection" title="Communication/Executive Function">
                         <apex:inputField value="{!Evaluation__c.Communication_Oriented_To__c}" label="Oriented To" />
                         <apex:pageBlockSectionItem id="communicationSliderLegendsWrapper">
                             <apex:outputText value="" />
