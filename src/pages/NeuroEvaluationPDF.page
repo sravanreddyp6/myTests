@@ -90,7 +90,7 @@
         <apex:pageBlock title="Demographics" >
             <table style="width:100%">
                 <tr>
-                    <td width="50%">
+                    <td style="width: 50%; ">
                         <apex:outputLabel for="FullNameField" value="{!$ObjectType.Person_Being_Referred__c.fields.Full_Name__c.Label}" style="{!labelStyle}" />
                         <apex:outputText id="FullNameField" value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Full_Name__c}" />
                     </td>
@@ -166,9 +166,9 @@
                 </apex:pageBlockTable>
             </apex:pageBlockSection>
             <br />
-            <table width="100%">
+            <table style="width: 100%; ">
                 <tr>
-                    <td width="50%">
+                    <td style="width: 50%; ">
                         <apex:outputLabel value="Height at Admission" style="font-weight: Bold;"/>
                         <table>
                             <tr>
@@ -229,7 +229,7 @@
             <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Micro Detail" formId="{!$Component.wholePage}" uniqueId="micro" isPdf="true" />
             <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Radiology Detail" formId="{!$Component.wholePage}" uniqueId="radiology" isPdf="true" />
             <br />
-            <table width="100%">
+            <table style="width: 100%; ">
                 <tr>
                     <td>
                         <apex:dynamiccomponent componentValue="{!ctlmap['cancer__c']}" />
@@ -278,7 +278,7 @@
         </apex:pageBlock>
         <hr />
         <apex:pageBlock title="Cardiopulmonary">
-            <table width="100%">
+            <table style="width: 100%; ">
                 <tr>
                     <td>
                         <apex:dynamiccomponent componentValue="{!ctlmap['hypertension__c']}" />
