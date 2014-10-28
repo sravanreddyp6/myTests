@@ -938,5 +938,145 @@
                 </tr>
             </table>
         </apex:pageBlock>
+        <apex:pageBlock title="Psycho/Social">
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 50%; ">
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['past_psychiatric_history__c']}" />
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Description" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Past_Psychiatric_History_Description__c}" />
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <h3>Does Resident Exhibit Signs or Relate a History of Any of the Following</h3>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Alcohol Abuse" styleClass="label" />
+                        <apex:outputLabel value="Consumes >2 alcoholic drinks/day"
+                            rendered="{!Evaluation__c.Alcoholic_drinks_per_day__c == 'Yes' }" />
+                        <br />
+                        <apex:outputField value="{!Evaluation__c.Alcohol_Abuse_Describe__c}" rendered="{!Evaluation__c.Alcohol_Abuse__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Drug Abuse" styleClass="label" />
+                        <apex:outputLabel value="No" rendered="{!!Evaluation__c.Drug_Abuse__c}" />
+                        <apex:outputField value="{!Evaluation__c.Drug_Abuse_Describe__c}" rendered="{!Evaluation__c.Drug_Abuse__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Sexual Abuse" styleClass="label" />
+                        <apex:outputLabel value="No" rendered="{!!Evaluation__c.Sexual_Abuse__c}" />
+                        <apex:outputField value="{!Evaluation__c.Sexual_Abuse_Describe__c}" rendered="{!Evaluation__c.Sexual_Abuse__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Domestic Abuse" styleClass="label" />
+                        <apex:outputLabel value="No" rendered="{!!Evaluation__c.Domestic_Abuse__c}" />
+                        <apex:outputField value="{!Evaluation__c.Domestic_Abuse_Describe__c}" rendered="{!Evaluation__c.Domestic_Abuse__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Financial Abuse" styleClass="label" />
+                        <apex:outputLabel value="No" rendered="{!!Evaluation__c.Financial_Abuse__c}" />
+                        <apex:outputField value="{!Evaluation__c.Financial_Abuse_Describe__c}" rendered="{!Evaluation__c.Financial_Abuse__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Physical Abuse" styleClass="label" />
+                        <apex:outputLabel value="No" rendered="{!!Evaluation__c.Physical_Abuse__c}" />
+                        <apex:outputField value="{!Evaluation__c.Physical_Abuse_Describe__c}" rendered="{!Evaluation__c.Physical_Abuse__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Risk to Self" styleClass="label" />
+                        <apex:outputLabel value="No" rendered="{!!Evaluation__c.Risk_to_Self__c}" />
+                        <apex:outputField value="{!Evaluation__c.Risk_to_Self_Describe__c}" rendered="{!Evaluation__c.Risk_to_Self__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Risk to Others" styleClass="label" />
+                        <apex:outputLabel value="No" rendered="{!!Evaluation__c.Risk_to_Others__c}" />
+                        <apex:outputField value="{!Evaluation__c.Risk_to_Others__c}" rendered="{!Evaluation__c.Risk_to_Others__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Elopement Risk" styleClass="label" />
+                        <apex:outputLabel value="No" rendered="{!!Evaluation__c.Elopement_Risk__c}" />
+                        <apex:outputField value="{!Evaluation__c.Elopement_Risk_Describe__c}" rendered="{!Evaluation__c.Elopement_Risk__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Halucinations" styleClass="label" />
+                        <apex:outputLabel value="No" rendered="{!!Evaluation__c.Hallucinations__c}" />
+                        <apex:outputText value="{!selectedHalls}"
+                            rendered="{!Evaluation__c.Hallucinations__c}" />
+                        <br />
+                        <apex:outputField value="{!Evaluation__c.Hallucinations_Describe__c}"
+                            rendered="{!Evaluation__c.Hallucinations__c}" />
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 100%; ">
+                        <h3>Offender History</h3>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Past or pending charges that have been brought against this person due to their sexual behavior" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Sexual_behavior_past_pending_charges__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Are there sexual events that might have resulted in legal action" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Sexual_events_led_to_legal_action__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Are there any other sexual issues in this individual's past which clinical team may deem needs review" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Other_significant_sexual_issues__c}" />
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 100%">
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['psycho_social_comments__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['psycho_social_section_completed__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['evaluation_date__c']}" />
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <apex:pageBlockSection columns="1">
+                <apex:outputText label="Evaluation Signed" value="{!IF(Evaluation__c.Is_Signed__c,'YES','NO')}" style="padding:10px;" />
+                <apex:outputText label="Last Modified By" value="{!Evaluation__c.LastModifiedBy.Name}" style="padding:10px;"  />
+                <apex:outputText value=" {!Evaluation__c.LastModifiedDate}"  style="padding:10px;" />
+            </apex:pageBlockSection>
+        </apex:pageBlock>
     </apex:form>
 </apex:page>
