@@ -714,5 +714,229 @@
                 </tr>
             </table>
         </apex:pageBlock>
+        <apex:pageBlock title="Rehab">
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 100%; ">
+                        <h3>Mobility Devices</h3>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['wheel_chair__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['front_wheeled_walker__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['rehab_cane__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Other" styleClass="label" />
+                        <apex:outputText value="No" rendered="{!!Evaluation.Current_Gait_Mobility_Other__c}" />
+                        <apex:outputField value="{!Evaluation.Current_Gait_Mobility_Other__c}" rendered="{!Evaluation.Current_Gait_Mobility_Other__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['wheel_chair_type__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['bed_type__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['dme_needs__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['endurance__c']}" />
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 100%; ">
+                        <h3>Mobility</h3>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Locomotion" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Mobility_Locomotion__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Stairs" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Mobility_Stairs__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Transfers" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Mobility_Transfers__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Toilet" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Mobility_Toilet__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Tub/Shower" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Mobility_Tub_Shower__c}" />
+                    </td>
+                </tr>
+            </table>
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 100%;">
+                        <h3>Self Care</h3>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Feeding" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Self_Care_Feeding__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Grooming" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Self_Care_Grooming__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Bathing" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Self_Care_Bathing__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Toileting" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Self_Care_Toileting__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Dressing UE" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Self_Care_Dressing_UE__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Dressing LE" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Self_Care_Dressing_LE__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Home Skills" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Self_Care_Home_Skills__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Community Skills" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Self_Care_Community_Skills__c}" />
+                    </td>
+                </tr>
+            </table>
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 100%; ">
+                        <h3>Communication/Executive Function</h3>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Oriented To" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Communication_Oriented_To__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Receptive Communication" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Communication_Receptive_Communication__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Exp Communication" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Communication_Exp_Communication__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Comprehension" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Communication_Comprehension__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Memory" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Communication_Memory__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Problem Solving" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Communication_Problem_Solving__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Attention" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Communication_Attention__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Awareness" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Communication_Awareness__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Safety Judgement" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Communication_Safety_Judgment__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Swallowing" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Communication_Swallowing__c}" />
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 100%; ">
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['rehab_comments__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['rehab_section_completed__c']}" />
+                    </td>
+                </tr>
+            </table>
+        </apex:pageBlock>
     </apex:form>
 </apex:page>
