@@ -1,0 +1,166 @@
+<apex:page standardcontroller="Evaluation__c" extensions="CMShiftAssessmentEdit" >
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:includeScript value="{!$Resource.AnnotoriousDev}"/>
+    <apex:includeScript value="{!$Resource.AnotoJS}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}"/>
+    <style>
+        [id$=skinBodyFooter] {
+            clear: both;
+        }
+        [id$=bodyMapOtherComments] {
+            clear: both;
+        }
+        .thinking{
+            opacity:0.8;
+            background-color:#ccc;
+            position:fixed;
+            width:100%;
+            height:100%;
+            top:0px;
+            left:0px;
+            z-index:1000;
+        }
+        .thinkingwheel{
+            position:absolute; left:40%; top:48%; background-color: white; border: 2px solid gray; padding: 2px;
+        }
+         hr {
+            color: #ECECEC;
+            background-color: #ECECEC;
+            margin-bottom: 20px;
+            margin-top: 20px;
+            border: none;
+            height: 5px;
+        }
+        .evaluationTabHeader .sectionCompleted, .sectionCompletedLink {
+            background-image: url("{!URLFOR($Resource.EvaluationResources, 'greencheck.png')}");
+            background-repeat: no-repeat;
+            padding-top: 22px;
+        }
+        .evaluationTabHeader .sectionNotCompleted, .sectionNotCompletedLink {
+            background-image: url("{!URLFOR($Resource.EvaluationResources, 'whitecheck.png')}");
+            background-repeat: no-repeat;
+            padding-top: 22px;
+        }
+        .sectionNotCompletedLink, .sectionCompletedLink {
+            vertical-align:bottom !important;
+            background-position: center top;
+            padding-left:10px;
+            padding-right:10px;
+        }
+        .mycols{
+            width: 15%;
+            padding-left: 25px;
+           cellspacing: 15px;
+        }
+    </style>
+    <script>
+         function getNextTab( currTab ) {
+            var nextTab = currTab;
+
+            if ( currTab == 'demographicsTab' || currTab == '')
+                nextTab = 'diagnosticTab';
+            else if( currTab == 'diagnosticTab')
+                nextTab =  'cardioTab';
+            else if ( currTab== 'cardioTab')
+                nextTab = 'nutritionTab';
+            else if ( currTab == 'nutritionTab')
+                nextTab = 'skinBodyTab';
+            else if ( currTab == 'skinBodyTab')
+                nextTab = 'neuroTab';
+            else if ( currTab == 'neuroTab')
+                nextTab = 'orthoTab';
+            else if ( currTab == 'orthoTab')
+                nextTab = 'psychoSocialTab';
+
+            return nextTab;
+            }
+    
+    
+    </script>
+    
+    
+    <div id="breadcrumb" class="breadcrumb">
+    <a href="/">Home</a>&nbsp;>&nbsp;
+    <a href="/apex/PersonsBeingServedListView">Persons Being Served</a>&nbsp;>&nbsp;
+    <a href="/{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__c}">{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__r.Name}</a>&nbsp;>&nbsp;
+    <a href="/{!Evaluation__c.ServiceAssignment__r.Admission__c}">Admission</a>&nbsp;>&nbsp;
+    <a href="/{!Evaluation__c.ServiceAssignment__c}" >Service Assignment</a>&nbsp;>&nbsp;
+    <apex:outputText value="Shift Assessment" />
+    </div>
+    <apex:form id="wholePage" >
+        <apex:pageMessages id="pageMessages" />
+         <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" reRender="pageMessages, wholeTabPanel, buttons">
+            <apex:param name="nextTab" assignTo="{!nextTab}" value="" />
+        </apex:actionFunction>
+         <apex:tabPanel value="{!selectedTab}" id="wholeTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent" >
+             <apex:tab label="Demographics" name="demographicsTab" ontabenter="changeTab('demographicsTab'); return false;" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
+                 <apex:pageBlock >
+                 
+                 </apex:pageBlock>
+             </apex:tab>
+             
+             <apex:tab label="Diagnostics" name="diagnosticTab" ontabenter="changeTab('diagnosticsTab'); return false;" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
+                <apex:pageBlock >
+                
+                </apex:pageBlock>
+             </apex:tab>
+             
+             <apex:tab label="Cardiopulmonary" name="cardioTab" onTabenter="changeTab('cardioTab'); return false;" styleClass="{!IF(Evaluation__c.Cardio_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
+                <apex:pageBlock >
+                
+                </apex:pageBlock>
+             </apex:tab>
+             
+             <apex:tab label="GU/GI/Nutrition" name="nutritionTab" ontabenter="changeTab('nutritionTab'); return false;" styleClass="{!IF(Evaluation__c.Nutrition_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
+                <apex:pageBlock >
+                
+                </apex:pageBlock>
+             </apex:tab>
+             
+             <apex:tab label="Skin/Body" name="skinBodyTab" ontabenter="changeTab('skinBodyTab'); return false;" styleClass="{!IF(Evaluation__c.Skin_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
+                <apex:pageBlock >
+                
+                </apex:pageBlock>
+             </apex:tab>
+             
+             <apex:tab label="Neurological" name="neuroTab" ontabenter="changeTab('neuroTab');return false;" styleClass="{!IF(Evaluation__c.Neuro_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
+                <apex:pageBlock >
+                
+                </apex:pageBlock>
+             </apex:tab>
+             
+             <apex:tab label="Ortho" name="orthoTab" ontabenter="changeTab('orthoTab'); return false;" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
+                <apex:pageBlock >
+                
+                </apex:pageBlock>
+             </apex:tab>
+             
+             <apex:tab label="Psycho/Social" name="psychoSocialTab" ontabenter="changeTab('psychoSocialTab'); return false;" styleClass="{!IF(Evaluation__c.Psycho_Social_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
+                <apex:pageBlock >
+                
+                </apex:pageBlock>
+             </apex:tab>
+         </apex:tabPanel>
+         <apex:pageBlock id="buttons">
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton Value="Save & Continue" onClick="changeTab(getNextTab('{!selectedTab}')); return false;" rendered="{!selectedTab != 'dischargePlanTab'}" />
+                <apex:commandButton value="Save" action="{!save}" />
+                <apex:commandButton value="Cancel" onClick="window.location='apex/CMShiftAssessmentView?id={!Evaluation__c.Id}&tab={!selectedTab}'; return false;"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>        
+    </apex:form>
+    <apex:actionStatus id="pageProcessing" >
+        <apex:facet name="start">
+            <div class="thinking">
+                <div class="thinkingwheel">
+                    <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Saving &amp; Processing...</span>
+                </div>
+            </div>
+        </apex:facet>
+        <apex:facet name="stop"/>
+    </apex:actionStatus>
+</apex:page>
