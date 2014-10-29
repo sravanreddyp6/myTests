@@ -123,9 +123,6 @@
 
         text = String.fromCharCode({!IF(Evaluation__c.Skin_Section_Completed__c, '9745', '9744')}) + " Skin/Body";
         context.fillText( text, col1 , line, width );
-        text = String.fromCharCode({!IF(Evaluation__c.Discharge_Section_Completed__c, '9745', '9744')}) + " Discharge Plan";
-        context.fillText( text, col2 , line, width );
-        line += fontsize;
 
         line += 70;
         var today = new Date();
@@ -151,7 +148,7 @@
     </div></td></tr>
         <tr>
             <td align="left">
-                <apex:outputPanel style="color:red;" rendered="{!!Evaluation__c.Details_Section_Completed__c || !Evaluation__c.Diagnostics_Section_Completed__c || !Evaluation__c.Cardio_Section_Completed__c || !Evaluation__c.Nutrition_Section_Completed__c || !Evaluation__c.Skin_Section_Completed__c || !Evaluation__c.Neuro_Section_Completed__c || !Evaluation__c.Ortho_Section_Completed__c || !Evaluation__c.Rehab_Section_Completed__c || !Evaluation__c.Psycho_Social_Section_Completed__c || !Evaluation__c.Discharge_Section_Completed__c}">
+                <apex:outputPanel style="color:red;" rendered="{!!Evaluation__c.Details_Section_Completed__c || !Evaluation__c.Diagnostics_Section_Completed__c || !Evaluation__c.Cardio_Section_Completed__c || !Evaluation__c.Nutrition_Section_Completed__c || !Evaluation__c.Skin_Section_Completed__c || !Evaluation__c.Neuro_Section_Completed__c || !Evaluation__c.Ortho_Section_Completed__c || !Evaluation__c.Rehab_Section_Completed__c || !Evaluation__c.Psycho_Social_Section_Completed__c}">
                     The evaluation cannot be signed until all sections have been designated as complete by checking the Section Complete box for each section.
                 </apex:outputPanel>
                 <apex:outputPanel style="color:red;" rendered="{!Evaluation__c.Is_Signed__c}">
@@ -169,13 +166,13 @@
         <div align="left" style="padding-left:20px;" id="divusername0">Name (Print): &nbsp;<input type="text" style="width:50%" onchange="drawSignerNames('EsignInfo', 1)" id="UserNme" /></div>
     </div>
     <div style="padding-left:20px;" align="left">
-        <apex:outputPanel rendered="{!Evaluation__c.Details_Section_Completed__c && Evaluation__c.Diagnostics_Section_Completed__c && Evaluation__c.Cardio_Section_Completed__c && Evaluation__c.Nutrition_Section_Completed__c && Evaluation__c.Skin_Section_Completed__c && Evaluation__c.Neuro_Section_Completed__c && Evaluation__c.Ortho_Section_Completed__c && Evaluation__c.Rehab_Section_Completed__c && Evaluation__c.Psycho_Social_Section_Completed__c && Evaluation__c.Discharge_Section_Completed__c && !Evaluation__c.Is_Signed__c}">
+        <apex:outputPanel rendered="{!Evaluation__c.Details_Section_Completed__c && Evaluation__c.Diagnostics_Section_Completed__c && Evaluation__c.Cardio_Section_Completed__c && Evaluation__c.Nutrition_Section_Completed__c && Evaluation__c.Skin_Section_Completed__c && Evaluation__c.Neuro_Section_Completed__c && Evaluation__c.Ortho_Section_Completed__c && Evaluation__c.Rehab_Section_Completed__c && Evaluation__c.Psycho_Social_Section_Completed__c && !Evaluation__c.Is_Signed__c}">
             <input type="button" id="btnSign" value="Electronically Sign" onclick=" if(!validate()) return false; printCanvas('EsignInfo','EsignImg', 1, this.id); return saveSignature('{!Evaluation__c.Id}'); " />
         </apex:outputPanel>
 
-        <apex:outputPanel rendered="{!!Evaluation__c.Details_Section_Completed__c || !Evaluation__c.Diagnostics_Section_Completed__c || !Evaluation__c.Cardio_Section_Completed__c || !Evaluation__c.Nutrition_Section_Completed__c || !Evaluation__c.Skin_Section_Completed__c || !Evaluation__c.Neuro_Section_Completed__c || !Evaluation__c.Ortho_Section_Completed__c || !Evaluation__c.Rehab_Section_Completed__c || !Evaluation__c.Psycho_Social_Section_Completed__c || !Evaluation__c.Discharge_Section_Completed__c  || Evaluation__c.Is_Signed__c}">
+        <apex:outputPanel rendered="{!!Evaluation__c.Details_Section_Completed__c || !Evaluation__c.Diagnostics_Section_Completed__c || !Evaluation__c.Cardio_Section_Completed__c || !Evaluation__c.Nutrition_Section_Completed__c || !Evaluation__c.Skin_Section_Completed__c || !Evaluation__c.Neuro_Section_Completed__c || !Evaluation__c.Ortho_Section_Completed__c || !Evaluation__c.Rehab_Section_Completed__c || !Evaluation__c.Psycho_Social_Section_Completed__c || Evaluation__c.Is_Signed__c}">
             <input type="button" id="btnSignDisabled" value="Electronically Sign" disabled="true" />
         </apex:outputPanel>
-        <input type="button" id="btnCancel" value="Cancel" onclick="window.location = '/apex/CareMeridianEvaluationView?id={!Evaluation__c.id}&tab=dischargePlanTab';return false;" />
+        <input type="button" id="btnCancel" value="Cancel" onclick="window.location = '/apex/NeuroEvaluationView?id={!Evaluation__c.id}&tab=dischargePlanTab';return false;" />
     </div>
 </apex:page>
