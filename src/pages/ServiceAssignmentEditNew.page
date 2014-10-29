@@ -387,10 +387,10 @@
                 <apex:pageBlockTable value="{!programRows}" var="pR" id="ProgramAssocTableNEW" rendered="{!theServAssign.Program__c=='IFCS'}">
                     <apex:column headerValue="{!IF(editSA,'Select','Selected')}">
                         <apex:outputPanel rendered="{!(pR.paPhase<>999 && pR.paPhase==theServAssign.Phase__c)}">
-                            <input id="PhaseRadio" name="PhaseRadioEdit" type="radio" value="{!theServAssign.Phase__c}" onclick="SetHiddenPhase('{!theServAssign.Id}','{!pR.paPhase}');" checked="checked" />
+                            <input id="PhaseRadio" name="PhaseRadioEdit" type="radio" value="{!theServAssign.Phase__c}" onclick="SetHiddenPhase({!pR.paPhase});" checked="checked" />
                         </apex:outputPanel>
                         <apex:outputPanel rendered="{!(pR.paPhase<>999 && pR.paPhase<>theServAssign.Phase__c)}">
-                            <input id="PhaseRadio" name="PhaseRadioEdit" type="radio" value="{!theServAssign.Phase__c}" onclick="SetHiddenPhase('{!theServAssign.Id}','{!pR.paPhase}');" />
+                            <input id="PhaseRadio" name="PhaseRadioEdit" type="radio" value="{!theServAssign.Phase__c}" onclick="SetHiddenPhase({!pR.paPhase});" />
                         </apex:outputPanel>
                     </apex:column>
                     <apex:column headerValue="Phase of Treatment">
