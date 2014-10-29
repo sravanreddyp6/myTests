@@ -60,7 +60,7 @@
         font-weight: bold;
         color: #4a4a56;
         font-style: italic;
-    
+
     }
     .whitenoise { color:white; }
   </style>
@@ -70,8 +70,8 @@
    j$ = jQuery.noConflict();
 
     // a variable to hold the list of related Parties... need this so we can refresh it using ajax
-    var relPartyData = '{!relPartiesJSON}';   
-   
+    var relPartyData = '{!relPartiesJSON}';
+
      //disable enter key
 function stopRKey(evt) {
    var evt = (evt) ? evt : ((event) ? event : null);
@@ -85,7 +85,7 @@ function stopRKey(evt) {
     if (j$('input[id$=relatedPartyEntry_Name]').val() == '') {
         errors += '<li>Party Name is a required field.</li>';
     }
-    var partyType = j$('select[id$=relatedPartyEntry_Type]').val();    
+    var partyType = j$('select[id$=relatedPartyEntry_Type]').val();
     if (partyType =='') {
         errors += '<li>Type is a required field.</li>';
     }
@@ -100,18 +100,18 @@ function stopRKey(evt) {
     var partyID = j$('input[id$=relatedPartyEntry_Id]').val();
     str = "Physician - Primary";
     var obj = JSON.parse(relPartyData);
-    
-    var isPrimaryPhysician = false;    
+
+    var isPrimaryPhysician = false;
     for (var i = 0; i < obj.length; i++) {
         if ( obj[i].TypeC === str ) {
             isPrimaryPhysician = true;
             break;
         }
     }
-     
+
     for (var i = 0; i < obj.length; i++) {
         if ( (!partyID && isPrimaryPhysician && partyType === str) ||           // adding a new related party and one already exists thats primary physician .
-             (partyID === obj[i].Id && isPrimaryPhysician && obj[i].TypeC != str && partyType === str ) ) {       // editing existing one and changing its type to primary physician but one already present. 
+             (partyID === obj[i].Id && isPrimaryPhysician && obj[i].TypeC != str && partyType === str ) ) {       // editing existing one and changing its type to primary physician but one already present.
             errors += '<li>Only one "Physician - Primary" allowed. Please edit Type on this entry or change the Type assigned to existing Related Party.</li>';
             break;
         }
@@ -128,7 +128,7 @@ function stopRKey(evt) {
     } else if (j$('input[id$=lookupElement_lkid]').val() =='') {
         errors += '<li>You must lookup the Alias</li>';
     }
-    
+
     if (j$('input[id$=locationEntry_User]').length > 0) {
         if (j$('input[id$=locationEntry_User]').val() =='') {
             errors += '<li>User Assigned is a required field.</li>';
@@ -136,7 +136,7 @@ function stopRKey(evt) {
             errors += '<li>You must lookup the User</li>';
         }
     }
-        
+
     if (j$('select[id$=locationEntry_Status]').val() =='') {
         errors += '<li>Status is a required field.</li>';
     }
@@ -164,7 +164,7 @@ function stopRKey(evt) {
             errors += '<li>Invalid date range or format. Correct date format: {m,mm}/{d,dd}/yyyy</li>';
         }
     }
-    
+
     j$('#activityErrors').html(errors);
     return (errors == '');
   }
@@ -186,8 +186,8 @@ function stopRKey(evt) {
     }
         return returnval
   }
-  
- 
+
+
  //copies relatedParty fields from dialog for postback
   function relatedPartySave(isDialogClose) {
       if (validateRelatedParty()) {
@@ -285,10 +285,10 @@ function stopRKey(evt) {
           var locID = j$('input[id$=locationEntry_Id]').val();
           var locUser = '';
           var locRank = '';
-          if (j$('input[id$=locationEntry_User_lkid]').length > 0 ) 
+          if (j$('input[id$=locationEntry_User_lkid]').length > 0 )
             locUser = j$('input[id$=locationEntry_User_lkid]').val();
-          if (j$('select[id$=locationEntry_Rank]').length > 0 ) 
-            locRank = j$('select[id$=locationEntry_Rank]').val();   
+          if (j$('select[id$=locationEntry_Rank]').length > 0 )
+            locRank = j$('select[id$=locationEntry_Rank]').val();
           var locServiceLocation = j$(idSelector).val();
           // j$('.searchLocationLookupElement_lkid').val();//j$('input[id$=lookupElement_lkid]').val();//'{!location.Service_Location__c}';//j$('input[id$=locationEntry_ServiceLocation_lkid]').val();
           var locStatus = j$('select[id$=locationEntry_Status]').val();
@@ -579,7 +579,7 @@ function stopRKey(evt) {
           <apex:column value="{!relParty.Phone_2_Type__c}"/>
           <apex:column value="{!relParty.Comments__c}"/>
         </apex:pageBlockTable>
-        
+
         <script type="text/javascript">
             relPartyData = '{!relPartiesJSON}';
         </script>
@@ -750,7 +750,7 @@ function stopRKey(evt) {
             <apex:inputField value="{!fundingSource.Additional_Coverage__c}" id="additionalCoverage" />
             <apex:inputTextarea value="{!fundingSource.Additional_Coverage_Comments__c}" id="additionalCoverageDetail" label="" cols="80" />
         </apex:pageBlockSection>
-               
+
         <apex:pageBlockSection columns="2" rendered="{!ReferralRecordType == 'CareMeridian'}">
             <apex:outputText value="Benefit Information" styleClass="modalSubheader" />
             <apex:pageBlockSectionItem />
@@ -783,7 +783,7 @@ function stopRKey(evt) {
             <apex:pageBlockSectionItem />
             <apex:inputField value="{!fundingSource.ARU_Day_Total__c}" />
             <apex:inputField value="{!fundingSource.ARU_Days_Used__c}" />
-            
+
             <apex:outputText value="Home Health" styleClass="modalSubheader" />
             <apex:pageBlockSectionItem />
             <apex:inputField value="{!fundingSource.HH_Visits_Total__c}" />
@@ -807,7 +807,7 @@ function stopRKey(evt) {
             <apex:inputField value="{!fundingSource.SNF_Phone__c}" label="Precert Company Phone" />
             <apex:inputField value="{!fundingSource.SNF_Fax__c}" label="Fax" />
             <apex:pageBlockSectionItem />
-            
+
             <apex:outputText value="Claims Submission" styleClass="modalSubheader" />
             <apex:pageBlockSectionItem />
             <apex:inputField value="{!fundingSource.Claims_Submission_Company__c}" label="Company" />
@@ -820,7 +820,7 @@ function stopRKey(evt) {
             <apex:inputField value="{!fundingSource.Claims_Submission_Fax__c}" label="Fax" />
             <apex:inputField value="{!fundingSource.Claims_Submission_State__c}" label="State" />
             <apex:pageBlockSectionItem />
-            <apex:inputField value="{!fundingSource.Claims_Submission_Zip__c}" id="Claims_Submission_Zip" label="Zip" />        
+            <apex:inputField value="{!fundingSource.Claims_Submission_Zip__c}" id="Claims_Submission_Zip" label="Zip" />
         </apex:pageBlockSection>
         <apex:pageBlockSection columns="2" rendered="{!ReferralRecordType == 'NeuroRestorative'}">
             <apex:outputText value="Benefit Information" styleClass="modalSubheader" />
@@ -923,7 +923,7 @@ function stopRKey(evt) {
       <apex:pageBlock title="Authorization Detail" id="fundingSourceAuthorizationDetailEntry" rendered="{!ReferralRecordType == 'CareMeridian' || ReferralRecordType == 'NeuroRestorative'}">
         <apex:pageBlockSection columns="2" rendered="{!ReferralRecordType == 'CareMeridian'}">
             <apex:pageBlockSectionItem >
-                <apex:outputlabel for="authtype" value="Authorization Type" />  
+                <apex:outputlabel for="authtype" value="Authorization Type" />
                 <apex:outputpanel >
                 <apex:actionRegion >
                 <apex:inputField id="authtype" value="{!fundingSource.Authorization_Type__c}" >
@@ -943,7 +943,7 @@ function stopRKey(evt) {
                 </apex:outputpanel>
             </apex:pageBlockSectionItem>
             <apex:inputField value="{!fundingSource.Status__c}" />
-            
+
             <apex:outputText value="Request" styleClass="modalSubheader" />
             <apex:pageBlockSectionItem />
             <apex:inputField value="{!fundingSource.Requested_By__c}" />
@@ -962,10 +962,10 @@ function stopRKey(evt) {
             <apex:inputField value="{!fundingSource.Received_Date_Time__c}" label="Date/Time Received" />
             <apex:inputField value="{!fundingSource.Auth_given_method__c}" />
             <apex:inputField value="{!fundingSource.Authorization_Number__c}" />
-            <apex:outputText value="" /> 
+            <apex:outputText value="" />
             <apex:inputField value="{!fundingSource.Days_Authorized_From__c}" />
             <apex:inputField value="{!fundingSource.Days_Authorized_To__c}" />
-            
+
             <apex:inputField id="contractused" value="{!fundingSource.CM_Contract_Used_Lookup__c}" />
             <apex:inputField value="{!fundingSource.Level__c}" />
             <apex:inputField value="{!fundingSource.Justification__c}" />
@@ -1121,7 +1121,7 @@ function stopRKey(evt) {
         <apex:outputlabel for="referralSource" value="Referral Source" />
         <apex:outputField id="referralSource" value="{!Referral__c.Agency_Name__c}" />
         </apex:pageBlockSectionItem>
-        <!-- ERC-97: End --> 
+        <!-- ERC-97: End -->
         <apex:outputField value="{!Referral__c.Referral_Name__c}" />
         <apex:outputField value="{!Referral__c.Referral_Phone_Number__c}" />
         <apex:outputField value="{!Referral__c.Financial_Status__c}" rendered="{!ReferralRecordType == 'CareMeridian'}" />
@@ -1134,8 +1134,8 @@ function stopRKey(evt) {
             <br/>
             <apex:outputLabel styleClass="ref_loc_head" value="Street 2" />&nbsp;
             <apex:outputText value="{!Referral__c.Referrer_Street_2__c}"  id="Perm_Street2"/>&nbsp;
-            <br/> 
-            <apex:outputLabel styleClass="ref_loc_head" value="City" />&nbsp;          
+            <br/>
+            <apex:outputLabel styleClass="ref_loc_head" value="City" />&nbsp;
             <apex:outputText value="{!Referral__c.Referrer_City__c}"  id="Perm_City"/>&nbsp;
             <apex:outputLabel styleClass="ref_loc_head" value="State" />&nbsp;
             <apex:outputField value="{!Referral__c.Referrer_State__c}"  id="Perm_State"/>&nbsp;
@@ -1143,16 +1143,16 @@ function stopRKey(evt) {
             <apex:outputText value="{!Referral__c.Referrer_Zip__c}" style="width: 42px;"  id="Perm_Zip"/>
           </apex:outputPanel>
         </apex:pageBlockSectionItem>
-        <apex:outputField value="{!Referral__c.Referrer_Street__c}" rendered="{!ReferralRecordType=='Cambridge Florida' || 
-                                                                                ReferralRecordType = 'Cambridge Massachusetts' ||                        
-                                                                                ReferralRecordType = 'Cambridge Maryland' || 
+        <apex:outputField value="{!Referral__c.Referrer_Street__c}" rendered="{!ReferralRecordType=='Cambridge Florida' ||
+                                                                                ReferralRecordType = 'Cambridge Massachusetts' ||
+                                                                                ReferralRecordType = 'Cambridge Maryland' ||
                                                                                 ReferralRecordType = 'Cambridge Indiana' ||
                                                                                 ReferralRecordType = 'Cambridge North Carolina' ||
                                                                                 ReferralRecordType = 'Cambridge Ohio'}"/>
-        <apex:outputField value="{!Referral__c.Referrer_Email__c}" rendered="{!ReferralRecordType=='NeuroRestorative' || 
-                                                                                ReferralRecordType=='Cambridge Florida' || 
+        <apex:outputField value="{!Referral__c.Referrer_Email__c}" rendered="{!ReferralRecordType=='NeuroRestorative' ||
+                                                                                ReferralRecordType=='Cambridge Florida' ||
                                                                                 ReferralRecordType = 'Cambridge Massachusetts' ||
-                                                                                ReferralRecordType = 'Cambridge Maryland' || 
+                                                                                ReferralRecordType = 'Cambridge Maryland' ||
                                                                                 ReferralRecordType = 'Cambridge Indiana' ||
                                                                                 ReferralRecordType = 'Cambridge North Carolina' ||
                                                                                 ReferralRecordType = 'Cambridge Ohio'}"/>
@@ -1207,20 +1207,20 @@ function stopRKey(evt) {
      </apex:pageBlockSection>
 
 
-      <apex:pageBlockSection rendered="{!ReferralRecordType=='Cambridge Florida' || 
+      <apex:pageBlockSection rendered="{!ReferralRecordType=='Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio'}">
          <apex:pageblockSectionItem >
-             <apex:outputPanel >         
+             <apex:outputPanel >
                  <apex:outputLabel >Reason Category: Mental Health/Emotional</apex:outputLabel>
                  <apex:outputPanel rendered="{!Referral__c.Discrimination_Reason__c != ''}">
                      <br/>
                      <apex:outputLabel >Discrimination Reason</apex:outputLabel>
                  </apex:outputPanel>
-                 
+
              </apex:outputPanel>
              <apex:outputPanel >
                  <apex:outputField value="{!Referral__c.Reason_Category_Mental_Health_Emotional__c}" />
@@ -1228,14 +1228,14 @@ function stopRKey(evt) {
                      <br/>
                      <apex:outputField value="{!Referral__c.Discrimination_Reason__c}" />
                  </apex:outputPanel>
-             </apex:outputPanel> 
+             </apex:outputPanel>
          </apex:pageblockSectionItem>
          <apex:outputField value="{!Referral__c.Reason_Category_School_Problems__c}" />
          <apex:outputField value="{!Referral__c.Reason_Category_Medical_Problems__c}" />
          <apex:outputField value="{!Referral__c.Reason_Category_Physical_Environment__c}" />
          <apex:outputField value="{!Referral__c.Reason_Category_Behavioral_Problems__c}" />
      </apex:pageBlockSection>
-     
+
      <!-- START: CTEAE-106, MA Referral Flavor Fields -->
      <apex:pageBlockSection rendered="{!ReferralRecordType=='Cambridge Massachusetts'}">
         <apex:outputField id="IccCarePlanSubmittedField" value="{!Referral__c.ICC_Care_Plan_Submitted__c}" label="If the referral is from the ICC has the care plan been submitted to the insurance company in order for us to obtain an authorization for services?" />
@@ -1244,7 +1244,7 @@ function stopRKey(evt) {
         <apex:outputField value="{!Referral__c.Goals_from_the_Referral_Source__c}" />
      </apex:pageBlockSection>
      <!-- END: CTEAE-106, MA Referral Flavor Fields -->
-     
+
      <apex:pageBlockSection showHeader="false" columns="1" collapsible="false" id="ReferralDetail_1">
        <apex:outputField value="{!Referral__c.Reason_for_Referral__c}" style="width: 90%;" />
        <apex:outputField value="{!Referral__c.Update_Notes__c}" style="width: 90%;" />
@@ -1265,9 +1265,9 @@ function stopRKey(evt) {
         </apex:pageBlockSection>
 
 <!--  START NEW PLACEMENT SECTION -->
-<apex:pageBlockSection title="Placement Risk" id="placementRiskBlock" rendered="{!referralRecordType=='Cambridge Florida' ||                         
+<apex:pageBlockSection title="Placement Risk" id="placementRiskBlock" rendered="{!referralRecordType=='Cambridge Florida' ||
                                                                                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                                                                                        ReferralRecordType = 'Cambridge Maryland' || 
+                                                                                        ReferralRecordType = 'Cambridge Maryland' ||
                                                                                         ReferralRecordType = 'Cambridge Indiana' ||
                                                                                         ReferralRecordType = 'Cambridge North Carolina' ||
                                                                                         ReferralRecordType = 'Cambridge Ohio'}">
@@ -1276,9 +1276,9 @@ function stopRKey(evt) {
          <apex:outputField label="Select the type of placement that would be most likely to occur, should an out of home placement be required:" value="{!Referral__c.Placement_Type_Risk__c}" />
          <apex:outputField label="Other (specify)" value="{!Referral__c.Other_Placement_Type_Desc__c}" />
      </apex:pageBlockSection>
-    <apex:pageBlockSection id="PlacementHxBlockSection" title="Placement History" rendered="{!referralRecordType=='Cambridge Florida' || 
+    <apex:pageBlockSection id="PlacementHxBlockSection" title="Placement History" rendered="{!referralRecordType=='Cambridge Florida' ||
                                                                                                 ReferralRecordType = 'Cambridge Massachusetts' ||
-                                                                                                ReferralRecordType = 'Cambridge Maryland' || 
+                                                                                                ReferralRecordType = 'Cambridge Maryland' ||
                                                                                                 ReferralRecordType = 'Cambridge Indiana' ||
                                                                                                 ReferralRecordType = 'Cambridge North Carolina' ||
                                                                                                 ReferralRecordType = 'Cambridge Ohio'}">
@@ -1331,12 +1331,12 @@ function stopRKey(evt) {
              <hr />
          </apex:pageBlockSectionItem>
          </apex:pageBlockSection>
-        <apex:pageBlockSection id="JuvBlockSection" title="Juvenile Services Info" rendered="{!referralRecordType=='Cambridge Florida' || 
+        <apex:pageBlockSection id="JuvBlockSection" title="Juvenile Services Info" rendered="{!referralRecordType=='Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}">         
+                        ReferralRecordType = 'Cambridge Ohio'}">
          <apex:outputField value="{!Referral__c.Previous_Juvenile_Services_Involvement__c}" />
          <apex:pageBlockSectionItem />
          <apex:outputField value="{!Referral__c.Current_Juvenile_Services_Involvement__c}" />
@@ -1445,7 +1445,7 @@ function stopRKey(evt) {
         <!--Left --><apex:outputField value="{!Referral__c.Axis_II__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />
         <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',referralRecordType != 'CareMeridian', referralRecordType != 'NeuroRestorative')}"/>
         <apex:outputField value="{!Referral__c.Diagnosis_Effective_Date__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
-        
+
         <!--Left --><apex:outputField value="{!Referral__c.Axis_III__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />
         <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian')}"/>
         <apex:pageBlocksectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}">
@@ -1456,13 +1456,13 @@ function stopRKey(evt) {
         <apex:param value="{!Referral__c.Cause_of_Injury_Other__c}" />
         </apex:outputtext>
        </apex:outputPanel>
-        
+
         </apex:pageBlocksectionItem>
         <apex:outputField value="{!Referral__c.Type_of_Encephalopathy__c}" rendered="{!Referral__c.Diagnosis_I__c =='Encephalopathy' && ReferralRecordType == 'NeuroRestorative'}" />
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative' && Referral__c.Diagnosis_I__c =='Encephalopathy'}"/>
-        
+
         <apex:outputField value="{!Referral__c.Diagnosis_II__c}" label="Secondary Diagnosis" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
- 
+
         <apex:outputField value="{!Referral__c.Current_Location__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" />
 
         <!--Left --><apex:outputField value="{!Referral__c.Axis_IV__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />
@@ -1502,7 +1502,7 @@ function stopRKey(evt) {
 
         <apex:outputField value="{!Referral__c.Communication_Summary__c}" rendered="{!ReferralRecordType == 'Illinois' || ReferralRecordType == 'Cambridge Florida'} ||
                                 ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio'}"/>
@@ -1511,7 +1511,7 @@ function stopRKey(evt) {
 
         <apex:outputField value="{!Referral__c.ADL_Summary__c}" rendered="{!ReferralRecordType == 'Illinois' || ReferralRecordType == 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio'}"/>
@@ -1633,7 +1633,7 @@ function stopRKey(evt) {
         <apex:outputField value="{!Referral__c.Comments__c}" style="width: 90%;" />
       </apex:pageBlockSection>
 
-      <apex:pageBlockSection showHeader="true" title="Evaluation" columns="1" collapsible="false" rendered="{!ReferralRecordType=='CareMeridian'}">
+      <apex:pageBlockSection showHeader="true" title="Evaluation" columns="1" collapsible="false" rendered="{!ReferralRecordType=='CareMeridian' || ReferralRecordType=='NeuroRestorative'}">
         <apex:outputPanel >
           <apex:variable var="emptyList" value="'[]'"/>
           <apex:variable var="evaluationList" value="'{!Referral__c.Evaluations__r}'"/>
@@ -1641,7 +1641,7 @@ function stopRKey(evt) {
         </apex:outputPanel>
         <apex:pageBlockTable value="{!Referral__c.Evaluations__r}" var="evaluation" >
           <apex:column headerValue="Action" >
-          	  <apex:outputPanel rendered="{!evaluation.Referral__r.Person_Being_Served__c == null}">
+                <apex:outputPanel rendered="{!evaluation.Referral__r.Person_Being_Served__c == null}">
                  <a href="/{!evaluation.Id}/e">Edit</a>
               </apex:outputPanel>
           </apex:column>
@@ -1740,15 +1740,17 @@ function stopRKey(evt) {
                                columns="4"
                                collapsible="false"
                                id="progConsid"
-                               rendered="{!AND(ReferralRecordType!='CareMeridian',ReferralRecordType!='NeuroRestorative')}">
+                               rendered="{!AND(ReferralRecordType!='CareMeridian')}">
           <!-- Row 1, Col 1 -->
-          <apex:outputField value="{!Referral__c.Staffing_Needs__c}" rendered="{!ReferralRecordType != 'Indiana'}"/>
+          <apex:outputField value="{!Referral__c.Staffing_Needs__c}" rendered="{!ReferralRecordType != 'Indiana' && ReferralRecordType != 'NeuroRestorative'}"/>
           <apex:outputField value="{!Referral__c.Living_Environment__c}" rendered="{!ReferralRecordType = 'Indiana'}"/>
+          <apex:outputField value="{!Referral__c.Staffing_Ratio__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 1, Col 2 -->
           <apex:outputField value="{!Referral__c.Physically_Aggressive_to_Peers__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio'}"
@@ -1771,6 +1773,8 @@ function stopRKey(evt) {
                         ReferralRecordType = 'California'||
                         ReferralRecordType = 'Nevada'}"
           />
+          <apex:outputField value="{!Referral__c.Desired_Living_Environment_at_Discharge__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 1, Col 3 -->
           <apex:outputField value="{!Referral__c.Uses_Tobacco__c}"
             rendered="{!isCambridge}"
@@ -1793,6 +1797,8 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Law_Enforcement_Involvement__c}"
             rendered="{!ReferralRecordType = 'Wisconsin'}"
           />
+          <apex:outputField value="{!Referral__c.Elopement__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 1, Col 4 -->
           <apex:outputField value="{!Referral__c.Maintain_Sibling_Group__c}"
             rendered="{!isCambridge}"
@@ -1815,18 +1821,21 @@ function stopRKey(evt) {
             rendered="{!ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
           <!-- Row 2, Col 1 -->
           <apex:outputField value="{!Referral__c.Staffing_Ratio__c}"
-            rendered="{!ReferralRecordType != 'Indiana'}"
+            rendered="{!ReferralRecordType != 'Indiana' && ReferralRecordType != 'NeuroRestorative'}"
           />
           <apex:outputField value="{!Referral__c.Mobility__c}"
             rendered="{!ReferralRecordType = 'Indiana'}"
           />
+          <apex:outputField value="{!Referral__c.Physically_Aggressive_to_Staff__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 2, Col 2 -->
           <apex:outputField value="{!Referral__c.Verbally_Aggressive__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio'}"
@@ -1849,6 +1858,8 @@ function stopRKey(evt) {
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}"
           />
+          <apex:outputField value="{!Referral__c.Physically_Aggressive_to_Self__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 2, Col 3 -->
           <apex:outputField value="{!Referral__c.Chemical_Use_Recovery__c}"
             rendered="{!isCambridge}"
@@ -1871,6 +1882,8 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Uses_Tobacco__c}"
             rendered="{!ReferralRecordType = 'Wisconsin'}"
           />
+          <apex:outputField value="{!Referral__c.Physically_Aggressive_to_Peers__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 2, Col 4 -->
           <apex:outputField value="{!Referral__c.If_Yes_How_Many__c}"
             rendered="{!isCambridge}"
@@ -1893,18 +1906,22 @@ function stopRKey(evt) {
             rendered="{!ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
+          <apex:outputField value="{!Referral__c.Verbally_Aggressive__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 3, Col 1 -->
           <apex:outputField value="{!Referral__c.Living_Environment__c}"
-            rendered="{!ReferralRecordType != 'Indiana'}"
+            rendered="{!ReferralRecordType != 'Indiana' && ReferralRecordType != 'NeuroRestorative'}"
           />
           <apex:outputField value="{!Referral__c.Accessible_Housing_Needed__c}"
             rendered="{!ReferralRecordType = 'Indiana'}"
           />
+          <apex:outputField value="{!Referral__c.Aggressive_to_Staff_Description__c}" label="Description" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 3, Col 2 -->
           <apex:outputField value="{!Referral__c.Suicide_Threats__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio'}"
@@ -1927,6 +1944,8 @@ function stopRKey(evt) {
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}"
           />
+          <apex:outputField value="{!Referral__c.Aggressive_to_Self_Description__c}" label="Description" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 3, Col 3 -->
           <apex:outputField value="{!Referral__c.Chemical_Use_Current__c}"
             rendered="{!isCambridge}"
@@ -1947,6 +1966,8 @@ function stopRKey(evt) {
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
+          <apex:outputField value="{!Referral__c.Aggressive_to_Peers_Description__c}" label="Description" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 3, Col 4 -->
           <apex:outputField value="{!Referral__c.No_Same_Sex_Peers__c}"
             rendered="{!isCambridge}"
@@ -1967,6 +1988,8 @@ function stopRKey(evt) {
             rendered="{!ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
+          <apex:outputField value="{!Referral__c.Verbally_Aggressive_Description__c}" label="Description" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 4, Col 1 -->
           <apex:outputField value="{!Referral__c.Preferred_Setting__c}"
             rendered="{!isCambridge }"
@@ -1987,11 +2010,12 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Accessible_Vehicle_Needed__c}"
             rendered="{!ReferralRecordType = 'Indiana'}"
           />
+          <apex:outputField value="{!Referral__c.Suicide_Threats__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
           <!-- Row 4, Col 2 -->
           <apex:outputField value="{!Referral__c.Suicide_Attempts__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio'}"
@@ -2014,6 +2038,7 @@ function stopRKey(evt) {
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}"
           />
+          <apex:outputField value="{!Referral__c.Suicide_Attempts__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
           <!-- Row 4, Col 3 -->
           <apex:outputField value="{!Referral__c.Chemical_Dependency_Treatment__c}"
             rendered="{!isCambridge}"
@@ -2034,6 +2059,7 @@ function stopRKey(evt) {
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
+          <apex:outputField value="{!Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
           <!-- Row 4, Col 4 -->
           <apex:outputField value="{!Referral__c.Live_with_Opposite_Sex__c}"
             rendered="{!isCambridge}"
@@ -2054,6 +2080,8 @@ function stopRKey(evt) {
             rendered="{!ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
+          <apex:outputField value="{!Referral__c.Theft__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 5, Col 1 -->
           <apex:outputField value="{!Referral__c.Mobility__c}"
             rendered="{!isCambridge }"
@@ -2076,11 +2104,13 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Area_of_State_Interested_In__c}"
             rendered="{!ReferralRecordType = 'Indiana'}"
           />
+          <apex:outputField value="{!Referral__c.Suicide_Threats_Description__c}" label="Description" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 5, Col 2 -->
           <apex:outputField value="{!Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio'}"
@@ -2103,11 +2133,13 @@ function stopRKey(evt) {
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}"
           />
+          <apex:outputField value="{!Referral__c.Suicide_Attempts_Description__c}" label="Description" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 5, Col 3 -->
           <apex:outputField value="{!Referral__c.Drug_Possession_Distribution__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio'}"
@@ -2132,6 +2164,8 @@ function stopRKey(evt) {
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
+          <apex:outputField value="{!Referral__c.Self_Harm_Behavior_Description__c}" label="Description" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 5, Col 4 -->
           <apex:outputField value="{!Referral__c.No_Cross_Cultural_Placement__c}"
             rendered="{!isCambridge}"
@@ -2152,6 +2186,8 @@ function stopRKey(evt) {
             rendered="{!ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
+          <apex:outputField value="{!Referral__c.Theft_Description__c}" label="Description" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 6, Col 1 -->
           <apex:outputField value="{!Referral__c.Accessible_Housing_Needed__c}"
             rendered="{!isCambridge ||
@@ -2172,12 +2208,13 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Current_Medical_Conditions__c}"
             rendered="{!ReferralRecordType = 'Indiana'}"
           />
+          <apex:outputField value="{!Referral__c.Uses_Tobacco__c}" label="Tobacco Use (Current)" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
 
           <!-- Row 6, Col 2 -->
           <apex:outputField value="{!Referral__c.Fire_Setting__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio'}"
@@ -2200,12 +2237,13 @@ function stopRKey(evt) {
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}"
           />
+          <apex:outputField value="{!Referral__c.Chemical_Use_Current__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
 
           <!-- Row 6, Col 3 -->
           <apex:outputField value="{!Referral__c.Elopement__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio' ||
@@ -2228,6 +2266,7 @@ function stopRKey(evt) {
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
+          <apex:outputField value="{!Referral__c.Chemical_Dependency_Treatment__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
 
           <!-- Row 6, Col 4 -->
           <apex:outputField value="{!Referral__c.Can_Be_Placed_With_Other_Children__c}"
@@ -2256,6 +2295,8 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Has_Pets__c}"
             rendered="{!ReferralRecordType = 'Wisconsin'}"
           />
+          <apex:outputField value="{!Referral__c.Unwanted_Sexual_Behavior__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 7, Col 1 -->
           <apex:outputField value="{!Referral__c.Accessible_Vehicle_Needed__c}"
             rendered="{!isCambridge ||
@@ -2275,11 +2316,13 @@ function stopRKey(evt) {
                         ReferralRecordType = 'Wisconsin' ||
                         ReferralRecordType = 'West Virginia'}"
           />
+          <apex:outputField value="{!Referral__c.Current_Tobacco_Use_Description__c}" label="Description" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 7, Col 2 -->
           <apex:outputField value="{!Referral__c.Property_Destruction__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio'}"
@@ -2302,11 +2345,13 @@ function stopRKey(evt) {
           <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
+          <apex:outputField value="{!Referral__c.Current_Chemical_Use_Date_Last_Used__c}" label="Date Last Used" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 7, Col 3 -->
           <apex:outputField value="{!Referral__c.Unwanted_Sexual_Behavior__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio' ||
@@ -2332,6 +2377,8 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Exterior_Locking_Mechanism_Required__c}"
             rendered="{!ReferralRecordType = 'Wisconsin'}"
           />
+          <apex:outputField value="{!Referral__c.Chemical_Dep_Treatment_Date_Completed__c}" label="Date Completed" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 7, Col 4 -->
           <apex:outputField value="{!Referral__c.If_Yes_Age_Requirements__c}"
             rendered="{!isCambridge}"
@@ -2352,6 +2399,8 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.If_Yes_What_kind__c}"
             rendered="{!ReferralRecordType = 'Wisconsin'}"
           />
+          <apex:outputField value="{!Referral__c.If_Yes_Type_of_Unwanted_Sexual_Behavior__c}" label="If Yes, Type" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 8, Col 1 -->
           <apex:outputField value="{!Referral__c.Geographic_Restrictions__c}"
             rendered="{!isCambridge}"
@@ -2371,11 +2420,13 @@ function stopRKey(evt) {
                         ReferralRecordType = 'Wisconsin' ||
                         ReferralRecordType = 'West Virginia'}"
           />
+          <apex:outputField value="{!Referral__c.Current_Pending_Litigation__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 8, Col 2 -->
           <apex:outputField value="{!Referral__c.Gang_Involvement__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio'}"
@@ -2398,11 +2449,13 @@ function stopRKey(evt) {
                         ReferralRecordType = 'Oregon' ||
                         ReferralRecordType = 'West Virginia'}"
           />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 8, Col 3 -->
           <apex:outputField value="{!Referral__c.Registered_Sex_Offender__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio' ||
@@ -2429,6 +2482,8 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Unwanted_Sexual_Behavior__c}"
             rendered="{!ReferralRecordType = 'Wisconsin'}"
           />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 8, Col 4 -->
           <apex:outputField value="{!Referral__c.Family_Involvement_Restrictions__c}"
             rendered="{!isCambridge}"
@@ -2440,17 +2495,20 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Locked_Seclusion_Room_Needed__c}"
             rendered="{!ReferralRecordType = 'Wisconsin'}"
           />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 9, Col 1 -->
           <apex:outputField value="{!Referral__c.Area_of_State_Interested_In__c}"
             rendered="{!isCambridge}"
           />
           <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Wisconsin' ||
                         ReferralRecordType = 'Iowa'}" />
+          <apex:outputField value="{!Referral__c.Current_Pending_Litigation_Description__c}" label="Describe" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
           <!-- Row 9, Col 2 -->
           <apex:outputField value="{!Referral__c.Theft__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio'}"
@@ -2467,7 +2525,7 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Nursing_Care_Needed__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio'}"
@@ -2494,7 +2552,7 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Legal_History__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio'}"
@@ -2507,7 +2565,7 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Level_of_Support_Required__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio'}"
@@ -2535,7 +2593,7 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Physically_Aggressive_to_Staff__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio'}"
@@ -2546,7 +2604,7 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Law_Enforcement_Involvement__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio'}"
@@ -2559,29 +2617,29 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Unsupervised_Time__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio'}"
           />
           <apex:outputField value="{!Referral__c.Victim_of_Domestic_Violence__c}" rendered="{!ReferralRecordType = 'Cambridge Ohio'}" />
           <apex:outputField value="{!Referral__c.Safe_Plan__c}" rendered="{!ReferralRecordType = 'Cambridge Indiana'}" />
-          
+
           <apex:outputField value="{!Referral__c.Length_of_time__c}" rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
           <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge New Jersey'}" />
           <!-- Row 11, Col 4 -->
           <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                                                 ReferralRecordType = 'Cambridge Massachusetts' ||
-                                                ReferralRecordType = 'Cambridge Maryland' || 
+                                                ReferralRecordType = 'Cambridge Maryland' ||
                                                 ReferralRecordType = 'Cambridge North Carolina' ||
                                                 ReferralRecordType = 'Cambridge New Jersey'}" />
-                                                
+
           <apex:outputField value="{!Referral__c.If_Yes_What_kind__c}" label="If Yes, Type" rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
           <!-- Row 12, Col 1 -->
           <apex:outputField value="{!Referral__c.Physically_Aggressive_to_Self__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio'}"
@@ -2593,35 +2651,35 @@ function stopRKey(evt) {
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Maryland'}"
           />
-          
+
           see CTEAE-34 for reason commented out
           -->
        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Cambridge Florida' ||
                                                 ReferralRecordType = 'Cambridge Massachusetts' ||
-                                                ReferralRecordType = 'Cambridge Maryland' || 
+                                                ReferralRecordType = 'Cambridge Maryland' ||
                                                 ReferralRecordType = 'Cambridge Indiana' ||
                                                 ReferralRecordType = 'Cambridge North Carolina' ||
                                                 ReferralRecordType = 'Cambridge Ohio'}">
                  <apex:outputLabel >Adjudicated offense status</apex:outputLabel>
               <apex:outputPanel >
-                  <apex:outputField id="Adjudicated_offense_status" value="{!Referral__c.Adjudicated_offense_status__c}"/>                  
+                  <apex:outputField id="Adjudicated_offense_status" value="{!Referral__c.Adjudicated_offense_status__c}"/>
                   <apex:outputPanel rendered="{!Referral__c.Adjudicated_offense_status__c}">
                       <br/>
                       <apex:outputField id="Misdemeanor_s" value="{!Referral__c.Misdemeanor_s__c}"/>Misdemeanor/s
                       <br/>
-                      <apex:outputField id="Felony_ies" value="{!Referral__c.Felony_ies__c}"/>Felony/ies                 
+                      <apex:outputField id="Felony_ies" value="{!Referral__c.Felony_ies__c}"/>Felony/ies
                   </apex:outputPanel>
               </apex:outputPanel>
-          
-          </apex:pageBlockSectionItem>          
-          
-          
+
+          </apex:pageBlockSectionItem>
+
+
           <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
           <!-- Row 12, Col 3 -->
           <apex:outputField value="{!Referral__c.Length_of_time__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                         ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' || 
+                        ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
                         ReferralRecordType = 'Cambridge Ohio' }"
@@ -2630,12 +2688,12 @@ function stopRKey(evt) {
           <!-- Row 12, Col 4 -->
           <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Florida' ||
                                                 ReferralRecordType = 'Cambridge Massachusetts' ||
-                                                ReferralRecordType = 'Cambridge Maryland' || 
+                                                ReferralRecordType = 'Cambridge Maryland' ||
                                                 ReferralRecordType = 'Cambridge Indiana' ||
-                                                ReferralRecordType = 'Cambridge North Carolina' 
+                                                ReferralRecordType = 'Cambridge North Carolina'
                                                 }" />
           <apex:outputField value="{!Referral__c.Animal_Cruelty__c}" rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
-          
+
           <!-- This section is standard among the operating groups, so wwe keep them in one place -->
           <apex:outputText rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}">
             <h1>Diagnosis Programming Considerations</h1> <hr />
@@ -2655,7 +2713,8 @@ function stopRKey(evt) {
         </apex:pageBlockSection>
         <apex:pageBlockSection columns="1" id="progConsiderationsDetail">
           <apex:outputField value="{!Referral__c.Restricted_Health_Conditions__c}" rendered="{!ReferralRecordType == 'Cambridge Georgia'}" />
-          <apex:outputField value="{!Referral__c.Programming_Considerations_Comments__c}" rendered="{!isCambridge}" />
+          <apex:outputPanel layout="none" rendered="{!ReferralRecordType = 'NeuroRestorative'}"><hr /></apex:outputPanel>
+          <apex:outputField value="{!Referral__c.Programming_Considerations_Comments__c}" rendered="{!isCambridge || ReferralRecordType = 'NeuroRestorative'}" />
         </apex:pageBlockSection>
       </span>
 
