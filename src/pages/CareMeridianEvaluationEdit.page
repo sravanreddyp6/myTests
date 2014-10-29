@@ -476,7 +476,8 @@
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Vitals Detail" formId="{!$Component.wholePage}" uniqueId="vitals" />
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Lab Detail" formId="{!$Component.wholePage}" uniqueId="lab" />
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Chem Detail" formId="{!$Component.wholePage}" uniqueId="chem" />
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Micro Detail" formId="{!$Component.wholePage}" uniqueId="micro" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Micro Detail" formId="{!$Component.wholePage}" uniqueId="micro"
+                        rules="{&quot;Test_Type__c&quot;: {&quot;MRSA&quot;: [&quot;X2_Negative_Cultures__c&quot;], &quot;C-diff&quot;: [&quot;X2_Negative_Cultures__c&quot;]}}" />
                     <apex:pageBlockSection columns="1">
                         <apex:inputField value="{!Evaluation__c.Isolation__c}" label="Requires Isolation"
                             html-data-rules="{&quot;1&quot;: &quot;{!$Component.isolationType}&quot;}" />
