@@ -77,6 +77,22 @@ public with sharing class EvaluationResponseTableController {
         }
     }
 
+    public Component.Apex.PageBlockSection getDialog() {
+        // We use a dynamic component here in order to assign dynamic ids to
+        // the form inputs (Visualforce doesn't let us do that using static
+        // components)
+        Component.Apex.PageBlockSection dialog = new Component.Apex.PageBlockSection(columns=2);
+        if (columnsToFetch == null) {
+            return dialog;
+        }
+        for (String column: columnsToFetch) {
+            Component.Apex.InputField dialogInput = new Component.Apex.Inputfield(id=column);
+            dialogInput.expressions.value = '{!currentResponse[\'' + column + '\']}';
+            dialog.childComponents.add(dialogInput);
+        }
+        return dialog;
+    }
+
     private void fetchResponses(Id evaluationId, String responseType) {
         String query = 'SELECT Id, ' + getNecessaryColumns(responseType) +
             ' FROM Evaluation_Response__c WHERE Evaluation__c = :evaluationId' +

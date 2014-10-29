@@ -7,6 +7,7 @@ public with sharing class EvaluationResponseTableControllerTest {
         insert evaluation;
         EvaluationResponseTableController controller = new EvaluationResponseTableController();
         controller.evaluationId = evaluation.Id;
+        Component.Apex.PageBlockSection section = controller.getDialog();
         controller.responseType = 'Allergy';
         controller.showAddResponse();
         System.assertEquals(null, controller.currentResponse.Id);
