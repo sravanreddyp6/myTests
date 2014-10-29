@@ -1,0 +1,343 @@
+<apex:page controller="HomePageController"
+           sidebar="false"  id="thePage">
+  <apex:stylesheet value="{!URLFOR($Resource.Unsemantic, 'stylesheets/unsemantic-grid-responsive.css')}" />
+  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery.tinysort.min.js')}" />
+
+  <style type="text/css">
+    .grid-container {
+      margin-left: 0;
+      margin-right: 0;
+      max-width: none;
+      padding: 0;
+    }
+
+    .block {
+      border-width: 12px 4px;
+      border-style: solid;
+      border-color: #7AC143;
+      -webkit-border-radius: 8px;
+      -moz-border-radius: 8px;
+      border-radius: 8px;
+      padding: 0px;
+      margin-bottom: 12px;
+     
+    }
+
+    .block-title {
+      color: #002C59;
+      padding: 0 4px;
+      font-size: 1.5em;
+    }
+
+    .block-inner {
+      background-color: #ffffff;
+      padding: 6px 6px 6px 6px;
+      border:1px solid white;
+      border-radius: 8px;
+      
+    }
+
+    .block-inner ul {
+      margin: 0px !important;
+      padding: 0px;
+      list-style-type: none;
+    }
+    .block-inner ul li {
+        padding-top:3px;
+        margin:3px;
+    }
+
+    .block-inner ul li ul {
+      margin-left: 0;
+      padding-left: 0;
+      list-style-type:disc;
+      list-style:inside;
+    }
+
+    .block-inner ul li ul li {
+        margin-left:20px;
+        margin-bottom:0px;
+        margin-top:0px;
+        list-style-position:outside;
+    }
+
+    #accordion, #accordion ul {
+      padding-left: 0;
+    }
+
+    #accordion li ul {
+      display: none;
+    }
+
+    #accordion li.current ul {
+      display: block;
+    }
+
+    #accordion a.heading {
+      display: block;
+    }
+    
+    a.heading:hover {
+      cursor: pointer;
+    }
+    .taskbutton {
+      background-color: #002C59;
+      color: #ffffff;
+      font-weight: bold;
+      text-align: center;
+      border-radius: 8px 8px 8px 8px;
+      padding: 6px 6px 6px 6px;
+      margin-top: 4px;
+      display: block;
+      text-decoration: none;
+    }
+
+    a.taskbutton:hover {
+      text-decoration: none;
+    }
+     .custPopup{
+       background-color: white;
+       border-width: 2px;
+       border-style: solid;
+       z-index: 9999;
+       left: 50%;
+       padding:10px;
+       position: absolute;
+       /* These are the 3 css properties you will need to change so the popup 
+       displays in the center of the screen. First set the width. Then set 
+       margin-left to negative half of what the width is. You can add 
+       the height property for a fixed size pop up if you want.*/
+       width: 500px;
+       margin-left: -250px;
+       top:100px;
+   }
+      .popupBackground{
+         background-color:black;
+         opacity: 0.20;
+         filter: alpha(opacity = 20);
+         position: absolute;
+         width: 100%;
+         height: 100%;
+         top: 0;
+         left: 0;
+         z-index: 9998;
+   }
+        
+    .dataTable  {width: 100% !important;}
+    .dataTables_filter {float: right; !important;}
+    .dataTables_length{width:150px; float: left ;!important;}
+    .dataTables_info {float:left; width: 250px;!important;}
+    .dataTables_paginate{float:right;!important;}
+       
+    .sorting {
+      background: #7AC143 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_both.png') }') no-repeat center right !important;
+      padding-right: 20px !important;
+    }
+    .sorting_asc {
+        background: #7AC143 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_asc.png') }') no-repeat center right !important;
+        padding-right: 20px !important;
+    }
+    .sorting_desc {
+        background: #7AC143 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_desc.png') }') no-repeat center right !important;
+        padding-right: 20px !important;
+    }
+    .sorting_asc_disabled {
+        background: #7AC143 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_asc_disabled.png') }') no-repeat center right !important;
+        padding-right: 20px !important;
+    }
+    .sorting_desc_disabled {
+        background: #7AC143 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_desc_disabled.png') }') no-repeat center right !important;
+        padding-right: 20px !important;
+    }
+    .sorting_disabled {
+        background: #7AC143 !important;
+    }
+    .paginate_button {
+        margin-left: 5px;
+        border-radius: 12%; 
+        width: 10px;
+        height: 8px;
+        padding: 0.5px;
+        background: #F8F8F8;
+        border: 1px solid #666;
+        color: #666;
+        text-align: center;
+        font: 10px Time New Roman, sans-serif;
+        cursor: pointer;
+    }
+    
+    .paginate_active{
+        margin-left: 5px;
+        border-radius: 12%; 
+        width: 10px;
+        height: 8px;
+        padding: 0.5px;
+        background: #7AC143;
+        border: 1px solid #666;
+        color: #666;
+        text-align: center;
+        font: 10px Times New Roman, sans-serif;
+        cursor: pointer;
+    }
+    
+    
+    table.dataTable tr.odd { background-color: white; }
+    table.dataTable tr.even { background-color: white; }
+    table.dataTable tr.odd td.sorting_1 { background-color: white; }
+    table.dataTable tr.odd td.sorting_2 { background-color: white; }
+    table.dataTable tr.odd td.sorting_3 { background-color: white; }
+    table.dataTable tr.even td.sorting_1 { background-color: white; }
+    table.dataTable tr.even td.sorting_2 { background-color: white; }
+    table.dataTable tr.even td.sorting_3 { background-color: white; }
+    .dataTables_length, .dataTables_filter, .dataTables_info, .dataTables_paginate {
+    padding: 3px;
+    }
+    
+  </style>
+
+  <script>
+    j$ = jQuery.noConflict();
+    
+    function showHideList(id) {
+      j$('#' + id).slideToggle();
+    }
+  </script>
+  
+  <apex:form id="formid">
+	<apex:pageMessages />
+   <apex:outputPanel layout="block" styleClass="block-title" id="main">
+          I would like to access...
+        </apex:outputPanel>      <br />
+      <apex:inputText label="First Name" title="First Name" value="{!FrstName}" id="FName"> First Name</apex:inputText>
+       &nbsp; &nbsp; &nbsp; &nbsp;
+  <apex:inputText label="First Name" title="Last Name" value="{!LstName}" id="LName">Last Name</apex:inputText>
+  &nbsp; &nbsp; &nbsp; &nbsp;
+  <apex:commandButton id="search_values" value="Find" onclick="search_Names();" action="{!getSearchNames}"> </apex:commandButton>
+   &nbsp; <br /> <br />
+   <apex:outputPanel layout="block" styleClass="grid-container">
+  <c:HomePageComponents objectName="Referrals" OperatingGroup="{! $User.Operating_Group__c}" />  
+  <c:HomePageComponents objectName="Person Being Served" OperatingGroup="{! $User.Operating_Group__c}" />  
+  <c:HomePageComponents objectName="TMN Contacts" OperatingGroup="{! $User.Operating_Group__c}" />  
+  <c:HomePageComponents objectName="Contract Management" OperatingGroup="{! $User.Operating_Group__c}" />  
+  <c:HomePageComponents objectName="Documents" OperatingGroup="{! $User.Operating_Group__c}" />  
+  </apex:outputPanel>
+  
+  
+      <apex:pageBlock title="My Tasks" >
+      
+      <apex:pageBlockButtons location="Top">
+       <apex:panelGrid columns="3">
+      <apex:commandButton action="/setup/ui/recordtypeselect.jsp?ent=Task&retURL=%2Fhome%2Fhome.jsp&save_new_url=%2F00T%2Fe%3FretURL%3D%252Fhome%252Fhome.jsp" value="Add Task"/>
+      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+      
+        <apex:selectList value="{!viewstsk}" size="1">
+            <apex:selectOptions value="{!viewvalues}"/>
+           <apex:actionSupport event="onchange" action="{!mineTasks}" rerender="PageBT"/>   
+        </apex:selectList><p/>
+        </apex:panelGrid>
+        </apex:pageBlockButtons>
+        <a href="/007">View All</a> <br /> <br />
+       <apex:pageBlockTable value="{!populateTasks}" var="tsk" id="PageBT">
+          <apex:column >
+              <a href="/{!tsk.Id}/e?close=1&retURL=/apex/Home">X</a>
+          </apex:column>
+          <apex:column headerValue="Created"><apex:outputText value=" {!tsk.CreatedDate}" /></apex:column>
+           <apex:column headerValue="Subject"><a href="/{!tsk.Id}?retURL=/apex/Home">{!tsk.Subject}</a></apex:column>
+           <apex:column headerValue="Priority">{!tsk.Priority}</apex:column>
+            <apex:column headerValue="Status">{!tsk.Status}</apex:column> 
+            <apex:column headerValue="Due Date"><apex:outputText value=" {!tsk.ActivityDate}" /></apex:column> 
+            <apex:column headerValue="Name"><a href="/{!tsk.WhoId}">{!tsk.Who.Name}</a></apex:column>
+            <apex:column headerValue="Related To"><a href="/{!tsk.WhatId}">{!tsk.What.Name}</a></apex:column>
+        </apex:pageBlockTable>   
+    </apex:pageBlock> 
+    
+   <apex:pageBlock title="Approvals">
+       <!-- a href="/04i">View All</a> <br /> <br /--->
+        <apex:pageBlockTable value="{!ListApprovals}" var="app" id="approvalTable" styleClass="dataTable" >
+            <apex:column headerValue="Action" ><a href="/{!app.TAction}/e?et=REASSIGN&retURL=%2Fhome%2Fhome.jsp"> Reassign</a> | <a href="/{!app.TRelated}" target="_blank"> Review</a></apex:column>
+            <apex:column headerValue="Item to Approve"><a href="/{!app.TRelated}">{!app.TobjName}</a></apex:column>
+            <apex:column headerValue="Type">{!app.TType}</apex:column>
+            <apex:column headerValue="Created By"><a href="/{!app.MostRecent}">{!app.LMName}</a></apex:column>
+            <apex:column headerValue="Date Submitted"><apex:outputText Value=" {!app.cDate}"></apex:outputText></apex:column>
+        </apex:pageBlockTable>    
+    </apex:pageBlock>
+  </apex:form>
+  
+  <script>
+  function search_Names(){
+  
+   var fname = document.getElementById("{!$Component.thePage.formid.FName}").value;
+   var lname = document.getElementById("{!$Component.thePage.formid.LName}").value;
+   if((fname==null || fname=='') && (lname==null || lname=='')){
+        alert('Please fill one of the search boxes before you click on find');
+     }
+     return false; 
+  }
+  
+  </script>
+
+
+  <script type="text/javascript">
+    j$(document).ready(function() {
+    
+     var setSize = function () {  //define a function with the code you want to call    
+        // resize all boxes to same height
+        var maxheight=0;
+        j$( ".block-inner" ).each( function( index, element) {
+            if ( this.clientHeight > maxheight )
+                maxheight = this.clientHeight;
+        });
+        
+        j$(".block").css("height", maxheight);
+        j$(".block").clientHeight = maxheight;
+    
+         };
+   
+        j$(window).resize(setSize);
+        setSize();  
+    
+      j$('ul#accordion a.heading').click(function() {
+        j$(this).css('outline','none');
+        if(j$(this).parent().hasClass('current')) {
+          j$(this).siblings('ul').slideUp('slow',function() {
+            j$(this).parent().removeClass('current');
+            j$.scrollTo('#accordion',1000);
+          });
+        } else {
+          j$('ul#accordion li.current ul').slideUp('slow',function() {
+            j$(this).parent().removeClass('current');
+          });
+          j$(this).siblings('ul').slideToggle('slow',function() {
+            j$(this).parent().toggleClass('current');
+          });
+          j$.scrollTo('#accordion',1000);
+        }
+        return false;
+      });
+      
+      
+      j$('ul#refrpt>span').tsort();
+      j$('ul#PBSrpt>span').tsort();
+      console.log('items sorted');
+      
+    });
+  </script>
+  
+  <script type="text/javascript" language="javascript">
+      var j$ = jQuery.noConflict();
+       j$('table.dataTable').dataTable({
+        'aoColumnDefs': [{
+        'bSortable': false,
+        'aTargets': [0]
+        }],
+        
+        sPaginationType: "full_numbers"
+         
+    });
+    
+  </script>
+</apex:page>
