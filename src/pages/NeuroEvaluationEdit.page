@@ -459,7 +459,8 @@
             </apex:tab>
             <apex:tab label="Diagnostics" name="diagnosticTab" ontabenter="changeTab('diagnosticTab'); return false;" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Micro Detail" formId="{!$Component.wholePage}" uniqueId="micro" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Micro Detail" formId="{!$Component.wholePage}" uniqueId="micro"
+                        rules="{&quot;Test_Type__c&quot;: {&quot;MRSA&quot;: [&quot;X2_Negative_Cultures__c&quot;], &quot;C-diff&quot;: [&quot;X2_Negative_Cultures__c&quot;]}}" />
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Radiology Detail" formId="{!$Component.wholePage}" uniqueId="radiology" />
                     <apex:pageBlockSection columns="1">
                         <apex:inputField value="{!Evaluation__c.Cancer__c}" />
