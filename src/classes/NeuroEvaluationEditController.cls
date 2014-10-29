@@ -1,8 +1,18 @@
-public with sharing class CareMeridianEvaluationEditController {
+public with sharing class NeuroEvaluationEditController {
     public Evaluation__c evaluation { get; set; }
     public ApexPages.standardController stdController;
     public String selectedTab { get; set; }
     public String nextTab { get; set; }
+
+    public List<String> dummyString{ get; set; }
+    public List<string>selectedHalls {get;set;}
+    public List<SelectOption> hallValues {
+        get {
+            return Utility.getPicklistValues(evaluation, 'Hallucination_Types__c');
+        }
+        set;
+    }
+
     public Related_Party__c[] relatedParties { set;
         get {
             return [
@@ -23,15 +33,38 @@ public with sharing class CareMeridianEvaluationEditController {
     public Person_Being_Referred__c pbr { get; set; }  // Here to save DOB
     public Referral__c ref {get; set; } //to update Primary and Secondary Diagnosis
 
-    public List<String> sliderOptions { set;
+    public List<String> mobilitySliderOptions { set;
         get {
-            if (sliderOptions == null) {
-                sliderOptions = new String[] {
-                    '', 'Dependent', 'Max Assist', 'Moderate Assist',
-                    'Minimum Assist', 'CGA', 'Supervised', 'Independent'
+            if (mobilitySliderOptions == null) {
+                mobilitySliderOptions = new String[] {
+                    'Unknown', 'Total Assist', 'Max Assist', 'Moderate Assist',
+                    'Minimum Assist', 'Setup', 'Modified', 'Independent'
                 };
             }
-            return sliderOptions;
+            return mobilitySliderOptions;
+        }
+    }
+
+    public List<String> selfCareSliderOptions { set;
+        get {
+            if (selfCareSliderOptions == null) {
+                selfCareSliderOptions = new String[] {
+                    'Unknown', 'Total Assist', 'Max Assist', 'Moderate Assist',
+                    'Minimum Assist', 'Setup', 'Modified', 'Independent'
+                };
+            }
+            return selfCareSliderOptions;
+        }
+    }
+
+    public List<String> communicationSliderOptions { set;
+        get {
+            if (communicationSliderOptions == null) {
+                communicationSliderOptions = new String[] {
+                    'Unknown', 'Severe', 'Moderate', 'Mild', 'No Deficit'
+                };
+            }
+            return communicationSliderOptions;
         }
     }
 
@@ -48,7 +81,7 @@ public with sharing class CareMeridianEvaluationEditController {
     }
     public String serializedAnnotations { get; set; }
 
-    public CareMeridianEvaluationEditController(ApexPages.standardController stdController) {
+    public NeuroEvaluationEditController(ApexPages.standardController stdController) {
         this.stdController = stdController;
         evaluation = (Evaluation__c) stdController.getRecord();
         serializedAnnotations = JSON.serialize(annotations);
@@ -64,6 +97,12 @@ public with sharing class CareMeridianEvaluationEditController {
         if (ApexPages.currentPage().getParameters().get('tab') != null) {
             selectedTab = ApexPages.currentPage().getParameters().get('tab');
         }
+        dummyString = new List<String>();
+        selectedHalls = new List<String>();
+
+        if(!String.isBlank(this.evaluation.Hallucination_Types__c))
+            selectedHalls = this.evaluation.Hallucination_Types__c.split(';');
+
     }
 
     public void showAddRelatedParty() {
@@ -154,19 +193,22 @@ public with sharing class CareMeridianEvaluationEditController {
         if (submitted || selectedTab == 'detailsTab' || selectedTab == null) {
 
         }
+        // Hallucination type multi-picklist
+        string hal ='';
+        for (string h: selectedHalls) {
+            hal += h + ';';
+        }
+        if (hal!='' && this.evaluation.Hallucinations__c){
+            hal = hal.Substring(0,hal.length()-1);
+            this.evaluation.Hallucination_Types__c = hal;
+        }
+        else {
+            this.evaluation.Hallucination_Types__c ='';
+        }
         update this.evaluation;
         update this.pbr;
 
-        if(ref.Primary_Diagnosis__c != evaluation.Primary_Diagnosis__c || ref.Secondary_Diagnosis__c != evaluation.Secondary_Diagnosis__c || ref.Date_of_Injury__c != evaluation.Date_of_Injury_Onset__c ){
-            ref.Primary_Diagnosis__c = evaluation.Primary_Diagnosis__c;
-            ref.Secondary_Diagnosis__c = evaluation.Secondary_Diagnosis__c;
-            ref.Date_of_Injury__c = evaluation.Date_of_Injury_Onset__c;
-
-            update this.ref;
-
-        }
-        //return stdController.view();
-        return new PageReference('/apex/CareMeridianEvaluationView?id=' + evaluation.Id + '&tab=' + selectedTab);
+        return new PageReference('/apex/NeuroEvaluationView?id=' + evaluation.Id + '&tab=' + selectedTab);
     }
 
 }
