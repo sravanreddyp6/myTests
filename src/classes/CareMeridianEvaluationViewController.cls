@@ -53,17 +53,16 @@ public with sharing class CareMeridianEvaluationViewController {
         serializedAnnotations = JSON.serialize(annotations);
         currentRelatedParty = new Related_Party__c();
         selectedTab = ApexPages.currentPage().getParameters().get('tab');
-        
-       	string file;
-		file = 'Person Being Referred- '+ this.evaluation.Referral__r.Person_Being_Referred__r.Full_Name__c+'.pdf';
-		file = file.replaceAll('[|,||\\,||"||:|~|!|@|#|$|%|^|&|*|_|+|=|<|>|?|\\(|\\)|\\{|\\}|\\;|\\\'"]', ' ');	
-		// Assigns the person being referred Name to the PDF dynamically
-		Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename='+file);
-		//Grab the Service Assignment details to populate the breadcrumb when user opens Evaluation from Sevrice Assignment Page. EC-41 Sravan:10/13/2014 1:15 PM.
-		if(Apexpages.currentpage().getparameters().get('SA_Id') != null ){
-			SA =[SELECT ID, Name, Admission__r.Name,Admission__c, Admission__r.Person_being_served__c, Admission__r.Person_being_served__r.Name FROM Service_Assignment__c WHERE Id =:ApexPages.currentPage().getParameters().get('SA_Id') ];
-		}
-		
+
+           string file;
+        file = 'Person Being Referred- '+ this.evaluation.Referral__r.Person_Being_Referred__r.Full_Name__c+'.pdf';
+        file = file.replaceAll('[|,||\\,||"||:|~|!|@|#|$|%|^|&|*|_|+|=|<|>|?|\\(|\\)|\\{|\\}|\\;|\\\'"]', ' ');
+        // Assigns the person being referred Name to the PDF dynamically
+        Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename='+file);
+        //Grab the Service Assignment details to populate the breadcrumb when user opens Evaluation from Sevrice Assignment Page. EC-41 Sravan:10/13/2014 1:15 PM.
+        if(Apexpages.currentpage().getparameters().get('SA_Id') != null ){
+            SA =[SELECT ID, Name, Admission__r.Name,Admission__c, Admission__r.Person_being_served__c, Admission__r.Person_being_served__r.Name FROM Service_Assignment__c WHERE Id =:ApexPages.currentPage().getParameters().get('SA_Id') ];
+        }
     }
 
     public void showAddRelatedParty() {
@@ -91,17 +90,12 @@ public with sharing class CareMeridianEvaluationViewController {
     }
     
     public PageReference reDirect() {
-    	
-    	PageReference returnURL;
-    	
-    	if(evaluation.RecordTypeId == Utility.getEValuationRecordType('NursesAssessment')) 
-    	returnURL = new PageReference ('/apex/NursingEvaluationView?id='+evaluation.id);
-    	system.debug('UUUUUUUUUUUUUURRRRRRRRRRRRRRRRRRRRLLLLLLLLLLLLLLLLLLL'+returnURL);
-    	
-    	return returnURL;
-    	
-    	
-    
+        PageReference returnURL;
+        if(evaluation.RecordTypeId == Utility.getEValuationRecordType('NursesAssessment')) 
+            returnURL = new PageReference ('/apex/NursingEvaluationView?id='+evaluation.id);
+        system.debug('UUUUUUUUUUUUUURRRRRRRRRRRRRRRRRRRRLLLLLLLLLLLLLLLLLLL'+returnURL);
+
+        return returnURL;
     }
     
 }
