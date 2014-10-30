@@ -1638,7 +1638,10 @@ function stopRKey(evt) {
         <apex:outputPanel >
           <apex:variable var="emptyList" value="'[]'"/>
           <apex:variable var="evaluationList" value="'{!Referral__c.Evaluations__r}'"/>
-          <apex:commandButton value="Add Evaluation" action="{!addEvaluation}" rendered="{!evaluationList == emptyList && Referral__c.Person_Being_Served__c == null}" />
+          <apex:commandButton value="Add Evaluation" action="{!addEvaluation}"
+            rendered="{!evaluationList == emptyList && Referral__c.Person_Being_Served__c == null && Referral__c.Referral_Status__c!='Closed'}" />
+          <apex:commandButton value="Add Evaluation" onclick="alert('You cannot add a new Evaluation to a Closed referral'); return false;"
+            rendered="{!Referral__c.Referral_Status__c=='Closed'}" />
         </apex:outputPanel>
         <apex:pageBlockTable value="{!Referral__c.Evaluations__r}" var="evaluation" >
           <apex:column headerValue="Action" >
