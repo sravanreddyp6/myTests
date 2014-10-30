@@ -117,7 +117,7 @@ public with sharing class referrals_Controller{
 
 
   public Boolean isErrorDisplayed { get; set; }
-    
+
   private Id personBeingServedId {get; set;}
   public Id pBSId { get; set; }
 
@@ -756,7 +756,8 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
                        Middle_Initial__c, Phone__c, Primary_Language__c, SSN__c,
                        State__c, Street_1__c, Street_2__c, Zip_Code__c,
                        Additional_Information_Comments__c, Sign_Language__c,
-                       Legal_Guardianship_Status__c, Non_Verbal__c, Full_Name__c
+                       Legal_Guardianship_Status__c, Non_Verbal__c, Full_Name__c,
+                       Level_of_Education__c
                 from Person_Being_Referred__c
                 where Id = :pBRId
                 limit 1];
@@ -890,8 +891,8 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     }
     // end CTEAE - 34
 
-	// start EB-214 - Scenario 2
-    if (referralRecord.referral_status__c == 'Closed' 
+    // start EB-214 - Scenario 2
+    if (referralRecord.referral_status__c == 'Closed'
         && referralRecord.close_reason__c != 'Admitted' && !string.IsBlank(referralRecord.close_reason__c)
         && string.IsBlank(string.valueof(referralRecord.Service_Location__c))
         && locations.size() == 0 ) {
@@ -900,7 +901,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
             return null;
     }
     // end EB-214
-    
+
     // ERNS-8 - when trying to close/admit Neuro referral, check for required fields
     if ( referralRecordType == 'NeuroRestorative') {
 
