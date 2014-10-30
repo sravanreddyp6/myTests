@@ -336,7 +336,8 @@ public with sharing class referral_Controller2 {
                        Middle_Initial__c, Phone__c, Primary_Language__c, SSN__c,
                        State__c, Street_1__c, Street_2__c, Zip_Code__c,
                        Additional_Information_Comments__c, Sign_Language__c,
-                       Legal_Guardianship_Status__c, Non_Verbal__c, Full_Name__c
+                       Legal_Guardianship_Status__c, Non_Verbal__c, Full_Name__c,
+                       Level_of_Education__c
                 from Person_Being_Referred__c
                 where Id = :pBRId
                 limit 1];
@@ -557,7 +558,7 @@ public with sharing class referral_Controller2 {
 
     System.Debug( ' anticipated service location = ' +this.referralRecord.Service_Location__c );
     //Added the And condtion to bypass the conversion error for CareMerdian Flavor - Sravan 5/15/2014.
-	//EB214. Closing a referral with the reason 'admitted' mandates the admission location for all flavours. So be logic applies to all. - Neeraj 10/22/2014    
+    //EB214. Closing a referral with the reason 'admitted' mandates the admission location for all flavours. So be logic applies to all. - Neeraj 10/22/2014
     if ( String.IsBlank(this.referralRecord.Service_Location_Program__c) ) {
         messages.Add( 'Anticipated Service Location' );
         hasReq = false;
