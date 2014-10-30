@@ -1,0 +1,831 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <content>Assessment_RiskForm_Redirect_Edit</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <content>assessment_tab</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <content>Assessment_RiskForm_Redirect</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>ASSESSMENT - Stores basic assessment info</description>
+    <enableActivities>true</enableActivities>
+    <enableEnhancedLookup>false</enableEnhancedLookup>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>true</enableReports>
+    <fieldSets>
+        <fullName>CANS_Fields</fullName>
+        <description>Dynamically generate summary table for CANS Assessment</description>
+        <displayedFields>
+            <field>Id</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Name</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Assessment_Date__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Score__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Owner.FirstName</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Owner.LastName</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Status__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>OwnerId</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <label>CANS Fields</label>
+    </fieldSets>
+    <fieldSets>
+        <fullName>Hardcoded_Questions</fullName>
+        <description>Used to clone Assessments dynamically</description>
+        <displayedFields>
+            <field>Additional_Areas_of_Concern__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Staffing_Supervision_Needs__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Recommended_Day_Services_Staffing_Ratio__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Services_Required_Level_Day_Services__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Support_Required_Level_Residential__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <label>Hardcoded Questions</label>
+    </fieldSets>
+    <fields>
+        <fullName>AccountID__c</fullName>
+        <description>Gets the Account ID from the admission lookup and sets the accountperson field in the trigger</description>
+        <externalId>false</externalId>
+        <formula>Admission__r.Person_Being_Served__r.AccountId</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>AccountID</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>AccountPerson__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>Account Person Relationship
+Delete Me</description>
+        <externalId>false</externalId>
+        <label>AccountPerson</label>
+        <referenceTo>Account</referenceTo>
+        <relationshipLabel>Assessments</relationshipLabel>
+        <relationshipName>Assessment_Junction</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Additional_Areas_of_Concern__c</fullName>
+        <description>Risk Assessment field</description>
+        <externalId>false</externalId>
+        <label>Additional Areas of Concern</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Admission__c</fullName>
+        <deleteConstraint>Cascade</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Admission</label>
+        <referenceTo>Admission__c</referenceTo>
+        <relationshipLabel>Assessments</relationshipLabel>
+        <relationshipName>Assessments</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Approval_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Approval Date</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Approval_Status__c</fullName>
+        <description>A field to track and manage approval status for assessments.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>A field to track and manage approval status for assessments.</inlineHelpText>
+        <label>Approval Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Open</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Pending Approval</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Returned for Corrections</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Approved</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Approved_By__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>Who approved this assessment?</description>
+        <externalId>false</externalId>
+        <label>Finalized By</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Assessments</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>AssessmentQuestionCount__c</fullName>
+        <externalId>false</externalId>
+        <label>AssessmentQuestionCount</label>
+        <summaryForeignKey>Assessment_Response__c.Assessment__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <trackTrending>false</trackTrending>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>AssessmentResponseCount__c</fullName>
+        <description>A field to roll-up and count the number of &quot;answers&quot; that have been dropped into the child Assessment_Response__c object so we can use an Apex trigger to then count the expected &quot;answers&quot; for a given assessment, make a comparison, and prevent changing the Status__c field of the Assessment object to &quot;locked&quot; if the count of expected answers is less than the count of answers entered.</description>
+        <externalId>false</externalId>
+        <label>AssessmentResponseCount</label>
+        <summaryFilterItems>
+            <field>Assessment_Response__c.Response_Has_Value__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </summaryFilterItems>
+        <summaryForeignKey>Assessment_Response__c.Assessment__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <trackTrending>false</trackTrending>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>Assessment_Count__c</fullName>
+        <externalId>false</externalId>
+        <label>Assessment Count</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Assessment_Date__c</fullName>
+        <description>The official date for this assessment.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The official date for this assessment.</inlineHelpText>
+        <label>Assessment Date</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Assessment_Type_Id__c</fullName>
+        <externalId>false</externalId>
+        <formula>Assessment_Type__r.Id</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Assessment Type Id</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Assessment_Type_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>Assessment_Type__r.Name</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Assessment Type Name</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Assessment_Type__c</fullName>
+        <deleteConstraint>Restrict</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Assessment Type</label>
+        <referenceTo>Assessment_Type__c</referenceTo>
+        <relationshipLabel>Assessments</relationshipLabel>
+        <relationshipName>Assessment_Junction</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Comments__c</fullName>
+        <description>A field to allow users to record descriptive information about the given assessment, including exception case details and brief thoughts/concerns.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>A field to allow users to record descriptive information about the given assessment, including exception case details and brief thoughts/concerns.</inlineHelpText>
+        <label>Comments</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Delete_Assessment__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Delete Assessment</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Disregard__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Disregard</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Family_Annual_Income__c</fullName>
+        <externalId>false</externalId>
+        <label>Family Annual Income</label>
+        <picklist>
+            <picklistValues>
+                <fullName>15,000 or under</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>15,001-25,000</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>25,001-35,000</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>35,001-50,000</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>50,001-65,000</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>65,001-80,000</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>80,001-100,000</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Over 100,000</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Finalized_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Finalized Date</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Interval__c</fullName>
+        <description>Interval for the assessment</description>
+        <externalId>false</externalId>
+        <label>Interval</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Intake</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Quarterly</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Discharge</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Locked__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>A field to control whether or not an assessment has been submitted and locked, unlocked, etc.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>A field to control whether or not an assessment has been submitted and locked, unlocked, etc.</inlineHelpText>
+        <label>Locked</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Overall_Score__c</fullName>
+        <description>Calculated Score of the assessment</description>
+        <externalId>false</externalId>
+        <label>Overall Score</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Phase__c</fullName>
+        <externalId>false</externalId>
+        <label>Phase</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Initial</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>3 Month</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Final</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Previous__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>The Assessment that this one is cloned from</description>
+        <externalId>false</externalId>
+        <label>Previous</label>
+        <referenceTo>Assessment__c</referenceTo>
+        <relationshipLabel>Assessments</relationshipLabel>
+        <relationshipName>Assessments</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Quarter__c</fullName>
+        <description>Indication of the numbered quarter this assessment describes.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Indication of the numbered quarter this assessment describes.</inlineHelpText>
+        <label>Quarter</label>
+        <precision>4</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Recommended_Day_Services_Staffing_Ratio__c</fullName>
+        <description>Risk Assessment Only Field</description>
+        <externalId>false</externalId>
+        <label>Recommended Day Services Staffing Ratio</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Referral_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Referral Date</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Score__c</fullName>
+        <externalId>false</externalId>
+        <label>Score</label>
+        <summarizedField>Assessment_Response__c.ScoreOld__c</summarizedField>
+        <summaryForeignKey>Assessment_Response__c.Assessment__c</summaryForeignKey>
+        <summaryOperation>sum</summaryOperation>
+        <trackTrending>false</trackTrending>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>Service_Assignment__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Service Assignment</label>
+        <referenceTo>Service_Assignment__c</referenceTo>
+        <relationshipLabel>Assessments</relationshipLabel>
+        <relationshipName>Assessments</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Service_Line__c</fullName>
+        <externalId>false</externalId>
+        <label>Service Line</label>
+        <picklist>
+            <picklistValues>
+                <fullName>TFC Vistas</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>TFC Non-Vistas</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Basic</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>CI</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Day TX</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>FCT</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>FTS</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>GH</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>IIH</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>OPT</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Services_Required_Level_Day_Services__c</fullName>
+        <externalId>false</externalId>
+        <label>Level of Services Required for Day Servi</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Staffing_Supervision_Needs__c</fullName>
+        <description>Risk Assessment Only Field</description>
+        <externalId>false</externalId>
+        <label>Staffing/Supervision Needs</label>
+        <length>30000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>2</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Active Final</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Inactive Draft</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Inactive Final</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Locked</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Open</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Re-opened</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Submitted__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>Selected when Assessment is complete</description>
+        <externalId>false</externalId>
+        <label>Submitted</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Support_Required_Level_Residential__c</fullName>
+        <description>Risk Assessment Only Field</description>
+        <externalId>false</externalId>
+        <label>Level of Support Required for Residentia</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>TFC_Family_Vistas__c</fullName>
+        <externalId>false</externalId>
+        <label>TFC/Family Vistas</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>FAD Summary</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Verbal_Approval_Obtained_From__c</fullName>
+        <externalId>false</externalId>
+        <label>Verbal Approval Obtained From</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Verbal_Approval_Obtained_On__c</fullName>
+        <externalId>false</externalId>
+        <label>Verbal Approval Obtained On</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <label>Assessment</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Support_Required_Level_Residential__c</columns>
+        <columns>Services_Required_Level_Day_Services__c</columns>
+        <columns>Staffing_Supervision_Needs__c</columns>
+        <columns>Recommended_Day_Services_Staffing_Ratio__c</columns>
+        <columns>AccountPerson__c</columns>
+        <columns>Status__c</columns>
+        <columns>Admission__c</columns>
+        <columns>Assessment_Type__c</columns>
+        <columns>UPDATEDBY_USER</columns>
+        <columns>Previous__c</columns>
+        <columns>Assessment_Date__c</columns>
+        <columns>CREATED_DATE</columns>
+        <columns>OWNER.FIRST_NAME</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <label>Assessment Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Assessments</pluralLabel>
+    <searchLayouts>
+        <excludedStandardButtons>New</excludedStandardButtons>
+    </searchLayouts>
+    <sharingModel>Private</sharingModel>
+    <validationRules>
+        <fullName>Admission_Required</fullName>
+        <active>true</active>
+        <errorConditionFormula>(ISBLANK(Admission__c) &amp;&amp; TEXT(Type__c) != &apos;FAD&apos;)</errorConditionFormula>
+        <errorDisplayField>Admission__c</errorDisplayField>
+        <errorMessage>An Admission is required for all Assessments</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>All_Questions_not_answered</fullName>
+        <active>true</active>
+        <errorConditionFormula>TEXT(Status__c)=&apos;Active Final&apos; &amp;&amp;
+ AssessmentQuestionCount__c != AssessmentResponseCount__c</errorConditionFormula>
+        <errorMessage>All questions for the assessment have not been answered. Please answer all questions prior to finalizing the assessment.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>AssessmentQuarterValidation</fullName>
+        <active>true</active>
+        <description>A rule to make sure that if user selects &quot;quarterly&quot; in interval picklist that they are forced to enter a quarter number in field.</description>
+        <errorConditionFormula>ISPICKVAL( Interval__c , &apos;Quarterly&apos;) &amp;&amp;  ISBLANK( Quarter__c )</errorConditionFormula>
+        <errorDisplayField>Quarter__c</errorDisplayField>
+        <errorMessage>Quarter is required when &quot;Quarterly&quot; is selected from the Interval picklist.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Assessment_Date_Required</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISBLANK( Assessment_Date__c ) &amp;&amp;
+  LOWER(Assessment_Type__r.Name)=&apos;cans&apos;</errorConditionFormula>
+        <errorDisplayField>Assessment_Date__c</errorDisplayField>
+        <errorMessage>Assessment Date is required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>CANS_SerivceLine_Req</fullName>
+        <active>false</active>
+        <errorConditionFormula>Assessment_Type__r.Name == &apos;CANS&apos; &amp;&amp; ISPICKVAL(Service_Line__c, &apos;&apos;)</errorConditionFormula>
+        <errorDisplayField>Service_Line__c</errorDisplayField>
+        <errorMessage>A value must be selected for Service Line when completing a CANS assessment.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>IntervalRequired</fullName>
+        <active>true</active>
+        <description>A rule to require selection of an interval for each new assessment.</description>
+        <errorConditionFormula>Assessment_Type__r.Name == &apos;CANS&apos; &amp;&amp; ISPICKVAL(  Interval__c , &apos;&apos;)</errorConditionFormula>
+        <errorMessage>You must select an Interval value to create a new CANS assessment.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Locked</fullName>
+        <active>true</active>
+        <errorConditionFormula>Locked__c &amp;&amp; IF(PRIORVALUE(Locked__c),true,false) &amp;&amp;  !ISCHANGED( OwnerId )</errorConditionFormula>
+        <errorMessage>Locked Assessments Can Not be Updated</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>RISK_Locked</fullName>
+        <active>true</active>
+        <errorConditionFormula>LOWER(TEXT(Status__c))=&apos;active final&apos; &amp;&amp;
+ISBLANK(Approval_Date__c) &amp;&amp;
+(LOWER(Assessment_Type__r.Name) =&apos;risk&apos; ||  ISPICKVAL( Type__c , &apos;ISSA&apos;))</errorConditionFormula>
+        <errorDisplayField>Approval_Date__c</errorDisplayField>
+        <errorMessage>Approval Date  is required</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>TFC_Family_Vistas_Selection_Required</fullName>
+        <active>false</active>
+        <description>A validation rule that requires a selection be made from the TFC/Family Vistas picklist</description>
+        <errorConditionFormula>Assessment_Type__r.Name == &apos;CANS&apos; &amp;&amp; NOT(OR(ISPICKVAL( TFC_Family_Vistas__c , &apos;Yes&apos;) ,ISPICKVAL( TFC_Family_Vistas__c , &apos;No&apos;) ))</errorConditionFormula>
+        <errorDisplayField>TFC_Family_Vistas__c</errorDisplayField>
+        <errorMessage>A value must be selected for &quot;&quot;TFC / Family Vistas&quot;&quot; when completing a CANS assessment.</errorMessage>
+    </validationRules>
+    <webLinks>
+        <fullName>New_Assessment</fullName>
+        <availability>online</availability>
+        <description>Button that passes default Name.</description>
+        <displayType>massActionButton</displayType>
+        <encodingKey>UTF-8</encodingKey>
+        <linkType>url</linkType>
+        <masterLabel>New Assessment</masterLabel>
+        <openType>replace</openType>
+        <protected>false</protected>
+        <requireRowSelection>true</requireRowSelection>
+        <url>https://na12.salesforce.com/a0d/e?CF00NU00000036vU3={!Admission__c.Name}&amp;Name=TBD (DO NOT CHANGE)&amp;CF00NU00000036vU2={!Account.Name}&amp;CF00NU00000036vU2_lkid={!Account.Id}&amp;CF00NU00000036vU7=CANS&amp;CF00NU00000036vU7_lkid=a0cU0000002RG3nIAG</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Print_Assessment</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <encodingKey>UTF-8</encodingKey>
+        <hasMenubar>false</hasMenubar>
+        <hasScrollbars>true</hasScrollbars>
+        <hasToolbar>false</hasToolbar>
+        <height>600</height>
+        <isResizable>true</isResizable>
+        <linkType>url</linkType>
+        <masterLabel>Print Assessment</masterLabel>
+        <openType>newWindow</openType>
+        <position>none</position>
+        <protected>false</protected>
+        <showsLocation>false</showsLocation>
+        <showsStatus>false</showsStatus>
+        <url>/apex/PDF_Assessment_CANS_Scoresheet?id={!Assessment__c.Id}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>View_Assessment</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <encodingKey>UTF-8</encodingKey>
+        <height>600</height>
+        <linkType>url</linkType>
+        <masterLabel>View Assessment</masterLabel>
+        <openType>sidebar</openType>
+        <protected>false</protected>
+        <url>/apex/AssessmentForm?id={!Assessment__c.Id}</url>
+    </webLinks>
+</CustomObject>

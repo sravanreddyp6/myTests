@@ -1,0 +1,130 @@
+<apex:component controller="EvaluationResponseTableController" allowDML="true">
+    <apex:attribute name="parentId" description="Id of the parent Evaluation record"
+        type="Id" assignTo="{!evaluationId}" />
+    <apex:attribute name="pbsParentId" description="Id of the parent PBS record"
+        type="Id" assignTo="{!pbsId}" />
+    <apex:attribute name="type" description="The type of this table"
+        type="String" required="true" assignTo="{!responseType}" />
+    <apex:attribute name="editEnabled" description="Whether Edit functionality is enabled"
+        type="Boolean" default="true" />
+    <apex:attribute name="addEnabled" description="Whether Add functionality is enabled"
+        type="Boolean" default="true" />
+    <apex:attribute name="onEdit" description="The Javascript function to call when Edit is clicked"
+        type="String" />
+    <apex:attribute name="formId" description="Id of the form element that includes this component"
+        type="String" />
+    <apex:attribute name="uniqueId" description="Unique ID so we can differentiate JS functions"
+        type="String" required="true" />
+    <apex:attribute name="isPdf" description="Boolean describing whether or not this is for a PDF rendering"
+        type="Boolean" required="false" default="false" />
+    <apex:attribute name="rules" description="The rules for the fields in the dialog. If you use this, make sure enableDisableField() is available on the page. Also, use the field names in the rules instead of field IDs."
+        type="String" required="false" />
+
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
+
+    <apex:pageBlockSection columns="1" title="{!type}">
+        <apex:actionFunction rendered="{!addEnabled}" name="showAddResponse{!uniqueId}" action="{!showAddResponse}" status="loadingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Add {!type}', '{!formId}'); attachRules{!uniqueId}();" />
+        <apex:actionFunction rendered="{!editEnabled}" name="showEditResponse{!uniqueId}" action="{!showEditResponse}" status="loadingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Edit {!type}', '{!formId}'); attachRules{!uniqueId}();">
+            <apex:param name="currentResponseId" assignTo="{!currentResponseId}" value="" />
+        </apex:actionFunction>
+
+        <apex:outputPanel layout="none" rendered="{!addEnabled}">
+            <apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" />
+            <apex:actionStatus id="loadingStatus">
+                <apex:facet name="start">
+                  <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                </apex:facet>
+                <apex:facet name="stop" />
+            </apex:actionStatus>
+        </apex:outputPanel>
+        <apex:outputPanel id="responseTableWrapper">
+            <apex:pageBlockTable value="{!responses}" var="response" id="responseTable" rendered="{!numberOfResponses>0}">
+                <apex:column headerValue="{!IF(AND(responses.size>0,isPdf != true), 'Action', '')}" width="50px" rendered="{!editEnabled}">
+                    <apex:commandLink onclick="{!onEdit}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit != null) && !isPdf}" />
+                    <apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit == null) && !isPdf}" />
+                </apex:column>
+                <apex:repeat value="{!columnsToFetch}" var="column">
+                    <apex:column value="{!response[column]}">
+                        <!-- Normally these header facets are not necessary (as they should be display based on the column values, but for some reason
+                        in the PBS page they come up empty, so we must manually show them. -->
+                        <apex:facet name="header">{!columnsToHeadersMap[column]}</apex:facet>
+                    </apex:column>
+                </apex:repeat>
+            </apex:pageBlockTable>
+        </apex:outputPanel>
+
+        <!-- Dialog Modal -->
+        <apex:outputPanel id="responseDialog" style="display: none;" rendered="{!!isPdf}">
+            <script>
+                jQuery.noConflict();
+
+                var desanitize = function (str) {
+                    var tempDOMEl = document.createElement('div');
+                    tempDOMEl.innerHTML = str;
+                    return tempDOMEl.firstChild.nodeValue;
+                }
+
+                jQuery(document).ready(function ($) {
+                    attachRules{!uniqueId} = function () {
+                        if ('{!rules}' === "") {
+                            return;
+                        }
+                        var allFieldRules = JSON.parse(desanitize('{!rules}'));
+                        $.each(allFieldRules, function (controllingField, fieldRules) {
+                            $.each(fieldRules, function (controllingValue, controlledFields) {
+                                $.each(controlledFields, function (index, controlledField) {
+                                    // Swap out the field names and put in the actual field ids.
+                                    fieldRules[controllingValue][index] = $('[id$='+controlledField+']').get(0).id;
+                                });
+                            });
+                            $('[id$='+controllingField+']').data("rules", fieldRules);
+                        });
+                        debugger;
+                        $(document.getElementById('{!$Component.responseDialog}')).find('input').on("change", function (event) {
+                            enableDisableField(event.target);
+                        });
+                        $(document.getElementById('{!$Component.responseDialog}')).find('select').on("change", function (event) {
+                            enableDisableField(event.target);
+                        });
+                        $(document.getElementById('{!$Component.responseDialog}')).find('input').each(function (_, target) {
+                            enableDisableField(target);
+                        });
+                        $(document.getElementById('{!$Component.responseDialog}')).find('select').each(function (_, target) {
+                            enableDisableField(target);
+                        });
+                    };
+                });
+            </script>
+            <span class="ui-helper-hidden-accessible"><input type="text"/></span>  <!-- Just so Jquery UI doesn't auto focus on the 1st field -->
+            <apex:pageBlock title="{!type}" id="responseDialogMainBlock">
+                <apex:pageblockButtons location="bottom">
+                    <apex:actionFunction name="saveResponse{!uniqueId}" action="{!saveResponse}" rerender="responseTableWrapper,responseDialogMainBlock,responseDialogErrors" status="saveResponseStatus" oncomplete="afterSave('{!$Component.responseDialog}', request.options.parameters.keepDialogOpen, showAddResponse{!uniqueId});">
+                        <apex:param name="keepDialogOpen" value="" />
+                    </apex:actionFunction>
+                    <apex:actionStatus id="saveResponseStatus">
+                        <apex:facet name="stop">
+                            <apex:outputPanel id="buttons">
+                                <apex:commandButton value="Save" onClick="saveResponse{!uniqueId}(false); return false;" />
+                                <apex:commandButton value="Save & New" onClick="saveResponse{!uniqueId}(true); return false;" />
+                                <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.responseDialog}'); return false;" />
+                            </apex:outputPanel>
+                        </apex:facet>
+                        <apex:facet name="start">
+                            <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                        </apex:facet>
+                        <apex:facet name="stop" />
+                    </apex:actionStatus>
+                </apex:pageblockButtons>
+
+                <apex:pageMessages id="responseDialogErrors" />
+                <apex:inputHidden value="{!currentResponse.Id}" rendered="{!isEdit}" />
+                <apex:dynamicComponent componentValue="{!dialog}" />
+            </apex:pageBlock>
+        </apex:outputPanel>
+    </apex:pageBlockSection>
+    <hr />
+</apex:component>
