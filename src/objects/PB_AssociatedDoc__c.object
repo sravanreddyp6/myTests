@@ -48,17 +48,32 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <enableActivities>false</enableActivities>
     <enableFeeds>false</enableFeeds>
-    <enableHistory>false</enableHistory>
+    <enableHistory>true</enableHistory>
     <enableReports>false</enableReports>
     <fields>
-        <fullName>DocumentPacket__c</fullName>
+        <fullName>DocPacket__c</fullName>
+        <externalId>false</externalId>
+        <label>DocPacket</label>
+        <referenceTo>PB_Doc_Packet__c</referenceTo>
+        <relationshipLabel>AssociatedDocs</relationshipLabel>
+        <relationshipName>AssociatedDocuments</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Document__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
-        <label>DocumentPacket</label>
-        <referenceTo>Document_Packet__c</referenceTo>
-        <relationshipLabel>AssociatedDocuments</relationshipLabel>
-        <relationshipName>AssociatedDocuments</relationshipName>
+        <label>Document</label>
+        <referenceTo>PB_Document__c</referenceTo>
+        <relationshipLabel>AssociatedDocs</relationshipLabel>
+        <relationshipName>AssociatedDocs</relationshipName>
         <required>false</required>
+        <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
@@ -69,6 +84,7 @@
         <precision>10</precision>
         <required>false</required>
         <scale>0</scale>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
@@ -78,46 +94,16 @@
         <externalId>false</externalId>
         <label>Effective Date</label>
         <required>false</required>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Date</type>
-    </fields>
-    <fields>
-        <fullName>Entity_Id__c</fullName>
-        <externalId>false</externalId>
-        <label>Entity Id</label>
-        <length>100</length>
-        <required>true</required>
-        <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
-    </fields>
-    <fields>
-        <fullName>Entity_Type__c</fullName>
-        <externalId>false</externalId>
-        <label>Entity Type</label>
-        <picklist>
-            <picklistValues>
-                <fullName>Admission</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Person Being Served</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Service Assignment</fullName>
-                <default>false</default>
-            </picklistValues>
-            <sorted>false</sorted>
-        </picklist>
-        <trackTrending>false</trackTrending>
-        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Filed_Date__c</fullName>
         <externalId>false</externalId>
         <label>Filed Date</label>
         <required>false</required>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
@@ -126,20 +112,9 @@
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
         <label>IsAdded</label>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
-    </fields>
-    <fields>
-        <fullName>MasterDocument__c</fullName>
-        <deleteConstraint>SetNull</deleteConstraint>
-        <externalId>false</externalId>
-        <label>MasterDocument</label>
-        <referenceTo>MasterDocument__c</referenceTo>
-        <relationshipLabel>AssociatedDocuments</relationshipLabel>
-        <relationshipName>AssociatedDocuments</relationshipName>
-        <required>false</required>
-        <trackTrending>false</trackTrending>
-        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Recurring_Frequency__c</fullName>
@@ -164,6 +139,7 @@
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
@@ -182,16 +158,80 @@
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
     </fields>
-    <label>AssociatedDocument</label>
+    <fields>
+        <fullName>Status_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Status Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Filed</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Signed</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>sObject_Id__c</fullName>
+        <externalId>false</externalId>
+        <label>sObject Id</label>
+        <length>100</length>
+        <required>true</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>sObject_Type__c</fullName>
+        <externalId>false</externalId>
+        <label>sObject Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Admission</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Person Being Served</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Service Assignment</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <label>PB_AssociatedDoc</label>
     <nameField>
         <displayFormat>{0000}</displayFormat>
         <label>ID</label>
+        <trackHistory>false</trackHistory>
         <type>AutoNumber</type>
     </nameField>
-    <pluralLabel>AssociatedDocuments</pluralLabel>
+    <pluralLabel>AssociatedDocs</pluralLabel>
     <searchLayouts/>
-    <sharingModel>ReadWrite</sharingModel>
+    <sharingModel>ControlledByParent</sharingModel>
 </CustomObject>
