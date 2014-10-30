@@ -361,6 +361,7 @@
         <a href="/">Home</a> > <a href="/{!Evaluation__c.Referral__c}">Referral: {!Evaluation__c.Referral__r.Name}</a> > <a href="/{!Evaluation__c.Id}">Evaluation: {!Evaluation__c.Name}</a>
     </div>
     <apex:form id="wholePage">
+        <apex:variable var="editable" value="{!Evaluation__c.Referral__r.Referral_Status__c != 'Closed'}" />
         <apex:pageMessages id="pageMessages" />
         <apex:actionFunction action="{!changeTab}" name="changeTabAction" status="pageProcessing" oncomplete="setUpFields(); removeSpacer(); scrollToTop();" rerender="pageMessages, wholeTabPanel, buttons">
             <apex:param name="nextTab" assignTo="{!nextTab}" value="" />
@@ -397,7 +398,7 @@
                         </apex:actionFunction>
 
                         <apex:outputPanel layout="none">
-                            <apex:commandButton value="Add Related Party" onclick="showAddRelatedParty(); return false;" />
+                            <apex:commandButton value="Add Related Party" onclick="showAddRelatedParty(); return false;" rendered="{!editable}" />
                             <apex:actionStatus id="loadingRelatedPartyStatus">
                                 <apex:facet name="start">
                                   <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
@@ -406,7 +407,7 @@
                             </apex:actionStatus>
                         </apex:outputPanel>
                         <apex:pageBlockTable value="{!relatedParties}" var="relatedParty" id="relatedPartyTable">
-                            <apex:column headerValue="{!IF(relatedParties.size>0, 'Action', '')}" width="50px">
+                            <apex:column headerValue="{!IF(relatedParties.size>0, 'Action', '')}" width="50px" rendered="{!editable}">
                                 <apex:commandLink onclick="showEditRelatedParty('{!relatedParty.Id}'); return false;" value="Edit" />
                             </apex:column>
                             <apex:column value="{!relatedParty.Type__c}"/>
@@ -445,7 +446,7 @@
                             <apex:outputLabel for="cm" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Height_in_cms__c.label}</apex:outputLabel>
                         </apex:outputPanel>
                     </apex:pageBlockSection>
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" editEnabled="{!editable}" addEnabled="{!editable}" />
                     <apex:pageBlockSection columns="2">
                         <apex:inputField value="{!Evaluation__c.LOMN_Physician_Referral_Attached__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.lomnPhysysianReferralAttachedDate}&quot;]}" />
                         <apex:inputField value="{!Evaluation__c.Plan_of_Care_Attached__c}" />
@@ -460,8 +461,9 @@
             <apex:tab label="Diagnostics" name="diagnosticTab" ontabenter="changeTab('diagnosticTab'); return false;" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Micro Detail" formId="{!$Component.wholePage}" uniqueId="micro"
+                        editEnabled="{!editable}" addEnabled="{!editable}"
                         rules="{&quot;Test_Type__c&quot;: {&quot;MRSA&quot;: [&quot;X2_Negative_Cultures__c&quot;], &quot;C-diff&quot;: [&quot;X2_Negative_Cultures__c&quot;]}}" />
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Radiology Detail" formId="{!$Component.wholePage}" uniqueId="radiology" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Radiology Detail" formId="{!$Component.wholePage}" uniqueId="radiology" editEnabled="{!editable}" addEnabled="{!editable}" />
                     <apex:pageBlockSection columns="1">
                         <apex:inputField value="{!Evaluation__c.Cancer__c}" />
                         <apex:inputField value="{!Evaluation__c.MARs_Attached__c}" />
@@ -615,8 +617,8 @@
                 });
                 </script>
                 <apex:pageBlock >
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" />
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Pressure Ulcer Detail" formId="{!$Component.wholePage}" uniqueId="decubiti" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" editEnabled="{!editable}" addEnabled="{!editable}" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Pressure Ulcer Detail" formId="{!$Component.wholePage}" uniqueId="decubiti"  editEnabled="{!editable}" addEnabled="{!editable}" />
                     <h2 style="display: block; margin: 10px;">Body Map</h2>
                     <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
                         <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!(baseUrl + URLFOR($Resource.WholeBodyNoGrid))}" id="bodyMap" />
@@ -697,9 +699,9 @@
             <apex:tab label="Ortho" name="orthoTab" ontabenter="changeTab('orthoTab'); return false;" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
                     <apex:pageBlockSection columns="2" title="Orthopedics">
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Weight Bearing Precautions" />
-                            <apex:outputPanel>
+                            <apex:outputPanel >
                                 <apex:inputField value="{!Evaluation__c.Weight_Bearing_Precautions__c}" id="weightBearingPrecautions" />
                                 <apex:outputLabel value="N/a" />
                                 <apex:inputField value="{!Evaluation__c.Weight_Bearing_Precautions_Not_Available__c}"

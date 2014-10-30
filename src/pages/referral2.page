@@ -1645,7 +1645,7 @@ function stopRKey(evt) {
         </apex:outputPanel>
         <apex:pageBlockTable value="{!Referral__c.Evaluations__r}" var="evaluation" >
           <apex:column headerValue="Action" >
-                <apex:outputPanel rendered="{!evaluation.Referral__r.Person_Being_Served__c == null}">
+                <apex:outputPanel rendered="{!evaluation.Referral__r.Person_Being_Served__c == null && Referral__c.Referral_Status__c != 'Closed'}">
                  <a href="/{!evaluation.Id}/e">Edit</a>
               </apex:outputPanel>
           </apex:column>
