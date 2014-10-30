@@ -1,8 +1,9 @@
-public with sharing class NursesAssessmentAttachFile {
-	public String myId {get; set;}
-    public String strImg {get; set;}
+public with sharing class EvaluationAttachFile {
+    public String myId { get; set; }
+    public String strImg { get; set; }
+    public String parentId { get; set; }
     public Blob img { get; set;}
-    public String attachID { get; set;}
+    public String attachID { get; set; }
 
     public Attachment attachment { set;
         get {
@@ -25,20 +26,21 @@ public with sharing class NursesAssessmentAttachFile {
         System.debug('Inside upload');
         myId = ApexPages.currentPage().getParameters().get('id'); //  this will be the id of the evaluation passed up from ajax post
         strImg = ApexPages.currentPage().getParameters().get('img'); // the canvas img output, base-64 encoded string
+        parentId = ApexPages.currentPage().getParameters().get('parentId'); //  this will be the id of the parent record
 
         // decode the img string back to binary data
         img = EncodingUtil.base64Decode(strImg);
 
         attachment.OwnerId = Userinfo.getUserId();
 
-        // get the progress note for this id
+        // get the evaluation for this id
         Evaluation__c evaluation = [
-            SELECT ID, Name, ServiceAssignment__c FROM Evaluation__c WHERE Id=:myId LIMIT 1
+            SELECT ID, Name FROM Evaluation__c WHERE Id=:myId LIMIT 1
         ];
 
         // create name for attachment based on note name + date posted
         attachment.Name = evaluation.Name  + ' ' + getLongDate() + ' Esigned.jpg';
-        attachment.ParentId = evaluation.ServiceAssignment__c;
+        attachment.ParentId = parentId;
 
         // attachment body is the actual canvas jpg image
         attachment.Body = img;
@@ -57,5 +59,4 @@ public with sharing class NursesAssessmentAttachFile {
         }
         return null;
     }
-
 }
