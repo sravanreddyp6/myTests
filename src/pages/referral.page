@@ -2182,8 +2182,13 @@ clearDisableField = function(pageSectionId){
         <apex:outputPanel >
           <apex:variable var="emptyList" value="'[]'"/>
           <apex:variable var="evaluationList" value="'{!Referral__c.Evaluations__r}'"/>
-          <apex:commandButton value="Add Evaluation" action="{!addEvaluation}" rendered="{!AND(evaluationList == emptyList, ReferralRecord.Id != null)}" />
-          <apex:commandButton value="Add Evaluation" onclick="alert('Please save the referral before creating a new Evaluation'); return false;" rendered="{!ReferralRecord.Id == null}" />
+          <apex:commandButton value="Add Evaluation" action="{!addEvaluation}"
+            rendered="{!AND(evaluationList == emptyList, ReferralRecord.Id != null, Referral__c.Referral_Status__c!='Closed')}"
+          />
+          <apex:commandButton value="Add Evaluation" onclick="alert('Please save the referral before creating a new Evaluation'); return false;"
+            rendered="{!ReferralRecord.Id == null}" />
+          <apex:commandButton value="Add Evaluation" onclick="alert('You cannot add a new Evaluation to a Closed referral'); return false;"
+            rendered="{!Referral__c.Referral_Status__c=='Closed'}" />
         </apex:outputPanel>
         <apex:pageBlockTable value="{!Referral__c.Evaluations__r}" var="evaluation">
           <apex:column headerValue="Name"><a href="/{!evaluation.Id}">{!evaluation.Name}</a></apex:column>
