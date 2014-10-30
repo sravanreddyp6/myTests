@@ -48,39 +48,50 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <enableActivities>false</enableActivities>
     <enableFeeds>false</enableFeeds>
-    <enableHistory>false</enableHistory>
+    <enableHistory>true</enableHistory>
     <enableReports>false</enableReports>
     <fields>
-        <fullName>DocumentPacket__c</fullName>
-        <deleteConstraint>Restrict</deleteConstraint>
+        <fullName>AssociatedDoc__c</fullName>
         <externalId>false</externalId>
-        <label>DocumentPacket</label>
-        <referenceTo>Document_Packet__c</referenceTo>
-        <relationshipLabel>DocumentPacketJOs</relationshipLabel>
-        <relationshipName>DocumentPacketJOs</relationshipName>
-        <required>true</required>
+        <label>AssociatedDoc</label>
+        <referenceTo>PB_AssociatedDoc__c</referenceTo>
+        <relationshipName>AssocDocSignatures</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>DocSignature__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>DocSignature</label>
+        <referenceTo>PB_DocSignature__c</referenceTo>
+        <relationshipName>AssocDocSignatures</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
     <fields>
-        <fullName>MasterDocument__c</fullName>
-        <deleteConstraint>Restrict</deleteConstraint>
+        <fullName>Signed_Date__c</fullName>
         <externalId>false</externalId>
-        <label>MasterDocument</label>
-        <referenceTo>MasterDocument__c</referenceTo>
-        <relationshipLabel>DocumentPacketJOs</relationshipLabel>
-        <relationshipName>DocumentPacketJOs</relationshipName>
-        <required>true</required>
+        <label>Signed Date</label>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
-        <type>Lookup</type>
+        <type>Date</type>
     </fields>
-    <label>DocumentPacketJO</label>
+    <label>PB_AssocDocSignature</label>
     <nameField>
         <displayFormat>{0000}</displayFormat>
         <label>ID</label>
+        <trackHistory>false</trackHistory>
         <type>AutoNumber</type>
     </nameField>
-    <pluralLabel>DocumentPacketJOs</pluralLabel>
+    <pluralLabel>PB_AssocDocSignatures</pluralLabel>
     <searchLayouts/>
-    <sharingModel>ReadWrite</sharingModel>
+    <sharingModel>ControlledByParent</sharingModel>
 </CustomObject>

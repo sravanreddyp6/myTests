@@ -51,45 +51,41 @@
     <enableHistory>false</enableHistory>
     <enableReports>false</enableReports>
     <fields>
-        <fullName>AssociatedDocument__c</fullName>
+        <fullName>Packet_Name__c</fullName>
+        <caseSensitive>false</caseSensitive>
         <externalId>false</externalId>
-        <label>AssociatedDocument</label>
-        <referenceTo>AssocitedDocument__c</referenceTo>
-        <relationshipLabel>AssocDocSignatures</relationshipLabel>
-        <relationshipName>AssocDocSignatures</relationshipName>
-        <relationshipOrder>0</relationshipOrder>
-        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <label>Packet Name</label>
+        <length>100</length>
+        <required>true</required>
         <trackTrending>false</trackTrending>
-        <type>MasterDetail</type>
-        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+        <type>Text</type>
+        <unique>true</unique>
     </fields>
     <fields>
-        <fullName>DocSignature__c</fullName>
-        <deleteConstraint>SetNull</deleteConstraint>
+        <fullName>Status__c</fullName>
         <externalId>false</externalId>
-        <label>DocSignature</label>
-        <referenceTo>DocSignature__c</referenceTo>
-        <relationshipLabel>AssocDocSignatures</relationshipLabel>
-        <relationshipName>AssocDocSignatures</relationshipName>
-        <required>false</required>
+        <label>Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Active</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Inactive</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
         <trackTrending>false</trackTrending>
-        <type>Lookup</type>
+        <type>Picklist</type>
     </fields>
-    <fields>
-        <fullName>Signed_Date__c</fullName>
-        <externalId>false</externalId>
-        <label>Signed Date</label>
-        <required>false</required>
-        <trackTrending>false</trackTrending>
-        <type>Date</type>
-    </fields>
-    <label>AssocDocSignature</label>
+    <label>PB_DocPacket</label>
     <nameField>
         <displayFormat>{0000}</displayFormat>
         <label>ID</label>
         <type>AutoNumber</type>
     </nameField>
-    <pluralLabel>AssocDocSignatures</pluralLabel>
+    <pluralLabel>PB_DocPackets</pluralLabel>
     <searchLayouts/>
-    <sharingModel>ControlledByParent</sharingModel>
+    <sharingModel>ReadWrite</sharingModel>
 </CustomObject>
