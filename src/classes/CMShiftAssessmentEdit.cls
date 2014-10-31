@@ -3,6 +3,12 @@ public with sharing class CMShiftAssessmentEdit {
     public ApexPages.standardController stdController;
     public String selectedTab { get; set; }
     public String nextTab { get; set; }
+   
+    public string getprimaryPhysician(){
+    	List<Related_Party__c> rp = [SELECT Id, Name FROM Related_Party__c WHERE Person_Being_served__c=:this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__c AND Type__c='Physician - Primary' order by LastModifiedDate desc LIMIT 1];
+    	if(rp.size()>0) return rp[0].Name;
+    	else return null;
+    }
     
 	public CMShiftAssessmentEdit(Apexpages.StandardController controller){
 		this.stdController = controller;

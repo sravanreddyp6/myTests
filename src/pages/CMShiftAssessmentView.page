@@ -80,6 +80,9 @@
     </div>
     
      <apex:form id="wholePage">
+     	<apex:outputpanel rendered="false" >
+     		<apex:inputhidden value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__c}" />
+     	</apex:outputpanel>
      	 <apex:pageMessages id="pageMessages" />
      	 <apex:tabPanel id="wholeTabPanel" value="{!selectedTab}"
             styleClass="evaluationTabPanel" activeTabClass="evaluationActiveTab"
@@ -99,16 +102,23 @@
                         <apex:OutputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.BirthDate}" />
                         <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Age__c}" />
                         <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Medical_Record_Number__c}" />
-                        <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Advanced_Directives__c}" />
+                        <apex:outputText value="{!primaryPhysician}" label="Primary Physician" />
+                        <apex:pageBlockSectionItem HelpText="To edit this information, return to the Person Being Served record." >
+                        	{!$ObjectType.Contact.fields.Advanced_Directives__c.label}
+                        	<apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Advanced_Directives__c}" />
+                        </apex:pageBlockSectionItem >
                         <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Code_Status__c}"  />
                         <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_being_served__r.Advanced_Directives_Attached__c}" />
                         <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.admission__r.Person_Being_Served__r.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" />
                  	</apex:pageBlockSection>
+                 	<c:EvaluationResponseTable pbsParentId="{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__c}"
+                        addEnabled="true" editEnabled="true" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" />
      	 		</apex:pageBlock>
      	 	</apex:tab>
      	 	
      	 	 <apex:tab label="Diagnostics" name="diagnosticTab" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
      	 	 	<apex:pageBlock >
+     	 	 		<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Vitals Detail" formId="{!$Component.wholePage}" uniqueId="vitals" />
      	 	 	</apex:pageBlock>
      	 	 </apex:tab>
      	 	 
