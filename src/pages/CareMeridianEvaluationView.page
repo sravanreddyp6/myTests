@@ -1,4 +1,4 @@
-<apex:page standardController="Evaluation__c" extensions="CareMeridianEvaluationViewController,CareMeridianEvaluationCommonController" action="{!reDirect}">
+<apex:page standardController="Evaluation__c" extensions="CareMeridianEvaluationViewController,CareMeridianEvaluationCommonController">
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
@@ -8,6 +8,85 @@
     function openWin(url){
         window.open(url);
     }
+    jQuery(document).ready(function ($) {
+        String.prototype.endsWith = function (suffix) {
+            return this.indexOf(suffix, this.length - suffix.length) !== -1;
+        };
+        $.fn.realVal = function() {
+            // This function is here to put all the value-getting functionalities
+            // in one place. This is because calling val() on a checkbox input
+            // will only return the default value.
+            var $obj = $(this);
+            var val = $obj.val();
+            var type = $obj.attr('type');
+            if (type && type==='checkbox') {
+                return $obj.prop('checked') ? '1' : '0';
+            } else {
+                return val;
+            }
+        };
+        // Do the field disable/enable functionality here
+        // When values are in map -> will be enabled when key is changed
+        enableDisableField = function (element) {
+            var $element = $(element);
+            // For multi-picklist, apparently the data- passthrough also
+            // exist in the selected and unselected checkboxes, which confuse
+            // the script, so we check for their existence here.
+            if ($element.attr('multiple') == 'multiple' && ($element.attr('id').endsWith('_selected') || $element.attr('id').endsWith('_unselected'))) {
+                return;
+            }
+            var enabledFields = [];
+            var rules = $element.data("rules");
+            rules && $.each(rules, function (key, value) {
+                var $targets = [];
+                if (value instanceof Array) {
+                    $.each(value, function (_, selector) {
+                        $targets.push($(document.getElementById(selector)));
+                    });
+                } else {
+                    $targets.push($(document.getElementById(value)));
+                }
+                var val = $element.realVal();
+                if (val == key || (val instanceof Array && $.inArray(key, val)!=-1)) {
+                    // Enable fields
+                    $.each($targets, function (_, $target) {
+                        if ($target.attr("multiple")) {
+                            $target.parent().find("select").prop("disabled", false);
+                        } else {
+                            $target.prop("disabled", false);
+                        }
+                        enabledFields.push($target.get(0));
+                    });
+                } else {
+                    // Disable fields
+                    $.each($targets, function (_, $target) {
+                        // We also need to revert the field(s) to their original state
+                        // One exception: if the field has been enabled by one of the
+                        // earlier rules, then don't disable it!
+                        if ($.inArray($target.get(0), enabledFields) != -1) {
+                            return;
+                        }
+                        if ($target.attr("multiple")) {
+                            // Simulate removing all the selected options
+                            $(document.getElementById($target.attr('id') + '_selected')).find('option').attr('selected', 'selected');
+                            // Fake clicking the Remove button here
+                            location.href = $target.parent().find("a[title=Remove]").attr("href");
+                            $target.parent().find("select").prop("disabled", true);
+                        } else {
+                            $target.prop("disabled", true);
+                            var type = $target.attr('type');
+                            if (type && type==='checkbox') {
+                                $target.prop('checked', false);
+                            } else {
+                                $target.val('');
+                            }
+                        }
+                        $target.trigger('change');
+                    });
+                }
+            });
+        }
+    });
     </script>
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
     <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
@@ -49,6 +128,7 @@
     </div>
     </apex:outputPanel>
     <apex:form id="wholePage">
+        <apex:variable var="editable" value="{!Evaluation__c.Referral__r.Referral_Status__c != 'Closed'}" />
         <apex:outputPanel id="penUploadMessages">
             <apex:actionRegion >
                 <apex:outputPanel layout="block" styleClass="message errorM3" rendered="{!Evaluation__c.Pen_Upload_Error__c != null}">
@@ -88,7 +168,7 @@
                         <apex:pageBlockSectionItem />
                         <apex:outputField value="{!Evaluation__c.EmploymentDisabled__c}" />
                         <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.EmploymentUnknown__c}" />    
+                        <apex:outputField value="{!Evaluation__c.EmploymentUnknown__c}" />
                     </apex:pageBlockSection>
                     <hr/>
                     <apex:pageBlockSection columns="2">
@@ -109,7 +189,7 @@
                         </apex:actionFunction>
 
                         <apex:outputPanel layout="none">
-                            <apex:commandButton value="Add Related Party" onclick="showAddRelatedParty(); return false;" />
+                            <apex:commandButton value="Add Related Party" onclick="showAddRelatedParty(); return false;" rendered="{!editable}" />
                             <apex:actionStatus id="loadingRelatedPartyStatus">
                                 <apex:facet name="start">
                                   <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
@@ -118,7 +198,7 @@
                             </apex:actionStatus>
                         </apex:outputPanel>
                         <apex:pageBlockTable value="{!relatedParties}" var="relatedParty" id="relatedPartyTable">
-                            <apex:column headerValue="{!IF(relatedParties.size>0, 'Action', '')}" width="50px">
+                            <apex:column headerValue="{!IF(relatedParties.size>0, 'Action', '')}" width="50px" rendered="{!editable}">
                                 <apex:commandLink onclick="showEditRelatedParty('{!relatedParty.Id}'); return false;" value="Edit" />
                             </apex:column>
                             <apex:column value="{!relatedParty.Type__c}"/>
@@ -140,52 +220,54 @@
                         <apex:outputField value="{!Evaluation__c.Bariatric_Equipment__c}" />
                     </apex:pageBlockSection>
                     <apex:pageBlockSection columns="2">
-                        	<apex:outputPanel >
-                        	<apex:outputlabel for="wt" style="font-weight: Bold; color: #4A4A56; font-size: 10px; margin-left: 145px;">{!$ObjectType.Evaluation__c.Fields.Weight__c.label}</apex:outputlabel>
-                        	<apex:outputField id="wt" value="{!Evaluation__c.Weight__c}" style="margin-left: 25px;" html-disabled="True"/>
+                            <apex:outputPanel >
+                            <apex:outputlabel for="wt" style="font-weight: Bold; color: #4A4A56; font-size: 10px; margin-left: 145px;">{!$ObjectType.Evaluation__c.Fields.Weight__c.label}</apex:outputlabel>
+                            <apex:outputField id="wt" value="{!Evaluation__c.Weight__c}" style="margin-left: 25px;" html-disabled="True"/>
                         </apex:outputPanel>
                         <apex:outputPanel >
-                        	<apex:outputLabel value="Weight at Admission" style="font-weight: Bold; color: #4A4A56; font-size: 10px;margin-left:85px;"/>
-                        	&nbsp;&nbsp;&nbsp;
-                        	<apex:outputField id="lbs" value="{!Evaluation__c.Weightlbs__c}" style="margin-left: 25px;"/>
-                        	<apex:outputLabel for="lbs" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Weightlbs__c.label}</apex:outputLabel>
-                        	<span/>
-                        	<apex:outputField id="oz" value="{!Evaluation__c.Weightoz__c}" style="margin-left: 25px;"/>
-                        	<apex:outputLabel for="in" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Weightoz__c.label}</apex:outputLabel>
-                        	<span/>
-                        	<apex:outputText value=" (or) "/>
-                        	<apex:outputField id="kg" value="{!Evaluation__c.WeightKg__c}" style="margin-left: 25px;"/>
-                        	<apex:outputLabel for="kg" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.WeightKg__c.label}</apex:outputLabel>
-                        </apex:outputPanel>  
+                            <apex:outputLabel value="Weight at Admission" style="font-weight: Bold; color: #4A4A56; font-size: 10px;margin-left:85px;"/>
+                            &nbsp;&nbsp;&nbsp;
+                            <apex:outputField id="lbs" value="{!Evaluation__c.Weightlbs__c}" style="margin-left: 25px;"/>
+                            <apex:outputLabel for="lbs" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Weightlbs__c.label}</apex:outputLabel>
+                            <span/>
+                            <apex:outputField id="oz" value="{!Evaluation__c.Weightoz__c}" style="margin-left: 25px;"/>
+                            <apex:outputLabel for="in" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Weightoz__c.label}</apex:outputLabel>
+                            <span/>
+                            <apex:outputText value=" (or) "/>
+                            <apex:outputField id="kg" value="{!Evaluation__c.WeightKg__c}" style="margin-left: 25px;"/>
+                            <apex:outputLabel for="kg" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.WeightKg__c.label}</apex:outputLabel>
+                        </apex:outputPanel>
                         </apex:pageBlockSection>
-                        <apex:pageBlockSection columns="2" > 
+                        <apex:pageBlockSection columns="2" >
                         <apex:outputPanel >
-                        	<apex:outputlabel for="ht" style="font-weight: Bold; color: #4A4A56; font-size: 10px; margin-left: 145px;">{!$ObjectType.Evaluation__c.Fields.Height__c.label}</apex:outputlabel>
-                        	<apex:outputField id="ht" value="{!Evaluation__c.Height__c}" style="margin-left: 25px;" html-disabled="True"/>
+                            <apex:outputlabel for="ht" style="font-weight: Bold; color: #4A4A56; font-size: 10px; margin-left: 145px;">{!$ObjectType.Evaluation__c.Fields.Height__c.label}</apex:outputlabel>
+                            <apex:outputField id="ht" value="{!Evaluation__c.Height__c}" style="margin-left: 25px;" html-disabled="True"/>
                         </apex:outputPanel>
                         <apex:outputPanel >
-                        	<apex:outputLabel value="Height at Admission" style="font-weight: Bold; color: #4A4A56; font-size: 10px;margin-left: 85px;"/>
-                        	&nbsp;&nbsp;&nbsp;
-                        	<apex:outputField id="ft" value="{!Evaluation__c.HeightFt__c}" style="margin-left: 25px;"/>
-                        	<apex:outputLabel for="ft" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.HeightFt__c.label}</apex:outputLabel>
-                        	<span/>
-                        	<apex:outputField id="in" value="{!Evaluation__c.HeightInches__c}" style="Margin-left: 25px;"/>
-                        	<apex:outputLabel for="in" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.HeightInches__c.label}</apex:outputLabel>
-                        	<span/>
-	                            <apex:outputText value=" (or) "/>
-	                            <apex:outputField id="cm" value="{!Evaluation__c.Height_in_cms__c}" style="margin-left: 25px;"/>
-	                            <apex:outputLabel for="cm" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Height_in_cms__c.label}</apex:outputLabel>
-                        </apex:outputPanel>   		  
-                    </apex:pageBlockSection>  
-                       
+                            <apex:outputLabel value="Height at Admission" style="font-weight: Bold; color: #4A4A56; font-size: 10px;margin-left: 85px;"/>
+                            &nbsp;&nbsp;&nbsp;
+                            <apex:outputField id="ft" value="{!Evaluation__c.HeightFt__c}" style="margin-left: 25px;"/>
+                            <apex:outputLabel for="ft" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.HeightFt__c.label}</apex:outputLabel>
+                            <span/>
+                            <apex:outputField id="in" value="{!Evaluation__c.HeightInches__c}" style="Margin-left: 25px;"/>
+                            <apex:outputLabel for="in" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.HeightInches__c.label}</apex:outputLabel>
+                            <span/>
+                                <apex:outputText value=" (or) "/>
+                                <apex:outputField id="cm" value="{!Evaluation__c.Height_in_cms__c}" style="margin-left: 25px;"/>
+                                <apex:outputLabel for="cm" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Height_in_cms__c.label}</apex:outputLabel>
+                        </apex:outputPanel>
+                    </apex:pageBlockSection>
+
                     <apex:pageBlockSection columns="1">
                         <apex:outputField value="{!Evaluation__c.PMH__c}" />
                         <apex:outputField value="{!Evaluation__c.Precautions__c}" />
                         <!-- Added By Sravan for Evaluation Enhancement Apr 23, 2014  -->
                         <apex:outPutField Value="{!Evaluation__c.NKDA__c}" />
                     </apex:pageBlockSection>
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" />
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Surgery Detail" formId="{!$Component.wholePage}" uniqueId="surgery" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy"
+                        editEnabled="{!editable}" addEnabled="{!editable}" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Surgery Detail" formId="{!$Component.wholePage}" uniqueId="surgery"
+                        editEnabled="{!editable}" addEnabled="{!editable}" />
                     <apex:pageBlockSection columns="1">
                         <apex:outputField value="{!Evaluation__c.Clinical_Course__c}" />
                         <apex:outputField value="{!Evaluation__c.Details_Section_Completed__c}" label="Demographics Section Completed"/>
@@ -194,18 +276,24 @@
             </apex:tab>
             <apex:tab label="Diagnostics" name="diagnosticTab" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Vitals Detail" formId="{!$Component.wholePage}" uniqueId="vitals" />
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Lab Detail" formId="{!$Component.wholePage}" uniqueId="lab" />
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Chem Detail" formId="{!$Component.wholePage}" uniqueId="chem" />
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Micro Detail" formId="{!$Component.wholePage}" uniqueId="micro" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Vitals Detail" formId="{!$Component.wholePage}" uniqueId="vitals"
+                        editEnabled="{!editable}" addEnabled="{!editable}" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Lab Detail" formId="{!$Component.wholePage}" uniqueId="lab"
+                        editEnabled="{!editable}" addEnabled="{!editable}" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Chem Detail" formId="{!$Component.wholePage}" uniqueId="chem"
+                        editEnabled="{!editable}" addEnabled="{!editable}" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Micro Detail" formId="{!$Component.wholePage}" uniqueId="micro"
+                        editEnabled="{!editable}" addEnabled="{!editable}"
+                        rules="{&quot;Test_Type__c&quot;: {&quot;MRSA&quot;: [&quot;X2_Negative_Cultures__c&quot;], &quot;C-diff&quot;: [&quot;X2_Negative_Cultures__c&quot;]}}" />
                     <apex:pageBlockSection columns="1">
                         <apex:outputField value="{!Evaluation__c.Isolation__c}" label="Requires Isolation" />
                         <apex:outputField value="{!Evaluation__c.Isolation_Type__c}" />
                         <apex:outPutField value="{!Evaluation__c.DiagnosisIsolation_Type__c}" />
                     </apex:pageBlockSection>
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Radiology Detail" formId="{!$Component.wholePage}" uniqueId="radiology" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Radiology Detail" formId="{!$Component.wholePage}" uniqueId="radiology"
+                        editEnabled="{!editable}" addEnabled="{!editable}" />
                     <apex:PageBlockSection Columns="2">
-                    	<apex:pageBlockSectionItem >
+                        <apex:pageBlockSectionItem >
                             <apex:outputText value="IV Type" />
                             <apex:outputText value="" />
                         </apex:pageBlockSectionItem>
@@ -222,7 +310,7 @@
                         <apex:outputField value="{!Evaluation__c.PCA_Rate__c}" />
                         <apex:outputField value="{!Evaluation__c.MARs_Attached__c}" />
                         <apex:outputField value="{!Evaluation__c.Recent_Changes__c}" />
-                    </apex:pageBlockSection>  
+                    </apex:pageBlockSection>
                    <apex:pageBlockSection columns="1">
                         <apex:outputField value="{!Evaluation__c.MAR_Comments__c}" />
                         <!--  apex:outputField value="{!Evaluation__c.MAR_Section_Completed__c}" /-->
@@ -266,7 +354,7 @@
                         <apex:outputField value="{!Evaluation__c.O2__c}" />
                         <apex:outputField value="{!Evaluation__c.Will_be_DC_d_prior_to_transfer__c}" />
                         <apex:outputField value="{!Evaluation__c.Ventilator_Type__c}" label="Ventilator Type"/>
-                        <apex:outputField value="{!Evaluation__c.O2_Type__c}" />  
+                        <apex:outputField value="{!Evaluation__c.O2_Type__c}" />
                         <apex:outputField value="{!Evaluation__c.Trach__c}" />
                         <apex:outputField value="{!Evaluation__c.If_Intermittent_Schedule__c}" label="Intermittent Schedule"/>
                         <apex:outputField value="{!Evaluation__c.Liters_Min__c}" />
@@ -348,7 +436,8 @@
                         <apex:pageBlockSectionItem />
                         <apex:outputField value="{!Evaluation__c.Odor__c}" />
                     </apex:pageBlockSection>
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="ABG Detail" formId="{!$Component.wholePage}" uniqueId="abg" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="ABG Detail" formId="{!$Component.wholePage}" uniqueId="abg"
+                        editEnabled="{!editable}" addEnabled="{!editable}" />
                     <apex:pageBlockSection columns="1">
                         <apex:outputField value="{!Evaluation__c.Cardio_Comments__c}" />
                         <apex:outputField value="{!Evaluation__c.Cardio_Section_Completed__c}" />
@@ -380,10 +469,10 @@
                     <hr />
                     <apex:pageBlockSection columns="2">
                         <apex:outputField value="{!Evaluation__c.Dialysis__c}" />
-                        
+
                             <apex:outputField value="{!Evaluation__c.Shunt_Permacath__c}" />
-                           
-                       
+
+
                         <apex:outputField value="{!Evaluation__c.Dialysis_Type__c}" />
                         <apex:outputField value="{!Evaluation__c.Shunt_Permacath_Date_Placed__c}" label="Date Placed" />
                         <apex:outputField value="{!Evaluation__c.Dialysis_Type_Details__c}" />
@@ -485,14 +574,16 @@
                         <apex:pageBlockSectionItem />
                         <apex:outputField value="{!Evaluation__c.Rash_Location__c}" />
                     </apex:pageBlockSection>
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound"
+                        editEnabled="{!editable}" addEnabled="{!editable}" />
                     <apex:pageBlockSection columns="2">
                         <apex:outputField value="{!Evaluation__c.Burns__c}" />
                         <apex:outputField value="{!Evaluation__c.TBSA_Percent__c}" />
                         <apex:pageBlockSectionItem />
                         <apex:outputField value="{!Evaluation__c.Burns_Area__c}" />
                     </apex:pageBlockSection>
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Pressure Ulcer Detail" formId="{!$Component.wholePage}" uniqueId="decubiti" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Pressure Ulcer Detail" formId="{!$Component.wholePage}" uniqueId="decubiti"
+                        editEnabled="{!editable}" addEnabled="{!editable}" />
                     <apex:pageBlockSection columns="2">
                         <apex:outputField value="{!Evaluation__c.Wound_Vac__c}" />
                         <apex:outputField value="{!Evaluation__c.Wound_Vac_Frequency__c}" />
@@ -707,7 +798,8 @@
             </apex:tab>
             <apex:tab label="Ortho" name="orthoTab" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Fracture Detail" formId="{!$Component.wholePage}" uniqueId="fracture" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Fracture Detail" formId="{!$Component.wholePage}" uniqueId="fracture"
+                        editEnabled="{!editable}" addEnabled="{!editable}" />
                     <apex:pageBlockSection columns="1">
                         <apex:outputField value="{!Evaluation__c.Weight_Bearing_Precautions__c}" />
                     </apex:pageBlockSection>
@@ -748,7 +840,8 @@
                         <apex:outputField value="{!Evaluation__c.ROM_Limited_Due_To__c}" label="If Limited, Due To" />
                     </apex:pageBlockSection>
                     <hr />
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Contracture Detail" formId="{!$Component.wholePage}" uniqueId="contracture" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Contracture Detail" formId="{!$Component.wholePage}" uniqueId="contracture"
+                        editEnabled="{!editable}" addEnabled="{!editable}" />
                     <apex:pageBlockSection columns="1">
                         <apex:outputField value="{!Evaluation__c.Ortho_Comments__c}" />
                         <apex:outputField value="{!Evaluation__c.Ortho_Section_Completed__c}" />
@@ -891,13 +984,13 @@
                         <apex:outputField value="{!Evaluation__c.Discharge_Nursing__c}"/>
                         <apex:outputField value="{!Evaluation__c.Location_of_Stairs__c}" />
                         <apex:outputField value="{!Evaluation__c.Nursing__c}" />
-                        <apex:outputField value="{!Evaluation__c.Elevator__c}" /> 
+                        <apex:outputField value="{!Evaluation__c.Elevator__c}" />
                         <apex:outputField value="{!Evaluation__c.Discharge_OT__c}"/>
-                        <apex:outputField value="{!Evaluation__c.Living_With__c}" /> 
+                        <apex:outputField value="{!Evaluation__c.Living_With__c}" />
                         <apex:outputField value="{!Evaluation__c.OT__c}" />
                         <apex:outputField value="{!Evaluation__c.Living_With_Employment_Status__c}" />
                         <apex:outputField Value="{!Evaluation__c.Discharge_PT__c}"/>
-                        <apex:PageBlockSection /> 
+                        <apex:PageBlockSection />
                         <apex:outputField value="{!Evaluation__c.PT__c}" />
                         <apex:pageBlockSectionItem />
                         <apex:outputField value="{!Evaluation__c.Discharge_ST__c}"/>
@@ -945,13 +1038,13 @@
                         <apex:param name="keepDialogOpen" value="" />
                     </apex:actionFunction>
                     <apex:actionStatus id="saveRelatedPartyStatus">
-						<apex:facet name="stop">
-							<apex:outputPanel id="relPartyButtons">
-			                    <apex:commandButton value="Save" onClick="saveRelatedParty(false); return false;" />
-			                    <apex:commandButton value="Save & New" onClick="saveRelatedParty(true); return false;" />
-			                    <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.relatedPartyDialog}'); return false;" />
-							</apex:outputPanel>
-						</apex:facet>
+                        <apex:facet name="stop">
+                            <apex:outputPanel id="relPartyButtons">
+                                <apex:commandButton value="Save" onClick="saveRelatedParty(false); return false;" />
+                                <apex:commandButton value="Save & New" onClick="saveRelatedParty(true); return false;" />
+                                <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.relatedPartyDialog}'); return false;" />
+                            </apex:outputPanel>
+                        </apex:facet>
                         <apex:facet name="start">
                             <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
                         </apex:facet>

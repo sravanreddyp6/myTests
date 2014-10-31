@@ -39,10 +39,11 @@
         jQuery.ajax({
             type: 'POST',
             timeout: 20000,
-             url: '/apex/NursesAssessmentEsignPostBack',
+             url: '/apex/EvaluationEsignPostBack',
              data: {
                 id: evaluationId,
-                img: newstr
+                img: newstr,
+                parentId: '{!Evaluation__c.ServiceAssignment__c}'
             },
              success: function (msg) {
                  alert("Your signed form has been attached to the ServiceAssignment.  Please refresh the Service Assignment to see the attachment. ");
@@ -107,7 +108,7 @@
         text = String.fromCharCode({!IF(Evaluation__c.Ortho_Section_Completed__c, '9745', '9744')}) + " Orthopedic";
         context.fillText( text, col2 , line, width );
         line += fontsize;
-        
+
         text = String.fromCharCode({!IF(Evaluation__c.Cardio_Section_Completed__c, '9745', '9744')}) + " Cardiopulmonary";
         context.fillText( text, col1 , line, width );
         text = String.fromCharCode({!IF(Evaluation__c.Rehab_Section_Completed__c, '9745', '9744')}) + " Rehab";
