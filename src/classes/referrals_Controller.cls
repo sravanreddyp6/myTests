@@ -6,7 +6,7 @@ public with sharing class referrals_Controller{
  Description    : Extension Controller for Referrals
  Modification   : 05/09/2014
  Mod By         : Shaun Wood
- Mod Reason     : Adding this comment only so this class can get deployed again in the May release. 
+ Mod Reason     : Adding this comment only so this class can get deployed again in the May release.
                 : This will allow the code that was commented out for the release to be commented back in.
                 : Please see ticket SHAUN-21 for reference.
 *******************************************************************************/
@@ -58,12 +58,12 @@ public with sharing class referrals_Controller{
 
   public List<Related_Party__c> relParties { get; set; }
   public String relPartiesJSON {get {
-   	List<RelatedParty> relPartiesData = new List<RelatedParty>();
-	if (relParties.size() > 0) {
-		for (Related_Party__c rp :relParties){
-			relPartiesData.add( new RelatedParty(rp.id, rp.Type__c) );
-		}
-	}	
+       List<RelatedParty> relPartiesData = new List<RelatedParty>();
+    if (relParties.size() > 0) {
+        for (Related_Party__c rp :relParties){
+            relPartiesData.add( new RelatedParty(rp.id, rp.Type__c) );
+        }
+    }
     return JSON.serialize(relPartiesData);}
   }
 
@@ -71,11 +71,11 @@ public with sharing class referrals_Controller{
      Id Id;
      String TypeC;
      RelatedParty(Id id, String typeC){
-     	this.Id=id;
-     	this.TypeC = typeC;
+         this.Id=id;
+         this.TypeC = typeC;
      }
   }
-  
+
   public Attachment relPartyFile {
     get {
       if (relPartyFile == null)
@@ -87,23 +87,23 @@ public with sharing class referrals_Controller{
   public Referral_Location__c location { get; set; }
   public List<Referral_Location__c> locations { get; set; }
   public string locationsJSON {get {
-  	List<ReferralLocation> refLocData = new List<ReferralLocation>();
-  	if(locations.size() > 0){
-  		for(Referral_Location__c rl : locations){
-  			refLocData.add(new ReferralLocation(rl.Id,rl.Status__c) );
-  		 }
-  		
-  	   }
-  
-   	 return JSON.serialize(refLocData);}
+      List<ReferralLocation> refLocData = new List<ReferralLocation>();
+      if(locations.size() > 0){
+          for(Referral_Location__c rl : locations){
+              refLocData.add(new ReferralLocation(rl.Id,rl.Status__c) );
+           }
+
+         }
+
+        return JSON.serialize(refLocData);}
   }
   public class ReferralLocation{
-  	Id id;
-  	String status;
-  	ReferralLocation(Id id, String status){
-  		this.Id = id;
-  		this.status = status;
-  	} 
+      Id id;
+      String status;
+      ReferralLocation(Id id, String status){
+          this.Id = id;
+          this.status = status;
+      }
   }
   public Id currentRefId {
     get {
@@ -114,13 +114,13 @@ public with sharing class referrals_Controller{
   }
   private Id personBeingRefId {get; set;}
   public Id pBRId { get; set; }
-  
+
 
   public Boolean isErrorDisplayed { get; set; }
     
   private Id personBeingServedId {get; set;}
   public Id pBSId { get; set; }
-  
+
   public boolean isLinkedPersonBeingServed {
         get { return pBSId != null; }
   }
@@ -215,7 +215,7 @@ public with sharing class referrals_Controller{
           populateRelParties();
       }
   }
-  
+
    public void unlinkPBS()
   {
       if (this.referralRecord.oldPBS__c != null) {
@@ -223,7 +223,7 @@ public with sharing class referrals_Controller{
           this.pbsID = this.referralRecord.oldPBS__c;
           this.referralRecord.oldPBS__c = null;
           update this.referralRecord;
-          
+
           this.personBeingServedRecord = getPBSRec();
           populateRelParties();
       }
@@ -313,10 +313,10 @@ public with sharing class referrals_Controller{
             if ( qs != '') qs += ' and ';
             if (this.operatinggroup == 'NeuroRestorative') {
                 qs += 'FacilityId__c = 20';
-            } 
+            }
             else if (this.operatinggroup == 'CareMeridian'){
                 qs += 'FacilityId__c = 13';
-			}
+            }
             else {
                 qs += 'FacilityId__c Not In (20, 13)';
             }
@@ -464,15 +464,15 @@ public with sharing class referrals_Controller{
 
             if (this.operatinggroup == 'NeuroRestorative') {
                 qs += 'FacilityId__c = 20';
-            } 
+            }
             else if (this.operatinggroup == 'CareMeridian'){
                 qs += 'FacilityId__c = 13';
-			}
+            }
             else {
                 qs += 'FacilityId__c Not In (20, 13)';
             }
-            
-			System.debug('!@#$ '+qs);
+
+            System.debug('!@#$ '+qs);
             tmpResults2=Database.query(qs1 + qs);
             countTotalRecords2=tmpResults2.size();
         }else{
@@ -489,17 +489,17 @@ public with sharing class referrals_Controller{
         if (pbrLastName == null) pbrLastName = '';
         Evaluation__c eval = new Evaluation__c(
             Referral__c = referralRecord.Id,
-            RecordtypeId = Utility.getEValuationRecordType('CareMeridian'),
+            RecordtypeId = (ReferralRecordType=='CareMeridian' ? Utility.getEvaluationRecordType('CareMeridian') : Utility.getEvaluationRecordType('NeuroRestorative')),
             Name = pbrLastName + 'Eval' + DateTime.Now().format('MMddyy')
         );
         insert eval;
-        
+
         // ERC-93 - fill evaluated by field on Referral with current user
         TMN_User__c curruser = [ select id from tmn_user__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];
         referralRecord.evaluated_by_internal__c = curruser.id;
         referralRecord.Has_evaluation__c = true;
         update referralRecord;
-        
+
         return new PageReference('/' + eval.Id + '/e');
     }
 
@@ -554,7 +554,7 @@ public with sharing class referrals_Controller{
     }
   /**********************************************************/
   public void unsetStatusHelperFiels(){
-    
+
       if(referralrecord.referral_status__c != 'Closed'){
           referralrecord.close_date__c=null;
           referralrecord.close_reason__c='';
@@ -596,7 +596,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     } else {
       this.personBeingRefRecord = new Person_Being_Referred__c();
     }
-    
+
     if (pBSId != null) {
       this.personBeingServedRecord = getPBSRec();
       populateRelParties();
@@ -610,7 +610,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     if (this.referralRecord.Person_Being_Served__c == null) {
       this.referralRecord.Person_Being_Served__c = pBSId;
     }
-    
+
     if (this.referralRecord.Id != null) {
       populateRefRelLists();
     }
@@ -619,7 +619,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
         initReferralRecordType();
 
         referralRecordType= (this.ReferralRecord.RecordTypeId != null)?Utility.getRecordTypeForReferral(Id.valueOf(this.ReferralRecord.RecordTypeId)):''; //(this.ReferralRecord.RecordType.Name!=null)?this.ReferralRecord.RecordType.Name:[select name from recordtype where id=:this.referralRecord.recordTypeId limit 1].name;
-  
+
   }
 
    private void populateRelParties() {
@@ -782,7 +782,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
       }
     pBSId = (this.referralRecord.Person_Being_Served__c != null) ? this.referralRecord.Person_Being_Served__c : pBSIdParam;
   }
-  
+
   private Contact getPBSRec() {
     Contact pBSRec;
     try {
@@ -801,7 +801,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     }
     return pBSRec;
   }
-    
+
   public void showAddActivity() {
    System.debug('showAddActivity activity: ' + this.activity);
     this.activity = new Task(Priority = 'Normal', Status='Not Started', OwnerId = UserInfo.getUserId(), RecordTypeId = Utility.getRecordTypeForTask('Referral Tasks'));
@@ -825,7 +825,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
   public void showAddFundingSource() {
     fundingSource = new Funding_Source__c();
     fundingSource.RecordTypeId = Utility.getFundingSourceRecordTypeFromReferral(this.ReferralRecord);
-    defaultAuthTypePicklist( fundingSource );    
+    defaultAuthTypePicklist( fundingSource );
   }
 
   public void saveFundingSource() {
@@ -848,7 +848,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
             fs.Authorization_type__c = 'Initial'; // set default value that is not being honored in late render on jquery dialog
     }
  }
- 
+
   public void showAddRelParty() {
     relParty = new Related_Party__c();
     relParty.RecordTypeId = Utility.getRelatedPartyRecordTypeFromReferral(this.ReferralRecord);
@@ -856,7 +856,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
 
   public void saveRelParty() {
     // CTEAE-22: J. Gilliam commented this line by Appirio that seems to be unnecessary for the save fo Related Party records, and in particular
-    // was causing new Related Party records to save without a Type after we fixed the order of operations issue that was triggering 
+    // was causing new Related Party records to save without a Type after we fixed the order of operations issue that was triggering
     // the required field validation.  1-31-14
     //
     // this.relParty.Type__c = this.relParty.Type_String__c;
@@ -884,44 +884,44 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
         if(!referralRecord.Misdemeanor_s__c   & !referralRecord.Felony_ies__c){
             referralRecord.Adjudicated_offense_status__c.addError('Please Select at least one - Misdemeanor/s or Felony/ies');
             return null;
-        
+
         }
-    
+
     }
     // end CTEAE - 34
-    
+
 	// start EB-214 - Scenario 2
     if (referralRecord.referral_status__c == 'Closed' 
-    	&& referralRecord.close_reason__c != 'Admitted' && !string.IsBlank(referralRecord.close_reason__c)
-    	&& string.IsBlank(string.valueof(referralRecord.Service_Location__c))
-    	&& locations.size() == 0 ) {
-		ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Please select at least 1 location Alias working the Referral. A location Alias is required for accurate reporting.'));
-		this.isErrorDisplayed = true;
-		return null;
+        && referralRecord.close_reason__c != 'Admitted' && !string.IsBlank(referralRecord.close_reason__c)
+        && string.IsBlank(string.valueof(referralRecord.Service_Location__c))
+        && locations.size() == 0 ) {
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Please select at least 1 location Alias working the Referral. A location Alias is required for accurate reporting.'));
+            this.isErrorDisplayed = true;
+            return null;
     }
     // end EB-214
     
     // ERNS-8 - when trying to close/admit Neuro referral, check for required fields
     if ( referralRecordType == 'NeuroRestorative') {
-    	
-    	
+
+
         if (referralRecord.Diagnosis_I__c != 'Encephalopathy') //Added by Sravan for ERNS-21 ticket.07/02/2014 1:02 PM
             referralRecord.Type_of_Encephalopathy__c = '';
-        
+
         if ( referralRecord.referral_status__c == 'Closed' && referralRecord.close_reason__c =='Admitted') {
-        
-            if (!checkNRRequiredCloseAdmitFields()) 
+
+            if (!checkNRRequiredCloseAdmitFields())
                 return null;
         }
-        
+
         if ( referralRecord.referral_status__c == 'Closed' && referralRecord.close_reason__c !='Admitted') {
-        
-            if (!checkNRRequiredCloseNonAdmitFields()) 
+
+            if (!checkNRRequiredCloseNonAdmitFields())
                 return null;
         }
     }
-    
-    
+
+
     system.debug('in saveREF');
     Id refId;
 
@@ -951,7 +951,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
       }
 
       if (fundingSources != null) {
-        
+
         for (Funding_Source__c fndSrc : fundingSources) {
           if (fndSrc.Referral__c == null) {
               System.debug('refId: ' + refId);
@@ -1006,85 +1006,85 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
 
   //ERNS-8 - check for required fields upon attempt to close/admit
   private Boolean checkNRRequiredCloseAdmitFields() {
-    
+
     Boolean hasError = false, hasError2 = false,  hasError3 = false;
     hasError = checkForBlankFields( personBeingRefRecord, 'Person_Being_Referred__c', new list<string>{'first_name__c','last_name__c','date_of_birth__c','gender__c','race__c'}, 'A value for {0} is required to close/admit');
     hasError2 = checkForBlankFields( referralRecord, 'Referral__c', new list<string>{'referral_status__c', 'referral_source_type__c','agency_name__c','referral_name__c','referral_date__c','evaluated_by_source__c','referral_provided_by_source__c','how_did_they_learn__c', 'date_of_injury__c','cause_of_injury_pick__c','current_location_type__c'}, 'A value for {0} is required to close/admit');
-    
+
    // if ( referralRecord.evaluated_by_source__c == 'Internal')
        // hasError3 = checkForBlankFields( referralRecord, 'Referral__c', new list<string>{'evaluated_by_internal__c'}, 'A value for {0} is required to close/admit');
      if (referralRecord.evaluated_by_source__c == 'External')
         hasError3 = checkForBlankFields( referralRecord, 'Referral__c', new list<string>{'evaluated_by_external__c'}, 'A value for {0} is required to close/admit');
-    
+
     if ( referralRecord.referral_provided_by_source__c == 'Internal')
         hasError3 = checkForBlankFields( referralRecord, 'Referral__c', new list<string>{'referral_provided_by__c'}, 'A value for {0} is required to close/admit');
     else if  (referralRecord.referral_provided_by_source__c == 'External')
         hasError3 = checkForBlankFields( referralRecord, 'Referral__c', new list<string>{'referral_provided_by_external__c'}, 'A value for {0} is required to close/admit');
     //EB-199 for some reason == null didn't work here so i used string.valueof()
     if(string.IsBlank(string.valueof(this.referralRecord.Service_Location__c))){
-            ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,'A value for Alias is required to close/admit'); 
-            ApexPages.addMessage(myMsg);    
+            ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,'A value for Alias is required to close/admit');
+            ApexPages.addMessage(myMsg);
             hasError3 = true;
-            }    
+            }
     //end eb-199
     //EB-205 Sravan 09/03/2014 1:44 PM
     if(referralRecord.Evaluated_By_Source__c =='Internal' && referralRecord.Evaluated_By_Internal__c == null && referralRecord.Evaluated_By_Internal_Other__c == null){
-    			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'When Evaluated by Source is Internal either Evaluated By(Internal) or Evaluated By (Internal-Other) have to be filled'));
-    			hasError3 = true;
-    		}
+                ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'When Evaluated by Source is Internal either Evaluated By(Internal) or Evaluated By (Internal-Other) have to be filled'));
+                hasError3 = true;
+            }
     //end of EB-205
-    system.debug('checkNRRequiredCloseAdmitFields result: ' + (!hasError && !hasError2 && !hasError3)); 
+    system.debug('checkNRRequiredCloseAdmitFields result: ' + (!hasError && !hasError2 && !hasError3));
     return ( !hasError && !hasError2 && !hasError3);
-    
+
   }
-  
+
   //EB-206 Sravan - Check for Required fields upon Close and Close reason other than Admit 09/03/2014 3:15 PM
   private Boolean checkNRRequiredCloseNonAdmitFields(){
-  	 Boolean hasError4 = false, hasError5 = false;
-  	 hasError4 = checkForBlankFields(referralRecord,'Referral__c',new list<string>{'Evaluated_By_Source__c','Close_Date__c','Close_Reason__c'},'A value for {0} is Required to close');
-  	  if(referralRecord.Evaluated_By_Source__c =='Internal' && referralRecord.Evaluated_By_Internal__c == null && referralRecord.Evaluated_By_Internal_Other__c == null){
-    			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'When Evaluated by Source is Internal either Evaluated By(Internal) or Evaluated By (Internal-Other) have to be filled'));
-    			hasError4 = true;
-    	}
+       Boolean hasError4 = false, hasError5 = false;
+       hasError4 = checkForBlankFields(referralRecord,'Referral__c',new list<string>{'Evaluated_By_Source__c','Close_Date__c','Close_Reason__c'},'A value for {0} is Required to close');
+        if(referralRecord.Evaluated_By_Source__c =='Internal' && referralRecord.Evaluated_By_Internal__c == null && referralRecord.Evaluated_By_Internal_Other__c == null){
+                ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'When Evaluated by Source is Internal either Evaluated By(Internal) or Evaluated By (Internal-Other) have to be filled'));
+                hasError4 = true;
+        }
       else if(referralRecord.evaluated_by_source__c == 'External'){
-      		hasError5 = checkForBlankFields( referralRecord, 'Referral__c', new list<string>{'evaluated_by_external__c'}, 'A value for {0} is required to close');
+              hasError5 = checkForBlankFields( referralRecord, 'Referral__c', new list<string>{'evaluated_by_external__c'}, 'A value for {0} is required to close');
       }
-  	 return (!hasError4 && !hasError5);
-  	
+       return (!hasError4 && !hasError5);
+
   }
-  
+
   //End of EB-206
-  
+
   private Boolean checkforBlankFields ( sobject obj, string classname, List<string> fieldlist, string errMsgFmtString ) {
- 
+
     Boolean blankfield = false;
     List<Schema.DescribeSObjectResult> describelist = Schema.describeSObjects(new List<string>{classname});
-        
+
     if (describelist.size() == 0){
         return false;
     }
-        
+
     Schema.DescribeSObjectResult info = describelist[0];
-        
+
     Map<string,Schema.SObjectField> fmap = info.fields.getmap();
-    
+
     for ( string f : fieldlist ) {
-        
+
         if ( String.IsBlank ( String.valueOf( obj.get(f)))) {
 
-            ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,String.Format( errMsgFmtString, new string[] {fmap.get(f).getDescribe().getlabel()})); 
+            ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,String.Format( errMsgFmtString, new string[] {fmap.get(f).getDescribe().getlabel()}));
             ApexPages.addMessage(myMsg);
-            
+
             //thisPage.addError( String.Format( errMsgFmtString, new string[] {fmap.get(f).getDescribe().getlabel()}));
             blankfield = true;
-            
+
         }
-            
+
     }
     system.debug('checkforBlankFields result: ' + blankfield);
     return blankfield;
   }
-    
+
 
   public void createRelParties() {
     if (relParties != null && this.personBeingRefRecord.Id != null) {
@@ -1188,7 +1188,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     return current;
   }
   public void checkRedFlags() {
-   
+
     redFlagged = false;
     String fieldSetName = 'Red_Flag_' + ReferralRecordType.replace(' ', '_');
     Set<String> allFieldSets = Schema.SObjectType.Referral__c.fieldSets.getMap().keySet();
@@ -1214,12 +1214,12 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     // the Record Type to be changed when the user first opens up a referral
     // record.
     //if (this.referralRecord == null || this.referralRecord.RecordTypeId == null) {
-      
 
-      
+
+
         setReferralRecordType();
-      
-      
+
+
     //}
     if (Utility.getRecordTypeNameForReferralObject(this.referralRecord).startsWith('Cambridge')) {
         isCambridge = true;

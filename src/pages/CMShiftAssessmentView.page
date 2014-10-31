@@ -1,0 +1,152 @@
+<apex:page standardController="Evaluation__c" extensions="CMShiftAssessmentView">
+	
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+    <apex:includeScript value="{!$Resource.AnnotoriousDev}" />
+    <apex:includeScript value="{!$Resource.AnotoJS}" />
+    <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
+    <script>
+    function openWin(url){
+        window.open(url);
+    }
+    </script>
+    
+    <style>
+		[id$=skinBodyFooter] {
+    	clear: both;
+		}
+		
+		[id$=bodyMapOtherComments] {
+		    clear: both;
+		}
+		
+		hr {
+		    color: #ECECEC;
+		    background-color: #ECECEC;
+		    margin-bottom: 20px;
+		    margin-top: 20px;
+		    border: none;
+		    height: 5px;
+		}
+		
+		.evaluationTabHeader .sectionCompleted {
+		    background-image:
+		        url("{!URLFOR($Resource.EvaluationResources, 'greencheck.png')}");
+		    background-repeat: no-repeat;
+		    padding-top: 22px;
+		}
+		
+		.evaluationTabHeader .sectionNotCompleted {
+		    background-image:
+		        url("{!URLFOR($Resource.EvaluationResources, 'whitecheck.png')}");
+		    background-repeat: no-repeat;
+		    padding-top: 22px;
+		}
+		
+		.tableStyle {
+		    border-collapse: collapse;
+		    border-spacing: 0px 0px;
+		}
+		
+		.colStyle1 {
+		    width: 10%;
+		    text-align: right;
+		    padding-top: 3px;
+		    padding-bottom: 8px
+		}
+		
+		.colStyle2 {
+		    width: 8%;
+		    padding-left: 20px;
+		    padding-top: 5px;
+		    padding-bottom: 8px
+		}
+		
+		.rowstyle {
+		    border-bottom-style: solid;
+		    border-bottom-width: 1px;
+		    border-bottom-color: #E8E8E8
+		}
+	</style>
+    <div id="breadcrumb" class="breadcrumb">
+        <a href="/">Home</a>&nbsp;>&nbsp; 
+        <a href="/apex/PersonsBeingServedListView">Persons Being Served</a>&nbsp;>&nbsp;
+        <a href="/{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__c}">{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__r.Name}</a>&nbsp;>&nbsp;
+        <a href="/{!Evaluation__c.ServiceAssignment__r.Admission__c}">Admission</a>&nbsp;>&nbsp;
+        <a href="/{!Evaluation__c.ServiceAssignment__c}">Service
+            Assignment</a>&nbsp;>&nbsp;
+        <apex:outputText value="Shift Assessment" />
+    </div>
+    
+     <apex:form id="wholePage">
+     	 <apex:pageMessages id="pageMessages" />
+     	 <apex:tabPanel id="wholeTabPanel" value="{!selectedTab}"
+            styleClass="evaluationTabPanel" activeTabClass="evaluationActiveTab"
+            inactiveTabClass="evaluationInactiveTab"
+            headerClass="evaluationTabHeader" contentClass="evaluationTabContent" >
+     	 	<apex:tab label="Demographics" name="demographicsTab" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
+     	 		<apex:pageBlock >
+     	 			<apex:pageBlockSection Columns="2" Collapsible="false" >
+                 		<apex:outputField Value="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.Alias__c}"/>
+                 		<apex:pageBlockSectionItem >
+                            <apex:outputLabel Value="Address"/> <c:AddressDisplay Street1="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.Street__c}"
+                                                                              City="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.City__c}"
+                                                                              State="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.State__c}"
+                                                                              Zip="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.Zip__c}" />
+                        </apex:pageBlockSectionItem>
+                        <apex:outPutField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Name}" />
+                        <apex:OutputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.BirthDate}" />
+                        <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Age__c}" />
+                        <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Medical_Record_Number__c}" />
+                        <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Advanced_Directives__c}" />
+                        <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Code_Status__c}"  />
+                        <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_being_served__r.Advanced_Directives_Attached__c}" />
+                        <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.admission__r.Person_Being_Served__r.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" />
+                 	</apex:pageBlockSection>
+     	 		</apex:pageBlock>
+     	 	</apex:tab>
+     	 	
+     	 	 <apex:tab label="Diagnostics" name="diagnosticTab" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
+     	 	 	<apex:pageBlock >
+     	 	 	</apex:pageBlock>
+     	 	 </apex:tab>
+     	 	 
+     	 	 <apex:tab label="Cardiopulmonary" name="cardioTab" styleClass="{!IF(Evaluation__c.Cardio_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
+     	 	 	<apex:pageBlock >
+     	 	 	</apex:pageBlock>
+     	 	 </apex:tab>
+     	 	 
+     	 	 <apex:tab label="GU/GI/Nutrition" name="nutritionTab" styleClass="{!IF(Evaluation__c.Nutrition_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
+     	 	 	<apex:pageBlock >
+     	 	 	</apex:pageBlock> 
+     	 	 </apex:tab>
+     	 	 
+     	 	 <apex:tab label="Skin/Body" name="skinBodyTab" styleClass="{!IF(Evaluation__c.Skin_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
+     	 	 	<apex:pageBlock >
+     	 	 	</apex:pageBlock>
+     	 	 </apex:tab>
+     	 	 
+     	 	 <apex:tab label="Neurological" name="neuroTab" styleClass="{!IF(Evaluation__c.Neuro_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
+     	 	 	<apex:pageBlock >
+     	 	 	</apex:pageBlock>
+     	 	 </apex:tab>
+     	 	 
+     	 	 <apex:tab label="Ortho" name="orthoTab" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
+     	 	 	<apex:pageBlock >
+     	 	 	</apex:pageBlock>
+     	 	 </apex:tab>
+     	 	 
+     	 	 <apex:tab label="Psycho/Social" name="psychoSocialTab"  styleClass="{!IF(Evaluation__c.Psycho_Social_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
+     	 	 	<apex:pageBlock >
+     	 	 	</apex:pageBlock>
+     	 	 </apex:tab>
+         </apex:tabPanel>
+         <apex:pageBlock id="buttons">
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton onclick="window.location='/apex/CMShiftAssessmentEdit?id={!Evaluation.Id}&tab={!selectedTab}'; return false;" value="Edit" />
+            </apex:pageBlockButtons>
+         </apex:pageBlock>
+                       
+	</apex:form>
+</apex:page>
