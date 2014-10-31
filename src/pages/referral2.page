@@ -1618,10 +1618,11 @@ function stopRKey(evt) {
 
 
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
-        <!--  apex:outputField value="{!Referral__c.Primary_Requested_Location__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/-->
-        <!--  apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/-->
-        <!--  apex:outputField value="{!Referral__c.Secondary_Location__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/-->
         <apex:outputField value="{!Referral__c.Glasgow_Coma_Scale__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
+        <apex:outputField value="{!Referral__c.Duration_of_Unconsciousness__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
+        <apex:outputField value="{!Referral__c.Reported_By__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
         <!--Flavor Specific fields-->
 
         <apex:outputField label="Primary Diagnosis" value="{!Referral__c.Primary_Diagnosis__c}" rendered="{!OR(referralRecordType=='CareMeridian',referralRecordType=='Wisconsin' )}"/>
