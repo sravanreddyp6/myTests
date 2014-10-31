@@ -128,7 +128,7 @@
                  </apex:pageBlock>
              </apex:tab>
              
-             <apex:tab label="Diagnostics" name="diagnosticTab" ontabenter="changeTab('diagnosticsTab'); return false;" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
+             <apex:tab label="Diagnostics" name="diagnosticTab" ontabenter="changeTab('diagnosticTab'); return false;" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
                 <apex:pageBlock >
                 	<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Vitals Detail" formId="{!$Component.wholePage}" uniqueId="vitals" />
                 	<apex:pageBlockSection columns="1" title="IV">
@@ -136,7 +136,7 @@
                 			<apex:outputLabel value="IV" />
                 			<apex:actionRegion >
                 			<apex:inputField Value="{!Evaluation__c.IV__c}" >
-                				<apex:actionStatus id="supportStatus" >
+                				<apex:actionStatus id="ivStatus" >
 							  		<apex:facet name="start">
 							           <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
 							               <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
@@ -144,7 +144,7 @@
 							       </apex:facet>
 							       <apex:facet name="stop"></apex:facet>
 							  	</apex:actionStatus>
-                				<apex:actionSupport event="onchange" rerender="ivSection" status="supportStatus" />
+                				<apex:actionSupport event="onchange" rerender="ivSection" status="ivStatus"/>
                 			</apex:inputField>
                 			</apex:actionRegion>
                 		</apex:pageBlockSectionItem>
@@ -158,11 +158,37 @@
                             <apex:outputText styleClass="labelCol" value="Central" style="margin-left:20px;"/><apex:inputField value="{!Evaluation__c.Central__c}" />
                             <apex:outputText styleClass="labelCol" value="HepLock" style="margin-left:20px;"/><apex:inputField value="{!Evaluation__c.HepLock__c}" />
                         </apex:outputPanel>
-                     </apex:pageBlockSectionItem>  
+                     </apex:pageBlockSectionItem>
+                     <apex:pageBlockSectionItem rendered="{!Evaluation__c.IV__c == 'Yes'}" >
+                			<apex:outputLabel value="IV Site Issues" />
+                			<apex:actionRegion >
+                			<apex:inputField Value="{!Evaluation__c.IV_Site_Issues__c}" >
+                				<apex:actionStatus id="narrativenoteStatus" >
+							  		<apex:facet name="start">
+							           <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+							               <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+							           </div>
+							       </apex:facet>
+							       <apex:facet name="stop"></apex:facet>
+							  	</apex:actionStatus>
+                				<apex:actionSupport event="onchange" rerender="narrativeNote" status="narrativenoteStatus" />
+                			</apex:inputField>
+                			</apex:actionRegion>
+                		</apex:pageBlockSectionItem >
+                     <apex:pageBlockSection columns="1" id="narrativeNote">
+                     	 <apex:pageBlockSectionItem>
+                     	 	<apex:outputlabel value="IV Narrative Note" rendered="{!Evaluation__c.IV_Site_Issues__c=='Yes'&& Evaluation__c.IV__c=='Yes'}" />
+                     	 	<apex:outputPanel>
+                     	 		<div class="requiredInput">
+                     	 			<div class="requiredBlock"></div>
+	                     			<apex:inputTextArea value="{!Evaluation__c.IV_Narrative_Note__c}" rows="4" cols="60" rendered="{!Evaluation__c.IV_Site_Issues__c=='Yes'&& Evaluation__c.IV__c=='Yes'}"  required="True"/>
+	                     		</div>
+	                     	</apex:outputPanel>
+	                     </apex:pageBlockSectionItem>
+                     </apex:pageBlockSection>
                   </apex:pageBlockSection>
                </apex:pageBlock>
            </apex:tab>
-             
              <apex:tab label="Cardiopulmonary" name="cardioTab" onTabenter="changeTab('cardioTab'); return false;" styleClass="{!IF(Evaluation__c.Cardio_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
                 <apex:pageBlock >
                 

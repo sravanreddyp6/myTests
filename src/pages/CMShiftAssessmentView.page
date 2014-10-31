@@ -119,6 +119,19 @@
      	 	 <apex:tab label="Diagnostics" name="diagnosticTab" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
      	 	 	<apex:pageBlock >
      	 	 		<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Vitals Detail" formId="{!$Component.wholePage}" uniqueId="vitals" />
+     	 	 		<apex:pageBlockSection columns="1" title="IV">
+     	 	 			<apex:outputField value="{!Evaluation__c.IV__c}" />
+     	 	 			<apex:pageBlockSectionItem rendered="{!Evaluation__c.IV__c == 'Yes'}" >
+	                        <apex:outputLabel value="IV Type" />
+	                        <apex:outputPanel >
+	                            <apex:outputText styleClass="labelCol" value="PICC" /><apex:outputField value="{!Evaluation__c.PICC__c}" />
+	                            <apex:outputText styleClass="labelCol" value="Central" style="margin-left:20px;"/><apex:outputField value="{!Evaluation__c.Central__c}" />
+	                            <apex:outputText styleClass="labelCol" value="HepLock" style="margin-left:20px;"/><apex:outputField value="{!Evaluation__c.HepLock__c}" />
+	                        </apex:outputPanel>
+                     	</apex:pageBlockSectionItem>
+                     	<apex:outputField Value="{!Evaluation__c.IV_Site_Issues__c}"  rendered="{!Evaluation__c.IV__c == 'Yes'}" />
+                     	<apex:outputText value="{!Evaluation__c.IV_Narrative_Note__c}" rendered="{!Evaluation__c.IV_Site_Issues__c == 'Yes' && Evaluation__c.IV__c == 'Yes'}" />
+     	 	 		</apex:pageBlockSection>
      	 	 	</apex:pageBlock>
      	 	 </apex:tab>
      	 	 
