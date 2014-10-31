@@ -1,5 +1,6 @@
 <apex:page standardController="Contact" extensions="PBSedit_controller,PBS_controller_helper" standardStylesheets="true" sidebar="false"  tabStyle="Persons_Being_Served_New__tab">
   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
   <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 
@@ -23,92 +24,18 @@
      function setFocusOnLoad() {}
     var inputsDisabled = []; // global variable to hold the list of inputs disabled unsing below script. These needs to be enabled before submit or else they dont get submitted.
     jQuery(document).ready(function ($) {
-        String.prototype.endsWith = function (suffix) {
-                return this.indexOf(suffix, this.length - suffix.length) !== -1;
-            };
-
-        $.fn.realVal = function() {
-                // This function is here to put all the value-getting functionalities
-                // in one place. This is because calling val() on a checkbox input
-                // will only return the default value.
-                var $obj = $(this);
-                var val = $obj.val();
-                var type = $obj.attr('type');
-                if (type && type==='checkbox') {
-                    return $obj.prop('checked') ? '1' : '0';
-                } else {
-                    return val;
-                }
-            };
-
-        // Do the field disable/enable functionality here
-        // When values are in map -> will be enabled when key is changed
-        enableDisableField = function (element) {
-                var $element = $(element);
-                // For multi-picklist, apparently the data- passthrough also
-                // exist in the selected and unselected checkboxes, which confuse
-                // the script, so we check for their existence here.
-                if ($element.attr('multiple') == 'multiple' && ($element.attr('id').endsWith('_selected') || $element.attr('id').endsWith('_unselected'))) {
-                    return;
-                }
-                var rules = $element.data("rules");
-                rules && $.each(rules, function (key, value) {
-                    var $targets = [];
-                    if (value instanceof Array) {
-                        $.each(value, function (_, selector) {
-                            $targets.push($(document.getElementById(selector)));
-                        });
-                    } else {
-                        $targets.push($(document.getElementById(value)));
-                    }
-                    var val = $element.realVal();
-                    if (val == key || (val instanceof Array && $.inArray(key, val)!=-1)) {
-                        // Enable fields
-                        $.each($targets, function (_, $target) {
-                            if ($target.attr("multiple")) {
-                                $target.parent().find("select").prop("disabled", false);
-                            } else {
-                                $target.prop("disabled", false);
-                            }
-                        });
-                    } else {
-                        // Disable fields
-                        $.each($targets, function (_, $target) {
-                            // We also need to revert the field(s) to their original state
-                            if ($target.attr("multiple")) {
-                                // Simulate removing all the selected options
-                                $(document.getElementById($target.attr('id') + '_selected')).find('option').attr('selected', 'selected');
-                                // Fake clicking the Remove button here
-                                location.href = $target.parent().find("a[title=Remove]").attr("href");
-                                $target.parent().find("select").prop("disabled", true);
-                            } else {
-                                $target.prop("disabled", true);
-                                inputsDisabled.push($target);    // add to the list so at the time of form submit, disabled will be removed from these
-                                var type = $target.attr('type');
-                                if (type && type==='checkbox') {
-                                    $target.prop('checked', false);
-                                } else {
-                                    $target.val('');
-                                }
-                            }
-                            $target.trigger('change');
-                        });
-                    }
-                });
-        }
-
         setUpFields = function () {
                 $('body input').on("change", function (event) {
-                    enableDisableField(event.target);
+                    applyRulesToField(event.target);
                 });
                 $('body select').on("change", function (event) {
-                    enableDisableField(event.target);
+                    applyRulesToField(event.target);
                 });
                 $('body input').each(function (_, target) {
-                    enableDisableField(target);
+                    applyRulesToField(target);
                 });
                 $('body select').each(function (_, target) {
-                    enableDisableField(target);
+                    applyRulesToField(target);
                 });
         }
         setUpFields();
@@ -320,7 +247,7 @@
     </apex:pageBlockSection>
 
     <!--Contact Information Section-->
-	  <a name="AI" id="AI" /> <!-- Using Additional info anchor here as a hack as the blue card will cover the top portion of the page. Sravan EC-43 10/14/2014 1:00 PM-->
+      <a name="AI" id="AI" /> <!-- Using Additional info anchor here as a hack as the blue card will cover the top portion of the page. Sravan EC-43 10/14/2014 1:00 PM-->
       <apex:pageBlockSection title="Contact Information"
                              showHeader="true"
                              columns="2"
