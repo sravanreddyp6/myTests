@@ -3,6 +3,7 @@
   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
   <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 
+  <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
   <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}"/>
     <!--<p>{!$Component.referralForm.ReferralLocationModalBlock.referralLocationEntry.sectionItem.sl.comp.lookupElement_lkid}</p>-->
 <apex:pageMessage rendered="{!Referral__c.Service_Location__c == null && locations.size == 0 && Referral__c.id != null}" title="WARNING-Alias Field is blank: No Location has been selected, please add an Anticipated Admission Location OR the section with 'Add Location' button to the Referral." severity="warning"></apex:pageMessage>
@@ -415,8 +416,8 @@ function stopRKey(evt) {
     <apex:actionFunction name="saveRelParty" action="{!saveRelParty}" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs"/>
     <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs"/>
     <apex:actionFunction name="saveFundingSource" action="{!saveFundingSource}" status="saveFundingSourceStatus" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialog('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceAuthorizationDetailEntry,fundingSourceEntry,msgs"/>
-    <apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" action="{!showAddFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceAuthorizationDetailEntry,fundingSourceEntry,msgs" />
-    <apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000);" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceAuthorizationDetailEntry,fundingSourceEntry,msgs">
+    <apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" action="{!showAddFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000); applyRulesToFundingSource(); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceAuthorizationDetailEntry,fundingSourceEntry,msgs" />
+    <apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000); applyRulesToFundingSource(); " rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceAuthorizationDetailEntry,fundingSourceEntry,msgs">
         <apex:param name="fundingId" value="" assignTo="{!fundingSource.Id}" />
     </apex:actionFunction>
     <apex:actionFunction name="saveAgency" action="{!saveAgency}" rerender="agencies,agencyEntry,msgs"/>
@@ -669,6 +670,24 @@ function stopRKey(evt) {
 
  <!-- Add Funding Source modal. -->
     <apex:outputPanel id="FundingSourceModal" style="display:none">
+      <script>
+        j$(document).ready(function ($) {
+          applyRulesToFundingSource = function () {
+            $(document.getElementById('{!$Component.FundingSourceModal}')).find('input').on("change", function (event) {
+              applyRulesToField(event.target);
+            });
+            $(document.getElementById('{!$Component.FundingSourceModal}')).find('select').on("change", function (event) {
+              applyRulesToField(event.target);
+            });
+            $(document.getElementById('{!$Component.FundingSourceModal}')).find('input').each(function (_, target) {
+              applyRulesToField(target);
+            });
+            $(document.getElementById('{!$Component.FundingSourceModal}')).find('select').each(function (_, target) {
+              applyRulesToField(target);
+            });
+          };
+        });
+      </script>
       <div id='fundingMessages'></div>
       <apex:pageBlock title="Add Funding Source" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative'}">
         <apex:pageBlockSection columns="1" id="fundingSourceEntry">
@@ -718,7 +737,10 @@ function stopRKey(evt) {
                 <apex:param value="{!personBeingRefRecord.Date_of_Birth__c}"/>
             </apex:outputText>
             <apex:inputField value="{!fundingSource.Type_of_Coverage__c}" />
-            <apex:inputField value="{!fundingSource.Payer_Type__c}" />
+            <apex:inputField value="{!fundingSource.Payer_Type__c}" id="neuroPayerType"
+                html-data-rules="{&quot;VA - Pilot&quot;: [&quot;{!$Component.vaPilotClinicalNumber}&quot;]}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.VA_Pilot_Clinical_Number__c}" id="vaPilotClinicalNumber" />
             <apex:inputField value="{!fundingSource.Payer_Name__c}" />
             <apex:inputField value="{!fundingSource.Payer_Phone__c}" />
             <apex:pageBlockSectionItem >
@@ -1110,7 +1132,7 @@ function stopRKey(evt) {
          <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}"/>
         <apex:outputField value="{!Referral__c.Referral_Date__c}" />
         <apex:outputField value="{!Referral__c.UCI_Number__c}" rendered="{!ReferralRecordType=='California'}"/>
-        <apex:outputField value="{!Referral__c.Referral_Status__c}">
+        <apex:outputField value="{!Referral__c.Referral_Status__c}" id="referralStatus">
           <apex:actionSupport event="onchange" rerender="ReferralStatus"/>
         </apex:outputField>
         <apex:outputField value="{!Referral__c.Referral_Source_Type__c}" />

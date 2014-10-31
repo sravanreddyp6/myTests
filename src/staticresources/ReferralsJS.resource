@@ -75,24 +75,24 @@
             if ($payerCmEmail.size()>0 && $payerCmEmail.val()!='' && !validateEmail($payerCmEmail.val())) {
                 errors.push('Payer CM Email does not seem to a valid email address');
             }
-            
+
             // claims submission zip
-			if ( !checkZipCode(j$('input[id$=Claims_Submission_Zip]').val())) {
-				errors.push('Please enter zip code in the format: XXXXX or XXXXX-XXXX');
-			}
-			
-			if (j$('select[id$=authtype]').length > 0 && j$('select[id$=authtype]').val() == 'Other') {
-	    		if ( j$('input[id$=otherauthtype]').val().trim() == false  ) {
-	    			errors.push ('Please describe "Other" authorization type');
-	        	}
-	        }
-	        
-	        if ( j$('input[id$=contractused_lkid]').length > 0 &&  j$('input[id$=contractused]').val().trim() && !(j$('input[id$=contractused_lkid]').val().trim())) {
-    			errors.push('Please choose a valid contract using the search icon');
-    		}
-    	
-	        
-	    }
+            if ( !checkZipCode(j$('input[id$=Claims_Submission_Zip]').val())) {
+                errors.push('Please enter zip code in the format: XXXXX or XXXXX-XXXX');
+            }
+
+            if (j$('select[id$=authtype]').length > 0 && j$('select[id$=authtype]').val() == 'Other') {
+                if ( j$('input[id$=otherauthtype]').val().trim() == false  ) {
+                    errors.push ('Please describe "Other" authorization type');
+                }
+            }
+
+            if ( j$('input[id$=contractused_lkid]').length > 0 &&  j$('input[id$=contractused]').val().trim() && !(j$('input[id$=contractused_lkid]').val().trim())) {
+                errors.push('Please choose a valid contract using the search icon');
+            }
+
+
+        }
 
         if (referralRecordType == 'NeuroRestorative') {
             // Validate email fields
@@ -112,23 +112,38 @@
             if ($adjusterEmail.size()>0 && $adjusterEmail.val()!='' && !validateEmail($adjusterEmail.val())) {
                 errors.push('Adjustor Email does not seem to a valid email address');
             }
+
+            // Other validation
+            var $referralStatus = $('[id$=referralStatus]');
+            var $payerType = $('[id$=neuroPayerType]');
+            // $referralStatus could either be in a <span> or in an <input>,
+            // depending on which page we're looking at (view or edit page),
+            // so we have to use diffferent methods to find its value.
+            if (($referralStatus.val() == 'Closed' || $referralStatus.text() == 'Closed') && $payerType.val() == '') {
+                errors.push('You must choose a Payer Type for a closed referral!');
+            }
+
+            var $vaPilotClinicalNumber = $('[id$=vaPilotClinicalNumber]');
+            if ($payerType.val() == 'VA - Pilot' && $vaPilotClinicalNumber.val() == '') {
+                errors.push('You must enter the VA Pilot Clinical Number because the Payer Type is VA - Pilot!');
+            }
         }
         return errors;
     }
-    
+
      // ERC-96: Adding this for front end validation.
   // Claims_Submission_Zip is now a text field instead of number field.
   function checkZipCode(value) {
       var errors = '';
-      var validformat = /^\d{5}$|^\d{5}-\d{4}$/    
-      
+      var validformat = /^\d{5}$|^\d{5}-\d{4}$/
+
       // if it contains a value and doesn't match regex then error
       return ( !(!validformat.test(value) && value.trim()) );
-          
-      }     
-  
-    
-    
+
+      }
+
+
+
     fundingSourceSaveHelper = function (referralRecordType) {
         fundingSourceClearMessages();
         var errors = validateFundingSource(referralRecordType);
