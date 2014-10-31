@@ -92,6 +92,9 @@
     <apex:outputText value="Shift Assessment" />
     </div>
     <apex:form id="wholePage" >
+    	<apex:outputpanel rendered="false" >
+    		<apex:inputhidden value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__c}" /> 
+    	</apex:outputpanel>
         <apex:pageMessages id="pageMessages" />
          <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" reRender="pageMessages, wholeTabPanel, buttons">
             <apex:param name="nextTab" assignTo="{!nextTab}" value="" />
@@ -111,19 +114,54 @@
                         <apex:OutputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.BirthDate}" />
                         <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Age__c}" />
                         <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Medical_Record_Number__c}" />
-                        <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Advanced_Directives__c}" />
+                        <apex:outputText value="{!primaryPhysician}" label="Primary Physician" />
+                        <apex:pageBlockSectionItem HelpText="To edit this information, return to the Person Being Served record.">
+                        	{!$ObjectType.Contact.fields.Advanced_Directives__c.label}
+                        	<apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Advanced_Directives__c}" />
+                        </apex:pageBlockSectionItem>
                         <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Code_Status__c}"  />
                         <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_being_served__r.Advanced_Directives_Attached__c}" />
                         <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.admission__r.Person_Being_Served__r.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" />
                  	</apex:pageBlockSection>
+                 	<c:EvaluationResponseTable pbsParentId="{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__c}"
+                        addEnabled="true" editEnabled="true" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" />
                  </apex:pageBlock>
              </apex:tab>
              
              <apex:tab label="Diagnostics" name="diagnosticTab" ontabenter="changeTab('diagnosticsTab'); return false;" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
                 <apex:pageBlock >
-                
-                </apex:pageBlock>
-             </apex:tab>
+                	<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Vitals Detail" formId="{!$Component.wholePage}" uniqueId="vitals" />
+                	<apex:pageBlockSection columns="1" title="IV">
+                		<apex:pageBlockSectionItem >
+                			<apex:outputLabel value="IV" />
+                			<apex:actionRegion >
+                			<apex:inputField Value="{!Evaluation__c.IV__c}" >
+                				<apex:actionStatus id="supportStatus" >
+							  		<apex:facet name="start">
+							           <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+							               <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+							           </div>
+							       </apex:facet>
+							       <apex:facet name="stop"></apex:facet>
+							  	</apex:actionStatus>
+                				<apex:actionSupport event="onchange" rerender="ivSection" status="supportStatus" />
+                			</apex:inputField>
+                			</apex:actionRegion>
+                		</apex:pageBlockSectionItem>
+                	</apex:pageBlockSection >
+                	
+                	<apex:pageBlockSection columns="1" id="ivSection" >
+                        <apex:pageBlockSectionItem rendered="{!Evaluation__c.IV__c == 'Yes'}">
+                        <apex:outputLabel value="IV Type" />
+                        <apex:outputPanel >
+                            <apex:outputText styleClass="labelCol" value="PICC" /><apex:inputField value="{!Evaluation__c.PICC__c}" />
+                            <apex:outputText styleClass="labelCol" value="Central" style="margin-left:20px;"/><apex:inputField value="{!Evaluation__c.Central__c}" />
+                            <apex:outputText styleClass="labelCol" value="HepLock" style="margin-left:20px;"/><apex:inputField value="{!Evaluation__c.HepLock__c}" />
+                        </apex:outputPanel>
+                     </apex:pageBlockSectionItem>  
+                  </apex:pageBlockSection>
+               </apex:pageBlock>
+           </apex:tab>
              
              <apex:tab label="Cardiopulmonary" name="cardioTab" onTabenter="changeTab('cardioTab'); return false;" styleClass="{!IF(Evaluation__c.Cardio_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
                 <apex:pageBlock >
