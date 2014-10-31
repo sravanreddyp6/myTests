@@ -17,12 +17,13 @@
         type="String" required="true" />
     <apex:attribute name="isPdf" description="Boolean describing whether or not this is for a PDF rendering"
         type="Boolean" required="false" default="false" />
-    <apex:attribute name="rules" description="The rules for the fields in the dialog. If you use this, make sure enableDisableField() is available on the page. Also, use the field names in the rules instead of field IDs."
+    <apex:attribute name="rules" description="The rules for the fields in the dialog. Use the field names in the rules instead of field IDs."
         type="String" required="false" />
 
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
     <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
 
@@ -84,16 +85,16 @@
                             $('[id$='+controllingField+']').data("rules", fieldRules);
                         });
                         $(document.getElementById('{!$Component.responseDialog}')).find('input').on("change", function (event) {
-                            enableDisableField(event.target);
+                            applyRulesToField(event.target);
                         });
                         $(document.getElementById('{!$Component.responseDialog}')).find('select').on("change", function (event) {
-                            enableDisableField(event.target);
+                            applyRulesToField(event.target);
                         });
                         $(document.getElementById('{!$Component.responseDialog}')).find('input').each(function (_, target) {
-                            enableDisableField(target);
+                            applyRulesToField(target);
                         });
                         $(document.getElementById('{!$Component.responseDialog}')).find('select').each(function (_, target) {
-                            enableDisableField(target);
+                            applyRulesToField(target);
                         });
                     };
                 });

@@ -1,5 +1,6 @@
 <apex:page standardController="Evaluation__c" extensions="CareMeridianEvaluationEditController,CareMeridianEvaluationCommonController">
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
     <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
     <apex:includeScript value="{!$Resource.AnnotoriousDev}"/>
@@ -120,92 +121,19 @@
                     }
                 );
             });
-            String.prototype.endsWith = function (suffix) {
-                return this.indexOf(suffix, this.length - suffix.length) !== -1;
-            };
-            $.fn.realVal = function() {
-                // This function is here to put all the value-getting functionalities
-                // in one place. This is because calling val() on a checkbox input
-                // will only return the default value.
-                var $obj = $(this);
-                var val = $obj.val();
-                var type = $obj.attr('type');
-                if (type && type==='checkbox') {
-                    return $obj.prop('checked') ? '1' : '0';
-                } else {
-                    return val;
-                }
-            };
-            // Do the field disable/enable functionality here
-            // When values are in map -> will be enabled when key is changed
-            enableDisableField = function (element) {
-                var $element = $(element);
-                // For multi-picklist, apparently the data- passthrough also
-                // exist in the selected and unselected checkboxes, which confuse
-                // the script, so we check for their existence here.
-                if ($element.attr('multiple') == 'multiple' && ($element.attr('id').endsWith('_selected') || $element.attr('id').endsWith('_unselected'))) {
-                    return;
-                }
-                var rules = $element.data("rules");
-                rules && $.each(rules, function (key, value) {
-                    var $targets = [];
-                    if (value instanceof Array) {
-                        $.each(value, function (_, selector) {
-                            $targets.push($(document.getElementById(selector)));
-                        });
-                    } else {
-                        $targets.push($(document.getElementById(value)));
-                    }
-                    var val = $element.realVal();
-                    if (val == key || (val instanceof Array && $.inArray(key, val)!=-1)) {
-                        // Enable fields
-                        $.each($targets, function (_, $target) {
-                            if ($target.attr("multiple")) {
-                                $target.parent().find("select").prop("disabled", false);
-                            } else {
-                                $target.prop("disabled", false);
-                            }
-                        });
-                    } else {
-                        // Disable fields
-                        $.each($targets, function (_, $target) {
-                            // We also need to revert the field(s) to their original state
-                            if ($target.attr("multiple")) {
-                                // Simulate removing all the selected options
-                                $(document.getElementById($target.attr('id') + '_selected')).find('option').attr('selected', 'selected');
-                                // Fake clicking the Remove button here
-                                location.href = $target.parent().find("a[title=Remove]").attr("href");
-                                $target.parent().find("select").prop("disabled", true);
-                            } else {
-                                $target.prop("disabled", true);
-                                var type = $target.attr('type');
-                                if (type && type==='checkbox') {
-                                    $target.prop('checked', false);
-                                } else {
-                                    $target.val('');
-                                }
-                            }
-                            $target.trigger('change');
-                        });
-                    }
-                });
-            }
             setUpFields = function () {
                 $('body input').on("change", function (event) {
-                    enableDisableField(event.target);
+                    applyRulesToField(event.target);
                 });
                 $('body select').on("change", function (event) {
-                    enableDisableField(event.target);
+                    applyRulesToField(event.target);
                 });
                 $('body input').each(function (_, target) {
-                    enableDisableField(target);
+                    applyRulesToField(target);
                 });
                 $('body select').each(function (_, target) {
-                    enableDisableField(target);
+                    applyRulesToField(target);
                 });
-                /*$('.multiSelectPicklistCell a[title=Remove]').on('click', function () {
-                    eval(this.href);
-                });*/
             }
             setUpFields();
         });
@@ -670,17 +598,17 @@
                         <apex:inputField value="{!Evaluation__c.Elimination_Bowel_Continent__c}"
                             label="Incontinent"
                             html-data-rules="{&quot;1&quot;: &quot;{!$Component.eliminationBowelNoContinentAppliance}&quot;}" />
-                        <!-- For multipicklist fields, we need to call enableDisableField directly, because the change
+                        <!-- For multipicklist fields, we need to call applyRulesToField directly, because the change
                              event is not fired programmatically. -->
                         <apex:inputField value="{!Evaluation__c.Elimination_Bladder_No_Continent_Details__c}"
                             id="eliminationBladderNoContinentDetails"
-                            onchange="enableDisableField(document.getElementById('{!$Component.eliminationBladderNoContinentDetails}'));"
+                            onchange="applyRulesToField(document.getElementById('{!$Component.eliminationBladderNoContinentDetails}'));"
                             label="Details" html-data-rules="{&quot;ICP&quot;: &quot;{!$Component.ifICPQ}&quot;}" />
-                        <!-- For multipicklist fields, we need to call enableDisableField directly, because the change
+                        <!-- For multipicklist fields, we need to call applyRulesToField directly, because the change
                              event is not fired programmatically. -->
                         <apex:inputField value="{!Evaluation__c.Elimination_Bowel_No_Continent_Appliance__c}"
                             id="eliminationBowelNoContinentAppliance" label="Appliance"
-                            onchange="enableDisableField(document.getElementById('{!$Component.eliminationBowelNoContinentAppliance}'));"
+                            onchange="applyRulesToField(document.getElementById('{!$Component.eliminationBowelNoContinentAppliance}'));"
                             html-data-rules="{&quot;Other&quot;: &quot;{!$Component.eliminationBowelNoApplianceOther}&quot;}" />
                         <apex:inputField value="{!Evaluation__c.If_ICP_Q__c}" id="ifICPQ" />
                         <apex:inputField value="{!Evaluation__c.Elimination_Bowel_No_Appliance_Other__c}" id="eliminationBowelNoApplianceOther" label="Specify Other" />
@@ -1203,10 +1131,10 @@
             <apex:tab label="Discharge Plan" name="dischargePlanTab" ontabenter="changeTab('dischargePlanTab'); return false;" styleClass="{!IF(Evaluation__c.Discharge_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
                     <apex:pageBlockSection columns="2">
-                        <!-- For multipicklist fields, we need to call enableDisableField directly, because the change
+                        <!-- For multipicklist fields, we need to call applyRulesToField directly, because the change
                              event is not fired programmatically. -->
                         <apex:inputField value="{!Evaluation__c.Prior_Living_Situation__c}" id="priorLivingSituation"
-                            onchange="enableDisableField(document.getElementById('{!$Component.priorLivingSituation}'));"
+                            onchange="applyRulesToField(document.getElementById('{!$Component.priorLivingSituation}'));"
                             html-data-rules="{&quot;Other&quot;: &quot;{!$Component.priorLivingSituationOther}&quot;}" />
                         <apex:inputField value="{!Evaluation__c.Discharge_Plan_Home_Situation__c}" />
                         <apex:inputField value="{!Evaluation__c.Prior_Living_Situation_Other__c}" id="priorLivingSituationOther" label="Specify Other" />
@@ -1252,10 +1180,10 @@
                     </apex:pageBlockSection>
                     <hr />
                     <apex:pageBlockSection columns="1">
-                        <!-- For multipicklist fields, we need to call enableDisableField directly, because the change
+                        <!-- For multipicklist fields, we need to call applyRulesToField directly, because the change
                              event is not fired programmatically. -->
                         <apex:inputField value="{!Evaluation__c.Discharge_To__c}" id="dischargeTo"
-                            onchange="enableDisableField(document.getElementById('{!$Component.dischargeTo}'));"
+                            onchange="applyRulesToField(document.getElementById('{!$Component.dischargeTo}'));"
                             html-data-rules="{&quot;Other&quot;: &quot;{!$Component.dischargeToOther}&quot;}" />
                         <apex:inputField value="{!Evaluation__c.Discharge_To_Other__c}" label="Specify Other" id="dischargeToOther" />
                         <apex:inputField value="{!Evaluation__c.Follow_Up_Appt_Required__c}" />

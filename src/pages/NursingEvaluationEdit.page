@@ -1,6 +1,7 @@
 <apex:page standardController="Evaluation__c" extensions="NursingEvaluationEditController" >
 
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
     <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
     <apex:includeScript value="{!$Resource.AnnotoriousDev}"/>
@@ -106,20 +107,20 @@
 
             };
 
-			handleIntact = function( val ) {
-			
-				var el = $('#bodyMap').get(0).src;
-				/*
-				if ( val == 1 && el ) {
-					// disable body map if intact is checked
-					anno.hideSelectionWidget( el );
-					anno.removeAll( el );
-				} else {
-					anno.showSelectionWidget( el );
-				}
-				*/				
-			
-			}
+            handleIntact = function( val ) {
+
+                var el = $('#bodyMap').get(0).src;
+                /*
+                if ( val == 1 && el ) {
+                    // disable body map if intact is checked
+                    anno.hideSelectionWidget( el );
+                    anno.removeAll( el );
+                } else {
+                    anno.showSelectionWidget( el );
+                }
+                */
+
+            }
             handleBladder = function() {
                 // get the value
                 var bladdertypes = '';
@@ -281,41 +282,41 @@
                         $.each(subctrl, function (_, ctrl) {
                             ctrl.prop('checked', false );
                             if (ctrl.is(':checkbox'))
-                            	ctrl.prop('disabled', true);
+                                ctrl.prop('disabled', true);
                             else
-                            	ctrl.prop('readonly', true);
-                            enableDisableField(ctrl);
+                                ctrl.prop('readonly', true);
+                            applyRulesToField(ctrl);
                             });
                 } else {
                         $.each(subctrl, function (_, ctrl) {
                             ctrl.prop('readonly', false);
                             ctrl.prop('disabled', false);
-                            enableDisableField(ctrl);
+                            applyRulesToField(ctrl);
                             });
-                            
+
                 }
 
             }
-            
+
             // if checkbox for Other is selected, enable other field
             handleOther = function( ids ) {
 
-				var theval = false;
-				
+                var theval = false;
+
                 $('input[id*=' + ids + ']').each( function(index, element) {
                     if ( element.value.indexOf('Other') == 0 )
                         theval = $(element).prop('checked');
                     });
 
                 if (theval == true ) {
-                	// enable the text field called other
-                	$('input[id$=' + ids + 'other]').prop('readonly', false);
+                    // enable the text field called other
+                    $('input[id$=' + ids + 'other]').prop('readonly', false);
                 } else {
-                	// disable the field and empty it out
-                	$('input[id$=' + ids + 'other]').prop('readonly', true);
-                	$('input[id$=' + ids + 'other]').prop('readonly', true).val('');
+                    // disable the field and empty it out
+                    $('input[id$=' + ids + 'other]').prop('readonly', true);
+                    $('input[id$=' + ids + 'other]').prop('readonly', true).val('');
                 }
-			}
+            }
 
             handleNutrition = function () {
                 handleFeedingChange();
@@ -333,9 +334,9 @@
                 handleNone('neuropain');
                 handleNone('neuropainalleve');
                 handleNone('seizurehistory');
-                
+
             }
-            
+
             handlePsychoSocial = function() {
                 handleNone('barriers');
                 handleOther('communications');
@@ -349,7 +350,7 @@
 
 
             }
-            
+
 
             handleWFLsChange = function () {
 
@@ -360,7 +361,7 @@
                     var furtherind = $('[id$=furtherind]');
                     furtherind.prop('checked', false);
                     furtherind.attr('disabled', true);
-                    enableDisableField(furtherind);
+                    applyRulesToField(furtherind);
 
 
                     // mobility devices
@@ -368,11 +369,11 @@
                     $('[id$=walker]').prop('checked', false).prop('disabled',true);
                     $('[id$=cane]').prop('checked', false).prop('disabled',true);
                     $('[id$=othermobility]').prop('checked', false).prop('disabled',true);
-                    enableDisableField($('[id$=othermobility]'));
+                    applyRulesToField($('[id$=othermobility]'));
 
                     // other special equipment
                     $('[id$=specialequip]').val('').prop('disabled',true);
-                    enableDisableField($('[id$=specialequip]'));
+                    applyRulesToField($('[id$=specialequip]'));
 
 
                     // reset sliders
@@ -474,7 +475,7 @@
              };
 
              handleMood = function() {
-             
+
                 // if sad or flat, enable depression question
                 var mood = '';
                 $('input[id*=moodlist]').each(function (index, element) {
@@ -482,29 +483,29 @@
                         mood += $(element).val() + ';';
                 });
 
-				if ( mood.indexOf('Unable to Determine') >= 0 ) {
-					// disable all others
-	                $('input[id*=moodlist]').each(function (index, element) {
-	                	if ($(element).val() != 'Unable to Determine') {
-		                	$(element).prop('checked', false);
-		                	$(element).prop('disabled', true);
-						}
-					});
-				} else {
-				
-				    $('input[id*=moodlist]').each(function (index, element) {
-		                	$(element).prop('disabled', false);
-						});					
-				
-	                if ( mood.indexOf('Sad') >=  0 || mood.indexOf('Flat') >=  0 ) {
-	                    $('[id$=responds]').each( function(index, element) {
-	                        $('[id$=sadflatHurt]').prop('disabled', false);
-	                    });
-	                } else {
-	
-	                    $('[id$=sadflatHurt]').prop('disabled', true).val('');
-	                    enableDisableField( $('[id$=sadflatHurt]'));
-					}	
+                if ( mood.indexOf('Unable to Determine') >= 0 ) {
+                    // disable all others
+                    $('input[id*=moodlist]').each(function (index, element) {
+                        if ($(element).val() != 'Unable to Determine') {
+                            $(element).prop('checked', false);
+                            $(element).prop('disabled', true);
+                        }
+                    });
+                } else {
+
+                    $('input[id*=moodlist]').each(function (index, element) {
+                            $(element).prop('disabled', false);
+                        });
+
+                    if ( mood.indexOf('Sad') >=  0 || mood.indexOf('Flat') >=  0 ) {
+                        $('[id$=responds]').each( function(index, element) {
+                            $('[id$=sadflatHurt]').prop('disabled', false);
+                        });
+                    } else {
+
+                        $('[id$=sadflatHurt]').prop('disabled', true).val('');
+                        applyRulesToField( $('[id$=sadflatHurt]'));
+                    }
                 }
 
              };
@@ -556,103 +557,18 @@
                 );
 
             });
-
-        String.prototype.endsWith = function (suffix) {
-                return this.indexOf(suffix, this.length - suffix.length) !== -1;
-            };
-
-        $.fn.realVal = function() {
-                // This function is here to put all the value-getting functionalities
-                // in one place. This is because calling val() on a checkbox input
-                // will only return the default value.
-                var $obj = $(this);
-                var val = $obj.val();
-                var type = $obj.attr('type');
-                if (type && type==='checkbox') {
-                    return $obj.prop('checked') ? '1' : '0';
-                } else {
-                    return val;
-                }
-            };
-
-
-     // Do the field disable/enable functionality here
-            // When values are in map -> will be enabled when key is changed
-            enableDisableField = function (element) {
-                var $element = $(element);
-                // For multi-picklist, apparently the data- passthrough also
-                // exist in the selected and unselected checkboxes, which confuse
-                // the script, so we check for their existence here.
-                if ($element.attr('multiple') == 'multiple' && ($element.attr('id').endsWith('_selected') || $element.attr('id').endsWith('_unselected'))) {
-                    return;
-                }
-                var enabledFields = [];
-                var rules = $element.data("rules");
-                rules && $.each(rules, function (key, value) {
-                    var $targets = [];
-                    if (value instanceof Array) {
-                        $.each(value, function (_, selector) {
-                            $targets.push($(document.getElementById(selector)));
-                        });
-                    } else {
-                        $targets.push($(document.getElementById(value)));
-                    }
-                    var val = $element.realVal();
-                    if (val == key || (val instanceof Array && $.inArray(key, val)!=-1)) {
-                        // Enable fields
-                        $.each($targets, function (_, $target) {
-                            if ($target.attr("multiple")) {
-                                $target.parent().find("select").prop("disabled", false);
-                            } else {
-                                $target.prop("disabled", false);
-                            }
-                            enabledFields.push($target.get(0));
-                        });
-                    } else {
-                        // Disable fields
-                        $.each($targets, function (_, $target) {
-                            // We also need to revert the field(s) to their original state
-							// One exception: if the field has been enabled by one of the
-							// earlier rules, then don't disable it!
-							if ($.inArray($target.get(0), enabledFields) != -1) {
-     							return;
-							}
-                            
-                            if ($target.attr("multiple")) {
-                                // Simulate removing all the selected options
-                                $(document.getElementById($target.attr('id') + '_selected')).find('option').attr('selected', 'selected');
-                                // Fake clicking the Remove button here
-                                location.href = $target.parent().find("a[title=Remove]").attr("href");
-                                $target.parent().find("select").prop("disabled", true);
-                            } else {
-                                $target.prop("disabled", true);
-                                var type = $target.attr('type');
-                                if (type && type==='checkbox') {
-                                    $target.prop('checked', false);
-                                } else {
-                                    $target.val('');
-                                }
-                            }
-                            $target.trigger('change');
-                        });
-                    }
-                });
-
-
-            }
-
-     setUpFields = function () {
+            setUpFields = function () {
                 $('body input').on("change", function (event) {
-                    enableDisableField(event.target);
+                    applyRulesToField(event.target);
                 });
                 $('body select').on("change", function (event) {
-                    enableDisableField(event.target);
+                    applyRulesToField(event.target);
                 });
                 $('body input').each(function (_, target) {
-                    enableDisableField(target);
+                    applyRulesToField(target);
                 });
                 $('body select').each(function (_, target) {
-                    enableDisableField(target);
+                    applyRulesToField(target);
                 });
                 /*$('.multiSelectPicklistCell a[title=Remove]').on('click', function () {
                     eval(this.href);
@@ -662,7 +578,7 @@
                 if ( {!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Age__c} <= 3 ) {
                     $('input[id$=headcircum]').prop('disabled', false);
                     $('input[id$=earinfhist]').prop('disabled', false);
-                }    
+                }
                 else {
                     $('input[id$=headcircum]').prop('disabled', true);
                     $('input[id$=earinfhist]').prop('disabled', true);
@@ -670,8 +586,8 @@
 
 
             }
-            
-            
+
+
             setUpFields();
             handleSoresAll();
             handleNutrition();
@@ -1020,9 +936,9 @@
                             </apex:selectCheckboxes>
                         </apex:pageBlockSectionItem>
                    </apex:pageBlockSection>
-                   
+
                     <apex:pageBlockSection columns="2" Title="Immunization History" >
-                        
+
                         <apex:inputField value="{!Evaluation__c.Immunization_N_A__c}" label="N/A" html-data-rules="{&quot;0&quot;:[&quot;{!$Component.vpneumo.pneumo}&quot;,&quot;{!$Component.vflu.flu}&quot;,&quot;{!$Component.vtdap.tdap}&quot;]}"/>
                         <apex:pageBlockSectionItem id="vpneumo">
                         <apex:outputLabel for="pneumo" value="Pneumococcal" />
@@ -1052,10 +968,10 @@
                     </apex:pageBlockSection>
 
                     <apex:pageBlockSection Columns="1" title="Pediatric Immunization History">
-                    	<apex:inputField value="{!Evaluation__c.Vaccination_Info_Sheet_Provided__c}" />	
-                    	<apex:inputField value="{!Evaluation__c.Vaccination_Pneumococcal__c}" />
-                    	<apex:inputField value="{!Evaluation__c.Vaccination_Flu__c}" />
-                    	<apex:inputField value="{!Evaluation__c.Isolation__c}" label="Requires Isolation" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.isolationType}&quot;, &quot;{!$Component.isolationReason}&quot;]}" />
+                        <apex:inputField value="{!Evaluation__c.Vaccination_Info_Sheet_Provided__c}" />
+                        <apex:inputField value="{!Evaluation__c.Vaccination_Pneumococcal__c}" />
+                        <apex:inputField value="{!Evaluation__c.Vaccination_Flu__c}" />
+                        <apex:inputField value="{!Evaluation__c.Isolation__c}" label="Requires Isolation" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.isolationType}&quot;, &quot;{!$Component.isolationReason}&quot;]}" />
                         <apex:inputField value="{!Evaluation__c.DiagnosisIsolation_Type__c}" id="isolationType" />
                         <apex:inputField value="{!Evaluation__c.Isolation_Reason_and_Site__c}" id="isolationReason" />
                     </apex:pageBlockSection>
@@ -1246,16 +1162,16 @@
 
                 <apex:pageBlockSection columns="2" title="Ventilator">
                          <apex:inputField value="{!Evaluation__c.Ventilator__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.ventilatorMode}&quot;, &quot;{!$Component.ventilatorRate}&quot;, &quot;{!$Component.FIO2}&quot;, &quot;{!$Component.peep}&quot;, &quot;{!$Component.tv}&quot;, &quot;{!$Component.ps}&quot;, &quot;{!$Component.cpap}&quot;, &quot;{!$Component.bipap}&quot;, &quot;{!$Component.bipapRate}&quot;, &quot;{!$Component.patientToBringBiPAP}&quot;, &quot;{!$Component.weaningTrial}&quot;, &quot;{!$Component.ventilatorResults}&quot;, &quot;{!$Component.ventilatorType}&quot;, &quot;{!$Component.ventilatorType}&quot;, &quot;{!$Component.ventilatorOther}&quot;]}" />
-                         <apex:pageBlockSectionItem>
+                         <apex:pageBlockSectionItem >
                          <apex:outputLabel value="Ventilator Type<br /><br />Schedule" escape="false" />
-                         <apex:outputPanel>
+                         <apex:outputPanel >
                          <apex:inputField value="{!Evaluation__c.Ventilator_Type__c}" id="ventilatorType" style="margin-left:10px;" html-data-rules="{&quot;Intermittent&quot;: &quot;{!$Component.interSchedule}&quot;}" /><br />
                           <apex:inputField value="{!Evaluation__c.If_Intermittent_Schedule__c}" id="interSchedule" style="margin-left:10px;"/>
                          </apex:outputPanel>
                          </apex:pageBlockSectionItem>
-                        <apex:outputText label ="Settings" value=""/><apex:outputText value="" />
+                        <apex:outputText label="Settings" value=""/><apex:outputText value="" />
                          <apex:inputField value="{!Evaluation__c.Ventilator_Mode__c}" id="ventilatorMode" /><br />
-                         
+
                          <apex:inputField value="{!Evaluation__c.Ventilator_Rate__c}" id="ventilatorRate" />
                          <apex:inputField value="{!Evaluation__c.FIO2__c}" id="FIO2" />
                          <apex:inputField value="{!Evaluation__c.PEEP__c}" id="peep" />
@@ -2734,7 +2650,7 @@
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Resident Oriented to the Following" escape="false"/>
                             <apex:outputPanel >
-                            
+
                             <apex:selectCheckboxes value="{!selectedOrientations}" layout="pageDirection" disabled="{! OR(CONTAINS(Evaluation__c.Rancho_Level__c, '(1)'),CONTAINS(Evaluation__c.Rancho_Level__c, '(2)'), Evaluation__c.Rancho_Level__c = '', Evaluation__c.Level_of_Conciousness__c = 'Unresponsive', Evaluation__c.Level_of_Conciousness__c = '')}">
                                 <apex:selectOptions value="{!orientationValues}" />
                             </apex:selectCheckboxes>
@@ -2847,7 +2763,7 @@
                     <apex:pageBlocksection columns="1" title="Discharge Plan Details">
                         <apex:inputField value="{!Evaluation__c.Discharge_Info_From__c}" />
                         <apex:inputField value="{!Evaluation__c.Prior_Living_Situation__c}" id="priorLivingSituation"
-                            onchange="enableDisableField(document.getElementById('{!$Component.priorLivingSituation}'));"
+                            onchange="applyRulesToField(document.getElementById('{!$Component.priorLivingSituation}'));"
                             html-data-rules="{&quot;Other&quot;: &quot;{!$Component.priorLivingSituationOther}&quot;}" />
                         <apex:inputField value="{!Evaluation__c.Prior_Living_Situation_Other__c}" id="priorLivingSituationOther"/>
                         <apex:inputField value="{!Evaluation__c.DC_Plan__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.dcplanOther}&quot;}"/>
