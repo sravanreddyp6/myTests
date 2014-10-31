@@ -1,6 +1,8 @@
 <apex:page standardController="Referral__c" extensions="referrals_Controller">
   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+
+  <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
   <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}"/>
   <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
   <apex:pageMessage rendered="{!Referral__c.Service_Location__c == null && !isErrorDisplayed && Referral__c.Close_Reason__c != 'Admitted' && locations.size == 0 && Referral__c.id != null}" title="WARNING-Alias Field is blank: No Location has been selected, please add an Anticipated Admission Location OR the section with 'Add Location' button to the Referral." severity="warning"></apex:pageMessage>
@@ -445,7 +447,7 @@ clearDisableField = function(pageSectionId){
         <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" oncomplete="openModalDialog('relatedPartyModal', 'span', 'Add Related Party','none');" status="showAddRelPartyStatus" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs" />
     </apex:actionRegion>
     <apex:actionRegion >
-        <apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" oncomplete="fundingSourceScrollToTop(); fundingSourceClearMessages(); openModalDialog('FundingSourceModal', 'span', 'Add Funding Source','none', 1000);" action="{!showAddFundingSource}" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceAuthorizationDetailEntry,fundingSourceEntry,msgs"/>
+        <apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" oncomplete="fundingSourceScrollToTop(); fundingSourceClearMessages(); openModalDialog('FundingSourceModal', 'span', 'Add Funding Source','none', 1000); applyRulesToFundingSource(); " action="{!showAddFundingSource}" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceAuthorizationDetailEntry,fundingSourceEntry,msgs"/>
     </apex:actionRegion>
     <apex:actionRegion >
         <apex:actionFunction name="showAddAgency" action="{!showAddAgency}" rerender="agencies,agencyEntry,msgs"/>
@@ -746,8 +748,26 @@ clearDisableField = function(pageSectionId){
     <!-- Add Funding Source modal. -->
 <apex:actionRegion >
     <apex:outputPanel id="FundingSourceModal" style="display:none">
+      <script>
+        j$(document).ready(function ($) {
+          applyRulesToFundingSource = function () {
+            $(document.getElementById('{!$Component.FundingSourceModal}')).find('input').on("change", function (event) {
+              applyRulesToField(event.target);
+            });
+            $(document.getElementById('{!$Component.FundingSourceModal}')).find('select').on("change", function (event) {
+              applyRulesToField(event.target);
+            });
+            $(document.getElementById('{!$Component.FundingSourceModal}')).find('input').each(function (_, target) {
+              applyRulesToField(target);
+            });
+            $(document.getElementById('{!$Component.FundingSourceModal}')).find('select').each(function (_, target) {
+              applyRulesToField(target);
+            });
+          };
+        });
+      </script>
 
-        <apex:actionFunction name="saveFundingSource" status="saveFundingSourceStatus" action="{!saveFundingSource}" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialog('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceAuthorizationDetailEntry,fundingSourceEntry,msgs"/>
+      <apex:actionFunction name="saveFundingSource" status="saveFundingSourceStatus" action="{!saveFundingSource}" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialog('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceAuthorizationDetailEntry,fundingSourceEntry,msgs"/>
 
       <div id='fundingMessages' ></div>
       <apex:pageBlock title="Add Funding Source" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative'}">
@@ -798,7 +818,10 @@ clearDisableField = function(pageSectionId){
                 <apex:param value="{!personBeingRefRecord.Date_of_Birth__c}"/>
             </apex:outputText>
             <apex:inputField value="{!fundingSource.Type_of_Coverage__c}" />
-            <apex:inputField value="{!fundingSource.Payer_Type__c}" />
+            <apex:inputField value="{!fundingSource.Payer_Type__c}" id="neuroPayerType"
+                html-data-rules="{&quot;VA - Pilot&quot;: [&quot;{!$Component.vaPilotClinicalNumber}&quot;]}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.VA_Pilot_Clinical_Number__c}" id="vaPilotClinicalNumber" />
             <apex:inputField value="{!fundingSource.Payer_Name__c}" />
             <apex:inputField value="{!fundingSource.Payer_Phone__c}" />
             <apex:pageBlockSectionItem >
