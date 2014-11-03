@@ -3,7 +3,10 @@ public with sharing class CMShiftAssessmentEdit {
     public ApexPages.standardController stdController;
     public String selectedTab { get; set; }
     public String nextTab { get; set; }
-   
+    
+    public List<selectOption>copingValues ;
+    public List<string>selectedCoping {get;set;}
+    
     public string getprimaryPhysician(){
     	List<Related_Party__c> rp = [SELECT Id, Name FROM Related_Party__c WHERE Person_Being_served__c=:this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__c AND Type__c='Physician - Primary' order by LastModifiedDate desc LIMIT 1];
     	if(rp.size()>0) return rp[0].Name;
@@ -16,6 +19,12 @@ public with sharing class CMShiftAssessmentEdit {
 		if (ApexPages.currentPage().getParameters().get('tab') != null) {
             selectedTab = ApexPages.currentPage().getParameters().get('tab');
         	}
+        	
+        copingValues = new List<selectOption>();
+        selectedCoping = new List<String>();
+        if(!String.isBlank(this.evaluation.Resident_Demonstrating_Issues__c))
+               selectedCoping = this.evaluation.Resident_Demonstrating_Issues__c.split(';');
+                
 	}
 	
    public PageReference save() {
@@ -43,7 +52,22 @@ public with sharing class CMShiftAssessmentEdit {
  		if (submitted || selectedTab == 'detailsTab' || selectedTab == null) {
 
         }
+        // For Resident Coping Well Multi-Picklist
+                string cpg ='';
+                for(string cp: selectedCoping)
+                cpg += cp+';';
+                        if(cpg!=''){
+                                cpg = cpg.Substring(0,cpg.length()-1);
+                                this.evaluation.Resident_Demonstrating_Issues__c = cpg;
+                        } 
+                        else
+                        this.evaluation.Resident_Demonstrating_Issues__c ='';
         update this.evaluation;
         return new PageReference('/apex/CMShiftAssessmentView?id=' + evaluation.Id + '&tab=' + selectedTab);
  	}
+ 	
+ 	public List<selectoption> getcopingValues(){
+                List<Selectoption> copingValue = Utility.getPicklistValues(evaluation, 'Resident_Demonstrating_Issues__c');
+                return copingValue; 
+   }
 }

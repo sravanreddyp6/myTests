@@ -94,6 +94,7 @@
     <apex:form id="wholePage" >
     	<apex:outputpanel rendered="false" >
     		<apex:inputhidden value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__c}" /> 
+    		<apex:inputhidden value="{!Evaluation__c.Resident_Demonstrating_Issues__c}" />
     	</apex:outputpanel>
         <apex:pageMessages id="pageMessages" />
          <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" reRender="pageMessages, wholeTabPanel, buttons">
@@ -218,10 +219,47 @@
                 
                 </apex:pageBlock>
              </apex:tab>
-             
              <apex:tab label="Psycho/Social" name="psychoSocialTab" ontabenter="changeTab('psychoSocialTab'); return false;" styleClass="{!IF(Evaluation__c.Psycho_Social_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
                 <apex:pageBlock >
-                
+                	<apex:pageBlockSection Columns="1" >
+                		<apex:pageBlockSectionItem >
+                			<apex:outputLabel value="Does Resident appear to be<br/>coping well" />
+                			<apex:actionRegion >
+                			<apex:inputField Value="{!Evaluation__c.Resident_Coping_Well__c}" >
+                				<apex:actionStatus id="copingStatus" >
+							  		<apex:facet name="start">
+							           <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+							               <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+							           </div>
+							       </apex:facet>
+							       <apex:facet name="stop"></apex:facet>
+							  	</apex:actionStatus>
+                				<apex:actionSupport event="onchange" rerender="copingDescribe" status="copingStatus"/>
+                			</apex:inputField>
+                			</apex:actionRegion>
+                		</apex:pageBlockSectionItem>
+                	</apex:pageBlockSection >
+                	<apex:pageBlockSection columns="1" id="copingDescribe" >
+                		<apex:pageBlockSectionItem >
+                     	 	<apex:outputlabel value="Describe" rendered="{!Evaluation__c.Resident_Coping_Well__c =='No'}" />
+                     	 	<apex:outputPanel>
+                     	 		<div class="requiredInput">
+                     	 			<div class="requiredBlock"></div>
+	                     			<apex:inputfield value="{!Evaluation__c.Coping_Description__c}"  rendered="{!Evaluation__c.Resident_Coping_Well__c =='No'}"  required="True"/>
+	                     		</div>
+	                     	</apex:outputPanel>
+	                     </apex:pageBlockSectionItem >
+                	</apex:pageBlockSection>
+                	<apex:pageBlockSection columns="1" >
+                		<apex:inputField value="{!Evaluation__c.Does_Resident_appear_to_demonstrate__c}" label="Does Resident appear to<br/>
+                																								demonstrate/note<br/>any of the following" />
+                		<apex:pageBlockSectionItem >
+                			<apex:outputText value="" />
+	                		<apex:selectCheckboxes value="{!selectedCoping}" layout="pageDirection" style="margin-left:-13px" >
+	                                <apex:selectOptions value="{!copingValues}" />
+	                        </apex:selectCheckboxes>
+                        </apex:pageBlockSectionItem>
+                	</apex:pageBlockSection>
                 </apex:pageBlock>
              </apex:tab>
          </apex:tabPanel>
