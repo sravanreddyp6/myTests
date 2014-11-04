@@ -976,14 +976,16 @@
                         <apex:inputField value="{!Evaluation__c.Isolation_Reason_and_Site__c}" id="isolationReason" />
                     </apex:pageBlockSection>
 
-                    <apex:pageBlockSection columns="1" title="IV">
-                        <apex:pageBlockSectionItem >
+                    <apex:pageBlockSection columns="1" title="IV" >
+                        <apex:inputField value="{!Evaluation__c.Has_IV__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.ivtype.ivpicc}&quot;,&quot;{!$Component.ivtype.ivcentral}&quot;,&quot;{!$Component.ivtype.ivhep}&quot;,&quot;{!$Component.ivtype.ivpca}&quot;]}"/>
+                        <apex:pageBlockSectionItem id="ivtype">
+                        
                         <apex:outputLabel value="IV Type" />
                         <apex:outputPanel >
-                            <apex:outputText styleClass="labelCol" value="PICC" /><apex:inputField value="{!Evaluation__c.PICC__c}" />
-                            <apex:outputText styleClass="labelCol" value="Central" style="margin-left:20px;"/><apex:inputField value="{!Evaluation__c.Central__c}" />
-                            <apex:outputText styleClass="labelCol" value="HepLock" style="margin-left:20px;"/><apex:inputField value="{!Evaluation__c.HepLock__c}" />
-                            <apex:outputText styleClass="labelCol" value="PCA" style="margin-left:20px;"/><apex:inputField value="{!Evaluation__c.PCA__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.pcaRx}&quot;, &quot;{!$Component.pcaRate}&quot;]}" />
+                            <apex:outputText styleClass="labelCol" value="PICC" /><apex:inputField id="ivpicc" value="{!Evaluation__c.PICC__c}" />
+                            <apex:outputText styleClass="labelCol" value="Central" style="margin-left:20px;"/><apex:inputField id="ivcentral" value="{!Evaluation__c.Central__c}" />
+                            <apex:outputText styleClass="labelCol" value="HepLock" style="margin-left:20px;"/><apex:inputField id="ivhep" value="{!Evaluation__c.HepLock__c}" />
+                            <apex:outputText styleClass="labelCol" value="PCA" style="margin-left:20px;"/><apex:inputField id="ivpca" value="{!Evaluation__c.PCA__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.pcaRx}&quot;, &quot;{!$Component.pcaRate}&quot;]}" />
                             <apex:outputText styleClass="labelCol" value="PCA Rx" style="margin-left:20px;"/><apex:inputField value="{!Evaluation__c.PCA_Rx__c}" id="pcaRx" />
                             <apex:outputText styleClass="labelCol" value="PCA Rate" style="margin-left:20px;"/><apex:inputField value="{!Evaluation__c.PCA_Rate__c}" id="pcaRate" />
                         </apex:outputPanel>
