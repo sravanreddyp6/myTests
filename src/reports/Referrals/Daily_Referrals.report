@@ -51,6 +51,11 @@
             <operator>notEqual</operator>
             <value>Error</value>
         </criteriaItems>
+        <criteriaItems>
+            <column>Referral__c$Days_Since_Creation__c</column>
+            <operator>lessOrEqual</operator>
+            <value>1</value>
+        </criteriaItems>
     </filter>
     <format>Tabular</format>
     <name>Daily Referrals</name>
@@ -63,6 +68,6 @@
     <showDetails>true</showDetails>
     <timeFrameFilter>
         <dateColumn>Referral__c$Referral_Date__c</dateColumn>
-        <interval>INTERVAL_TODAY</interval>
+        <interval>INTERVAL_CUSTOM</interval>
     </timeFrameFilter>
 </Report>
