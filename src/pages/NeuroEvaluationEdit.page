@@ -992,7 +992,7 @@
         <apex:pageBlock id="buttons">
             <apex:pageBlockButtons location="bottom">
                 <apex:commandButton value="Save & Continue" onclick="changeTab(getNextTab('{!selectedTab}')); return false;" rendered="{! selectedTab != 'psychoSocialTab'}" />
-                <apex:commandButton onclick="saveRecord(); " value="Save" />
+                <apex:commandButton onclick="saveRecord(); return false; " value="Save" />
                 <apex:commandButton onclick="window.location='/apex/NeuroEvaluationView?id={!Evaluation__c.Id}&tab={!selectedTab}'; return false;" value="Cancel" />
                 <!-- apex:commandButton value="Generate Paper Form" action="{!generatePaperForm}" rerender="pageMessages" onclick="jQuery('[id$=pdfGenerationSpinner]').show();" oncomplete="downloadPaperForm('{!pdfExistenceUrl}');" /-->
                 <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" style="display: none;" id="pdfGenerationSpinner" />
