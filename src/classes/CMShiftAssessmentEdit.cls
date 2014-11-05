@@ -6,6 +6,11 @@ public with sharing class CMShiftAssessmentEdit {
     
     public List<selectOption>copingValues ;
     public List<string>selectedCoping {get;set;}
+    public List<selectOption>neuroOrientValues ;
+    public List<string>selectedNeuroOrient{get;set;}
+    public List<selectOption>moodValues ;
+    public List<string>selectedMoods {get;set;}
+    
     
     public string getprimaryPhysician(){
     	List<Related_Party__c> rp = [SELECT Id, Name FROM Related_Party__c WHERE Person_Being_served__c=:this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__c AND Type__c='Physician - Primary' order by LastModifiedDate desc LIMIT 1];
@@ -22,11 +27,72 @@ public with sharing class CMShiftAssessmentEdit {
         	
         copingValues = new List<selectOption>();
         selectedCoping = new List<String>();
+        neuroOrientValues = new List<selectOption>();
+        selectedNeuroOrient = new List<string>();
+        moodValues = new List<selectOption>();
+        selectedMoods = new List<String>();
+        
         if(!String.isBlank(this.evaluation.Resident_Demonstrating_Issues__c))
                selectedCoping = this.evaluation.Resident_Demonstrating_Issues__c.split(';');
+               
+        if(!String.isBlank(this.evaluation.Orientation__c))
+               selectedNeuroOrient = this.evaluation.Orientation__c.split(';');
+       
+        if(!String.isBlank(this.evaluation.Mood__c))
+               selectedMoods = this.evaluation.Mood__c.split(';');
+        
                 
 	}
-	
+
+   public PageReference handleIVfields(){
+	   	if(evaluation.IV__c != 'Yes'){
+	   		evaluation.Picc__c = false;
+	   		evaluation.Central__c = false;
+	   		evaluation.Heplock__c = false;
+	   		evaluation.IV_Site_Issues__c = '';
+	   		evaluation.IV_Narrative_Note__c = '';
+	   	}
+   	
+   		return null;	
+   }
+   
+   public PageReference handleNarrativenote(){
+    	if(evaluation.IV_Site_Issues__c != 'Yes'){
+    		evaluation.IV_Narrative_Note__c = '';	
+    	}
+   		
+   		return null;
+   }
+   
+  public PageReference handleResidentdescribe(){
+   		if(evaluation.Resident_Coping_Well__c != 'No'){
+   			evaluation.Coping_Description__c = '';
+   		}
+   		
+   		return null;
+  }
+  
+ public pageReference handleRanchoresponse(){
+ 	evaluation.Verbal_Stim__c = false;
+ 	evaluation.Auditory_Stim__c = false;
+ 	evaluation.Tactile_Stim__c = false;
+ 	evaluation.Responds_To_Pain__c = false;
+ 	evaluation.Visual__c = false;
+ 	evaluation.Level_of_Conciousness__c ='';
+ 	evaluation.Cooperative__c = false;
+ 	evaluation.Impulsive__c = false;
+ 	evaluation.Inappropriate__c = false;
+ 	evaluation.Agitated__c = false;
+ 	evaluation.Combative__c = false;
+ 	evaluation.Confused__c = false;
+ 	evaluation.Unresponsive__c = false;
+ 	selectedNeuroOrient = new List<String>();
+ 	
+ 	
+ 	return null;
+ 	
+ }
+   
    public PageReference save() {
         return this.save(false);
     }
@@ -56,12 +122,39 @@ public with sharing class CMShiftAssessmentEdit {
                 string cpg ='';
                 for(string cp: selectedCoping)
                 cpg += cp+';';
-                        if(cpg!=''){
-                                cpg = cpg.Substring(0,cpg.length()-1);
-                                this.evaluation.Resident_Demonstrating_Issues__c = cpg;
-                        } 
-                        else
-                        this.evaluation.Resident_Demonstrating_Issues__c ='';
+                
+                if(cpg!=''){
+                        cpg = cpg.Substring(0,cpg.length()-1);
+                        this.evaluation.Resident_Demonstrating_Issues__c = cpg;
+                } 
+                else
+                this.evaluation.Resident_Demonstrating_Issues__c ='';
+                        
+       // For Orientation Multi-picklist
+       			string orn = '';
+       			for(string rn: selectedNeuroOrient)
+       				orn += rn+';';
+       				
+   				if(orn!= ''){
+   					orn = orn.Substring(0,orn.length()-1);
+   					this.evaluation.Orientation__c = orn;
+   					}
+   				else
+                this.evaluation.Orientation__c ='';
+                        
+     
+		// For Mood Multi-picklist
+                string mod='';
+                for(string md: selectedMoods)
+                	mod += md+';';
+                
+                if(mod!=''){
+                     mod = mod.Substring(0,mod.length()-1);
+                     this.evaluation.Mood__c = mod;
+                }
+                else
+                this.evaluation.Mood__c ='';
+       			
         update this.evaluation;
         return new PageReference('/apex/CMShiftAssessmentView?id=' + evaluation.Id + '&tab=' + selectedTab);
  	}
@@ -69,5 +162,15 @@ public with sharing class CMShiftAssessmentEdit {
  	public List<selectoption> getcopingValues(){
                 List<Selectoption> copingValue = Utility.getPicklistValues(evaluation, 'Resident_Demonstrating_Issues__c');
                 return copingValue; 
+   }
+   
+   public List<selectoption> getneuroOrientValues(){
+                List<Selectoption> orientValue = Utility.getPicklistValues(evaluation, 'Orientation__c');
+                return orientValue; 
+   }
+   
+   public List<selectoption> getmoodValues(){
+                List<Selectoption> moodValue = Utility.getPicklistValues(evaluation, 'Mood__c');
+                return moodValue; 
    }
 }
