@@ -58,6 +58,15 @@
         }
     </style>
     <script>
+	    function setFocusOnLoad() {}  // Overwrite VF function to focus on the 1st field
+	       jQuery.noConflict();
+       
+       	 jQuery(document).ready(function ($) {
+       	 
+       	 });   //end "ready" function
+       
+         
+         
          function getNextTab( currTab ) {
             var nextTab = currTab;
 
@@ -95,6 +104,8 @@
     	<apex:outputpanel rendered="false" >
     		<apex:inputhidden value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__c}" /> 
     		<apex:inputhidden value="{!Evaluation__c.Resident_Demonstrating_Issues__c}" />
+    		<apex:inputhidden value="{!Evaluation__c.Orientation__c}" />
+    		<apex:inputhidden value="{!Evaluation__c.Mood__c}" />
     	</apex:outputpanel>
         <apex:pageMessages id="pageMessages" />
          <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" reRender="pageMessages, wholeTabPanel, buttons">
@@ -145,11 +156,11 @@
 							       </apex:facet>
 							       <apex:facet name="stop"></apex:facet>
 							  	</apex:actionStatus>
-                				<apex:actionSupport event="onchange" rerender="ivSection" status="ivStatus"/>
+                				<apex:actionSupport event="onchange" rerender="ivSection" status="ivStatus" action="{!handleIVFields}"/>
                 			</apex:inputField>
                 			</apex:actionRegion>
                 		</apex:pageBlockSectionItem>
-                	</apex:pageBlockSection >
+                	</apex:pageBlockSection>
                 	
                 	<apex:pageBlockSection columns="1" id="ivSection" >
                         <apex:pageBlockSectionItem rendered="{!Evaluation__c.IV__c == 'Yes'}">
@@ -163,7 +174,7 @@
                      <apex:pageBlockSectionItem rendered="{!Evaluation__c.IV__c == 'Yes'}" >
                 			<apex:outputLabel value="IV Site Issues" />
                 			<apex:actionRegion >
-                			<apex:inputField Value="{!Evaluation__c.IV_Site_Issues__c}" >
+                			<apex:inputField Value="{!Evaluation__c.IV_Site_Issues__c}" id="issuesissues">
                 				<apex:actionStatus id="narrativenoteStatus" >
 							  		<apex:facet name="start">
 							           <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
@@ -172,17 +183,17 @@
 							       </apex:facet>
 							       <apex:facet name="stop"></apex:facet>
 							  	</apex:actionStatus>
-                				<apex:actionSupport event="onchange" rerender="narrativeNote" status="narrativenoteStatus" />
+                				<apex:actionSupport event="onchange" rerender="narrativeNote" status="narrativenoteStatus" action="{!handleNarrativenote}" />
                 			</apex:inputField>
                 			</apex:actionRegion>
-                		</apex:pageBlockSectionItem >
+                		</apex:pageBlockSectionItem>
                      <apex:pageBlockSection columns="1" id="narrativeNote">
-                     	 <apex:pageBlockSectionItem>
+                     	 <apex:pageBlockSectionItem >
                      	 	<apex:outputlabel value="IV Narrative Note" rendered="{!Evaluation__c.IV_Site_Issues__c=='Yes'&& Evaluation__c.IV__c=='Yes'}" />
-                     	 	<apex:outputPanel>
+                     	 	<apex:outputPanel >
                      	 		<div class="requiredInput">
                      	 			<div class="requiredBlock"></div>
-	                     			<apex:inputTextArea value="{!Evaluation__c.IV_Narrative_Note__c}" rows="4" cols="60" rendered="{!Evaluation__c.IV_Site_Issues__c=='Yes'&& Evaluation__c.IV__c=='Yes'}"  required="True"/>
+	                     			<apex:inputTextArea value="{!Evaluation__c.IV_Narrative_Note__c}" rows="4" cols="60" rendered="{!Evaluation__c.IV_Site_Issues__c=='Yes'&& Evaluation__c.IV__c=='Yes'}"  required="True" id="longDesc"/>
 	                     		</div>
 	                     	</apex:outputPanel>
 	                     </apex:pageBlockSectionItem>
@@ -204,13 +215,65 @@
              
              <apex:tab label="Skin/Body" name="skinBodyTab" ontabenter="changeTab('skinBodyTab'); return false;" styleClass="{!IF(Evaluation__c.Skin_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
                 <apex:pageBlock >
-                
+                	
                 </apex:pageBlock>
              </apex:tab>
              
              <apex:tab label="Neurological" name="neuroTab" ontabenter="changeTab('neuroTab');return false;" styleClass="{!IF(Evaluation__c.Neuro_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
                 <apex:pageBlock >
-                
+                	<apex:pageBlockSection columns="1" >
+                		<apex:inputField value="{!Evaluation__c.Rancho_Level__c}"  id="ranchoValue" >
+                			<apex:actionStatus id="ranchoStatus" >
+							  		<apex:facet name="start">
+							           <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+							               <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+							           </div>
+							       </apex:facet>
+							       <apex:facet name="stop"></apex:facet>
+							  	</apex:actionStatus>
+                			<apex:actionSupport event="onchange" rerender ="response"  status="ranchoStatus" action="{!handleRanchoresponse}" />
+                		</apex:inputField>	
+                	</apex:pageBlockSection >
+                	<apex:pageBlockSection  id="response" columns="1">
+                		<apex:pageBlockSectionItem  rendered="{!Evaluation__c.Rancho_Level__c !='' && Evaluation__c.Rancho_Level__c != '(1) No Response'}">
+	                        <apex:outputLabel value="Responds To" />
+	                        <apex:outputPanel >
+	                        <apex:inputField id="vstimresponds" value="{!Evaluation__c.Verbal_Stim__c}" /><apex:outputLabel for="vstim" value="Verbal Stim" />&nbsp;
+	                        <apex:inputField id="astimresponds" value="{!Evaluation__c.Auditory_Stim__c}" /><apex:outputLabel for="astim" value="Auditory Stim" />&nbsp;
+	                        <apex:inputField id="tstimresponds" value="{!Evaluation__c.Tactile_Stim__c}" /><apex:outputLabel for="tstim" value="Tactile Stim" />&nbsp;
+	                        <apex:inputField id="pstimresponds" value="{!Evaluation__c.Responds_To_Pain__c}" label="Pain" /><apex:outputLabel for="pstim" value="Pain" />&nbsp;
+	                        <apex:inputField id="visualresponds" value="{!Evaluation__c.Visual__c}"/><apex:outputLabel for="visual" value="Visual" />
+	                        </apex:outputPanel>
+                  		</apex:pageBlockSectionItem>
+                  		
+                  		<apex:inputField value="{!Evaluation__c.Level_of_Conciousness__c}" rendered="{!Evaluation__c.Rancho_Level__c !='' && Evaluation__c.Rancho_Level__c != '(1) No Response'}" />
+                        <apex:pageBlockSectionItem  rendered="{!Evaluation__c.Rancho_Level__c !='' && Evaluation__c.Rancho_Level__c != '(1) No Response'}" >
+                            <apex:outputLabel value="Orientation" />
+                            <apex:selectCheckboxes value="{!selectedNeuroOrient}" style="margin-left:-13px" >
+                                <apex:selectOptions value="{!neuroOrientValues}" />
+                            </apex:selectCheckboxes>
+                        </apex:pageBlockSectionItem>
+
+                        <apex:pageBlockSectionItem rendered="{!Evaluation__c.Rancho_Level__c !='' && Evaluation__c.Rancho_Level__c != '(1) No Response'}" >
+                        <apex:outputLabel value="Behavior" />
+                        <apex:outputPanel >
+                        <apex:inputField id="coop" value="{!Evaluation__c.Cooperative__c}" /><apex:outputLabel for="coop" value="Cooperative" />&nbsp;
+                        <apex:inputField id="impulsive" value="{!Evaluation__c.Impulsive__c}" /><apex:outputLabel for="impulsive" value="Impulsive" />&nbsp;
+                        <apex:inputField id="inapp" value="{!Evaluation__c.Inappropriate__c}" /><apex:outputLabel for="inapp" value="Inappropriate" />&nbsp;
+                        <apex:inputField id="agitated" value="{!Evaluation__c.Agitated__c}" /><apex:outputLabel for="agitated" value="Agitated" />&nbsp;
+                        <apex:inputField id="combat" value="{!Evaluation__c.Combative__c}" /><apex:outputLabel for="combat" value="Combative" />&nbsp;
+                        <apex:inputField id="confused" value="{!Evaluation__c.Confused__c}"/><apex:outputLabel for="confused" value="Confused" />&nbsp;
+                        <apex:inputField id="unresp" value="{!Evaluation__c.Unresponsive__c}"/><apex:outputLabel for="unresp" value="Unresponsive" />
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+   
+                         <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Mood" />
+                            <apex:selectCheckboxes value="{!selectedMoods}"  style="margin-left:-13px" id="moodlist">
+                                <apex:selectOptions value="{!moodValues}" />
+                            </apex:selectCheckboxes>
+                        </apex:pageBlockSectionItem>
+                  	</apex:pageBlockSection>
                 </apex:pageBlock>
              </apex:tab>
              
@@ -223,7 +286,7 @@
                 <apex:pageBlock >
                 	<apex:pageBlockSection Columns="1" >
                 		<apex:pageBlockSectionItem >
-                			<apex:outputLabel value="Does Resident appear to be<br/>coping well" />
+                			<apex:outputLabel > Does Resident appear to be<br/>coping well </apex:outputLabel>
                 			<apex:actionRegion >
                 			<apex:inputField Value="{!Evaluation__c.Resident_Coping_Well__c}" >
                 				<apex:actionStatus id="copingStatus" >
@@ -234,21 +297,21 @@
 							       </apex:facet>
 							       <apex:facet name="stop"></apex:facet>
 							  	</apex:actionStatus>
-                				<apex:actionSupport event="onchange" rerender="copingDescribe" status="copingStatus"/>
+                				<apex:actionSupport event="onchange" rerender="copingDescribe" status="copingStatus" action="{!handleResidentdescribe}"/>
                 			</apex:inputField>
                 			</apex:actionRegion>
                 		</apex:pageBlockSectionItem>
-                	</apex:pageBlockSection >
+                	</apex:pageBlockSection>
                 	<apex:pageBlockSection columns="1" id="copingDescribe" >
                 		<apex:pageBlockSectionItem >
                      	 	<apex:outputlabel value="Describe" rendered="{!Evaluation__c.Resident_Coping_Well__c =='No'}" />
-                     	 	<apex:outputPanel>
+                     	 	<apex:outputPanel >
                      	 		<div class="requiredInput">
                      	 			<div class="requiredBlock"></div>
 	                     			<apex:inputfield value="{!Evaluation__c.Coping_Description__c}"  rendered="{!Evaluation__c.Resident_Coping_Well__c =='No'}"  required="True"/>
 	                     		</div>
 	                     	</apex:outputPanel>
-	                     </apex:pageBlockSectionItem >
+	                     </apex:pageBlockSectionItem>
                 	</apex:pageBlockSection>
                 	<apex:pageBlockSection columns="1" >
                 		<apex:inputField value="{!Evaluation__c.Does_Resident_appear_to_demonstrate__c}" label="Does Resident appear to<br/>

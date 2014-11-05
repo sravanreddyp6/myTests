@@ -153,6 +153,35 @@
      	 	 
      	 	 <apex:tab label="Neurological" name="neuroTab" styleClass="{!IF(Evaluation__c.Neuro_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
      	 	 	<apex:pageBlock >
+     	 	 		<apex:pageblockSection Columns="1" >
+     	 	 			<apex:outputField value="{!Evaluation__c.Rancho_Level__c}" />
+                        <apex:pageBlockSectionItem rendered="{!Evaluation__c.Rancho_Level__c != '(1) No Response'}" >
+                        <apex:outputLabel value="Responds To" />
+                        <apex:outputPanel >
+                        <apex:outputText value="{!If (Evaluation__c.Verbal_Stim__c, 'Verbal Stim;', '')}" />
+                        <apex:outputText value="{!If (Evaluation__c.Auditory_Stim__c, 'Auditory Stim;', '')}" />
+                        <apex:outputText value="{!If (Evaluation__c.Tactile_Stim__c, 'Tactile Stim;', '')}" />
+                        <apex:outputText value="{!If (Evaluation__c.Responds_To_Pain__c, 'Pain;', '')}" />
+                        <apex:outputText value="{!If (Evaluation__c.Visual__c, 'Visual Stim;', '')}" />
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        
+                        <apex:outputField value="{!Evaluation__c.Level_of_Conciousness__c}" />
+                        <apex:outputField value="{!Evaluation__c.Orientation__c}" label="Orientation" />
+
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Behavior" />
+                        <apex:outputPanel >
+                        <apex:outputText value="{!if (Evaluation__c.Cooperative__c, 'Cooperative;','')}" />
+                        <apex:outputText value="{!if (Evaluation__c.Impulsive__c, 'Impulsive;','')}" />
+                        <apex:outputText value="{!if (Evaluation__c.Inappropriate__c, 'Inappropriate;','')}" />
+                        <apex:outputText value="{!if (Evaluation__c.Agitated__c, 'Agitated;','')}" />
+                        <apex:outputText value="{!if (Evaluation__c.Combative__c, 'Combative;','')}" />
+                        <apex:outputText value="{!if (Evaluation__c.Confused__c, 'Confused;','')}" />
+                        <apex:outputText value="{!if (Evaluation__c.Unresponsive__c, 'Unresponsive;','')}" />
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+     	 	 		</apex:pageblockSection>
      	 	 	</apex:pageBlock>
      	 	 </apex:tab>
      	 	 
@@ -164,9 +193,15 @@
      	 	 <apex:tab label="Psycho/Social" name="psychoSocialTab"  styleClass="{!IF(Evaluation__c.Psycho_Social_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
      	 	 	<apex:pageBlock >
      	 	 		<apex:pageBlockSection columns="1" >
-     	 	 			<apex:outputField value="{!Evaluation__c.Resident_Coping_Well__c}" label="Does Resident appear to be coping well" />
+     	 	 			<apex:pageBlockSectionItem >
+     	 	 				<apex:outputLabel>Does Resident appear to be <br/>coping well</apex:outputLabel>
+     	 	 				<apex:outputField value="{!Evaluation__c.Resident_Coping_Well__c}" />
+     	 	 			</apex:pageBlockSectionItem>
      	 	 			<apex:outputField value="{!Evaluation__c.Coping_Description__c}" label="Describe" rendered="{!Evaluation__c.Resident_Coping_Well__c == 'No'}" />
-     	 	 			<apex:outputField value="{!Evaluation__c.Does_Resident_appear_to_demonstrate__c}" label="Does Resident appear to<br/>demonstrate/note<br/>any of the following" />
+     	 	 			<apex:pageBlockSectionItem >
+     	 	 				<apex:outputlabel>Does Resident appear to<br/>demonstrate/note<br/>any of the following</apex:outputlabel>
+     	 	 				<apex:outputField value="{!Evaluation__c.Does_Resident_appear_to_demonstrate__c}" />
+     	 	 			</apex:pageBlockSectionItem>
      	 	 			<apex:pageBlockSectionItem >
                 			<apex:outputText value="" />
 	                		<apex:selectCheckboxes value="{!selectedCoping}" layout="pageDirection" style="margin-left:-13px" disabled="true">
