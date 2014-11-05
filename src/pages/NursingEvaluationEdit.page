@@ -67,9 +67,12 @@
 
 
 
-            handleFeedingChange = function () {
+            handleFeedingChange = function ( currTab ) {
 
-
+				
+				if ( currTab != 'nutritionTab' )
+					return;
+				
                 // get the value
                 var feedtypes = '';
                 $('input[id*=feedingtypes]').each(function (index, element) {
@@ -79,6 +82,7 @@
 
                 $('input[id$=formula]').prop('disabled','disabled');
                 $('input[id$=tuberate]').prop('disabled','disabled');
+                $('input[id$=fluidintake]').prop('disabled','disabled');
                 $('input[id$=potype]').prop('disabled','disabled');
                 $('input[id$=potexture]').prop('disabled','disabled');
                 $('[id$=lipids]').prop('disabled','disabled');
@@ -96,6 +100,7 @@
                  }
                 if ( feedtypes.indexOf( 'PO;' ) >= 0  )
                  {
+                        $('input[id$=fluidintake]').prop('disabled', false);
                         $('input[id$=potype]').prop('disabled', false);
                         $('input[id$=potexture]').prop('disabled', false);
                  }
@@ -107,19 +112,23 @@
 
             };
 
-            handleIntact = function( val ) {
+            handleIntact = function( cb ) {
 
                 var el = $('#bodyMap').get(0).src;
-                /*
-                if ( val == 1 && el ) {
+                
+                var checked = $(cb).prop('checked');
+                
+                if ( checked && el ) {
                     // disable body map if intact is checked
                     anno.hideSelectionWidget( el );
                     anno.removeAll( el );
+                    $('.annotation-number').remove();
+                    $('table#annotations tr').remove();
+                    // need to remove from db also
                 } else {
                     anno.showSelectionWidget( el );
                 }
-                */
-
+                
             }
             handleBladder = function() {
                 // get the value
@@ -318,16 +327,19 @@
                 }
             }
 
-            handleNutrition = function () {
-                handleFeedingChange();
-                handleIncont();
-                handleIncontBowel();
-                handleUrineClarity();
-                handleDialysis();
+            handleNutrition = function ( currTab ) {
+                handleFeedingChange( currTab);
+                handleIncont( currTab);
+                handleIncontBowel( currTab);
+                handleUrineClarity( currTab);
+                handleDialysis( currTab);
+                handleSoresAll( currTab);
             };
 
             handleNeuro = function() {
                 handleMood();
+                handleVerbalExpression();
+                handleRancho();
                 enableFalls('{!Evaluation__c.Number_Falls__c}');
                 handleNone('p');
                 handleNone('palleve');
@@ -354,6 +366,9 @@
 
             handleWFLsChange = function () {
 
+				if ( '{!selectedTab}' != 'orthoTab') 
+					return;
+					
                 // get the value
                 if ( $('[id$=wfls]').val() == 'Yes') {
                     // set all other checkboxes to negative - invalidate all answers
@@ -406,43 +421,35 @@
 
             };
 
-            handleSoresAll = function() {
-                handleSores( null, 'gums');
-                handleSores( null, 'tongue');
-                handleSores( null, 'lips');
-                handleSores( null, 'cheeks');
+            handleSoresAll = function( currTab ) {
+                handleSores( 'gums', currTab);
+                handleSores( 'tongue', currTab);
+                handleSores( 'lips', currTab);
+                handleSores( 'cheek', currTab);
                 };
 
-            handleSores = function (typeofSelect, typeofsores) {
+            handleSores = function (typeofsores, currTab) {
 
+				if (  currTab != 'nutritionTab') 
+					return;
+					
                 var fieldtoupdate = typeofsores + 'sores';
-                var listtocheck = '';
+                
+                $('input[id*=' + typeofsores + ']').each( function(index, element) {
+                    if ( element.value.indexOf('Sores') == 0 )
+                        theval = $(element).prop('checked');
+                    });
 
-                // called to initialize when tab is loaded - reset to saved values
-                if ( typeofSelect == null ) {
-                    if ( typeofsores == 'gums')
-                        listtocheck = '{!Evaluation__c.Gums__c}';
-                    if (typeofsores == 'tongue')
-                        listtocheck = '{!Evaluation__c.Tongue__c}';
-                    if (typeofsores == 'lips')
-                        listtocheck = '{!Evaluation__c.Lips__c}';
-                    if (typeofsores == 'cheeks')
-                        listtocheck = '!Evaluation__c.Cheeks__c}';
-                    }
-                else {
-                    if ( $(typeofSelect).val() == 'Sores' && $(typeofSelect).prop('checked'))
-                        listtocheck = 'Sores';
-                    else
-                        listtocheck = '';
-                    }
-
-                if ( listtocheck.indexOf('Sores') >= 0 )
+                if (theval == true ) {
+                    // enable the text field called other
                     $('[id$='+fieldtoupdate+']').prop('readonly', false);
-                else {
+                    $('[id$='+fieldtoupdate+']').prop('disabled', false);
+                } else {
+                    // disable the field and empty it out
                     $('[id$='+fieldtoupdate+']').prop('readonly', true);
+                    $('[id$='+fieldtoupdate+']').prop('disabled', true);
                     $('[id$='+fieldtoupdate+']').val('');
-                    }
-
+                }
             };
 
             handleSliderChange = function (inputIdToUpdate) {
@@ -456,10 +463,14 @@
 
              handleRancho = function () {
 
+
+				if (  '{!selectedTab}' != 'Neuro') 
+					return;
+					
                 var ranchoScore = $('[id$=ranchoValue]').val();
 
-                // enable 'responds to' if rancho anything except 1
-                if ( ranchoScore.indexOf('1') < 0 ) {
+                // enable 'responds to' if rancho anything except 1 
+                if ( ( ranchoScore.indexOf('1') < 0 ) && ( ranchoScore != '' ) ) {
                     $('[id$=responds]').each( function(index, element) {
                         $(element).prop('disabled', false);
                     });
@@ -470,12 +481,39 @@
 
                     });
 
-                }
-
+                
+				}
              };
 
-             handleMood = function() {
 
+             handleVerbalExpression = function() {
+				// only for neuro tab
+				
+				if (  '{!selectedTab}' != 'neuroTab') 
+					return;
+		
+				var expression = $('select[id*=verbalExpression]').val();
+				if ( expression == 'Non-Verbal') {
+					$('input[id*=expressionOther]').each(function (index, element) {
+                    	$(element).prop('disabled', false);
+                	});
+				} else {
+					$('input[id*=expressionOther]').each(function (index, element) {
+                    	$(element).prop('disabled', true);
+                    	$(element).prop('checked', false);
+                	});
+				
+				}
+
+			}
+
+
+             handleMood = function() {
+				// only for psycho social tab
+				
+				if (  '{!selectedTab}' != 'psychosocialTab') 
+					return;
+					
                 // if sad or flat, enable depression question
                 var mood = '';
                 $('input[id*=moodlist]').each(function (index, element) {
@@ -589,8 +627,7 @@
 
 
             setUpFields();
-            handleSoresAll();
-            handleNutrition();
+            handleNutrition('{!selectedTab}');
             handleNeuro();
             disablePain();
             handlePsychoSocial();
@@ -801,6 +838,7 @@
         <apex:inputhidden value="{!Evaluation__c.Negative_Impact_on_ADLs__c}" />
         <apex:inputhidden value="{!Evaluation__c.Alleviating_Factors__c}" />
         <apex:inputhidden value="{!Evaluation__c.Manner_of_Expressing_Pain__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Expression_Other__c}" />
         <apex:inputhidden value="{!Evaluation__c.Neuro_Pain_Types__c}" />
         <apex:inputhidden value="{!Evaluation__c.Neuro_Pain_Alleviating_Factors__c}" />
         <apex:inputhidden value="{!Evaluation__c.Neuro_Pain_neg_Impact_on_ADLs__c}" />
@@ -820,7 +858,7 @@
         <apex:inputHidden value="{!Evaluation__c.Dressing_LE__c}" id="dressingLE" />
 
         <apex:pageMessages id="pageMessages" />
-        <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); removeSpacer(); scrollToTop(); handleSoresAll(); handleNutrition(); handleNeuro();handlePsychoSocial();" reRender="pageMessages, wholeTabPanel, buttons">
+        <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); removeSpacer(); scrollToTop(); handleNutrition('{!nextTab}'); handleNeuro();handlePsychoSocial();" reRender="pageMessages, wholeTabPanel, buttons">
             <apex:param name="nextTab" assignTo="{!nextTab}" value="" />
         </apex:actionFunction>
 
@@ -1013,10 +1051,10 @@
             <apex:tab label="Cardiopulmonary" name="cardioTab" onTabenter="changeTab('cardioTab'); return false;" styleClass="{!IF(Evaluation__c.Cardio_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
                 <apex:pageBlockSection columns="2" title="Cardio">
-                         <apex:inputField value="{!Evaluation__c.Pulse_Ox__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.pulseDetails}&quot;}"/>
+                         <apex:inputField value="{!Evaluation__c.Pulse_Ox__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.cardiopulseox.pulseDetails}&quot;}"/>
                          <apex:outputText value="" />
 
-                         <apex:pageblocksectionitem >
+                         <apex:pageblocksectionitem id="cardiopulseox" >
                          <apex:outputLabel for="pulseDetails" value = "Pulse Ox Detail<Br/><br />Describe"  escape="false"/>
                          <apex:outputPanel >
                          <apex:inputField value="{!Evaluation__c.Pulse_Ox_Details__c}" id="pulseDetails" html-data-rules="{&quot;Intermittent&quot;: &quot;{!$Component.pulseSchedule}&quot;}"/>
@@ -1137,11 +1175,12 @@
                 </apex:pageBlockSection>
 
                   <apex:pageBlockSection columns="2" title="O2">
-                         <apex:inputField value="{!Evaluation__c.O2__c}"  html-data-rules="{&quot;1&quot;: [&quot;{!$Component.litersMin}&quot;, &quot;{!$Component.o2Type}&quot;, &quot;{!$Component.nasalCannula}&quot;, &quot;{!$Component.mask}&quot;, &quot;{!$Component.tPiece}&quot;, &quot;{!$Component.mistType}&quot;, &quot;{!$Component.maskType}&quot;]}"/>
+                         <apex:inputField value="{!Evaluation__c.O2__c}"  html-data-rules="{&quot;1&quot;: [&quot;{!$Component.litersMin}&quot;, &quot;{!$Component.o2Type}&quot;, &quot;{!$Component.nasalCannula}&quot;, &quot;{!$Component.o2mask.mask}&quot;, &quot;{!$Component.tPiece}&quot;, &quot;{!$Component.o2mist.mist}&quot;]}"/>
                          <apex:inputField value="{!Evaluation__c.O2_Type__c}" id="o2Type"/>
                          <apex:inputField value="{!Evaluation__c.Liters_Min__c}" id="litersMin" />
                          <apex:inputField value="{!Evaluation__c.Nasal_Cannula__c}" id="nasalCannula" />
-                         <apex:pageBlockSectionItem >
+                         <apex:pageBlockSectionItem id="o2mask">
+                      
                             <apex:outputLabel for="mask" style="color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.Mask__c.label}</apex:outputLabel>
                          <apex:outputPanel >
                          <apex:inputField value="{!Evaluation__c.Mask__c}" id="mask"  html-data-rules="{&quot;1&quot;: &quot;{!$Component.maskType}&quot;}"/>
@@ -1151,7 +1190,7 @@
                          </apex:pageBlockSectionItem>
 
                          <apex:inputField value="{!Evaluation__c.T_Piece__c}" id="tPiece" />
-                         <apex:pageBlockSectionItem >
+                         <apex:pageBlockSectionItem id="o2mist">
                             <apex:outputLabel for="mist" style="color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.Mist__c.label}</apex:outputLabel>
                          <apex:outputPanel >
                             <apex:inputField value="{!Evaluation__c.Mist__c}" id="mist" html-data-rules="{&quot;1&quot;: &quot;{!$Component.mistType}&quot;}"/>
@@ -1163,8 +1202,8 @@
                   </apex:pageBlockSection>
 
                 <apex:pageBlockSection columns="2" title="Ventilator">
-                         <apex:inputField value="{!Evaluation__c.Ventilator__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.ventilatorMode}&quot;, &quot;{!$Component.ventilatorRate}&quot;, &quot;{!$Component.FIO2}&quot;, &quot;{!$Component.peep}&quot;, &quot;{!$Component.tv}&quot;, &quot;{!$Component.ps}&quot;, &quot;{!$Component.cpap}&quot;, &quot;{!$Component.bipap}&quot;, &quot;{!$Component.bipapRate}&quot;, &quot;{!$Component.patientToBringBiPAP}&quot;, &quot;{!$Component.weaningTrial}&quot;, &quot;{!$Component.ventilatorResults}&quot;, &quot;{!$Component.ventilatorType}&quot;, &quot;{!$Component.ventilatorType}&quot;, &quot;{!$Component.ventilatorOther}&quot;]}" />
-                         <apex:pageBlockSectionItem >
+                         <apex:inputField value="{!Evaluation__c.Ventilator__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.venttype.ventilatorType}&quot;,&quot;{!$Component.ventilatorMode}&quot;, &quot;{!$Component.ventilatorRate}&quot;, &quot;{!$Component.FIO2}&quot;, &quot;{!$Component.peep}&quot;, &quot;{!$Component.tv}&quot;, &quot;{!$Component.ps}&quot;, &quot;{!$Component.cpap}&quot;, &quot;{!$Component.bipap}&quot;, &quot;{!$Component.bipapRate}&quot;, &quot;{!$Component.patientToBringBiPAP}&quot;, &quot;{!$Component.weaningTrial}&quot;, &quot;{!$Component.ventilatorResults}&quot;, &quot;{!$Component.ventilatorType}&quot;, &quot;{!$Component.ventilatorType}&quot;, &quot;{!$Component.ventilatorOther}&quot;]}" />
+                         <apex:pageBlockSectionItem id="venttype">
                          <apex:outputLabel value="Ventilator Type<br /><br />Schedule" escape="false" />
                          <apex:outputPanel >
                          <apex:inputField value="{!Evaluation__c.Ventilator_Type__c}" id="ventilatorType" style="margin-left:10px;" html-data-rules="{&quot;Intermittent&quot;: &quot;{!$Component.interSchedule}&quot;}" /><br />
@@ -1199,7 +1238,7 @@
                  <apex:pageBlockSection columns="2" title="Nutrition and Hydration">
                         <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Feeding Type" />
-                        <apex:selectCheckboxes id="feedingtypes" value="{!selectedFeedingTypes}"  onchange="handleFeedingChange()" >
+                        <apex:selectCheckboxes id="feedingtypes" value="{!selectedFeedingTypes}"  onchange="handleFeedingChange('nutritionTab')" >
                                 <apex:selectOptions value="{!feedingTypes}" />
                         </apex:selectCheckboxes>
                         </apex:pageBlockSectionItem>
@@ -1246,7 +1285,7 @@
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Tongue" />
                             <apex:outputPanel >
-                            <apex:selectCheckboxes value="{!selectedTongues}" onchange="handleSores(this, 'tongue')" >
+                            <apex:selectCheckboxes id="tongue" value="{!selectedTongues}" onchange="handleSores('tongue', 'nutritionTab')" >
                                 <apex:selectOptions value="{!tongueValues}"/>
                             </apex:selectCheckboxes>
                             <apex:outputLabel value="Describe Sores" /><apex:inputField id="tonguesores" value="{!Evaluation__c.Tongue_Sores_Describe__c}" />
@@ -1256,7 +1295,7 @@
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Gums" />
                             <apex:outputPanel >
-                            <apex:selectCheckboxes value="{!selectedGums}" onchange="handleSores(this, 'gums')">
+                            <apex:selectCheckboxes id="gums" value="{!selectedGums}" onchange="handleSores( 'gums', 'nutritionTab')">
                                 <apex:selectOptions value="{!gumValues}"/>
                             </apex:selectCheckboxes>
                             <apex:outputLabel value="Describe Sores" /><apex:inputField id="gumssores" value="{!Evaluation__c.Gums_Sores_Describe__c}" />
@@ -1266,7 +1305,7 @@
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Cheeks" />
                             <apex:outputPanel >
-                            <apex:selectCheckboxes value="{!selectedCheeks}" onchange="handleSores(this, 'cheek')">
+                            <apex:selectCheckboxes id="cheek" value="{!selectedCheeks}" onchange="handleSores('cheek', 'nutritionTab')">
                                 <apex:selectOptions value="{!cheekValues}"/>
                             </apex:selectCheckboxes>
                             <apex:outputLabel value="Describe Sores" /><apex:inputField id="cheeksores" value="{!Evaluation__c.Cheeks_Sores_Describe__c}" />
@@ -1275,7 +1314,7 @@
                         <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Lips" />
                         <apex:outputPanel >
-                            <apex:selectCheckboxes value="{!selectedLips}" onchange="handleSores(this, 'lips')">
+                            <apex:selectCheckboxes id="lips" value="{!selectedLips}" onchange="handleSores('lips', 'nutritionTab')">
                             <apex:selectOptions value="{!lipValues}"/>
                         </apex:selectCheckboxes>
                         <apex:outputLabel value="Describe Sores" /><apex:inputField id="lipssores" value="{!Evaluation__c.Lips_Sores_Describe__c}"  />
@@ -1673,7 +1712,7 @@
                     </apex:outputPanel>
                     </apex:pageBlockSectionItem>
 
-                    <apex:inputField value="{!Evaluation__c.Intact__c}" onchange="handleIntact(this.value);" />
+                    <apex:inputField value="{!Evaluation__c.Intact__c}" onchange="handleIntact(this);" />
 
                     <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
                         <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!baseUrl + URLFOR($Resource.WholeBodyNoGrid)}" id="bodyMap" />
@@ -1799,9 +1838,11 @@
                         <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Expression<br /><br />Other" escape="False" />
                         <apex:outputPanel >
-                        <apex:inputField value="{!Evaluation__c.Expression__c}" html-data-rules="{&quot;Non-Verbal&quot;: [&quot;{!$Component.expressionOther}&quot;]}"/>
-
-                        <apex:inputField value="{!Evaluation__c.Expression_Other__c}" label="If Non-verbal, Other Expression" id="expressionOther"/>
+                        <apex:inputField value="{!Evaluation__c.Expression__c}" id="verbalExpression" onchange="handleVerbalExpression()" html-data-rules="{&quot;Non-Verbal&quot;: [&quot;{!$Component.expressionOther}&quot;]}"/>
+                         <apex:selectCheckboxes value="{!selectedVerbalExpression}" style="margin-left:-13px" id="expressionOther" >
+                                <apex:selectOptions value="{!verbalExpressionValues}" />
+                            </apex:selectCheckboxes>
+                            
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
 
@@ -2162,7 +2203,10 @@
                                 <apex:selectoptions value="{!painexpressionValues}" />
                             </apex:selectCheckboxes>
                         </apex:pageBlocksectionItem>
+						<apex:inputField value="{!Evaluation__c.Current_Pain_Treatment__c}" />
+						<apex:outputText value="" />
                     </apex:pageblockSection>
+                    
                    </apex:outputPanel>
 
 
