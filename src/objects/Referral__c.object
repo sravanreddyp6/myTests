@@ -1631,6 +1631,20 @@
         <type>Date</type>
     </fields>
     <fields>
+        <fullName>Days_Since_Creation__c</fullName>
+        <description>Days between NOW() and CreatedDate.</description>
+        <externalId>false</externalId>
+        <formula>NOW() - CreatedDate</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Days Since Creation</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Days_To_Convert_Referral__c</fullName>
         <externalId>false</externalId>
         <formula>if(ISPICKVAL( Close_Reason__c, &quot;Admitted&quot;),  Close_Date__c - Referral_Date__c ,0)</formula>
