@@ -42,6 +42,13 @@
     <columns>
         <field>LAST_UPDATE_BY</field>
     </columns>
+    <filter>
+        <criteriaItems>
+            <column>Referral__c.Close_Reason__c</column>
+            <operator>notEqual</operator>
+            <value>Error</value>
+        </criteriaItems>
+    </filter>
     <format>Tabular</format>
     <name>Referrals with Activities</name>
     <params>

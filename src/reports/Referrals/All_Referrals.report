@@ -60,6 +60,13 @@
     <columns>
         <field>Referral__c$Assigned_Users__c</field>
     </columns>
+    <filter>
+        <criteriaItems>
+            <column>Referral__c$Close_Reason__c</column>
+            <operator>notEqual</operator>
+            <value>Error</value>
+        </criteriaItems>
+    </filter>
     <format>Matrix</format>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>
@@ -76,8 +83,6 @@
     <showDetails>true</showDetails>
     <timeFrameFilter>
         <dateColumn>Referral__c$CreatedDate</dateColumn>
-        <endDate>2014-08-01</endDate>
         <interval>INTERVAL_CUSTOM</interval>
-        <startDate>2014-07-01</startDate>
     </timeFrameFilter>
 </Report>

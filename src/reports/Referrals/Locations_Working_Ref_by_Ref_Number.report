@@ -61,6 +61,13 @@
         <field>Person_Being_Referred__c.Referrals__r$Services_Requested__c</field>
     </columns>
     <description>This report displays the locations working each referral and contact information listed by Referral Number</description>
+    <filter>
+        <criteriaItems>
+            <column>Person_Being_Referred__c.Referrals__r$Close_Reason__c</column>
+            <operator>notEqual</operator>
+            <value>Error</value>
+        </criteriaItems>
+    </filter>
     <format>Summary</format>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>
