@@ -519,7 +519,7 @@ clearDisableField = function(pageSectionId){
           </apex:outputPanel>
         </apex:pageBlockSectionItem>
         <apex:inputField value="{!personBeingRefRecord.SSN__c}"/>
-        <apex:inputField value="{!personBeingRefRecord.Level_of_Education__c}" />
+        <apex:inputField value="{!personBeingRefRecord.Level_of_Education__c}" id="levelOfEducation" required="{!AND(Referral__c.Referral_Status__c='Closed', Referral__c.Close_Reason__c='Admitted')}" />
       </apex:pageBlockSection>
       <apex:pageBlockSection showHeader="false"
                              columns="1"
@@ -1373,7 +1373,7 @@ clearDisableField = function(pageSectionId){
         <apex:outputlabel for="referralStatus" value="Referral Status" />
         <apex:actionregion >
             <apex:inputField id="referralStatus" value="{!Referral__c.Referral_Status__c}" required="true">
-            <apex:actionSupport event="onchange" action="{!unsetStatusHelperFiels}" rerender="ReferralStatus" oncomplete="unsetAdditionalFields(j$('select[id$=referralStatus]').val());" />
+            <apex:actionSupport event="onchange" action="{!unsetStatusHelperFiels}" rerender="ReferralStatus, levelOfEducation" oncomplete="unsetAdditionalFields(j$('select[id$=referralStatus]').val());" />
         </apex:inputField>
         </apex:actionregion>
         </apex:pageblocksectionitem>
@@ -1884,7 +1884,9 @@ clearDisableField = function(pageSectionId){
 
      <apex:pageBlockSection showHeader="false" columns="2" collapsible="false" id="ReferralStatus">
        <apex:inputField id="closeDate" value="{!Referral__c.Close_Date__c}" rendered="{!Referral__c.Referral_Status__c=='Closed'}"/>
-       <apex:inputField id="closeReason" value="{!Referral__c.Close_Reason__c}" rendered="{!Referral__c.Referral_Status__c=='Closed'}"/>
+       <apex:inputField id="closeReason" value="{!Referral__c.Close_Reason__c}" rendered="{!Referral__c.Referral_Status__c=='Closed'}">
+         <apex:actionSupport event="onchange" rerender="levelOfEducation" />
+       </apex:inputField>
        <apex:pageBlockSectionItem rendered="{!Referral__c.Referral_Status__c!='Closed$'}"/>
        <apex:inputField id="closeComment" value="{!Referral__c.Close_Comment__c}" rendered="{!Referral__c.Referral_Status__c=='Closed' && !isCambridge}"/>
        <apex:inputField id="holdDate" value="{!Referral__c.Hold_Date__c}" rendered="{!Referral__c.Referral_Status__c=='On Hold'}"/>
