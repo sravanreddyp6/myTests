@@ -63,9 +63,9 @@
        
        	 jQuery(document).ready(function ($) {
        	 
+       	 
        	 });   //end "ready" function
        
-         
          
          function getNextTab( currTab ) {
             var nextTab = currTab;
@@ -231,11 +231,12 @@
 							       </apex:facet>
 							       <apex:facet name="stop"></apex:facet>
 							  	</apex:actionStatus>
-                			<apex:actionSupport event="onchange" rerender ="response"  status="ranchoStatus" action="{!handleRanchoresponse}" />
+                			<apex:actionSupport event="onchange" rerender="response"  status="ranchoStatus" action="{!handleRanchoresponse}" />
                 		</apex:inputField>	
-                	</apex:pageBlockSection >
-                	<apex:pageBlockSection  id="response" columns="1">
-                		<apex:pageBlockSectionItem  rendered="{!Evaluation__c.Rancho_Level__c !='' && Evaluation__c.Rancho_Level__c != '(1) No Response'}">
+                	</apex:pageBlockSection>
+                	
+                	<apex:pageBlockSection id="response" columns="1">
+                		<apex:pageBlockSectionItem rendered="{!Evaluation__c.Rancho_Level__c !='' && Evaluation__c.Rancho_Level__c != '(1) No Response'}">
 	                        <apex:outputLabel value="Responds To" />
 	                        <apex:outputPanel >
 	                        <apex:inputField id="vstimresponds" value="{!Evaluation__c.Verbal_Stim__c}" /><apex:outputLabel for="vstim" value="Verbal Stim" />&nbsp;
@@ -245,9 +246,9 @@
 	                        <apex:inputField id="visualresponds" value="{!Evaluation__c.Visual__c}"/><apex:outputLabel for="visual" value="Visual" />
 	                        </apex:outputPanel>
                   		</apex:pageBlockSectionItem>
-                  		
+         
                   		<apex:inputField value="{!Evaluation__c.Level_of_Conciousness__c}" rendered="{!Evaluation__c.Rancho_Level__c !='' && Evaluation__c.Rancho_Level__c != '(1) No Response'}" />
-                        <apex:pageBlockSectionItem  rendered="{!Evaluation__c.Rancho_Level__c !='' && Evaluation__c.Rancho_Level__c != '(1) No Response'}" >
+                        <apex:pageBlockSectionItem rendered="{!Evaluation__c.Rancho_Level__c !='' && Evaluation__c.Rancho_Level__c != '(1) No Response'}" >
                             <apex:outputLabel value="Orientation" />
                             <apex:selectCheckboxes value="{!selectedNeuroOrient}" style="margin-left:-13px" >
                                 <apex:selectOptions value="{!neuroOrientValues}" />
@@ -265,15 +266,54 @@
                         <apex:inputField id="confused" value="{!Evaluation__c.Confused__c}"/><apex:outputLabel for="confused" value="Confused" />&nbsp;
                         <apex:inputField id="unresp" value="{!Evaluation__c.Unresponsive__c}"/><apex:outputLabel for="unresp" value="Unresponsive" />
                         </apex:outputPanel>
-                        </apex:pageBlockSectionItem>
-   
-                         <apex:pageBlockSectionItem >
-                            <apex:outputLabel value="Mood" />
-                            <apex:selectCheckboxes value="{!selectedMoods}"  style="margin-left:-13px" id="moodlist">
-                                <apex:selectOptions value="{!moodValues}" />
-                            </apex:selectCheckboxes>
-                        </apex:pageBlockSectionItem>
-                  	</apex:pageBlockSection>
+                        </apex:pageBlockSectionItem>             
+                        </apex:PageblockSection >
+                        
+                        <apex:pageBlockSection columns="1" id="moodBlock">
+                        	<apex:pageBlockSectionItem >
+                            	<apex:outputLabel value="Mood" />
+                            	<apex:actionregion >
+                            	<apex:selectCheckboxes value="{!selectedMoods}"  style="margin-left:-13px" id="moodlist">
+                                	<apex:selectOptions value="{!moodValues}" />
+                                		<apex:actionStatus id="moodStatus"  >
+								  			<apex:facet name="start">
+								           	 <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+								               	<img class="waitingImage" src="/img/loading.gif" title="Please Wait..."  /> <span class="waitingDescription"></span>
+								           	 </div>
+								       		</apex:facet>
+								       		<apex:facet name="stop"></apex:facet>
+								  		</apex:actionStatus>
+	                				<apex:actionSupport event="onchange" rerender="residenthurtSection,moodlist,plantoHurt" action="{!handleMood}"  status="moodStatus" />
+                            	</apex:selectCheckboxes>
+                            	</apex:actionregion>
+                        	</apex:pageBlockSectionItem>
+                        	
+                        	<apex:outputPanel id="residenthurtSection" >
+	                        <apex:pageBlockSectionItem  rendered="{!showResidenthurt}" >
+	                        	<apex:outputLabel value="Has Resident Expressed Desire to Hurt Him/Herself?" styleClass="labelCol" style="margin-left:55px;"/>
+	                        	<apex:actionregion >
+	                        	<apex:inputField value="{!Evaluation__c.Desire_to_hurt_themselves__c}" style="margin-left: 5Px;">
+	                        		<apex:actionStatus id="hurtStatus" >
+								  		<apex:facet name="start">
+								           <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+								               <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+								           </div>
+								       </apex:facet>
+								       <apex:facet name="stop"></apex:facet>
+								  	</apex:actionStatus>
+	                			<apex:actionSupport event="onchange" rerender="plantoHurt"  status="hurtStatus" action="{!handleResidenthurt}"/>
+	                        	</apex:inputField>
+	                        	</apex:actionregion>
+	                        </apex:pageBlockSectionItem >
+	                        </apex:outputPanel>
+                        
+	                        <apex:outputPanel id="plantoHurt" >
+	                        <apex:pageBlockSectionItem rendered="{!Evaluation__c.Desire_to_hurt_themselves__c == 'Yes' && showResidenthurt}" >
+	                        	<apex:outputText value="Does Resident Have a Plan to Harm Him/Herself?" styleClass="labelCol" style="margin-left: 65px;"/>
+	                        	<apex:inputField value="{!Evaluation__c.Plan_to_Harm_themselves__c}" style="margin-left: 10Px;"/>
+	                        </apex:pageBlockSectionItem >
+	                        </apex:outputPanel>
+	                  	</apex:pageBlockSection>
                 </apex:pageBlock>
              </apex:tab>
              
@@ -314,8 +354,7 @@
 	                     </apex:pageBlockSectionItem>
                 	</apex:pageBlockSection>
                 	<apex:pageBlockSection columns="1" >
-                		<apex:inputField value="{!Evaluation__c.Does_Resident_appear_to_demonstrate__c}" label="Does Resident appear to<br/>
-                																								demonstrate/note<br/>any of the following" />
+                		<apex:inputField value="{!Evaluation__c.Does_Resident_appear_to_demonstrate__c}" label="Does Resident appear to<br/>demonstrate/note<br/>any of the following" />
                 		<apex:pageBlockSectionItem >
                 			<apex:outputText value="" />
 	                		<apex:selectCheckboxes value="{!selectedCoping}" layout="pageDirection" style="margin-left:-13px" >

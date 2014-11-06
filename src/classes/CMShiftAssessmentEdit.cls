@@ -4,6 +4,8 @@ public with sharing class CMShiftAssessmentEdit {
     public String selectedTab { get; set; }
     public String nextTab { get; set; }
     
+    public Boolean showResidenthurt{get; set; }
+    
     public List<selectOption>copingValues ;
     public List<string>selectedCoping {get;set;}
     public List<selectOption>neuroOrientValues ;
@@ -24,6 +26,8 @@ public with sharing class CMShiftAssessmentEdit {
 		if (ApexPages.currentPage().getParameters().get('tab') != null) {
             selectedTab = ApexPages.currentPage().getParameters().get('tab');
         	}
+        
+        showResidenthurt = false;
         	
         copingValues = new List<selectOption>();
         selectedCoping = new List<String>();
@@ -92,7 +96,30 @@ public with sharing class CMShiftAssessmentEdit {
  	return null;
  	
  }
+ 
+ public void handleMood(){
+ 	set<string> moods = new set<string>(); // Using set as we do not have a List.contains method. Using set helps us avoid using a for loop. Sravan: 11/5/2014 11:30 AM.
+ 	moods.addAll(selectedMoods);
+ 	if(moods.Contains('Unable to Determine')){
+ 		selectedMoods = new List<string>{'Unable to Determine'};
+ 		showResidenthurt = false;
+ 		this.evaluation.Desire_to_hurt_themselves__c = '';				
+ 	}
+ 	if((moods.Contains('Sad') || moods.Contains('Flat')) && !moods.Contains('Unable to Determine')){
+ 		showResidenthurt = true;	
+ 	}
+ 	else{
+ 		 showResidenthurt = false;
+ 		 this.evaluation.Desire_to_hurt_themselves__c = '';
+ 	}
+ }
    
+ 
+ public void handleResidenthurt(){
+ 	this.evaluation.Plan_to_Harm_themselves__c = '';
+ 		
+ }
+ 
    public PageReference save() {
         return this.save(false);
     }
