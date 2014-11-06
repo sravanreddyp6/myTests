@@ -922,6 +922,31 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
         }
     }
 
+    //Start EC-54 CM Save and Close Validations
+    if (referralRecordType == 'CareMeridian') {
+        Boolean hasFundError = true, hasLocError = true;       
+        checkForBlankFields(referralRecord,'Referral__c',new list<string>{'Evaluated_By_Internal__c'}, 'A value for {0} is required to save');       
+        if(referralRecord.Close_Reason__c != 'Error' && referralRecord.Referral_Status__c == 'Closed'){
+            checkForBlankFields(referralRecord,'Referral__c',new list<string>{'Current_Location__c','Close_Reason__c','Agency_Name__c'}, 'A value for {0} is required to close');
+        }
+        for(Funding_Source__c fs :fundingSources){
+          if (fs.Type_of_Coverage__c == 'Primary'){
+             hasFundError = false;
+          }
+        }
+        for(Referral_Location__c rl :locations){
+          if (rl.Rank__c == 'Primary'){
+             hasLocError = false;
+          }
+        }
+        if (hasFundError){
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'A primary funding source must be selected to save the referral'));
+        }
+        if (hasLocError){
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'A primary location must be selected to save the referral'));
+        }
+    }  
+    //End EC-54 
 
     system.debug('in saveREF');
     Id refId;
