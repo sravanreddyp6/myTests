@@ -206,9 +206,9 @@
             <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" isPdf="true" />
             <br />
 
-            <table>
+            <table style="width: 100%; ">
                 <tr>
-                    <td>
+                    <td style="width: 50%; ">
                         <apex:dynamiccomponent componentValue="{!ctlmap['lomn_physician_referral_attached__c']}" />
                     </td>
                     <td>
@@ -217,7 +217,15 @@
                 </tr>
                 <tr>
                     <td>
-                        <apex:dynamiccomponent componentValue="{!ctlmap['lomn_physician_referral_attached_date__c']}" />
+                        <apex:outputLabel value="Date LOMN Requested" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.LOMN_Physician_Referral_Attached_Date__c}" />
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Physician Name" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.LOMN_Physician_Name__c}" />
                     </td>
                     <td></td>
                 </tr>
