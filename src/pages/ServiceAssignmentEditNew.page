@@ -790,11 +790,19 @@ END: Uncomment to have the element collapsed by default -->
 
 
   <!--  Plan section -->
+  <apex:actionFunction name="makeNewPlan" action="{!NewPlan}" rerender="" status="planstatus"/>
   <a name="Plan" id="Plan" ></a>
     <apex:pageBlock id="Plan" title="Action Plans" rendered="{! !AssessmentOnly && !editSA}">
     <div class="pbHeaderButton">
-        <apex:commandButton action="{!NewPlan}" value="New Plan"  rendered="{!(plans.size=0) && canCreatePlan && !editSA }" immediate="true"/>
-        <apex:commandButton onclick="window.open('/{!Ack_Overview}?pv0={!Service_Assignment__c.Name}', '_self'); return false;" rendered="{! plans.size!=0 && !editSA}" value="Acknowledgment Overview" />
+    <apex:actionStatus id="planstatus">
+	<apex:facet name="stop">
+    	<apex:commandButton value="New Plan" rendered="{!(plans.size=0) && canCreatePlan && !editSA }" immediate="true" onclick="this.disabled='disabled'; makeNewPlan();" />
+    </apex:facet>
+	<apex:facet name="start">
+		<apex:commandButton value="Loading..." disabled="true"/>
+	</apex:facet>
+	</apex:actionStatus>
+	<apex:commandButton onclick="window.open('/{!Ack_Overview}?pv0={!Service_Assignment__c.Name}', '_self'); return false;" rendered="{! plans.size!=0 && !editSA}" value="Acknowledgment Overview" />
 
     </div>
     <apex:pageBlockSection columns="1"
