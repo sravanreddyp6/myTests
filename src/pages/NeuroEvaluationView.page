@@ -301,6 +301,27 @@
                 <apex:pageBlock >
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" editEnabled="{!editable}" addEnabled="{!editable}" />
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Pressure Ulcer Detail" formId="{!$Component.wholePage}" uniqueId="decubiti" editEnabled="{!editable}" addEnabled="{!editable}" />
+                    <apex:pageBlockSection columns="1" title="General Skin Condition">
+                        <apex:outputField value="{!Evaluation__c.Skin_Moisture__c}"
+                            label="Mositure" />
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Edema" />
+                            <apex:outputPanel >
+                                <apex:outputField value="{!Evaluation__c.Skin_Edema__c}"
+                                    label="Edema" />
+                                <apex:outputText styleClass="labelCol" value="Location" style="margin-left: 10px; "
+                                    rendered="{!Evaluation__c.Skin_Edema__c == 'Yes'}" />
+                                <apex:outputField value="{!Evaluation__c.Skin_Edema_Location__c}"
+                                    label="Edema Location" id="edemaLocation"
+                                    rendered="{!Evaluation__c.Skin_Edema__c == 'Yes'}" />
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:outputField value="{!Evaluation__c.Skin_Behavior__c}"
+                            label="Behavior" />
+                        <apex:outputField value="{!Evaluation__c.Peripheral_Capillary_Refill_Location__c}" />
+                        <apex:outputField value="{!Evaluation__c.Peripheral_Capillary_Refill_of_Seconds__c}" label="# of Seconds" />
+                    </apex:pageBlockSection>
+
                     <h2 style="display: block; margin: 10px;">Body Map</h2>
                     <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
                         <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!(baseUrl + URLFOR($Resource.WholeBodyNoGrid))}" id="bodyMap" />
@@ -332,6 +353,7 @@
                         <apex:outputField value="{!Evaluation__c.EEG_Within_Normal_Limits__c}" label="Within Normal Limits" />
                         <apex:outputField value="{!Evaluation__c.Symptoms_of_Seizure__c}" />
                         <apex:outputField value="{!Evaluation__c.EEG_Above_Normal_Limits__c}" label="Above Normal Limits" />
+                        <apex:outputField value="{!Evaluation__c.Onset_of_Seizure_Activity__c}" />
                     </apex:pageBlockSection>
                     <hr />
                     <apex:pageBlockSection columns="2" title="Sensory">
@@ -385,7 +407,7 @@
                             <apex:outputLabel value="Weight Bearing Precautions" />
                             <apex:outputPanel >
                                 <apex:outputField value="{!Evaluation__c.Weight_Bearing_Precautions__c}" id="weightBearingPrecautions" />
-                                <apex:outputLabel value="N/a" rendered="{!Evaluation__c.Weight_Bearing_Precautions__c == ''}" />
+                                <apex:outputLabel value="N/A" rendered="{!Evaluation__c.Weight_Bearing_Precautions__c == ''}" />
                                 <apex:outputField value="{!Evaluation__c.Weight_Bearing_Precautions_Not_Available__c}" rendered="{!Evaluation__c.Weight_Bearing_Precautions__c == ''}" />
                             </apex:outputPanel>
                         </apex:pageBlockSectionItem>
