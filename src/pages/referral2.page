@@ -1383,9 +1383,6 @@ function stopRKey(evt) {
      </apex:pageBlockSection>
 
 <!--  END NEW PLACEMENT SECTION -->
-    <apex:pageBlockSection title="Acceptance Status" rendered="{!ReferralRecordType == 'NeuroRestorative'}">
-       <apex:outputField value="{!Referral__c.Medical_Clinical_Acceptance__c}" />
-     </apex:pageBlockSection>
 
      <apex:pageBlockSection showHeader="false" columns="2" collapsible="false" id="ReferralStatus">
        <apex:outputField value="{!Referral__c.Close_Date__c}" rendered="{!Referral__c.Referral_Status__c=='Closed'}"/>
@@ -1395,6 +1392,10 @@ function stopRKey(evt) {
        <apex:outputField value="{!Referral__c.Hold_Date__c}" rendered="{!Referral__c.Referral_Status__c=='On Hold'}"/>
        <apex:outputField value="{!Referral__c.Hold_Reason__c}" rendered="{!Referral__c.Referral_Status__c=='On Hold'}"/>
        <apex:outputField value="{!Referral__c.Review_On__c}" rendered="{!Referral__c.Referral_Status__c=='On Hold'}"/>
+     </apex:pageBlockSection>
+
+     <apex:pageBlockSection title="Acceptance Status" rendered="{!ReferralRecordType == 'NeuroRestorative'}">
+       <apex:outputField value="{!Referral__c.Medical_Clinical_Acceptance__c}" />
      </apex:pageBlockSection>
 
      <apex:pageBlockSection title="Anticipated Admission Location Information" columns="1" collapsible="false" id="LocationInfo">

@@ -1882,10 +1882,6 @@ clearDisableField = function(pageSectionId){
         <script type="text/javascript">clearDisableField('JuvBlockSection');clearDisableField('HxBlock');clearDisableField('moreHxBlock');</script>
      </apex:pageBlockSection>
 
-     <apex:pageBlockSection title="Acceptance Status" rendered="{!ReferralRecordType == 'NeuroRestorative'}">
-       <apex:inputField value="{!Referral__c.Medical_Clinical_Acceptance__c}" />
-     </apex:pageBlockSection>
-
      <apex:pageBlockSection showHeader="false" columns="2" collapsible="false" id="ReferralStatus">
        <apex:inputField id="closeDate" value="{!Referral__c.Close_Date__c}" rendered="{!Referral__c.Referral_Status__c=='Closed'}"/>
        <apex:inputField id="closeReason" value="{!Referral__c.Close_Reason__c}" rendered="{!Referral__c.Referral_Status__c=='Closed'}"/>
@@ -1896,6 +1892,11 @@ clearDisableField = function(pageSectionId){
        <apex:inputField id="reviewOn" value="{!Referral__c.Review_On__c}" rendered="{!Referral__c.Referral_Status__c=='On Hold'}"/>
 
      </apex:pageBlockSection>
+
+     <apex:pageBlockSection title="Acceptance Status" rendered="{!ReferralRecordType == 'NeuroRestorative'}">
+       <apex:inputField value="{!Referral__c.Medical_Clinical_Acceptance__c}" />
+     </apex:pageBlockSection>
+
      <apex:pageBlockSection title="Anticipated Admission Location Information" columns="1" collapsible="false" id="LocationInfo">
        <apex:inputField value="{!Referral__c.Anticipated_Admission_Date__c}" />
        <apex:inputHidden id="sl_lkid" value="{!Referral__c.Service_Location__c}" />
