@@ -174,8 +174,10 @@ public with sharing class Report_KidTraksExport_Controller {
 					}
 				}
 				System.debug('thisPersonsProgressNotesThisReport.size(): ' + thisPersonsProgressNotesThisReport.size());
+				if(thisPersonsProgressNotesThisReport.size() > 0) {
 				// Set the start date for the report line item to the first note in the list, which should be the earliest based on the query sorting.
 				lineItemStartDate = thisPersonsProgressNotesThisReport[0].Start_Time__c.date();
+				}
 			}
     			
     		    	
