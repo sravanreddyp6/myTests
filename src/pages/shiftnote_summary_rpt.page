@@ -1,0 +1,278 @@
+<apex:page controller="shiftnote_summary_rpt" sidebar="false" docType="html-5.0" readOnly="true" >
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!$Resource.jquery}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+    <apex:includeScript value="https://raw.github.com/awbush/jquery-fastLiveFilter/master/jquery.fastLiveFilter.js" />
+    
+    
+<script src="https://jquery-datatables-column-filter.googlecode.com/svn/trunk/media/js/jquery.dataTables.columnFilter.js"></script>    
+<script>
+    function setFocusOnLoad() {}
+</script>
+<style>
+    .left_col{ text-align: left; font-weight: bold; color: #4a4a56 !important; padding: 5px; vertical-align: top; width: 150px;}
+.thinking{
+    opacity:0.8;
+    background-color:#ccc;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}
+
+.thinkingwheel{
+    position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+}   
+.mytbl{
+    width: 100%;
+}  
+.dataTables_wrapper{
+    margin-top: -52px;
+    margin-left: -19px;
+
+}
+.pbTitle{
+    width: 300px !important;
+}
+</style>
+<apex:outputPanel id="fillerspace">
+<apex:outputPanel layout="block" style="width: 35%; float: left; padding: 15px;" rendered="{! !hasRunOnce}">
+&nbsp;
+</apex:outputPanel>
+</apex:outputPanel>
+<apex:outputPanel layout="block" style="width: 650px; float: left; padding: 15px;">
+<apex:form >
+<apex:pageMessages id="messages" ></apex:pageMessages>
+<apex:pageBlock id="ShiftnoteSummaryRptPgBlk" title="Shift Note Summary Report">
+    <apex:pageBlockButtons >
+        
+    </apex:pageBlockButtons>
+        <apex:outputPanel id="buttonPanel" layout="block" style="float: left; margin-left: 250px; margin-top: 5px; position : absolute;">
+        <apex:commandButton value="Run" 
+            action="{!runReport}" 
+            reRender="buttonPanel, dataTable, fillerspace, tbl_maker, pbsOPTS, messages" 
+            status="myStatus"
+             oncomplete="createtbl()"
+             style="height: 57px; width: 91px;"
+             rendered="{!!hasRunOnce}"
+            />
+        
+        <apex:commandButton value="New Report Run" 
+            action="{!cancelToNewRun}" 
+            status="myStatus"
+             style="padding:21.5px !important;"
+             rendered="{!hasRunOnce}"
+            />
+        <apex:commandLink value="Create PDF" 
+        	action="{!runPdf}"
+        	styleClass="btn" 
+        	style="padding:21.5px !important;" 
+        	status="myStatus" 
+        	target="_blank" 
+        	immediate="true" 
+        	rendered="{!hasRunOnce}" 
+        	/>
+    
+        </apex:outputPanel>    
+    <apex:pageBlockSection columns="1">
+        
+       <apex:inputText id="start_date" size="10" required="true" onfocus="DatePicker.pickDate(false, this , false);" styleClass="datepicker" label="Start Date" value="{!StartDate }" />
+       <apex:inputText id="end_date"  size="10" required="true" onfocus="DatePicker.pickDate(false, this , false);" styleClass="datepicker" label="End Date" value="{!EndDate }" />
+       <apex:selectList size="1" value="{!HCMCfilter}" label="Healthcare/Medical Note">
+           <apex:selectOption itemLabel="Both" itemValue=""></apex:selectOption>
+           <apex:selectOption itemLabel="Yes" itemValue="false"></apex:selectOption>           
+           <apex:selectOption itemLabel="No" itemValue="true"></apex:selectOption>
+       </apex:selectList> 
+       </apex:pageBlockSection>
+       <apex:actionRegion >
+       
+       <apex:pageBlockSection id="programs" title="Programs (Please select one or more Programs from the below list to view clients.)" columns="1" collapsible="false" >
+	    <apex:outputpanel >
+	    	<table>
+		        <tr><td>
+		        <apex:selectList id="selectprograms" value="{!selectedPrograms}" size="7" multiselect="true" style="min-width:235px">
+		            <apex:selectOptions value="{!programslist}"/>
+		        </apex:selectList>
+		        </td><td style="vertical-align:middle">
+		        <apex:commandButton value="add" 
+						            action="{!AddPrograms}" 
+						            reRender="programs, pbsOPTS" 
+						            status="myStatus"
+						            oncomplete="createtbl()"
+						            style="height: 25px; width: 35px;"/><br/>
+		        <apex:commandButton value="remove" 
+						            action="{!RemovePrograms}" 
+						            reRender="programs, pbsOPTS" 
+						            status="myStatus"
+						            oncomplete="createtbl()"
+						            style="height: 25px; width: 50px;"/>		             
+		        </td><td>
+		        <apex:selectList id="select2" value="{!select2PrmIds}" size="7" multiselect="true" style="min-width:235px">
+		        	<apex:selectOptions value="{!select2list}" />
+				</apex:selectList>
+		        </td></tr>
+	 		</table>                   
+		</apex:outputPanel>
+       </apex:pageBlockSection>       
+       
+       
+       <apex:pageBlockSection id="pbsOPTS"  title="Person Being Served (Please select one or more names from the list.)" columns="1" collapsible="false" >
+           <apex:outputPanel layout="block" style="padding-left: 200px;" >
+               <apex:commandLink action="{!selectAllPbs}" value="Select All" reRender="pbsOPTS, tbl_maker" status="myStatus" oncomplete="createtbl()" />
+               <br/><apex:commandLink action="{!clearSelectedPbs}" value="Clear Selected" reRender="pbsOPTS, tbl_maker" status="myStatus" oncomplete="createtbl()" />
+            </apex:outputPanel>
+        <apex:outputPanel >
+        
+        
+           <br/>               
+               <apex:selectCheckboxes html-class="mytbl2" value="{!selectedPBS }" layout="pageDirection" >
+                   <apex:selectOptions value="{!PBSlsit }"></apex:selectOptions>
+               </apex:selectCheckboxes>     
+           </apex:outputPanel>
+                 
+       </apex:pageBlockSection>       
+       </apex:actionRegion>
+     
+
+    
+</apex:pageBlock>
+</apex:form>
+</apex:outputPanel>
+
+<apex:outputPanel layout="block" style="float: left; width: 700px; padding: 15px;" id="dataTable"> 
+
+    <apex:repeat value="{!notes }" var="n">   
+    <apex:pageBlock >
+    <table id="mytbl" class="mytbl">     
+        <tr>
+             <td class="left_col">
+                 Person Being Served:
+             </td>
+             <td>
+                 <apex:outputField value="{!n.Person_Being_Served__c}"/> 
+             </td>
+         </tr>
+         <tr>
+             <td class="left_col">
+                 Note: 
+             </td>
+             <td>
+             <a href="/{!n.id}">{!n.name}</a>                 
+             </td>             
+         </tr>
+         <tr>
+             <td class="left_col">
+                 Start Date/Time:
+             </td>
+             <td>
+	             <apex:outputField value="{!n.Start_Time__c}"/>
+             </td>
+         </tr>  
+         <tr>
+             <td class="left_col">
+                 End Date/Time:
+             </td>
+             <td>
+	             <apex:outputField value="{!n.End_Time__c}"/>
+             </td>
+         </tr>  
+          
+          
+         <tr>
+             <td class="left_col">
+                 Written By:
+             </td>
+             <td>
+	             <apex:outputField value="{!n.CreatedById}"/>
+             </td>
+         </tr> 
+       
+         
+         <tr>
+             <td class="left_col" >
+                     Narrative:
+             </td>
+             <td>
+				<div>
+					{!n.Narrative__c}
+				</div>
+             </td>
+         </tr> 
+         
+         
+         <tr>
+             <td class="left_col">
+                Healthcare/Medical Note :
+             </td>         
+             <td  >
+                 <apex:outputField value="{!n.Healthcare_Medical_Note__c}"/> 
+             </td>
+         </tr> 
+
+         <tr>
+             <td class="left_col">
+                Goals/Objectives :
+             </td>         
+             <td  >
+                 <apex:repeat value="{!Note_Goals[n.id]}" var="g">
+                 	{!g.Goal__r.Description__c}
+                     <br/>
+                         <apex:repeat value="{!Note_Objs[n.id + g.Goal__c]}" var="o">
+                             &nbsp;&nbsp;
+                             {!o.Objective__r.Description__c}
+                             <br/>
+                         </apex:repeat>
+                 </apex:repeat>
+             </td>
+         </tr> 
+      </table>              
+     </apex:pageBlock>                                
+     </apex:repeat> 
+
+</apex:outputPanel>
+       
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <div  class="thinking">
+            <div class="thinkingwheel">    
+                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+            </div>
+        </div>   
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus>
+
+<apex:outputPanel id="tbl_maker">
+<script>
+j$ = jQuery.noConflict();
+function createtbl(){
+    j$('.mytbl2').dataTable({"bPaginate": false, "bFilter": true, "bRetrieve": true, "aoColumnDefs": [
+      { "sTitle": " ", "aTargets": [ 0 ] },],
+"oLanguage": {
+    "sSearch": " "
+  }
+      });
+}
+j$(document).ready(function(){
+    createtbl();
+	j$('#int').fastLiveFilter('#search_list');
+    // j$('testing').filterTable();
+});
+
+var tableToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+  return function(table, name) {
+    if (!table.nodeType) table = document.getElementById(table)
+    var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+    window.location.href = uri + base64(format(template, ctx))
+  }
+})()
+</script>
+</apex:outputPanel>
+</apex:page>
