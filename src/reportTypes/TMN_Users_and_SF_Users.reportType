@@ -3,7 +3,7 @@
     <baseObject>User</baseObject>
     <category>admin</category>
     <deployed>true</deployed>
-    <description>This report is used to display additional user detail (department, OG, etc) from TMN Users along with current SF Users accounts. Useful when working with Leadership to show them which staff have active SF accounts.</description>
+    <description>This report is used to display additional user detail (department, OG, etc) from TMN Users along with current SF Users accounts. Used for Account Provisioning. Also, useful for Leadership to see which staff have active SF accounts.</description>
     <join>
         <outerJoin>false</outerJoin>
         <relationship>TMN_Users__r</relationship>
@@ -516,6 +516,16 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>Work_State__c</field>
+            <table>User.TMN_Users__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Personal_Email__c</field>
+            <table>User.TMN_Users__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Salesforce_User_Account__c</field>
             <table>User.TMN_Users__r</table>
         </columns>
         <masterLabel>TMN Users</masterLabel>
