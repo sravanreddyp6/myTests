@@ -946,9 +946,8 @@
         </apex:tabPanel>
         <apex:pageBlock id="buttons">
             <apex:pageBlockButtons location="bottom">
-                <apex:commandButton onclick="window.location='/apex/CareMeridianEvaluationEdit?id={!Evaluation__c.Id}&tab={!selectedTab}'; return false;" value="Edit" rendered="{!Evaluation__c.Referral__r.Person_Being_Served__c == null}"/>
+                <apex:commandButton onclick="window.location='/apex/CareMeridianEvaluationEdit?id={!Evaluation__c.Id}&tab={!selectedTab}'; return false;" value="Edit" rendered="{!Evaluation__c.Referral__r.Person_Being_Served__c == null && editable}"/>
                 <apex:commandButton onclick="window.location='/apex/CareMeridianEvaluationEsign?id={!Evaluation__c.Id}'; return false;" value="E-Sign" rendered="{!selectedTab == 'dischargePlanTab'}" />
-                <!-- apex:commandButton value="Generate Paper Form" action="{!generatePaperForm}" rerender="pageMessages" onclick="jQuery('[id$=pdfGenerationSpinner]').show();" oncomplete="downloadPaperForm('{!pdfExistenceUrl}');" /-->
                 <apex:commandButton value="Generate PDF" onclick="openWin('/apex/CareMeridianEvaluationPDF?id={!Evaluation__c.Id}'); return false;" />
                 <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" style="display: none;" id="pdfGenerationSpinner" />
             </apex:pageBlockButtons>
