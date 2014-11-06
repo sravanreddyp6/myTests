@@ -116,20 +116,43 @@
 
                 var el = $('#bodyMap').get(0).src;
                 
-                var checked = $(cb).prop('checked');
-                
+                var checked = false;
+                if ( cb != null ) 
+                	$(cb).prop('checked');
+                else
+                	checked= ( {!Evaluation__c.Intact__c} == 1 );
+                	
                 if ( checked && el ) {
-                    // disable body map if intact is checked
-                    anno.hideSelectionWidget( el );
-                    anno.removeAll( el );
-                    $('.annotation-number').remove();
-                    $('table#annotations tr').remove();
-                    // need to remove from db also
+					disableAnno( el, '' );
                 } else {
                     anno.showSelectionWidget( el );
                 }
                 
             }
+            
+            
+            disableAnno = function ( el, annotype ) {
+            	// disable body map if intact is checked
+                anno.hideSelectionWidget( el );
+
+                $('.' + annotype + 'annotation-number').remove();
+                $('table#' + annotype + 'annotations tr').remove();
+            	// because the remove handler is not called on the removeAll, remove each one individually
+                anno.getAnnotations(el).each( function( element) {
+                	anno.removeAnnotation(element);
+                	Visualforce.remoting.Manager.invokeAction(
+                		'{!$RemoteAction.NursingEvaluationEditController.deleteAnnotation}',
+                		element.Id,
+               			function (result, event) {
+                    	if (!event.status) {
+                        	alert("Failed to delete annotation! Error: " + event.message);
+                        	anno.addAnnotation(element);
+                    	}
+                	});
+                
+                });
+            }
+            
             handleBladder = function() {
                 // get the value
                 var bladdertypes = '';
@@ -336,7 +359,12 @@
                 handleSoresAll( currTab);
             };
 
+			handleSkinBody = function() {
+				handleIntact( null );
+				}
+				
             handleNeuro = function() {
+            	disablePain();
                 handleMood();
                 handleVerbalExpression();
                 handleRancho();
@@ -629,7 +657,6 @@
             setUpFields();
             handleNutrition('{!selectedTab}');
             handleNeuro();
-            disablePain();
             handlePsychoSocial();
 
 
@@ -760,22 +787,18 @@
 
         }
 
-       disablePain = function(){
+       disablePain = function() {
+           painval = j$('[id$=painYes]').val();
+           if(painval == 'Yes'){
 
+               j$('[id$=painSection]').show();
+               setupAnno();
 
-            painval = j$('[id$=painYes]').val();
-            if(painval == 'Yes'){
+           } else {
+				disableAnno( j$('#neurobodyMap').get(0).src, 'neuro');
+               j$('[id$=painSection]').hide();
 
-                j$('[id$=painSection]').show();
-                setupAnno();
-
-            }
-            if(painval != 'Yes'){
-                j$('[id$=painSection]').hide();
-
-
-                }
-
+             }
         }
 
         function enableFalls( historyVal )  {
@@ -858,7 +881,7 @@
         <apex:inputHidden value="{!Evaluation__c.Dressing_LE__c}" id="dressingLE" />
 
         <apex:pageMessages id="pageMessages" />
-        <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); removeSpacer(); scrollToTop(); handleNutrition('{!nextTab}'); handleNeuro();handlePsychoSocial();" reRender="pageMessages, wholeTabPanel, buttons">
+        <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); removeSpacer(); scrollToTop(); handleNutrition('{!nextTab}'); handleNeuro();handlePsychoSocial();handleSkinBody()" reRender="pageMessages, wholeTabPanel, buttons">
             <apex:param name="nextTab" assignTo="{!nextTab}" value="" />
         </apex:actionFunction>
 
@@ -1136,10 +1159,10 @@
                    </apex:pageBlockSection>
                  <apex:pageBlockSection columns="2" title="Trach">
 
-                         <apex:inputField value="{!Evaluation__c.Trach__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.trachPlacementDate}&quot;, &quot;{!$Component.trachType}&quot;, &quot;{!$Component.trachSize}&quot;, &quot;{!$Component.cuffed}&quot;, &quot;{!$Component.pmv}&quot;,&quot;{!$Component.cuffed}&quot;, &quot;{!$Component.trachPlugged}&quot;]}" />
+                         <apex:inputField value="{!Evaluation__c.Trach__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.trachPlacementDate}&quot;, &quot;{!$Component.trachtypesection.trachType}&quot;, &quot;{!$Component.trachsizesection.trachSize}&quot;, &quot;{!$Component.cuffed}&quot;, &quot;{!$Component.pmv}&quot;,&quot;{!$Component.cuffed}&quot;, &quot;{!$Component.trachplugsection.trachPlugged}&quot;]}" />
                          <apex:inputField value="{!Evaluation__c.Trach_Placement_Date__c}" id="trachPlacementDate" />
 
-                         <apex:pageBlockSectionItem >
+                         <apex:pageBlockSectionItem id="trachtypesection">
                          <apex:outputLabel for="trachType" value="Trach Type<br /><br/>Other" escape="false" />
                          <apex:outputPanel >
 
@@ -1149,7 +1172,7 @@
                          </apex:outputPanel>
                          </apex:pageBlockSectionItem>
 
-                         <apex:pageBlockSectionItem >
+                         <apex:pageBlockSectionItem id="trachsizesection">
                          <apex:outputLabel for="trachSize" value="Trach Size<br /><br />Other" escape="false" />
                          <apex:outputPanel >
                          <apex:inputField value="{!Evaluation__c.Trach_Size__c}" id="trachSize" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.trachOtherSize}&quot;}"/>
@@ -1160,9 +1183,9 @@
 
 
                          <apex:inputField value="{!Evaluation__c.Cuffed__c}" id="cuffed" />
-                         <apex:inputField value="{!Evaluation__c.PMV__c}" id="pmv"  html-data-rules="{&quot;1&quot;: [&quot;{!$Component.plugInitiated}&quot;, &quot;{!$Component.plugDuration}&quot;]}"/>
+                         <apex:inputField value="{!Evaluation__c.PMV__c}" id="pmv"  html-data-rules="{&quot;1&quot;: [&quot;{!$Component.trachplugsection.plugInitiated}&quot;, &quot;{!$Component.trachplugsection.plugDuration}&quot;]}"/>
 
-                         <apex:pageBlockSectionItem >
+                         <apex:pageBlockSectionItem id="trachplugsection">
                          <apex:outputLabel for="trachplugged" value="Trach Plugged<br /><br />Initiated<br /><br />Duration" escape="False" />
                          <apex:outputPanel >
                          <apex:inputField value="{!Evaluation__c.Trach_Plugged__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.plugInitiated}&quot;, &quot;{!$Component.plugDuration}&quot;]}" id="trachPlugged"/>
@@ -2099,13 +2122,13 @@
                                 </apex:repeat>
                                 var neurocreateAnnotationElements = function (neuroAnnotations) {
                                     j$('.neuroannotation-number').remove();
-                                    j$('table#neuroAnnotations tr').remove();
+                                    j$('table#neuroannotations tr').remove();
                                     j$.each(neuroAnnotations, function (index, neuroannotation) {
                                         var j$divEl = j$("<div class='neuroannotation-number' style='pointer-events:none; position: absolute; text-align: center; left: " + neuroannotation.shapes[0].geometry.x * 100 + "%; width: " + neuroannotation.shapes[0].geometry.width * 100 + "%; top: " + neuroannotation.shapes[0].geometry.y * 100 + "%; height: " + neuroannotation.shapes[0].geometry.height * 100 + "%;'></div>");
                                         j$nel.parent().append(j$divEl);
                                         var j$textEl = j$("<span style='line-height: " + j$divEl.height() + "px; color: red; font-size: 1.5em;'>" + (index + 1) + "</span>");
                                         j$divEl.append(j$textEl);
-                                        j$("table#neuroAnnotations tbody").append("<tr><td>" + (index + 1) + "</td><td>" + neuroannotation.text + "</td></tr>");
+                                        j$("table#neuroannotations tbody").append("<tr><td>" + (index + 1) + "</td><td>" + neuroannotation.text + "</td></tr>");
                                     });
                                 }
                                 neurocreateAnnotationElements(anno.getAnnotations());
@@ -2131,7 +2154,7 @@
                             <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!baseUrl + URLFOR($Resource.NeurotabBodyNoGrid)}" id="neurobodyMap" />
                         </div>
                         <div style="margin-left: 420px; height: 298px; overflow: auto;">
-                            <table id="neuroAnnotations">
+                            <table id="neuroannotations">
                                 <tbody>
                                 </tbody>
                             </table>
