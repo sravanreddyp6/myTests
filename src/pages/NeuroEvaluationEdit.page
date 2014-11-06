@@ -369,9 +369,11 @@
                     </apex:pageBlockSection>
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" editEnabled="{!editable}" addEnabled="{!editable}" />
                     <apex:pageBlockSection columns="2">
-                        <apex:inputField value="{!Evaluation__c.LOMN_Physician_Referral_Attached__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.lomnPhysysianReferralAttachedDate}&quot;]}" />
+                        <apex:inputField value="{!Evaluation__c.LOMN_Physician_Referral_Attached__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.lomnPhysysianReferralAttachedDate}&quot;, &quot;{!$Component.lomnPhysicianName}&quot;]}" />
                         <apex:outputField value="{!Evaluation__c.Plan_of_Care_Attached__c}" />
-                        <apex:inputField value="{!Evaluation__c.LOMN_Physician_Referral_Attached_Date__c}" id="lomnPhysysianReferralAttachedDate" label="Date Attached" />
+                        <apex:inputField value="{!Evaluation__c.LOMN_Physician_Referral_Attached_Date__c}" id="lomnPhysysianReferralAttachedDate" label="Date LOMN Requested" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.LOMN_Physician_Name__c}" id="lomnPhysicianName" />
                     </apex:pageBlockSection>
                     <hr />
                     <apex:pageBlockSection columns="1">
