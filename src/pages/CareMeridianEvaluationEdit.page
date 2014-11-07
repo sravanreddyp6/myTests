@@ -362,7 +362,7 @@
                         <apex:inputField value="{!Evaluation__c.Date_of_Injury_Onset__c}" />
                         <apex:inputField value="{!Evaluation__c.Secondary_Diagnosis__c}" />
                         <apex:inputField value="{!Evaluation__c.Bariatric_Equipment__c}" />
-                        <apex:outputField id="wt" value="{!Evaluation__c.Weight__c}" />
+                        <apex:inputField value="{!Evaluation__c.PMH__c}" />
                         <apex:outputPanel >
                             <apex:outputLabel value="Weight at Admission" style="font-weight: Bold; color: #4A4A56; font-size: 10px;"/>
                             <apex:inputField id="lbs" value="{!Evaluation__c.Weightlbs__c}" style="margin-left: 25px; width: 60px; !important;" onkeyup="return calculate(this,'lbs');"/>
@@ -373,7 +373,7 @@
                             <apex:inputField id="kg" value="{!Evaluation__c.WeightKg__c}" style="margin-left: 193px; width: 60px;" onkeyup="return calculate(this,'kg');"/>
                             <apex:outputLabel for="kg" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.WeightKg__c.label}</apex:outputLabel>
                         </apex:outputPanel>
-                        <apex:outputField id="ht" value="{!Evaluation__c.Height__c}" />
+                        <apex:inputField value="{!Evaluation__c.Precautions__c}" />
                         <apex:outputPanel >
                             <apex:outputLabel value="Height at Admission" style="font-weight: Bold; color: #4A4A56; font-size: 10px;"/>
                             <apex:inputField id="ft" value="{!Evaluation__c.HeightFt__c}" style="margin-left: 25px; width: 60px; !important;" onkeyUp="return calculate(this,'ft');"/>
@@ -384,11 +384,7 @@
                             <apex:inputField id="cm" value="{!Evaluation__c.Height_in_cms__c}" style="margin-left: 193px; width: 60px; width: 60px; !important;" onkeyup="return calculate(this,'cm');"/>
                             <apex:outputLabel for="cm" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Height_in_cms__c.label}</apex:outputLabel>
                         </apex:outputPanel>
-                    </apex:pageBlockSection>
-                    <apex:pageBlockSection columns="1">
-                        <apex:inputField value="{!Evaluation__c.PMH__c}" />
-                        <apex:inputField value="{!Evaluation__c.Precautions__c}" />
-                        <!-- Added by Sravan for Evaluation Enhancement -->
+ 						<!-- Added by Sravan for Evaluation Enhancement -->
                         <apex:inputField value="{!Evaluation__c.NKDA__c}" />
                     </apex:pageBlockSection>
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" />
@@ -409,7 +405,6 @@
                     <apex:pageBlockSection columns="1">
                         <apex:inputField value="{!Evaluation__c.Isolation__c}" label="Requires Isolation"
                             html-data-rules="{&quot;1&quot;: &quot;{!$Component.isolationType}&quot;}" />
-                        <apex:outPutField value="{!Evaluation__c.Isolation_Type__c}" />
                         <apex:inputField value="{!Evaluation__c.DiagnosisIsolation_Type__c}" id="isolationType" />
                     </apex:pageBlockSection>
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Radiology Detail" formId="{!$Component.wholePage}" uniqueId="radiology" />
@@ -543,9 +538,6 @@
                         <apex:pageBlockSectionItem />
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Sputum_Quantity__c}" id="sputumQuantity" />
-                        <apex:pageBlockSectionItem />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Sputum_Appearance__c}" id="sputumAppearance" />
                         <apex:pageBlockSectionItem />
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Sputum_Color__c}" id="sputumColor" />
