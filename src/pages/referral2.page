@@ -1394,10 +1394,6 @@ function stopRKey(evt) {
        <apex:outputField value="{!Referral__c.Review_On__c}" rendered="{!Referral__c.Referral_Status__c=='On Hold'}"/>
      </apex:pageBlockSection>
 
-     <apex:pageBlockSection title="Acceptance Status" rendered="{!ReferralRecordType == 'NeuroRestorative'}">
-       <apex:outputField value="{!Referral__c.Medical_Clinical_Acceptance__c}" />
-     </apex:pageBlockSection>
-
      <apex:pageBlockSection title="Anticipated Admission Location Information" columns="1" collapsible="false" id="LocationInfo">
        <apex:outputField value="{!Referral__c.Anticipated_Admission_Date__c}" />
        <apex:outputField value="{!Referral__c.Service_Location__c}" />
@@ -1755,7 +1751,7 @@ function stopRKey(evt) {
       </style>
       <apex:pageBlockSection columns="1" title="Referral Tracking" id="activities" collapsible="false">
         <apex:pageBlockSectionItem >
-          <apex:outputPanel>
+          <apex:outputPanel >
             <input type="button" class="btn" value="Add Referral Tracking Activity"
               onclick="showAddActivity(); return false;" />
             <apex:commandButton onclick="addNeuroAdmissionSteps(); return false;" value="Add Admission Steps" rendered="{!AND(ReferralRecordType='NeuroRestorative', !Referral__c.Admission_Steps_Added__c)}" />

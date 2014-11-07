@@ -1892,11 +1892,6 @@ clearDisableField = function(pageSectionId){
        <apex:inputField id="holdDate" value="{!Referral__c.Hold_Date__c}" rendered="{!Referral__c.Referral_Status__c=='On Hold'}"/>
        <apex:inputField id="holdReason" value="{!Referral__c.Hold_Reason__c}" rendered="{!Referral__c.Referral_Status__c=='On Hold'}"/>
        <apex:inputField id="reviewOn" value="{!Referral__c.Review_On__c}" rendered="{!Referral__c.Referral_Status__c=='On Hold'}"/>
-
-     </apex:pageBlockSection>
-
-     <apex:pageBlockSection title="Acceptance Status" rendered="{!ReferralRecordType == 'NeuroRestorative'}">
-       <apex:inputField value="{!Referral__c.Medical_Clinical_Acceptance__c}" />
      </apex:pageBlockSection>
 
      <apex:pageBlockSection title="Anticipated Admission Location Information" columns="1" collapsible="false" id="LocationInfo">
@@ -2307,7 +2302,7 @@ clearDisableField = function(pageSectionId){
       </style>
       <apex:pageBlockSection columns="1" title="Referral Tracking" id="activities">
         <apex:pageBlockSectionItem >
-          <apex:outputPanel>
+          <apex:outputPanel >
             <apex:commandButton value="Add Referral Tracking Activity"
                                 onclick="showAddActivity(); openModalDialog('ActivityModal', 'span', 'Add Activity','none'); return false;" />
             <apex:commandButton onclick="addNeuroAdmissionSteps(); return false;" value="Add Admission Steps" rendered="{!AND(ReferralRecordType='NeuroRestorative', !Referral__c.Admission_Steps_Added__c)}" />
