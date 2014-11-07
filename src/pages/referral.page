@@ -2305,9 +2305,9 @@ clearDisableField = function(pageSectionId){
           <apex:outputPanel >
             <apex:commandButton value="Add Referral Tracking Activity"
                                 onclick="showAddActivity(); openModalDialog('ActivityModal', 'span', 'Add Activity','none'); return false;" />
-            <apex:commandButton onclick="addNeuroAdmissionSteps(); return false;" value="Add Admission Steps" rendered="{!AND(ReferralRecordType='NeuroRestorative', !Referral__c.Admission_Steps_Added__c)}" />
-            <apex:outputLabel value="Admission Steps Assigned To" for="taskOwner" rendered="{!ReferralRecordType='NeuroRestorative' && !Referral__c.Admission_Steps_Added__c}" style="margin-left: 8px; margin-right: 8px; " />
-            <apex:inputField value="{!dummyTask.OwnerId}" label="Assigned To" id="taskOwner" rendered="{!ReferralRecordType='NeuroRestorative' && !Referral__c.Admission_Steps_Added__c}" required="false" />
+            <apex:commandButton onclick="addNeuroAdmissionSteps(); return false;" value="Add Admission Steps" rendered="{!AND(ReferralRecordType='NeuroRestorative', !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" />
+            <apex:outputLabel value="Admission Steps Assigned To" for="taskOwner" rendered="{!ReferralRecordType='NeuroRestorative' && !Referral__c.Admission_Steps_Added__c && Referral__c.Referral_Status__c != 'Closed'}" style="margin-left: 8px; margin-right: 8px; " />
+            <apex:inputField value="{!dummyTask.OwnerId}" label="Assigned To" id="taskOwner" rendered="{!ReferralRecordType='NeuroRestorative' && !Referral__c.Admission_Steps_Added__c && Referral__c.Referral_Status__c!='Closed'}" required="false" />
             <apex:actionStatus id="taskAssignStatus">
               <apex:facet name="start">
                 <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
