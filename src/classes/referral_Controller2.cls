@@ -80,6 +80,11 @@ public with sharing class referral_Controller2 {
       }
       private set; }
   public List<Task> activities { get; set; }
+  // For Neuro - the user Id to assign the admission steps (tasks) to
+  public Id userIdToAssignTasks { get; set; }
+  // We use a dummy task record in order to be able to use Salesforce's
+  // standard user chooser widget.
+  public Task dummyTask { get; set; }
   public Agency_Involved_With_Individual__c agency { get; set; }
   public List<Agency_Involved_With_Individual__c> agencies { get; set; }
   public Funding_Source__c fundingSource {
@@ -135,6 +140,7 @@ public with sharing class referral_Controller2 {
     this.activities = new List<Task>();
     this.editableTasks = new Map<Id, Boolean>();
     this.locations = new List<Referral_Location__c>();
+    this.dummyTask = new Task();
 
     system.debug( this.referralRecord);
 
@@ -598,5 +604,39 @@ public with sharing class referral_Controller2 {
           this.personBeingServedRecord = getPBSRec();
           populateRelParties();
       }
+  }
+
+  public void addNeuroAdmissionSteps() {
+    if (dummyTask.OwnerId == null) {
+      dummyTask.OwnerId.addError('Field is required!');
+      return;
+    }
+    Map<String, Neuro_Admission_Steps__c> stepSubjects = Neuro_Admission_Steps__c.getAll();
+    System.debug('stepSubjects: ' + stepSubjects);
+    List<Task> tasks = new List<Task>();
+    Set<String> nameSet = stepSubjects.keySet();
+    List<Integer> orderedNames = new List<Integer>();  // We use this list to sort the subjects by their names
+    for (String name: nameSet) {
+      orderedNames.add(Integer.valueOf(name));
+    }
+    orderedNames.sort();
+    for (Integer orderedName: orderedNames) {
+      Task task = new Task(
+        Subject = stepSubjects.get(String.valueOf(orderedName)).Subject__c,
+        Priority = 'Normal',
+        Status = 'Not Started',
+        WhatId = referralRecord.Id,
+        OwnerId = dummyTask.OwnerId
+      );
+      tasks.add(task);
+    }
+    insert tasks;
+    System.debug('tasks: ' + tasks);
+    populateActivities();
+    System.debug('this.activities: ' + this.activities);
+
+    // We also want to make sure that the user can't do this action more than once
+    referralRecord.Admission_Steps_Added__c = true;
+    update new Referral__c(Id=referralRecord.Id, Admission_Steps_Added__c=true);
   }
 }
