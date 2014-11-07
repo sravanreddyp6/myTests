@@ -6,39 +6,69 @@ public class Shift_Note_Basic_Test{
     private static Action_plan_Objective__c apo;
     private static Action_plan_Action__c apa;
     
-static testMethod void myUnitTest() {
+	static testMethod void myUnitTest() {
+	
+	  createData();
+	  
+	  PageReference pageRef = Page.shiftnote_basic_form;
+	   Test.setCurrentPage(pageRef);
+	   pageRef.getParameters().put('retURL','%2F'+pn.id);
+	   
+	  ApexPages.StandardController sc = new ApexPages.StandardController(pn);  
+	    
+	  Shift_Note_Basic contrl = new Shift_Note_Basic(sc);
+	  
+	    contrl.myEdit();
+	    system.assert(contrl.editMode);
+	    contrl.myCancel();
+	    contrl.myEdit();
+	    Shift_Note_Basic.clsPlan_Goal tmpclsG =  new Shift_Note_Basic.clsPlan_Goal(apg);
+	    contrl.mySave();
+	    string nextpage = contrl.myFinal().getUrl();
+	    system.assertEquals('/p/process/Submit?id='+pn.id+'&retURL=%2F'+pn.id, nextpage);
+	    pn.Signature_on_File__c = 'Y';
+	    update pn;
+	    contrl.myFinal();
+	    pn.Number_of_Required_Signatures__c = 0;
+	    pn.Locked__c = false;
+	    update pn;
+	    contrl.myCheckB4Final();
+	    contrl.myFinal();
+	    contrl.GETallgoals();
+	    contrl.getchildrenScope();
+	    contrl.getGoals();
+	    
+	    
+	}
 
-  createData();
-  
-  PageReference pageRef = Page.shiftnote_basic_form;
-   Test.setCurrentPage(pageRef);
-   pageRef.getParameters().put('retURL','%2F'+pn.id);
-   
-  ApexPages.StandardController sc = new ApexPages.StandardController(pn);  
-    
-  Shift_Note_Basic contrl = new Shift_Note_Basic(sc);
-  
-    contrl.myEdit();
-    system.assert(contrl.editMode);
-    contrl.myCancel();
-    contrl.myEdit();
-    contrl.mySave();
-    string nextpage = contrl.myFinal().getUrl();
-    system.assertEquals('/p/process/Submit?id='+pn.id+'&retURL=%2F'+pn.id, nextpage);
-    pn.Signature_on_File__c = 'Y';
-    update pn;
-    contrl.myFinal();
-    pn.Number_of_Required_Signatures__c = 0;
-    pn.Locked__c = false;
-    update pn;
-    contrl.myCheckB4Final();
-    contrl.myFinal();
-    contrl.GETallgoals();
-    contrl.getchildrenScope();
-    contrl.getGoals();
-    
-    
-}
+//Testing the creation of new Record
+	static testMethod void myUnitTest2() {
+		TMN_Generic_Core_TestData testData2 = new TMN_Generic_Core_TestData();
+		 Action_Plan__c ap2 = new Action_Plan__c(
+	          Service_Assignment__c = testData2.theSA.id,
+	          Target_Date__c = system.today(),
+	          Effective_Date__c = system.today()-365
+	        );        
+	      insert ap2;
+	       
+	     Progress_Note__c pn2 = new Progress_Note__c(Service_Assignment__c=testData2.theSA.Id,Admission__c=testData2.theAdm.Id,Service_Code__c=testData2.theServiceCode.Id,Person_Being_Served__c=testData2.contactID,Start_Time__c=DateTime.newInstance(Date.Today(),time.newinstance(0,0,0,0)),End_Time__c=DateTime.newInstance(Date.Today(),time.newinstance(0,30,0,0)));
+	   
+		PageReference pageRef2 = Page.shiftnote_basic_form;
+		Test.setCurrentPage(pageRef2);
+		pageRef2.getParameters().put('planId',ap2.Id);
+		pageRef2.getParameters().put('saID',testData2.theSA.id);
+		pageRef2.getparameters().put('admID',testData2.theAdm.Id);
+		ApexPages.StandardController sc = new ApexPages.StandardController(pn2);
+		Shift_Note_Basic contrl = new Shift_Note_Basic(sc);
+		
+		contrl.myEdit();
+		contrl.mySave();
+		pn2.Signature_on_file__c = 'n';
+		update pn2;
+		contrl.myCheckB4Final();
+		system.assert(!contrl.canFinalize);
+				
+	}
     
      private static Action_Plan__c createData(){
      	
