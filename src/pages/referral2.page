@@ -1744,10 +1744,31 @@ function stopRKey(evt) {
         </apex:pageBlockTable>
       </apex:pageBlockSection>
 
+      <style>
+        [id$=activities] .requiredInput {
+          display: inline-block;
+          margin-left: 10px;
+        }
+        [id$=activities] .errorMsg {
+          display: inline-block;
+        }
+      </style>
       <apex:pageBlockSection columns="1" title="Referral Tracking" id="activities" collapsible="false">
         <apex:pageBlockSectionItem >
-          <input type="button" class="btn" value="Add Referral Tracking Activity"
-                              onclick="showAddActivity(); return false;" />
+          <apex:outputPanel>
+            <input type="button" class="btn" value="Add Referral Tracking Activity"
+              onclick="showAddActivity(); return false;" />
+            <apex:commandButton onclick="addNeuroAdmissionSteps(); return false;" value="Add Admission Steps" rendered="{!AND(ReferralRecordType='NeuroRestorative', !Referral__c.Admission_Steps_Added__c)}" />
+            <apex:outputLabel value="Admission Steps Assigned To" for="taskOwner" rendered="{!ReferralRecordType='NeuroRestorative' && !Referral__c.Admission_Steps_Added__c}" style="margin-left: 8px; margin-right: 8px; " />
+            <apex:inputField value="{!dummyTask.OwnerId}" label="Assigned To" id="taskOwner" rendered="{!ReferralRecordType='NeuroRestorative' && !Referral__c.Admission_Steps_Added__c}" required="false" />
+            <apex:actionStatus id="taskAssignStatus">
+              <apex:facet name="start">
+                <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+              </apex:facet>
+              <apex:facet name="stop" />
+            </apex:actionStatus>
+            <apex:actionFunction name="addNeuroAdmissionSteps" action="{!addNeuroAdmissionSteps}" rerender="activities" status="taskAssignStatus" />
+          </apex:outputPanel>
         </apex:pageBlockSectionItem>
 
         <apex:pageBlockTable value="{!activities}" var="activity">

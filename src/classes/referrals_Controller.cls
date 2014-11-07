@@ -33,6 +33,11 @@ public with sharing class referrals_Controller{
   }
   public Boolean isCambridge { get; set; }  // Makes it easier to implement common stuffs for Cambridge
   public Referral__c referralRecord { get; set; }
+  // For Neuro - the user Id to assign the admission steps (tasks) to
+  public Id userIdToAssignTasks { get; set; }
+  // We use a dummy task record in order to be able to use Salesforce's
+  // standard user chooser widget.
+  public Task dummyTask { get; set; }
   public Person_Being_Referred__c personBeingRefRecord { get; set; }
   public List<Person_Being_Referred__c> refResults { get; set; }
   public Contact personBeingServedRecord { get; set; }
@@ -577,6 +582,7 @@ public with sharing class referrals_Controller{
     this.isErrorDisplayed = false;
     this.isCambridge = false;
     this.referralRecord = (Referral__c) ctl.getRecord();
+    this.dummyTask = new Task();
     this.agencies = new List<Agency_Involved_With_Individual__c>();
     this.fundingSources = new List<Funding_Source__c>();
     this.relParties = new List<Related_Party__c>();
@@ -1297,5 +1303,36 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
       }
       System.debug('Referral Record Type: ' + referralRecordType);
       System.debug('isCambridge: ' + isCambridge);
+  }
+
+  public void addNeuroAdmissionSteps() {
+    if (dummyTask.OwnerId == null) {
+      dummyTask.OwnerId.addError('Field is required!');
+      return;
+    }
+    Map<String, Neuro_Admission_Steps__c> stepSubjects = Neuro_Admission_Steps__c.getAll();
+    List<Task> tasks = new List<Task>();
+    Set<String> nameSet = stepSubjects.keySet();
+    List<Integer> orderedNames = new List<Integer>();  // We use this list to sort the subjects by their names
+    for (String name: nameSet) {
+      orderedNames.add(Integer.valueOf(name));
+    }
+    orderedNames.sort();
+    for (Integer orderedName: orderedNames) {
+      Task task = new Task(
+        Subject = stepSubjects.get(String.valueOf(orderedName)).Subject__c,
+        Priority = 'Normal',
+        Status = 'Not Started',
+        WhatId = referralRecord.Id,
+        OwnerId = dummyTask.OwnerId
+      );
+      tasks.add(task);
+    }
+    insert tasks;
+    this.activities.addAll(tasks);
+
+    // We also want to make sure that the user can't do this action more than once
+    referralRecord.Admission_Steps_Added__c = true;
+    update new Referral__c(Id=referralRecord.Id, Admission_Steps_Added__c=true);
   }
 }

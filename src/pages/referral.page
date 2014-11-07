@@ -2294,23 +2294,36 @@ clearDisableField = function(pageSectionId){
 
         <apex:inputHidden value="{!fundingSource.RecordType.Name}" id="fundingSourceEntryRecordType" />
         <apex:inputHidden value="{!fundingSource.RecordTypeId}" id="fundingSourceEntryRecordTypeId" />
-        <!--
-        <apex:outputpanel style="display:none">
-        <apex:inputhidden value="{!fundingSource.Funding_Source__c}" id="fundingSource"/>
-        <apex:inputhidden value="{!fundingSource.Funding_Source_ID__c}" id="fundingSourceId"/>
-        <apex:inputhidden value="{!fundingSource.Status_String__c}" id="fundingStatus"/>
-        <apex:inputhidden value="{!fundingSource.Service_Being_Funded_String__c}" id="fundingService"/>
-        <apex:inputhidden value="{!fundingSource.Comment__c}" id="fundingComment"/>
-        </apex:outputpanel> -->
       </apex:pageBlockSection>
 
+      <style>
+        [id$=activities] .requiredInput {
+          display: inline-block;
+          margin-left: 10px;
+        }
+        [id$=activities] .errorMsg {
+          display: inline-block;
+        }
+      </style>
       <apex:pageBlockSection columns="1" title="Referral Tracking" id="activities">
         <apex:pageBlockSectionItem >
-          <apex:commandButton value="Add Referral Tracking Activity"
-                              onclick="showAddActivity(); openModalDialog('ActivityModal', 'span', 'Add Activity','none');return false;" />
+          <apex:outputPanel>
+            <apex:commandButton value="Add Referral Tracking Activity"
+                                onclick="showAddActivity(); openModalDialog('ActivityModal', 'span', 'Add Activity','none'); return false;" />
+            <apex:commandButton onclick="addNeuroAdmissionSteps(); return false;" value="Add Admission Steps" rendered="{!AND(ReferralRecordType='NeuroRestorative', !Referral__c.Admission_Steps_Added__c)}" />
+            <apex:outputLabel value="Admission Steps Assigned To" for="taskOwner" rendered="{!ReferralRecordType='NeuroRestorative' && !Referral__c.Admission_Steps_Added__c}" style="margin-left: 8px; margin-right: 8px; " />
+            <apex:inputField value="{!dummyTask.OwnerId}" label="Assigned To" id="taskOwner" rendered="{!ReferralRecordType='NeuroRestorative' && !Referral__c.Admission_Steps_Added__c}" required="false" />
+            <apex:actionStatus id="taskAssignStatus">
+              <apex:facet name="start">
+                <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+              </apex:facet>
+              <apex:facet name="stop" />
+            </apex:actionStatus>
+            <apex:actionFunction name="addNeuroAdmissionSteps" action="{!addNeuroAdmissionSteps}" rerender="activities" status="taskAssignStatus" />
+          </apex:outputPanel>
         </apex:pageBlockSectionItem>
 
-            <apex:pageBlockTable value="{!activities}" var="activity">
+        <apex:pageBlockTable value="{!activities}" var="activity">
           <apex:column value="{!activity.Subject}" />
           <apex:column value="{!activity.ActivityDate}" />
           <apex:column value="{!activity.OwnerId}" />
