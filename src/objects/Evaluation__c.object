@@ -88,6 +88,11 @@
             <isRequired>false</isRequired>
         </displayedFields>
         <displayedFields>
+            <field>Isolation_Type__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
             <field>O2_Type__c</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>false</isRequired>
@@ -104,6 +109,31 @@
         </displayedFields>
         <displayedFields>
             <field>PMV__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Trach_Size__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Trach_Size_Other__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Trach_Placement_Date__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Trach_Type__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Trach_Type_Other__c</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>false</isRequired>
         </displayedFields>
@@ -1607,7 +1637,7 @@
         </picklist>
         <trackTrending>false</trackTrending>
         <type>MultiselectPicklist</type>
-        <visibleLines>4</visibleLines>
+        <visibleLines>7</visibleLines>
     </fields>
     <fields>
         <fullName>Communication_Problem_Solving__c</fullName>
@@ -4121,6 +4151,14 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Has_IV__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>IV</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>Head_Circumference_cm__c</fullName>
         <externalId>false</externalId>
         <label>Head Circumference (cm)</label>
@@ -4192,6 +4230,33 @@
         </picklist>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Heart_Intervention_Need_Picklist__c</fullName>
+        <externalId>false</externalId>
+        <label>Heart Intervention Need Picklist</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Heart_Rate_Intervention_Describe__c</fullName>
+        <externalId>false</externalId>
+        <label>Heart Rate Intervention Describe</label>
+        <length>3000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
     </fields>
     <fields>
         <fullName>Heart_Sound_Describe__c</fullName>
@@ -4437,9 +4502,9 @@
         <visibleLines>3</visibleLines>
     </fields>
     <fields>
-        <fullName>IV_Site_Issues__c</fullName>
+        <fullName>IV_Picklist__c</fullName>
         <externalId>false</externalId>
-        <label>IV Site Issues</label>
+        <label>IV</label>
         <picklist>
             <picklistValues>
                 <fullName>Yes</fullName>
@@ -4455,9 +4520,9 @@
         <type>Picklist</type>
     </fields>
     <fields>
-        <fullName>IV__c</fullName>
+        <fullName>IV_Site_Issues__c</fullName>
         <externalId>false</externalId>
-        <label>IV</label>
+        <label>IV Site Issues</label>
         <picklist>
             <picklistValues>
                 <fullName>Yes</fullName>
@@ -4939,6 +5004,16 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>LOMN_Physician_Name__c</fullName>
+        <externalId>false</externalId>
+        <label>Physician Name</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>LOMN_Physician_Referral_Attached_Date__c</fullName>
         <externalId>false</externalId>
         <label>LOMN/Physician Referral Attached Date</label>
@@ -4950,7 +5025,7 @@
         <fullName>LOMN_Physician_Referral_Attached__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
-        <label>LOMN/Physician Referral Attached</label>
+        <label>LOMN/Physician Referral Requested</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
@@ -7145,7 +7220,7 @@
             </picklistValues>
             <picklistValues>
                 <fullName>No</fullName>
-                <default>true</default>
+                <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
@@ -13125,6 +13200,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Heart_Intervention_Need_Picklist__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Heart_Sounds__c</picklist>
             <values>
                 <fullName>Irregular</fullName>
@@ -13191,7 +13277,7 @@
             </values>
         </picklistValues>
         <picklistValues>
-            <picklist>IV_Site_Issues__c</picklist>
+            <picklist>IV_Picklist__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -13202,7 +13288,7 @@
             </values>
         </picklistValues>
         <picklistValues>
-            <picklist>IV__c</picklist>
+            <picklist>IV_Site_Issues__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -17755,6 +17841,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Heart_Intervention_Need_Picklist__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Heart_Sounds__c</picklist>
             <values>
                 <fullName>Irregular</fullName>
@@ -17821,7 +17918,7 @@
             </values>
         </picklistValues>
         <picklistValues>
-            <picklist>IV_Site_Issues__c</picklist>
+            <picklist>IV_Picklist__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -17832,7 +17929,7 @@
             </values>
         </picklistValues>
         <picklistValues>
-            <picklist>IV__c</picklist>
+            <picklist>IV_Site_Issues__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -22313,6 +22410,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Heart_Intervention_Need_Picklist__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Heart_Sounds__c</picklist>
             <values>
                 <fullName>Irregular</fullName>
@@ -22390,7 +22498,7 @@
             </values>
         </picklistValues>
         <picklistValues>
-            <picklist>IV_Site_Issues__c</picklist>
+            <picklist>IV_Picklist__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -22401,7 +22509,7 @@
             </values>
         </picklistValues>
         <picklistValues>
-            <picklist>IV__c</picklist>
+            <picklist>IV_Site_Issues__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -27052,6 +27160,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Heart_Intervention_Need_Picklist__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Heart_Sounds__c</picklist>
             <values>
                 <fullName>Irregular</fullName>
@@ -27118,7 +27237,7 @@
             </values>
         </picklistValues>
         <picklistValues>
-            <picklist>IV_Site_Issues__c</picklist>
+            <picklist>IV_Picklist__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -27129,7 +27248,7 @@
             </values>
         </picklistValues>
         <picklistValues>
-            <picklist>IV__c</picklist>
+            <picklist>IV_Site_Issues__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
