@@ -676,11 +676,11 @@
                     </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:tab>
+            <apex:commandButton onclick="window.location='/apex/NeuroEvaluationEsign?id={!Evaluation__c.Id}'; return false;" value="E-Sign" style="position: absolute; margin-left: 720px; margin-top: 8px; " />
         </apex:tabPanel>
         <apex:pageBlock id="buttons">
             <apex:pageBlockButtons location="bottom">
                 <apex:commandButton onclick="window.location='/apex/NeuroEvaluationEdit?id={!Evaluation__c.Id}&tab={!selectedTab}'; return false;" value="Edit" rendered="{!editable}" />
-                <apex:commandButton onclick="window.location='/apex/NeuroEvaluationEsign?id={!Evaluation__c.Id}'; return false;" value="E-Sign" rendered="{!selectedTab == 'psychoSocialTab'}" />
                 <apex:commandButton value="Generate PDF" onclick="openWin('/apex/NeuroEvaluationPDF?id={!Evaluation__c.Id}'); return false;" />
                 <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" style="display: none;" id="pdfGenerationSpinner" />
             </apex:pageBlockButtons>

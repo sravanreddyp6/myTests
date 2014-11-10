@@ -140,8 +140,8 @@
                         <apex:outputField value="{!Evaluation__c.Date_of_Injury_Onset__c}" />
                         <apex:outputField value="{!Evaluation__c.Secondary_Diagnosis__c}" />
                         <apex:outputField value="{!Evaluation__c.Bariatric_Equipment__c}" />
-                    	<apex:outputField value="{!Evaluation__c.PMH__c}" />
-                    	<apex:outputPanel>
+                        <apex:outputField value="{!Evaluation__c.PMH__c}" />
+                        <apex:outputPanel >
                             <apex:outputLabel value="Weight at Admission" style="font-weight: Bold; color: #4A4A56; font-size: 10px;margin-left:85px;"/>
                             &nbsp;&nbsp;&nbsp;
                             <apex:outputField id="lbs" value="{!Evaluation__c.Weightlbs__c}" style="margin-left: 25px;"/>
@@ -156,7 +156,7 @@
                         </apex:outputPanel>
                         </apex:pageBlockSection>
                         <apex:pageBlockSection columns="2" >
-						<apex:outputField value="{!Evaluation__c.Precautions__c}" />
+                        <apex:outputField value="{!Evaluation__c.Precautions__c}" />
                         <apex:outputPanel >
                             <apex:outputLabel value="Height at Admission" style="font-weight: Bold; color: #4A4A56; font-size: 10px;margin-left: 85px;"/>
                             &nbsp;&nbsp;&nbsp;
@@ -169,7 +169,7 @@
                                 <apex:outputText value=" (or) "/>
                                 <apex:outputField id="cm" value="{!Evaluation__c.Height_in_cms__c}" style="margin-left: 25px;"/>
                                 <apex:outputLabel for="cm" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Height_in_cms__c.label}</apex:outputLabel>
-                        </apex:outputPanel>                       
+                        </apex:outputPanel>
                         <!-- Added By Sravan for Evaluation Enhancement Apr 23, 2014  -->
                         <apex:outPutField Value="{!Evaluation__c.NKDA__c}" />
                     </apex:pageBlockSection>
@@ -929,11 +929,11 @@
                     </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:tab>
+            <apex:commandButton onclick="window.location='/apex/CareMeridianEvaluationEsign?id={!Evaluation__c.Id}'; return false;" value="E-Sign" style="position: absolute; margin-left: 810px; margin-top: 8px; " />
         </apex:tabPanel>
         <apex:pageBlock id="buttons">
             <apex:pageBlockButtons location="bottom">
                 <apex:commandButton onclick="window.location='/apex/CareMeridianEvaluationEdit?id={!Evaluation__c.Id}&tab={!selectedTab}'; return false;" value="Edit" rendered="{!Evaluation__c.Referral__r.Person_Being_Served__c == null && editable}"/>
-                <apex:commandButton onclick="window.location='/apex/CareMeridianEvaluationEsign?id={!Evaluation__c.Id}'; return false;" value="E-Sign" rendered="{!selectedTab == 'dischargePlanTab'}" />
                 <apex:commandButton value="Generate PDF" onclick="openWin('/apex/CareMeridianEvaluationPDF?id={!Evaluation__c.Id}'); return false;" />
                 <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" style="display: none;" id="pdfGenerationSpinner" />
             </apex:pageBlockButtons>
