@@ -519,7 +519,7 @@ clearDisableField = function(pageSectionId){
           </apex:outputPanel>
         </apex:pageBlockSectionItem>
         <apex:inputField value="{!personBeingRefRecord.SSN__c}"/>
-        <apex:inputField value="{!personBeingRefRecord.Level_of_Education__c}" id="levelOfEducation" required="{!AND(Referral__c.Referral_Status__c='Closed', Referral__c.Close_Reason__c='Admitted')}" />
+        <apex:inputField value="{!personBeingRefRecord.Level_of_Education__c}" id="levelOfEducation" required="{!AND(Referral__c.Referral_Status__c='Closed', Referral__c.Close_Reason__c='Admitted', ReferralRecordType = 'NeuroRestorative')}" />
       </apex:pageBlockSection>
       <apex:pageBlockSection showHeader="false"
                              columns="1"
