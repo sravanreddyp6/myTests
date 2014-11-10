@@ -930,10 +930,9 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
 
     //Start EC-54 CM Save and Close Validations
     if (referralRecordType == 'CareMeridian') {
-        Boolean hasFundError = true, hasLocError = true, hasBlankError = true, hasCloseError = false;       
-        hasBlankError = (checkForBlankFields(referralRecord,'Referral__c',new list<string>{'Evaluated_By_Internal__c'}, 'A value for {0} is required to save'));      
+        Boolean hasFundError = true, hasLocError = true, hasCloseError = false;             
         if(referralRecord.Close_Reason__c != 'Error' && referralRecord.Referral_Status__c == 'Closed'){
-            hasCloseError = checkForBlankFields(referralRecord,'Referral__c',new list<string>{'Current_Location__c','Close_Reason__c','Agency_Name__c'}, 'A value for {0} is required to close');
+            hasCloseError = checkForBlankFields(referralRecord,'Referral__c',new list<string>{'Current_Location__c','Close_Reason__c','Agency_Name__c','Evaluated_By_Internal__c'}, 'A value for {0} is required to close');
         }
         for(Funding_Source__c fs :fundingSources){
           if (fs.Type_of_Coverage__c == 'Primary'){
@@ -953,7 +952,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
         if (hasLocError){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'A primary location must be selected to save the referral'));
         }
-        if (hasFundError==true || hasLocError==true || hasBlankError==true || hasCloseError==true){
+        if (hasFundError==true || hasLocError==true || hasCloseError==true){
             return null;
         }
     }  
