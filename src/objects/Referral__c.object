@@ -81992,7 +81992,7 @@
         <fullName>Highest_Level_of_Education_Required</fullName>
         <active>true</active>
         <description>Highest Level of Education is required when Status is Closed and Close Reason is Admitted.</description>
-        <errorConditionFormula>AND(  ISPICKVAL( Person_Being_Referred__r.Level_of_Education__c, &apos;&apos; ), ISPICKVAL( Referral_Status__c, &apos;Closed&apos; ), ISPICKVAL ( Close_Reason__c, &apos;Admitted&apos; ))</errorConditionFormula>
+        <errorConditionFormula>AND(  ISPICKVAL( Person_Being_Referred__r.Level_of_Education__c, &apos;&apos; ), ISPICKVAL( Referral_Status__c, &apos;Closed&apos; ), ISPICKVAL ( Close_Reason__c, &apos;Admitted&apos; ),  RecordType.Name == &apos;NeuroRestorative&apos; )</errorConditionFormula>
         <errorMessage>Highest Level of Education is required when Close Reason is Admitted.</errorMessage>
     </validationRules>
     <validationRules>
