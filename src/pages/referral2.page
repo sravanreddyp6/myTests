@@ -1821,7 +1821,7 @@ function stopRKey(evt) {
                         ReferralRecordType = 'California'||
                         ReferralRecordType = 'Nevada'}"
           />
-          <apex:outputField value="{!Referral__c.Desired_Living_Environment_at_Discharge__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:outputField value="{!Referral__c.Verbally_Aggressive__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
 
           <!-- Row 1, Col 3 -->
           <apex:outputField value="{!Referral__c.Uses_Tobacco__c}"
@@ -1845,7 +1845,7 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Law_Enforcement_Involvement__c}"
             rendered="{!ReferralRecordType = 'Wisconsin'}"
           />
-          <apex:outputField value="{!Referral__c.Elopement__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:outputField value="{!Referral__c.Theft__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
 
           <!-- Row 1, Col 4 -->
           <apex:outputField value="{!Referral__c.Maintain_Sibling_Group__c}"
@@ -1869,7 +1869,8 @@ function stopRKey(evt) {
             rendered="{!ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:outputField value="{!Referral__c.Unwanted_Sexual_Behavior__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 2, Col 1 -->
           <apex:outputField value="{!Referral__c.Staffing_Ratio__c}"
             rendered="{!ReferralRecordType != 'Indiana' && ReferralRecordType != 'NeuroRestorative'}"
@@ -1877,7 +1878,7 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Mobility__c}"
             rendered="{!ReferralRecordType = 'Indiana'}"
           />
-          <apex:outputField value="{!Referral__c.Physically_Aggressive_to_Staff__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:outputField value="{!Referral__c.Desired_Living_Environment_at_Discharge__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
 
           <!-- Row 2, Col 2 -->
           <apex:outputField value="{!Referral__c.Verbally_Aggressive__c}"
@@ -1906,7 +1907,9 @@ function stopRKey(evt) {
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}"
           />
-          <apex:outputField value="{!Referral__c.Physically_Aggressive_to_Self__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:outputField value="{!Referral__c.Verbally_Aggressive_Description__c}" label="Describe"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Verbally_Aggressive__c}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Verbally_Aggressive__c}" />
 
           <!-- Row 2, Col 3 -->
           <apex:outputField value="{!Referral__c.Chemical_Use_Recovery__c}"
@@ -1930,7 +1933,9 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Uses_Tobacco__c}"
             rendered="{!ReferralRecordType = 'Wisconsin'}"
           />
-          <apex:outputField value="{!Referral__c.Physically_Aggressive_to_Peers__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:outputField value="{!Referral__c.Theft_Description__c}" label="Describe"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Theft__c}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Theft__c}" />
 
           <!-- Row 2, Col 4 -->
           <apex:outputField value="{!Referral__c.If_Yes_How_Many__c}"
@@ -1954,7 +1959,9 @@ function stopRKey(evt) {
             rendered="{!ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:outputField value="{!Referral__c.Verbally_Aggressive__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:outputField value="{!Referral__c.If_Yes_Type_of_Unwanted_Sexual_Behavior__c}" label="If Yes, Type"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Unwanted_Sexual_Behavior__c}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Unwanted_Sexual_Behavior__c}" />
 
           <!-- Row 3, Col 1 -->
           <apex:outputField value="{!Referral__c.Living_Environment__c}"
@@ -1963,9 +1970,7 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Accessible_Housing_Needed__c}"
             rendered="{!ReferralRecordType = 'Indiana'}"
           />
-          <apex:outputField value="{!Referral__c.Aggressive_to_Staff_Description__c}" label="Description"
-            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Physically_Aggressive_to_Staff__c}"/>
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Physically_Aggressive_to_Staff__c}" />
+          <apex:outputField value="{!Referral__c.Physically_Aggressive_to_Staff__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
 
           <!-- Row 3, Col 2 -->
           <apex:outputField value="{!Referral__c.Suicide_Threats__c}"
@@ -1994,9 +1999,7 @@ function stopRKey(evt) {
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}"
           />
-          <apex:outputField value="{!Referral__c.Aggressive_to_Self_Description__c}" label="Description"
-            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Physically_Aggressive_to_Self__c}"/>
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Physically_Aggressive_to_Self__c}" />
+          <apex:outputField value="{!Referral__c.Suicide_Threats__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
 
           <!-- Row 3, Col 3 -->
           <apex:outputField value="{!Referral__c.Chemical_Use_Current__c}"
@@ -2018,9 +2021,7 @@ function stopRKey(evt) {
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:outputField value="{!Referral__c.Aggressive_to_Peers_Description__c}" label="Description"
-            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Physically_Aggressive_to_Peers__c}"/>
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Physically_Aggressive_to_Peers__c}" />
+          <apex:outputField value="{!Referral__c.Uses_Tobacco__c}" label="Tobacco Use (Current)" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
 
           <!-- Row 3, Col 4 -->
           <apex:outputField value="{!Referral__c.No_Same_Sex_Peers__c}"
@@ -2042,9 +2043,7 @@ function stopRKey(evt) {
             rendered="{!ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:outputField value="{!Referral__c.Verbally_Aggressive_Description__c}" label="Description"
-            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Verbally_Aggressive__c}"/>
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Verbally_Aggressive__c}" />
+          <apex:outputField value="{!Referral__c.Current_Pending_Litigation__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}" />
 
           <!-- Row 4, Col 1 -->
           <apex:outputField value="{!Referral__c.Preferred_Setting__c}"
@@ -2066,7 +2065,10 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Accessible_Vehicle_Needed__c}"
             rendered="{!ReferralRecordType = 'Indiana'}"
           />
-          <apex:outputField value="{!Referral__c.Suicide_Threats__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:outputField value="{!Referral__c.Aggressive_to_Staff_Description__c}" label="Describe"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Physically_Aggressive_to_Staff__c}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Physically_Aggressive_to_Staff__c}" />
+
           <!-- Row 4, Col 2 -->
           <apex:outputField value="{!Referral__c.Suicide_Attempts__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -2094,7 +2096,10 @@ function stopRKey(evt) {
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}"
           />
-          <apex:outputField value="{!Referral__c.Suicide_Attempts__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:outputField value="{!Referral__c.Suicide_Threats_Description__c}" label="Describe"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Suicide_Threats__c}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Suicide_Threats__c}" />
+
           <!-- Row 4, Col 3 -->
           <apex:outputField value="{!Referral__c.Chemical_Dependency_Treatment__c}"
             rendered="{!isCambridge}"
@@ -2115,7 +2120,10 @@ function stopRKey(evt) {
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:outputField value="{!Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:outputField value="{!Referral__c.Current_Tobacco_Use_Description__c}" label="Describe"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Uses_Tobacco__c}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Uses_Tobacco__c}" />
+
           <!-- Row 4, Col 4 -->
           <apex:outputField value="{!Referral__c.Live_with_Opposite_Sex__c}"
             rendered="{!isCambridge}"
@@ -2136,7 +2144,9 @@ function stopRKey(evt) {
             rendered="{!ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:outputField value="{!Referral__c.Theft__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:outputField value="{!Referral__c.Current_Pending_Litigation_Description__c}" label="Describe"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Current_Pending_Litigation__c}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Current_Pending_Litigation__c}" />
 
           <!-- Row 5, Col 1 -->
           <apex:outputField value="{!Referral__c.Mobility__c}"
@@ -2160,9 +2170,7 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Area_of_State_Interested_In__c}"
             rendered="{!ReferralRecordType = 'Indiana'}"
           />
-          <apex:outputField value="{!Referral__c.Suicide_Threats_Description__c}" label="Description"
-            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Suicide_Threats__c}"/>
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Suicide_Threats__c}" />
+          <apex:outputField value="{!Referral__c.Physically_Aggressive_to_Self__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
 
           <!-- Row 5, Col 2 -->
           <apex:outputField value="{!Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}"
@@ -2191,9 +2199,7 @@ function stopRKey(evt) {
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}"
           />
-          <apex:outputField value="{!Referral__c.Suicide_Attempts_Description__c}" label="Description"
-            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Suicide_Attempts__c}"/>
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Suicide_Attempts__c}" />
+          <apex:outputField value="{!Referral__c.Suicide_Attempts__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
 
           <!-- Row 5, Col 3 -->
           <apex:outputField value="{!Referral__c.Drug_Possession_Distribution__c}"
@@ -2224,9 +2230,7 @@ function stopRKey(evt) {
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:outputField value="{!Referral__c.Self_Harm_Behavior_Description__c}" label="Description"
-            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}"/>
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}" />
+          <apex:outputField value="{!Referral__c.Chemical_Use_Current__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
 
           <!-- Row 5, Col 4 -->
           <apex:outputField value="{!Referral__c.No_Cross_Cultural_Placement__c}"
@@ -2248,9 +2252,7 @@ function stopRKey(evt) {
             rendered="{!ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:outputField value="{!Referral__c.Theft_Description__c}" label="Description"
-            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Theft__c}"/>
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Theft__c}" />
+          <apex:outputField value="{!Referral__c.Elopement__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
 
           <!-- Row 6, Col 1 -->
           <apex:outputField value="{!Referral__c.Accessible_Housing_Needed__c}"
@@ -2272,7 +2274,9 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Current_Medical_Conditions__c}"
             rendered="{!ReferralRecordType = 'Indiana'}"
           />
-          <apex:outputField value="{!Referral__c.Uses_Tobacco__c}" label="Tobacco Use (Current)" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:outputField value="{!Referral__c.Aggressive_to_Self_Description__c}" label="Describe"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Physically_Aggressive_to_Self__c}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Physically_Aggressive_to_Self__c}" />
 
           <!-- Row 6, Col 2 -->
           <apex:outputField value="{!Referral__c.Fire_Setting__c}"
@@ -2301,7 +2305,9 @@ function stopRKey(evt) {
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}"
           />
-          <apex:outputField value="{!Referral__c.Chemical_Use_Current__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:outputField value="{!Referral__c.Suicide_Attempts_Description__c}" label="Describe"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Suicide_Attempts__c}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Suicide_Attempts__c}" />
 
           <!-- Row 6, Col 3 -->
           <apex:outputField value="{!Referral__c.Elopement__c}"
@@ -2330,7 +2336,9 @@ function stopRKey(evt) {
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:outputField value="{!Referral__c.Chemical_Dependency_Treatment__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:outputField value="{!Referral__c.Current_Chemical_Use_Date_Last_Used__c}" label="Date Last Used"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Chemical_Use_Current__c}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Chemical_Use_Current__c}" />
 
           <!-- Row 6, Col 4 -->
           <apex:outputField value="{!Referral__c.Can_Be_Placed_With_Other_Children__c}"
@@ -2359,7 +2367,7 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Has_Pets__c}"
             rendered="{!ReferralRecordType = 'Wisconsin'}"
           />
-          <apex:outputField value="{!Referral__c.Unwanted_Sexual_Behavior__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}" />
 
           <!-- Row 7, Col 1 -->
           <apex:outputField value="{!Referral__c.Accessible_Vehicle_Needed__c}"
@@ -2380,9 +2388,7 @@ function stopRKey(evt) {
                         ReferralRecordType = 'Wisconsin' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:outputField value="{!Referral__c.Current_Tobacco_Use_Description__c}" label="Description"
-            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Uses_Tobacco__c}"/>
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Uses_Tobacco__c}" />
+          <apex:outputField value="{!Referral__c.Physically_Aggressive_to_Peers__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
 
           <!-- Row 7, Col 2 -->
           <apex:outputField value="{!Referral__c.Property_Destruction__c}"
@@ -2411,9 +2417,7 @@ function stopRKey(evt) {
           <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:outputField value="{!Referral__c.Current_Chemical_Use_Date_Last_Used__c}" label="Date Last Used"
-            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Chemical_Use_Current__c}"/>
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Chemical_Use_Current__c}" />
+          <apex:outputField value="{!Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
 
           <!-- Row 7, Col 3 -->
           <apex:outputField value="{!Referral__c.Unwanted_Sexual_Behavior__c}"
@@ -2445,9 +2449,7 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Exterior_Locking_Mechanism_Required__c}"
             rendered="{!ReferralRecordType = 'Wisconsin'}"
           />
-          <apex:outputField value="{!Referral__c.Chemical_Dep_Treatment_Date_Completed__c}" label="Date Completed"
-            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Chemical_Dependency_Treatment__c}"/>
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Chemical_Dependency_Treatment__c}" />
+          <apex:outputField value="{!Referral__c.Chemical_Dependency_Treatment__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
 
           <!-- Row 7, Col 4 -->
           <apex:outputField value="{!Referral__c.If_Yes_Age_Requirements__c}"
@@ -2469,9 +2471,7 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.If_Yes_What_kind__c}"
             rendered="{!ReferralRecordType = 'Wisconsin'}"
           />
-          <apex:outputField value="{!Referral__c.If_Yes_Type_of_Unwanted_Sexual_Behavior__c}" label="If Yes, Type"
-            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Unwanted_Sexual_Behavior__c}"/>
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Unwanted_Sexual_Behavior__c}" />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}" />
 
           <!-- Row 8, Col 1 -->
           <apex:outputField value="{!Referral__c.Geographic_Restrictions__c}"
@@ -2492,7 +2492,9 @@ function stopRKey(evt) {
                         ReferralRecordType = 'Wisconsin' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:outputField value="{!Referral__c.Current_Pending_Litigation__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:outputField value="{!Referral__c.Aggressive_to_Peers_Description__c}" label="Describe"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Physically_Aggressive_to_Peers__c}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Physically_Aggressive_to_Peers__c}" />
 
           <!-- Row 8, Col 2 -->
           <apex:outputField value="{!Referral__c.Gang_Involvement__c}"
@@ -2521,7 +2523,9 @@ function stopRKey(evt) {
                         ReferralRecordType = 'Oregon' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:outputField value="{!Referral__c.Self_Harm_Behavior_Description__c}" label="Describe"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}" />
 
           <!-- Row 8, Col 3 -->
           <apex:outputField value="{!Referral__c.Registered_Sex_Offender__c}"
@@ -2554,7 +2558,9 @@ function stopRKey(evt) {
           <apex:outputField value="{!Referral__c.Unwanted_Sexual_Behavior__c}"
             rendered="{!ReferralRecordType = 'Wisconsin'}"
           />
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:outputField value="{!Referral__c.Chemical_Dep_Treatment_Date_Completed__c}" label="Date Completed"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Chemical_Dependency_Treatment__c}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Chemical_Dependency_Treatment__c}" />
 
           <!-- Row 8, Col 4 -->
           <apex:outputField value="{!Referral__c.Family_Involvement_Restrictions__c}"
@@ -2575,9 +2581,6 @@ function stopRKey(evt) {
           />
           <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Wisconsin' ||
                         ReferralRecordType = 'Iowa'}" />
-          <apex:outputField value="{!Referral__c.Current_Pending_Litigation_Description__c}" label="Describe"
-            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Current_Pending_Litigation__c}"/>
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Current_Pending_Litigation__c}" />
 
           <!-- Row 9, Col 2 -->
           <apex:outputField value="{!Referral__c.Theft__c}"
