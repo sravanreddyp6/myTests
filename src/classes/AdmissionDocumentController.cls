@@ -81,6 +81,7 @@ public with sharing class AdmissionDocumentController {
     public pageReference editTreeNode(){
     	Id selectedID = Id.valueOf(Apexpages.currentPage().getParameters().get('selectedKey'));    	
     	currrentAssocDoc = treeModel.get(selectedID).associatedDoc;
+    	treeModel.get(selectedID).isChanged = true;
     	return null;
     }
     
@@ -121,7 +122,7 @@ public with sharing class AdmissionDocumentController {
 																		Recurring_Frequency__c = docWrap.doc.Recurring_Frequency__c,
 																		sObject_Id__c = this.admission.id,
 																		sObject_Type__c = 'Admission',
-																		Status__c = null,
+																		Status__c = 'Initial',
 																		Status_Date__c = null );
 				docWrap.associatedDoc = newDoc;		
 			}

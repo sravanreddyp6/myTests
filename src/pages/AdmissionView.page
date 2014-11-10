@@ -1,11 +1,159 @@
-<apex:page title="Admission: {!admission.Name}" standardController="Admission__c" extensions="AdmissionViewExtension"  standardStylesheets="true" sidebar="false"  tabStyle="Persons_Being_Served_New__tab">
+<apex:page title="Admission: {!admission.Name}" standardController="Admission__c" extensions="AdmissionViewExtension,AdmissionDocumentController"  standardStylesheets="true" sidebar="false"  tabStyle="Persons_Being_Served_New__tab">
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+
+  <style type="text/css">
+    .dialogLoadingSpinner {
+      margin-left: 5px;
+    }
+    .modalDialog {
+      max-height: 500px;
+      overflow: auto;
+    }
+    .modalDialog .modalSubheader {
+      font-weight: bold;
+    }
+    .modalDialog .pbHeader {
+      font-size: 0.9em;
+    }
+    .nowrap {
+      white-space: nowrap;
+    }
+    .fixed-dialog{
+        position: fixed;
+        top:75px;
+        left:100px;
+        overflow-y:scroll;
+        max-height:400px;
+    }
+    .fieldLabel {
+        font-size:90%;
+        color:#4a4a56;
+        font-weight:bold;
+    }
+    .whitenoise { color:white; }
+    .cssWait { cursor:wait;}
+    .cssWaitComplete { cursor:auto;}    
+  </style>
+
+ <script type="text/javascript">
+    j$ = jQuery.noConflict();
+    
+(function ($) {
+    openModalDialog = function (dialogId, tagType, titleString, dClass, width) {
+        if (!width) {
+            width = 800;
+        }
+        if (!dClass) {
+            dClass = 'fixed-dialog';
+        }
+        selector = tagType + '[id$=' + dialogId + ']';
+        if ($(selector).dialog("isOpen")!==true) {
+            $(selector).dialog({
+                dialogClass: dClass,
+                title:titleString,
+                modal:true,
+                width: width,
+                resizable: false,
+                minHeight: 0,
+                dialogClass: 'modalDialog',
+                closeOnEscape:false,
+                position: {
+                    my: "center top",
+                    at: "center top"
+                },
+                open: function () {
+                    $("body").css("overflow", "hidden");
+                }
+            }).parent().appendTo($('form[id$=admissionForm]'));
+            $(selector).parent().find('a.ui-dialog-titlebar-close').remove();
+        }
+    };
+    
+    closeModalDialog = function (dialogId, tagType) {
+        selector = tagType + '[id$=' + dialogId + ']';
+        $(selector).dialog('destroy');
+        // Allow "background" to be scrollable when dialogs are closed.
+        $("body").css("overflow", "auto");
+    };
+
+    
+    assignValue = function (elSelector, value) {
+        var $el = $(document.getElementById(elSelector));
+        $el.val(value);
+    }
+}) (jQuery.noConflict());
+
+
+var isModified = false;
+var nodeKey = null;    
+function recordChange(){
+    isModified = true;
+} 
+
+function triggerNodeEdit(nK){
+    nodeKey = nK.key;   
+    if (isModified){
+        $('[id*=dialog-confirm]').dialog( "open" );
+    }
+    else {
+    
+    	if(!nK.isFolder()){
+			waitStart();
+        	editNode(nodeKey);
+        }
+    }
+ }
+ 
+ function waitComplete(){
+ 	$('html, body').css("cursor", "auto");
+ }
+ 
+ function waitStart(){
+	    $('html, body').css("cursor", "wait");
+ }
+ 
+ function showAddEditAdmissionDoc(){
+ 	waitStart();
+ 	showAddEditAdmissionDocAF();
+ }
+
+ function saveAdmissionDoc(){
+ 	waitStart();
+ 	saveAdmissionDocAF();
+ }
+  
+ 
+ function triggerNodeSelection (treeNode) {
+	waitStart();  
+	updateDocSelectionAF(treeNode.key, treeNode.isSelected());  
+ }
+ </script>
+
 <apex:variable value="{! $User.Operating_Group__c = 'Cambridge'}" var="showCans"/>
 <apex:variable value="{! $User.Operating_Group__c = 'CareMeridian' || $User.Operating_Group__c = 'Care Meridian'}" var="isCM"/>
-
+  
     <c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" parentPage="Admission" admId="{!admission.Id}"/>
     <br />
-    <apex:form >
+    <apex:form id="admissionForm">
+    
+	<apex:actionFunction name="saveAdmissionDocAF" action="{!saveAdmissionDoc}" rerender="associatedDocuments" oncomplete="waitComplete(),closeModalDialog('addAdmissionDocumentModal', 'span');"/>
+    <apex:actionFunction name="showAddEditAdmissionDocAF" action="{!showAddEditAdmissionDoc}" rerender="admissionDocumentyEntry,msgs" oncomplete="waitComplete()"/>
+
+ <apex:actionFunction action="{!editTreeNode}" name="editNode" rerender="associatedDocDetails" oncomplete="waitComplete()">
+     <apex:param name="selectedKey" value="" />
+ </apex:actionFunction>
+
+
+ <apex:actionFunction action="{!updateDocSelection}" name="updateDocSelectionAF" rerender="associatedDocuments" oncomplete="waitComplete()">
+     <apex:param name="selectedKey" value="" />
+     <apex:param name="isSelected" value="" />     
+ </apex:actionFunction>
+ 
+ 
+     
     <!--  -->
     <apex:pageBlock title="Admission Detail">
     <div class="pbHeaderButton">
@@ -67,7 +215,92 @@
             <apex:column value="{!item.Remaining_Units__c}"/>
         </apex:pageBlockTable>
         <apex:outputText value="No records to display" rendered="{!(admission.Authorized_Services__r==null || admission.Authorized_Services__r.size=0)}" />
-        </apex:pageBlock>
+	</apex:pageBlock>
+        
+        
+    <apex:pageBlock title="Admission Documents" rendered="{!isCM}"  id="associatedDocuments">
+    	<div class="pbHeaderButton">
+<!--           <input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="showAddEditAdmissionDoc();openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents'); return false;"/> -->
+          <input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents'); return false;"/>          
+        </div>
+		<apex:pageBlockTable styleclass="pbBody-list"  value="{!associatedDocs}" var="doc">
+            <apex:column> <apex:facet name="header">Packet Name</apex:facet> {!doc.DocPacket__r.Packet_Name__c} </apex:column>
+            <apex:column> <apex:facet name="header">Document Name</apex:facet> {!doc.Document__r.Document_Name__c} </apex:column>
+            <apex:column> <apex:facet name="header">Effective Date</apex:facet><apex:outputField value="{!doc.Effective_Date__c}" /></apex:column>
+            <apex:column> <apex:facet name="header">Filed Date</apex:facet> <apex:outputField value="{!doc.Filed_Date__c}" /> </apex:column>
+            <apex:column> <apex:facet name="header">Status</apex:facet> {!doc.Status__c} </apex:column>
+            <apex:column> <apex:facet name="header">Status Date</apex:facet><apex:outputField value="{!doc.Status_Date__c}" /></apex:column>
+            <apex:column> <apex:facet name="header">Signature - Date</apex:facet> <apex:repeat value="{!doc.AssocDocSignatures__r}" var="signatures" id="theRepeat"> {!signatures.DocSignature__r.DocSigner__c}-<apex:outputField value="{!signatures.Signed_Date__c}" /><br/> </apex:repeat> </apex:column>
+        </apex:pageBlockTable>
+        <apex:outputText value="No records to display" rendered="{!(associatedDocs ==null || associatedDocs.size=0)}" />
+	</apex:pageBlock>
+	
+	
+	    <!-- Add/edit Admission Documents. -->
+    <apex:outputPanel id="addAdmissionDocumentModal" style="display:none">
+      <apex:pageBlock title="Add/Edit Documents">
+        <apex:pageblockButtons location="bottom">
+          <input type="button" value="Save" onClick="saveAdmissionDoc(true); " class="btn" />
+<!--           <input type="button" value="Close" onClick="closeModalDialog('addAdmissionDocumentModal', 'span'); j$('#admissionDocumentErrors').html('');j$('[id$=tree2]').fancytree('destroy');return false;"  class="btn"/> -->
+          <input type="button" value="Close" onClick="closeModalDialog('addAdmissionDocumentModal', 'span'); j$('#admissionDocumentErrors').html('');return false;"  class="btn"/>          
+        </apex:pageblockButtons>
+
+        <apex:facet name="header">
+          <p><strong>Check/Uncheck a document or packet to add/remove to the admission. Select document name to view/edit its details:</strong></p>
+        </apex:facet>
+
+        <div id='admissionDocumentErrors' style='color:red' ></div>
+
+        <apex:pageBlockSection columns="2" id="admissionDocumentyEntry">
+
+	       	<apex:outputPanel id="tree2" layout="block">
+				<c:Fancy_Tree showIcons="true" TreeString="{!allDocsTree.Fancy_Tree_JSon_String_LongText}" allowInactiveNode="false" mode="3" activateActionSignature="triggerNodeEdit(data.node);" selectActionSignature="triggerNodeSelection(data.node);" checkbox="true" ID_PageSideStorage="catalog_items" TreeID="tree2" debug="false" />
+		        <apex:inputHidden value="{!selectedKeys}" id="catalog_items"/>       
+			</apex:outputPanel>
+
+			<apex:outputPanel id="associatedDocDetails" layout="block" >
+				<br/><br/>
+        	 	<table>
+					<tr>
+						<td><apex:outputText value="Effective Date" styleClass="labelCol"/></td>
+						<td><apex:inputField value="{!currrentAssocDoc.Effective_Date__c}" id="currrentAssocDoc_Effective_Date"/></td>					
+					</tr>
+					<tr>
+						<td><apex:outputText value="Recurring" styleClass="labelCol"/></td>
+						<td><apex:inputField value="{!currrentAssocDoc.Recurring__c}" id="currrentAssocDoc_Recurring__c"/></td>					
+					</tr>
+					<tr>
+						<td><apex:outputText value="Frequency" styleClass="labelCol"/></td>
+						<td><apex:inputField value="{!currrentAssocDoc.Recurring_Frequency__c}" id="currrentAssocDoc_Recurring_Frequency"/></td>					
+					</tr>
+					<tr>
+						<td><apex:outputText value="Due Days" styleClass="labelCol"/></td>
+						<td><apex:inputField value="{!currrentAssocDoc.Due_Days__c}" id="currrentAssocDoc_Due_Days"/></td>					
+					</tr>
+					<tr>
+						<td><apex:outputText value="Filed Date" styleClass="labelCol"/></td>
+						<td><apex:inputField value="{!currrentAssocDoc.Filed_Date__c}" id="currrentAssocDoc_Filed_Date"/></td>					
+					</tr>
+
+					<tr>
+						<td><apex:outputText value="Status" styleClass="labelCol"/></td>
+						<td><apex:inputField value="{!currrentAssocDoc.Status__c}" id="currrentAssocDoc_Status"/></td>					
+					</tr>
+					<tr>
+						<td><apex:outputText value="Status Date" styleClass="labelCol"/></td>
+						<td><apex:inputField value="{!currrentAssocDoc.Status_Date__c}" id="currrentAssocDoc_Status_Date"/></td>					
+					</tr>
+				</table>	
+	        </apex:outputPanel>
+
+
+        </apex:pageBlockSection>
+      </apex:pageBlock>
+    </apex:outputPanel>	
+	
+
+
+
     <a name="Asmt" id="Asmt" ></a>
 <apex:pageBlock title="Assessments" rendered="{!!isCM}">
         <div class="pbHeaderButton">
@@ -147,5 +380,4 @@
     </apex:form>
  <c:SObjectNotesAndAttachments parentId="{!admission.id}" showAction="false" ></c:SObjectNotesAndAttachments> 
 <c:SObjectHistories object="{!admission}" title="Admission History" />   
-    
 </apex:page>
