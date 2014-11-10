@@ -80,6 +80,7 @@ public class TMN_Tree{
                 isNew = true;
                 DeleteRecord = false;
                 CatTreeNode = new Clinical_Catalog_Tree_Node__c ();
+                CatTreeNode.Status__c = 'Active'; 
                 CatTreeEley = new Clinical_Catalog_Element__c ();
                             
             }
