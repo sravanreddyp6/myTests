@@ -12,6 +12,8 @@ public with sharing class CMShiftAssessmentEdit {
     public List<string>selectedNeuroOrient{get;set;}
     public List<selectOption>moodValues ;
     public List<string>selectedMoods {get;set;}
+    public List<SelectOption>breatheSounds ;
+    public List<string>selectedSounds {get ; set;}
     
     
     public string getprimaryPhysician(){
@@ -35,6 +37,10 @@ public with sharing class CMShiftAssessmentEdit {
         selectedNeuroOrient = new List<string>();
         moodValues = new List<selectOption>();
         selectedMoods = new List<String>();
+        breatheSounds = new List<SelectOption>();
+        selectedSounds = new List<String>();
+        
+        
         
         if(!String.isBlank(this.evaluation.Resident_Demonstrating_Issues__c))
                selectedCoping = this.evaluation.Resident_Demonstrating_Issues__c.split(';');
@@ -45,11 +51,14 @@ public with sharing class CMShiftAssessmentEdit {
         if(!String.isBlank(this.evaluation.Mood__c))
                selectedMoods = this.evaluation.Mood__c.split(';');
         
+        if(!String.isBlank(this.evaluation.Breathe_sounds__c))
+                selectedSounds = this.evaluation.Breathe_Sounds__c.split(';');
+        
                 
 	}
 
    public PageReference handleIVfields(){
-	   	if(evaluation.IV__c != 'Yes'){
+	   	if(evaluation.IV_Picklist__c != 'Yes'){
 	   		evaluation.Picc__c = false;
 	   		evaluation.Central__c = false;
 	   		evaluation.Heplock__c = false;
@@ -180,7 +189,23 @@ public with sharing class CMShiftAssessmentEdit {
                      this.evaluation.Mood__c = mod;
                 }
                 else
-                this.evaluation.Mood__c ='';
+                	this.evaluation.Mood__c ='';
+                
+         //for breathe sounds multi-select
+		        String strtypes = '';
+		        for (String s : selectedSounds)
+		                strtypes += s +';';
+                
+                if (strtypes != ''){
+                        strtypes = strtypes.Substring(0, strtypes.length() -1);
+                        this.evaluation.Breathe_Sounds__c = strtypes;
+                        if(!strtypes.Contains('Other'))
+                        this.evaluation.Breathe_Sound_Other__c = '';
+                }
+                else{
+	                this.evaluation.Breathe_Sounds__c ='';
+	                this.evaluation.Breathe_Sound_Other__c ='';
+                }
        			
         update this.evaluation;
         return new PageReference('/apex/CMShiftAssessmentView?id=' + evaluation.Id + '&tab=' + selectedTab);
@@ -199,5 +224,11 @@ public with sharing class CMShiftAssessmentEdit {
    public List<selectoption> getmoodValues(){
                 List<Selectoption> moodValue = Utility.getPicklistValues(evaluation, 'Mood__c');
                 return moodValue; 
+   }
+   
+   public List<SelectOption> getbreatheSounds(){
+                List<Selectoption> breatheSound = Utility.getPicklistValues(evaluation, 'Breathe_Sounds__c');
+                return breatheSound; 
+                
    }
 }

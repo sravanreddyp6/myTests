@@ -1,4 +1,4 @@
-<apex:page standardcontroller="Evaluation__c" extensions="CMShiftAssessmentEdit" >
+<apex:page standardcontroller="Evaluation__c" extensions="CMShiftAssessmentEdit" > 
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
@@ -59,10 +59,66 @@
     </style>
     <script>
 	    function setFocusOnLoad() {}  // Overwrite VF function to focus on the 1st field
-	       jQuery.noConflict();
+	        jQuery.noConflict();
        
        	 jQuery(document).ready(function ($) {
-       	 
+       	 		
+       	 	handleHeartBeat = function () {
+       	 	
+       	 		var heartRate = $('[id$=heartRate]').val();
+                var interventionpicklist = $('[id$=interventionPicklist]').val();
+             
+                if(heartRate == 'Irregular'){
+                		$('[id$=interventionLabel]').show();
+                		$('[id$=interventionPicklist]').show();
+                		
+                		if(interventionpicklist == 'Yes'){
+                			$('[id$=interventionDescribe]').show();
+                			$('[id$=narrativeLabel]').show();
+                			
+                			}
+                		else{
+                			$('[id$=interventionDescribe]').hide();
+                			$('[id$=narrativeLabel]').hide();
+                			$('[id$=interventionDescribe]').val('');
+                		}
+                	}
+                	else{
+                		$('[id$=interventionLabel]').hide();
+                		$('[id$=interventionPicklist]').hide();
+                		$('[id$=interventionDescribe]').hide();
+                		$('[id$=narrativeLabel]').hide();
+                		$('[id$=interventionPicklist]').val('');
+                		$('[id$=interventionDescribe]').val('');
+                		
+                	}
+       	 		 
+             };
+             
+             handlePeripheralPulses = function(){
+             	var pulsePresent = $('[id$=peripheralPulses]').val();
+             	
+             	if(pulsePresent == 'No'){
+             		$('[id$=peripheraldescribeLabel]').show();
+                	$('[id$=peripheralDescribe]').show();
+             		
+             	}
+             	else{
+             		$('[id$=peripheraldescribeLabel]').hide();
+                	$('[id$=peripheralDescribe]').hide();
+                	$('[id$=peripheralDescribe]').val('');
+             	
+             	}
+             
+             };
+       	 	
+       	 	handleCardio = function () {
+       	 		handleHeartBeat();
+       	 		handlePeripheralPulses();
+       	 	
+       	 	};
+	       	
+	       	handleCardio(); 	
        	 
        	 });   //end "ready" function
        
@@ -87,6 +143,9 @@
 
             return nextTab;
             }
+            
+            
+       	 
     
     
     </script>
@@ -106,9 +165,10 @@
     		<apex:inputhidden value="{!Evaluation__c.Resident_Demonstrating_Issues__c}" />
     		<apex:inputhidden value="{!Evaluation__c.Orientation__c}" />
     		<apex:inputhidden value="{!Evaluation__c.Mood__c}" />
+    		<apex:inputhidden value="{!Evaluation__c.Breathe_Sounds__c}" />
     	</apex:outputpanel>
         <apex:pageMessages id="pageMessages" />
-         <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" reRender="pageMessages, wholeTabPanel, buttons">
+         <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="handleCardio();" reRender="pageMessages, wholeTabPanel, buttons">
             <apex:param name="nextTab" assignTo="{!nextTab}" value="" />
         </apex:actionFunction>
          <apex:tabPanel value="{!selectedTab}" id="wholeTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent" >
@@ -147,7 +207,7 @@
                 		<apex:pageBlockSectionItem >
                 			<apex:outputLabel value="IV" />
                 			<apex:actionRegion >
-                			<apex:inputField Value="{!Evaluation__c.IV__c}" >
+                			<apex:inputField Value="{!Evaluation__c.IV_Picklist__c}" >
                 				<apex:actionStatus id="ivStatus" >
 							  		<apex:facet name="start">
 							           <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
@@ -163,7 +223,7 @@
                 	</apex:pageBlockSection>
                 	
                 	<apex:pageBlockSection columns="1" id="ivSection" >
-                        <apex:pageBlockSectionItem rendered="{!Evaluation__c.IV__c == 'Yes'}">
+                        <apex:pageBlockSectionItem rendered="{!Evaluation__c.IV_Picklist__c == 'Yes'}">
                         <apex:outputLabel value="IV Type" />
                         <apex:outputPanel >
                             <apex:outputText styleClass="labelCol" value="PICC" /><apex:inputField value="{!Evaluation__c.PICC__c}" />
@@ -171,7 +231,7 @@
                             <apex:outputText styleClass="labelCol" value="HepLock" style="margin-left:20px;"/><apex:inputField value="{!Evaluation__c.HepLock__c}" />
                         </apex:outputPanel>
                      </apex:pageBlockSectionItem>
-                     <apex:pageBlockSectionItem rendered="{!Evaluation__c.IV__c == 'Yes'}" >
+                     <apex:pageBlockSectionItem rendered="{!Evaluation__c.IV_Picklist__c == 'Yes'}" >
                 			<apex:outputLabel value="IV Site Issues" />
                 			<apex:actionRegion >
                 			<apex:inputField Value="{!Evaluation__c.IV_Site_Issues__c}" id="issuesissues">
@@ -189,11 +249,11 @@
                 		</apex:pageBlockSectionItem>
                      <apex:pageBlockSection columns="1" id="narrativeNote">
                      	 <apex:pageBlockSectionItem >
-                     	 	<apex:outputlabel value="IV Narrative Note" rendered="{!Evaluation__c.IV_Site_Issues__c=='Yes'&& Evaluation__c.IV__c=='Yes'}" />
+                     	 	<apex:outputlabel value="IV Narrative Note" rendered="{!Evaluation__c.IV_Site_Issues__c=='Yes'&& Evaluation__c.IV_Picklist__c=='Yes'}" />
                      	 	<apex:outputPanel >
                      	 		<div class="requiredInput">
                      	 			<div class="requiredBlock"></div>
-	                     			<apex:inputTextArea value="{!Evaluation__c.IV_Narrative_Note__c}" rows="4" cols="60" rendered="{!Evaluation__c.IV_Site_Issues__c=='Yes'&& Evaluation__c.IV__c=='Yes'}"  required="True" id="longDesc"/>
+	                     			<apex:inputTextArea value="{!Evaluation__c.IV_Narrative_Note__c}" rows="4" cols="60" rendered="{!Evaluation__c.IV_Site_Issues__c=='Yes'&& Evaluation__c.IV_Picklist__c=='Yes'}"  required="True" id="longDesc"/>
 	                     		</div>
 	                     	</apex:outputPanel>
 	                     </apex:pageBlockSectionItem>
@@ -203,7 +263,82 @@
            </apex:tab>
              <apex:tab label="Cardiopulmonary" name="cardioTab" onTabenter="changeTab('cardioTab'); return false;" styleClass="{!IF(Evaluation__c.Cardio_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
                 <apex:pageBlock >
-                
+                	<apex:pageBlockSection Columns="2" title="cardio">
+                	
+                		<apex:inputField value="{!Evaluation__c.Heart_Sounds__c}" label="Heart Rate" required="true" id="heartRate" onchange="handleHeartBeat(); return false;" />
+                		
+                		<apex:pageblocksectionitem >
+                			<apex:outputLabel value="Periphral Pulses Present" />
+	                        <apex:inputField value="{!Evaluation__c.Peripheral_Pulses_Present__c}" id="peripheralPulses" required="True" onchange="handlePeripheralPulses(); return false;"/>
+	                     </apex:pageblocksectionitem>
+	                        
+                		<apex:pageBlockSectionItem >
+                			<apex:outputlabel value="Intervention Needed" id="interventionLabel" /> 
+                			<apex:outputPanel >
+                     	 		<div class="requiredInput">
+                     	 			<div class="requiredBlock"></div>
+	                     			<apex:inputField value="{!Evaluation__c.Heart_Intervention_Need_Picklist__c}" id="interventionPicklist" onchange="handleHeartBeat(); return false;"/>
+	                     		</div>
+	                     	</apex:outputPanel>
+                		</apex:pageBlockSectionItem >
+                		
+                		<apex:pageBlockSectionItem >
+                			<apex:outputLabel value="Describe" id="peripheraldescribeLabel" />
+                			<apex:outputPanel >
+                     	 		<div class="requiredInput">
+                     	 			<div class="requiredBlock"></div>
+	                     			<apex:inputField value="{!Evaluation__c.Peripheral_Pulses_Describe__c}" id="peripheralDescribe" />
+	                     		</div>
+	                     	</apex:outputPanel>
+                		</apex:pageBlockSectionItem >
+                		
+                		<apex:pageBlockSectionItem >
+                			<apex:outputLabel value="Narrative Note" id='narrativeLabel' />
+                			<apex:outputPanel >
+                     	 		<div class="requiredInput">
+                     	 			<div class="requiredBlock"></div>
+	                     			<apex:inputTextArea value="{!Evaluation__c.Heart_Rate_Intervention_Describe__c}" id="interventionDescribe" rows="4" cols="60" />
+	                     		</div>
+	                     	</apex:outputPanel>
+                		</apex:pageBlockSectionItem >
+                		
+                		
+                	</apex:pageBlockSection >
+                	<apex:pageBlockSection title="Sputum" collapsible="True" columns="2" >
+                	
+                		<apex:inputField value="{!Evaluation__c.Sputum_Quantity__c}" id="sputumQuantity" />
+
+                         <apex:inputField value="{!Evaluation__c.Sputum_Color__c}" id="sputumColor" />
+                         <apex:inputField value="{!Evaluation__c.Blood_Tinged__c}" id="bloodTinged"/>
+                         <apex:inputField value="{!Evaluation__c.Odor__c}" id="odor" />
+                         <apex:pageBlockSectionItem >
+                         <apex:outputLabel value="Sputum Consistency"  />
+                         <apex:outputPanel >
+                         <table>
+                         <tr><td><apex:inputField Value="{!Evaluation__c.Thick__c}" id="thick" /><apex:outputLabel for="thick">{!$ObjectType.Evaluation__c.Fields.Thick__c.label}</apex:outputLabel></td></tr>
+                         <tr><td><apex:inputField value="{!Evaluation__c.Thin__c}" id="thin" /><apex:outputLabel for="thin">{!$ObjectType.Evaluation__c.Fields.Thin__c.label}</apex:outputLabel></td></tr>
+                         <tr><td><apex:inputField value="{!Evaluation__c.Frothy__c}" id="frothy" /><apex:outputLabel for="frothy">{!$ObjectType.Evaluation__c.Fields.Frothy__c.label}</apex:outputLabel></td></tr>
+                         <tr><td><apex:inputField value="{!Evaluation__c.Sticky__c}" id="sticky" /><apex:outputLabel for="sticky">{!$ObjectType.Evaluation__c.Fields.Sticky__c.label}</apex:outputLabel></td></tr>
+                         <tr><td><apex:inputField value="{!Evaluation__c.Creamy__c}" id="creamy" /><apex:outputLabel for="creamy">{!$ObjectType.Evaluation__c.Fields.Creamy__c.label}</apex:outputLabel></td></tr>
+                         </table>
+                         </apex:outputPanel>
+                         </apex:pageBlockSectionItem>
+
+                        <apex:pageblockSectionItem >
+                            <apex:outputLabel value="Breath Sounds" styleClass="labelCol" />
+                            <apex:selectCheckboxes value="{!selectedSounds}" id="breathesound" layout="pageDirection" onchange="handleOther('breathesound')">
+                                <apex:selectOptions value="{!breatheSounds}" />
+                            </apex:selectCheckboxes>
+                         </apex:pageblockSectionItem>
+                         
+                         <apex:outputtext value="" />
+                         <apex:pageBLockSectionItem helpText="{!$ObjectType.Evaluation__c.Fields.Breathe_Sound_Other__c.inlineHelpText}">
+                            <apex:outputlabel for="breathesoundother" value="If Other Describe" />
+                            <apex:inputField value="{!Evaluation__c.Breathe_Sound_Other__c}" id="breathesoundother"/>
+                         </apex:pageBLockSectionItem>
+                	
+                	</apex:pageBlockSection>
+               
                 </apex:pageBlock>
              </apex:tab>
              
@@ -267,7 +402,7 @@
                         <apex:inputField id="unresp" value="{!Evaluation__c.Unresponsive__c}"/><apex:outputLabel for="unresp" value="Unresponsive" />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>             
-                        </apex:PageblockSection >
+                        </apex:PageblockSection>
                         
                         <apex:pageBlockSection columns="1" id="moodBlock">
                         	<apex:pageBlockSectionItem >
@@ -289,7 +424,7 @@
                         	</apex:pageBlockSectionItem>
                         	
                         	<apex:outputPanel id="residenthurtSection" >
-	                        <apex:pageBlockSectionItem  rendered="{!showResidenthurt}" >
+	                        <apex:pageBlockSectionItem rendered="{!showResidenthurt}" >
 	                        	<apex:outputLabel value="Has Resident Expressed Desire to Hurt Him/Herself?" styleClass="labelCol" style="margin-left:55px;"/>
 	                        	<apex:actionregion >
 	                        	<apex:inputField value="{!Evaluation__c.Desire_to_hurt_themselves__c}" style="margin-left: 5Px;">
@@ -304,14 +439,14 @@
 	                			<apex:actionSupport event="onchange" rerender="plantoHurt"  status="hurtStatus" action="{!handleResidenthurt}"/>
 	                        	</apex:inputField>
 	                        	</apex:actionregion>
-	                        </apex:pageBlockSectionItem >
+	                        </apex:pageBlockSectionItem>
 	                        </apex:outputPanel>
                         
 	                        <apex:outputPanel id="plantoHurt" >
 	                        <apex:pageBlockSectionItem rendered="{!Evaluation__c.Desire_to_hurt_themselves__c == 'Yes' && showResidenthurt}" >
 	                        	<apex:outputText value="Does Resident Have a Plan to Harm Him/Herself?" styleClass="labelCol" style="margin-left: 65px;"/>
 	                        	<apex:inputField value="{!Evaluation__c.Plan_to_Harm_themselves__c}" style="margin-left: 10Px;"/>
-	                        </apex:pageBlockSectionItem >
+	                        </apex:pageBlockSectionItem>
 	                        </apex:outputPanel>
 	                  	</apex:pageBlockSection>
                 </apex:pageBlock>
