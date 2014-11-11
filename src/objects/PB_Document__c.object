@@ -91,6 +91,17 @@
         <type>Date</type>
     </fields>
     <fields>
+        <fullName>External_ID__c</fullName>
+        <caseSensitive>false</caseSensitive>
+        <externalId>true</externalId>
+        <label>External ID</label>
+        <length>255</length>
+        <required>true</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>true</unique>
+    </fields>
+    <fields>
         <fullName>Recurring_Frequency__c</fullName>
         <externalId>false</externalId>
         <label>Recurring Frequency</label>
@@ -183,11 +194,17 @@
     </fields>
     <label>PB_Document</label>
     <nameField>
-        <displayFormat>{0}</displayFormat>
+        <displayFormat>{0000}</displayFormat>
         <label>ID</label>
         <type>AutoNumber</type>
     </nameField>
     <pluralLabel>PB_Documents</pluralLabel>
     <searchLayouts/>
     <sharingModel>ReadWrite</sharingModel>
+    <validationRules>
+        <fullName>test</fullName>
+        <active>false</active>
+        <errorConditionFormula>1=1</errorConditionFormula>
+        <errorMessage>error</errorMessage>
+    </validationRules>
 </CustomObject>
