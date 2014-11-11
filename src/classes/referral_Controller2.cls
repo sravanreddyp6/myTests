@@ -277,6 +277,7 @@ public with sharing class referral_Controller2 {
                                 ActivityDate, Comments__c , Description
                          from Task
                          where WhatId = :this.referralRecord.Id
+                         order by number__c, createddate
                          limit 150];
         // We also have to make only users with correct permissions can see the
         // Edit button
@@ -611,27 +612,26 @@ public with sharing class referral_Controller2 {
       dummyTask.OwnerId.addError('Field is required!');
       return;
     }
+    List<Task> tasks = new List<Task>();
     Map<String, Neuro_Admission_Steps__c> stepSubjects = Neuro_Admission_Steps__c.getAll();
     System.debug('stepSubjects: ' + stepSubjects);
-    List<Task> tasks = new List<Task>();
     Set<String> nameSet = stepSubjects.keySet();
     List<Integer> orderedNames = new List<Integer>();  // We use this list to sort the subjects by their names
     for (String name: nameSet) {
       orderedNames.add(Integer.valueOf(name));
     }
     orderedNames.sort();
+    System.debug('orderedNames: ' + orderedNames);
     for (Integer orderedName: orderedNames) {
-      Task task = new Task(
+      tasks.add(new Task(
         Subject = stepSubjects.get(String.valueOf(orderedName)).Subject__c,
         Priority = 'Normal',
         Status = 'Not Started',
         WhatId = referralRecord.Id,
         OwnerId = dummyTask.OwnerId
-      );
-      tasks.add(task);
+      ));
     }
     insert tasks;
-    System.debug('tasks: ' + tasks);
     populateActivities();
     System.debug('this.activities: ' + this.activities);
 
