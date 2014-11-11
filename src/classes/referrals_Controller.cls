@@ -728,6 +728,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
                   Description
            from Task
            where WhatId = :this.referralRecord.Id
+           order by number__c, createddate
            limit 150];
 
     } catch (Exception e) {
@@ -930,7 +931,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
 
     //Start EC-54 CM Save and Close Validations
     if (referralRecordType == 'CareMeridian') {
-        Boolean hasFundError = true, hasLocError = true, hasCloseError = false;             
+        Boolean hasFundError = true, hasLocError = true, hasCloseError = false;
         if(referralRecord.Close_Reason__c != 'Error' && referralRecord.Referral_Status__c == 'Closed'){
             hasCloseError = checkForBlankFields(referralRecord,'Referral__c',new list<string>{'Current_Location__c','Close_Reason__c','Agency_Name__c','Evaluated_By_Internal__c'}, 'A value for {0} is required to close');
         }
@@ -955,8 +956,8 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
         if (hasFundError==true || hasLocError==true || hasCloseError==true){
             return null;
         }
-    }  
-    //End EC-54 
+    }
+    //End EC-54
 
     system.debug('in saveREF');
     Id refId;
@@ -1321,19 +1322,21 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     for (String name: nameSet) {
       orderedNames.add(Integer.valueOf(name));
     }
+    System.debug('orderedName: ' + orderedNames);
     orderedNames.sort();
     for (Integer orderedName: orderedNames) {
-      Task task = new Task(
+      tasks.add(new Task(
         Subject = stepSubjects.get(String.valueOf(orderedName)).Subject__c,
         Priority = 'Normal',
         Status = 'Not Started',
         WhatId = referralRecord.Id,
         OwnerId = dummyTask.OwnerId
-      );
-      tasks.add(task);
+      ));
     }
     insert tasks;
+    System.debug('After insert, tasks: ' + tasks);
     this.activities.addAll(tasks);
+    System.debug('After insert, activities: ' + this.activities);
 
     // We also want to make sure that the user can't do this action more than once
     referralRecord.Admission_Steps_Added__c = true;
