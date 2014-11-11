@@ -387,6 +387,24 @@
                         <apex:pageBlockSectionItem />
                         <apex:outputField value="{!Evaluation__c.Tracking_L__c}" />
                     </apex:pageBlockSection>
+                    <apex:pageBlockSection columns="1" title="Pain">
+                        <apex:outputField value="{!Evaluation__c.Pain_Present__c}" />
+                    </apex:pageBlockSection>
+                    <apex:pageblockSection columns="2" rendered="{!Evaluation__c.Pain_Present__c == 'Yes'}">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Specify Pain Level"  />
+                            <apex:image url="{!URLFOR($Resource.Wongbakerfaces)}" width="85%" height="110" style="margin-left: 0.75cm;" />
+                        </apex:pageBlockSectionItem>
+                        <apex:inputhidden value="{!Evaluation__c.Neuro_Pain_Level__c}" id="neuropainLevel" />
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Pain Level" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.neuropainLevel}')"
+                                options="{!painsliderOptions}"
+                                initial="{!Evaluation__c.Neuro_Pain_Level__c}" disabled="True" />
+                        </apex:pageBlockSectionItem>
+                        <apex:outputField value="{!Evaluation__c.Neuro_Pain_Severity__c}" label="Severity" />
+                        <apex:outputField value="{!Evaluation__c.Neuro_Pain_Alleviating_Factors__c}" label="Alleviating Factors" />
+                    </apex:pageblockSection>
                     <hr />
                     <apex:pageBlockSection columns="2">
                         <apex:outputField value="{!Evaluation__c.Neuropsychological_Evaluation_Attached__c}" />

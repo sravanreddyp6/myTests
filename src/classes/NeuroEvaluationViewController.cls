@@ -16,6 +16,18 @@ public with sharing class NeuroEvaluationViewController {
         }
     }
 
+    public List<String> painsliderOptions {
+        get {
+            if (painsliderOptions == null) {
+                painsliderOptions = new String[] {
+                    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'
+                };
+            }
+            return painsliderOptions;
+        }
+        set;
+    }
+
     public List<selectOption> hallValues {
         get {
             return Utility.getPicklistValues(evaluation, 'Hallucination_Types__c');
