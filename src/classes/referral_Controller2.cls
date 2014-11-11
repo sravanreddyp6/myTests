@@ -612,7 +612,6 @@ public with sharing class referral_Controller2 {
       dummyTask.OwnerId.addError('Field is required!');
       return;
     }
-    List<Task> tasks = new List<Task>();
     Map<String, Neuro_Admission_Steps__c> stepSubjects = Neuro_Admission_Steps__c.getAll();
     System.debug('stepSubjects: ' + stepSubjects);
     Set<String> nameSet = stepSubjects.keySet();
@@ -623,15 +622,16 @@ public with sharing class referral_Controller2 {
     orderedNames.sort();
     System.debug('orderedNames: ' + orderedNames);
     for (Integer orderedName: orderedNames) {
-      tasks.add(new Task(
+      // We do not batch insert the tasks here because it leads to inconsistent
+      // sorting order.
+      insert new Task(
         Subject = stepSubjects.get(String.valueOf(orderedName)).Subject__c,
         Priority = 'Normal',
         Status = 'Not Started',
         WhatId = referralRecord.Id,
         OwnerId = dummyTask.OwnerId
-      ));
+      );
     }
-    insert tasks;
     populateActivities();
     System.debug('this.activities: ' + this.activities);
 
