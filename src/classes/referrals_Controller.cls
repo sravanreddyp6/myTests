@@ -1316,7 +1316,6 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
       return;
     }
     Map<String, Neuro_Admission_Steps__c> stepSubjects = Neuro_Admission_Steps__c.getAll();
-    List<Task> tasks = new List<Task>();
     Set<String> nameSet = stepSubjects.keySet();
     List<Integer> orderedNames = new List<Integer>();  // We use this list to sort the subjects by their names
     for (String name: nameSet) {
@@ -1325,21 +1324,26 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     System.debug('orderedName: ' + orderedNames);
     orderedNames.sort();
     for (Integer orderedName: orderedNames) {
-      tasks.add(new Task(
+      Task task = new Task(
         Subject = stepSubjects.get(String.valueOf(orderedName)).Subject__c,
         Priority = 'Normal',
         Status = 'Not Started',
         WhatId = referralRecord.Id,
         OwnerId = dummyTask.OwnerId
-      ));
+      );
+      // We do not batch insert the tasks here because it leads to inconsistent
+      // sorting order.
+      if (referralRecord.Id != null) {
+        insert task;
+      }
+      this.activities.add(task);
     }
-    insert tasks;
-    System.debug('After insert, tasks: ' + tasks);
-    this.activities.addAll(tasks);
     System.debug('After insert, activities: ' + this.activities);
 
     // We also want to make sure that the user can't do this action more than once
     referralRecord.Admission_Steps_Added__c = true;
-    update new Referral__c(Id=referralRecord.Id, Admission_Steps_Added__c=true);
+    if (referralRecord.Id != null) {
+      update new Referral__c(Id=referralRecord.Id, Admission_Steps_Added__c=true);
+    }
   }
 }
