@@ -111,10 +111,97 @@
              	}
              
              };
+             
+             handleVentSection = function(){
+        		var ventValue = $('[id$=ventilatorPicklist]').val();
+        		var ventType = $('[id$=ventilatorType]').val();
+        		
+        		if(ventValue == 'Yes'){
+        			$('[id$=ventilatorDetails]').show();
+        			
+        			if(ventType == 'Intermittent'){
+        				$('[id$=ventilatorScheduleLabel]').show();
+        				$('[id$=ventilatorSchedule]').show();
+        			}
+        			else {
+        				$('[id$=ventilatorScheduleLabel]').hide();
+        				$('[id$=ventilatorSchedule]').hide();
+        				$('[id$=ventilatorSchedule]').val('');
+        			
+        			}	
+        		}
+        		else{
+        			$('[id$=ventilatorDetails]').hide();
+        			$('[id$=ventilatorType]').val('');
+        			$('[id$=ventilatorMode]').val('');
+        			$('[id$=ventilatorRate]').val('');
+        			$('[id$=FIO2]').val('');
+        			$('[id$=peep]').val('');
+        			$('[id$=tv]').val('');
+        			$('[id$=ps]').val('');
+        			$('[id$=ventilatorSchedule]').val('');	
+        		}
+             
+             };
+             
+             handleO2 = function(){
+             	var O2Value = $('[id$=o2]').val();
+            
+             	if(O2Value == 'Yes'){
+             		$('[id$=o2Details]').show();             	
+             	}
+             	else{
+             		$('[id$=o2Details]').hide(); 
+             		$('[id$=o2Type]').val('');
+             		$('[id$=o2interventionNeeded]').val('');
+             		$('[id$=litersMin]').val('');
+             		$('[id$=o2Documentation]').val('');
+             		$('[id$=o2Note]').val('');
+            
+             	}
+             
+             };
+             
+             handleSuctioning = function(){
+             	var suctionValue = $('[id$=suctioning]').val();
+             	
+             	if(suctionValue == 'Yes'){
+             		$('[id$=suctioningDetails]').show(); 
+             		
+             	}
+             	else{
+             		$('[id$=suctioningDetails]').hide(); 
+             	
+             	}
+             
+            };
+             
+             // if checkbox for Other is selected, enable other field
+            	handleOther = function( ids ) {
+				var theval = false;
+				
+                $('input[id*=' + ids + ']').each( function(index, element) {
+                    if ( element.value.indexOf('Other') == 0 )
+                        theval = $(element).prop('checked');
+                    });
+
+                if (theval == true ) {
+                	// enable the text field called other
+                	$('input[id$=' + ids + 'other]').prop('readonly', false);
+                } else {
+                	// disable the field and empty it out
+                	$('input[id$=' + ids + 'other]').prop('readonly', true);
+                	$('input[id$=' + ids + 'other]').prop('readonly', true).val('');
+                }
+			};
        	 	
        	 	handleCardio = function () {
        	 		handleHeartBeat();
        	 		handlePeripheralPulses();
+       	 		handleOther('breathesound');
+       	 		handleVentSection();
+       	 		handleO2();
+       	 		handleSuctioning();
        	 	
        	 	};
 	       	
@@ -301,42 +388,117 @@
 	                     		</div>
 	                     	</apex:outputPanel>
                 		</apex:pageBlockSectionItem >
-                		
-                		
+          
                 	</apex:pageBlockSection >
-                	<apex:pageBlockSection title="Sputum" collapsible="True" columns="2" >
+                	<apex:pageBlockSection columns="1" title="Sputum" Collapsible="True" >
+                		<apex:inputField value="{!Evaluation__c.Suctioning_Picklist__c}" label="Suctioning" id="suctioning" required="true" onchange="handleSuctioning(); return false;"/>
+                		
+	                	<apex:pageBlockSection columns="2" id="suctioningDetails" >
+	                		 <apex:inputField value="{!Evaluation__c.Sputum_Quantity__c}" id="sputumQuantity" />
+	                         <apex:inputField value="{!Evaluation__c.Sputum_Color__c}" id="sputumColor" />
+	                         <apex:inputField value="{!Evaluation__c.Blood_Tinged__c}" id="bloodTinged"/>
+	                         <apex:inputField value="{!Evaluation__c.Odor__c}" id="odor" />
+	                         <apex:pageBlockSectionItem >
+	                         <apex:outputLabel value="Sputum Consistency"  />
+	                         <apex:outputPanel >
+	                         <table>
+	                         <tr><td><apex:inputField Value="{!Evaluation__c.Thick__c}" id="thick" /><apex:outputLabel for="thick">{!$ObjectType.Evaluation__c.Fields.Thick__c.label}</apex:outputLabel></td></tr>
+	                         <tr><td><apex:inputField value="{!Evaluation__c.Thin__c}" id="thin" /><apex:outputLabel for="thin">{!$ObjectType.Evaluation__c.Fields.Thin__c.label}</apex:outputLabel></td></tr>
+	                         <tr><td><apex:inputField value="{!Evaluation__c.Frothy__c}" id="frothy" /><apex:outputLabel for="frothy">{!$ObjectType.Evaluation__c.Fields.Frothy__c.label}</apex:outputLabel></td></tr>
+	                         <tr><td><apex:inputField value="{!Evaluation__c.Sticky__c}" id="sticky" /><apex:outputLabel for="sticky">{!$ObjectType.Evaluation__c.Fields.Sticky__c.label}</apex:outputLabel></td></tr>
+	                         <tr><td><apex:inputField value="{!Evaluation__c.Creamy__c}" id="creamy" /><apex:outputLabel for="creamy">{!$ObjectType.Evaluation__c.Fields.Creamy__c.label}</apex:outputLabel></td></tr>
+	                         </table>
+	                         </apex:outputPanel>
+	                         </apex:pageBlockSectionItem>
+	
+	                       	 <apex:pageblockSectionItem >
+	                            <apex:outputLabel value="Breath Sounds" styleClass="labelCol" />
+	                            <apex:selectCheckboxes value="{!selectedSounds}" id="breathesound" layout="pageDirection" onchange="handleOther('breathesound')">
+	                                <apex:selectOptions value="{!breatheSounds}" />
+	                            </apex:selectCheckboxes>
+	                         </apex:pageblockSectionItem>
+	                         
+	                         <apex:outputtext value="" />
+	                         <apex:pageBLockSectionItem helpText="{!$ObjectType.Evaluation__c.Fields.Breathe_Sound_Other__c.inlineHelpText}">
+	                            <apex:outputlabel for="breathesoundother" value="If Other Describe" />
+	                            <apex:inputField value="{!Evaluation__c.Breathe_Sound_Other__c}" id="breathesoundother"/>
+	                         </apex:pageBLockSectionItem>
+	                         
+	                		</apex:pageBlockSection>
+	                	</apex:pageBlockSection>
+	                	
+	                	<apex:pageBlockSection columns="2" title="Trach" >
+	           
+	                	</apex:pageBlockSection>
                 	
-                		<apex:inputField value="{!Evaluation__c.Sputum_Quantity__c}" id="sputumQuantity" />
-
-                         <apex:inputField value="{!Evaluation__c.Sputum_Color__c}" id="sputumColor" />
-                         <apex:inputField value="{!Evaluation__c.Blood_Tinged__c}" id="bloodTinged"/>
-                         <apex:inputField value="{!Evaluation__c.Odor__c}" id="odor" />
-                         <apex:pageBlockSectionItem >
-                         <apex:outputLabel value="Sputum Consistency"  />
-                         <apex:outputPanel >
-                         <table>
-                         <tr><td><apex:inputField Value="{!Evaluation__c.Thick__c}" id="thick" /><apex:outputLabel for="thick">{!$ObjectType.Evaluation__c.Fields.Thick__c.label}</apex:outputLabel></td></tr>
-                         <tr><td><apex:inputField value="{!Evaluation__c.Thin__c}" id="thin" /><apex:outputLabel for="thin">{!$ObjectType.Evaluation__c.Fields.Thin__c.label}</apex:outputLabel></td></tr>
-                         <tr><td><apex:inputField value="{!Evaluation__c.Frothy__c}" id="frothy" /><apex:outputLabel for="frothy">{!$ObjectType.Evaluation__c.Fields.Frothy__c.label}</apex:outputLabel></td></tr>
-                         <tr><td><apex:inputField value="{!Evaluation__c.Sticky__c}" id="sticky" /><apex:outputLabel for="sticky">{!$ObjectType.Evaluation__c.Fields.Sticky__c.label}</apex:outputLabel></td></tr>
-                         <tr><td><apex:inputField value="{!Evaluation__c.Creamy__c}" id="creamy" /><apex:outputLabel for="creamy">{!$ObjectType.Evaluation__c.Fields.Creamy__c.label}</apex:outputLabel></td></tr>
-                         </table>
-                         </apex:outputPanel>
-                         </apex:pageBlockSectionItem>
-
-                        <apex:pageblockSectionItem >
-                            <apex:outputLabel value="Breath Sounds" styleClass="labelCol" />
-                            <apex:selectCheckboxes value="{!selectedSounds}" id="breathesound" layout="pageDirection" onchange="handleOther('breathesound')">
-                                <apex:selectOptions value="{!breatheSounds}" />
-                            </apex:selectCheckboxes>
-                         </apex:pageblockSectionItem>
-                         
-                         <apex:outputtext value="" />
-                         <apex:pageBLockSectionItem helpText="{!$ObjectType.Evaluation__c.Fields.Breathe_Sound_Other__c.inlineHelpText}">
-                            <apex:outputlabel for="breathesoundother" value="If Other Describe" />
-                            <apex:inputField value="{!Evaluation__c.Breathe_Sound_Other__c}" id="breathesoundother"/>
-                         </apex:pageBLockSectionItem>
+                	<apex:pageBlockSection columns="1" title="O2" >
+                		<apex:inputField value="{!Evaluation__c.O2_picklist__c}" required="true" id="o2" label="O2" onchange="handleO2(); return false;"/>
+                		<apex:pageBlockSectionItem />
+                		
+                		<apex:pageBlockSection Columns="2" id="o2Details" >
+                			<apex:inputField value="{!Evaluation__c.O2_Type__c}" id="o2Type" />
+                			
+                			<apex:pageBlockSectionItem >
+                				<apex:outputLabel value="Intervention Needed?" />
+                				<apex:outputPanel>
+                					<div class="requiredInput">
+	                     	 			<div class="requiredBlock"></div>
+		                    	<apex:inputField value="{!Evaluation__c.O2_Intervention_Needed__c}" id="o2interventionNeeded" onchange="handleO2(); return false;" />
+		                    		</div>
+		                    	</apex:outputPanel>
+		                    </apex:pageBlockSectionItem>
+                			<apex:inputField value="{!Evaluation__c.Liters_Min__c}" id="litersMin" />
+                			<apex:pageBlockSectionItem >
+                				<apex:outputLabel value="Documentation Required" />
+                				<apex:outputPanel >
+	                     	 		<div class="requiredInput">
+	                     	 			<div class="requiredBlock"></div>
+		                     			<apex:inputField value="{!Evaluation__c.O2_Documentation_Required__c}" id="o2Documentation" />
+		                     		</div>
+		                     	</apex:outputPanel >
+                			</apex:pageBlockSectionItem>
+                			<apex:pageBlockSectionItem />
+                			<apex:inputTextArea value="{!Evaluation__c.O2_Narrative_Note__c}" id="o2Note" rows="4" cols="60" />
+                			<!--  apex:pageBlockSectionItem >
+                				<apex:outputLabel value="Add Narrative Note" />
+                				<apex:outputPanel>
+                					<div class="requiredInput" >
+                						<div class="requiredBlock"></div>
+                						<apex:inputTextArea value="{!Evaluation__c.O2_Narrative_Note__c}" id="o2Note" rows="4" cols="60" />
+                					</div>
+                				</apex:outputPanel>
+                			</apex:pageBlockSectionItem -->
+                		</apex:pageBlockSection>
+                	</apex:pageBlockSection>
                 	
+                	<apex:pageBlockSection columns="1" title="Ventilator" >
+                		<apex:inputField value="{!Evaluation__c.Ventilator_picklist__c}" required="true" id="ventilatorPicklist" label="Ventilator" onchange="handleVentSection();return false;"/>
+                		<apex:pageblockSectionItem />
+                		
+                		<apex:pageBlockSection Columns="2" id="ventilatorDetails" >
+                		<apex:inputField value="{!Evaluation__c.Ventilator_Type__c}" id="ventilatorType" onchange="handleVentSection(); return false;"/>
+                		<apex:outputText label ="Settings" value=""/>
+                		<apex:pageBlockSectionItem >
+                			<apex:outputlabel value="If Intermittent, Schedule" id="ventilatorScheduleLabel"/>
+                			<apex:outputPanel >
+                     	 		<div class="requiredInput">
+                     	 			<div class="requiredBlock"></div>
+	                     			<apex:inputField value="{!Evaluation__c.If_Intermittent_Schedule__c}" id="ventilatorSchedule" />
+	                     		</div>
+	                     	</apex:outputPanel >
+                		 </apex:pageBlockSectionItem >
+                		 <apex:inputField value="{!Evaluation__c.Ventilator_Mode__c}" id="ventilatorMode" />
+                		 <apex:pageblocksectionitem />
+                		 <apex:inputField value="{!Evaluation__c.Ventilator_Rate__c}" id="ventilatorRate" />
+                		 <apex:pageBlockSectionItem />
+                		 <apex:inputField value="{!Evaluation__c.FIO2__c}" id="FIO2" />
+                		 <apex:pageBlockSectionItem />
+                		 <apex:inputField value="{!Evaluation__c.PEEP__c}" id="peep" />
+                		 <apex:pageblocksectionitem />
+                		 <apex:inputField value="{!Evaluation__c.TV__c}" id="tv" />
+                		 <apex:pageblocksectionitem />
+                		 <apex:inputField value="{!Evaluation__c.PS__c}" id="ps"/>
+                		 </apex:pageBlockSection>
                 	</apex:pageBlockSection>
                
                 </apex:pageBlock>

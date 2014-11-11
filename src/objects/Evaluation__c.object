@@ -6494,6 +6494,69 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>O2_Documentation_Required__c</fullName>
+        <externalId>false</externalId>
+        <label>O2 Documentation Required</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>O2_Intervention_Needed__c</fullName>
+        <externalId>false</externalId>
+        <label>O2 Intervention Needed</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>O2_Narrative_Note__c</fullName>
+        <externalId>false</externalId>
+        <label>O2 Narrative Note</label>
+        <length>3000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>O2_Picklist__c</fullName>
+        <externalId>false</externalId>
+        <label>O2 Picklist</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>O2_Type__c</fullName>
         <externalId>false</externalId>
         <label>O2 Type</label>
@@ -10226,6 +10289,28 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Suctioning_Picklist__c</fullName>
+        <externalId>false</externalId>
+        <label>Suctioning Picklist</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>N/A</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Suctioning_Type__c</fullName>
         <externalId>false</externalId>
         <label>Suctioning Type</label>
@@ -11367,6 +11452,24 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Ventilator_Picklist__c</fullName>
+        <externalId>false</externalId>
+        <label>Ventilator Picklist</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Ventilator_Rate__c</fullName>
@@ -14140,6 +14243,39 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>O2_Documentation_Required__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>O2_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>O2_Picklist__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Type__c</picklist>
             <values>
                 <fullName>Continuous</fullName>
@@ -15895,6 +16031,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Suctioning_Picklist__c</picklist>
+            <values>
+                <fullName>N%2FA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Suctioning_Type__c</picklist>
             <values>
                 <fullName>Oral</fullName>
@@ -16214,6 +16365,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>VP_Shunt__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Ventilator_Picklist__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -18701,6 +18863,39 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>O2_Documentation_Required__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>O2_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>O2_Picklist__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Type__c</picklist>
             <values>
                 <fullName>Continuous</fullName>
@@ -20446,6 +20641,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Suctioning_Picklist__c</picklist>
+            <values>
+                <fullName>N%2FA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Suctioning_Type__c</picklist>
             <values>
                 <fullName>Oral</fullName>
@@ -20786,6 +20996,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>VP_Shunt__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Ventilator_Picklist__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -23361,6 +23582,39 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>O2_Documentation_Required__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>O2_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>O2_Picklist__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Type__c</picklist>
             <values>
                 <fullName>Continuous</fullName>
@@ -25198,6 +25452,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Suctioning_Picklist__c</picklist>
+            <values>
+                <fullName>N%2FA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Suctioning_Type__c</picklist>
             <values>
                 <fullName>Oral</fullName>
@@ -25554,6 +25823,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>VP_Shunt__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Ventilator_Picklist__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -28052,6 +28332,39 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>O2_Documentation_Required__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>O2_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>O2_Picklist__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Type__c</picklist>
             <values>
                 <fullName>Continuous</fullName>
@@ -29837,6 +30150,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Suctioning_Picklist__c</picklist>
+            <values>
+                <fullName>N%2FA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Suctioning_Type__c</picklist>
             <values>
                 <fullName>Oral</fullName>
@@ -30193,6 +30521,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>VP_Shunt__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Ventilator_Picklist__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
