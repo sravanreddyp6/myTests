@@ -67,6 +67,51 @@
         jQuery.noConflict();
 
         jQuery(document).ready(function ($) {
+            // if checkbox for None is selected, disables all others in group
+            handleNone = function( ids ) {
+                var theval = $('[id$=' + ids + 'none]').prop('checked');
+                var subctrl = [];
+                if ( ids == 'p' || ids == 'neuropain') {
+                        ctrl =  $('[id$=' + ids + 'timeday]');
+                        subctrl.push( ctrl);
+                        ctrl =  $('[id$=' + ids + 'activity]');
+                        subctrl.push( ctrl);
+                        ctrl =  $('[id$=' + ids + 'position]');
+                        subctrl.push( ctrl);
+                } else {
+                    $('input[id*=' + ids + ']').each( function(index, element) {
+                        if ( element.value.indexOf('None') < 0 )
+                            subctrl.push( $(element) );
+                        else
+                            theval = $(element).prop('checked');
+                        });
+                }
+                var ctrl;
+                if (theval == true ) {
+                        $.each(subctrl, function (_, ctrl) {
+                            ctrl.prop('checked', false );
+                            if (ctrl.is(':checkbox'))
+                                ctrl.prop('disabled', true);
+                            else
+                                ctrl.prop('readonly', true);
+                            applyRulesToField(ctrl);
+                            });
+                } else {
+                        $.each(subctrl, function (_, ctrl) {
+                            ctrl.prop('readonly', false);
+                            ctrl.prop('disabled', false);
+                            applyRulesToField(ctrl);
+                            });
+                }
+            }
+            disablePain = function() {
+                painval = j$('[id$=painYes]').val();
+                if(painval == 'Yes'){
+                    $('[id$=painSection]').show();
+                } else {
+                    j$('[id$=painSection]').hide();
+                }
+            }
             handleSliderChange = function (inputIdToUpdate) {
                 // Closure is so much fun :)
                 var $inputToUpdate = $(document.getElementById(inputIdToUpdate));
@@ -578,6 +623,11 @@
                 </apex:pageBlock>
             </apex:tab>
             <apex:tab label="Neurological" name="neuroTab" ontabenter="changeTab('neuroTab'); return false;" styleClass="{!IF(Evaluation__c.Neuro_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+                <script>
+                    jQuery(document).ready(function ($) {
+                        disablePain();
+                    });
+                </script>
                 <apex:pageBlock >
                     <apex:pageBlockSection columns="2" title="Cognitive">
                         <apex:inputField value="{!Evaluation__c.Seizure_History__c}" />
@@ -620,6 +670,30 @@
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Tracking_L__c}" />
                     </apex:pageBlockSection>
+                    <apex:pageblockSection columns="2" title="Pain">
+                        <apex:inputField value="{!Evaluation__c.Pain_Present__c}" style="margin-left: 1cm;" id="painYes" onchange="disablePain(); return false;" />
+                    </apex:pageblockSection>
+                    <apex:outputPanel id="painSection" layout="block" >
+                        <apex:outputField value="{!Evaluation__c.Neuro_Pain_Alleviating_Factors__c}" rendered="false" />
+                        <apex:pageblockSection columns="2">
+                            <apex:pageBlockSectionItem >
+                                <apex:outputText value="Specify Pain Level" />
+                                <apex:image url="{!URLFOR($Resource.Wongbakerfaces)}" height="110px" width="85%" style="margin-left:0.75cm"/>
+                            </apex:pageBlockSectionItem>
+                            <apex:inputhidden value="{!Evaluation__c.Neuro_Pain_Level__c}" id="neuropainLevel" />
+                            <apex:pageBlockSectionItem >
+                                <apex:outputText value="Pain Level" />
+                                <c:Slider onChange="handleSliderChange('{!$Component.neuropainLevel}')" options="{!painsliderOptions}" initial="{!Evaluation__c.Neuro_Pain_Level__c}"  />
+                            </apex:pageBlockSectionItem>
+                            <apex:inputField value="{!Evaluation__c.Neuro_Pain_Severity__c}" label="Severity" />
+                            <apex:pageBlocksectionItem >
+                                <apex:outputLabel value="Alleviating Factors" />
+                                <apex:selectCheckboxes value="{!selectedPainAlleviators}" id="neuropainalleve" onchange="handleNone('neuropainalleve');">
+                                    <apex:selectoptions value="{!painAlleviatorValues}" />
+                                </apex:selectCheckboxes>
+                            </apex:pageBlocksectionItem>
+                        </apex:pageblockSection>
+                    </apex:outputPanel>
                     <hr />
                     <apex:pageBlockSection columns="2">
                         <apex:inputField value="{!Evaluation__c.Neuropsychological_Evaluation_Attached__c}" />

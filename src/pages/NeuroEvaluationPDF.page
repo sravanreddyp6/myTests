@@ -674,6 +674,37 @@
                     <td></td>
                 </tr>
             </table>
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 50%"><h3>Pain</h3></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Pain Present" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Pain_Present__c}" />
+                    </td>
+                </tr>
+                <apex:outputPanel layout="none" rendered="{!Evaluation__c.Pain_Present__c = 'Yes'}">
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Pain Level" styleClass="label"/>
+                        <apex:outputField value="{!Evaluation__c.Neuro_Pain_Level__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Severity" styleClass="label"/>
+                        <apex:outputField value="{!Evaluation__c.Neuro_Pain_Severity__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Alleviating Factors" styleClass="label"/>
+                        <apex:outputField value="{!Evaluation__c.Neuro_Pain_Alleviating_Factors__c}" />
+                    </td>
+                    <td></td>
+                </tr>
+                </apex:outputPanel>
+            </table>
             <hr />
             <table style="width: 100%; ">
                 <tr>
