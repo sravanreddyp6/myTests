@@ -170,11 +170,53 @@
              		
              	}
              	else{
-             		$('[id$=suctioningDetails]').hide(); 
+             		$('[id$=suctioningDetails]').hide();
+             		$('[id$=suctioningDetails]').find('select,input:text').val('');
+             		$('[id$=suctioningDetails]').find('input:checkbox').prop('checked',false);
+	                handleOther('breathesound'); 
              	
              	}
              
             };
+            
+            handleTrach = function(){
+            	var trachValue = $('[id$=trachPicklist').val();
+            	var trachTypeValue = $('[id$=trachType').val();
+            	var trachSizeValue = $('[id$=trachSize').val();
+            	
+            	if(trachValue == 'Yes'){
+            		$('[id$=trachDetails]').show();
+            		
+            		if(trachTypeValue == 'Other'){
+            			$('[id$=trachTypeOtherLabel]').show();
+            			$('[id$=trackTypeOther]').show();
+            		}
+            		if(trachSizeValue == 'Other'){
+            			$('[id$=trachSizeOtherLabel]').show();
+            			$('[id$=trackSizeOther]').show();
+            		}
+            		if(trachSizeValue != 'Other'){
+            			$('[id$=trachSizeOtherLabel]').hide();
+            			$('[id$=trackSizeOther]').hide();
+            			$('[id$=trackSizeOther]').val('');
+            		
+            		}
+            		if(trachTypeValue != 'Other'){
+            			$('[id$=trachTypeOtherLabel]').hide();
+            			$('[id$=trackTypeOther]').hide();
+            			$('[id$=trackTypeOther]').val('');
+            		
+            		}
+            			
+            	}
+            	else{
+            		$('[id$=trachDetails]').hide();
+            		$('[id$=trachDetails]').find('select,input:text').val('');
+             		$('[id$=trachDetails]').find('input:checkbox').prop('checked',false);
+            	
+            	} 
+            };
+            
              
              // if checkbox for Other is selected, enable other field
             	handleOther = function( ids ) {
@@ -202,6 +244,7 @@
        	 		handleVentSection();
        	 		handleO2();
        	 		handleSuctioning();
+       	 		handleTrach();
        	 	
        	 	};
 	       	
@@ -427,8 +470,54 @@
 	                		</apex:pageBlockSection>
 	                	</apex:pageBlockSection>
 	                	
-	                	<apex:pageBlockSection columns="2" title="Trach" >
-	           
+	                	<apex:pageBlockSection columns="1" title="Trach" >
+	                		<apex:inputField value="{!Evaluation__c.Trach_Picklist__c}" label="Trach" id="trachPicklist" required="true" onchange="handleTrach(); return false;" />
+	                		<apex:pageBlockSection columns="2" id="trachDetails" >
+	                			<apex:pageBlockSectionItem >
+			                         <apex:outputPanel >
+			                         	<apex:outputLabel for="trachType" value="Trach Type" />
+			                         	<br />
+			                         	<br />
+			                         	<apex:outputLabel for="trackTypeOther" value="Other" id="trachTypeOtherLabel"/>
+			                         </apex:outputPanel>
+			                         <apex:outputPanel >
+			                         	<div class="requiredInput">
+                     	 			 	<div class="requiredBlock"></div>
+			                         	<apex:inputField value="{!Evaluation__c.Trach_Type__c}" id="trachType" onchange="handleTrach(); return false;"/>
+			                         	</div>
+			                         	<div class="requiredInput">
+                     	 			 	<div class="requiredBlock"></div>
+			                         	<apex:inputField Value="{!Evaluation__c.Trach_Type_Other__c}" id="trackTypeOther" />
+			                         	</div>
+			                         </apex:outputPanel>
+		                         </apex:pageBlockSectionItem>
+		                         
+		                         <apex:pageBlockSectionItem >
+			                         <apex:outputPanel >
+			                         	<apex:outputLabel for="trachSize" value="Trach Size" />
+			                         	<br />
+			                         	<br />
+			                         	<apex:outputLabel for="trackSizeOther" value="Other" id="trachSizeOtherLabel"/>
+			                         </apex:outputPanel>
+			                         <apex:outputPanel >
+			                         	<div class="requiredInput">
+                     	 			 	<div class="requiredBlock"></div>
+			                         	<apex:inputField value="{!Evaluation__c.Trach_Size__c}" id="trachSize" onchange="handleTrach(); return false;"/>
+			                         	</div>
+			                         	<div class="requiredInput">
+                     	 			 	<div class="requiredBlock"></div>
+			                         	<apex:inputField Value="{!Evaluation__c.Trach_Size_Other__c}" id="trackSizeOther" />
+			                         	</div>
+			                         </apex:outputPanel>
+		                         </apex:pageBlockSectionItem >
+		                         
+		                         <apex:inputField value="{!Evaluation__c.Cuffed_Picklist__c}" label="Cuffed" id="trachCuffed" />
+		                         <apex:inputField value="{!Evaluation__c.PMV_picklist__c}" label="PMV" id="trachPMV"/ >
+		                         <apex:inputField value="{!Evaluation__c.Plugged_Picklist__c}" label="Plugged" id="trachlugged" />
+		                         <apex:inputField value="{!Evaluation__c.PMV_Documentation_Needed__c}" label="Documentation Needed" id="pmvDocumantation"/>
+		                         <apex:pageBlockSectionItem />
+		                         <apex:inputTextArea value="{!Evaluation__c.PMV_Documentation_Narrative_Note__c}" label="Add Narrative Note" id="pmvnarrativeNote" rows="4" cols="60" />  
+	                		</apex:pageBlockSection>
 	                	</apex:pageBlockSection>
                 	
                 	<apex:pageBlockSection columns="1" title="O2" >
