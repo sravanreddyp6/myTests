@@ -170,7 +170,13 @@ function enableDiagEff() {
             errors += '<li>You must lookup the User</li>';
         }
     }
-
+   
+   //EC-54 November 2014 Release Make Rank Required for CM 
+    if (j$('select[id$=locationEntry_Rank]').val() =='' && {!referralRecordType == 'CareMeridian'}) {
+        errors += '<li>Rank is a required field.</li>';
+    }
+   //End EC-54
+    
     if (j$('select[id$=locationEntry_Status]').val() =='') {
         errors += '<li>Status is a required field.</li>';
     }
