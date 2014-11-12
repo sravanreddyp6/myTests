@@ -125,6 +125,16 @@ public with sharing class referral_Controller2 {
         return ((operatinggroup == 'Cambridge' && isCambridge )|| (operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ) || (operatinggroup == 'CareMeridian' && isCareMeridian && OS.Referral_ConvertCMEnabled__c ) );
     } set;}
 
+  // NEVAL-32
+  public Boolean showNeuroFeatures {
+    get {
+      if (showNeuroFeatures == null) {
+        showNeuroFeatures = OS.Referral_Neuro_Features_Enabled__c;
+      }
+      return showNeuroFeatures;
+    }
+    set;
+  }
 
   public static final String REFERRAL_EDIT_URL = '/apex/referral';
   public static final String REFERRAL_CONVERT_URL = '/apex/referralConversion';

@@ -170,13 +170,13 @@ function enableDiagEff() {
             errors += '<li>You must lookup the User</li>';
         }
     }
-   
-   //EC-54 November 2014 Release Make Rank Required for CM 
+
+   //EC-54 November 2014 Release Make Rank Required for CM
     if (j$('select[id$=locationEntry_Rank]').val() =='' && {!referralRecordType == 'CareMeridian'}) {
         errors += '<li>Rank is a required field.</li>';
     }
    //End EC-54
-    
+
     if (j$('select[id$=locationEntry_Status]').val() =='') {
         errors += '<li>Status is a required field.</li>';
     }
@@ -2213,7 +2213,7 @@ clearDisableField = function(pageSectionId){
         <apex:inputField value="{!Referral__c.Comments__c}" style="width: 90%;" />
       </apex:pageBlockSection>
 
-      <apex:pageBlockSection showHeader="true" title="Evaluation" columns="1" collapsible="false" rendered="{!ReferralRecordType=='CareMeridian' || ReferralRecordType=='NeuroRestorative'}">
+      <apex:pageBlockSection showHeader="true" title="Evaluation" columns="1" collapsible="false" rendered="{!OR(ReferralRecordType=='CareMeridian', AND(ReferralRecordType=='NeuroRestorative', showNeuroFeatures))}">
         <apex:outputPanel >
           <apex:variable var="emptyList" value="'[]'"/>
           <apex:variable var="evaluationList" value="'{!Referral__c.Evaluations__r}'"/>
@@ -2311,9 +2311,9 @@ clearDisableField = function(pageSectionId){
           <apex:outputPanel >
             <apex:commandButton value="Add Referral Tracking Activity"
                                 onclick="showAddActivity(); openModalDialog('ActivityModal', 'span', 'Add Activity','none'); return false;" />
-            <apex:commandButton onclick="addNeuroAdmissionSteps(); return false;" value="Add Admission Steps" rendered="{!AND(ReferralRecordType='NeuroRestorative', !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" />
-            <apex:outputLabel value="Admission Steps Assigned To" for="taskOwner" rendered="{!ReferralRecordType='NeuroRestorative' && !Referral__c.Admission_Steps_Added__c && Referral__c.Referral_Status__c != 'Closed'}" style="margin-left: 8px; margin-right: 8px; " />
-            <apex:inputField value="{!dummyTask.OwnerId}" label="Assigned To" id="taskOwner" rendered="{!ReferralRecordType='NeuroRestorative' && !Referral__c.Admission_Steps_Added__c && Referral__c.Referral_Status__c!='Closed'}" required="false" />
+            <apex:commandButton onclick="addNeuroAdmissionSteps(); return false;" value="Add Admission Steps" rendered="{!AND(ReferralRecordType='NeuroRestorative', !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed', showNeuroFeatures)}" />
+            <apex:outputLabel value="Admission Steps Assigned To" for="taskOwner" rendered="{!ReferralRecordType='NeuroRestorative' && !Referral__c.Admission_Steps_Added__c && Referral__c.Referral_Status__c != 'Closed' && showNeuroFeatures}" style="margin-left: 8px; margin-right: 8px; " />
+            <apex:inputField value="{!dummyTask.OwnerId}" label="Assigned To" id="taskOwner" rendered="{!ReferralRecordType='NeuroRestorative' && !Referral__c.Admission_Steps_Added__c && Referral__c.Referral_Status__c!='Closed' && showNeuroFeatures}" required="false" />
             <apex:actionStatus id="taskAssignStatus">
               <apex:facet name="start">
                 <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
@@ -2349,7 +2349,7 @@ clearDisableField = function(pageSectionId){
                                columns="4"
                                collapsible="false"
                                id="progConsid"
-                               rendered="{!AND(ReferralRecordType!='CareMeridian')}">
+                               rendered="{!OR(AND(ReferralRecordType!='CareMeridian', ReferralRecordType!='NeuroRestorative'), AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures))}">
           <!-- Row 1, Col 1 -->
           <apex:inputField value="{!Referral__c.Staffing_Needs__c}" rendered="{!ReferralRecordType != 'Indiana' && ReferralRecordType != 'NeuroRestorative'}"/>
           <apex:inputField value="{!Referral__c.Living_Environment__c}" rendered="{!ReferralRecordType = 'Indiana' && ReferralRecordType != 'NeuroRestorative'}"/>
@@ -3565,7 +3565,7 @@ clearDisableField = function(pageSectionId){
           <apex:inputField value="{!Referral__c.Hospitalization_Within_the_past_year__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
           <!-- TADA -->
         </apex:pageBlockSection>
-        <apex:pageBlockSection columns="1" id="progConsiderationsDetail">
+        <apex:pageBlockSection columns="1" id="progConsiderationsDetail" rendered="{!OR(ReferralRecordType != 'NeuroRestorative', showNeuroFeatures)}">
           <apex:inputField value="{!Referral__c.Restricted_Health_Conditions__c}" rendered="{!ReferralRecordType == 'Cambridge Georgia'}" />
           <apex:outputPanel layout="none" rendered="{!ReferralRecordType = 'NeuroRestorative'}"><hr /></apex:outputPanel>
           <apex:inputTextarea value="{!Referral__c.Programming_Considerations_Comments__c}" cols="80" rendered="{!isCambridge || ReferralRecordType = 'NeuroRestorative'}" />

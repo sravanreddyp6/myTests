@@ -38,6 +38,18 @@ public with sharing class referrals_Controller{
   // We use a dummy task record in order to be able to use Salesforce's
   // standard user chooser widget.
   public Task dummyTask { get; set; }
+  // NEVAL-32
+  SystemSettings__c OS = SystemSettings__c.getOrgDefaults();
+  public Boolean showNeuroFeatures {
+    get {
+      if (showNeuroFeatures == null) {
+        showNeuroFeatures = OS.Referral_Neuro_Features_Enabled__c;
+      }
+      return showNeuroFeatures;
+    }
+    set;
+  }
+
   public Person_Being_Referred__c personBeingRefRecord { get; set; }
   public List<Person_Being_Referred__c> refResults { get; set; }
   public Contact personBeingServedRecord { get; set; }
