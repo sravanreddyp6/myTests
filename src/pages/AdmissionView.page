@@ -1,4 +1,4 @@
-<apex:page title="Admission: {!admission.Name}" standardController="Admission__c" extensions="AdmissionViewExtension,AdmissionDocumentController"  standardStylesheets="true" sidebar="false"  tabStyle="Persons_Being_Served_New__tab">
+<apex:page title="Admission: {!admission.Name}" standardController="Admission__c" extensions="AdmissionViewExtension,AdmissionDocumentController" standardStylesheets="true" sidebar="false"  tabStyle="Persons_Being_Served_New__tab">
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
@@ -35,12 +35,19 @@
     }
     .whitenoise { color:white; }
     .cssWait { cursor:wait;}
-    .cssWaitComplete { cursor:auto;}    
+    .cssWaitComplete { cursor:auto;}
+    
+    span.fancytree-focused span.fancytree-title {
+	outline: 2px ridge black
+	}
+	
+	.datePicker{z-index:1004;}
+    
   </style>
 
  <script type="text/javascript">
-    j$ = jQuery.noConflict();
-    
+
+                	        
 (function ($) {
     openModalDialog = function (dialogId, tagType, titleString, dClass, width) {
         if (!width) {
@@ -64,8 +71,10 @@
                     my: "center top",
                     at: "center top"
                 },
-                open: function () {
-                    $("body").css("overflow", "hidden");
+                open: function (event, ui) {
+                     $("body").css("overflow", "hidden");
+                   
+
                 }
             }).parent().appendTo($('form[id$=admissionForm]'));
             $(selector).parent().find('a.ui-dialog-titlebar-close').remove();
@@ -86,6 +95,14 @@
     }
 }) (jQuery.noConflict());
 
+
+//j$ = jQuery.noConflict();
+//j$(document).ready(function(){
+//	var hstryblks = j$('img[id$=section1]');
+//	j$.each( hstryblks, function( index, hstryblk) {
+//			j$(this).trigger("click");
+//	});
+//});
 
 var isModified = false;
 var nodeKey = null;    
@@ -139,7 +156,7 @@ function triggerNodeEdit(nK){
     <br />
     <apex:form id="admissionForm">
     
-	<apex:actionFunction name="saveAdmissionDocAF" action="{!saveAdmissionDoc}" rerender="associatedDocuments" oncomplete="waitComplete(),closeModalDialog('addAdmissionDocumentModal', 'span');"/>
+	<apex:actionFunction name="saveAdmissionDocAF" action="{!saveAdmissionDoc}" rerender="associatedDocuments" oncomplete="waitComplete(),closeModalDialog('addAdmissionDocumentModal', 'span');" status="myStatus"/>
     <apex:actionFunction name="showAddEditAdmissionDocAF" action="{!showAddEditAdmissionDoc}" rerender="admissionDocumentyEntry,msgs" oncomplete="waitComplete()"/>
 
  <apex:actionFunction action="{!editTreeNode}" name="editNode" rerender="associatedDocDetails" oncomplete="waitComplete()">
@@ -147,7 +164,7 @@ function triggerNodeEdit(nK){
  </apex:actionFunction>
 
 
- <apex:actionFunction action="{!updateDocSelection}" name="updateDocSelectionAF" rerender="associatedDocuments" oncomplete="waitComplete()">
+ <apex:actionFunction action="{!updateDocSelection}" name="updateDocSelectionAF" rerender="associatedDocDetails" oncomplete="waitComplete()">
      <apex:param name="selectedKey" value="" />
      <apex:param name="isSelected" value="" />     
  </apex:actionFunction>
@@ -224,13 +241,16 @@ function triggerNodeEdit(nK){
           <input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents'); return false;"/>          
         </div>
 		<apex:pageBlockTable styleclass="pbBody-list"  value="{!associatedDocs}" var="doc">
-            <apex:column> <apex:facet name="header">Packet Name</apex:facet> {!doc.DocPacket__r.Packet_Name__c} </apex:column>
-            <apex:column> <apex:facet name="header">Document Name</apex:facet> {!doc.Document__r.Document_Name__c} </apex:column>
-            <apex:column> <apex:facet name="header">Effective Date</apex:facet><apex:outputField value="{!doc.Effective_Date__c}" /></apex:column>
-            <apex:column> <apex:facet name="header">Filed Date</apex:facet> <apex:outputField value="{!doc.Filed_Date__c}" /> </apex:column>
-            <apex:column> <apex:facet name="header">Status</apex:facet> {!doc.Status__c} </apex:column>
-            <apex:column> <apex:facet name="header">Status Date</apex:facet><apex:outputField value="{!doc.Status_Date__c}" /></apex:column>
-            <apex:column> <apex:facet name="header">Signature - Date</apex:facet> <apex:repeat value="{!doc.AssocDocSignatures__r}" var="signatures" id="theRepeat"> {!signatures.DocSignature__r.DocSigner__c}-<apex:outputField value="{!signatures.Signed_Date__c}" /><br/> </apex:repeat> </apex:column>
+            <apex:column > <apex:facet name="header">Packet Name</apex:facet> {!doc.DocPacket__r.Packet_Name__c} </apex:column>
+            <apex:column > <apex:facet name="header">Document Name</apex:facet> {!doc.Document__r.Document_Name__c} </apex:column>
+            <apex:column > <apex:facet name="header">Effective Date</apex:facet><apex:outputField value="{!doc.Effective_Date__c}" /></apex:column>
+            <apex:column > <apex:facet name="header">Filed Date</apex:facet> <apex:outputField value="{!doc.Filed_Date__c}" /> </apex:column>
+            <apex:column > <apex:facet name="header">Status</apex:facet> {!doc.Status__c} </apex:column>
+            <apex:column > <apex:facet name="header">Status Date</apex:facet><apex:outputField value="{!doc.Status_Date__c}" /></apex:column>
+            
+<!--             <apex:column > <apex:facet name="header">History</apex:facet><apex:pageBlockSection title="History" columns="1"  id="section1"> -->
+<!--             <c:SObjectHistories object="{!doc}" title="Document History" /></apex:pageBlockSection> </apex:column> -->
+<!--             <apex:column> <apex:facet name="header">Signature - Date</apex:facet> <apex:repeat value="{!doc.AssocDocSignatures__r}" var="signatures" id="theRepeat"> {!signatures.DocSignature__r.DocSigner__c} - <apex:outputField value="{!signatures.Signed_Date__c}" /><br/> </apex:repeat> </apex:column> -->
         </apex:pageBlockTable>
         <apex:outputText value="No records to display" rendered="{!(associatedDocs ==null || associatedDocs.size=0)}" />
 	</apex:pageBlock>
@@ -239,11 +259,23 @@ function triggerNodeEdit(nK){
 	    <!-- Add/edit Admission Documents. -->
     <apex:outputPanel id="addAdmissionDocumentModal" style="display:none">
       <apex:pageBlock title="Add/Edit Documents">
+
         <apex:pageblockButtons location="bottom">
-          <input type="button" value="Save" onClick="saveAdmissionDoc(true); " class="btn" />
-<!--           <input type="button" value="Close" onClick="closeModalDialog('addAdmissionDocumentModal', 'span'); j$('#admissionDocumentErrors').html('');j$('[id$=tree2]').fancytree('destroy');return false;"  class="btn"/> -->
-          <input type="button" value="Close" onClick="closeModalDialog('addAdmissionDocumentModal', 'span'); j$('#admissionDocumentErrors').html('');return false;"  class="btn"/>          
-        </apex:pageblockButtons>
+		<apex:actionStatus id="myStatus">
+	        <apex:facet name="start">
+	        	<div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+	            	<img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+				</div>
+	        </apex:facet>
+            <apex:facet name="stop">
+		        
+		          <input type="button" value="Save" onClick="saveAdmissionDoc(true); " class="btn" />
+		<!--           <input type="button" value="Close" onClick="closeModalDialog('addAdmissionDocumentModal', 'span'); j$('#admissionDocumentErrors').html('');j$('[id$=tree2]').fancytree('destroy');return false;"  class="btn"/> -->
+		          <input type="button" value="Close" onClick="closeModalDialog('addAdmissionDocumentModal', 'span'); $('#admissionDocumentErrors').html('');return false;"  class="btn"/>          
+         
+            </apex:facet>
+		</apex:actionStatus>
+       		        </apex:pageblockButtons>            
 
         <apex:facet name="header">
           <p><strong>Check/Uncheck a document or packet to add/remove to the admission. Select document name to view/edit its details:</strong></p>
@@ -258,8 +290,9 @@ function triggerNodeEdit(nK){
 		        <apex:inputHidden value="{!selectedKeys}" id="catalog_items"/>       
 			</apex:outputPanel>
 
-			<apex:outputPanel id="associatedDocDetails" layout="block" >
-				<br/><br/>
+			<apex:outputPanel id="associatedDocDetails">
+			<apex:outputPanel id="associatedDocDetail" layout="block" rendered="{! currrentAssocDoc.Status__c != '' }">
+				<br/>
         	 	<table>
 					<tr>
 						<td><apex:outputText value="Effective Date" styleClass="labelCol"/></td>
@@ -288,11 +321,11 @@ function triggerNodeEdit(nK){
 					</tr>
 					<tr>
 						<td><apex:outputText value="Status Date" styleClass="labelCol"/></td>
-						<td><apex:inputField value="{!currrentAssocDoc.Status_Date__c}" id="currrentAssocDoc_Status_Date"/></td>					
+						<td><apex:inputField value="{!currrentAssocDoc.Status_Date__c}" id="currrentAssocDoc_Status_Date"/></td>
 					</tr>
 				</table>	
 	        </apex:outputPanel>
-
+			</apex:outputPanel>
 
         </apex:pageBlockSection>
       </apex:pageBlock>
