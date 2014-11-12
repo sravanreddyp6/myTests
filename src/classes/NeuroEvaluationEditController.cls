@@ -35,8 +35,8 @@ public with sharing class NeuroEvaluationEditController {
 
     public List<SelectOption> painAlleviatorValues {
         get {
-            painAlleviatorValue = Utility.getPicklistValues(evaluation, 'Neuro_Pain_Alleviating_Factors__c');
-            return painAlleviatorValue;
+            painAlleviatorValues = Utility.getPicklistValues(evaluation, 'Neuro_Pain_Alleviating_Factors__c');
+            return painAlleviatorValues;
         }
         set;
     }
