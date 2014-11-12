@@ -75,6 +75,7 @@ public with sharing class referral_Controller2 {
               activity.Priority = 'Normal';
               activity.OwnerId = UserInfo.getUserId();
               activity.Status = 'Not Started';
+              activity.RecordTypeId = Utility.getRecordTypeForTask('Referral Tasks');
           }
           return activity;
       }
@@ -389,6 +390,7 @@ public with sharing class referral_Controller2 {
       activity.Priority = 'Normal';
       activity.OwnerId = UserInfo.getUserId();
       activity.Status = 'Not Started';
+      activity.RecordTypeId = Utility.getRecordTypeForTask('Referral Tasks');
   }
 
   public void saveActivity() {
@@ -397,6 +399,7 @@ public with sharing class referral_Controller2 {
     activity.Priority = 'Normal';
     activity.OwnerId = UserInfo.getUserId();
     activity.Status = 'Not Started';
+    activity.RecordTypeId = Utility.getRecordTypeForTask('Referral Tasks');
   }
 
   public void showAddAgency() {
@@ -621,6 +624,7 @@ public with sharing class referral_Controller2 {
     }
     orderedNames.sort();
     System.debug('orderedNames: ' + orderedNames);
+    Id taskRecordType = Utility.getRecordTypeForTask('Referral Tasks');
     for (Integer orderedName: orderedNames) {
       // We do not batch insert the tasks here because it leads to inconsistent
       // sorting order.
@@ -629,7 +633,8 @@ public with sharing class referral_Controller2 {
         Priority = 'Normal',
         Status = 'Not Started',
         WhatId = referralRecord.Id,
-        OwnerId = dummyTask.OwnerId
+        OwnerId = dummyTask.OwnerId,
+        RecordTypeId = taskRecordType
       );
     }
     populateActivities();

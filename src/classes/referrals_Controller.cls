@@ -1323,13 +1323,15 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     }
     System.debug('orderedName: ' + orderedNames);
     orderedNames.sort();
+    Id taskRecordType = Utility.getRecordTypeForTask('Referral Tasks');
     for (Integer orderedName: orderedNames) {
       Task task = new Task(
         Subject = stepSubjects.get(String.valueOf(orderedName)).Subject__c,
         Priority = 'Normal',
         Status = 'Not Started',
         WhatId = referralRecord.Id,
-        OwnerId = dummyTask.OwnerId
+        OwnerId = dummyTask.OwnerId,
+        RecordTypeId = taskRecordType
       );
       // We do not batch insert the tasks here because it leads to inconsistent
       // sorting order.
