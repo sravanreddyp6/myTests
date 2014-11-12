@@ -833,6 +833,45 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Autonomic_Dysreflexia_Areas_Assessed__c</fullName>
+        <externalId>false</externalId>
+        <label>Autonomic Dysreflexia Areas Assessed</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Bladder Distended</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Signs &amp; Symptoms of UTI</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Pain</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Kinked Catheter</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Distended Abdomen</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Constrictive clothes/shoes/apparatus</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Lying/sitingonwrinkled clothng/bedlinen</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>MultiselectPicklist</type>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
         <fullName>Autonomic_Dysreflexia__c</fullName>
         <externalId>false</externalId>
         <label>Autonomic Dysreflexia</label>
@@ -2862,6 +2901,34 @@
         <label>Dysphagia</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Dysreflexia_Issue_Describe__c</fullName>
+        <externalId>false</externalId>
+        <label>Dysreflexia Issue Describe</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Dysreflexia_issue_resolved__c</fullName>
+        <externalId>false</externalId>
+        <label>Dysreflexia issue resolved</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>EEG_Above_Normal_Limits__c</fullName>
@@ -12036,6 +12103,37 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Autonomic_Dysreflexia_Areas_Assessed__c</picklist>
+            <values>
+                <fullName>Bladder Distended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Constrictive clothes%2Fshoes%2Fapparatus</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Distended Abdomen</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Kinked Catheter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lying%2Fsitingonwrinkled clothng%2Fbedlinen</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Pain</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Signs %26 Symptoms of UTI</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Autonomic_Dysreflexia__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -12843,6 +12941,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Does_Resident_appear_to_demonstrate__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Dysreflexia_issue_resolved__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -16734,6 +16843,37 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Autonomic_Dysreflexia_Areas_Assessed__c</picklist>
+            <values>
+                <fullName>Bladder Distended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Constrictive clothes%2Fshoes%2Fapparatus</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Distended Abdomen</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Kinked Catheter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lying%2Fsitingonwrinkled clothng%2Fbedlinen</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Pain</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Signs %26 Symptoms of UTI</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Autonomic_Dysreflexia__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -17598,6 +17738,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Does_Resident_appear_to_demonstrate__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Dysreflexia_issue_resolved__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -21434,6 +21585,37 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Autonomic_Dysreflexia_Areas_Assessed__c</picklist>
+            <values>
+                <fullName>Bladder Distended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Constrictive clothes%2Fshoes%2Fapparatus</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Distended Abdomen</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Kinked Catheter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lying%2Fsitingonwrinkled clothng%2Fbedlinen</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Pain</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Signs %26 Symptoms of UTI</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Autonomic_Dysreflexia__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -22281,6 +22463,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Does_Resident_appear_to_demonstrate__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Dysreflexia_issue_resolved__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -26317,6 +26510,37 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Autonomic_Dysreflexia_Areas_Assessed__c</picklist>
+            <values>
+                <fullName>Bladder Distended</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Constrictive clothes%2Fshoes%2Fapparatus</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Distended Abdomen</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Kinked Catheter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lying%2Fsitingonwrinkled clothng%2Fbedlinen</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Pain</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Signs %26 Symptoms of UTI</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Autonomic_Dysreflexia__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -27145,6 +27369,17 @@
         </picklistValues>
         <picklistValues>
             <picklist>Does_Resident_appear_to_demonstrate__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Dysreflexia_issue_resolved__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
