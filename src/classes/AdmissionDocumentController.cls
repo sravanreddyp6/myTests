@@ -3,18 +3,15 @@ public with sharing class AdmissionDocumentController {
 	public List<PB_AssociatedDoc__c> associatedDocs = new List<PB_AssociatedDoc__c>();
 	public List<PB_AssociatedDoc__c> getAssociatedDocs() { return this.associatedDocs;}
 	
-
 	public TMN_Tree allDocsTree {get; set;}
     //keys returned by the fancy tree comp are stored here
     public string selectedKeys {get; set;}
     
-    public string selectedForEdit {get; set;}
-    
-    // An in-memory mapping for of the tree, with the key beig the Packet-Doc Juntion ID
+    // An in-memory DB to represent componenets managed by the fancy tree, with the key being the Packet-Doc Juntion ID
     public Map<Id, DocumentWrapper> treeModel = new Map<Id, DocumentWrapper>();
     public PB_AssociatedDoc__c currrentAssocDoc {get; set;}
     
-    // An in-memory mapping to list of docPacketJo's with the packet ID
+    // An in-memory mapping to list docPacketJo's with the packet ID
     public Map<Id, List<PB_DocPacket_Document_JO__c>> pcktJos = new Map<Id, List<PB_DocPacket_Document_JO__c>>();
      
     
@@ -26,16 +23,16 @@ public with sharing class AdmissionDocumentController {
    		Map<id, PB_Document__c> docMap = new map<id, PB_Document__c>([SELECT id, Document_Name__c, Due_Days__c, Effective_Date__c, Expiration_Date__c, Recurring__c, 
    																			 Recurring_Frequency__c, Status__c, Type__c, Version__c, (SELECT id, DocSigner__c FROM DocSignatures__r)
    																		FROM PB_Document__c]);
-       	List<PB_AssociatedDoc__c> allAssocDocs = getAllAssociatedDocs();
-       	
+
    		for (PB_DocPacket_Document_JO__c jo : [SELECT id, DocPacket__r.id, Document__r.id FROM PB_DocPacket_Document_JO__c]){
    			treeModel.put(jo.id, new DocumentWrapper(docMap.get(jo.Document__r.id), pcktMap.get(jo.DocPacket__r.id), docMap.get(jo.Document__r.id).DocSignatures__r));
    		}
 
+       	List<PB_AssociatedDoc__c> allAssocDocs = getAllAssociatedDocs();
 		for (PB_AssociatedDoc__c assocDoc : allAssocDocs){
 			// these are the ones already added to this admission
 			if (assocDoc.isAdded__c == true){
-				this.associatedDocs.add(assocDoc);
+				this.associatedDocs.add(assocDoc);			// This adds the current list of associated docs for the first time page load, subsequently this list is refreshed using refreshAssociatedDocs()
 			}
 			
 			for (ID idKey : treeModel.keyset()) {
@@ -60,12 +57,11 @@ public with sharing class AdmissionDocumentController {
     }
     
     private List<PB_AssociatedDoc__c> getAllAssociatedDocs(){
-    	List<PB_AssociatedDoc__c> allAssocDocs = [SELECT id, DocPacket__r.id, Document__r.id, DocPacket__r.Packet_Name__c, Document__r.document_name__c, due_days__c, effective_date__c, filed_date__c, isAdded__c, 
-       							 recurring__c, recurring_frequency__c, sObject_id__c, sObject_Type__c, status__c, status_date__c,
-       							 (SELECT DocSignature__r.DocSigner__c, signed_date__c FROM AssocDocSignatures__r) 
-      						FROM PB_AssociatedDoc__c WHERE sObject_id__c =: this.admission.id AND sObject_type__c = 'Admission' 
-       						ORDER BY DocPacket__r.Packet_Name__c, Document__r.document_name__c];
-       						
+    	List<PB_AssociatedDoc__c> allAssocDocs = [SELECT  id, DocPacket__r.id, Document__r.id, DocPacket__r.Packet_Name__c, Document__r.document_name__c, due_days__c, effective_date__c, filed_date__c, 
+    													  isAdded__c, recurring__c, recurring_frequency__c, sObject_id__c, sObject_Type__c, status__c, status_date__c,
+						       							  (SELECT isSigned__c, DocSignature__r.DocSigner__c, signed_date__c FROM AssocDocSignatures__r) 
+      												FROM  PB_AssociatedDoc__c WHERE sObject_id__c =: this.admission.id AND sObject_type__c = 'Admission' 
+       												ORDER BY DocPacket__r.Packet_Name__c, Document__r.document_name__c];       						
        	return allAssocDocs;
     }
     
@@ -75,7 +71,7 @@ public with sharing class AdmissionDocumentController {
 			if (assocDoc.isAdded__c == true){
 				this.associatedDocs.add(assocDoc);
 			}
- 		}  
+ 		}
  	}
  	 
     public pageReference editTreeNode(){
@@ -94,6 +90,7 @@ public with sharing class AdmissionDocumentController {
 		if (selectedID.getSobjectType() == PB_DocPacket_Document_JO__c.sObjectType) {
 	    	//get the Document wrapper
 			updateDocSelections(treeModel.get(selectedID), isSelected);
+			editTreeNode();
 		} else {
 			// the selected node is a packet; get all the associated Docs, add ones not already present as new 
 			List<PB_DocPacket_Document_JO__c> selectedTreeIds = pcktJos.get(selectedID);
@@ -124,13 +121,19 @@ public with sharing class AdmissionDocumentController {
 																		sObject_Type__c = 'Admission',
 																		Status__c = 'Initial',
 																		Status_Date__c = null );
-				docWrap.associatedDoc = newDoc;		
+				docWrap.associatedDoc = newDoc;
+				
+				// Add the Signature 
+				//for (PB_DocSignature__c sig :docWrap.docSigners) {
+				//	docWrap.associatedDocSigners.add( new PB_AssocDocSignature__c(DocSignature__c = sig.id, Signed_Date__c = null));
+				//}
 			}
 	}
 
 
 	public void saveAdmissionDoc() {
 		List<PB_AssociatedDoc__c> newAssocDocs = new List<PB_AssociatedDoc__c>();
+		//List<PB_AssocDocSignature__c> newAssocSigns = new List<PB_AssocDocSignature__c>();
 		List<PB_AssociatedDoc__c> updatedAssocDocs = new List<PB_AssociatedDoc__c>();
 
 
@@ -142,14 +145,23 @@ public with sharing class AdmissionDocumentController {
 			
 			if (docWrap.isNew ){			// new additions
 					newAssocDocs.add(docWrap.associatedDoc);
-			}
-			
+			}			
 		}
 		
-		
-		
 		update updatedAssocDocs;
-		insert newAssocDocs;		
+		insert newAssocDocs;
+
+		//for (ID idKey : treeModel.keyset()) {
+		//	DocumentWrapper docWrap = treeModel.get(idKey);
+		//	if (docWrap.isNew && docWrap.associatedDocSigners.size()>0 ){			// signatures for the newly added docs
+		//		for (PB_AssocDocSignature__c assocSig :docWrap.associatedDocSigners) {
+		//				assocSig.AssociatedDoc__c = docWrap.associatedDoc.id;
+		//				newAssocSigns.add(assocSig);
+		//		}
+		//	}			
+		//}
+		//insert newAssocSigns;
+
 		refreshAssociatedDocs();
 	}	
   
@@ -193,7 +205,7 @@ public with sharing class AdmissionDocumentController {
 		public PB_DocPacket__c packet;
 		public List<PB_DocSignature__c> docSigners;
 		public PB_AssociatedDoc__c associatedDoc;
-		public List<PB_AssocDocSignature__c> associatedDocSigners;
+		public List<PB_AssocDocSignature__c> associatedDocSigners = new List<PB_AssocDocSignature__c>();
 		
 		public boolean isAssocPresent = false;		 // to indiate if the packet-Doc junction is already present in the association table
 		public boolean isChanged = false;
