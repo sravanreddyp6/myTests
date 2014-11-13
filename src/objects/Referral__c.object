@@ -81962,7 +81962,7 @@
     <validationRules>
         <fullName>Closed_Admitted_NoServiceLoc</fullName>
         <active>true</active>
-        <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;Closed&apos;) &amp;&amp; ISBLANK(Service_Location__c)</errorConditionFormula>
+        <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;Closed&apos;) &amp;&amp; ISPICKVAL(  Close_Reason__c , &apos;Admitted&apos;) &amp;&amp; ISBLANK(Service_Location__c)</errorConditionFormula>
         <errorMessage>Alias Field is blank: No Location has been selected, please add an Anticipated Admission Location.</errorMessage>
     </validationRules>
     <validationRules>
@@ -82044,8 +82044,8 @@
     <validationRules>
         <fullName>NC_Req_HighRisk_Must_FCT</fullName>
         <active>true</active>
-        <errorConditionFormula>ISPICKVAL(State_for_Preferred_Service__c,&apos;North Carolina&apos;) &amp;&amp; 
-INCLUDES(Services_Requested__c, &apos;FCT - Family Centered Treatment&apos;) &amp;&amp; 
+        <errorConditionFormula>ISPICKVAL(State_for_Preferred_Service__c,&apos;North Carolina&apos;) &amp;&amp;
+INCLUDES(Services_Requested__c, &apos;FCT - Family Centered Treatment&apos;) &amp;&amp;
 
 (!(ISPICKVAL(Risk_of_Out_of_Home_Placement__c, &apos;Yes&apos;))
 ||
