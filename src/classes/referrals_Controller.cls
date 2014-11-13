@@ -946,19 +946,19 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
         Boolean hasFundError = false, hasLocError = false, hasCloseError = false;
         if(referralRecord.Close_Reason__c != 'Error' && referralRecord.Referral_Status__c == 'Closed'){
           hasCloseError = checkForBlankFields(referralRecord,'Referral__c',new list<string>{'Current_Location__c','Close_Reason__c','Agency_Name__c','Evaluated_By_Internal__c'}, 'A value for {0} is required to close');
-          for(Funding_Source__c fs :fundingSources){
-            if (fs.Type_of_Coverage__c != 'Primary'){
-               hasFundError = true;
-               break;
-            }
+        }     	
+        for(Funding_Source__c fs :fundingSources){
+          if (fs.Type_of_Coverage__c != 'Primary' && referralRecord.Close_Reason__c != 'Error' && referralRecord.Referral_Status__c == 'Closed'){
+             hasFundError = true;
+             break;
           }
-          for(Referral_Location__c rl :locations){
-            if (rl.Rank__c != 'Primary'){
-               hasLocError = true;
-               break;
-            }
+        }
+        for(Referral_Location__c rl :locations){
+          if (rl.Rank__c != 'Primary' && referralRecord.Close_Reason__c != 'Error' && referralRecord.Referral_Status__c == 'Closed'){
+             hasLocError = true;
+             break;
           }
-		}  
+        }  
         if (hasFundError){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'A primary funding source must be selected to close the referral'));
         }
