@@ -20,7 +20,7 @@ public with sharing class NeuroEvaluationEditControllerTest {
             SELECT Id, Referral__c, Referral__r.Person_Being_Referred__c,
                    RecordtypeId, Primary_Diagnosis__c, Secondary_Diagnosis__c,
                    Date_of_Injury_Onset__c, Hallucination_Types__c,
-                   Hallucinations__c
+                   Hallucinations__c, Neuro_Pain_Alleviating_Factors__c
             FROM Evaluation__c WHERE Id=:evaluation.Id
         ];
         NeuroEvaluationEditController controller = new NeuroEvaluationEditController(new ApexPages.StandardController(evaluation));
