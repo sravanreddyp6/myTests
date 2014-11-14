@@ -1,4 +1,4 @@
-<apex:page standardController="Evaluation__c" extensions="NeuroEvaluationViewController,FieldPrintTransform" showHeader="false" applyHTMLTag="False" renderas="PDF">
+<apex:page standardController="Evaluation__c" extensions="NeuroEvaluationViewController" showHeader="false" applyHTMLTag="False" renderas="PDF">
     <head>
         <style>
             [id$=skinBodyFooter] {
@@ -619,8 +619,7 @@
                     </td>
                     <td>
                         <apex:outputLabel value="For Reading" styleClass="label" />
-                        <apex:outputText value="No" rendered="{!!Evaluation.Glasses_For_Reading__c}" />
-                        <apex:outputField value="{!Evaluation.Glasses_For_Reading__c}" rendered="{!Evaluation.Glasses_For_Reading__c}" />
+                        <apex:outputField value="{!Evaluation.Glasses_For_Reading__c}" />
                     </td>
                 </tr>
                 <tr>
@@ -629,8 +628,7 @@
                     </td>
                     <td>
                         <apex:outputLabel value="For Distance" styleClass="label" />
-                        <apex:outputText value="No" rendered="{!!Evaluation.Glasses_For_Distance__c}" />
-                        <apex:outputField value="{!Evaluation.Glasses_For_Distance__c}" rendered="{!Evaluation.Glasses_For_Distance__c}" />
+                        <apex:outputField value="{!Evaluation.Glasses_For_Distance__c}" />
                     </td>
                 </tr>
                 <tr>
@@ -639,8 +637,7 @@
                     </td>
                     <td>
                         <apex:outputLabel value="For Multi Focal Use" styleClass="label" />
-                        <apex:outputText value="No" rendered="{!!Evaluation.Glasses_For_Multi_Focal_Use__c}" />
-                        <apex:outputField value="{!Evaluation.Glasses_For_Multi_Focal_Use__c}" rendered="{!Evaluation.Glasses_For_Multi_Focal_Use__c}" />
+                        <apex:outputField value="{!Evaluation.Glasses_For_Multi_Focal_Use__c}" />
                     </td>
                 </tr>
                 <tr>
@@ -826,8 +823,7 @@
                 <tr>
                     <td>
                         <apex:outputLabel value="Other" styleClass="label" />
-                        <apex:outputText value="No" rendered="{!!Evaluation.Current_Gait_Mobility_Other__c}" />
-                        <apex:outputField value="{!Evaluation.Current_Gait_Mobility_Other__c}" rendered="{!Evaluation.Current_Gait_Mobility_Other__c}" />
+                        <apex:outputField value="{!Evaluation.Current_Gait_Mobility_Other__c}" />
                     </td>
                 </tr>
                 <tr>
@@ -1057,55 +1053,47 @@
                     </td>
                     <td>
                         <apex:outputLabel value="Drug Abuse" styleClass="label" />
-                        <apex:outputLabel value="No" rendered="{!!Evaluation__c.Drug_Abuse__c}" />
-                        <apex:outputField value="{!Evaluation__c.Drug_Abuse_Describe__c}" rendered="{!Evaluation__c.Drug_Abuse__c}" />
+                        <apex:outputField value="{!Evaluation__c.Drug_Abuse_Describe__c}" />
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <apex:outputLabel value="Sexual Abuse" styleClass="label" />
-                        <apex:outputLabel value="No" rendered="{!!Evaluation__c.Sexual_Abuse__c}" />
-                        <apex:outputField value="{!Evaluation__c.Sexual_Abuse_Describe__c}" rendered="{!Evaluation__c.Sexual_Abuse__c}" />
+                        <apex:outputField value="{!Evaluation__c.Sexual_Abuse_Describe__c}" />
                     </td>
                     <td>
                         <apex:outputLabel value="Domestic Abuse" styleClass="label" />
-                        <apex:outputLabel value="No" rendered="{!!Evaluation__c.Domestic_Abuse__c}" />
-                        <apex:outputField value="{!Evaluation__c.Domestic_Abuse_Describe__c}" rendered="{!Evaluation__c.Domestic_Abuse__c}" />
+                        <apex:outputField value="{!Evaluation__c.Domestic_Abuse_Describe__c}" />
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <apex:outputLabel value="Financial Abuse" styleClass="label" />
-                        <apex:outputLabel value="No" rendered="{!!Evaluation__c.Financial_Abuse__c}" />
-                        <apex:outputField value="{!Evaluation__c.Financial_Abuse_Describe__c}" rendered="{!Evaluation__c.Financial_Abuse__c}" />
+                        <apex:outputField value="{!Evaluation__c.Financial_Abuse_Describe__c}" />
                     </td>
                     <td>
                         <apex:outputLabel value="Physical Abuse" styleClass="label" />
-                        <apex:outputLabel value="No" rendered="{!!Evaluation__c.Physical_Abuse__c}" />
-                        <apex:outputField value="{!Evaluation__c.Physical_Abuse_Describe__c}" rendered="{!Evaluation__c.Physical_Abuse__c}" />
+                        <apex:outputField value="{!Evaluation__c.Physical_Abuse_Describe__c}" />
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <apex:outputLabel value="Risk to Self" styleClass="label" />
-                        <apex:outputLabel value="No" rendered="{!!Evaluation__c.Risk_to_Self__c}" />
-                        <apex:outputField value="{!Evaluation__c.Risk_to_Self_Describe__c}" rendered="{!Evaluation__c.Risk_to_Self__c}" />
+                        <apex:outputField value="{!Evaluation__c.Risk_to_Self_Describe__c}" />
                     </td>
                     <td>
                         <apex:outputLabel value="Risk to Others" styleClass="label" />
-                        <apex:outputLabel value="No" rendered="{!!Evaluation__c.Risk_to_Others__c}" />
-                        <apex:outputField value="{!Evaluation__c.Risk_to_Others__c}" rendered="{!Evaluation__c.Risk_to_Others__c}" />
+                        <apex:outputField value="{!Evaluation__c.Risk_to_Others__c}" />
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <apex:outputLabel value="Elopement Risk" styleClass="label" />
-                        <apex:outputLabel value="No" rendered="{!!Evaluation__c.Elopement_Risk__c}" />
-                        <apex:outputField value="{!Evaluation__c.Elopement_Risk_Describe__c}" rendered="{!Evaluation__c.Elopement_Risk__c}" />
+                        <apex:outputField value="{!Evaluation__c.Elopement_Risk_Describe__c}" />
                     </td>
                     <td>
                         <apex:outputLabel value="Halucinations" styleClass="label" />
-                        <apex:outputLabel value="No" rendered="{!!Evaluation__c.Hallucinations__c}" />
+                        <apex:outputLabel value="{!Evaluation__c.Hallucinations__c}" rendered="{!!Evaluation__c.Hallucinations__c}" />
                         <apex:outputText value="{!selectedHalls}"
                             rendered="{!Evaluation__c.Hallucinations__c}" />
                         <br />
