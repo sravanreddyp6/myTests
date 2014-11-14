@@ -1,0 +1,742 @@
+<apex:page standardController="Evaluation__c" extensions="NeuroEvaluationViewController">
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
+    <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
+    <apex:includeScript value="{!$Resource.AnnotoriousDev}"/>
+    <apex:includeScript value="{!$Resource.AnotoJS}"/>
+    <script>
+    function openWin(url){
+        window.open(url);
+    }
+    </script>
+    <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
+    <style>
+        [id$=skinBodyFooter] {
+            clear: both;
+        }
+        [id$=bodyMapOtherComments] {
+            clear: both;
+        }
+        hr {
+            color: #ECECEC;
+            background-color: #ECECEC;
+            margin-bottom: 20px;
+            margin-top: 20px;
+            border: none;
+            height: 5px;
+        }
+        .evaluationTabHeader .sectionCompleted {
+            background-image: url("{!URLFOR($Resource.EvaluationResources, 'greencheck.png')}");
+            background-repeat: no-repeat;
+            padding-top: 22px;
+        }
+        .evaluationTabHeader .sectionNotCompleted {
+            background-image: url("{!URLFOR($Resource.EvaluationResources, 'whitecheck.png')}");
+            background-repeat: no-repeat;
+            padding-top: 22px;
+        }
+    </style>
+    <div class="breadcrumb">
+        <a href="/">Home</a> > <a href="/{!Evaluation__c.Referral__c}">Referral: {!Evaluation__c.Referral__r.Name}</a> > <a href="/{!Evaluation__c.Id}">Evaluation: {!Evaluation__c.Name}</a>
+    </div>
+    <apex:form id="wholePage">
+        <apex:variable var="editable" value="{!Evaluation__c.Referral__r.Referral_Status__c != 'Closed'}" />
+        <apex:pageMessages id="pageMessages" />
+        <apex:tabPanel id="wholeTabPanel" value="{!selectedTab}" styleClass="evaluationTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
+            <apex:tab label="Demographics" name="demographicsTab" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+                <apex:pageBlock >
+                    <apex:pageBlockSection columns="2">
+                        <apex:outputField value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Full_Name__c}" />
+                        <apex:outputField value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Date_of_Birth__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Age__c}" />
+                        <apex:outputField value="{!Evaluation__c.Occupation__c}" />
+                        <apex:outputText value="Employment Status" styleClass="labelCol" style="margin-left: 3cm;"/>
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Employed__c}" id="employed" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.EmploymentFT__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.EmploymentPT__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.EmploymentRetired__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.EmploymentDisabled__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.EmploymentUnknown__c}" />
+                        <apex:outputField value="{!Evaluation__c.Premorbid_Living_Status__c}" />
+                    </apex:pageBlockSection>
+                    <hr/>
+                    <apex:pageBlockSection columns="1" title="Related Party">
+                        <apex:actionFunction name="showAddRelatedParty" action="{!showAddRelatedParty}" status="loadingRelatedPartyStatus" rerender="relatedPartyDialogMainBlock" oncomplete="openModalDialog('{!$Component.relatedPartyDialog}', 'Add Related Party', '{!$Component.wholePage}');" />
+                        <apex:actionFunction name="showEditRelatedParty" action="{!showEditRelatedParty}" status="loadingRelatedPartyStatus" rerender="relatedPartyDialogMainBlock" oncomplete="openModalDialog('{!$Component.relatedPartyDialog}', 'Edit Related Party', '{!$Component.wholePage}');">
+                            <apex:param name="currentRelatedPartyId" assignTo="{!currentRelatedPartyId}" value="" />
+                        </apex:actionFunction>
+
+                        <apex:outputPanel layout="none">
+                            <apex:commandButton value="Add Related Party" onclick="showAddRelatedParty(); return false;" rendered="{!editable}" />
+                            <apex:actionStatus id="loadingRelatedPartyStatus">
+                                <apex:facet name="start">
+                                  <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                                </apex:facet>
+                                <apex:facet name="stop" />
+                            </apex:actionStatus>
+                        </apex:outputPanel>
+                        <apex:pageBlockTable value="{!relatedParties}" var="relatedParty" id="relatedPartyTable">
+                            <apex:column headerValue="{!IF(relatedParties.size>0, 'Action', '')}" width="50px" rendered="{!editable}">
+                                <apex:commandLink onclick="showEditRelatedParty('{!relatedParty.Id}'); return false;" value="Edit" />
+                            </apex:column>
+                            <apex:column value="{!relatedParty.Type__c}"/>
+                            <apex:column value="{!relatedParty.Name}"/>
+                            <apex:column value="{!relatedParty.Address__c}"/>
+                            <apex:column value="{!relatedParty.Email__c}"/>
+                            <apex:column value="{!relatedParty.Phone__c}"/>
+                            <apex:column value="{!relatedParty.Phone_1_Type__c}"/>
+                            <apex:column value="{!relatedParty.Phone_2__c}"/>
+                            <apex:column value="{!relatedParty.Phone_2_Type__c}"/>
+                            <apex:column value="{!relatedParty.Comments__c}"/>
+                        </apex:pageBlockTable>
+                    </apex:pageBlockSection>
+                    <hr />
+                    <apex:pageBlockSection columns="2">
+                            <apex:outputPanel >
+                            <apex:outputlabel for="wt" style="font-weight: Bold; color: #4A4A56; font-size: 10px; margin-left: 145px;">{!$ObjectType.Evaluation__c.Fields.Weight__c.label}</apex:outputlabel>
+                            <apex:outputField id="wt" value="{!Evaluation__c.Weight__c}" style="margin-left: 25px;" html-disabled="True"/>
+                        </apex:outputPanel>
+                        <apex:outputPanel >
+                            <apex:outputLabel value="Weight at Admission" style="font-weight: Bold; color: #4A4A56; font-size: 10px;margin-left:85px;"/>
+                            &nbsp;&nbsp;&nbsp;
+                            <apex:outputField id="lbs" value="{!Evaluation__c.Weightlbs__c}" style="margin-left: 25px;"/>
+                            <apex:outputLabel for="lbs" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Weightlbs__c.label}</apex:outputLabel>
+                            <span/>
+                            <apex:outputField id="oz" value="{!Evaluation__c.Weightoz__c}" style="margin-left: 25px;"/>
+                            <apex:outputLabel for="in" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Weightoz__c.label}</apex:outputLabel>
+                            <span/>
+                            <apex:outputText value=" (or) "/>
+                            <apex:outputField id="kg" value="{!Evaluation__c.WeightKg__c}" style="margin-left: 25px;"/>
+                            <apex:outputLabel for="kg" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.WeightKg__c.label}</apex:outputLabel>
+                        </apex:outputPanel>
+                        </apex:pageBlockSection>
+                        <apex:pageBlockSection columns="2" >
+                        <apex:outputPanel >
+                            <apex:outputlabel for="ht" style="font-weight: Bold; color: #4A4A56; font-size: 10px; margin-left: 145px;">{!$ObjectType.Evaluation__c.Fields.Height__c.label}</apex:outputlabel>
+                            <apex:outputField id="ht" value="{!Evaluation__c.Height__c}" style="margin-left: 25px;" html-disabled="True"/>
+                        </apex:outputPanel>
+                        <apex:outputPanel >
+                            <apex:outputLabel value="Height at Admission" style="font-weight: Bold; color: #4A4A56; font-size: 10px;margin-left: 85px;"/>
+                            &nbsp;&nbsp;&nbsp;
+                            <apex:outputField id="ft" value="{!Evaluation__c.HeightFt__c}" style="margin-left: 25px;"/>
+                            <apex:outputLabel for="ft" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.HeightFt__c.label}</apex:outputLabel>
+                            <span/>
+                            <apex:outputField id="in" value="{!Evaluation__c.HeightInches__c}" style="Margin-left: 25px;"/>
+                            <apex:outputLabel for="in" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.HeightInches__c.label}</apex:outputLabel>
+                            <span/>
+                                <apex:outputText value=" (or) "/>
+                                <apex:outputField id="cm" value="{!Evaluation__c.Height_in_cms__c}" style="margin-left: 25px;"/>
+                                <apex:outputLabel for="cm" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Height_in_cms__c.label}</apex:outputLabel>
+                        </apex:outputPanel>
+                    </apex:pageBlockSection>
+
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy"
+                         editEnabled="{!editable}" addEnabled="{!editable}" />
+                    <apex:pageBlockSection columns="2">
+                        <apex:outputField value="{!Evaluation__c.LOMN_Physician_Referral_Attached__c}" />
+                        <apex:outputField value="{!Evaluation__c.Plan_of_Care_Attached__c}" />
+                        <apex:outputField value="{!Evaluation__c.LOMN_Physician_Referral_Attached_Date__c}" id="lomnPhysysianReferralAttachedDate" label="Date LOMN Requested" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.LOMN_Physician_Name__c}" id="lomnPhysicianName" />
+                    </apex:pageBlockSection>
+                    <hr />
+                    <apex:pageBlockSection columns="1">
+                        <apex:outputField value="{!Evaluation__c.Details_Section_Completed__c}" label="Demographics Section Completed"/>
+                    </apex:pageBlockSection>
+                </apex:pageBlock>
+            </apex:tab>
+            <apex:tab label="Diagnostics" name="diagnosticTab" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+                <apex:pageBlock >
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Micro Detail" formId="{!$Component.wholePage}" uniqueId="micro"
+                        editEnabled="{!editable}" addEnabled="{!editable}"
+                        rules="{&quot;Test_Type__c&quot;: {&quot;MRSA&quot;: [&quot;X2_Negative_Cultures__c&quot;], &quot;C-diff&quot;: [&quot;X2_Negative_Cultures__c&quot;]}}" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Radiology Detail" formId="{!$Component.wholePage}" uniqueId="radiology"
+                        editEnabled="{!editable}" addEnabled="{!editable}" />
+                    <apex:pageBlockSection columns="1">
+                        <apex:outputField value="{!Evaluation__c.Cancer__c}" />
+                        <apex:outputField value="{!Evaluation__c.MARs_Attached__c}" />
+                        <apex:outputField value="{!Evaluation__c.MAR_Comments__c}" />
+                        <apex:outputField value="{!Evaluation__c.Labs_Attached__c}" />
+                        <apex:outputField value="{!Evaluation__c.Releases_signed_for_originating_H_P_D_C__c}" label="Releases signed for originating H/P and D/C" />
+                        <apex:outputField value="{!Evaluation__c.Originating_H_P_and_D_C_Attached__c}" />
+                        <apex:outputField value="{!Evaluation__c.Diagnostics_Comments__c}" />
+                        <apex:outputField value="{!Evaluation__c.Diagnostics_Section_Completed__c}" />
+                    </apex:pageBlockSection>
+                </apex:pageBlock>
+            </apex:tab>
+            <apex:tab label="Cardiopulmonary" name="cardioTab" styleClass="{!IF(Evaluation__c.Cardio_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+                <apex:pageBlock >
+                    <apex:pageBlockSection columns="1">
+                        <apex:outputField value="{!Evaluation__c.Hypertension__c}" />
+                        <apex:outputField value="{!Evaluation__c.Cardiac_Disease__c}" />
+                        <apex:outputField value="{!Evaluation__c.EKG__c}" />
+                        <apex:outputField value="{!Evaluation__c.Within_Normal_Limits__c}" />
+                        <apex:outputField value="{!Evaluation__c.Above_Normal_Limits__c}" />
+                        <apex:outputField value="{!Evaluation__c.Smoking_History__c}" />
+                        <apex:outputField value="{!Evaluation__c.Packs_Day_Years__c}" id="numPacksPerDay" />
+                    </apex:pageBlockSection>
+                    <hr />
+                    <apex:pageBlockSection columns="1">
+                        <apex:outputField value="{!Evaluation__c.Cardio_Comments__c}" />
+                        <apex:outputField value="{!Evaluation__c.Cardio_Section_Completed__c}" />
+                    </apex:pageBlockSection>
+                </apex:pageBlock>
+            </apex:tab>
+            <apex:tab label="GU/GI/Nutrition" name="nutritionTab" styleClass="{!IF(Evaluation__c.Nutrition_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+                <apex:pageBlock >
+                    <apex:pageBlockSection columns="2">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Elimination - Bladder" />
+                            <apex:outputText value="" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Elimination - Bowel" />
+                            <apex:outputText value="" />
+                        </apex:pageBlockSectionItem>
+                        <apex:outputField value="{!Evaluation__c.Elimination_Bladder_Continent__c}" label="Incontinent" />
+                        <apex:outputField value="{!Evaluation__c.Elimination_Bowel_Continent__c}" label="Incontinent" />
+                        <apex:outputField value="{!Evaluation__c.Elimination_Bladder_No_Continent_Details__c}" label="Details" />
+                        <apex:outputField value="{!Evaluation__c.Elimination_Bowel_No_Continent_Appliance__c}" label="Appliance" />
+                    </apex:pageBlockSection>
+                    <hr />
+                    <apex:pageBlockSection columns="2">
+                        <apex:outputField value="{!Evaluation__c.Shunt__c}" />
+                        <apex:outputField value="{!Evaluation__c.Permacath__c}" />
+                        <apex:outputField value="{!Evaluation__c.Shunt_Date_Placed__c}"
+                            label="Date Placed"
+                            id="shuntDatePlaced" />
+                        <apex:outputField value="{!Evaluation__c.Permacath_Date_Placed__c}"
+                            label="Date placed"
+                            id="permacathDatePlaced" />
+                        <apex:outputField value="{!Evaluation__c.Shunt_Location__c}"
+                            label="Location"
+                            id="shuntLocation" />
+                        <apex:outputField value="{!Evaluation__c.Permacath_Location__c}"
+                            label="Location"
+                            id="permacathLocation" />
+                    </apex:pageBlockSection>
+                    <hr />
+                    <apex:pageBlockSection columns="1">
+                        <apex:outputField value="{!Evaluation__c.G_Tube__c}" />
+                        <apex:outputField value="{!Evaluation__c.G_Tube_Date_Placed__c}"
+                            label="Date Placed"
+                            id="gTubeDatePlaced" />
+                        <apex:outputField value="{!Evaluation__c.G_Tube_Location__c}"
+                            label="Location"
+                            id="gTubeLocation" />
+                    </apex:pageBlockSection>
+                    <hr />
+                    <apex:pageBlockSection columns="1">
+                        <apex:outputField value="{!Evaluation__c.Nutrition_Route__c}" />
+                        <apex:outputField value="{!Evaluation__c.Diet__c}" />
+                        <apex:outputField value="{!Evaluation__c.Thicken_Liquids__c}" />
+                        <apex:outputField value="{!Evaluation__c.Thicken_Liquids_Details__c}"
+                            label="If Yes: " id="thickenLiquidDetails" />
+                        <apex:outputField value="{!Evaluation__c.Tube_Feed__c}" />
+                        <apex:outputField value="{!Evaluation__c.Planned_Removal__c}" />
+                        <apex:outputField value="{!Evaluation__c.Any_Problems_Noted__c}" />
+                    </apex:pageBlockSection>
+                    <hr />
+                    <apex:pageBlockSection columns="1">
+                        <apex:outputField value="{!Evaluation__c.Nutrition_Comments__c}" />
+                        <apex:outputField value="{!Evaluation__c.Nutrition_Section_Completed__c}" />
+                    </apex:pageBlockSection>
+                </apex:pageBlock>
+            </apex:tab>
+            <apex:tab label="Skin/Body" name="skinBodyTab" styleClass="{!IF(Evaluation__c.Skin_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+                <script>
+                jQuery(document).ready(function ($) {
+                    anno.reset();
+                    var el = $('#bodyMap').get(0);
+                    if (el) {
+                        anno.makeAnnotatable(el);
+                    }
+                    anno.hideSelectionWidget();
+                    var $el = $(el);
+                    <apex:repeat value="{!annotations}" var="annotation">
+                        anno.addAnnotation({
+                            Id: "{!annotation.Id}",
+                            src: $("#bodyMap").prop("src"),
+                            text: "{!JSENCODE(annotation.Annotation_Text__c)}",
+                            shapes: [{
+                                type: "{!JSENCODE(annotation.Annotation_Shape__c)}",
+                                geometry: {
+                                    x: {!annotation.Annotation_X__c},
+                                    y: {!annotation.Annotation_Y__c},
+                                    width: {!annotation.Annotation_Width__c},
+                                    height: {!annotation.Annotation_Height__c}
+                                }
+                            }],
+                            editable: false
+                        });
+                    </apex:repeat>
+                    var createAnnotationElements = function (annotations) {
+                        $('.annotation-number').remove();
+                        $('table#annotations tr').remove();
+                        $.each(annotations, function (index, annotation) {
+                            var $divEl = $("<div class='annotation-number' style='pointer-events:none; position: absolute; text-align: center; left: " + annotation.shapes[0].geometry.x * 100 + "%; width: " + annotation.shapes[0].geometry.width * 100 + "%; top: " + annotation.shapes[0].geometry.y * 100 + "%; height: " + annotation.shapes[0].geometry.height * 100 + "%;'></div>");
+                            $el.parent().append($divEl);
+                            var $textEl = $("<span style='line-height: " + $divEl.height() + "px; color: red; font-size: 1.5em;'>" + (index + 1) + "</span>");
+                            $divEl.append($textEl);
+                            $("table#annotations tbody").append("<tr><td>" + (index + 1) + "</td><td>" + annotation.text + "</td></tr>");
+                        });
+                    }
+                    createAnnotationElements(anno.getAnnotations());
+                    anno.addHandler('onAnnotationCreated', function (annotation) {
+                        createAnnotationElements(anno.getAnnotations());
+                    });
+                    anno.addHandler('onAnnotationUpdated', function (annotation) {
+                        createAnnotationElements(anno.getAnnotations());
+                    });
+                    anno.addHandler('onAnnotationRemoved', function (annotation) {
+                        createAnnotationElements(anno.getAnnotations());
+                    });
+                });
+                </script>
+                <apex:pageBlock >
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" editEnabled="{!editable}" addEnabled="{!editable}" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Pressure Ulcer Detail" formId="{!$Component.wholePage}" uniqueId="decubiti" editEnabled="{!editable}" addEnabled="{!editable}" />
+                    <apex:pageBlockSection columns="1" title="General Skin Condition">
+                        <apex:outputField value="{!Evaluation__c.Skin_Moisture__c}"
+                            label="Mositure" />
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Edema" />
+                            <apex:outputPanel >
+                                <apex:outputField value="{!Evaluation__c.Skin_Edema__c}"
+                                    label="Edema" />
+                                <apex:outputText styleClass="labelCol" value="Location" style="margin-left: 10px; "
+                                    rendered="{!Evaluation__c.Skin_Edema__c == 'Yes'}" />
+                                <apex:outputField value="{!Evaluation__c.Skin_Edema_Location__c}"
+                                    label="Edema Location" id="edemaLocation"
+                                    rendered="{!Evaluation__c.Skin_Edema__c == 'Yes'}" />
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:outputField value="{!Evaluation__c.Skin_Behavior__c}"
+                            label="Behavior" />
+                        <apex:outputField value="{!Evaluation__c.Peripheral_Capillary_Refill_Location__c}" />
+                        <apex:outputField value="{!Evaluation__c.Peripheral_Capillary_Refill_of_Seconds__c}" label="# of Seconds" />
+                    </apex:pageBlockSection>
+
+                    <h2 style="display: block; margin: 10px;">Body Map</h2>
+                    <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
+                        <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!(baseUrl + URLFOR($Resource.WholeBodyNoGrid))}" id="bodyMap" />
+                    </div>
+                    <div style="margin-left: 420px; height: 298px; overflow: auto;">
+                        <table id="annotations">
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <apex:pageBlockSection columns="1" id="bodyMapOtherComments">
+                        <apex:outputField value="{!Evaluation__c.Body_Map_Comments__c}" label="Other Body Map Comments" />
+                    </apex:pageBlockSection>
+                    <hr />
+                    <apex:pageBlockSection columns="1" id="skinBodyFooter">
+                        <apex:outputField value="{!Evaluation__c.Skin_Body_Comments__c}" />
+                        <apex:outputField value="{!Evaluation__c.Skin_Section_Completed__c}" />
+                    </apex:pageBlockSection>
+                </apex:pageBlock>
+            </apex:tab>
+            <apex:tab label="Neurological" name="neuroTab" styleClass="{!IF(Evaluation__c.Neuro_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+                <apex:pageBlock >
+                    <apex:pageBlockSection columns="2" title="Cognitive">
+                        <apex:outputField value="{!Evaluation__c.Seizure_History__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Date_of_Last_Seizure__c}" />
+                        <apex:outputField value="{!Evaluation__c.EEG__c}" />
+                        <apex:outputField value="{!Evaluation__c.Frequency_of_Seizure_Activity__c}" />
+                        <apex:outputField value="{!Evaluation__c.EEG_Within_Normal_Limits__c}" label="Within Normal Limits" />
+                        <apex:outputField value="{!Evaluation__c.Symptoms_of_Seizure__c}" />
+                        <apex:outputField value="{!Evaluation__c.EEG_Above_Normal_Limits__c}" label="Above Normal Limits" />
+                        <apex:outputField value="{!Evaluation__c.Onset_of_Seizure_Activity__c}" />
+                    </apex:pageBlockSection>
+                    <hr />
+                    <apex:pageBlockSection columns="2" title="Sensory">
+                        <apex:outputField value="{!Evaluation__c.Hearing__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Hearing_Aid_Right__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Hearing_Aid_Left__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Visual Impairment" />
+                            <apex:outputText value="" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Glasses/Contacts" />
+                            <apex:outputText value="" />
+                        </apex:pageBlockSectionItem>
+                        <apex:outputField value="{!Evaluation__c.Impaired_Acuity_R__c}" />
+                        <apex:outputField value="{!Evaluation__c.Glasses_For_Reading__c}" label="For Reading" />
+                        <apex:outputField value="{!Evaluation__c.Impaired_Acuity_L__c}" />
+                        <apex:outputField value="{!Evaluation__c.Glasses_For_Distance__c}" label="For Distance" />
+                        <apex:outputField value="{!Evaluation__c.Neglect_R__c}" />
+                        <apex:outputField value="{!Evaluation__c.Glasses_For_Multi_Focal_Use__c}" label="For Multi Focal Use" />
+                        <apex:outputField value="{!Evaluation__c.Neglect_L__c}" />
+                        <apex:outputField value="{!Evaluation__c.Contacts_Type__c}" label="If Contacts, Type" />
+                        <apex:outputField value="{!Evaluation__c.Diplopia__c}" />
+                        <apex:outputField value="{!Evaluation__c.Resident_Contacts_Glasses_at_Facility__c}" label="Does Resident Have Contacts or Glasses at Facility" />
+                        <apex:outputField value="{!Evaluation__c.Tracking_R__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Tracking_L__c}" />
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection columns="1" title="Pain">
+                        <apex:outputField value="{!Evaluation__c.Pain_Present__c}" />
+                    </apex:pageBlockSection>
+                    <apex:pageblockSection columns="2" rendered="{!Evaluation__c.Pain_Present__c == 'Yes'}">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Specify Pain Level"  />
+                            <apex:image url="{!URLFOR($Resource.Wongbakerfaces)}" width="85%" height="110" style="margin-left: 0.75cm;" />
+                        </apex:pageBlockSectionItem>
+                        <apex:inputhidden value="{!Evaluation__c.Neuro_Pain_Level__c}" id="neuropainLevel" />
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Pain Level" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.neuropainLevel}')"
+                                options="{!painsliderOptions}"
+                                initial="{!Evaluation__c.Neuro_Pain_Level__c}" disabled="True" />
+                        </apex:pageBlockSectionItem>
+                        <apex:outputField value="{!Evaluation__c.Neuro_Pain_Severity__c}" label="Severity" />
+                        <apex:outputField value="{!Evaluation__c.Neuro_Pain_Alleviating_Factors__c}" label="Alleviating Factors" />
+                    </apex:pageblockSection>
+                    <hr />
+                    <apex:pageBlockSection columns="2">
+                        <apex:outputField value="{!Evaluation__c.Neuropsychological_Evaluation_Attached__c}" />
+                        <apex:outputField value="{!Evaluation__c.Neuropsychological_Eval_Completed_By__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Neuropsychological_Eval_Completed_Date__c}" />
+                    </apex:pageBlockSection>
+                </apex:pageBlock>
+                <apex:pageBlock >
+                    <apex:pageBlockSection columns="1">
+                        <apex:outputField value="{!Evaluation__c.Neuro_Comments__c}" />
+                        <apex:outputField value="{!Evaluation__c.Neuro_Section_Completed__c}" />
+                    </apex:pageBlockSection>
+                </apex:pageBlock>
+            </apex:tab>
+            <apex:tab label="Ortho" name="orthoTab" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+                <apex:pageBlock >
+                    <apex:pageBlockSection columns="2" title="Orthopedics">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Weight Bearing Precautions" />
+                            <apex:outputPanel >
+                                <apex:outputField value="{!Evaluation__c.Weight_Bearing_Precautions__c}" id="weightBearingPrecautions" />
+                                <apex:outputLabel value="N/A" rendered="{!Evaluation__c.Weight_Bearing_Precautions__c == ''}" />
+                                <apex:outputField value="{!Evaluation__c.Weight_Bearing_Precautions_Not_Available__c}" rendered="{!Evaluation__c.Weight_Bearing_Precautions__c == ''}" />
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Splint__c}" />
+                        <apex:outputField value="{!Evaluation__c.Cast__c}" />
+                        <apex:outputField value="{!Evaluation__c.Splint_Location__c}" id="splintLocation" label="Location" />
+                        <apex:outputField value="{!Evaluation__c.Ortho_Cast_Location__c}" id="castLocation" label="Location" />
+                        <apex:outputField value="{!Evaluation__c.Splint_Location_Other__c}" id="splintLocationOther" label="Other" />
+                        <apex:outputField value="{!Evaluation__c.Cast_Location__c}" id="castLocationOther" label="Other" />
+                        <apex:outputField value="{!Evaluation__c.Splint_Follow_up_Required__c}" id="splintFollowUpRequired" label="Follow-up Required" />
+                        <apex:outputField value="{!Evaluation__c.Cast_Follow_up_Required__c}" id="castFollowUpRequired" label="Follow-up Required" />
+                    </apex:pageBlockSection>
+                    <hr />
+                    <apex:pageBlockSection columns="1">
+                        <apex:outputField value="{!Evaluation__c.Ortho_Comments__c}" />
+                        <apex:outputField value="{!Evaluation__c.Ortho_Section_Completed__c}" />
+                    </apex:pageBlockSection>
+                </apex:pageBlock>
+            </apex:tab>
+            <apex:tab label="Rehab" name="rehabTab" styleClass="{!IF(Evaluation__c.Rehab_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+                <style>
+                [id$=mobilitySliderSection] {
+                    width: 75%;
+                }
+                [id$=selfCareSliderSection] {
+                    width: 75%;
+                }
+                [id$=communicationSliderSection] {
+                    width: 75%;
+                }
+                </style>
+                <apex:pageBlock >
+                    <apex:pageBlockSection columns="1">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Mobility Devices" />
+                            <apex:outputText value="" />
+                        </apex:pageBlockSectionItem>
+                        <apex:outputField value="{!Evaluation__c.Wheel_Chair__c}" />
+                        <apex:outputField value="{!Evaluation__c.Front_Wheeled_Walker__c}" />
+                        <apex:outputField value="{!Evaluation__c.Rehab_Cane__c}"/>
+                        <apex:outputField value="{!Evaluation__c.Current_Gait_Mobility_Other__c}" label="Other" />
+                        <apex:outputField value="{!Evaluation__c.Wheel_Chair_Type__c}" id="wheelChairType" />
+                        <apex:outputField value="{!Evaluation__c.Bed_Type__c}" />
+                        <apex:outputField value="{!Evaluation__c.DME_Needs__c}" />
+                        <apex:outputField value="{!Evaluation__c.Endurance__c}" />
+                    </apex:pageBlockSection>
+                    <hr />
+                    <apex:pageBlockSection columns="1" id="mobilitySliderSection" title="Mobility">
+                        <apex:pageBlockSectionItem id="mobilitySliderLegendsWrapper">
+                            <apex:outputText value="" />
+                            <apex:outputPanel id="mobilitySliderLegends" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Locomotion" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.mobilityLocomotion}')" options="{!mobilitySliderOptions}" initial="{!Evaluation__c.Mobility_Locomotion__c}"
+                                legendsEnabled="true" legendsParentId="{!$Component.mobilitySliderSection.mobilitySliderLegendsWrapper.mobilitySliderLegends}"
+                                morestyle="margin-left: 5%; margin-right: 5%; " disabled="true" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Stairs" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.mobilityStairs}')" options="{!mobilitySliderOptions}" initial="{!Evaluation__c.Mobility_Stairs__c}"
+                                morestyle="margin-left: 5%; margin-right: 5%; " disabled="true" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Transfers" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.mobilityTransfers}')" options="{!mobilitySliderOptions}" initial="{!Evaluation__c.Mobility_Transfers__c}"
+                                morestyle="margin-left: 5%; margin-right: 5%; " disabled="true" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Toilet" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.mobilityToilet}')" options="{!mobilitySliderOptions}" initial="{!Evaluation__c.Mobility_Toilet__c}"
+                                morestyle="margin-left: 5%; margin-right: 5%; " disabled="true" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Tub/Shower" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.mobilityTubShower}')" options="{!mobilitySliderOptions}" initial="{!Evaluation__c.Mobility_Tub_Shower__c}"
+                                morestyle="margin-left: 5%; margin-right: 5%; " disabled="true" />
+                        </apex:pageBlockSectionItem>
+                    </apex:pageBlockSection>
+                    <hr />
+                    <apex:pageBlockSection columns="1" id="selfCareSliderSection" title="Self Care">
+                        <apex:pageBlockSectionItem id="selfCareSliderLegendsWrapper">
+                            <apex:outputText value="" />
+                            <apex:outputPanel id="selfCareSliderLegends" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Feeding" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.selfCareFeeding}')" options="{!selfCareSliderOptions}" initial="{!Evaluation__c.Self_Care_Feeding__c}"
+                                legendsEnabled="true" legendsParentId="{!$Component.selfCareSliderSection.selfCareSliderLegendsWrapper.selfCareSliderLegends}"
+                                morestyle="margin-left: 5%; margin-right: 5%; " disabled="true" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Grooming" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.selfCareGrooming}')" options="{!selfCareSliderOptions}" initial="{!Evaluation__c.Self_Care_Grooming__c}"
+                                morestyle="margin-left: 5%; margin-right: 5%; " disabled="true" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Bathing" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.selfCareBathing}')" options="{!selfCareSliderOptions}" initial="{!Evaluation__c.Self_Care_Bathing__c}"
+                                morestyle="margin-left: 5%; margin-right: 5%; " disabled="true" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Toileting" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.selfCareToileting}')" options="{!selfCareSliderOptions}" initial="{!Evaluation__c.Self_Care_Toileting__c}"
+                                morestyle="margin-left: 5%; margin-right: 5%; " disabled="true" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Dressing UE" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.selfCareDressingUE}')" options="{!selfCareSliderOptions}" initial="{!Evaluation__c.Self_Care_Dressing_UE__c}"
+                                morestyle="margin-left: 5%; margin-right: 5%; " disabled="true" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Dressing LE" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.selfCareDressingLE}')" options="{!selfCareSliderOptions}" initial="{!Evaluation__c.Self_Care_Dressing_LE__c}"
+                                morestyle="margin-left: 5%; margin-right: 5%; " disabled="true" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Home Skills" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.selfCareHomeSkills}')" options="{!selfCareSliderOptions}" initial="{!Evaluation__c.Self_Care_Home_Skills__c}"
+                                morestyle="margin-left: 5%; margin-right: 5%; " disabled="true" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Community Skills" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.selfCareCommunitySkills}')" options="{!selfCareSliderOptions}" initial="{!Evaluation__c.Self_Care_Community_Skills__c}"
+                                morestyle="margin-left: 5%; margin-right: 5%; " disabled="true" />
+                        </apex:pageBlockSectionItem>
+                    </apex:pageBlockSection>
+                    <hr />
+                    <apex:pageBlockSection columns="1" id="communicationSliderSection" title="Communication/Executive Function">
+                        <apex:outputField value="{!Evaluation__c.Communication_Oriented_To__c}" label="Oriented To" />
+                        <apex:pageBlockSectionItem id="communicationSliderLegendsWrapper">
+                            <apex:outputText value="" />
+                            <apex:outputPanel id="communicationSliderLegends" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Receptive Communication" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.communicationReceptiveCommunication}')" options="{!communicationSliderOptions}"
+                                initial="{!Evaluation__c.Communication_Receptive_Communication__c}" legendsEnabled="true"
+                                legendsParentId="{!$Component.communicationSliderSection.communicationSliderLegendsWrapper.communicationSliderLegends}"
+                                morestyle="margin-left: 10%; margin-right: 10%; " disabled="true" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Exp Communication" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.communicationExpCommunication}')" options="{!communicationSliderOptions}"
+                                initial="{!Evaluation__c.Communication_Exp_Communication__c}"
+                                morestyle="margin-left: 10%; margin-right: 10%; " disabled="true" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Comprehension" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.communicationComprehension}')" options="{!communicationSliderOptions}"
+                                initial="{!Evaluation__c.Communication_Comprehension__c}"
+                                morestyle="margin-left: 10%; margin-right: 10%; " disabled="true" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Memory" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.communicationMemory}')" options="{!communicationSliderOptions}"
+                                initial="{!Evaluation__c.Communication_Memory__c}"
+                                morestyle="margin-left: 10%; margin-right: 10%; " disabled="true" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Problem Solving" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.communicationProblemSolving}')" options="{!communicationSliderOptions}"
+                                initial="{!Evaluation__c.Communication_Problem_Solving__c}"
+                                morestyle="margin-left: 10%; margin-right: 10%; " disabled="true" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Attention" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.communicationAttention}')" options="{!communicationSliderOptions}"
+                                initial="{!Evaluation__c.Communication_Attention__c}"
+                                morestyle="margin-left: 10%; margin-right: 10%; " disabled="true" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Awareness" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.communicationAwareness}')" options="{!communicationSliderOptions}"
+                                initial="{!Evaluation__c.Communication_Awareness__c}"
+                                morestyle="margin-left: 10%; margin-right: 10%; " disabled="true" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Safety Judgment" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.communicationSafetyJudgment}')" options="{!communicationSliderOptions}"
+                                initial="{!Evaluation__c.Communication_Safety_Judgment__c}"
+                                morestyle="margin-left: 10%; margin-right: 10%; " disabled="true" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Swallowing" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.communicationSwallowing}')" options="{!communicationSliderOptions}"
+                                initial="{!Evaluation__c.Communication_Swallowing__c}"
+                                morestyle="margin-left: 10%; margin-right: 10%; " disabled="true" />
+                        </apex:pageBlockSectionItem>
+                    </apex:pageBlockSection>
+                    <hr />
+                    <apex:pageBlockSection columns="1">
+                        <apex:outputField value="{!Evaluation__c.Rehab_Comments__c}" />
+                        <apex:outputField value="{!Evaluation__c.Rehab_Section_Completed__c}" />
+                    </apex:pageBlockSection>
+                </apex:pageBlock>
+            </apex:tab>
+            <apex:tab label="Psycho/Social" name="psychoSocialTab" styleClass="{!IF(Evaluation__c.Psycho_Social_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+                <apex:outputPanel rendered="false">
+                    <apex:inputhidden value="{!Evaluation__c.Hallucination_Types__c}" />
+                </apex:outputPanel>
+                <apex:pageBlock >
+                    <apex:pageBlockSection columns="2" title="Psycho/Social History">
+                        <apex:outputField value="{!Evaluation__c.Past_Psychiatric_History__c}" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Past_Psychiatric_History_Description__c}" label="Describe" />
+                        <apex:pageBlockSectionItem />
+
+                        <apex:outputText label="Does Resident Exhibit Signs or Relate a History of Any of the Following"
+                            value="" />
+                        <apex:outputText value="" />
+
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Alcohol Abuse" />
+                            <apex:outputPanel >
+                                <apex:outputLabel value="Consumes >2 alcoholic drinks/day"
+                                    rendered="{!Evaluation__c.Alcoholic_drinks_per_day__c == 'Yes' }" />
+                                <br />
+                                <apex:outputText value="{!Evaluation__c.Alcohol_Abuse_Describe__c}"
+                                    id="alcoholAbuse" />
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+
+                        <apex:outputField value="{!Evaluation__c.Drug_Abuse_Describe__c}"
+                            label="Drug Abuse" />
+                        <apex:outputField value="{!Evaluation__c.Sexual_Abuse_Describe__c}"
+                            label="Sexual Abuse" />
+                        <apex:outputField value="{!Evaluation__c.Domestic_Abuse_Describe__c}"
+                            label="Domestic Abuse" />
+                        <apex:outputField value="{!Evaluation__c.Financial_Abuse_Describe__c}"
+                            label="Financial Abuse" />
+                        <apex:outputField value="{!Evaluation__c.Physical_Abuse_Describe__c}"
+                            label="Physical Abuse" />
+                        <apex:outputField value="{!Evaluation__c.Risk_to_Self_Describe__c}"
+                            label="Risk to Self" />
+                        <apex:outputField value="{!Evaluation__c.Risk_to_Others_Describe__c}"
+                            label="Risk to Others" />
+                        <apex:outputField value="{!Evaluation__c.Elopement_Risk_Describe__c}"
+                            label="Elopement Risk" />
+
+                        <apex:pageblockSectionItem >
+                            <apex:outputlabel value="Hallucinations" />
+                            <apex:outputPanel >
+                                <apex:outputText value="{!selectedHalls}"
+                                    rendered="{!Evaluation__c.Hallucinations__c}" />
+                                <apex:outputField value="{!Evaluation__c.Hallucinations_Describe__c}"
+                                    rendered="{!Evaluation__c.Hallucinations__c}" />
+                            </apex:outputPanel>
+                        </apex:pageblockSectionItem>
+
+                        <apex:outputText label="Offender History"  value=""/>
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Sexual_behavior_past_pending_charges__c}" label="Past or pending charges that have been brought against this person due to their sexual behavior" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Sexual_events_led_to_legal_action__c}" label="Are there sexual events that might have resulted in legal action" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Other_significant_sexual_issues__c}" label="Are there any other sexual issues in this individual's past which clinical team may deem needs review" />
+                    </apex:pageBlockSection>
+                    <hr />
+                    <apex:pageBlockSection columns="1">
+                        <apex:outputField value="{!Evaluation__c.Psycho_Social_Comments__c}" />
+                        <apex:outputField value="{!Evaluation__c.Psycho_Social_Section_Completed__c}" />
+                    </apex:pageBlockSection>
+                </apex:pageBlock>
+            </apex:tab>
+            <apex:commandButton onclick="window.location='/apex/NeuroEvaluationEsign?id={!Evaluation__c.Id}'; return false;" value="E-Sign" style="position: absolute; margin-left: 730px; margin-top: 8px; " />
+        </apex:tabPanel>
+        <apex:pageBlock id="buttons">
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton onclick="window.location='/apex/NeuroEvaluationEdit?id={!Evaluation__c.Id}&tab={!selectedTab}'; return false;" value="Edit" rendered="{!editable}" />
+                <apex:commandButton value="Generate PDF" onclick="openWin('/apex/NeuroEvaluationPDF?id={!Evaluation__c.Id}'); return false;" />
+                <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" style="display: none;" id="pdfGenerationSpinner" />
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        <apex:outputPanel id="relatedPartyDialog" style="display:none">
+            <apex:pageBlock title="Add/Edit Related Party" id="relatedPartyDialogMainBlock">
+                <apex:pageblockButtons location="bottom">
+                   <apex:actionFunction name="saveRelatedParty" action="{!saveRelatedParty}" rerender="relatedPartyTable,relatedPartyDialogMainBlock,relatedPartyDialogErrors" status="saveRelatedPartyStatus" oncomplete="afterSave('{!$Component.relatedPartyDialog}', request.options.parameters.keepDialogOpen, showAddRelatedParty);">
+                        <apex:param name="keepDialogOpen" value="" />
+                    </apex:actionFunction>
+                    <apex:actionStatus id="saveRelatedPartyStatus">
+                        <apex:facet name="stop">
+                            <apex:outputPanel id="relPartyButtons">
+                                <apex:commandButton value="Save" onClick="saveRelatedParty(false); return false;" />
+                                <apex:commandButton value="Save & New" onClick="saveRelatedParty(true); return false;" />
+                                <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.relatedPartyDialog}'); return false;" />
+                            </apex:outputPanel>
+                        </apex:facet>
+                        <apex:facet name="start">
+                            <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                        </apex:facet>
+                    </apex:actionStatus>
+                </apex:pageblockButtons>
+                <apex:pageMessages id="relatedPartyDialogErrors" />
+                <apex:pageBlockSection columns="2">
+                    <apex:outputField value="{!currentRelatedParty.Name}" />
+                    <apex:outputField value="{!currentRelatedParty.Type__c}" />
+                    <apex:outputField value="{!currentRelatedParty.Address__c}" />
+                    <apex:outputField value="{!currentRelatedParty.Email__c}" />
+                    <apex:outputField value="{!currentRelatedParty.Phone__c}" />
+                    <apex:outputField value="{!currentRelatedParty.Phone_1_Type__c}" />
+                    <apex:outputField value="{!currentRelatedParty.Phone_2__c}" />
+                    <apex:outputField value="{!currentRelatedParty.Phone_2_Type__c}" />
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="1">
+                    <apex:outputField value="{!currentRelatedParty.Comments__c}" style="width: 90%;" />
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+        </apex:outputPanel>
+    </apex:form>
+</apex:page>

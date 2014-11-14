@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>Referral__c$Name</field>
+    </columns>
+    <columns>
+        <field>Referral__c$Referral_Date__c</field>
+    </columns>
+    <columns>
+        <field>Referral__c$Name_PBR__c</field>
+    </columns>
+    <columns>
+        <field>Referral__c$Evaluated_By_Internal__c</field>
+    </columns>
+    <columns>
+        <field>Referral__c$Primary_Requested_Location__c</field>
+    </columns>
+    <columns>
+        <field>Referral__c.Funding_Sources__r$Payer_Name__c</field>
+    </columns>
+    <columns>
+        <field>Referral__c.Funding_Sources__r$Name</field>
+    </columns>
+    <columns>
+        <field>Referral__c.Funding_Sources__r$Payer_Type__c</field>
+    </columns>
+    <description>All Referrals with Primary Payor</description>
+    <format>Tabular</format>
+    <name>All Referrals with Primary Payor</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>Referrals_with_or_without_Funding_Sources__c</reportType>
+    <scope>user</scope>
+    <showDetails>true</showDetails>
+    <timeFrameFilter>
+        <dateColumn>Referral__c$CreatedDate</dateColumn>
+        <interval>INTERVAL_CURRENT</interval>
+    </timeFrameFilter>
+</Report>
