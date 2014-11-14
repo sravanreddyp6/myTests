@@ -68,6 +68,19 @@
        	 	handleDiagnosis = function(){
        	 		var ivValue = $('[id$=ivPicklist]').val();
        	 		var siteIssue = $('[id$=ivsiteIssues]').val();
+       	 		var isolationValue =$('[id$=isolationRequired]').val();
+       	 		
+       	 		if(isolationValue == 'Yes'){
+       	 			$('[id$=isolationType]').show();
+       	 			$('[id$=isolationTypeLabel]').show();
+       	 		}
+       	 		else{
+       	 			$('[id$=isolationType]').hide();
+       	 			$('[id$=isolationTypeLabel]').hide();
+       	 			$('[id$=isolationType]').val('');
+       	 		
+       	 		}
+       	 		
        	 		if(ivValue == 'Yes'){
        	 			$('[id$=ivSection]').show();
        	 			
@@ -88,8 +101,71 @@
        	 			$('[id$=ivSection]').hide();
        	 			$('[id$=ivSection]').find('select,input:text,textarea').val('');
              		$('[id$=ivSection]').find('input:checkbox').prop('checked',false);
-       	 		}	
+       	 		}
+       	 		
        	 	};
+       	 	
+       	 	handleVitals = function(){
+       	 		var diagHR = $('[id$=DiagheartRate]').val();
+       	 		var diagO2 = $('[id$=DiagO2]').val();
+       	 		
+       	 		if(diagHR != '' && (diagHR > 120 ||  diagHR < 60)){
+       	 		
+       	 				$('[id$=DiaginterventionLabel]').show();
+       	 				$('[id$=DiaginterventionPicklist]').show();
+       	 				
+       	 				if($('[id$=DiaginterventionPicklist]').val() == 'Yes'){
+       	 					$('[id$=DiagnarrativeLabel]').show();
+     	 					$('[id$=DiaginterventionDescribe]').show();
+       	 				}
+       	 				
+       	 				else{
+       	 					$('[id$=DiagnarrativeLabel]').hide();
+     	 					$('[id$=DiaginterventionDescribe]').hide();
+     	 					$('[id$=DiaginterventionDescribe]').val('');
+       	 				
+       	 				}
+       	 		}
+     	 		else{
+     	 				$('[id$=DiaginterventionLabel]').hide();
+     	 				$('[id$=DiaginterventionPicklist]').hide();
+     	 				$('[id$=DiagnarrativeLabel]').hide();
+     	 				$('[id$=DiaginterventionDescribe]').hide();
+     	 				$('[id$=DiaginterventionDescribe]').val('');
+     	 				$('[id$=DiaginterventionPicklist]').val('');
+     	 		}	
+     	 		
+     	 	 	if(diagO2 !='' && diagO2 < 90){
+     	 	 	
+     	 	 			$('[id$=DiagO2interventionLabel]').show();
+       	 				$('[id$=DiagO2interventionPicklist]').show();
+     	 	 		
+	     	 	 		if($('[id$=DiagO2interventionPicklist]').val() == 'Yes'){
+	       	 					$('[id$=DiagO2narrativeLabel]').show();
+	     	 					$('[id$=DiagO2interventionDescribe]').show();
+	       	 				}
+       	 				
+      	 				else{
+      	 					$('[id$=DiagO2narrativeLabel]').hide();
+    	 					$('[id$=DiagO2interventionDescribe]').hide();
+    	 					$('[id$=DiagO2interventionDescribe]').val('');
+      	 				
+      	 				}
+     	
+     	 	 	}
+     	 	 	else{
+     	 	 	
+     	 	 		$('[id$=DiagO2interventionLabel]').hide();
+     	 				$('[id$=DiagO2interventionPicklist]').hide();
+     	 				$('[id$=DiagO2narrativeLabel]').hide();
+     	 				$('[id$=DiagO2interventionDescribe]').hide();
+     	 				$('[id$=DiagO2interventionDescribe]').val('');
+     	 				$('[id$=DiagO2interventionPicklist]').val('');
+     	 	 	
+     	 	 	}
+       	 
+       	 	};
+       	 	
        	 		
        	 	handleHeartBeat = function () {
        	 		var heartRate = $('[id$=heartRate]').val();
@@ -290,9 +366,86 @@
        	 		handleDysreflexia();
        	 	
        	 	};
+       	 	
+       	 	handleOrtho = function(){
+       	 	
+       	 		var castValue = $('[id$=cast').val();
+       	 		//var castLocation $('[id$=castLocation').val();
+       	 		var tractionValue = $('[id$=traction').val();
+       	 		var deviceValue = $('[id$=extdev').val();
+       	 		
+       	 		if(castValue == 'Yes'){
+       	 			$('[id$=castLocationLabel').show();
+       	 			$('[id$=castLocation').show();
+       	 			
+       	 			if($('[id$=castLocation').val() == 'Other'){
+       	 				$('[id$=OthercastLocationLabel').show();
+       	 				$('[id$=OthercastLocation').show();
+       	 			
+       	 			}
+       	 			else{
+       	 				$('[id$=OthercastLocationLabel').hide();
+       	 				$('[id$=OthercastLocation').hide();
+       	 				$('[id$=OthercastLocation').val('');	
+       	 			}	
+       	 		}
+       	 		else{
+       	 			$('[id$=castLocationLabel').hide();
+       	 			$('[id$=castLocation').hide();
+       	 			$('[id$=castLocation').val('');
+       	 		}
+       	 		
+       	 		if(tractionValue == 'Yes'){
+       	 			$('[id$=tractionLocationLabel').show();
+       	 			$('[id$=tractionLocation').show();
+       	 			
+       	 			$('[id$=tractionTypeLabel').show();
+       	 			$('[id$=tractionType').show();
+       	 			
+       	 			$('[id$=tractionWeightLabel').show();
+       	 			$('[id$=tractionWeight').show();
+       	 		
+       	 		}
+       	 		
+       	 		else{
+       	 			$('[id$=tractionLocationLabel').hide();
+       	 			$('[id$=tractionLocation').hide();
+       	 			$('[id$=tractionLocation').val('');
+       	 			
+       	 			$('[id$=tractionTypeLabel').hide();
+       	 			$('[id$=tractionType').hide();
+       	 			$('[id$=tractionType').val('');
+       	 			
+       	 			$('[id$=tractionWeightLabel').hide();
+       	 			$('[id$=tractionWeight').hide();
+       	 			$('[id$=tractionWeight').val('');
+   
+       	 		}
+       	 		
+       	 		if(deviceValue == 'Yes'){
+       	 			$('[id$=externalDevicesLocationLabel').show();
+       	 			$('[id$=externalDevicesLocation').show();
+       	 			
+       	 			$('[id$=externalDevicesTypeLabel').show();
+       	 			$('[id$=externalDevicesType').show();
+       	 		
+       	 		}
+       	 		else{
+       	 			$('[id$=externalDevicesLocationLabel').hide();
+       	 			$('[id$=externalDevicesLocation').hide();
+       	 			$('[id$=externalDevicesLocation').val('');
+       	 			
+       	 			$('[id$=externalDevicesTypeLabel').hide();
+       	 			$('[id$=externalDevicesType').hide();
+       	 			$('[id$=externalDevicesType').val('');
+       	 		
+       	 		}    	 	
+       	 	};
 	       	
 	       	handleDiagnosis();
-	       	handleCardio(); 	
+	       	handleCardio();
+	       	handleOrtho();
+	       	handleVitals();
        	 
        	 });   //end "ready" function
        
@@ -338,7 +491,7 @@
     		<apex:inputhidden value="{! Evaluation__c.Autonomic_Dysreflexia_Areas_Assessed__c}" />
     	</apex:outputpanel>
         <apex:pageMessages id="pageMessages" />
-         <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="handleDiagnosis(); handleCardio();" reRender="pageMessages, wholeTabPanel, buttons">
+         <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="handleDiagnosis(); handleCardio(); handleOrtho();" reRender="pageMessages, wholeTabPanel, buttons">
             <apex:param name="nextTab" assignTo="{!nextTab}" value="" />
         </apex:actionFunction>
          <apex:tabPanel value="{!selectedTab}" id="wholeTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent" >
@@ -373,24 +526,54 @@
              <apex:tab label="Diagnostics" name="diagnosticTab" ontabenter="changeTab('diagnosticTab'); return false;" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
                 <apex:pageBlock >
                 	<apex:pageBlockSection title="Vitals Detail" Columns="1" >
+                		<apex:actionFunction name="showAddVitalsDetail" action="{!showAddVitalsDetail}" status="loadingVitalsDetailStatus" rerender="vitalsDetailDialogMainBlock" oncomplete="openModalDialog('{!$Component.vitalsDetailDialog}', 'Add Vitals Detail', '{!$Component.wholePage}'); handleVitals();" />
+                        <apex:actionFunction name="showEditVitalsDetail" action="{!showEditVitalsDetail}" status="loadingVitalsDetaiStatus" rerender="vitalsDetailDialogMainBlock" oncomplete="openModalDialog('{!$Component.vitalsDetailDialog}', 'Edit Vitals Detail', '{!$Component.wholePage}'); handleVitals();">
+                            <apex:param name="currentVitalsDetailId" assignTo="{!currentVitalsDetailId}" value="" />
+                        </apex:actionFunction>
                 	
-                	
-                	
-                	
-                	
-                	
-                	
-                	
-                	
-                	
-                	
-                	
-                	
+                		<apex:outputPanel layout="none">
+                            <apex:commandButton value="Add Vitals Details" onclick="showAddVitalsDetail(); return false;" />
+                            <apex:actionStatus id="loadingVitalsDetailStatus">
+                                <apex:facet name="start">
+                                  <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                                </apex:facet>
+                                <apex:facet name="stop" />
+                            </apex:actionStatus>
+                        </apex:outputPanel>
+                        
+                		<apex:pageBlockTable value="{!vitals}" var="vital" id="vitalsTable">
+                            <apex:column headerValue="{!IF(vitals.size>0, 'Action', '')}" width="50px">
+                                <apex:commandLink onclick="showEditVitalsDetail('{!vital.Id}'); return false;" value="Edit" />
+                            </apex:column>
+                            <apex:column value="{!vital.Date__c}"/>
+                            <apex:column value="{!vital.Name}"/>
+                            <apex:column value="{!vital.Heart_Rate__c}"/>
+                            <apex:column value="{!vital.Blood_Pressure__c}"/>
+                            <apex:column value="{!vital.O2_Saturation__c}"/>
+                            <apex:column value="{!vital.Temperature__c}"/>
+                        </apex:pageBlockTable>
+                        <apex:pageBlockSectionItem />
+                		<apex:pageBlockSectionItem >
+		                         <apex:outputPanel >
+		                         	<apex:outputLabel for="isolationRequired" value="Requires Isolation" />
+		                         	<br />
+		                         	<br />
+		                         	<apex:outputLabel for="isolationType" value="Isolation Type" id="isolationTypeLabel"/>
+		                         </apex:outputPanel>
+		                         <apex:outputPanel >
+		                         	<div class="requiredInput">
+                    	 			 	<div class="requiredBlock"></div>
+		                         	<apex:inputField value="{!Evaluation__c.Requires_Isolation_Picklist__c}" id="isolationRequired" required="True" onchange="handleDiagnosis(); return false;" />
+		                         	</div>
+		                         	<div class="requiredInput">
+                    	 			 	<div class="requiredBlock"></div>
+		                         	<apex:inputField Value="{!Evaluation__c.DiagnosisIsolation_Type__c}" id="isolationType" />
+		                         	</div>
+		                         </apex:outputPanel>
+	                    </apex:pageBlockSectionItem >
                 	</apex:pageBlockSection>
-                	
                 	<apex:pageBlockSection columns="1" title="IV">
                 		<apex:inputField Value="{!Evaluation__c.IV_Picklist__c}" label="IV" id="ivPicklist" onchange="handleDiagnosis(); return false;"/>
-                	
 	                	<apex:pageBlockSection columns="1" id="ivSection" >
 	                        <apex:pageBlockSectionItem >
 	                        <apex:outputLabel value="IV Type" />
@@ -421,10 +604,7 @@
            </apex:tab>
              <apex:tab label="Cardiopulmonary" name="cardioTab" onTabenter="changeTab('cardioTab'); return false;" styleClass="{!IF(Evaluation__c.Cardio_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
                 <apex:pageBlock >
-                	<apex:pageBlockSection Columns="2" title="cardio">
-                	
-                		<!--apex:inputField value="{!Evaluation__c.Heart_Sounds__c}" label="Heart Rate" required="true" id="heartRate" onchange="handleHeartBeat(); return false;" /-->
-                		
+                	<apex:pageBlockSection Columns="2" title="cardio">   		
                			<apex:pageBlockSectionItem >
 		                         <apex:outputPanel >
 		                         	<apex:outputLabel for="heartRate" value="Heart Rate" />
@@ -444,15 +624,12 @@
                     	 			 	<div class="requiredBlock"></div>
 		                         	<apex:inputField Value="{!Evaluation__c.Heart_Intervention_Need_Picklist__c}" id="interventionPicklist" onchange="handleHeartBeat(); return false;" />
 		                         	</div>
-		                         	
 	                     	 		<div class="requiredInput">
 	                     	 			<div class="requiredBlock"></div>
 		                     			<apex:inputTextArea value="{!Evaluation__c.Heart_Rate_Intervention_Describe__c}" id="interventionDescribe" rows="4" cols="60" />
 		                     		</div>
-		                     		
 		                         </apex:outputPanel>
 	                       </apex:pageBlockSectionItem >
-	                       
 	                       <apex:pageBlockSectionItem >
 		                         <apex:outputPanel >
 		                         	<apex:outputLabel for="peripheralPulses" value="Periphral Pulses Present" />
@@ -470,50 +647,11 @@
 		                         	<apex:inputField Value="{!Evaluation__c.Peripheral_Pulses_Describe__c}" id="peripheralDescribe" />
 		                         	</div>
 		                         </apex:outputPanel>
-	                       </apex:pageBlockSectionItem >
-                		
-                		<!--  apex:pageblocksectionitem >
-                			<apex:outputLabel value="Periphral Pulses Present" />
-	                        <apex:inputField value="{!Evaluation__c.Peripheral_Pulses_Present__c}" id="peripheralPulses" required="True" onchange="handlePeripheralPulses(); return false;"/>
-	                     </apex:pageblocksectionitem -->
-	                        
-                		<!-- apex:pageBlockSectionItem >
-                			<apex:outputlabel value="Intervention Needed" id="interventionLabel" /> 
-                			<apex:outputPanel >
-                     	 		<div class="requiredInput">
-                     	 			<div class="requiredBlock"></div>
-	                     			<apex:inputField value="{!Evaluation__c.Heart_Intervention_Need_Picklist__c}" id="interventionPicklist" onchange="handleHeartBeat(); return false;"/>
-	                     		</div>
-	                     	</apex:outputPanel>
-                		</apex:pageBlockSectionItem -->
-                		
-                		<!--  apex:pageBlockSectionItem >
-                			<apex:outputLabel value="Describe" id="peripheraldescribeLabel" />
-                			<apex:outputPanel >
-                     	 		<div class="requiredInput">
-                     	 			<div class="requiredBlock"></div>
-	                     			<apex:inputField value="{!Evaluation__c.Peripheral_Pulses_Describe__c}" id="peripheralDescribe" />
-	                     		</div>
-	                     	</apex:outputPanel>
-                		</apex:pageBlockSectionItem -->
-                		
-                		<!-- apex:pageBlockSectionItem >
-                			<apex:outputLabel value="Narrative Note" id='narrativeLabel' />
-                			<apex:outputPanel >
-                     	 		<div class="requiredInput">
-                     	 			<div class="requiredBlock"></div>
-	                     			<apex:inputTextArea value="{!Evaluation__c.Heart_Rate_Intervention_Describe__c}" id="interventionDescribe" rows="4" cols="60" />
-	                     		</div>
-	                     	</apex:outputPanel>
-                		</apex:pageBlockSectionItem >
-                		<apex:pageBlockSectionItem /-->
-                		
-                		
+	                    </apex:pageBlockSectionItem >
                 		<apex:inputField Value="{!Evaluation__c.Autonomic_Dysreflexia__c}" required="true" onchange="handleDysreflexia(); return false;" id="dysreflexia"/>
                 		<apex:pageBlockSectionItem />
-                		
-                		<apex:pageBlockSection Columns="2" id="DysreflexiaDetails"  >
-                			
+  
+                		<apex:pageBlockSection Columns="2" id="DysreflexiaDetails" >
                 			<apex:pageBlockSectionItem  >
 	                			<apex:outputText value="If Yes, Were the Following areas assessed?" />
 		                		<apex:selectCheckboxes value="{!selectedDysreflexia}" layout="pageDirection"  >
@@ -538,12 +676,11 @@
 			                         	</div>
 			                         </apex:outputPanel>
 		                         </apex:pageBlockSectionItem>
-                		
                 		</apex:pageBlockSection>
                 	</apex:pageBlockSection >
                 	<apex:pageBlockSection columns="1" title="Sputum" Collapsible="True" >
                 		<apex:inputField value="{!Evaluation__c.Suctioning_Picklist__c}" label="Suctioning" id="suctioning" required="true" onchange="handleSuctioning(); return false;"/>
-                		
+         
 	                	<apex:pageBlockSection columns="2" id="suctioningDetails" >
 	                		 <apex:inputField value="{!Evaluation__c.Sputum_Quantity__c}" id="sputumQuantity" />
 	                         <apex:inputField value="{!Evaluation__c.Sputum_Color__c}" id="sputumColor" />
@@ -561,23 +698,19 @@
 	                         </table>
 	                         </apex:outputPanel>
 	                         </apex:pageBlockSectionItem>
-	
 	                       	 <apex:pageblockSectionItem >
 	                            <apex:outputLabel value="Breath Sounds" styleClass="labelCol" />
 	                            <apex:selectCheckboxes value="{!selectedSounds}" id="breathesound" layout="pageDirection" onchange="handleOther('breathesound')">
 	                                <apex:selectOptions value="{!breatheSounds}" />
 	                            </apex:selectCheckboxes>
-	                         </apex:pageblockSectionItem>
-	                         
+	                         </apex:pageblockSectionItem>	                         
 	                         <apex:outputtext value="" />
 	                         <apex:pageBLockSectionItem helpText="{!$ObjectType.Evaluation__c.Fields.Breathe_Sound_Other__c.inlineHelpText}">
 	                            <apex:outputlabel for="breathesoundother" value="If Other Describe" />
 	                            <apex:inputField value="{!Evaluation__c.Breathe_Sound_Other__c}" id="breathesoundother"/>
-	                         </apex:pageBLockSectionItem>
-	                         
+	                         </apex:pageBLockSectionItem>	                         
 	                		</apex:pageBlockSection>
 	                	</apex:pageBlockSection>
-	                	
 	                	<apex:pageBlockSection columns="1" title="Trach" >
 	                		<apex:inputField value="{!Evaluation__c.Trach_Picklist__c}" label="Trach" id="trachPicklist" required="true" onchange="handleTrach(); return false;" />
 	                		<apex:pageBlockSection columns="2" id="trachDetails" >
@@ -618,7 +751,7 @@
 			                         	</div>
 			                         </apex:outputPanel>
 		                         </apex:pageBlockSectionItem >
-		                         
+		                      
 		                         <apex:inputField value="{!Evaluation__c.Cuffed_Picklist__c}" label="Cuffed" id="trachCuffed" />
 		                         <apex:pageBlockSectionItem >
 		                         	<apex:outputLabel value="PMV" />
@@ -669,48 +802,44 @@
                 			</apex:pageBlockSectionItem>
                 			<apex:pageBlockSectionItem />
                 			<apex:inputTextArea value="{!Evaluation__c.O2_Narrative_Note__c}" id="o2Note" rows="4" cols="60" />
-                			<!--  apex:pageBlockSectionItem >
-                				<apex:outputLabel value="Add Narrative Note" />
-                				<apex:outputPanel>
-                					<div class="requiredInput" >
-                						<div class="requiredBlock"></div>
-                						<apex:inputTextArea value="{!Evaluation__c.O2_Narrative_Note__c}" id="o2Note" rows="4" cols="60" />
-                					</div>
-                				</apex:outputPanel>
-                			</apex:pageBlockSectionItem -->
                 		</apex:pageBlockSection>
                 	</apex:pageBlockSection>
-                	
                 	<apex:pageBlockSection columns="1" title="Ventilator" >
                 		<apex:inputField value="{!Evaluation__c.Ventilator_picklist__c}" required="true" id="ventilatorPicklist" label="Ventilator" onchange="handleVentSection();return false;"/>
                 		<apex:pageblockSectionItem />
                 		
                 		<apex:pageBlockSection Columns="2" id="ventilatorDetails" >
-                		<apex:inputField value="{!Evaluation__c.Ventilator_Type__c}" id="ventilatorType" onchange="handleVentSection(); return false;"/>
-                		<apex:outputText label ="Settings" value=""/>
-                		<apex:pageBlockSectionItem >
-                			<apex:outputlabel value="If Intermittent, Schedule" id="ventilatorScheduleLabel"/>
-                			<apex:outputPanel >
-                     	 		<div class="requiredInput">
-                     	 			<div class="requiredBlock"></div>
-	                     			<apex:inputField value="{!Evaluation__c.If_Intermittent_Schedule__c}" id="ventilatorSchedule" />
-	                     		</div>
-	                     	</apex:outputPanel >
-                		 </apex:pageBlockSectionItem >
-                		 <apex:inputField value="{!Evaluation__c.Ventilator_Mode__c}" id="ventilatorMode" />
-                		 <apex:pageblocksectionitem />
-                		 <apex:inputField value="{!Evaluation__c.Ventilator_Rate__c}" id="ventilatorRate" />
-                		 <apex:pageBlockSectionItem />
-                		 <apex:inputField value="{!Evaluation__c.FIO2__c}" id="FIO2" />
-                		 <apex:pageBlockSectionItem />
-                		 <apex:inputField value="{!Evaluation__c.PEEP__c}" id="peep" />
-                		 <apex:pageblocksectionitem />
-                		 <apex:inputField value="{!Evaluation__c.TV__c}" id="tv" />
-                		 <apex:pageblocksectionitem />
-                		 <apex:inputField value="{!Evaluation__c.PS__c}" id="ps"/>
+                			<apex:pageBlockSectionItem >
+		                         <apex:outputPanel >
+		                         	<apex:outputLabel for="ventilatorType" value="Ventilator Type" />
+		                         	<br />
+		                         	<br />
+		                         	<apex:outputLabel for="ventilatorSchedule" value="If Intermittent, Schedule" id="ventilatorScheduleLabel"/>
+		                         </apex:outputPanel>
+		                         <apex:outputPanel >
+		                         	<div class="requiredInput">
+                    	 			 	<div class="requiredBlock"></div>
+		                         	<apex:inputField value="{!Evaluation__c.Ventilator_Type__c}" id="ventilatorType" onchange="handleVentSection(); return false;"/>
+		                         	</div>
+		                         	<div class="requiredInput">
+                    	 			 	<div class="requiredBlock"></div>
+		                         	<apex:inputField Value="{!Evaluation__c.If_Intermittent_Schedule__c}" id="ventilatorSchedule" />
+		                         	</div>
+		                         </apex:outputPanel>
+                     	 	 </apex:pageBlockSectionItem >
+	                		 <apex:inputField value="{!Evaluation__c.Ventilator_Mode__c}" id="ventilatorMode" />
+	                		 <apex:pageblocksectionitem />
+	                		 <apex:inputField value="{!Evaluation__c.Ventilator_Rate__c}" id="ventilatorRate" />
+	                		 <apex:pageBlockSectionItem />
+	                		 <apex:inputField value="{!Evaluation__c.FIO2__c}" id="FIO2" />
+	                		 <apex:pageBlockSectionItem />
+	                		 <apex:inputField value="{!Evaluation__c.PEEP__c}" id="peep" />
+	                		 <apex:pageblocksectionitem />
+	                		 <apex:inputField value="{!Evaluation__c.TV__c}" id="tv" />
+	                		 <apex:pageblocksectionitem />
+	                		 <apex:inputField value="{!Evaluation__c.PS__c}" id="ps"/>
                 		 </apex:pageBlockSection>
                 	</apex:pageBlockSection>
-               
                 </apex:pageBlock>
              </apex:tab>
              
@@ -826,6 +955,83 @@
              
              <apex:tab label="Ortho" name="orthoTab" ontabenter="changeTab('orthoTab'); return false;" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
                 <apex:pageBlock >
+                	<apex:pageBlockSection columns="2" >
+                		 <apex:pageBlockSectionItem >
+                         	<apex:outputPanel >
+	                         	<apex:outputLabel for="cast" value="Cast" />
+	                         	<br />
+	                         	<br />
+	                         	<apex:outputLabel for="castLocation" value="Location" id="castLocationLabel"/>
+	                         	<br />
+	                         	<br />
+	                         	<apex:outputLabel for="OthercastLocation" value="Other" id='OthercastLocationLabel' />
+	                         </apex:outputPanel>
+	                        <apex:outputPanel >
+	                            <apex:inputField id="cast" value="{!Evaluation__c.Cast_Picklist__c}"  required ="True" onchange="handleOrtho(); return false;" />
+	                            <div class="requiredInput">
+	                    	 			<div class="requiredBlock"></div>
+	                            <apex:inputField value="{!Evaluation__c.Ortho_Cast_Location__c}" id="castLocation"  onchange="handleOrtho(); return false;" />
+	                            </div>
+	                            <div class="requiredInput">
+	                    	 			<div class="requiredBlock"></div>
+	                             <apex:inputField value="{!Evaluation__c.Cast_Location__c}" id="OthercastLocation" />
+	                             </div>
+	                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                        	<apex:outputPanel >
+	                         	<apex:outputLabel for="traction" value="Traction" />
+	                         	<br />
+	                         	<br />
+	                         	<apex:outputLabel for="tractionLocation" value="Location" id="tractionLocationLabel"/>
+	                         	<br />
+	                         	<br />
+	                         	<apex:outputLabel for="tractionType" value="Type" id='tractionTypeLabel' />
+	                         	<br />
+	                         	<br />
+	                         	<apex:outputLabel for="tractionWeight" value="Weight" id='tractionWeightLabel' />
+	                         </apex:outputPanel>
+                        
+	                        <apex:outputPanel >
+	                            <apex:inputField id="traction" value="{!Evaluation__c.Traction_Picklist__c}"  required="true" onchange="handleOrtho(); return false;" />
+	                            <div class="requiredInput">
+	                    	 			<div class="requiredBlock"></div>
+	                            <apex:inputField value="{!Evaluation__c.Traction_Location__c}" id="tractionLocation" />
+	                            </div>
+	                            <div class="requiredInput">
+	                    	 			<div class="requiredBlock"></div>
+	                            <apex:inputField value="{!Evaluation__c.Traction_Type__c}" id="tractionType"  />
+	                            </div>
+	                            <div class="requiredInput">
+	                    	 			<div class="requiredBlock"></div>
+	                            <apex:inputField value="{!Evaluation__c.Traction_Weight__c}" id="tractionWeight"  />
+	                            </div>
+	                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                        	<apex:outputPanel >
+	                         	<apex:outputLabel for="extdev" value="External Devices" />
+	                         	<br />
+	                         	<br />
+	                         	<apex:outputLabel for="externalDevicesLocation" value="Location" id="externalDevicesLocationLabel"/>
+	                         	<br />
+	                         	<br />
+	                         	<apex:outputLabel for="externalDevicesType" value="Type" id='externalDevicesTypeLabel' />
+	                         </apex:outputPanel>
+	                        <apex:outputPanel >
+	                        <apex:inputField value="{!Evaluation__c.External_Device_Picklist__c}" required="true" id="extdev" onchange="handleOrtho(); return false;" />
+	                        <div class="requiredInput">
+	                    	 			<div class="requiredBlock"></div>
+	                        <apex:inputField value="{!Evaluation__c.External_Devices_Location__c}" id="externalDevicesLocation" />
+	                        </div>
+	                        <div class="requiredInput">
+	                    	 			<div class="requiredBlock"></div>
+	                        <apex:inputField value="{!Evaluation__c.External_Devices_Type__c}" id="externalDevicesType"  />
+	                        </div>
+	                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                	
+                	</apex:pageBlockSection>
                 
                 </apex:pageBlock>
              </apex:tab>
@@ -878,7 +1084,84 @@
                 <apex:commandButton value="Save" action="{!save}" />
                 <apex:commandButton value="Cancel" onClick="window.location='apex/CMShiftAssessmentView?id={!Evaluation__c.Id}&tab={!selectedTab}'; return false;"/>
             </apex:pageBlockButtons>
-        </apex:pageBlock>        
+        </apex:pageBlock>
+        
+        <apex:outputPanel id="vitalsDetailDialog" style="display:none">
+        	<span class="ui-helper-hidden-accessible"><input type="text"/></span>
+            <apex:pageBlock title="Add/Edit Vitals Detail" id="vitalsDetailDialogMainBlock">
+                <apex:pageblockButtons location="bottom">
+                   <apex:actionFunction name="saveVitalsDetail" action="{!saveVitalsDetail}" rerender="vitalsTable,vitalsDetailDialogMainBlock,vitalsDetailDialogErrors" status="saveVitalsDetailStatus" oncomplete="afterSave('{!$Component.vitalsDetailDialog}', request.options.parameters.keepDialogOpen, showAddVitalsDetail);">
+                        <apex:param name="keepDialogOpen" value="" />
+                    </apex:actionFunction>
+                    <apex:actionStatus id="saveVitalsDetailStatus">
+                        <apex:facet name="stop">
+                            <apex:outputPanel id="vitDetailsButtons">
+                                <apex:commandButton value="Save" onClick="saveVitalsDetail(false); return false;" />
+                                <apex:commandButton value="Save & New" onClick="saveVitalsDetail(true); handleVitals(); return false;" />
+                                <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.vitalsDetailDialog}'); return false;" />
+                            </apex:outputPanel>
+                        </apex:facet>
+                        <apex:facet name="start">
+                            <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                        </apex:facet>
+                    </apex:actionStatus>
+                </apex:pageblockButtons>
+                <apex:pageMessages id="vitalsDetailDialogErrors" />
+                <apex:pageBlockSection columns="2">
+                    <apex:inputField value="{!currentVitalsDetail.Date__c}" />
+                    <apex:inputField value="{!currentVitalsDetail.Blood_Pressure__c}" />
+                    <apex:pageBlockSectionItem >
+                         <apex:outputPanel >
+                         	<apex:outputLabel for="DiagheartRate" value="Heart Rate" />
+                         	<br/>
+                         	<br />
+                         	<apex:outputLabel for="DiaginterventionPicklist" value="Intervention Needed" id="DiaginterventionLabel"/>
+                         	<br />
+                         	<br />
+                         	<apex:outputLabel for="DiaginterventionDescribe" value="Narrative Note" id='DiagnarrativeLabel' />
+                         </apex:outputPanel>
+                         <apex:outputPanel >
+                         	<apex:inputField value="{!currentVitalsDetail.Heart_Rate__c}" id="DiagheartRate" onblur="handleVitals(); return false;" />
+                         	<br/>
+                         	<div class="requiredInput">
+                  	 			 	<div class="requiredBlock"></div>
+                         	<apex:inputField Value="{!currentVitalsDetail.HR_Intervention_Needed__c}" id="DiaginterventionPicklist" onchange="handleVitals(); return false;" />
+                         	</div>
+                    	 		<div class="requiredInput">
+                    	 			<div class="requiredBlock"></div>
+                     			<apex:inputTextArea value="{!currentVitalsDetail.HR_Narrative_Note__c}" id="DiaginterventionDescribe" rows="3" cols="40" />
+                     		</div>
+                         </apex:outputPanel>
+                   	</apex:pageBlockSectionItem >
+                   	<apex:pageBlockSectionItem >
+                         <apex:outputPanel >
+                         	<apex:outputLabel for="DiagO2" value="O2 Saturation" />
+                         	<br/>
+                         	<br />
+                         	<apex:outputLabel for="DiagO2interventionPicklist" value="Intervention Needed" id="DiagO2interventionLabel"/>
+                         	<br />
+                         	<br />
+                         	<apex:outputLabel for="DiagO2interventionDescribe" value="Narrative Note" id='DiagO2narrativeLabel' />
+                         </apex:outputPanel>
+                         <apex:outputPanel >
+                         	<apex:inputField value="{!currentVitalsDetail.O2_Saturation__c}" id="DiagO2" onblur="handleVitals(); return false;" />
+                         	<br/>
+                         	<div class="requiredInput">
+                  	 			 	<div class="requiredBlock"></div>
+                         	<apex:inputField Value="{!currentVitalsDetail.O2_Intervention_Needed__c}" id="DiagO2interventionPicklist" onchange="handleVitals(); return false;" />
+                         	</div>
+                    	 		<div class="requiredInput">
+                    	 			<div class="requiredBlock"></div>
+                     			<apex:inputTextArea value="{!currentVitalsDetail.O2_Narrative_Note__c}" id="DiagO2interventionDescribe" rows="3" cols="40" />
+                     		</div>
+                         </apex:outputPanel>
+                   	</apex:pageBlockSectionItem >
+                    <apex:inputField value="{!currentVitalsDetail.R__c}" />
+                    <apex:inputField value="{!currentVitalsDetail.Temperature__c}" /> 
+                    <apex:inputField value="{!currentVitalsDetail.O2_Saturation__c}" /> 
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+         </apex:outputPanel>        
     </apex:form>
     <apex:actionStatus id="pageProcessing" >
         <apex:facet name="start">
