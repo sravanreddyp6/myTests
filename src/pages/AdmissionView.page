@@ -36,11 +36,9 @@
     .whitenoise { color:white; }
     .cssWait { cursor:wait;}
     .cssWaitComplete { cursor:auto;}
-    
     span.fancytree-focused span.fancytree-title {
-	outline: 2px ridge black
+		outline: 2px ridge black;
 	}
-	
 	.datePicker{z-index:1004;}
     
   </style>
@@ -159,12 +157,12 @@ function triggerNodeEdit(nK){
 	<apex:actionFunction name="saveAdmissionDocAF" action="{!saveAdmissionDoc}" rerender="associatedDocuments" oncomplete="waitComplete(),closeModalDialog('addAdmissionDocumentModal', 'span');" status="myStatus"/>
     <apex:actionFunction name="showAddEditAdmissionDocAF" action="{!showAddEditAdmissionDoc}" rerender="admissionDocumentyEntry,msgs" oncomplete="waitComplete()"/>
 
- <apex:actionFunction action="{!editTreeNode}" name="editNode" rerender="associatedDocDetails" oncomplete="waitComplete()">
+ <apex:actionFunction action="{!editTreeNode}" name="editNode" rerender="associatedDocDetails" oncomplete="waitComplete()" status="myStatus">
      <apex:param name="selectedKey" value="" />
  </apex:actionFunction>
 
 
- <apex:actionFunction action="{!updateDocSelection}" name="updateDocSelectionAF" rerender="associatedDocDetails" oncomplete="waitComplete()">
+ <apex:actionFunction action="{!updateDocSelection}" name="updateDocSelectionAF" rerender="associatedDocDetails" oncomplete="waitComplete()" status="myStatus">
      <apex:param name="selectedKey" value="" />
      <apex:param name="isSelected" value="" />     
  </apex:actionFunction>

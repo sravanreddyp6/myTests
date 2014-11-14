@@ -28,24 +28,7 @@ public with sharing class AdmissionDocumentController {
    			treeModel.put(jo.id, new DocumentWrapper(docMap.get(jo.Document__r.id), pcktMap.get(jo.DocPacket__r.id), docMap.get(jo.Document__r.id).DocSignatures__r));
    		}
 
-       	List<PB_AssociatedDoc__c> allAssocDocs = getAllAssociatedDocs();
-		for (PB_AssociatedDoc__c assocDoc : allAssocDocs){
-			// these are the ones already added to this admission
-			if (assocDoc.isAdded__c == true){
-				this.associatedDocs.add(assocDoc);			// This adds the current list of associated docs for the first time page load, subsequently this list is refreshed using refreshAssociatedDocs()
-			}
-			
-			for (ID idKey : treeModel.keyset()) {
-			    DocumentWrapper docWrap = treeModel.get(idKey);
-			    if (docWrap.doc.id == assocDoc.Document__r.id && docWrap.packet.id == assocDoc.DocPacket__r.id){
-			    	docWrap.associatedDoc = assocDoc;
-			    	docWrap.associatedDocSigners = assocDoc.AssocDocSignatures__r;
-			    	docWrap.isAssocPresent = true;
-			    	break;
-			    }
-			}
-		}
-
+       	refreshInMemoryMapAndAssocDocs();
 		
 	    // An in-memory mapping to list of docPacketJo's with the packet ID		
 		List<PB_DocPacket__c> pckt_pcktDocJos = [Select id, (SELECT id, DocPacket__r.id, Document__r.id FROM DocPacketJOs__r) from PB_DocPacket__c];		
@@ -56,6 +39,7 @@ public with sharing class AdmissionDocumentController {
    		showAddEditAdmissionDoc();
     }
     
+    @TestVisible 
     private List<PB_AssociatedDoc__c> getAllAssociatedDocs(){
     	List<PB_AssociatedDoc__c> allAssocDocs = [SELECT  id, DocPacket__r.id, Document__r.id, DocPacket__r.Packet_Name__c, Document__r.document_name__c, due_days__c, effective_date__c, filed_date__c, 
     													  isAdded__c, recurring__c, recurring_frequency__c, sObject_id__c, sObject_Type__c, status__c, status_date__c,
@@ -65,15 +49,28 @@ public with sharing class AdmissionDocumentController {
        	return allAssocDocs;
     }
     
-   	private void refreshAssociatedDocs(){
- 		this.associatedDocs.clear();
-		for (PB_AssociatedDoc__c assocDoc : getAllAssociatedDocs()){
-			if (assocDoc.isAdded__c == true){
-				this.associatedDocs.add(assocDoc);
-			}
- 		}
- 	}
- 	 
+  	private void refreshInMemoryMapAndAssocDocs(){
+		List<PB_AssociatedDoc__c> allAssocDocs = getAllAssociatedDocs();
+		this.associatedDocs.clear();
+		for (PB_AssociatedDoc__c assocDoc : allAssocDocs){
+				// these are the ones already added to this admission
+				if (assocDoc.isAdded__c == true){
+					this.associatedDocs.add(assocDoc);
+				}
+				
+				for (ID idKey : treeModel.keyset()) {
+				    DocumentWrapper docWrap = treeModel.get(idKey);
+				    if (docWrap.doc.id == assocDoc.Document__r.id && docWrap.packet.id == assocDoc.DocPacket__r.id){
+				    	docWrap.associatedDoc = assocDoc;
+				    	docWrap.associatedDocSigners = assocDoc.AssocDocSignatures__r;
+				    	docWrap.isAssocPresent = true;
+				    	docWrap.isNew = false;
+				    	break;
+				    }
+				}
+		}       		
+	} 	 
+       	
     public pageReference editTreeNode(){
     	Id selectedID = Id.valueOf(Apexpages.currentPage().getParameters().get('selectedKey'));    	
     	currrentAssocDoc = treeModel.get(selectedID).associatedDoc;
@@ -143,7 +140,7 @@ public with sharing class AdmissionDocumentController {
 					updatedAssocDocs.add(docWrap.associatedDoc);
 			}
 			
-			if (docWrap.isNew ){			// new additions
+			else if (docWrap.isNew ){			// new additions
 					newAssocDocs.add(docWrap.associatedDoc);
 			}			
 		}
@@ -162,7 +159,7 @@ public with sharing class AdmissionDocumentController {
 		//}
 		//insert newAssocSigns;
 
-		refreshAssociatedDocs();
+		refreshInMemoryMapAndAssocDocs();
 	}	
   
  	public void showAddEditAdmissionDoc(){
