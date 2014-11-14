@@ -544,6 +544,11 @@
                     if (el) {
                         anno.makeAnnotatable(el);
                     }
+                    // In case the user doesn't have permission to create the
+                    // annotations
+                    if ({!!canCreateEvaluationResponse}) {
+                        anno.hideSelectionWidget();
+                    }
                     var $el = $(el);
                     <apex:repeat value="{!annotations}" var="annotation">
                     anno.addAnnotation({

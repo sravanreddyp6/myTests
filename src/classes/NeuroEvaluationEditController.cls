@@ -22,6 +22,11 @@ public with sharing class NeuroEvaluationEditController {
             ];
         }
     }
+    public Boolean canCreateEvaluationResponse {
+        get {
+            return Schema.sObjectType.Evaluation_Response__c.isCreateable();
+        }
+    }
     public String baseUrl {
         get {
             return System.URL.getSalesforceBaseURL().toExternalForm();
