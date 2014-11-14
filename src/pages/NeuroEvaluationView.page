@@ -694,7 +694,7 @@
                     </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:tab>
-            <apex:commandButton onclick="window.location='/apex/NeuroEvaluationEsign?id={!Evaluation__c.Id}'; return false;" value="E-Sign" style="position: absolute; margin-left: 730px; margin-top: 8px; " />
+            <apex:commandButton onclick="window.location='/apex/NeuroEvaluationEsign?id={!Evaluation__c.Id}'; return false;" value="E-Sign" style="position: absolute; margin-left: 730px; margin-top: 8px; " rendered="{!canUpdateEvaluation}" />
         </apex:tabPanel>
         <apex:pageBlock id="buttons">
             <apex:pageBlockButtons location="bottom">
