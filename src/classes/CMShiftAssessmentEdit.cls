@@ -17,6 +17,20 @@ public with sharing class CMShiftAssessmentEdit {
     public List<SelectOption>DysreflexiaValues;
     public List<string>selectedDysreflexia {get ; set;}
     
+     public Evaluation_Response__c[] vitals { set;
+        get {
+            return [
+                SELECT ID,Name,Date__c,Heart_Rate__c,Blood_Pressure__c,R__c,O2_Saturation__c,Temperature__c,O2_Intervention_Needed__c,O2_Narrative_Note__c,
+                HR_Intervention_Needed__c, HR_Narrative_Note__c
+                FROM Evaluation_Response__c WHERE Evaluation__c=:evaluation.Id
+                 AND RecordType.Name='Vitals Details Shift Assessment'
+            ];
+        }
+    }
+    
+    public Evaluation_Response__c currentVitalsDetail {get; set; }
+    public Id currentVitalsDetailId { get; set; }
+    
     public string getprimaryPhysician(){
     	List<Related_Party__c> rp = [SELECT Id, Name FROM Related_Party__c WHERE Person_Being_served__c=:this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__c AND Type__c='Physician - Primary' order by LastModifiedDate desc LIMIT 1];
     	if(rp.size()>0) return rp[0].Name;
@@ -26,6 +40,7 @@ public with sharing class CMShiftAssessmentEdit {
 	public CMShiftAssessmentEdit(Apexpages.StandardController controller){
 		this.stdController = controller;
 		evaluation = (Evaluation__c) stdController.getRecord();
+		currentVitalsDetail = new Evaluation_Response__c();
 		if (ApexPages.currentPage().getParameters().get('tab') != null) {
             selectedTab = ApexPages.currentPage().getParameters().get('tab');
         	}
@@ -61,6 +76,31 @@ public with sharing class CMShiftAssessmentEdit {
         
                 
 	}
+	
+	 public void showAddVitalsDetail()  {
+        this.currentVitalsDetail = new Evaluation_Response__c();
+        this.currentVitalsDetail.Evaluation__c = this.evaluation.Id;
+        this.currentVitalsDetail.RecordTypeId = Utility.getEvaluationResponseRecordType('Vitals Details Shift Assessment');
+                
+    }
+    
+    public void showEditVitalsDetail() {
+        this.currentVitalsDetail = [
+                SELECT ID, Name, Date__c, Temperature__c, R__c, O2_Saturation__c, Blood_Pressure__c,
+                   Heart_Rate__c
+            FROM Evaluation_Response__c WHERE ID=:currentVitalsDetailId
+        ];
+                
+    }
+    public void saveVitalsDetail() {
+        try {
+           
+            upsert currentVitalsDetail;
+        } catch (DMLException ex) {
+            // SF will automatically create a PageMessage Error here, so we don't
+            // have to do anything
+        }
+    }
 
 	  public PageReference handleResidentdescribe(){
 	   		if(evaluation.Resident_Coping_Well__c != 'No'){
@@ -184,12 +224,11 @@ public with sharing class CMShiftAssessmentEdit {
 	                if (strtypes != ''){
 	                        strtypes = strtypes.Substring(0, strtypes.length() -1);
 	                        this.evaluation.Breathe_Sounds__c = strtypes;
-	                        if(!strtypes.Contains('Other'))
-	                        this.evaluation.Breathe_Sound_Other__c = '';
+	                        
 	                }
 	                else{
 		                this.evaluation.Breathe_Sounds__c ='';
-		                this.evaluation.Breathe_Sound_Other__c ='';
+		               
 	                }
 	                
 	          // For Autonomic Dysreflexia Areas Assessed
