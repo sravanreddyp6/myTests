@@ -943,14 +943,20 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
 
     //Start EC-54 CM Save and Close Validations
     if (referralRecordType == 'CareMeridian') {
-        Boolean hasFundError = false, hasLocError = false, hasCloseError = false;
+        Boolean hasFundError = false, hasLocError = false, hasCloseError = false, hasNoFundError = false, hasNoLocError = false;
         if(referralRecord.Close_Reason__c != 'Error' && referralRecord.Referral_Status__c == 'Closed'){
           hasCloseError = checkForBlankFields(referralRecord,'Referral__c',new list<string>{'Current_Location__c','Close_Reason__c','Agency_Name__c','Evaluated_By_Internal__c'}, 'A value for {0} is required to close');
-        }     	
+        }
+        if(fundingSources.size() == 0 && referralRecord.Close_Reason__c != 'Error' && referralRecord.Referral_Status__c == 'Closed'){
+             hasNoFundError = true;
+        }
+        if(locations.size() == 0 && referralRecord.Close_Reason__c != 'Error' && referralRecord.Referral_Status__c == 'Closed'){
+             hasNoLocError = true;
+        }       
         for(Funding_Source__c fs :fundingSources){
           if (fs.Type_of_Coverage__c != 'Primary' && referralRecord.Close_Reason__c != 'Error' && referralRecord.Referral_Status__c == 'Closed'){
              hasFundError = true;
-             break;
+             break;   
           }
         }
         for(Referral_Location__c rl :locations){
@@ -965,12 +971,18 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
         if (hasLocError){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'A primary location must be selected to close the referral'));
         }
-        if (hasFundError==true || hasLocError==true || hasCloseError==true){
+        if (hasNoFundError){
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'A primary funding source must be created to close the referral'));
+        }
+        if (hasNoLocError){
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'A primary location must be created to close the referral'));
+        }        
+        if (hasFundError==true || hasLocError==true || hasCloseError==true || hasNoFundError==true || hasNoLocError==true){
             return null;
         }
     }
     //End EC-54
-
+    
     system.debug('in saveREF');
     Id refId;
 
