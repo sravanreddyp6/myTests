@@ -66,6 +66,11 @@ public with sharing class NeuroEvaluationViewController {
         }
     }
     public String serializedAnnotations { get; set; }
+    public Boolean canUpdateEvaluation {
+        get {
+            return Schema.sObjectType.Evaluation__c.isUpdateable();
+        }
+    }
 
     public List<String> mobilitySliderOptions { set;
         get {
