@@ -413,6 +413,7 @@ function stopRKey(evt) {
  </script>
 
   <apex:form id="referralForm">
+    <apex:variable var="editable" value="{!AND(Referral__c.Referral_Status__c != 'Closed', canUpdateReferral)}" />
     <apex:actionFunction name="saveRelParty" action="{!saveRelParty}" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs"/>
     <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs"/>
     <apex:actionFunction name="saveFundingSource" action="{!saveFundingSource}" status="saveFundingSourceStatus" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialog('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceAuthorizationDetailEntry,fundingSourceEntry,msgs"/>
@@ -439,11 +440,11 @@ function stopRKey(evt) {
 
     <apex:pageBlock mode="view">
       <apex:pageblockButtons location="Top" rendered="{!isEditor}">
-          <apex:commandButton value="Edit" action="{!redirectToEdit}" rendered="{!Referral__c.Referral_Status__c != 'Closed'}"/>
+          <apex:commandButton value="Edit" action="{!redirectToEdit}" rendered="{!editable}"/>
         <apex:commandButton value="Search for Duplicates" action="{!redirectToSearch}"/>
           <apex:commandButton value="Unlink Referral" action="{!unlinkPBR}" rendered="{!Referral__c.OldPBR__c != null}"/>
           <apex:commandButton value="Unlink Referral" action="{!unlinkPBS}" rendered="{!Referral__c.OldPBS__c != null}"/>
-          <apex:commandButton value="Convert" action="{!redirectToConversion}"  rendered="{!Referral__c.Referral_Status__c != 'Closed' && canConvert }"/>
+          <apex:commandButton value="Convert" action="{!redirectToConversion}"  rendered="{!editable && canConvert }"/>
       </apex:pageblockButtons>
 
       <apex:pageBlockSection title="Person Being Referred"
@@ -1662,13 +1663,13 @@ function stopRKey(evt) {
           <apex:variable var="emptyList" value="'[]'"/>
           <apex:variable var="evaluationList" value="'{!Referral__c.Evaluations__r}'"/>
           <apex:commandButton value="Add Evaluation" action="{!addEvaluation}"
-            rendered="{!evaluationList == emptyList && Referral__c.Person_Being_Served__c == null && Referral__c.Referral_Status__c!='Closed'}" />
+            rendered="{!evaluationList == emptyList && Referral__c.Person_Being_Served__c == null && Referral__c.Referral_Status__c!='Closed' && canCreateEvaluation}" />
           <apex:commandButton value="Add Evaluation" onclick="alert('You cannot add a new Evaluation to a Closed referral'); return false;"
             rendered="{!Referral__c.Referral_Status__c=='Closed'}" />
         </apex:outputPanel>
         <apex:pageBlockTable value="{!Referral__c.Evaluations__r}" var="evaluation" >
           <apex:column headerValue="Action" >
-                <apex:outputPanel rendered="{!evaluation.Referral__r.Person_Being_Served__c == null && Referral__c.Referral_Status__c != 'Closed'}">
+                <apex:outputPanel rendered="{!AND(evaluation.Referral__r.Person_Being_Served__c == null, Referral__c.Referral_Status__c != 'Closed', canUpdateEvaluation)}">
                  <a href="/{!evaluation.Id}/e">Edit</a>
               </apex:outputPanel>
           </apex:column>
