@@ -77,90 +77,41 @@ public with sharing class CMShiftAssessmentEdit {
                 
 	}
 	
-	 public void showAddVitalsDetail()  {
-        this.currentVitalsDetail = new Evaluation_Response__c();
-        this.currentVitalsDetail.Evaluation__c = this.evaluation.Id;
-        this.currentVitalsDetail.RecordTypeId = Utility.getEvaluationResponseRecordType('Vitals Details Shift Assessment');
-                
-    }
+		 public void showAddVitalsDetail()  {
+	        this.currentVitalsDetail = new Evaluation_Response__c();
+	        this.currentVitalsDetail.Evaluation__c = this.evaluation.Id;
+	        this.currentVitalsDetail.RecordTypeId = Utility.getEvaluationResponseRecordType('Vitals Details Shift Assessment');
+	                
+	    }
     
-    public void showEditVitalsDetail() {
-        this.currentVitalsDetail = [
-                SELECT ID, Name, Date__c, Temperature__c, R__c, O2_Saturation__c, Blood_Pressure__c,
-                   Heart_Rate__c
-            FROM Evaluation_Response__c WHERE ID=:currentVitalsDetailId
-        ];
-                
-    }
-    public void saveVitalsDetail() {
-        try {
-           
-            upsert currentVitalsDetail;
-        } catch (DMLException ex) {
-            // SF will automatically create a PageMessage Error here, so we don't
-            // have to do anything
-        }
-    }
+	    public void showEditVitalsDetail() {
+	        this.currentVitalsDetail = [
+	                SELECT ID, Name, Date__c, Temperature__c, R__c, O2_Saturation__c, Blood_Pressure__c,
+	                   Heart_Rate__c
+	            FROM Evaluation_Response__c WHERE ID=:currentVitalsDetailId
+	        ];
+	                
+	    }
+	    
+	    public void saveVitalsDetail() {
+	        try {
+	           
+	            upsert currentVitalsDetail;
+	        } catch (DMLException ex) {
+	            // SF will automatically create a PageMessage Error here, so we don't
+	            // have to do anything
+	        }
+	    }
 
-	  public PageReference handleResidentdescribe(){
-	   		if(evaluation.Resident_Coping_Well__c != 'No'){
-	   			evaluation.Coping_Description__c = '';
-	   		}
-	   		
-	   		return null;
-	  }
-	  
-	 public pageReference handleRanchoresponse(){
-	 	evaluation.Verbal_Stim__c = false;
-	 	evaluation.Auditory_Stim__c = false;
-	 	evaluation.Tactile_Stim__c = false;
-	 	evaluation.Responds_To_Pain__c = false;
-	 	evaluation.Visual__c = false;
-	 	evaluation.Level_of_Conciousness__c ='';
-	 	evaluation.Cooperative__c = false;
-	 	evaluation.Impulsive__c = false;
-	 	evaluation.Inappropriate__c = false;
-	 	evaluation.Agitated__c = false;
-	 	evaluation.Combative__c = false;
-	 	evaluation.Confused__c = false;
-	 	evaluation.Unresponsive__c = false;
-	 	selectedNeuroOrient = new List<String>();
-	 	
-	 	
-	 	return null;
-	 	
-	 }
-	 
-	 public void handleMood(){
-	 	set<string> moods = new set<string>(); // Using set as we do not have a List.contains method. Using set helps us avoid using a for loop. Sravan: 11/5/2014 11:30 AM.
-	 	moods.addAll(selectedMoods);
-	 	if(moods.Contains('Unable to Determine')){
-	 		selectedMoods = new List<string>{'Unable to Determine'};
-	 		showResidenthurt = false;
-	 		this.evaluation.Desire_to_hurt_themselves__c = '';				
-	 	}
-	 	if((moods.Contains('Sad') || moods.Contains('Flat')) && !moods.Contains('Unable to Determine')){
-	 		showResidenthurt = true;	
-	 	}
-	 	else{
-	 		 showResidenthurt = false;
-	 		 this.evaluation.Desire_to_hurt_themselves__c = '';
-	 	}
-	 }
-	   
-	 
-	 public void handleResidenthurt(){
-	 	this.evaluation.Plan_to_Harm_themselves__c = '';
-	 		
-	 }
-	 
 	   public PageReference save() {
 	        return this.save(false);
 	    }
 	    
+	    
 	   public PageReference submit() {
 	        return this.save(true);
 	    }	
+	    
 	    
 	   public PageReference changeTab() {
 		     System.debug('nextTab: ' + nextTab);
