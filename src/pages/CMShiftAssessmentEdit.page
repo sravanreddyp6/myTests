@@ -299,9 +299,9 @@
             };
             
             handleTrach = function(){
-            	var trachValue = $('[id$=trachPicklist').val();
-            	var trachTypeValue = $('[id$=trachType').val();
-            	var trachSizeValue = $('[id$=trachSize').val();
+            	var trachValue = $('[id$=trachPicklist]').val();
+            	var trachTypeValue = $('[id$=trachType]').val();
+            	var trachSizeValue = $('[id$=trachSize]').val();
           
             	if(trachValue == 'Yes'){
             		$('[id$=trachDetails]').show();
@@ -371,151 +371,113 @@
 
                 var ranchoScore = $('[id$=ranchoValue]').val();
 
-                // enable 'responds to' if rancho anything except 1
-                if ( ranchoScore.indexOf('1') < 0 ) {
-                    $('[id$=responds]').each( function(index, element) {
-                        $(element).prop('disabled', false);
-                    });
-                } else {
-                    $('[id$=responds]').each( function(index, element) {
-                        $(element).prop('disabled', true);
-                        $(element).prop('checked', false);
-
-                    });
-
+                if(ranchoScore.indexOf('1') < 0 && ranchoScore != '') {
+                	$('[id$=ranchoDetails]').show();
+                
+                }
+                else{
+                	$('[id$=ranchoDetails]').hide();
+                	$('[id$=ranchoDetails]').find('select,input:text,textarea').val('');
+             		$('[id$=ranchoDetails]').find('input:checkbox').prop('checked',false);
+                
                 }
 
              };
 
-             handleMood = function() {
              
-                // if sad or flat, enable depression question
-                var mood = '';
-                $('input[id*=moodlist]').each(function (index, element) {
-                    if ( $(element).prop('checked') == true )
-                        mood += $(element).val() + ';';
-                });
-
-				if ( mood.indexOf('Unable to Determine') >= 0 ) {
-					// disable all others
-	                $('input[id*=moodlist]').each(function (index, element) {
-	                	if ($(element).val() != 'Unable to Determine') {
-		                	$(element).prop('checked', false);
-		                	$(element).prop('disabled', true);
-						}
-					});
-				} else {
-				
-				    $('input[id*=moodlist]').each(function (index, element) {
-		                	$(element).prop('disabled', false);
-						});					
-				
-	                if ( mood.indexOf('Sad') >=  0 || mood.indexOf('Flat') >=  0 ) {
-	                    $('[id$=responds]').each( function(index, element) {
-	                        $('[id$=sadflatHurt]').prop('disabled', false);
-	                    });
-	                } else {
-	
-	                    $('[id$=sadflatHurt]').prop('disabled', true).val('');
-	                    enableDisableField( $('[id$=sadflatHurt]'));
-					}	
-                }
-
-             };
        	 	
        	 	handleNeuro = function () {
-	       	 	handleMood();
 	       	 	handleRancho();
        	
        	 	};
        	 	
        	 	handleOrtho = function(){
        	 	
-       	 		var castValue = $('[id$=cast').val();
-       	 		//var castLocation $('[id$=castLocation').val();
-       	 		var tractionValue = $('[id$=traction').val();
-       	 		var deviceValue = $('[id$=extdev').val();
+       	 		var castValue = $('[id$=cast]').val();
+       	 		//var castLocation $('[id$=castLocation]').val();
+       	 		var tractionValue = $('[id$=traction]').val();
+       	 		var deviceValue = $('[id$=extdev]').val();
        	 		
        	 		if(castValue == 'Yes'){
-       	 			$('[id$=castLocationLabel').show();
-       	 			$('[id$=castLocation').show();
+       	 			$('[id$=castLocationLabel]').show();
+       	 			$('[id$=castLocation]').show();
        	 			
-       	 			if($('[id$=castLocation').val() == 'Other'){
-       	 				$('[id$=OthercastLocationLabel').show();
-       	 				$('[id$=OthercastLocation').show();
+       	 			if($('[id$=castLocation]').val() == 'Other'){
+       	 				$('[id$=OthercastLocationLabel]').show();
+       	 				$('[id$=OthercastLocation]').show();
        	 			
        	 			}
        	 			else{
-       	 				$('[id$=OthercastLocationLabel').hide();
-       	 				$('[id$=OthercastLocation').hide();
-       	 				$('[id$=OthercastLocation').val('');	
+       	 				$('[id$=OthercastLocationLabel]').hide();
+       	 				$('[id$=OthercastLocation]').hide();
+       	 				$('[id$=OthercastLocation]').val('');	
        	 			}	
        	 		}
        	 		else{
-       	 			$('[id$=castLocationLabel').hide();
-       	 			$('[id$=castLocation').hide();
-       	 			$('[id$=castLocation').val('');
+       	 			$('[id$=castLocationLabel]').hide();
+       	 			$('[id$=castLocation]').hide();
+       	 			$('[id$=castLocation]').val('');
        	 		}
        	 		
        	 		if(tractionValue == 'Yes'){
-       	 			$('[id$=tractionLocationLabel').show();
-       	 			$('[id$=tractionLocation').show();
+       	 			$('[id$=tractionLocationLabel]').show();
+       	 			$('[id$=tractionLocation]').show();
        	 			
-       	 			$('[id$=tractionTypeLabel').show();
-       	 			$('[id$=tractionType').show();
+       	 			$('[id$=tractionTypeLabel]').show();
+       	 			$('[id$=tractionType]').show();
        	 			
-       	 			$('[id$=tractionWeightLabel').show();
-       	 			$('[id$=tractionWeight').show();
+       	 			$('[id$=tractionWeightLabel]').show();
+       	 			$('[id$=tractionWeight]').show();
        	 		
        	 		}
        	 		
        	 		else{
-       	 			$('[id$=tractionLocationLabel').hide();
-       	 			$('[id$=tractionLocation').hide();
-       	 			$('[id$=tractionLocation').val('');
+       	 			$('[id$=tractionLocationLabel]').hide();
+       	 			$('[id$=tractionLocation]').hide();
+       	 			$('[id$=tractionLocation]').val('');
        	 			
-       	 			$('[id$=tractionTypeLabel').hide();
-       	 			$('[id$=tractionType').hide();
-       	 			$('[id$=tractionType').val('');
+       	 			$('[id$=tractionTypeLabel]').hide();
+       	 			$('[id$=tractionType]').hide();
+       	 			$('[id$=tractionType]').val('');
        	 			
-       	 			$('[id$=tractionWeightLabel').hide();
-       	 			$('[id$=tractionWeight').hide();
-       	 			$('[id$=tractionWeight').val('');
+       	 			$('[id$=tractionWeightLabel]').hide();
+       	 			$('[id$=tractionWeight]').hide();
+       	 			$('[id$=tractionWeight]').val('');
    
        	 		}
        	 		
        	 		if(deviceValue == 'Yes'){
-       	 			$('[id$=externalDevicesLocationLabel').show();
-       	 			$('[id$=externalDevicesLocation').show();
+       	 			$('[id$=externalDevicesLocationLabel]').show();
+       	 			$('[id$=externalDevicesLocation]').show();
        	 			
-       	 			$('[id$=externalDevicesTypeLabel').show();
-       	 			$('[id$=externalDevicesType').show();
+       	 			$('[id$=externalDevicesTypeLabel]').show();
+       	 			$('[id$=externalDevicesType]').show();
        	 		
        	 		}
        	 		else{
-       	 			$('[id$=externalDevicesLocationLabel').hide();
-       	 			$('[id$=externalDevicesLocation').hide();
-       	 			$('[id$=externalDevicesLocation').val('');
+       	 			$('[id$=externalDevicesLocationLabel]').hide();
+       	 			$('[id$=externalDevicesLocation]').hide();
+       	 			$('[id$=externalDevicesLocation]').val('');
        	 			
-       	 			$('[id$=externalDevicesTypeLabel').hide();
-       	 			$('[id$=externalDevicesType').hide();
-       	 			$('[id$=externalDevicesType').val('');
+       	 			$('[id$=externalDevicesTypeLabel]').hide();
+       	 			$('[id$=externalDevicesType]').hide();
+       	 			$('[id$=externalDevicesType]').val('');
        	 		
        	 		}    	 	
        	 	};
        	 	
        	 	hanldePsycho = function(){
-       	 		var copingValue = $('[id$=residentCoping').val();
+       	 		var copingValue = $('[id$=residentCoping]').val();
        	 		
        	 		if(copingValue == 'No'){
-       	 			$('[id$=copingDescribeLabel').show();
-       	 			$('[id$=copingDescribe').show();
+       	 			$('[id$=copingDescribeLabel]').show();
+       	 			$('[id$=copingDescribe]').show();
        	 		
        	 		}
        	 		else{
-       	 			$('[id$=copingDescribeLabel').hide();
-       	 			$('[id$=copingDescribe').hide();
-       	 			$('[id$=copingDescribe').val('');
+       	 			$('[id$=copingDescribeLabel]').hide();
+       	 			$('[id$=copingDescribe]').hide();
+       	 			$('[id$=copingDescribe]').val('');
        	 		
        	 		}
        	 	};
@@ -525,6 +487,7 @@
 	       	handleOrtho();
 	       	handleVitals();
 	       	hanldePsycho();
+	       	handleNeuro();
        	 
        	 });   //end "ready" function
        
@@ -936,49 +899,67 @@
              
              <apex:tab label="Neurological" name="neuroTab" ontabenter="changeTab('neuroTab');return false;" styleClass="{!IF(Evaluation__c.Neuro_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
                 <apex:pageBlock >
-                	<apex:pageBlockSection columns="1" >
-                		    <apex:inputField value="{!Evaluation__c.Rancho_Level__c}" onchange="handleRancho();" id="ranchoValue"/>
+                	<apex:pageBlockSection columns="1" title="Cognitive" collapsible="True">
+                		    <apex:inputField value="{!Evaluation__c.Rancho_Level__c}" onchange="handleRancho(); return false;" id="ranchoValue" required="true" />
+                		    
+                		    <apex:pageBlockSection id="ranchoDetails" columns="1" >
+		                        <apex:pageBlockSectionItem >
+		                        <apex:outputLabel value="Responds To" id="labelresponds"/>
+		                        <apex:outputPanel >
+		                        <apex:inputField id="vstimresponds" value="{!Evaluation__c.Verbal_Stim__c}" /><apex:outputLabel for="vstim" value="Verbal Stim" id="vstimlabelresponds" />&nbsp;
+		                        <apex:inputField id="astimresponds" value="{!Evaluation__c.Auditory_Stim__c}" /><apex:outputLabel for="astim" value="Auditory Stim" id="astimlabelresponds" />&nbsp;
+		                        <apex:inputField id="tstimresponds" value="{!Evaluation__c.Tactile_Stim__c}" /><apex:outputLabel for="tstim" value="Tactile Stim" id="tstimlabelresponds" />&nbsp;
+		                        <apex:inputField id="pstimresponds" value="{!Evaluation__c.Responds_To_Pain__c}" label="Pain" /><apex:outputLabel for="pstim" value="Pain" id="pstimlabelresponds" />&nbsp;
+		                        <apex:inputField id="visualresponds" value="{!Evaluation__c.Visual__c}"/><apex:outputLabel for="visual" value="Visual" id="visuallabelresponds" />
+		                        </apex:outputPanel>
+		                        </apex:pageBlockSectionItem>
+		
+		                        <apex:inputField value="{!Evaluation__c.Level_of_Conciousness__c}" />
+		                        <apex:pageBlockSectionItem >
+		                            <apex:outputLabel value="Orientation" />
+		                            <apex:selectCheckboxes value="{!selectedNeuroOrient}" style="margin-left:-13px" >
+		                                <apex:selectOptions value="{!neuroOrientValues}" />
+		                            </apex:selectCheckboxes>
+		                        </apex:pageBlockSectionItem>
+		
+		                        <apex:pageBlockSectionItem >
+		                        <apex:outputLabel value="Behavior" />
+		                        <apex:outputPanel >
+		                        <apex:inputField id="coop" value="{!Evaluation__c.Cooperative__c}" /><apex:outputLabel for="coop" value="Cooperative" />&nbsp;
+		                        <apex:inputField id="impulsive" value="{!Evaluation__c.Impulsive__c}" /><apex:outputLabel for="impulsive" value="Impulsive" />&nbsp;
+		                        <apex:inputField id="inapp" value="{!Evaluation__c.Inappropriate__c}" /><apex:outputLabel for="inapp" value="Inappropriate" />&nbsp;
+		                        <apex:inputField id="agitated" value="{!Evaluation__c.Agitated__c}" /><apex:outputLabel for="agitated" value="Agitated" />&nbsp;
+		                        <apex:inputField id="combat" value="{!Evaluation__c.Combative__c}" /><apex:outputLabel for="combat" value="Combative" />&nbsp;
+		                        <apex:inputField id="confused" value="{!Evaluation__c.Confused__c}"/><apex:outputLabel for="confused" value="Confused" />&nbsp;
+		                        <apex:inputField id="unresp" value="{!Evaluation__c.Unresponsive__c}"/><apex:outputLabel for="unresp" value="Unresponsive" />
+		                        </apex:outputPanel>
+		                        </apex:pageBlockSectionItem>
+		
+		                        <apex:pageBlockSectionItem >
+		                            <apex:outputLabel value="Mood" />
+		                            <apex:selectCheckboxes value="{!selectedMoods}"  style="margin-left:-13px" id="moodlist">
+		                                <apex:selectOptions value="{!moodValues}" />
+		                            </apex:selectCheckboxes>
+		                        </apex:pageBlockSectionItem>
+		                        <apex:inputField value="{!Evaluation__c.Desire_to_hurt_themselves__c}" label="Has Resident Expressed Desire to Hurt Him/Herself?"  id="sadflatHurt"/>
+		                        <apex:inputField value="{!Evaluation__c.Plan_to_Harm_themselves__c}" label="Does Resident Have a Plan to Harm Him/Herself?" id="plantoHarm" />
+		                    </apex:pageBlockSection>
+                        </apex:PageblockSection>
+                        
+                        <apex:pageBlockSection columns="1" title="Safety" >
+	                        <apex:inputField value="{!Evaluation__c.Safety_Awareness__c}" />
+	                        <apex:inputField value="{!Evaluation__c.Bed_Alarm__c}" />
 	                        <apex:pageBlockSectionItem >
-	                        <apex:outputLabel value="Responds To" />
+	                        <apex:outputLabel value="One to One Sitter<br /><br />Hours Per Day" escape="false" />
 	                        <apex:outputPanel >
-	                        <apex:inputField id="vstimresponds" value="{!Evaluation__c.Verbal_Stim__c}" /><apex:outputLabel for="vstim" value="Verbal Stim" />&nbsp;
-	                        <apex:inputField id="astimresponds" value="{!Evaluation__c.Auditory_Stim__c}" /><apex:outputLabel for="astim" value="Auditory Stim" />&nbsp;
-	                        <apex:inputField id="tstimresponds" value="{!Evaluation__c.Tactile_Stim__c}" /><apex:outputLabel for="tstim" value="Tactile Stim" />&nbsp;
-	                        <apex:inputField id="pstimresponds" value="{!Evaluation__c.Responds_To_Pain__c}" label="Pain" /><apex:outputLabel for="pstim" value="Pain" />&nbsp;
-	                        <apex:inputField id="visualresponds" value="{!Evaluation__c.Visual__c}"/><apex:outputLabel for="visual" value="Visual" />
+	
+	                        <apex:inputField value="{!Evaluation__c.One_to_One_Sitter__c}"  />
+	                        <br /><apex:inputField value="{!Evaluation__c.one_to_One_Sitter_of_Hours_per_day__c}" label="# of hours per day" id="onetooneHours" />
 	                        </apex:outputPanel>
 	                        </apex:pageBlockSectionItem>
-	
-	                        <apex:inputField value="{!Evaluation__c.Level_of_Conciousness__c}" html-data-rules="{&quot;Unresponsive&quot;: [&quot;{!$Component.blinktothreat}&quot;]}"/>
-	                        <apex:pageBlockSectionItem >
-	                            <apex:outputLabel value="Orientation" />
-	                            <apex:selectCheckboxes value="{!selectedNeuroOrient}" style="margin-left:-13px" >
-	                                <apex:selectOptions value="{!neuroOrientValues}" />
-	                            </apex:selectCheckboxes>
-	                        </apex:pageBlockSectionItem>
-	
-	                        <apex:pageBlockSectionItem >
-	                        <apex:outputLabel value="Behavior" />
-	                        <apex:outputPanel >
-	                        <apex:inputField id="coop" value="{!Evaluation__c.Cooperative__c}" /><apex:outputLabel for="coop" value="Cooperative" />&nbsp;
-	                        <apex:inputField id="impulsive" value="{!Evaluation__c.Impulsive__c}" /><apex:outputLabel for="impulsive" value="Impulsive" />&nbsp;
-	                        <apex:inputField id="inapp" value="{!Evaluation__c.Inappropriate__c}" /><apex:outputLabel for="inapp" value="Inappropriate" />&nbsp;
-	                        <apex:inputField id="agitated" value="{!Evaluation__c.Agitated__c}" /><apex:outputLabel for="agitated" value="Agitated" />&nbsp;
-	                        <apex:inputField id="combat" value="{!Evaluation__c.Combative__c}" /><apex:outputLabel for="combat" value="Combative" />&nbsp;
-	                        <apex:inputField id="confused" value="{!Evaluation__c.Confused__c}"/><apex:outputLabel for="confused" value="Confused" />&nbsp;
-	                        <apex:inputField id="unresp" value="{!Evaluation__c.Unresponsive__c}"/><apex:outputLabel for="unresp" value="Unresponsive" />
-	                        </apex:outputPanel>
-	                        </apex:pageBlockSectionItem>
-	
-	                        <apex:pageBlockSectionItem >
-	                            <apex:outputLabel value="Mood" />
-	                            <apex:selectCheckboxes value="{!selectedMoods}" onchange="handleMood();" style="margin-left:-13px" id="moodlist">
-	                                <apex:selectOptions value="{!moodValues}" />
-	                            </apex:selectCheckboxes>
-	                        </apex:pageBlockSectionItem>
-	                        <apex:inputField value="{!Evaluation__c.Desire_to_hurt_themselves__c}" label="Has Resident Expressed Desire to Hurt Him/Herself?"  html-data-rules="{&quot;Yes&quot;: [&quot;{!$Component.plantoHarm}&quot;]}" id="sadflatHurt"/>
-	                        <apex:inputField value="{!Evaluation__c.Plan_to_Harm_themselves__c}" label="Does Resident Have a Plan to Harm Him/Herself?" id="plantoHarm" />
-	                        </apex:PageblockSection>    
+	                        <apex:inputField value="{!Evaluation__c.Low_Bed__c}" />
+                        </apex:pageBlockSection>
+                            
                 </apex:pageBlock>
              </apex:tab>
              
