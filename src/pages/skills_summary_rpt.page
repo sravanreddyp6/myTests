@@ -1,0 +1,257 @@
+<apex:page controller="skills_summary_rpt" sidebar="false" docType="html-5.0" readOnly="true" >
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!$Resource.jquery}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+    <apex:includeScript value="https://raw.github.com/awbush/jquery-fastLiveFilter/master/jquery.fastLiveFilter.js" />
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.columnFilter.js')}" />
+       
+<script>
+    function setFocusOnLoad() {}
+</script>
+<style>
+.attemptinput {
+    width:20px;
+
+}
+.statusinput {
+    width:75px;
+
+}
+.metobjectiveinput {
+    width:40px;
+
+}
+.initialsinput {
+    width:35px;
+
+}
+.lastfieldofday {
+    border-right:1px solid black;
+}
+.left_col{ text-align: left; font-weight: bold; color: #4a4a56 !important; padding: 5px; vertical-align: top; width: 150px;}
+
+.thinking{
+    opacity:0.8;
+    background-color:#ccc;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}
+
+.thinkingwheel{
+    position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+}   
+.mytbl{
+    width: 100%;
+}  
+.dataTables_wrapper{
+    margin-top: -52px;
+    margin-left: -19px;
+	width:50%;
+}
+.pbTitle{
+    width: 300px !important;
+}
+</style>
+
+<apex:form >
+<apex:pageMessages id="messages" ></apex:pageMessages>
+<apex:actionFunction action="{!runPDF}" name="runPDF"/>
+<apex:pageBlock id="SkillsSummaryRptPgBlk" title="Skills Summary Report">
+<apex:actionRegion >
+    
+    <apex:pageBlockSection columns="1">
+    
+    <apex:outputPanel>
+       <apex:outputLabel value="Start Date" for="start_date" /> <apex:input type="auto" id="start_date" size="10"  label="Start Date" styleClass="datepicker" value="{! StartDate}" />
+       <apex:outputLabel value="End Date" for="end_date" /> <apex:input type="auto" id="end_date" size="10"  label="End Date" styleClass="datepicker" value="{! EndDate}" />
+    </apex:outputPanel>
+    </apex:pageBlockSection>
+    
+       
+       
+       <apex:pageBlockSection id="programs" title="Programs (Please select one or more Programs from the below list to view clients.)" columns="1" collapsible="false" >
+       <apex:outputPanel>
+	    	<table>
+		        <tr>
+		        <td>
+		        <apex:selectList id="selectprograms" value="{!selectedPrograms}" size="7" multiselect="true" style="min-width:235px">
+		            <apex:selectOptions value="{!programslist}"/>
+		        </apex:selectList>
+		        </td><td style="vertical-align:middle">
+		        <apex:commandButton value="add" 
+						            action="{!AddPrograms}" 
+						            reRender="programs, pbsOPTS,messages" 
+						            status="myStatus"
+						            oncomplete="createtbl()"/>
+						            <br/>
+		        <apex:commandButton value="remove" 
+						            action="{!RemovePrograms}" 
+						            reRender="programs, pbsOPTS, messages" 
+						            status="myStatus"
+						            oncomplete="createtbl()"/>
+		        </td>
+		        <td>
+		        <apex:selectList id="select2" value="{!select2PrmIds}" size="7" multiselect="true" style="min-width:235px">
+		        	<apex:selectOptions value="{!select2list}" />
+				</apex:selectList>
+		        </td></tr>
+	 		</table>    
+	 		</apex:outputPanel>               
+       </apex:pageBlockSection>       
+       
+       
+       <apex:pageBlockSection id="pbsOPTS"  title="Person Being Served (Please select one or more names from the list. Type a name in the field below to filter the list.)" columns="1" collapsible="false" >
+       <div id="pbslinks" style="position:relative; left:180px; top:10px">
+       <a href="#" onclick="clearAllPBS();" >Clear</a>&nbsp;&nbsp;
+       <a href="#" onclick="selectAllPBS();" >Select All</a>
+       </div>
+       <Br />
+       <apex:outputPanel>
+       <br />
+       
+              <apex:selectCheckboxes html-class="mytbl2" value="{!selectedPBS }" layout="pageDirection" id="chkPBS">
+                  <apex:selectOptions value="{!PBSList }"></apex:selectOptions>
+              </apex:selectCheckboxes>
+       </apex:outputPanel>     
+       </apex:pageBlockSection>
+       
+       
+
+		<apex:outputPanel layout="none" id="buttonPanel">
+       	<apex:commandButton value="Run" 
+            action="{!runReport}" 
+            reRender="dataTable, tbl_maker, pbsOPTS, messages, buttonPanel" 
+            status="myStatus"
+            rendered="{!!hasRunOnce}"
+            />
+      	<apex:commandButton value="Reset" 
+            action="{!cancelToNewRun}"
+            immediate="true" 
+            />
+        <apex:commandLink id="btnRunPDF2"
+        	value="Create PDF"
+        	action="{!runPDF}"
+        	styleClass="btn" 
+        	target="_blank" 
+        	rendered="{!hasRunOnce}" />
+        	</apex:outputPanel>
+        	
+       </apex:actionRegion>
+</apex:pageBlock>
+</apex:form> 
+
+<apex:pageBlock id="dataTable">     
+
+<apex:repeat value="{!selectedPBS}" var="person">
+<apex:pageBlockSection title="{!pbsPeople[person].Lastname + ', ' + pbsPeople[person].firstname }" columns="1" rendered="{! numContacts > 0}">
+
+ <apex:repeat value="{!pbsPlanMap[person]}" var="plan">
+ 	<apex:pageBlockSection title="{! plan.name}" columns="1">   
+    
+    <apex:repeat value="{!planObjMap[plan]}" var="obj">
+    <apex:pageBlockSection title="{!obj.Description__c}" columns="1">
+    <apex:outputPanel>
+	<apex:repeat value="{!objWeekMap[obj.Id]}" var="day"> <!--  first day of reportable week -->
+        
+		<table style="border:1px solid black;width:100%;padding:0px; border-collapse:collapse">
+      	<tr style="border-bottom:1px solid black">
+      	 
+		      <td colspan="4" class="daysofweek" ><apex:outputText value="{0, date, MMM dd - E}"><apex:param value="{!day.intdate}" /></apex:outputText></td>
+		      <td colspan="4" class="daysofweek" ><apex:outputText value="{0, date, MMM dd - E}"><apex:param value="{!day.intdate +1}" /></apex:outputText></td>
+		      <td colspan="4" class="daysofweek" ><apex:outputText value="{0, date, MMM dd - E}"><apex:param value="{!day.intdate +2}" /></apex:outputText></td>
+		      <td colspan="4" class="daysofweek" ><apex:outputText value="{0, date, MMM dd - E}"><apex:param value="{!day.intdate +3}" /></apex:outputText></td>
+		      <td colspan="4" class="daysofweek" ><apex:outputText value="{0, date, MMM dd - E}"><apex:param value="{!day.intdate +4}" /></apex:outputText></td>
+		      <td colspan="4" class="daysofweek" ><apex:outputText value="{0, date, MMM dd - E}"><apex:param value="{!day.intdate +5}" /></apex:outputText></td>
+		      <td colspan="4" class="daysofweek" ><apex:outputText value="{0, date, MMM dd - E}"><apex:param value="{!day.intdate +6}" /></apex:outputText></td>
+		</tr>
+      <tr>
+          	  <td class="inputheaders">Attempts</td><td class="inputheaders">Prompt/<br/>Status</td><td class="inputheaders">Met Obj.</td><td class="inputheaders lastfieldofday">Initials</td>
+          	  <td class="inputheaders">Attempts</td><td class="inputheaders">Prompt/<br/>Status</td><td class="inputheaders">Met Obj.</td><td class="inputheaders lastfieldofday">Initials</td>
+          	  <td class="inputheaders">Attempts</td><td class="inputheaders">Prompt/<br/>Status</td><td class="inputheaders">Met Obj.</td><td class="inputheaders lastfieldofday">Initials</td>
+          	  <td class="inputheaders">Attempts</td><td class="inputheaders">Prompt/<br/>Status</td><td class="inputheaders">Met Obj.</td><td class="inputheaders lastfieldofday">Initials</td>
+          	  <td class="inputheaders">Attempts</td><td class="inputheaders">Prompt/<br/>Status</td><td class="inputheaders">Met Obj.</td><td class="inputheaders lastfieldofday">Initials</td>
+          	  <td class="inputheaders">Attempts</td><td class="inputheaders">Prompt/<br/>Status</td><td class="inputheaders">Met Obj.</td><td class="inputheaders lastfieldofday">Initials</td>
+          	  <td class="inputheaders">Attempts</td><td class="inputheaders">Prompt/<br/>Status</td><td class="inputheaders">Met Obj.</td><td class="inputheaders lastfieldofday">Initials</td>
+      </tr>
+      <tr>
+      			
+		      <apex:repeat value="{!dayCounter}" var="dayInc">
+		      	  <apex:variable value="{!0}" var="display" />   	
+	   		      <apex:repeat value="{!obj.Action_Skill_Results__r}" var="res">
+				      <apex:outputPanel layout="none" rendered="{!res.Day__c == day.intdate+dayInc}">
+				      	<td style="text-align:center"><apex:outputField value="{!res.Attempts__c}"  styleClass="attemptoutput"/></td>
+				      	<td style="text-align:center"><apex:outputField value="{!res.Status__c}" rendered="{!res.Day__c == day.intdate+dayInc}" styleClass="statusoutput"/></td>
+				      	<td style="text-align:center"><apex:outputField value="{!res.Met_Objective__c}" rendered="{!res.Day__c == day.intdate+dayInc}" styleClass="metobjectiveoutput"/></td>
+				      	<td style="text-align:center" class="lastfieldofday"><apex:outputField value="{!res.Initials__c}" rendered="{!res.Day__c == day.intdate+dayInc}" styleClass="initialsoutput"/></td>
+				      	</apex:outputPanel>
+				      	<apex:variable value="{!IF(OR(display==1, AND(display==0, res.day__c == day.intdate+dayInc)), 1, 0)}" var="display" />
+			      </apex:repeat>
+			          <apex:outputPanel layout="none" rendered="{!display==0}">
+				      	<td style="text-align:center">&nbsp;</td>
+				      	<td style="text-align:center">&nbsp;</td>
+				      	<td style="text-align:center">&nbsp;</td>
+				      	<td style="text-align:center" class="lastfieldofday">&nbsp;</td>
+				      	</apex:outputPanel>
+				      	
+				</apex:repeat> 
+      </tr> 
+	  </table>
+	  <br /><br />
+	      </apex:repeat>
+	      </apex:outputPanel>
+	      
+	</apex:pageBlockSection>
+	  </apex:repeat>
+      </apex:pageBlockSection>
+      </apex:repeat>
+      
+</apex:pageBlockSection>
+</apex:repeat>
+
+</apex:pageBlock>
+
+       
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <div  class="thinking">
+            <div class="thinkingwheel">    
+                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+            </div>
+        </div>   
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus>
+
+<apex:outputPanel id="tbl_maker">
+<script>
+j$ = jQuery.noConflict();
+function createtbl(){
+    j$('.mytbl2').dataTable({"bPaginate": false, "bFilter": true, "bRetrieve": true, "aoColumnDefs": [
+      { "sTitle": " ", "aTargets": [ 0 ] },],
+		"oLanguage": {
+    	"sSearch": " "
+  	}
+      });
+      
+}
+j$(document).ready(function(){
+    createtbl();
+});
+function selectAllPBS() {
+ 	j$('input[id *=chkPBS]').each(function(index,element) {
+ 		j$(element).prop('checked', true);
+ 	});
+}
+function clearAllPBS() {
+ 	j$('input[id *=chkPBS]').each(function(index,element) {
+ 		j$(element).prop('checked', false);
+ 	});
+}
+</script>
+</apex:outputPanel>
+</apex:page>
