@@ -40,7 +40,7 @@
         <a href="/">Home</a> > <a href="/{!Evaluation__c.Referral__c}">Referral: {!Evaluation__c.Referral__r.Name}</a> > <a href="/{!Evaluation__c.Id}">Evaluation: {!Evaluation__c.Name}</a>
     </div>
     <apex:form id="wholePage">
-        <apex:variable var="editable" value="{!Evaluation__c.Referral__r.Referral_Status__c != 'Closed'}" />
+        <apex:variable var="editable" value="{!AND(Evaluation__c.Referral__r.Referral_Status__c != 'Closed', canUpdateEvaluation)}" />
         <apex:pageMessages id="pageMessages" />
         <apex:tabPanel id="wholeTabPanel" value="{!selectedTab}" styleClass="evaluationTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
             <apex:tab label="Demographics" name="demographicsTab" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
