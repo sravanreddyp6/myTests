@@ -125,6 +125,22 @@ public with sharing class referral_Controller2 {
         return ((operatinggroup == 'Cambridge' && isCambridge )|| (operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ) || (operatinggroup == 'CareMeridian' && isCareMeridian && OS.Referral_ConvertCMEnabled__c ) );
     } set;}
 
+  public Boolean canUpdateReferral {
+    get {
+      return Schema.sObjectType.Referral__c.isUpdateable();
+    }
+  }
+  public Boolean canUpdateEvaluation {
+    get {
+      return Schema.sObjectType.Evaluation__c.isUpdateable();
+    }
+  }
+  public Boolean canCreateEvaluation {
+    get {
+      return Schema.sObjectType.Evaluation__c.isCreateable();
+    }
+  }
+
   // NEVAL-32
   public Boolean showNeuroFeatures {
     get {
