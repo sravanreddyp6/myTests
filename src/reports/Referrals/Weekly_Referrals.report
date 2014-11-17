@@ -45,6 +45,18 @@
     <columns>
         <field>Referral__c$Assigned_Users__c</field>
     </columns>
+    <filter>
+        <criteriaItems>
+            <column>Referral__c$Close_Reason__c</column>
+            <operator>notEqual</operator>
+            <value>Error</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Referral__c$Days_Since_Creation__c</column>
+            <operator>lessOrEqual</operator>
+            <value>7.02</value>
+        </criteriaItems>
+    </filter>
     <format>Tabular</format>
     <name>Weekly Referrals</name>
     <params>
@@ -56,6 +68,6 @@
     <showDetails>true</showDetails>
     <timeFrameFilter>
         <dateColumn>Referral__c$Referral_Date__c</dateColumn>
-        <interval>INTERVAL_THISWEEK</interval>
+        <interval>INTERVAL_CUSTOM</interval>
     </timeFrameFilter>
 </Report>

@@ -1,6 +1,8 @@
 <apex:page standardController="Referral__c" extensions="referrals_Controller">
   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+
+  <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
   <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}"/>
   <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
   <apex:pageMessage rendered="{!Referral__c.Service_Location__c == null && !isErrorDisplayed && Referral__c.Close_Reason__c != 'Admitted' && locations.size == 0 && Referral__c.id != null}" title="WARNING-Alias Field is blank: No Location has been selected, please add an Anticipated Admission Location OR the section with 'Add Location' button to the Referral." severity="warning"></apex:pageMessage>
@@ -168,6 +170,12 @@ function enableDiagEff() {
             errors += '<li>You must lookup the User</li>';
         }
     }
+
+   //EC-54 November 2014 Release Make Rank Required for CM
+    if (j$('select[id$=locationEntry_Rank]').val() =='' && {!referralRecordType == 'CareMeridian'}) {
+        errors += '<li>Rank is a required field.</li>';
+    }
+   //End EC-54
 
     if (j$('select[id$=locationEntry_Status]').val() =='') {
         errors += '<li>Status is a required field.</li>';
@@ -445,7 +453,7 @@ clearDisableField = function(pageSectionId){
         <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" oncomplete="openModalDialog('relatedPartyModal', 'span', 'Add Related Party','none');" status="showAddRelPartyStatus" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs" />
     </apex:actionRegion>
     <apex:actionRegion >
-        <apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" oncomplete="fundingSourceScrollToTop(); fundingSourceClearMessages(); openModalDialog('FundingSourceModal', 'span', 'Add Funding Source','none', 1000);" action="{!showAddFundingSource}" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceAuthorizationDetailEntry,fundingSourceEntry,msgs"/>
+        <apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" oncomplete="fundingSourceScrollToTop(); fundingSourceClearMessages(); openModalDialog('FundingSourceModal', 'span', 'Add Funding Source','none', 1000); applyRulesToFundingSource(); " action="{!showAddFundingSource}" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceAuthorizationDetailEntry,fundingSourceEntry,msgs"/>
     </apex:actionRegion>
     <apex:actionRegion >
         <apex:actionFunction name="showAddAgency" action="{!showAddAgency}" rerender="agencies,agencyEntry,msgs"/>
@@ -517,6 +525,7 @@ clearDisableField = function(pageSectionId){
           </apex:outputPanel>
         </apex:pageBlockSectionItem>
         <apex:inputField value="{!personBeingRefRecord.SSN__c}"/>
+        <apex:inputField value="{!personBeingRefRecord.Level_of_Education__c}" id="levelOfEducation" required="{!AND(Referral__c.Referral_Status__c='Closed', Referral__c.Close_Reason__c='Admitted', ReferralRecordType = 'NeuroRestorative')}" />
       </apex:pageBlockSection>
       <apex:pageBlockSection showHeader="false"
                              columns="1"
@@ -745,8 +754,26 @@ clearDisableField = function(pageSectionId){
     <!-- Add Funding Source modal. -->
 <apex:actionRegion >
     <apex:outputPanel id="FundingSourceModal" style="display:none">
+      <script>
+        j$(document).ready(function ($) {
+          applyRulesToFundingSource = function () {
+            $(document.getElementById('{!$Component.FundingSourceModal}')).find('input').on("change", function (event) {
+              applyRulesToField(event.target);
+            });
+            $(document.getElementById('{!$Component.FundingSourceModal}')).find('select').on("change", function (event) {
+              applyRulesToField(event.target);
+            });
+            $(document.getElementById('{!$Component.FundingSourceModal}')).find('input').each(function (_, target) {
+              applyRulesToField(target);
+            });
+            $(document.getElementById('{!$Component.FundingSourceModal}')).find('select').each(function (_, target) {
+              applyRulesToField(target);
+            });
+          };
+        });
+      </script>
 
-        <apex:actionFunction name="saveFundingSource" status="saveFundingSourceStatus" action="{!saveFundingSource}" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialog('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceAuthorizationDetailEntry,fundingSourceEntry,msgs"/>
+      <apex:actionFunction name="saveFundingSource" status="saveFundingSourceStatus" action="{!saveFundingSource}" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialog('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceAuthorizationDetailEntry,fundingSourceEntry,msgs"/>
 
       <div id='fundingMessages' ></div>
       <apex:pageBlock title="Add Funding Source" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative'}">
@@ -797,7 +824,10 @@ clearDisableField = function(pageSectionId){
                 <apex:param value="{!personBeingRefRecord.Date_of_Birth__c}"/>
             </apex:outputText>
             <apex:inputField value="{!fundingSource.Type_of_Coverage__c}" />
-            <apex:inputField value="{!fundingSource.Payer_Type__c}" />
+            <apex:inputField value="{!fundingSource.Payer_Type__c}" id="neuroPayerType"
+                html-data-rules="{&quot;VA - Pilot&quot;: [&quot;{!$Component.vaPilotClinicalNumber}&quot;]}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!fundingSource.VA_Pilot_Clinical_Number__c}" id="vaPilotClinicalNumber" />
             <apex:inputField value="{!fundingSource.Payer_Name__c}" />
             <apex:inputField value="{!fundingSource.Payer_Phone__c}" />
             <apex:pageBlockSectionItem >
@@ -1349,7 +1379,7 @@ clearDisableField = function(pageSectionId){
         <apex:outputlabel for="referralStatus" value="Referral Status" />
         <apex:actionregion >
             <apex:inputField id="referralStatus" value="{!Referral__c.Referral_Status__c}" required="true">
-            <apex:actionSupport event="onchange" action="{!unsetStatusHelperFiels}" rerender="ReferralStatus" oncomplete="unsetAdditionalFields(j$('select[id$=referralStatus]').val());" />
+            <apex:actionSupport event="onchange" action="{!unsetStatusHelperFiels}" rerender="ReferralStatus, levelOfEducation" oncomplete="unsetAdditionalFields(j$('select[id$=referralStatus]').val());" />
         </apex:inputField>
         </apex:actionregion>
         </apex:pageblocksectionitem>
@@ -1860,14 +1890,16 @@ clearDisableField = function(pageSectionId){
 
      <apex:pageBlockSection showHeader="false" columns="2" collapsible="false" id="ReferralStatus">
        <apex:inputField id="closeDate" value="{!Referral__c.Close_Date__c}" rendered="{!Referral__c.Referral_Status__c=='Closed'}"/>
-       <apex:inputField id="closeReason" value="{!Referral__c.Close_Reason__c}" rendered="{!Referral__c.Referral_Status__c=='Closed'}"/>
+       <apex:inputField id="closeReason" value="{!Referral__c.Close_Reason__c}" rendered="{!Referral__c.Referral_Status__c=='Closed'}">
+         <apex:actionSupport event="onchange" rerender="levelOfEducation" />
+       </apex:inputField>
        <apex:pageBlockSectionItem rendered="{!Referral__c.Referral_Status__c!='Closed$'}"/>
        <apex:inputField id="closeComment" value="{!Referral__c.Close_Comment__c}" rendered="{!Referral__c.Referral_Status__c=='Closed' && !isCambridge}"/>
        <apex:inputField id="holdDate" value="{!Referral__c.Hold_Date__c}" rendered="{!Referral__c.Referral_Status__c=='On Hold'}"/>
        <apex:inputField id="holdReason" value="{!Referral__c.Hold_Reason__c}" rendered="{!Referral__c.Referral_Status__c=='On Hold'}"/>
        <apex:inputField id="reviewOn" value="{!Referral__c.Review_On__c}" rendered="{!Referral__c.Referral_Status__c=='On Hold'}"/>
-
      </apex:pageBlockSection>
+
      <apex:pageBlockSection title="Anticipated Admission Location Information" columns="1" collapsible="false" id="LocationInfo">
        <apex:inputField value="{!Referral__c.Anticipated_Admission_Date__c}" />
        <apex:inputHidden id="sl_lkid" value="{!Referral__c.Service_Location__c}" />
@@ -2134,6 +2166,10 @@ clearDisableField = function(pageSectionId){
         <!--  apex:inputField value="{!Referral__c.Secondary_Location__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/-->
         <!--  apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/-->
         <apex:inputField value="{!Referral__c.Glasgow_Coma_Scale__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
+        <apex:inputField value="{!Referral__c.Duration_of_Unconsciousness__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
+        <apex:inputField value="{!Referral__c.Reported_By__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/>
 
         <!--Flavor Specific fields-->
 
@@ -2177,12 +2213,17 @@ clearDisableField = function(pageSectionId){
         <apex:inputField value="{!Referral__c.Comments__c}" style="width: 90%;" />
       </apex:pageBlockSection>
 
-      <apex:pageBlockSection showHeader="true" title="Evaluation" columns="1" collapsible="false" rendered="{!ReferralRecordType=='CareMeridian' || ReferralRecordType=='NeuroRestorative'}">
+      <apex:pageBlockSection showHeader="true" title="Evaluation" columns="1" collapsible="false" rendered="{!OR(ReferralRecordType=='CareMeridian', AND(ReferralRecordType=='NeuroRestorative', showNeuroFeatures))}">
         <apex:outputPanel >
           <apex:variable var="emptyList" value="'[]'"/>
           <apex:variable var="evaluationList" value="'{!Referral__c.Evaluations__r}'"/>
-          <apex:commandButton value="Add Evaluation" action="{!addEvaluation}" rendered="{!AND(evaluationList == emptyList, ReferralRecord.Id != null)}" />
-          <apex:commandButton value="Add Evaluation" onclick="alert('Please save the referral before creating a new Evaluation'); return false;" rendered="{!ReferralRecord.Id == null}" />
+          <apex:commandButton value="Add Evaluation" action="{!addEvaluation}"
+            rendered="{!AND(evaluationList == emptyList, ReferralRecord.Id != null, Referral__c.Referral_Status__c!='Closed')}"
+          />
+          <apex:commandButton value="Add Evaluation" onclick="alert('Please save the referral before creating a new Evaluation'); return false;"
+            rendered="{!ReferralRecord.Id == null}" />
+          <apex:commandButton value="Add Evaluation" onclick="alert('You cannot add a new Evaluation to a Closed referral'); return false;"
+            rendered="{!Referral__c.Referral_Status__c=='Closed'}" />
         </apex:outputPanel>
         <apex:pageBlockTable value="{!Referral__c.Evaluations__r}" var="evaluation">
           <apex:column headerValue="Name"><a href="/{!evaluation.Id}">{!evaluation.Name}</a></apex:column>
@@ -2192,7 +2233,7 @@ clearDisableField = function(pageSectionId){
       </apex:pageBlockSection>
 
       <apex:pageBlockSection columns="1"
-                             title="Agencies Involved With Individual" id="agencies" rendered="{!ReferralRecordType!='NeuroRestorative' && ReferralRecordType!='CareMeridian'}">
+                             title="Agencies Involved With Individual" id="agencies" rendered="{!ReferralRecordType!='CareMeridian'}">
         <apex:pageBlockSectionItem >
           <apex:commandButton value="Add Agency Involved With Individual"
                               id="addAgency"
@@ -2254,23 +2295,36 @@ clearDisableField = function(pageSectionId){
 
         <apex:inputHidden value="{!fundingSource.RecordType.Name}" id="fundingSourceEntryRecordType" />
         <apex:inputHidden value="{!fundingSource.RecordTypeId}" id="fundingSourceEntryRecordTypeId" />
-        <!--
-        <apex:outputpanel style="display:none">
-        <apex:inputhidden value="{!fundingSource.Funding_Source__c}" id="fundingSource"/>
-        <apex:inputhidden value="{!fundingSource.Funding_Source_ID__c}" id="fundingSourceId"/>
-        <apex:inputhidden value="{!fundingSource.Status_String__c}" id="fundingStatus"/>
-        <apex:inputhidden value="{!fundingSource.Service_Being_Funded_String__c}" id="fundingService"/>
-        <apex:inputhidden value="{!fundingSource.Comment__c}" id="fundingComment"/>
-        </apex:outputpanel> -->
       </apex:pageBlockSection>
 
+      <style>
+        [id$=activities] .requiredInput {
+          display: inline-block;
+          margin-left: 10px;
+        }
+        [id$=activities] .errorMsg {
+          display: inline-block;
+        }
+      </style>
       <apex:pageBlockSection columns="1" title="Referral Tracking" id="activities">
         <apex:pageBlockSectionItem >
-          <apex:commandButton value="Add Referral Tracking Activity"
-                              onclick="showAddActivity(); openModalDialog('ActivityModal', 'span', 'Add Activity','none');return false;" />
+          <apex:outputPanel >
+            <apex:commandButton value="Add Referral Tracking Activity"
+                                onclick="showAddActivity(); openModalDialog('ActivityModal', 'span', 'Add Activity','none'); return false;" />
+            <apex:commandButton onclick="addNeuroAdmissionSteps(); return false;" value="Add Admission Steps" rendered="{!AND(ReferralRecordType='NeuroRestorative', !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed', showNeuroFeatures)}" />
+            <apex:outputLabel value="Admission Steps Assigned To" for="taskOwner" rendered="{!ReferralRecordType='NeuroRestorative' && !Referral__c.Admission_Steps_Added__c && Referral__c.Referral_Status__c != 'Closed' && showNeuroFeatures}" style="margin-left: 8px; margin-right: 8px; " />
+            <apex:inputField value="{!dummyTask.OwnerId}" label="Assigned To" id="taskOwner" rendered="{!ReferralRecordType='NeuroRestorative' && !Referral__c.Admission_Steps_Added__c && Referral__c.Referral_Status__c!='Closed' && showNeuroFeatures}" required="false" />
+            <apex:actionStatus id="taskAssignStatus">
+              <apex:facet name="start">
+                <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+              </apex:facet>
+              <apex:facet name="stop" />
+            </apex:actionStatus>
+            <apex:actionFunction name="addNeuroAdmissionSteps" action="{!addNeuroAdmissionSteps}" rerender="activities" status="taskAssignStatus" />
+          </apex:outputPanel>
         </apex:pageBlockSectionItem>
 
-            <apex:pageBlockTable value="{!activities}" var="activity">
+        <apex:pageBlockTable value="{!activities}" var="activity">
           <apex:column value="{!activity.Subject}" />
           <apex:column value="{!activity.ActivityDate}" />
           <apex:column value="{!activity.OwnerId}" />
@@ -2295,7 +2349,7 @@ clearDisableField = function(pageSectionId){
                                columns="4"
                                collapsible="false"
                                id="progConsid"
-                               rendered="{!AND(ReferralRecordType!='CareMeridian')}">
+                               rendered="{!OR(AND(ReferralRecordType!='CareMeridian', ReferralRecordType!='NeuroRestorative'), AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures))}">
           <!-- Row 1, Col 1 -->
           <apex:inputField value="{!Referral__c.Staffing_Needs__c}" rendered="{!ReferralRecordType != 'Indiana' && ReferralRecordType != 'NeuroRestorative'}"/>
           <apex:inputField value="{!Referral__c.Living_Environment__c}" rendered="{!ReferralRecordType = 'Indiana' && ReferralRecordType != 'NeuroRestorative'}"/>
@@ -2328,7 +2382,23 @@ clearDisableField = function(pageSectionId){
                         ReferralRecordType = 'California'||
                         ReferralRecordType = 'Nevada'}"
           />
-          <apex:inputField value="{!Referral__c.Desired_Living_Environment_at_Discharge__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}">
+            <apex:outputLabel value="Verbally Aggressive" />
+            <apex:outputPanel >
+              <apex:inputField value="{!Referral__c.Verbally_Aggressive__c}">
+                <apex:actionSupport event="onchange" rerender="progConsid" status="verballyAggressiveStatus" />
+              </apex:inputField>
+              <apex:actionStatus id="verballyAggressiveStatus">
+                <apex:facet name="start">
+                  <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; ">
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                  </div>
+                </apex:facet>
+                <apex:facet name="stop"></apex:facet>
+              </apex:actionStatus>
+            </apex:outputPanel>
+          </apex:pageBlockSectionItem>
+
           <!-- Row 1, Col 3 -->
           <apex:inputField value="{!Referral__c.Uses_Tobacco__c}"
             rendered="{!isCambridge}"
@@ -2351,7 +2421,23 @@ clearDisableField = function(pageSectionId){
           <apex:inputField value="{!Referral__c.Law_Enforcement_Involvement__c}"
             rendered="{!ReferralRecordType = 'Wisconsin'}"
           />
-          <apex:inputField value="{!Referral__c.Elopement__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}">
+            <apex:outputLabel value="Theft" />
+            <apex:outputPanel >
+              <apex:inputField value="{!Referral__c.Theft__c}">
+                <apex:actionSupport event="onchange" rerender="progConsid" status="theftStatus" />
+              </apex:inputField>
+              <apex:actionStatus id="theftStatus">
+                <apex:facet name="start">
+                  <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; ">
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                  </div>
+                </apex:facet>
+                <apex:facet name="stop"></apex:facet>
+              </apex:actionStatus>
+            </apex:outputPanel>
+          </apex:pageBlockSectionItem>
+
           <!-- Row 1, Col 4 -->
           <apex:inputField value="{!Referral__c.Maintain_Sibling_Group__c}"
             rendered="{!isCambridge}"
@@ -2374,7 +2460,23 @@ clearDisableField = function(pageSectionId){
             rendered="{!ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}">
+            <apex:outputLabel value="Unwanted Sexual Behavior" />
+            <apex:outputPanel >
+              <apex:inputField value="{!Referral__c.Unwanted_Sexual_Behavior__c}">
+                <apex:actionSupport event="onchange" rerender="progConsid" status="unwantedSexualBehaviorStatus" />
+              </apex:inputField>
+              <apex:actionStatus id="unwantedSexualBehaviorStatus">
+                <apex:facet name="start">
+                  <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; ">
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                  </div>
+                </apex:facet>
+                <apex:facet name="stop"></apex:facet>
+              </apex:actionStatus>
+            </apex:outputPanel>
+          </apex:pageBlockSectionItem>
+
           <!-- Row 2, Col 1 -->
           <apex:inputField value="{!Referral__c.Staffing_Ratio__c}"
             rendered="{!ReferralRecordType != 'Indiana' && ReferralRecordType != 'NeuroRestorative'}"
@@ -2382,7 +2484,8 @@ clearDisableField = function(pageSectionId){
           <apex:inputField value="{!Referral__c.Mobility__c}"
             rendered="{!ReferralRecordType = 'Indiana'}"
           />
-          <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Staff__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:inputField value="{!Referral__c.Desired_Living_Environment_at_Discharge__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 2, Col 2 -->
           <apex:inputField value="{!Referral__c.Verbally_Aggressive__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -2410,7 +2513,10 @@ clearDisableField = function(pageSectionId){
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}"
           />
-          <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Self__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:inputField value="{!Referral__c.Verbally_Aggressive_Description__c}" label="Describe"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Verbally_Aggressive__c}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Verbally_Aggressive__c}" />
+
           <!-- Row 2, Col 3 -->
           <apex:inputField value="{!Referral__c.Chemical_Use_Recovery__c}"
             rendered="{!isCambridge}"
@@ -2433,7 +2539,10 @@ clearDisableField = function(pageSectionId){
           <apex:inputField value="{!Referral__c.Uses_Tobacco__c}"
             rendered="{!ReferralRecordType = 'Wisconsin'}"
           />
-          <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Peers__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:inputField value="{!Referral__c.Theft_Description__c}" label="Describe"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Theft__c}" />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Theft__c}" />
+
           <!-- Row 2, Col 4 -->
           <apex:inputField value="{!Referral__c.If_Yes_How_Many__c}"
             rendered="{!isCambridge}"
@@ -2456,7 +2565,10 @@ clearDisableField = function(pageSectionId){
             rendered="{!ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:inputField value="{!Referral__c.Verbally_Aggressive__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:inputField value="{!Referral__c.If_Yes_Type_of_Unwanted_Sexual_Behavior__c}" label="If Yes, Type"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Unwanted_Sexual_Behavior__c}" />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Unwanted_Sexual_Behavior__c}" />
+
           <!-- Row 3, Col 1 -->
           <apex:inputField value="{!Referral__c.Living_Environment__c}"
             rendered="{!ReferralRecordType != 'Indiana' && ReferralRecordType != 'NeuroRestorative'}"
@@ -2464,7 +2576,23 @@ clearDisableField = function(pageSectionId){
           <apex:inputField value="{!Referral__c.Accessible_Housing_Needed__c}"
             rendered="{!ReferralRecordType = 'Indiana'}"
           />
-          <apex:inputField value="{!Referral__c.Aggressive_to_Staff_Description__c}" label="Description" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}">
+            <apex:outputLabel value="Physically Aggressive To Staff" />
+            <apex:outputPanel >
+              <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Staff__c}">
+                <apex:actionSupport event="onchange" rerender="progConsid" status="aggressiveToStaffStatus" />
+              </apex:inputField>
+              <apex:actionStatus id="aggressiveToStaffStatus">
+                <apex:facet name="start">
+                  <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; ">
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                  </div>
+                </apex:facet>
+                <apex:facet name="stop"></apex:facet>
+              </apex:actionStatus>
+            </apex:outputPanel>
+          </apex:pageBlockSectionItem>
+
           <!-- Row 3, Col 2 -->
           <apex:inputField value="{!Referral__c.Suicide_Threats__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -2492,7 +2620,23 @@ clearDisableField = function(pageSectionId){
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}"
           />
-          <apex:inputField value="{!Referral__c.Aggressive_to_Self_Description__c}" label="Description" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}">
+            <apex:outputLabel value="Suicide Threats" />
+            <apex:outputPanel >
+              <apex:inputField value="{!Referral__c.Suicide_Threats__c}">
+                <apex:actionSupport event="onchange" rerender="progConsid" status="suicideThreatsStatus" />
+              </apex:inputField>
+              <apex:actionStatus id="suicideThreatsStatus">
+                <apex:facet name="start">
+                  <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; ">
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                  </div>
+                </apex:facet>
+                <apex:facet name="stop"></apex:facet>
+              </apex:actionStatus>
+            </apex:outputPanel>
+          </apex:pageBlockSectionItem>
+
           <!-- Row 3, Col 3 -->
           <apex:inputField value="{!Referral__c.Chemical_Use_Current__c}"
             rendered="{!isCambridge}"
@@ -2513,7 +2657,23 @@ clearDisableField = function(pageSectionId){
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:inputField value="{!Referral__c.Aggressive_to_Peers_Description__c}" label="Description" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}">
+            <apex:outputLabel value="Tobacco Use (Current)" />
+            <apex:outputPanel >
+              <apex:inputField value="{!Referral__c.Uses_Tobacco__c}">
+                <apex:actionSupport event="onchange" rerender="progConsid" status="usesTobaccoStatus" />
+              </apex:inputField>
+              <apex:actionStatus id="usesTobaccoStatus">
+                <apex:facet name="start">
+                  <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; ">
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                  </div>
+                </apex:facet>
+                <apex:facet name="stop"></apex:facet>
+              </apex:actionStatus>
+            </apex:outputPanel>
+          </apex:pageBlockSectionItem>
+
           <!-- Row 3, Col 4 -->
           <apex:inputField value="{!Referral__c.No_Same_Sex_Peers__c}"
             rendered="{!isCambridge}"
@@ -2535,7 +2695,23 @@ clearDisableField = function(pageSectionId){
             rendered="{!ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:inputField value="{!Referral__c.Verbally_Aggressive_Description__c}" label="Description" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}">
+            <apex:outputLabel value="Current Pending Litigation" />
+            <apex:outputPanel >
+              <apex:inputField value="{!Referral__c.Current_Pending_Litigation__c}">
+                <apex:actionSupport event="onchange" rerender="progConsid" status="currentPendingLitigationStatus" />
+              </apex:inputField>
+              <apex:actionStatus id="currentPendingLitigationStatus">
+                <apex:facet name="start">
+                  <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; ">
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                  </div>
+                </apex:facet>
+                <apex:facet name="stop"></apex:facet>
+              </apex:actionStatus>
+            </apex:outputPanel>
+          </apex:pageBlockSectionItem>
+
           <!-- Row 4, Col 1 -->
           <apex:inputField value="{!Referral__c.Preferred_Setting__c}"
             rendered="{!isCambridge }"
@@ -2556,7 +2732,11 @@ clearDisableField = function(pageSectionId){
           <apex:inputField value="{!Referral__c.Accessible_Vehicle_Needed__c}"
             rendered="{!ReferralRecordType = 'Indiana'}"
           />
-          <apex:inputField value="{!Referral__c.Suicide_Threats__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:inputField value="{!Referral__c.Aggressive_to_Staff_Description__c}"
+            id="aggressiveToStaffDescription" label="Describe"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Physically_Aggressive_to_Staff__c}" />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Physically_Aggressive_to_Staff__c}" />
+
           <!-- Row 4, Col 2 -->
           <apex:inputField value="{!Referral__c.Suicide_Attempts__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -2584,7 +2764,10 @@ clearDisableField = function(pageSectionId){
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}"
           />
-          <apex:inputField value="{!Referral__c.Suicide_Attempts__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:inputField value="{!Referral__c.Suicide_Threats_Description__c}" label="Describe"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Suicide_Threats__c}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Suicide_Threats__c}" />
+
           <!-- Row 4, Col 3 -->
           <apex:inputField value="{!Referral__c.Chemical_Dependency_Treatment__c}"
             rendered="{!isCambridge}"
@@ -2605,7 +2788,10 @@ clearDisableField = function(pageSectionId){
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:inputField value="{!Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:inputField value="{!Referral__c.Current_Tobacco_Use_Description__c}" label="Describe"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Uses_Tobacco__c}" />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Uses_Tobacco__c}" />
+
           <!-- Row 4, Col 4 -->
           <apex:inputField value="{!Referral__c.Live_with_Opposite_Sex__c}"
             rendered="{!isCambridge}"
@@ -2626,7 +2812,10 @@ clearDisableField = function(pageSectionId){
             rendered="{!ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:inputField value="{!Referral__c.Theft__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:inputField value="{!Referral__c.Current_Pending_Litigation_Description__c}" label="Describe"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Current_Pending_Litigation__c}" />
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Current_Pending_Litigation__c}" />
+
           <!-- Row 5, Col 1 -->
           <apex:inputField value="{!Referral__c.Mobility__c}"
             rendered="{!isCambridge}"
@@ -2649,7 +2838,23 @@ clearDisableField = function(pageSectionId){
           <apex:inputField value="{!Referral__c.Area_of_State_Interested_In__c}"
             rendered="{!ReferralRecordType = 'Indiana'}"
           />
-          <apex:inputField value="{!Referral__c.Suicide_Threats_Description__c}" label="Description" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}">
+            <apex:outputLabel value="Physically Aggressive To Self" />
+            <apex:outputPanel >
+              <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Self__c}">
+                <apex:actionSupport event="onchange" rerender="progConsid" status="aggressiveToSelfStatus" />
+              </apex:inputField>
+              <apex:actionStatus id="aggressiveToSelfStatus">
+                <apex:facet name="start">
+                  <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; ">
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                  </div>
+                </apex:facet>
+                <apex:facet name="stop"></apex:facet>
+              </apex:actionStatus>
+            </apex:outputPanel>
+          </apex:pageBlockSectionItem>
+
           <!-- Row 5, Col 2 -->
           <apex:inputField value="{!Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -2677,7 +2882,23 @@ clearDisableField = function(pageSectionId){
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}"
           />
-          <apex:inputField value="{!Referral__c.Suicide_Attempts_Description__c}" label="Description" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}">
+            <apex:outputLabel value="Suicide Attempts" />
+            <apex:outputPanel >
+              <apex:inputField value="{!Referral__c.Suicide_Attempts__c}">
+                <apex:actionSupport event="onchange" rerender="progConsid" status="suicideAttemptsStatus" />
+              </apex:inputField>
+              <apex:actionStatus id="suicideAttemptsStatus">
+                <apex:facet name="start">
+                  <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; ">
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                  </div>
+                </apex:facet>
+                <apex:facet name="stop"></apex:facet>
+              </apex:actionStatus>
+            </apex:outputPanel>
+          </apex:pageBlockSectionItem>
+
           <!-- Row 5, Col 3 -->
           <apex:inputField value="{!Referral__c.Drug_Possession_Distribution__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -2707,7 +2928,23 @@ clearDisableField = function(pageSectionId){
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:inputField value="{!Referral__c.Self_Harm_Behavior_Description__c}" label="Description" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}">
+            <apex:outputLabel value="Chemical Use (Current)" />
+            <apex:outputPanel >
+              <apex:inputField value="{!Referral__c.Chemical_Use_Current__c}">
+                <apex:actionSupport event="onchange" rerender="progConsid" status="chemicalUseCurrentStatus" />
+              </apex:inputField>
+              <apex:actionStatus id="chemicalUseCurrentStatus">
+                <apex:facet name="start">
+                  <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; ">
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                  </div>
+                </apex:facet>
+                <apex:facet name="stop"></apex:facet>
+              </apex:actionStatus>
+            </apex:outputPanel>
+          </apex:pageBlockSectionItem>
+
           <!-- Row 5, Col 4 -->
           <apex:inputField value="{!Referral__c.No_Cross_Cultural_Placement__c}"
             rendered="{!isCambridge}"
@@ -2728,7 +2965,8 @@ clearDisableField = function(pageSectionId){
             rendered="{!ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:inputField value="{!Referral__c.Theft_Description__c}" label="Description" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:inputField value="{!Referral__c.Elopement__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 6, Col 1 -->
           <apex:inputField value="{!Referral__c.Accessible_Housing_Needed__c}"
             rendered="{!isCambridge ||
@@ -2749,7 +2987,10 @@ clearDisableField = function(pageSectionId){
           <apex:inputField value="{!Referral__c.Current_Medical_Conditions__c}"
             rendered="{!ReferralRecordType = 'Indiana'}"
           />
-          <apex:inputField value="{!Referral__c.Uses_Tobacco__c}" label="Tobacco Use (Current)" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:inputField value="{!Referral__c.Aggressive_to_Self_Description__c}" label="Describe"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Physically_Aggressive_to_Self__c}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Physically_Aggressive_to_Self__c}" />
+
           <!-- Row 6, Col 2 -->
           <apex:inputField value="{!Referral__c.Fire_Setting__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -2777,7 +3018,9 @@ clearDisableField = function(pageSectionId){
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Nevada'}"
           />
-          <apex:inputField value="{!Referral__c.Chemical_Use_Current__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:inputField value="{!Referral__c.Suicide_Attempts_Description__c}" label="Describe"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Suicide_Attempts__c}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Suicide_Attempts__c}" />
 
           <!-- Row 6, Col 3 -->
           <apex:inputField value="{!Referral__c.Elopement__c}"
@@ -2806,7 +3049,9 @@ clearDisableField = function(pageSectionId){
                         ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:inputField value="{!Referral__c.Chemical_Dependency_Treatment__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:inputField value="{!Referral__c.Current_Chemical_Use_Date_Last_Used__c}" label="Date Last Used"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Chemical_Use_Current__c}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Chemical_Use_Current__c}" />
 
           <!-- Row 6, Col 4 -->
           <apex:inputField value="{!Referral__c.Can_Be_Placed_With_Other_Children__c}"
@@ -2835,7 +3080,8 @@ clearDisableField = function(pageSectionId){
           <apex:inputField value="{!Referral__c.Has_Pets__c}"
             rendered="{!ReferralRecordType = 'Wisconsin'}"
           />
-          <apex:inputField value="{!Referral__c.Unwanted_Sexual_Behavior__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 7, Col 1 -->
           <apex:inputField value="{!Referral__c.Accessible_Vehicle_Needed__c}"
             rendered="{!isCambridge ||
@@ -2855,7 +3101,23 @@ clearDisableField = function(pageSectionId){
                         ReferralRecordType = 'Wisconsin' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:inputField value="{!Referral__c.Current_Tobacco_Use_Description__c}" label="Description" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}">
+            <apex:outputLabel value="Physically Aggressive To Peers" />
+            <apex:outputPanel >
+              <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Peers__c}">
+                <apex:actionSupport event="onchange" rerender="progConsid" status="aggressiveToPeersStatus" />
+              </apex:inputField>
+              <apex:actionStatus id="aggressiveToPeersStatus">
+                <apex:facet name="start">
+                  <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; ">
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                  </div>
+                </apex:facet>
+                <apex:facet name="stop"></apex:facet>
+              </apex:actionStatus>
+            </apex:outputPanel>
+          </apex:pageBlockSectionItem>
+
           <!-- Row 7, Col 2 -->
           <apex:inputField value="{!Referral__c.Property_Destruction__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -2883,7 +3145,23 @@ clearDisableField = function(pageSectionId){
           <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Minnesota' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:inputField value="{!Referral__c.Current_Chemical_Use_Date_Last_Used__c}" label="Date Last Used" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}">
+            <apex:outputLabel value="Self-Harm or Self-Injurous Behaviors" />
+            <apex:outputPanel >
+              <apex:inputField value="{!Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}">
+                <apex:actionSupport event="onchange" rerender="progConsid" status="selfHarmStatus" />
+              </apex:inputField>
+              <apex:actionStatus id="selfHarmStatus">
+                <apex:facet name="start">
+                  <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; ">
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                  </div>
+                </apex:facet>
+                <apex:facet name="stop"></apex:facet>
+              </apex:actionStatus>
+            </apex:outputPanel>
+          </apex:pageBlockSectionItem>
+
           <!-- Row 7, Col 3 -->
           <apex:inputField value="{!Referral__c.Unwanted_Sexual_Behavior__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -2914,7 +3192,23 @@ clearDisableField = function(pageSectionId){
           <apex:inputField value="{!Referral__c.Exterior_Locking_Mechanism_Required__c}"
             rendered="{!ReferralRecordType = 'Wisconsin'}"
           />
-          <apex:inputField value="{!Referral__c.Chemical_Dep_Treatment_Date_Completed__c}" label="Date Completed" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}">
+            <apex:outputLabel value="Chemical Dependency Treatment" />
+            <apex:outputPanel >
+              <apex:inputField value="{!Referral__c.Chemical_Dependency_Treatment__c}">
+                <apex:actionSupport event="onchange" rerender="progConsid" status="chemicalDependencyTreatmentStatus" />
+              </apex:inputField>
+              <apex:actionStatus id="chemicalDependencyTreatmentStatus">
+                <apex:facet name="start">
+                  <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; ">
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                  </div>
+                </apex:facet>
+                <apex:facet name="stop"></apex:facet>
+              </apex:actionStatus>
+            </apex:outputPanel>
+          </apex:pageBlockSectionItem>
+
           <!-- Row 7, Col 4 -->
           <apex:inputField value="{!Referral__c.If_Yes_Age_Requirements__c}"
             rendered="{!isCambridge}"
@@ -2935,7 +3229,8 @@ clearDisableField = function(pageSectionId){
           <apex:inputField value="{!Referral__c.If_Yes_What_kind__c}"
             rendered="{!ReferralRecordType = 'Wisconsin'}"
           />
-          <apex:inputField value="{!Referral__c.If_Yes_Type_of_Unwanted_Sexual_Behavior__c}" label="If Yes, Type" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 8, Col 1 -->
           <apex:inputField value="{!Referral__c.Geographic_Restrictions__c}"
             rendered="{!isCambridge}"
@@ -2955,7 +3250,10 @@ clearDisableField = function(pageSectionId){
                         ReferralRecordType = 'Wisconsin' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:inputField value="{!Referral__c.Current_Pending_Litigation__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:inputField value="{!Referral__c.Aggressive_to_Peers_Description__c}" label="Describe"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Physically_Aggressive_to_Peers__c}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Physically_Aggressive_to_Peers__c}" />
+
           <!-- Row 8, Col 2 -->
           <apex:inputField value="{!Referral__c.Gang_Involvement__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -2983,7 +3281,10 @@ clearDisableField = function(pageSectionId){
                         ReferralRecordType = 'Oregon' ||
                         ReferralRecordType = 'West Virginia'}"
           />
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:inputField value="{!Referral__c.Self_Harm_Behavior_Description__c}" label="Describe"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}" />
+
           <!-- Row 8, Col 3 -->
           <apex:inputField value="{!Referral__c.Registered_Sex_Offender__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -3015,7 +3316,10 @@ clearDisableField = function(pageSectionId){
           <apex:inputField value="{!Referral__c.Unwanted_Sexual_Behavior__c}"
             rendered="{!ReferralRecordType = 'Wisconsin'}"
           />
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+          <apex:inputField value="{!Referral__c.Chemical_Dep_Treatment_Date_Completed__c}" label="Date Completed"
+            rendered="{!ReferralRecordType = 'NeuroRestorative' && Referral__c.Chemical_Dependency_Treatment__c}"/>
+          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Chemical_Dependency_Treatment__c}" />
+
           <!-- Row 8, Col 4 -->
           <apex:inputField value="{!Referral__c.Family_Involvement_Restrictions__c}"
             rendered="{!isCambridge}"
@@ -3028,13 +3332,14 @@ clearDisableField = function(pageSectionId){
             rendered="{!ReferralRecordType = 'Wisconsin'}"
           />
           <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 9, Col 1 -->
           <apex:inputField value="{!Referral__c.Area_of_State_Interested_In__c}"
             rendered="{!isCambridge}"
           />
           <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Wisconsin' ||
                         ReferralRecordType = 'Iowa'}" />
-          <apex:inputField value="{!Referral__c.Current_Pending_Litigation_Description__c}" label="Describe" rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 9, Col 2 -->
           <apex:inputField value="{!Referral__c.Theft__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -3052,7 +3357,7 @@ clearDisableField = function(pageSectionId){
           <apex:inputField value="{!Referral__c.Property_Destruction__c}"
             rendered="{!ReferralRecordType = 'Wisconsin'}"
           />
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 9, Col 3 -->
           <apex:inputField value="{!Referral__c.Nursing_Care_Needed__c}"
             rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -3069,13 +3374,13 @@ clearDisableField = function(pageSectionId){
             rendered="{!ReferralRecordType = 'Cambridge New Jersey'}"
           />
           <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Wisconsin'}" />
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 9, Col 4 -->
           <apex:inputField value="{!Referral__c.If_Yes_Level__c}" rendered="{!isCambridge}" />
           <apex:inputField value="{!Referral__c.Safety_Measures_Required__c}" label="Restrictive measures or rights restrictions will need to be implemented to safely support this individual"
             rendered="{!ReferralRecordType = 'Wisconsin'}"
           />
-          <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}"/>
+
           <!-- Row 10, Col 1 -->
           <apex:inputField value="{!Referral__c.Access_to_Public_Transportation__c}"  rendered="{!isCambridge}"  />
 
@@ -3260,7 +3565,7 @@ clearDisableField = function(pageSectionId){
           <apex:inputField value="{!Referral__c.Hospitalization_Within_the_past_year__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
           <!-- TADA -->
         </apex:pageBlockSection>
-        <apex:pageBlockSection columns="1" id="progConsiderationsDetail">
+        <apex:pageBlockSection columns="1" id="progConsiderationsDetail" rendered="{!OR(ReferralRecordType != 'NeuroRestorative', showNeuroFeatures)}">
           <apex:inputField value="{!Referral__c.Restricted_Health_Conditions__c}" rendered="{!ReferralRecordType == 'Cambridge Georgia'}" />
           <apex:outputPanel layout="none" rendered="{!ReferralRecordType = 'NeuroRestorative'}"><hr /></apex:outputPanel>
           <apex:inputTextarea value="{!Referral__c.Programming_Considerations_Comments__c}" cols="80" rendered="{!isCambridge || ReferralRecordType = 'NeuroRestorative'}" />

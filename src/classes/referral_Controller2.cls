@@ -75,11 +75,17 @@ public with sharing class referral_Controller2 {
               activity.Priority = 'Normal';
               activity.OwnerId = UserInfo.getUserId();
               activity.Status = 'Not Started';
+              activity.RecordTypeId = Utility.getRecordTypeForTask('Referral Tasks');
           }
           return activity;
       }
       private set; }
   public List<Task> activities { get; set; }
+  // For Neuro - the user Id to assign the admission steps (tasks) to
+  public Id userIdToAssignTasks { get; set; }
+  // We use a dummy task record in order to be able to use Salesforce's
+  // standard user chooser widget.
+  public Task dummyTask { get; set; }
   public Agency_Involved_With_Individual__c agency { get; set; }
   public List<Agency_Involved_With_Individual__c> agencies { get; set; }
   public Funding_Source__c fundingSource {
@@ -119,6 +125,32 @@ public with sharing class referral_Controller2 {
         return ((operatinggroup == 'Cambridge' && isCambridge )|| (operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ) || (operatinggroup == 'CareMeridian' && isCareMeridian && OS.Referral_ConvertCMEnabled__c ) );
     } set;}
 
+  public Boolean canUpdateReferral {
+    get {
+      return Schema.sObjectType.Referral__c.isUpdateable();
+    }
+  }
+  public Boolean canUpdateEvaluation {
+    get {
+      return Schema.sObjectType.Evaluation__c.isUpdateable();
+    }
+  }
+  public Boolean canCreateEvaluation {
+    get {
+      return Schema.sObjectType.Evaluation__c.isCreateable();
+    }
+  }
+
+  // NEVAL-32
+  public Boolean showNeuroFeatures {
+    get {
+      if (showNeuroFeatures == null) {
+        showNeuroFeatures = OS.Referral_Neuro_Features_Enabled__c;
+      }
+      return showNeuroFeatures;
+    }
+    set;
+  }
 
   public static final String REFERRAL_EDIT_URL = '/apex/referral';
   public static final String REFERRAL_CONVERT_URL = '/apex/referralConversion';
@@ -135,6 +167,7 @@ public with sharing class referral_Controller2 {
     this.activities = new List<Task>();
     this.editableTasks = new Map<Id, Boolean>();
     this.locations = new List<Referral_Location__c>();
+    this.dummyTask = new Task();
 
     system.debug( this.referralRecord);
 
@@ -271,6 +304,7 @@ public with sharing class referral_Controller2 {
                                 ActivityDate, Comments__c , Description
                          from Task
                          where WhatId = :this.referralRecord.Id
+                         order by number__c, createddate
                          limit 150];
         // We also have to make only users with correct permissions can see the
         // Edit button
@@ -336,7 +370,8 @@ public with sharing class referral_Controller2 {
                        Middle_Initial__c, Phone__c, Primary_Language__c, SSN__c,
                        State__c, Street_1__c, Street_2__c, Zip_Code__c,
                        Additional_Information_Comments__c, Sign_Language__c,
-                       Legal_Guardianship_Status__c, Non_Verbal__c, Full_Name__c
+                       Legal_Guardianship_Status__c, Non_Verbal__c, Full_Name__c,
+                       Level_of_Education__c
                 from Person_Being_Referred__c
                 where Id = :pBRId
                 limit 1];
@@ -381,6 +416,7 @@ public with sharing class referral_Controller2 {
       activity.Priority = 'Normal';
       activity.OwnerId = UserInfo.getUserId();
       activity.Status = 'Not Started';
+      activity.RecordTypeId = Utility.getRecordTypeForTask('Referral Tasks');
   }
 
   public void saveActivity() {
@@ -389,6 +425,7 @@ public with sharing class referral_Controller2 {
     activity.Priority = 'Normal';
     activity.OwnerId = UserInfo.getUserId();
     activity.Status = 'Not Started';
+    activity.RecordTypeId = Utility.getRecordTypeForTask('Referral Tasks');
   }
 
   public void showAddAgency() {
@@ -557,7 +594,7 @@ public with sharing class referral_Controller2 {
 
     System.Debug( ' anticipated service location = ' +this.referralRecord.Service_Location__c );
     //Added the And condtion to bypass the conversion error for CareMerdian Flavor - Sravan 5/15/2014.
-	//EB214. Closing a referral with the reason 'admitted' mandates the admission location for all flavours. So be logic applies to all. - Neeraj 10/22/2014    
+    //EB214. Closing a referral with the reason 'admitted' mandates the admission location for all flavours. So be logic applies to all. - Neeraj 10/22/2014
     if ( String.IsBlank(this.referralRecord.Service_Location_Program__c) ) {
         messages.Add( 'Anticipated Service Location' );
         hasReq = false;
@@ -597,5 +634,40 @@ public with sharing class referral_Controller2 {
           this.personBeingServedRecord = getPBSRec();
           populateRelParties();
       }
+  }
+
+  public void addNeuroAdmissionSteps() {
+    if (dummyTask.OwnerId == null) {
+      dummyTask.OwnerId.addError('Field is required!');
+      return;
+    }
+    Map<String, Neuro_Admission_Steps__c> stepSubjects = Neuro_Admission_Steps__c.getAll();
+    System.debug('stepSubjects: ' + stepSubjects);
+    Set<String> nameSet = stepSubjects.keySet();
+    List<Integer> orderedNames = new List<Integer>();  // We use this list to sort the subjects by their names
+    for (String name: nameSet) {
+      orderedNames.add(Integer.valueOf(name));
+    }
+    orderedNames.sort();
+    System.debug('orderedNames: ' + orderedNames);
+    Id taskRecordType = Utility.getRecordTypeForTask('Referral Tasks');
+    for (Integer orderedName: orderedNames) {
+      // We do not batch insert the tasks here because it leads to inconsistent
+      // sorting order.
+      insert new Task(
+        Subject = stepSubjects.get(String.valueOf(orderedName)).Subject__c,
+        Priority = 'Normal',
+        Status = 'Not Started',
+        WhatId = referralRecord.Id,
+        OwnerId = dummyTask.OwnerId,
+        RecordTypeId = taskRecordType
+      );
+    }
+    populateActivities();
+    System.debug('this.activities: ' + this.activities);
+
+    // We also want to make sure that the user can't do this action more than once
+    referralRecord.Admission_Steps_Added__c = true;
+    update new Referral__c(Id=referralRecord.Id, Admission_Steps_Added__c=true);
   }
 }

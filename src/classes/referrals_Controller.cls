@@ -33,6 +33,23 @@ public with sharing class referrals_Controller{
   }
   public Boolean isCambridge { get; set; }  // Makes it easier to implement common stuffs for Cambridge
   public Referral__c referralRecord { get; set; }
+  // For Neuro - the user Id to assign the admission steps (tasks) to
+  public Id userIdToAssignTasks { get; set; }
+  // We use a dummy task record in order to be able to use Salesforce's
+  // standard user chooser widget.
+  public Task dummyTask { get; set; }
+  // NEVAL-32
+  SystemSettings__c OS = SystemSettings__c.getOrgDefaults();
+  public Boolean showNeuroFeatures {
+    get {
+      if (showNeuroFeatures == null) {
+        showNeuroFeatures = OS.Referral_Neuro_Features_Enabled__c;
+      }
+      return showNeuroFeatures;
+    }
+    set;
+  }
+
   public Person_Being_Referred__c personBeingRefRecord { get; set; }
   public List<Person_Being_Referred__c> refResults { get; set; }
   public Contact personBeingServedRecord { get; set; }
@@ -117,7 +134,7 @@ public with sharing class referrals_Controller{
 
 
   public Boolean isErrorDisplayed { get; set; }
-    
+
   private Id personBeingServedId {get; set;}
   public Id pBSId { get; set; }
 
@@ -577,6 +594,7 @@ public with sharing class referrals_Controller{
     this.isErrorDisplayed = false;
     this.isCambridge = false;
     this.referralRecord = (Referral__c) ctl.getRecord();
+    this.dummyTask = new Task();
     this.agencies = new List<Agency_Involved_With_Individual__c>();
     this.fundingSources = new List<Funding_Source__c>();
     this.relParties = new List<Related_Party__c>();
@@ -722,6 +740,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
                   Description
            from Task
            where WhatId = :this.referralRecord.Id
+           order by number__c, createddate
            limit 150];
 
     } catch (Exception e) {
@@ -756,7 +775,8 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
                        Middle_Initial__c, Phone__c, Primary_Language__c, SSN__c,
                        State__c, Street_1__c, Street_2__c, Zip_Code__c,
                        Additional_Information_Comments__c, Sign_Language__c,
-                       Legal_Guardianship_Status__c, Non_Verbal__c, Full_Name__c
+                       Legal_Guardianship_Status__c, Non_Verbal__c, Full_Name__c,
+                       Level_of_Education__c
                 from Person_Being_Referred__c
                 where Id = :pBRId
                 limit 1];
@@ -890,8 +910,8 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
     }
     // end CTEAE - 34
 
-	// start EB-214 - Scenario 2
-    if (referralRecord.referral_status__c == 'Closed' 
+    // start EB-214 - Scenario 2
+    if (referralRecord.referral_status__c == 'Closed'
         && referralRecord.close_reason__c != 'Admitted' && !string.IsBlank(referralRecord.close_reason__c)
         && string.IsBlank(string.valueof(referralRecord.Service_Location__c))
         && locations.size() == 0 ) {
@@ -900,7 +920,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
             return null;
     }
     // end EB-214
-    
+
     // ERNS-8 - when trying to close/admit Neuro referral, check for required fields
     if ( referralRecordType == 'NeuroRestorative') {
 
@@ -921,7 +941,48 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
         }
     }
 
-
+    //Start EC-54 CM Save and Close Validations
+    if (referralRecordType == 'CareMeridian') {
+        Boolean hasFundError = false, hasLocError = false, hasCloseError = false, hasNoFundError = false, hasNoLocError = false;
+        if(referralRecord.Close_Reason__c != 'Error' && referralRecord.Referral_Status__c == 'Closed'){
+          hasCloseError = checkForBlankFields(referralRecord,'Referral__c',new list<string>{'Current_Location__c','Close_Reason__c','Agency_Name__c','Evaluated_By_Internal__c'}, 'A value for {0} is required to close');
+        }
+        if(fundingSources.size() == 0 && referralRecord.Close_Reason__c != 'Error' && referralRecord.Referral_Status__c == 'Closed'){
+             hasNoFundError = true;
+        }
+        if(locations.size() == 0 && referralRecord.Close_Reason__c != 'Error' && referralRecord.Referral_Status__c == 'Closed'){
+             hasNoLocError = true;
+        }       
+        for(Funding_Source__c fs :fundingSources){
+          if (fs.Type_of_Coverage__c != 'Primary' && referralRecord.Close_Reason__c != 'Error' && referralRecord.Referral_Status__c == 'Closed'){
+             hasFundError = true;
+             break;   
+          }
+        }
+        for(Referral_Location__c rl :locations){
+          if (rl.Rank__c != 'Primary' && referralRecord.Close_Reason__c != 'Error' && referralRecord.Referral_Status__c == 'Closed'){
+             hasLocError = true;
+             break;
+          }
+        }  
+        if (hasFundError){
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'A primary funding source must be selected to close the referral'));
+        }
+        if (hasLocError){
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'A primary location must be selected to close the referral'));
+        }
+        if (hasNoFundError){
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'A primary funding source must be created to close the referral'));
+        }
+        if (hasNoLocError){
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'A primary location must be created to close the referral'));
+        }        
+        if (hasFundError==true || hasLocError==true || hasCloseError==true || hasNoFundError==true || hasNoLocError==true){
+            return null;
+        }
+    }
+    //End EC-54
+    
     system.debug('in saveREF');
     Id refId;
 
@@ -1271,5 +1332,44 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
       }
       System.debug('Referral Record Type: ' + referralRecordType);
       System.debug('isCambridge: ' + isCambridge);
+  }
+
+  public void addNeuroAdmissionSteps() {
+    if (dummyTask.OwnerId == null) {
+      dummyTask.OwnerId.addError('Field is required!');
+      return;
+    }
+    Map<String, Neuro_Admission_Steps__c> stepSubjects = Neuro_Admission_Steps__c.getAll();
+    Set<String> nameSet = stepSubjects.keySet();
+    List<Integer> orderedNames = new List<Integer>();  // We use this list to sort the subjects by their names
+    for (String name: nameSet) {
+      orderedNames.add(Integer.valueOf(name));
+    }
+    System.debug('orderedName: ' + orderedNames);
+    orderedNames.sort();
+    Id taskRecordType = Utility.getRecordTypeForTask('Referral Tasks');
+    for (Integer orderedName: orderedNames) {
+      Task task = new Task(
+        Subject = stepSubjects.get(String.valueOf(orderedName)).Subject__c,
+        Priority = 'Normal',
+        Status = 'Not Started',
+        WhatId = referralRecord.Id,
+        OwnerId = dummyTask.OwnerId,
+        RecordTypeId = taskRecordType
+      );
+      // We do not batch insert the tasks here because it leads to inconsistent
+      // sorting order.
+      if (referralRecord.Id != null) {
+        insert task;
+      }
+      this.activities.add(task);
+    }
+    System.debug('After insert, activities: ' + this.activities);
+
+    // We also want to make sure that the user can't do this action more than once
+    referralRecord.Admission_Steps_Added__c = true;
+    if (referralRecord.Id != null) {
+      update new Referral__c(Id=referralRecord.Id, Admission_Steps_Added__c=true);
+    }
   }
 }

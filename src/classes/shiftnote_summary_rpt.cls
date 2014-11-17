@@ -6,6 +6,9 @@ public with sharing class shiftnote_summary_rpt {
     public list<SelectOption> PBSlsit = new list<SelectOption>();
     public list<SelectOption> getPBSlsit(){ return PBSlsit ;}
     public boolean hasRunOnce {get; set;}
+    // START: ERD-11 - Add property to hold PDF run datetime as string in report runner's time zone.  J. Gilliam, 11/5/14
+    public string pdfRunDateTimeString { get; set; }
+    // END: ERD-11 - Add property to hold PDF run datetime as string in report runner's time zone.  J. Gilliam, 11/5/14
 
     public list<SelectOption> programslist = new list<SelectOption>();
     public list<SelectOption> getProgramslist(){ return programslist; }
@@ -37,7 +40,7 @@ public with sharing class shiftnote_summary_rpt {
         return Note_Objs;
     }
 
-    public shiftnote_summary_rpt() {
+    public shiftnote_summary_rpt() {   	
 		List<AggregateResult> slPrgms = [SELECT service_location__r.id slID, service_location__r.Alias__c alias, service_location__r.program__c prgm
 										   FROM service_assignment__c 
 										  GROUP BY service_location__r.id, service_location__r.program__c, service_location__r.Alias__c 
@@ -48,6 +51,7 @@ public with sharing class shiftnote_summary_rpt {
         }
         selectedPBS = new List<id>();
         hasRunOnce =false;
+        
     }
 
 
@@ -100,6 +104,7 @@ public with sharing class shiftnote_summary_rpt {
     }
 
     public pagereference runReport(){
+    	
        if(selectedPBS.Size()==0    ){
             ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,
                     'ERROR: Please Select at least one Person Being Served ');
@@ -186,8 +191,7 @@ public with sharing class shiftnote_summary_rpt {
             // RBO-277 - an objective associated without its parent goal can cause an issue here.  Check for existence first.
             if ( Note_objs.containskey(tmp) )
             	Note_Objs.get(tmp ).add(item);           
-        }           
-         
+        }          
                                    
         return null;
     }
@@ -204,6 +208,22 @@ public with sharing class shiftnote_summary_rpt {
         selectedPBS.clear();
      
         return null;
-    }      
+    }
+
+// START: ERD-11; add PDF functionality.  J. Gilliam, 10/30/14    
+    public PageReference runPdf() {	
+    	Datetime pdfRunDateTime = System.now();
+    	pdfRunDateTimeString = pdfRunDateTime.format('MM/dd/yyyy, h:mm:ss a');
+    	PageReference toPdfPage = new PageReference('/apex/shiftnote_summary_rpt_PDF');
+    	toPdfPage.setRedirect(false);
+    	return toPdfPage;
+    }
+    
+    public PageReference cancelToNewRun() {
+    	PageReference pageRef = new PageReference('/apex/shiftnote_summary_rpt');
+    	pageRef.setRedirect(true);
+    	return pageRef;
+    }
+// END: ERD-11; add PDF functionality.  J. Gilliam, 10/30/14       
 
 }

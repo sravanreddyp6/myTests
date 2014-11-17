@@ -2,6 +2,7 @@ public with sharing class NeuroEvaluationViewController {
     public Evaluation__c evaluation { get; set; }
     public ApexPages.standardController stdController;
     public String selectedTab { get; set; }
+    public transient Map<String, Component.Apex.OutputPanel> ctlMap { get; set; }
     public String bodyMapUrl {
         get {
             Attachment[] attachments = [
@@ -14,6 +15,18 @@ public with sharing class NeuroEvaluationViewController {
             }
             return null;
         }
+    }
+
+    public List<String> painsliderOptions {
+        get {
+            if (painsliderOptions == null) {
+                painsliderOptions = new String[] {
+                    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'
+                };
+            }
+            return painsliderOptions;
+        }
+        set;
     }
 
     public List<selectOption> hallValues {
@@ -53,6 +66,11 @@ public with sharing class NeuroEvaluationViewController {
         }
     }
     public String serializedAnnotations { get; set; }
+    public Boolean canUpdateEvaluation {
+        get {
+            return Schema.sObjectType.Evaluation__c.isUpdateable();
+        }
+    }
 
     public List<String> mobilitySliderOptions { set;
         get {
@@ -110,6 +128,7 @@ public with sharing class NeuroEvaluationViewController {
         if(!String.isBlank(this.evaluation.Hallucination_Types__c)) {
             selectedHalls = this.evaluation.Hallucination_Types__c.split(';');
         }
+        ctlMap = CreateFieldControls( stdController.getRecord().getSObjectType().getDescribe().getName(), stdController );
 
         // Naming the PDF in case this controller is used for the PDF page
         String file = 'Person Being Referred - '+ this.evaluation.Referral__r.Person_Being_Referred__r.Full_Name__c+'.pdf';
@@ -140,5 +159,44 @@ public with sharing class NeuroEvaluationViewController {
             // SF will automatically create a PageMessage Error here, so we don't
             // have to do anything
         }
+    }
+
+    public Map<String, Component.Apex.OutputPanel> CreateFieldControls ( string classname, ApexPages.StandardController controller ) {
+        System.Debug('loading map for:' + classname);
+        Map<String, Component.Apex.OutputPanel> cmap = new Map<String, Component.Apex.OutputPanel>();
+
+        List<Schema.DescribeSObjectResult> describelist = Schema.describeSObjects( new List<String>{classname});
+        if (describelist.size() == 0){
+            return null;
+        }
+
+        // need to get value for all fields - they are not in scope from VF page being dynamic
+        Schema.DescribeSObjectResult info = describelist[0];
+        Map<string,Schema.SObjectField> fmap = info.fields.getmap();
+
+        Schema.DescribeFieldResult fielddescribe;
+        ID theID = controller.getID();
+        String query = 'SELECT ' +  String.Join(New List<String>(fmap.keyset()), ', ') + ' FROM ' + className + ' Where ID = :theID';
+        system.debug( query );
+        SObject fullobj  = Database.query(query);
+
+        for(string fieldname:fmap.keyset()){
+            Component.Apex.OutputPanel op = new Component.Apex.OutputPanel();
+
+            fielddescribe = fmap.get(fieldname).getdescribe();
+
+            try {
+                Component.Apex.OutputLabel outLbl = new Component.Apex.OutputLabel( value=fielddescribe.getLabel(), styleClass='label');
+                op.childComponents.Add( outLbl);
+                Component.Apex.OutputField outFld = new Component.Apex.OutputField();
+                outFld.expressions.value = '{!' + classname + '.' + fieldname +'}';
+                op.childComponents.Add( outFld);
+                cmap.put( fieldname, op);
+            }
+            catch( Exception e) {
+                System.Debug( e );
+            }
+        }
+        return cmap;
     }
 }

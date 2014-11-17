@@ -1,5 +1,6 @@
 <apex:page standardController="Evaluation__c" extensions="NeuroEvaluationEditController">
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
     <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
     <apex:includeScript value="{!$Resource.AnnotoriousDev}"/>
@@ -66,6 +67,51 @@
         jQuery.noConflict();
 
         jQuery(document).ready(function ($) {
+            // if checkbox for None is selected, disables all others in group
+            handleNone = function( ids ) {
+                var theval = $('[id$=' + ids + 'none]').prop('checked');
+                var subctrl = [];
+                if ( ids == 'p' || ids == 'neuropain') {
+                        ctrl =  $('[id$=' + ids + 'timeday]');
+                        subctrl.push( ctrl);
+                        ctrl =  $('[id$=' + ids + 'activity]');
+                        subctrl.push( ctrl);
+                        ctrl =  $('[id$=' + ids + 'position]');
+                        subctrl.push( ctrl);
+                } else {
+                    $('input[id*=' + ids + ']').each( function(index, element) {
+                        if ( element.value.indexOf('None') < 0 )
+                            subctrl.push( $(element) );
+                        else
+                            theval = $(element).prop('checked');
+                        });
+                }
+                var ctrl;
+                if (theval == true ) {
+                        $.each(subctrl, function (_, ctrl) {
+                            ctrl.prop('checked', false );
+                            if (ctrl.is(':checkbox'))
+                                ctrl.prop('disabled', true);
+                            else
+                                ctrl.prop('readonly', true);
+                            applyRulesToField(ctrl);
+                            });
+                } else {
+                        $.each(subctrl, function (_, ctrl) {
+                            ctrl.prop('readonly', false);
+                            ctrl.prop('disabled', false);
+                            applyRulesToField(ctrl);
+                            });
+                }
+            }
+            disablePain = function() {
+                painval = j$('[id$=painYes]').val();
+                if(painval == 'Yes'){
+                    $('[id$=painSection]').show();
+                } else {
+                    j$('[id$=painSection]').hide();
+                }
+            }
             handleSliderChange = function (inputIdToUpdate) {
                 // Closure is so much fun :)
                 var $inputToUpdate = $(document.getElementById(inputIdToUpdate));
@@ -122,99 +168,19 @@
                     }
                 );
             });
-            String.prototype.endsWith = function (suffix) {
-                return this.indexOf(suffix, this.length - suffix.length) !== -1;
-            };
-            $.fn.realVal = function() {
-                // This function is here to put all the value-getting functionalities
-                // in one place. This is because calling val() on a checkbox input
-                // will only return the default value.
-                var $obj = $(this);
-                var val = $obj.val();
-                var type = $obj.attr('type');
-                if (type && type==='checkbox') {
-                    return $obj.prop('checked') ? '1' : '0';
-                } else {
-                    return val;
-                }
-            };
-            // Do the field disable/enable functionality here
-            // When values are in map -> will be enabled when key is changed
-            enableDisableField = function (element) {
-                var $element = $(element);
-                // For multi-picklist, apparently the data- passthrough also
-                // exist in the selected and unselected checkboxes, which confuse
-                // the script, so we check for their existence here.
-                if ($element.attr('multiple') == 'multiple' && ($element.attr('id').endsWith('_selected') || $element.attr('id').endsWith('_unselected'))) {
-                    return;
-                }
-                var enabledFields = [];
-                var rules = $element.data("rules");
-                rules && $.each(rules, function (key, value) {
-                    var $targets = [];
-                    if (value instanceof Array) {
-                        $.each(value, function (_, selector) {
-                            $targets.push($(document.getElementById(selector)));
-                        });
-                    } else {
-                        $targets.push($(document.getElementById(value)));
-                    }
-                    var val = $element.realVal();
-                    if (val == key || (val instanceof Array && $.inArray(key, val)!=-1)) {
-                        // Enable fields
-                        $.each($targets, function (_, $target) {
-                            if ($target.attr("multiple")) {
-                                $target.parent().find("select").prop("disabled", false);
-                            } else {
-                                $target.prop("disabled", false);
-                            }
-                            enabledFields.push($target.get(0));
-                        });
-                    } else {
-                        // Disable fields
-                        $.each($targets, function (_, $target) {
-                            // We also need to revert the field(s) to their original state
-                            // One exception: if the field has been enabled by one of the
-                            // earlier rules, then don't disable it!
-                            if ($.inArray($target.get(0), enabledFields) != -1) {
-                                return;
-                            }
-                            if ($target.attr("multiple")) {
-                                // Simulate removing all the selected options
-                                $(document.getElementById($target.attr('id') + '_selected')).find('option').attr('selected', 'selected');
-                                // Fake clicking the Remove button here
-                                location.href = $target.parent().find("a[title=Remove]").attr("href");
-                                $target.parent().find("select").prop("disabled", true);
-                            } else {
-                                $target.prop("disabled", true);
-                                var type = $target.attr('type');
-                                if (type && type==='checkbox') {
-                                    $target.prop('checked', false);
-                                } else {
-                                    $target.val('');
-                                }
-                            }
-                            $target.trigger('change');
-                        });
-                    }
-                });
-            }
             setUpFields = function () {
                 $('body input').on("change", function (event) {
-                    enableDisableField(event.target);
+                    applyRulesToField(event.target);
                 });
                 $('body select').on("change", function (event) {
-                    enableDisableField(event.target);
+                    applyRulesToField(event.target);
                 });
                 $('body input').each(function (_, target) {
-                    enableDisableField(target);
+                    applyRulesToField(target);
                 });
                 $('body select').each(function (_, target) {
-                    enableDisableField(target);
+                    applyRulesToField(target);
                 });
-                /*$('.multiSelectPicklistCell a[title=Remove]').on('click', function () {
-                    eval(this.href);
-                });*/
             }
             beforeEvaluationSave = function () {
                 // Temporarily enable all the disabled fields before saving the
@@ -361,6 +327,7 @@
         <a href="/">Home</a> > <a href="/{!Evaluation__c.Referral__c}">Referral: {!Evaluation__c.Referral__r.Name}</a> > <a href="/{!Evaluation__c.Id}">Evaluation: {!Evaluation__c.Name}</a>
     </div>
     <apex:form id="wholePage">
+        <apex:variable var="editable" value="{!Evaluation__c.Referral__r.Referral_Status__c != 'Closed'}" />
         <apex:pageMessages id="pageMessages" />
         <apex:actionFunction action="{!changeTab}" name="changeTabAction" status="pageProcessing" oncomplete="setUpFields(); removeSpacer(); scrollToTop();" rerender="pageMessages, wholeTabPanel, buttons">
             <apex:param name="nextTab" assignTo="{!nextTab}" value="" />
@@ -397,7 +364,7 @@
                         </apex:actionFunction>
 
                         <apex:outputPanel layout="none">
-                            <apex:commandButton value="Add Related Party" onclick="showAddRelatedParty(); return false;" />
+                            <apex:commandButton value="Add Related Party" onclick="showAddRelatedParty(); return false;" rendered="{!editable}" />
                             <apex:actionStatus id="loadingRelatedPartyStatus">
                                 <apex:facet name="start">
                                   <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
@@ -406,7 +373,7 @@
                             </apex:actionStatus>
                         </apex:outputPanel>
                         <apex:pageBlockTable value="{!relatedParties}" var="relatedParty" id="relatedPartyTable">
-                            <apex:column headerValue="{!IF(relatedParties.size>0, 'Action', '')}" width="50px">
+                            <apex:column headerValue="{!IF(relatedParties.size>0, 'Action', '')}" width="50px" rendered="{!editable}">
                                 <apex:commandLink onclick="showEditRelatedParty('{!relatedParty.Id}'); return false;" value="Edit" />
                             </apex:column>
                             <apex:column value="{!relatedParty.Type__c}"/>
@@ -445,11 +412,13 @@
                             <apex:outputLabel for="cm" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Height_in_cms__c.label}</apex:outputLabel>
                         </apex:outputPanel>
                     </apex:pageBlockSection>
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" editEnabled="{!editable}" addEnabled="{!editable}" />
                     <apex:pageBlockSection columns="2">
-                        <apex:inputField value="{!Evaluation__c.LOMN_Physician_Referral_Attached__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.lomnPhysysianReferralAttachedDate}&quot;]}" />
-                        <apex:inputField value="{!Evaluation__c.Plan_of_Care_Attached__c}" />
-                        <apex:inputField value="{!Evaluation__c.LOMN_Physician_Referral_Attached_Date__c}" id="lomnPhysysianReferralAttachedDate" label="Date Attached" />
+                        <apex:inputField value="{!Evaluation__c.LOMN_Physician_Referral_Attached__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.lomnPhysysianReferralAttachedDate}&quot;, &quot;{!$Component.lomnPhysicianName}&quot;]}" />
+                        <apex:outputField value="{!Evaluation__c.Plan_of_Care_Attached__c}" />
+                        <apex:inputField value="{!Evaluation__c.LOMN_Physician_Referral_Attached_Date__c}" id="lomnPhysysianReferralAttachedDate" label="Date LOMN Requested" />
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!Evaluation__c.LOMN_Physician_Name__c}" id="lomnPhysicianName" />
                     </apex:pageBlockSection>
                     <hr />
                     <apex:pageBlockSection columns="1">
@@ -460,8 +429,9 @@
             <apex:tab label="Diagnostics" name="diagnosticTab" ontabenter="changeTab('diagnosticTab'); return false;" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Micro Detail" formId="{!$Component.wholePage}" uniqueId="micro"
+                        editEnabled="{!editable}" addEnabled="{!editable}"
                         rules="{&quot;Test_Type__c&quot;: {&quot;MRSA&quot;: [&quot;X2_Negative_Cultures__c&quot;], &quot;C-diff&quot;: [&quot;X2_Negative_Cultures__c&quot;]}}" />
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Radiology Detail" formId="{!$Component.wholePage}" uniqueId="radiology" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Radiology Detail" formId="{!$Component.wholePage}" uniqueId="radiology" editEnabled="{!editable}" addEnabled="{!editable}" />
                     <apex:pageBlockSection columns="1">
                         <apex:inputField value="{!Evaluation__c.Cancer__c}" />
                         <apex:inputField value="{!Evaluation__c.MARs_Attached__c}" />
@@ -574,6 +544,11 @@
                     if (el) {
                         anno.makeAnnotatable(el);
                     }
+                    // In case the user doesn't have permission to create the
+                    // annotations
+                    if ({!!canCreateEvaluationResponse}) {
+                        anno.hideSelectionWidget();
+                    }
                     var $el = $(el);
                     <apex:repeat value="{!annotations}" var="annotation">
                     anno.addAnnotation({
@@ -615,8 +590,23 @@
                 });
                 </script>
                 <apex:pageBlock >
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" />
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Pressure Ulcer Detail" formId="{!$Component.wholePage}" uniqueId="decubiti" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" editEnabled="{!editable}" addEnabled="{!editable}" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Pressure Ulcer Detail" formId="{!$Component.wholePage}" uniqueId="decubiti"  editEnabled="{!editable}" addEnabled="{!editable}" />
+
+                    <apex:pageBlockSection columns="1" title="General Skin Condition" >
+                        <apex:inputField value="{!Evaluation__c.Skin_Moisture__c}" label="Mositure" />
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Edema" />
+                            <apex:outputPanel >
+                                <apex:inputField value="{!Evaluation__c.Skin_Edema__c}" label="Edema" html-data-rules="{&quot;Yes&quot;: [&quot;{!$Component.edemaLocation}&quot;]}" />
+                                <apex:outputText styleClass="labelCol" value="Location" /><apex:inputField value="{!Evaluation__c.Skin_Edema_Location__c}" label="Edema Location" id="edemaLocation" />
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:inputField value="{!Evaluation__c.Skin_Behavior__c}" label="Behavior" />
+                        <apex:inputField value="{!Evaluation__c.Peripheral_Capillary_Refill_Location__c}" />
+                        <apex:inputField Value="{!Evaluation__c.Peripheral_Capillary_Refill_of_Seconds__c}" label="# of Seconds" />
+                    </apex:pageBlockSection>
+
                     <h2 style="display: block; margin: 10px;">Body Map</h2>
                     <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
                         <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!(baseUrl + URLFOR($Resource.WholeBodyNoGrid))}" id="bodyMap" />
@@ -638,6 +628,11 @@
                 </apex:pageBlock>
             </apex:tab>
             <apex:tab label="Neurological" name="neuroTab" ontabenter="changeTab('neuroTab'); return false;" styleClass="{!IF(Evaluation__c.Neuro_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+                <script>
+                    jQuery(document).ready(function ($) {
+                        disablePain();
+                    });
+                </script>
                 <apex:pageBlock >
                     <apex:pageBlockSection columns="2" title="Cognitive">
                         <apex:inputField value="{!Evaluation__c.Seizure_History__c}" />
@@ -648,6 +643,7 @@
                         <apex:inputField value="{!Evaluation__c.EEG_Within_Normal_Limits__c}" label="Within Normal Limits" />
                         <apex:inputField value="{!Evaluation__c.Symptoms_of_Seizure__c}" />
                         <apex:inputField value="{!Evaluation__c.EEG_Above_Normal_Limits__c}" label="Above Normal Limits" />
+                        <apex:inputField value="{!Evaluation__c.Onset_of_Seizure_Activity__c}" />
                     </apex:pageBlockSection>
                     <hr />
                     <apex:pageBlockSection columns="2" title="Sensory">
@@ -679,6 +675,30 @@
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Tracking_L__c}" />
                     </apex:pageBlockSection>
+                    <apex:pageblockSection columns="2" title="Pain">
+                        <apex:inputField value="{!Evaluation__c.Pain_Present__c}" style="margin-left: 1cm;" id="painYes" onchange="disablePain(); return false;" />
+                    </apex:pageblockSection>
+                    <apex:outputPanel id="painSection" layout="block" >
+                        <apex:outputField value="{!Evaluation__c.Neuro_Pain_Alleviating_Factors__c}" rendered="false" />
+                        <apex:pageblockSection columns="2">
+                            <apex:pageBlockSectionItem >
+                                <apex:outputText value="Specify Pain Level" />
+                                <apex:image url="{!URLFOR($Resource.Wongbakerfaces)}" height="110px" width="85%" style="margin-left:0.75cm"/>
+                            </apex:pageBlockSectionItem>
+                            <apex:inputhidden value="{!Evaluation__c.Neuro_Pain_Level__c}" id="neuropainLevel" />
+                            <apex:pageBlockSectionItem >
+                                <apex:outputText value="Pain Level" />
+                                <c:Slider onChange="handleSliderChange('{!$Component.neuropainLevel}')" options="{!painsliderOptions}" initial="{!Evaluation__c.Neuro_Pain_Level__c}"  />
+                            </apex:pageBlockSectionItem>
+                            <apex:inputField value="{!Evaluation__c.Neuro_Pain_Severity__c}" label="Severity" />
+                            <apex:pageBlocksectionItem >
+                                <apex:outputLabel value="Alleviating Factors" />
+                                <apex:selectCheckboxes value="{!selectedPainAlleviators}" id="neuropainalleve" onchange="handleNone('neuropainalleve');">
+                                    <apex:selectoptions value="{!painAlleviatorValues}" />
+                                </apex:selectCheckboxes>
+                            </apex:pageBlocksectionItem>
+                        </apex:pageblockSection>
+                    </apex:outputPanel>
                     <hr />
                     <apex:pageBlockSection columns="2">
                         <apex:inputField value="{!Evaluation__c.Neuropsychological_Evaluation_Attached__c}" />
@@ -701,7 +721,7 @@
                             <apex:outputLabel value="Weight Bearing Precautions" />
                             <apex:outputPanel >
                                 <apex:inputField value="{!Evaluation__c.Weight_Bearing_Precautions__c}" id="weightBearingPrecautions" />
-                                <apex:outputLabel value="N/a" />
+                                <apex:outputLabel value="N/A" />
                                 <apex:inputField value="{!Evaluation__c.Weight_Bearing_Precautions_Not_Available__c}"
                                     label="N/A"
                                     html-data-rules="{&quot;0&quot;: &quot;{!$Component.weightBearingPrecautions}&quot;}"
@@ -951,7 +971,7 @@
                         <apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Alcohol_Abuse__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.alcoholAbuse}&quot;}" /> <apex:outputLabel value="Consumes >2 alcoholic drinks/day" />&nbsp;<apex:inputField value="{!Evaluation__c.Alcoholic_drinks_per_day__c}" />
                         <br />
-                        <apex:inputTextArea value="{!Evaluation__c.Alcohol_Abuse_Describe__c}" label="Describe"  id="alcoholAbuse" />
+                        <apex:inputTextArea value="{!Evaluation__c.Alcohol_Abuse_Describe__c}" cols="70" label="Describe"  id="alcoholAbuse" />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
 
@@ -959,7 +979,7 @@
                         <apex:outputLabel value="Drug Abuse<Br /><Br />Describe" escape="false" />
                         <apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Drug_Abuse__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.drugAbuse}&quot;}"/>
-                        <br /><apex:inputTextArea value="{!Evaluation__c.Drug_Abuse_Describe__c}" label="Describe" id="drugAbuse" />
+                        <br /><apex:inputTextArea value="{!Evaluation__c.Drug_Abuse_Describe__c}" cols="70" label="Describe" id="drugAbuse" />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
 
@@ -967,7 +987,7 @@
                         <apex:outputLabel value="Sexual Abuse<Br /><Br />Describe" escape="false" />
                         <apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Sexual_Abuse__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.sexualAbuse}&quot;}" />
-                        <br /><apex:inputTextArea value="{!Evaluation__c.Sexual_Abuse_Describe__c}" label="Describe" id="sexualAbuse" />
+                        <br /><apex:inputTextArea value="{!Evaluation__c.Sexual_Abuse_Describe__c}" cols="70" label="Describe" id="sexualAbuse" />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
 
@@ -975,7 +995,7 @@
                         <apex:outputLabel value="Domestic Abuse<Br /><Br />Describe" escape="false" />
                         <apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Domestic_Abuse__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.domesticAbuse}&quot;}" />
-                        <br /><apex:inputTextArea value="{!Evaluation__c.Domestic_Abuse_Describe__c}" label="Describe" id="domesticAbuse" />
+                        <br /><apex:inputTextArea value="{!Evaluation__c.Domestic_Abuse_Describe__c}" cols="70" label="Describe" id="domesticAbuse" />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
 
@@ -983,7 +1003,7 @@
                         <apex:outputLabel value="Financial Abuse<Br /><Br />Describe" escape="false" />
                         <apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Financial_Abuse__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.financialAbuse}&quot;}" />
-                        <br /><apex:inputTextArea value="{!Evaluation__c.Financial_Abuse_Describe__c}" label="Describe" id="financialAbuse" />
+                        <br /><apex:inputTextArea value="{!Evaluation__c.Financial_Abuse_Describe__c}" cols="70" label="Describe" id="financialAbuse" />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
 
@@ -991,7 +1011,7 @@
                         <apex:outputLabel value="Physical Abuse<Br /><Br />Describe" escape="false" />
                         <apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Physical_Abuse__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.physicalAbuse}&quot;}" />
-                        <br /><apex:inputTextArea value="{!Evaluation__c.Physical_Abuse_Describe__c}" label="Describe" id="physicalAbuse" />
+                        <br /><apex:inputTextArea value="{!Evaluation__c.Physical_Abuse_Describe__c}" cols="70" label="Describe" id="physicalAbuse" />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
 
@@ -999,7 +1019,7 @@
                         <apex:outputLabel value="Risk to Self<Br /><Br />Describe" escape="false" />
                         <apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Risk_to_Self__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.riskselfDescribe}&quot;}" />
-                        <br /><apex:inputTextArea value="{!Evaluation__c.Risk_to_Self_Describe__c}" id="riskselfDescribe" label="Describe" />
+                        <br /><apex:inputTextArea value="{!Evaluation__c.Risk_to_Self_Describe__c}" cols="70" id="riskselfDescribe" label="Describe" />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
 
@@ -1007,7 +1027,7 @@
                         <apex:outputLabel value="Risk to Others<Br /><Br />Describe" escape="false" />
                         <apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Risk_to_Others__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.riskothersDescribe}&quot;}" />
-                        <br /><apex:inputTextArea value="{!Evaluation__c.Risk_to_Others_Describe__c}" id="riskothersDescribe" label="Describe" />
+                        <br /><apex:inputTextArea value="{!Evaluation__c.Risk_to_Others_Describe__c}" cols="70" id="riskothersDescribe" label="Describe" />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
 
@@ -1015,7 +1035,7 @@
                         <apex:outputLabel value="Elopement Risk<Br /><Br />Describe" escape="false" />
                         <apex:outputPanel >
                         <apex:inputField value="{!Evaluation__c.Elopement_Risk__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.elopementDescribe}&quot;}" />
-                        <br /><apex:inputTextArea value="{!Evaluation__c.Elopement_Risk_Describe__c}" id="elopementDescribe" label="Describe"  />
+                        <br /><apex:inputTextArea value="{!Evaluation__c.Elopement_Risk_Describe__c}" cols="70" id="elopementDescribe" label="Describe"  />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
 
@@ -1045,7 +1065,7 @@
                                     <apex:selectOptions value="{!hallValues}"/>
                                 </apex:selectCheckboxes>
                                 </apex:outputpanel>
-                                <apex:inputTextArea value="{!Evaluation__c.Hallucinations_Describe__c}" id="hallucinationDescribe" label="Describe"  />
+                                <apex:inputTextArea value="{!Evaluation__c.Hallucinations_Describe__c}" cols="70" id="hallucinationDescribe" label="Describe"  />
                             </apex:outputPanel>
                         </apex:pageblockSectionItem>
                         <apex:outputText label="Offender History"  value=""/>
@@ -1069,7 +1089,7 @@
         <apex:pageBlock id="buttons">
             <apex:pageBlockButtons location="bottom">
                 <apex:commandButton value="Save & Continue" onclick="changeTab(getNextTab('{!selectedTab}')); return false;" rendered="{! selectedTab != 'psychoSocialTab'}" />
-                <apex:commandButton onclick="saveRecord(); " value="Save" />
+                <apex:commandButton onclick="saveRecord(); return false; " value="Save" />
                 <apex:commandButton onclick="window.location='/apex/NeuroEvaluationView?id={!Evaluation__c.Id}&tab={!selectedTab}'; return false;" value="Cancel" />
                 <!-- apex:commandButton value="Generate Paper Form" action="{!generatePaperForm}" rerender="pageMessages" onclick="jQuery('[id$=pdfGenerationSpinner]').show();" oncomplete="downloadPaperForm('{!pdfExistenceUrl}');" /-->
                 <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" style="display: none;" id="pdfGenerationSpinner" />

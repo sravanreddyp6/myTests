@@ -186,6 +186,9 @@ static testMethod void myCancel() {
         apa.Action_Plan_Objective__c = apo.id;
         apa.Description__c = 'action';
         apa.sort_order__c = 'a';
+        apa.Start_Date__c = myData.theSA.Start_Date__c;
+        apa.End_Date__c = myData.theSA.Start_Date__c.addDays(1);
+        apa.Status__c = 'New';
         insert apa;
         
         

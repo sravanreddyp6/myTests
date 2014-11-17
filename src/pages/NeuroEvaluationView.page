@@ -1,5 +1,6 @@
 <apex:page standardController="Evaluation__c" extensions="NeuroEvaluationViewController">
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
     <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
     <apex:includeScript value="{!$Resource.AnnotoriousDev}"/>
     <apex:includeScript value="{!$Resource.AnotoJS}"/>
@@ -7,85 +8,6 @@
     function openWin(url){
         window.open(url);
     }
-    jQuery(document).ready(function ($) {
-        String.prototype.endsWith = function (suffix) {
-            return this.indexOf(suffix, this.length - suffix.length) !== -1;
-        };
-        $.fn.realVal = function() {
-            // This function is here to put all the value-getting functionalities
-            // in one place. This is because calling val() on a checkbox input
-            // will only return the default value.
-            var $obj = $(this);
-            var val = $obj.val();
-            var type = $obj.attr('type');
-            if (type && type==='checkbox') {
-                return $obj.prop('checked') ? '1' : '0';
-            } else {
-                return val;
-            }
-        };
-        // Do the field disable/enable functionality here
-        // When values are in map -> will be enabled when key is changed
-        enableDisableField = function (element) {
-            var $element = $(element);
-            // For multi-picklist, apparently the data- passthrough also
-            // exist in the selected and unselected checkboxes, which confuse
-            // the script, so we check for their existence here.
-            if ($element.attr('multiple') == 'multiple' && ($element.attr('id').endsWith('_selected') || $element.attr('id').endsWith('_unselected'))) {
-                return;
-            }
-            var enabledFields = [];
-            var rules = $element.data("rules");
-            rules && $.each(rules, function (key, value) {
-                var $targets = [];
-                if (value instanceof Array) {
-                    $.each(value, function (_, selector) {
-                        $targets.push($(document.getElementById(selector)));
-                    });
-                } else {
-                    $targets.push($(document.getElementById(value)));
-                }
-                var val = $element.realVal();
-                if (val == key || (val instanceof Array && $.inArray(key, val)!=-1)) {
-                    // Enable fields
-                    $.each($targets, function (_, $target) {
-                        if ($target.attr("multiple")) {
-                            $target.parent().find("select").prop("disabled", false);
-                        } else {
-                            $target.prop("disabled", false);
-                        }
-                        enabledFields.push($target.get(0));
-                    });
-                } else {
-                    // Disable fields
-                    $.each($targets, function (_, $target) {
-                        // We also need to revert the field(s) to their original state
-                        // One exception: if the field has been enabled by one of the
-                        // earlier rules, then don't disable it!
-                        if ($.inArray($target.get(0), enabledFields) != -1) {
-                            return;
-                        }
-                        if ($target.attr("multiple")) {
-                            // Simulate removing all the selected options
-                            $(document.getElementById($target.attr('id') + '_selected')).find('option').attr('selected', 'selected');
-                            // Fake clicking the Remove button here
-                            location.href = $target.parent().find("a[title=Remove]").attr("href");
-                            $target.parent().find("select").prop("disabled", true);
-                        } else {
-                            $target.prop("disabled", true);
-                            var type = $target.attr('type');
-                            if (type && type==='checkbox') {
-                                $target.prop('checked', false);
-                            } else {
-                                $target.val('');
-                            }
-                        }
-                        $target.trigger('change');
-                    });
-                }
-            });
-        }
-    });
     </script>
     <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
     <style>
@@ -118,6 +40,7 @@
         <a href="/">Home</a> > <a href="/{!Evaluation__c.Referral__c}">Referral: {!Evaluation__c.Referral__r.Name}</a> > <a href="/{!Evaluation__c.Id}">Evaluation: {!Evaluation__c.Name}</a>
     </div>
     <apex:form id="wholePage">
+        <apex:variable var="editable" value="{!AND(Evaluation__c.Referral__r.Referral_Status__c != 'Closed', canUpdateEvaluation)}" />
         <apex:pageMessages id="pageMessages" />
         <apex:tabPanel id="wholeTabPanel" value="{!selectedTab}" styleClass="evaluationTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
             <apex:tab label="Demographics" name="demographicsTab" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
@@ -151,7 +74,7 @@
                         </apex:actionFunction>
 
                         <apex:outputPanel layout="none">
-                            <apex:commandButton value="Add Related Party" onclick="showAddRelatedParty(); return false;" />
+                            <apex:commandButton value="Add Related Party" onclick="showAddRelatedParty(); return false;" rendered="{!editable}" />
                             <apex:actionStatus id="loadingRelatedPartyStatus">
                                 <apex:facet name="start">
                                   <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
@@ -160,7 +83,7 @@
                             </apex:actionStatus>
                         </apex:outputPanel>
                         <apex:pageBlockTable value="{!relatedParties}" var="relatedParty" id="relatedPartyTable">
-                            <apex:column headerValue="{!IF(relatedParties.size>0, 'Action', '')}" width="50px">
+                            <apex:column headerValue="{!IF(relatedParties.size>0, 'Action', '')}" width="50px" rendered="{!editable}">
                                 <apex:commandLink onclick="showEditRelatedParty('{!relatedParty.Id}'); return false;" value="Edit" />
                             </apex:column>
                             <apex:column value="{!relatedParty.Type__c}"/>
@@ -214,11 +137,14 @@
                         </apex:outputPanel>
                     </apex:pageBlockSection>
 
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy"
+                         editEnabled="{!editable}" addEnabled="{!editable}" />
                     <apex:pageBlockSection columns="2">
                         <apex:outputField value="{!Evaluation__c.LOMN_Physician_Referral_Attached__c}" />
                         <apex:outputField value="{!Evaluation__c.Plan_of_Care_Attached__c}" />
-                        <apex:outputField value="{!Evaluation__c.LOMN_Physician_Referral_Attached_Date__c}" id="lomnPhysysianReferralAttachedDate" label="Date Attached" />
+                        <apex:outputField value="{!Evaluation__c.LOMN_Physician_Referral_Attached_Date__c}" id="lomnPhysysianReferralAttachedDate" label="Date LOMN Requested" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.LOMN_Physician_Name__c}" id="lomnPhysicianName" />
                     </apex:pageBlockSection>
                     <hr />
                     <apex:pageBlockSection columns="1">
@@ -229,8 +155,10 @@
             <apex:tab label="Diagnostics" name="diagnosticTab" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Micro Detail" formId="{!$Component.wholePage}" uniqueId="micro"
+                        editEnabled="{!editable}" addEnabled="{!editable}"
                         rules="{&quot;Test_Type__c&quot;: {&quot;MRSA&quot;: [&quot;X2_Negative_Cultures__c&quot;], &quot;C-diff&quot;: [&quot;X2_Negative_Cultures__c&quot;]}}" />
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Radiology Detail" formId="{!$Component.wholePage}" uniqueId="radiology" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Radiology Detail" formId="{!$Component.wholePage}" uniqueId="radiology"
+                        editEnabled="{!editable}" addEnabled="{!editable}" />
                     <apex:pageBlockSection columns="1">
                         <apex:outputField value="{!Evaluation__c.Cancer__c}" />
                         <apex:outputField value="{!Evaluation__c.MARs_Attached__c}" />
@@ -373,8 +301,29 @@
                 });
                 </script>
                 <apex:pageBlock >
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" />
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Pressure Ulcer Detail" formId="{!$Component.wholePage}" uniqueId="decubiti" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" editEnabled="{!editable}" addEnabled="{!editable}" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Pressure Ulcer Detail" formId="{!$Component.wholePage}" uniqueId="decubiti" editEnabled="{!editable}" addEnabled="{!editable}" />
+                    <apex:pageBlockSection columns="1" title="General Skin Condition">
+                        <apex:outputField value="{!Evaluation__c.Skin_Moisture__c}"
+                            label="Mositure" />
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Edema" />
+                            <apex:outputPanel >
+                                <apex:outputField value="{!Evaluation__c.Skin_Edema__c}"
+                                    label="Edema" />
+                                <apex:outputText styleClass="labelCol" value="Location" style="margin-left: 10px; "
+                                    rendered="{!Evaluation__c.Skin_Edema__c == 'Yes'}" />
+                                <apex:outputField value="{!Evaluation__c.Skin_Edema_Location__c}"
+                                    label="Edema Location" id="edemaLocation"
+                                    rendered="{!Evaluation__c.Skin_Edema__c == 'Yes'}" />
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:outputField value="{!Evaluation__c.Skin_Behavior__c}"
+                            label="Behavior" />
+                        <apex:outputField value="{!Evaluation__c.Peripheral_Capillary_Refill_Location__c}" />
+                        <apex:outputField value="{!Evaluation__c.Peripheral_Capillary_Refill_of_Seconds__c}" label="# of Seconds" />
+                    </apex:pageBlockSection>
+
                     <h2 style="display: block; margin: 10px;">Body Map</h2>
                     <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
                         <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!(baseUrl + URLFOR($Resource.WholeBodyNoGrid))}" id="bodyMap" />
@@ -406,6 +355,7 @@
                         <apex:outputField value="{!Evaluation__c.EEG_Within_Normal_Limits__c}" label="Within Normal Limits" />
                         <apex:outputField value="{!Evaluation__c.Symptoms_of_Seizure__c}" />
                         <apex:outputField value="{!Evaluation__c.EEG_Above_Normal_Limits__c}" label="Above Normal Limits" />
+                        <apex:outputField value="{!Evaluation__c.Onset_of_Seizure_Activity__c}" />
                     </apex:pageBlockSection>
                     <hr />
                     <apex:pageBlockSection columns="2" title="Sensory">
@@ -437,6 +387,24 @@
                         <apex:pageBlockSectionItem />
                         <apex:outputField value="{!Evaluation__c.Tracking_L__c}" />
                     </apex:pageBlockSection>
+                    <apex:pageBlockSection columns="1" title="Pain">
+                        <apex:outputField value="{!Evaluation__c.Pain_Present__c}" />
+                    </apex:pageBlockSection>
+                    <apex:pageblockSection columns="2" rendered="{!Evaluation__c.Pain_Present__c == 'Yes'}">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Specify Pain Level"  />
+                            <apex:image url="{!URLFOR($Resource.Wongbakerfaces)}" width="85%" height="110" style="margin-left: 0.75cm;" />
+                        </apex:pageBlockSectionItem>
+                        <apex:inputhidden value="{!Evaluation__c.Neuro_Pain_Level__c}" id="neuropainLevel" />
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Pain Level" />
+                            <c:Slider onChange="handleSliderChange('{!$Component.neuropainLevel}')"
+                                options="{!painsliderOptions}"
+                                initial="{!Evaluation__c.Neuro_Pain_Level__c}" disabled="True" />
+                        </apex:pageBlockSectionItem>
+                        <apex:outputField value="{!Evaluation__c.Neuro_Pain_Severity__c}" label="Severity" />
+                        <apex:outputField value="{!Evaluation__c.Neuro_Pain_Alleviating_Factors__c}" label="Alleviating Factors" />
+                    </apex:pageblockSection>
                     <hr />
                     <apex:pageBlockSection columns="2">
                         <apex:outputField value="{!Evaluation__c.Neuropsychological_Evaluation_Attached__c}" />
@@ -455,11 +423,11 @@
             <apex:tab label="Ortho" name="orthoTab" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
                     <apex:pageBlockSection columns="2" title="Orthopedics">
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Weight Bearing Precautions" />
-                            <apex:outputPanel>
+                            <apex:outputPanel >
                                 <apex:outputField value="{!Evaluation__c.Weight_Bearing_Precautions__c}" id="weightBearingPrecautions" />
-                                <apex:outputLabel value="N/a" rendered="{!Evaluation__c.Weight_Bearing_Precautions__c == ''}" />
+                                <apex:outputLabel value="N/A" rendered="{!Evaluation__c.Weight_Bearing_Precautions__c == ''}" />
                                 <apex:outputField value="{!Evaluation__c.Weight_Bearing_Precautions_Not_Available__c}" rendered="{!Evaluation__c.Weight_Bearing_Precautions__c == ''}" />
                             </apex:outputPanel>
                         </apex:pageBlockSectionItem>
@@ -726,11 +694,11 @@
                     </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:tab>
+            <apex:commandButton onclick="window.location='/apex/NeuroEvaluationEsign?id={!Evaluation__c.Id}'; return false;" value="E-Sign" style="position: absolute; margin-left: 730px; margin-top: 8px; " rendered="{!canUpdateEvaluation}" />
         </apex:tabPanel>
         <apex:pageBlock id="buttons">
             <apex:pageBlockButtons location="bottom">
-                <apex:commandButton onclick="window.location='/apex/NeuroEvaluationEdit?id={!Evaluation__c.Id}&tab={!selectedTab}'; return false;" value="Edit" rendered="{!Evaluation__c.Referral__r.Person_Being_Served__c == null}"/>
-                <apex:commandButton onclick="window.location='/apex/NeuroEvaluationEsign?id={!Evaluation__c.Id}'; return false;" value="E-Sign" rendered="{!selectedTab == 'psychoSocialTab'}" />
+                <apex:commandButton onclick="window.location='/apex/NeuroEvaluationEdit?id={!Evaluation__c.Id}&tab={!selectedTab}'; return false;" value="Edit" rendered="{!editable}" />
                 <apex:commandButton value="Generate PDF" onclick="openWin('/apex/NeuroEvaluationPDF?id={!Evaluation__c.Id}'); return false;" />
                 <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" style="display: none;" id="pdfGenerationSpinner" />
             </apex:pageBlockButtons>

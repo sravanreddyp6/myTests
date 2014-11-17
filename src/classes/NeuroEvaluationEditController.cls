@@ -22,6 +22,11 @@ public with sharing class NeuroEvaluationEditController {
             ];
         }
     }
+    public Boolean canCreateEvaluationResponse {
+        get {
+            return Schema.sObjectType.Evaluation_Response__c.isCreateable();
+        }
+    }
     public String baseUrl {
         get {
             return System.URL.getSalesforceBaseURL().toExternalForm();
@@ -31,7 +36,17 @@ public with sharing class NeuroEvaluationEditController {
     public Related_Party__c currentRelatedParty { get; set; }
     public Id currentRelatedPartyId { get; set; }
     public Person_Being_Referred__c pbr { get; set; }  // Here to save DOB
-    public Referral__c ref {get; set; } //to update Primary and Secondary Diagnosis
+    public Referral__c ref { get; set; } //to update Primary and Secondary Diagnosis
+
+    public List<SelectOption> painAlleviatorValues {
+        get {
+            painAlleviatorValues = Utility.getPicklistValues(evaluation, 'Neuro_Pain_Alleviating_Factors__c');
+            return painAlleviatorValues;
+        }
+        set;
+    }
+    public List<String> selectedPainAlleviators { get; set; }
+
 
     public List<String> mobilitySliderOptions { set;
         get {
@@ -68,6 +83,18 @@ public with sharing class NeuroEvaluationEditController {
         }
     }
 
+    public List<String> painsliderOptions { set;
+        get {
+            if (painsliderOptions == null) {
+                painsliderOptions = new String[] {
+                    '0', '1', '2', '3','4','5','6','7','8','9',
+                    '10'
+                };
+            }
+            return painsliderOptions;
+        }
+    }
+
     public Evaluation_Response__c[] annotations { set;
         get {
             return [
@@ -100,9 +127,15 @@ public with sharing class NeuroEvaluationEditController {
         dummyString = new List<String>();
         selectedHalls = new List<String>();
 
-        if(!String.isBlank(this.evaluation.Hallucination_Types__c))
+        if(!String.isBlank(this.evaluation.Hallucination_Types__c)) {
             selectedHalls = this.evaluation.Hallucination_Types__c.split(';');
+        }
 
+        painAlleviatorValues = new List<selectOption>();
+        selectedpainAlleviators = new List<String>();
+        if(!String.isBlank(this.evaluation.Neuro_Pain_Alleviating_Factors__c)) {
+            selectedPainAlleviators = this.evaluation.Neuro_Pain_Alleviating_Factors__c.split(';');
+        }
     }
 
     public void showAddRelatedParty() {
@@ -204,6 +237,16 @@ public with sharing class NeuroEvaluationEditController {
         }
         else {
             this.evaluation.Hallucination_Types__c ='';
+        }
+        string npal='';
+        for(string npl: selectedPainAlleviators) {
+            npal += npl+';';
+        }
+        if(npal!='' && this.evaluation.Pain_Present__c == 'Yes') {
+            npal = npal.Substring(0, npal.length() - 1);
+            this.evaluation.Neuro_Pain_Alleviating_Factors__c = npal;
+        } else {
+            this.evaluation.Neuro_Pain_Alleviating_Factors__c ='';
         }
         update this.evaluation;
         update this.pbr;
