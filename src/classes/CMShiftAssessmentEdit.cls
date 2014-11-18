@@ -16,6 +16,8 @@ public with sharing class CMShiftAssessmentEdit {
     public List<string>selectedSounds {get ; set;}
     public List<SelectOption>DysreflexiaValues;
     public List<string>selectedDysreflexia {get ; set;}
+    public List<selectOption>verbalExpressionValues;
+    public List<string>selectedVerbalExpression {get;set;}
     
      public Evaluation_Response__c[] vitals { set;
         get {
@@ -57,6 +59,8 @@ public with sharing class CMShiftAssessmentEdit {
         selectedSounds = new List<String>();
         DysreflexiaValues = new List<SelectOption>();
         selectedDysreflexia = new List<String>();
+        verbalExpressionValues = new List<selectOption>();
+        selectedVerbalExpression = new List<String>();
         
         
         if(!String.isBlank(this.evaluation.Resident_Demonstrating_Issues__c))
@@ -73,6 +77,9 @@ public with sharing class CMShiftAssessmentEdit {
                 
         if(!String.isBlank(this.evaluation.Autonomic_Dysreflexia_Areas_Assessed__c))
                 selectedDysreflexia = this.evaluation.Autonomic_Dysreflexia_Areas_Assessed__c.split(';');
+                
+        if(!String.isBlank(this.evaluation.Expression_Other__c))
+                selectedVerbalExpression = this.evaluation.Expression_Other__c.split(';');
         
                 
 	}
@@ -193,6 +200,17 @@ public with sharing class CMShiftAssessmentEdit {
 	                }
 	                else
 	                	this.evaluation.Autonomic_Dysreflexia_Areas_Assessed__c ='';
+	                	
+	         // For Other Verbal Expression Multi-picklist
+	                string exr='';
+	                for(string er: selectedVerbalExpression)
+	                	exr += er+';';
+                    if(exr!=''){
+                            exr = exr.Substring(0,exr.length()-1);
+                            this.evaluation.Expression_Other__c = exr;
+                    }
+                    else
+                    this.evaluation.Expression_Other__c ='';  
 	       			
 	        update this.evaluation;
 	        return new PageReference('/apex/CMShiftAssessmentView?id=' + evaluation.Id + '&tab=' + selectedTab);
@@ -213,7 +231,7 @@ public with sharing class CMShiftAssessmentEdit {
 	                return moodValue; 
 	   }
 	   
-	   public List<SelectOption> getbreatheSounds(){
+	   public List<SelectOption> getbreatheSounds() {
 	                List<Selectoption> breatheSound = Utility.getPicklistValues(evaluation, 'Breathe_Sounds__c');
 	                return breatheSound; 
 	                
@@ -224,4 +242,9 @@ public with sharing class CMShiftAssessmentEdit {
 	                return DysreflexiaValue; 
 	                
 	   }
+	   
+      public List<selectoption> getverbalExpressionValues() {
+            List<Selectoption> expressionValue = Utility.getPicklistValues(evaluation, 'Expression_Other__c');
+            return expressionValue; 
+   		}
 	}

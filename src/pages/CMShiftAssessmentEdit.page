@@ -368,9 +368,9 @@
        	 	};
        	 	
        	 	 handleRancho = function () {
-
+       	 	 
                 var ranchoScore = $('[id$=ranchoValue]').val();
-
+                
                 if(ranchoScore.indexOf('1') < 0 && ranchoScore != '') {
                 	$('[id$=ranchoDetails]').show();
                 
@@ -383,11 +383,60 @@
                 }
 
              };
-
              
-       	 	
+             handleExpression = function () {
+             
+             	var expressionValue = $('[id$=needsKnown]').val();
+             	
+             	if(expressionValue == 'No' ) {
+             		$('[id$=verbalExpressionLabel]').show();
+             		$('[id$=verbalExpression]').show();
+             		
+             		if( $('[id$=verbalExpression]').val() == 'Non-Verbal' ) {
+             			$('[id$=otherExpressionLabel]').show();
+             			$('[id$=expressionOther]').show();
+             		}
+             		else {
+             			 
+             			$('[id$=otherExpressionLabel]').hide();
+             			$('[id$=expressionOther]').hide();
+             			$('[id$=expressionOther]').find('input:checkbox').prop('checked',false);
+             			
+             		}
+             	
+             	}
+             	
+             	else{
+             		$('[id$=verbalExpressionLabel]').hide();
+             		$('[id$=verbalExpression]').hide();
+             		$('[id$=verbalExpression]').val('');
+             		$('[id$=otherExpressionLabel]').hide();
+             		$('[id$=expressionOther]').hide();
+             		$('[id$=expressionOther]').find('input:checkbox').prop('checked',false);
+             	
+             	}
+             
+             };
+             
+             handleSitter = function () {
+       
+             	if( $('[id$=sitter]').is(":checked") ) {
+             		$('[id$=onetooneHours]').show();
+       
+             	}
+             	else{
+             		$('[id$=onetooneHours]').hide();
+             		$('[id$=onetooneHours]').val('');
+             	
+             	}
+             
+             };
+
+           
        	 	handleNeuro = function () {
 	       	 	handleRancho();
+	       	 	handleExpression();
+	       	 	handleSitter();
        	
        	 	};
        	 	
@@ -531,6 +580,7 @@
     		<apex:inputhidden value="{!Evaluation__c.Mood__c}" />
     		<apex:inputhidden value="{!Evaluation__c.Breathe_Sounds__c}" />
     		<apex:inputhidden value="{! Evaluation__c.Autonomic_Dysreflexia_Areas_Assessed__c}" />
+    		<apex:inputhidden value="{! Evaluation__c.Expression_Other__c}" />
     	</apex:outputpanel>
         <apex:pageMessages id="pageMessages" />
          <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="handleDiagnosis(); handleCardio(); handleNeuro(); handleOrtho(); hanldePsycho();" reRender="pageMessages, wholeTabPanel, buttons">
@@ -943,17 +993,44 @@
 		                        </apex:pageBlockSectionItem>
 		                        <apex:inputField value="{!Evaluation__c.Desire_to_hurt_themselves__c}" label="Has Resident Expressed Desire to Hurt Him/Herself?"  id="sadflatHurt"/>
 		                        <apex:inputField value="{!Evaluation__c.Plan_to_Harm_themselves__c}" label="Does Resident Have a Plan to Harm Him/Herself?" id="plantoHarm" />
+		                        <apex:pageBlockSectionItem />
+		                        <apex:pageBlockSectionItem >
+		                        	<apex:outputText value="Communication" styleClass="labelCol" />
+		                        	<apex:outputText value="" />
+		                        </apex:pageBlockSectionItem >
+		                        <apex:pageBlockSectionItem >
+		                        	<apex:outputPanel >
+		                        		<apex:outputLabel for="needsKnown" value="Ability to make needs known"  />
+		                        		<br />
+		                        		<br />
+		                        		<apex:outputlabel for="verbalExpression" value="Expression" id="verbalExpressionLabel"/>
+		                        		<br />
+		                        		<br />
+		                        		<apex:outputText  value="Other Expression" id="otherExpressionLabel" />
+		                        	</apex:outputPanel>
+		                        	<apex:outputPanel >
+		                        		<apex:inputField value="{!Evaluation__c.Able_to_make_Needs_Known__c}" id="needsKnown" required ="True" onchange="handleExpression(); return false;" />
+		                        		<div class="requiredInput">
+	                    	 				<div class="requiredBlock"></div>
+		                        		<apex:inputField value="{!Evaluation__c.Expression__c}" id="verbalExpression" onchange="handleExpression(); return false;" />
+		                        		</div>
+		                        		<br />
+		                        		<apex:selectCheckboxes value="{!selectedVerbalExpression}" style="margin-left:-13px" id="expressionOther"  >
+                                			<apex:selectOptions value="{!verbalExpressionValues}" />
+                            			</apex:selectCheckboxes>
+		                        	</apex:outputPanel>
+		                        </apex:pageBlockSectionItem>
 		                    </apex:pageBlockSection>
                         </apex:PageblockSection>
                         
                         <apex:pageBlockSection columns="1" title="Safety" >
-	                        <apex:inputField value="{!Evaluation__c.Safety_Awareness__c}" />
+	                        <apex:inputField value="{!Evaluation__c.Safety_Awareness__c}" required="true" />
 	                        <apex:inputField value="{!Evaluation__c.Bed_Alarm__c}" />
 	                        <apex:pageBlockSectionItem >
 	                        <apex:outputLabel value="One to One Sitter<br /><br />Hours Per Day" escape="false" />
 	                        <apex:outputPanel >
 	
-	                        <apex:inputField value="{!Evaluation__c.One_to_One_Sitter__c}"  />
+	                        <apex:inputField value="{!Evaluation__c.One_to_One_Sitter__c}"  id="sitter" onchange="handleSitter(); return false;"/>
 	                        <br /><apex:inputField value="{!Evaluation__c.one_to_One_Sitter_of_Hours_per_day__c}" label="# of hours per day" id="onetooneHours" />
 	                        </apex:outputPanel>
 	                        </apex:pageBlockSectionItem>
