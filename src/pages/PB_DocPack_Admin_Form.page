@@ -1,280 +1,143 @@
 <apex:page standardController="PB_DocPacket__c" extensions="PB_DocPack_Admin_Form" sidebar="false" >
-<apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery-1.11.1.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+<script type="text/javascript">
+$ = jQuery.noConflict();
+var isModified = false;
+var itemsModified = [];
 
-
-<!---->
-<apex:stylesheet value="{!URLFOR($Resource.BootStrap_forVF,'/bootstrap.css')}" />
-<apex:stylesheet value="{!URLFOR($Resource.BootStrap_forVF,'/bootstrap-theme.css')}" />
-
-
-<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
-<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}"/>
-
-<!--
-<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/js/dataTables.tableTools.min.js')}" />
-<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/css/dataTables.tableTools.css')}"/>
--->
-
-<div class="fogBG noDisplay" />
-<!-- wrapper for bootstrap -->
-<div class="bs">
-<apex:form id="frm" styleClass="form-horizontal">
-
-
-<apex:pageMessages />
-<div id="top-sticky">
-    <div class="fRight" > 
-        <apex:commandButton styleClass="form-control btn btn-primary" style="width: 150px;" value="Add Document" action="{!NewDocument}" reRender="docPopUp" immediate="true" status="myStatus" oncomplete="showPopUp('#AddDocPop'); return false;"/>
-        <apex:commandButton styleClass="form-control btn btn-primary" style="width: 100px;" value="Save" action="{!SavePacket}" reRender="frm" status="myStatus" oncomplete="commonLoad();"/>
-        <apex:commandButton styleClass="form-control btn btn-primary" style="width: 100px;" value="Cancel" action="{!Cancel}"/>
-    </div>
-        <div class="btn-group btn-group-justified" style="width: 200px; float: left; padding: 3px;">
-            <div class="btn-group">
-                <button type="button" id="btn-mode-summary" class="btn btn-warning" onclick="summaryMode();">Summary</button>
-            </div>
-            <div class="btn-group">
-                <button type="button"  id="btn-mode-edit" class="btn btn-warning" onclick="editMode();">Edit</button>
-            </div>
-        </div><!-- end button group -->
-    <span><h2>&nbsp; &nbsp; {!DocPacket.Packet_Name__c}</h2></span>
-
-</div>
-
-
-
-<div class="container-fluid">  <!-- master container --> 
-  <div class="row">
-    <div class="col-xs-12">
-        <div class="h-line" ><h3 >Details</h3></div>
-    </div>
-  </div>
-  <div class="row">
-    <label class="col-xs-1 control-label">Name</label>
-    <div class="col-xs-5">
-      <apex:inputField styleClass="form-control"  value="{!DocPacket.Packet_Name__c}" />
-    </div>
-  </div>
-  <div class="form-group">
-    <label class="col-xs-1 control-label">Status</label>
-    <div class="col-xs-5">
-      <apex:inputField styleClass="form-control" value="{!DocPacket.Status__c}" />
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-12">
-        <div class="h-line" ><br/><h3 >Documents</h3></div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-1"></div>
-    <div class="col-xs-10">
-        <table id="table-all-docs" >
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>Version</th>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Status</th>
-                    <th>Effective Date</th>
-                    <th>Expiration Date</th>
-                    <th>Recurring</th>
-                    <th>Recurring Frequency</th>
-                    <th>Due Days</th>
-                </tr>
-            </thead>
-
-
-            <apex:repeat value="{!AllDocsInPacket}" var="item">
-            <tr>
-                <td>
-                   <apex:commandButton styleClass="form-control btn btn-info" style="width: 75px;" value="Edit" action="{!EditDocument}" 
-                                       reRender="docPopUp" status="myStatus" oncomplete="showPopUp('#AddDocPop'); return false;"  immediate="true">
-                       <apex:param assignTo="{!documentIdForEdit}" value="{!item.id}" name="documentIdForEdit "  />                     
-                   </apex:commandButton> 
-                </td>
-                <td>
-                    {!item.Version__c}
-                </td>
-                <td>
-                    {!item.Document_Name__c}
-                </td>
-                <td>
-                    {!item.Type__c}
-                </td>
-                <td>
-                    {!item.Status__c}
-                </td>
-                <td>
-                    <apex:outputText value="{0,date,MM'/'dd'/'yy}">
-                        <apex:param value="{!item.Effective_Date__c}" /> 
-                    </apex:outputText>
-                </td>
-                <td>
-                    <apex:outputText value="{0,date,MM'/'dd'/'yy}">
-                        <apex:param value="{!item.Expiration_Date__c}" /> 
-                    </apex:outputText>
-                </td>   
-                <td>
-                    {!item.Recurring__c}
-                </td>
-                <td>
-                    {!item.Recurring_Frequency__c}
-                </td>
-                <td>
-                    {!item.Due_Days__c}
-                </td>                                                                                                                                                                                           
-            </tr>
-            </apex:repeat>
-        </table>    
-    </div>
-    <div class="col-xs-1"></div>            
-  </div>
-
-
-  <div class="row">
-    <div class="col-xs-12">
-        <div style="height: 1000px; width: 100%;"></div>
-    </div>      
-  </div>
-
-
-
-
-
-</div>  <!-- end master container-->
-
-
-</apex:form>
-<apex:form id="docPopUp">
-<!-- pop-ups -->
-<!-- Add Document Pop-Up  -->
-<div id="AddDocPop" class="pop-up noDisplay">
-<apex:outputPanel id="docPopUpContainer">
-
-<div class="container-fluid"> 
-  <div class="row">
-    <div class="col-xs-12">
-        <div class="fRight">  
-            <apex:commandButton styleClass="form-control btn btn-primary" style="width: 100px;" value="Save" action="{!SaveDocument}" reRender="frm, docPopUpContainer" status="myStatus" oncomplete="handleDocSave();"/>                      
-            <div class="form-control btn btn-primary" style="width: 100px;" onclick="hidePopUp('#AddDocPop'); return false; ">Cancel</div>
-        </div>
-    </div>
-  </div>   
-  <div class="row">
-    <div class="col-xs-12">
-        <div class="h-line" ><h3 >Details</h3></div>
-    </div>
-  </div>                    
-    <div class="row">
-      <!-- start middle section -->
-      <div class="col-xs-12">
-            <apex:pageMessages />
-            <!-- add one new document tab-->
-            <div id="doc-add-single" class="doc-tab">
-                <div class="container-fluid">   
-                  <div class="row">
-                    <label class="col-xs-1 control-label">Name</label>
-                    <div class="col-xs-11">
-                      <apex:inputField styleClass="form-control"  value="{!PopUpDocument.Document_Name__c}" />
-                    </div>
-                  </div>
-                  <div class="row">
-                    <label class="col-xs-2 control-label">Version</label>
-                    <div class="col-xs-4">
-                      <apex:inputField styleClass="form-control"  value="{!PopUpDocument.Version__c}" />
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-xs-2 control-label">Due Days</label>
-                    <div class="col-xs-4">
-                      <apex:inputField styleClass="form-control" value="{!PopUpDocument.Due_Days__c}" />
-                    </div>
-                  </div>                  
-                  <div class="row">
-                    <label class="col-xs-2 control-label">Type</label>
-                    <div class="col-xs-4">
-                      <apex:inputField styleClass="form-control"  value="{!PopUpDocument.Type__c}" />
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-xs-2 control-label">Status</label>
-                    <div class="col-xs-4">
-                      <apex:inputField styleClass="form-control" value="{!PopUpDocument.Status__c}" />
-                    </div>
-                  </div>                   
-                  <div class="row">
-                    <label class="col-xs-2 control-label">Effective Date</label>
-                    <div class="col-xs-4">
-                      <apex:inputField styleClass="form-control"  value="{!PopUpDocument.Effective_Date__c}" />
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-xs-2 control-label">Expiration Date</label>
-                    <div class="col-xs-4">
-                      <apex:inputField styleClass="form-control" value="{!PopUpDocument.Expiration_Date__c}" />
-                    </div>
-                  </div>  
-                  <div class="row">
-                    <label class="col-xs-2 control-label">Recurring?</label>
-                    <div class="col-xs-4">
-                      <apex:inputField styleClass="form-control"  value="{!PopUpDocument.Recurring__c}" />
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-xs-2 control-label">Recurring Frequency</label>
-                    <div class="col-xs-4">
-                      <apex:inputField styleClass="form-control" value="{!PopUpDocument.Recurring_Frequency__c}" />
-                    </div>
-                  </div> 
-                                                                     
-                </div>  <!-- end detail container-->                
-                
-            </div><!-- end add one doc tab -->
-
-             
-      </div><!--end middle section -->
-
-    </div><!-- end row-->
-  <div class="row">
-    <div class="col-xs-12">
-        <div class="h-line" ><h3 >Signatures</h3>&nbsp;
-            <apex:commandButton styleClass="form-control btn btn-info" style="width: 150px;" value="Add Signature" action="{!NewDocumentSignature}" reRender="signatures" status="myStatus"/>                              
-        </div>
-    </div>
-  </div> 
-<apex:outputPanel id="signatures">
-<apex:repeat value="{!PopUpDocumentSignatures }" var="signature">  
-  <div class="row">
-    <label class="col-xs-1 control-label">Who?</label>
-    <div class="col-xs-3"><apex:inputField styleClass="form-control" value="{!signature.DocSigner__c}"/></div>
-    <label class="col-xs-1 control-label">Interval</label>
-    <div class="col-xs-3"><apex:inputField styleClass="form-control" value="{!signature.ReSign_Interval__c}"/></div>
-    <label class="col-xs-1 control-label">Required</label>
-    <div class="col-xs-3"><apex:inputField styleClass="form-control" value="{!signature.ReSign_Required__c}"/></div>       
+var nodeKey = null;    
+function recordChange(item){
+    isModified = true;
     
-  </div> 
-    </apex:repeat>
-</apex:outputPanel>          
-</div>  <!-- end detail container-->
+    itemsModified.push(item);
+    document.getElementById("changedItems").innerHTML = itemsModified;
+} 
+function triggerNodeEdit(nK){
+    nodeKey = nK;  
+    console.log('key' + nodeKey); 
+    if (isModified){
+        $('[id*=dialog-confirm]').dialog( "open" );
+    }
+    else {
+        editNode(nodeKey);
+    }
+ }
+$(function() {
+    $('[id*=dialog-confirm]').dialog({
+      resizable: false,
+      height:180,
+      modal: true,
+      autoOpen: false,
+      buttons: {
+        Yes: function() {
+            $( this ).dialog( "close" );
+            $('[id*=SaveNode]').trigger("click");           
+        },
+        No: function() {
+            $( this ).dialog( "close" );
+            isModified = false;  
+            var itemsModified = [];        
+            editNode(nodeKey);
+        }
+      }
+    });
+});
+</script>
+<apex:outputPanel id="fullpage">
+<div class="fogBG noDisplay" />
+
+<apex:outputPanel id="dialog-confirm" title="Confirm save" layout="block">
+    <apex:outputPanel layout="inline">
+        
+        
+        The Following fields have changed - <br/>
+        <span id="changedItems"></span>
+        <br/><br/><p/>Do you want to save before navigating away?
+    </apex:outputPanel>
 </apex:outputPanel>
-</div> <!-- end pop-ups -->
 
-
+<div class="frm-Container">
+<apex:form >
+<apex:actionFunction action="{!editItem}" name="editNode" reRender="miniForm" status="myStatus" immediate="true">
+    <apex:param name="itemID" value=""/>
+</apex:actionFunction>
+    <div class="left-Col">
+        <apex:pageBlock title="Packets and Documents">
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton value="Add New Item" action="{!resetMiniForm}" reRender="miniForm" status="myStatus"/>
+            </apex:pageBlockButtons>
+                <apex:outputPanel id="abcd"  >
+                    <c:Fancy_Tree TreeString="{!dataTree.Fancy_Tree_JSon_String_LongText}" mode="1" activateActionSignature="triggerNodeEdit(data.node.key);" checkbox="false" allowInactiveNode="true"  TreeID="abcd" debug="false" />    
+                </apex:outputPanel>       
+        </apex:pageBlock>   
+    </div>
+    
+    <div class="right-Col">
+        <apex:pageBlock title="" id="miniForm">
+            <apex:pageBlockSection columns="1">
+                <apex:pageMessages ></apex:pageMessages>
+                <apex:pageBlockSectionItem >
+                    Type    
+                    <apex:actionRegion >
+                        <apex:selectList value="{!SelectedItemOption}" size="1">
+                            <apex:selectOptions value="{!ItemOptions}"></apex:selectOptions>
+                            <apex:actionSupport event="onchange" reRender="newItemDataElements" action="{!setSelectiblePacketsForDocumentsTree}" status="myStatus"  />
+                        </apex:selectList> 
+                    </apex:actionRegion>               
+                </apex:pageBlockSectionItem>
+            </apex:pageblockSection>  
+            <apex:pageBlock id="newItemDataElements">  
+                <apex:pageBlockButtons >
+                    <apex:commandButton action="{!SaveDoc}" id="DocSaveNode" value="Save Document" rendered="{!SelectedItemOption == 'Document'}" status="myStatus" reRender="fullpage"/>
+                    <apex:commandButton action="{!SavePack}" id="PackSaveNode" value="Save Packet" rendered="{!SelectedItemOption == 'Packet'}" status="myStatus" reRender="fullpage"/>
+                </apex:pageBlockButtons>
+                <apex:pageBlockSection columns="1" rendered="{!SelectedItemOption == 'Packet'}" >
+                    <apex:inputField value="{!SelectedDocPacket.Packet_Name__c}"/>
+                    <apex:inputField value="{!SelectedDocPacket.Status__c}"/>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="1" rendered="{!SelectedItemOption == 'Document'}" >
+                    <apex:inputField value="{!SelectedDocument.Document_Name__c}" onchange="recordChange('Document Name')"/>
+                    <apex:inputField value="{!SelectedDocument.Version__c}" onchange="recordChange('Version')"/>
+                    <apex:inputField value="{!SelectedDocument.Status__c}" onchange="recordChange('Status')"/>
+                    <apex:inputField value="{!SelectedDocument.Type__c}" onchange="recordChange('Type')"/>                    
+                    <apex:inputField value="{!SelectedDocument.Effective_Date__c}" onchange="recordChange('Effective Date')"/>
+                    <apex:inputField value="{!SelectedDocument.Expiration_Date__c}" onchange="recordChange('Exiration Date')"/>
+                    <apex:inputField value="{!SelectedDocument.Due_Days__c}" onchange="recordChange('Due Days')"/>
+                    <apex:inputField value="{!SelectedDocument.Recurring__c}" onchange="recordChange('Recurring')"/>
+                    <apex:inputField value="{!SelectedDocument.Recurring_Frequency__c}" onchange="recordChange('Recurring Frequency')"/>
+                    <apex:inputText style="display: none;" id="miniFormTreeSelectedItems" value="{!miniFormTreeSelectedKeys}" onchange="recordChange('Related Packets')"/>
+                    
+                    <div id="miniFormTree">
+                        <c:Fancy_Tree TreeString="{!miniFormTreeForDocs.Fancy_Tree_JSon_String_LongText}" mode="2" checkbox="true" ID_PageSideStorage="miniFormTreeSelectedItems" allowInactiveNode="false"  TreeID="miniFormTree" debug="false" />
+                    </div>                     
+                </apex:pageBlockSection>      
+         
+            </apex:pageBlock>
+        
+        </apex:pageBlock>
+    
+    </div>
 
 </apex:form>
 </div>
+</apex:outputPanel>
 
 <style>
 .dateFormat{ display: none;)
 </style>
 <style>
-#datePicker{z-index: 1000;}
+#datePicker{z-index: 1200;}
 .noOverflow{ overflow: hidden;}
 .fRight{float: right;}
 
-.bs .form-control{margin: 3px !important; }
-.control-label{text-align: right;}
+.frm-Container{ width: 1200px;}
+.left-Col, .right-Col{float: left; padding: 10px;}
+.left-Col{width: 650px;}
+.right-Col{width: 350px;}
+
+
 .h-line{border-bottom: 1px rgba(0, 0, 0, 0.05) solid; width: 100%; margin-top: 3px; margin-bottom: 3px;}
 
 .container-fluid{margin-top: 3px;}
@@ -321,120 +184,26 @@
 #top-sticky h2{text-transform: uppercase;}
 </style>
 <script>
-    var j$ = jQuery.noConflict();
-    j$( document ).ready(function() {
-        createtbl('#table-add-doc-from-other', 2); 
-        
-        
-        commonLoad();
-        editMode();
-        
-    }); 
-    function commonLoad(){
-        console.log('starting int functions');  
-        createtbl('#table-all-docs', 2);         
-        pinTopMenu('#top-sticky');
-    }
-    function editMode(){
-        j$('#btn-mode-summary').removeClass('active');
-        j$('#btn-mode-edit').addClass('active');    
-        j$('.form-control').prop("disabled", false);
-    }
-    function summaryMode(){
-        j$('#btn-mode-summary').addClass('active');
-        j$('#btn-mode-edit').removeClass('active');
-        
-        j$('.form-control').prop("disabled", true);
-    }
-    function changeDocTab(tab, selector){
-        j$('.doc-tab').addClass('noDisplay');
-        j$('.doc-tab-selector').removeClass('active');
+    $ = jQuery.noConflict();
 
-        j$(tab).removeClass('noDisplay');
-        j$(selector).addClass('active');
-    }
-    function showPopUp(item){
-        console.log('showing ' + item);
-        j$(item).removeClass('noDisplay');   
-        j$('.fogBG').removeClass('noDisplay');  
-        j$('body').addClass('noOverflow');
-        
-    }
-    function hidePopUp(item){
-        j$(item).addClass('noDisplay');    
-        j$('.fogBG').addClass('noDisplay');  
-        j$('body').removeClass('noOverflow');
-    }
-    function createtbl(tbl, sortrow){
-        console.log('starting tables');
-        var tableData = j$(tbl).dataTable({ 
-                "bPaginate": false, 
-                "ordering": true,
-                "bFilter": true,
-                "order": [[ sortrow, "asc" ]]
-                
-            });
-    
-        console.log('loaded tables');
-    }   
-    function pinTopMenu(item){
-                var s = jQuery(item);
-                var pos = s.position();            
-                jQuery(window).scroll(function() {
-                    var windowpos = jQuery(window).scrollTop();
-                    if (windowpos - 120 >= pos.top) {
-                        s.addClass("sticky");
-                    } else {
-                        s.removeClass("sticky");
-                    }
-    
-                });
-    }
-    function checkDisable(dis, result){
-        console.log('trying to disable - ' + result + dis );
-    
-        j$(dis).prop("disabled", result);
-        
-        console.log('result acpeted - ' + result + dis );
-    }
-    function checkScroll(){        
-                var s = jQuery("#mode_selctor_container");
-                var pos = s.position();
-                var windowpos = jQuery(window).scrollTop();
-                if (windowpos - 120 >= pos.top) {
-                    s.addClass("sticky");
-                } else {
-                    s.removeClass("sticky");
-                }
-    }
-    function handleDocSave(){
-
-   if (j$('.errorM3').length > 0){
-
-    }
-    else{
-        hidePopUp('#AddDocPop');
-        commonLoad();
-    }        
-    
-    }
 </script>
 
 <apex:actionStatus id="myStatus" >
-    <apex:facet name="start">
-    <style>
-    .thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;}
-.foggy{
-    opacity:0.8;
-    background-color:#ccc;
-    position:fixed;
-    width:100%;
-    height:100%;
-    top:0px;
-    left:0px;
-    z-index:1000;
-}  
-</style>  
+    <apex:facet name="start">  
+            <style>
+            .thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;}
+        .foggy{
+            opacity:0.8;
+            background-color:#ccc;
+            position:fixed;
+            width:100%;
+            height:100%;
+            top:0px;
+            left:0px;
+            z-index:1000;
+        }  
+        </style>
+
         <div class="foggy" />        
         <div class="thinkingwheel" >    
             <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>

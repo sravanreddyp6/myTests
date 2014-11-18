@@ -61,6 +61,9 @@ public class TMN_Tree{
             public Project_Task__c ProjTask {get; set;}
             public Task theTask {get; set;}
             public Project_Task_Activity__c ProjTaskAct {get; set;}
+            public PB_Document__c pbDoc { get; set;}
+            public PB_DocPacket__c pbDocPacket {get; set;}
+            public PB_DocPacket_Document_JO__c pbDocPacketJO{get; set;}
             
             public list<Attachment> Attaches { get; set;}
             //end Custom objects
