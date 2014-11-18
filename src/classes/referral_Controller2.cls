@@ -527,8 +527,7 @@ public with sharing class referral_Controller2 {
     } else
         return null;
     }
-   public boolean checkRequiredFields()
- {
+   public boolean checkRequiredFields(){
     List<String> messages = new List<String>{};
     boolean hasReq = false;
 
@@ -542,10 +541,55 @@ public with sharing class referral_Controller2 {
         messages.Add( 'Payer/Guarantor Medical Number Description' );
         hasReq = false;
         }
+     }
+     //end CTEAE-137   
+     
+     //start EC-54
+     if(referralRecordType == 'CareMeridian'){
+     Boolean hasPrimaryLoc = false, hasPrimaryFund = false;
+        if(referralRecord.Current_Location__c == null){
+          messages.Add('Current Location');
+          hasReq = false;
+        }
+        if(referralRecord.Agency_Name__c == null){
+          messages.Add('Referral Source');
+          hasReq = false;
+        }
+        if(referralRecord.Evaluated_By_Internal__c == null){
+          messages.Add('Evaluated by');
+          hasReq = false;
+        }
+        if(fundingSources.size() == 0){
+          messages.Add('Primary Funding Source');
+          hasReq = false;
+        }
+        if(locations.size() == 0){
+          messages.Add('Primary Requested Location');
+          hasReq = false;
+        }
+        for(Referral_Location__c rl :locations){
+          if(rl.Rank__c == 'Primary'){
+            hasPrimaryLoc = true;
+            break;
+          }
+        }  
+        if(!hasPrimaryLoc){
+          messages.Add('Primary Requested Location');
+          hasReq = false;
+        }
+        for(Funding_Source__c fs :fundingSources){
+          if(fs.Type_of_Coverage__c == 'Primary'){
+            hasPrimaryFund = true;
+            break;
+          }
+        }
+        if(!hasPrimaryFund){
+            messages.Add('Primary Funding Source');
+            hasReq = false;
+          } 
+     }  
+    //End EC-54
 
-    }
-
-    //end CTEAE-137
     // requirements to create a new PBS
     if ( (string.valueOf(this.referralRecord.Person_Being_Served__c) == '' )) {
 
