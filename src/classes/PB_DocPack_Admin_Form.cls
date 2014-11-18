@@ -1,154 +1,70 @@
 public with sharing class PB_DocPack_Admin_Form {
-    public boolean hasError {get; set;}
-    public map<PB_Document__c, boolean> allDocs {get; set;}
-    public list<PB_Document__c> AllDocsInPacket {get; set;}
-    public PB_Document__c PopUpDocument { get;set;}
-    public string documentIdForEdit { get; set;}
-    public PB_DocPacket__c DocPacket { get; set;}
-    public map<string, list<PB_DocSignature__c>> allDocumentSignatures { get; set;}
-    public list<PB_DocSignature__c> PopUpDocumentSignatures { get; set;}
+
+    public List<SelectOption> getItemOptions() {
+            List<SelectOption> options = new List<SelectOption>();
+            options.add(new SelectOption('','--None--'));
+            options.add(new SelectOption('Packet','Packet'));
+            options.add(new SelectOption('Document','Document'));
+            return options;
+    }
+    public string SelectedItemOption {get; set;}
+    public PB_Document__c SelectedDocument { get; set;}
+    public PB_DocPacket__c SelectedDocPacket {get; set;}
+    public TMN_Tree dataTree {get; set;}
+    public TMN_Tree miniFormTreeForDocs {get; set;}
+    public TMN_Tree packetForDocumentsTree {get; set;}
+    public string miniFormTreeSelectedKeys {get; set;}
+
     
+    //construct
     public PB_DocPack_Admin_Form(ApexPages.StandardController controller) {
-        DocPacket = getDocPacket(controller.getId()); 
-        PopUpDocument = new PB_Document__c();
-        allDocumentSignatures = new map<string, list<PB_DocSignature__c>> ();
-        clearDocSignatures();
-       // refreshDocMap();
-        refreshDocsInPacket();
+        SelectedDocument = new PB_Document__c ();
+        SelectedDocPacket = new PB_DocPacket__c();
+        refreshDataTree();
     }
-    
-    
-    //refresh methods
-    public PB_DocPacket__c getDocPacket(id docID){
-        PB_DocPacket__c doc  = new PB_DocPacket__c ();
-        if(docID != null){
-            doc = [select id, name, External_ID__c, Packet_Name__c, Status__c  from PB_DocPacket__c where id = :docID];
-        }
-        else{
-            doc.External_ID__c = genID(20);
-        }
-        return doc;
-        
-    }
-    public void refreshDocsInPacket(){
-        AllDocsInPacket = new list<PB_Document__c>();
-        list<PB_DocPacket_Document_JO__c > Joins = [select id, name, DocPacket__c, Document__c from PB_DocPacket_Document_JO__c where DocPacket__c =:DocPacket.id];
-        set<id> theDocIds = new set<id>();
-        for(PB_DocPacket_Document_JO__c item : Joins){
-            theDocIds.add(item.Document__c);
-        }
-        
-        AllDocsInPacket = [select id, name, Document_Name__c, 
-                                        Due_Days__c, Effective_Date__c, Expiration_Date__c, Recurring__c, Recurring_Frequency__c,
-                                        Status__c,  Type__c, Version__c
-                                            from PB_Document__c where id IN :theDocIds]; 
-    
-        //reset the map
-        allDocumentSignatures = new map<string, list<PB_DocSignature__c>> ();
-        // add each doc and a blank list to the map
-        for (string item: theDocIds){
-            allDocumentSignatures.put(item, new List<PB_DocSignature__c>());
-        }
-        list<PB_DocSignature__c> docSigns = [select id, name, DocSigner__c, Document__c, ReSign_Interval__c, ReSign_Required__c From PB_DocSignature__c where Document__c IN :theDocIds];
-        for(PB_DocSignature__c item: docSigns ){
-            allDocumentSignatures.get(item.Document__c).add(item);
-        }
-        
-    
-    }  
-    public void refreshDocSignatures(id docID){
-    
-        PopUpDocumentSignatures = [select id, name, DocSigner__c, Document__c, ReSign_Interval__c, ReSign_Required__c from PB_DocSignature__c where Document__c = :docID Order By CreatedDate];
-    
-    } 
-    public void clearDocSignatures(){
-        PopUpDocumentSignatures = new list<PB_DocSignature__c>();
-    
-    }
-    /* 
-    public void refreshDocMap(){
-
-        allDocs = new map<PB_Document__c, boolean>();
-
-        for(PB_Document__c item : [select id, name, Document_Name__c, 
-                                        Due_Days__c, Effective_Date__c, Expiration_Date__c, Recurring__c, Recurring_Frequency__c,
-                                        Status__c,  Type__c, Version__c
-                                            from PB_Document__c]){
-            allDocs.put(item, false);
-            TMN_Tree.node node = new TMN_Tree.node(item.id, item.id);
-            node.pbDoc = item;
-            
-            DocTree.root.nodes.add(node);
-
-        }
-    }
-    */
-
-    public PageReference SavePacket(){
+    //page methods
+    public PageReference SavePack(){
         try{
-            upsert DocPacket;
-            DocPacket = getDocPacket(DocPacket.id);
-
-        }
-        catch(Exception e){
-            ApexPages.addMessages(e);
-        }
-
-    return  null;
-
-
-    }
-
-    //Document Methods
-    public PageReference SaveDocument(){
-        try{
-            hasError = true;
-            boolean addJO = false;
-            if(PopUpDocument.id == null){
-                addJO = true;
+            if(SelectedDocPacket.External_ID__c == null){
+                SelectedDocPacket.External_ID__c = genID(20);
             }
-            upsert PopUpDocument ;
-            upsert PopUpDocumentSignatures ;
-            if(addJO){
-                PB_DocPacket_Document_JO__c PackDocJoin = new PB_DocPacket_Document_JO__c();
-                PackDocJoin.DocPacket__c = DocPacket.id;
-                PackDocJoin.Document__c = PopUpDocument.id;
-                insert PackDocJoin ;
-            }
-            refreshDocsInPacket();
-            
-            //hasError = false;
-
-        }
-        catch(Exception e){
-            hasError = true;
-            PopUpDocument = new PB_Document__c ();
-            ApexPages.addMessages(e);
-        }
-
-    return  null;
-
-
-    }
-    public PageReference EditDocument(){
-        try{
-            PopUpDocument = [select id, name, Document_Name__c, Due_Days__c, 
-                                Effective_Date__c, Expiration_Date__c, External_ID__c, 
-                                Recurring__c, Recurring_Frequency__c, Status__c, Type__c, Version__c
-                                From PB_Document__c where id = :documentIdForEdit ];
-            refreshDocSignatures(PopUpDocument.id);
+            upsert SelectedDocPacket;
+            refreshDataTree();
+            refreshMiniForm();
 
         }
         catch(Exception e){
             ApexPages.addMessages(e);
         }    
         return null;
-    }
-    public PageReference NewDocument(){
+    }     
+    public PageReference SaveDoc(){
         try{
-            PopUpDocument = new PB_Document__c ();
-            PopUpDocument.External_ID__c = genID(20);
-            clearDocSignatures();
+            if(SelectedDocument.External_ID__c == null){            
+                SelectedDocument.External_ID__c = genID(20);
+            }
+            upsert SelectedDocument;
+            set<string> selectedPackets = new set<string>();
+            for(string item : miniFormTreeSelectedKeys.split(',')){
+                selectedPackets.add(item);
+            }
+            
+            for(PB_DocPacket_Document_JO__c JO : [select id, name, document__c, DocPacket__c from PB_DocPacket_Document_JO__c where DocPacket__c IN :selectedPackets  and document__c = :SelectedDocument.id]){
+                selectedPackets.remove(JO.DocPacket__c);
+            }
+            
+            list<PB_DocPacket_Document_JO__c> newJOsToInsert = new list<PB_DocPacket_Document_JO__c>();
+            for(string packetID: selectedPackets){
+                PB_DocPacket_Document_JO__c newJO = new PB_DocPacket_Document_JO__c();
+                newJO.Document__c = SelectedDocument.id;
+                newJo.DocPacket__c = packetID;  
+                newJosToInsert.add(newJO);          
+            }
+            insert newJosToInsert;
+            refreshDataTree();
+            refreshMiniForm();
+            
+            
 
         }
         catch(Exception e){
@@ -156,35 +72,125 @@ public with sharing class PB_DocPack_Admin_Form {
         }    
         return null;
     }    
-    public PageReference NewDocumentSignature(){
+    public PageReference setSelectiblePacketsForDocumentsTree(){
         try{
-            PB_DocSignature__c signature = new PB_DocSignature__c();
-            
-            PB_Document__c refDoc = new PB_Document__c();
-            refDoc.External_ID__c = PopUpDocument.External_ID__c;
-            signature.Document__r = refDoc;
-            PopUpDocumentSignatures.add(signature);
-            
-
+            refreshMiniFormTree(null);
         }
         catch(Exception e){
             ApexPages.addMessages(e);
-        }         
-    
+        }    
         return null;
-    }
+    }   
+    public PageReference resetMiniForm(){
+        try{
+            refreshMiniFormTree(null);
+            SelectedDocument = new PB_Document__c ();
+            SelectedDocPacket = new PB_DocPacket__c(); 
+            SelectedItemOption  = null;        
+            
+        }
+        catch(Exception e){
+            ApexPages.addMessages(e);
+        }    
+        return null;
+    }   
     
-    //helper methods
+    
+    
+       
+    //refresh methods
+    public void refreshMiniForm(){
+        string SelectedItemOption = null;
+        SelectedDocument = new PB_Document__c();
+        SelectedDocPacket = new PB_DocPacket__c ();
+    
+    }
+    public void refreshMiniFormTree(string DocID){
+        miniFormTreeForDocs = new TMN_Tree();
+        
+        for(PB_DocPacket__c packet: [select id, name, External_ID__c, Packet_Name__c, Status__c from PB_DocPacket__c]){
+            TMN_Tree.Node packetNode = new TMN_Tree.Node(packet.id, packet.Packet_Name__c);
+            packetNode.pbDocPacket = packet;
+            miniFormTreeForDocs.root.nodes.add(packetnode);        
+        }
+        
+        for(PB_DocPacket_Document_JO__c JO: [select id, name, DocPacket__c, Document__c from PB_DocPacket_Document_JO__c Where Document__c = :DocID]){
+            integer packetKey = miniFormTreeForDocs.root.getNode_Key(JO.DocPacket__c);
+            miniFormTreeForDocs.root.nodes.get(packetKey).isSelected = true;        
+        }
+    
+    }
+    public void refreshDataTree(){
+    
+        dataTree = new TMN_Tree();
+        list<PB_DocPacket__c > allPackets = [select id, name, External_ID__c, Packet_Name__c, Status__c from PB_DocPacket__c];
+        
+        for(PB_DocPacket__c packet: allPackets){
+            TMN_Tree.Node packetNode = new TMN_Tree.Node(packet.id, packet.Packet_Name__c);
+            packetNode.pbDocPacket = packet;
+            packetNode.isFolder = true;
+            packetNode.isActivate = packet.Status__c == 'Active';
+            dataTree.root.nodes.add(packetNode);
+        }
+        
+        
+        list<PB_DocPacket_Document_JO__c> allPackDocJO = [select id, name, DocPacket__c, DocPacket__r.Packet_Name__c, Document__c, Document__r.Document_Name__c from PB_DocPacket_Document_JO__c];
+        
+        for(PB_DocPacket_Document_JO__c PackDocJO: allPackDocJO){
+            TMN_Tree.node docNode = new TMN_Tree.node(PackDocJO.id, PackDocJO.Document__r.Document_Name__c);
+            docNode.pbDocPacketJO = PackDocJO;
+            integer docKey = dataTree.root.getNode_Key(PackDocJO.DocPacket__c); 
+            dataTree.root.nodes.get(docKey).nodes.add(docNode);
+        }
+        packetForDocumentsTree(new list<string>());
+    
+    }
+    public void packetForDocumentsTree(list<string> selectedKeys){
+    
+    
+    }
+    public PageReference editItem(){
+        try{
+            //this is passed from the JS method we'll need the prefix from that ID to figure out the object in question
+            // so we know what element to display in the miniForm
+            string itemID = ApexPages.CurrentPage().getParameters().get('itemID');
+            string itemPrefix = itemID.left(3);
+            
+            Schema.DescribeSObjectResult packObj = PB_DocPacket__c.sObjectType.getDescribe();
+            String packetPrefix= packObj.getKeyPrefix();
+            Schema.DescribeSObjectResult joObj = PB_DocPacket_Document_JO__c.sObjectType.getDescribe();
+            String joPrefix= joObj.getKeyPrefix();    
+            
+            if(itemPrefix == packetPrefix){
+                SelectedItemOption = 'Packet';
+                SelectedDocPacket = [select id, name, External_ID__c,  Packet_Name__c, Status__c from PB_DocPacket__c where id =:itemID];            
+            }
+            else if(itemPrefix == joPrefix){
+                //the JS passes us the ID of the junction object, what we need is the ID of the acutal document 
+                //
+                SelectedItemOption = 'Document';
+                SelectedDocument = [select id, name, Document_Name__c, Due_Days__c, Effective_Date__c,
+                                        Expiration_Date__c, External_ID__c, Recurring__c, Recurring_Frequency__c, 
+                                        Status__c, Type__c, Version__c 
+                                            From PB_Document__c
+                                            Where id IN (select document__c from PB_DocPacket_Document_JO__c where id = :itemID)];
+                                            
+                // now we need to find the packets that this document is a part of 
+                refreshMiniFormTree(SelectedDocument.id);    
+            } 
+        }
+        catch(Exception e){
+            ApexPages.addMessages(e);
+        }    
+        return null;
+    }  
+ //helper methods
     public string GenId(integer len){
         Blob b = Crypto.GenerateAESKey(128);
         String h = EncodingUtil.ConvertTohex(b);            
         
         return h.substring(0,len);
     
-    } 
-    public Boolean getErrorsPresent(){
-        return ApexPages.hasMessages(ApexPages.Severity.ERROR);
-    }   
-
-
+    }        
+ 
 }
