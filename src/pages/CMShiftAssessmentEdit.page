@@ -371,7 +371,7 @@
        	 	 
                 var ranchoScore = $('[id$=ranchoValue]').val();
                 
-                if(ranchoScore.indexOf('1') < 0 && ranchoScore != '') {
+                if(ranchoScore != '(1) No Response' ) {
                 	$('[id$=ranchoDetails]').show();
                 
                 }
@@ -418,13 +418,81 @@
              
              };
              
+             handleMood = function() {
+					
+                // if sad or flat, enable depression question
+                var mood = '';
+                $('input[id*=moodlist]').each(function (index, element) {
+                    if ( $(element).prop('checked') == true )
+                        mood += $(element).val() + ';';
+                });
+                
+                if ( mood.indexOf('Unable to Determine') >= 0 ) {
+                    // disable all others
+                    $('input[id*=moodlist]').each(function (index, element) {
+                        if ($(element).val() != 'Unable to Determine') {
+                            $(element).prop('checked', false);
+                            $(element).prop('disabled', true);
+                            mood -= $(element).val() + ';';
+                           
+                        }
+                    });
+                   		$('[id$=sadflatHurt]').hide();
+                   		$('[id$=sadflatHurtLabel]').hide();
+                   		$('[id$=sadflatHurt]').val('');
+                   		$('[id$=plantoHarm]').hide();
+                   		$('[id$=plantoHarmLabel]').hide();
+                   		$('[id$=plantoHarm]').val('');
+                   		
+                } else {
+
+                    $('input[id*=moodlist]').each(function (index, element) {
+                            $(element).prop('disabled', false);
+                            
+                        });
+                        
+                        if ( mood.indexOf('Sad') >=  0 || mood.indexOf('Flat') >=  0 ) {
+                        	$('[id$=sadflatHurt]').show();
+                    		$('[id$=sadflatHurtLabel]').show();
+                    		
+                    		if($('[id$=sadflatHurt]').val() == 'Yes') {
+                    				
+                    				$('[id$=plantoHarm]').show();
+                    				$('[id$=plantoHarmLabel]').show();
+            
+                    		}
+                    		else {
+                    		
+                    				$('[id$=plantoHarm]').hide();
+                    				$('[id$=plantoHarmLabel]').hide();
+                    				$('[id$=plantoHarm]').val('');
+                    		
+                    		}	
+                        
+                        }
+                        else{
+                        	$('[id$=sadflatHurt]').hide();
+                    		$('[id$=sadflatHurtLabel]').hide();
+                    		$('[id$=sadflatHurt]').val('');
+                    		$('[id$=plantoHarm]').hide();
+                    		$('[id$=plantoHarmLabel]').hide();
+                    		$('[id$=plantoHarm]').val('');
+                        
+                        }
+                }
+
+             };
+             
+             
              handleSitter = function () {
        
              	if( $('[id$=sitter]').is(":checked") ) {
+             		$('[id$=hoursLabel]').show();
              		$('[id$=onetooneHours]').show();
        
              	}
              	else{
+             		$('[id$=hoursLabel]').hide();
              		$('[id$=onetooneHours]').hide();
              		$('[id$=onetooneHours]').val('');
              	
@@ -437,6 +505,7 @@
 	       	 	handleRancho();
 	       	 	handleExpression();
 	       	 	handleSitter();
+	       	 	handleMood();
        	
        	 	};
        	 	
@@ -518,7 +587,7 @@
        	 	hanldePsycho = function(){
        	 		var copingValue = $('[id$=residentCoping]').val();
        	 		
-       	 		if(copingValue == 'No'){
+       	 		if(copingValue == 'No' ){
        	 			$('[id$=copingDescribeLabel]').show();
        	 			$('[id$=copingDescribe]').show();
        	 		
@@ -583,7 +652,7 @@
     		<apex:inputhidden value="{! Evaluation__c.Expression_Other__c}" />
     	</apex:outputpanel>
         <apex:pageMessages id="pageMessages" />
-         <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="handleDiagnosis(); handleCardio(); handleNeuro(); handleOrtho(); hanldePsycho();" reRender="pageMessages, wholeTabPanel, buttons">
+         <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="handleDiagnosis(); handleCardio(); handleNeuro(); handleOrtho();  hanldePsycho();" reRender="pageMessages, wholeTabPanel, buttons">
             <apex:param name="nextTab" assignTo="{!nextTab}" value="" />
         </apex:actionFunction>
          <apex:tabPanel value="{!selectedTab}" id="wholeTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent" >
@@ -987,12 +1056,29 @@
 		
 		                        <apex:pageBlockSectionItem >
 		                            <apex:outputLabel value="Mood" />
-		                            <apex:selectCheckboxes value="{!selectedMoods}"  style="margin-left:-13px" id="moodlist">
+		                            <apex:selectCheckboxes value="{!selectedMoods}"  style="margin-left:-13px" id="moodlist" onchange="handleMood(); return false;" >
 		                                <apex:selectOptions value="{!moodValues}" />
 		                            </apex:selectCheckboxes>
 		                        </apex:pageBlockSectionItem>
-		                        <apex:inputField value="{!Evaluation__c.Desire_to_hurt_themselves__c}" label="Has Resident Expressed Desire to Hurt Him/Herself?"  id="sadflatHurt"/>
-		                        <apex:inputField value="{!Evaluation__c.Plan_to_Harm_themselves__c}" label="Does Resident Have a Plan to Harm Him/Herself?" id="plantoHarm" />
+		                        <apex:pageBlockSectionItem >
+		                        	<apex:outputpanel id="labelPanel">
+		                        		<apex:outputLabel value="Has Resident Expressed Desire to Hurt Him/Herself?" id="sadflatHurtLabel" />
+		                        		<br/>
+		                        		<br/>
+		                        		<apex:outputLabel value="Does Resident Have a Plan to Harm Him/Herself?" id="plantoHarmLabel" />
+		                        	</apex:outputpanel>
+		                        	<apex:outputPanel >
+		                        		<div class="requiredInput">
+	                    	 				<div class="requiredBlock"></div >
+		                        		<apex:inputField value="{!Evaluation__c.Desire_to_hurt_themselves__c}"  id="sadflatHurt" onchange="handleMood(); return false;"/>
+		                        		</div>
+		                        		<div class="requiredInput">
+	                    	 				<div class="requiredBlock"></div>
+		                        		<apex:inputField value="{!Evaluation__c.Plan_to_Harm_themselves__c}"  id="plantoHarm" />
+		                        		</div>
+		                        	</apex:outputPanel>
+		                        </apex:pageBlockSectionItem>
+		                        
 		                        <apex:pageBlockSectionItem />
 		                        <apex:pageBlockSectionItem >
 		                        	<apex:outputText value="Communication" styleClass="labelCol" />
@@ -1009,7 +1095,10 @@
 		                        		<apex:outputText  value="Other Expression" id="otherExpressionLabel" />
 		                        	</apex:outputPanel>
 		                        	<apex:outputPanel >
-		                        		<apex:inputField value="{!Evaluation__c.Able_to_make_Needs_Known__c}" id="needsKnown" required ="True" onchange="handleExpression(); return false;" />
+		                        		<div class="requiredInput">
+	                    	 				<div class="requiredBlock"></div>
+		                        		<apex:inputField value="{!Evaluation__c.Able_to_make_Needs_Known__c}" id="needsKnown" onchange="handleExpression(); return false;" />
+		                        		</div>
 		                        		<div class="requiredInput">
 	                    	 				<div class="requiredBlock"></div>
 		                        		<apex:inputField value="{!Evaluation__c.Expression__c}" id="verbalExpression" onchange="handleExpression(); return false;" />
@@ -1027,12 +1116,18 @@
 	                        <apex:inputField value="{!Evaluation__c.Safety_Awareness__c}" required="true" />
 	                        <apex:inputField value="{!Evaluation__c.Bed_Alarm__c}" />
 	                        <apex:pageBlockSectionItem >
-	                        <apex:outputLabel value="One to One Sitter<br /><br />Hours Per Day" escape="false" />
-	                        <apex:outputPanel >
-	
-	                        <apex:inputField value="{!Evaluation__c.One_to_One_Sitter__c}"  id="sitter" onchange="handleSitter(); return false;"/>
-	                        <br /><apex:inputField value="{!Evaluation__c.one_to_One_Sitter_of_Hours_per_day__c}" label="# of hours per day" id="onetooneHours" />
-	                        </apex:outputPanel>
+		                        <apex:outputpanel >
+			                        <apex:outputLabel value="One to One Sitter" />
+			                        <br/>
+			                        <br/>
+			                        <apex:outputLabel value="# of hours per day" id="hoursLabel"/>
+		                        </apex:outputpanel>
+	                        
+		                        <apex:outputPanel >
+			                        <apex:inputField value="{!Evaluation__c.One_to_One_Sitter__c}"  id="sitter" onchange="handleSitter(); return false;"/>
+			                      	<br />
+			                        <apex:inputField value="{!Evaluation__c.one_to_One_Sitter_of_Hours_per_day__c}" id="onetooneHours" />
+		                        </apex:outputPanel>
 	                        </apex:pageBlockSectionItem>
 	                        <apex:inputField value="{!Evaluation__c.Low_Bed__c}" />
                         </apex:pageBlockSection>
