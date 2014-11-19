@@ -3,7 +3,7 @@ public with sharing class skills_summary_rpt {
     public date StartDate {get; set;}
     public date EndDate {get; set;}
     public List<id> selectedPBS {get; set;}
-    public list<SelectOption> PBSList = new list<SelectOption>();
+    public list<SelectOption> PBSList ;
     public list<SelectOption> getPBSList(){ return PBSList ;}
 
     public boolean hasRunOnce {get; set;}
@@ -20,11 +20,11 @@ public with sharing class skills_summary_rpt {
     public string pdfRunDateTimeString { get; set; }
     // END: ERD-11 - Add property to hold PDF run datetime as string in report runner's time zone.  J. Gilliam, 11/5/14
 
-    public transient list<SelectOption> programslist = new list<SelectOption>();
+    public list<SelectOption> programslist = new list<SelectOption>();
     public list<SelectOption> getProgramslist(){ return programslist; }
 	public List<Id> selectedPrograms {get; set;}
 	
-    public transient list<SelectOption> select2list = new list<SelectOption>();
+    public list<SelectOption> select2list = new list<SelectOption>();
     public list<SelectOption> getSelect2list(){ return select2list; }	
     public List<id> select2PrmIds {get; set;}
     
@@ -38,6 +38,7 @@ public with sharing class skills_summary_rpt {
 		for (AggregateResult slPrgm : slPrgms) {
 			programslist.add(new SelectOption((Id)slPrgm.get('slID'), String.valueOf(slPrgm.get('alias')) + '-' + String.valueOf(slPrgm.get('prgm')) ));
         }
+        PBSList = new List<SelectOption>();
         selectedPBS = new List<id>();
         pbsPeople = new Map<ID, Contact>();
         hasRunOnce =false;
