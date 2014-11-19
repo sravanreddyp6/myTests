@@ -84,8 +84,9 @@ static testMethod void testReport() {
     	
     }
 
+	cntl.runPDF();
+	
     cntl.select2PrmIds.Add( cntl.selectedprograms[0]);
-    
     cntl.RemovePrograms();
 
    	
