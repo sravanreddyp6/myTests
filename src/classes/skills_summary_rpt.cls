@@ -8,13 +8,14 @@ public with sharing class skills_summary_rpt {
     public list<SelectOption> getPBSList(){ return PBSList ;}
     public boolean hasRunOnce {get; set;}
     public List<mydate> mondays { get; set;}
-    public Map<ID, List<Action_Plan__c>> pbsPlanMap { get; set; }
-    public Map<ID, List<Action_Plan_Objective__c>> planObjMap { get; set; }
-    public Map<ID, List<mydate>> objWeekMap { get; set; }
+    public transient Map<ID, List<Action_Plan__c>> pbsPlanMap { get; set; }
+    public transient Map<ID, List<Action_Plan_Objective__c>> planObjMap { get; set; }
+    public transient Map<ID, List<mydate>> objWeekMap { get; set; }
     public List<Integer> dayCounter {get { return new List<Integer>{0,1,2,3,4,5,6};}}
-    public Map<ID, Contact> pbsPeople{ get; set;}
+    public transient Map<ID, Contact> pbsPeople{ get; set;}
     public string strPlanContacts { get; set;}
     public integer numContacts { get; set; }
+    public string strPlanObjList {get; set;}
 
     // START: ERD-11 - Add property to hold PDF run datetime as string in report runner's time zone.  J. Gilliam, 11/5/14
     public string pdfRunDateTimeString { get; set; }
@@ -184,21 +185,24 @@ public with sharing class skills_summary_rpt {
 										
 		planObjMap = new map<ID, List<Action_Plan_Objective__c>>();
 		objWeekMap = new map<ID, List<mydate>>();
+		ID planID; 
 		
+		// put the objectives list into the plan map.
 		for ( Action_Plan_Objective__c apo : apoList ) {
-			if ( planObjMap.containsKey( apo.action_plan_goal__r.action_plan__c)) {
+			planID = apo.action_plan_goal__r.action_plan__c;
+			if ( planObjMap.containsKey( planID)) {
 				// add to the list
-				(planObjMap.get( apo.action_plan_goal__r.action_plan__c)).add(apo );
+				(planObjMap.get( planID )).add(apo );
 			} 			
 			else { 
-				planObjMap.put( apo.action_plan_goal__r.action_plan__c, new List<Action_Plan_Objective__c>{ apo });
+				planObjMap.put( planID, new List<Action_Plan_Objective__c>{ apo });
+				strplanobjlist += planID+ ',';
 			}
 			
 			objWeekMap.put( apo.id, getCoveredWeeks( apo.effective_date__c, apo.target_end_date__c, startDate, endDate));
 			
 			
 		}
-		
 		system.Debug( 'pbs plans:' + pbsPlanMap);
 		system.Debug( 'plan objs:' + planObjMap);		
 		

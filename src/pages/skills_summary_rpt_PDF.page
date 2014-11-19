@@ -24,16 +24,16 @@ Run Date:&nbsp;	<apex:outputText value="{!pdfRunDateTimeString}" /><br />
 Run By:  {!$User.myFullName__c}<br />
 <br />
 <hr />
-<apex:pageBlock>
+<apex:pageBlock >
 <apex:repeat value="{!selectedPBS}" var="person">
 <apex:pageBlockSection title="{!pbsPeople[person].Lastname + ', ' + pbsPeople[person].firstname }" columns="1" rendered="{! numContacts > 0}">
 
  <apex:repeat value="{!pbsPlanMap[person]}" var="plan">
- 	<apex:pageBlockSection title="{! plan.name}" columns="1">   
+ 	<apex:pageBlockSection title="{! plan.name}" columns="1" rendered="{!CONTAINS( strplanobjlist, plan.id)}">   
     
     <apex:repeat value="{!planObjMap[plan]}" var="obj">
     <apex:pageBlockSection title="{!obj.Description__c}" columns="1">
-    <apex:outputPanel>
+    <apex:outputPanel >
 	<apex:repeat value="{!objWeekMap[obj.Id]}" var="day"> <!--  first day of reportable week -->
         
 		<table style="border:1px solid black;width:100%;padding:0px; border-collapse:collapse">
