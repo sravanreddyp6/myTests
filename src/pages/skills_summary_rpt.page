@@ -66,7 +66,7 @@
     
     <apex:pageBlockSection columns="1">
     
-    <apex:outputPanel>
+    <apex:outputPanel >
        <apex:outputLabel styleclass="labelCol" value="Start Date" for="start_date" /> <apex:input type="auto" id="start_date" size="10"  label="Start Date" styleClass="datepicker" value="{! StartDate}" />
        <apex:outputLabel styleclass="labelCol" value="End Date" for="end_date" /> <apex:input type="auto" id="end_date" size="10"  label="End Date" styleClass="datepicker" value="{! EndDate}" />
     </apex:outputPanel>
@@ -75,7 +75,7 @@
        
        
        <apex:pageBlockSection id="programs" title="Programs (Please select one or more Programs from the below list to view clients.)" columns="1" collapsible="false" >
-       <apex:outputPanel>
+       <apex:outputPanel >
 	    	<table>
 		        <tr>
 		        <td>
@@ -111,7 +111,7 @@
        <a href="#" onclick="selectAllPBS();" >Select All</a>
        </div>
        <Br />
-       <apex:outputPanel>
+       <apex:outputPanel >
        <br />
        
               <apex:selectCheckboxes html-class="mytbl2" value="{!selectedPBS }" layout="pageDirection" id="chkPBS">
@@ -151,11 +151,11 @@
 <apex:pageBlockSection title="{!pbsPeople[person].Lastname + ', ' + pbsPeople[person].firstname }" columns="1" rendered="{! numContacts > 0}">
 
  <apex:repeat value="{!pbsPlanMap[person]}" var="plan">
- 	<apex:pageBlockSection title="{! plan.name}" columns="1">   
+ 	<apex:pageBlockSection title="{! plan.name}" columns="1" rendered="{!CONTAINS( strplanobjlist, plan.id)}">   
     
     <apex:repeat value="{!planObjMap[plan]}" var="obj">
     <apex:pageBlockSection title="{!obj.Description__c}" columns="1">
-    <apex:outputPanel>
+    <apex:outputPanel >
 	<apex:repeat value="{!objWeekMap[obj.Id]}" var="day"> <!--  first day of reportable week -->
         
 		<table style="border:1px solid black;width:100%;padding:0px; border-collapse:collapse">
