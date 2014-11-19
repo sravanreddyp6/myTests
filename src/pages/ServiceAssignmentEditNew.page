@@ -889,6 +889,7 @@ END: Uncomment to have the element collapsed by default -->
     <apex:pageBlock title="Admission and Shift Assessments" rendered="{!showNurseAssessment && !editSA}">
     		<div class="pbHeaderButton">
     			<apex:CommandButton value="Admission and Shift Assessment" rendered="{!(evaluations == null || evaluations.size=0) && Service_Assignment__c.Status__c!='Inactive'}" action="{!addNurAssessment}"/>
+    			<apex:commandButton value="Add Shift Assessment" rendered="{!vfVarIsCM}" onclick="window.open('{!$Page.createShiftAssessment}','_self'); return false;" />
     		</div>
     		<apex:pageBlockTable styleclass="pcBody-list" value="{!evaluations}" var="evs" rendered="{!evaluations.size>0}">
     			<apex:column headerValue="Action"><a href="/apex/NursingEvaluationEdit?id={!evs.Id}&tab=demographicsTab">Edit</a></apex:column>
