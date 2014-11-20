@@ -955,13 +955,17 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
         }       
         for(Funding_Source__c fs :fundingSources){
           if (fs.Type_of_Coverage__c != 'Primary' && referralRecord.Close_Reason__c != 'Error' && referralRecord.Referral_Status__c == 'Closed'){
-             hasFundError = true;
-             break;   
+             hasFundError = true;   
+          } else if(fs.Type_of_Coverage__c == 'Primary'){
+             hasFundError = false;
+             break;
           }
         }
         for(Referral_Location__c rl :locations){
           if (rl.Rank__c != 'Primary' && referralRecord.Close_Reason__c != 'Error' && referralRecord.Referral_Status__c == 'Closed'){
              hasLocError = true;
+          } else if(rl.Rank__c == 'Primary'){
+             hasLocError = false;
              break;
           }
         }  
