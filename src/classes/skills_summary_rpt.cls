@@ -146,7 +146,7 @@ public with sharing class skills_summary_rpt {
 		numContacts = people.size();
 		
 		// for each PBS, get active action plan, put into a map of PBSID, PlanID
-		List<Action_Plan__c> apList = [select id, name, service_assignment__r.person_being_served__c from action_plan__c where service_assignment__r.person_being_served__c in :selectedPBS and 
+		List<Action_Plan__c> apList = [select id, name, status__c, service_assignment__r.person_being_served__c from action_plan__c where service_assignment__r.person_being_served__c in :selectedPBS and 
 			 ((effective_date__c >= :startDate and effective_date__c <= :endDate ) or
 				(target_date__c >= :startDate and target_date__c <= :endDate ) or
 				( effective_date__c < :startDate and target_date__c > :endDate)

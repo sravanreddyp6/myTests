@@ -29,7 +29,7 @@ Run By:  {!$User.myFullName__c}<br />
 <apex:pageBlockSection title="{!pbsPeople[person].Lastname + ', ' + pbsPeople[person].firstname }" columns="1" rendered="{! numContacts > 0}">
 
  <apex:repeat value="{!pbsPlanMap[person]}" var="plan">
- 	<apex:pageBlockSection title="{! plan.name}" columns="1" rendered="{!CONTAINS( strplanobjlist, plan.id)}">   
+ 	<apex:pageBlockSection title="{! plan.name + ' - ' + plan.status__c }" columns="1" rendered="{!CONTAINS( strplanobjlist, plan.id)}">   
     
     <apex:repeat value="{!planObjMap[plan]}" var="obj">
     <apex:pageBlockSection title="{!obj.Description__c}" columns="1">
