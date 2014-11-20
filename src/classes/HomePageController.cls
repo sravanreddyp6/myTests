@@ -482,7 +482,7 @@ public with sharing class HomePageController{
             items.add('Weekly_Referrals');        
         }
         if(og == 'Care Meridian'){
-        
+        	items.add('All_Referrals_with_Primary_Payor');
         }
         if(og == 'NeuroRestorative'){
             items.add('Daily_Referrals');
