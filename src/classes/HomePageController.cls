@@ -44,8 +44,8 @@ public with sharing class HomePageController{
       
       //Constructor
      public HomePageController(){
-  		
-  		checkTmnUserRecord();
+        
+        checkTmnUserRecord();
         shareobj();
         reports();
         mineTasks();
@@ -486,7 +486,8 @@ public with sharing class HomePageController{
         }
         if(og == 'NeuroRestorative'){
             items.add('Daily_Referrals');
-            items.add('Weekly_Referrals');                  
+            items.add('Weekly_Referrals');
+            items.add('NR_AdmissionSteps');                  
         } 
         
     
@@ -499,18 +500,18 @@ public with sharing class HomePageController{
     public class TMN_User_Exception extends Exception {}
     
     public void checkTmnUserRecord() {
-    	
-    	String usersId = UserInfo.getUserId();
-    	List<TMN_User__c> tmnUserRecords = [ SELECT Id FROM TMN_User__c WHERE Salesforce_User_Account__c = :usersId LIMIT 1 ];
-    	
-    	Integer countTmnUserRecords = 0;
-    	for(TMN_User__c tmnu : tmnUserRecords) {
-			countTmnUserRecords++;
-    	}
-    	
-    	if(countTmnUserRecords==0) {
-    		throw new TMN_User_Exception('ERROR: Your account must be reconfigured before you begin using the system. Please contact the Implementation Team at Implementation@thementornetwork.com or the IT Service Center at 888-774-4872.');
-    	}	
+        
+        String usersId = UserInfo.getUserId();
+        List<TMN_User__c> tmnUserRecords = [ SELECT Id FROM TMN_User__c WHERE Salesforce_User_Account__c = :usersId LIMIT 1 ];
+        
+        Integer countTmnUserRecords = 0;
+        for(TMN_User__c tmnu : tmnUserRecords) {
+            countTmnUserRecords++;
+        }
+        
+        if(countTmnUserRecords==0) {
+            throw new TMN_User_Exception('ERROR: Your account must be reconfigured before you begin using the system. Please contact the Implementation Team at Implementation@thementornetwork.com or the IT Service Center at 888-774-4872.');
+        }   
     }
     // END: SHAUN-47: Additions for checking existence of TMN_User__c record for the User.
   
