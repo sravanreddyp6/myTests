@@ -132,8 +132,59 @@
                     </div>
                 </apex:outputPanel>
                 <div class="modal-body">
+                
+                         <script>
+                            /*
+                             * Shaun Added
+                             * EB-263
+                             */
+                             
+                             if (j$('#choices').attr('name') == 'a0g11000000bJVBAA2') {
+                                 //alert('show');
+                                 j$('#cb').show();   
+                                 j$('.DescribeNInput').prop("disabled", true);
+                             }else {
+                                 //alert('hide');
+                                 j$('#cb').hide();
+                                 j$('.DescribeNInput').prop("disabled", false);   
+                             }
+                             
+                                                            
+                             function autoFill() {
+                             
+                                 alert(document.getElementById("choices").value);
+                             
+                               
+                                if (document.getElementById("choices").value == "Other"){
+                                    j$('.DescribeNInput').text("");
+                                    j$('.DescribeNInput').prop("disabled", false);
+                                    //alert(q);
+                                }     
+                                else{
+                                    j$('.DescribeNInput').text(document.getElementById("choices").value);
+                                    j$('.DescribeNInput').prop("disabled", true);
+                                }        
+                              }
+                          </script>
+                
+                
+                
                     <apex:outputPanel rendered="{!Question.Describe_Description_N__c != null}">
-                        <p>{!Question.Describe_Description_N__c}</p> 
+                        {!Question.Describe_Description_N__c} 
+                        <div id="cb">
+                          <select id="choices" name="{!Question.Id}" onChange="autoFill();">
+                                <option value=" ">Please Select</option>
+                                <option value="I am not responsible to conduct or monitor this training">I am not responsible to conduct or monitor this training</option> 
+                                <option value="No compliance training was offered">No compliance training was offered</option>
+                                <option value="I don’t have the records of who was trained">I don’t have the records of who was trained</option>
+                                <option value="I don’t know how to locate training records">I don’t know how to locate training records</option>
+                                <option value="I was unaware that compliance training had to be completed">I was unaware that compliance training had to be completed</option>
+                                <option value="I did not supervise the employees for the whole year so I am unsure if they had the training">I did not supervise the employees for the whole year so I am unsure if they had the training</option>
+                                <option value="I do not have direct reports">I do not have direct reports</option>
+                                <option value="I am not sure if it was done">I am not sure if it was done</option>
+                                <option value="Other">Other</option>                          
+                          </select>
+                        </div>
                     </apex:outputPanel>
                     <apex:inputField style="width:95%"  value="{!Reply.Describe__c}" required="true" rendered="{!Question.Describe_N__c}" styleClass="DescribeNInput"/>
                 </div>
