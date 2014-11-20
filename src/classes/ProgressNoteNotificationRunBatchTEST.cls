@@ -25,7 +25,7 @@
 private class ProgressNoteNotificationRunBatchTEST {
 
     static testMethod void myUnitTest() {
-          User usr = [ SELECT Id FROM User WHERE LastName = 'Gilliam' AND FirstName = 'Josh' LIMIT 1];
+          User usr = [ SELECT Id FROM User WHERE LastName = 'integration' LIMIT 1];
         
         String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
         

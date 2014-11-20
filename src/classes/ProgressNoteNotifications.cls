@@ -132,7 +132,7 @@ global class ProgressNoteNotifications implements Database.Batchable<sObject> {
 	                // Set receiver of email to a User Id for a Salesforce user; the owner of the assessment for
 	                // which we are sending a notification.  
 	                
-	                User idForAssmtDeveloper = [ SELECT Id FROM User WHERE FirstName = 'Josh' AND LastName = 'Gilliam' LIMIT 1];
+	                User idForAssmtDeveloper = [ SELECT Id FROM User WHERE LastName = 'integration' LIMIT 1];
 	                
 	                mail.setTargetObjectId(idForAssmtDeveloper.Id);            
 	                      
@@ -226,7 +226,7 @@ global class ProgressNoteNotifications implements Database.Batchable<sObject> {
                 
                 // Get user Id of this script's author.  Assumes we'll only have one person with this full name.
                 // If changed to a more common name, recode for that.               
-                List<User> userIDs = [SELECT Id FROM User WHERE Name = 'Josh Gilliam'];     
+                List<User> userIDs = [SELECT Id FROM User WHERE Name = 'integration'];     
                 Id userID = userIds[0].Id;
                 
                 // Set receiver of email "target" to the User Id of the script author.
