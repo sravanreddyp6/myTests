@@ -65,15 +65,32 @@
 <apex:actionRegion >
     
     <apex:pageBlockSection columns="1">
-    
+    <apex:pageBlockSectionItem>
+    <apex:outputPanel layout="none" id="buttonPanel">
+       	<apex:commandButton value="Run" 
+            action="{!runReport}" 
+            reRender="dataTable, tbl_maker, pbsOPTS, messages, buttonPanel" 
+            status="myStatus"
+            rendered="{!!hasRunOnce}"
+            />
+      	<apex:commandButton value="Reset" 
+            action="{!cancelToNewRun}"
+            immediate="true" 
+            />
+        <apex:commandLink id="btnRunPDF2"
+        	value="Create PDF"
+        	action="{!runPDF}"
+        	styleClass="btn" 
+        	target="_blank" 
+        	rendered="{!hasRunOnce}" />
+        	</apex:outputPanel>
+        	</apex:pageBlockSectionItem>
+        	
     <apex:outputPanel >
        <apex:outputLabel styleclass="labelCol" value="Start Date" for="start_date" /> <apex:input type="auto" id="start_date" size="10"  label="Start Date" styleClass="datepicker" value="{! StartDate}" />
        <apex:outputLabel styleclass="labelCol" value="End Date" for="end_date" /> <apex:input type="auto" id="end_date" size="10"  label="End Date" styleClass="datepicker" value="{! EndDate}" />
     </apex:outputPanel>
     </apex:pageBlockSection>
-    
-       
-       
        <apex:pageBlockSection id="programs" title="Programs (Please select one or more Programs from the below list to view clients.)" columns="1" collapsible="false" >
        <apex:outputPanel >
 	    	<table>
@@ -122,25 +139,6 @@
        
        
 
-		<apex:outputPanel layout="none" id="buttonPanel">
-       	<apex:commandButton value="Run" 
-            action="{!runReport}" 
-            reRender="dataTable, tbl_maker, pbsOPTS, messages, buttonPanel" 
-            status="myStatus"
-            rendered="{!!hasRunOnce}"
-            />
-      	<apex:commandButton value="Reset" 
-            action="{!cancelToNewRun}"
-            immediate="true" 
-            />
-        <apex:commandLink id="btnRunPDF2"
-        	value="Create PDF"
-        	action="{!runPDF}"
-        	styleClass="btn" 
-        	target="_blank" 
-        	rendered="{!hasRunOnce}" />
-        	</apex:outputPanel>
-        	
        </apex:actionRegion>
 </apex:pageBlock>
 </apex:form> 
@@ -155,8 +153,8 @@
     
     <apex:repeat value="{!planObjMap[plan]}" var="obj">
     <apex:pageBlockSection title="{!obj.Description__c}" columns="1">
-    <apex:outputPanel >
-	<apex:repeat value="{!objWeekMap[obj.Id]}" var="day"> <!--  first day of reportable week -->
+    <apex:outputPanel>
+   <apex:repeat value="{!objWeekMap[obj.Id]}" var="day"> <!--  first day of reportable week -->
         
 		<table style="border:1px solid black;width:100%;padding:0px; border-collapse:collapse">
       	<tr style="border-bottom:1px solid black">
@@ -203,10 +201,11 @@
 	  </table>
 	  <br /><br />
 	      </apex:repeat>
-	      </apex:outputPanel>
-	      
+	</apex:outputPanel>      
 	</apex:pageBlockSection>
+	
 	  </apex:repeat>
+	  
       </apex:pageBlockSection>
       </apex:repeat>
       
