@@ -162,7 +162,8 @@ public with sharing class REF_HomePageController {
         }
         if(og == 'NeuroRestorative'){
             items.add('Daily_Referrals');
-            items.add('Weekly_Referrals');                    
+            items.add('Weekly_Referrals');
+            items.add('NR_AdmissionSteps');                    
         } 
         
     
