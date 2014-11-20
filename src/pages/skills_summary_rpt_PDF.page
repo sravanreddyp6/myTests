@@ -59,24 +59,24 @@ Run By:  {!$User.myFullName__c}<br />
       <tr>
       			
 		      <apex:repeat value="{!dayCounter}" var="dayInc">
-		      	  <apex:variable value="{!0}" var="display" />   	
-	   		      <apex:repeat value="{!obj.Action_Skill_Results__r}" var="res">
-				      <apex:outputPanel layout="none" rendered="{!res.Day__c == day.intdate+dayInc}">
-				      	<td style="text-align:center"><apex:outputField value="{!res.Attempts__c}"  styleClass="attemptoutput"/></td>
-				      	<td style="text-align:center"><apex:outputField value="{!res.Status__c}" rendered="{!res.Day__c == day.intdate+dayInc}" styleClass="statusoutput"/></td>
-				      	<td style="text-align:center"><apex:outputField value="{!res.Met_Objective__c}" rendered="{!res.Day__c == day.intdate+dayInc}" styleClass="metobjectiveoutput"/></td>
-				      	<td style="text-align:center" class="lastfieldofday"><apex:outputField value="{!res.Initials__c}" rendered="{!res.Day__c == day.intdate+dayInc}" styleClass="initialsoutput"/></td>
-				      	</apex:outputPanel>
-				      	<apex:variable value="{!IF(OR(display==1, AND(display==0, res.day__c == day.intdate+dayInc)), 1, 0)}" var="display" />
-			      </apex:repeat>
-			          <apex:outputPanel layout="none" rendered="{!display==0}">
-				      	<td style="text-align:center">&nbsp;</td>
-				      	<td style="text-align:center">&nbsp;</td>
-				      	<td style="text-align:center">&nbsp;</td>
-				      	<td style="text-align:center" class="lastfieldofday">&nbsp;</td>
-				      	</apex:outputPanel>
-				      	
-				</apex:repeat> 
+                  <apex:variable value="{!0}" var="display" />      
+                  <apex:repeat value="{!obj.Action_Skill_Results__r}" var="res">
+                      <apex:outputPanel layout="none" rendered="{!res.Day__c == day.intdate+dayInc}">
+                        <td style="text-align:center" class="attemptoutput">{!res.Attempts__c}</td>
+                        <td style="text-align:center;display:{!IF(res.Day__c == day.intdate+dayInc,'','none')}" class="statusoutput">{!res.Status__c}</td>
+                        <td style="text-align:center;display:{!IF(res.Day__c == day.intdate+dayInc,'','none')}" class="metobjectiveoutput">{!res.Met_Objective__c}</td>
+                        <td style="text-align:center;display:{!IF(res.Day__c == day.intdate+dayInc,'','none')}" class="lastfieldofday initialsoutput">{!res.Initials__c}</td>
+                        </apex:outputPanel>
+                        <apex:variable value="{!IF(OR(display==1, AND(display==0, res.day__c == day.intdate+dayInc)), 1, 0)}" var="display" />
+                  </apex:repeat>
+                      <apex:outputPanel layout="none" rendered="{!display==0}">
+                        <td style="text-align:center">&nbsp;</td>
+                        <td style="text-align:center">&nbsp;</td>
+                        <td style="text-align:center">&nbsp;</td>
+                        <td style="text-align:center" class="lastfieldofday">&nbsp;</td>
+                        </apex:outputPanel>
+                        
+                </apex:repeat>        
       </tr> 
 	  </table>
 	  <br /><br />
