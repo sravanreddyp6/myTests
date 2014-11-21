@@ -8,10 +8,10 @@
     .dialogLoadingSpinner {
       margin-left: 5px;
     }
-    /*.modalDialog {
+    .modalDialog {
       max-height: 500px;
       overflow: auto;
-    }*/
+    }
     .modalDialog .modalSubheader {
       font-weight: bold;
     }
@@ -49,7 +49,7 @@
 (function ($) {
     openModalDialog = function (dialogId, tagType, titleString, dClass, width) {
         if (!width) {
-            width = 1000;
+            width = 1200;
         }
         if (!dClass) {
             dClass = 'fixed-dialog';
@@ -94,13 +94,23 @@
 }) (jQuery.noConflict());
 
 
-//j$ = jQuery.noConflict();
-//j$(document).ready(function(){
-//	var hstryblks = j$('img[id$=section1]');
-//	j$.each( hstryblks, function( index, hstryblk) {
-//			j$(this).trigger("click");
-//	});
-//});
+renderTreeTableCols = function(data){
+                        var node = data.node,
+                        $select = $("<select>"),
+                        $tdList = $(node.tr).find(">td");
+                        // (index #0 is rendered by fancytree by adding the checkbox)
+                              // (index #1 is rendered by fancytree - title)
+                                $tdList.eq(2).html(node.data.effectiveDate);
+                                $tdList.eq(2).css({"white-space":"nowrap"});                  
+                                $tdList.eq(3).html(node.data.dueDays);
+                                $tdList.eq(3).css({"text-align":"center"});
+                                $tdList.eq(4).html(node.data.filedDate);
+                                $tdList.eq(4).css({"white-space":"nowrap"});      
+                                $tdList.eq(5).html(node.data.recurrFreq);
+                                $tdList.eq(6).html(node.data.assocStatus);
+                                $tdList.eq(7).html(node.data.statusDate);
+                                $tdList.eq(7).css({"white-space":"nowrap"});
+}
 
 var isModified = false;
 var nodeKey = null;    
@@ -155,18 +165,15 @@ function triggerNodeEdit(nK){
     <apex:form id="admissionForm">
     
 	<apex:actionFunction name="saveAdmissionDocAF" action="{!saveAdmissionDoc}" rerender="associatedDocuments" oncomplete="waitComplete(),closeModalDialog('addAdmissionDocumentModal', 'span');" status="myStatus"/>
-    <apex:actionFunction name="showAddEditAdmissionDocAF" action="{!showAddEditAdmissionDoc}" rerender="admissionDocumentyEntry,msgs" oncomplete="waitComplete()"/>
+    <apex:actionFunction name="showAddEditAdmissionDocAF" action="{!showAddEditAdmissionDoc}" rerender="admissionDocumentyEntry,msgs" oncomplete="waitComplete();openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents');" status="myStatus1"/>
 
  <apex:actionFunction action="{!editTreeNode}" name="editNode" rerender="associatedDocDetails" oncomplete="waitComplete()" status="myStatus">
      <apex:param name="selectedKey" value="" />
  </apex:actionFunction>
-
-
  <apex:actionFunction action="{!updateDocSelection}" name="updateDocSelectionAF" rerender="associatedDocDetails" oncomplete="waitComplete()" status="myStatus">
      <apex:param name="selectedKey" value="" />
      <apex:param name="isSelected" value="" />     
  </apex:actionFunction>
- 
  
      
     <!--  -->
@@ -234,14 +241,24 @@ function triggerNodeEdit(nK){
         
         
     <apex:pageBlock title="Admission Documents" rendered="{!isCM}"  id="associatedDocuments">
-    	<div class="pbHeaderButton">
-<!--           <input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="showAddEditAdmissionDoc();openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents'); return false;"/> -->
-          <input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents'); return false;"/>          
-        </div>
+    	<apex:actionStatus id="myStatus1">
+			<apex:facet name="start">
+		        <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+				</div>
+		    </apex:facet>
+	        <apex:facet name="stop">
+				<div class="pbHeaderButton">
+			    <input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="showAddEditAdmissionDoc(); return false;"/>
+			<!--	<input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents'); return false;"/>           -->
+				</div>
+	        </apex:facet>
+		</apex:actionStatus>	        
+	        
 		<apex:pageBlockTable styleclass="pbBody-list"  value="{!associatedDocs}" var="doc">
             <apex:column > <apex:facet name="header">Packet Name</apex:facet> {!doc.DocPacket__r.Packet_Name__c} </apex:column>
             <apex:column > <apex:facet name="header">Document Name</apex:facet> {!doc.Document__r.Document_Name__c} </apex:column>
             <apex:column > <apex:facet name="header">Effective Date</apex:facet><apex:outputField value="{!doc.Effective_Date__c}" /></apex:column>
+            <apex:column > <apex:facet name="header">Due Days</apex:facet><apex:outputField value="{!doc.Due_Days__c}" /></apex:column>
             <apex:column > <apex:facet name="header">Filed Date</apex:facet> <apex:outputField value="{!doc.Filed_Date__c}" /> </apex:column>
             <apex:column > <apex:facet name="header">Status</apex:facet> {!doc.Status__c} </apex:column>
             <apex:column > <apex:facet name="header">Status Date</apex:facet><apex:outputField value="{!doc.Status_Date__c}" /></apex:column>
@@ -259,39 +276,67 @@ function triggerNodeEdit(nK){
       <apex:pageBlock title="Add/Edit Documents">
 
         <apex:pageblockButtons location="bottom">
-		<apex:actionStatus id="myStatus">
-	        <apex:facet name="start">
-	        	<div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
-	            	<img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
-				</div>
-	        </apex:facet>
-            <apex:facet name="stop">
-		        
-		          <input type="button" value="Save" onClick="saveAdmissionDoc(true); " class="btn" />
-		<!--           <input type="button" value="Close" onClick="closeModalDialog('addAdmissionDocumentModal', 'span'); j$('#admissionDocumentErrors').html('');j$('[id$=tree2]').fancytree('destroy');return false;"  class="btn"/> -->
-		          <input type="button" value="Close" onClick="closeModalDialog('addAdmissionDocumentModal', 'span'); $('#admissionDocumentErrors').html('');return false;"  class="btn"/>          
-         
-            </apex:facet>
-		</apex:actionStatus>
-       		        </apex:pageblockButtons>            
+			<apex:actionStatus id="myStatus">
+		        <apex:facet name="start">
+		        	<div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+		            	<img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+					</div>
+		        </apex:facet>
+	            <apex:facet name="stop">
+			    	<input type="button" value="Save" onClick="saveAdmissionDoc(true); " class="btn" />
+			        <input type="button" value="Cancel" onClick="closeModalDialog('addAdmissionDocumentModal', 'span'); $('#admissionDocumentErrors').html('');return false;"  class="btn"/>
+			<!--    <input type="button" value="Close" onClick="closeModalDialog('addAdmissionDocumentModal', 'span'); j$('#admissionDocumentErrors').html('');j$('[id$=tree2]').fancytree('destroy');return false;"  class="btn"/> -->          
+	            </apex:facet>
+			</apex:actionStatus>
+		</apex:pageblockButtons>            
 
         <apex:facet name="header">
-          <p><strong>Check/Uncheck a document or packet to add/remove to the admission. Select document name to view/edit its details:</strong></p>
+          <p><strong>Check/Uncheck a document or packet to add/remove to the admission. Select document name to edit its details:</strong></p>
         </apex:facet>
 
         <div id='admissionDocumentErrors' style='color:red' ></div>
 
         <apex:pageBlockSection columns="2" id="admissionDocumentyEntry">
 
-	       	<apex:outputPanel id="tree2" layout="block">
-				<c:Fancy_Tree showIcons="true" TreeString="{!allDocsTree.Fancy_Tree_JSon_String_LongText}" allowInactiveNode="false" mode="3" activateActionSignature="triggerNodeEdit(data.node);" selectActionSignature="triggerNodeSelection(data.node);" checkbox="true" ID_PageSideStorage="catalog_items" TreeID="tree2" debug="false" />
-		        <apex:inputHidden value="{!selectedKeys}" id="catalog_items"/>       
+	       	<apex:outputPanel id="treeContainer" layout="block">
+				<c:Fancy_Tree showIcons="true" TreeString="{!treeData}" allowInactiveNode="false" 
+				tableExt="true" mode="3" activateActionSignature="triggerNodeEdit(data.node);"  selectActionSignature="triggerNodeSelection(data.node);" 
+				checkbox="true" ID_PageSideStorage="catalog_items" TreeID="pb_packetDoc" debug="false" />
+		        <apex:inputHidden value="{!selectedKeys}" id="catalog_items"/>     
+		        
+	<table id="pb_packetDoc">
+	    <colgroup>
+	    <col width="30px"></col>
+	    <col width="350px"></col>
+	    <col width="50px"></col>
+	    <col width="50px"></col>
+	    <col width="50px"></col>
+	    <col width="50px"></col>
+	    <col width="50px"></col>
+	    <col width="50px"></col>
+	    </colgroup>
+	    <thead>
+	    	<tr><th></th>
+			  <th></th>
+			  <th>Effective</th>
+			  <th>DueDays</th>
+			  <th>Filed</th>
+			  <th>Recur</th>
+			  <th>Status</th>
+			  <th>Date</th></tr>
+	    </thead>
+	    <tbody></tbody>
+	</table>
+    
 			</apex:outputPanel>
 
 			<apex:outputPanel id="associatedDocDetails">
 			<apex:outputPanel id="associatedDocDetail" layout="block" rendered="{! currrentAssocDoc.Status__c != '' }">
 				<br/>
         	 	<table>
+	        	 	<tr>
+						<td colspan="2"><apex:outputText value="{!currrentAssocDoc.Document__r.Document_Name__c}" styleClass="labelCol"/></td>
+					</tr><tr></tr>
 					<tr>
 						<td><apex:outputText value="Effective Date" styleClass="labelCol"/></td>
 						<td><apex:inputField value="{!currrentAssocDoc.Effective_Date__c}" id="currrentAssocDoc_Effective_Date"/></td>					
