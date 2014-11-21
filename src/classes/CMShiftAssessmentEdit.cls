@@ -6,6 +6,12 @@ public with sharing class CMShiftAssessmentEdit {
 
     public Boolean showResidenthurt{ get; set; }
 
+    // The following 2 properties are used to deal with situations where we
+    // want to use selectOptions for multi-checklist instead of the standard
+    // Salesforce widget.
+    public Map<String, List<selectOption>> selectOptionWidgetsMap { get; set; }
+    public Map<String, List<String>> selectedOptionsMap { get; set; }
+
     public List<selectOption>copingValues;
     public List<string>selectedCoping { get; set; }
     public List<selectOption>neuroOrientValues;
@@ -41,7 +47,46 @@ public with sharing class CMShiftAssessmentEdit {
 
     public CMShiftAssessmentEdit(Apexpages.StandardController controller){
         this.stdController = controller;
+        selectOptionWidgetsMap = new Map<String, List<selectOption>>{
+            'nutrition_route__c' => new List<selectOption>(),
+            'tongue__c' => new List<selectOption>(),
+            'gums__c' => new List<selectOption>(),
+            'cheeks__c' => new List<selectOption>(),
+            'lips__c' => new List<selectOption>(),
+            'saliva__c' => new List<selectOption>()
+        };
+        if (!Test.isRunningTest()) {
+            // Make sure the multi-checkbox fields are always in scope
+            List<String> fieldsToAdd = new List<String>();
+            fieldsToAdd.addAll(selectOptionWidgetsMap.keySet());
+            controller.addFields(fieldsToAdd);
+        }
         evaluation = (Evaluation__c) stdController.getRecord();
+
+        selectedOptionsMap = new Map<String, List<String>>();
+        for (String field: selectOptionWidgetsMap.keySet()) {
+            selectOptionWidgetsMap.put(field, Utility.getPicklistValues(evaluation, field));
+            if (!String.isBlank(String.valueOf(this.evaluation.get(field)))) {
+                selectedOptionsMap.put(field, String.valueOf(this.evaluation.get(field)).split(';'));
+            } else {
+                selectedOptionsMap.put(field, new List<String>{''});
+            }
+        }
+
+        // Exception: For Nutrition_Route__c, the picklist values are dependent
+        // on the record type of the evaluation record, which Utility.getPicklistValues
+        // does not account for. So we have to manually add them here
+        selectOptionWidgetsMap.put('nutrition_route__c', new List<SelectOption>{
+            new SelectOption('Oral', 'Oral'),
+            new SelectOption('G-Tube', 'G-Tube'),
+            new SelectOption('J-Tube', 'J-Tube'),
+            new SelectOption('PEG', 'PEG'),
+            new SelectOption('NG Tube', 'NG Tube'),
+            new SelectOption('PPN', 'PPN'),
+            new SelectOption('TPN', 'TPN'),
+            new SelectOption('Bottle', 'Bottle')
+        });
+
         currentVitalsDetail = new Evaluation_Response__c();
         if (ApexPages.currentPage().getParameters().get('tab') != null) {
             selectedTab = ApexPages.currentPage().getParameters().get('tab');
@@ -80,8 +125,6 @@ public with sharing class CMShiftAssessmentEdit {
 
         if(!String.isBlank(this.evaluation.Expression_Other__c))
             selectedVerbalExpression = this.evaluation.Expression_Other__c.split(';');
-
-
     }
 
     public void showAddVitalsDetail()  {
@@ -209,6 +252,18 @@ public with sharing class CMShiftAssessmentEdit {
         }
         else
             this.evaluation.Expression_Other__c ='';
+
+        // Saving the selected options for multi-checkbox fields
+        for (String field: selectOptionWidgetsMap.keySet()) {
+            String fieldValue = '';
+            for (String selectOptionValue: selectedOptionsMap.get(field)) {
+                fieldvalue += selectOptionValue + ';';
+            }
+            if (fieldValue != '') {
+                fieldValue = fieldValue.substring(0, fieldValue.length() - 1);
+            }
+            this.evaluation.put(field, fieldValue);
+        }
 
         update this.evaluation;
         return new PageReference('/apex/CMShiftAssessmentView?id=' + evaluation.Id + '&tab=' + selectedTab);
