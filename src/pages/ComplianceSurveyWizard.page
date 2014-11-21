@@ -137,19 +137,28 @@
                             /*
                              * Shaun Added
                              * EB-263
+                             *
+                             * Make sure the combo box only shows up for the correct question being asked
+                             * The TextArea in the pop-up should be disabled for only the question that requires the combo box (unless "Other" is chosen)
+                             * The TextArea in the pop-up will be enabled for all other questions.
                              */
                              
-                             if (j$('#choices').attr('name') == 'a0g11000000bJVBAA2') {
-                                 //alert('show');
-                                 j$('#cb').show();   
-                                 j$('.DescribeNInput').prop("disabled", true);
+                             if (j$('#choices').attr('name') == '4') {
+                                 j$('#cb').show();   //Show the combobox
+                                 j$('.DescribeNInput').prop("disabled", true); //disable the textarea in the pop-up
                              }else {
-                                 //alert('hide');
-                                 j$('#cb').hide();
-                                 j$('.DescribeNInput').prop("disabled", false);   
+                                 j$('#cb').hide(); //Hide the combobox
+                                 j$('.DescribeNInput').prop("disabled", false); //enabled the textarea in the pop-up   
                              }
                              
                                                             
+                             /*
+                              * Whatever the user chooses in the combo box will be auto-filled in the textarea
+                              * Except if the user chooses:
+                              *   "Other" --> Text Area will become enabled and will have no text in it so the user can fill it in
+                              *   "Please Select" --> TextArea stays disabled but is blank
+                              * If the users chooses "Other" and does not put text in the TextArea *or* chooses "Please Select" the pop-up will not submit. The user *Must* choose from the dropdown.
+                              */                               
                              function autoFill() {
                              
                                  //alert(document.getElementById("choices").value);
@@ -158,7 +167,6 @@
                                 if (document.getElementById("choices").value == "Other"){
                                     j$('.DescribeNInput').text("");
                                     j$('.DescribeNInput').prop("disabled", false);
-                                    //alert(q);
                                 }     
                                 else{
                                     j$('.DescribeNInput').text(document.getElementById("choices").value);
@@ -172,7 +180,7 @@
                     <apex:outputPanel rendered="{!Question.Describe_Description_N__c != null}">
                         {!Question.Describe_Description_N__c} 
                         <div id="cb">
-                          <select id="choices" name="{!Question.Id}" onChange="autoFill();">
+                          <select id="choices" name="{!Question.Title__c}" onChange="autoFill();">
                                 <option value=" ">Please Select</option>
                                 <option value="I am not responsible to conduct or monitor this training">I am not responsible to conduct or monitor this training</option> 
                                 <option value="No compliance training was offered">No compliance training was offered</option>
