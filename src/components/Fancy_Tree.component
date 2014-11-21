@@ -11,13 +11,17 @@
     <apex:attribute name="ID_PageSideStorage" type="string" description="Id of the element the the tree will push selected keys to" />
     <apex:attribute name="allowInactiveNode" assignTo="{!allowInactive}" type="boolean" default="true" description="show Inactive nodes in the tree" />
     <apex:attribute name="showIcons" type="boolean" default="true" description="Show icons for the tree nodes" />
-    <apex:attribute name="forceParents" type="boolean" default="false" description="Force Parents to be selected useful when in mode 2"/>
-        
+    <apex:attribute name="forceParents" type="boolean" default="false" description="Force Parents to be selected useful when in mode 2"/> 
+    <apex:attribute name="tableExt" type="boolean" default="false" description="table Extensions for the fancy tree"/>
+    <apex:attribute name="filterExt" type="boolean" default="true" description="filter Extensions for the fancy tree, this is set to true by default so that present instances of its usage not need update."/>
+    
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.fancytree, 'skin-win7/ui.fancytree.css')}" />
     <apex:includescript value="{!URLFOR($Resource.fancytree, 'jquery.fancytree.js')}" />
-    <apex:includescript value="{!URLFOR($Resource.fancytree, 'src/jquery.fancytree.filter.js')}" />
+    <apex:includescript value="{!URLFOR($Resource.fancytree, 'src/jquery.fancytree.filter.js')}" />    
+    <apex:includescript value="{!URLFOR($Resource.fancytree, 'src/jquery.fancytree.table.js')}" />
+    
     <style>
         .display_off {
             display: none;
@@ -53,12 +57,25 @@
         }          
     $ = jQuery.noConflict();
     
-    var treeData = [{!TreeStr}];
+    var treeData = [];
+    if (Object.prototype.toString.call({!TreeStr}) != '[object Array]'){
+        treeData = [{!TreeStr}];
+    }else{
+        treeData = {!TreeStr};
+    }
+
+    var exts = [];
+    if({!tableExt}) exts.push("table");
+    if({!filterExt}) exts.push("filter"); 
     
     $(function(){    
-    $('[id*={!TreeName}]').fancytree({
-            extensions: ["filter"],
+    $('[id$={!TreeName}]').fancytree({
+            extensions: exts,
             checkbox: {!checkbox},
+            table		:	{ indentation: 20,      // indent 20px per node level
+                              nodeColumnIdx: 1,     // render the node title into the 2nd column
+                              checkboxColumnIdx: 0  // render the checkboxes into the 1st column
+                              },
             selectMode: {!mode},
             source: treeData,
             select: function(event, data) {
@@ -113,6 +130,9 @@
                     return false;
                 }
             },
+			renderColumns: 	function(event, data) {
+                                renderTreeTableCols(data);
+						    },            
             renderNode: function(event, data) {
                 var node = data.node;
                 if(node.data.status === 'Inactive'){
