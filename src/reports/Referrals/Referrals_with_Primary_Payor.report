@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>Referral__c$Name</field>
+    </columns>
+    <columns>
+        <field>Referral__c$Referral_Date__c</field>
+    </columns>
+    <columns>
+        <field>Referral__c.Funding_Sources__r$Id</field>
+    </columns>
+    <columns>
+        <field>Referral__c.Funding_Sources__r$Funding_Source__c</field>
+    </columns>
+    <columns>
+        <field>Referral__c.Funding_Sources__r$Name</field>
+    </columns>
+    <columns>
+        <field>Referral__c$Evaluated_By__c</field>
+    </columns>
+    <columns>
+        <field>Referral__c$Evaluated_By_Internal__c</field>
+    </columns>
+    <columns>
+        <field>Referral__c.Funding_Sources__r$Payer_Name__c</field>
+    </columns>
+    <columns>
+        <field>Referral__c$Primary_Requested_Location__c</field>
+    </columns>
+    <description>All Referrals with Primary Payor with Primary Requested Location</description>
+    <filter>
+        <criteriaItems>
+            <column>Referral__c.Funding_Sources__r$Type_of_Coverage__c</column>
+            <operator>equals</operator>
+            <value>Primary</value>
+        </criteriaItems>
+    </filter>
+    <format>Tabular</format>
+    <name>Referrals with Primary Payor</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>Referrals_with_or_without_Funding_Sources__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <timeFrameFilter>
+        <dateColumn>Referral__c$CreatedDate</dateColumn>
+        <endDate>2014-12-31</endDate>
+        <interval>INTERVAL_CUSTOM</interval>
+        <startDate>2012-10-01</startDate>
+    </timeFrameFilter>
+</Report>
