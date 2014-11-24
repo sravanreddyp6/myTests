@@ -1,0 +1,25 @@
+<apex:page StandardController="Evaluation__c" extensions="createShiftAssessment" docType="html-5.0" sidebar="false"  >
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+
+    <script>
+    function setFocusOnLoad() {}
+    </script>
+    
+    
+    <apex:form id="frm" >
+    	<apex:pageMessages />
+        <apex:outputPanel layout="block" id="parameterPanel" style="width: 800px;">
+        <apex:pageBlock title="Enter Shift Time" >
+            <apex:pageBlockSection >
+                <apex:inputfield id="start_time" value="{!Evaluation__c.Shift_Start_Time__c}" label="Start Time" />
+                <apex:inputfield id="end_time" label="End Time" value="{!Evaluation__c.Shift_End_Time__c}"  />
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="bottom" >
+                <apex:commandButton value="Create ShiftAssessment" action="{!proceed}" />
+            </apex:pageBlockButtons>
+        
+        </apex:pageBlock>
+        </apex:outputPanel>
+    </apex:form>
+
+</apex:page>
