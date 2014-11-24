@@ -1,0 +1,1157 @@
+<apex:page standardController="Evaluation__c" extensions="NeuroEvaluationViewController" showHeader="false" applyHTMLTag="False" renderas="PDF">
+    <head>
+        <style>
+            [id$=skinBodyFooter] {
+                clear: both;
+            }
+            hr {
+                color: #ECECEC;
+                background-color: #ECECEC;
+                margin-bottom: 20px;
+                margin-top: 20px;
+                border: none;
+                height: 3px;
+            }
+            .hrSmall {
+                height: 1px;
+                border: 0;
+                color: black;
+                background-color: black;
+            }
+            h1 { font-size:16px;}
+            h2 { font-size: 16px;}
+            h3 { font-size:13px; padding-bottom:0px; margin-bottom:0px}
+            .pbHeader {
+                font-size:2em;
+                margin-bottom:3px;
+                display:block;
+                border-bottom:3px solid black;
+                border-collapse:collapse;
+                line-height:1.25%;
+                }
+            .pbSubheader {
+                font-size:1em;
+                border-collapse:collapse;
+                margin-bottom:0px !important;
+                padding-bottom:0px !important;
+            }
+
+            .labelCol, .label {
+                margin: 10px;
+                font-weight:bold;
+            }
+
+            body {
+                font-family:'Serif';
+                font-size:12px
+            }
+        </style>
+
+        <style type="text/css" media="print">
+            @page {
+                @top-center {
+                    content: element(header);
+                }
+                @bottom-left {
+                    content: element(footer);
+                }
+            }
+            div.header {
+                padding: 10px;
+                align:right;
+                width:100%;
+                position: running(header);
+            }
+            div.footer {
+                display: block;
+                padding: 5px;
+                position: running(footer);
+            }
+            .pagenumber:before {
+                content: counter(page);
+            }
+            .pagecount:before {
+                content: counter(pages);
+            }
+        </style>
+    </head>
+
+    <apex:pageMessages id="pageMessages" />
+    <div style="width:100%; text-align:right" class="header">
+        <b>Patient Name:&nbsp;</b><apex:outputText value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Full_Name__c}" /><b>, Page</b> <span class="pagenumber"/><b> of </b><span class="pagecount"/>
+    </div>
+    <div style="text-align: center;" class="footer">
+        <b>INTERNAL USE ONLY</b>
+    </div>
+    <apex:form id="wholePage">
+        <apex:variable var="labelStyle" value="margin: 10px; font-weight: bold;" />
+
+        <h1 style="text-align:center;">PRE-ADMISSION EVALUATION FORM</h1>
+        <apex:pageBlock title="Demographics" >
+            <table style="width:100%">
+                <tr>
+                    <td style="width: 50%; ">
+                        <apex:outputLabel for="FullNameField" value="{!$ObjectType.Person_Being_Referred__c.fields.Full_Name__c.Label}" style="{!labelStyle}" />
+                        <apex:outputText id="FullNameField" value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Full_Name__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel for="DobField" value="{!$ObjectType.Person_Being_Referred__c.fields.Date_of_Birth__c.Label}" style="{!labelStyle}" />
+                        <apex:outputField id="DobField" value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Date_of_Birth__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <apex:outputLabel for="AgeField" value="{!$ObjectType.Person_Being_Referred__c.fields.Age__c.Label}" style="{!labelStyle}" />
+                        <apex:outputField id="AgeField" value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Age__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['occupation__c']}" />
+                    </td>
+                    <td>
+                        <apex:outputText value="Employment Status" style="{!labelStyle}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <apex:dynamiccomponent id="EmploymentFT" componentValue="{!ctlmap['employmentft__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <apex:dynamiccomponent id="EmploymentPT" componentValue="{!ctlmap['employmentpt__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <apex:dynamiccomponent id="EmploymentRetired" componentValue="{!ctlmap['employmentretired__c']}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <apex:dynamiccomponent id="EmploymentDisabled" componentValue="{!ctlmap['employmentdisabled__c']}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <apex:dynamiccomponent id="EmploymentUnknown" componentValue="{!ctlmap['employmentunknown__c']}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['premorbid_living_status__c']}"/>
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+            <apex:pageBlockSection columns="1" title="Related Party">
+                <apex:outputText value="None" rendered="{!relatedParties.size == 0}" />
+                <apex:pageBlockTable value="{!relatedParties}" var="relatedParty" id="relatedPartyTable" border="1" rendered="{!relatedParties.size > 0}">
+                    <apex:column value="{!relatedParty.Type__c}"/>
+                    <apex:column value="{!relatedParty.Name}"/>
+                    <apex:column value="{!relatedParty.Address__c}"/>
+                    <apex:column value="{!relatedParty.Email__c}"/>
+                    <apex:column value="{!relatedParty.Phone__c}"/>
+                    <apex:column value="{!relatedParty.Phone_1_Type__c}"/>
+                    <apex:column value="{!relatedParty.Phone_2__c}"/>
+                    <apex:column value="{!relatedParty.Phone_2_Type__c}"/>
+                    <apex:column value="{!relatedParty.Comments__c}"/>
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+            <br />
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 50%; ">
+                        <apex:outputLabel value="Height at Admission" style="font-weight: Bold;"/>
+                        <table>
+                            <tr>
+                                <td>
+                                    <apex:dynamiccomponent id="HeightFtField" componentValue="{!ctlmap['heightft__c']}" />
+                                </td>
+                                <td>
+                                    <apex:dynamiccomponent id="HeightInchesField" componentValue="{!ctlmap['heightinches__c']}" />
+                                </td>
+                                <td>
+                                    <apex:dynamiccomponent id="HeightCMField" componentValue="{!ctlmap['height_in_cms__c']}" />
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Weight at Admission" style="font-weight: Bold;"/>
+                        <table>
+                            <tr>
+                                <td>
+                                    <apex:dynamiccomponent id="WeightlbsField" componentValue="{!ctlmap['weightlbs__c']}" />
+                                </td>
+                                <td>
+                                    <apex:dynamiccomponent id="WeightozField" componentValue="{!ctlmap['weightoz__c']}" />
+                                </td>
+                                <td>
+                                    <apex:dynamiccomponent id="WeightkgField" componentValue="{!ctlmap['weightkg__c']}" />
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+
+            <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" isPdf="true" />
+            <br />
+
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 50%; ">
+                        <apex:dynamiccomponent componentValue="{!ctlmap['lomn_physician_referral_attached__c']}" />
+                    </td>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['plan_of_care_attached__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Date LOMN Requested" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.LOMN_Physician_Referral_Attached_Date__c}" />
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Physician Name" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.LOMN_Physician_Name__c}" />
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+        </apex:pageBlock>
+        <hr />
+
+        <apex:pageBlock title="Diagnostics">
+            <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Micro Detail" formId="{!$Component.wholePage}" uniqueId="micro" isPdf="true" />
+            <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Radiology Detail" formId="{!$Component.wholePage}" uniqueId="radiology" isPdf="true" />
+            <br />
+            <table style="width: 100%; ">
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['cancer__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['mars_attached__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['mar_comments__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['labs_attached__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['releases_signed_for_originating_h_p_d_c__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['originating_h_p_and_d_c_attached__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['diagnostics_comments__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['diagnostics_section_completed__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                    </td>
+                </tr>
+            </table>
+        </apex:pageBlock>
+        <hr />
+        <apex:pageBlock title="Cardiopulmonary">
+            <table style="width: 100%; ">
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['hypertension__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['cardiac_disease__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['ekg__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['within_normal_limits__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['above_normal_limits__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['smoking_history__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['packs_day_years__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['cardio_comments__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['cardio_section_completed__c']}" />
+                    </td>
+                </tr>
+            </table>
+        </apex:pageBlock>
+        <hr />
+        <apex:pageBlock >
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 50%;"><h3>Elimination - Bladder</h3></td>
+                    <td><h3>Elimination - Bowel</h3></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['elimination_bladder_continent__c']}" />
+                    </td>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['elimination_bowel_continent__c']}" />
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Details" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Elimination_Bladder_No_Continent_Details__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Appliance" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Elimination_Bowel_No_Continent_Appliance__c}" />
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 50%; ">
+                        <apex:dynamiccomponent componentValue="{!ctlmap['shunt__c']}" />
+                    </td>
+                    <td>
+                        <apex:dynamiccomponent componentValue="{!ctlmap['permacath__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Date Placed" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Shunt_Date_Placed__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Date Placed" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Permacath_Date_Placed__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Location" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Shunt_Location__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Location" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Permacath_Location__c}" />
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <table style="width: 100%">
+                <tr>
+                    <td><apex:dynamiccomponent componentValue="{!ctlmap['g_tube__c']}" /></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Date Placed" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.G_Tube_Date_Placed__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Location" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.G_Tube_Location__c}" />
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <table style="width: 100%; ">
+                <tr>
+                    <td><apex:dynamiccomponent componentValue="{!ctlmap['nutrition_route__c']}" /></td>
+                </tr>
+                <tr>
+                    <td><apex:dynamiccomponent componentValue="{!ctlmap['diet__c']}" /></td>
+                </tr>
+                <tr>
+                    <td><apex:dynamiccomponent componentValue="{!ctlmap['thicken_liquids__c']}" /></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="If Yes" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Thicken_Liquids_Details__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td><apex:dynamiccomponent componentValue="{!ctlmap['tube_feed__c']}" /></td>
+                </tr>
+                <tr>
+                    <td><apex:dynamiccomponent componentValue="{!ctlmap['planned_removal__c']}" /></td>
+                </tr>
+            </table>
+            <hr />
+            <table style="width: 100%; ">
+                <tr>
+                    <td>
+                        <apex:outputLabel value="GU/GI/Nutrition Comments" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Nutrition_Comments__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="GU/GI/Nutrition Section Complete" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Nutrition_Section_Completed__c}" />
+                    </td>
+                </tr>
+            </table>
+        </apex:pageBlock>
+        <apex:pageBlock title="Skin/Body">
+            <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" isPdf="true" />
+            <c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Pressure Ulcer Detail" formId="{!$Component.wholePage}" uniqueId="pressureUlcer" isPdf="true" />
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 100%; "><h3>General Skin Condition</h3></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Moisture" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Skin_Moisture__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Edema" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Skin_Edema__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Location" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Skin_Edema_Location__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Behavior" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Skin_Behavior__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Peripheral Capillary Refill Location" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Peripheral_Capillary_Refill_Location__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="# of Seconds" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Peripheral_Capillary_Refill_of_Seconds__c}" />
+                    </td>
+                </tr>
+            </table>
+            <hr />
+
+            <div style="page-break-before:always;"></div>
+            <h2 style="display: block; margin: 10px;">Body Map</h2>
+            <br /><br />
+            <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 3px; margin-top: 50px; height: 298px; ">
+                <apex:image width="318" height="298" style="float: left; border: 3px solid #ECECEC;" value="{!IF(bodyMapUrl=null, URLFOR($Resource.WholeBodyNoGrid), bodyMapUrl)}" id="bodyMap" />
+
+                <apex:variable var="index" value="{!1}" />
+                <apex:repeat value="{!annotations}" var="annotation">
+                    <div class='annotation-number'
+                        style="pointer-events: none;
+                        position: absolute;
+                        text-align: center;
+                        left: {!annotation.Annotation_X__c * 100}%;
+                        width: {!annotation.Annotation_Width__c * 100}%;
+                        top: {!annotation.Annotation_Y__c * 100}%;
+                        height: {!annotation.Annotation_Height__c * 100}%;
+                        border: 1px black solid;">
+                        <span style="color: red; font-size: 1em;">{!index}</span>
+                    </div>
+                    <apex:variable var="index" value="{!index+1}" />
+                </apex:repeat>
+
+
+            </div>
+            <div style="margin-left: 420px; height: 298px;">
+                <table id="annotations">
+                    <tbody>
+                        <apex:variable id="index" var="index" value="{!0}" />
+                        <apex:repeat value="{!annotations}" var="annotation">
+                            <apex:variable id="index" var="index" value="{!index+1}" />
+                            <tr><td>{!index}</td><td>{!annotation.Annotation_Text__c}</td></tr>
+                        </apex:repeat>
+                    </tbody>
+                </table>
+            </div>
+            <hr />
+
+            <apex:pageBlockSection columns="1" id="skinBodyFooter">
+                <apex:outputField value="{!Evaluation__c.Body_Map_Comments__c}" label="Other Body Map Comments" />
+                <br />
+                <apex:dynamiccomponent componentvalue="{!ctlmap['skin_body_comments__c']}" />
+                <apex:dynamiccomponent componentvalue="{!ctlmap['skin_section_completed__c']}" />
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:pageBlock title="Neurological">
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 50%; "><h3>Cognitive</h3></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['seizure_history__c']}" />
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['date_of_last_seizure__c']}" />
+                    </td>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['eeg__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['frequency_of_seizure_activity__c']}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Within Normal Limits" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.EEG_Within_Normal_Limits__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['symptoms_of_seizure__c']}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Above Normal Limits" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.EEG_Above_Normal_Limits__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Onset of Seizure Activity" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Onset_of_Seizure_Activity__c}" />
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+            <hr />
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 50%; "><h3>Sensory</h3></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['hearing__c']}" />
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['hearing_aid_right__c']}" />
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['hearing_aid_left__c']}" />
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><h3>Visual Impairment</h3></td>
+                    <td><h3>Glasses/Contacts</h3></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['impaired_acuity_r__c']}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="For Reading" styleClass="label" />
+                        <apex:outputField value="{!Evaluation.Glasses_For_Reading__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['impaired_acuity_l__c']}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="For Distance" styleClass="label" />
+                        <apex:outputField value="{!Evaluation.Glasses_For_Distance__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['neglect_r__c']}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="For Multi Focal Use" styleClass="label" />
+                        <apex:outputField value="{!Evaluation.Glasses_For_Multi_Focal_Use__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['neglect_l__c']}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="If Contacts, Type" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Contacts_Type__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['diplopia__c']}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Does Resident Have Contacts or Glasses at Facility" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Resident_Contacts_Glasses_at_Facility__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['tracking_r__c']}" />
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['tracking_l__c']}" />
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 50%"><h3>Pain</h3></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Pain Present" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Pain_Present__c}" />
+                    </td>
+                </tr>
+                <apex:outputPanel layout="none" rendered="{!Evaluation__c.Pain_Present__c = 'Yes'}">
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Pain Level" styleClass="label"/>
+                        <apex:outputField value="{!Evaluation__c.Neuro_Pain_Level__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Severity" styleClass="label"/>
+                        <apex:outputField value="{!Evaluation__c.Neuro_Pain_Severity__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Alleviating Factors" styleClass="label"/>
+                        <apex:outputField value="{!Evaluation__c.Neuro_Pain_Alleviating_Factors__c}" />
+                    </td>
+                    <td></td>
+                </tr>
+                </apex:outputPanel>
+            </table>
+            <hr />
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 50%; ">
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['neuropsychological_evaluation_attached__c']}" />
+                    </td>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['neuropsychological_eval_completed_by__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['neuropsychological_eval_completed_date__c']}" />
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 100%; ">
+                        <apex:outputLabel value="Neurological Comments" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Neuro_Comments__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['neuro_section_completed__c']}" />
+                    </td>
+                </tr>
+            </table>
+        </apex:pageBlock>
+        <apex:pageBlock title="Ortho">
+            <table style="width: 100%">
+                <tr>
+                    <td style="width: 50%; "><h3>Orthopedics</h3></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Weight Bearing Precautions" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Weight_Bearing_Precautions__c}" rendered="{!Evaluation__c.Weight_Bearing_Precautions__c!=''}" />
+                        <apex:outputLabel value="N/A" rendered="{!Evaluation__c.Weight_Bearing_Precautions_Not_Available__c}" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Weight_Bearing_Precautions_Not_Available__c}" rendered="{!Evaluation__c.Weight_Bearing_Precautions_Not_Available__c}" />
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><apex:dynamiccomponent componentvalue="{!ctlmap['splint__c']}" /></td>
+                    <td><apex:dynamiccomponent componentvalue="{!ctlmap['cast__c']}" /></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Location" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Splint_Location__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Location" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Ortho_Cast_Location__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Other" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Splint_Location_Other__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Other" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Cast_Location__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Follow-up Required" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Splint_Follow_up_Required__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Follow-up Required" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Cast_Follow_up_Required__c}" />
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 100%; ">
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['ortho_comments__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['ortho_section_completed__c']}" />
+                    </td>
+                </tr>
+            </table>
+        </apex:pageBlock>
+        <apex:pageBlock title="Rehab">
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 100%; ">
+                        <h3>Mobility Devices</h3>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['wheel_chair__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['front_wheeled_walker__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['rehab_cane__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Other" styleClass="label" />
+                        <apex:outputField value="{!Evaluation.Current_Gait_Mobility_Other__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['wheel_chair_type__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['bed_type__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['dme_needs__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['endurance__c']}" />
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 100%; ">
+                        <h3>Mobility</h3>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Locomotion" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Mobility_Locomotion__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Stairs" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Mobility_Stairs__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Transfers" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Mobility_Transfers__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Toilet" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Mobility_Toilet__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Tub/Shower" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Mobility_Tub_Shower__c}" />
+                    </td>
+                </tr>
+            </table>
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 100%;">
+                        <h3>Self Care</h3>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Feeding" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Self_Care_Feeding__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Grooming" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Self_Care_Grooming__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Bathing" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Self_Care_Bathing__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Toileting" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Self_Care_Toileting__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Dressing UE" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Self_Care_Dressing_UE__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Dressing LE" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Self_Care_Dressing_LE__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Home Skills" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Self_Care_Home_Skills__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Community Skills" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Self_Care_Community_Skills__c}" />
+                    </td>
+                </tr>
+            </table>
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 100%; ">
+                        <h3>Communication/Executive Function</h3>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Oriented To" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Communication_Oriented_To__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Receptive Communication" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Communication_Receptive_Communication__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Exp Communication" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Communication_Exp_Communication__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Comprehension" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Communication_Comprehension__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Memory" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Communication_Memory__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Problem Solving" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Communication_Problem_Solving__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Attention" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Communication_Attention__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Awareness" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Communication_Awareness__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Safety Judgement" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Communication_Safety_Judgment__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Swallowing" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Communication_Swallowing__c}" />
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 100%; ">
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['rehab_comments__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['rehab_section_completed__c']}" />
+                    </td>
+                </tr>
+            </table>
+        </apex:pageBlock>
+        <apex:pageBlock title="Psycho/Social">
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 50%; ">
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['past_psychiatric_history__c']}" />
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Description" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Past_Psychiatric_History_Description__c}" />
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <h3>Does Resident Exhibit Signs or Relate a History of Any of the Following</h3>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Alcohol Abuse" styleClass="label" />
+                        <apex:outputLabel value="Consumes >2 alcoholic drinks/day"
+                            rendered="{!Evaluation__c.Alcoholic_drinks_per_day__c == 'Yes' }" />
+                        <br />
+                        <apex:outputField value="{!Evaluation__c.Alcohol_Abuse_Describe__c}" rendered="{!Evaluation__c.Alcohol_Abuse__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Drug Abuse" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Drug_Abuse_Describe__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Sexual Abuse" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Sexual_Abuse_Describe__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Domestic Abuse" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Domestic_Abuse_Describe__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Financial Abuse" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Financial_Abuse_Describe__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Physical Abuse" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Physical_Abuse_Describe__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Risk to Self" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Risk_to_Self_Describe__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Risk to Others" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Risk_to_Others__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Elopement Risk" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Elopement_Risk_Describe__c}" />
+                    </td>
+                    <td>
+                        <apex:outputLabel value="Halucinations" styleClass="label" />
+                        <apex:outputLabel value="{!Evaluation__c.Hallucinations__c}" rendered="{!!Evaluation__c.Hallucinations__c}" />
+                        <apex:outputText value="{!selectedHalls}"
+                            rendered="{!Evaluation__c.Hallucinations__c}" />
+                        <br />
+                        <apex:outputField value="{!Evaluation__c.Hallucinations_Describe__c}"
+                            rendered="{!Evaluation__c.Hallucinations__c}" />
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 100%; ">
+                        <h3>Offender History</h3>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Are there past or pending charges that have been brought against this person due to their sexual behavior?" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Sexual_behavior_past_pending_charges__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Are there sexual events that might have resulted in legal action?" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Sexual_events_led_to_legal_action__c}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Are there any other significant sexual issues in this individual's past which clinical team may deem needs review?" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Other_significant_sexual_issues__c}" />
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <table style="width: 100%; ">
+                <tr>
+                    <td style="width: 100%">
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['psycho_social_comments__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['psycho_social_section_completed__c']}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:dynamiccomponent componentvalue="{!ctlmap['evaluation_date__c']}" />
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <apex:pageBlockSection columns="1">
+                <apex:outputText label="Evaluation Signed" value="{!IF(Evaluation__c.Is_Signed__c,'YES','NO')}" style="padding:10px;" />
+                <apex:outputText label="Last Modified By" value="{!Evaluation__c.LastModifiedBy.Name}" style="padding:10px;"  />
+                <apex:outputText value=" {!Evaluation__c.LastModifiedDate}"  style="padding:10px;" />
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

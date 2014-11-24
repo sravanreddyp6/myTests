@@ -23,8 +23,6 @@ public with sharing class CareMeridianEvaluationEditTest {
         System.assertNotEquals(0, controller.sliderOptions.size());
         System.assertEquals(0, controller.annotations.size());
         System.assertNotEquals(null, controller.relatedParties);
-      //  string redirectedPage = controller.reDirect().getUrl();
-        system.assertEquals(null,controller.reDirect());
         controller.showAddRelatedParty();
         System.assertEquals(null, controller.currentRelatedParty.Id);
         controller.currentRelatedPartyId = rp.Id;

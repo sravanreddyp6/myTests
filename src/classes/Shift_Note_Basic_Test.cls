@@ -1,75 +1,81 @@
 @isTest
 public class Shift_Note_Basic_Test{
     private static Progress_Note__c pn;
- private static Action_plan__c ap;
+ 	private static Action_plan__c ap;
     private static Action_plan_Goal__c apg;
     private static Action_plan_Objective__c apo;
     private static Action_plan_Action__c apa;
     
-static testMethod void myUnitTest() {
-/*   COMMENTED OUT 5/15/14 BY J. GILLIAM TO GET US THROUGH MAY DEPLOYMENT 
-    createData();
+	static testMethod void myUnitTest() {
+	
+	  createData();
+	  
+	  PageReference pageRef = Page.shiftnote_basic_form;
+	   Test.setCurrentPage(pageRef);
+	   pageRef.getParameters().put('retURL','%2F'+pn.id);
+	   
+	  ApexPages.StandardController sc = new ApexPages.StandardController(pn);  
+	    
+	  Shift_Note_Basic contrl = new Shift_Note_Basic(sc);
+	  
+	    contrl.myEdit();
+	    system.assert(contrl.editMode);
+	    contrl.myCancel();
+	    contrl.myEdit();
+	    Shift_Note_Basic.clsPlan_Goal tmpclsG =  new Shift_Note_Basic.clsPlan_Goal(apg);
+	    contrl.mySave();
+	    string nextpage = contrl.myFinal().getUrl();
+	    system.assertEquals('/p/process/Submit?id='+pn.id+'&retURL=%2F'+pn.id, nextpage);
+	    pn.Signature_on_File__c = 'Y';
+	    update pn;
+	    contrl.myFinal();
+	    pn.Number_of_Required_Signatures__c = 0;
+	    pn.Locked__c = false;
+	    update pn;
+	    contrl.myCheckB4Final();
+	    contrl.myFinal();
+	    contrl.GETallgoals();
+	    contrl.getchildrenScope();
+	    contrl.getGoals();
+	    
+	    
+	}
 
-  ApexPages.StandardController sc = new ApexPages.StandardController(pn);  
+//Testing the creation of new Record
+	static testMethod void myUnitTest2() {
+		TMN_Generic_Core_TestData testData2 = new TMN_Generic_Core_TestData();
+		 Action_Plan__c ap2 = new Action_Plan__c(
+	          Service_Assignment__c = testData2.theSA.id,
+	          Target_Date__c = system.today(),
+	          Effective_Date__c = system.today()-365
+	        );        
+	      insert ap2;
+	       
+	     Progress_Note__c pn2 = new Progress_Note__c(Service_Assignment__c=testData2.theSA.Id,Admission__c=testData2.theAdm.Id,Service_Code__c=testData2.theServiceCode.Id,Person_Being_Served__c=testData2.contactID,Start_Time__c=DateTime.newInstance(Date.Today(),time.newinstance(0,0,0,0)),End_Time__c=DateTime.newInstance(Date.Today(),time.newinstance(0,30,0,0)));
+	   
+		PageReference pageRef2 = Page.shiftnote_basic_form;
+		Test.setCurrentPage(pageRef2);
+		pageRef2.getParameters().put('planId',ap2.Id);
+		pageRef2.getParameters().put('saID',testData2.theSA.id);
+		pageRef2.getparameters().put('admID',testData2.theAdm.Id);
+		ApexPages.StandardController sc = new ApexPages.StandardController(pn2);
+		Shift_Note_Basic contrl = new Shift_Note_Basic(sc);
+		
+		contrl.myEdit();
+		contrl.mySave();
+		pn2.Signature_on_file__c = 'n';
+		update pn2;
+		contrl.myCheckB4Final();
+		system.assert(!contrl.canFinalize);
+				
+	}
     
-    Shift_Note_Basic contrl = new Shift_Note_Basic(sc);
-  PageReference pageRef = Page.shiftnote_basic_form;
-    Test.setCurrentPage(pageRef);
-    
-    contrl.myEdit();
-    contrl.mySave();
-    contrl.myFinal();
-
-    pn.Signature_on_File__c = 'Y';
-    update pn;
-    contrl.myFinal();
-    pn.Number_of_Required_Signatures__c = 0;
-    pn.Locked__c = false;
-    update pn;
-    contrl.myFinal();
-    contrl.GETallgoals();
-    contrl.getchildrenScope();
-    contrl.getGoals();
-    
-*/    
-}
-/*    
      private static Action_Plan__c createData(){
-    String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
-        
-        Account Accnt = new Account(
-            RecordTypeID=RecTypeId,
-            FirstName= 'Test FName',
-            LastName='Test LName',
-            PersonMailingStreet='test@yahoo.com',
-            PersonMailingPostalCode='12345',
-            PersonMailingCity='SFO',
-            PersonMailingStateCode='NC',
-            PersonEmail='test@yahoo.com',
-            PersonHomePhone='1234567',
-            PersonMobilePhone='12345678'
-        );
-        insert Accnt; 
-        
-        Id aContactId = [select PersonContactId from account where id =:accnt.id].PersonContactId;
-        Id aAccountId = Accnt.Id;        
-    Admission__c Adm = new Admission__c(
-            Name = 'TEST ADM',
-            Person_Being_Served__c = aContactId,
-            Effective_Date__c = date.today(),
-            Network_Offering__c = 'ARY'
-        );
-        insert Adm;     
-        
-        Service_Assignment__c SA = new Service_Assignment__c(
-            admission__c = adm.id,
-          Person_Being_Served__c = aContactId
-        );        
-        insert SA;
-        
+     	
+      TMN_Generic_Core_TestData testData = new TMN_Generic_Core_TestData();
       ap = new Action_Plan__c(
-          Service_Assignment__c = sa.id,
-          Target_Date__c = system.today()+365,
+          Service_Assignment__c = testData.theSA.id,
+          Target_Date__c = system.today(),
           Effective_Date__c = system.today()-365
         );        
       insert ap; 
@@ -86,7 +92,7 @@ static testMethod void myUnitTest() {
           Status__c = 'In Progress',
           Description__c = 'an Objective',
           Type__c = 'skill',
-          Target_End_Date__c = system.today()+365,
+          Target_End_Date__c = system.today(),
           Effective_Date__c = system.today()-365,
             sort_order__c = 'o'
         );
@@ -96,18 +102,15 @@ static testMethod void myUnitTest() {
         apa.Action_Plan_Objective__c = apo.id;
         apa.Description__c = 'action';
         apa.sort_order__c = 'a';
+        apa.start_Date__c = system.today()-365;
+        apa.End_Date__c = system.today();
+        apa.Status__c = 'New';
         insert apa;
         
-        pn = new progress_Note__c(
-         action_plan__c = ap.id,
-         Start_Time__c = system.now()-1,
-         End_Time__c = system.now(),
-            Person_Being_Served__c = aContactId,
-            Admission__c = adm.id,
-            Service_Assignment__c = sa.id,
-            No_Approval_Needed__c = true
-         );
-         insert pn;
+        pn = TMN_Generic_Core_TestData.createProgressNote(testData.theSA,testData.theAdm,testData.theServiceCode,testData.contactID,DateTime.newInstance(Date.Today(),time.newinstance(0,0,0,0)),DateTime.newInstance(Date.Today(),time.newinstance(0,30,0,0)));
+        pn.action_plan__c = ap.id;
+        update pn;
+        
         ProgressNote_ActionPlanChildren_mjo__c jo = new ProgressNote_ActionPlanChildren_mjo__c(
         	goal__c = apg.id,
             progress_note__c = pn.id
@@ -115,6 +118,6 @@ static testMethod void myUnitTest() {
         );
         insert jo;
         return ap;   
-    }
-*/
+    } 
+
 }

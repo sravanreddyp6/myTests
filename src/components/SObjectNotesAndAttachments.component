@@ -6,7 +6,7 @@
     <apex:variable value="{!if(retURL != null, retURL ,$CurrentPage.URL)}" var="theRetUrl"/>
     <apex:form id="wholeForm">
         <apex:pageBlock title="Attachments">
-            <apex:pageBlockButtons location="top">
+            <apex:pageBlockButtons id="NotesAndAttachmentsButtons" location="top">
                <!-- <apex:commandButton value="New Note" onclick="window.location='/002/e?parent_id={!LEFT(parentId, 15)}&retURL={!$CurrentPage.URL}'; return false;" />-->
                 <apex:commandButton value="Attach File" onclick="window.location='/p/attach/NoteAttach?pid={!LEFT(parentId, 15)}&retURL={!theRetUrl}';return false;" />
                 <apex:commandButton rendered="{!entries.size>0}" onclick="window.location='/ui/content/ViewAllNotesPage?id={!LEFT(parentID, 15)}&retURL={!theRetUrl}'; return false;" value="View All" />

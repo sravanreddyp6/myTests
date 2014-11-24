@@ -66,7 +66,7 @@ public with sharing class HomePageController{
                
         }
         
-        for(ProcessInstanceWorkitem app:[select Id,ProcessInstanceId,CreatedDate,ActorId,CreatedById,CreatedBy.Name,ProcessInstance.LastModifiedBy.Name,ProcessInstance.TargetObject.Name,ProcessInstance.LastModifiedById,ProcessInstance.TargetObjectId from ProcessInstanceWorkitem where ActorId=:UserInfo.getUserId() order by CreatedDate desc]){
+        for(ProcessInstanceWorkitem app:[select Id,ProcessInstanceId,CreatedDate,ActorId,CreatedById,CreatedBy.Name,ProcessInstance.LastModifiedBy.Name,ProcessInstance.TargetObject.Name,ProcessInstance.LastModifiedById,ProcessInstance.TargetObjectId from ProcessInstanceWorkitem where ActorId=:UserInfo.getUserId() order by CreatedDate desc limit 1000]){
                 String sub = app.ProcessInstance.TargetObjectId;
                 String IdType = sub.substring(0,3);
                 String Type = sObjNamesMap.get(IdType);
@@ -482,7 +482,9 @@ public with sharing class HomePageController{
             items.add('Weekly_Referrals');        
         }
         if(og == 'Care Meridian'){
-        
+        	// EC-57 - added
+        	// EC-57 2014-11-21 - remove until report is reformatted
+        	//items.add('All_Referrals_with_Primary_Payor');
         }
         if(og == 'NeuroRestorative'){
             items.add('Daily_Referrals');

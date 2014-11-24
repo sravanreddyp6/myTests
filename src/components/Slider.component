@@ -8,10 +8,22 @@
     <apex:attribute name="disabled" description="Whether the slider is disabled or not"
         type="Boolean" default="false" />
     <apex:attribute name="morestyle" description="HTML style tags" type="String" required="False" />
+    <apex:attribute name="legendsEnabled" description="Whether legends are enabled"
+        type="Boolean" default="false" />
+    <apex:attribute name="legendsParentId" description="The Id of the div that the legends will be put into"
+        type="String" />
 
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+    <apex:outputPanel layout="none" rendered="{!legendsEnabled}">
+    <style>
+    .ui-slider-legend p {
+        display: inline-block;
+        text-align: center;
+    }
+    </style>
+    </apex:outputPanel>
     <script>
     jQuery(document).ready(function($) {
         var options = [];
@@ -34,6 +46,19 @@
                 ({!onChange})(options[ui.value - 1]);
             }
         });
+        <apex:outputPanel layout="none" rendered="{!legendsEnabled}">
+        var resizeSliderLegends = function () {
+            var width = ($(document.getElementById('{!$Component.slider}')).parent().parent().width()) / (options.length);
+            var $parent = $(document.getElementById('{!legendsParentId}'));
+            if ($parent.find(".ui-slider-legend").size() > 0) {
+                $parent.find(".ui-slider-legend p").width(width);
+            } else {
+                $parent.append('<div class="ui-slider-legend"><p style="width:' + width + 'px;">' + options.join('</p><p style="width:' + width + 'px;">') +'</p></div>');
+            }
+        }
+        $(window).on('resize', resizeSliderLegends);
+        resizeSliderLegends();
+        </apex:outputPanel>
     });
     </script>
     <apex:outputPanel style="margin-left: 30px; margin-right: 40px; {!morestyle}" id="slider" layout="block" />

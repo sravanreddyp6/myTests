@@ -79,6 +79,8 @@ public with sharing class NursingEvaluationEditController {
     public List<string>selectedAlleviators {get;set;}
     public List<selectOption>adlValues ;
     public List<string>selectedAdls {get;set;}
+    public List<selectOption>verbalExpressionValues;
+    public List<string>selectedVerbalExpression {get;set;}
     public List<selectOption>expressionValues ;
     public List<string>selectedExpressions {get;set;}
     public List<selectOption>paintypeValues ;
@@ -272,6 +274,8 @@ public with sharing class NursingEvaluationEditController {
                 selectedAdls = new List<String>();
                 expressionValues = new List<selectOption>();
                 selectedExpressions = new List<String>();
+                verbalExpressionValues = new List<selectOption>();
+                selectedVerbalExpression = new List<String>();
                 paintypeValues = new List<selectOption>();
                 selectedPaintypes = new List<String>();
                 painalleviatorValues = new List<selectOption>();
@@ -382,6 +386,9 @@ public with sharing class NursingEvaluationEditController {
                 
                 if(!String.isBlank(this.evaluation.Seizure_History__c))
                 selectedMoods = this.evaluation.Seizure_History__c.split(';');
+
+                if(!String.isBlank(this.evaluation.Expression_Other__c))
+                selectedVerbalExpression = this.evaluation.Expression_Other__c.split(';');
 
                 if(!String.isBlank(this.evaluation.Alleviating_Factors__c))
                 selectedAlleviators = this.evaluation.Alleviating_Factors__c.split(';');
@@ -955,8 +962,20 @@ public with sharing class NursingEvaluationEditController {
                         else
                         this.evaluation.Negative_Impact_on_ADLs__c ='';
                         
-// For Manner of Expressing Pain Multi-picklist
+// For Other Verbal Expression Multi-picklist
                 string exr='';
+                for(string er: selectedVerbalExpression)
+                exr += er+';';
+                        if(exr!=''){
+                                exr = exr.Substring(0,exr.length()-1);
+                                this.evaluation.Expression_Other__c = exr;
+                        }
+                        else
+                        this.evaluation.Expression_Other__c ='';       
+                        
+                        
+// For Manner of Expressing Pain Multi-picklist
+                exr='';
                 for(string er: selectedExpressions)
                 exr += er+';';
                         if(exr!=''){
@@ -1214,6 +1233,12 @@ public with sharing class NursingEvaluationEditController {
    public List<selectoption> getadlValues(){
                 List<Selectoption> adlValue = Utility.getPicklistValues(evaluation, 'Negative_Impact_on_ADLs__c');
                 return adlValue; 
+   }
+   
+   
+   public List<selectoption> getverbalExpressionValues(){
+                List<Selectoption> expressionValue = Utility.getPicklistValues(evaluation, 'Expression_Other__c');
+                return expressionValue; 
    }
    
    public List<selectoption> getexpressionValues(){

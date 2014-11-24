@@ -218,7 +218,7 @@ public with sharing class Shift_Note_Basic {
     public PageReference myFinal(){
         PageReference pageRef = new PageReference('/apex/Notes_ProgressNote_Create_Flavor_PDF');
         PageReference pageRefFlavor = ApexPages.currentPage();
-        pageRef .getParameters().put('id', note.id);
+        pageRef.getParameters().put('id', note.id);
         
         try{
 
@@ -232,7 +232,7 @@ public with sharing class Shift_Note_Basic {
             Attachment attachmentPDF = new Attachment();
             attachmentPDF.parentId = note.id;
             attachmentPDF.Name = note.Person_Being_Served__r.Name + ' - ' + note.RecordType.Name +' - (' + date.today().month() + '-' + date.today().day() + '-' + date.today().year() + ').pdf';
-            attachmentPDF.body = Note_Pdf_ref.getContent();
+            attachmentPDF.body = !Test.isRunningTest() ? Note_Pdf_ref.getContent() : Blob.valueOf('dummy content'); // Modified by Sravan as we cannot invoke getCOntent() method from test class-Salesforce bug. 10/28/2014 1:00 PM
             insert attachmentPDF;
             /**/
             if(!note.No_approval_Needed__c){
