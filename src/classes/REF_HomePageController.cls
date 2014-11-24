@@ -140,6 +140,7 @@ public with sharing class REF_HomePageController {
         items.add('Referral_Conversion_Time_Report');
         items.add('Referrals_By_Location_Working_Referral');
         items.add('Referrals_Requiring_Action');
+        items.add('Referrals_with_Activities2');
         
         if(og == 'Cambridge'){
             items.add('Active_Referrals_With_Diagnosis');
@@ -158,7 +159,9 @@ public with sharing class REF_HomePageController {
             items.add('Weekly_Referrals');        
         }
         if(og == 'CareMeridian'){
-        
+        	// EC-57 - added
+        	// EC-57 2014-11-21 - remove until report is reformatted
+        	//items.add('All_Referrals_with_Primary_Payor');
         }
         if(og == 'NeuroRestorative'){
             items.add('Daily_Referrals');

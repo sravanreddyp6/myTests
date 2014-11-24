@@ -1,5 +1,6 @@
-<apex:page standardController="Evaluation__c" extensions="CareMeridianEvaluationEditController,CareMeridianEvaluationCommonController" action="{!reDirect}">
+<apex:page standardController="Evaluation__c" extensions="CareMeridianEvaluationEditController,CareMeridianEvaluationCommonController">
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
     <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
     <apex:includeScript value="{!$Resource.AnnotoriousDev}"/>
@@ -45,27 +46,27 @@
             background-repeat: no-repeat;
             padding-top: 22px;
         }
-        
+
         .sectionNotCompletedLink, .sectionCompletedLink {
             vertical-align:bottom !important;
             background-position: center top;
             padding-left:10px;
             padding-right:10px;
         }
-        
+
     .mycols{
     width: 15%;
     padding-left: 25px;
     cellspacing: 15px;
-    
+
     }
 
-        
+
     </style>
     <script>
         function setFocusOnLoad() {}  // Overwrite VF function to focus on the 1st field
         jQuery.noConflict();
-        
+
         jQuery(document).ready(function ($) {
             handleSliderChange = function (inputIdToUpdate) {
                 // Closure is so much fun :)
@@ -120,104 +121,31 @@
                     }
                 );
             });
-            String.prototype.endsWith = function (suffix) {
-                return this.indexOf(suffix, this.length - suffix.length) !== -1;
-            };
-            $.fn.realVal = function() {
-                // This function is here to put all the value-getting functionalities
-                // in one place. This is because calling val() on a checkbox input
-                // will only return the default value.
-                var $obj = $(this);
-                var val = $obj.val();
-                var type = $obj.attr('type');
-                if (type && type==='checkbox') {
-                    return $obj.prop('checked') ? '1' : '0';
-                } else {
-                    return val;
-                }
-            };
-            // Do the field disable/enable functionality here
-            // When values are in map -> will be enabled when key is changed
-            enableDisableField = function (element) {
-                var $element = $(element);
-                // For multi-picklist, apparently the data- passthrough also
-                // exist in the selected and unselected checkboxes, which confuse
-                // the script, so we check for their existence here.
-                if ($element.attr('multiple') == 'multiple' && ($element.attr('id').endsWith('_selected') || $element.attr('id').endsWith('_unselected'))) {
-                    return;
-                }
-                var rules = $element.data("rules");
-                rules && $.each(rules, function (key, value) {
-                    var $targets = [];
-                    if (value instanceof Array) {
-                        $.each(value, function (_, selector) {
-                            $targets.push($(document.getElementById(selector)));
-                        });
-                    } else {
-                        $targets.push($(document.getElementById(value)));
-                    }
-                    var val = $element.realVal();
-                    if (val == key || (val instanceof Array && $.inArray(key, val)!=-1)) {
-                        // Enable fields
-                        $.each($targets, function (_, $target) {
-                            if ($target.attr("multiple")) {
-                                $target.parent().find("select").prop("disabled", false);
-                            } else {
-                                $target.prop("disabled", false);
-                            }
-                        });
-                    } else {
-                        // Disable fields
-                        $.each($targets, function (_, $target) {
-                            // We also need to revert the field(s) to their original state
-                            if ($target.attr("multiple")) {
-                                // Simulate removing all the selected options
-                                $(document.getElementById($target.attr('id') + '_selected')).find('option').attr('selected', 'selected');
-                                // Fake clicking the Remove button here
-                                location.href = $target.parent().find("a[title=Remove]").attr("href");
-                                $target.parent().find("select").prop("disabled", true);
-                            } else {
-                                $target.prop("disabled", true);
-                                var type = $target.attr('type');
-                                if (type && type==='checkbox') {
-                                    $target.prop('checked', false);
-                                } else {
-                                    $target.val('');
-                                }
-                            }
-                            $target.trigger('change');
-                        });
-                    }
-                });
-            }
             setUpFields = function () {
                 $('body input').on("change", function (event) {
-                    enableDisableField(event.target);
+                    applyRulesToField(event.target);
                 });
                 $('body select').on("change", function (event) {
-                    enableDisableField(event.target);
+                    applyRulesToField(event.target);
                 });
                 $('body input').each(function (_, target) {
-                    enableDisableField(target);
+                    applyRulesToField(target);
                 });
                 $('body select').each(function (_, target) {
-                    enableDisableField(target);
+                    applyRulesToField(target);
                 });
-                /*$('.multiSelectPicklistCell a[title=Remove]').on('click', function () {
-                    eval(this.href);
-                });*/
             }
             setUpFields();
         });
-        
+
         function getNextTab( currTab ) {
             var nextTab = currTab;
-            
+
             if ( currTab == 'demographicsTab' || currTab == '')
                 nextTab = 'diagnosticTab';
-            else if( currTab == 'diagnosticTab') 
+            else if( currTab == 'diagnosticTab')
                 nextTab =  'cardioTab';
-            //else if ( currTab == 'marTab' ) 
+            //else if ( currTab == 'marTab' )
                 //nextTab =     'cardioTab';
             else if ( currTab== 'cardioTab')
                 nextTab = 'nutritionTab';
@@ -229,79 +157,79 @@
                 nextTab = 'orthoTab';
             else if ( currTab == 'orthoTab')
                 nextTab = 'rehabTab';
-            else if ( currTab == 'rehabTab') 
+            else if ( currTab == 'rehabTab')
                 nextTab = 'psychoSocialTab';
             else if ( currTab == 'psychoSocialTab')
                 nextTab = 'dischargePlanTab';
-            
+
             return nextTab;
             }
-                            
+
     </script>
 
 
     <script type="text/javascript">
-       
+
            var lbs;
            var oz;
            var kg;
            var ft;
            var inc;
            var cm;
-           
+
           j$=jQuery.noConflict();
-      
+
          function calculate(formField,type){
-          
-           if(type=='lbs'){              
-               var total=getlbsValue() + getOzValue();  
-               j$('[id$=kg]').val(total);                  
+
+           if(type=='lbs'){
+               var total=getlbsValue() + getOzValue();
+               j$('[id$=kg]').val(total);
            }
-           
+
            if(type=='oz'){
                var total=getlbsValue() + getOzValue();
-               j$('[id$=kg]').val(total);  
+               j$('[id$=kg]').val(total);
            }
-           
+
            if(type=='kg'){
-               kg=j$('[id$=kg]').val();  
+               kg=j$('[id$=kg]').val();
                var kgtolbs = kg*2.2046;
-               j$('[id$=lbs]').val(kgtolbs);                    
-               j$('[id$=oz]').val('0.0');  
+               j$('[id$=lbs]').val(kgtolbs);
+               j$('[id$=oz]').val('0.0');
            }
-           
+
            if(type=='ft'){
-           	var htotal = getftValue() + getincValue();
-           	j$('[id$=cm]').val(htotal);
-           
+               var htotal = getftValue() + getincValue();
+               j$('[id$=cm]').val(htotal);
+
            }
-           
+
            if(type=='inc'){
-           	var htotal = getftValue() + getincValue();
-           	j$('[id$=cm]').val(htotal);
-           
+               var htotal = getftValue() + getincValue();
+               j$('[id$=cm]').val(htotal);
+
            }
-           
+
            if(type=='cm'){
-               cm=j$('[id$=cm]').val();  
+               cm=j$('[id$=cm]').val();
                var inches = cm*0.3937;
                var inchtoft = Math.floor(inches/12);
                var cmtoinc = Math.round(inches%12);
-               j$('[id$=ft]').val(inchtoft);                    
+               j$('[id$=ft]').val(inchtoft);
                j$('[id$=inc]').val(cmtoinc);
-           
-        	}
-           
-           
-     	}
-        
+
+            }
+
+
+         }
+
         function getlbsValue(){
              lbs=j$('[id$=lbs]').val();
              var lbtokgs = 0;
              if(lbs!=null && lbs!='')
                  lbtokgs = lbs*0.453592;
              return lbtokgs;
-        
+
         }
         function getOzValue(){
              oz=j$('[id$=oz]').val();
@@ -309,34 +237,34 @@
              if(oz!=null && oz!='')
                  oztokg = oz*0.0283495;
              return oztokg;
-        
+
         }
-        
+
         function getftValue(){
-        	ft=j$('[id$=ft]').val();
-        	var fttocm = 0;
-        	if(ft!= null && ft!='')
-        		fttocm = ft*30.48;
-        	return fttocm;
-        
-        
+            ft=j$('[id$=ft]').val();
+            var fttocm = 0;
+            if(ft!= null && ft!='')
+                fttocm = ft*30.48;
+            return fttocm;
+
+
         }
-        
+
         function getincValue(){
-        	inc=j$('[id$=inc]').val();
-        	var inctocm = 0;
-        	if(inc!= null && inc!='')
-        		inctocm = inc*2.54;
-        	return inctocm;
-        
-        
+            inc=j$('[id$=inc]').val();
+            var inctocm = 0;
+            if(inc!= null && inc!='')
+                inctocm = inc*2.54;
+            return inctocm;
+
+
         }
-        
-        
-        
+
+
+
      </script>
-    
-    
+
+
     <div class="breadcrumb">
         <a href="/">Home</a> > <a href="/{!Evaluation__c.Referral__c}">Referral: {!Evaluation__c.Referral__r.Name}</a> > <a href="/{!Evaluation__c.Id}">Evaluation: {!Evaluation__c.Name}</a>
     </div>
@@ -434,7 +362,7 @@
                         <apex:inputField value="{!Evaluation__c.Date_of_Injury_Onset__c}" />
                         <apex:inputField value="{!Evaluation__c.Secondary_Diagnosis__c}" />
                         <apex:inputField value="{!Evaluation__c.Bariatric_Equipment__c}" />
-                        <apex:outputField id="wt" value="{!Evaluation__c.Weight__c}" />
+                        <apex:inputField value="{!Evaluation__c.PMH__c}" />
                         <apex:outputPanel >
                             <apex:outputLabel value="Weight at Admission" style="font-weight: Bold; color: #4A4A56; font-size: 10px;"/>
                             <apex:inputField id="lbs" value="{!Evaluation__c.Weightlbs__c}" style="margin-left: 25px; width: 60px; !important;" onkeyup="return calculate(this,'lbs');"/>
@@ -444,8 +372,8 @@
                             <pre/>
                             <apex:inputField id="kg" value="{!Evaluation__c.WeightKg__c}" style="margin-left: 193px; width: 60px;" onkeyup="return calculate(this,'kg');"/>
                             <apex:outputLabel for="kg" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.WeightKg__c.label}</apex:outputLabel>
-                        </apex:outputPanel>  
-                        <apex:outputField id="ht" value="{!Evaluation__c.Height__c}" />
+                        </apex:outputPanel>
+                        <apex:inputField value="{!Evaluation__c.Precautions__c}" />
                         <apex:outputPanel >
                             <apex:outputLabel value="Height at Admission" style="font-weight: Bold; color: #4A4A56; font-size: 10px;"/>
                             <apex:inputField id="ft" value="{!Evaluation__c.HeightFt__c}" style="margin-left: 25px; width: 60px; !important;" onkeyUp="return calculate(this,'ft');"/>
@@ -455,12 +383,8 @@
                             <pre/>
                             <apex:inputField id="cm" value="{!Evaluation__c.Height_in_cms__c}" style="margin-left: 193px; width: 60px; width: 60px; !important;" onkeyup="return calculate(this,'cm');"/>
                             <apex:outputLabel for="cm" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Height_in_cms__c.label}</apex:outputLabel>
-                        </apex:outputPanel>           
-                    </apex:pageBlockSection>
-                    <apex:pageBlockSection columns="1">
-                        <apex:inputField value="{!Evaluation__c.PMH__c}" />
-                        <apex:inputField value="{!Evaluation__c.Precautions__c}" />
-                        <!-- Added by Sravan for Evaluation Enhancement -->
+                        </apex:outputPanel>
+ 						<!-- Added by Sravan for Evaluation Enhancement -->
                         <apex:inputField value="{!Evaluation__c.NKDA__c}" />
                     </apex:pageBlockSection>
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" />
@@ -476,12 +400,12 @@
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Vitals Detail" formId="{!$Component.wholePage}" uniqueId="vitals" />
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Lab Detail" formId="{!$Component.wholePage}" uniqueId="lab" />
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Chem Detail" formId="{!$Component.wholePage}" uniqueId="chem" />
-                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Micro Detail" formId="{!$Component.wholePage}" uniqueId="micro" />
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Micro Detail" formId="{!$Component.wholePage}" uniqueId="micro"
+                        rules="{&quot;Test_Type__c&quot;: {&quot;MRSA&quot;: [&quot;X2_Negative_Cultures__c&quot;], &quot;C-diff&quot;: [&quot;X2_Negative_Cultures__c&quot;]}}" />
                     <apex:pageBlockSection columns="1">
                         <apex:inputField value="{!Evaluation__c.Isolation__c}" label="Requires Isolation"
                             html-data-rules="{&quot;1&quot;: &quot;{!$Component.isolationType}&quot;}" />
-                        <apex:outPutField value="{!Evaluation__c.Isolation_Type__c}" />
-                        <apex:inputField value="{!Evaluation__c.DiagnosisIsolation_Type__c}" id="isolationType" /> 
+                        <apex:inputField value="{!Evaluation__c.DiagnosisIsolation_Type__c}" id="isolationType" />
                     </apex:pageBlockSection>
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Radiology Detail" formId="{!$Component.wholePage}" uniqueId="radiology" />
                     <apex:pageBlockSection columns="2">
@@ -534,7 +458,7 @@
                     </apex:pageBlockSection>
                     <apex:pageBlockSection columns="1">
                         <apex:inputTextArea value="{!Evaluation__c.MAR_Comments__c}" cols="80" />
-                        
+
                     </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:tab-->
@@ -550,20 +474,20 @@
                             <apex:inputField value="{!Evaluation__c.Ventilator_Type__c}" id="ventilatorType" style="margin-left:10px;" html-data-rules="{&quot;Intermittent&quot;: &quot;{!$Component.interSchedule}&quot;}"/>
                             <apex:outputLabel for="interSchedule" style="margin-left:15px; color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.If_Intermittent_Schedule__c.label}</apex:outputLabel>
                             <apex:inputField value="{!Evaluation__c.If_Intermittent_Schedule__c}" id="interSchedule" style="margin-left:10px;"/>
-                        </apex:outputPanel> 
-                        <apex:inputField value="{!Evaluation__c.O2_Type__c}" id="o2Type"/>                   
+                        </apex:outputPanel>
+                        <apex:inputField value="{!Evaluation__c.O2_Type__c}" id="o2Type"/>
                         <apex:inputField value="{!Evaluation__c.Trach__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.trachPlacementDate}&quot;, &quot;{!$Component.trachType}&quot;, &quot;{!$Component.trachSize}&quot;, &quot;{!$Component.cuffed}&quot;, &quot;{!$Component.pmv}&quot;]}" />
                         <apex:inputField value="{!Evaluation__c.Ventilator_Mode__c}" id="ventilatorMode" />
-                        <apex:inputField value="{!Evaluation__c.Liters_Min__c}" id="litersMin" />                    
+                        <apex:inputField value="{!Evaluation__c.Liters_Min__c}" id="litersMin" />
                         <apex:inputField value="{!Evaluation__c.Trach_Placement_Date__c}" id="trachPlacementDate" />
                         <apex:inputField value="{!Evaluation__c.Ventilator_Rate__c}" id="ventilatorRate" />
-                        <apex:inputField value="{!Evaluation__c.Nasal_Cannula__c}" id="nasalCannula" />                 
+                        <apex:inputField value="{!Evaluation__c.Nasal_Cannula__c}" id="nasalCannula" />
                         <apex:outputPanel >
                         <apex:outputLabel for="trachType" style="color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.Trach_Type__c.label}</apex:outputLabel>
                         <apex:inputField value="{!Evaluation__c.Trach_Type__c}" id="trachType" style="margin-left:10px;" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.trackTypeOther}&quot;}"/>
                         <apex:outputLabel for="trackTypeOther" style="margin-left:10px;color: #4A4A56; font-size: 10px; font-weight: Bold;" >{!$ObjectType.Evaluation__c.Fields.Trach_Type_Other__c.label}</apex:outputLabel>
                         <apex:inputField Value="{!Evaluation__c.Trach_Type_Other__c}" id="trackTypeOther" style="margin-left:10px;"/>
-                        </apex:outputPanel>    
+                        </apex:outputPanel>
                         <apex:inputField value="{!Evaluation__c.FIO2__c}" id="FIO2" />
                         <apex:inputField value="{!Evaluation__c.Mask__c}" id="mask"  html-data-rules="{&quot;1&quot;: &quot;{!$Component.maskType}&quot;}"/>
                         <apex:outputPanel >
@@ -573,7 +497,7 @@
                         <apex:inputField value="{!Evaluation__c.Trach_Size_Other__c}" id="trachOtherSize" style="margin-left:10px;"/>
                         </apex:outputPanel>
                         <apex:inputField value="{!Evaluation__c.PEEP__c}" id="peep" />
-                        <apex:inputField value="{!Evaluation__c.Mask_Type__c}" id="maskType" /> 
+                        <apex:inputField value="{!Evaluation__c.Mask_Type__c}" id="maskType" />
                         <apex:inputField value="{!Evaluation__c.Cuffed__c}" id="cuffed" />
                         <apex:inputField value="{!Evaluation__c.TV__c}" id="tv" />
                         <apex:inputField value="{!Evaluation__c.T_Piece__c}" id="tPiece" />
@@ -585,7 +509,7 @@
                             <apex:outputLabel for="mist" style="color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.Mist__c.label}</apex:outputLabel>
                             <apex:inputField value="{!Evaluation__c.Mist__c}" id="mist" style="margin-left:10px;" html-data-rules="{&quot;1&quot;: &quot;{!$Component.mistType}&quot;}"/>
                             <apex:outputLabel for="mistType" style="margin-left:15px; color: #4A4A56; font-size: 10px; font-weight: Bold;">{!$ObjectType.Evaluation__c.Fields.Mist_Type__c.label}</apex:outputLabel>
-                            <apex:inputField value="{!Evaluation__c.Mist_Type__c}" id="mistType" style="margin-left:10px;"/> 
+                            <apex:inputField value="{!Evaluation__c.Mist_Type__c}" id="mistType" style="margin-left:10px;"/>
                         </apex:outputPanel>
                         <apex:inputField value="{!Evaluation__c.Trach_Plugged__c}" />
                         <apex:inputField value="{!Evaluation__c.CPAP__c}" id="cpap" />
@@ -614,9 +538,6 @@
                         <apex:pageBlockSectionItem />
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Sputum_Quantity__c}" id="sputumQuantity" />
-                        <apex:pageBlockSectionItem />
-                        <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Sputum_Appearance__c}" id="sputumAppearance" />
                         <apex:pageBlockSectionItem />
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Sputum_Color__c}" id="sputumColor" />
@@ -669,17 +590,17 @@
                         <apex:inputField value="{!Evaluation__c.Elimination_Bowel_Continent__c}"
                             label="Incontinent"
                             html-data-rules="{&quot;1&quot;: &quot;{!$Component.eliminationBowelNoContinentAppliance}&quot;}" />
-                        <!-- For multipicklist fields, we need to call enableDisableField directly, because the change
+                        <!-- For multipicklist fields, we need to call applyRulesToField directly, because the change
                              event is not fired programmatically. -->
                         <apex:inputField value="{!Evaluation__c.Elimination_Bladder_No_Continent_Details__c}"
                             id="eliminationBladderNoContinentDetails"
-                            onchange="enableDisableField(document.getElementById('{!$Component.eliminationBladderNoContinentDetails}'));"
+                            onchange="applyRulesToField(document.getElementById('{!$Component.eliminationBladderNoContinentDetails}'));"
                             label="Details" html-data-rules="{&quot;ICP&quot;: &quot;{!$Component.ifICPQ}&quot;}" />
-                        <!-- For multipicklist fields, we need to call enableDisableField directly, because the change
+                        <!-- For multipicklist fields, we need to call applyRulesToField directly, because the change
                              event is not fired programmatically. -->
                         <apex:inputField value="{!Evaluation__c.Elimination_Bowel_No_Continent_Appliance__c}"
                             id="eliminationBowelNoContinentAppliance" label="Appliance"
-                            onchange="enableDisableField(document.getElementById('{!$Component.eliminationBowelNoContinentAppliance}'));"
+                            onchange="applyRulesToField(document.getElementById('{!$Component.eliminationBowelNoContinentAppliance}'));"
                             html-data-rules="{&quot;Other&quot;: &quot;{!$Component.eliminationBowelNoApplianceOther}&quot;}" />
                         <apex:inputField value="{!Evaluation__c.If_ICP_Q__c}" id="ifICPQ" />
                         <apex:inputField value="{!Evaluation__c.Elimination_Bowel_No_Appliance_Other__c}" id="eliminationBowelNoApplianceOther" label="Specify Other" />
@@ -692,8 +613,8 @@
                     <hr />
                     <apex:pageBlockSection columns="2">
                         <apex:inputField value="{!Evaluation__c.Dialysis__c}"
-                            html-data-rules="{&quot;1&quot;: [&quot;{!$Component.dialysisType}&quot;, &quot;{!$Component.dialysisTypeDetails}&quot;, &quot;{!$Component.dialysisOnset}&quot;, &quot;{!$Component.dialysisDaysOfTheWeek}&quot;]}" /> 
-                        <apex:InputField value="{!Evaluation__c.Shunt_Permacath__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.shuntDatePlaced}&quot;, &quot;{!$Component.shuntLocation}&quot;, &quot;{!$Component.shuntPreviousProvider}&quot;]}" />   
+                            html-data-rules="{&quot;1&quot;: [&quot;{!$Component.dialysisType}&quot;, &quot;{!$Component.dialysisTypeDetails}&quot;, &quot;{!$Component.dialysisOnset}&quot;, &quot;{!$Component.dialysisDaysOfTheWeek}&quot;]}" />
+                        <apex:InputField value="{!Evaluation__c.Shunt_Permacath__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.shuntDatePlaced}&quot;, &quot;{!$Component.shuntLocation}&quot;, &quot;{!$Component.shuntPreviousProvider}&quot;]}" />
                         <apex:inputField value="{!Evaluation__c.Dialysis_Type__c}" id="dialysisType" />
                         <apex:inputField value="{!Evaluation__c.Shunt_Permacath_Date_Placed__c}" label="Date Placed" id="shuntDatePlaced"/>
                         <apex:inputField value="{!Evaluation__c.Dialysis_Type_Details__c}" id="dialysisTypeDetails" />
@@ -1039,16 +960,16 @@
                         <apex:inputField value="{!Evaluation__c.Traction__c}"
                             html-data-rules="{&quot;1&quot;: [&quot;{!$Component.tractionLocation}&quot;, &quot;{!$Component.tractionType}&quot;, &quot;{!$Component.tractionWeight}&quot;, &quot;{!$Component.tractionPinCare}&quot;]}" />
                         <apex:inputField value="{!Evaluation__c.Ortho_Cast_Location__c}" id="castLocation" label="Location" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.OthercastLocation}&quot;}" />
-                       
+
                         <apex:inputField value="{!Evaluation__c.Traction_Location__c}" id="tractionLocation" label="Location" />
                          <apex:inputField value="{!Evaluation__c.Cast_Location__c}" id="OthercastLocation" label="Location (other)" />
-                        
+
                         <apex:inputField value="{!Evaluation__c.Traction_Type__c}" id="tractionType" label="Type" />
                         <apex:inputField value="{!Evaluation__c.Cast_Type__c}" id="castType" label="Type" />
-                        
+
                         <apex:inputField value="{!Evaluation__c.Traction_Weight__c}" id="tractionWeight" label="Weight" />
                         <apex:inputField value="{!Evaluation__c.Patient_to_Bring_Cast__c}" id="patientToBringCast" label="Patient to Bring" />
-                       
+
                         <apex:inputField value="{!Evaluation__c.Traction_Pin_Care__c}" id="tractionPinCare" label="Pin Care" />
                          <apex:inputField value="{!Evaluation__c.Cast_Ordered__c}" id="castOrdered" label="Ordered" />
                          <apex:PageBlockSectionItem />
@@ -1087,7 +1008,7 @@
                     </apex:pageBlockSection>
                     <hr />
                     <apex:pageBlockSection columns="2">
-                        <apex:inputField value="{!Evaluation__c.Therapy_Ordered__c}" 
+                        <apex:inputField value="{!Evaluation__c.Therapy_Ordered__c}"
                             html-data-rules="{&quot;1&quot;: [&quot;{!$Component.pt}&quot;, &quot;{!$Component.ot}&quot;, &quot;{!$Component.st}&quot;, &quot;{!$Component.neuroPsy}&quot;]}" />
                         <apex:pageBlockSectionItem >
                             <apex:outputText value="Mobility Devices" />
@@ -1099,7 +1020,7 @@
                         <apex:inputField value="{!Evaluation__c.Front_Wheeled_Walker__c}" />
                         <apex:inputField value="{!Evaluation__c.Therapy_Ordered_ST__c}" id="st" label="ST" />
                         <apex:inputField value="{!Evaluation__c.Rehab_Cane__c}"/>
-                       
+
                         <apex:inputField value="{!Evaluation__c.Therapy_Ordered_Neuro_Psy__c}" id="neuroPsy" label="Neuro Psy" />
                          <apex:inputField value="{!Evaluation__c.Current_Gait_Mobility_Other__c}" label="Other" html-data-rules="{&quot;1&quot;: &quot;{!$Component.currentGaitMobilityOther}&quot;}" />
                          <apex:PageBlockSectionItem />
@@ -1202,10 +1123,10 @@
             <apex:tab label="Discharge Plan" name="dischargePlanTab" ontabenter="changeTab('dischargePlanTab'); return false;" styleClass="{!IF(Evaluation__c.Discharge_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
                     <apex:pageBlockSection columns="2">
-                        <!-- For multipicklist fields, we need to call enableDisableField directly, because the change
+                        <!-- For multipicklist fields, we need to call applyRulesToField directly, because the change
                              event is not fired programmatically. -->
                         <apex:inputField value="{!Evaluation__c.Prior_Living_Situation__c}" id="priorLivingSituation"
-                            onchange="enableDisableField(document.getElementById('{!$Component.priorLivingSituation}'));"
+                            onchange="applyRulesToField(document.getElementById('{!$Component.priorLivingSituation}'));"
                             html-data-rules="{&quot;Other&quot;: &quot;{!$Component.priorLivingSituationOther}&quot;}" />
                         <apex:inputField value="{!Evaluation__c.Discharge_Plan_Home_Situation__c}" />
                         <apex:inputField value="{!Evaluation__c.Prior_Living_Situation_Other__c}" id="priorLivingSituationOther" label="Specify Other" />
@@ -1230,13 +1151,13 @@
                         <apex:inputField value="{!Evaluation__c.Discharge_Nursing__c}"/>
                         <apex:inputField value="{!Evaluation__c.Location_of_Stairs__c}" id="locationOfStairs" />
                         <apex:inputField value="{!Evaluation__c.Nursing__c}" style="Width: 370px; height: 57px;"/>
-                        <apex:inputField value="{!Evaluation__c.Elevator__c}" /> 
+                        <apex:inputField value="{!Evaluation__c.Elevator__c}" />
                         <apex:inputField value="{!Evaluation__c.Discharge_OT__c}"/>
-                        <apex:inputField value="{!Evaluation__c.Living_With__c}" /> 
+                        <apex:inputField value="{!Evaluation__c.Living_With__c}" />
                         <apex:inputField value="{!Evaluation__c.OT__c}" style="Width: 370px; height: 57px;"/>
                         <apex:inputField value="{!Evaluation__c.Living_With_Employment_Status__c}" />
                         <apex:inputField Value="{!Evaluation__c.Discharge_PT__c}"/>
-                        <apex:PageBlockSection /> 
+                        <apex:PageBlockSection />
                         <apex:inputField value="{!Evaluation__c.PT__c}" style="Width: 370px; height: 57px;" />
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!Evaluation__c.Discharge_ST__c}"/>
@@ -1251,10 +1172,10 @@
                     </apex:pageBlockSection>
                     <hr />
                     <apex:pageBlockSection columns="1">
-                        <!-- For multipicklist fields, we need to call enableDisableField directly, because the change
+                        <!-- For multipicklist fields, we need to call applyRulesToField directly, because the change
                              event is not fired programmatically. -->
                         <apex:inputField value="{!Evaluation__c.Discharge_To__c}" id="dischargeTo"
-                            onchange="enableDisableField(document.getElementById('{!$Component.dischargeTo}'));"
+                            onchange="applyRulesToField(document.getElementById('{!$Component.dischargeTo}'));"
                             html-data-rules="{&quot;Other&quot;: &quot;{!$Component.dischargeToOther}&quot;}" />
                         <apex:inputField value="{!Evaluation__c.Discharge_To_Other__c}" label="Specify Other" id="dischargeToOther" />
                         <apex:inputField value="{!Evaluation__c.Follow_Up_Appt_Required__c}" />
@@ -1269,22 +1190,22 @@
                         <apex:inputField value="{!Evaluation__c.Evaluation_Date__c}" />
                         <apex:inputField value="{!Evaluation__c.Discharge_Section_Completed__c}" />
                     </apex:pageBlockSection>
-                </apex:pageBlock> 
+                </apex:pageBlock>
             </apex:tab>
         </apex:tabPanel>
 
- 
-        
+
+
         <apex:pageBlock id="buttons">
-        
+
                 <!--  add anchor ribbon to mimic tabs above  -->
-                <!-- 
+                <!--
  <table style="border:1px solid black;height:38px;background-color:#E3E6EF;">
  <tr>
  <td class="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompletedLink', 'sectionNotCompletedLink')}">
        <a id="detailsLink" onclick="changeTab('demographicsTab'); return false;" class="tabLink {! IF(OR(selectedTab == 'demographicsTab', selectedTab == ''), 'tabLinkActive','' )} ">Details</a>
 </td>
-<td class="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompletedLink', 'sectionNotCompletedLink')}">  
+<td class="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompletedLink', 'sectionNotCompletedLink')}">
        <a id="diagnosticLink" onclick="changeTab('diagnosticTab'); return false;" class="tabLink {! IF(selectedTab == 'diagnosticTab', 'tabLinkActive','' )}" >Diagnostics</a>
 </td>
 <td class="{!IF(Evaluation__c.MAR_Section_Completed__c, 'sectionCompletedLink', 'sectionNotCompletedLink')}">
@@ -1315,7 +1236,7 @@
        <a id="dischargeTab" onclick="changeTab('dischargeTab'); return false;" class="tabLink {! IF(selectedTab == 'dischargeTab', 'tabLinkActive','' )}">Discharge Plan</a>
 </td>
 </tr>
-</table> 
+</table>
  -->
 
             <apex:pageBlockButtons location="bottom">
@@ -1333,13 +1254,13 @@
                         <apex:param name="keepDialogOpen" value="" />
                     </apex:actionFunction>
                     <apex:actionStatus id="saveRelatedPartyStatus">
-						<apex:facet name="stop">
-							<apex:outputPanel id="relPartyButtons">
-			                    <apex:commandButton value="Save" onClick="saveRelatedParty(false); return false;" />
-			                    <apex:commandButton value="Save & New" onClick="saveRelatedParty(true); return false;" />
-			                    <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.relatedPartyDialog}'); return false;" />
-							</apex:outputPanel>
-						</apex:facet>
+                        <apex:facet name="stop">
+                            <apex:outputPanel id="relPartyButtons">
+                                <apex:commandButton value="Save" onClick="saveRelatedParty(false); return false;" />
+                                <apex:commandButton value="Save & New" onClick="saveRelatedParty(true); return false;" />
+                                <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.relatedPartyDialog}'); return false;" />
+                            </apex:outputPanel>
+                        </apex:facet>
                         <apex:facet name="start">
                             <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
                         </apex:facet>

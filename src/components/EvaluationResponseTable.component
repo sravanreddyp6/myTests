@@ -17,16 +17,19 @@
         type="String" required="true" />
     <apex:attribute name="isPdf" description="Boolean describing whether or not this is for a PDF rendering"
         type="Boolean" required="false" default="false" />
+    <apex:attribute name="rules" description="The rules for the fields in the dialog. Use the field names in the rules instead of field IDs."
+        type="String" required="false" />
 
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
     <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
 
     <apex:pageBlockSection columns="1" title="{!type}">
-        <apex:actionFunction rendered="{!addEnabled}" name="showAddResponse{!uniqueId}" action="{!showAddResponse}" status="loadingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Add {!type}', '{!formId}');" />
-        <apex:actionFunction rendered="{!editEnabled}" name="showEditResponse{!uniqueId}" action="{!showEditResponse}" status="loadingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Edit {!type}', '{!formId}');">
+        <apex:actionFunction rendered="{!addEnabled}" name="showAddResponse{!uniqueId}" action="{!showAddResponse}" status="loadingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Add {!type}', '{!formId}'); attachRules{!uniqueId}();" />
+        <apex:actionFunction rendered="{!editEnabled}" name="showEditResponse{!uniqueId}" action="{!showEditResponse}" status="loadingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Edit {!type}', '{!formId}'); attachRules{!uniqueId}();">
             <apex:param name="currentResponseId" assignTo="{!currentResponseId}" value="" />
         </apex:actionFunction>
 
@@ -57,6 +60,45 @@
 
         <!-- Dialog Modal -->
         <apex:outputPanel id="responseDialog" style="display: none;" rendered="{!!isPdf}">
+            <script>
+                jQuery.noConflict();
+
+                var desanitize = function (str) {
+                    var tempDOMEl = document.createElement('div');
+                    tempDOMEl.innerHTML = str;
+                    return tempDOMEl.firstChild.nodeValue;
+                }
+
+                jQuery(document).ready(function ($) {
+                    attachRules{!uniqueId} = function () {
+                        if ('{!rules}' === "") {
+                            return;
+                        }
+                        var allFieldRules = JSON.parse(desanitize('{!rules}'));
+                        $.each(allFieldRules, function (controllingField, fieldRules) {
+                            $.each(fieldRules, function (controllingValue, controlledFields) {
+                                $.each(controlledFields, function (index, controlledField) {
+                                    // Swap out the field names and put in the actual field ids.
+                                    fieldRules[controllingValue][index] = $('[id$='+controlledField+']').get(0).id;
+                                });
+                            });
+                            $('[id$='+controllingField+']').data("rules", fieldRules);
+                        });
+                        $(document.getElementById('{!$Component.responseDialog}')).find('input').on("change", function (event) {
+                            applyRulesToField(event.target);
+                        });
+                        $(document.getElementById('{!$Component.responseDialog}')).find('select').on("change", function (event) {
+                            applyRulesToField(event.target);
+                        });
+                        $(document.getElementById('{!$Component.responseDialog}')).find('input').each(function (_, target) {
+                            applyRulesToField(target);
+                        });
+                        $(document.getElementById('{!$Component.responseDialog}')).find('select').each(function (_, target) {
+                            applyRulesToField(target);
+                        });
+                    };
+                });
+            </script>
             <span class="ui-helper-hidden-accessible"><input type="text"/></span>  <!-- Just so Jquery UI doesn't auto focus on the 1st field -->
             <apex:pageBlock title="{!type}" id="responseDialogMainBlock">
                 <apex:pageblockButtons location="bottom">
@@ -80,11 +122,7 @@
 
                 <apex:pageMessages id="responseDialogErrors" />
                 <apex:inputHidden value="{!currentResponse.Id}" rendered="{!isEdit}" />
-                <apex:pageBlockSection columns="2">
-                    <apex:repeat value="{!columnsToFetch}" var="column">
-                        <apex:inputField value="{!currentResponse[column]}" />
-                    </apex:repeat>
-                </apex:pageBlockSection>
+                <apex:dynamicComponent componentValue="{!dialog}" />
             </apex:pageBlock>
         </apex:outputPanel>
     </apex:pageBlockSection>
