@@ -115,22 +115,28 @@ jQuery(document).ready(function() {
 });
     
 
+displayDocProperties= function(){
+    var el = $('div[id$=associatedDocDetail]');
+    el.trigger('scrollIntoView');
+    //el.trigger(scrollIntoView,[false]);
+}
+
 renderTreeTableCols = function(data){
                         var node = data.node,
                         $select = $("<select>"),
                         $tdList = $(node.tr).find(">td");
                         // (index #0 is rendered by fancytree by adding the checkbox)
-                              // (index #1 is rendered by fancytree - title)
-                                $tdList.eq(2).html(node.data.effectiveDate);
-                                $tdList.eq(2).css({"white-space":"nowrap"});                  
-                                $tdList.eq(3).html(node.data.dueDays);
-                                $tdList.eq(3).css({"text-align":"center"});
-                                $tdList.eq(4).html(node.data.filedDate);
-                                $tdList.eq(4).css({"white-space":"nowrap"});      
-                                $tdList.eq(5).html(node.data.recurrFreq);
-                                $tdList.eq(6).html(node.data.assocStatus);
-                                $tdList.eq(7).html(node.data.statusDate);
-                                $tdList.eq(7).css({"white-space":"nowrap"});
+                        // (index #1 is rendered by fancytree - title)
+                        $tdList.eq(2).html(node.data.effectiveDate);
+                        $tdList.eq(2).css({"white-space":"nowrap"});                  
+                        $tdList.eq(3).html(node.data.dueDays);
+                        $tdList.eq(3).css({"text-align":"center"});
+                        $tdList.eq(4).html(node.data.filedDate);
+                        $tdList.eq(4).css({"white-space":"nowrap"});      
+                        $tdList.eq(5).html(node.data.recurrFreq);
+                        $tdList.eq(6).html(node.data.assocStatus);
+                        $tdList.eq(7).html(node.data.statusDate);
+                        $tdList.eq(7).css({"white-space":"nowrap"});
 }
 
 var isModified = false;
@@ -188,7 +194,7 @@ function triggerNodeEdit(nK){
     <apex:actionFunction name="saveAdmissionDocAF" action="{!saveAdmissionDoc}" rerender="associatedDocuments" oncomplete="waitComplete();closeModalDialog('addAdmissionDocumentModal', 'span');initializeDocTable();" status="myStatus"/>
     <apex:actionFunction name="showAddEditAdmissionDocAF" action="{!showAddEditAdmissionDoc}" rerender="admissionDocumentyEntry,msgs" oncomplete="waitComplete();openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents');" status="myStatus1"/>
 
- <apex:actionFunction action="{!editTreeNode}" name="editNode" rerender="associatedDocDetails" oncomplete="waitComplete()" status="myStatus">
+ <apex:actionFunction action="{!editTreeNode}" name="editNode" rerender="associatedDocDetails" oncomplete="waitComplete();displayDocProperties();" status="myStatus">
      <apex:param name="selectedKey" value="" />
  </apex:actionFunction>
  <apex:actionFunction action="{!updateDocSelection}" name="updateDocSelectionAF" rerender="associatedDocDetails" oncomplete="waitComplete()" status="myStatus">
