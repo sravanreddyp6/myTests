@@ -23,14 +23,13 @@ public with sharing class createShiftAssessment {
 			return new PageReference ('/apex/CMShiftAssessmentEdit?id='+evaluation.id);
 		}
 		catch (Exception e ){
-
-	    	throw new myException('Shift Assessment Could not be created', e);
+			
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+       		 'An error occurred in creating the Shift Assessment. ' + e.getMessage()));
 	    }
 	    
-	}
-	
-	class myException extends Exception {
-		
+	   return null;
+	    
 	}
 
 }
