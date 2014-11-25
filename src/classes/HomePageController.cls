@@ -483,8 +483,7 @@ public with sharing class HomePageController{
         }
         if(og == 'Care Meridian'){
         	// EC-57 - added
-        	// EC-57 2014-11-21 - remove until report is reformatted
-        	//items.add('All_Referrals_with_Primary_Payor');
+        	items.add('Referrals_with_Funding_and_Location');
         }
         if(og == 'NeuroRestorative'){
             items.add('Daily_Referrals');
