@@ -53,7 +53,12 @@ public with sharing class CMShiftAssessmentEdit {
             'gums__c' => new List<selectOption>(),
             'cheeks__c' => new List<selectOption>(),
             'lips__c' => new List<selectOption>(),
-            'saliva__c' => new List<selectOption>()
+            'saliva__c' => new List<selectOption>(),
+            'abdomen__c' => new List<selectOption>(),
+            'elimination_bowel_status__c' => new List<selectOption>(),
+            'urinary_issues__c' => new List<selectOption>(),
+            'urine_clarity__c' => new List<selectOption>(),
+            'dialysis_type__c' => new List<selectOption>()
         };
         if (!Test.isRunningTest()) {
             // Make sure the multi-checkbox fields are always in scope
