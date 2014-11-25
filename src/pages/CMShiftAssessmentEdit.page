@@ -1144,6 +1144,16 @@
                                 </apex:selectCheckboxes>
                             </apex:outputPanel>
                         </apex:pageBlockSectionItem>
+                        <apex:inputField value="{!Evaluation__c.Dentures__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.denturesSection.denturesType}&quot;, &quot;{!$Component.denturesUsageDetails}&quot;]}" html-data-visibility-row-rules="true" />
+                        <apex:pageBlockSectionItem id="denturesSection">
+                            <apex:outputLabel value="Type" />
+                            <apex:outputPanel >
+                                <apex:selectCheckboxes id="denturesType" value="{!selectedOptionsMap['dentures_type__c']}">
+                                    <apex:selectOptions value="{!selectOptionWidgetsMap['dentures_type__c']}" />
+                                </apex:selectCheckboxes>
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:inputField value="{!Evaluation__c.Dentures_Usage_Details__c}" label="Usage Details" id="denturesUsageDetails" />
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Jaw Wires" />
                             <apex:outputpanel >
@@ -1162,7 +1172,7 @@
                                 <apex:inputField value="{!Evaluation__c.Other_Dental_Appliance_Usage_Details__c}" id="usageDetails" />
                                 <br />
                                 <apex:outputLabel value="Are They Present" style="margin-right: 5px; " id="otherDentalAppliancePresentLabel" />
-                                <apex:inputField value="{!Evaluation__c.Other_Dental_Appliance_Present__c}" id="otherDentalAppliancePresent" />
+                                <apex:inputField value="{!Evaluation__c.Other_Dental_Appliance_Present_Picklist__c}" id="otherDentalAppliancePresent" />
                             </apex:outputpanel>
                         </apex:pageBlockSectionItem>
                         <apex:inputField value="{!Evaluation__c.Narrative_Note__c}" label="Add Narrative Note" />
