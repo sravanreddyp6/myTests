@@ -4,6 +4,9 @@
   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
   <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 
+  <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}"/>  
+
   <style type="text/css">
     .dialogLoadingSpinner {
       margin-left: 5px;
@@ -37,10 +40,16 @@
     .cssWait { cursor:wait;}
     .cssWaitComplete { cursor:auto;}
     span.fancytree-focused span.fancytree-title {
-		outline: 2px ridge black;
-	}
-	.datePicker{z-index:1004;}
-    
+        outline: 2px ridge black;
+    }
+    .datePicker{z-index:1004;}
+
+    .dataTables_wrapper {
+        position: relative;
+        clear: none;
+		zoom: 1;
+		}
+
   </style>
 
  <script type="text/javascript">
@@ -93,6 +102,18 @@
     }
 }) (jQuery.noConflict());
 
+initializeDocTable = function(){
+        $('table[id$=docPacketTable]').DataTable({
+        "scrollY":        "200px",
+        "scrollCollapse": true,
+        "paging":         false
+    });
+}
+
+jQuery(document).ready(function() {
+    initializeDocTable();
+});
+    
 
 renderTreeTableCols = function(data){
                         var node = data.node,
@@ -164,7 +185,7 @@ function triggerNodeEdit(nK){
     <br />
     <apex:form id="admissionForm">
     
-	<apex:actionFunction name="saveAdmissionDocAF" action="{!saveAdmissionDoc}" rerender="associatedDocuments" oncomplete="waitComplete(),closeModalDialog('addAdmissionDocumentModal', 'span');" status="myStatus"/>
+    <apex:actionFunction name="saveAdmissionDocAF" action="{!saveAdmissionDoc}" rerender="associatedDocuments" oncomplete="waitComplete();closeModalDialog('addAdmissionDocumentModal', 'span');initializeDocTable();" status="myStatus"/>
     <apex:actionFunction name="showAddEditAdmissionDocAF" action="{!showAddEditAdmissionDoc}" rerender="admissionDocumentyEntry,msgs" oncomplete="waitComplete();openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents');" status="myStatus1"/>
 
  <apex:actionFunction action="{!editTreeNode}" name="editNode" rerender="associatedDocDetails" oncomplete="waitComplete()" status="myStatus">
@@ -241,37 +262,49 @@ function triggerNodeEdit(nK){
         
         
     <apex:pageBlock title="Admission Documents" rendered="{!isCM}"  id="associatedDocuments">
-    	<apex:actionStatus id="myStatus1">
-			<apex:facet name="start">
-		        <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
-				</div>
-		    </apex:facet>
-	        <apex:facet name="stop">
-				<div class="pbHeaderButton">
-			    <input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="showAddEditAdmissionDoc(); return false;"/>
-			<!--	<input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents'); return false;"/>           -->
-				</div>
-	        </apex:facet>
-		</apex:actionStatus>	        
-	        
-		<apex:pageBlockTable styleclass="pbBody-list"  value="{!associatedDocs}" var="doc">
-            <apex:column > <apex:facet name="header">Packet Name</apex:facet> {!doc.DocPacket__r.Packet_Name__c} </apex:column>
-            <apex:column > <apex:facet name="header">Document Name</apex:facet> {!doc.Document__r.Document_Name__c} </apex:column>
-            <apex:column > <apex:facet name="header">Effective Date</apex:facet><apex:outputField value="{!doc.Effective_Date__c}" /></apex:column>
-            <apex:column > <apex:facet name="header">Due Days</apex:facet><apex:outputField value="{!doc.Due_Days__c}" /></apex:column>
-            <apex:column > <apex:facet name="header">Filed Date</apex:facet> <apex:outputField value="{!doc.Filed_Date__c}" /> </apex:column>
-            <apex:column > <apex:facet name="header">Status</apex:facet> {!doc.Status__c} </apex:column>
-            <apex:column > <apex:facet name="header">Status Date</apex:facet><apex:outputField value="{!doc.Status_Date__c}" /></apex:column>
-            
-<!--             <apex:column > <apex:facet name="header">History</apex:facet><apex:pageBlockSection title="History" columns="1"  id="section1"> -->
-<!--             <c:SObjectHistories object="{!doc}" title="Document History" /></apex:pageBlockSection> </apex:column> -->
-<!--             <apex:column> <apex:facet name="header">Signature - Date</apex:facet> <apex:repeat value="{!doc.AssocDocSignatures__r}" var="signatures" id="theRepeat"> {!signatures.DocSignature__r.DocSigner__c} - <apex:outputField value="{!signatures.Signed_Date__c}" /><br/> </apex:repeat> </apex:column> -->
-        </apex:pageBlockTable>
-        <apex:outputText value="No records to display" rendered="{!(associatedDocs ==null || associatedDocs.size=0)}" />
-	</apex:pageBlock>
-	
-	
-	    <!-- Add/edit Admission Documents. -->
+        <apex:actionStatus id="myStatus1">
+            <apex:facet name="start">
+                <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                </div>
+            </apex:facet>
+            <apex:facet name="stop">
+                <div class="pbHeaderButton">
+                <input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="showAddEditAdmissionDoc(); return false;"/>
+            <!--    <input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents'); return false;"/>           -->
+                </div>
+            </apex:facet>
+        </apex:actionStatus>            
+        
+        <table id="docPacketTable">
+                <thead>
+                    <tr>
+                        <td style="width: 15%"><strong>Packet Name</strong></td>
+                        <td style="width: 35%"><strong>Document Name</strong></td>
+                        <td style="width: 15%"><strong>Effective Date</strong></td>
+                        <td style="width: 10%"><strong>Due Days</strong></td>
+                        <td style="width: 15%"><strong>Filed Date</strong></td>
+                        <td style="width: 10%"><strong>Status</strong></td>
+                        <td style="width: 15%"><strong>Status Date</strong></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <apex:repeat value="{!associatedDocs}" var="doc">
+                            <tr><td>{!doc.DocPacket__r.Packet_Name__c}</td>
+                                <td>{!doc.Document__r.Document_Name__c}</td>
+                                <td><apex:outputField value="{!doc.Effective_Date__c}" /></td>
+                                <td><apex:outputField value="{!doc.Due_Days__c}" /></td>
+                                <td><apex:outputField value="{!doc.Filed_Date__c}" /></td>
+                                <td>{!doc.Status__c}</td>
+                                <td><apex:outputField value="{!doc.Status_Date__c}" /></td>
+                            </tr>
+                    </apex:repeat>
+                </tbody>
+        </table>
+                
+    </apex:pageBlock>
+    
+    
+        <!-- Add/edit Admission Documents. -->
     <apex:outputPanel id="addAdmissionDocumentModal" style="display:none">
       <apex:pageBlock title="Add/Edit Documents">
 
