@@ -54,6 +54,7 @@ public with sharing class CMShiftAssessmentEdit {
             'cheeks__c' => new List<selectOption>(),
             'lips__c' => new List<selectOption>(),
             'saliva__c' => new List<selectOption>(),
+            'dentures_type__c' => new List<selectOption>(),
             'abdomen__c' => new List<selectOption>(),
             'elimination_bowel_status__c' => new List<selectOption>(),
             'urinary_issues__c' => new List<selectOption>(),
