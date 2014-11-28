@@ -282,7 +282,104 @@
                 </apex:pageBlock>
             </apex:tab>
             <apex:tab label="GU/GI/Nutrition" name="nutritionTab" styleClass="{!IF(Evaluation__c.Nutrition_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
-                <apex:pageBlock >
+                <apex:pageBlock id="nutritionMainBlock">
+                    <apex:pageBlockSection columns="1" title="Nutrition & Hydration" id="nutritionHydrationSection">
+                        <apex:outputField value="{!Evaluation__c.Nutrition_Route__c}" label="Feeding Type" />
+                        <apex:outputField value="{!Evaluation__c.Oral_Health_Check__c}" />
+                        <apex:outputField value="{!Evaluation__c.Issues_Noted__c}" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
+                        <apex:outputField value="{!Evaluation__c.Tongue__c}" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
+                        <apex:outputField value="{!Evaluation__c.Tongue_Sores_Describe__c}" label="If Sores, Describe" rendered="{!AND(!ISBLANK(Evaluation__c.Tongue__c), CONTAINS(Evaluation__c.Tongue__c, 'Sores'))}" />
+                        <apex:outputField value="{!Evaluation__c.Gums__c}" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
+                        <apex:outputField value="{!Evaluation__c.Gums_Sores_Describe__c}" label="If Sores, Describe" rendered="{!AND(!ISBLANK(Evaluation__c.Gums__c), CONTAINS(Evaluation__c.Gums__c, 'Sores'))}" />
+                        <apex:outputField value="{!Evaluation__c.Cheeks__c}" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
+                        <apex:outputField value="{!Evaluation__c.Cheeks_Sores_Describe__c}" label="If Sores, Describe" rendered="{!AND(!ISBLANK(Evaluation__c.Cheeks__c), CONTAINS(Evaluation__c.Cheeks__c, 'Sores'))}" />
+                        <apex:outputField value="{!Evaluation__c.Lips__c}" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
+                        <apex:outputField value="{!Evaluation__c.Lips_Sores_Describe__c}" label="If Sores, Describe" rendered="{!AND(!ISBLANK(Evaluation__c.Lips__c), CONTAINS(Evaluation__c.Lips__c, 'Sores'))}" />
+                        <apex:outputField value="{!Evaluation__c.Breath__c}" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
+                        <apex:outputField value="{!Evaluation__c.Saliva__c}" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
+                        <apex:outputField value="{!Evaluation__c.Dentures__c}" />
+                        <apex:outputField value="{!Evaluation__c.Dentures_Type__c}" label="If Yes, Type" rendered="{!Evaluation__c.Dentures__c='Yes'}" />
+                        <apex:outputField value="{!Evaluation__c.Dentures_Usage_Details__c}" label="If Yes, Usage Details" rendered="{!Evaluation__c.Dentures__c='Yes'}" />
+                        <apex:outputField value="{!Evaluation__c.Jaw_Wires__c}" />
+                        <apex:outputField value="{!Evaluation__c.Wire_Cutters_at_Bedside__c}" label="If Yes, Wire Cutters at Bedside" rendered="{!Evaluation__c.Jaw_Wires__c='Yes'}" />
+                        <apex:outputField value="{!Evaluation__c.Other_Dental_Appliance_Checkbox__c}" label="Other Dental Appliance" />
+                        <apex:outputField value="{!Evaluation__c.Other_Dental_Appliance_Usage_Details__c}" label="If Yes, Usage Details" rendered="{!Evaluation__c.Other_Dental_Appliance_Checkbox__c}" />
+                        <apex:outputField value="{!Evaluation__c.Other_Dental_Appliance_Present_Picklist__c}" label="If Yes, Are they present" rendered="{!Evaluation__c.Other_Dental_Appliance_Checkbox__c}" />
+                        <apex:outputField value="{!Evaluation__c.Narrative_Note__c}" label="Add Narrative Note" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
+                        <apex:pageBlockSectionItem>
+                            <apex:outputLabel value="PEDS" />
+                            <apex:outputText value="" />
+                        </apex:pageBlockSectionItem>
+                        <apex:outputField value="{!Evaluation__c.PEDS_Teething__c}" label="Teething"/>
+                        <apex:outputField value="{!Evaluation__c.PEDS_History_of_Tonsils__c}" label="History of Tonsilitis" />
+                        <apex:outputField value="{!Evaluation__c.PEDS_Tonsil_History_Describe__c}" label="If Yes, Describe Tonsilitis History" rendered="{!Evaluation__c.PEDS_History_of_Tonsils__c='Yes'}" />
+                        <apex:outputField value="{!Evaluation__c.PEDS_Pacifier__c}" label="Pacifier" />
+                        <apex:outputField value="{!Evaluation__c.PEDS_Pacifier_Type_Usage__c}" label="if Yes, Type & usage" rendered="{!Evaluation__c.PEDS_Pacifier__c='Yes'}" />
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection columns="2" title="Elimination - Bowel">
+                        <apex:outputText Label="Bowel Sounds" value="" />
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.RUQ__c}" />
+                        <apex:outputField value="{!Evaluation__c.LUQ__c}" />
+
+                        <apex:outputField value="{!Evaluation__c.RUQ_Describe__c}" label="If Abnormal, Describe" rendered="{!Evaluation__c.RUQ__c='Abnormal'}" />
+                        <apex:pageBlockSectionItem rendered="{!Evaluation__c.RUQ__c!='Abnormal'}" />
+                        <apex:outputField value="{!Evaluation__c.LUQ_Describe__c}" label="If Abnormal, Describe" rendered="{!Evaluation__c.LUQ__c='Abnormal'}" />
+                        <apex:pageBlockSectionItem rendered="{!Evaluation__c.LUQ__c!='Abnormal'}" />
+
+                        <apex:outputField value="{!Evaluation__c.RLQ__c}" />
+                        <apex:outputField value="{!Evaluation__c.LLQ__c}" />
+
+                        <apex:outputField value="{!Evaluation__c.RLQ_Describe__c}" label="If Abnormal, Describe" rendered="{!Evaluation__c.RLQ__c='Abnormal'}" />
+                        <apex:pageBlockSectionItem rendered="{!Evaluation__c.RLQ__c!='Abnormal'}" />
+                        <apex:outputField value="{!Evaluation__c.LLQ_Describe__c}" label="If Abnormal, Describe" rendered="{!Evaluation__c.LLQ__c='Abnormal'}" />
+                        <apex:pageBlockSectionItem rendered="{!Evaluation__c.LLQ__c!='Abnormal'}" />
+
+                        <apex:outputField value="{!Evaluation__c.Abdomen__c}" />
+                        <apex:pageBlockSectionItem />
+
+                        <apex:outputField value="{!Evaluation__c.Elimination_Bowel_Status__c}" label="Status" />
+                        <apex:pageBlockSectionItem />
+
+                        <apex:outputField value="{!Evaluation__c.Elimination_Bowel_No_Appliance_Other__c}" label="If Other, Describe" rendered="{!AND(!ISBLANK(Evaluation__c.Elimination_Bowel_Status__c), CONTAINS(Evaluation__c.Elimination_Bowel_Status__c, 'Other'))}" />
+                        <apex:pageBlockSectionItem />
+
+                        <apex:outputField value="{!Evaluation__c.Usual_Elimination_Frequeny__c}" />
+                        <apex:pageBlockSectionItem />
+
+                        <apex:outputField value="{!Evaluation__c.Last_BM__c}" />
+                        <apex:pageBlockSectionItem />
+
+                        <apex:outputField value="{!Evaluation__c.Bowel_Issues__c}" />
+                        <apex:pageBlockSectionItem />
+
+                        <apex:outputField value="{!Evaluation__c.Bowel_Issue_Type__c}" label="If Yes, Issue Type" rendered="{!Evaluation__c.Bowel_Issues__c='Yes'}" />
+                        <apex:pageBlockSectionItem />
+
+                        <apex:outputField value="{!Evaluation__c.Bowel_Issues_Additional_Information__c}" label="Additional Information" rendered="{!Evaluation__c.Bowel_Issues__c='Yes'}" />
+                        <apex:pageBlockSectionItem />
+
+                        <apex:outputField value="{!Evaluation__c.Incontinent_Neurogenic_Bowel__c}" label="Neurogenic Bowel" />
+                        <apex:pageBlockSectionItem />
+
+                        <apex:outputField value="{!Evaluation__c.Incontinent_Neuro_Bowel_Describe__c}" label="If Yes, Describe Program" rendered="{!Evaluation__c.Incontinent_Neurogenic_Bowel__c='Yes'}" />
+                        <apex:pageBlockSectionItem />
+
+                        <apex:outputField value="{!Evaluation__c.Perception_of_Need_to_Defecate__c}" />
+                        <apex:pageBlockSectionItem />
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection title="Elimination - Bladder" columns="1">
+                        <apex:outputField value="{!Evaluation__c.Neurogenic_Bladder__c}" />
+                        <apex:outputField value="{!Evaluation__c.Urinary_Issues_Checkbox__c}" />
+                        <apex:outputField value="{!Evaluation__c.Urinary_Issues__c}" label="If Yes, Issue Type" rendered="{!Evaluation__c.Urinary_Issues_Checkbox__c='Yes'}" />
+                        <apex:outputField value="{!Evaluation__c.Urine_Color__c}" rendered="{!Evaluation__c.Urinary_Issues_Checkbox__c='Yes'}" />
+                        <apex:outputField value="{!Evaluation__c.Urine_Clarity__c}" rendered="{!Evaluation__c.Urinary_Issues_Checkbox__c='Yes'}" />
+                        <apex:outputField value="{!Evaluation__c.Urine_Odor__c}" rendered="{!Evaluation__c.Urinary_Issues_Checkbox__c='Yes'}" />
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection title="Dialysis" columns="1">
+                        <apex:outputField value="{!Evaluation__c.Dialysis_Picklist__c}" label="Dialysis" />
+                        <apex:outputField value="{!Evaluation__c.Dialysis_Type__c}" label="If Yes, Dialysis Type" rendered="{!Evaluation__c.Dialysis_Picklist__c='Yes'}" />
+                    </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:tab>
 
