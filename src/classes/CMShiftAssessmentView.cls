@@ -13,7 +13,7 @@ public with sharing class CMShiftAssessmentView {
     public List<string>selectedSounds { get ; set; }
     public List<SelectOption>DysreflexiaValues;
     public List<string>selectedDysreflexia { get ; set; }
-
+    
     public string getprimaryPhysician(){
         List<Related_Party__c> rp = [SELECT Id, Name FROM Related_Party__c WHERE Person_Being_served__c=:this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__c AND Type__c='Physician - Primary' order by LastModifiedDate desc LIMIT 1];
         if(rp.size()>0) return rp[0].Name;
@@ -90,7 +90,7 @@ public with sharing class CMShiftAssessmentView {
             // have to do anything
         }
     }
-
+    
     public List<selectoption> getcopingValues(){
         List<Selectoption> copingValue = Utility.getPicklistValues(evaluation, 'Resident_Demonstrating_Issues__c');
         return copingValue;

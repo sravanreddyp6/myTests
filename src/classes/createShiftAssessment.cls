@@ -17,6 +17,7 @@ public with sharing class createShiftAssessment {
 			evaluation.RecordtypeId = Utility.getEValuationRecordType('CMShiftAssessment');
 			evaluation.ServiceAssignment__c = this.SA.ID;
 			evaluation.Status__c = 'Draft';
+			evaluation.Details_Section_Completed__c = true;
 			
 		try{
 			insert evaluation;

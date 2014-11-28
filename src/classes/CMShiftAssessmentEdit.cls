@@ -11,6 +11,9 @@ public with sharing class CMShiftAssessmentEdit {
     // Salesforce widget.
     public Map<String, List<selectOption>> selectOptionWidgetsMap { get; set; }
     public Map<String, List<String>> selectedOptionsMap { get; set; }
+    
+    //The following property is used to handle Tab Specific error Messages
+    public Map<String,List<String>> errorMap { get; set; }
 
     public List<selectOption>copingValues;
     public List<string>selectedCoping { get; set; }
@@ -86,7 +89,18 @@ public with sharing class CMShiftAssessmentEdit {
             new SelectOption('TPN', 'TPN'),
             new SelectOption('Bottle', 'Bottle')
         });
-
+        
+        errorMap = new Map<string, List<string>>();
+        errorMap.put('demographicsTab', new List<string>{''});
+        errorMap.put('diagnosticTab', new List<string>{''});
+        errorMap.put('cardioTab', new List<string>{''});
+        errorMap.put('nutritionTab', new List<string>{''});
+        errorMap.put('skinBodyTab', new List<string>{''});
+        errorMap.put('neuroTab', new List<string>{''});
+        errorMap.put('orthoTab', new List<string>{''});
+        errorMap.put('psychoSocialTab', new List<string>{''});
+        
+       
         currentVitalsDetail = new Evaluation_Response__c();
         if (ApexPages.currentPage().getParameters().get('tab') != null) {
             selectedTab = ApexPages.currentPage().getParameters().get('tab');
@@ -264,9 +278,43 @@ public with sharing class CMShiftAssessmentEdit {
             }
             this.evaluation.put(field, fieldValue);
         }
-
+        
+        this.evaluation.Diagnostics_Section_Completed__c = checkDiagnosis();
+        this.evaluation.Psycho_Social_Section_Completed__c = checkPsycho();
+		
         update this.evaluation;
         return new PageReference('/apex/CMShiftAssessmentView?id=' + evaluation.Id + '&tab=' + selectedTab);
+    }
+    
+    public Boolean checkDiagnosis() {
+    	Boolean checkDiag = true;
+    	List<string> diagErrors = errorMap.get('diagnosticTab');
+    	diagErrors.clear();
+    	if(this.evaluation.Requires_Isolation_Picklist__c == null ) {
+    			checkDiag = false;
+    			diagErrors.add('Requires isolation is Mandatory');	
+        }
+        else if(this.evaluation.Requires_Isolation_Picklist__c == 'Yes' && this.evaluation.DiagnosisIsolation_Type__c == null) {
+        	checkDiag = false;
+        	diagErrors.add('Isolation Type is Mandatory when Isolation is Required');
+        	
+        }
+        
+        if(this.evaluation.IV_Site_Issues__c =='Yes' && this.evaluation.IV_Narrative_Note__c == '') {
+        	checkDiag = false;
+        	diagErrors.add('Narrative Note is required for IV Site issues');
+        	
+        }
+    		return checkDiag;
+    }
+    
+    public Boolean checkPsycho() {
+    	Boolean checkPsych = true;
+    	if(this.evaluation.Resident_Coping_Well__c == 'No' && this.evaluation.Coping_Description__c == null) {
+    		checkPsych = false;
+    	}
+    	
+    	return checkPsych;
     }
 
     public List<selectoption> getcopingValues(){

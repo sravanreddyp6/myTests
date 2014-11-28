@@ -49,7 +49,7 @@
         }
         .evaluationTabHeader .sectionNotCompleted,
         .sectionNotCompletedLink {
-            background-image: url("{!URLFOR($Resource.EvaluationResources, 'whitecheck.png')}");
+            background-image: url("{!URLFOR($Resource.EvaluationResources, 'orangecheck.png')}");
             background-repeat: no-repeat;
             padding-top: 22px;
         }
@@ -673,6 +673,13 @@
 
             <apex:tab label="Diagnostics" name="diagnosticTab" ontabenter="changeTab('diagnosticTab'); return false;" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
+                	<apex:pageBlockTable value="{!errorMap['diagnosticTab']}" var="d" columns="1" >
+                		<apex:repeat value="{!d}" var="temp" >
+                			<apex:column >
+                				<apex:outputText value="{!temp}" style="color: red"/>
+                			</apex:column>
+                		</apex:repeat>
+                	</apex:pageBlockTable>
                     <apex:pageBlockSection title="Vitals Detail" Columns="1">
                         <apex:actionFunction name="showAddVitalsDetail" action="{!showAddVitalsDetail}" status="loadingVitalsDetailStatus" rerender="vitalsDetailDialogMainBlock" oncomplete="openModalDialog('{!$Component.vitalsDetailDialog}', 'Add Vitals Detail', '{!$Component.wholePage}'); handleVitals();" />
                         <apex:actionFunction name="showEditVitalsDetail" action="{!showEditVitalsDetail}" status="loadingVitalsDetaiStatus" rerender="vitalsDetailDialogMainBlock" oncomplete="openModalDialog('{!$Component.vitalsDetailDialog}', 'Edit Vitals Detail', '{!$Component.wholePage}'); handleVitals();">
@@ -1193,8 +1200,16 @@
             </apex:tab>
             <apex:tab label="Neurological" name="neuroTab" ontabenter="changeTab('neuroTab');return false;" styleClass="{!IF(Evaluation__c.Neuro_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
-                    <apex:pageBlockSection columns="1" title="Cognitive" collapsible="True">
-                        <apex:inputField value="{!Evaluation__c.Rancho_Level__c}" onchange="handleRancho(); handleMood(); return false;" id="ranchoValue" required="true" />
+                    <apex:pageBlockSection columns="1" title="Cognitive" collapsible="True" >
+                    	<apex:pageBlockSectionItem >
+                    		<apex:outputLabel value="Rancho Level" />
+                    		<apex:outputPanel >
+                    			<div class="requiredInput" >
+                    				<div Class="requiredBlock" ></div>
+                        		<apex:inputField value="{!Evaluation__c.Rancho_Level__c}" onchange="handleRancho(); handleMood(); return false;" id="ranchoValue" />
+                        		</div>
+                        	</apex:outputPanel >
+                        </apex:pageBlockSectionItem >
                         <apex:pageBlockSection id="ranchoDetails" columns="1" >
                         	<apex:pageBlockSectionItem >
                         		<apex:outputLabel value="Responds To" id="labelresponds" />
@@ -1294,7 +1309,15 @@
 						</apex:pageBlockSection>
                     </apex:pageBlockSection >
                     <apex:pageBlockSection columns="1" title="Safety" >
-	                        <apex:inputField value="{!Evaluation__c.Safety_Awareness__c}" required="true" />
+                    		<apex:pageBlockSectionItem >
+                    			<apex:outputLabel Value="Safety Awareness" />
+                    			<apex:outputPanel >
+                    				<div Class="requiredInput" >
+                    					<div Class="requiredBlock" ></div>
+	                        		<apex:inputField value="{!Evaluation__c.Safety_Awareness__c}" />
+	                        		</div>
+	                        	</apex:outputPanel >
+	                        </apex:pageBlockSectionItem >
 	                        <apex:inputField value="{!Evaluation__c.Bed_Alarm__c}" />
 	                        <apex:pageBlockSectionItem >
 		                        <apex:outputpanel >
@@ -1328,7 +1351,10 @@
                                 <apex:outputLabel for="OthercastLocation" value="Other" id="OthercastLocationLabel" />
                             </apex:outputPanel>
                             <apex:outputPanel >
-                                <apex:inputField id="cast" value="{!Evaluation__c.Cast_Picklist__c}" required="True" onchange="handleOrtho(); return false;" />
+                            	<div class="requiredInput">
+                                    <div class="requiredBlock"></div>
+                                <apex:inputField id="cast" value="{!Evaluation__c.Cast_Picklist__c}"  onchange="handleOrtho(); return false;" />
+                                </div>
                                 <div class="requiredInput">
                                     <div class="requiredBlock"></div>
                                     <apex:inputField value="{!Evaluation__c.Ortho_Cast_Location__c}" id="castLocation" onchange="handleOrtho(); return false;" />
@@ -1354,7 +1380,10 @@
                             </apex:outputPanel>
 
                             <apex:outputPanel >
-                                <apex:inputField id="traction" value="{!Evaluation__c.Traction_Picklist__c}" required="true" onchange="handleOrtho(); return false;" />
+                            	<div class="requiredInput">
+                                    <div class="requiredBlock"></div>
+                                <apex:inputField id="traction" value="{!Evaluation__c.Traction_Picklist__c}"  onchange="handleOrtho(); return false;" />
+                                </div>
                                 <div class="requiredInput">
                                     <div class="requiredBlock"></div>
                                     <apex:inputField value="{!Evaluation__c.Traction_Location__c}" id="tractionLocation" />
@@ -1380,7 +1409,10 @@
                                 <apex:outputLabel for="externalDevicesType" value="Type" id="externalDevicesTypeLabel" />
                             </apex:outputPanel>
                             <apex:outputPanel >
-                                <apex:inputField value="{!Evaluation__c.External_Device_Picklist__c}" required="true" id="extdev" onchange="handleOrtho(); return false;" />
+                            	<div class="requiredInput">
+                                    <div class="requiredBlock"></div>
+                                <apex:inputField value="{!Evaluation__c.External_Device_Picklist__c}"  id="extdev" onchange="handleOrtho(); return false;" />
+                                </div>
                                 <div class="requiredInput">
                                     <div class="requiredBlock"></div>
                                     <apex:inputField value="{!Evaluation__c.External_Devices_Location__c}" id="externalDevicesLocation" />
