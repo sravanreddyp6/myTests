@@ -7,6 +7,8 @@ public with sharing class AdmissionDocumentController {
 	public String treeData {get{ return JSON.serialize(allDocsTree.root.children);} }
     //keys returned by the fancy tree comp are stored here
     public string selectedKeys {get; set;}
+
+    public transient String assocDocRecurrs {get;set;}    
     
     // An in-memory DB to represent componenets managed by the fancy tree, with the key being the Packet-Doc Juntion ID
     public Map<Id, DocumentWrapper> treeModel = new Map<Id, DocumentWrapper>();
@@ -36,6 +38,10 @@ public with sharing class AdmissionDocumentController {
 		for (PB_DocPacket__c pckt: pckt_pcktDocJos) {
 			pcktJos.put(pckt.id, pckt.DocPacketJOs__r);
 		}
+		
+		//get all the doc recurrences for this admission
+		assocDocRecurrs = JSON.serialize([select id, PB_AssociatedDoc__c, effective_date__c, filed_date__c, status__c, status_date__c 
+                                 from PB_AssocDocRecurrence__c where PB_AssociatedDoc__r.sObject_type__c = 'Admission' and PB_AssociatedDoc__r.sObject_id__c =: this.admission.id]);
 		
    		showAddEditAdmissionDoc();
     }
