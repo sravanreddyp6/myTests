@@ -1,6 +1,6 @@
 public with sharing class HomePageController{
     public final String OperatingGroup = [select operating_group__c from user where id=:UserInfo.getUserId() limit 1].operating_group__c;
-    public static Map<String,Schema.SObjectType> gSchema;   
+    public static Map<String,Schema.SObjectType> gSchema;
     public Map<String,String> sObjNamesMap{get;set;}
     public List<String> objname{get;set;}
     public List<wrapper> AppWrapper = new List<wrapper>();
@@ -8,453 +8,480 @@ public with sharing class HomePageController{
     public String FrstName{get;set;}
     public String LstName{get;set;}
     public boolean displayPop{get;set;}
-     public String objectName{get;set;}
-     
-   private static Set<String> sObjNamesSet; 
-      //declaration of variables
-      public List<Report> refrportlst{get;set;}
-      public List<Report> PBSrportlst{get;set;}
-      public List<Report> contractrportlst{get;set;}
-      public List<Report> credrportlst{get;set;}
-      public List<Report> docrportlst{get;set;}
-      public List<Task> populateTasks{get;set;}
-      public List<VF_Reports__c> VFReportlst{get;set;}
-  
-      public boolean RefCreate{get;set;}
-      public boolean RefView{get;set;}
-      public boolean PBSView{get;set;}
-      public boolean PBSCreate{get;set;}
-      public boolean TMNCreate{get;set;}
-      public boolean TMNView{get;set;}
-      public boolean ContractCreate{get;set;}
-      public boolean ContractView{get;set;}
-      public boolean DocCreate{get;set;}
-      public boolean DocView{get;set;}
-      public boolean Refresh=false;
+    public String objectName{get;set;}
 
-      //report folders      
-      public String RefId;
-      public String ESDbillingId;
-      public String ESDActivityId;
-      public String ESDSupyId;
-      public String CntrctId;
-      public String CredId;
-      public String TypObj;
-      
-      
-      //Constructor
-     public HomePageController(){
-  		
-  		checkTmnUserRecord();
+    private static Set<String> sObjNamesSet;
+    //declaration of variables
+    public List<Report> refrportlst{get;set;}
+    public List<Report> PBSrportlst{get;set;}
+    public List<Report> contractrportlst{get;set;}
+    public List<Report> credrportlst{get;set;}
+    public List<Report> docrportlst{get;set;}
+    public List<Task> populateTasks{get;set;}
+    public Map<Id, String> taskToNameMap { get; set; }
+    public List<VF_Reports__c> VFReportlst{get;set;}
+
+    public boolean RefCreate{get;set;}
+    public boolean RefView{get;set;}
+    public boolean PBSView{get;set;}
+    public boolean PBSCreate{get;set;}
+    public boolean TMNCreate{get;set;}
+    public boolean TMNView{get;set;}
+    public boolean ContractCreate{get;set;}
+    public boolean ContractView{get;set;}
+    public boolean DocCreate{get;set;}
+    public boolean DocView{get;set;}
+    public boolean Refresh=false;
+
+    //report folders
+    public String RefId;
+    public String ESDbillingId;
+    public String ESDActivityId;
+    public String ESDSupyId;
+    public String CntrctId;
+    public String CredId;
+    public String TypObj;
+
+
+    //Constructor
+    public HomePageController(){
+
+        checkTmnUserRecord();
         shareobj();
         reports();
         mineTasks();
-       
-     
+
+
     }
     //Wrapper class for Approvals
     public List<wrapper> getListApprovals(){
         if(Refresh==false){
-        gSchema = Schema.getGlobalDescribe();   
-        sObjNamesMap = new Map<String,String>{};
-        sObjNamesSet = gSchema.keyset();
-        for(String sobj:sObjNamesSet){
-                 Schema.DescribeSObjectResult oSchema = gSchema.get(sobj).getDescribe();
-                 String tempName = oSchema.getLabel();
-                 String tempPrefix = oSchema.getKeyPrefix();   
-                 sObjNamesMap.put(tempPrefix, tempName);   
-               
-        }
-        
-        for(ProcessInstanceWorkitem app:[select Id,ProcessInstanceId,CreatedDate,ActorId,CreatedById,CreatedBy.Name,ProcessInstance.LastModifiedBy.Name,ProcessInstance.TargetObject.Name,ProcessInstance.LastModifiedById,ProcessInstance.TargetObjectId from ProcessInstanceWorkitem where ActorId=:UserInfo.getUserId() order by CreatedDate desc limit 1000]){
+            gSchema = Schema.getGlobalDescribe();
+            sObjNamesMap = new Map<String,String>{};
+            sObjNamesSet = gSchema.keyset();
+            for(String sobj:sObjNamesSet){
+                Schema.DescribeSObjectResult oSchema = gSchema.get(sobj).getDescribe();
+                String tempName = oSchema.getLabel();
+                String tempPrefix = oSchema.getKeyPrefix();
+                sObjNamesMap.put(tempPrefix, tempName);
+
+            }
+
+            for(ProcessInstanceWorkitem app:[select Id,ProcessInstanceId,CreatedDate,ActorId,CreatedById,CreatedBy.Name,ProcessInstance.LastModifiedBy.Name,ProcessInstance.TargetObject.Name,ProcessInstance.LastModifiedById,ProcessInstance.TargetObjectId from ProcessInstanceWorkitem where ActorId=:UserInfo.getUserId() order by CreatedDate desc limit 1000]){
                 String sub = app.ProcessInstance.TargetObjectId;
                 String IdType = sub.substring(0,3);
                 String Type = sObjNamesMap.get(IdType);
-                
+
                 AppWrapper.add(new wrapper(app.Id,app.ProcessInstance.TargetObjectId,app.ProcessInstance.LastModifiedById,app.ProcessInstance.LastModifiedBy.Name,app.CreatedDate,app.ProcessInstance.TargetObject.Name,Type));
-                
-        }
-        
-        
-        Refresh = true;
+
+            }
+
+
+            Refresh = true;
         }
         return AppWrapper;
     }
     //Block visibility check
     public void shareobj(){
         Schema.DescribeSObjectResult oSchema4;
-      
-         //Referral object
-         Schema.DescribeSObjectResult oSchema1 = Referral__c.sObjectType.getDescribe();
-         RefCreate = oSchema1.IsCreateable();
-         RefView = oSchema1.isAccessible();
-         //PBS object
-         Schema.DescribeSObjectResult oSchema2 = Account.sObjectType.getDescribe();
-         PBSCreate = oSchema2.IsCreateable();
-         PBSView = oSchema2.isAccessible();
-         //TMN object
-         Schema.DescribeSObjectResult oSchema3 = TMN_Contact__c.sObjectType.getDescribe();
-         TMNCreate = oSchema3.IsCreateable();
-         TMNView = oSchema3.isAccessible();
-         //Contract object
-         List<TMN_User__c> tmnUsers = [SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c= :UserInfo.getUserId() LIMIT 1];
-       
-          
-         for(TMN_User__c tmn:tmnUsers){
-             if(tmn.Operating_Group__c=='Cambridge'){
-                 oSchema4 = TMN_Contract__c.sObjectType.getDescribe();
-             }else if(tmn.Operating_Group__c=='CareMeridian' || tmn.Operating_Group__c=='Care Meridian' || tmn.Operating_Group__c=='NeuroRestorative' ){
-                 oSchema4 = CareMeridian_Contract__c.sObjectType.getDescribe();
-             }else if(tmn.Operating_Group__c=='Redwood'){
+
+        //Referral object
+        Schema.DescribeSObjectResult oSchema1 = Referral__c.sObjectType.getDescribe();
+        RefCreate = oSchema1.IsCreateable();
+        RefView = oSchema1.isAccessible();
+        //PBS object
+        Schema.DescribeSObjectResult oSchema2 = Account.sObjectType.getDescribe();
+        PBSCreate = oSchema2.IsCreateable();
+        PBSView = oSchema2.isAccessible();
+        //TMN object
+        Schema.DescribeSObjectResult oSchema3 = TMN_Contact__c.sObjectType.getDescribe();
+        TMNCreate = oSchema3.IsCreateable();
+        TMNView = oSchema3.isAccessible();
+        //Contract object
+        List<TMN_User__c> tmnUsers = [SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c= :UserInfo.getUserId() LIMIT 1];
+
+
+        for(TMN_User__c tmn:tmnUsers){
+            if(tmn.Operating_Group__c=='Cambridge'){
+                oSchema4 = TMN_Contract__c.sObjectType.getDescribe();
+            }else if(tmn.Operating_Group__c=='CareMeridian' || tmn.Operating_Group__c=='Care Meridian' || tmn.Operating_Group__c=='NeuroRestorative' ){
+                oSchema4 = CareMeridian_Contract__c.sObjectType.getDescribe();
+            }else if(tmn.Operating_Group__c=='Redwood'){
                 oSchema4 = Redwood_Contract__c.sObjectType.getDescribe();
-             }else{
+            }else{
                 oSchema4=null;
-             }
-         
-         }
-     
-        
-         if(oSchema4!=null){
-          ContractCreate = oSchema4.IsCreateable();
-          ContractView = oSchema4.isAccessible(); 
-         }else{
-          ContractCreate = false;
-          ContractView = false; 
-         }
-          
-         //Doc object
-         Schema.DescribeSObjectResult oSchema5 = Document__c.sObjectType.getDescribe();
-         DocCreate = oSchema5.IsCreateable();
-         DocView = oSchema5.isAccessible();
-       
-        
-        
-        
+            }
+
+        }
+
+
+        if(oSchema4!=null){
+            ContractCreate = oSchema4.IsCreateable();
+            ContractView = oSchema4.isAccessible();
+        }else{
+            ContractCreate = false;
+            ContractView = false;
+        }
+
+        //Doc object
+        Schema.DescribeSObjectResult oSchema5 = Document__c.sObjectType.getDescribe();
+        DocCreate = oSchema5.IsCreateable();
+        DocView = oSchema5.isAccessible();
+
+
+
+
     }
-     //Wrapper class
-     public class wrapper{
-      public Id TAction{get;set;}
-      public Id TRelated{get;set;}
-      public String TobjName{get;set;}
-      public String TType{get;set;}
-      public Id MostRecent{get;set;}
-      public String LMName{get;set;}
-      public Datetime cDate{get;set;}
-      
-      public wrapper(Id Id,Id TId,Id LId,String LName,Datetime cdate,String TName,String Type){
-        this.Taction = Id;
-        this.TRelated = TId;
-        this.TobjName = TName;
-        this.MostRecent = LId;
-        this.LMName = LName;
-        this.cDate = cdate;
-        this.TType = Type;
-        
-        
-      }
-     }
+    //Wrapper class
+    public class wrapper{
+        public Id TAction{get;set;}
+        public Id TRelated{get;set;}
+        public String TobjName{get;set;}
+        public String TType{get;set;}
+        public Id MostRecent{get;set;}
+        public String LMName{get;set;}
+        public Datetime cDate{get;set;}
+
+        public wrapper(Id Id,Id TId,Id LId,String LName,Datetime cdate,String TName,String Type){
+            this.Taction = Id;
+            this.TRelated = TId;
+            this.TobjName = TName;
+            this.MostRecent = LId;
+            this.LMName = LName;
+            this.cDate = cdate;
+            this.TType = Type;
+
+
+        }
+    }
 
     public string referralPrefix {
-        get { 
-                Schema.DescribeSObjectResult d = Referral__c.sObjectType.getDescribe();
-               
-                return d.getKeyPrefix();
+        get {
+            Schema.DescribeSObjectResult d = Referral__c.sObjectType.getDescribe();
+
+            return d.getKeyPrefix();
         }
         private set;
     }
 
-  public Map<String, String> personsBeingServedViews {
-    get {
-        if (personsBeingServedViews != null) {
+    public Map<String, String> personsBeingServedViews {
+        get {
+            if (personsBeingServedViews != null) {
+                return personsBeingServedViews;
+            }
+            personsBeingServedViews = new Map<String, String>();
+            String query = 'SELECT ID FROM Account limit 100';  // 05/06/14 - set limit to prevent governor limit overrun
+            ApexPages.StandardSetController con = new ApexPages.StandardSetController(Database.getQueryLocator(query));
+            SelectOption[] options = con.getListViewOptions();
+            for (SelectOption option : options) {
+
+                if (option.getLabel().toLowerCase().indexOf('all persons being served')!=-1) {
+                    personsBeingServedViews.put('all', option.getValue());
+                } else if (option.getLabel().toLowerCase().indexOf('recently viewed')!=-1) {
+                    personsBeingServedViews.put('recent', option.getValue());
+                } else if (option.getLabel().toLowerCase().indexOf('new this week')!=-1) {
+                    personsBeingServedViews.put('new', option.getValue());
+                } else if (option.getLabel().toLowerCase().indexOf('my persons being served')!=-1) {
+                    personsBeingServedViews.put('my', option.getValue());
+                }
+            }
+
             return personsBeingServedViews;
         }
-        personsBeingServedViews = new Map<String, String>();
-        String query = 'SELECT ID FROM Account limit 100';  // 05/06/14 - set limit to prevent governor limit overrun
-        ApexPages.StandardSetController con = new ApexPages.StandardSetController(Database.getQueryLocator(query));
-        SelectOption[] options = con.getListViewOptions();
-        for (SelectOption option : options) {
-           
-            if (option.getLabel().toLowerCase().indexOf('all persons being served')!=-1) {
-                personsBeingServedViews.put('all', option.getValue());
-            } else if (option.getLabel().toLowerCase().indexOf('recently viewed')!=-1) {
-                personsBeingServedViews.put('recent', option.getValue());
-            } else if (option.getLabel().toLowerCase().indexOf('new this week')!=-1) {
-                personsBeingServedViews.put('new', option.getValue());
-            } else if (option.getLabel().toLowerCase().indexOf('my persons being served')!=-1) {
-                personsBeingServedViews.put('my', option.getValue());
-            }
-        }
-       
-        return personsBeingServedViews;
+        set;
     }
-    set;
-  }
-  public Map<String, String> ReferralViews {
-    get {
-        if (ReferralViews != null) {
+    public Map<String, String> ReferralViews {
+        get {
+            if (ReferralViews != null) {
+                return ReferralViews;
+            }
+            ReferralViews = new Map<String, String>();
+            String query2 = 'SELECT ID FROM Referral__c  limit 100'; // 05/06/14 - set limit to prevent governor limit overrun
+            ApexPages.StandardSetController con2 = new ApexPages.StandardSetController(Database.getQueryLocator(query2));
+            SelectOption[] options2 = con2.getListViewOptions();
+            for (SelectOption option2 : options2) {
+
+                if (option2.getLabel().toLowerCase().indexOf('all')!=-1) {
+                    ReferralViews.put('all', option2.getValue().substring(0,15));
+                } else if (option2.getLabel().toLowerCase().indexOf('my referrals')!=-1) {
+                    ReferralViews.put('my', option2.getValue().substring(0,15));
+                }
+            }
+
             return ReferralViews;
         }
-        ReferralViews = new Map<String, String>();
-        String query2 = 'SELECT ID FROM Referral__c  limit 100'; // 05/06/14 - set limit to prevent governor limit overrun
-        ApexPages.StandardSetController con2 = new ApexPages.StandardSetController(Database.getQueryLocator(query2));
-        SelectOption[] options2 = con2.getListViewOptions();
-        for (SelectOption option2 : options2) {
-           
-            if (option2.getLabel().toLowerCase().indexOf('all')!=-1) {
-                ReferralViews.put('all', option2.getValue().substring(0,15));
-            } else if (option2.getLabel().toLowerCase().indexOf('my referrals')!=-1) {
-                ReferralViews.put('my', option2.getValue().substring(0,15));
-            }
-        }
-       
-        return ReferralViews;
+        set;
     }
-    set;
-  }
-  public Map<String, String> DocViews {
-    get {
-        if (DocViews != null) {
+    public Map<String, String> DocViews {
+        get {
+            if (DocViews != null) {
+                return DocViews;
+            }
+            DocViews = new Map<String, String>();
+            String query1 = 'SELECT ID FROM Document__c  limit 100'; // 05/06/14 - set limit to prevent governor limit overrun
+            ApexPages.StandardSetController con1 = new ApexPages.StandardSetController(Database.getQueryLocator(query1));
+
+            SelectOption[] options1 = con1.getListViewOptions();
+
+            for (SelectOption option1 : options1) {
+
+                if (option1.getLabel().toLowerCase().indexOf('all')!=-1) {
+                    DocViews.put('all', option1.getValue().substring(0,15));
+                } else if (option1.getLabel().toLowerCase().indexOf('Cambridge BP DocView')!=-1) {
+                    DocViews.put('cambridge', option1.getValue().substring(0,15));
+                }
+            }
+
+
             return DocViews;
         }
-        DocViews = new Map<String, String>();
-        String query1 = 'SELECT ID FROM Document__c  limit 100'; // 05/06/14 - set limit to prevent governor limit overrun
-        ApexPages.StandardSetController con1 = new ApexPages.StandardSetController(Database.getQueryLocator(query1));
-       
-        SelectOption[] options1 = con1.getListViewOptions();
-       
-        for (SelectOption option1 : options1) {
-            
-             if (option1.getLabel().toLowerCase().indexOf('all')!=-1) {
-                DocViews.put('all', option1.getValue().substring(0,15));
-            } else if (option1.getLabel().toLowerCase().indexOf('Cambridge BP DocView')!=-1) {
-                DocViews.put('cambridge', option1.getValue().substring(0,15));
-            } 
-        }
-        
-        
-        return DocViews;
+        set;
     }
-    set;
-  }
-   public Map<String, String> TMNViews {
-    get {
-        if (TMNViews != null) {
+    public Map<String, String> TMNViews {
+        get {
+            if (TMNViews != null) {
+                return TMNViews;
+            }
+            TMNViews = new Map<String, String>();
+            String query4 = 'SELECT ID FROM TMN_Contact__c  limit 100'; // 05/06/14 - set limit to prevent governor limit overrun
+            ApexPages.StandardSetController con4 = new ApexPages.StandardSetController(Database.getQueryLocator(query4));
+
+            SelectOption[] options4 = con4.getListViewOptions();
+
+            for (SelectOption option4 : options4) {
+
+
+
+                if (option4.getLabel().toLowerCase().indexOf('my')!=-1) {
+                    TMNViews.put('my', option4.getValue().substring(0,15));
+                }
+            }
+
+
             return TMNViews;
         }
-        TMNViews = new Map<String, String>();
-        String query4 = 'SELECT ID FROM TMN_Contact__c  limit 100'; // 05/06/14 - set limit to prevent governor limit overrun
-        ApexPages.StandardSetController con4 = new ApexPages.StandardSetController(Database.getQueryLocator(query4));
-       
-        SelectOption[] options4 = con4.getListViewOptions();
-       
-        for (SelectOption option4 : options4) {
-            
-     
-            
-             if (option4.getLabel().toLowerCase().indexOf('my')!=-1) {
-                TMNViews.put('my', option4.getValue().substring(0,15));
-            } 
-        }
-        
-      
-        return TMNViews;
+        set;
     }
-    set;
-  }
-   
-   public List<Report> reports() {
-          String ESDAct='',ref,Care,ESDbill,ESDsup,Red;
-          VF_Reports__c vf = VF_Reports__c.getInstance();
-          VFReportlst = [SELECT Name,Id,Name__c,Description__c,link__c, groups__c from VF_Reports__c];
-          for(Folder tmp:[SELECT AccessType,Id,IsReadonly,Name,DeveloperName,Type FROM Folder WHERE Type = 'Report']){
-      
-              if(tmp.DeveloperName=='Referrals'){
+
+    public List<Report> reports() {
+        String ESDAct='',ref,Care,ESDbill,ESDsup,Red;
+        VF_Reports__c vf = VF_Reports__c.getInstance();
+        VFReportlst = [SELECT Name,Id,Name__c,Description__c,link__c, groups__c from VF_Reports__c];
+        for(Folder tmp:[SELECT AccessType,Id,IsReadonly,Name,DeveloperName,Type FROM Folder WHERE Type = 'Report']){
+
+            if(tmp.DeveloperName=='Referrals'){
                 RefId = tmp.Id;
-                 
-                }else if(tmp.DeveloperName=='CareMeridian_Contracts' && operatinggroup == 'Care Meridian'){
-                    CntrctId = tmp.Id;
-                }
-                else if(tmp.DeveloperName=='Redwood_Contracts' && operatinggroup == 'Redwood'){
-                    CntrctId = tmp.Id;
-                 }         
-                 else if ( tmp.DeveloperName == 'Contract_Reports' && operatinggroup == 'Cambridge')
-                    CntrctId = tmp.Id;
-                 else if ( tmp.DeveloperName == 'Redwood_Contracts' && operatinggroup == 'Redwood')
-                    CntrctId = tmp.Id;
-                else if(tmp.DeveloperName=='ESD_Activity'){
-                    ESDActivityId = tmp.Id;
-                    ESDAct = 'ESDAct';
-                 }
-                 else if(tmp.DeveloperName=='ESD_Billing'){
-                    ESDbillingId = tmp.Id;
-                 }
-                 else if(tmp.DeveloperName=='ESD_Supervisory'){
-                    ESDSupyId = tmp.Id;
-                 }
-                 else if ( tmp.DeveloperName == 'Credentialing')
-                    CredID = tmp.Id;
+
+            }else if(tmp.DeveloperName=='CareMeridian_Contracts' && operatinggroup == 'Care Meridian'){
+                CntrctId = tmp.Id;
             }
-            
-            refrportlst = new List<Report>();
-            system.debug('op grounp ' + OperatingGroup  );
-            if(OperatingGroup != null){
-                set<string> okRefRpts = getReportsToShow(OperatingGroup );
-                system.debug('reports in scope - ' + okRefRpts);
-                for(Report rpt:report(RefId, null)){
-                    if ( canSeeReport( rpt.Id )){
-                        if(okRefRpts.contains(rpt.DeveloperName)){
-                            refrportlst.add(rpt);
-                            }
+            else if(tmp.DeveloperName=='Redwood_Contracts' && operatinggroup == 'Redwood'){
+                CntrctId = tmp.Id;
+            }
+            else if ( tmp.DeveloperName == 'Contract_Reports' && operatinggroup == 'Cambridge')
+                CntrctId = tmp.Id;
+            else if ( tmp.DeveloperName == 'Redwood_Contracts' && operatinggroup == 'Redwood')
+                CntrctId = tmp.Id;
+            else if(tmp.DeveloperName=='ESD_Activity'){
+                ESDActivityId = tmp.Id;
+                ESDAct = 'ESDAct';
+            }
+            else if(tmp.DeveloperName=='ESD_Billing'){
+                ESDbillingId = tmp.Id;
+            }
+            else if(tmp.DeveloperName=='ESD_Supervisory'){
+                ESDSupyId = tmp.Id;
+            }
+            else if ( tmp.DeveloperName == 'Credentialing')
+                CredID = tmp.Id;
+        }
+
+        refrportlst = new List<Report>();
+        system.debug('op grounp ' + OperatingGroup  );
+        if(OperatingGroup != null){
+            set<string> okRefRpts = getReportsToShow(OperatingGroup );
+            system.debug('reports in scope - ' + okRefRpts);
+            for(Report rpt:report(RefId, null)){
+                if ( canSeeReport( rpt.Id )){
+                    if(okRefRpts.contains(rpt.DeveloperName)){
+                        refrportlst.add(rpt);
                     }
                 }
             }
-            
-            contractrportlst = new List<Report>();
-            for(Report rpt:report(CntrctId, null)){
-                if ( canSeeReport( rpt.Id ))
-                    contractrportlst.add(rpt);
+        }
+
+        contractrportlst = new List<Report>();
+        for(Report rpt:report(CntrctId, null)){
+            if ( canSeeReport( rpt.Id ))
+                contractrportlst.add(rpt);
+        }
+
+
+        credrportlst = new List<Report>();
+        for(Report rpt:report(CredId,null)){
+            if ( canSeeReport( rpt.Id ))
+                credrportlst.add(rpt);
+        }
+
+        docrportlst = new List<Report>();
+        for(Report rpt:report(ESDActivityId,'Docs')){
+            if ( canSeeReport( rpt.Id))
+                docrportlst.add(rpt);
+        }
+
+        PBSrportlst = new List<Report>();
+        for(Report rpt:report(ESDActivityId,ESDAct)){
+            if ( canSeeReport( rpt.Id))
+                PBSrportlst.add(rpt);
+        }
+
+        for(Report rpt1:report(ESDbillingId,ESDbill)){
+            if ( canSeeReport( rpt1.Id))
+                PBSrportlst.add(rpt1);
+        }
+
+        for(Report rpt2:report(ESDSupyId,ESDsup)){
+            if ( canSeeReport( rpt2.Id))
+                PBSrportlst.add(rpt2);
+        }
+
+        return null;
+    }
+    public List<Report> report(Id ownId,String ReportText){
+        String query = 'SELECT Name, Id,OwnerId, description, DeveloperName, SystemModstamp FROM report where OwnerId=:ownId';
+        if(ReportText!=null && ReportText=='ESDAct'){
+            query+=' and description like \'%#notes%\'' ;
+        } else if (ReportText != null && ReportText=='Docs') {
+            query+=' and (description like \'%Case Document%\' or description like \'%Fidelity Document%\')';
+        }
+
+        query+= ' order by name';
+
+        List<Report> tempreport = database.query(query);
+        return tempreport;
+    }
+
+
+    public List<SelectOption> getviewvalues() {
+        List<SelectOption> Options = new List<SelectOption>();
+        Options.add(new SelectOption('All Open','All Open'));
+        Options.add(new SelectOption('Overdue','Overdue'));
+        Options.add(new SelectOption('Today','Today'));
+        Options.add(new SelectOption('Today+Overdue','Today+Overdue'));
+        Options.add(new SelectOption('Tomorrow','Tomorrow'));
+        Options.add(new SelectOption('Next 7 Days','Next 7 Days'));
+        Options.add(new SelectOption('Next 7 Days+Overdue','Next 7 Days+Overdue'));
+        Options.add(new SelectOption('This Month','This Month'));
+
+        return Options;
+    }
+    public void mineTasks(){
+        system.debug('came here');
+        Id userId = UserInfo.getUserId();
+        String query ='select id, subject,WhatId,What.Name,WhoId,Who.Name,status,RecordTypeId, ActivityDate, Priority, CreatedDate from Task where OwnerId=:userId and status!=\'Completed\'';
+        system.debug('*********viewstsk'+viewstsk);
+        if(viewstsk==null || viewstsk=='All Open'){
+            query+=' order by ActivityDate desc, Priority limit 25';
+        }
+        else if (viewstsk=='Overdue'){
+            query+='and ActivityDate<TODAY order by ActivityDate desc, Priority limit 25';
+        }else if (viewstsk=='Today'){
+            query+='and ActivityDate=TODAY order by ActivityDate desc, Priority limit 25';
+        }else if (viewstsk=='Today+Overdue'){
+            query+='and ActivityDate<=TODAY order by ActivityDate desc, Priority limit 25';
+        }else if (viewstsk=='Tomorrow'){
+            query+='and ActivityDate=TOMORROW order by ActivityDate desc, Priority limit 25';
+        }else if (viewstsk=='Next 7 Days'){
+            query+='and ActivityDate=NEXT_WEEK order by ActivityDate desc, Priority limit 25';
+        }else if (viewstsk=='Next 7 Days+Overdue'){
+            query+='and ActivityDate<=NEXT_WEEK order by ActivityDate desc, Priority limit 25';
+        }else if (viewstsk=='This Month'){
+            query+='and ActivityDate=THIS_MONTH order by ActivityDate desc, Priority limit 25';
+        }else {
+            query+=' order by ActivityDate desc, Priority limit 25';
+        }
+        //and RecordTypeId = :Utility.getRecordTypeForTask('Referral Tasks')
+
+        populateTasks = database.query(query);
+
+        // We use the following map to display the name of tasks, because tasks
+        // associated with Referrals cannot have their WhoId set to the Person
+        // Being Referred record, so we need to construct the names manually
+        // here
+        taskToNameMap = new Map<Id, String>();
+        Set<Id> whatIdSet = new Set<Id>();
+        for (Task task: populateTasks) {
+            if (task.WhoId != null) {
+                taskToNameMap.put(task.Id, '<a href="/' + task.WhoId + '">' + task.Who.Name + '</a>');
+            } else {
+                whatIdSet.add(task.WhatId);
             }
-            
-            
-            credrportlst = new List<Report>();
-            for(Report rpt:report(CredId,null)){
-                if ( canSeeReport( rpt.Id ))
-                    credrportlst.add(rpt);
+        }
+        Map<Id, Referral__c> referrals = new Map<Id, Referral__c>([
+            SELECT Id, Person_Being_Referred__r.Full_Name__c
+              FROM Referral__c
+             WHERE Id IN :whatIdSet
+        ]);
+        Set<Id> referralIdSet = referrals.keySet();
+        for (Task task: populateTasks) {
+            if (referralIdSet.contains(task.WhatId)) {
+                taskToNameMap.put(task.Id, '<a href="/' + task.WhatId + '">' + referrals.get(task.WhatId).Person_Being_Referred__r.Full_Name__c + '</a>');
+            } else {
+                taskToNameMap.put(task.Id, '');
+            }
+        }
+    }
+    public PageReference getsearchNames(){
+
+        try {
+            if((FrstName!=null && FrstName!='') || (LstName!=null && LstName!='')){
+                system.debug('coming here');
+                displayPop = false;
+                PageReference newocp= new PageReference('/apex/HomePage_Search?FirstNM='+FrstName+'&&LastNM='+LstName);
+                newocp.setRedirect(true);
+                return newocp;
             }
 
-            docrportlst = new List<Report>();
-            for(Report rpt:report(ESDActivityId,'Docs')){
-                if ( canSeeReport( rpt.Id))
-                    docrportlst.add(rpt);
-            }
-                        
-            PBSrportlst = new List<Report>();
-            for(Report rpt:report(ESDActivityId,ESDAct)){
-                if ( canSeeReport( rpt.Id))
-                    PBSrportlst.add(rpt);
-            }
-            
-             for(Report rpt1:report(ESDbillingId,ESDbill)){
-                if ( canSeeReport( rpt1.Id))
-                    PBSrportlst.add(rpt1);
-            }
-            
-             for(Report rpt2:report(ESDSupyId,ESDsup)){
-                if ( canSeeReport( rpt2.Id))
-                    PBSrportlst.add(rpt2);
-            }
-           
-            return null;
- }
- public List<Report> report(Id ownId,String ReportText){
-    String query = 'SELECT Name, Id,OwnerId, description, DeveloperName, SystemModstamp FROM report where OwnerId=:ownId';
-    if(ReportText!=null && ReportText=='ESDAct'){
-        query+=' and description like \'%#notes%\'' ;
-    } else if (ReportText != null && ReportText=='Docs') {
-        query+=' and (description like \'%Case Document%\' or description like \'%Fidelity Document%\')';
-    }
-    
-    query+= ' order by name';
-    
-    List<Report> tempreport = database.query(query);
-    return tempreport;
- }
-  
+            else{
 
-  public List<SelectOption> getviewvalues() {
-    List<SelectOption> Options = new List<SelectOption>();
-    Options.add(new SelectOption('All Open','All Open'));
-    Options.add(new SelectOption('Overdue','Overdue'));
-    Options.add(new SelectOption('Today','Today'));
-    Options.add(new SelectOption('Today+Overdue','Today+Overdue'));
-    Options.add(new SelectOption('Tomorrow','Tomorrow'));
-    Options.add(new SelectOption('Next 7 Days','Next 7 Days'));
-    Options.add(new SelectOption('Next 7 Days+Overdue','Next 7 Days+Overdue'));
-    Options.add(new SelectOption('This Month','This Month'));
-    
-    return Options;
-  }
-  public void mineTasks(){
-    system.debug('came here');
-   Id userId = UserInfo.getUserId();
-    String query ='select id, subject,WhatId,What.Name,WhoId,Who.Name,status,RecordTypeId, ActivityDate, Priority, CreatedDate from Task where OwnerId=:userId and status!=\'Completed\'';
-    system.debug('*********viewstsk'+viewstsk);
-            if(viewstsk==null || viewstsk=='All Open'){
-                query+=' order by ActivityDate desc, Priority limit 25';
+                displayPop = true;
+                return null;
             }
-            else if (viewstsk=='Overdue'){
-                query+='and ActivityDate<TODAY order by ActivityDate desc, Priority limit 25';
-            }else if (viewstsk=='Today'){
-                query+='and ActivityDate=TODAY order by ActivityDate desc, Priority limit 25';
-            }else if (viewstsk=='Today+Overdue'){
-                query+='and ActivityDate<=TODAY order by ActivityDate desc, Priority limit 25';
-            }else if (viewstsk=='Tomorrow'){
-                query+='and ActivityDate=TOMORROW order by ActivityDate desc, Priority limit 25';
-            }else if (viewstsk=='Next 7 Days'){
-                query+='and ActivityDate=NEXT_WEEK order by ActivityDate desc, Priority limit 25';
-            }else if (viewstsk=='Next 7 Days+Overdue'){
-                query+='and ActivityDate<=NEXT_WEEK order by ActivityDate desc, Priority limit 25';
-            }else if (viewstsk=='This Month'){
-                query+='and ActivityDate=THIS_MONTH order by ActivityDate desc, Priority limit 25';
-            }else {
-                query+=' order by ActivityDate desc, Priority limit 25';
-            }
-    //and RecordTypeId = :Utility.getRecordTypeForTask('Referral Tasks')
-    
-      populateTasks = database.query(query);     
-                   
-  }
-  public PageReference getsearchNames(){
-  
-    try {
-          if((FrstName!=null && FrstName!='') || (LstName!=null && LstName!='')){
-            system.debug('coming here');
-             displayPop = false;
-              PageReference newocp= new PageReference('/apex/HomePage_Search?FirstNM='+FrstName+'&&LastNM='+LstName);
-              newocp.setRedirect(true);
-              return newocp;
-          }
-      
-         else{
-       
-            displayPop = true;
+
+        } catch (DMLException e) {
+
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Error opening the Search Results.'));
             return null;
-          }
-                
-    } catch (DMLException e) {
-        
-              ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Error opening the Search Results.'));
-              return null;
-    
+
+        }
+
+        return null;
     }
-      
-    return null;
-  }
- 
- 
- // This funtion is here to work around a salesforce bug where report folder security is not being honored through apex queries.
- // To determine whether report is accessible to the user, attempt a page reference to the report.  A non-permitted user will receive an HTTP 500 error.
- // We can put the page instantiation into a try/catch block and return appropriately
- // We can remove this function when the bug is fixed.
- Boolean canSeeReport( ID reportid ) {
-    return true;
-    // tests to see whether user can view report
-    try {
-        PageReference pr = new PageReference( '/' + string.valueof( reportID));
-    
-        return (!pr.getContent().toString().contains('Data Not Available'));
+
+
+    // This funtion is here to work around a salesforce bug where report folder security is not being honored through apex queries.
+    // To determine whether report is accessible to the user, attempt a page reference to the report.  A non-permitted user will receive an HTTP 500 error.
+    // We can put the page instantiation into a try/catch block and return appropriately
+    // We can remove this function when the bug is fixed.
+    Boolean canSeeReport( ID reportid ) {
+        return true;
+        // tests to see whether user can view report
+        try {
+            PageReference pr = new PageReference( '/' + string.valueof( reportID));
+
+            return (!pr.getContent().toString().contains('Data Not Available'));
+        }
+        catch(DmlException e) {
+            // DmlException handling code here.
+            return false;
+        } catch(Exception e) {
+            // Generic exception handling code here.
+            return false;
+        }
     }
-    catch(DmlException e) {
-        // DmlException handling code here.
-        return false;
-    } catch(Exception e) {
-        // Generic exception handling code here.
-        return false;
-    }   
- }
     public set<string> getReportsToShow(string og){
         set<string> items = new set<string>();
-        
+
         items.add('All_Active_Referrals_Report');
         items.add('All_Referrals');
         items.add('Closed_Referral_Tracking');
@@ -463,7 +490,7 @@ public with sharing class HomePageController{
         items.add('Referrals_By_Location_Working_Referral');
         items.add('Referrals_Requiring_Action');
         items.add('Referrals_with_Activities2');
-        
+
         if(og == 'Cambridge'){
             items.add('Active_Referrals_With_Diagnosis');
             items.add('Active_Referrals_With_Diagnosis_Axis');
@@ -471,48 +498,48 @@ public with sharing class HomePageController{
             items.add('Red_Flagged_Referrals');
             items.add('Weekly_Referrals');
             items.add('Avatar_GA_Referrals');
-            items.add('GA_Referrals_FIT_Program'); 
-            
+            items.add('GA_Referrals_FIT_Program');
+
         }
         if(og == 'Redwood'){
             items.add('Active_Referrals_With_Diagnosis');
             items.add('Active_Referrals_With_Diagnosis_Axis');
             items.add('Daily_Referrals');
             items.add('Red_Flagged_Referrals');
-            items.add('Weekly_Referrals');        
+            items.add('Weekly_Referrals');
         }
         if(og == 'Care Meridian'){
-        	// EC-57 - added
-        	items.add('Referrals_with_Funding_and_Location');
+            // EC-57 - added
+            items.add('Referrals_with_Funding_and_Location');
         }
         if(og == 'NeuroRestorative'){
             items.add('Daily_Referrals');
-            items.add('Weekly_Referrals');                  
-        } 
-        
-    
-    
+            items.add('Weekly_Referrals');
+        }
+
+
+
         return items;
-    
+
     }
-    
+
     // START: SHAUN-47: Additions for checking existence of TMN_User__c record for the User.
     public class TMN_User_Exception extends Exception {}
-    
+
     public void checkTmnUserRecord() {
-    	
-    	String usersId = UserInfo.getUserId();
-    	List<TMN_User__c> tmnUserRecords = [ SELECT Id FROM TMN_User__c WHERE Salesforce_User_Account__c = :usersId LIMIT 1 ];
-    	
-    	Integer countTmnUserRecords = 0;
-    	for(TMN_User__c tmnu : tmnUserRecords) {
-			countTmnUserRecords++;
-    	}
-    	
-    	if(countTmnUserRecords==0) {
-    		throw new TMN_User_Exception('ERROR: Your account must be reconfigured before you begin using the system. Please contact the Implementation Team at Implementation@thementornetwork.com or the IT Service Center at 888-774-4872.');
-    	}	
+
+        String usersId = UserInfo.getUserId();
+        List<TMN_User__c> tmnUserRecords = [ SELECT Id FROM TMN_User__c WHERE Salesforce_User_Account__c = :usersId LIMIT 1 ];
+
+        Integer countTmnUserRecords = 0;
+        for(TMN_User__c tmnu : tmnUserRecords) {
+            countTmnUserRecords++;
+        }
+
+        if(countTmnUserRecords==0) {
+            throw new TMN_User_Exception('ERROR: Your account must be reconfigured before you begin using the system. Please contact the Implementation Team at Implementation@thementornetwork.com or the IT Service Center at 888-774-4872.');
+        }
     }
     // END: SHAUN-47: Additions for checking existence of TMN_User__c record for the User.
-  
+
 }
