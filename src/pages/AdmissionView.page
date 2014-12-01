@@ -47,8 +47,16 @@
     .dataTables_wrapper {
         position: relative;
         clear: none;
-		zoom: 1;
-		}
+        zoom: 1;
+    }
+
+	td.details-control {
+	    background: url("{!URLFOR($Resource.DetailsOpenClose, 'details_open.png')}") no-repeat center center;
+	    cursor: pointer;
+	}
+	tr.shown td.details-control {
+	    background: url("{!URLFOR($Resource.DetailsOpenClose, 'details_close.png')}") no-repeat center center;
+	}
 
   </style>
 
@@ -102,23 +110,9 @@
     }
 }) (jQuery.noConflict());
 
-initializeDocTable = function(){
-        $('table[id$=docPacketTable]').DataTable({
-        "scrollY":        "200px",
-        "scrollCollapse": true,
-        "paging":         false
-    });
-}
-
-jQuery(document).ready(function() {
-    initializeDocTable();
-});
-    
-
 displayDocProperties= function(){
     var el = $('div[id$=associatedDocDetail]');
     el.trigger('scrollIntoView');
-    //el.trigger(scrollIntoView,[false]);
 }
 
 renderTreeTableCols = function(data){
@@ -179,9 +173,98 @@ function triggerNodeEdit(nK){
   
  
  function triggerNodeSelection (treeNode) {
-	waitStart();  
-	updateDocSelectionAF(treeNode.key, treeNode.isSelected());  
+    waitStart();  
+    updateDocSelectionAF(treeNode.key, treeNode.isSelected());  
  }
+ 
+ var assocDocRecurrences = {!assocDocRecurrs};
+ 
+ function format ( d, docRec ) {
+    // `d` is the original data object for the row
+    return '<div class="slider">'+
+        '<table cellspacing="0" border="1px" width="70%">'+
+            '<thead>'+
+                '<tr>'+
+//	                '<th>Packet Name</th>'+
+	                '<th>Document Name</th>'+
+	                '<th>Effective Date</th>'+
+//	                '<th>Recurrence</th>'+
+//	                '<th>Due Days</th>'+
+	                '<th>Filed Date</th>'+
+	                '<th>Status</th>'+
+	                '<th>Status Date</th>'+
+                '</tr>'+
+            '</thead>'+
+            '<tbody>'+
+                '<tr>'+
+//	                '<td>'+d[2]+'</td>'+
+	                '<td>'+d[3]+'</td>'+
+	                '<td>'+docRec.Effective_Date__c+'</td>'+
+//	                '<td>'+d[5]+'</td>'+
+//	                '<td>'+d[6]+'</td>'+
+	                '<td>'+docRec.Filed_Date__c+'</td>'+
+	                '<td>'+docRec.Status__c+'</td>'+
+	                '<td>'+docRec.Status_Date__c+'</td>'+
+                '</tr>'+
+            '</tbody>'+
+        '</table>'+
+    '</div>';
+}
+                
+         
+ initializeDocTable = function(){
+    var table = $('#docPacketTable').DataTable({
+                    "scrollY"       :   "200px",
+                    "scrollCollapse":   true,
+                    "paging"        :   false,
+                    "order"         :   [[2, 'asc']],
+                    "columnDefs"    :   [{
+                                        "targets"       :   0,
+                                        "searchable"    :   false,
+                                        "orderable"     :   false,
+                                        "defaultContent":   '',
+                                        "createdCell"   :   function (td, cellData, rowData, row, col) {
+                                                                $.each( assocDocRecurrences, function( index, docRec ) {
+                                                                            if (docRec.PB_AssociatedDoc__c ===  rowData[1]) {
+                                                                                $(td).addClass('details-control');
+                                                                                return false;
+                                                                            }
+                                                                });
+                                                            }
+                                        },
+                                        { "visible": false, "targets": 1 }]
+			    });
+    
+    
+    $('#docPacketTable tbody').on('click', 'td.details-control', function () {
+	    var tr = $(this).closest('tr');
+	    var row = table.row( tr );
+	 
+	    if ( row.child.isShown() ) {
+	        // This row is already open - close it
+	        row.child.hide();
+	        tr.removeClass('shown');
+	    }
+	    else {
+	        // Open this row
+	        $.each( assocDocRecurrences, function( index, docRec ) {
+                    if (docRec.PB_AssociatedDoc__c ===  row.data()[1]) {
+                            row.child( format(row.data(), docRec)).show();
+                            tr.addClass('shown');
+                            return false;
+                    }
+            });
+
+	    }
+    });
+
+ }
+
+jQuery(document).ready(function(){
+    initializeDocTable();
+});
+
+
  </script>
 
 <apex:variable value="{! $User.Operating_Group__c = 'Cambridge'}" var="showCans"/>
@@ -281,27 +364,34 @@ function triggerNodeEdit(nK){
             </apex:facet>
         </apex:actionStatus>            
         
-        <table id="docPacketTable">
+        <table id="docPacketTable" cellspacing="0" class="hover" width="100%">
                 <thead>
                     <tr>
-                        <td style="width: 15%"><strong>Packet Name</strong></td>
-                        <td style="width: 35%"><strong>Document Name</strong></td>
-                        <td style="width: 15%"><strong>Effective Date</strong></td>
-                        <td style="width: 10%"><strong>Due Days</strong></td>
-                        <td style="width: 15%"><strong>Filed Date</strong></td>
-                        <td style="width: 10%"><strong>Status</strong></td>
-                        <td style="width: 15%"><strong>Status Date</strong></td>
+                        <th></th>
+                        <th></th>
+                        <th>Packet Name</th>
+                        <th>Document Name</th>
+                        <th>Effective Date</th>
+                        <th>Recurrence</th>                        
+                        <th>Due Days</th>
+                        <th>Filed Date</th>
+                        <th>Status</th>
+                        <th>Status Date</th>
                     </tr>
                 </thead>
                 <tbody>
                     <apex:repeat value="{!associatedDocs}" var="doc">
-                            <tr><td>{!doc.DocPacket__r.Packet_Name__c}</td>
+                            <tr>
+                                <td></td>
+                                <td>{!doc.id}</td>
+                                <td>{!doc.DocPacket__r.Packet_Name__c}</td>
                                 <td>{!doc.Document__r.Document_Name__c}</td>
-                                <td><apex:outputField value="{!doc.Effective_Date__c}" /></td>
-                                <td><apex:outputField value="{!doc.Due_Days__c}" /></td>
-                                <td><apex:outputField value="{!doc.Filed_Date__c}" /></td>
-                                <td>{!doc.Status__c}</td>
-                                <td><apex:outputField value="{!doc.Status_Date__c}" /></td>
+                                <td style="text-align:center;"><apex:outputField value="{!doc.Effective_Date__c}" /></td>
+                                <td style="text-align:center;">{!doc.recurring_frequency__c}</td>
+                                <td style="text-align:center;">{!doc.Due_Days__c}</td>
+                                <td style="text-align:center;"><apex:outputField value="{!doc.Filed_Date__c}" /></td>
+                                <td style="text-align:center;">{!doc.Status__c}</td>
+                                <td style="text-align:center;"><apex:outputField value="{!doc.Status_Date__c}" /></td>
                             </tr>
                     </apex:repeat>
                 </tbody>
@@ -369,52 +459,48 @@ function triggerNodeEdit(nK){
     
 			</apex:outputPanel>
 
-			<apex:outputPanel id="associatedDocDetails">
-			<apex:outputPanel id="associatedDocDetail" layout="block" rendered="{! currrentAssocDoc.Status__c != '' }">
-				<br/>
-        	 	<table>
-	        	 	<tr>
-						<td colspan="2"><apex:outputText value="{!currrentAssocDoc.Document__r.Document_Name__c}" styleClass="labelCol"/></td>
-					</tr><tr></tr>
-					<tr>
-						<td><apex:outputText value="Effective Date" styleClass="labelCol"/></td>
-						<td><apex:inputField value="{!currrentAssocDoc.Effective_Date__c}" id="currrentAssocDoc_Effective_Date"/></td>					
-					</tr>
-					<tr>
-						<td><apex:outputText value="Recurring" styleClass="labelCol"/></td>
-						<td><apex:inputField value="{!currrentAssocDoc.Recurring__c}" id="currrentAssocDoc_Recurring__c"/></td>					
-					</tr>
-					<tr>
-						<td><apex:outputText value="Frequency" styleClass="labelCol"/></td>
-						<td><apex:inputField value="{!currrentAssocDoc.Recurring_Frequency__c}" id="currrentAssocDoc_Recurring_Frequency"/></td>					
-					</tr>
-					<tr>
-						<td><apex:outputText value="Due Days" styleClass="labelCol"/></td>
-						<td><apex:inputField value="{!currrentAssocDoc.Due_Days__c}" id="currrentAssocDoc_Due_Days"/></td>					
-					</tr>
-					<tr>
-						<td><apex:outputText value="Filed Date" styleClass="labelCol"/></td>
-						<td><apex:inputField value="{!currrentAssocDoc.Filed_Date__c}" id="currrentAssocDoc_Filed_Date"/></td>					
-					</tr>
-
-					<tr>
-						<td><apex:outputText value="Status" styleClass="labelCol"/></td>
-						<td><apex:inputField value="{!currrentAssocDoc.Status__c}" id="currrentAssocDoc_Status"/></td>					
-					</tr>
-					<tr>
-						<td><apex:outputText value="Status Date" styleClass="labelCol"/></td>
-						<td><apex:inputField value="{!currrentAssocDoc.Status_Date__c}" id="currrentAssocDoc_Status_Date"/></td>
-					</tr>
-				</table>	
-	        </apex:outputPanel>
-			</apex:outputPanel>
+            <apex:outputPanel id="associatedDocDetails">
+            <apex:outputPanel id="associatedDocDetail" layout="block" rendered="{! currrentAssocDoc.Status__c != '' }">
+                <br/>
+                <table>
+                    <tr>
+                        <td colspan="2"><apex:outputText value="{!currrentAssocDoc.Document__r.Document_Name__c}" styleClass="labelCol"/></td>
+                    </tr><tr></tr>
+                    <tr>
+                        <td><apex:outputText value="Effective Date" styleClass="labelCol"/></td>
+                        <td><apex:inputField value="{!currrentAssocDoc.Effective_Date__c}" id="currrentAssocDoc_Effective_Date"/></td>                  
+                    </tr>
+                    <tr>
+                        <td><apex:outputText value="Recurring" styleClass="labelCol"/></td>
+                        <td><apex:inputField value="{!currrentAssocDoc.Recurring__c}" id="currrentAssocDoc_Recurring__c"/></td>                 
+                    </tr>
+                    <tr>
+                        <td><apex:outputText value="Frequency" styleClass="labelCol"/></td>
+                        <td><apex:inputField value="{!currrentAssocDoc.Recurring_Frequency__c}" id="currrentAssocDoc_Recurring_Frequency"/></td>                    
+                    </tr>
+                    <tr>
+                        <td><apex:outputText value="Due Days" styleClass="labelCol"/></td>
+                        <td><apex:inputField value="{!currrentAssocDoc.Due_Days__c}" id="currrentAssocDoc_Due_Days"/></td>                  
+                    </tr>
+                    <tr>
+                        <td><apex:outputText value="Filed Date" styleClass="labelCol"/></td>
+                        <td><apex:inputField value="{!currrentAssocDoc.Filed_Date__c}" id="currrentAssocDoc_Filed_Date"/></td>                  
+                    </tr>
+                    <tr>
+                        <td><apex:outputText value="Status" styleClass="labelCol"/></td>
+                        <td><apex:inputField value="{!currrentAssocDoc.Status__c}" id="currrentAssocDoc_Status"/></td>                  
+                    </tr>
+                    <tr>
+                        <td><apex:outputText value="Status Date" styleClass="labelCol"/></td>
+                        <td><apex:inputField value="{!currrentAssocDoc.Status_Date__c}" id="currrentAssocDoc_Status_Date"/></td>
+                    </tr>
+                </table>    
+            </apex:outputPanel>
+            </apex:outputPanel>
 
         </apex:pageBlockSection>
       </apex:pageBlock>
-    </apex:outputPanel>	
-	
-
-
+    </apex:outputPanel> 
 
     <a name="Asmt" id="Asmt" ></a>
 <apex:pageBlock title="Assessments" rendered="{!!isCM}">
