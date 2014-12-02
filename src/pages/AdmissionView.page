@@ -179,36 +179,41 @@ function triggerNodeEdit(nK){
  
  var assocDocRecurrences = {!assocDocRecurrs};
  
- function format ( d, docRec ) {
-    // `d` is the original data object for the row
-    return '<div class="slider">'+
+ function format ( d, docRecs ) {
+    var htmlRecurrences;
+    htmlRecurrences =      '<div class="slider">'+
         '<table cellspacing="0" border="1px" width="70%">'+
             '<thead>'+
                 '<tr>'+
-//	                '<th>Packet Name</th>'+
-	                '<th>Document Name</th>'+
-	                '<th>Effective Date</th>'+
-//	                '<th>Recurrence</th>'+
-//	                '<th>Due Days</th>'+
-	                '<th>Filed Date</th>'+
-	                '<th>Status</th>'+
-	                '<th>Status Date</th>'+
+//                  '<th>Packet Name</th>'+
+                    '<th>Document Name</th>'+
+                    '<th>Effective Date</th>'+
+//                  '<th>Recurrence</th>'+
+//                  '<th>Due Days</th>'+
+                    '<th>Filed Date</th>'+
+                    '<th>Status</th>'+
+                    '<th>Status Date</th>'+
                 '</tr>'+
             '</thead>'+
-            '<tbody>'+
-                '<tr>'+
-//	                '<td>'+d[2]+'</td>'+
-	                '<td>'+d[3]+'</td>'+
-	                '<td>'+docRec.Effective_Date__c+'</td>'+
-//	                '<td>'+d[5]+'</td>'+
-//	                '<td>'+d[6]+'</td>'+
-	                '<td>'+docRec.Filed_Date__c+'</td>'+
-	                '<td>'+docRec.Status__c+'</td>'+
-	                '<td>'+docRec.Status_Date__c+'</td>'+
-                '</tr>'+
-            '</tbody>'+
-        '</table>'+
-    '</div>';
+            '<tbody>';
+
+    $.each(docRecs, function( index, docRec ) {
+		htmlRecurrences +='<tr>'+
+		//                  '<td>'+d[2]+'</td>'+
+		                    '<td>'+d[3]+'</td>'+
+		                    '<td>'+docRec.Effective_Date__c+'</td>'+
+		//                  '<td>'+d[5]+'</td>'+
+		//                  '<td>'+d[6]+'</td>'+
+		                    '<td>'+docRec.Filed_Date__c+'</td>'+
+		                    '<td>'+docRec.Status__c+'</td>'+
+		                    '<td>'+docRec.Status_Date__c+'</td>'+
+		                '</tr>';
+    });
+                
+    htmlRecurrences += '</tbody>'+
+				        '</table>'+
+				    '</div>';    
+    return htmlRecurrences;
 }
                 
          
@@ -246,15 +251,15 @@ function triggerNodeEdit(nK){
 	        tr.removeClass('shown');
 	    }
 	    else {
-	        // Open this row
+	        // Open this row   
+	        docRecs = [];
 	        $.each( assocDocRecurrences, function( index, docRec ) {
                     if (docRec.PB_AssociatedDoc__c ===  row.data()[1]) {
-                            row.child( format(row.data(), docRec)).show();
-                            tr.addClass('shown');
-                            return false;
+                        docRecs.push(docRec);
                     }
             });
-
+            row.child( format(row.data(), docRecs)).show();
+            tr.addClass('shown');
 	    }
     });
 
