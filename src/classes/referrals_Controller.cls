@@ -721,7 +721,8 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
                Representing_Request__c, Representing_Received__c,
                Days_Authorized_From__c, Days_Authorized_To__c, Did_CM_Confirm_Level__c,
                Authorization_Comments__c, Does_PH_Plan_to_Continue_Working__c,
-               ALS_ESRD_Black_Lung_Disease__c, Patient_Over_64_Years_of_Age__c
+               ALS_ESRD_Black_Lung_Disease__c, Patient_Over_64_Years_of_Age__c,
+               Payer_Type__c
         FROM Funding_Source__c
         WHERE Referral__c = :this.referralRecord.Id
         ORDER BY Type_of_Coverage__c LIMIT 150
@@ -989,6 +990,22 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
 
     system.debug('in saveREF');
     Id refId;
+
+    // Start NEVAL-26 - Don't let NR user close the referral if one of the funding sources
+    // has blank Payer Type
+    System.debug('Checking funding source payer type');
+    if (referralRecordType == 'NeuroRestorative' && referralRecord.Referral_Status__c == 'Closed') {
+        System.debug('Inside if loop');
+        for (Funding_Source__c fs: fundingSources) {
+            System.debug('For this funding source, the payer type is ' + fs.Payer_Type__c);
+            if (fs.Payer_Type__c == '' || fs.Payer_Type__c == null) {
+                ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'One or more of the Funding Sources\'s Payer Type is blank'));
+                return null;
+            }
+        }
+    }
+
+    // End NEVAL-26
 
     try {
       if (this.personBeingRefRecord != null && this.personBeingRefRecord.Id != null) {
