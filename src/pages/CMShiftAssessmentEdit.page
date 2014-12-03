@@ -629,7 +629,7 @@
         <a href="/{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__c}">{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__r.Name}</a>&nbsp;>&nbsp;
         <a href="/{!Evaluation__c.ServiceAssignment__r.Admission__c}">Admission</a>&nbsp;>&nbsp;
         <a href="/{!Evaluation__c.ServiceAssignment__c}">Service Assignment</a>&nbsp;>&nbsp;
-        <apex:outputText value="Shift Assessment" />
+        <apex:outputText value="{!Evaluation__c.Name}" />
     </div>
     <apex:form id="wholePage">
         <apex:outputpanel rendered="false">
@@ -762,6 +762,13 @@
             </apex:tab>
             <apex:tab label="Cardiopulmonary" name="cardioTab" onTabenter="changeTab('cardioTab'); return false;" styleClass="{!IF(Evaluation__c.Cardio_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
+                	<apex:pageBlockTable value="{!errorMap['cardioTab']}" var="d" columns="1" >
+                		<apex:repeat value="{!d}" var="temp" >
+                			<apex:column >
+                				<apex:outputText value="{!temp}" style="color: red"/>
+                			</apex:column>
+                		</apex:repeat>
+                	</apex:pageBlockTable>
                     <apex:pageBlockSection Columns="2" title="cardio">
                         <apex:pageBlockSectionItem >
                             <apex:outputPanel >
@@ -853,7 +860,7 @@
                         		<apex:inputField value="{!Evaluation__c.Suctioning_Picklist__c}"  id="suctioning" onchange="handleSuctioning(); return false;" />
                         		</div>
                         	</apex:outputPanel>
-						</apex:pageBlockSectionItem >
+						</apex:pageBlockSectionItem>
                         <apex:pageBlockSection columns="2" id="suctioningDetails">
                             <apex:inputField value="{!Evaluation__c.Sputum_Quantity__c}" id="sputumQuantity" />
                             <apex:inputField value="{!Evaluation__c.Sputum_Color__c}" id="sputumColor" />
@@ -918,7 +925,7 @@
                         		<apex:inputField value="{!Evaluation__c.Trach_Picklist__c}" label="Trach" id="trachPicklist" onchange="handleTrach(); return false;" />
                         		</div>
                         	</apex:outputPanel>
-                        </apex:pageBlockSectionItem >
+                        </apex:pageBlockSectionItem>
                         <apex:pageBlockSection columns="2" id="trachDetails">
                             <apex:pageBlockSectionItem >
                                 <apex:outputPanel >
@@ -989,7 +996,7 @@
                         		<apex:inputField value="{!Evaluation__c.O2_Picklist__c}"  id="o2" onchange="handleO2(); return false;" />
                         		</div>
                         	</apex:outputPanel>
-                        </apex:pageBlockSectionItem >
+                        </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem />
 
                         <apex:pageBlockSection Columns="2" id="o2Details">
@@ -1026,7 +1033,7 @@
                     				<div Class="requiredBlock" ></div>
                         		<apex:inputField value="{!Evaluation__c.Ventilator_Picklist__c}" id="ventilatorPicklist" label="Ventilator" onchange="handleVentSection();return false;" />
                         		</div>
-                        	</apex:outputPanel >
+                        	</apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:pageblockSectionItem />
 
@@ -1231,7 +1238,7 @@
                             <apex:inputField value="{!Evaluation__c.LLQ_Describe__c}" id="field" />
                         </apex:pageBlockSectionItem>
 
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Abdomen" />
                             <apex:outputPanel >
                                 <apex:selectCheckboxes value="{!selectedOptionsMap['abdomen__c']}">
@@ -1241,7 +1248,7 @@
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem />
 
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Status" />
                             <apex:outputPanel >
                                 <apex:selectCheckboxes value="{!selectedOptionsMap['elimination_bowel_status__c']}" id="eliminationBowelStatus">
@@ -1330,12 +1337,12 @@
                     				<div Class="requiredBlock" ></div>
                         		<apex:inputField value="{!Evaluation__c.Rancho_Level__c}" onchange="handleRancho(); handleMood(); return false;" id="ranchoValue" />
                         		</div>
-                        	</apex:outputPanel >
-                        </apex:pageBlockSectionItem >
+                        	</apex:outputPanel>
+                        </apex:pageBlockSectionItem>
                         <apex:pageBlockSection id="ranchoDetails" columns="1" >
                         	<apex:pageBlockSectionItem >
                         		<apex:outputLabel value="Responds To" id="labelresponds" />
-                                <apex:outputPanel>
+                                <apex:outputPanel >
                                     <apex:inputField id="vstimresponds" value="{!Evaluation__c.Verbal_Stim__c}" />
                                     <apex:outputLabel for="vstim" value="Verbal Stim" id="vstimlabelresponds" />&nbsp;
                                     <apex:inputField id="astimresponds" value="{!Evaluation__c.Auditory_Stim__c}" />
@@ -1349,15 +1356,15 @@
                                 </apex:outputPanel>
                         	</apex:pageBlockSectionItem>
                         	<apex:inputField value="{!Evaluation__c.Level_of_Conciousness__c}" />
-                            <apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem >
                                 <apex:outputLabel value="Orientation" />
                                 <apex:selectCheckboxes value="{!selectedNeuroOrient}" style="margin-left:-13px">
                                     <apex:selectOptions value="{!neuroOrientValues}" />
                                 </apex:selectCheckboxes>
                             </apex:pageBlockSectionItem>
-                            <apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem >
                                 <apex:outputLabel value="Behavior" />
-                                <apex:outputPanel>
+                                <apex:outputPanel >
                                     <apex:inputField id="coop" value="{!Evaluation__c.Cooperative__c}" />
                                     <apex:outputLabel for="coop" value="Cooperative" />&nbsp;
                                     <apex:inputField id="impulsive" value="{!Evaluation__c.Impulsive__c}" />
@@ -1429,7 +1436,7 @@
 		                        	</apex:outputPanel>
 		                        </apex:pageBlockSectionItem>
 						</apex:pageBlockSection>
-                    </apex:pageBlockSection >
+                    </apex:pageBlockSection>
                     <apex:pageBlockSection columns="1" title="Safety" >
                     		<apex:pageBlockSectionItem >
                     			<apex:outputLabel Value="Safety Awareness" />
@@ -1438,8 +1445,8 @@
                     					<div Class="requiredBlock" ></div>
 	                        		<apex:inputField value="{!Evaluation__c.Safety_Awareness__c}" />
 	                        		</div>
-	                        	</apex:outputPanel >
-	                        </apex:pageBlockSectionItem >
+	                        	</apex:outputPanel>
+	                        </apex:pageBlockSectionItem>
 	                        <apex:inputField value="{!Evaluation__c.Bed_Alarm__c}" />
 	                        <apex:pageBlockSectionItem >
 		                        <apex:outputpanel >
@@ -1461,6 +1468,13 @@
             </apex:tab>
             <apex:tab label="Ortho" name="orthoTab" ontabenter="changeTab('orthoTab'); return false;" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
+                	<apex:pageBlockTable value="{!errorMap['orthoTab']}" var="d" columns="1" >
+                		<apex:repeat value="{!d}" var="temp" >
+                			<apex:column >
+                				<apex:outputText value="{!temp}" style="color: red"/>
+                			</apex:column>
+                		</apex:repeat>
+                	</apex:pageBlockTable >
                     <apex:pageBlockSection columns="2">
                         <apex:pageBlockSectionItem >
                             <apex:outputPanel >
