@@ -288,6 +288,7 @@ public with sharing class CMShiftAssessmentEdit {
         this.evaluation.Diagnostics_Section_Completed__c = checkDiagnosis();
         this.evaluation.Cardio_Section_Completed__c = checkCardio();
         this.evaluation.Ortho_Section_Completed__c = checkOrtho();
+        this.evaluation.Neuro_Section_Completed__c = checkNeuro();
         this.evaluation.Psycho_Social_Section_Completed__c = checkPsycho();
 		
         update this.evaluation;
@@ -318,8 +319,16 @@ public with sharing class CMShiftAssessmentEdit {
     
     public Boolean checkPsycho() {
     	Boolean checkPsych = true;
+    	List<String>psychErrors = errorMap.get('psychoSocialTab');
+    	psychErrors.clear();
+    	if(this.evaluation.Resident_Coping_Well__c == null) {
+    		checkPsych = false;
+    		psychErrors.add('Resident copiwng well is mandatory');
+    		
+    	}
     	if(this.evaluation.Resident_Coping_Well__c == 'No' && this.evaluation.Coping_Description__c == null) {
     		checkPsych = false;
+    		psychErrors.add('Description is Mandatory is resident is not coping well');
     	}
     	
     	return checkPsych;
@@ -378,9 +387,59 @@ public with sharing class CMShiftAssessmentEdit {
     	return cardio;
     }
     
+    public Boolean checkNeuro() {
+    	Boolean neuro = true;
+    	List<string> neuroErrors = errorMap.get('neuroTab');
+    	neuroErrors.clear();
+    	if(this.evaluation.Rancho_Level__c == null) {
+    		neuro = false;
+    		neuroErrors.add('Rancho level is Mandatory');
+    	}
+    	
+    	if(this.evaluation.Rancho_Level__c != null && this.evaluation.Rancho_Level__c != '(1)No Response') {
+    		
+    		if(this.evaluation.Mood__c.Contains('Sad') || this.evaluation.Mood__c.Contains('Flat')) {
+    			
+    			if(this.evaluation.Desire_to_hurt_themselves__c == null) {
+    				neuro = false;
+    				neuroErrors.add('Has Resident Expressed Desire to Hurt Him/Herself? field is mandatory when mood is flat or sad');
+    			}
+    			
+    			if(this.evaluation.Desire_to_hurt_themselves__c =='Yes' && this.evaluation.Plan_to_Harm_themselves__c == null) {
+    				neuro = false;
+    				neuroErrors.add('Does Resident Have a Plan to Harm Him/Herself? is mandatory');
+    			}
+    		}
+    		
+    		if(this.evaluation.Able_to_make_Needs_Known__c == null) {
+    			neuro = false;
+    			neuroErrors.add('Ability to make needs known is mandatory');
+    		}
+    		
+    		if(this.evaluation.Able_to_make_Needs_Known__c == 'No' && this.evaluation.Expression__c == null) {
+    			neuro = false;
+    			neuroErrors.add('Expression field is mandatory');
+    		}
+    		
+    		if(this.evaluation.Able_to_make_Needs_Known__c == 'Non-Verbal' && this.evaluation.Expression_Other__c == '') {
+    			neuro = false;
+    			neuroErrors.add('Please choose other expression when expression is non-verbal');
+    		}
+    		
+    	}
+    	
+		if(this.evaluation.Safety_Awareness__c == null){
+			neuro = false;
+			neuroErrors.add('Safety awareness is mandatory');
+		
+		}
+    	return neuro;
+    }
+    
     public Boolean checkOrtho() {
     	Boolean ortho = true;
     	List<String> orthoErrors = errorMap.get('orthoTab');
+    	orthoErrors.clear();
     	
     	if(this.evaluation.Cast_Picklist__c == null) {
     		ortho = false;
@@ -441,6 +500,8 @@ public with sharing class CMShiftAssessmentEdit {
     	return ortho;
     	
     }
+    
+    
 
     public List<selectoption> getcopingValues(){
         List<Selectoption> copingValue = Utility.getPicklistValues(evaluation, 'Resident_Demonstrating_Issues__c');

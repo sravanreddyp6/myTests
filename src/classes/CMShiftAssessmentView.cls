@@ -66,7 +66,22 @@ public with sharing class CMShiftAssessmentView {
     public Evaluation_Response__c currentVitalsDetail {get; set; }
     public Id currentVitalsDetailId { get; set; }
 
-
+	public pageReference finalizeEval() {
+		this.evaluation.Status__c = 'Final';
+		update this.evaluation;
+		pageReference backtoView = new pageReference('/apex/CMShiftAssessmentView?id='+this.evaluation.Id);
+		backtoview.setRedirect(true);
+		return backtoView;
+	}
+	
+	public pageReference disregardEval() {
+		this.evaluation.status__c = 'Disregard';
+		update this.evaluation;
+		pageReference backtoView = new pageReference('/apex/CMShiftAssessmentView?id='+this.evaluation.Id);
+		backtoview.setRedirect(true);
+		return backtoView;
+	}
+	
     public void showAddVitalsDetail()  {
         this.currentVitalsDetail = new Evaluation_Response__c();
         this.currentVitalsDetail.Evaluation__c = this.evaluation.Id;

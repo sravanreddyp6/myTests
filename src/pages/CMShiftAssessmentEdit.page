@@ -1329,6 +1329,13 @@
             </apex:tab>
             <apex:tab label="Neurological" name="neuroTab" ontabenter="changeTab('neuroTab');return false;" styleClass="{!IF(Evaluation__c.Neuro_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
+                	<apex:pageBlockTable value="{!errorMap['neuroTab']}" var="d" columns="1" >
+                		<apex:repeat value="{!d}" var="temp" >
+                			<apex:column >
+                				<apex:outputText value="{!temp}" style="color: red"/>
+                			</apex:column>
+                		</apex:repeat>
+                	</apex:pageBlockTable>
                     <apex:pageBlockSection columns="1" title="Cognitive" collapsible="True" >
                     	<apex:pageBlockSectionItem >
                     		<apex:outputLabel value="Rancho Level" />
@@ -1566,6 +1573,13 @@
             </apex:tab>
             <apex:tab label="Psycho/Social" name="psychoSocialTab" ontabenter="changeTab('psychoSocialTab'); return false;" styleClass="{!IF(Evaluation__c.Psycho_Social_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
+                	<apex:pageBlockTable value="{!errorMap['psychoSocialTab']}" var="d" columns="1" >
+                		<apex:repeat value="{!d}" var="temp" >
+                			<apex:column >
+                				<apex:outputText value="{!temp}" style="color: red"/>
+                			</apex:column>
+                		</apex:repeat>
+                	</apex:pageBlockTable>
                     <apex:pageBlockSection Columns="1">
                         <apex:pageBlockSectionItem >
                             <apex:outputPanel >
