@@ -11,15 +11,17 @@
             window.open(url);
         }
         
-        function finalize() {
-        	var r = window.confirm('Are you sure?');
-        	if (r== true) {
-        		// canFinalize();
-        	} else{
+        j$ = jQuery.noConflict();
+        
+        finalize = function() {
+        	var c = confirm('Are you sure about finalizing?');
+        	if(c==true) {
+        		finalizeEval();
+        	}else {
         		return null;
-        	
         	}
         }
+        
     </script>
 
     <style>
@@ -28,6 +30,24 @@
         }
         [id$=bodyMapOtherComments] {
             clear: both;
+        }
+        .thinking {
+            opacity: 0.8;
+            background-color: #ccc;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0px;
+            left: 0px;
+            z-index: 1000;
+        }
+        .thinkingwheel {
+            position: absolute;
+            left: 40%;
+            top: 48%;
+            background-color: white;
+            border: 2px solid gray;
+            padding: 2px;
         }
         hr {
             color: #ECECEC;
@@ -76,7 +96,7 @@
         <a href="/{!Evaluation__c.ServiceAssignment__r.Admission__c}">Admission</a>&nbsp;>&nbsp;
         <a href="/{!Evaluation__c.ServiceAssignment__c}">Service
             Assignment</a>&nbsp;>&nbsp;
-        <apex:outputText value="Shift Assessment" />
+        <apex:outputText value="{!Evaluation__c.Name}" />
     </div>
 	
     <apex:form id="wholePage">
@@ -90,6 +110,8 @@
             <apex:inputhidden value="{! Evaluation__c.Autonomic_Dysreflexia_Areas_Assessed__c}" />
         </apex:outputpanel>
         <apex:pageMessages id="pageMessages" />
+        <apex:actionfunction name="finalizeEval" action="{!finalizeEval}" status="pageProcessing" reRender="pageMessages" />
+        <apex:actionFunction name="disregardEval" action="{!disregardEval}" status="pageProcessing" reRender="pageMessages,btnDisregard" />
         <apex:tabPanel id="wholeTabPanel" value="{!selectedTab}" styleClass="evaluationTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
             <apex:tab label="Demographics" name="demographicsTab" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
@@ -491,11 +513,14 @@
                     </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:tab>
-            <apex:commandButton value="Finalize" style="position: absolute; margin-left: 820px; margin-top: 8px;" onClick="finalize();" rendered="{!Evaluation__c.Status__c =='Draft' && Evaluation__c.Diagnostics_Section_Completed__c && Evaluation__c.Psycho_Social_Section_Completed__c}" />
+            <apex:commandButton value="Finalize" onClick="finalize(); return false;" style="position: absolute; margin-left: 680px; margin-top: 8px;" rendered="{!Evaluation__c.Status__c =='Draft' && Evaluation__c.Diagnostics_Section_Completed__c && Evaluation__c.Psycho_Social_Section_Completed__c && Evaluation__c.Cardio_Section_Completed__c && Evaluation__c.Ortho_Section_Completed__c && Evaluation__c.Neuro_Section_Completed__c}"  />
+            <apex:commandButton value="Disregard" style="position: absolute; margin-left: 730px; margin-top: 8px;" rendered="{!Evaluation__c.Status__c != 'Final' && Evaluation__c.Status__c != 'Disregard' && Evaluation__c.OwnerId == $User.Id}}" onClick="disregardEval(); return false;" id="btnDisregard"/>
+            <apex:commandButton value="E-Sign" style="position: absolute; margin-left: 792px; margin-top: 8px;" rendered="{!Evaluation__c.OwnerId == $User.Id}"/>
+            <apex:commandButton value="Print PDF" style="position: absolute; margin-left: 840px; margin-top: 8px;"/>
         </apex:tabPanel>
         <apex:pageBlock id="buttons">
             <apex:pageBlockButtons location="bottom">
-                <apex:commandButton onclick="window.location='/apex/CMShiftAssessmentEdit?id={!Evaluation.Id}&tab={!selectedTab}'; return false;" value="Edit" />
+                <apex:commandButton onclick="window.location='/apex/CMShiftAssessmentEdit?id={!Evaluation.Id}&tab={!selectedTab}'; return false;" value="Edit" rendered="{!Evaluation__c.Status__c='Draft' && Evaluation__c.OwnerId == $User.id}"/>
             </apex:pageBlockButtons>
         </apex:pageBlock>
         <apex:outputPanel id="vitalsDetailDialog" style="display:none">
@@ -529,6 +554,15 @@
                 </apex:pageBlockSection>
             </apex:pageBlock>
         </apex:outputPanel>
-
     </apex:form>
+    <apex:actionStatus id="pageProcessing">
+        <apex:facet name="start">
+            <div class="thinking">
+                <div class="thinkingwheel">
+                    <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Saving &amp; Processing...</span>
+                </div>
+            </div>
+        </apex:facet>
+        <apex:facet name="stop" />
+    </apex:actionStatus>
 </apex:page>
