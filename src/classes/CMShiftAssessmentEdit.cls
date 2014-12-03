@@ -286,6 +286,8 @@ public with sharing class CMShiftAssessmentEdit {
         }
         
         this.evaluation.Diagnostics_Section_Completed__c = checkDiagnosis();
+        this.evaluation.Cardio_Section_Completed__c = checkCardio();
+        this.evaluation.Ortho_Section_Completed__c = checkOrtho();
         this.evaluation.Psycho_Social_Section_Completed__c = checkPsycho();
 		
         update this.evaluation;
@@ -321,6 +323,123 @@ public with sharing class CMShiftAssessmentEdit {
     	}
     	
     	return checkPsych;
+    }
+    
+    public Boolean checkCardio() {
+    	Boolean cardio = true;
+    	List<String>cardioErrors = errorMap.get('cardioTab');
+    	cardioErrors.clear();
+    	if(this.evaluation.Heart_Sounds__c == null) {
+    		cardio = false;
+    		cardioErrors.add('Heart Rate is Mandatory');
+    	}
+    	
+    	if(this.evaluation.Heart_Sounds__c == 'irregular' && this.evaluation.Heart_Intervention_Need_Picklist__c == null ) {
+    		cardio = false;
+    		cardioErrors.add('When Heart Rate is Irregular, Intervention needed is Mandatory');
+    	}
+    	
+    	if(this.evaluation.Heart_Intervention_Need_Picklist__c == 'Yes' && this.evaluation.Heart_Rate_Intervention_Describe__c == '' ) {
+    		cardio = false;
+    		cardioErrors.add('Heart Rate narrative note is required, when Intervention is needed');
+    	}
+    	
+    	if(this.evaluation.Peripheral_Pulses_Present__c == null) {
+    		cardio = false;
+    		cardioErrors.add('Peripheral pulses field is Mandatory');
+    	}
+    	
+    	if(this.evaluation.Peripheral_Pulses_Present__c == 'No' && this.evaluation.Peripheral_Pulses_Describe__c == null){
+    		cardio = false;
+    		cardioErrors.add('Description is mandatory for peripheral pulses.');
+    	}
+    	
+    	if(this.evaluation.Autonomic_Dysreflexia__c == null) {
+    		cardio = false;
+    		cardioErrors.add('Autonomic Dysrefelxia is Mandatory');
+    		
+    	}
+    	
+    	if(this.evaluation.Autonomic_Dysreflexia__c == 'Yes' && this.evaluation.Dysreflexia_issue_resolved__c == null) {
+    		cardio = false;
+    		cardioErrors.add('Autonomic Dysreflexia issue resolved field is Mandatory');
+    	}
+    	
+    	if(this.evaluation.Dysreflexia_issue_resolved__c == 'No' && this.evaluation.Dysreflexia_Issue_Describe__c == null){
+    		cardio = false;
+    		cardioErrors.add('Description is mandatory for Autonomic Dysreflexia issue.');
+    	}
+    	
+    	if(this.evaluation.Autonomic_Dysreflexia__c == 'Yes' && this.evaluation.Autonomic_Dysreflexia_Areas_Assessed__c == '') {
+    		cardio = false;
+    		cardioErrors.add('Please choose atleast one area that is assessed for Autonomic Dysreflexia');
+    	}
+    	
+    	return cardio;
+    }
+    
+    public Boolean checkOrtho() {
+    	Boolean ortho = true;
+    	List<String> orthoErrors = errorMap.get('orthoTab');
+    	
+    	if(this.evaluation.Cast_Picklist__c == null) {
+    		ortho = false;
+    		orthoErrors.add('Cast field is Mandatory');
+    	}
+    	
+    	if(this.evaluation.Cast_Picklist__c == 'Yes' && this.evaluation.Ortho_Cast_Location__c == null) {
+    		ortho = false;
+    		orthoErrors.add('Cast location field is mandatory');
+    	}
+    	
+    	if(this.evaluation.Ortho_Cast_Location__c == 'Other' && this.evaluation.Cast_Location__c == null) {
+    		ortho = false;
+    		orthoErrors.add('Please mention the other value for Cast location');
+    	}
+    	
+    	if(this.evaluation.External_Device_Picklist__c == null) {
+    		ortho = false;
+    		orthoErrors.add('External devices field is mandatory');
+    	}
+    	
+    	if(this.evaluation.External_Device_Picklist__c == 'Yes' && this.evaluation.External_Devices_Location__c == null) {
+    		ortho = false;
+    		orthoErrors.add('External devices location is mandatory');
+    	}
+    	
+    	if(this.evaluation.External_Device_Picklist__c == 'Yes' && this.evaluation.External_Devices_Type__c == null) {
+    		ortho = false;
+    		orthoErrors.add('External devices type is mandatory');
+    	}
+    	
+    	if(this.evaluation.Traction_Picklist__c == null) {
+    		ortho = false;
+    		orthoErrors.add('Traction field is mandatory');
+    	}
+    	
+    	if(this.evaluation.Traction_Picklist__c == 'Yes') {
+    		
+    		if(this.evaluation.Traction_Location__c == null) {
+    			ortho = false;
+    			orthoErrors.add('Traction Location is mandatory');
+    			
+    		}
+    		
+    		if(this.evaluation.Traction_Type__c == null) {
+    			ortho = false;
+    			orthoErrors.add('Traction type is mandatory');
+    			
+    		}
+    		
+    		if(this.evaluation.Traction_Weight__c == null) {
+    			ortho = false;
+    			orthoErrors.add('Traction weight is mandatory');
+    			
+    		}
+    	}
+    	
+    	return ortho;
+    	
     }
 
     public List<selectoption> getcopingValues(){

@@ -307,6 +307,16 @@ public without sharing class ServiceAssignmentExt {
       }
       set;
   }
+  
+  public Evaluation__c evaluation {
+	  get{
+		 if (evaluation == null) {
+			evaluation = new Evaluation__c();
+		}
+		return evaluation;
+	}
+	set; }
+	
 
 // END:  Parent level properties with get/set methods.
 
@@ -1265,7 +1275,7 @@ public void loadProgramList() {
 
             if(evaluations == null){
 
-                evaluations = [SELECT ID, Name, LastModifiedDate, Is_Signed__c,Shift_Start_time__c,Shift_end_time__c, Status__c FROM Evaluation__c WHERE ServiceAssignment__c = :theServAssign.Id Order By CreatedDate asc];
+                evaluations = [SELECT ID, Name, LastModifiedDate, Is_Signed__c,Shift_Start_time__c,Shift_end_time__c, Status__c FROM Evaluation__c WHERE ServiceAssignment__c = :theServAssign.Id Order By CreatedDate desc LIMIT 5];
             }
             return evaluations;
         }
@@ -1357,6 +1367,34 @@ public void loadProgramList() {
 
         return ref;
     }
+    
+  public void showAddevaluation() {
+  	evaluation = new Evaluation__c();
+  	String pbsLastName = this.theServAssign.Admission__r.Person_Being_Served__r.LastName;
+	if(pbsLastName == null) pbsLastName = '';
+	evaluation = new Evaluation__c();
+	evaluation.Name = pbsLastName+'ShiftAssessment'+DateTime.Now().format('MMddyy');
+	evaluation.RecordTypeID = Utility.getEValuationRecordType('CMShiftAssessment');
+	evaluation.ServiceAssignment__c = this.theServAssign.Id;
+	evaluation.Status__c = 'Draft';
+	evaluation.Details_Section_Completed__c = true;
+  	
+   	
+  }
+  
+  public pageReference saveEvaluation() {
+  
+  	try{
+  		insert evaluation;
+  		PageReference pg = new PageReference('/apex/CMShiftAssessmentEdit?id='+evaluation.Id);
+  		return pg;
+  	}  	
+  	catch (Exception e) {
+  		Apexpages.AddMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
+  	}
+    
+    return null;
+  }
 
   public void showAddFundingSource() {
     fundingSource = new Funding_Source__c();

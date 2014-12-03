@@ -306,7 +306,7 @@
                         <apex:outputField value="{!Evaluation__c.Other_Dental_Appliance_Usage_Details__c}" label="If Yes, Usage Details" rendered="{!Evaluation__c.Other_Dental_Appliance_Checkbox__c}" />
                         <apex:outputField value="{!Evaluation__c.Other_Dental_Appliance_Present_Picklist__c}" label="If Yes, Are they present" rendered="{!Evaluation__c.Other_Dental_Appliance_Checkbox__c}" />
                         <apex:outputField value="{!Evaluation__c.Narrative_Note__c}" label="Add Narrative Note" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
-                        <apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
                             <apex:outputLabel value="PEDS" />
                             <apex:outputText value="" />
                         </apex:pageBlockSectionItem>
@@ -491,7 +491,7 @@
                     </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:tab>
-            <apex:commandButton value="Finalize" style="position: absolute; margin-left: 820px; margin-top: 8px;" onClick="finalize();" rendered="{!Evaluation__c.Status__c =='Draft'}" />
+            <apex:commandButton value="Finalize" style="position: absolute; margin-left: 820px; margin-top: 8px;" onClick="finalize();" rendered="{!Evaluation__c.Status__c =='Draft' && Evaluation__c.Diagnostics_Section_Completed__c && Evaluation__c.Psycho_Social_Section_Completed__c}" />
         </apex:tabPanel>
         <apex:pageBlock id="buttons">
             <apex:pageBlockButtons location="bottom">
