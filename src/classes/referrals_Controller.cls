@@ -999,7 +999,7 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
         for (Funding_Source__c fs: fundingSources) {
             System.debug('For this funding source, the payer type is ' + fs.Payer_Type__c);
             if (fs.Payer_Type__c == '' || fs.Payer_Type__c == null) {
-                ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'One or more of the Funding Sources\'s Payer Type is blank'));
+                ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'One or more of the Funding Sources\' Payer Type is blank.'));
                 return null;
             }
         }
