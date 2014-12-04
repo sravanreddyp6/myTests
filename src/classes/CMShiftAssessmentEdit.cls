@@ -97,7 +97,8 @@ public with sharing class CMShiftAssessmentEdit {
             'elimination_bowel_status__c' => new List<selectOption>(),
             'urinary_issues__c' => new List<selectOption>(),
             'urine_clarity__c' => new List<selectOption>(),
-            'dialysis_type__c' => new List<selectOption>()
+            'dialysis_type__c' => new List<selectOption>(),
+            'bowel_issue_type__c' => new List<selectOption>()
         };
         if (!Test.isRunningTest()) {
             // Make sure the multi-checkbox fields are always in scope
