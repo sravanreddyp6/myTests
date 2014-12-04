@@ -44,7 +44,8 @@ public with sharing class AdmissionDocumentController {
                                             from PB_AssocDocRecurrence__c where PB_AssociatedDoc__r.sObject_type__c = 'Admission' and PB_AssociatedDoc__r.sObject_id__c =: this.admission.id
                                            order by effective_date__c desc]);
 		
-   		showAddEditAdmissionDoc();
+   		//showAddEditAdmissionDoc();
+   		allDocsTree = new TMN_TreePktDocTable();
     }
     
     @TestVisible 
@@ -173,43 +174,44 @@ public with sharing class AdmissionDocumentController {
  	public void showAddEditAdmissionDoc(){
 		allDocsTree = new TMN_TreePktDocTable();
 		List<String> addedDocs = new List<string>();
-		
-		for (PB_DOCPacket__c pkt : [SELECT  id, 
-											Packet_Name__c, 
-											(SELECT PB_DocPacket_Document_JO__c.id, DocPacket__r.id, Document__r.id, Document__r.document_name__c FROM DocPacketJOs__r ORDER BY DocPacket__r.ID, Document__r.ID),
-											(SELECT DocPacket__r.id, Document__r.id, Due_Days__c, Effective_Date__c, Filed_Date__c, Recurring__c, Recurring_Frequency__c, Status__c, Status_Date__c
-											   FROM AssociatedDocuments__r WHERE sObject_id__c =: this.admission.id AND sObject_type__c = 'Admission' AND IsAdded__c = true)
-									 from   PB_DOCPacket__c])
-		{
+		map<string, TMN_TreePktDocTable.node> nodeKeyMap;
+        List<PB_DocPacket__c> pkts = [SELECT  id, 
+                                            Packet_Name__c, 
+                                            (SELECT PB_DocPacket_Document_JO__c.id, DocPacket__r.id, Document__r.id, Document__r.document_name__c FROM DocPacketJOs__r ORDER BY DocPacket__r.ID, Document__r.ID),
+                                            (SELECT DocPacket__r.id, Document__r.id, Due_Days__c, Effective_Date__c, Filed_Date__c, Recurring__c, Recurring_Frequency__c, Status__c, Status_Date__c
+                                               FROM AssociatedDocuments__r WHERE sObject_id__c =: this.admission.id AND sObject_type__c = 'Admission' AND IsAdded__c = true)
+                                     from   PB_DOCPacket__c];
+                                     
+		for (PB_DocPacket__c pkt : pkts) {
 			TMN_TreePktDocTable.node pckt_node= new TMN_TreePktDocTable.node(pkt.id, pkt.Packet_Name__c);
-			pckt_node.refID = pkt.id;		//for the packet the key and the refID is same
 			pckt_node.folder = true;
 			allDocsTree.root.children.add(pckt_node);			
 			for (PB_DocPacket_Document_JO__c doc :  pkt.DocPacketJOs__r){
 				TMN_TreePktDocTable.node doc_node= new TMN_TreePktDocTable.node(doc.id, doc.Document__r.document_name__c);   // each doc has the key of junction object ID.
-				doc_node.refID = pkt.id;   //for doc node, the refID has the key packetID.. the containing folder
-				integer pkt_key = allDocsTree.root.getNode_Key(pkt.id);
-							
-				allDocsTree.root.children.get(pkt_key).children.add(doc_node);							
+				allDocsTree.root.children.get(allDocsTree.root.getNode_Key(pkt.id)).children.add(doc_node);							
 			}
-						
-			for	(PB_AssociatedDoc__c assoc : pkt.AssociatedDocuments__r){				
-				for (PB_DocPacket_Document_JO__c doc :  pkt.DocPacketJOs__r){
-					if (assoc.DocPacket__r.id == doc.DocPacket__r.id && assoc.Document__r.id == doc.Document__r.id){
-						addedDocs.add(doc.id);
-						TMN_TreePktDocTable.node node = TMN_TreePktDocTable.getNodeForKey(doc.id, allDocsTree.root.children);
-						node.dueDays = Integer.valueOf(assoc.Due_Days__c);
-						node.effectiveDate = assoc.Effective_Date__c; 
-						node.filedDate = assoc.Filed_Date__c;
-						node.recurr = assoc.Recurring__c;
-						node.recurrFreq = assoc.Recurring_Frequency__c;
-						node.assocStatus = assoc.Status__c;
-						node.statusDate = assoc.Status_Date__c;
-						break;
-					}							
-				}
-			}
-		}		
+		}
+		
+		nodeKeyMap = TMN_TreePktDocTable.buildNodeKeyMapFor(allDocsTree.root.children);
+		for (PB_DocPacket__c pkt : pkts) {
+        	for (PB_AssociatedDoc__c assoc : pkt.AssociatedDocuments__r){               
+                for (PB_DocPacket_Document_JO__c jo :  pkt.DocPacketJOs__r){
+                    if (assoc.DocPacket__r.id == jo.DocPacket__r.id && assoc.Document__r.id == jo.Document__r.id){
+                        addedDocs.add(jo.id);
+                        //TMN_TreePktDocTable.node node = TMN_TreePktDocTable.getNodeForKey(jo.id, allDocsTree.root.children);
+                        TMN_TreePktDocTable.node node = nodeKeyMap.get(jo.id);
+                        node.dueDays = Integer.valueOf(assoc.Due_Days__c);
+                        node.effectiveDate = assoc.Effective_Date__c; 
+                        node.filedDate = assoc.Filed_Date__c;
+                        node.recurr = assoc.Recurring__c;
+                        node.recurrFreq = assoc.Recurring_Frequency__c;
+                        node.assocStatus = assoc.Status__c;
+                        node.statusDate = assoc.Status_Date__c;
+                        break;
+                    }
+                }
+            }
+        }
 		allDocsTree.inputSelectedKeys(addedDocs, true);
 		selectedKeys = allDocsTree.GetSelectedNodeStr;
 	}
