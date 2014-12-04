@@ -75,16 +75,16 @@ private class AdmissionDocumentControllerTest {
         insert adm;
 
 		//create a packet		
-		pckt = new PB_DocPacket__c(External_ID__c='123', Packet_Name__c='Test Packet One', Status__c='Active');
+		pckt = new PB_DocPacket__c(Packet_Name__c='Test Packet One', Status__c='Active', External_ID__c = String.valueOf(Math.abs(Math.random())));
 		insert pckt;
 
 		//create three documents 
-		doc1 = new PB_Document__c(Document_Name__c = 'Test Doc One', Due_Days__c	= 2, Effective_Date__c = Date.parse('10/10/2014'), Expiration_Date__c = null, External_ID__c = '123', 
-												 Recurring__c = 'No', Recurring_Frequency__c = null, Status__c = 'Active', Type__c = 'Standard', Version__c = 1 );
-		PB_Document__c doc2 = new PB_Document__c(Document_Name__c = 'Test Doc Two', Due_Days__c	= 2, Effective_Date__c = Date.parse('10/10/2014'), Expiration_Date__c = null, External_ID__c = '123', 
-												 Recurring__c = 'No', Recurring_Frequency__c = null, Status__c = 'Active', Type__c = 'Standard', Version__c = 1 );
-		PB_Document__c doc3 = new PB_Document__c(Document_Name__c = 'Test Doc Three', Due_Days__c	= 2, Effective_Date__c = Date.parse('10/10/2014'), Expiration_Date__c = null, External_ID__c = '123', 
-												 Recurring__c = 'No', Recurring_Frequency__c = null, Status__c = 'Active', Type__c = 'Standard', Version__c = 1 );
+		doc1 = new PB_Document__c(Document_Name__c = 'Test Doc One', Due_Days__c	= 2, Effective_Date__c = Date.parse('10/10/2014'), Expiration_Date__c = null,  
+												 Recurring__c = 'No', Recurring_Frequency__c = null, Status__c = 'Active', Type__c = 'Standard', Version__c = 1, External_ID__c = String.valueOf(Math.abs(Math.random())) );
+		PB_Document__c doc2 = new PB_Document__c(Document_Name__c = 'Test Doc Two', Due_Days__c	= 2, Effective_Date__c = Date.parse('10/10/2014'), Expiration_Date__c = null,  
+												 Recurring__c = 'No', Recurring_Frequency__c = null, Status__c = 'Active', Type__c = 'Standard', Version__c = 1, External_ID__c = String.valueOf(Math.abs(Math.random())) );
+		PB_Document__c doc3 = new PB_Document__c(Document_Name__c = 'Test Doc Three', Due_Days__c	= 2, Effective_Date__c = Date.parse('10/10/2014'), Expiration_Date__c = null,
+												 Recurring__c = 'No', Recurring_Frequency__c = null, Status__c = 'Active', Type__c = 'Standard', Version__c = 1, External_ID__c = String.valueOf(Math.abs(Math.random())) );
 		List<PB_Document__c> docList = new List<PB_Document__c>();
 		docList.add(doc1);
 		docList.add(doc2);

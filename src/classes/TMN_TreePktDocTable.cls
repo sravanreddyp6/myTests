@@ -2,6 +2,7 @@ public with sharing class TMN_TreePktDocTable {
     public node root{get; set;}        
     public boolean autoExpand{ get; set;}
     
+
     public string GetSelectedNodeStr {
         get{ string str=''; 
             str = BuildSelectedNodeStr(root.children);
@@ -84,20 +85,19 @@ public with sharing class TMN_TreePktDocTable {
     }
 //End Node Class
     
-    public Static TMN_TreePktDocTable.node getNodeForKey(string key, list<TMN_TreePktDocTable.node> theNodes){
-         TMN_TreePktDocTable.node selctedNode;
-         for(node n: theNodes){
-            if (n.key == key){
-                selctedNode = n;
-                //break;
-                return selctedNode;
-            } else {
-               selctedNode = getNodeForKey(key, n.children);
-            }
+    private static map<string, node> nodeKeyMap;
+    private static void buildNodeKeyMap(list<TMN_TreePktDocTable.node> theNodes){
+        //if (nodeKeyMap == null && nodeKeyMap.isEmpty()) nodeKeyMap = new map<string, node>();
+        for(node n: theNodes){
+        	nodeKeyMap.put(n.key, n);
+        	buildNodeKeyMap(n.children);
         }
-         return selctedNode;
     }
-    
+    public static map<string, node> buildNodeKeyMapFor(list<TMN_TreePktDocTable.node> theNodes){
+    	nodeKeyMap = new map<string, node>();
+    	buildNodeKeyMap(theNodes);
+    	return nodeKeyMap;
+    }
     
 //Custom Methods    
     //use in the controller of the page using the custom compentent
