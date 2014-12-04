@@ -71,6 +71,14 @@
         jQuery.noConflict();
 
         jQuery(document).ready(function ($) {
+            handleSliderChange = function (inputIdToUpdate) {
+                // Closure is so much fun :)
+                var $inputToUpdate = $(document.getElementById(inputIdToUpdate));
+                return function (value) {
+                    // Assign the value to the hidden input from the the slider
+                    $inputToUpdate.val(value);
+                };
+            };
             handleDiagnosis = function () {
                 var ivValue = $('[id$=ivPicklist]').val();
                 var siteIssue = $('[id$=ivsiteIssues]').val();
@@ -400,16 +408,16 @@
                 }
 
             };
-            
+
             handleMood = function() {
-					
+
                 // if sad or flat, enable depression question
                 var mood = '';
                 $('input[id*=moodlist]').each(function (index, element) {
                     if ( $(element).prop('checked') == true )
                         mood += $(element).val() + ';';
                 });
-                
+
                 if ( mood.indexOf('Unable to Determine') >= 0 ) {
                     // disable all others
                     $('input[id*=moodlist]').each(function (index, element) {
@@ -417,50 +425,46 @@
                             $(element).prop('checked', false);
                             $(element).prop('disabled', true);
                             mood -= $(element).val() + ';';
-                           
+
                         }
                     });
-                   		$('[id$=sadflatHurt]').hide();
-                   		$('[id$=sadflatHurtLabel]').hide();
-                   		$('[id$=sadflatHurt]').val('');
-                   		$('[id$=plantoHarm]').hide();
-                   		$('[id$=plantoHarmLabel]').hide();
-                   		$('[id$=plantoHarm]').val('');
-                   		
+                           $('[id$=sadflatHurt]').hide();
+                           $('[id$=sadflatHurtLabel]').hide();
+                           $('[id$=sadflatHurt]').val('');
+                           $('[id$=plantoHarm]').hide();
+                           $('[id$=plantoHarmLabel]').hide();
+                           $('[id$=plantoHarm]').val('');
+
                 } else {
 
                     $('input[id*=moodlist]').each(function (index, element) {
                             $(element).prop('disabled', false);
-                            
+
                         });
-                        
+
                         if ( mood.indexOf('Sad') >=  0 || mood.indexOf('Flat') >=  0 ) {
-                        	$('[id$=sadflatHurt]').show();
-                    		$('[id$=sadflatHurtLabel]').show();
-                    		
-                    		if($('[id$=sadflatHurt]').val() == 'Yes') {
-                    			
-                    				$('[id$=plantoHarm]').show();
-                    				$('[id$=plantoHarmLabel]').show();
-            
-                    		}
-                    		else {
-                    		
-                    				$('[id$=plantoHarm]').hide();
-                    				$('[id$=plantoHarmLabel]').hide();
-                    				$('[id$=plantoHarm]').val('');
-                    		
-                    		}	
-                        
-                        }
-                        else{
-                        	$('[id$=sadflatHurt]').hide();
-                    		$('[id$=sadflatHurtLabel]').hide();
-                    		$('[id$=sadflatHurt]').val('');
-                    		$('[id$=plantoHarm]').hide();
-                    		$('[id$=plantoHarmLabel]').hide();
-                    		$('[id$=plantoHarm]').val('');
-                        
+                            $('[id$=sadflatHurt]').show();
+                            $('[id$=sadflatHurtLabel]').show();
+
+                            if($('[id$=sadflatHurt]').val() == 'Yes') {
+
+                                    $('[id$=plantoHarm]').show();
+                                    $('[id$=plantoHarmLabel]').show();
+
+                        } else {
+                                    $('[id$=plantoHarm]').hide();
+                                    $('[id$=plantoHarmLabel]').hide();
+                                    $('[id$=plantoHarm]').val('');
+
+                            }
+                    } else {
+                            $('[id$=sadflatHurt]').hide();
+                            $('[id$=sadflatHurtLabel]').hide();
+                            $('[id$=sadflatHurt]').val('');
+                            $('[id$=plantoHarm]').hide();
+                            $('[id$=plantoHarmLabel]').hide();
+                            $('[id$=plantoHarm]').val('');
+
                         }
                 }
 
@@ -472,7 +476,7 @@
                     $('[id$=onetooneHours]').show();
 
                 } else {
-                	$('[id$=hoursLabel]').hide();
+                    $('[id$=hoursLabel]').hide();
                     $('[id$=onetooneHours]').hide();
                     $('[id$=onetooneHours]').val('');
 
@@ -673,13 +677,13 @@
 
             <apex:tab label="Diagnostics" name="diagnosticTab" ontabenter="changeTab('diagnosticTab'); return false;" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
-                	<apex:pageBlockTable value="{!errorMap['diagnosticTab']}" var="d" columns="1" >
-                		<apex:repeat value="{!d}" var="temp" >
-                			<apex:column >
-                				<apex:outputText value="{!temp}" style="color: red"/>
-                			</apex:column>
-                		</apex:repeat>
-                	</apex:pageBlockTable>
+                    <apex:pageBlockTable value="{!errorMap['diagnosticTab']}" var="d" columns="1" >
+                        <apex:repeat value="{!d}" var="temp" >
+                            <apex:column >
+                                <apex:outputText value="{!temp}" style="color: red"/>
+                            </apex:column>
+                        </apex:repeat>
+                    </apex:pageBlockTable>
                     <apex:pageBlockSection title="Vitals Detail" Columns="1">
                         <apex:actionFunction name="showAddVitalsDetail" action="{!showAddVitalsDetail}" status="loadingVitalsDetailStatus" rerender="vitalsDetailDialogMainBlock" oncomplete="openModalDialog('{!$Component.vitalsDetailDialog}', 'Add Vitals Detail', '{!$Component.wholePage}'); handleVitals();" />
                         <apex:actionFunction name="showEditVitalsDetail" action="{!showEditVitalsDetail}" status="loadingVitalsDetaiStatus" rerender="vitalsDetailDialogMainBlock" oncomplete="openModalDialog('{!$Component.vitalsDetailDialog}', 'Edit Vitals Detail', '{!$Component.wholePage}'); handleVitals();">
@@ -762,13 +766,13 @@
             </apex:tab>
             <apex:tab label="Cardiopulmonary" name="cardioTab" onTabenter="changeTab('cardioTab'); return false;" styleClass="{!IF(Evaluation__c.Cardio_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
-                	<apex:pageBlockTable value="{!errorMap['cardioTab']}" var="d" columns="1" >
-                		<apex:repeat value="{!d}" var="temp" >
-                			<apex:column >
-                				<apex:outputText value="{!temp}" style="color: red"/>
-                			</apex:column>
-                		</apex:repeat>
-                	</apex:pageBlockTable>
+                    <apex:pageBlockTable value="{!errorMap['cardioTab']}" var="d" columns="1" >
+                        <apex:repeat value="{!d}" var="temp" >
+                            <apex:column >
+                                <apex:outputText value="{!temp}" style="color: red"/>
+                            </apex:column>
+                        </apex:repeat>
+                    </apex:pageBlockTable>
                     <apex:pageBlockSection Columns="2" title="cardio">
                         <apex:pageBlockSectionItem >
                             <apex:outputPanel >
@@ -814,13 +818,13 @@
                             </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem >
-                        	<apex:outputLabel value="Autonomic Dysreflexia" />
-                        	<apex:outputPanel >
-                        		<div class="requiredInput">
+                            <apex:outputLabel value="Autonomic Dysreflexia" />
+                            <apex:outputPanel >
+                                <div class="requiredInput">
                                     <div class="requiredBlock"></div>
-                        		<apex:inputField Value="{!Evaluation__c.Autonomic_Dysreflexia__c}" onchange="handleDysreflexia(); return false;" id="dysreflexia" />
-                        		</div>
-                        	</apex:outputPanel>
+                                <apex:inputField Value="{!Evaluation__c.Autonomic_Dysreflexia__c}" onchange="handleDysreflexia(); return false;" id="dysreflexia" />
+                                </div>
+                            </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem />
 
@@ -852,15 +856,15 @@
                         </apex:pageBlockSection>
                     </apex:pageBlockSection>
                     <apex:pageBlockSection columns="1" title="Sputum" Collapsible="True">
-                    	<apex:pageBlockSectionItem >
-                    		<apex:outputLabel value="Suctioning" />
-                    		<apex:outputPanel >
-                    			<div class="requiredInput" >
-                    				<div Class="requiredBlock" ></div> 
-                        		<apex:inputField value="{!Evaluation__c.Suctioning_Picklist__c}"  id="suctioning" onchange="handleSuctioning(); return false;" />
-                        		</div>
-                        	</apex:outputPanel>
-						</apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Suctioning" />
+                            <apex:outputPanel >
+                                <div class="requiredInput" >
+                                    <div class="requiredBlock"></div>
+                                <apex:inputField value="{!Evaluation__c.Suctioning_Picklist__c}"  id="suctioning" onchange="handleSuctioning(); return false;" />
+                                </div>
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
                         <apex:pageBlockSection columns="2" id="suctioningDetails">
                             <apex:inputField value="{!Evaluation__c.Sputum_Quantity__c}" id="sputumQuantity" />
                             <apex:inputField value="{!Evaluation__c.Sputum_Color__c}" id="sputumColor" />
@@ -917,14 +921,14 @@
                         </apex:pageBlockSection>
                     </apex:pageBlockSection>
                     <apex:pageBlockSection columns="1" title="Trach">
-                    	<apex:pageBlockSectionItem >
-                    		<apex:outputLabel value="Trach" />
-                    		<apex:outputPanel >
-                    			<div Class="requiredInput" >
-                    				<div class="requiredBlock" ></div>
-                        		<apex:inputField value="{!Evaluation__c.Trach_Picklist__c}" label="Trach" id="trachPicklist" onchange="handleTrach(); return false;" />
-                        		</div>
-                        	</apex:outputPanel>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Trach" />
+                            <apex:outputPanel >
+                                <div Class="requiredInput" >
+                                    <div class="requiredBlock" ></div>
+                                <apex:inputField value="{!Evaluation__c.Trach_Picklist__c}" label="Trach" id="trachPicklist" onchange="handleTrach(); return false;" />
+                                </div>
+                            </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSection columns="2" id="trachDetails">
                             <apex:pageBlockSectionItem >
@@ -988,14 +992,14 @@
                     </apex:pageBlockSection>
 
                     <apex:pageBlockSection columns="1" title="O2" >
-                    	<apex:pageBlockSectionItem >
-                    		<apex:outputLabel value="O2" />
-                    		<apex:outputPanel >
-                    			<div Class="requiredInput" >
-                    				<div Class="requiredBlock" ></div>
-                        		<apex:inputField value="{!Evaluation__c.O2_Picklist__c}"  id="o2" onchange="handleO2(); return false;" />
-                        		</div>
-                        	</apex:outputPanel>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="O2" />
+                            <apex:outputPanel >
+                                <div Class="requiredInput" >
+                                    <div Class="requiredBlock" ></div>
+                                <apex:inputField value="{!Evaluation__c.O2_Picklist__c}"  id="o2" onchange="handleO2(); return false;" />
+                                </div>
+                            </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem />
 
@@ -1026,14 +1030,14 @@
                         </apex:pageBlockSection>
                     </apex:pageBlockSection>
                     <apex:pageBlockSection columns="1" title="Ventilator">
-                    	<apex:pageBlockSectionItem >
-                    		<apex:outputLabel value="Ventilator" />
-                    		<apex:outputPanel >
-                    			<div Class="requiredInput" >
-                    				<div Class="requiredBlock" ></div>
-                        		<apex:inputField value="{!Evaluation__c.Ventilator_Picklist__c}" id="ventilatorPicklist" label="Ventilator" onchange="handleVentSection();return false;" />
-                        		</div>
-                        	</apex:outputPanel>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Ventilator" />
+                            <apex:outputPanel >
+                                <div Class="requiredInput" >
+                                    <div Class="requiredBlock" ></div>
+                                <apex:inputField value="{!Evaluation__c.Ventilator_Picklist__c}" id="ventilatorPicklist" label="Ventilator" onchange="handleVentSection();return false;" />
+                                </div>
+                            </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:pageblockSectionItem />
 
@@ -1077,21 +1081,21 @@
                     jQuery(document).ready(function ($) {
                         // Add rules to input fields that we can't add rules to using
                         // only Visualforce
-                        $("[id$=tongue] input[value=Sores]").data("visibility-rules",
-                            {"1": ["{!$Component.nutritionMainBlock.nutritionHydrationSection.tongueSection.tongueSores}", "{!$Component.nutritionMainBlock.nutritionHydrationSection.tongueSection.tongueSoresLabel}"]}
-                        );
-                        $("[id$=gums] input[value=Sores]").data("visibility-rules",
-                            {"1": ["{!$Component.nutritionMainBlock.nutritionHydrationSection.gumsSection.gumsSores}", "{!$Component.nutritionMainBlock.nutritionHydrationSection.gumsSection.gumsSoresLabel}"]}
-                        );
-                        $("[id$=cheeks] input[value=Sores]").data("visibility-rules",
-                            {"1": ["{!$Component.nutritionMainBlock.nutritionHydrationSection.cheeksSection.cheeksSores}", "{!$Component.nutritionMainBlock.nutritionHydrationSection.cheeksSection.cheeksSoresLabel}"]}
-                        );
-                        $("[id$=lips] input[value=Sores]").data("visibility-rules",
-                            {"1": ["{!$Component.nutritionMainBlock.nutritionHydrationSection.lipsSection.lipsSores}", "{!$Component.nutritionMainBlock.nutritionHydrationSection.lipsSection.lipsSoresLabel}"]}
-                        );
-                        $("[id$=eliminationBowelStatus] input[value=Other]").data("visibility-rules",
-                            {"1": ["{!$Component.nutritionMainBlock.eliminationBowelSection.eliminationBowelStatusOther}"]}
-                        );
+                        $("[id$=tongue] input[value=Sores]").data("visibility-rules", {
+                            "1": ["{!$Component.nutritionMainBlock.nutritionHydrationSection.tongueSection.tongueSores}", "{!$Component.nutritionMainBlock.nutritionHydrationSection.tongueSection.tongueSoresLabel}"]
+                        });
+                        $("[id$=gums] input[value=Sores]").data("visibility-rules", {
+                            "1": ["{!$Component.nutritionMainBlock.nutritionHydrationSection.gumsSection.gumsSores}", "{!$Component.nutritionMainBlock.nutritionHydrationSection.gumsSection.gumsSoresLabel}"]
+                        });
+                        $("[id$=cheeks] input[value=Sores]").data("visibility-rules", {
+                            "1": ["{!$Component.nutritionMainBlock.nutritionHydrationSection.cheeksSection.cheeksSores}", "{!$Component.nutritionMainBlock.nutritionHydrationSection.cheeksSection.cheeksSoresLabel}"]
+                        });
+                        $("[id$=lips] input[value=Sores]").data("visibility-rules", {
+                            "1": ["{!$Component.nutritionMainBlock.nutritionHydrationSection.lipsSection.lipsSores}", "{!$Component.nutritionMainBlock.nutritionHydrationSection.lipsSection.lipsSoresLabel}"]
+                        });
+                        $("[id$=eliminationBowelStatus] input[value=Other]").data("visibility-rules", {
+                            "1": ["{!$Component.nutritionMainBlock.eliminationBowelSection.eliminationBowelStatusOther}"]
+                        });
                         $("[id$=eliminationBowelStatus] input[value=Other]").data("visibility-row-rules", true);
                         setUpFields();
                     });
@@ -1328,27 +1332,27 @@
                 </apex:pageBlock>
             </apex:tab>
             <apex:tab label="Neurological" name="neuroTab" ontabenter="changeTab('neuroTab');return false;" styleClass="{!IF(Evaluation__c.Neuro_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
-                <apex:pageBlock >
-                	<apex:pageBlockTable value="{!errorMap['neuroTab']}" var="d" columns="1" >
-                		<apex:repeat value="{!d}" var="temp" >
-                			<apex:column >
-                				<apex:outputText value="{!temp}" style="color: red"/>
-                			</apex:column>
-                		</apex:repeat>
-                	</apex:pageBlockTable>
+                <apex:pageBlock id="neuroMainBlock">
+                    <apex:pageBlockTable value="{!errorMap['neuroTab']}" var="d" columns="1" >
+                        <apex:repeat value="{!d}" var="temp" >
+                            <apex:column >
+                                <apex:outputText value="{!temp}" style="color: red"/>
+                            </apex:column>
+                        </apex:repeat>
+                    </apex:pageBlockTable>
                     <apex:pageBlockSection columns="1" title="Cognitive" collapsible="True" >
-                    	<apex:pageBlockSectionItem >
-                    		<apex:outputLabel value="Rancho Level" />
-                    		<apex:outputPanel >
-                    			<div class="requiredInput" >
-                    				<div Class="requiredBlock" ></div>
-                        		<apex:inputField value="{!Evaluation__c.Rancho_Level__c}" onchange="handleRancho(); handleMood(); return false;" id="ranchoValue" />
-                        		</div>
-                        	</apex:outputPanel>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Rancho Level" />
+                            <apex:outputPanel >
+                                <div class="requiredInput" >
+                                    <div Class="requiredBlock" ></div>
+                                <apex:inputField value="{!Evaluation__c.Rancho_Level__c}" onchange="handleRancho(); handleMood(); return false;" id="ranchoValue" />
+                                </div>
+                            </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSection id="ranchoDetails" columns="1" >
-                        	<apex:pageBlockSectionItem >
-                        		<apex:outputLabel value="Responds To" id="labelresponds" />
+                            <apex:pageBlockSectionItem >
+                                <apex:outputLabel value="Responds To" id="labelresponds" />
                                 <apex:outputPanel >
                                     <apex:inputField id="vstimresponds" value="{!Evaluation__c.Verbal_Stim__c}" />
                                     <apex:outputLabel for="vstim" value="Verbal Stim" id="vstimlabelresponds" />&nbsp;
@@ -1361,8 +1365,8 @@
                                     <apex:inputField id="visualresponds" value="{!Evaluation__c.Visual__c}" />
                                     <apex:outputLabel for="visual" value="Visual" id="visuallabelresponds" />
                                 </apex:outputPanel>
-                        	</apex:pageBlockSectionItem>
-                        	<apex:inputField value="{!Evaluation__c.Level_of_Conciousness__c}" />
+                            </apex:pageBlockSectionItem>
+                            <apex:inputField value="{!Evaluation__c.Level_of_Conciousness__c}" />
                             <apex:pageBlockSectionItem >
                                 <apex:outputLabel value="Orientation" />
                                 <apex:selectCheckboxes value="{!selectedNeuroOrient}" style="margin-left:-13px">
@@ -1389,99 +1393,136 @@
                                 </apex:outputPanel>
                             </apex:pageBlockSectionItem>
                             <apex:pageBlockSectionItem >
-		                            <apex:outputLabel value="Mood" />
-		                            <apex:selectCheckboxes value="{!selectedMoods}"  style="margin-left:-13px" id="moodlist" onchange="handleMood(); return false;" >
-		                                <apex:selectOptions value="{!moodValues}" />
-		                            </apex:selectCheckboxes>
-		                        </apex:pageBlockSectionItem>
-		                        <apex:pageBlockSectionItem >
-		                        	<apex:outputpanel id="labelPanel">
-		                        		<apex:outputLabel value="Has Resident Expressed Desire to Hurt Him/Herself?" id="sadflatHurtLabel" />
-		                        		<br/>
-		                        		<br/>
-		                        		<apex:outputLabel value="Does Resident Have a Plan to Harm Him/Herself?" id="plantoHarmLabel" />
-		                        	</apex:outputpanel>
-		                        	<apex:outputPanel >
-		                        		<div class="requiredInput">
-	                    	 				<div class="requiredBlock"></div >
-		                        		<apex:inputField value="{!Evaluation__c.Desire_to_hurt_themselves__c}"  id="sadflatHurt" onchange="handleMood(); return false;"/>
-		                        		</div>
-		                        		<div class="requiredInput">
-	                    	 				<div class="requiredBlock"></div>
-		                        		<apex:inputField value="{!Evaluation__c.Plan_to_Harm_themselves__c}"  id="plantoHarm" />
-		                        		</div>
-		                        	</apex:outputPanel>
-		                        </apex:pageBlockSectionItem>
-		                        <apex:pageBlockSectionItem />
-		                        <apex:pageBlockSectionItem >
-		                        	<apex:outputText value="Communication" styleClass="labelCol" />
-		                        	<apex:outputText value="" />
-		                        </apex:pageBlockSectionItem>
-		                        <apex:pageBlockSectionItem >
-		                        	<apex:outputPanel >
-		                        		<apex:outputLabel for="needsKnown" value="Ability to make needs known"  />
-		                        		<br />
-		                        		<br />
-		                        		<apex:outputlabel for="verbalExpression" value="Expression" id="verbalExpressionLabel"/>
-		                        		<br />
-		                        		<br />
-		                        		<apex:outputText value="Other Expression" id="otherExpressionLabel" />
-		                        	</apex:outputPanel>
-		                        	<apex:outputPanel >
-		                        		<div class="requiredInput">
-	                    	 				<div class="requiredBlock"></div>
-		                        		<apex:inputField value="{!Evaluation__c.Able_to_make_Needs_Known__c}" id="needsKnown" onchange="handleExpression(); return false;" />
-		                        		</div>
-		                        		<div class="requiredInput">
-	                    	 				<div class="requiredBlock"></div>
-		                        		<apex:inputField value="{!Evaluation__c.Expression__c}" id="verbalExpression" onchange="handleExpression(); return false;" />
-		                        		</div>
-		                        		<br />
-		                        		<apex:selectCheckboxes value="{!selectedVerbalExpression}" style="margin-left:-13px" id="expressionOther"  >
-                                			<apex:selectOptions value="{!verbalExpressionValues}" />
-                            			</apex:selectCheckboxes>
-		                        	</apex:outputPanel>
-		                        </apex:pageBlockSectionItem>
-						</apex:pageBlockSection>
+                                    <apex:outputLabel value="Mood" />
+                                    <apex:selectCheckboxes value="{!selectedMoods}"  style="margin-left:-13px" id="moodlist" onchange="handleMood(); return false;" >
+                                        <apex:selectOptions value="{!moodValues}" />
+                                    </apex:selectCheckboxes>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputpanel id="labelPanel">
+                                        <apex:outputLabel value="Has Resident Expressed Desire to Hurt Him/Herself?" id="sadflatHurtLabel" />
+                                        <br/>
+                                        <br/>
+                                        <apex:outputLabel value="Does Resident Have a Plan to Harm Him/Herself?" id="plantoHarmLabel" />
+                                    </apex:outputpanel>
+                                    <apex:outputPanel >
+                                        <div class="requiredInput">
+                                             <div class="requiredBlock"></div >
+                                        <apex:inputField value="{!Evaluation__c.Desire_to_hurt_themselves__c}"  id="sadflatHurt" onchange="handleMood(); return false;"/>
+                                        </div>
+                                        <div class="requiredInput">
+                                             <div class="requiredBlock"></div>
+                                        <apex:inputField value="{!Evaluation__c.Plan_to_Harm_themselves__c}"  id="plantoHarm" />
+                                        </div>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem />
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputText value="Communication" styleClass="labelCol" />
+                                    <apex:outputText value="" />
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputPanel >
+                                        <apex:outputLabel for="needsKnown" value="Ability to make needs known"  />
+                                        <br />
+                                        <br />
+                                        <apex:outputlabel for="verbalExpression" value="Expression" id="verbalExpressionLabel"/>
+                                        <br />
+                                        <br />
+                                        <apex:outputText value="Other Expression" id="otherExpressionLabel" />
+                                    </apex:outputPanel>
+                                    <apex:outputPanel >
+                                        <div class="requiredInput">
+                                             <div class="requiredBlock"></div>
+                                        <apex:inputField value="{!Evaluation__c.Able_to_make_Needs_Known__c}" id="needsKnown" onchange="handleExpression(); return false;" />
+                                        </div>
+                                        <div class="requiredInput">
+                                             <div class="requiredBlock"></div>
+                                        <apex:inputField value="{!Evaluation__c.Expression__c}" id="verbalExpression" onchange="handleExpression(); return false;" />
+                                        </div>
+                                        <br />
+                                        <apex:selectCheckboxes value="{!selectedVerbalExpression}" style="margin-left:-13px" id="expressionOther"  >
+                                            <apex:selectOptions value="{!verbalExpressionValues}" />
+                                        </apex:selectCheckboxes>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                        </apex:pageBlockSection>
                     </apex:pageBlockSection>
                     <apex:pageBlockSection columns="1" title="Safety" >
-                    		<apex:pageBlockSectionItem >
-                    			<apex:outputLabel Value="Safety Awareness" />
-                    			<apex:outputPanel >
-                    				<div Class="requiredInput" >
-                    					<div Class="requiredBlock" ></div>
-	                        		<apex:inputField value="{!Evaluation__c.Safety_Awareness__c}" />
-	                        		</div>
-	                        	</apex:outputPanel>
-	                        </apex:pageBlockSectionItem>
-	                        <apex:inputField value="{!Evaluation__c.Bed_Alarm__c}" />
-	                        <apex:pageBlockSectionItem >
-		                        <apex:outputpanel >
-			                        <apex:outputLabel value="One to One Sitter" />
-			                        <br/>
-			                        <br/>
-			                        <apex:outputLabel value="# of hours per day" id="hoursLabel"/>
-		                        </apex:outputpanel>
-	                        
-		                        <apex:outputPanel >
-			                        <apex:inputField value="{!Evaluation__c.One_to_One_Sitter__c}"  id="sitter" onchange="handleSitter(); return false;"/>
-			                      	<br />
-			                        <apex:inputField value="{!Evaluation__c.one_to_One_Sitter_of_Hours_per_day__c}" id="onetooneHours" />
-		                        </apex:outputPanel>
-	                        </apex:pageBlockSectionItem>
-	                        <apex:inputField value="{!Evaluation__c.Low_Bed__c}" />
-	               </apex:pageBlockSection> 
+                            <apex:pageBlockSectionItem >
+                                <apex:outputLabel Value="Safety Awareness" />
+                                <apex:outputPanel >
+                                    <div Class="requiredInput" >
+                                        <div Class="requiredBlock" ></div>
+                                    <apex:inputField value="{!Evaluation__c.Safety_Awareness__c}" />
+                                    </div>
+                                </apex:outputPanel>
+                            </apex:pageBlockSectionItem>
+                            <apex:inputField value="{!Evaluation__c.Bed_Alarm__c}" />
+                            <apex:pageBlockSectionItem >
+                                <apex:outputpanel >
+                                    <apex:outputLabel value="One to One Sitter" />
+                                    <br/>
+                                    <br/>
+                                    <apex:outputLabel value="# of hours per day" id="hoursLabel"/>
+                                </apex:outputpanel>
+
+                                <apex:outputPanel >
+                                    <apex:inputField value="{!Evaluation__c.One_to_One_Sitter__c}"  id="sitter" onchange="handleSitter(); return false;"/>
+                                      <br />
+                                    <apex:inputField value="{!Evaluation__c.one_to_One_Sitter_of_Hours_per_day__c}" id="onetooneHours" />
+                                </apex:outputPanel>
+                            </apex:pageBlockSectionItem>
+                            <apex:inputField value="{!Evaluation__c.Low_Bed__c}" />
+                   </apex:pageBlockSection>
+
+                    <apex:pageBlockSection title="Pain" id="painSection" columns="1">
+                        <apex:outputPanel id="painSectionButtons">
+                            <apex:commandButton value="Add Entry" action="{!addPainResponse}" immediate="true" rerender="painResponsesSection" rendered="{!Evaluation__c.Pain_Present__c='Yes'}" />
+                        </apex:outputPanel>
+                        <apex:inputField value="{!Evaluation__c.Pain_Present__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.neuroMainBlock.painResponsesSection}&quot;]}">
+                            <apex:actionSupport event="onchange" rerender="{!$Component.neuroMainBlock.painSection.painSectionButtons}" />
+                        </apex:inputField>
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection id="painResponsesSection" columns="1">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Specify Pain Level" />
+                            <apex:image url="{!URLFOR($Resource.Wongbakerfaces)}" height="110px" width="45%" />
+                        </apex:pageBlockSectionItem>
+                        <apex:repeat value="{!pains}" var="pain">
+                            <apex:inputhidden value="{!pain.Initial_Pain_Level__c}" id="initialPainLevel" />
+                            <apex:inputhidden value="{!pain.Follow_up_Pain_Level__c}" id="followUpPainLevel" />
+                            <apex:pageBlockSectionItem >
+                                <apex:outputLabel value="Pain Level" />
+                                <apex:outputPanel layout="none">
+                                    <c:Slider onChange="handleSliderChange('{!$Component.initialPainLevel}')" options="{!painSliderOptions}" initial="{!pain.Initial_Pain_Level__c}" morestyle="display: inline-block; width: 40%;" />
+                                    <apex:outputLabel value="Add Narrative Note" style="margin: auto 5px;" />
+                                    <apex:inputTextarea value="{!pain.Narrative_Note__c}" style="vertical-align: top; " />
+                                    <apex:outputLabel value="Time Observed" style="margin: auto 5px;" />
+                                    <apex:inputField value="{!pain.Time_Observed__c}" />
+                                </apex:outputPanel>
+                            </apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem >
+                                <apex:outputLabel value="Follow-up Pain Level" />
+                                <apex:outputPanel layout="none">
+                                    <c:Slider onChange="handleSliderChange('{!$Component.followUpPainLevel}')" options="{!painSliderOptions}" initial="{!pain.Follow_up_Pain_Level__c}" morestyle="display: inline-block; width: 40%;" />
+                                    <apex:outputLabel value="Describe Effectiveness" style="margin: auto 5px;" />
+                                    <apex:inputTextarea value="{!pain.Follow_up_Effectiveness__c}" style="vertical-align: top; " />
+                                </apex:outputPanel>
+                            </apex:pageBlockSectionItem>
+                        </apex:repeat>
+                    </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:tab>
             <apex:tab label="Ortho" name="orthoTab" ontabenter="changeTab('orthoTab'); return false;" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
-                	<apex:pageBlockTable value="{!errorMap['orthoTab']}" var="d" columns="1" >
-                		<apex:repeat value="{!d}" var="temp" >
-                			<apex:column >
-                				<apex:outputText value="{!temp}" style="color: red"/>
-                			</apex:column>
-                		</apex:repeat>
-                	</apex:pageBlockTable >
+                    <apex:pageBlockTable value="{!errorMap['orthoTab']}" var="d" columns="1" >
+                        <apex:repeat value="{!d}" var="temp" >
+                            <apex:column >
+                                <apex:outputText value="{!temp}" style="color: red"/>
+                            </apex:column>
+                        </apex:repeat>
+                    </apex:pageBlockTable>
                     <apex:pageBlockSection columns="2">
                         <apex:pageBlockSectionItem >
                             <apex:outputPanel >
@@ -1494,7 +1535,7 @@
                                 <apex:outputLabel for="OthercastLocation" value="Other" id="OthercastLocationLabel" />
                             </apex:outputPanel>
                             <apex:outputPanel >
-                            	<div class="requiredInput">
+                                <div class="requiredInput">
                                     <div class="requiredBlock"></div>
                                 <apex:inputField id="cast" value="{!Evaluation__c.Cast_Picklist__c}"  onchange="handleOrtho(); return false;" />
                                 </div>
@@ -1523,7 +1564,7 @@
                             </apex:outputPanel>
 
                             <apex:outputPanel >
-                            	<div class="requiredInput">
+                                <div class="requiredInput">
                                     <div class="requiredBlock"></div>
                                 <apex:inputField id="traction" value="{!Evaluation__c.Traction_Picklist__c}"  onchange="handleOrtho(); return false;" />
                                 </div>
@@ -1552,7 +1593,7 @@
                                 <apex:outputLabel for="externalDevicesType" value="Type" id="externalDevicesTypeLabel" />
                             </apex:outputPanel>
                             <apex:outputPanel >
-                            	<div class="requiredInput">
+                                <div class="requiredInput">
                                     <div class="requiredBlock"></div>
                                 <apex:inputField value="{!Evaluation__c.External_Device_Picklist__c}"  id="extdev" onchange="handleOrtho(); return false;" />
                                 </div>
@@ -1573,13 +1614,13 @@
             </apex:tab>
             <apex:tab label="Psycho/Social" name="psychoSocialTab" ontabenter="changeTab('psychoSocialTab'); return false;" styleClass="{!IF(Evaluation__c.Psycho_Social_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
-                	<apex:pageBlockTable value="{!errorMap['psychoSocialTab']}" var="d" columns="1" >
-                		<apex:repeat value="{!d}" var="temp" >
-                			<apex:column >
-                				<apex:outputText value="{!temp}" style="color: red"/>
-                			</apex:column>
-                		</apex:repeat>
-                	</apex:pageBlockTable>
+                    <apex:pageBlockTable value="{!errorMap['psychoSocialTab']}" var="d" columns="1" >
+                        <apex:repeat value="{!d}" var="temp" >
+                            <apex:column >
+                                <apex:outputText value="{!temp}" style="color: red"/>
+                            </apex:column>
+                        </apex:repeat>
+                    </apex:pageBlockTable>
                     <apex:pageBlockSection Columns="1">
                         <apex:pageBlockSectionItem >
                             <apex:outputPanel >

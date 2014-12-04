@@ -13,7 +13,34 @@ public with sharing class CMShiftAssessmentView {
     public List<string>selectedSounds { get ; set; }
     public List<SelectOption>DysreflexiaValues;
     public List<string>selectedDysreflexia { get ; set; }
-    
+
+    public Evaluation_Response__c[] pains {
+        get {
+            if (pains == null) {
+                pains = [
+                    SELECT ID, Initial_Pain_Level__c, Narrative_Note__c,
+                           Follow_up_Pain_Level__c, Follow_up_Effectiveness__c,
+                           Time_Observed__c
+                    FROM Evaluation_Response__c WHERE Evaluation__c=:evaluation.Id
+                    AND RecordType.Name='Pain'
+                ];
+            }
+            return pains;
+        }
+        set;
+    }
+    public List<String> painSliderOptions {
+        get {
+            if (painSliderOptions == null) {
+                painSliderOptions = new String[] {
+                    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'
+                };
+            }
+            return painSliderOptions;
+        }
+        set;
+    }
+
     public string getprimaryPhysician(){
         List<Related_Party__c> rp = [SELECT Id, Name FROM Related_Party__c WHERE Person_Being_served__c=:this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__c AND Type__c='Physician - Primary' order by LastModifiedDate desc LIMIT 1];
         if(rp.size()>0) return rp[0].Name;
@@ -66,22 +93,22 @@ public with sharing class CMShiftAssessmentView {
     public Evaluation_Response__c currentVitalsDetail {get; set; }
     public Id currentVitalsDetailId { get; set; }
 
-	public pageReference finalizeEval() {
-		this.evaluation.Status__c = 'Final';
-		update this.evaluation;
-		pageReference backtoView = new pageReference('/apex/CMShiftAssessmentView?id='+this.evaluation.Id);
-		backtoview.setRedirect(true);
-		return backtoView;
-	}
-	
-	public pageReference disregardEval() {
-		this.evaluation.status__c = 'Disregard';
-		update this.evaluation;
-		pageReference backtoView = new pageReference('/apex/CMShiftAssessmentView?id='+this.evaluation.Id);
-		backtoview.setRedirect(true);
-		return backtoView;
-	}
-	
+    public pageReference finalizeEval() {
+        this.evaluation.Status__c = 'Final';
+        update this.evaluation;
+        pageReference backtoView = new pageReference('/apex/CMShiftAssessmentView?id='+this.evaluation.Id);
+        backtoview.setRedirect(true);
+        return backtoView;
+    }
+
+    public pageReference disregardEval() {
+        this.evaluation.status__c = 'Disregard';
+        update this.evaluation;
+        pageReference backtoView = new pageReference('/apex/CMShiftAssessmentView?id='+this.evaluation.Id);
+        backtoview.setRedirect(true);
+        return backtoView;
+    }
+
     public void showAddVitalsDetail()  {
         this.currentVitalsDetail = new Evaluation_Response__c();
         this.currentVitalsDetail.Evaluation__c = this.evaluation.Id;
@@ -105,7 +132,7 @@ public with sharing class CMShiftAssessmentView {
             // have to do anything
         }
     }
-    
+
     public List<selectoption> getcopingValues(){
         List<Selectoption> copingValue = Utility.getPicklistValues(evaluation, 'Resident_Demonstrating_Issues__c');
         return copingValue;
