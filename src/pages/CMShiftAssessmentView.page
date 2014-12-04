@@ -10,18 +10,18 @@
         function openWin(url) {
             window.open(url);
         }
-        
+
         j$ = jQuery.noConflict();
-        
+
         finalize = function() {
-        	var c = confirm('Are you sure about finalizing?');
-        	if(c==true) {
-        		finalizeEval();
-        	}else {
-        		return null;
-        	}
+            var c = confirm('Are you sure about finalizing?');
+            if(c==true) {
+                finalizeEval();
+            } else {
+                return null;
+            }
         }
-        
+
     </script>
 
     <style>
@@ -98,9 +98,9 @@
             Assignment</a>&nbsp;>&nbsp;
         <apex:outputText value="{!Evaluation__c.Name}" />
     </div>
-	
+
     <apex:form id="wholePage">
-    	
+
         <apex:outputpanel rendered="false">
             <apex:inputhidden value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__c}" />
             <apex:inputhidden value="{!Evaluation__c.Resident_Demonstrating_Issues__c}" />
@@ -441,6 +441,35 @@
                             </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                     </apex:pageblockSection>
+                    <apex:pageBlockSection title="Pain" id="painSection" columns="1">
+                        <apex:outputField value="{!Evaluation__c.Pain_Present__c}" />
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection id="painResponsesSection" columns="1" rendered="{!Evaluation__c.Pain_Present__c='Yes'}">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputText value="Specify Pain Level" />
+                            <apex:image url="{!URLFOR($Resource.Wongbakerfaces)}" height="110px" width="45%" />
+                        </apex:pageBlockSectionItem>
+                        <apex:repeat value="{!pains}" var="pain">
+                            <apex:pageBlockSectionItem >
+                                <apex:outputLabel value="Pain Level" />
+                                <apex:outputPanel layout="none">
+                                    <c:Slider disabled="true" onchange="handleSliderChange('{!$Component.initialPainLevel}')" options="{!painSliderOptions}" initial="{!pain.Initial_Pain_Level__c}" morestyle="display: inline-block; width: 40%;" />
+                                    <apex:outputLabel value="Narrative Note" style="margin: auto 5px;" />
+                                    <apex:outputField value="{!pain.Narrative_Note__c}" />
+                                    <apex:outputLabel value="Time Observed" style="margin: auto 5px;" />
+                                    <apex:outputField value="{!pain.Time_Observed__c}" />
+                                </apex:outputPanel>
+                            </apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem >
+                                <apex:outputLabel value="Follow-up Pain Level" />
+                                <apex:outputPanel layout="none">
+                                    <c:Slider disabled="true" onchange="handleSliderChange('{!$Component.followUpPainLevel}')" options="{!painSliderOptions}" initial="{!pain.Follow_up_Pain_Level__c}" morestyle="display: inline-block; width: 40%;" />
+                                    <apex:outputLabel value="Describe Effectiveness" style="margin: auto 5px;" />
+                                    <apex:outputField value="{!pain.Follow_up_Effectiveness__c}" />
+                                </apex:outputPanel>
+                            </apex:pageBlockSectionItem>
+                        </apex:repeat>
+                    </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:tab>
 
@@ -520,7 +549,7 @@
         </apex:tabPanel>
         <apex:pageBlock id="buttons">
             <apex:pageBlockButtons location="bottom">
-                <apex:commandButton onclick="window.location='/apex/CMShiftAssessmentEdit?id={!Evaluation.Id}&tab={!selectedTab}'; return false;" value="Edit" rendered="{!Evaluation__c.Status__c='Draft' && Evaluation__c.OwnerId == $User.id}"/>
+                <apex:commandButton onclick="window.location='/apex/CMShiftAssessmentEdit?id={!Evaluation.Id}&tab={!selectedTab}'; return false;" value="Edit" rendered="{!Evaluation__c.Status__c='Draft' && Evaluation__c.OwnerId == $User.Id}"/>
             </apex:pageBlockButtons>
         </apex:pageBlock>
         <apex:outputPanel id="vitalsDetailDialog" style="display:none">
