@@ -131,7 +131,10 @@
                     }
                     // We also need to make sure the fields are blanked out, so
                     // that they could be updated on the backend
-                    $target.find("input, select").prop("disabled", true).prop("disabled", false).trigger("change");
+                    if ($target.is("input") || $target.is("select")) {
+                        $target.val("").prop("checked", false).trigger("change");
+                    }
+                    $target.find("input, select").prop("checked", false).val("").trigger("change");
                     $target.trigger("change");
                 });
             }
