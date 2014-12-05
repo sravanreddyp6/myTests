@@ -426,7 +426,7 @@ public with sharing class HomePageController{
         for (Task task: populateTasks) {
             if (referralIdSet.contains(task.WhatId)) {
                 taskToNameMap.put(task.Id, '<a href="/' + task.WhatId + '">' + referrals.get(task.WhatId).Person_Being_Referred__r.Full_Name__c + '</a>');
-            } else {
+            } else if (task.WhoId == null) {  // Do not override the entry from above if WhoId != null
                 taskToNameMap.put(task.Id, '');
             }
         }
