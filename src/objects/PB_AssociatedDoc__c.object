@@ -78,30 +78,19 @@
         <type>Lookup</type>
     </fields>
     <fields>
-        <fullName>Due_Days__c</fullName>
+        <fullName>Due_Date__c</fullName>
+        <description>Calculated based on PBS&apos;s Admission Start Date or Entered (If &quot;Other&quot; in Due)</description>
         <externalId>false</externalId>
-        <label>Due Days</label>
-        <precision>4</precision>
+        <label>Due Date</label>
         <required>false</required>
-        <scale>0</scale>
-        <trackHistory>true</trackHistory>
+        <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
-        <type>Number</type>
-        <unique>false</unique>
+        <type>Date</type>
     </fields>
     <fields>
         <fullName>Effective_Date__c</fullName>
         <externalId>false</externalId>
         <label>Effective Date</label>
-        <required>false</required>
-        <trackHistory>true</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>Date</type>
-    </fields>
-    <fields>
-        <fullName>Filed_Date__c</fullName>
-        <externalId>false</externalId>
-        <label>Filed Date</label>
         <required>false</required>
         <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
@@ -127,10 +116,6 @@
             </picklistValues>
             <picklistValues>
                 <fullName>Quarterly</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Half-Yearly</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -177,11 +162,11 @@
         <label>Status</label>
         <picklist>
             <picklistValues>
-                <fullName>Filed</fullName>
-                <default>false</default>
+                <fullName>Pending</fullName>
+                <default>true</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Signed</fullName>
+                <fullName>Received</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
