@@ -36,13 +36,21 @@ public with sharing class Notes_ProgressNote_FCInclude {
         else
             thePN.Foster_Parents__c ='';
     	
+    	return SaveScheduling();
     	
+    }
+    
+    public PageReference SaveOther() {
+    	system.debug('other is:' + thePN.Topic_Other__c);
+    	if ( !thePN.Topic_Other__c )
+    		thePN.Topic_If_Other__c = '';
+    		
     	update thePN;
     	return null;
     }
     
+    
     public PageReference SaveScheduling() {
-    	system.debug( 'COORD:' + thePN.Coord_support_for_Mentor_child__c);
     	update thePN;
     	return null;
     }
