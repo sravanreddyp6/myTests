@@ -993,11 +993,12 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
 
     // Start NEVAL-26 - Don't let NR user close the referral if one of the funding sources
     // has blank Payer Type
-    System.debug('Checking funding source payer type');
-    if (referralRecordType == 'NeuroRestorative' && referralRecord.Referral_Status__c == 'Closed') {
-        System.debug('Inside if loop');
+    if (referralRecordType == 'NeuroRestorative' && referralRecord.Referral_Status__c == 'Closed' && referralRecord.Close_Reason__c == 'Admitted') {
+        if (fundingSources.size() == 0) {
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'One or more of the Funding Sources\' Payer Type is blank.'));
+            return null;
+        }
         for (Funding_Source__c fs: fundingSources) {
-            System.debug('For this funding source, the payer type is ' + fs.Payer_Type__c);
             if (fs.Payer_Type__c == '' || fs.Payer_Type__c == null) {
                 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'One or more of the Funding Sources\' Payer Type is blank.'));
                 return null;
