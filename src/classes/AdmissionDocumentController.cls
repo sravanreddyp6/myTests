@@ -23,8 +23,8 @@ public with sharing class AdmissionDocumentController {
        	    
        	// get the list of all packets, docs and their junction. And the associated docs - to build an in-memory model for interaction with fancyTree component.
 		Map<id, PB_DocPacket__c> pcktMap = new map<id, PB_DocPacket__c>([SELECT id, Packet_Name__c FROM PB_DocPacket__c]);
-   		Map<id, PB_Document__c> docMap = new map<id, PB_Document__c>([SELECT id, Document_Name__c, Due_Days__c, Effective_Date__c, Expiration_Date__c, Recurring__c, 
-   																			 Recurring_Frequency__c, Status__c, Type__c, Version__c, (SELECT id, DocSigner__c FROM DocSignatures__r)
+   		Map<id, PB_Document__c> docMap = new map<id, PB_Document__c>([SELECT id, Document_Name__c, Due__c, Due_Date__c, Effective_Date__c, Expiration_Date__c, Recurring_Frequency__c, 
+   																			 Recurring_Interval__c, Status__c, Type__c, Version__c, (SELECT id, DocSigner__c FROM DocSignatures__r)
    																		FROM PB_Document__c]);
 
    		for (PB_DocPacket_Document_JO__c jo : [SELECT id, DocPacket__r.id, Document__r.id FROM PB_DocPacket_Document_JO__c]){
@@ -40,9 +40,9 @@ public with sharing class AdmissionDocumentController {
 		}
 		
 		//get all the doc recurrences for this admission
-		assocDocRecurrs = JSON.serialize([select id, PB_AssociatedDoc__c, effective_date__c, filed_date__c, status__c, status_date__c 
+		assocDocRecurrs = JSON.serialize([select id, PB_AssociatedDoc__c, status__c, status_date__c 
                                             from PB_AssocDocRecurrence__c where PB_AssociatedDoc__r.sObject_type__c = 'Admission' and PB_AssociatedDoc__r.sObject_id__c =: this.admission.id
-                                           order by effective_date__c desc]);
+                                           order by status_date__c desc]);
 		
    		//showAddEditAdmissionDoc();
    		allDocsTree = new TMN_TreePktDocTable();
@@ -50,8 +50,8 @@ public with sharing class AdmissionDocumentController {
     
     @TestVisible 
     private List<PB_AssociatedDoc__c> getAllAssociatedDocs(){
-    	List<PB_AssociatedDoc__c> allAssocDocs = [SELECT  id, DocPacket__r.id, Document__r.id, DocPacket__r.Packet_Name__c, Document__r.document_name__c, due_days__c, effective_date__c, filed_date__c, 
-    													  isAdded__c, recurring__c, recurring_frequency__c, sObject_id__c, sObject_Type__c, status__c, status_date__c,
+    	List<PB_AssociatedDoc__c> allAssocDocs = [SELECT  id, DocPacket__r.id, Document__r.id, DocPacket__r.Packet_Name__c, Document__r.document_name__c, Document__r.Version__c, Document__r.Due__c, 
+    	                                                  due_date__c, Document__r.Type__c, Document__r.Recurring_Interval__c, isAdded__c, sObject_id__c, sObject_Type__c, status__c, status_date__c,
 						       							  (SELECT isSigned__c, DocSignature__r.DocSigner__c, signed_date__c FROM AssocDocSignatures__r) 
       												FROM  PB_AssociatedDoc__c WHERE sObject_id__c =: this.admission.id AND sObject_type__c = 'Admission' 
        												ORDER BY DocPacket__r.Packet_Name__c, Document__r.document_name__c];       						
@@ -117,15 +117,11 @@ public with sharing class AdmissionDocumentController {
 				docWrap.isNew = true;		
 				PB_AssociatedDoc__c newDoc = new PB_AssociatedDoc__c (	DocPacket__c = docWrap.packet.id, 
 																		Document__c = docWrap.doc.id,
-																		Due_Days__c = docWrap.doc.Due_Days__c,
-																		Effective_Date__c = null,
-																		Filed_Date__c = null,
+																		Due_Date__c = docWrap.doc.Due_Date__c, //due date = Calculated based on PBS Admission Date or Entered (If "Other" in Due)
 																		IsAdded__c = true,
-																		Recurring__c = docWrap.doc.Recurring__c,
-																		Recurring_Frequency__c = docWrap.doc.Recurring_Frequency__c,
 																		sObject_Id__c = this.admission.id,
 																		sObject_Type__c = 'Admission',
-																		Status__c = 'Initial',
+																		Status__c = 'Pending',
 																		Status_Date__c = null );
 				docWrap.associatedDoc = newDoc;
 				
@@ -177,8 +173,8 @@ public with sharing class AdmissionDocumentController {
 		map<string, TMN_TreePktDocTable.node> nodeKeyMap;
         List<PB_DocPacket__c> pkts = [SELECT  id, 
                                             Packet_Name__c, 
-                                            (SELECT PB_DocPacket_Document_JO__c.id, DocPacket__r.id, Document__r.id, Document__r.document_name__c FROM DocPacketJOs__r ORDER BY DocPacket__r.ID, Document__r.ID),
-                                            (SELECT DocPacket__r.id, Document__r.id, Due_Days__c, Effective_Date__c, Filed_Date__c, Recurring__c, Recurring_Frequency__c, Status__c, Status_Date__c
+                                            (SELECT PB_DocPacket_Document_JO__c.id, DocPacket__r.id, Document__r.id, Document__r.document_name__c, Document__r.Recurring_Interval__c FROM DocPacketJOs__r ORDER BY DocPacket__r.ID, Document__r.ID),
+                                            (SELECT DocPacket__r.id, Document__r.id, Due_Date__c, Effective_Date__c, Status__c, Status_Date__c
                                                FROM AssociatedDocuments__r WHERE sObject_id__c =: this.admission.id AND sObject_type__c = 'Admission' AND IsAdded__c = true)
                                      from   PB_DOCPacket__c];
                                      
@@ -187,7 +183,8 @@ public with sharing class AdmissionDocumentController {
 			pckt_node.folder = true;
 			allDocsTree.root.children.add(pckt_node);			
 			for (PB_DocPacket_Document_JO__c doc :  pkt.DocPacketJOs__r){
-				TMN_TreePktDocTable.node doc_node= new TMN_TreePktDocTable.node(doc.id, doc.Document__r.document_name__c);   // each doc has the key of junction object ID.
+				TMN_TreePktDocTable.node doc_node = new TMN_TreePktDocTable.node(doc.id, doc.Document__r.document_name__c);   // each doc has the key of junction object ID.
+				doc_node.recurrFreq = doc.Document__r.Recurring_Interval__c;
 				allDocsTree.root.children.get(allDocsTree.root.getNode_Key(pkt.id)).children.add(doc_node);							
 			}
 		}
@@ -198,13 +195,8 @@ public with sharing class AdmissionDocumentController {
                 for (PB_DocPacket_Document_JO__c jo :  pkt.DocPacketJOs__r){
                     if (assoc.DocPacket__r.id == jo.DocPacket__r.id && assoc.Document__r.id == jo.Document__r.id){
                         addedDocs.add(jo.id);
-                        //TMN_TreePktDocTable.node node = TMN_TreePktDocTable.getNodeForKey(jo.id, allDocsTree.root.children);
                         TMN_TreePktDocTable.node node = nodeKeyMap.get(jo.id);
-                        node.dueDays = Integer.valueOf(assoc.Due_Days__c);
-                        node.effectiveDate = assoc.Effective_Date__c; 
-                        node.filedDate = assoc.Filed_Date__c;
-                        node.recurr = assoc.Recurring__c;
-                        node.recurrFreq = assoc.Recurring_Frequency__c;
+                        node.dueDate = assoc.Due_Date__c;
                         node.assocStatus = assoc.Status__c;
                         node.statusDate = assoc.Status_Date__c;
                         break;

@@ -39,7 +39,7 @@ public with sharing class TMN_TreePktDocTable {
         //end fancy tree settings
         
         //Additional data for the table view of fancyTree
-        public integer dueDays {get; set;}
+        public Date dueDate {get; set;}
         public Date effectiveDate {get; set;}
         public Date filedDate {get; set;}
         public string recurr {get; set;}
