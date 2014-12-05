@@ -1,17 +1,23 @@
 <apex:page standardController="Progress_Note__c" extensions="Notes_ProgressNote_FCInclude" showheader="true">
 
-
+<script> 
+function setFocusOnLoad() { 
+} 
+onload=setFocusOnLoad; 
+</script>
 <apex:form >
 <apex:outputPanel style="display:none">
 <apex:outputText value="{!Progress_note__c.person_being_served__c}" />
 <apex:outputText value="{!Progress_note__c.recordtype.developername}" />
 <apex:outputText value="{!Progress_note__c.Foster_Parents__c}" />
+<apex:outputText value="{!Progress_note__c.Locked__c}" />
 </apex:outputPanel>
 
 <apex:actionfunction action="{!SaveParties}" status="partyStatus" name="saveParties" rerender="fosters"/>
-<apex:actionfunction action="{!SaveScheduling}" name="saveScheduling" rerender="sched"/>
+<apex:actionfunction action="{!SaveScheduling}" name="saveScheduling" rerender="sched, mentorchild"/>
 <apex:pageBlock mode="maindetail">
-<apex:pageBlockSection columns="3">
+
+<apex:pageBlockSection columns="3" rendered="{! !thePN.Locked__c}">
 
 <apex:inputField value="{!Progress_note__c.Purpose_of_this_consultation__c}" onblur="saveScheduling();" rendered="{!thePN.recordtype.developername == 'NC_TFC'}"/>
 <apex:outputText value="" rendered="{!thePN.recordtype.developername == 'NC_TFC'}"/>
@@ -49,9 +55,38 @@
 <apex:outputText value="" rendered="{!thePN.recordtype.developername == 'NC_TFC'}"/>
 <apex:outputText value="" rendered="{!thePN.recordtype.developername == 'NC_TFC'}"/>
 
+</apex:pageBlockSection>
+
+
+<apex:pageBlockSection columns="3" rendered="{! thePN.Locked__c}">
+
+<apex:outputField value="{!Progress_note__c.Purpose_of_this_consultation__c}" rendered="{!thePN.recordtype.developername == 'NC_TFC'}"/>
+<apex:outputText value="" rendered="{!thePN.recordtype.developername == 'NC_TFC'}"/>
+<apex:outputText value="" rendered="{!thePN.recordtype.developername == 'NC_TFC'}"/>
+
+<apex:outputField value="{!Progress_note__c.scheduling_status__c}" />
+<apex:outputText value="" />
+<apex:outputText value="" />
+
+<apex:outputField value="{!Progress_Note__c.Foster_Parents__c}" />
+<apex:outputText value="" />
+<apex:outputText value="" />
+
+<apex:outputField value="{!Progress_Note__c.PCP_Update_Since_Last_Visit__c}" rendered="{!thePN.recordtype.developername == 'NC_TFC'}"/>
+<apex:outputText value="" rendered="{!thePN.recordtype.developername == 'NC_TFC'}"/>
+<apex:outputText value="" rendered="{!thePN.recordtype.developername == 'NC_TFC'}"/>
+
+<apex:outputField value="{!Progress_Note__c.Provided_to_reviewed_w_foster_parents__c}" rendered="{!thePN.recordtype.developername == 'NC_TFC'}"/>
+<apex:outputText value="" rendered="{!thePN.recordtype.developername == 'NC_TFC'}"/>
+<apex:outputText value="" rendered="{!thePN.recordtype.developername == 'NC_TFC'}"/>
+
+<apex:outputField value="{!Progress_note__c.Coord_support_for_Mentor_child__c}" id="mentorchild" rendered="{!thePN.recordtype.developername == 'NC_TFC'}"/>
+<apex:outputText value="" rendered="{!thePN.recordtype.developername == 'NC_TFC'}"/>
+<apex:outputText value="" rendered="{!thePN.recordtype.developername == 'NC_TFC'}"/>
 
 
 </apex:pageBlockSection>
+
 </apex:pageBlock>
 </apex:form>
 </apex:page>
