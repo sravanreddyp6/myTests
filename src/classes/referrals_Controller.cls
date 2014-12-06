@@ -256,7 +256,8 @@ public with sharing class referrals_Controller{
     public List<Service_Location__c> tmpResults{get;set;}
     public List<Service_Location__c> searchedServiceLocationResults{
         get{
-            return (tmpResults!=null) ? [select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c from service_location__c where id in :tmpResults order by name limit :QueryLimit offset :OffsetSize] : null;
+        	// 2014-12-05 EB-273 only get active locations
+            return (tmpResults!=null) ? [select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, programid__c, zip__c, phone__c from service_location__c where id in :tmpResults and status__c = 'Active' order by name limit :QueryLimit offset :OffsetSize] : null;
         }
         set;
     }
@@ -285,6 +286,7 @@ public with sharing class referrals_Controller{
     public void search(){
         tmpResults=null;
         searchedServiceLocationResults=null;
+        
         String qs1='select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c from service_location__c where ';
         string qs = '';
 
@@ -338,7 +340,8 @@ public with sharing class referrals_Controller{
                 qs += 'FacilityId__c Not In (20, 13)';
             }
 
-            tmpResults=Database.query(qs1 + qs);
+			// 2014-12-05 - EB-273 - only retrieve Active locations
+            tmpResults=Database.query(qs1 + qs + 'and status__c = \'Active\' ');
             countTotalRecords=tmpResults.size();
         }else{
             tmpResults=null;
@@ -405,7 +408,7 @@ public with sharing class referrals_Controller{
     public List<Service_Location__c> tmpResults2{get;set;}
     public List<Service_Location__c> searchedServiceLocationResults2{
         get{
-            return (tmpResults2!=null) ? [select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c from service_location__c where id in :tmpResults2 order by name limit :QueryLimit2 offset :OffsetSize2] : null;
+            return (tmpResults2!=null) ? [select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, programid__c, zip__c, phone__c from service_location__c where id in :tmpResults2 and status__c = 'Active' order by name limit :QueryLimit2 offset :OffsetSize2] : null;
         }
         set;
     }
@@ -490,7 +493,8 @@ public with sharing class referrals_Controller{
             }
 
             System.debug('!@#$ '+qs);
-            tmpResults2=Database.query(qs1 + qs);
+            // 2014-12-05 - EB-273 - only retrieve Active locations
+            tmpResults2=Database.query(qs1 + qs + 'and status__c = \'Active\' ');
             countTotalRecords2=tmpResults2.size();
         }else{
             tmpResults2=null;
