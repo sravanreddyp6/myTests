@@ -1,0 +1,176 @@
+<apex:page standardController="Evaluation__c" showHeader="false" extensions="CMShiftAssessmentView" applyHtmlTag="false" renderAs="pdf">
+	<head>
+        <style>
+            [id$=skinBodyFooter] {
+                clear: both;
+            }
+            hr {
+                color: #ECECEC;
+                background-color: #ECECEC;
+                margin-bottom: 20px;
+                margin-top: 20px;
+                border: none;
+                height: 3px;
+            }
+            .hrSmall {
+                height: 1px;
+                border: 0;
+                color: black;
+                background-color: black;
+            }
+            h1 { font-size:16px;}
+            h2 { font-size: 16px;}
+            h3 { font-size:13px; padding-bottom:0px; margin-bottom:0px}
+            .pbHeader {
+                font-size:2em;
+                margin-bottom:3px;
+                display:block;
+                border-bottom:3px solid black;
+                border-collapse:collapse;
+                line-height:1.25%;
+                }
+            .pbSubheader {
+                font-size:1em;
+                border-collapse:collapse;
+                margin-bottom:0px !important;
+                padding-bottom:0px !important;
+            }
+
+            .labelCol, .label {
+                margin: 10px;
+                font-weight:bold;
+            }
+
+            body {
+                font-family:'Serif';
+                font-size:12px
+            }
+        </style>
+
+        <style type="text/css" media="print">
+            @page {
+                @top-center {
+                    content: element(header);
+                }
+                @bottom-left {
+                    content: element(footer);
+                }
+            }
+            div.header {
+                padding: 10px;
+                align:right;
+                width:100%;
+                position: running(header);
+            }
+            div.footer {
+                display: block;
+                padding: 5px;
+                position: running(footer);
+            }
+            .pagenumber:before {
+                content: counter(page);
+            }
+            .pagecount:before {
+                content: counter(pages);
+            }
+        </style>
+    </head>
+    <div style="width:100%; text-align:right" class="header"><b>Person Being Served: &nbsp;</b><apex:outputText value="{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__r.Name}" /><b>, Page</b> <span class="pagenumber"/><b> of </b><span class="pagecount"/></div>
+    <apex:pageMessages />
+    <apex:form id="wholePage" >
+     	<apex:outputpanel rendered="false">
+            <apex:inputhidden value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__c}" />
+            <apex:inputhidden value="{!Evaluation__c.Resident_Demonstrating_Issues__c}" />
+            <apex:inputhidden value="{!Evaluation__c.Orientation__c}" />
+            <apex:inputhidden value="{!Evaluation__c.Mood__c}" />
+            <apex:inputhidden value="{!Evaluation__c.Breathe_Sounds__c}" />
+            <apex:inputhidden value="{! Evaluation__c.Autonomic_Dysreflexia_Areas_Assessed__c}" />
+        </apex:outputpanel>
+         <h1 style="text-align:center;">SHIFT ASSESSMENT</h1>
+         <apex:pageBlock title="Demographics" >
+         	<table style="width:100%">
+         		<tr>
+	              <td width="50%">
+	              	<apex:outputLabel value="Alias" styleClass="label"/><apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Service_location__r.name}" />
+	              
+	              	</td><td>
+	                <apex:outputLabel id="Address" value="Address" styleClass="label"/>
+	                <c:AddressDisplay Street1="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.Street__c}"
+	                                  City="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.City__c}"
+	                                  State="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.State__c}"
+	                                  Zip="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.Zip__c}"/>
+	              </td></tr>
+	              <tr><td>
+	                <apex:outputLabel id="Name" value="Name" styleClass="label"/>
+	                <apex:outPutField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Name}"/>
+	              </td><td>
+	                <apex:outputLabel id="BirthDate" value="BirthDate" styleClass="label"/>
+	                <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.BirthDate}"/>
+	              </td></tr>
+	              <tr>
+	              	<td>
+	              		<apex:outputLabel value="Age" styleClass="label" />
+	              		<apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Age__c}" />
+             	    </td>
+	              	<td>
+	              		<apex:outputLabel value="Service Record Number" styleClass="label"/>
+	              		<apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Medical_Record_Number__c}" />
+	              	</td>
+	              </tr>
+	              <tr>
+	              	<td>
+	              		<apex:outputLabel value="Primary Physician" styleClass="label" />
+	              		<apex:outputText value="{!primaryPhysician}" />
+	              	</td>
+	              	<td>
+	              		<apex:outputLabel value="Advance Directives" styleClass="label" />
+	              		<apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Advanced_Directives__c}" />
+	              	</td>
+	              </tr>
+	              <tr >
+	              	<td>
+	              		<apex:outputLabel value="Code Status" styleClass="label" />
+	              		<apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Code_Status__c}" />
+	              	</td>
+	              	<td>
+	              		<apex:outputLabel value="Advance Directives Attached" styleClass="label" />
+	              		<apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_being_served__r.Advanced_Directives_Attached__c}" />
+	              	</td>
+	              </tr>
+	              <tr>
+	              	<td>
+	              		<apex:outputLabel value="Specify Other" styleClass="label" />
+	              		<apex:outputField value="{!Evaluation__c.ServiceAssignment__r.admission__r.Person_Being_Served__r.Code_Status_Other__c}" />
+	              	</td>
+	              	<td></td>
+	              </tr>
+         	</table>
+         	<c:EvaluationResponseTablePDF pbsParentId="{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__c}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" isPdf="true"/>
+         </apex:pageBlock>
+         <hr/>
+         <apex:pageBlock title="Diagnostics" >
+         	<apex:pageBlockSection columns="1" title="Vitals Details">
+         		<apex:pageBlockTable value="{!vitals}" var="vital" id="vitalsTable" border="1" >
+	                <apex:column value="{!vital.Date__c}" />
+	                <apex:column value="{!vital.Heart_Rate__c}" />
+	                <apex:column value="{!vital.Blood_Pressure__c}" />
+	                <apex:column value="{!vital.O2_Saturation__c}" />
+	                <apex:column value="{!vital.Temperature__c}" />
+	            </apex:pageBlockTable>
+	       </apex:pageBlockSection>
+	       <table style="width:80%;" >
+	       	<tr>
+	       		<td>
+	       			<apex:outputLabel value="Requires Isolation" styleClass="label" />
+	       			<apex:outputText value="{!Evaluation__c.Requires_Isolation_Picklist__c & if( Evaluation__c.Requires_Isolation_Picklist__c == 'Yes', ' - Type: ' & Evaluation__c.DiagnosisIsolation_Type__c, '' )}"/>
+	       		</td> </tr>
+	       		<tr>
+	       		<td colspan="2" style="border:1px solid black" > 
+	       			<apex:outputText Value="IV" styleClass="labelCol" />
+	       			
+	       		</td>	
+	       	</tr>
+	       </table>
+         </apex:pageBlock>
+    </apex:form>
+</apex:page>
