@@ -13,12 +13,14 @@ public with sharing class AdmissionDocumentController {
     // An in-memory DB to represent componenets managed by the fancy tree, with the key being the Packet-Doc Juntion ID
     public Map<Id, DocumentWrapper> treeModel = new Map<Id, DocumentWrapper>();
     public PB_AssociatedDoc__c currrentAssocDoc {get; set;}
+    public PB_Document__c currrentDoc {get; set;}
     
     // An in-memory mapping to list docPacketJo's with the packet ID
     public Map<Id, List<PB_DocPacket_Document_JO__c>> pcktJos = new Map<Id, List<PB_DocPacket_Document_JO__c>>();
      
     
     public AdmissionDocumentController(ApexPages.StandardController stdController) {
+    	stdController.addFields(new String[] {'Name', 'Effective_Date__c'});                
         this.admission = (Admission__c) stdController.getRecord();
        	    
        	// get the list of all packets, docs and their junction. And the associated docs - to build an in-memory model for interaction with fancyTree component.
@@ -83,6 +85,7 @@ public with sharing class AdmissionDocumentController {
     public pageReference editTreeNode(){
     	Id selectedID = Id.valueOf(Apexpages.currentPage().getParameters().get('selectedKey'));    	
     	currrentAssocDoc = treeModel.get(selectedID).associatedDoc;
+    	currrentDoc = treeModel.get(selectedID).doc;
     	treeModel.get(selectedID).isChanged = true;
     	return null;
     }
@@ -104,6 +107,8 @@ public with sharing class AdmissionDocumentController {
 				//get the Document wrapper
     			updateDocSelections(treeModel.get(jo.Id), isSelected);
 			}
+			currrentAssocDoc = null;
+            currrentDoc = null;
 		}
     	return null;
     }
@@ -114,10 +119,10 @@ public with sharing class AdmissionDocumentController {
 				docWrap.associatedDoc.isAdded__c = isSelected;
 			} else {
 				// the selected document is not present in the associated docs.... add it 
-				docWrap.isNew = true;		
+				docWrap.isNew = true;
 				PB_AssociatedDoc__c newDoc = new PB_AssociatedDoc__c (	DocPacket__c = docWrap.packet.id, 
 																		Document__c = docWrap.doc.id,
-																		Due_Date__c = docWrap.doc.Due_Date__c, //due date = Calculated based on PBS Admission Date or Entered (If "Other" in Due)
+																		Due_Date__c = getDueDate(this.admission.effective_date__c, docWrap.doc.Due__c), //due date = Calculated based on PBS Admission Date or Entered (If "Other" in Due)
 																		IsAdded__c = true,
 																		sObject_Id__c = this.admission.id,
 																		sObject_Type__c = 'Admission',
@@ -132,6 +137,15 @@ public with sharing class AdmissionDocumentController {
 			}
 	}
 
+    private Date getDueDate(Date admissionEffDt, String due){
+    	system.debug('getDueDate inputs: ' + admissionEffDt + '  ' + due);
+    	Date dueDate;
+        if (due == 'Treatment Start Date')  dueDate = admissionEffDt; 
+        else if (due == '72 Hours after Treatment Start') dueDate = admissionEffDt.addDays(3);
+        else dueDate = null;
+        
+        return dueDate;
+    }
 
 	public void saveAdmissionDoc() {
 		List<PB_AssociatedDoc__c> newAssocDocs = new List<PB_AssociatedDoc__c>();
