@@ -42,7 +42,9 @@
     span.fancytree-focused span.fancytree-title {
         outline: 2px ridge black;
     }
-    .datePicker{z-index:1004;}
+    .datePicker{
+        z-index:2000;
+    }
 
     .dataTables_wrapper {
         position: relative;
@@ -124,11 +126,11 @@ renderTreeTableCols = function(data){
                         // (index #1 is rendered by fancytree - title)
                         $tdList.eq(1).css({"white-space":"nowrap"});
                         $tdList.eq(2).html(node.data.dueDate);
-                        $tdList.eq(2).css({"text-align":"center"});
+                        $tdList.eq(2).css({"text-align":"center", "white-space":"nowrap"});
                         $tdList.eq(3).html(node.data.recurrFreq);
                         $tdList.eq(4).html(node.data.assocStatus);
                         $tdList.eq(5).html(node.data.statusDate);
-                        $tdList.eq(5).css({"white-space":"nowrap"});
+                        $tdList.eq(5).css({"text-align":"center", "white-space":"nowrap"});
 }
 
 var isModified = false;
@@ -145,7 +147,6 @@ function triggerNodeEdit(nK){
     else {
     
     	if(!nK.isFolder()){
-			waitStart();
         	editNode(nodeKey);
         }
     }
@@ -160,26 +161,23 @@ function triggerNodeEdit(nK){
  }
  
  function showAddEditAdmissionDoc(){
- 	waitStart();
  	showAddEditAdmissionDocAF();
  }
 
  function saveAdmissionDoc(){
- 	waitStart();
  	saveAdmissionDocAF();
  }
   
  
  function triggerNodeSelection (treeNode) {
-    waitStart();  
+    waitStart();
     updateDocSelectionAF(treeNode.key, treeNode.isSelected());  
  }
 
 
 displayRecievedDate = function() {
     if ($('select[id$=currrentAssocDoc_Status]').val() != 'Received'){
-        $('input[id$=currrentAssocDoc_Status_Date]').val('');
-        $('input[id$=currrentAssocDoc_Status_Date]').closest('tr').hide();
+        $('input[id$=currrentAssocDoc_Status_Date]').val('').closest('tr').hide();
     }else{
         $('input[id$=currrentAssocDoc_Status_Date]').closest('tr').show();
     }
@@ -279,13 +277,13 @@ jQuery(document).ready(function(){
     <br />
     <apex:form id="admissionForm">
     
-    <apex:actionFunction name="saveAdmissionDocAF" action="{!saveAdmissionDoc}" rerender="associatedDocuments" oncomplete="waitComplete();closeModalDialog('addAdmissionDocumentModal', 'span');initializeDocTable();" status="myStatus"/>
-    <apex:actionFunction name="showAddEditAdmissionDocAF" action="{!showAddEditAdmissionDoc}" rerender="admissionDocumentyEntry,msgs" oncomplete="waitComplete();openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents');" status="myStatus1"/>
+    <apex:actionFunction name="saveAdmissionDocAF" action="{!saveAdmissionDoc}" rerender="associatedDocuments" oncomplete="closeModalDialog('addAdmissionDocumentModal', 'span');initializeDocTable();" status="SaveStatus"/>
+    <apex:actionFunction name="showAddEditAdmissionDocAF" action="{!showAddEditAdmissionDoc}" rerender="admissionDocumentyEntry,msgs" oncomplete="openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents');" status="AddEditDocStatus"/>
 
- <apex:actionFunction action="{!editTreeNode}" name="editNode" rerender="associatedDocDetails" oncomplete="waitComplete();displayDocProperties();" status="myStatus">
+ <apex:actionFunction action="{!editTreeNode}" name="editNode" rerender="associatedDocDetails" oncomplete="displayDocProperties();" status="myStatus">
      <apex:param name="selectedKey" value="" />
  </apex:actionFunction>
- <apex:actionFunction action="{!updateDocSelection}" name="updateDocSelectionAF" rerender="associatedDocDetails" oncomplete="waitComplete()" status="myStatus">
+ <apex:actionFunction action="{!updateDocSelection}" name="updateDocSelectionAF" rerender="associatedDocDetails" oncomplete="waitComplete();displayDocProperties();" status="myStatus">
      <apex:param name="selectedKey" value="" />
      <apex:param name="isSelected" value="" />     
  </apex:actionFunction>
@@ -356,10 +354,11 @@ jQuery(document).ready(function(){
         
         
     <apex:pageBlock title="Admission Documents" rendered="{!isCM}"  id="associatedDocuments">
-        <apex:actionStatus id="myStatus1">
+        <apex:actionStatus id="AddEditDocStatus">
             <apex:facet name="start">
-                <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
-                </div>
+                <span class="pbHeaderButton">
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                </span>
             </apex:facet>
             <apex:facet name="stop">
                 <div class="pbHeaderButton">
@@ -395,7 +394,7 @@ jQuery(document).ready(function(){
 	                                <td>{!doc.Document__r.Version__c}</td>
                                     <td>{!doc.Document__r.Type__c}</td>
 	                                <td style="text-align:center;">{!doc.Document__r.Recurring_Interval__c}</td>
-	                                <td style="text-align:center;">{!doc.Due_Date__c}</td>
+	                                <td style="text-align:center;"><apex:outputField value="{!doc.Due_Date__c}" /></td>
 	                                <td style="text-align:center;">{!doc.Status__c}</td>
 	                                <td style="text-align:center;"><apex:outputField value="{!doc.Status_Date__c}" /></td>
 	                            </tr>
@@ -411,7 +410,7 @@ jQuery(document).ready(function(){
       <apex:pageBlock title="Add/Edit Documents">
 
         <apex:pageblockButtons location="bottom">
-			<apex:actionStatus id="myStatus">
+			<apex:actionStatus id="SaveStatus">
 		        <apex:facet name="start">
 		        	<div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
 		            	<img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
@@ -460,18 +459,29 @@ jQuery(document).ready(function(){
 				    <tbody></tbody>
 				</table>
 			</apex:outputPanel>
-
+			
+			
+<apex:actionRegion >
             <apex:outputPanel id="associatedDocDetails">
-            <apex:outputPanel id="associatedDocDetail" layout="block" rendered="{! currrentAssocDoc.Status__c != '' }">
+
+            <apex:actionStatus id="myStatus" >
+                <apex:facet name="start">  
+                    <div class="thinkingwheel" >    
+                        <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+                    </div> 
+                </apex:facet>  
+                <apex:facet name="stop"> </apex:facet>         
+            </apex:actionStatus>            
+            <apex:outputPanel id="associatedDocDetail" layout="block" rendered="{! currrentDoc != null }">
                 <br/>
                 <table>
                     <tr>
-                        <td colspan="2"><apex:outputText value="{!currrentAssocDoc.Document__r.Document_Name__c}" styleClass="labelCol"/></td>
+                        <td colspan="2"><apex:outputText value="{!currrentDoc.Document_Name__c}" styleClass="labelCol"/></td>
                     </tr><tr></tr>
                     <tr>
-                        <td><apex:outputText value="Due Date" styleClass="labelCol"/></td>
-                        <td><apex:inputField value="{!currrentAssocDoc.Due_Date__c}" id="currrentAssocDoc_Due_Date_edit" rendered="{!currrentAssocDoc.Document__r.Due__c =='Other'}"/>
-                        <apex:outputField value="{!currrentAssocDoc.Due_Date__c}" id="currrentAssocDoc_Due_Date" rendered="{!currrentAssocDoc.Document__r.Due__c != 'Other'}"/></td>
+                        <td><apex:outputText value="Due Date" styleClass="labelCol" rendered="{!currrentDoc.Due__c != 'N/A'}" /></td>
+                        <td><apex:inputField value="{!currrentAssocDoc.Due_Date__c}" id="currrentAssocDoc_Due_Date_edit" rendered="{!currrentDoc.Due__c == 'Other'}"/>
+                        <apex:outputField value="{!currrentAssocDoc.Due_Date__c}" id="currrentAssocDoc_Due_Date" rendered="{!currrentDoc.Due__c != 'Other'}"/></td>
                     </tr>
                     <tr>
                         <td><apex:outputText value="Status" styleClass="labelCol"/></td>
@@ -484,7 +494,7 @@ jQuery(document).ready(function(){
                 </table>    
             </apex:outputPanel>
             </apex:outputPanel>
-
+</apex:actionRegion>
         </apex:pageBlockSection>
       </apex:pageBlock>
     </apex:outputPanel> 
