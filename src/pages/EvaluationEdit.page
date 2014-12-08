@@ -1,4 +1,19 @@
 <apex:page standardController="Evaluation__c"
            extensions="EvaluationEditController"
-           action="{!redirect}"
-/>
+           action="{!redirect}" >
+           
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}" />
+
+<div id="breadcrumb" class="breadcrumb" rendered="{!isShift}">
+        <a href="/">Home</a>&nbsp;>&nbsp;
+        <a href="/apex/PersonsBeingServedListView">Persons Being Served</a>&nbsp;>&nbsp;
+        <a href="/{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__c}">{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__r.Name}</a>&nbsp;>&nbsp;
+        <a href="/{!Evaluation__c.ServiceAssignment__r.Admission__c}">Admission</a>&nbsp;>&nbsp;
+        <a href="/{!Evaluation__c.ServiceAssignment__c}">Service Assignment</a>&nbsp;>&nbsp;
+        <apex:outputText value="{!Evaluation__c.Name}" />
+    </div>
+<apex:pageMessages />
+<apex:outputText rendered="{!isShift}" > Click <a href="/apex/CMShiftAssessmentView?id={!Evaluation__c.Id}" style="color:blue;"> here </a> to navigatee to View mode </apex:outputText>
+</apex:page>

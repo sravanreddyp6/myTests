@@ -575,8 +575,52 @@
                 <apex:pageMessages id="vitalsDetailDialogErrors" />
                 <apex:pageBlockSection columns="2">
                     <apex:inputField value="{!currentVitalsDetail.Date__c}" />
-                    <apex:inputField value="{!currentVitalsDetail.Blood_Pressure__c}" />
-                    <apex:inputField value="{!currentVitalsDetail.Heart_Rate__c}" />
+                    <apex:pageBlockSectionItem >
+                        <apex:outputPanel >
+                            <apex:outputLabel for="DiagheartRate" value="Heart Rate" />
+                            <br/>
+                            <br />
+                            <apex:outputLabel for="DiaginterventionPicklist" value="Intervention Needed" id="DiaginterventionLabel" />
+                            <br />
+                            <br />
+                            <apex:outputLabel for="DiaginterventionDescribe" value="Narrative Note" id="DiagnarrativeLabel" />
+                        </apex:outputPanel>
+                        <apex:outputPanel >
+                            <apex:inputField value="{!currentVitalsDetail.Heart_Rate__c}" id="DiagheartRate" onblur="handleVitals(); return false;" />
+                            <br/>
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:inputField Value="{!currentVitalsDetail.HR_Intervention_Needed__c}" id="DiaginterventionPicklist" onchange="handleVitals(); return false;" />
+                            </div>
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:inputTextArea value="{!currentVitalsDetail.HR_Narrative_Note__c}" id="DiaginterventionDescribe" rows="3" cols="40" />
+                            </div>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputPanel >
+                            <apex:outputLabel for="DiagO2" value="O2 Saturation" />
+                            <br/>
+                            <br />
+                            <apex:outputLabel for="DiagO2interventionPicklist" value="Intervention Needed" id="DiagO2interventionLabel" />
+                            <br />
+                            <br />
+                            <apex:outputLabel for="DiagO2interventionDescribe" value="Narrative Note" id="DiagO2narrativeLabel" />
+                        </apex:outputPanel>
+                        <apex:outputPanel >
+                            <apex:inputField value="{!currentVitalsDetail.O2_Saturation__c}" id="DiagO2" onblur="handleVitals(); return false;" />
+                            <br/>
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:inputField Value="{!currentVitalsDetail.O2_Intervention_Needed__c}" id="DiagO2interventionPicklist" onchange="handleVitals(); return false;" />
+                            </div>
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:inputTextArea value="{!currentVitalsDetail.O2_Narrative_Note__c}" id="DiagO2interventionDescribe" rows="3" cols="40" />
+                            </div>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
                     <apex:inputField value="{!currentVitalsDetail.R__c}" />
                     <apex:inputField value="{!currentVitalsDetail.Temperature__c}" />
                     <apex:inputField value="{!currentVitalsDetail.O2_Saturation__c}" />
