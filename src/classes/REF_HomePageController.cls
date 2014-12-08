@@ -159,7 +159,8 @@ public with sharing class REF_HomePageController {
             items.add('Weekly_Referrals');        
         }
         if(og == 'CareMeridian'){
-        
+        	// EC-57 - added
+        	items.add('Referrals_with_Funding_and_Location');
         }
         if(og == 'NeuroRestorative'){
             items.add('Daily_Referrals');

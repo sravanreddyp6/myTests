@@ -13,18 +13,25 @@
         <field>Referral__c$Evaluated_By_Internal__c</field>
     </columns>
     <columns>
-        <field>Referral__c$Primary_Requested_Location__c</field>
+        <field>Referral__c$Service_Location_Program__c</field>
     </columns>
     <columns>
         <field>Referral__c.Funding_Sources__r$Payer_Name__c</field>
     </columns>
     <columns>
-        <field>Referral__c.Funding_Sources__r$Name</field>
+        <field>Referral__c.Funding_Sources__r$Funding_Source__c</field>
     </columns>
     <columns>
         <field>Referral__c.Funding_Sources__r$Payer_Type__c</field>
     </columns>
     <description>All Referrals with Primary Payor</description>
+    <filter>
+        <criteriaItems>
+            <column>Referral__c.Funding_Sources__r$Type_of_Coverage__c</column>
+            <operator>equals</operator>
+            <value>Primary</value>
+        </criteriaItems>
+    </filter>
     <format>Tabular</format>
     <name>All Referrals with Primary Payor</name>
     <params>
@@ -32,7 +39,7 @@
         <value>1</value>
     </params>
     <reportType>Referrals_with_or_without_Funding_Sources__c</reportType>
-    <scope>user</scope>
+    <scope>organization</scope>
     <showDetails>true</showDetails>
     <timeFrameFilter>
         <dateColumn>Referral__c$CreatedDate</dateColumn>

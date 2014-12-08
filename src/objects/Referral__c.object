@@ -3302,7 +3302,7 @@
     <fields>
         <fullName>Name_PBR__c</fullName>
         <externalId>false</externalId>
-        <formula>Person_Being_Referred__r.Last_Name__c &amp; &apos;, &apos; &amp; Person_Being_Referred__r.First_Name__c</formula>
+        <formula>IF(NOT(ISBLANK(Person_Being_Referred__c)), Person_Being_Referred__r.Last_Name__c &amp; &apos;, &apos; &amp; Person_Being_Referred__r.First_Name__c, Person_Being_Served__r.LastName &amp; &apos;, &apos; &amp; Person_Being_Served__r.FirstName)</formula>
         <label>Full Name</label>
         <required>false</required>
         <trackTrending>false</trackTrending>
@@ -7937,6 +7937,28 @@
         <columns>Services_Requested__c</columns>
         <filterScope>Mine</filterScope>
         <label>My Referrals</label>
+    </listViews>
+    <listViews>
+        <fullName>Referral_with_Field_Assessment</fullName>
+        <columns>NAME</columns>
+        <columns>Name_PBR__c</columns>
+        <columns>Referral_Date__c</columns>
+        <columns>CREATEDBY_USER</columns>
+        <columns>Service_Location_Program__c</columns>
+        <columns>CREATED_DATE</columns>
+        <columns>Referral_Status__c</columns>
+        <columns>Has_Evaluation__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Referral_Status__c</field>
+            <operation>notEqual</operation>
+            <value>Closed</value>
+        </filters>
+        <label>Active Referral with/without Assessment</label>
+        <sharedTo>
+            <role>NeuroRestorative</role>
+            <role>Neuro_Clinical_Evaluator</role>
+        </sharedTo>
     </listViews>
     <nameField>
         <label>Referral Number</label>

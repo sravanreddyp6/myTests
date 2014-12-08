@@ -464,8 +464,8 @@ clearDisableField = function(pageSectionId){
     <apex:actionRegion >
         <apex:actionFunction name="showAddLocation" action="{!showAddLocation}" rerender="locations,locationEntry,msgs" oncomplete="openModalDialog('ReferralLocationModal', 'span', 'Add Location','referral-location'); " status="AddLocationStatus" />
     </apex:actionRegion>
-    <apex:actionFunction name="locationLookup" action="{!resetSearchItems}" rerender="block,table" oncomplete="j$('input[id$=nameFilter]').val(j$('input[id$=locationEntry_ServiceLocation]').val());openModalDialog('searchDialog', 'span', 'Search Service Location','custom-lookup-dialog');return false;"/>
-    <apex:actionFunction name="locationLookup2" action="{!resetSearchItems2}" rerender="block2,table2" oncomplete="j$('input[id$=nameFilter2]').val(j$('input[id$=sl]').val());openModalDialog('searchDialog2', 'span', 'Search Service Location','custom-lookup-dialog');return false;"/>
+    <apex:actionFunction name="locationLookup" action="{!resetSearchItems}" rerender="block,table" oncomplete="j$('input[id$=nameFilter]').val(j$('input[id$=locationEntry_ServiceLocation]').val());openModalDialog('searchDialog', 'span', 'Search Service Location','custom-lookup-dialog', 850);return false;"/>
+    <apex:actionFunction name="locationLookup2" action="{!resetSearchItems2}" rerender="block2,table2" oncomplete="j$('input[id$=nameFilter2]').val(j$('input[id$=sl]').val());openModalDialog('searchDialog2', 'span', 'Search Service Location','custom-lookup-dialog',850);return false;"/>
 
     <apex:pageMessages id="msgs"/>
 
@@ -583,6 +583,8 @@ clearDisableField = function(pageSectionId){
 
         <apex:outputField value="{!personBeingServedRecord.Gender__c}"/>
         <apex:outputField value="{!personBeingServedRecord.SSN__c}"/>
+        <apex:pageBlockSectionItem />
+        <apex:outputField value="{!personBeingServedRecord.Level_of_Education__c}" />
 
       </apex:pageBlockSection>
 
@@ -1222,20 +1224,20 @@ clearDisableField = function(pageSectionId){
                 <br/><br/>
                 <apex:pageblockTable value="{!searchedServiceLocationresults}" var="r" id="table" >
 
-                    <apex:column headerValue="Name">
+                    <apex:column headerValue="Alias">
                         <a href="#" onClick="j$('input[id$=locationEntry_ServiceLocation]').val('{!r.name}');j$('input[id$=locationEntry_ServiceLocation_lkid]').val('{!r.id}');closeModalDialog('searchDialog', 'span', 'Search Service Location');return false ">{!r.name}</a>
                     </apex:column>
-                    <apex:column headerValue="Program">
-                        <apex:outputText >{!r.Program__c}</apex:outputText>
+                    <apex:column headerValue="Program Code">
+                        <apex:outputText >{!r.ProgramID__c}</apex:outputText>
                     </apex:column>
                     <apex:column headerValue="Setting">
                         <apex:outputText >{!r.Setting__c}</apex:outputText>
                     </apex:column>
+                    <apex:column headerValue="Program">
+                        <apex:outputText >{!r.Program__c}</apex:outputText>
+                    </apex:column>
                     <apex:column headerValue="Service Value">
                         <apex:outputText >{!r.Service_Value__c}</apex:outputText>
-                    </apex:column>
-                    <apex:column headerValue="Phone">
-                        <apex:outputText >{!r.Phone__c}</apex:outputText>
                     </apex:column>
                     <apex:column headerValue="Street">
                         <apex:outputText >{!r.Street__c}</apex:outputText>
@@ -1248,6 +1250,9 @@ clearDisableField = function(pageSectionId){
                     </apex:column>
                     <apex:column headerValue="Zip">
                         <apex:outputText >{!r.Zip__c}</apex:outputText>
+                    </apex:column>
+                     <apex:column headerValue="Phone">
+                        <apex:outputText >{!r.Phone__c}</apex:outputText>
                     </apex:column>
                 </apex:pageblockTable>
             </apex:pageBlock>
@@ -1287,20 +1292,20 @@ clearDisableField = function(pageSectionId){
                 <br/><br/>
                 <apex:pageblockTable value="{!searchedServiceLocationresults2}" var="r" id="table2" >
 
-                    <apex:column headerValue="Name">
+                    <apex:column headerValue="Alias">
                         <a href="#" onClick="j$('input[id$=sl]').val('{!r.name}');j$('input[id$=sl_lkid]').val('{!r.id}');closeModalDialog('searchDialog2', 'span', 'Search Service Location');return false ">{!r.name}</a>
                     </apex:column>
-                    <apex:column headerValue="Program">
-                        <apex:outputText >{!r.Program__c}</apex:outputText>
+                    <apex:column headerValue="Program Code">
+                        <apex:outputText >{!r.ProgramID__c}</apex:outputText>
                     </apex:column>
                     <apex:column headerValue="Setting">
                         <apex:outputText >{!r.Setting__c}</apex:outputText>
                     </apex:column>
+                    <apex:column headerValue="Program">
+                        <apex:outputText >{!r.Program__c}</apex:outputText>
+                    </apex:column>
                     <apex:column headerValue="Service Value">
                         <apex:outputText >{!r.Service_Value__c}</apex:outputText>
-                    </apex:column>
-                    <apex:column headerValue="Phone">
-                        <apex:outputText >{!r.Phone__c}</apex:outputText>
                     </apex:column>
                     <apex:column headerValue="Street">
                         <apex:outputText >{!r.Street__c}</apex:outputText>
@@ -1313,6 +1318,9 @@ clearDisableField = function(pageSectionId){
                     </apex:column>
                     <apex:column headerValue="Zip">
                         <apex:outputText >{!r.Zip__c}</apex:outputText>
+                    </apex:column>
+                    <apex:column headerValue="Phone">
+                        <apex:outputText >{!r.Phone__c}</apex:outputText>
                     </apex:column>
                 </apex:pageblockTable>
             </apex:pageBlock>
@@ -1597,7 +1605,7 @@ clearDisableField = function(pageSectionId){
      <!-- START: CTEAE-106, MA Referral Flavor Fields -->
      <apex:pageBlockSection rendered="{!ReferralRecordType=='Cambridge Massachusetts'}">
         <apex:inputField id="IccCarePlanSubmittedField" value="{!Referral__c.ICC_Care_Plan_Submitted__c}" label="If the referral is from the ICC has the care plan been submitted to the insurance company in order for us to obtain an authorization for services?" />
-        <apex:inputField value="{!Referral__c.Grade__c}" />
+        <apex:pageBlockSectionItem />
         <apex:inputField value="{!Referral__c.If_Yes_What_kind__c}" label="Describe Any Household Pets" />
         <apex:inputField value="{!Referral__c.Goals_from_the_Referral_Source__c}" />
      </apex:pageBlockSection>
@@ -3146,7 +3154,7 @@ clearDisableField = function(pageSectionId){
                         ReferralRecordType = 'West Virginia'}"
           />
           <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}">
-            <apex:outputLabel value="Self-Harm or Self-Injurous Behaviors" />
+            <apex:outputLabel value="Self-Harm or Self-Injurious Behaviors" />
             <apex:outputPanel >
               <apex:inputField value="{!Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}">
                 <apex:actionSupport event="onchange" rerender="progConsid" status="selfHarmStatus" />

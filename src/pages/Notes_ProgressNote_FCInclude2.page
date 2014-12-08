@@ -1,0 +1,99 @@
+<apex:page standardController="Progress_Note__c" extensions="Notes_ProgressNote_FCInclude" showheader="true">
+
+
+<apex:form >
+<apex:outputPanel style="display:none">
+<apex:outputText value="{!Progress_Note__c.Person_Being_Served__c}" />
+<apex:outputText value="{!Progress_Note__c.recordtype.developername}" />
+<apex:outputText value="{!Progress_Note__c.Foster_Parents__c}" />
+<apex:outputText value="{!Progress_Note__c.Locked__c}" />
+</apex:outputPanel>
+
+<apex:actionfunction action="{!SaveScheduling}" name="saveScheduling" rerender="sched"/>
+<apex:actionfunction action="{!saveOther}" name="saveOther" rerender="otherdesc"/>
+<apex:pageBlock mode="maindetail">
+
+<apex:pageBlockSection columns="3" rendered="{!thePN.recordtype.developername == 'NC_Wks_1_6_TFC' && !thePN.Locked__c}">
+ 
+<apex:inputField value="{!Progress_Note__c.Topic_Behavior_Management__c}" onchange="saveScheduling();" />
+<apex:inputField value="{!Progress_Note__c.Topic_Diagnostic_Psycho_education__c}" onchange="saveScheduling();" />
+<apex:outputText value="" />
+
+<apex:inputField value="{!Progress_Note__c.Topic_Shared_Parenting__c}" onchange="saveScheduling();" />
+<apex:inputField value="{!Progress_Note__c.Topic_Family_Interactions__c}" onchange="saveScheduling();" />
+<apex:outputText value="" />
+
+<apex:inputField value="{!Progress_Note__c.Topic_Life_Book_Development__c}" onchange="saveScheduling();" />
+<apex:inputField value="{!Progress_Note__c.Topic_Treatment_Goal_Review_PCP__c}" onchange="saveScheduling();" />
+<apex:outputText value="" />
+
+<apex:inputField value="{!Progress_Note__c.Topic_TFP_Rules_of_the_Road__c}" onchange="saveScheduling();" />
+<apex:inputField value="{!Progress_Note__c.Topic_Separation_Loss_and_Grief_Issues__c}" onchange="saveScheduling();" />
+<apex:outputText value="" />
+
+<apex:inputField value="{!Progress_Note__c.Topic_Successful_Adaptation__c}" onchange="saveScheduling();" />
+<apex:outputText value="" />
+<apex:outputText value="" />
+
+<apex:pageBlockSectionItem >
+<apex:outputLabel value="Other" /> 
+<apex:outputPanel >
+<apex:actionRegion >
+<apex:inputField value="{!Progress_Note__c.Topic_Other__c}" >
+          <apex:actionSupport event="onchange" action="{!saveOther}" rerender="otherdesc" status="partyStatus"/>
+</apex:inputField> <apex:actionStatus id="partyStatus" style="display:inline-block">
+    <apex:facet name="start">
+            <div class="thinkingwheel" style="display:inline-block">    
+                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+            </div>
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>
+</apex:actionStatus>
+
+</apex:actionRegion>
+</apex:outputPanel>
+</apex:pageBlockSectionItem>
+
+<apex:pageBlockSectionItem >
+<apex:outputLabel value="If Other, Describe" />
+<apex:outputPanel id="otherdesc"> 
+<apex:inputField value="{!Progress_Note__c.Topic_If_Other__c}" onblur="saveScheduling();" rendered="{!thePN.Topic_Other__c == true}"/>
+</apex:outputPanel>
+</apex:pageBlockSectionItem>
+
+<apex:outputText value="" />
+
+</apex:pageBlockSection>
+
+<apex:pageBlockSection columns="3" rendered="{!thePN.recordtype.developername == 'NC_Wks_1_6_TFC' && thePN.Locked__c}">
+ 
+<apex:outputField value="{!Progress_Note__c.Topic_Behavior_Management__c}"  />
+<apex:outputField value="{!Progress_Note__c.Topic_Diagnostic_Psycho_education__c}" />
+<apex:outputText value="" />
+
+<apex:outputField value="{!Progress_Note__c.Topic_Shared_Parenting__c}" />
+<apex:outputField value="{!Progress_Note__c.Topic_Family_Interactions__c}" />
+<apex:outputText value="" />
+
+<apex:outputField value="{!Progress_Note__c.Topic_Life_Book_Development__c}" />
+<apex:outputField value="{!Progress_Note__c.Topic_Treatment_Goal_Review_PCP__c}" />
+<apex:outputText value="" />
+
+<apex:outputField value="{!Progress_Note__c.Topic_TFP_Rules_of_the_Road__c}"  />
+<apex:outputField value="{!Progress_Note__c.Topic_Separation_Loss_and_Grief_Issues__c}"  />
+<apex:outputText value="" />
+
+<apex:outputField value="{!Progress_Note__c.Topic_Successful_Adaptation__c}" />
+<apex:outputText value="" />
+<apex:outputText value="" />
+
+<apex:outputField value="{!Progress_Note__c.Topic_Other__c}" />
+<apex:outputField label="If Other, Describe" value="{!Progress_Note__c.Topic_If_Other__c}" />
+<apex:outputText value="" />
+
+</apex:pageBlockSection>
+
+
+</apex:pageBlock>
+</apex:form>
+</apex:page>

@@ -256,7 +256,8 @@ public with sharing class referrals_Controller{
     public List<Service_Location__c> tmpResults{get;set;}
     public List<Service_Location__c> searchedServiceLocationResults{
         get{
-            return (tmpResults!=null) ? [select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c from service_location__c where id in :tmpResults order by name limit :QueryLimit offset :OffsetSize] : null;
+        	// 2014-12-05 EB-273 only get active locations
+            return (tmpResults!=null) ? [select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, programid__c, zip__c, phone__c from service_location__c where id in :tmpResults and status__c = 'Active' order by name limit :QueryLimit offset :OffsetSize] : null;
         }
         set;
     }
@@ -285,6 +286,7 @@ public with sharing class referrals_Controller{
     public void search(){
         tmpResults=null;
         searchedServiceLocationResults=null;
+        
         String qs1='select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c from service_location__c where ';
         string qs = '';
 
@@ -338,7 +340,8 @@ public with sharing class referrals_Controller{
                 qs += 'FacilityId__c Not In (20, 13)';
             }
 
-            tmpResults=Database.query(qs1 + qs);
+			// 2014-12-05 - EB-273 - only retrieve Active locations
+            tmpResults=Database.query(qs1 + qs + 'and status__c = \'Active\' ');
             countTotalRecords=tmpResults.size();
         }else{
             tmpResults=null;
@@ -405,7 +408,7 @@ public with sharing class referrals_Controller{
     public List<Service_Location__c> tmpResults2{get;set;}
     public List<Service_Location__c> searchedServiceLocationResults2{
         get{
-            return (tmpResults2!=null) ? [select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c from service_location__c where id in :tmpResults2 order by name limit :QueryLimit2 offset :OffsetSize2] : null;
+            return (tmpResults2!=null) ? [select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, programid__c, zip__c, phone__c from service_location__c where id in :tmpResults2 and status__c = 'Active' order by name limit :QueryLimit2 offset :OffsetSize2] : null;
         }
         set;
     }
@@ -490,7 +493,8 @@ public with sharing class referrals_Controller{
             }
 
             System.debug('!@#$ '+qs);
-            tmpResults2=Database.query(qs1 + qs);
+            // 2014-12-05 - EB-273 - only retrieve Active locations
+            tmpResults2=Database.query(qs1 + qs + 'and status__c = \'Active\' ');
             countTotalRecords2=tmpResults2.size();
         }else{
             tmpResults2=null;
@@ -721,7 +725,8 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
                Representing_Request__c, Representing_Received__c,
                Days_Authorized_From__c, Days_Authorized_To__c, Did_CM_Confirm_Level__c,
                Authorization_Comments__c, Does_PH_Plan_to_Continue_Working__c,
-               ALS_ESRD_Black_Lung_Disease__c, Patient_Over_64_Years_of_Age__c
+               ALS_ESRD_Black_Lung_Disease__c, Patient_Over_64_Years_of_Age__c,
+               Payer_Type__c
         FROM Funding_Source__c
         WHERE Referral__c = :this.referralRecord.Id
         ORDER BY Type_of_Coverage__c LIMIT 150
@@ -810,8 +815,8 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
                        Fax, FirstName, Gender__c,
                        LastName, Ethnicity_Picklist__c,
                        Middle_Name__c, Phone, Primary_Language__c, SSN__c,
-                       MailingState, MailingStreet, OtherStreet, MailingPostalCode, Legal_Guardianship_Status__c, Sign_Language__c, Non_Verbal__c
-                       , Current_Medications__c
+                       MailingState, MailingStreet, OtherStreet, MailingPostalCode, Legal_Guardianship_Status__c, Sign_Language__c, Non_Verbal__c,
+                       Current_Medications__c, Level_of_Education__c
                 from Contact
                 where Id = :pBSId
                 limit 1];
@@ -952,19 +957,23 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
         }
         if(locations.size() == 0 && referralRecord.Close_Reason__c != 'Error' && referralRecord.Referral_Status__c == 'Closed'){
              hasNoLocError = true;
-        }       
+        }
         for(Funding_Source__c fs :fundingSources){
           if (fs.Type_of_Coverage__c != 'Primary' && referralRecord.Close_Reason__c != 'Error' && referralRecord.Referral_Status__c == 'Closed'){
              hasFundError = true;
-             break;   
+          } else if(fs.Type_of_Coverage__c == 'Primary'){
+             hasFundError = false;
+             break;
           }
         }
         for(Referral_Location__c rl :locations){
           if (rl.Rank__c != 'Primary' && referralRecord.Close_Reason__c != 'Error' && referralRecord.Referral_Status__c == 'Closed'){
              hasLocError = true;
+          } else if(rl.Rank__c == 'Primary'){
+             hasLocError = false;
              break;
           }
-        }  
+        }
         if (hasFundError){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'A primary funding source must be selected to close the referral'));
         }
@@ -976,15 +985,32 @@ this.activity = new Task(Status = 'Not Started', Priority = 'Normal', OwnerId = 
         }
         if (hasNoLocError){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'A primary location must be created to close the referral'));
-        }        
+        }
         if (hasFundError==true || hasLocError==true || hasCloseError==true || hasNoFundError==true || hasNoLocError==true){
             return null;
         }
     }
     //End EC-54
-    
+
     system.debug('in saveREF');
     Id refId;
+
+    // Start NEVAL-26 - Don't let NR user close the referral if one of the funding sources
+    // has blank Payer Type
+    if (referralRecordType == 'NeuroRestorative' && referralRecord.Referral_Status__c == 'Closed' && referralRecord.Close_Reason__c == 'Admitted') {
+        if (fundingSources.size() == 0) {
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'One or more of the Funding Sources\' Payer Type is blank.'));
+            return null;
+        }
+        for (Funding_Source__c fs: fundingSources) {
+            if (fs.Payer_Type__c == '' || fs.Payer_Type__c == null) {
+                ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'One or more of the Funding Sources\' Payer Type is blank.'));
+                return null;
+            }
+        }
+    }
+
+    // End NEVAL-26
 
     try {
       if (this.personBeingRefRecord != null && this.personBeingRefRecord.Id != null) {
