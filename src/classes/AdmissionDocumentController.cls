@@ -20,7 +20,7 @@ public with sharing class AdmissionDocumentController {
      
     
     public AdmissionDocumentController(ApexPages.StandardController stdController) {
-    	stdController.addFields(new String[] {'Name', 'Effective_Date__c'});                
+    	if(!test.isRunningTest()) stdController.addFields(new String[] {'Name', 'Effective_Date__c'});                
         this.admission = (Admission__c) stdController.getRecord();
        	    
        	// get the list of all packets, docs and their junction. And the associated docs - to build an in-memory model for interaction with fancyTree component.
