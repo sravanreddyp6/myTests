@@ -522,8 +522,8 @@
                 <apex:pageBlock >
                     <apex:pageBlockSection columns="1">
                         <apex:pageBlockSectionItem >
-                            <apex:outputLabel >Does Resident appear to be
-                                <br/>coping well</apex:outputLabel>
+                            <apex:outputLabel >Does Resident appear to be coping well</apex:outputLabel>
+                                
                             <apex:outputField value="{!Evaluation__c.Resident_Coping_Well__c}" />
                         </apex:pageBlockSectionItem>
                         <apex:outputField value="{!Evaluation__c.Coping_Description__c}" label="Describe" rendered="{!Evaluation__c.Resident_Coping_Well__c == 'No'}" />
@@ -543,9 +543,9 @@
                 </apex:pageBlock>
             </apex:tab>
             <apex:commandButton value="Finalize" onClick="finalize(); return false;" style="position: absolute; margin-left: 680px; margin-top: 8px;" rendered="{!Evaluation__c.Status__c =='Draft' && Evaluation__c.Diagnostics_Section_Completed__c && Evaluation__c.Psycho_Social_Section_Completed__c && Evaluation__c.Cardio_Section_Completed__c && Evaluation__c.Ortho_Section_Completed__c && Evaluation__c.Neuro_Section_Completed__c}"  />
-            <apex:commandButton value="Disregard" style="position: absolute; margin-left: 730px; margin-top: 8px;" rendered="{!Evaluation__c.Status__c != 'Final' && Evaluation__c.Status__c != 'Disregard' && Evaluation__c.OwnerId == $User.Id}}" onClick="disregardEval(); return false;" id="btnDisregard"/>
-            <apex:commandButton value="E-Sign" style="position: absolute; margin-left: 792px; margin-top: 8px;" rendered="{!Evaluation__c.OwnerId == $User.Id}"/>
-            <apex:commandButton value="Print PDF" style="position: absolute; margin-left: 840px; margin-top: 8px;"/>
+            <apex:commandButton value="Disregard" style="position: absolute; margin-left: 730px; margin-top: 8px;" rendered="{!Evaluation__c.Status__c =='Draft' &&  Evaluation__c.OwnerId == $User.Id}" onClick="disregardEval(); return false;"/>
+            <apex:commandButton value="E-Sign" style="position: absolute; margin-left: 792px; margin-top: 8px;" rendered="{!Evaluation__c.OwnerId == $User.Id && Evaluation__c.Status__c != 'Disregard'}"/>
+            <apex:commandButton value="Print PDF" style="position: absolute; margin-left: 840px; margin-top: 8px;" onclick="window.location='/apex/CMShiftAssessmentPDF?id={!Evaluation__c.Id}'; return false;"/>
         </apex:tabPanel>
         <apex:pageBlock id="buttons">
             <apex:pageBlockButtons location="bottom">
