@@ -2,6 +2,7 @@ public with sharing class EvaluationHandler {
     private boolean m_isExecuting = false;
     public List <Evaluation_Response__c> tobedelAnnos = new List<Evaluation_Response__c>();
     public List<Evaluation__c> annoEvals = new List<Evaluation__c>();
+    private Id recTypeId = Utility.getEValuationRecordType('CMShiftAssessment');
 
     public EvaluationHandler(boolean isExecuting){
         m_isExecuting = isExecuting;
@@ -10,8 +11,10 @@ public with sharing class EvaluationHandler {
     public void OnBeforeInsert(Evaluation__c[] newObjects){
         // EXECUTE BEFORE INSERT LOGIC
         for (Evaluation__c newObject: newObjects) {
-            validateFields(newObject);
-
+        	if(newObject.RecordTypeId != recTypeId){
+        			validateFields(newObject);
+        		
+        	}
         }
     }
 
@@ -22,7 +25,10 @@ public with sharing class EvaluationHandler {
     public void OnBeforeUpdate(Evaluation__c[] oldObjects, Evaluation__c[] updatedObjects, Map<Id,Evaluation__c> newObjMap){
         // BEFORE UPDATE LOGIC
         for(Evaluation__c eUpdated : updatedObjects) {
-            validateFields(eUpdated);
+        			
+        	if(eUpdated.RecordTypeId != recTypeId){
+            	validateFields(eUpdated);
+        	}
             if(eUpdated.Is_Being_Signed__c==true) {
                 eUpdated.Is_Signed__c = true;
             }
@@ -42,7 +48,7 @@ public with sharing class EvaluationHandler {
                     tobedelAnnos.add(ers);
             }
                    if(tobedelAnnos.size()>0)
-                delete tobedelAnnos;
+                	delete tobedelAnnos;
            }
 
     }

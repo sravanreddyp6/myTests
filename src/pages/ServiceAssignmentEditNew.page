@@ -1,10 +1,19 @@
 <apex:page standardController="Service_Assignment__c" extensions="ServiceAssignmentExt" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab" showheader="true">
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:stylesheet value="{!$Resource.pbscardcss}" />
+<apex:remoteObjects jsNamespace="rm" >
+        <apex:remoteObjectModel name="Evaluation__c" jsShorthand="eval" 
+            fields="Name,Id">
+        <apex:remoteObjectField name="Shift_Start_Time__c" jsShorthand="startTime"/>
+        <apex:remoteObjectField name="Shift_End_Time__c" jsShorthand="endTime"/>
+        <apex:remoteObjectField name="Status__c" jsShorthand="status"/>
+        </apex:remoteObjectModel>
+</apex:remoteObjects>
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}"/>
+<apex:includeScript value="{!URLFOR($Resource.momentJS)}"/>
 <apex:variable value="{!$ObjectType.Action_Plan_Worksheet__c.accessible}" var="vfVarCanAccessWS"/>
 <apex:variable value="{!$User.Operating_Group__c == 'Cambridge'}" var="vfVarIsCB"/>
 <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM"/>
@@ -13,12 +22,17 @@
     .dialogLoadingSpinner {
       margin-left: 5px;
     }
+    
     #fundingMessages {
       margin-bottom: 10px;
     }
-    #fundingMessages .error {
+    
+    #fundingMessages,#evaluationMessages .error {
       color: red;
     }
+    
+   
+
     #fundingMessages .success {
       color: green;
     }
@@ -71,7 +85,7 @@
         j$('input[id$=phaseToSave]').val(thePhase);
     }
 
-	openModalDialog = function (dialogId, tagType, titleString, dClass, width) {
+    openModalDialog = function (dialogId, tagType, titleString, dClass, width) {
         if (!width) {
             width = 800;
         }
@@ -103,11 +117,11 @@
         }
     };
     
-	fundingSourceSave = function (isClose) {
-		// We cant use Visualforce functions/variables in a Static Resource JS file, so we have to pass it in here.
-	    closeFundingSource = isClose;
-	    fundingSourceSaveHelper('{!JSENCODE(fundingSourceRecordType)}');
-  	}
+    fundingSourceSave = function (isClose) {
+        // We cant use Visualforce functions/variables in a Static Resource JS file, so we have to pass it in here.
+        closeFundingSource = isClose;
+        fundingSourceSaveHelper('{!JSENCODE(fundingSourceRecordType)}');
+    }
 
     function loadFundingSource(fundingId) {
         // This provides backward-compatibility with code the Appirio wrote
@@ -115,30 +129,69 @@
     }
     
     function fundingSourceAllowedEdit(){
-    	fundingSourceClearMessages();
-    	j$('[id*=FundingSourceModal] input[id*=saveFundingSource]').show();
-    	j$('[id*=FundingSourceModal] input[id*=saveAndNewFundingSource]').show();
-    	var fsTerminationDate = j$('[id*=FundingSourceModal] input[id*=fsTerminationDate]');
-    	if ((new Date(fsTerminationDate.val()).getTime() < new Date(getToday()).getTime())){
-    	 	j$('#fundingMessages').append('<li class="success">Edits are not allowed past the funding source termination date.</li>');
-    	 	j$('[id*=FundingSourceModal] input[id*=saveFundingSource]').hide();
-    	 	j$('[id*=FundingSourceModal] input[id*=saveAndNewFundingSource]').hide();
-    	 }    
+        fundingSourceClearMessages();
+        j$('[id*=FundingSourceModal] input[id*=saveFundingSource]').show();
+        j$('[id*=FundingSourceModal] input[id*=saveAndNewFundingSource]').show();
+        var fsTerminationDate = j$('[id*=FundingSourceModal] input[id*=fsTerminationDate]');
+        if ((new Date(fsTerminationDate.val()).getTime() < new Date(getToday()).getTime())){
+            j$('#fundingMessages').append('<li class="success">Edits are not allowed past the funding source termination date.</li>');
+            j$('[id*=FundingSourceModal] input[id*=saveFundingSource]').hide();
+            j$('[id*=FundingSourceModal] input[id*=saveAndNewFundingSource]').hide();
+         }    
     }
     
-	function getToday(){    
-		var today = new Date();
-		var dd = today.getDate();
-		var mm = today.getMonth()+1; //January is 0!
-		var yyyy = today.getFullYear();
-		if(dd<10) {
-		    dd='0'+dd
-		} 	
-		if(mm<10) {
-		    mm='0'+mm
-		}
-		today = mm+'/'+dd+'/'+yyyy;
-		return today;
+    function getToday(){    
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth()+1; //January is 0!
+        var yyyy = today.getFullYear();
+        if(dd<10) {
+            dd='0'+dd
+        }   
+        if(mm<10) {
+            mm='0'+mm
+        }
+        today = mm+'/'+dd+'/'+yyyy;
+        return today;
+    }
+    
+    
+    validateEval = function() {
+    
+    	
+        var evalErrors= [];
+        var startValue = j$('[id$=evalstartTime]').val();
+        var formatStart = moment(startValue).format();
+        var start = new Date(formatStart);
+        var endValue = j$('[id$=evalendTime]').val();
+        var formatEnd = moment(endValue).format();
+		var end = new Date(formatEnd);
+        var ct = new rm.eval();
+        
+        j$('#evaluationMessages').html('');
+		if(startValue == '' || endValue == ''){
+                    evalErrors.push('Shift Start time and end time cannot be blank');
+                }
+				
+		if(start >= end ) {
+                    evalErrors.push('Shift End time Should be greater than Start time');
+                }
+				
+		if(evalErrors.length > 0) {
+                    
+                    j$.each(evalErrors, function(index, error) {
+                         j$('#evaluationMessages').append('<li class="error">' + error + '</li>');
+                    });
+                    
+         } else {
+         		
+         		evaluationSave();
+         
+         }
+         
+         
+        
+              	
 	}
 
     
@@ -146,10 +199,12 @@
 <apex:pagemessages id="msgs" />
 <br />
 <apex:form id="myFRM">
+<apex:actionFunction name="evaluationSave" action="{!saveEvaluation}" status="saveevaluationStatus" reRender=""/>
+<apex:actionFunction name="showAddevaluation" action="{!showAddevaluation}" status="AddevaluationStatus" oncomplete="openModalDialog('evaluationModal','span','Add Shift Assessment',null,1000); j$('#evaluationMessages').html('');" reRender="evaluations,msgs" />
 <apex:actionFunction name="saveFundingSource" action="{!saveFundingSource}" status="saveFundingSourceStatus" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialog('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs"/>
 <apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" action="{!showAddFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
 <apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000); fundingSourceAllowedEdit();" rerender="fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs">
-	<apex:param name="fundingId" value="" assignTo="{!fundingSource.Id}" />
+    <apex:param name="fundingId" value="" assignTo="{!fundingSource.Id}" />
 </apex:actionFunction>
 <apex:actionFunction action="{!changeToModel}" name="changeToModel" rerender="ContractAssoc, ProgAssoc" status="SaveStatus1"/>
 <apex:inputhidden value="{!theServAssign.Person_Being_Served__c}" rendered="{!canEditSA}" />
@@ -174,8 +229,8 @@
       <div class="pbHeaderButton">
           <apex:commandButton value="Edit" action="{!EditServAssign}" rendered="{!!editSA && canEditSA}" />
           <apex:actionStatus id="SaveStatus1" >
-		 <apex:facet name="stop">
-		 <apex:outputPanel id="buttons">
+         <apex:facet name="stop">
+         <apex:outputPanel id="buttons">
           <apex:commandButton value="Save" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1, myFRM, msgs" rendered="{!editSA}"/>
           &nbsp;
          <apex:commandButton value="Reset" action="{!ResetPage}" status="SaveStatus1" rerender="savestatus1, myFRM" rendered="{!editSA}" immediate="true"/>
@@ -417,9 +472,9 @@
    
 <apex:outputPanel style="display:none">
     <apex:actionregion >
-	    <apex:inputText id="currentProgramID" value="{!currentProgramID}" >
-	    <apex:actionsupport event="onchange" action="{!loadAvailableCodesByID}" rerender="ServCodeSelect" />
-	    </apex:inputText>
+        <apex:inputText id="currentProgramID" value="{!currentProgramID}" >
+        <apex:actionsupport event="onchange" action="{!loadAvailableCodesByID}" rerender="ServCodeSelect" />
+        </apex:inputText>
     </apex:actionregion>
 </apex:outputPanel>
 <apex:outputpanel rendered="{!showCodes}"><hr /></apex:outputpanel>
@@ -795,14 +850,14 @@ END: Uncomment to have the element collapsed by default -->
     <apex:pageBlock id="Plan" title="Action Plans" rendered="{! !AssessmentOnly && !editSA}">
     <div class="pbHeaderButton">
     <apex:actionStatus id="planstatus">
-	<apex:facet name="stop">
-    	<apex:commandButton value="New Plan" rendered="{!(plans.size=0) && canCreatePlan && !editSA }" immediate="true" onclick="this.disabled='disabled'; makeNewPlan();" />
+    <apex:facet name="stop">
+        <apex:commandButton value="New Plan" rendered="{!(plans.size=0) && canCreatePlan && !editSA }" immediate="true" onclick="this.disabled='disabled'; makeNewPlan();" />
     </apex:facet>
-	<apex:facet name="start">
-		<apex:commandButton value="Loading..." disabled="true"/>
-	</apex:facet>
-	</apex:actionStatus>
-	<apex:commandButton onclick="window.open('/{!Ack_Overview}?pv0={!Service_Assignment__c.Name}', '_self'); return false;" rendered="{! plans.size!=0 && !editSA}" value="Acknowledgment Overview" />
+    <apex:facet name="start">
+        <apex:commandButton value="Loading..." disabled="true"/>
+    </apex:facet>
+    </apex:actionStatus>
+    <apex:commandButton onclick="window.open('/{!Ack_Overview}?pv0={!Service_Assignment__c.Name}', '_self'); return false;" rendered="{! plans.size!=0 && !editSA}" value="Acknowledgment Overview" />
 
     </div>
     <apex:pageBlockSection columns="1"
@@ -886,19 +941,51 @@ END: Uncomment to have the element collapsed by default -->
 
     </apex:pageBlockSection>
     </apex:pageBlock>
-    <apex:pageBlock title="Admission and Shift Assessments" rendered="{!showNurseAssessment && !editSA}">
-    		<div class="pbHeaderButton">
-    			<apex:CommandButton value="Admission and Shift Assessment" rendered="{!(evaluations == null || evaluations.size=0) && Service_Assignment__c.Status__c!='Inactive'}" action="{!addNurAssessment}"/>
-    		</div>
-    		<apex:pageBlockTable styleclass="pcBody-list" value="{!evaluations}" var="evs" rendered="{!evaluations.size>0}">
-    			<apex:column headerValue="Action"><a href="/apex/NursingEvaluationEdit?id={!evs.Id}&tab=demographicsTab">Edit</a></apex:column>
-    			<apex:column headerValue="Name">
-    				<apex:outputLink value="/apex/NursingEvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
-    			</apex:column>
-    			<apex:column headerValue="Signed" value="{!evs.Is_Signed__c}"></apex:column>
-    			<apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
-    		</apex:pageBlockTable>
-    	<apex:outputText value="No Records to display" rendered="{!evaluations.size=0 || evaluations == null}" />
+    
+    <!-- Admission and Shift Assessments Section -->
+    <apex:outputPanel id="evaluationModal" style="display:none" >
+    <div id='evaluationMessages' ></div>
+        <apex:pageBlock title="Add ShiftAssessment" rendered="{!vfVarIsCM}" >
+            <apex:pageBlockSection columns="2" id="evaluationEntry" >
+                <apex:inputField value="{!evaluation.Shift_Start_Time__c}" id="evalstartTime"/>
+                <apex:inputField value="{!evaluation.Shift_End_Time__c}" id="evalendTime"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="bottom" >
+                <apex:commandButton value="Save" onclick="validateEval();return false;" />
+                <apex:commandButton value="Cancel" onclick="closeModalDialog('evaluationModal', 'span'); j$('#evaluationMessages').html(''); return false;"/>
+                <apex:actionStatus id="saveevaluationStatus" >
+                    <apex:facet name="start">
+                      <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                    </apex:facet>
+                    <apex:facet name="stop" />
+                </apex:actionStatus>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:outputPanel>
+    <apex:pageBlock title="Admission and Shift Assessments" rendered="{!showNurseAssessment && !editSA}" >
+            <div class="pbHeaderButton">
+                <!-- apex:CommandButton value="Admission and Shift Assessment" rendered="{!(evaluations == null || evaluations.size=0) && Service_Assignment__c.Status__c!='Inactive'}" action="{!addNurAssessment}"/ -->
+                <apex:commandButton value="Add Shift Assessment" rendered="{!vfVarIsCM}" onclick="showAddevaluation(); return false;" />
+                <apex:actionStatus id="AddevaluationStatus">
+                      <apex:facet name="start">
+                        <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                      </apex:facet>
+                      <apex:facet name="stop" />
+                </apex:actionStatus>
+            </div>
+            <apex:pageBlockTable styleclass="pcBody-list" value="{!evaluations}" var="evs" rendered="{!evaluations.size>0}" id="evaluations">
+                <apex:column headerValue="Action"><a href="/apex/EvaluationEdit?id={!evs.Id}&tab=demographicsTab">Edit</a></apex:column>
+                <apex:column headerValue="Name">
+                    <apex:outputLink value="/apex/EvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
+                </apex:column>
+                <apex:column value="{!evs.Shift_Start_Time__c}" headerValue="Start Time" />
+                <apex:column value="{!evs.Shift_End_Time__c}" headerValue="End Time" />
+                <apex:column value="{!evs.Status__c}" />
+                <apex:column headerValue="Signed" value="{!evs.Is_Signed__c}"></apex:column>
+                <apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
+            </apex:pageBlockTable>
+        <apex:outputText value="No Records to display" rendered="{!evaluations.size=0 || evaluations == null}" />
+        <apex:outputPanel rendered="{!evaluations.size>0}" >Showing 5 most recent Records. Click <a href="/a11?id={!Service_Assignment__c.Id}&rlid=00NU0000003nvkw&lsr=0" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
     </apex:pageBlock>
       
   <!--  Notes section -->
@@ -1227,106 +1314,106 @@ END: Uncomment to have the element collapsed by default -->
 
 <a id="Funding_Sources" ></a>
 <apex:pageBlock id="fundingSources" title="Funding Sources" rendered="{!vfVarIsCM}">
-	<div class="pbHeaderButton">
+    <div class="pbHeaderButton">
         <apex:commandButton value="Add Funding Source" onclick="showAddFundingSource(); return false;"/>
         <apex:actionStatus id="AddFundingSourceStatus">
               <apex:facet name="start">
                 <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
               </apex:facet>
               <apex:facet name="stop" />
-		</apex:actionStatus>
+        </apex:actionStatus>
     </div>
-	<apex:outputText value="No Funding Sources to display" rendered="{!(fundingSources.size=0)}" />
+    <apex:outputText value="No Funding Sources to display" rendered="{!(fundingSources.size=0)}" />
         
-	<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType != 'CareMeridian' && fundingSourceRecordType != 'NeuroRestorative' && fundingSources.size!=0}">
-		<apex:column headerValue="Action"><a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a></apex:column>
+    <apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType != 'CareMeridian' && fundingSourceRecordType != 'NeuroRestorative' && fundingSources.size!=0}">
+        <apex:column headerValue="Action"><a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a></apex:column>
         <apex:column value="{!fundingSource.Funding_Source__c}"/>
-		<apex:column value="{!fundingSource.Funding_Source_ID__c}"/>
+        <apex:column value="{!fundingSource.Funding_Source_ID__c}"/>
         <apex:column value="{!fundingSource.Service_Being_Funded__c}" rendered="{!fundingSourceRecordType!='CareMeridian'}"/>
         <apex:column value="{!fundingSource.Payor__c}" rendered="{!fundingSourceRecordType=='CareMeridian'}"/>
         <apex:column value="{!fundingSource.Status__c}"/>
         <apex:column value="{!fundingSource.Comment__c}"/>
-	</apex:pageBlockTable>
-
-	<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'CareMeridian' && fundingSources.size!=0}">
-		<apex:column headerValue="Action"><a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a></apex:column>
-		<apex:column value="{!fundingSource.Type_of_Coverage__c}"/>
-		<apex:column value="{!fundingSource.Payer_Name__c}"/>
-		<apex:column value="{!fundingSource.Effective_Date__c}"/>
-		<apex:column value="{!fundingSource.Termination_Date__c}"/>
-		<apex:column value="{!fundingSource.Status__c}"/>
-		<apex:column value="{!fundingSource.Comment__c}"/>
     </apex:pageBlockTable>
 
-	<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'NeuroRestorative' && fundingSources.size!=0}">
-		<apex:column headerValue="Action"><a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a></apex:column>
-		<apex:column value="{!fundingSource.Type_of_Coverage__c}"/>
-		<apex:column value="{!fundingSource.Payer_Name__c}"/>
-		<apex:column value="{!fundingSource.Effective_Date__c}"/>
-		<apex:column value="{!fundingSource.Termination_Date__c}"/>
-		<apex:column value="{!fundingSource.Comment__c}" />
-		<apex:column value="{!fundingSource.Status__c}"/>
+    <apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'CareMeridian' && fundingSources.size!=0}">
+        <apex:column headerValue="Action"><a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a></apex:column>
+        <apex:column value="{!fundingSource.Type_of_Coverage__c}"/>
+        <apex:column value="{!fundingSource.Payer_Name__c}"/>
+        <apex:column value="{!fundingSource.Effective_Date__c}"/>
+        <apex:column value="{!fundingSource.Termination_Date__c}"/>
+        <apex:column value="{!fundingSource.Status__c}"/>
+        <apex:column value="{!fundingSource.Comment__c}"/>
+    </apex:pageBlockTable>
+
+    <apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'NeuroRestorative' && fundingSources.size!=0}">
+        <apex:column headerValue="Action"><a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a></apex:column>
+        <apex:column value="{!fundingSource.Type_of_Coverage__c}"/>
+        <apex:column value="{!fundingSource.Payer_Name__c}"/>
+        <apex:column value="{!fundingSource.Effective_Date__c}"/>
+        <apex:column value="{!fundingSource.Termination_Date__c}"/>
+        <apex:column value="{!fundingSource.Comment__c}" />
+        <apex:column value="{!fundingSource.Status__c}"/>
     </apex:pageBlockTable>        
 </apex:pageBlock>
 <!-- end Funding sources section-->
 
  <apex:pageBlock title="Referral Detail" rendered="{!referral != null }">
- 	<apex:pageBlockSection columns="2" title="Originating Referral" collapsible="false">
- 		<apex:pageBlockSectionItem >
-  			<apex:outputLabel value="Name" />
-  			<apex:outputlink value="/{!referral.Id}">{!referral.name}</apex:outputlink>
-  		</apex:pageBlockSectionItem>
- 		<apex:outputField value="{!referral.Referral_Date__c}" />
-		<apex:pageBlockSectionItem rendered="{!!referral.Has_Evaluation__c && vfVarIsCM}" >
- 			<apex:outputLabel value="Evaluation" />
- 			<apex:outputText value="No Evaluation to display." />
- 		</apex:pageBlockSectionItem>
- 		<apex:pageBlockSectionItem rendered="{!referral.Has_Evaluation__c}">
- 			<apex:outputLabel value="Evaluation" />
- 			<apex:outputLink value="/apex/CareMeridianEvaluationView?id={!referral.Evaluations__r[0].Id}&SA_Id={!theServAssign.Id}" >{!referral.Evaluations__r[0].Name}</apex:outputLink>
- 		</apex:pageBlockSectionItem>
- 		<apex:pageBlockSectionItem rendered="{!vfVarIsCM}" />
-     	<apex:pageBlockSectionItem >
-    		<apex:outputLabel value="Created By" />
-    	<apex:outputPanel layout="none">
-    		<apex:outputField value="{!referral.CreatedById}"  />, <apex:outputText value=" {!referral.CreatedDate}"/>
-    	</apex:outputPanel>
-    	</apex:pageBlockSectionItem>
-    	 <apex:pageBlockSectionItem >
-    	<apex:outputLabel value="Last Modified By" />
-    	<apex:outputPanel layout="none">
-     	<apex:outputField value="{!referral.LastModifiedById}"  />, <apex:outputText value=" {!referral.LastModifiedDate}" />
-    	</apex:outputPanel>
-    	</apex:pageBlockSectionItem>
+    <apex:pageBlockSection columns="2" title="Originating Referral" collapsible="false">
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Name" />
+            <apex:outputlink value="/{!referral.Id}">{!referral.name}</apex:outputlink>
+        </apex:pageBlockSectionItem>
+        <apex:outputField value="{!referral.Referral_Date__c}" />
+        <apex:pageBlockSectionItem rendered="{!!referral.Has_Evaluation__c && vfVarIsCM}" >
+            <apex:outputLabel value="Evaluation" />
+            <apex:outputText value="No Evaluation to display." />
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem rendered="{!referral.Has_Evaluation__c}">
+            <apex:outputLabel value="Evaluation" />
+            <apex:outputLink value="/apex/CareMeridianEvaluationView?id={!referral.Evaluations__r[0].Id}&SA_Id={!theServAssign.Id}" >{!referral.Evaluations__r[0].Name}</apex:outputLink>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem rendered="{!vfVarIsCM}" />
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Created By" />
+        <apex:outputPanel layout="none">
+            <apex:outputField value="{!referral.CreatedById}"  />, <apex:outputText value=" {!referral.CreatedDate}"/>
+        </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+        <apex:outputLabel value="Last Modified By" />
+        <apex:outputPanel layout="none">
+        <apex:outputField value="{!referral.LastModifiedById}"  />, <apex:outputText value=" {!referral.LastModifiedDate}" />
+        </apex:outputPanel>
+        </apex:pageBlockSectionItem>
  </apex:pageBlockSection>
  
  <apex:pageBlockSection title="Funding Source" collapsible="false" columns="1"><br />
-	 <apex:pageBlockTable value="{!referralFundingsources}" var="item" rendered="{!(referralFundingsources != null || referralFundingsources.size > 0)}">
-		<apex:column value="{!item.name}"/>
-		<apex:column value="{!item.Type_of_Coverage__c}"/>
-		<apex:column value="{!item.Payer_Name__c}"/>
-		<apex:column value="{!item.Effective_Date__c}"/>
-		<apex:column value="{!item.Termination_Date__c}"/>
-		<apex:column value="{!item.Status__c}"/>
-		<apex:column value="{!item.Comment__c}"/>
-	 </apex:pageBlockTable>
-	<apex:outputText value="No records to display" rendered="{!(referralFundingsources == null || referralFundingsources.size = 0)}" />
+     <apex:pageBlockTable value="{!referralFundingsources}" var="item" rendered="{!(referralFundingsources != null || referralFundingsources.size > 0)}">
+        <apex:column value="{!item.name}"/>
+        <apex:column value="{!item.Type_of_Coverage__c}"/>
+        <apex:column value="{!item.Payer_Name__c}"/>
+        <apex:column value="{!item.Effective_Date__c}"/>
+        <apex:column value="{!item.Termination_Date__c}"/>
+        <apex:column value="{!item.Status__c}"/>
+        <apex:column value="{!item.Comment__c}"/>
+     </apex:pageBlockTable>
+    <apex:outputText value="No records to display" rendered="{!(referralFundingsources == null || referralFundingsources.size = 0)}" />
  </apex:pageBlockSection>
 
  </apex:pageBlock>
  
   <!--  Shift Summaries section -->
     <a name="ShiftSummaries" id="shiftSummaries"></a>
-    	<apex:pageBlock title="Shift Summaries" rendered="{!!editSA && vfVarIsCM}" >
-    		<apex:outputText value="No Records to Display" />
-    	</apex:pageBlock>
+        <apex:pageBlock title="Shift Summaries" rendered="{!!editSA && vfVarIsCM}" >
+            <apex:outputText value="No Records to Display" />
+        </apex:pageBlock>
  <!-- End Shift Summaries -->   
 
 <!-- START: Service Assignment Closure Section; CTEAE-125 & CTEAE-126 -->
     <apex:pageBlock id="pbServAssignClose" title="Service Assignment Closure" rendered="{!showServAssignClose}">
     <div class="pbHeaderButton">
         <apex:commandButton action="{!addServAssignClose}"
-        					value="Add Service Assignment Closure"
+                            value="Add Service Assignment Closure"
                             id="addServAssignClose"
                             rendered="{!editSA && (ServAssignCloses.size==0)}"/>
     </div>
@@ -1422,30 +1509,30 @@ function validateDiagnosis() {
       
       
       if ( {!newSA } == true ) {
-      	saveDiagnosis();
-      	}
+        saveDiagnosis();
+        }
       else {
-      	
-      	var dtEff  = new Date(j$('input[id$=diagnosisEntry_EffDate]').val());
-      	ServiceAssignmentExt.saveSingleDiagnosis( j$('input[id$=diagnosisEntry_Id]').length > 0 ?  j$('input[id$=diagnosisEntry_Id]').val() : '', 
-      											dtEff.getTime(),
-      											j$('input[id$=diagnosisEntry_AxisI]').val(),
-      											j$('input[id$=diagnosisEntry_AxisII]').val(),
-      											j$('input[id$=diagnosisEntry_AxisIII]').val(),
-      											j$('input[id$=diagnosisEntry_AxisIV]').val(),
-      											j$('input[id$=diagnosisEntry_AxisV]').val(),
-      											j$('input[id$=diagnosisEntry_PrimaryDiag]').val(),      
-      											j$('input[id$=diagnosisEntry_SecondaryDiag]').val(),
-      											j$('input[id$=diagnosisEntry_LevelofDisability]').val(),
-      											j$('textarea[id$=diagnosisEntry_Comments]').val(),
-      											'{!theServAssign.ID}',
+        
+        var dtEff  = new Date(j$('input[id$=diagnosisEntry_EffDate]').val());
+        ServiceAssignmentExt.saveSingleDiagnosis( j$('input[id$=diagnosisEntry_Id]').length > 0 ?  j$('input[id$=diagnosisEntry_Id]').val() : '', 
+                                                dtEff.getTime(),
+                                                j$('input[id$=diagnosisEntry_AxisI]').val(),
+                                                j$('input[id$=diagnosisEntry_AxisII]').val(),
+                                                j$('input[id$=diagnosisEntry_AxisIII]').val(),
+                                                j$('input[id$=diagnosisEntry_AxisIV]').val(),
+                                                j$('input[id$=diagnosisEntry_AxisV]').val(),
+                                                j$('input[id$=diagnosisEntry_PrimaryDiag]').val(),      
+                                                j$('input[id$=diagnosisEntry_SecondaryDiag]').val(),
+                                                j$('input[id$=diagnosisEntry_LevelofDisability]').val(),
+                                                j$('textarea[id$=diagnosisEntry_Comments]').val(),
+                                                '{!theServAssign.ID}',
           function(result, event){
             if (event.status) {
-				refreshDiagnoses();	// this call causes the re-render to happen, even tho the server side save action has already taken place            
+                refreshDiagnoses(); // this call causes the re-render to happen, even tho the server side save action has already taken place            
             } else { 
-            	alert ('Error saving diagnosis.'); 
-            	isClose = false; 
-            	}
+                alert ('Error saving diagnosis.'); 
+                isClose = false; 
+                }
           },
           {escape: true}
         );
@@ -1473,8 +1560,8 @@ function validateDiagnosis() {
   function loadDiagnosis(diagId) {
 
        if ( !diagId ) {
-	       alert('Please save before editing the new Diagnosis.');
-	       return;
+           alert('Please save before editing the new Diagnosis.');
+           return;
        }
 
         ServiceAssignmentExt.loadDiagnosis(diagId,
@@ -1595,13 +1682,13 @@ function saveLocation() {
     }
 
 
-	function changeEffectiveDates() {
-		var sd = j$('input[id$=startdate]').val();
-		var ed = j$('input[id$=enddate]').val();
-		
-		setEffectiveDate( sd, ed );
-	
-	}
+    function changeEffectiveDates() {
+        var sd = j$('input[id$=startdate]').val();
+        var ed = j$('input[id$=enddate]').val();
+        
+        setEffectiveDate( sd, ed );
+    
+    }
 
 </script>
 
