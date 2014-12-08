@@ -13,6 +13,7 @@ public with sharing class CMShiftAssessmentView {
     public List<string>selectedSounds { get ; set; }
     public List<SelectOption>DysreflexiaValues;
     public List<string>selectedDysreflexia { get ; set; }
+    public transient Map<String, Component.Apex.OutputPanel> ctlMap { get; set; }
 
     public Evaluation_Response__c[] pains {
         get {
@@ -88,6 +89,8 @@ public with sharing class CMShiftAssessmentView {
 
         if(!String.isBlank(this.evaluation.Autonomic_Dysreflexia_Areas_Assessed__c))
             selectedDysreflexia = this.evaluation.Autonomic_Dysreflexia_Areas_Assessed__c.split(';');
+            
+        ctlMap = CreateFieldControls( stdController.getRecord().getSObjectType().getDescribe().getName(), stdController );
     }
 
     public Evaluation_Response__c currentVitalsDetail {get; set; }
@@ -158,6 +161,45 @@ public with sharing class CMShiftAssessmentView {
         List<Selectoption> DysreflexiaValue = Utility.getPicklistValues(evaluation, 'Autonomic_Dysreflexia_Areas_Assessed__c');
         return DysreflexiaValue;
 
+    }
+    
+    public Map<String, Component.Apex.OutputPanel> CreateFieldControls ( string classname, ApexPages.StandardController controller ) {
+        System.Debug('loading map for:' + classname);
+        Map<String, Component.Apex.OutputPanel> cmap = new Map<String, Component.Apex.OutputPanel>();
+
+        List<Schema.DescribeSObjectResult> describelist = Schema.describeSObjects( new List<String>{classname});
+        if (describelist.size() == 0){
+            return null;
+        }
+
+        // need to get value for all fields - they are not in scope from VF page being dynamic
+        Schema.DescribeSObjectResult info = describelist[0];
+        Map<string,Schema.SObjectField> fmap = info.fields.getmap();
+
+        Schema.DescribeFieldResult fielddescribe;
+        ID theID = controller.getID();
+        String query = 'SELECT ' +  String.Join(New List<String>(fmap.keyset()), ', ') + ' FROM ' + className + ' Where ID = :theID';
+        system.debug( query );
+        SObject fullobj  = Database.query(query);
+
+        for(string fieldname:fmap.keyset()){
+            Component.Apex.OutputPanel op = new Component.Apex.OutputPanel();
+
+            fielddescribe = fmap.get(fieldname).getdescribe();
+
+            try {
+                Component.Apex.OutputLabel outLbl = new Component.Apex.OutputLabel( value=fielddescribe.getLabel(), styleClass='label');
+                op.childComponents.Add( outLbl);
+                Component.Apex.OutputField outFld = new Component.Apex.OutputField();
+                outFld.expressions.value = '{!' + classname + '.' + fieldname +'}';
+                op.childComponents.Add( outFld);
+                cmap.put( fieldname, op);
+            }
+            catch( Exception e) {
+                System.Debug( e );
+            }
+        }
+        return cmap;
     }
 
 

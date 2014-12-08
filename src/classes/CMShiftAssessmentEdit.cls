@@ -76,7 +76,27 @@ public with sharing class CMShiftAssessmentEdit {
 
     public Evaluation_Response__c currentVitalsDetail { get; set; }
     public Id currentVitalsDetailId { get; set; }
-
+    
+	public Evaluation_Response__c[] annotations { set;
+        get {
+            return [
+                SELECT ID, Annotation_Height__c, Annotation_Width__c,
+                       Annotation_X__c, Annotation_Y__c, Annotation_Source__c,
+                       Annotation_Shape__c, Annotation_Text__c
+                FROM Evaluation_Response__c WHERE Evaluation__c=:evaluation.Id
+                 AND RecordType.Name='Annotation'
+            ];
+        }
+    }
+	
+	public String serializedAnnotations { get; set; }
+	
+	public String baseUrl {
+        get {
+            return System.URL.getSalesforceBaseURL().toExternalForm();
+        }
+    }
+    
     public string getprimaryPhysician(){
         List<Related_Party__c> rp = [SELECT Id, Name FROM Related_Party__c WHERE Person_Being_served__c=:this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__c AND Type__c='Physician - Primary' order by LastModifiedDate desc LIMIT 1];
         if(rp.size()>0) return rp[0].Name;
@@ -107,6 +127,7 @@ public with sharing class CMShiftAssessmentEdit {
             controller.addFields(fieldsToAdd);
         }
         evaluation = (Evaluation__c) stdController.getRecord();
+        serializedAnnotations = JSON.serialize(annotations);
 
         selectedOptionsMap = new Map<String, List<String>>();
         for (String field: selectOptionWidgetsMap.keySet()) {
@@ -571,7 +592,7 @@ public with sharing class CMShiftAssessmentEdit {
         List<Selectoption> expressionValue = Utility.getPicklistValues(evaluation, 'Expression_Other__c');
         return expressionValue;
     }
-
+    
     public PageReference addPainResponse() {
         pains.add(new Evaluation_Response__c(
             RecordTypeId = Utility.getEvaluationResponseRecordType('Pain'),
@@ -580,5 +601,37 @@ public with sharing class CMShiftAssessmentEdit {
             Evaluation__c = this.evaluation.Id
         ));
         return null;
+    }
+    
+    @RemoteAction
+    public static Evaluation_Response__c addOrModifyAnnotation(ID annotationId, String source, Decimal x, Decimal y, Decimal Width, Decimal Height, String Shape, String Text, String evaluationId) {
+        Evaluation_Response__c annotation;
+        if (annotationId!=null) {
+            annotation = [
+                SELECT ID FROM Evaluation_Response__c WHERE ID=:annotationId
+            ];
+        } else {
+            annotation = new Evaluation_Response__c();
+            annotation.Evaluation__c = evaluationId;
+            annotation.RecordTypeId = Utility.getEvaluationResponseRecordType('Annotation');
+        }
+        annotation.Annotation_Height__c = Height;
+        annotation.Annotation_Width__c = Width;
+        annotation.Annotation_X__c = x;
+        annotation.Annotation_Y__c = y;
+        annotation.Annotation_Source__c = Source;
+        annotation.Annotation_Shape__c = Shape;
+        annotation.Annotation_Text__c = Text;
+        System.debug('Annotation to upsert: ' + annotation);
+        upsert annotation;
+        return annotation;
+    }
+    
+     
+    @RemoteAction
+    public static void deleteAnnotation(ID annotationId) {
+        delete [
+            SELECT ID FROM Evaluation_Response__c WHERE ID=:annotationId
+        ];
     }
 }

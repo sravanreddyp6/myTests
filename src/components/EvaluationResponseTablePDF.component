@@ -1,6 +1,8 @@
 <apex:component controller="EvaluationResponseTableController" allowDML="true">
     <apex:attribute name="parentId" description="Id of the parent Evaluation record"
-        type="Id" required="true" assignTo="{!evaluationId}" />
+        type="Id" assignTo="{!evaluationId}" />
+    <apex:attribute name="pbsParentId" description="Id of the parent PBS record"
+        type="Id" assignTo="{!pbsId}" />
     <apex:attribute name="type" description="The type of this table"
         type="String" required="true" assignTo="{!responseType}" />
     <apex:attribute name="onEdit" description="The Javascript function to call when Edit is clicked"
@@ -14,9 +16,11 @@
 
     <apex:pageBlockSection columns="1" title="{!type}" >
     	<apex:outputText value="None" rendered="{!responses.size==0 && isPDF}" />
-        <apex:pageBlockTable value="{!responses}" var="response" id="responseTable" border="1px" style="text-align:center;th padding:10px;" rendered="{! (responses.size > 0 && isPDF) || !isPDF }">
+        <apex:pageBlockTable value="{!responses}" var="response" id="responseTable" border="1px" style="text-align:center;th padding:10px;" rendered="{! (numberOfResponses > 0 && isPDF) || !isPDF }">
                 <apex:repeat value="{!columnsToFetch}" var="column">
-                    <apex:column value="{!response[column]}" style="padding:10px;margin:10px;text-align:center;" />
+                    <apex:column value="{!response[column]}" style="padding:10px;margin:10px;text-align:center;" >
+                    	<apex:facet name="header">{!columnsToHeadersMap[column]}</apex:facet>
+                    </apex:column>
                 </apex:repeat>    
         </apex:pageBlockTable>
 
