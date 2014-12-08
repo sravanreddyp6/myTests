@@ -65,6 +65,14 @@
             padding-left: 25px;
             cellspacing: 15px;
         }
+        
+        .hidePain{
+        	display:none;
+        }
+        
+        .showPain{
+        	display: block;
+        }
     </style>
     <script>
         function setFocusOnLoad() {} // Overwrite VF function to focus on the 1st field
@@ -331,11 +339,61 @@
                 }
             };
             
-            handleSkinBody = function() {
-				handleIntact();
-				}
-				 
-            var addOrModifyAnnotation = function (annotation, isNew) {
+            
+            // if checkbox for Other is selected, enable other field
+            handleOther = function (ids) {
+                var theval = false;
+
+                $('input[id*=' + ids + ']').each(function (index, element) {
+                    if (element.value.indexOf('Other') == 0)
+                        theval = $(element).prop('checked');
+                });
+
+                if (theval == true) {
+                    // enable the text field called other
+                    $('input[id$=' + ids + 'other]').prop('readonly', false);
+                } else {
+                    // disable the field and empty it out
+                    $('input[id$=' + ids + 'other]').prop('readonly', true);
+                    $('input[id$=' + ids + 'other]').prop('readonly', true).val('');
+                }
+            };
+
+            handleCardio = function () {
+                handleHeartBeat();
+                handlePeripheralPulses();
+                handleOther('breathesound');
+                handleVentSection();
+                handleO2();
+                handleSuctioning();
+                handleTrach();
+                handleDysreflexia();
+
+            };
+            
+             disableAnno = function ( el, annotype ) {
+            	// disable body map if intact is checked
+                anno.hideSelectionWidget( el );
+
+                $('.' + annotype + 'annotation-number').remove();
+                $('table#' + annotype + 'annotations tr').remove();
+            	// because the remove handler is not called on the removeAll, remove each one individually
+                anno.getAnnotations(el).each( function( element) {
+                	anno.removeAnnotation(element);
+                	Visualforce.remoting.Manager.invokeAction(
+                		'{!$RemoteAction.CMShiftAssessmentEdit.deleteAnnotation}',
+                		element.Id,
+               			function (result, event) {
+                    	if (!event.status) {
+                        	alert("Failed to delete annotation! Error: " + event.message);
+                        	anno.addAnnotation(element);
+                    	}
+                	});
+                
+                });
+            };
+            
+             var addOrModifyAnnotation = function (annotation, isNew) {
                 if (isNew) {
                     if (annotation.Id !== undefined) {
                         return;  // So that annotations added at initial page loads are not duplicated
@@ -382,14 +440,21 @@
 
             });
             
-            disableAnno = function ( el, annotype ) {
-            	// disable body map if intact is checked
-                anno.hideSelectionWidget( el );
-
-                $('.' + annotype + 'annotation-number').remove();
-                $('table#' + annotype + 'annotations tr').remove();
-            	// because the remove handler is not called on the removeAll, remove each one individually
-                anno.getAnnotations(el).each( function( element) {
+            disablePain = function() {
+            	var Intact = $('[id$=skinIntact]').val();
+            	 var el = $('#bodyMap').get(0);
+            	 
+            	if(Intact == 'No') {
+            		$('[id$=painSection]').removeClass("hidePain").addClass("showPain");
+            				
+            	} else {
+            		//disableAnno( el, 'bodyMap' );
+            		 var el = $('#bodyMap').get(0);
+            		$('[id$=painSection]').removeClass("showPain").addClass("hidePain");
+            		$('[id$=painSection]').find('select,input:text,textarea').val('');
+            		
+            		anno.getAnnotations(el).each( function( element) {
+            		console.log('Iam here');
                 	anno.removeAnnotation(element);
                 	Visualforce.remoting.Manager.invokeAction(
                 		'{!$RemoteAction.CMShiftAssessmentEdit.deleteAnnotation}',
@@ -402,38 +467,15 @@
                 	});
                 
                 });
-            };
-			
-			
-            // if checkbox for Other is selected, enable other field
-            handleOther = function (ids) {
-                var theval = false;
-
-                $('input[id*=' + ids + ']').each(function (index, element) {
-                    if (element.value.indexOf('Other') == 0)
-                        theval = $(element).prop('checked');
-                });
-
-                if (theval == true) {
-                    // enable the text field called other
-                    $('input[id$=' + ids + 'other]').prop('readonly', false);
-                } else {
-                    // disable the field and empty it out
-                    $('input[id$=' + ids + 'other]').prop('readonly', true);
-                    $('input[id$=' + ids + 'other]').prop('readonly', true).val('');
-                }
-            };
-
-            handleCardio = function () {
-                handleHeartBeat();
-                handlePeripheralPulses();
-                handleOther('breathesound');
-                handleVentSection();
-                handleO2();
-                handleSuctioning();
-                handleTrach();
-                handleDysreflexia();
-
+            	
+            }
+            	
+            
+           };
+            
+            handleSkinBody = function() {
+            	disablePain();
+            
             };
 
             handleRancho = function () {
@@ -673,11 +715,11 @@
             handleCardio();
             handleOrtho();
             handleVitals();
-            hanldePsycho();
-            handleNeuro();
             handleSkinBody();
-         
-
+            handleNeuro();
+            hanldePsycho();
+            
+           
         }); //end "ready" function
 
 
@@ -702,25 +744,6 @@
             return nextTab;
         }
     </script>
-    <script type="text/javascript" >
-    	 	j$=jQuery.noConflict();
-             handleIntact = function() {
-             
-                var skinIntact = j$('[id$=skinIntact]').val();
-               
-                if(skinIntact == 'No') {
-                	j$('[id$=bodyMapSection]').show();
-                	setupAnno();
-                
-                } else {
-                	j$('[id$=bodyMapSection]').hide();
-                	disableAnno(j$('#bodyMap').get(0).src,'');
-                	j$('[id$=bodyMapSection]').find('select,input:text,textarea').val('');
-                }
-                   
-            };
-    
-    </script>
 
     <div id="breadcrumb" class="breadcrumb">
         <a href="/">Home</a>&nbsp;>&nbsp;
@@ -741,7 +764,7 @@
             <apex:inputhidden value="{! Evaluation__c.Expression_Other__c}" />
         </apex:outputPanel>
         <apex:pageMessages id="pageMessages" />
-        <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); handleDiagnosis(); handleCardio(); handleNeuro(); handleOrtho(); hanldePsycho();" reRender="pageMessages, wholeTabPanel, buttons">
+        <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); handleDiagnosis(); handleCardio(); handleSkinBody(); handleNeuro(); handleOrtho(); hanldePsycho();" reRender="pageMessages, wholeTabPanel, buttons">
             <apex:param name="nextTab" assignTo="{!nextTab}" value="" />
         </apex:actionFunction>
         <apex:tabPanel value="{!selectedTab}" id="wholeTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
@@ -1487,6 +1510,56 @@
             </apex:tab>
 
             <apex:tab label="Skin/Body" name="skinBodyTab" ontabenter="changeTab('skinBodyTab'); return false;" styleClass="{!IF(Evaluation__c.Skin_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+	            <script>
+	                 jQuery(document).ready(function ($) {
+                
+	                    anno.reset();
+	                    var el = $('#bodyMap').get(0);
+	                    if (el) {
+	                        anno.makeAnnotatable(el);
+	                    }
+	                    var $el = $(el);
+	                    <apex:repeat value="{!annotations}" var="annotation">
+	                    anno.addAnnotation({
+	                        Id: "{!annotation.Id}",
+	                        src: $("#bodyMap").prop("src"),
+	                        text: "{!JSENCODE(annotation.Annotation_Text__c)}",
+	                        shapes: [{
+	                            type: "{!JSENCODE(annotation.Annotation_Shape__c)}",
+	                            geometry: {
+	                                x: {!annotation.Annotation_X__c},
+	                                y: {!annotation.Annotation_Y__c},
+	                                width: {!annotation.Annotation_Width__c},
+	                                height: {!annotation.Annotation_Height__c}
+	                            }
+	                        }]
+	                    });
+	                    </apex:repeat>
+	                    var createAnnotationElements = function (annotations) {
+	                        $('.annotation-number').remove();
+	                        $('table#annotations tr').remove();
+	                        $.each(annotations, function (index, annotation) {
+	                            var $divEl = $("<div class='annotation-number' style='pointer-events:none; position: absolute; text-align: center; left: " + annotation.shapes[0].geometry.x * 100 + "%; width: " + annotation.shapes[0].geometry.width * 100 + "%; top: " + annotation.shapes[0].geometry.y * 100 + "%; height: " + annotation.shapes[0].geometry.height * 100 + "%;'></div>");
+	                            $el.parent().append($divEl);
+	                            var $textEl = $("<span style='line-height: " + $divEl.height() + "px; color: red; font-size: 1.5em;'>" + (index + 1) + "</span>");
+	                            $divEl.append($textEl);
+	                            $("table#annotations tbody").append("<tr><td>" + (index + 1) + "</td><td>" + annotation.text + "</td></tr>");
+	                        });
+	                    }
+	                    createAnnotationElements(anno.getAnnotations());
+	                    anno.addHandler('onAnnotationCreated', function (annotation) {
+	                        createAnnotationElements(anno.getAnnotations());
+	                    });
+	                    anno.addHandler('onAnnotationUpdated', function (annotation) {
+	                        createAnnotationElements(anno.getAnnotations());
+	                    });
+	                    anno.addHandler('onAnnotationRemoved', function (annotation) {
+	                        createAnnotationElements(anno.getAnnotations());
+	                    });
+	                    
+                    });
+	                
+	                </script>
                 <apex:pageBlock >
 					<apex:pageBlockSection columns="2" title="General Skin Condition" >
 
@@ -1514,116 +1587,69 @@
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" />
                     
                     <apex:pageBlockSection columns="1" >
-                    	<apex:inputField value="{!Evaluation__c.Skin_Intact_Picklist__c}"  onChange="handleIntact();return false;" id="skinIntact"/>
+                    	<apex:inputField value="{!Evaluation__c.Skin_Intact_Picklist__c}"  id="skinIntact" onChange="disablePain(); return false;"/>
                     </apex:pageBlockSection>
                     
-                    <apex:pageBlockSection title="Body Map" columns="1" id="bodyMapSection">
-	                    <script>
-	                    	 setupAnno = function() {
-                               anno.reset();
-                                var nel = j$('#bodyMap').get(0);
-                                if (nel) {
-                                    anno.makeAnnotatable(nel);
-                                }
-                                var j$nel = j$(nel);
-                                <apex:repeat value="{!Annotations}" var="annotation" >
-                                anno.addAnnotation({
-                                    Id: "{!annotation.Id}",
-                                    src: j$("#bodyMap").prop("src"),
-                                    text: "{!JSENCODE(annotation.Annotation_Text__c)}",
-                                    shapes: [{
-                                        type: "{!JSENCODE(annotation.Annotation_Shape__c)}",
-                                        geometry: {
-                                            x: {!annotation.Annotation_X__c},
-                                            y: {!annotation.Annotation_Y__c},
-                                            width: {!annotation.Annotation_Width__c},
-                                            height: {!annotation.Annotation_Height__c}
-                                        }
-                                    }]
-                                });
-                                </apex:repeat>
-                                var createAnnotationElements = function (Annotations) {
-                                    j$('.annotation-number').remove();
-                                    j$('table#annotations tr').remove();
-                                    j$.each(Annotations, function (index, annotation) {
-                                        var j$divEl = j$("<div class='annotation-number' style='pointer-events:none; position: absolute; text-align: center; left: " + annotation.shapes[0].geometry.x * 100 + "%; width: " + annotation.shapes[0].geometry.width * 100 + "%; top: " + annotation.shapes[0].geometry.y * 100 + "%; height: " + annotation.shapes[0].geometry.height * 100 + "%;'></div>");
-                                        j$nel.parent().append(j$divEl);
-                                        var j$textEl = j$("<span style='line-height: " + j$divEl.height() + "px; color: red; font-size: 1.5em;'>" + (index + 1) + "</span>");
-                                        j$divEl.append(j$textEl);
-                                        j$("table#annotations tbody").append("<tr><td>" + (index + 1) + "</td><td>" + annotation.text + "</td></tr>");
-                                    });
-                                }
-                                createAnnotationElements(anno.getAnnotations());
-                                anno.addHandler('onAnnotationCreated', function (annotation) {
-                                    createAnnotationElements(anno.getAnnotations());
-                                });
-                                anno.addHandler('onAnnotationUpdated', function (annotation) {
-                                    createAnnotationElements(anno.getAnnotations());
-                                });
-                                anno.addHandler('onAnnotationRemoved', function (annotation) {
-                                    createAnnotationElements(anno.getAnnotations());
-                                });
-
-                          }
-		                
-		                </script>
-                    	
-	                    <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
-	                        <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!baseUrl + URLFOR($Resource.WholeBodyNoGrid)}" id="bodyMap" />
-	                    </div>
-	                    <div style="margin-left: 420px; height: 298px; overflow: auto;">
-	                        <table id="annotations">
-	                            <tbody>
-	                            </tbody>
-	                        </table>
-	                    </div>
-	                    <apex:inputTextArea value="{!Evaluation__c.Body_Map_Comments__c}" label="Other Body Map Comments" cols="80" rows="7" />
-             			
-	                    <apex:pageBlockSectionItem >
-		                    <apex:outputPanel >
-			                    <apex:outputLabel value="Wound Vac"  id="WoundVacLabel" />
-			                    <br/>
-			                    <br/>
-			                    <apex:outputLabel value="Frequency" id="woundwacFrequencyLabel" />
-			                    <br/>
-			                    <br/>
-			                    <apex:outputLabel value="Duration" id="woundwacDurationLabel" />
-		                    </apex:outputPanel>
-		                    <apex:outputPanel >
-		                    	<div class="requiredInput">
-                                        <div class="requiredBlock"></div>
-			                    <apex:inputField value="{!Evaluation__c.Wound_Wac_Picklist__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.woundVacFrequency}&quot;, &quot;{!$Component.woundVacDuration}&quot;, &quot;{!$Component.woundwacFrequencyLabel}&quot;, &quot;{!$Component.woundwacDurationLabel}&quot;]}" />
-			                    </div>
-			                    <div class="requiredInput">
-                                        <div class="requiredBlock"></div>
-			                    <apex:inputField value="{!Evaluation__c.Wound_Vac_Frequency__c}" id="woundVacFrequency" />
-			                    </div>
-			                    <div class="requiredInput">
-                                        <div class="requiredBlock"></div>
-			                    <apex:inputField value="{!Evaluation__c.Wound_Vac_Duration__c}" id="woundVacDuration" />
-			                    </div>
-		                    </apex:outputPanel>
-	                    </apex:pageBlockSectionItem>
-	
-	                    <apex:pageBlockSectionItem >
-	                    	<apex:outputPanel >
-			                    <apex:outputLabel value="Specialty Bed" />
-			                    <br/>
-			                    <br/>
-			                    <apex:outputLabel value="Type" id="specialtyBedTypeLabel" />
-		                    </apex:outputPanel>
-		                    <apex:outputPanel >
-			                    <div class="requiredInput">
+                    <apex:outputPanel id="painSection" layout="block" >
+	                    <apex:pageBlockSection title="Body Map" columns="2" id="bodyMapSection">
+		                    <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
+		                        <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!baseUrl + URLFOR($Resource.WholeBodyNoGrid)}" id="bodyMap" />
+		                    </div>
+		                    <div style="margin-left: 420px; height: 298px; overflow: auto;">
+		                        <table id="annotations">
+		                            <tbody>
+		                            </tbody>
+		                        </table>
+		                    </div>
+		                    <apex:pageBlockSectionItem />
+		                    <apex:inputTextArea value="{!Evaluation__c.Body_Map_Comments__c}" label="Other Body Map Comments" cols="80" rows="7" />
+	             			<apex:pageBlockSectionItem />
+		                    <apex:pageBlockSectionItem >
+			                    <apex:outputPanel >
+				                    <apex:outputLabel value="Wound Vac"  id="WoundVacLabel" />
+				                    <br/>
+				                    <br/>
+				                    <apex:outputLabel value="Frequency" id="woundwacFrequencyLabel" />
+				                    <br/>
+				                    <br/>
+				                    <apex:outputLabel value="Duration" id="woundwacDurationLabel" />
+			                    </apex:outputPanel>
+			                    <apex:outputPanel >
+			                    	<div class="requiredInput">
 	                                        <div class="requiredBlock"></div>
-			                    <apex:inputField value="{!Evaluation__c.Speciality_Bed_Picklist__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.specialtyBedType}&quot;, &quot;{!$Component.specialtyBedTypeLabel}&quot;]}" />
-			                    </div>
-			                    <div class="requiredInput">
+				                    <apex:inputField value="{!Evaluation__c.Wound_Wac_Picklist__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.woundVacFrequency}&quot;, &quot;{!$Component.woundVacDuration}&quot;, &quot;{!$Component.woundwacFrequencyLabel}&quot;, &quot;{!$Component.woundwacDurationLabel}&quot;]}" />
+				                    </div>
+				                    <div class="requiredInput">
 	                                        <div class="requiredBlock"></div>
-			                    <apex:inputField value="{!Evaluation__c.Specialty_Bed_Type__c}" id="specialtyBedType" />
-			                    </div>
-		                    </apex:outputPanel>
+				                    <apex:inputField value="{!Evaluation__c.Wound_Vac_Frequency__c}" id="woundVacFrequency" />
+				                    </div>
+				                    <div class="requiredInput">
+	                                        <div class="requiredBlock"></div>
+				                    <apex:inputField value="{!Evaluation__c.Wound_Vac_Duration__c}" id="woundVacDuration" />
+				                    </div>
+			                    </apex:outputPanel>
 		                    </apex:pageBlockSectionItem>
-                    </apex:pageBlockSection>
+		
+		                    <apex:pageBlockSectionItem >
+		                    	<apex:outputPanel >
+				                    <apex:outputLabel value="Specialty Bed" />
+				                    <br/>
+				                    <br/>
+				                    <apex:outputLabel value="Type" id="specialtyBedTypeLabel" />
+			                    </apex:outputPanel>
+			                    <apex:outputPanel >
+				                    <div class="requiredInput">
+		                                        <div class="requiredBlock"></div>
+				                    <apex:inputField value="{!Evaluation__c.Speciality_Bed_Picklist__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.specialtyBedType}&quot;, &quot;{!$Component.specialtyBedTypeLabel}&quot;]}" />
+				                    </div>
+				                    <div class="requiredInput">
+		                                        <div class="requiredBlock"></div>
+				                    <apex:inputField value="{!Evaluation__c.Specialty_Bed_Type__c}" id="specialtyBedType" />
+				                    </div>
+			                    </apex:outputPanel>
+			                    </apex:pageBlockSectionItem>
+	                    </apex:pageBlockSection>
+                    </apex:outputPanel>
                 </apex:pageBlock>
             </apex:tab>
             <apex:tab label="Neurological" name="neuroTab" ontabenter="changeTab('neuroTab');return false;" styleClass="{!IF(Evaluation__c.Neuro_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
@@ -1920,12 +1946,15 @@
                         <apex:pageBlockSectionItem >
                             <apex:outputPanel >
                                 <apex:outputLabel for="residentCoping" value="Does Resident appear to be coping well" />
-                                <br />
-                                <br />
+                                <br/>
+                                <br/>
                                 <apex:outputLabel for="copingDescribe" value="Describe" id="copingDescribeLabel" />
                             </apex:outputPanel>
                             <apex:outputPanel >
+                            	<div class="requiredInput">
+                                    <div class="requiredBlock"></div>
                                 <apex:inputField value="{!Evaluation__c.Resident_Coping_Well__c}" id="residentCoping" onchange="hanldePsycho(); return false;" />
+                                </div>
                                 <div class="requiredInput">
                                     <div class="requiredBlock"></div>
                                     <apex:inputField Value="{!Evaluation__c.Coping_Description__c}" id="copingDescribe" />
