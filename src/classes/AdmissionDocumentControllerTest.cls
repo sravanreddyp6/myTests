@@ -17,10 +17,14 @@ private class AdmissionDocumentControllerTest {
     	AdmissionDocumentController extension =  new AdmissionDocumentController(new ApexPages.StandardController(adm));		
 		System.assertequals(0, extension.getAllAssociatedDocs().size());
 		
+		extension.showAddEditAdmissionDoc();
 		extension.updateDocSelection();	
 		extension.saveAdmissionDoc();		
+		
 		System.assertequals(1, extension.getAllAssociatedDocs().size());
-
+		System.assertequals(1, extension.getAssociatedDocs().size());
+		
+        extension.showAddEditAdmissionDoc();
     }
 
     static testMethod void EditAssocDoc() {
@@ -30,7 +34,7 @@ private class AdmissionDocumentControllerTest {
 																Document__c = doc1.id,
 																sObject_Id__c = adm.id,
 																sObject_Type__c = 'Admission',
-																Status__c = 'Initial');
+																Status__c = 'Pending');
     	insert newDoc;
     	
 		PageReference pageRef = Page.AdmissionView;
@@ -39,12 +43,13 @@ private class AdmissionDocumentControllerTest {
 
     	AdmissionDocumentController extension =  new AdmissionDocumentController(new ApexPages.StandardController(adm));		
 		System.assertequals(1, extension.getAllAssociatedDocs().size());
-		
+
+        extension.showAddEditAdmissionDoc();		
 		extension.editTreeNode();
-		extension.currrentAssocDoc.Status__c ='Signed';
+		extension.currrentAssocDoc.Status__c ='Received';
 		extension.saveAdmissionDoc();
 
-		System.assertequals('Signed', extension.getAllAssociatedDocs()[0].Status__c);
+		System.assertequals('Received', extension.getAllAssociatedDocs()[0].Status__c);
     }
 
 
@@ -79,12 +84,12 @@ private class AdmissionDocumentControllerTest {
 		insert pckt;
 
 		//create three documents 
-		doc1 = new PB_Document__c(Document_Name__c = 'Test Doc One', Due_Days__c	= 2, Effective_Date__c = Date.parse('10/10/2014'), Expiration_Date__c = null,  
-												 Recurring__c = 'No', Recurring_Frequency__c = null, Status__c = 'Active', Type__c = 'Standard', Version__c = 1, External_ID__c = String.valueOf(Math.abs(Math.random())) );
-		PB_Document__c doc2 = new PB_Document__c(Document_Name__c = 'Test Doc Two', Due_Days__c	= 2, Effective_Date__c = Date.parse('10/10/2014'), Expiration_Date__c = null,  
-												 Recurring__c = 'No', Recurring_Frequency__c = null, Status__c = 'Active', Type__c = 'Standard', Version__c = 1, External_ID__c = String.valueOf(Math.abs(Math.random())) );
-		PB_Document__c doc3 = new PB_Document__c(Document_Name__c = 'Test Doc Three', Due_Days__c	= 2, Effective_Date__c = Date.parse('10/10/2014'), Expiration_Date__c = null,
-												 Recurring__c = 'No', Recurring_Frequency__c = null, Status__c = 'Active', Type__c = 'Standard', Version__c = 1, External_ID__c = String.valueOf(Math.abs(Math.random())) );
+		doc1 = new PB_Document__c(Document_Name__c = 'Test Doc One', Due__c = 'Other', Effective_Date__c = Date.parse('10/10/2014'), Expiration_Date__c = null,  
+												 Recurring_Frequency__c = 'Recurring', Recurring_Interval__c = 'Annually', Status__c = 'Active', Type__c = 'Standard', Version__c = 1, External_ID__c = String.valueOf(Math.abs(Math.random())) );
+		PB_Document__c doc2 = new PB_Document__c(Document_Name__c = 'Test Doc Two', Due__c = 'Other', Effective_Date__c = Date.parse('10/10/2014'), Expiration_Date__c = null,  
+												 Recurring_Frequency__c = 'Recurring', Recurring_Interval__c = 'Annually', Status__c = 'Active', Type__c = 'Standard', Version__c = 1, External_ID__c = String.valueOf(Math.abs(Math.random())) );
+		PB_Document__c doc3 = new PB_Document__c(Document_Name__c = 'Test Doc Three', Due__c = 'Other', Effective_Date__c = Date.parse('10/10/2014'), Expiration_Date__c = null,
+												 Recurring_Frequency__c = 'Recurring', Recurring_Interval__c = 'Annually', Status__c = 'Active', Type__c = 'Standard', Version__c = 1, External_ID__c = String.valueOf(Math.abs(Math.random())) );
 		List<PB_Document__c> docList = new List<PB_Document__c>();
 		docList.add(doc1);
 		docList.add(doc2);
