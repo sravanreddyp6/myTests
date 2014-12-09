@@ -1,4 +1,4 @@
-public class TMN_Tree{
+public virtual class TMN_Tree{
 //Declarations
 
     String TEMPLATE_STR = '{0}title:"{1}", tooltip:"{2}", expanded:{3}, hideCheckbox:{4}, folder:{5}, activate:{6}, selected:{7}, unselectable:{8}, key:"{9}", status:"{10}", {11}'; 
@@ -6,7 +6,14 @@ public class TMN_Tree{
 
     public node root{get; set;}
     public string Fancy_Tree_JSon_String {get{return BuildJSonString(root.nodes, true);} set;}
-    public string Fancy_Tree_JSon_String_LongText {get{return BuildJSonString(root.nodes, false);} set;}
+    public string Fancy_Tree_JSon_String_LongText {
+    	get{ string str=''; 
+    		 str = BuildJSonString(root.nodes, false);
+             if (str.length()>0) {
+                str = str.substring(0, (str.length()-1));
+              }
+            return str;}    		
+    		set;}
 
     public string GetSelectedNodeStr {
         get{ string str=''; 
@@ -24,7 +31,7 @@ public class TMN_Tree{
         autoExpand = true; 
     }
 //Node Class
-        public class node{
+        public virtual class node{
         //Declarations            
             public list<node> nodes {get; set;}
             public string key {get; set;}
@@ -61,6 +68,9 @@ public class TMN_Tree{
             public Project_Task__c ProjTask {get; set;}
             public Task theTask {get; set;}
             public Project_Task_Activity__c ProjTaskAct {get; set;}
+            public PB_Document__c pbDoc { get; set;}
+            public PB_DocPacket__c pbDocPacket {get; set;}
+            public PB_DocPacket_Document_JO__c pbDocPacketJO{get; set;}
             
             public list<Attachment> Attaches { get; set;}
             //end Custom objects
@@ -80,6 +90,7 @@ public class TMN_Tree{
                 isNew = true;
                 DeleteRecord = false;
                 CatTreeNode = new Clinical_Catalog_Tree_Node__c ();
+                CatTreeNode.Status__c = 'Active'; 
                 CatTreeEley = new Clinical_Catalog_Element__c ();
                             
             }
