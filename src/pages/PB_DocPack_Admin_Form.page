@@ -2,32 +2,25 @@
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
-<script type="text/javascript">
-$ = jQuery.noConflict();
-var isModified = false;
-var itemsModified = [];
 
-var nodeKey = null;    
-function recordChange(item){
-    isModified = true;
-    
-    itemsModified.push(item);
-    document.getElementById("changedItems").innerHTML = itemsModified;
-} 
-function triggerNodeEdit(nK){
-    nodeKey = nK;  
-    console.log('key' + nodeKey); 
-    if (isModified){
-        $('[id*=dialog-confirm]').dialog( "open" );
-    }
-    else {
-        editNode(nodeKey);
-    }
- }
+
+<script type="text/javascript">
+window.onbeforeunload = function() {
+
+    if(isModified ){return 'You have unsaved changes!' + itemsModified;}
+}
+</script> 
+
+
+
+
+
+<script>
 $(function() {
     $('[id*=dialog-confirm]').dialog({
       resizable: false,
-      height:180,
+      draggable: false,
+      height:350,
       modal: true,
       autoOpen: false,
       buttons: {
@@ -40,82 +33,224 @@ $(function() {
             isModified = false;  
             var itemsModified = [];        
             editNode(nodeKey);
-        }
+        },
+        Cancel: function() {$( this ).dialog( "close" );}
       }
     });
 });
-</script>
-<apex:outputPanel id="fullpage">
-<div class="fogBG noDisplay" />
+</script>   
+
+
+
 
 <apex:outputPanel id="dialog-confirm" title="Confirm save" layout="block">
     <apex:outputPanel layout="inline">
         
         
-        The Following fields have changed - <br/>
+        The Following fields have changed - <p/>
         <span id="changedItems"></span>
-        <br/><br/><p/>Do you want to save before navigating away?
+        <p/>Do you want to save before navigating away?
     </apex:outputPanel>
-</apex:outputPanel>
+</apex:outputPanel>    
+
+
+
+
+
+
+
+
+
+<apex:outputPanel id="fullpage">
+<script type="text/javascript">
+$ = jQuery.noConflict();
+var isModified = false;
+var itemsModified = [];
+
+var nodeKey = null;
+
+function recordChange(item){
+    isModified = true;
+    
+    itemsModified.push(item);
+    var uniqueNames = [];
+    $.each(itemsModified, function(i, el){
+        if($.inArray(el, uniqueNames) === -1) uniqueNames.push(el);
+    });   
+    itemsModified = uniqueNames; 
+    
+    
+    
+    document.getElementById("changedItems").innerHTML = '';
+    document.getElementById("changedItems").appendChild(makeUL(uniqueNames));
+} 
+function documentFieldValCheck(){
+    checkFieldandShow('recurring-freq', 'Recurring', 'recurring-interval');
+    checkFieldandShow('due-picklist', 'Other', 'due-days');
+
+}
+function checkFieldandShow(eley, trueValue, showEley){
+    if($('[id*='+eley+']').val() == trueValue){
+        $('[id*='+showEley+']').removeClass('noDisplay');
+    }
+    else{
+        $('[id*='+showEley+']').addClass('noDisplay');
+    }
+}
+function makeUL(array) {
+    // Create the list element:
+    var list = document.createElement('ul');
+
+    for(var i = 0; i < array.length; i++) {
+        // Create the list item:
+        var item = document.createElement('li');
+
+        // Set its contents:
+        item.appendChild(document.createTextNode(array[i]));
+
+        // Add it to the list:
+        list.appendChild(item);
+    }
+
+    // Finally, return the constructed list:
+    return list;
+}
+function triggerNodeEdit(nK){
+    nodeKey = nK;  
+    console.log('key' + nodeKey); 
+    if (isModified){
+        $('[id*=dialog-confirm]').dialog( "open" );
+    }
+    else {
+        editNode(nodeKey);
+    }
+ }
+renderTreeTableCols = function(data){
+    console.log(data);
+                        var node = data.node,
+                        $select = $("<select>"),
+                        $tdList = $(node.tr).find(">td");
+                        $tdList.eq(2).html(node.data.custom.EffectiveDate);                
+                        $tdList.eq(3).html(node.data.custom.ExpirationDate);                        
+                        $tdList.eq(4).html(node.data.custom.dueDays);                              
+                        $tdList.eq(5).html(node.data.custom.RecurringFreq);
+    
+}
+</script>
+
+<div class="fogBG noDisplay" />
+
+
 
 <div class="frm-Container">
+<div><h1>Packets and Documents</h1></div>
 <apex:form >
-<apex:actionFunction action="{!editItem}" name="editNode" reRender="miniForm" status="myStatus" immediate="true">
+<apex:actionFunction action="{!editItem}" name="editNode" reRender="miniForm" status="myStatus" immediate="true" oncomplete="documentFieldValCheck();">
     <apex:param name="itemID" value=""/>
 </apex:actionFunction>
     <div class="left-Col">
-        <apex:pageBlock title="Packets and Documents">
+        <apex:pageBlock title="">
             <apex:pageBlockButtons location="top">
-                <apex:commandButton value="Add New Item" action="{!resetMiniForm}" reRender="miniForm" status="myStatus"/>
+                <apex:actionRegion >
+                    <apex:commandButton value="Add New Document" action="{!resetMiniForm}" reRender="miniForm" status="myStatus">
+                        <apex:param name="selection" value="Document"/>
+                     </apex:commandButton>   
+                    <apex:commandButton value="Add New Packet" action="{!resetMiniForm}" reRender="miniForm" status="myStatus">
+                        <apex:param name="selection" value="Packet"/>
+                     </apex:commandButton>                       
+                </apex:actionRegion>
+                
             </apex:pageBlockButtons>
                 <apex:outputPanel id="abcd"  >
-                    <c:Fancy_Tree TreeString="{!dataTree.Fancy_Tree_JSon_String_LongText}" mode="1" activateActionSignature="triggerNodeEdit(data.node.key);" checkbox="false" allowInactiveNode="true"  TreeID="abcd" debug="false" />    
+                    <c:Fancy_Tree TreeString="{!dataTree.Fancy_Tree_JSon_String_LongText}" tableExt="true" TreeID="allPackets" mode="1" activateActionSignature="triggerNodeEdit(data.node.key);" checkbox="false" allowInactiveNode="true"  debug="false" />    
+                    <table id="allPackets">
+                        <colgroup>
+                        <col width="1%"></col>
+                        <col width="60%"></col>
+                        <col width="10%"></col>
+                        <col width="10%"></col>
+                        <col width="10%"></col>
+                        <col width="9%"></col>
+                        </colgroup>
+                        <thead>
+                            <tr>
+                              <th></th>
+                              <th></th>
+                              <th>Effective</th>
+                              <th>Expiration </th>
+                              <th>Due Days</th>
+                              <th>Recurring</th>
+                              </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>                
+                
                 </apex:outputPanel>       
         </apex:pageBlock>   
     </div>
     
     <div class="right-Col">
-        <apex:pageBlock title="" id="miniForm">
-            <apex:pageBlockSection columns="1">
-                <apex:pageMessages ></apex:pageMessages>
-                <apex:pageBlockSectionItem >
-                    Type    
-                    <apex:actionRegion >
-                        <apex:selectList value="{!SelectedItemOption}" size="1">
-                            <apex:selectOptions value="{!ItemOptions}"></apex:selectOptions>
-                            <apex:actionSupport event="onchange" reRender="newItemDataElements" action="{!setSelectiblePacketsForDocumentsTree}" status="myStatus"  />
-                        </apex:selectList> 
-                    </apex:actionRegion>               
-                </apex:pageBlockSectionItem>
-            </apex:pageblockSection>  
-            <apex:pageBlock id="newItemDataElements">  
-                <apex:pageBlockButtons >
-                    <apex:commandButton action="{!SaveDoc}" id="DocSaveNode" value="Save Document" rendered="{!SelectedItemOption == 'Document'}" status="myStatus" reRender="fullpage"/>
-                    <apex:commandButton action="{!SavePack}" id="PackSaveNode" value="Save Packet" rendered="{!SelectedItemOption == 'Packet'}" status="myStatus" reRender="fullpage"/>
-                </apex:pageBlockButtons>
-                <apex:pageBlockSection columns="1" rendered="{!SelectedItemOption == 'Packet'}" >
-                    <apex:inputField value="{!SelectedDocPacket.Packet_Name__c}"/>
-                    <apex:inputField value="{!SelectedDocPacket.Status__c}"/>
-                </apex:pageBlockSection>
-                <apex:pageBlockSection columns="1" rendered="{!SelectedItemOption == 'Document'}" >
-                    <apex:inputField value="{!SelectedDocument.Document_Name__c}" onchange="recordChange('Document Name')"/>
-                    <apex:inputField value="{!SelectedDocument.Version__c}" onchange="recordChange('Version')"/>
-                    <apex:inputField value="{!SelectedDocument.Status__c}" onchange="recordChange('Status')"/>
-                    <apex:inputField value="{!SelectedDocument.Type__c}" onchange="recordChange('Type')"/>                    
-                    <apex:inputField value="{!SelectedDocument.Effective_Date__c}" onchange="recordChange('Effective Date')"/>
-                    <apex:inputField value="{!SelectedDocument.Expiration_Date__c}" onchange="recordChange('Exiration Date')"/>
-                    <apex:inputField value="{!SelectedDocument.Due_Days__c}" onchange="recordChange('Due Days')"/>
-                    <apex:inputField value="{!SelectedDocument.Recurring__c}" onchange="recordChange('Recurring')"/>
-                    <apex:inputField value="{!SelectedDocument.Recurring_Frequency__c}" onchange="recordChange('Recurring Frequency')"/>
-                    <apex:inputText style="display: none;" id="miniFormTreeSelectedItems" value="{!miniFormTreeSelectedKeys}" onchange="recordChange('Related Packets')"/>
-                    
-                    <div id="miniFormTree">
-                        <c:Fancy_Tree TreeString="{!miniFormTreeForDocs.Fancy_Tree_JSon_String_LongText}" mode="2" checkbox="true" ID_PageSideStorage="miniFormTreeSelectedItems" allowInactiveNode="false"  TreeID="miniFormTree" debug="false" />
-                    </div>                     
-                </apex:pageBlockSection>      
-         
-            </apex:pageBlock>
-        
+        <apex:pageBlock title="" id="miniForm" mode="mainDetail">  
+            
+            <apex:outputPanel layout="block" styleClass="miniFormContainer">
+            <apex:pageMessages />  
+                <apex:outputPanel rendered="{!SelectedItemOption != null}">
+                    <style type="text/css">.miniFormContainer{ background: #f8f8f8; padding:5px; border-radius: 4px; border-top: 3px solid #747e96; display: block; margin-top: -25px;}</style>
+
+                </apex:outputPanel>          
+                <apex:pageBlock id="newItemDataElements" mode="mainDetail">  
+                    <apex:pageBlockSection columns="1" rendered="{!SelectedItemOption == 'Packet'}" >
+                        
+                        <apex:outputPanel layout="block" styleClass="miniFormHeader">Packet Details</apex:outputPanel>
+                        <apex:inputField value="{!SelectedDocPacket.Packet_Name__c}" onchange="recordChange('Packet Name')"/>
+                        <apex:inputField required="true" value="{!SelectedDocPacket.Status__c}" onchange="recordChange('Status')"/>
+                        <apex:commandButton action="{!SavePack}"  style="width: 45%; float: right; margin-right: 5%; padding: 10px;"  id="PackSaveNode" value="Save Packet" status="myStatus" reRender="fullpage"/>
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection columns="1" rendered="{!SelectedItemOption == 'Document'}" >
+                        
+                        <apex:outputPanel layout="block" styleClass="miniFormHeader">Document Details</apex:outputPanel>
+                        <apex:inputField value="{!SelectedDocument.Document_Name__c}" onchange="recordChange('Document Name')"/>
+                        <apex:inputField value="{!SelectedDocument.Version__c}" required="true" onchange="recordChange('Version')"/>
+                        <apex:inputField value="{!SelectedDocument.Status__c}" required="true" onchange="recordChange('Status')"/>
+                        <apex:inputField value="{!SelectedDocument.Type__c}" required="true" onchange="recordChange('Type')"/> 
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel >Recurring Frequency</apex:outputLabel>
+                            <apex:outputPanel >
+                                <apex:inputField id="recurring-freq" value="{!SelectedDocument.Recurring_Frequency__c}" required="true" 
+                                                onchange="recordChange('Recurring Frequency');  documentFieldValCheck()"/>
+                                <apex:outputPanel id="recurring-interval" styleClass="noDisplay">
+                                    <apex:outputLabel styleClass="smallLabel">Interval</apex:outputLabel>
+                                   <apex:inputField value="{!SelectedDocument.Recurring_Interval__c}" onchange="recordChange('Recurring Interval')"/> 
+                                </apex:outputPanel>                                
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem> 
+
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel >Due</apex:outputLabel>
+                            <apex:outputPanel > 
+                                <apex:inputField id="due-picklist" value="{!SelectedDocument.Due__c}" onchange="recordChange('Due'); documentFieldValCheck()"/>
+                                <apex:outputPanel id="due-days" styleClass="noDisplay">                              
+                                    <apex:outputLabel styleClass="smallLabel"> Other</apex:outputLabel>
+                                    <apex:inputField value="{!SelectedDocument.Due_Days__c}" onchange="recordChange('Due Days')"/>
+                                </apex:outputPanel>
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:inputField value="{!SelectedDocument.Effective_Date__c}" required="true" onchange="recordChange('Effective Date')"/>
+                        <apex:inputText style="display: none" id="miniFormTreeSelectedItems" value="{!miniFormTreeSelectedKeys}" onchange="recordChange('Related Packets')"/>
+                        <apex:pageBlockSectionItem >
+                            Select at least one Packet
+
+                        </apex:pageBlockSectionItem>
+                        
+                        <div id="miniFormTree">
+                            <c:Fancy_Tree TreeString="{!miniFormTreeForDocs.Fancy_Tree_JSon_String_LongText}" selectActionSignature="recordChange('Related Packets')" mode="2" checkbox="true" ID_PageSideStorage="miniFormTreeSelectedItems" allowInactiveNode="false"  TreeID="miniFormTree" debug="false" />
+                        </div> 
+                        <apex:commandButton action="{!SaveDoc}" style="width: 45%; float: right; margin-right: 5%; padding: 10px;" 
+                                            id="DocSaveNode" value="Save Document" status="myStatus" reRender="fullpage" oncomplete="documentFieldValCheck();"/>                   
+                    </apex:pageBlockSection>      
+             
+                </apex:pageBlock>
+            </apex:outputPanel>
         </apex:pageBlock>
     
     </div>
@@ -132,17 +267,27 @@ $(function() {
 .noOverflow{ overflow: hidden;}
 .fRight{float: right;}
 
-.frm-Container{ width: 1200px;}
-.left-Col, .right-Col{float: left; padding: 10px;}
-.left-Col{width: 650px;}
-.right-Col{width: 350px;}
-
-
+.frm-Container{ width: 1200px; margin: 0 auto;}
+.left-Col, .right-Col{float: left; padding: 5px;}
+.left-Col{width: 850px;}
+.right-Col{width: 300px;}
+#miniFormTree{width:260px; }
+.miniFormContainer{ /*display: none;*/}
 .h-line{border-bottom: 1px rgba(0, 0, 0, 0.05) solid; width: 100%; margin-top: 3px; margin-bottom: 3px;}
+#allPackets td{border: none; border-bottom: solid 1px #EDEDED; border-top: solid 1px #EDEDED; font-size: 13px; cursor: pointer;}
 
 .container-fluid{margin-top: 3px;}
 .noDisplay{display: none;}
-
+.right-Col .labelCol{width: 33% !important;}
+.right-Col input {width: 85%; padding: 3px;}
+.right-Col select {width: 90%; padding: 3px;}
+.smallLabel{
+    font-size: 13px;
+    font-weight: bold;
+    color: #4a4a56;
+    padding: 5px;
+    display: block;
+}
 .fogBG{
     opacity:0.8;
     background-color:#ccc;
@@ -182,12 +327,20 @@ $(function() {
     padding: 10px;
 }
 #top-sticky h2{text-transform: uppercase;}
+#changedItems{ color: blue; }
+.fancytree-node{ width: 99% !important;}
+.fancytree-treefocus:focus{outline: none;}
+.fancytree-title{display: inline !important;}
+body h1{font-size: 36px; font-weight: 500; color:#224964;}
+.miniFormHeader{font-size: 18px; font-weight: 600; color:#224964; text-align: center; padding: 6px;}
 </style>
 <script>
     $ = jQuery.noConflict();
 
 </script>
-
+<!--
+<div style="z-index:1000;width:100%;height:100%;top:0px;left:0px;background-color:#ccc;opacity:0.8;position:fixed;">987</div>
+-->
 <apex:actionStatus id="myStatus" >
     <apex:facet name="start">  
             <style>

@@ -71,6 +71,17 @@
         <type>Date</type>
     </fields>
     <fields>
+        <fullName>Due_Days__c</fullName>
+        <externalId>false</externalId>
+        <label>Due Days</label>
+        <precision>4</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Due__c</fullName>
         <externalId>false</externalId>
         <label>Due</label>
@@ -239,9 +250,10 @@
     <searchLayouts/>
     <sharingModel>ReadWrite</sharingModel>
     <validationRules>
-        <fullName>test</fullName>
-        <active>false</active>
-        <errorConditionFormula>1=1</errorConditionFormula>
-        <errorMessage>error</errorMessage>
+        <fullName>REQ_Interval_When_Recurring</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL(Recurring_Frequency__c , &apos;Recurring&apos;) &amp;&amp; ISPICKVAL( Recurring_Interval__c, &apos;&apos; )</errorConditionFormula>
+        <errorDisplayField>Recurring_Interval__c</errorDisplayField>
+        <errorMessage>Please specify a recurring interval.</errorMessage>
     </validationRules>
 </CustomObject>
