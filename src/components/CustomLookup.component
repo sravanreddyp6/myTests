@@ -22,7 +22,7 @@
    j$(selector).first().dialog({dialogClass: dClass,
                         title:titleString,
                         modal:true,
-                        width:800, 
+                        width:850, 
                         closeOnEscape:false
                         })
                .parent()
@@ -95,7 +95,7 @@
                                         return false;"
                                         >{!r[$ObjectType[objectType].Fields['name'].localName]}</a>
                     </apex:column>
-                    <apex:repeat value="{!rfields}" var="f">
+                    <apex:repeat value="{!rfieldsOrdered}" var="f">
                         <apex:column headerValue="{!$ObjectType[objectType].Fields[f.Name].label}">
                             {!r[$ObjectType[objectType].Fields[f.Name].localName]}
                         </apex:column>

@@ -363,9 +363,10 @@ table#persons_table.dataTable {
     
 <!-- Originally removed for Ticket EB-225 (Kate M and SJ fealt this can't be done at this time because of Training users in Redwood -->
     <apex:outputPanel layout="block" style="float: left; width: 49%; padding-right: 10px;" id="divReports" >
-        <apex:pageBlock rendered="{! $user.Operating_Group__c = 'Redwood'}" title="Shift Note Report">
+        <apex:pageBlock rendered="{! $user.Operating_Group__c = 'Redwood'}" title="Summary Reports">
             <apex:outputLink value="/apex/shiftnote_summary_rpt">Shift Note Summary Report</apex:outputLink>
-        
+        	<br /><br />
+        	<apex:outputLink value="/apex/skills_summary_rpt">Skills Summary Report</apex:outputLink>
         </apex:pageBlock>
         <apex:pageBlock rendered="{! $user.Operating_Group__c = 'Cambridge'}" >
             <apex:outputLink value="/apex/IFCS_Active_MoreThanSixMonths_RPT">Active Persons Being Served Open Over 6 Months Report</apex:outputLink><br/>

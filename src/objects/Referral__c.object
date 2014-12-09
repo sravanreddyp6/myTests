@@ -766,6 +766,14 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Admission_Steps_Added__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Admission Steps Added</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>After_Care__c</fullName>
         <externalId>false</externalId>
         <label>Is this client receiving after care?</label>
@@ -788,6 +796,36 @@
         <externalId>false</externalId>
         <inlineHelpText>If the Referral Source is a Hospital, enter the Hospital name here. If the Referral Source is a Payor, enter the Company name here.</inlineHelpText>
         <label>Referral Source</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Aggressive_to_Peers_Description__c</fullName>
+        <externalId>false</externalId>
+        <label>Aggressive to Peers Description</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Aggressive_to_Self_Description__c</fullName>
+        <externalId>false</externalId>
+        <label>Aggressive to Self Description</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Aggressive_to_Staff_Description__c</fullName>
+        <externalId>false</externalId>
+        <label>Aggressive to Staff Description</label>
         <length>255</length>
         <required>false</required>
         <trackTrending>false</trackTrending>
@@ -1168,6 +1206,14 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Chemical_Dep_Treatment_Date_Completed__c</fullName>
+        <externalId>false</externalId>
+        <label>Chemical Dep Treatment Date Completed</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
         <fullName>Chemical_Dependency_Treatment__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
@@ -1268,6 +1314,10 @@
             </picklistValues>
             <picklistValues>
                 <fullName>Could Not Meet Needs</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Error</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -1394,6 +1444,14 @@
         <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Current_Chemical_Use_Date_Last_Used__c</fullName>
+        <externalId>false</externalId>
+        <label>Current Chemical Use Date Last Used</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
     </fields>
     <fields>
         <fullName>Current_Drug_Use__c</fullName>
@@ -1534,9 +1592,37 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Current_Pending_Litigation_Description__c</fullName>
+        <externalId>false</externalId>
+        <label>Current Pending Litigation Description</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Current_Pending_Litigation__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Current Pending Litigation</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>Current_Representative_Payee__c</fullName>
         <externalId>false</externalId>
         <label>Current Representative Payee</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Current_Tobacco_Use_Description__c</fullName>
+        <externalId>false</externalId>
+        <label>Current Tobacco Use Description</label>
         <length>255</length>
         <required>false</required>
         <trackTrending>false</trackTrending>
@@ -1553,6 +1639,20 @@
         <type>Date</type>
     </fields>
     <fields>
+        <fullName>Days_Since_Creation__c</fullName>
+        <description>Days between NOW() and CreatedDate.</description>
+        <externalId>false</externalId>
+        <formula>NOW() - CreatedDate</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Days Since Creation</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Days_To_Convert_Referral__c</fullName>
         <externalId>false</externalId>
         <formula>if(ISPICKVAL( Close_Reason__c, &quot;Admitted&quot;),  Close_Date__c - Referral_Date__c ,0)</formula>
@@ -1564,6 +1664,44 @@
         <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Desired_Living_Environment_at_Discharge__c</fullName>
+        <externalId>false</externalId>
+        <label>Desired Living Environment at Discharge</label>
+        <picklist>
+            <picklistValues>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>With Housemates</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Diagnosis_Date__c</fullName>
@@ -1879,6 +2017,16 @@
         <label>Drug Possession/Distribution</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Duration_of_Unconsciousness__c</fullName>
+        <externalId>false</externalId>
+        <label>Duration of Unconsciousness</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Eating_Disorders__c</fullName>
@@ -2948,6 +3096,24 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Medical_Clinical_Acceptance__c</fullName>
+        <externalId>false</externalId>
+        <label>Medical/Clinical Acceptance</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Medical_History__c</fullName>
         <externalId>false</externalId>
         <label>Medical History</label>
@@ -3136,7 +3302,7 @@
     <fields>
         <fullName>Name_PBR__c</fullName>
         <externalId>false</externalId>
-        <formula>Person_Being_Referred__r.Last_Name__c &amp; &apos;, &apos; &amp; Person_Being_Referred__r.First_Name__c</formula>
+        <formula>IF(NOT(ISBLANK(Person_Being_Referred__c)), Person_Being_Referred__r.Last_Name__c &amp; &apos;, &apos; &amp; Person_Being_Referred__r.First_Name__c, Person_Being_Served__r.LastName &amp; &apos;, &apos; &amp; Person_Being_Served__r.FirstName)</formula>
         <label>Full Name</label>
         <required>false</required>
         <trackTrending>false</trackTrending>
@@ -5372,6 +5538,16 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Reported_By__c</fullName>
+        <externalId>false</externalId>
+        <label>Reported By</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Residential_Support_Rate_Established__c</fullName>
         <externalId>false</externalId>
         <label>Residential Support Rate Established</label>
@@ -5868,10 +6044,20 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Self_Harm_Behavior_Description__c</fullName>
+        <externalId>false</externalId>
+        <label>Self Harm Behavior Description</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Self_Harm_or_Self_Injurous_Behaviors__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
-        <label>Self Harm or Self-Injurous Behaviors</label>
+        <label>Self Harm or Self-Injurious Behaviors</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
@@ -7267,12 +7453,32 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Suicide_Attempts_Description__c</fullName>
+        <externalId>false</externalId>
+        <label>Suicide Attempts Description</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Suicide_Attempts__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
         <label>Suicide Attempts</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Suicide_Threats_Description__c</fullName>
+        <externalId>false</externalId>
+        <label>Suicide Threats Description</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Suicide_Threats__c</fullName>
@@ -7304,6 +7510,16 @@
         <fullName>Target_Org_Contact_Id__c</fullName>
         <externalId>false</externalId>
         <label>Target Org Contact Id</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Theft_Description__c</fullName>
+        <externalId>false</externalId>
+        <label>Theft Description</label>
         <length>255</length>
         <required>false</required>
         <trackTrending>false</trackTrending>
@@ -7533,6 +7749,16 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Verbally_Aggressive_Description__c</fullName>
+        <externalId>false</externalId>
+        <label>Verbally Aggressive Description</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Verbally_Aggressive__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
@@ -7711,6 +7937,28 @@
         <columns>Services_Requested__c</columns>
         <filterScope>Mine</filterScope>
         <label>My Referrals</label>
+    </listViews>
+    <listViews>
+        <fullName>Referral_with_Field_Assessment</fullName>
+        <columns>NAME</columns>
+        <columns>Name_PBR__c</columns>
+        <columns>Referral_Date__c</columns>
+        <columns>CREATEDBY_USER</columns>
+        <columns>Service_Location_Program__c</columns>
+        <columns>CREATED_DATE</columns>
+        <columns>Referral_Status__c</columns>
+        <columns>Has_Evaluation__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Referral_Status__c</field>
+            <operation>notEqual</operation>
+            <value>Closed</value>
+        </filters>
+        <label>Active Referral with/without Assessment</label>
+        <sharedTo>
+            <role>NeuroRestorative</role>
+            <role>Neuro_Clinical_Evaluator</role>
+        </sharedTo>
     </listViews>
     <nameField>
         <label>Referral Number</label>
@@ -8034,6 +8282,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funding Inadequate</fullName>
                 <default>false</default>
             </values>
@@ -8127,6 +8379,37 @@
             </values>
             <values>
                 <fullName>Unknown</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Desired_Living_Environment_at_Discharge__c</picklist>
+            <values>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Housemates</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -8666,6 +8949,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Clinical_Acceptance__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -10970,6 +11264,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funding Inadequate</fullName>
                 <default>false</default>
             </values>
@@ -10994,6 +11292,37 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Desired_Living_Environment_at_Discharge__c</picklist>
+            <values>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Housemates</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11290,6 +11619,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Clinical_Acceptance__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -13075,6 +13415,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funding Inadequate</fullName>
                 <default>false</default>
             </values>
@@ -13180,6 +13524,37 @@
             </values>
             <values>
                 <fullName>Unknown</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Desired_Living_Environment_at_Discharge__c</picklist>
+            <values>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Housemates</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -13838,6 +14213,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Clinical_Acceptance__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -16595,6 +16981,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funding Inadequate</fullName>
                 <default>false</default>
             </values>
@@ -16700,6 +17090,37 @@
             </values>
             <values>
                 <fullName>Unknown</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Desired_Living_Environment_at_Discharge__c</picklist>
+            <values>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Housemates</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -17358,6 +17779,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Clinical_Acceptance__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -20603,6 +21035,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funding Inadequate</fullName>
                 <default>false</default>
             </values>
@@ -20752,6 +21188,37 @@
             </values>
             <values>
                 <fullName>Unknown</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Desired_Living_Environment_at_Discharge__c</picklist>
+            <values>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Housemates</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -21410,6 +21877,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Clinical_Acceptance__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -24167,6 +24645,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funding Inadequate</fullName>
                 <default>false</default>
             </values>
@@ -24272,6 +24754,37 @@
             </values>
             <values>
                 <fullName>Unknown</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Desired_Living_Environment_at_Discharge__c</picklist>
+            <values>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Housemates</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -24930,6 +25443,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Clinical_Acceptance__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -27890,6 +28414,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funding Inadequate</fullName>
                 <default>false</default>
             </values>
@@ -27995,6 +28523,37 @@
             </values>
             <values>
                 <fullName>Unknown</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Desired_Living_Environment_at_Discharge__c</picklist>
+            <values>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Housemates</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -28669,6 +29228,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Clinical_Acceptance__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -31450,6 +32020,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funding Inadequate</fullName>
                 <default>false</default>
             </values>
@@ -31555,6 +32129,37 @@
             </values>
             <values>
                 <fullName>Unknown</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Desired_Living_Environment_at_Discharge__c</picklist>
+            <values>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Housemates</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -32213,6 +32818,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Clinical_Acceptance__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -35117,6 +35733,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funding Inadequate</fullName>
                 <default>false</default>
             </values>
@@ -35222,6 +35842,37 @@
             </values>
             <values>
                 <fullName>Unknown</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Desired_Living_Environment_at_Discharge__c</picklist>
+            <values>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Housemates</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -35880,6 +36531,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Clinical_Acceptance__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -38776,6 +39438,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funding Inadequate</fullName>
                 <default>false</default>
             </values>
@@ -38881,6 +39547,37 @@
             </values>
             <values>
                 <fullName>Unknown</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Desired_Living_Environment_at_Discharge__c</picklist>
+            <values>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Housemates</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -39539,6 +40236,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Clinical_Acceptance__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -42284,6 +42992,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funding Inadequate</fullName>
                 <default>false</default>
             </values>
@@ -42389,6 +43101,37 @@
             </values>
             <values>
                 <fullName>Unknown</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Desired_Living_Environment_at_Discharge__c</picklist>
+            <values>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Housemates</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -43047,6 +43790,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Clinical_Acceptance__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -45943,6 +46697,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funding Inadequate</fullName>
                 <default>false</default>
             </values>
@@ -46036,6 +46794,37 @@
             </values>
             <values>
                 <fullName>Unknown</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Desired_Living_Environment_at_Discharge__c</picklist>
+            <values>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Housemates</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -46690,6 +47479,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Clinical_Acceptance__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -49087,6 +49887,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funding Inadequate</fullName>
                 <default>false</default>
             </values>
@@ -49111,6 +49915,37 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Desired_Living_Environment_at_Discharge__c</picklist>
+            <values>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Housemates</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -49403,6 +50238,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Clinical_Acceptance__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -51245,6 +52091,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funding Inadequate</fullName>
                 <default>false</default>
             </values>
@@ -51338,6 +52188,37 @@
             </values>
             <values>
                 <fullName>Unknown</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Desired_Living_Environment_at_Discharge__c</picklist>
+            <values>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Housemates</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -51877,6 +52758,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Clinical_Acceptance__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -54077,6 +54969,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funding Inadequate</fullName>
                 <default>false</default>
             </values>
@@ -54101,6 +54997,37 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Desired_Living_Environment_at_Discharge__c</picklist>
+            <values>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Housemates</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -54397,6 +55324,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Clinical_Acceptance__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -56123,6 +57061,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funding Inadequate</fullName>
                 <default>false</default>
             </values>
@@ -56216,6 +57158,37 @@
             </values>
             <values>
                 <fullName>Unknown</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Desired_Living_Environment_at_Discharge__c</picklist>
+            <values>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Housemates</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -56755,6 +57728,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Clinical_Acceptance__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -58971,6 +59955,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funding Inadequate</fullName>
                 <default>false</default>
             </values>
@@ -58995,6 +59983,37 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Desired_Living_Environment_at_Discharge__c</picklist>
+            <values>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Housemates</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -59271,6 +60290,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Clinical_Acceptance__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -61005,6 +62035,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funding Inadequate</fullName>
                 <default>false</default>
             </values>
@@ -61110,6 +62144,37 @@
             </values>
             <values>
                 <fullName>SNF</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Desired_Living_Environment_at_Discharge__c</picklist>
+            <values>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Housemates</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -61590,6 +62655,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>If_Yes_Type_of_Unwanted_Sexual_Behavior__c</picklist>
+            <values>
+                <fullName>Acting Out</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Aggression</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Issue</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Is_Reunification_Process__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -61697,6 +62777,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Clinical_Acceptance__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -64249,6 +65340,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funding Inadequate</fullName>
                 <default>false</default>
             </values>
@@ -64342,6 +65437,37 @@
             </values>
             <values>
                 <fullName>Unknown</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Desired_Living_Environment_at_Discharge__c</picklist>
+            <values>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Housemates</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -64881,6 +66007,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Clinical_Acceptance__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -66284,10 +67421,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>ISLA-Supported Living Residential%28Adult%29</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>ISLA-Supported Living Residential%28Child%29</fullName>
                 <default>false</default>
             </values>
@@ -67242,6 +68375,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funding Inadequate</fullName>
                 <default>false</default>
             </values>
@@ -67335,6 +68472,37 @@
             </values>
             <values>
                 <fullName>Unknown</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Desired_Living_Environment_at_Discharge__c</picklist>
+            <values>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Housemates</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -67874,6 +69042,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Clinical_Acceptance__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -70243,6 +71422,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funding Inadequate</fullName>
                 <default>false</default>
             </values>
@@ -70336,6 +71519,37 @@
             </values>
             <values>
                 <fullName>Unknown</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Desired_Living_Environment_at_Discharge__c</picklist>
+            <values>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Housemates</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -70875,6 +72089,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Clinical_Acceptance__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -73268,6 +74493,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funding Inadequate</fullName>
                 <default>false</default>
             </values>
@@ -73361,6 +74590,37 @@
             </values>
             <values>
                 <fullName>Unknown</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Desired_Living_Environment_at_Discharge__c</picklist>
+            <values>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Housemates</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -73900,6 +75160,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Clinical_Acceptance__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -76128,6 +77399,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funding Inadequate</fullName>
                 <default>false</default>
             </values>
@@ -76152,6 +77427,37 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Desired_Living_Environment_at_Discharge__c</picklist>
+            <values>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Housemates</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -76444,6 +77750,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Clinical_Acceptance__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -78194,6 +79511,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funding Inadequate</fullName>
                 <default>false</default>
             </values>
@@ -78287,6 +79608,37 @@
             </values>
             <values>
                 <fullName>Unknown</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Desired_Living_Environment_at_Discharge__c</picklist>
+            <values>
+                <fullName>Alone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICF</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Supported Living</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Foster Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>With Housemates</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -78826,6 +80178,17 @@
             </values>
             <values>
                 <fullName>With Housemates</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Clinical_Acceptance__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -80930,6 +82293,13 @@
         <errorMessage>Family Involvement Level is required when Family Involvement Restrictions option is checked.</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>Highest_Level_of_Education_Required</fullName>
+        <active>true</active>
+        <description>Highest Level of Education is required when Status is Closed and Close Reason is Admitted.</description>
+        <errorConditionFormula>AND(  ISPICKVAL( Person_Being_Referred__r.Level_of_Education__c, &apos;&apos; ), ISPICKVAL( Referral_Status__c, &apos;Closed&apos; ), ISPICKVAL ( Close_Reason__c, &apos;Admitted&apos; ),  RecordType.Name == &apos;NeuroRestorative&apos; )</errorConditionFormula>
+        <errorMessage>Highest Level of Education is required when Close Reason is Admitted.</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>HoldDate_Required_when_status_is_OnHold</fullName>
         <active>true</active>
         <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;On Hold&apos;)  &amp;&amp;  ISNULL(Hold_Date__c)</errorConditionFormula>
@@ -80978,8 +82348,8 @@
     <validationRules>
         <fullName>NC_Req_HighRisk_Must_FCT</fullName>
         <active>true</active>
-        <errorConditionFormula>ISPICKVAL(State_for_Preferred_Service__c,&apos;North Carolina&apos;) &amp;&amp; 
-INCLUDES(Services_Requested__c, &apos;FCT - Family Centered Treatment&apos;) &amp;&amp; 
+        <errorConditionFormula>ISPICKVAL(State_for_Preferred_Service__c,&apos;North Carolina&apos;) &amp;&amp;
+INCLUDES(Services_Requested__c, &apos;FCT - Family Centered Treatment&apos;) &amp;&amp;
 
 (!(ISPICKVAL(Risk_of_Out_of_Home_Placement__c, &apos;Yes&apos;))
 ||

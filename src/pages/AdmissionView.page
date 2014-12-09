@@ -501,11 +501,30 @@ jQuery(document).ready(function(){
 
     <a name="Asmt" id="Asmt" ></a>
 <apex:pageBlock title="Assessments" rendered="{!!isCM}">
+<apex:actionFunction name="makeNewISSA" action="{!createIssaAssess}" rerender="" status="issastatus"/>
+<apex:actionFunction name="makeNewRisk" action="{!createRiskAssess}" rerender="" status="riskstatus"/>
+
         <div class="pbHeaderButton">
-            <!-- <apex:commandButton rendered="{!assessmentTypes['CANS']}" onclick="window.open('/a0d/e?CF00NU00000036vU3={!admission.Name}&CF00NU00000036vU3_lkid={!admission.ID}', '_self'); return false;" value="New CANS Assessment" />&nbsp;&nbsp; -->
-            <apex:commandButton rendered="{!(assessmentTypes['CANS'] &&  canCreateAsmt )&& showCans }" onclick="window.open('/apex/assessment_CANSdetail?admission={!admission.ID}&type={!CANsID}', '_self'); return false;" value="New CANS Assessment" />&nbsp;&nbsp;
-            <apex:commandButton rendered="{!(assessmentTypes['Risk'] && riskAssessments.size=0 && canCreateAsmt ) && !showCans}" action="{!createRiskAssess}" value="New Risk Assessment" />
-            <apex:commandButton rendered="{!(admission.State__c = 'MN' && issaAssessments.size=0 && canCreateAsmt ) && !showCans}" action="{!createIssaAssess}" value="New ISSA Assessment" />
+            <apex:commandButton rendered="{!(assessmentTypes['CANS'] &&  canCreateAsmt )&& showCans }" onclick="window.open('/apex/assessment_CANSdetail?admission={!admission.ID}&type={!CANsID}', '_self'); return false;" value="New CANS Assessment" />
+            &nbsp;&nbsp;
+            <apex:actionStatus id="riskstatus">
+			<apex:facet name="stop">
+            <apex:commandButton rendered="{!(assessmentTypes['Risk'] && riskAssessments.size=0 && canCreateAsmt ) && !showCans}" immediate="true" onclick="this.disabled='disabled'; makeNewRisk();" value="New Risk Assessment" />
+            </apex:facet>
+            <apex:facet name="start">
+				<apex:commandButton value="Loading..." disabled="true"/>
+			</apex:facet>
+			</apex:actionStatus>
+			
+            <apex:actionStatus id="issastatus">
+			<apex:facet name="stop">
+            	<apex:commandButton rendered="{!(admission.State__c = 'MN' && issaAssessments.size=0 && canCreateAsmt ) && !showCans}" immediate="true" onclick="this.disabled='disabled'; makeNewISSA();" value="New ISSA Assessment" />
+            </apex:facet>
+            <apex:facet name="start">
+				<apex:commandButton value="Loading..." disabled="true"/>
+			</apex:facet>
+			</apex:actionStatus>
+			
             <apex:commandButton onclick="window.open('/{!Risk_Overview}?pv0={!Admission__c.Name}','_self'); return false;" rendered="{!(assessmentTypes['Risk'] && riskAssessments.size!=0 )}" value="Acknowledgment Overview" />
         </div>
         <apex:outputPanel rendered="{!(cansAssessments.size>0)}">

@@ -1,12 +1,48 @@
 <apex:page controller="referralResults_Controller" >
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+<script>
+j$ = jQuery.noConflict();
+var validateInput = function( ) {
 
-  <apex:messages />
+	var fname = j$('input[id$=fname]');
+	var lname = j$('input[id$=lname]');
+	var dob = j$('input[id$=dob]');
+	var age = j$('input[id$=age]');
+	var refID = j$('input[id$=rid]');
+	
+	var errors = '';
+	j$('#searchErrors').html(errors);
+	
+	if ( refID.val() == '') {
+	
+		if ( fname.val() == '' && lname.val() == '' ) {
+			errors += "<li>First and last name cannot both be blank.";
+			}
+			
+		if ( dob.val() != '' && !Date.parse( dob.val())) {
+			errors += "<li>Please enter a valid date of birth.";
+		}
+		if ( age.val() != '' && !parseFloat(age.val()) ) {
+			errors += "<li>Please enter a valid age.";
+		}	
+		
+		if ( errors != '' ) {
+			j$('#searchErrors').html(errors);
+			return false;
+		}
+	}
+	return( searchRefs());
+	
 
+
+}
+</script>
+  
   <apex:form id="referralForm">
     <apex:actionFunction name="searchRefs" action="{!searchRefs}" rerender="refResultsBlock" />
  
-    <apex:pageBlock mode="edit">
-
+    <apex:pageBlock mode="edit" >
+ 	<div id="searchErrors" style="color:red;padding:10px"/>
       <apex:facet name="header">
         <table cellspacing="0" cellpadding="0" border="0">
           <tr>
@@ -15,36 +51,36 @@
             </td>
             <td>&nbsp;</td>
           </tr>
-        </table>
+          </table>
       </apex:facet>
-
+	
+	  
       <apex:pageblockButtons location="bottom">
         <apex:commandButton value="Back" id="cancelButton"/>
       </apex:pageblockButtons>
 
       <apex:outputPanel layout="block">
-      <apex:pageBlockSection title="Person Being Referred"
-                             showHeader="true"
+      <apex:pageBlockSection title="Search for..."
                              columns="1"
                              collapsible="false"
                              id="PBRSection">
+         
         <apex:pageBlockSectionItem >
             <apex:outputLabel >Referral Number</apex:outputLabel>
-            <apex:inputText value="{!referralNumber}" onblur="searchRefs();"/>
+            <apex:inputText value="{!referralNumber}" id="rid" onblur="validateInput();"/>
         </apex:pageBlockSectionItem>
-        <apex:inputField value="{!referralRecord.First_Name__c}" onblur="searchRefs();"/>
-        <apex:inputField value="{!referralRecord.Last_Name__c}" onblur="searchRefs();"/>
-       <apex:inputField value="{!referralRecord.Date_of_Birth__c}" onblur="searchRefs();"/>
-       <apex:inputField value="{!referralRecord.Age__c}" onblur="searchRefs();"/>
-       <apex:inputField value="{!referralRecord.Gender__c}" onblur="searchRefs();"/>
+        <apex:inputText label="First Name" id="fname" value="{!personFirstName}" onblur="validateInput();"/>
+        <apex:inputText label="Last Name" id="lname" value="{!personLastName}" onblur="validateInput();"/>
+       <apex:inputText label="Date of Birth" id="dob" value="{!personDOB}" onblur="validateInput();"/>
+       <apex:inputText label="Age" id="age" value="{!personAge}" onblur="validateInput();"/>
+       <apex:inputText label="Gender" id="gender" value="{!personGender}" onblur="validateInput();"/>
+      
       </apex:pageBlockSection>
       </apex:outputPanel>
 
       <apex:outputPanel id="refResultsBlock"
-                        layout="block"
-                        title="Search Results">
+                        layout="block">
         <apex:pageBlockSection title="Search Results"
-             showHeader="true"
              columns="1"
              collapsible="false"
              id="ResultsSection">

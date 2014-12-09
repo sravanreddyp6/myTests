@@ -16,9 +16,11 @@ global with sharing class uploaderController
         public Blob Body { get { return attachment.Body; } set { attachment.Body = value; } }
         public String Description { get { return attachment.Description; } set { attachment.Description = value; } }
         public String isHeadShot { get; set; }
+        public String isPlanOfCare { get; set; }
         public ProxyAttachment(Attachment attachment) {
             this.attachment = attachment;
             isHeadShot = 'false';
+            isPlanOfCare = 'false';
         }
         public Attachment getSObject() {
             return attachment;
@@ -31,16 +33,29 @@ global with sharing class uploaderController
     // the parent object it
     public Id sobjId {get; set{
         sobjId = value;
-        if (sobjId.getSObjectType().getDescribe().getLocalName()=='Contact') {
+        String sObjectName = sobjId.getSObjectType().getDescribe().getLocalName();
+        if (sObjectName=='Contact') {
             showHeadShotSelection = true;
             showPersonalRecord = true;
+            showPlanOfCareSelection = false;
+        } else if(sObjectName=='Referral__c') {
+            showHeadShotSelection = false;
+            showPersonalRecord = false;
+            Referral__c ref = [ SELECT Id, RecordType.Name FROM Referral__c WHERE ID=:sObjId];
+            if (ref.RecordType.Name == 'NeuroRestorative') {
+                showPlanOfCareSelection = true;
+            } else {
+                showPlanOfCareSelection = false;
+            }
         } else {
             showHeadShotSelection = false;
             showPersonalRecord = false;
+            showPlanOfCareSelection = false;
         }
     }}
 
     public Boolean showHeadShotSelection { get; set; }
+    public Boolean showPlanOfCareSelection { get; set; }
     public String headShotPhotoIndex { get; set; }
 
     // list of existing attachments - populated on demand
@@ -86,6 +101,7 @@ global with sharing class uploaderController
         List<Attachment> toInsert=new List<Attachment>();
         Integer index = 0;
         Boolean headShotFound = false; // only use 1 photo as the headshot
+        Boolean planOfCareFound = false;
         for (ProxyAttachment newProxyAtt : newAttachments)
         {
             Attachment newAtt = newProxyAtt.getSObject();
@@ -96,6 +112,10 @@ global with sharing class uploaderController
                     System.debug('This is the headshot');
                     newAtt = manageHeadShotName(newAtt);
                     headShotFound = true;
+                }
+                if (newProxyAtt.isPlanOfCare=='true' && !planOfCareFound) {
+                    newAtt = managePlanOfCareName(newAtt);
+                    planOfCareFound = true;
                 }
                 newAtt.parentId=sobjId;
                 toInsert.add(newAtt);
@@ -131,6 +151,23 @@ global with sharing class uploaderController
         return a;
     }
 
+    public Attachment managePlanOfCareName(Attachment a) {
+        Set<String> currentAttachmentNames = new Set<String>();
+
+        String name = 'PlanOfCare-' + Date.today().format() + findExtension(a.Name);
+        for (Attachment current: attachments) {
+            currentAttachmentNames.add(current.Name);
+        }
+        Integer index = 1;
+        while (currentAttachmentNames.contains(name)) {
+            name = 'PlanOfCare-' + Date.today().format() + '-' + index + findExtension(a.Name);
+            index ++ ;
+        }
+
+        a.Name = name;
+        return a;
+    }
+
     private String findExtension(String fileName) {
         List<String> nameParts = fileName.split('\\.');
         if (nameParts.size()<=1) {
@@ -156,5 +193,4 @@ global with sharing class uploaderController
         Attachments = getAttachments();
         return null;
     }
-
 }
