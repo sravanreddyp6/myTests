@@ -1203,6 +1203,13 @@
                     });
                 </script>
                 <apex:pageBlock id="nutritionMainBlock">
+                	<apex:pageBlockTable value="{!errorMap['nutritionTab']}" var="d" columns="1" >
+                        <apex:repeat value="{!d}" var="temp" >
+                            <apex:column >
+                                <apex:outputText value="{!temp}" style="color: red"/>
+                            </apex:column>
+                        </apex:repeat>
+                    </apex:pageBlockTable>
                     <apex:pageBlockSection columns="1" title="Nutrition & Hydration" id="nutritionHydrationSection">
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Feeding Type" />
@@ -1545,25 +1552,80 @@
 	                
 	                </script>
                 <apex:pageBlock >
+                	<apex:pageBlockTable value="{!errorMap['skinBodyTab']}" var="d" columns="1" >
+                        <apex:repeat value="{!d}" var="temp" >
+                            <apex:column >
+                                <apex:outputText value="{!temp}" style="color: red"/>
+                            </apex:column>
+                        </apex:repeat>
+                    </apex:pageBlockTable>
 					<apex:pageBlockSection columns="2" title="General Skin Condition" >
-
-                        <apex:inputField value="{!Evaluation__c.Skin_Color__c}" label="Color" />
-                        <apex:inputField value="{!Evaluation__c.Skin_Temperature__c}" label="Temperature" />
-                        <apex:inputField value="{!Evaluation__c.Skin_Moisture__c}" label="Mositure" />
-                        <apex:inputField value="{!Evaluation__c.Skin_Turgor__c}" label="Turgor" />
+						<apex:pageBlockSectionItem >
+								<apex:outputLabel value="Color" styleClass="labelCol"/>
+								<apex:outputPanel >
+									<div class="requiredInput">
+	                                        <div class="requiredBlock"></div>
+	                        		<apex:inputField value="{!Evaluation__c.Skin_Color__c}" label="Color" />
+	                        		</div>
+                        	</apex:outputPanel>
+                        </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem >
-                        <apex:outputLabel value="Edema" />
+								<apex:outputLabel value="Temperature" styleClass="labelCol"/>
+								<apex:outputPanel >
+									<div class="requiredInput">
+	                                        <div class="requiredBlock"></div>
+	                        		<apex:inputField value="{!Evaluation__c.Skin_Temperature__c}" label="Temperature" />
+	                        		</div>
+                        	</apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+								<apex:outputLabel value="Moisture" styleClass="labelCol"/>
+								<apex:outputPanel >
+									<div class="requiredInput">
+	                                        <div class="requiredBlock"></div>
+	                        		<apex:inputField value="{!Evaluation__c.Skin_Moisture__c}" label="Mositure" />
+	                        		</div>
+                        	</apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+								<apex:outputLabel value="Turgor" styleClass="labelCol"/>
+								<apex:outputPanel >
+									<div class="requiredInput">
+	                                        <div class="requiredBlock"></div>
+	                        		<apex:inputField value="{!Evaluation__c.Skin_Turgor__c}" label="Turgor" />
+	                        		</div>
+                        	</apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Edema" styleClass="labelCol"/>
                         <apex:outputPanel >
+                        <div class="requiredInput">
+                               <div class="requiredBlock"></div>
                         <apex:inputField value="{!Evaluation__c.Skin_Edema__c}" label="Edema" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.edemaLocation}&quot;,&quot;{!$Component.edemaPitting}&quot;,&quot;{!$Component.edemaLocationLabel}&quot;,&quot;{!$Component.edemaPittingLabel}&quot;]}" />
-                        <apex:outputText styleClass="labelCol" value="Location" id="edemaLocationLabel"/><apex:inputField value="{!Evaluation__c.Skin_Edema_Location__c}" label="Edema Location" id="edemaLocation" />  <apex:outputText styleClass="labelCol" value="Pitting" id="edemaPittingLabel" /><apex:inputField value="{!Evaluation__c.Skin_Edema_Pitting__c}" label="Pitting" id="edemaPitting" />
+                        </div>
+                        <apex:outputText styleClass="labelCol" value="Location" id="edemaLocationLabel"/>
+                        <apex:inputField value="{!Evaluation__c.Skin_Edema_Location__c}" label="Edema Location" id="edemaLocation" /> 
+                        <apex:outputText styleClass="labelCol" value="Pitting" id="edemaPittingLabel" />
+                        <apex:inputField value="{!Evaluation__c.Skin_Edema_Pitting__c}" label="Pitting" id="edemaPitting" />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
-                        <apex:inputField value="{!Evaluation__c.Skin_Behavior__c}" label="Behavior" />
+                        <apex:pageBlockSectionItem >
+								<apex:outputLabel value="Behavior" styleClass="labelCol"/>
+								<apex:outputPanel >
+									<div class="requiredInput">
+	                                        <div class="requiredBlock"></div>
+	                        		<apex:inputField value="{!Evaluation__c.Skin_Behavior__c}" label="Behavior" />
+	                        		</div>
+                        	</apex:outputPanel>
+                        </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Peripheral Capillary Refill Location<Br /><br /># of Seconds" escape="false" />
                         <apex:outputPanel >
+                        <div class="requiredInput">
+                                <div class="requiredBlock"></div>
                         <apex:inputField value="{!Evaluation__c.Peripheral_Capillary_Refill_Location__c}" />
                         <Br /><apex:inputField Value="{!Evaluation__c.Peripheral_Capillary_Refill_of_Seconds__c}" />
+                        </div>
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                     </apex:pageBlockSection>
@@ -1571,7 +1633,15 @@
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" />
                     
                     <apex:pageBlockSection columns="1" >
-                    	<apex:inputField value="{!Evaluation__c.Skin_Intact_Picklist__c}"  id="skinIntact" onChange="disablePain(); return false;"/>
+                    	<apex:pageBlockSectionItem >
+                    		<apex:outputLabel value="Skin Intact" styleClass="labelCol"/>
+                    		<apex:outputPanel >
+                    			<div class="requiredInput">
+                                	<div class="requiredBlock"></div>
+                    			<apex:inputField value="{!Evaluation__c.Skin_Intact_Picklist__c}"  id="skinIntact" onChange="disablePain(); return false;"/>
+                    			</div>
+                    		</apex:outputPanel>
+                    	</apex:pageBlockSectionItem>
                     </apex:pageBlockSection>
                     
                     <apex:outputPanel id="painSection" layout="block" >
