@@ -14,6 +14,24 @@ public with sharing class CMShiftAssessmentView {
     public List<SelectOption>DysreflexiaValues;
     public List<string>selectedDysreflexia { get ; set; }
     public transient Map<String, Component.Apex.OutputPanel> ctlMap { get; set; }
+    
+    public Evaluation_Response__c[] annotations { set;
+        get {
+            return [
+                SELECT ID, Annotation_Height__c, Annotation_Width__c,
+                       Annotation_X__c, Annotation_Y__c, Annotation_Source__c,
+                       Annotation_Shape__c, Annotation_Text__c
+                FROM Evaluation_Response__c WHERE Evaluation__c=:evaluation.Id
+                 AND RecordType.Name='Annotation'
+            ];
+        }
+    }
+    
+    public String baseUrl {
+        get {
+            return System.URL.getSalesforceBaseURL().toExternalForm();
+        }
+    }
 
     public Evaluation_Response__c[] pains {
         get {

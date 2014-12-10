@@ -407,6 +407,125 @@
 
             <apex:tab label="Skin/Body" name="skinBodyTab" styleClass="{!IF(Evaluation__c.Skin_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
+                	<script>
+                         jQuery(document).ready(function ($) {
+                        anno.reset();
+                        var el = $('#bodyMap').get(0);
+                        if (el) {
+                            anno.makeAnnotatable(el);
+                        }
+                        anno.hideSelectionWidget();
+                        var $el = $(el);
+                        <apex:repeat value="{!annotations}" var="annotation">
+                        anno.addAnnotation({
+                            Id: "{!annotation.Id}",
+                            src: $("#bodyMap").prop("src"),
+                            text: "{!JSENCODE(annotation.Annotation_Text__c)}",
+                            shapes: [{
+                                type: "{!JSENCODE(annotation.Annotation_Shape__c)}",
+                                geometry: {
+                                    x: {!annotation.Annotation_X__c},
+                                    y: {!annotation.Annotation_Y__c},
+                                    width: {!annotation.Annotation_Width__c},
+                                    height: {!annotation.Annotation_Height__c}
+                                }
+                            }],
+                            editable: false
+                        });
+                        </apex:repeat>
+                        var createAnnotationElements = function (annotations) {
+                            $('.annotation-number').remove();
+                            $('table#annotations tr').remove();
+                            $.each(annotations, function (index, annotation) {
+                                var $divEl = $("<div class='annotation-number' style='pointer-events:none; position: absolute; text-align: center; left: " + annotation.shapes[0].geometry.x * 100 + "%; width: " + annotation.shapes[0].geometry.width * 100 + "%; top: " + annotation.shapes[0].geometry.y * 100 + "%; height: " + annotation.shapes[0].geometry.height * 100 + "%;'></div>");
+                                $el.parent().append($divEl);
+                                var $textEl = $("<span style='line-height: " + $divEl.height() + "px; color: red; font-size: 1.5em;'>" + (index + 1) + "</span>");
+                                $divEl.append($textEl);
+                                $("table#annotations tbody").append("<tr><td>" + (index + 1) + "</td><td>" + annotation.text + "</td></tr>");
+                            });
+                        }
+                        createAnnotationElements(anno.getAnnotations());
+                        anno.addHandler('onAnnotationCreated', function (annotation) {
+                            createAnnotationElements(anno.getAnnotations());
+                        });
+                        anno.addHandler('onAnnotationUpdated', function (annotation) {
+                            createAnnotationElements(anno.getAnnotations());
+                        });
+                        anno.addHandler('onAnnotationRemoved', function (annotation) {
+                            createAnnotationElements(anno.getAnnotations());
+                        });
+                    });
+                    </script>
+                	 <apex:pageBlockSection columns="2" title="General Skin Condition">
+                        <apex:outputField value="{!Evaluation__c.Skin_Color__c}"
+                            label="Color" />
+                        <apex:outputField value="{!Evaluation__c.Skin_Temperature__c}"
+                            label="Temperature" />
+                        <apex:outputField value="{!Evaluation__c.Skin_Moisture__c}"
+                            label="Mositure" />
+                        <apex:outputField value="{!Evaluation__c.Skin_Turgor__c}"
+                            label="Turgor" />
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Edema" />
+                            <apex:outputPanel >
+                                <apex:outputField value="{!Evaluation__c.Skin_Edema__c}"
+                                    label="Edema" />
+                                <apex:outputText styleClass="labelCol" value="Location"
+                                    rendered="{!Evaluation__c.Skin_Edema__c == 'Yes'}" />
+                                <apex:outputField value="{!Evaluation__c.Skin_Edema_Location__c}"
+                                    label="Edema Location" id="edemaLocation"
+                                    rendered="{!Evaluation__c.Skin_Edema__c == 'Yes'}" />
+                                <apex:outputText styleClass="labelCol" value="Pitting"
+                                    rendered="{!Evaluation__c.Skin_Edema__c == 'Yes'}" />
+                                <apex:outputField value="{!Evaluation__c.Skin_Edema_Pitting__c}"
+                                    label="Pitting" id="edemaPitting"
+                                    rendered="{!Evaluation__c.Skin_Edema__c == 'Yes'}" />
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:outputField value="{!Evaluation__c.Skin_Behavior__c}"
+                            label="Behavior" />
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Peripheral Capillary Refill Location" />
+                            <apex:outputPanel >
+                                <apex:outputField value="{!Evaluation__c.Peripheral_Capillary_Refill_Location__c}" />
+                                <apex:outputText value="# of Seconds" styleClass="labelCol"
+                                    style="margin-left:20px" />
+                                <apex:outputField Value="{!Evaluation__c.Peripheral_Capillary_Refill_of_Seconds__c}" />
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                    </apex:pageBlockSection>
+                    <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" />
+                    <apex:pageBlockSection columns="1" >
+                    	<apex:outputField value="{!Evaluation__c.Skin_Intact_Picklist__c}" />
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection title="Body Map" Columns="2" rendered="{!Evaluation__c.Skin_Intact_Picklist__c == 'No'}" >
+                    	<div
+                            style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
+                            <img width="318" height="298"
+                                style="float: left; border: 3px solid #ECECEC;"
+                                src="{!baseUrl + URLFOR($Resource.WholeBodyNoGrid)}"
+                                id="bodyMap" />
+                        </div>
+                        <div style="margin-left: 420px; height: 298px; overflow: auto;">
+                            <table id="annotations">
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                        <apex:pageBlockSectionItem />
+                        <apex:outputField value="{!Evaluation__c.Body_Map_Comments__c}"
+                            label="Other Body Map Comments" />
+                        <apex:pageBlockSectionItem />
+                      	
+	                    <apex:outputField value="{!Evaluation__c.Wound_Wac_Picklist__c}" label="Wound Wac" />
+	                    <apex:outputField value="{!Evaluation__c.Speciality_Bed_Picklist__c}"  label="Speciality Bed"/>
+	                    <apex:outputField value="{!Evaluation__c.Wound_Vac_Frequency__c}"  rendered="{!Evaluation__c.Wound_Wac_Picklist__c == 'Yes'}" label="Frequency"/>
+	                    <apex:outputField value="{!Evaluation__c.Specialty_Bed_Type__c}" rendered="{!Evaluation__c.Speciality_Bed_Picklist__c == 'Yes'}" label="Type"/>
+	                    <apex:outputField value="{!Evaluation__c.Wound_Vac_Duration__c}" rendered="{!Evaluation__c.Wound_Wac_Picklist__c == 'Yes'}" label="Duration" />  
+                    </apex:pageBlockSection>
+                    <apex:PageBlockSection title="Add Pressure Ulcer Details" columns="1" rendered="{!Evaluation__c.Skin_Intact_Picklist__c =='No'}" >
+                    
+                    </apex:PageBlockSection>
                 </apex:pageBlock>
             </apex:tab>
 

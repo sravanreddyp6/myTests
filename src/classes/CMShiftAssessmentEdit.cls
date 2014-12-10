@@ -66,16 +66,29 @@ public with sharing class CMShiftAssessmentEdit {
     public Evaluation_Response__c[] vitals { set;
         get {
             return [
-               SELECT ID,Name,Date__c,Heart_Rate__c,Blood_Pressure__c,R__c,O2_Saturation__c,Temperature__c,O2_Intervention_Needed__c,O2_Narrative_Note__c,
-                      HR_Intervention_Needed__c, HR_Narrative_Note__c
-               FROM Evaluation_Response__c WHERE Evaluation__c=:evaluation.Id
-               AND RecordType.Name='Vitals Details Shift Assessment'
+                SELECT ID,Name,Date__c,Heart_Rate__c,Blood_Pressure__c,R__c,O2_Saturation__c,Temperature__c,O2_Intervention_Needed__c,O2_Narrative_Note__c,
+                	HR_Intervention_Needed__c, HR_Narrative_Note__c
+                FROM Evaluation_Response__c WHERE Evaluation__c=:evaluation.Id
+                AND RecordType.Name='Vitals Details Shift Assessment'
             ];
         }
     }
 
     public Evaluation_Response__c currentVitalsDetail { get; set; }
     public Id currentVitalsDetailId { get; set; }
+    
+    public Evaluation_Response__c[] pUlcers { set;
+        get {
+            return [
+                SELECT ID,Decubity_Stage__c,Location__c, Decubity_Measurement__c,Treatment__c,Date__c 
+                FROM Evaluation_Response__c WHERE Evaluation__c=:evaluation.Id
+                AND RecordType.Name='Pressure Ulcer Detail'
+            ];
+        }
+    }
+    
+    public Evaluation_Response__c currentpUlcerDetail {get ; set;}
+    public Id currentpUlcerDetailId {get; set; }
     
 	public Evaluation_Response__c[] annotations { set;
         get {
@@ -165,6 +178,8 @@ public with sharing class CMShiftAssessmentEdit {
 
 
         currentVitalsDetail = new Evaluation_Response__c();
+        currentpUlcerDetail = new Evaluation_Response__c();
+        
         if (ApexPages.currentPage().getParameters().get('tab') != null) {
             selectedTab = ApexPages.currentPage().getParameters().get('tab');
         }
@@ -227,6 +242,30 @@ public with sharing class CMShiftAssessmentEdit {
             // have to do anything
         }
     }
+    
+    public void showAddpUlcerDetail()  {
+        this.currentpUlcerDetail = new Evaluation_Response__c();
+        this.currentpUlcerDetail.Evaluation__c = this.evaluation.Id;
+        this.currentpUlcerDetail.RecordTypeId = Utility.getEvaluationResponseRecordType('Pressure Ulcer Detail');
+
+    }
+
+    public void showEditpUlcerDetail() {
+        this.currentpUlcerDetail = [
+            SELECT ID,Decubity_Stage__c,Location__c, Decubity_Measurement__c,Treatment__c,Date__c
+            FROM Evaluation_Response__c WHERE ID=:currentpUlcerDetailId
+        ];
+    }
+
+    public void savepUlcerDetail() {
+        try {
+            upsert currentpUlcerDetail;
+        } catch (DMLException ex) {
+            // SF will automatically create a PageMessage Error here, so we don't
+            // have to do anything
+        }
+    }
+    
 
     public PageReference save() {
         return this.save(false);
