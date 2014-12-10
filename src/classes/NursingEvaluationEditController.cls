@@ -10,6 +10,7 @@ public with sharing class NursingEvaluationEditController {
     public List<string>selectedIssues {get; set;}
     public List<SelectOption>urineClarities ;
     public List<string>selectedClarities {get; set;}
+    
     public List<SelectOption>bladderValues ;
     public List<string>selectedBladder {get; set;}
     public List<SelectOption>bowelValues ;
@@ -462,21 +463,7 @@ public with sharing class NursingEvaluationEditController {
         }
         return null;
     }
-    
-   /* public PageReference emptyPain(){
-        system.debug('insideeeeeeeeeeee ActionFunction');
-        // List<Evaluation_Response__c> tobedelanno = [SELECT ID FROM Evaluation_Response__c WHERE Id =:evaluation.Id AND RecordType.Name = 'NeuroAnnotation'];
-        // system.debug('anno to delete' +tobedelanno);
-        delete neuroAnnotations;
-        this.evaluation.Activity__c = False;
-        this.evaluation.Position__c = False;
-        system.debug('stringggggggggggg'  +selectedpainDescriptors);
-        selectedpainDescriptors = new List<String>();
-        system.debug('afterreeedsssssss' +selectedpainDescriptors);
-        
-        return null;
-    }* /
-
+   
     /**
      * This method needs to know about whether the request is ready for submission,
      * and also the currently selected tab, because we need to group validation
@@ -546,8 +533,7 @@ public with sharing class NursingEvaluationEditController {
                 }
                 
         //for Bladder incont Multi-picklist         
-        
-        for(string c: selectedBladder)
+       	for(string c: selectedBladder)
         clr += c+';';
                 if(clr!=''){
                         clr =clr.Substring(0,clr.length()-1);
@@ -1040,11 +1026,6 @@ public with sharing class NursingEvaluationEditController {
                         else
                         this.evaluation.Neuro_pain_Descriptors__c ='';  
                         
-                        
-                        //if(this.evaluation.Pain_present__c != 'Yes')
-                        //delete neuroAnnotations; MOVING THE LOGIC TO TRIGGER
-                                                        
-                                                
         if (submitted || selectedTab == 'detailsTab' || selectedTab == null) {
 
         }
