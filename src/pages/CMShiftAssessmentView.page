@@ -88,6 +88,7 @@
             border-bottom-width: 1px;
             border-bottom-color: #E8E8E8
         }
+        
     </style>
     <div id="breadcrumb" class="breadcrumb">
         <a href="/">Home</a>&nbsp;>&nbsp;
@@ -595,15 +596,26 @@
             <apex:tab label="Ortho" name="orthoTab" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
                     <apex:pageBlockSection columns="2">
-                        <apex:pageBlockSectionItem >
-                            <apex:outputLabel value="Cast" />
+						<apex:pageBlockSectionItem >
                             <apex:outputPanel >
-                                <apex:outputText value="Yes" rendered="{!Evaluation__c.Cast_Picklist__c = 'Yes' && Evaluation__c.Ortho_Cast_Location__c = '' && Evaluation__c.Cast_Location__c = ''}" />
-                                <apex:outputText value="{!Evaluation__c.Ortho_Cast_Location__c}" rendered="{!Evaluation__c.Ortho_Cast_Location__c != 'Other'}" />
-                                <apex:outputText value="{!Evaluation__c.Cast_Location__c}" rendered="{!Evaluation__c.Ortho_Cast_Location__c == 'Other'}" />
+                                <apex:outputLabel for="cast" value="Cast" />
+                                <br />
+                                <br />
+                                <apex:outputLabel for="castLocation" value="Location" id="castLocationLabel" rendered="{!Evaluation__c.Cast_Picklist__c == 'Yes'}"/>
+                                <br />
+                                <br />
+                                <apex:outputLabel for="OthercastLocation" value="Other" id="OthercastLocationLabel" rendered="{!Evaluation__c.Ortho_Cast_Location__c == 'Other'}" />
+                            </apex:outputPanel>
+                            <apex:outputPanel >
+                                <apex:outputText id="cast" value="{!Evaluation__c.Cast_Picklist__c}"  />
+                                <br/>
+                                <br/>
+                                <apex:outputText value="{!Evaluation__c.Ortho_Cast_Location__c}" id="castLocation"  rendered="{!Evaluation__c.Cast_Picklist__c == 'Yes'}"/>
+                                <br/>
+                                <br/>
+                                <apex:outputText value="{!Evaluation__c.Cast_Location__c}"  rendered="{!Evaluation__c.Ortho_Cast_Location__c == 'Other'}"/>
                             </apex:outputPanel>
                         </apex:pageBlockSectionItem>
-
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel value="{! if ( Evaluation__c.Traction_Picklist__c == 'Yes', 'Traction<br /><br />Location<br /><br />Type<br /><br />Weight', 'Traction')}" escape="false" />
                             <apex:outputPanel rendered="{!Evaluation__c.Traction_Picklist__c == 'Yes'}">
@@ -661,10 +673,10 @@
                     </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:tab>
-            <apex:commandButton value="Finalize" onClick="finalize(); return false;" style="position: absolute; margin-left: 680px; margin-top: 8px;" rendered="{!Evaluation__c.Status__c =='Draft' && Evaluation__c.Diagnostics_Section_Completed__c && Evaluation__c.Psycho_Social_Section_Completed__c && Evaluation__c.Cardio_Section_Completed__c && Evaluation__c.Ortho_Section_Completed__c && Evaluation__c.Neuro_Section_Completed__c}"  />
+            <apex:commandButton value="Finalize" onClick="finalize(); return false;" style="position: absolute; margin-left: 680px; margin-top: 8px;" rendered="{!Evaluation__c.Status__c =='Draft' && Evaluation__c.Diagnostics_Section_Completed__c && Evaluation__c.Psycho_Social_Section_Completed__c && Evaluation__c.Cardio_Section_Completed__c && Evaluation__c.Nutrition_Section_Completed__c && Evaluation__c.Skin_Section_Completed__c && Evaluation__c.Ortho_Section_Completed__c && Evaluation__c.Neuro_Section_Completed__c}"  />
             <apex:commandButton value="Disregard" style="position: absolute; margin-left: 730px; margin-top: 8px;" rendered="{!Evaluation__c.Status__c =='Draft' &&  Evaluation__c.OwnerId == $User.Id}" onClick="disregardEval(); return false;"/>
             <apex:commandButton value="E-Sign" style="position: absolute; margin-left: 792px; margin-top: 8px;" rendered="{!Evaluation__c.OwnerId == $User.Id && Evaluation__c.Status__c != 'Disregard'}"/>
-            <apex:commandButton value="Print PDF" style="position: absolute; margin-left: 840px; margin-top: 8px;" onclick="window.location='/apex/CMShiftAssessmentPDF?id={!Evaluation__c.Id}'; return false;"/>
+            <apex:commandButton value="Print PDF" style="position: absolute; margin-left: 840px; margin-top: 8px;"  onclick="openWin('/apex/CMShiftAssessmentPDF?id={!Evaluation__c.Id}'); return false;" />
         </apex:tabPanel>
         <apex:pageBlock id="buttons">
             <apex:pageBlockButtons location="bottom">

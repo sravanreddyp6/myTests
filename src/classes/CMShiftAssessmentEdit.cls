@@ -386,7 +386,8 @@ public with sharing class CMShiftAssessmentEdit {
         this.evaluation.Ortho_Section_Completed__c = checkOrtho();
         this.evaluation.Neuro_Section_Completed__c = checkNeuro();
         this.evaluation.Psycho_Social_Section_Completed__c = checkPsycho();
-
+        this.evaluation.Nutrition_Section_Completed__c = checkNutrition();
+		this.evaluation.Skin_Section_Completed__c = checkSkinBody();
         upsert this.pains;
         update this.evaluation;
         return new PageReference('/apex/CMShiftAssessmentView?id=' + evaluation.Id + '&tab=' + selectedTab);
@@ -482,6 +483,155 @@ public with sharing class CMShiftAssessmentEdit {
         }
 
         return cardio;
+    }
+    
+    public Boolean checkNutrition() {
+    	Boolean nutrition = true;
+    	List<string> nutritionErrors = errorMap.get('nutritionTab');
+    	nutritionErrors.clear();
+    	if(this.evaluation.nutrition_route__c == ''){
+    		nutrition = false;
+    		nutritionErrors.add('Please Choose atleast one Feeding type');	
+    	}
+    	
+    	if(this.evaluation.Oral_Health_Check__c == null){
+    		nutrition = false;
+    		nutritionErrors.add('Oral health check is mandatory');	
+    	}
+    	
+    	if(this.evaluation.Oral_Health_Check__c == 'Yes' && this.evaluation.Issues_Noted__c == null){
+    		nutrition = false;
+    		nutritionErrors.add('Oral issues noted field is mandatory');	
+    	}
+    	
+    	if(this.evaluation.Issues_Noted__c == 'Yes') {
+    		if(this.evaluation.tongue__c == '') {
+    			nutrition = false;
+    			nutritionErrors.add('Please Choose atleast one check box for tongue');	
+    		}
+    		
+    		if(this.evaluation.Gums__c == '') {
+    			nutrition = false;
+    			nutritionErrors.add('Please Choose atleast one check box for Gums');	
+    		}
+    		
+    		if(this.evaluation.Cheeks__c == '') {
+    			nutrition = false;
+    			nutritionErrors.add('Please Choose atleast one check box for Cheeks');	
+    		}
+    		
+    		if(this.evaluation.Lips__c == '') {
+    			nutrition = false;
+    			nutritionErrors.add('Please Choose atleast one check box for Lips');	
+    		}
+    		
+    		if(this.evaluation.Saliva__c == '') {
+    			nutrition = false;
+    			nutritionErrors.add('Please Choose atleast one check box for Saliva');	
+    		}
+    		
+    		if(this.evaluation.Narrative_Note__c == '') {
+    			nutrition = false;
+    			nutritionErrors.add('Narrative note is mandatory');
+    		}
+    	}
+    	
+    	if(this.evaluation.PEDS_History_of_Tonsils__c == 'Yes' && this.evaluation.PEDS_Tonsil_History_Describe__c == null) {
+    		nutrition = false;
+    		nutritionErrors.add('Tonsils history is Mandatory');
+    		
+    	}
+    	
+    	if(this.evaluation.RUQ__c == 'Yes' && this.evaluation.RUQ_Describe__c == null) {
+    		nutrition = false;
+    		nutritionErrors.add('RUQ Description is Mandatory');
+    		
+    	}
+    	
+    	if(this.evaluation.LUQ__c == 'Yes' && this.evaluation.LUQ_Describe__c == null) {
+    		nutrition = false;
+    		nutritionErrors.add('LUQ Descritption is Mandatory');
+    		
+    	}
+    	
+    	if(this.evaluation.RLQ__c == 'Yes' && this.evaluation.RLQ_Describe__c == null) {
+    		nutrition = false;
+    		nutritionErrors.add('RLQ Description is Mandatory');
+    		
+    	}
+    	
+    	if(this.evaluation.LLQ__c == 'Yes' && this.evaluation.LLQ_Describe__c == null) {
+    		nutrition = false;
+    		nutritionErrors.add('LLQ Description is Mandatory');
+    		
+    	}
+    	
+    	if(this.evaluation.Bowel_Issues__c == null) {
+    		nutrition = false;
+    		nutritionErrors.add('Bowel issues field is Mandatory');
+    	}
+    	
+    	if(this.evaluation.Bowel_Issues__c == 'Yes') {
+    		if(this.evaluation.bowel_issue_type__c == '') {
+    			nutrition = false;
+    			nutritionErrors.add('Please choose atleast one Bowel issue type');
+    			
+    		}
+    		
+    		if(this.evaluation.Bowel_Issues_Additional_Information__c == null) {
+    			nutrition = false;
+    			nutritionErrors.add('Bowel issues additional information is Mandatory');
+    		} 
+    		
+    	}
+    		
+    	return nutrition;
+    }
+    public Boolean checkSkinBody() {
+    	Boolean skin = true;
+    	List<string> skinbodyErrors = errorMap.get('skinBodyTab');
+    	skinbodyErrors.clear();
+    	
+    	if(this.evaluation.Skin_Color__c == null) {
+    		skin = false;
+    		skinbodyErrors.add('Color is Mandatory');
+    	}
+    	if(this.evaluation.Skin_Temperature__c == null) {
+    		skin = false;
+    		skinbodyErrors.add('Temperature is Mandatory');
+    	}
+    	if(this.evaluation.Skin_Moisture__c == null) {
+    		skin = false;
+    		skinbodyErrors.add('Moisture is Mandatory');
+    	}
+    	if(this.evaluation.Skin_Turgor__c == null) {
+    		skin = false;
+    		skinbodyErrors.add('Turgor is Mandatory');
+    	}
+    	if(this.evaluation.Skin_Behavior__c == null) {
+    		skin = false;
+    		skinbodyErrors.add('Behavior is Mandatory');
+    	}
+    	if(this.evaluation.Skin_Edema__c == null) {
+    		skin = false;
+    		skinbodyErrors.add('Edema is Mandatory');
+    	}
+    	if(this.evaluation.Skin_Edema__c == 'Yes') {
+    		if(this.evaluation.Skin_Edema_Location__c == null) {
+    			skin = false;
+    			skinbodyErrors.add('Edema Location is Mandatory');
+    		}
+    		if(this.evaluation.Skin_Edema_Pitting__c == null) {
+    			skin = false;
+    			skinbodyErrors.add('Edema Pitiing is Mandatory');
+    		}
+    	}
+    	
+    	if(this.evaluation.Skin_Intact_Picklist__c == null){
+    		skin = false;
+    		skinbodyErrors.add('Skin Intact field is mandatory');
+    	}
+    	return skin;
     }
 
     public Boolean checkNeuro() {
