@@ -464,8 +464,8 @@ clearDisableField = function(pageSectionId){
     <apex:actionRegion >
         <apex:actionFunction name="showAddLocation" action="{!showAddLocation}" rerender="locations,locationEntry,msgs" oncomplete="openModalDialog('ReferralLocationModal', 'span', 'Add Location','referral-location'); " status="AddLocationStatus" />
     </apex:actionRegion>
-    <apex:actionFunction name="locationLookup" action="{!resetSearchItems}" rerender="block,table" oncomplete="j$('input[id$=nameFilter]').val(j$('input[id$=locationEntry_ServiceLocation]').val());openModalDialog('searchDialog', 'span', 'Search Service Location','custom-lookup-dialog', 850);return false;"/>
-    <apex:actionFunction name="locationLookup2" action="{!resetSearchItems2}" rerender="block2,table2" oncomplete="j$('input[id$=nameFilter2]').val(j$('input[id$=sl]').val());openModalDialog('searchDialog2', 'span', 'Search Service Location','custom-lookup-dialog',850);return false;"/>
+    <apex:actionFunction name="locationLookup" action="{!resetSearchItems}" rerender="block,table" oncomplete="j$('input[id$=nameFilter]').val(j$('input[id$=locationEntry_ServiceLocation]').val());openModalDialog('searchDialog', 'span', 'Search Service Location','custom-lookup-dialog', 900);return false;"/>
+    <apex:actionFunction name="locationLookup2" action="{!resetSearchItems2}" rerender="block2,table2" oncomplete="j$('input[id$=nameFilter2]').val(j$('input[id$=sl]').val());openModalDialog('searchDialog2', 'span', 'Search Service Location','custom-lookup-dialog',900);return false;"/>
 
     <apex:pageMessages id="msgs"/>
 
