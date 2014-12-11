@@ -4,8 +4,7 @@ public with sharing class SearchLogicOnPBSR {
     public static List<ReferralSearchResults> search(String referralNumber,String lastname,String firstname,Date dob, Double age,String gender){
         system.debug('lastname:' + lastname + ';firstname:' +firstname+';dob:'+dob+';age:'+age+';gender:'+gender);
         List<ReferralSearchResults> results = new List<ReferralSearchResults>();
-        if((lastname== null || lastname=='') && (firstname==null || firstname=='') && 
-           (referralNumber==null || referralNumber=='')){
+        if( String.IsBlank(lastname) && String.IsBlank(firstname) && string.IsBlank(referralNumber)){
             throw new CustomException('Both last and first name cannot be null');
         }
         String searchStringPBR = '';
@@ -14,40 +13,43 @@ public with sharing class SearchLogicOnPBSR {
         List<Person_Being_Referred__c> pbrs = new List<Person_Being_Referred__c>();
         List<Contact> pbsList = new List<Contact>();
         
-        if ((lastname!= null && lastname!='') || (firstname!=null && firstname!='')) {
-            searchStringPBR= SearchLogicOnPBSR.buildCriteria(lastname,firstname,dob, age,gender,false, true);
-            searchStringPBS= SearchLogicOnPBSR.buildCriteria(lastname,firstname,dob, age,gender,true, false);          
-            pbrs = Database.query(searchStringPBR);
-            pbsList = Database.query(searchStringPBS);
-        }
-        
-     /*  if ((lastname!= null && lastname!='') || (firstname!=null && firstname!='')) {
-           searchString= SearchLogicOnPBSR.buildCriteria(lastname,firstname,dob, age,gender,true, false);
-            pbsList = Database.query(searchString);
-            
-       }*/
-        
-        if(referralNumber!=null && referralNumber!=''){
+        // go for referral number first - fastest hit
+        if( !String.IsBlank(referralNumber)){
+        	
            List<Person_Being_Referred__c> tmpPbr=[Select name,first_name__c,last_name__c,gender__c,date_of_birth__c,city__c,(SELECT ID,Person_Being_Served__c FROM Referrals__r WHERE Person_Being_Served__c != null LIMIT 1),state__c,zip_code__c,street_1__c,street_2__c,age__c,Person_being_served__c  
                     From person_being_referred__c 
                         Where id in 
                             (select person_being_referred__c from referral__c where name=:referralNumber)
                     limit 1];
+                    
         //Sravan- Added extra query and changed the logic to display PBS if searched with refrral number. If no PBS exists person being referred record will be displayed EC-28  09/11/2014 1:32 PM           
             List <Contact> tmpCon = [SELECT name,firstname,lastname,gender__c,birthdate,mailingcity,mailingstatecode,mailingpostalcode,mailingstreet,otherstreet,age__c
             		 FROM Contact
             		 	WHERE ID IN(SELECT Person_Being_Served__c from referral__c WHERE name=:referralNumber)
             		 limit 1];
                   
-	             if(tmpCon.size()>0){
-	                pbsList.addall(tmpCon);
+                  // will always be 1 record
+	             if(tmpCon.size()== 1){
+	                pbsList = tmpCon;
 	              }
 	            
 	            else{
-	            	pbrs.addall(tmpPbr);	
+	            	pbrs = tmpPbr;	
 	            } 
 	             
         }
+        
+        // otherwise do a name search
+        if (String.IsBlank(lastname) || String.IsBlank(firstname)) {
+            searchStringPBR= SearchLogicOnPBSR.buildCriteria(lastname,firstname,dob, age,gender,false, true);
+            searchStringPBS= SearchLogicOnPBSR.buildCriteria(lastname,firstname,dob, age,gender,true, false);          
+            List<Person_Being_Referred__c> pbrs2 = Database.query(searchStringPBR);
+            List<Contact> pbss2 =  Database.query(searchStringPBS);
+            
+            pbrs.AddAll( pbrs2);
+            pbsList.AddAll( pbss2);
+        }
+        
         
         for(Person_Being_Referred__c pbr : pbrs)
         {
