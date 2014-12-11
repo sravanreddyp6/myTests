@@ -21,8 +21,9 @@ public with sharing class referralResults_Controller {
   public String personFirstName { get; set;}
   public String personLastName { get; set;}
   public String personGender { get; set;}
-  public Double personAge { get; set;}
+  public String personAge { get; set;}
   public Date personDOB { get; set; }
+  public List<SelectOption> genderList { get; set;}
  
   public static final String REFERRAL_EDIT_URL = '/apex/referral';
 
@@ -32,6 +33,8 @@ public with sharing class referralResults_Controller {
   *****************************************************************************/ 
      public referralResults_Controller() {
 
+		populateGenderList();
+		
         // Fill in the information from the GET request (for new referrals only)
         Boolean searchImmediately = false;
         if (ApexPages.currentPage().getParameters().get('referralNumber') != null) {
@@ -51,7 +54,7 @@ public with sharing class referralResults_Controller {
             searchImmediately = true;
         }
         if (ApexPages.currentPage().getParameters().get('age') != null) {
-            personAge = Decimal.valueOf(ApexPages.currentPage().getParameters().get('age'));
+            personAge = ApexPages.currentPage().getParameters().get('age');
             searchImmediately = true;
         }
         personGender = ApexPages.currentPage().getParameters().get('gender');
@@ -64,7 +67,7 @@ public with sharing class referralResults_Controller {
                 system.debug(ref);
                 personFirstName = ref.Person_Being_Referred__r.First_Name__c;
                 personLastName = ref.Person_Being_Referred__r.Last_Name__c;
-                personAge = ref.Person_Being_Referred__r.Age__c;
+                personAge = String.valueOf(ref.Person_Being_Referred__r.Age__c);
                 personGender = ref.Person_Being_Referred__r.Gender__c;
                 personDOB = ref.Person_Being_Referred__r.Date_of_Birth__c;
                 searchImmediately = true;
@@ -73,7 +76,7 @@ public with sharing class referralResults_Controller {
             
             personFirstName = pbr.First_Name__c;
             personLastName = pbr.Last_Name__c;
-            personAge = pbr.Age__c;
+            personAge = String.valueOf(pbr.Age__c);
             personGender = pbr.Gender__c;
             personDOB = pbr.Date_of_Birth__c;
             referralId = null;  
@@ -84,20 +87,63 @@ public with sharing class referralResults_Controller {
         }
     }
 
-    public PageReference searchRefs() {
+    public void searchRefs() {
 
         try
         {
-        	refResults = SearchLogicOnPBSR.search(referralNumber,personLastName, personFirstName, personDOB, (Double)personAge, personGender);
+        	double age2 = null;
+        	if ( !string.IsBlank(personAge))
+        		age2 = double.valueOf(personAge);
+        	
+        		
+        	refResults = SearchLogicOnPBSR.search(referralNumber,personLastName, personFirstName, Date.valueOf(personDOB), age2, personGender);
             system.debug(refResults);
-            return null;
+           // return null;
         } catch(exception e) {
             ApexPages.addMessages(e);
-            return null;
+            //return null;
         }
-        
+        system.debug( 'This many results:' + refResults.size());
         
     }
     
+    private void populateGenderList() {
+    	
+    	genderList = new list<SelectOption>();
+      
+      	// Get the object type of the SObject.
+      	Schema.sObjectType objType = Person_Being_Referred__c.getSObjectType(); 
+      	
+      	// Describe the SObject using its object type.
+      	Schema.DescribeSObjectResult objDescribe = objType.getDescribe();       
+      	
+      	// Get a map of fields for the SObject
+      	map<String, Schema.SObjectField> fieldMap = objDescribe.fields.getMap();
+      	 
+      	// Get the list of picklist values for this field.
+      	list<Schema.PicklistEntry> values = fieldMap.get('Gender__c').getDescribe().getPickListValues();
+      	
+      	genderList.Add( new SelectOption('',''));
+      	
+      	// Add these values to the selectoption list.
+      	for (Schema.PicklistEntry a : values)
+      	{ 
+        	genderList.add(new SelectOption(a.getLabel(), a.getValue())); 
+      	}
+      	
+      	
+
+    }
+    public Boolean canCreateReferral {
+    get {
+      return Schema.sObjectType.Referral__c.isCreateable();
+    }
+    }
     
+    public Boolean canUpdateReferral {
+    get {
+      return Schema.sObjectType.Referral__c.isUpdateable();
+    }
+  }
+  
 }
