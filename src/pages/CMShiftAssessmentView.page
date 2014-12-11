@@ -88,7 +88,7 @@
             border-bottom-width: 1px;
             border-bottom-color: #E8E8E8
         }
-        
+
     </style>
     <div id="breadcrumb" class="breadcrumb">
         <a href="/">Home</a>&nbsp;>&nbsp;
@@ -408,7 +408,7 @@
 
             <apex:tab label="Skin/Body" name="skinBodyTab" styleClass="{!IF(Evaluation__c.Skin_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
-                	<script>
+                    <script>
                          jQuery(document).ready(function ($) {
                         anno.reset();
                         var el = $('#bodyMap').get(0);
@@ -457,7 +457,7 @@
                         });
                     });
                     </script>
-                	 <apex:pageBlockSection columns="2" title="General Skin Condition">
+                     <apex:pageBlockSection columns="2" title="General Skin Condition">
                         <apex:outputField value="{!Evaluation__c.Skin_Color__c}"
                             label="Color" />
                         <apex:outputField value="{!Evaluation__c.Skin_Temperature__c}"
@@ -497,10 +497,10 @@
                     </apex:pageBlockSection>
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" />
                     <apex:pageBlockSection columns="1" >
-                    	<apex:outputField value="{!Evaluation__c.Skin_Intact_Picklist__c}" />
+                        <apex:outputField value="{!Evaluation__c.Skin_Intact_Picklist__c}" />
                     </apex:pageBlockSection>
                     <apex:pageBlockSection title="Body Map" Columns="2" rendered="{!Evaluation__c.Skin_Intact_Picklist__c == 'No'}" >
-                    	<div
+                        <div
                             style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
                             <img width="318" height="298"
                                 style="float: left; border: 3px solid #ECECEC;"
@@ -517,15 +517,15 @@
                         <apex:outputField value="{!Evaluation__c.Body_Map_Comments__c}"
                             label="Other Body Map Comments" />
                         <apex:pageBlockSectionItem />
-                      	
-	                    <apex:outputField value="{!Evaluation__c.Wound_Wac_Picklist__c}" label="Wound Wac" />
-	                    <apex:outputField value="{!Evaluation__c.Speciality_Bed_Picklist__c}"  label="Speciality Bed"/>
-	                    <apex:outputField value="{!Evaluation__c.Wound_Vac_Frequency__c}"  rendered="{!Evaluation__c.Wound_Wac_Picklist__c == 'Yes'}" label="Frequency"/>
-	                    <apex:outputField value="{!Evaluation__c.Specialty_Bed_Type__c}" rendered="{!Evaluation__c.Speciality_Bed_Picklist__c == 'Yes'}" label="Type"/>
-	                    <apex:outputField value="{!Evaluation__c.Wound_Vac_Duration__c}" rendered="{!Evaluation__c.Wound_Wac_Picklist__c == 'Yes'}" label="Duration" />  
+
+                        <apex:outputField value="{!Evaluation__c.Wound_Wac_Picklist__c}" label="Wound Wac" />
+                        <apex:outputField value="{!Evaluation__c.Speciality_Bed_Picklist__c}"  label="Speciality Bed"/>
+                        <apex:outputField value="{!Evaluation__c.Wound_Vac_Frequency__c}"  rendered="{!Evaluation__c.Wound_Wac_Picklist__c == 'Yes'}" label="Frequency"/>
+                        <apex:outputField value="{!Evaluation__c.Specialty_Bed_Type__c}" rendered="{!Evaluation__c.Speciality_Bed_Picklist__c == 'Yes'}" label="Type"/>
+                        <apex:outputField value="{!Evaluation__c.Wound_Vac_Duration__c}" rendered="{!Evaluation__c.Wound_Wac_Picklist__c == 'Yes'}" label="Duration" />
                     </apex:pageBlockSection>
                     <apex:PageBlockSection title="Add Pressure Ulcer Details" columns="1" rendered="{!Evaluation__c.Skin_Intact_Picklist__c =='No'}" >
-                    
+
                     </apex:PageBlockSection>
                 </apex:pageBlock>
             </apex:tab>
@@ -596,7 +596,7 @@
             <apex:tab label="Ortho" name="orthoTab" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
                     <apex:pageBlockSection columns="2">
-						<apex:pageBlockSectionItem >
+                        <apex:pageBlockSectionItem >
                             <apex:outputPanel >
                                 <apex:outputLabel for="cast" value="Cast" />
                                 <br />
@@ -654,7 +654,7 @@
                     <apex:pageBlockSection columns="1">
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel >Does Resident appear to be coping well</apex:outputLabel>
-                                
+
                             <apex:outputField value="{!Evaluation__c.Resident_Coping_Well__c}" />
                         </apex:pageBlockSectionItem>
                         <apex:outputField value="{!Evaluation__c.Coping_Description__c}" label="Describe" rendered="{!Evaluation__c.Resident_Coping_Well__c == 'No'}" />
@@ -675,7 +675,7 @@
             </apex:tab>
             <apex:commandButton value="Finalize" onClick="finalize(); return false;" style="position: absolute; margin-left: 680px; margin-top: 8px;" rendered="{!Evaluation__c.Status__c =='Draft' && Evaluation__c.Diagnostics_Section_Completed__c && Evaluation__c.Psycho_Social_Section_Completed__c && Evaluation__c.Cardio_Section_Completed__c && Evaluation__c.Nutrition_Section_Completed__c && Evaluation__c.Skin_Section_Completed__c && Evaluation__c.Ortho_Section_Completed__c && Evaluation__c.Neuro_Section_Completed__c}"  />
             <apex:commandButton value="Disregard" style="position: absolute; margin-left: 730px; margin-top: 8px;" rendered="{!Evaluation__c.Status__c =='Draft' &&  Evaluation__c.OwnerId == $User.Id}" onClick="disregardEval(); return false;"/>
-            <apex:commandButton value="E-Sign" style="position: absolute; margin-left: 792px; margin-top: 8px;" rendered="{!Evaluation__c.OwnerId == $User.Id && Evaluation__c.Status__c != 'Disregard'}"/>
+            <apex:commandButton value="E-Sign" style="position: absolute; margin-left: 792px; margin-top: 8px;" rendered="{!Evaluation__c.OwnerId == $User.Id && Evaluation__c.Status__c != 'Disregard' && !Evaluation__c.Is_Signed__c}" onClick="authenticate(); return false;" />
             <apex:commandButton value="Print PDF" style="position: absolute; margin-left: 840px; margin-top: 8px;"  onclick="openWin('/apex/CMShiftAssessmentPDF?id={!Evaluation__c.Id}'); return false;" />
         </apex:tabPanel>
         <apex:pageBlock id="buttons">
@@ -758,6 +758,7 @@
                 </apex:pageBlockSection>
             </apex:pageBlock>
         </apex:outputPanel>
+        <c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!Evaluation__c.Id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); window.location='/{!Evaluation__c}'; return false;" />
     </apex:form>
     <apex:actionStatus id="pageProcessing">
         <apex:facet name="start">
