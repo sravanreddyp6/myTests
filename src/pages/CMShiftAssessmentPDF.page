@@ -219,8 +219,8 @@
          				<apex:outputField value="{!Evaluation__c.Peripheral_Pulses_Describe__c}" rendered="{!Evaluation__c.Peripheral_Pulses_Present__c == 'No'}" /><br/>
          			</td>
          		</tr>
-        	</table>
-         	<table width="80%">
+         	</table>
+        	<table width="80%" >
          		<tr>
          			<td>
          				<apex:dynamiccomponent componentValue="{!ctlMap['autonomic_dysreflexia__c']}" /> <br/>
@@ -233,29 +233,130 @@
          			</td>
          		</tr>
          	</table>
-         	<table width="80%" border="1px;" >
-         		<tr colspan="2" style="border:1px solid black">
-         			<td>
-         				<apex:outputlabel value="Sputum" />
+         	<table width="80%" >	
+         		<tr>
+         			<td colspan="2" style="border:1px solid black">
+         				<apex:outputText value="Sputum" />
          			</td>
          		</tr>
          		<tr>
-         			<td>
+         			<td colspan="2">
          				<apex:outputLabel value="Suctioning" styleClass="label" />
-         				<apex:outputField value="{!Evaluation__c.Suctioning_Picklist__c}" /><br/>
-         				<apex:dynamiccomponent componentValue="{!ctlMap['sputum_quantity__c']}" /><br/>
-         				<apex:dynamiccomponent componentValue="{!ctlMap['blood_tinged__c']}" /><br/>
+         				<apex:outputField value="{!Evaluation__c.Suctioning_Picklist__c}" />
+         			</td> 
+         		</tr>
+         		<tr>
+         			<td>
+         				<apex:dynamiccomponent componentValue="{!ctlMap['sputum_quantity__c']}" rendered="{!Evaluation__c.Suctioning_Picklist__c == 'Yes'}" /><br/>
+         				<apex:dynamiccomponent componentValue="{!ctlMap['blood_tinged__c']}" rendered="{!Evaluation__c.Suctioning_Picklist__c == 'Yes'}" /><br/>
+         				<apex:outputLabel value="Sputum Consistency" styleClass="label" rendered="{!Evaluation__c.Suctioning_Picklist__c == 'Yes'}" />
          				<apex:outputText value="{! if( Evaluation__c.Thick__c, 'Thick;', '') &
                                          if (Evaluation__c.Thin__c, 'Thin;', '') &
                                          if (Evaluation__c.Frothy__c, 'Frothy;', '') &
                                          if (Evaluation__c.Sticky__c, 'Sticky;', '') &
-                                         if (Evaluation__c.Creamy__c, 'Creamy;', '')}" />
+                                         if (Evaluation__c.Creamy__c, 'Creamy;', '')}" rendered="{!Evaluation__c.Suctioning_Picklist__c == 'Yes'}" />
          			</td>
          			<td>
-         				<apex:dynamiccomponent componentValue="{!ctlMap['sputum_color__c']}" /><br/>
-         				<apex:dynamiccomponent componentValue="{!ctlMap['odor__c']}" /><br/>
-         				<apex:outputLabel value="Breath Sounds" styleClass="label" />
-         				<apex:outputText value="{!Evaluation__c.Breathe_Sounds__c & if( CONTAINS(Evaluation__c.Breathe_Sounds__c,  'Other'), ' (' & Evaluation__c.Breathe_Sound_Other__c & ')', '')}" />
+         				<apex:dynamiccomponent componentValue="{!ctlMap['sputum_color__c']}" rendered="{!Evaluation__c.Suctioning_Picklist__c == 'Yes'}" /><br/>
+         				<apex:dynamiccomponent componentValue="{!ctlMap['odor__c']}"  rendered="{!Evaluation__c.Suctioning_Picklist__c == 'Yes'}" /><br/>
+         				<apex:outputLabel value="Breath Sounds" styleClass="label" rendered="{!Evaluation__c.Suctioning_Picklist__c == 'Yes'}" />
+         				<apex:outputText value="{!Evaluation__c.Breathe_Sounds__c & if( CONTAINS(Evaluation__c.Breathe_Sounds__c,  'Other'), ' (' & Evaluation__c.Breathe_Sound_Other__c & ')', '')}" rendered="{!Evaluation__c.Suctioning_Picklist__c == 'Yes'}" />
+         			</td>
+         		</tr>
+         	</table>
+         	<table width="80%" >
+         		<tr>
+         			<td colspan="2" style="border:1px solid black"> 
+         				<apex:outputText value="Trach" />
+         			</td>
+         		</tr>
+         		<tr>
+         			<td colspan="2">
+         				<apex:outputLabel value="Trach" styleClass="label" />
+         				<apex:outputField value="{!Evaluation__c.Trach_Picklist__c}" /><br/>
+         			</td>
+         		</tr>
+         		<tr >
+         			<td >
+         				<apex:outputLabel value="Trach Type" styleClass="label" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" />
+                        <apex:outputText value="{! if (Evaluation__c.Trach_Type__c == 'Other' , Evaluation__c.Trach_Type_Other__c, Evaluation__c.Trach_Type__c) }" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}"/><br/>
+                        <apex:outputLabel value="Cuffed" styleClass="label" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" />
+                        <apex:outputField value="{!Evaluation__c.Cuffed_picklist__c}" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" /><br/>
+                        <apex:outputLabel value="Plugged" styleClass="label" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" />
+                        <apex:outputField value="{!Evaluation__c.Plugged_picklist__c}" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" />
+                        <br/>
+         			</td>
+         			<td>
+         				<apex:outputLabel  value="Trach Size" styleClass="label" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" />
+                        <apex:outputText  value="{! if (Evaluation__c.Trach_Size__c =='Other', Evaluation__c.Trach_Size_Other__c, Evaluation__c.Trach_Size__c) }" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" /><br/>
+                        <apex:outputLabel value="PMV" styleClass="label" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" />
+                        <apex:outputField value="{!Evaluation__c.PMV_Picklist__c}" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" /><br/>
+                        <apex:outputLabel value="Documentation Needed" styleClass="label" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" />
+                        <apex:outputField value="{!Evaluation__c.PMV_Documentation_Needed__c}" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" /> <br/>
+                        <apex:outputLabel value="Narrative Note" styleClass="label" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" />
+                        <apex:outputField value="{!Evaluation__c.PMV_Documentation_Narrative_Note__c}" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" /> 
+         			</td>
+         		</tr>
+         	</table>
+         	<table width="80%" >
+         		<tr>
+         			<td colspan="2" style="border:1px solid black"> 
+         				<apex:outputText value="O2" />
+         			</td>
+         		</tr>
+         		<tr>
+         			<td colspan="2">
+         				<apex:outputLabel value="O2" styleClass="label" />
+         				<apex:outputField value="{!Evaluation__c.O2_Picklist__c}" /><br/>
+         			</td>
+         		</tr>
+         		<tr >
+         			<td >
+         				<apex:outputLabel value="O2 Type" styleClass="label" rendered="{!Evaluation__c.O2_Picklist__c == 'Yes'}" />
+                        <apex:outputText value="{!Evaluation__c.O2_Type__c}" rendered="{!Evaluation__c.O2_Picklist__c == 'Yes'}" /><br/>
+                        <apex:outputLabel value="Liters/Min" styleClass="label" rendered="{!Evaluation__c.O2_Picklist__c == 'Yes'}"/>
+                        <apex:outputField value="{!Evaluation__c.Liters_Min__c}" rendered="{!Evaluation__c.O2_Picklist__c == 'Yes'}" /> 
+                        <br/>
+         			</td>
+         			<td>
+         				<apex:outputLabel value="Intervention Needed" styleClass="label" rendered="{!Evaluation__c.O2_Picklist__c == 'Yes'}" />
+                        <apex:outputText  value="{!Evaluation__c.O2_Intervention_Needed__c}" rendered="{!Evaluation__c.O2_Picklist__c == 'Yes'}" /><br/>
+                        <apex:outputLabel value="Documentation Needed" styleClass="label" rendered="{!Evaluation__c.O2_Picklist__c == 'Yes'}" />
+                        <apex:outputField value="{!Evaluation__c.O2_Documentation_Required__c}" rendered="{!Evaluation__c.O2_Picklist__c == 'Yes'}" /><br/>
+                        <apex:outputLabel value="O2 Narrative Note" styleClass="label" rendered="{!Evaluation__c.O2_Picklist__c == 'Yes'}" />
+                        <apex:outputField value="{!Evaluation__c.O2_Narrative_Note__c}" rendered="{!Evaluation__c.O2_Picklist__c == 'Yes'}" />
+         			</td>
+         		</tr>
+         	</table>
+         	<table width="80%" >
+         		<tr>
+         			<td colspan="2" style="border:1px solid black"> 
+         				<apex:outputText value="Ventilator" />
+         			</td>
+         		</tr>
+         		<tr>
+         			<td colspan="2">
+         				<apex:outputLabel value="Ventilator" styleClass="label" />
+         				<apex:outputField value="{!Evaluation__c.Ventilator_Picklist__c}" /><br/>
+         			</td>
+         		</tr>
+         		<tr >
+         			<td >
+         				<apex:outputLabel value="Ventilator Type" styleClass="label" rendered="{!Evaluation__c.Ventilator_Picklist__c == 'Yes'}" />
+                        <apex:outputText value="{!Evaluation__c.Ventilator_Type__c & if( Evaluation__c.Ventilator_Type__c == 'Intermittent', ' - schedule: ' & Evaluation__c.If_Intermittent_Schedule__c, '' )}" rendered="{!Evaluation__c.Ventilator_Picklist__c == 'Yes'}" />
+                        <br/>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <br/>
+         			</td>
+         			<td>
+         				<apex:dynamiccomponent componentValue="{!ctlMap['ventilator_mode__c']}" rendered="{!Evaluation__c.Ventilator_Picklist__c == 'Yes'}" /><br/>
+         				<apex:dynamiccomponent componentValue="{!ctlMap['ventilator_rate__c']}" rendered="{!Evaluation__c.Ventilator_Picklist__c == 'Yes'}" /><br/>
+         				<apex:dynamiccomponent componentValue="{!ctlMap['fio2__c']}" rendered="{!Evaluation__c.Ventilator_Picklist__c == 'Yes'}" /><br/>
+         				<apex:dynamiccomponent componentValue="{!ctlMap['peep__c']}" rendered="{!Evaluation__c.Ventilator_Picklist__c == 'Yes'}" /><br/>
+         				<apex:dynamiccomponent componentValue="{!ctlMap['tv__c']}" rendered="{!Evaluation__c.Ventilator_Picklist__c == 'Yes'}" /><br/>
+         				<apex:dynamiccomponent componentValue="{!ctlMap['ps__c']}" rendered="{!Evaluation__c.Ventilator_Picklist__c == 'Yes'}" />
          			</td>
          		</tr>
          	</table>
