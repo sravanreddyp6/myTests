@@ -1004,7 +1004,11 @@ END: Uncomment to have the element collapsed by default -->
                         <a href="/{!evs.Evaluation_Responses__r[0].Owner.Id}">{!evs.Evaluation_Responses__r[0].Owner.Name}</a>
                     </apex:outputText>
                 </apex:column>
-                <apex:column headerValue="Signed At">{!IF(evs.Evaluation_Responses__r.size!=0, evs.Evaluation_Responses__r[0].CreatedDate, '')}</apex:column>
+                <apex:column headerValue="Signed At">
+                    <apex:outputText rendered="{!evs.Evaluation_Responses__r.size!=0}">
+                        <apex:outputField value="{!evs.Evaluation_Responses__r[0].CreatedDate}" />
+                    </apex:outputText>
+                </apex:column>
                 <apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
             </apex:pageBlockTable>
             <apex:outputText value="No Records to display" rendered="{!evaluations.size=0 || evaluations == null}" />
