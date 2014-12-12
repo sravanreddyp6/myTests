@@ -536,6 +536,8 @@ function stopRKey(evt) {
         <apex:outputField value="{!personBeingServedRecord.Primary_Language__c}" />&nbsp;
         <apex:outputField value="{!personBeingServedRecord.Gender__c}"/>
         <apex:outputField value="{!personBeingServedRecord.SSN__c}"/>
+        <apex:pageBlockSectionItem />
+        <apex:outputField value="{!personBeingServedRecord.Level_of_Education__c}" />
 
       </apex:pageBlockSection>
 
@@ -1080,7 +1082,7 @@ function stopRKey(evt) {
             <apex:outputLabel value="Alias"/>
             <c:CustomLookup id="sl" formID="referralForm" uniqueId="searchLocation" type="Service_Location__c" parentId="{!location.Service_Location__c}"
                     parentName="{!location.Service_Location__r.Name}" filters="name,city__c,state__c"
-                    return="program__c,setting__c,service_value__c,phone__c,street__c,city__c,state__c,zip__c"/>
+                    return="programid__c,setting__c,program__c,service_value__c,street__c,city__c,state__c,zip__c,phone__c"/>
             </apex:pageBlockSectionItem>
             <apex:inputField value="{!location.User_Assigned__c}" id="locationEntry_User" rendered="{!referralRecordType != 'CareMeridian'}"/>
             <apex:inputField value="{!location.Rank__c}" id="locationEntry_Rank" rendered="{!referralRecordType == 'CareMeridian'}"/>
@@ -1263,7 +1265,7 @@ function stopRKey(evt) {
      <!-- START: CTEAE-106, MA Referral Flavor Fields -->
      <apex:pageBlockSection rendered="{!ReferralRecordType=='Cambridge Massachusetts'}">
         <apex:outputField id="IccCarePlanSubmittedField" value="{!Referral__c.ICC_Care_Plan_Submitted__c}" label="If the referral is from the ICC has the care plan been submitted to the insurance company in order for us to obtain an authorization for services?" />
-        <apex:outputField value="{!Referral__c.Grade__c}" />
+        <apex:pageBlockSectionItem />
         <apex:outputField value="{!Referral__c.If_Yes_What_kind__c}" label="Describe Any Household Pets" />
         <apex:outputField value="{!Referral__c.Goals_from_the_Referral_Source__c}" />
      </apex:pageBlockSection>
@@ -1434,7 +1436,8 @@ function stopRKey(evt) {
           <apex:column headerValue="Action">
               <a href="#" onclick="loadLocation('{!location.Id}');return false; ">Edit</a>
           </apex:column>
-          <apex:column value="{!location.Service_Location__c}"/>
+          	<apex:column value="{!location.Service_Location__c}"/>
+          	
             <apex:column value="{!location.Service_Location_Service_Value__c}"/>
             <apex:column value="{!location.Service_Location_Setting__c}"/>
           <apex:column value="{!location.Service_Location_Program__c}"/>
