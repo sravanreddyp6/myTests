@@ -362,7 +362,40 @@
          	</table>
          </apex:pageBlock>
          <apex:pageBlock title="GU/GI/Nutrition" >
-         
+         	<table width="80%" border="1px;" >
+         		<tr>
+         			<td colspan="2" style="border:1px solid black" >
+         				<apex:outputText value="Nutrition & Hydration" />
+         			</td>
+         		</tr>
+         		<tr>
+         			<td>
+         				<apex:outputLabel value="Feeding Type" styleClass="label" />
+         				<apex:outputField value="{!Evaluation__c.Nutrition_Route__c}" label="Feeding Type" /><br/>
+         				<apex:outputLabel value="Oral Health Check" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Oral_Health_Check__c}" /><br/>
+                       
+                   		<apex:variable value="" var="a" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" >
+                   		
+                        <apex:outputLabel value="Issues Noted" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Issues_Noted__c}" /><br/>
+                        <apex:outputLabel value="Tongue" for="tongue" styleClass="label"  />
+   						<apex:outputText id="tongue" value="{!if ( CONTAINS(Evaluation__c.Tongue__c, 'Sores'), Evaluation__c.Tongue__c + ' - ' + Evaluation__c.Tongue_Sores_Describe__c, Evaluation__c.Tongue__c)}"  /> <br />
+                        <apex:outputLabel value="Gums" for="gums" styleClass="label" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}"/>
+				        <apex:outputText value="{!if ( CONTAINS(Evaluation__c.Gums__c, 'Sores'), Evaluation__c.Gums__c + ' - ' + Evaluation__c.Gums_Sores_Describe__c, Evaluation__c.Gums__c)}" /><br />
+                        <apex:outputLabel value="Cheeks" for="cheeks" styleClass="label" />	
+        				<apex:outputText id="cheeks" value="{!if ( CONTAINS(Evaluation__c.Cheeks__c, 'Sores'), Evaluation__c.Cheeks__c + ' - ' + Evaluation__c.Cheeks_Sores_Describe__c, Evaluation__c.Cheeks__c)}" /><br />
+				    	<apex:outputLabel value="Lips" for="lips" styleClass="label" />
+				        <apex:outputText value="{!if ( CONTAINS(Evaluation__c.Lips__c, 'Sores'), Evaluation__c.Lips__c + ' - ' + Evaluation__c.Lips_Sores_Describe__c, Evaluation__c.Lips__c)}"  /><br />
+                        <apex:outputLabel value="Breath" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Breath__c}"  /><br/>
+                        <apex:outputLabel value="Saliva" styleClass="label" /> 
+                        <apex:outputField value="{!Evaluation__c.Saliva__c}" /><br/>
+                        
+                        </apex:variable>
+                  	</td>
+                  </tr>     
+         	</table>
          </apex:pageBlock>
          <apex:pageBlock title="Skin/Body" >
          
