@@ -307,16 +307,16 @@ public without sharing class ServiceAssignmentExt {
       }
       set;
   }
-  
+
   public Evaluation__c evaluation {
-	  get{
-		 if (evaluation == null) {
-			evaluation = new Evaluation__c();
-		}
-		return evaluation;
-	}
-	set; }
-	
+      get{
+         if (evaluation == null) {
+            evaluation = new Evaluation__c();
+        }
+        return evaluation;
+    }
+    set; }
+
 
 // END:  Parent level properties with get/set methods.
 
@@ -1272,14 +1272,22 @@ public void loadProgramList() {
     //Added to show Nurses Assessments from Evaluation__c object
     public List<Evaluation__c> evaluations{
         get{
-
-            if(evaluations == null){
-
-                evaluations = [SELECT ID, Name, LastModifiedDate, Is_Signed__c,Shift_Start_time__c,Shift_end_time__c, Status__c FROM Evaluation__c WHERE ServiceAssignment__c = :theServAssign.Id Order By CreatedDate desc LIMIT 5];
+            if(evaluations == null) {
+                evaluations = [
+                    SELECT ID, Name, LastModifiedDate, Is_Signed__c,
+                           Shift_Start_time__c, Shift_end_time__c, Status__c,
+                           (SELECT Id, CreatedDate, Owner.Name, Owner.Id
+                              FROM Evaluation_Responses__r
+                             WHERE RecordType.Name = 'E-Signature'
+                             ORDER BY CreatedDate DESC)
+                      FROM Evaluation__c
+                     WHERE ServiceAssignment__c = :theServAssign.Id
+                     ORDER By CreatedDate desc LIMIT 5
+                ];
             }
             return evaluations;
         }
-       set;
+        set;
    }
 
 //Commented out by Sravan - 11/25/2014 as Users will not create Admission Assessment from Service Assignemnt page. It will carry over from Referral.
@@ -1367,32 +1375,32 @@ public void loadProgramList() {
 
         return ref;
     }
-    
+
   public void showAddevaluation() {
-  	evaluation = new Evaluation__c();
-  	String pbsLastName = this.theServAssign.Admission__r.Person_Being_Served__r.LastName;
-	if(pbsLastName == null) pbsLastName = '';
-	evaluation = new Evaluation__c();
-	evaluation.Name = pbsLastName+'ShiftAssessment'+DateTime.Now().format('MMddyy');
-	evaluation.RecordTypeID = Utility.getEValuationRecordType('CMShiftAssessment');
-	evaluation.ServiceAssignment__c = this.theServAssign.Id;
-	evaluation.Status__c = 'Draft';
-	evaluation.Details_Section_Completed__c = true;
-  	
-   	
+      evaluation = new Evaluation__c();
+      String pbsLastName = this.theServAssign.Admission__r.Person_Being_Served__r.LastName;
+    if(pbsLastName == null) pbsLastName = '';
+    evaluation = new Evaluation__c();
+    evaluation.Name = pbsLastName+'ShiftAssessment'+DateTime.Now().format('MMddyy');
+    evaluation.RecordTypeID = Utility.getEValuationRecordType('CMShiftAssessment');
+    evaluation.ServiceAssignment__c = this.theServAssign.Id;
+    evaluation.Status__c = 'Draft';
+    evaluation.Details_Section_Completed__c = true;
+
+
   }
-  
+
   public pageReference saveEvaluation() {
-  
-  	try{
-  		insert evaluation;
-  		PageReference pg = new PageReference('/apex/CMShiftAssessmentEdit?id='+evaluation.Id);
-  		return pg;
-  	}  	
-  	catch (Exception e) {
-  		Apexpages.AddMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
-  	}
-    
+
+      try{
+          insert evaluation;
+          PageReference pg = new PageReference('/apex/CMShiftAssessmentEdit?id='+evaluation.Id);
+          return pg;
+      }
+      catch (Exception e) {
+          Apexpages.AddMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
+      }
+
     return null;
   }
 
