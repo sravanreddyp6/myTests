@@ -77,8 +77,17 @@ public with sharing class CMShiftAssessmentView {
         }
     }
 
-    public CMShiftAssessmentView(Apexpages.StandardController controller){
-        this.stdController = controller;
+    public CMShiftAssessmentView(Apexpages.StandardController stdcontroller){
+	  	this.stdController = stdcontroller;
+    	Map<String, Schema.SObjectField> fieldMap = Schema.SObjectType.Evaluation__c.fields.getMap();
+    	
+        if (!Test.isRunningTest()) {
+            List<Schema.DescribeSObjectResult> describelist = Schema.describeSObjects(new List<String>{ 'Evaluation__c' });
+            Schema.DescribeSObjectResult info = describelist[0];
+            Map<string,Schema.SObjectField> fmap = info.fields.getmap();
+            stdcontroller.addFields(new List<String>(fmap.keySet()));
+        }
+      
         evaluation = (Evaluation__c) stdController.getRecord();
         selectedTab = ApexPages.currentPage().getParameters().get('tab');
         copingValues = new List<selectOption>();

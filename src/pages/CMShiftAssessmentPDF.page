@@ -1,4 +1,5 @@
 <apex:page standardController="Evaluation__c" showHeader="false" extensions="CMShiftAssessmentView" applyHtmlTag="false" renderAs="pdf">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresdprint)}" />
 	<head>
         <style>
             [id$=skinBodyFooter] {
@@ -167,10 +168,168 @@
 	       		<tr>
 	       		<td colspan="2" style="border:1px solid black" > 
 	       			<apex:outputText Value="IV" styleClass="labelCol" />
-	       			
 	       		</td>	
 	       	</tr>
+	       	<tr>
+	       		<td>
+	       			<apex:outputLabel value="IV" styleClass="label" />
+	       			<apex:outputField value="{!Evaluation__c.IV_Picklist__c}" />
+	       		</td>
+	       	</tr>
+	       	<tr>
+	       		<td>
+	       			<apex:outputLabel value="IV Type" styleClass="label" />
+	       			<apex:dynamiccomponent id="picc" componentValue="{!ctlMap['picc__c']}" />
+		            <apex:dynamiccomponent id="central" componentValue="{!ctlMap['central__c']}" />
+		            <apex:dynamiccomponent componentValue="{!ctlMap['heplock__c']}" />
+	       		</td>
+	       	</tr>
+	       	<tr>
+	       		<td>
+	       			<apex:dynamiccomponent componentValue="{!ctlMap['iv_site_issues__c']}" rendered="{!Evaluation__c.IV_Picklist__c == 'Yes'}" />
+	       		</td>
+	       	</tr>
+	       	<tr>
+	       		<td>
+	       			<apex:dynamiccomponent componentValue="{!ctlMap['iv_narrative_note__c']}" rendered="{!Evaluation__c.IV_Site_Issues__c == 'Yes' && Evaluation__c.IV_Picklist__c == 'Yes'}"/>
+	       		</td>
+	       	</tr>
 	       </table>
+         </apex:pageBlock>
+         <apex:pageBlock title="Cardiopulmonary" >
+         	<table width="80%"  >
+         		<tr>
+         			<td colspan="2" style="border:1px solid black" >
+         				<apex:outputText value="Cardio" />
+         			</td>
+         		</tr>
+         		<tr>
+         			<td>
+         				<apex:outputLabel Value="Heart Rate" styleClass="label" />
+         				<apex:outputField value="{!Evaluation__c.Heart_Sounds__c}" /><br/>
+         				<apex:outputlabel value="Intervention Needed" rendered="{!Evaluation__c.Heart_Sounds__c == 'Irregular'}" styleClass="label" />
+         				<apex:outputField value="{!Evaluation__c.Heart_Intervention_Need_Picklist__c}" rendered="{!Evaluation__c.Heart_Sounds__c == 'Irregular'}" /><br/>
+         				<apex:outputLabel value="Narrative Note" rendered="{!Evaluation__c.Heart_Intervention_Need_Picklist__c == 'Yes'}" styleClass="label" />
+         				<apex:outputField value="{!Evaluation__c.Heart_Rate_Intervention_Describe__c}" rendered="{!Evaluation__c.Heart_Intervention_Need_Picklist__c == 'Yes'}" />
+         			</td>
+         			<td>
+         				<apex:outputLabel Value="Peripheral Pulses Present" styleClass="label" />
+         				<apex:outputField value="{!Evaluation__c.Peripheral_Pulses_Present__c}" /><br/>
+         				<apex:outputlabel value="Describe" rendered="{!Evaluation__c.Peripheral_Pulses_Present__c == 'No'}" styleClass="label" />
+         				<apex:outputField value="{!Evaluation__c.Peripheral_Pulses_Describe__c}" rendered="{!Evaluation__c.Peripheral_Pulses_Present__c == 'No'}" /><br/>
+         			</td>
+         		</tr>
+        	</table>
+         	<table width="80%">
+         		<tr>
+         			<td>
+         				<apex:dynamiccomponent componentValue="{!ctlMap['autonomic_dysreflexia__c']}" /> <br/>
+         				<apex:outputLabel Value="Were the following areas assessed" styleClass="label" />
+         				<em><apex:outputField value="{!Evaluation__c.Autonomic_Dysreflexia_Areas_Assessed__c}"/></em><br/>
+         				<apex:outputLabel value="Was the issue Resolved" styleClass="label"/>
+         				<apex:outputField value="{!Evaluation__c.Dysreflexia_issue_resolved__c}" /> <br/>
+         				<apex:outputLabel value="Describe" styleClass="label" />
+         				<apex:outputField value="{!Evaluation__c.Dysreflexia_Issue_Describe__c}" rendered="{!Evaluation__c.Dysreflexia_issue_resolved__c == 'No'}" />
+         			</td>
+         		</tr>
+         	</table>
+         	<table width="80%" border="1px;" >
+         		<tr colspan="2" style="border:1px solid black">
+         			<td>
+         				<apex:outputlabel value="Sputum" />
+         			</td>
+         		</tr>
+         		<tr>
+         			<td>
+         				<apex:outputLabel value="Suctioning" styleClass="label" />
+         				<apex:outputField value="{!Evaluation__c.Suctioning_Picklist__c}" /><br/>
+         				<apex:dynamiccomponent componentValue="{!ctlMap['sputum_quantity__c']}" /><br/>
+         				<apex:dynamiccomponent componentValue="{!ctlMap['blood_tinged__c']}" /><br/>
+         				<apex:outputText value="{! if( Evaluation__c.Thick__c, 'Thick;', '') &
+                                         if (Evaluation__c.Thin__c, 'Thin;', '') &
+                                         if (Evaluation__c.Frothy__c, 'Frothy;', '') &
+                                         if (Evaluation__c.Sticky__c, 'Sticky;', '') &
+                                         if (Evaluation__c.Creamy__c, 'Creamy;', '')}" />
+         			</td>
+         			<td>
+         				<apex:dynamiccomponent componentValue="{!ctlMap['sputum_color__c']}" /><br/>
+         				<apex:dynamiccomponent componentValue="{!ctlMap['odor__c']}" /><br/>
+         				<apex:outputLabel value="Breath Sounds" styleClass="label" />
+         				<apex:outputText value="{!Evaluation__c.Breathe_Sounds__c & if( CONTAINS(Evaluation__c.Breathe_Sounds__c,  'Other'), ' (' & Evaluation__c.Breathe_Sound_Other__c & ')', '')}" />
+         			</td>
+         		</tr>
+         	</table>
+         </apex:pageBlock>
+         <apex:pageBlock title="GU/GI/Nutrition" >
+         
+         </apex:pageBlock>
+         <apex:pageBlock title="Skin/Body" >
+         
+         </apex:pageBlock>
+         <apex:pageBlock title="Neurological" >
+         
+         </apex:pageBlock>
+         <apex:pageBlock title="Ortho" >
+         	<table width="80%" >
+         		<tr>
+         			<td>
+         				<apex:outputLabel Value="Cast" styleClass="label" />
+         				<apex:outputField value="{!Evaluation__c.Cast_Picklist__c}" /><br/>
+         				<apex:outputlabel value="Location" rendered="{!Evaluation__c.Cast_Picklist__c == 'Yes'}" styleClass="label" />
+         				<apex:outputField value="{!Evaluation__c.Ortho_Cast_Location__c}" rendered="{!Evaluation__c.Cast_Picklist__c == 'Yes'}" /><br/>
+         				<apex:outputLabel value="Other" rendered="{!Evaluation__c.Ortho_Cast_Location__c == 'Other'}" styleClass="label" />
+         				<apex:outputField value="{!Evaluation__c.Cast_Location__c}" rendered="{!Evaluation__c.Ortho_Cast_Location__c == 'Other'}" />
+         			</td>
+         			<td>
+         				<apex:outputLabel Value="Traction" styleClass="label" />
+         				<apex:outputField value="{!Evaluation__c.Traction_Picklist__c}" /><br/>
+         				<apex:outputlabel value="Location" rendered="{!Evaluation__c.Traction_Picklist__c == 'Yes'}" styleClass="label" />
+         				<apex:outputField value="{!Evaluation__c.Traction_Location__c}" rendered="{!Evaluation__c.Traction_Picklist__c == 'Yes'}" /><br/>
+         				<apex:outputLabel value="Type" rendered="{!Evaluation__c.Traction_Picklist__c == 'Yes'}" styleClass="label" />
+         				<apex:outputField value="{!Evaluation__c.Traction_Type__c}" rendered="{!Evaluation__c.Traction_Picklist__c == 'Yes'}" /><br/>
+         				<apex:outputLabel value="Weight" rendered="{!Evaluation__c.Traction_Picklist__c == 'Yes'}" styleClass="label" />
+         				<apex:outputField value="{!Evaluation__c.Traction_Weight__c}" rendered="{!Evaluation__c.Traction_Picklist__c == 'Yes'}" />
+         			</td>	
+         		</tr>
+         		<tr>
+         			<td>
+         				<apex:outputLabel Value="External Devices" styleClass="label" />
+         				<apex:outputField value="{!Evaluation__c.External_Device_Picklist__c}" /><br/>
+         				<apex:outputlabel value="Location" rendered="{!Evaluation__c.External_Device_Picklist__c == 'Yes'}" styleClass="label" />
+         				<apex:outputField value="{!Evaluation__c.External_Devices_Location__c}" rendered="{!Evaluation__c.External_Device_Picklist__c == 'Yes'}" /><br/>
+         				<apex:outputLabel value="Type" rendered="{!Evaluation__c.External_Device_Picklist__c == 'Yes'}" styleClass="label" />
+         				<apex:outputField value="{!Evaluation__c.External_Devices_Type__c}" rendered="{!Evaluation__c.External_Device_Picklist__c == 'Yes'}" />
+         			</td>
+         		</tr>
+         	
+         	</table>
+         </apex:pageBlock>
+         <apex:pageBlock title="Psycho/Social" >
+         	<table width="100%" >
+         		<tr>
+         			<td>
+         				<apex:outputLabel value="Does Resident appear to be coping well" styleClass="label"/>
+         				<apex:outputField value="{!Evaluation__c.Resident_Coping_Well__c}" />
+         			</td>
+         		</tr>
+         		<tr>
+         			<td>
+         				<apex:outputLabel value="Describe" styleClass="label"/>
+         				<apex:outputField value="{!Evaluation__c.Coping_Description__c}" rendered="{!Evaluation__c.Resident_Coping_Well__c == 'No'}" />
+         				
+         			</td>
+         		</tr>
+         		<tr>
+         			<td>
+         				<apex:outputlabel styleClass="label">Does Resident appear to demonstrate/note any of the following</apex:outputlabel>
+         				<apex:outputField value="{!Evaluation__c.Does_Resident_appear_to_demonstrate__c}" />
+         				<em><apex:outputField value="{!Evaluation__c.Resident_Demonstrating_Issues__c}" rendered="{!Evaluation__c.Does_Resident_appear_to_demonstrate__c == 'Yes'}" /></em>
+         			</td>
+         		</tr>
+         		
+         	
+         	
+         	</table>
          </apex:pageBlock>
     </apex:form>
 </apex:page>
