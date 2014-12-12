@@ -19488,34 +19488,33 @@ errors.push(&apos;You must populate the &quot;Notes For Next Visit&quot; field b
 // EB-197: END
 
 // START: EB-210: NC TFC Progress Note flavor field requirements
-if({!ISPICKVAL(Progress_Note__c.Purpose_of_this_Consultation__c,&apos;&apos;)}
-&amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+// 2014-12-06 - EB-262 - changed to embedded VF page so we need to query to get values
+var tfcFields = sforce.connection.query(&quot;SELECT id, RecordTypeId, purpose_of_this_consultation__c, scheduling_status__c, foster_parents__c, topic_behavior_management__c, Topic_Diagnostic_Psycho_education__c, Topic_Family_Interactions__c, Topic_Life_Book_Development__c, Topic_Separation_Loss_and_Grief_Issues__c, Topic_Shared_Parenting__c, Topic_Successful_Adaptation__c, Topic_TFP_Rules_of_the_Road__c, Topic_Treatment_Goal_Review_PCP__c, Topic_Other__c, Topic_If_Other__c,PCP_Update_since_last_visit__c, Provided_to_reviewed_w_foster_parents__c, Coord_support_for_Mentor_child__c from Progress_Note__c where id =&apos;{!Progress_Note__c.Id}&apos;&quot;); 
+records = tfcFields.getArray(&quot;records&quot;); 
+
+if( !records[0].Purpose_of_this_Consultation__c &amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
 errors.push(&apos;You must populate the &quot;Purpose of this Consultation&quot; field before continuing.&apos;);
 }
-if({!ISPICKVAL(Progress_Note__c.Scheduling_Status__c,&apos;&apos;)}
-&amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+if( !records[0].Scheduling_Status__c  &amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
 errors.push(&apos;You must populate the &quot;Scheduling Status&quot; field before continuing.&apos;);
 }
-if({!ISBLANK(Progress_Note__c.Foster_Parents__c)}
-&amp;&amp; (curRtype[0].DeveloperName == &apos;NC_TFC&apos; || curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos;)) {
+if( !records[0].Foster_Parents__c &amp;&amp; (curRtype[0].DeveloperName == &apos;NC_TFC&apos; || curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos;)) {
 errors.push(&apos;You must populate the &quot;Foster Parents&quot; field before continuing.&apos;);
 }
-if({!Progress_Note__c.Topic_Behavior_Management__c==false &amp;&amp; Progress_Note__c.Topic_Diagnostic_Psycho_education__c==false &amp;&amp; Progress_Note__c.Topic_Family_Interactions__c==false &amp;&amp; Progress_Note__c.Topic_Life_Book_Development__c==false &amp;&amp; Progress_Note__c.Topic_Other__c==false &amp;&amp; Progress_Note__c.Topic_Separation_Loss_and_Grief_Issues__c==false &amp;&amp; Progress_Note__c.Topic_Shared_Parenting__c==false &amp;&amp; Progress_Note__c.Topic_Successful_Adaptation__c==false &amp;&amp; Progress_Note__c.Topic_TFP_Rules_of_the_Road__c==false &amp;&amp; Progress_Note__c.Topic_Treatment_Goal_Review_PCP__c==false} &amp;&amp; curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos;) {
+
+if(records[0].Topic_Behavior_Management__c==&apos;false&apos; &amp;&amp; records[0].Topic_Diagnostic_Psycho_education__c==&apos;false&apos; &amp;&amp; records[0].Topic_Family_Interactions__c==&apos;false&apos; &amp;&amp; records[0].Topic_Life_Book_Development__c==&apos;false&apos; &amp;&amp; records[0].Topic_Other__c==&apos;false&apos; &amp;&amp; records[0].Topic_Separation_Loss_and_Grief_Issues__c==&apos;false&apos; &amp;&amp; records[0].Topic_Shared_Parenting__c==&apos;false&apos; &amp;&amp; records[0].Topic_Successful_Adaptation__c==&apos;false&apos; &amp;&amp; records[0].Topic_TFP_Rules_of_the_Road__c==&apos;false&apos; &amp;&amp; records[0].Topic_Treatment_Goal_Review_PCP__c==&apos;false&apos; &amp;&amp; curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos;) {
 errors.push(&apos;You must select at least one &quot;Clinical Consultation / Skill Enhancement Topic&quot; before continuing.&apos;);
 }
-if({!Progress_Note__c.Topic_Other__c==true &amp;&amp; Progress_Note__c.Topic_If_Other__c==&apos;&apos;}){
+if(records[0].Topic_Other__c==true &amp;&amp; !records[0].Topic_If_Other__c ){
 errors.push(&apos;If the &quot;Clinical Consultation / Skill Enhancement Topic&quot; option &quot;Other&quot; has been selected, then you must make an entry in the &quot;If Other&quot; field before continuing.&apos;);
 }
-if({!ISPICKVAL(Progress_Note__c.PCP_update_since_last_visit__c,&apos;&apos;)}
-&amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+if(!records[0].PCP_update_since_last_visit__c &amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
 errors.push(&apos;You must populate the &quot;PCP update since last visit?&quot; field before continuing.&apos;);
 }
-if({!ISPICKVAL(Progress_Note__c.PCP_update_since_last_visit__c,&apos;Yes&apos;) &amp;&amp; ISPICKVAL(Progress_Note__c.Provided_to_reviewed_w_foster_parents__c,&apos;&apos;)}
-&amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+if( records[0].PCP_update_since_last_visit__c == &apos;Yes&apos; &amp;&amp; !records[0].Provided_to_reviewed_w_foster_parents__c &amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
 errors.push(&apos;If the response to &quot;PCP update since last visit?&quot; is &quot;Yes,&quot; you must populate the &quot;Provided to/reviewed w/ foster parents?&quot; field before continuing.&apos;);
 }
-if({!ISBLANK(Progress_Note__c.Coord_support_for_Mentor_child__c)}
-&amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+if( !records[0].Coord_support_for_Mentor_child__c &amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
 errors.push(&apos;You must populate the &quot;Coord. support for Mentor &amp; child?&quot; field before continuing.&apos;);
 }
 // END: EB-210: NC TFC Progress Note flavor field requirements
