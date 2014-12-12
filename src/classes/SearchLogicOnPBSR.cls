@@ -38,19 +38,21 @@ public with sharing class SearchLogicOnPBSR {
 	            } 
 	             
         }
-        
+        else {
         // otherwise do a name search
-        if (String.IsBlank(lastname) || String.IsBlank(firstname)) {
+        //if (String.IsBlank(lastname) || String.IsBlank(firstname)) {
             searchStringPBR= SearchLogicOnPBSR.buildCriteria(lastname,firstname,dob, age,gender,false, true);
-            searchStringPBS= SearchLogicOnPBSR.buildCriteria(lastname,firstname,dob, age,gender,true, false);          
+            searchStringPBS= SearchLogicOnPBSR.buildCriteria(lastname,firstname,dob, age,gender,true, false);
+            system.debug( 'PBR: ' + searchSTringPBR);
+            system.debug( 'PBS: ' + searchSTringPBS);
             List<Person_Being_Referred__c> pbrs2 = Database.query(searchStringPBR);
             List<Contact> pbss2 =  Database.query(searchStringPBS);
             
             pbrs.AddAll( pbrs2);
             pbsList.AddAll( pbss2);
+        //}
+        
         }
-        
-        
         for(Person_Being_Referred__c pbr : pbrs)
         {
         	List<Referral__c> r = pbr.Referrals__r;
@@ -93,7 +95,7 @@ public with sharing class SearchLogicOnPBSR {
             results.add(new ReferralSearchResults(pbs, matchedItems));  
         }
         
-        
+        system.debug('final results:' + results);
         results.sort();
         return results;
         
