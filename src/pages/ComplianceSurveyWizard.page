@@ -1,0 +1,147 @@
+<apex:page controller="ComplianceSurveyWizard" title="Compliance Survey Wizard" cache="false" showHeader="false" sidebar="false" standardStylesheets="false" showChat="false">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <apex:includeScript value="{!URLFOR($Resource.Bootstrap, '/bootstrap/js/jquery-1.9.1.min.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.Bootstrap, '/bootstrap/js/bootstrap.min.js')}"/>
+        <apex:stylesheet value="{!URLFOR($Resource.Bootstrap, '/bootstrap/css/bootstrap.min.css')}"/>    
+        <style type="text/css">
+            .container {
+                width: auto;
+                max-width: 680px;
+            }
+            .error {
+                border: 1px solid red !important;
+                margin-bottom: 0px !important;
+            }
+            .errorMsg {
+                margin-bottom: 10px !important;
+            }
+        </style>
+        <apex:stylesheet value="{!URLFOR($Resource.Bootstrap, '/bootstrap/css/bootstrap-responsive.min.css')}"/>
+        <script type="text/javascript">
+            var j$ = jQuery.noConflict();
+            beenFocused = true;
+            function showDescribeY() {
+                j$('#DescribeY').modal('show');
+            }
+            function showDescribeN() {
+                j$('#DescribeN').modal('show');
+            }
+            function hideDescribeY() {
+                j$('#DescribeY').modal('hide');
+            }
+            function hideDescribeN() {
+                j$('#DescribeN').modal('hide');
+            }
+        </script>
+    </head>
+    <apex:form >
+        <div class="container">
+            <div class="page-header text-center">
+                <div class="row-fluid">
+                  <div class="span2"><img src="{!URLFOR($Resource.ComplianceSurveyLogo, '/ComplianceSurveyLogoLeft.png')}"/></div>
+                  <div class="span8"><h3 style="font-size:22px">{!Survey.Name}</h3></div>
+                  <div class="span2"><img src="{!URLFOR($Resource.ComplianceSurveyLogo, '/ComplianceSurveyLogoRight.png')}"/></div>
+                </div>
+            </div>
+            <apex:pageMessages id="Messages"/>
+            <apex:outputPanel id="Question" rendered="{!Survey.Id != null}">
+                    <apex:outputPanel rendered="{!QuestionID == 'Welcome'}">
+                        <p>Are you {!TMN_User.First_Name__c + ' ' + TMN_User.Last_Name__c}?</p>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!QuestionID == 'User Data'}">
+                        <div class="row-fluid">
+                            <div class="span12">
+                                <apex:outputPanel rendered="{!TMN_User.Id == null && UserID != null}">
+                                    <p class="text-error">The link you used is associated with a different employee. If you did not receive an email yourself, you are not required to submit a 2012 Compliance Certification at this time. If you would like to submit a certification anyway, please tell us something about yourself.</p>
+                                </apex:outputPanel>
+                                <fieldset >
+                                    <apex:repeat value="{!$ObjectType.Response__c.FieldSets.Wizard}" var="f"> 
+                                        <p>{!f.Label}:</p> <apex:inputField value="{!Response[f]}"/>
+                                    </apex:repeat>
+                                </fieldset>
+                                <apex:commandButton styleClass="btn btn-primary btn-large" value="Start Survey" action="{!Yes}" reRender="Question"/>
+                            </div>
+                        </div>
+                    </apex:outputPanel>
+                    <apex:repeat value="{!Questions}" var="q">
+                        <apex:outputPanel rendered="{!QuestionID == q.Id}">
+                            <h3><apex:outputText value="{!q.Title__c}" rendered="{!q.Show_Title__c && q.Title__c != null}"/></h3>
+                            <p><apex:outputText escape="false" value="{!q.Content__c}" rendered="{!q.Content__c != null}"/></p>
+                            <p class="text-warning"><apex:outputText escape="false" value="{!q.Reminder__c}" rendered="{!q.Reminder__c != null}"/></p>
+                        </apex:outputPanel>
+                    </apex:repeat>
+                    
+                <apex:outputPanel rendered="{!QuestionID == 'Final'}">
+                    <p>Thank you {!TMN_User.First_Name__c} for completing the survey.  If you would like to print your responses please click below.  Otherwise you can exit your browser window.</p>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!QuestionID == 'Submitted'}">
+                    <p>Your survey has already been submitted.</p>
+                </apex:outputPanel>
+                <ul class="pager">
+                    <li style="padding: 4px; float: left;"><apex:commandLink immediate="true" rendered="{!Savepoints.size >= 1 && QuestionID != 'First Question' && QuestionID != 'Final'}" action="{!Back}" reRender="Question,DescribeYContent,DescribeNContent">Previous Question</apex:commandLink></li>
+                    <apex:outputPanel style="border:none;padding:0;" rendered="{!QuestionID != 'User Data' && Question.Type__c != 'Final Question'}">
+                        <li style="padding: 1px;"><apex:commandLink rendered="{!!Question.Describe_Y__c && Question.Next_Question_Y__c != null}" action="{!Yes}" reRender="Question,DescribeYContent,DescribeNContent">Yes</apex:commandLink></li>
+                        <li style="padding: 1px;"><apex:outputLink rendered="{!Question.Link__c != null && Question.Next_Question_Y__c == null}" target="{!IF(Question.Action__c == 'New Tab','_blank','')}" value="{!'http://'+Question.Link__c}">Yes</apex:outputLink></li>
+                        <li style="padding: 1px;"><apex:commandLink rendered="{!Question.Describe_Y__c}" oncomplete="showDescribeY();" reRender="Question,DescribeYContent,DescribeNContent">Yes</apex:commandLink></li>
+                        
+                        <li style="padding: 1px;"><apex:commandLink rendered="{!!Question.Describe_N__c && Question.Next_Question_N__c != null}" action="{!No}" reRender="Question,DescribeYContent,DescribeNContent">No</apex:commandLink></li>
+                        <li style="padding: 1px;"><apex:outputLink rendered="{!Question.Link__c != null && Question.Next_Question_N__c == null}" target="{!IF(Question.Action__c == 'New Tab','_blank','')}" value="{!'http://'+Question.Link__c}">No</apex:outputLink></li>
+                        <li style="padding: 1px;"><apex:commandLink rendered="{!Question.Describe_N__c}" oncomplete="showDescribeN();" reRender="Question,DescribeYContent,DescribeNContent">No</apex:commandLink></li>
+                    </apex:outputPanel>
+                    <li style="padding: 1px;"><apex:commandLink rendered="{!QuestionID != 'Final' && Question.Type__c == 'Final Question'}" action="{!Submit}" reRender="Question">Submit</apex:commandLink></li>
+                    <li style="padding: 1px;"><apex:commandLink rendered="{!QuestionID == 'Final'}" action="{!Print}">Print your submission</apex:commandLink></li>                
+                </ul>
+            </apex:outputPanel>
+            <hr/>
+            <div id="footer">
+                <div class="container">
+                    <p class="muted credit">{!YEAR(TODAY())}</p>
+                </div>
+            </div>
+        </div>
+    </apex:form>
+    <apex:form >
+        <div id="DescribeY" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+            <apex:outputPanel id="DescribeYContent">
+                <apex:outputPanel rendered="{!Question.Describe_Title_Y__c != null}">
+                    <div class="modal-header">
+                        <h3 id="ModalLabel">{!Question.Describe_Title_Y__c}</h3>
+                    </div>
+                </apex:outputPanel>
+                <div class="modal-body">
+                    <apex:outputPanel rendered="{!Question.Describe_Description_Y__c != null}">
+                        <p>{!Question.Describe_Description_Y__c}</p> 
+                    </apex:outputPanel>
+                    <apex:inputField style="width:95%"  value="{!Reply.Describe__c}" required="true" rendered="{!Question.Describe_Y__c}" styleClass="DescribeYInput"/>
+                </div>
+            </apex:outputPanel>
+            <div class="modal-footer">
+                <apex:commandLink onclick="hideDescribeY()" styleClass="btn" reRender="Question,DescribeYContent,DescribeNContent" immediate="true">Cancel</apex:commandLink>
+                <apex:commandLink onclick="if(j$('.DescribeYInput').val().length >= 10  && j$('.DescribeYInput').val().length <= 300){hideDescribeY();}" styleClass="btn btn-primary btn-normal" action="{!Yes}" reRender="Question,DescribeYContent,DescribeNContent">Submit</apex:commandLink>
+            </div>
+        </div>
+    </apex:form>
+    <apex:form >
+        <div id="DescribeN" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+            <apex:outputPanel id="DescribeNContent">
+                <apex:outputPanel rendered="{!Question.Describe_Title_N__c != null}">
+                    <div class="modal-header">
+                        <h3 id="ModalLabel">{!Question.Describe_Title_N__c}</h3>
+                    </div>
+                </apex:outputPanel>
+                <div class="modal-body">
+                    <apex:outputPanel rendered="{!Question.Describe_Description_N__c != null}">
+                        <p>{!Question.Describe_Description_N__c}</p> 
+                    </apex:outputPanel>
+                    <apex:inputField style="width:95%"  value="{!Reply.Describe__c}" required="true" rendered="{!Question.Describe_N__c}" styleClass="DescribeNInput"/>
+                </div>
+            </apex:outputPanel>
+            <div class="modal-footer">
+                <apex:commandLink onclick="hideDescribeN()" styleClass="btn" reRender="Question,DescribeYContent,DescribeNContent" immediate="true">Cancel</apex:commandLink>
+                <apex:commandLink onclick="if(j$('.DescribeNInput').val().length >= 10  && j$('.DescribeNInput').val().length <= 300){hideDescribeN();}" styleClass="btn btn-primary btn-normal" action="{!No}" reRender="Question,DescribeYContent,DescribeNContent">Submit</apex:commandLink>
+            </div>
+        </div>
+    </apex:form>
+</apex:page>

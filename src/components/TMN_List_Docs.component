@@ -1,0 +1,60 @@
+<apex:component Controller="queryLibrary">
+<!--
+
+Renders a list of documents that have been include with the 'filterFor' varible which is passed from the VF Page
+filterFor is derived from the custom field Publish_To__c in the CRM Content object
+
+the resource 'DocListIcons' is required for this component to render images like download r preview
+
+the preview open in a new window/tab and redirects to the 'DocPreview' page tagged with the document ID to render a document preview
+
+-->
+<apex:attribute name="filterFor" type="String" required="true" description="the filter to place on the report list" assignTo="{!filter}"/>
+<apex:attribute name="TitleColor" type="String" required="false" description="Color of the Link" default="navy"/>
+<apex:attribute name="Title" type="String" required="false" description="Title of Pageblock Section Header" />
+<style>
+
+    .tmnListDocTitle{
+        font-size: 13pt;
+        color: {!TitleColor};
+        padding-left: 10px;
+        
+    }
+    .tmnListDocsDesc{
+        font-size: 10pt;
+        color: gray;
+        padding: 3px;
+        padding-left: 25px;
+    }
+
+</style>
+
+<apex:pageBlock title="{!Title}" >
+    <apex:pageBlockTable value="{!docs}" var="rr" style="border-radius: 7px">    
+
+        <apex:column > 
+            <apex:outputPanel layout="block" styleClass="tmnListDocTitle">  
+                <apex:outputLink style="color: {!TitleColor}" value="{!'/sfc/#version/' + rr.id}" title="View details for this document" >{!rr.title}</apex:outputLink> 
+            </apex:outputPanel>             
+            <apex:outputPanel layout="block" styleClass="tmnListDocsDesc"> 
+                {!rr.description}                
+            </apex:outputPanel>
+        </apex:column> 
+
+         <apex:column >
+             <a href="#" title="Preview Document in the Browser" onclick="window.open('{!$Page.DocPreview + '?id=' + rr.id}','','width=850,height=800')">
+                <apex:image value="{!URLFOR($Resource.DocListIcons,'Preview.png')}" height="24" width="24"/>
+            </a> 
+        </apex:column>
+        
+        <apex:column >
+            <apex:outputLink title="Download" value="/sfc/servlet.shepherd/version/download/{!rr.id}?asPdf=false&operationContext=CHATTER">
+                <apex:image value="{!URLFOR($Resource.DocListIcons,'Download.png')}" height="24" width="24"/>
+            </apex:outputLink>         
+        </apex:column>
+             
+    </apex:pageBlockTable>
+    
+
+</apex:pageBlock>
+</apex:component>

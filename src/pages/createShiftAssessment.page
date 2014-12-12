@@ -1,0 +1,50 @@
+<apex:page StandardController="Evaluation__c" extensions="createShiftAssessment" docType="html-5.0" sidebar="false"  >
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+
+<style>
+.thinking{
+    opacity:0.8;
+    background-color:#ccc;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}    
+.thinkingwheel{
+	position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+}
+</style>
+
+<script>
+    function setFocusOnLoad() {}
+</script>
+   
+    <apex:form id="frm" >
+    	<apex:pageMessages ></apex:pageMessages >
+        <apex:outputPanel layout="block" id="parameterPanel" style="width: 800px;">
+        <apex:pageBlock title="Enter Shift Time" >
+            <apex:pageBlockSection >
+                <apex:inputfield id="start_time" value="{!Evaluation__c.Shift_Start_Time__c}" label="Start Time" required="true" />
+                <apex:inputfield id="end_time" label="End Time" value="{!Evaluation__c.Shift_End_Time__c}"  />
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="bottom" >
+                <apex:commandButton value="Create ShiftAssessment" action="{!proceed}" status="myStatus"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        </apex:outputPanel>
+    </apex:form>
+    <apex:actionStatus id="myStatus" >
+	    <apex:facet name="start">
+	        <div  class="thinking">
+	            <div class="thinkingwheel">
+	                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp;Processing...</span>
+	            </div>
+	        </div>
+	    </apex:facet>  
+	    <apex:facet name="stop"></apex:facet>
+	</apex:actionStatus>        
+
+
+</apex:page>
