@@ -59,7 +59,10 @@
 	tr.shown td.details-control {
 	    background: url("{!URLFOR($Resource.DetailsOpenClose, 'details_close.png')}") no-repeat center center;
 	}
-
+	
+	.fancytree-container{
+	    border: none !important;
+    }
   </style>
 
  <script type="text/javascript">
@@ -113,8 +116,8 @@
 }) (jQuery.noConflict());
 
 displayDocProperties= function(){
-    var el = $('div[id$=associatedDocDetail]');
-    el.trigger('scrollIntoView');
+//    var el = $('div[id$=associatedDocDetail]');
+//    el.trigger('scrollIntoView');
     displayRecievedDate();
 }
 
@@ -432,7 +435,7 @@ jQuery(document).ready(function(){
 
         <apex:pageBlockSection columns="2" id="admissionDocumentyEntry">
 
-	       	<apex:outputPanel id="treeContainer" layout="block">
+	       	<apex:outputPanel id="treeContainer" layout="block" style="overflow-y:scroll;max-height:350px;overflow-x:hidden;">
 				<c:Fancy_Tree showIcons="true" TreeString="{!treeData}" allowInactiveNode="false" 
 				tableExt="true" mode="3" activateActionSignature="triggerNodeEdit(data.node);"  selectActionSignature="triggerNodeSelection(data.node);" 
 				checkbox="true" ID_PageSideStorage="catalog_items" TreeID="pb_packetDoc" debug="false" />
