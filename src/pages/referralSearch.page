@@ -27,7 +27,8 @@ var validateInput = function( ) {
 		if ( dob.val() != '' && !Date.parse( dob.val())) {
 			errors += "<li>Please enter a valid date of birth.";
 		}
-		if ( age.val() != '' && !parseFloat(age.val()) ) {
+		
+		if ( age.val() != '' && isNaN(parseFloat(age.val())) ) {
 			errors += "<li>Please enter a valid age.";
 		}	
 		
@@ -95,7 +96,7 @@ var validateInput = function( ) {
        	<apex:selectlist label="Gender" value="{!personGender}" id="gender" size="1">
        		<apex:selectOptions value="{!genderList}" />
      	</apex:selectlist>
-     	<apex:pageBlockSectionItem>
+     	<apex:pageBlockSectionItem >
      	<apex:outputLabel value="" />
       	<apex:commandbutton action="{!searchRefs}" value="Search" onclick="return validateInput();" />
       	</apex:pageBlockSectionItem>

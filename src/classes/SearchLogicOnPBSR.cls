@@ -62,7 +62,7 @@ public with sharing class SearchLogicOnPBSR {
 	            if (lastname!=null && lastname!='' && pbr.Last_Name__c == lastName) matchedItems +=1;
 	            if (firstname!=null && firstname!='' && pbr.First_Name__c == firstName) matchedItems +=1;
 	            if (dob!=null && pbr.Date_of_Birth__c == dob) matchedItems +=1;
-	            if (age!=null && age!=0 && pbr.Age__c == age) matchedItems +=1;
+	            if (age!=null && pbr.Age__c == age) matchedItems +=1;
 	            if (gender!=null && gender!='' && pbr.Gender__c == gender) matchedItems +=1;
 	            
 	        
@@ -74,7 +74,7 @@ public with sharing class SearchLogicOnPBSR {
 	            if (lastname!=null && lastname!='' && pbr.Last_Name__c == lastName) matchedItems +=1;
 	            if (firstname!=null && firstname!='' && pbr.First_Name__c == firstName) matchedItems +=1;
 	            if (dob!=null && pbr.Date_of_Birth__c == dob) matchedItems +=1;
-	            if (age!=null && age!=0 && pbr.Age__c == age) matchedItems +=1;
+	            if (age!=null && pbr.Age__c == age) matchedItems +=1;
 	            if (gender!=null && gender!='' && pbr.Gender__c == gender) matchedItems +=1;
 	            
 	        
