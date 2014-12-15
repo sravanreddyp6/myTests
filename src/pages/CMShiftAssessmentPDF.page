@@ -503,7 +503,48 @@
 		   
          </apex:pageBlock>
          <apex:pageBlock title="Neurological" >
-         
+         	<table style="width:80%;">
+				<tr>
+					<td style="border:1px solid black;width:100%"><apex:outputLabel value="Cognitive" styleClass="label" /></td>
+				</tr>
+				<tr>
+					<td>
+						<apex:dynamiccomponent componentvalue="{!ctlmap['rancho_level__c']}" />
+					</td>
+				</tr>
+			</table>
+         	<table >
+         		<tr>
+         			<td>
+         				<apex:outputLabel value="Responds To" styleClass="label"/>
+				        <apex:outputPanel >
+				        <apex:outputText value="{!If (Evaluation__c.Verbal_Stim__c, 'Verbal Stim;', '')}" />
+				        <apex:outputText value="{!If (Evaluation__c.Auditory_Stim__c, 'Auditory Stim;', '')}" />
+				        <apex:outputText value="{!If (Evaluation__c.Tactile_Stim__c, 'Tactile Stim;', '')}" />
+				        <apex:outputText value="{!If (Evaluation__c.Responds_To_Pain__c, 'Pain;', '')}" />
+				        <apex:outputText value="{!If (Evaluation__c.Visual__c, 'Visual Stim;', '')}" />
+				        </apex:outputPanel><br />
+				        <apex:dynamiccomponent componentvalue="{!ctlmap['level_of_conciousness__c']}" /><Br />
+	    				<apex:dynamiccomponent componentvalue="{!ctlmap['orientation__c']}" /><br />
+	    				<apex:outputLabel value="Behavior" styleclass="label"/>
+				        <apex:outputPanel >
+				        <apex:outputText value="{!if (Evaluation__c.Cooperative__c, 'Cooperative;','')}" />
+				        <apex:outputText value="{!if (Evaluation__c.Impulsive__c, 'Impulsive;','')}" />
+				        <apex:outputText value="{!if (Evaluation__c.Inappropriate__c, 'Inappropriate;','')}" />
+				        <apex:outputText value="{!if (Evaluation__c.Agitated__c, 'Agitated;','')}" />
+				        <apex:outputText value="{!if (Evaluation__c.Combative__c, 'Combative;','')}" />
+				        <apex:outputText value="{!if (Evaluation__c.Confused__c, 'Confused;','')}" />
+				        <apex:outputText value="{!if (Evaluation__c.Unresponsive__c, 'Unresponsive;','')}" />
+				        </apex:outputPanel><br />
+				        <apex:dynamiccomponent componentvalue="{!ctlmap['mood__c']}" /><br />
+				        <apex:outputLabel value="Has Resident Expressed Desire to Hurt Him/Herself?" styleClass="label" />
+				        <apex:outputField value="{!Evaluation__c.Desire_to_hurt_themselves__c}"  /><br />
+				        <apex:outputLabel value="Does Resident Have a Plan to Harm Him/Herself?" styleClass="label" />
+				        <apex:outputField value="{!Evaluation__c.Plan_to_Harm_themselves__c}" /><Br />
+				        
+         			</td>
+         		</tr>
+         	</table>
          </apex:pageBlock>
          <apex:pageBlock title="Ortho" >
          	<table width="80%" >
