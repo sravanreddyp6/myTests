@@ -320,14 +320,6 @@
                         <apex:outputField value="{!Evaluation__c.Lips_Sores_Describe__c}" label="If Sores, Describe" rendered="{!AND(!ISBLANK(Evaluation__c.Lips__c), CONTAINS(Evaluation__c.Lips__c, 'Sores'))}" />
                         <apex:outputField value="{!Evaluation__c.Breath__c}" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
                         <apex:outputField value="{!Evaluation__c.Saliva__c}" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
-                        <apex:outputField value="{!Evaluation__c.Dentures__c}" />
-                        <apex:outputField value="{!Evaluation__c.Dentures_Type__c}" label="If Yes, Type" rendered="{!Evaluation__c.Dentures__c='Yes'}" />
-                        <apex:outputField value="{!Evaluation__c.Dentures_Usage_Details__c}" label="If Yes, Usage Details" rendered="{!Evaluation__c.Dentures__c='Yes'}" />
-                        <apex:outputField value="{!Evaluation__c.Jaw_Wires__c}" />
-                        <apex:outputField value="{!Evaluation__c.Wire_Cutters_at_Bedside__c}" label="If Yes, Wire Cutters at Bedside" rendered="{!Evaluation__c.Jaw_Wires__c='Yes'}" />
-                        <apex:outputField value="{!Evaluation__c.Other_Dental_Appliance_Checkbox__c}" label="Other Dental Appliance" />
-                        <apex:outputField value="{!Evaluation__c.Other_Dental_Appliance_Usage_Details__c}" label="If Yes, Usage Details" rendered="{!Evaluation__c.Other_Dental_Appliance_Checkbox__c}" />
-                        <apex:outputField value="{!Evaluation__c.Other_Dental_Appliance_Present_Picklist__c}" label="If Yes, Are they present" rendered="{!Evaluation__c.Other_Dental_Appliance_Checkbox__c}" />
                         <apex:outputField value="{!Evaluation__c.Narrative_Note__c}" label="Add Narrative Note" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel value="PEDS" />
