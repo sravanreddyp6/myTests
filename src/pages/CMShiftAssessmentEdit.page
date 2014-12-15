@@ -1295,37 +1295,6 @@
                                 </apex:selectCheckboxes>
                             </apex:outputPanel>
                         </apex:pageBlockSectionItem>
-                        <apex:inputField value="{!Evaluation__c.Dentures__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.denturesSection.denturesType}&quot;, &quot;{!$Component.denturesUsageDetails}&quot;]}" html-data-visibility-row-rules="true" />
-                        <apex:pageBlockSectionItem id="denturesSection">
-                            <apex:outputLabel value="Type" />
-                            <apex:outputPanel >
-                                <apex:selectCheckboxes id="denturesType" value="{!selectedOptionsMap['dentures_type__c']}">
-                                    <apex:selectOptions value="{!selectOptionWidgetsMap['dentures_type__c']}" />
-                                </apex:selectCheckboxes>
-                            </apex:outputPanel>
-                        </apex:pageBlockSectionItem>
-                        <apex:inputField value="{!Evaluation__c.Dentures_Usage_Details__c}" label="Usage Details" id="denturesUsageDetails" />
-                        <apex:pageBlockSectionItem >
-                            <apex:outputLabel value="Jaw Wires" />
-                            <apex:outputPanel >
-                                <apex:inputField value="{!Evaluation__c.Jaw_Wires__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.wireCutters}&quot;, &quot;{!$Component.wireCuttersLabel}&quot;]}" />
-                                <br />
-                                <apex:outputLabel value="If Yes, Wire Cutters at Bedside" style="margin-right: 5px; " id="wireCuttersLabel" />
-                                <apex:inputField value="{!Evaluation__c.Wire_Cutters_at_Bedside__c}" id="wireCutters" />
-                            </apex:outputPanel>
-                        </apex:pageBlockSectionItem>
-                        <apex:pageBlockSectionItem >
-                            <apex:outputLabel value="Other Dental Appliance" />
-                            <apex:outputPanel >
-                                <apex:inputField value="{!Evaluation__c.Other_Dental_Appliance_Checkbox__c}" html-data-visibility-rules="{&quot;1&quot;: [&quot;{!$Component.usageDetails}&quot;, &quot;{!$Component.usageDetailsLabel}&quot;, &quot;{!$Component.otherDentalAppliancePresent}&quot;, &quot;{!$Component.otherDentalAppliancePresentLabel}&quot;]}" />
-                                <br />
-                                <apex:outputLabel value="Usage Details" style="margin-right: 5px; " id="usageDetailsLabel" />
-                                <apex:inputField value="{!Evaluation__c.Other_Dental_Appliance_Usage_Details__c}" id="usageDetails" />
-                                <br />
-                                <apex:outputLabel value="Are They Present" style="margin-right: 5px; " id="otherDentalAppliancePresentLabel" />
-                                <apex:inputField value="{!Evaluation__c.Other_Dental_Appliance_Present__c}" id="otherDentalAppliancePresent" />
-                            </apex:outputPanel>
-                        </apex:pageBlockSectionItem>
                         <apex:inputField value="{!Evaluation__c.Narrative_Note__c}" id="narrativeNote" label="Add Narrative Note" />
                         <apex:outputText value="PEDS" styleClass="labelCol" style="margin-left: 2cm;"/>
                         <apex:inputField value="{!Evaluation__c.PEDS_Teething__c}" label="Teething"/>
