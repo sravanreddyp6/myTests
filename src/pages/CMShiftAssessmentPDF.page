@@ -399,7 +399,108 @@
          	</table>
          </apex:pageBlock>
          <apex:pageBlock title="Skin/Body" >
-         
+         	<table width="80%" border="1px;" >
+         		<tr>
+         			<td colspan="2" style="border: 1px solid black;">
+         				<apex:outputText value="General Skin Condition" />
+         			</td>
+         		</tr>
+         		 <tr>
+				    <td width="50%" style="vertical-align:top">
+				
+				        <apex:outputLabel value="Color" styleClass="label" /> 
+				        <apex:outputText value="{!Evaluation__c.Skin_Color__c}" label="Color"/><br/>
+				        <apex:outputLabel value="Mositure" styleClass="label" /> 
+				        <apex:outputText value="{!Evaluation__c.Skin_Moisture__c}" label="Mositure"/><br/>
+				        <apex:outputLabel value="Edema" styleClass="label" /> 
+				        <apex:outputText value="{!Evaluation__c.Skin_Edema__c}" label="Edema"/>&nbsp;<apex:outputLabel value="Location" styleClass="label" /><apex:outputText value="{!Evaluation__c.Skin_Edema_Location__c}" label="Edema Location"/>&nbsp;<apex:outputLabel value="Pitting" styleClass="label" /><apex:outputText value="{!Evaluation__c.Skin_Edema_Pitting__c}" /><br/>
+				        <apex:dynamiccomponent componentvalue="{!ctlmap['peripheral_capillary_refill_location__c']}" />
+				        <apex:dynamiccomponent componentvalue="{!ctlmap['peripheral_capillary_refill_of_seconds__c']}" />
+				    </td><td width="50%" style="vertical-align:top">
+				        <apex:outputLabel value="Temperature" styleClass="label" /> 
+				        <apex:outputText value="{!Evaluation__c.Skin_Temperature__c}" label="Temperature"/><br/>
+				        <apex:outputLabel value="Turgor" styleClass="label" /> 
+				        <apex:outputText value="{!Evaluation__c.Skin_Turgor__c}" label="Turgor"/><br/>
+				        <apex:outputLabel value="Behavior" styleClass="label" /> 
+				        <apex:outputText value="{!Evaluation__c.Skin_Behavior__c}" label="Behavior"/><br/>
+				    </td>
+			    </tr>
+         	</table>
+         	<c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" isPdf="true" />
+         	<table width="80%" >
+         		<tr>
+         			<td>
+         				<apex:outputLabel value="Skin Intact" styleClass="label" />
+         				<apex:outputField value="{!Evaluation__c.Skin_Intact_Picklist__c}" />
+         			</td>
+         		</tr>
+         	</table>
+         	
+         	<apex:variable var="b" value="" rendered="{!Evaluation__c.Skin_intact_picklist__c == 'No'}" >
+         	
+         	<div style="page-break-before:always;"></div>
+         	<div style="position: relative; float: left; margin-left: 80px; height: 298px; margin-top:130px;" >
+		       <apex:image width="318" height="298" style="float: left; border: 3px solid #ECECEC;"  value="{! baseURL + URLFOR($Resource.WholeBodyNoGrid)}" id="bodyMap" />
+		
+		        <apex:variable var="index" value="{!1}" />
+		        <apex:repeat value="{!annotations}" var="annotation">
+		          <div class='annotation-number'
+		               style="pointer-events: none;
+		                      position: absolute;
+		                      text-align: center;
+		                      left: {!annotation.Annotation_X__c * 100}%;
+		                      width: {!annotation.Annotation_Width__c * 100}%;
+		                      top: {!annotation.Annotation_Y__c * 100}%;
+		                      height: {!annotation.Annotation_Height__c * 100}%;
+		                      border: 1px black solid;">
+		            <span style="color: red; font-size: 1em;">{!index}</span>
+		          </div>
+		        <apex:variable var="index" value="{!index+1}" />
+		        </apex:repeat>
+		        </div>
+		    <div style="margin-left: 420px; height: 298px;">
+		        <table id="annotations" style="width:80%">
+		            <tbody>
+		            <apex:variable id="index" var="index" value="{!0}" />
+		            <apex:repeat value="{!annotations}" var="annotation">
+		            <apex:variable id="index" var="index" value="{!index+1}" />
+		            <tr><td>{!index}</td><td>{!annotation.Annotation_Text__c}</td></tr>
+		            </apex:repeat>
+		            </tbody>
+		        </table>
+	    	</div>
+		    <div style="clear:both"></div>
+		    
+		    <table width="80%"  >
+		    	<tr>
+		    		<td colspan="2" style="vertical-align:top" >
+		    			<apex:outputLabel value="Other Body Map Comments" styleClass="label" />
+		    			<apex:outputField value="{!Evaluation__c.Body_Map_Comments__c}" />
+		    		</td>
+		    	</tr>
+		    	<tr>
+		    		<td style="width:50%" >
+        				<apex:dynamiccomponent componentvalue="{!ctlmap['wound_vac__c']}" /><br />
+       				    <apex:dynamiccomponent componentvalue="{!ctlmap['wound_vac_frequency__c']}" /><br />
+						<apex:dynamiccomponent componentvalue="{!ctlmap['wound_vac_duration__c']}" />
+					</td>
+					<td>
+						<apex:dynamiccomponent componentvalue="{!ctlmap['specialty_bed__c']}" /><br/>
+						<apex:dynamiccomponent componentvalue="{!ctlmap['specialty_bed_type__c']}" />                      
+    				</td>
+		    	</tr>
+		    </table>
+		    <apex:pageBlockSection columns="1" title="Pressure Ulcer Details" >
+			    <apex:pageBlockTable value="{!pUlcers}" var="ulcer" id="pUlcersTable" border="1" >
+	               <apex:column value="{!ulcer.Decubity_Stage__c}" />
+	               <apex:column value="{!ulcer.Location__c}" />
+	               <apex:column value="{!ulcer.Decubity_Measurement__c}" />
+	               <apex:column value="{!ulcer.Date__c}" headerValue="Date Last Measured"/>
+	               <apex:column value="{!ulcer.Treatment__c}" />
+	           </apex:pageBlockTable>
+	       </apex:pageBlockSection>
+		   </apex:variable>
+		   
          </apex:pageBlock>
          <apex:pageBlock title="Neurological" >
          
@@ -445,14 +546,9 @@
          		<tr>
          			<td>
          				<apex:outputLabel value="Does Resident appear to be coping well" styleClass="label"/>
-         				<apex:outputField value="{!Evaluation__c.Resident_Coping_Well__c}" />
-         			</td>
-         		</tr>
-         		<tr>
-         			<td>
-         				<apex:outputLabel value="Describe" styleClass="label"/>
+         				<apex:outputField value="{!Evaluation__c.Resident_Coping_Well__c}" /><br/>
+         				<apex:outputLabel value="Describe" styleClass="label" rendered="{!Evaluation__c.Resident_Coping_Well__c == 'No'}" />
          				<apex:outputField value="{!Evaluation__c.Coping_Description__c}" rendered="{!Evaluation__c.Resident_Coping_Well__c == 'No'}" />
-         				
          			</td>
          		</tr>
          		<tr>

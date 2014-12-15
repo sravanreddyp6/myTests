@@ -524,9 +524,31 @@
                         <apex:outputField value="{!Evaluation__c.Specialty_Bed_Type__c}" rendered="{!Evaluation__c.Speciality_Bed_Picklist__c == 'Yes'}" label="Type"/>
                         <apex:outputField value="{!Evaluation__c.Wound_Vac_Duration__c}" rendered="{!Evaluation__c.Wound_Wac_Picklist__c == 'Yes'}" label="Duration" />
                     </apex:pageBlockSection>
-                    <apex:PageBlockSection title="Add Pressure Ulcer Details" columns="1" rendered="{!Evaluation__c.Skin_Intact_Picklist__c =='No'}" >
-
-                    </apex:PageBlockSection>
+                  	<apex:pageBlockSection columns="1" title="Pressure Ulcer Details" rendered="{!Evaluation__c.Skin_Intact_Picklist__c == 'No'}" >
+                    	 <apex:actionFunction name="showAddpUlcerDetail" action="{!showAddpUlcerDetail}" status="loadingpUlcerDetailStatus" rerender="pUlcerDetailDialogMainBlock" oncomplete="openModalDialog('{!$Component.pUlcerDetailDialog}', 'Add Pressure Ulcers Detail', '{!$Component.wholePage}');" />
+                        <apex:actionFunction name="showEditpUlcerDetail" action="{!showEditpUlcerDetail}" status="loadingpUlcerDetailStatus" rerender="pUlcerDetailDialogMainBlock" oncomplete="openModalDialog('{!$Component.pUlcerDetailDialog}', 'Edit Pressure Ulcers Detail', '{!$Component.wholePage}');">
+                            <apex:param name="currentVitalsDetailId" assignTo="{!currentpUlcerDetailId}" value="" />
+                        </apex:actionFunction>
+                    	<apex:outputPanel layout="none">
+                            <apex:commandButton value="Add Pressure Ulcers Details" onclick="showAddpUlcerDetail(); return false;" />
+                            <apex:actionStatus id="loadingpUlcerDetailStatus">
+                                <apex:facet name="start">
+                                    <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                                </apex:facet>
+                                <apex:facet name="stop" />
+                            </apex:actionStatus>
+                        </apex:outputPanel>
+                        <apex:pageBlockTable value="{!pUlcers}" var="ulcer" id="pUlcersTable">
+                            <apex:column headerValue="{!IF(pUlcers.size>0, 'Action', '')}" width="50px">
+                                <apex:commandLink onclick="showEditpUlcerDetail('{!ulcer.Id}'); return false;" value="Edit" />
+                            </apex:column>
+                            <apex:column value="{!ulcer.Decubity_Stage__c}" />
+                            <apex:column value="{!ulcer.Location__c}" />
+                            <apex:column value="{!ulcer.Decubity_Measurement__c}" />
+                            <apex:column value="{!ulcer.Date__c}" headerValue="Date Last Measured"/>
+                            <apex:column value="{!ulcer.Treatment__c}" />
+                        </apex:pageBlockTable>
+                    </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:tab>
 
@@ -757,6 +779,36 @@
                     <apex:inputField value="{!currentVitalsDetail.O2_Saturation__c}" />
                 </apex:pageBlockSection>
             </apex:pageBlock>
+        </apex:outputPanel>
+        <apex:outputPanel id="pUlcerDetailDialog" style="display:none">
+        	<span class="ui-helper-hidden-accessible"><input type="text"/></span>
+        	<apex:pageBlock title="Add/Edit Pressure Ulcer Detail" id="pUlcerDetailDialogMainBlock">
+        		<apex:pageBlockButtons location="bottom" >
+        			<apex:actionFunction name="savepUlcerDetail" action="{!savepUlcerDetail}" rerender="pUlcersTable,pUlcerDetailDialogMainBlock,pUlcerDetailDialogErrors" status="savepUlcerDetailStatus" oncomplete="afterSave('{!$Component.pUlcerDetailDialog}', request.options.parameters.keepDialogOpen, showAddpUlcerDetail);">
+                        <apex:param name="keepDialogOpen" value="" />
+                    </apex:actionFunction>
+        			<apex:actionStatus id="savepUlcerDetailStatus">
+                        <apex:facet name="stop">
+                            <apex:outputPanel id="pUlcerDetailButtons">
+                                <apex:commandButton value="Save" onClick="savepUlcerDetail(false); return false;" />
+                                <apex:commandButton value="Save & New" onClick="savepUlcerDetail(true); return false;" />
+                                <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.pUlcerDetailDialog}'); return false;" />
+                            </apex:outputPanel>
+                        </apex:facet>
+                        <apex:facet name="start">
+                            <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                        </apex:facet>
+                    </apex:actionStatus>
+        		</apex:pageBlockButtons>
+        		<apex:pageMessages id="pUlcerDetailDialogErrors" />
+        		<apex:pageBlockSection columns="2" >
+        			<apex:inputField value="{!currentpUlcerDetail.Decubity_Stage__c}" />
+        			<apex:inputField value="{!currentpUlcerDetail.Location__c}" />
+        			<apex:inputField value="{!currentpUlcerDetail.Decubity_Measurement__c}" />
+        			<apex:inputField value="{!currentpUlcerDetail.Treatment__c}" />
+        			<apex:inputField value="{!currentpUlcerDetail.Date__c}" label="Date last measured"/>
+        		</apex:pageBlockSection>
+        	</apex:pageBlock>
         </apex:outputPanel>
         <c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!Evaluation__c.Id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); window.location='/{!Evaluation__c}'; return false;" />
     </apex:form>

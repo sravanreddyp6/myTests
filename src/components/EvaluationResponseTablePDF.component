@@ -18,7 +18,7 @@
     	<apex:outputText value="None" rendered="{!responses.size==0 && isPDF}" />
         <apex:pageBlockTable value="{!responses}" var="response" id="responseTable" border="1px" style="text-align:center;th padding:10px;" rendered="{! (numberOfResponses > 0 && isPDF) || !isPDF }">
                 <apex:repeat value="{!columnsToFetch}" var="column">
-                    <apex:column value="{!response[column]}" style="padding:10px;margin:10px;text-align:center;" >
+                    <apex:column value="{!response[column]}"  style="padding:10px;margin:10px;text-align:center;" >
                     	<apex:facet name="header">{!columnsToHeadersMap[column]}</apex:facet>
                     </apex:column>
                 </apex:repeat>    
