@@ -91,7 +91,7 @@
          <apex:pageBlock title="Demographics" >
          	<table style="width:100%">
          		<tr>
-	              <td width="50%">
+	              <td width="50%" >
 	              	<apex:outputLabel value="Alias" styleClass="label"/><apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Service_location__r.name}" />
 	              
 	              	</td><td>
@@ -204,7 +204,7 @@
          			</td>
          		</tr>
          		<tr>
-         			<td>
+         			<td width="50%" >
          				<apex:outputLabel Value="Heart Rate" styleClass="label" />
          				<apex:outputField value="{!Evaluation__c.Heart_Sounds__c}" /><br/>
          				<apex:outputlabel value="Intervention Needed" rendered="{!Evaluation__c.Heart_Sounds__c == 'Irregular'}" styleClass="label" />
@@ -246,7 +246,7 @@
          			</td> 
          		</tr>
          		<tr>
-         			<td>
+         			<td width="50%" >
          				<apex:dynamiccomponent componentValue="{!ctlMap['sputum_quantity__c']}" rendered="{!Evaluation__c.Suctioning_Picklist__c == 'Yes'}" /><br/>
          				<apex:dynamiccomponent componentValue="{!ctlMap['blood_tinged__c']}" rendered="{!Evaluation__c.Suctioning_Picklist__c == 'Yes'}" /><br/>
          				<apex:outputLabel value="Sputum Consistency" styleClass="label" rendered="{!Evaluation__c.Suctioning_Picklist__c == 'Yes'}" />
@@ -277,7 +277,7 @@
          			</td>
          		</tr>
          		<tr >
-         			<td >
+         			<td width="50%" >
          				<apex:outputLabel value="Trach Type" styleClass="label" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" />
                         <apex:outputText value="{! if (Evaluation__c.Trach_Type__c == 'Other' , Evaluation__c.Trach_Type_Other__c, Evaluation__c.Trach_Type__c) }" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}"/><br/>
                         <apex:outputLabel value="Cuffed" styleClass="label" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" />
@@ -311,14 +311,14 @@
          			</td>
          		</tr>
          		<tr >
-         			<td >
+         			<td width="50%" >
          				<apex:outputLabel value="O2 Type" styleClass="label" rendered="{!Evaluation__c.O2_Picklist__c == 'Yes'}" />
                         <apex:outputText value="{!Evaluation__c.O2_Type__c}" rendered="{!Evaluation__c.O2_Picklist__c == 'Yes'}" /><br/>
                         <apex:outputLabel value="Liters/Min" styleClass="label" rendered="{!Evaluation__c.O2_Picklist__c == 'Yes'}"/>
                         <apex:outputField value="{!Evaluation__c.Liters_Min__c}" rendered="{!Evaluation__c.O2_Picklist__c == 'Yes'}" /> 
                         <br/>
          			</td>
-         			<td>
+         			<td >
          				<apex:outputLabel value="Intervention Needed" styleClass="label" rendered="{!Evaluation__c.O2_Picklist__c == 'Yes'}" />
                         <apex:outputText  value="{!Evaluation__c.O2_Intervention_Needed__c}" rendered="{!Evaluation__c.O2_Picklist__c == 'Yes'}" /><br/>
                         <apex:outputLabel value="Documentation Needed" styleClass="label" rendered="{!Evaluation__c.O2_Picklist__c == 'Yes'}" />
@@ -341,7 +341,7 @@
          			</td>
          		</tr>
          		<tr >
-         			<td >
+         			<td width="50%" >
          				<apex:outputLabel value="Ventilator Type" styleClass="label" rendered="{!Evaluation__c.Ventilator_Picklist__c == 'Yes'}" />
                         <apex:outputText value="{!Evaluation__c.Ventilator_Type__c & if( Evaluation__c.Ventilator_Type__c == 'Intermittent', ' - schedule: ' & Evaluation__c.If_Intermittent_Schedule__c, '' )}" rendered="{!Evaluation__c.Ventilator_Picklist__c == 'Yes'}" />
                         <br/>
@@ -349,6 +349,7 @@
                         <br/>
                         <br/>
                         <br/>
+                     
          			</td>
          			<td>
          				<apex:dynamiccomponent componentValue="{!ctlMap['ventilator_mode__c']}" rendered="{!Evaluation__c.Ventilator_Picklist__c == 'Yes'}" /><br/>
@@ -406,13 +407,14 @@
          <apex:pageBlock title="Ortho" >
          	<table width="80%" >
          		<tr>
-         			<td>
+         			<td width="50%" >
          				<apex:outputLabel Value="Cast" styleClass="label" />
          				<apex:outputField value="{!Evaluation__c.Cast_Picklist__c}" /><br/>
          				<apex:outputlabel value="Location" rendered="{!Evaluation__c.Cast_Picklist__c == 'Yes'}" styleClass="label" />
          				<apex:outputField value="{!Evaluation__c.Ortho_Cast_Location__c}" rendered="{!Evaluation__c.Cast_Picklist__c == 'Yes'}" /><br/>
          				<apex:outputLabel value="Other" rendered="{!Evaluation__c.Ortho_Cast_Location__c == 'Other'}" styleClass="label" />
          				<apex:outputField value="{!Evaluation__c.Cast_Location__c}" rendered="{!Evaluation__c.Ortho_Cast_Location__c == 'Other'}" />
+         				<br />
          			</td>
          			<td>
          				<apex:outputLabel Value="Traction" styleClass="label" />
@@ -426,7 +428,7 @@
          			</td>	
          		</tr>
          		<tr>
-         			<td>
+         			<td width="50%" >
          				<apex:outputLabel Value="External Devices" styleClass="label" />
          				<apex:outputField value="{!Evaluation__c.External_Device_Picklist__c}" /><br/>
          				<apex:outputlabel value="Location" rendered="{!Evaluation__c.External_Device_Picklist__c == 'Yes'}" styleClass="label" />
