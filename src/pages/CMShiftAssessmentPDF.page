@@ -503,7 +503,17 @@
 		   
          </apex:pageBlock>
          <apex:pageBlock title="Neurological" >
-         
+         	<table style="width:80%;">
+				<tr>
+					<td style="border:1px solid black;width:100%"><apex:outputLabel value="Cognitive" styleClass="label" /></td>
+				</tr>
+				<tr>
+					<td>
+						<apex:dynamiccomponent componentvalue="{!ctlmap['rancho_level__c']}" />
+					</td>
+				</tr>
+			</table>
+         	
          </apex:pageBlock>
          <apex:pageBlock title="Ortho" >
          	<table width="80%" >
