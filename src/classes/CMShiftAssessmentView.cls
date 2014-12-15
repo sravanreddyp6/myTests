@@ -76,6 +76,19 @@ public with sharing class CMShiftAssessmentView {
             ];
         }
     }
+    
+    public Evaluation_Response__c[] pUlcers { set;
+        get {
+            return [
+                SELECT ID,Decubity_Stage__c,Location__c, Decubity_Measurement__c,Treatment__c,Date__c 
+                FROM Evaluation_Response__c WHERE Evaluation__c=:evaluation.Id
+                AND RecordType.Name='Pressure Ulcer Detail'
+            ];
+        }
+    }
+    
+    public Evaluation_Response__c currentpUlcerDetail {get ; set;}
+    public Id currentpUlcerDetailId {get; set; }
 
     public CMShiftAssessmentView(Apexpages.StandardController stdcontroller){
 	  	this.stdController = stdcontroller;
@@ -101,7 +114,9 @@ public with sharing class CMShiftAssessmentView {
         DysreflexiaValues = new List<SelectOption>();
         selectedDysreflexia = new List<String>();
 
-
+		currentVitalsDetail = new Evaluation_Response__c();
+        currentpUlcerDetail = new Evaluation_Response__c();
+        
         if(!String.isBlank(this.evaluation.Resident_Demonstrating_Issues__c))
             selectedCoping = this.evaluation.Resident_Demonstrating_Issues__c.split(';');
 
@@ -162,7 +177,31 @@ public with sharing class CMShiftAssessmentView {
             // have to do anything
         }
     }
+	
+	 public void showAddpUlcerDetail()  {
+        this.currentpUlcerDetail = new Evaluation_Response__c();
+        this.currentpUlcerDetail.Evaluation__c = this.evaluation.Id;
+        this.currentpUlcerDetail.RecordTypeId = Utility.getEvaluationResponseRecordType('Pressure Ulcer Detail');
 
+    }
+
+    public void showEditpUlcerDetail() {
+        this.currentpUlcerDetail = [
+            SELECT ID,Decubity_Stage__c,Location__c, Decubity_Measurement__c,Treatment__c,Date__c
+            FROM Evaluation_Response__c WHERE ID=:currentpUlcerDetailId
+        ];
+    }
+
+    public void savepUlcerDetail() {
+        try {
+            upsert currentpUlcerDetail;
+        } catch (DMLException ex) {
+            // SF will automatically create a PageMessage Error here, so we don't
+            // have to do anything
+        }
+    }
+    
+    
     public List<selectoption> getcopingValues(){
         List<Selectoption> copingValue = Utility.getPicklistValues(evaluation, 'Resident_Demonstrating_Issues__c');
         return copingValue;
