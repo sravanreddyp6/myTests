@@ -65,13 +65,13 @@
             padding-left: 25px;
             cellspacing: 15px;
         }
-        
+
         .hidePain{
-        	display:none;
+            display:none;
         }
-        
+
         .showPain{
-        	display: block;
+            display: block;
         }
     </style>
     <script>
@@ -338,8 +338,8 @@
 
                 }
             };
-            
-            
+
+
             // if checkbox for Other is selected, enable other field
             handleOther = function (ids) {
                 var theval = false;
@@ -370,29 +370,29 @@
                 handleDysreflexia();
 
             };
-            
+
              disableAnno = function ( el, annotype ) {
-            	// disable body map if intact is checked
+                // disable body map if intact is checked
                 anno.hideSelectionWidget( el );
 
                 $('.' + annotype + 'annotation-number').remove();
                 $('table#' + annotype + 'annotations tr').remove();
-            	// because the remove handler is not called on the removeAll, remove each one individually
+                // because the remove handler is not called on the removeAll, remove each one individually
                 anno.getAnnotations(el).each( function( element) {
-                	anno.removeAnnotation(element);
-                	Visualforce.remoting.Manager.invokeAction(
-                		'{!$RemoteAction.CMShiftAssessmentEdit.deleteAnnotation}',
-                		element.Id,
-               			function (result, event) {
-                    	if (!event.status) {
-                        	alert("Failed to delete annotation! Error: " + event.message);
-                        	anno.addAnnotation(element);
-                    	}
-                	});
-                
+                    anno.removeAnnotation(element);
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.CMShiftAssessmentEdit.deleteAnnotation}',
+                        element.Id,
+                           function (result, event) {
+                        if (!event.status) {
+                            alert("Failed to delete annotation! Error: " + event.message);
+                            anno.addAnnotation(element);
+                        }
+                    });
+
                 });
             };
-            
+
              var addOrModifyAnnotation = function (annotation, isNew) {
                 if (isNew) {
                     if (annotation.Id !== undefined) {
@@ -439,27 +439,27 @@
                 );
 
             });
-            
+
             disablePain = function() {
-            	var Intact = $('[id$=skinIntact]').val();
-            	 var el = $('#bodyMap').get(0);
-            	 
-            	if(Intact == 'No') {
-            		$('[id$=painSection]').removeClass("hidePain").addClass("showPain");
-            				
-            	} else {
-            		//disableAnno( el, 'bodyMap' );
-            		$('[id$=painSection]').removeClass("showPain").addClass("hidePain");
-            	//	$('[id$=painSection]').find('select,input:text,textarea').val('');
-            		
-           		}
-            	
-            
+                var Intact = $('[id$=skinIntact]').val();
+                 var el = $('#bodyMap').get(0);
+
+                if(Intact == 'No') {
+                    $('[id$=painSection]').removeClass("hidePain").addClass("showPain");
+
+                } else {
+                    //disableAnno( el, 'bodyMap' );
+                    $('[id$=painSection]').removeClass("showPain").addClass("hidePain");
+                //	$('[id$=painSection]').find('select,input:text,textarea').val('');
+
+                   }
+
+
            };
-            
+
             handleSkinBody = function() {
-            	disablePain();
-            
+                disablePain();
+
             };
 
             handleRancho = function () {
@@ -702,8 +702,8 @@
             handleSkinBody();
             handleNeuro();
             hanldePsycho();
-            
-           
+
+
         }); //end "ready" function
 
 
@@ -1203,7 +1203,7 @@
                     });
                 </script>
                 <apex:pageBlock id="nutritionMainBlock">
-                	<apex:pageBlockTable value="{!errorMap['nutritionTab']}" var="d" columns="1" >
+                    <apex:pageBlockTable value="{!errorMap['nutritionTab']}" var="d" columns="1" >
                         <apex:repeat value="{!d}" var="temp" >
                             <apex:column >
                                 <apex:outputText value="{!temp}" style="color: red"/>
@@ -1225,7 +1225,7 @@
                                 <div class="requiredInput">
                                     <div class="requiredBlock"></div>
                                     <apex:inputField value="{!Evaluation__c.Oral_Health_Check__c}"
-                                        html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.issuesNoted}&quot;, &quot;{!$Component.tongueSection.tongue}&quot;, &quot;{!$Component.gumsSection.gums}&quot;, &quot;{!$Component.cheeksSection.cheeks}&quot;, &quot;{!$Component.lipsSection.lips}&quot;, &quot;{!$Component.salivaSection.saliva}&quot;, &quot;{!$Component.narrativeNote}&quot;]}"
+                                        html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.issuesNoted}&quot;, &quot;{!$Component.tongueSection.tongue}&quot;, &quot;{!$Component.gumsSection.gums}&quot;, &quot;{!$Component.cheeksSection.cheeks}&quot;, &quot;{!$Component.lipsSection.lips}&quot;, &quot;{!$Component.breathSection.breath}&quot;, &quot;{!$Component.salivaSection.saliva}&quot;, &quot;{!$Component.narrativeNote}&quot;]}"
                                         html-data-visibility-row-rules="true" />
                                 </div>
                             </apex:outputPanel>
@@ -1277,6 +1277,14 @@
                                 </apex:selectCheckboxes>
                                 <apex:outputLabel value="Describe Sores" style="margin-right: 5px; " id="lipsSoresLabel" />
                                 <apex:inputField id="lipsSores" value="{!Evaluation__c.Lips_Sores_Describe__c}" />
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem id="breathSection">
+                            <apex:outputLabel value="Breath" />
+                            <apex:outputPanel >
+                                <apex:selectCheckboxes id="breath" value="{!selectedOptionsMap['breath__c']}">
+                                    <apex:selectOptions value="{!selectOptionWidgetsMap['breath__c']}" />
+                                </apex:selectCheckboxes>
                             </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem id="salivaSection">
@@ -1501,100 +1509,100 @@
             </apex:tab>
 
             <apex:tab label="Skin/Body" name="skinBodyTab" ontabenter="changeTab('skinBodyTab'); return false;" styleClass="{!IF(Evaluation__c.Skin_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
-	            <script>
-	                 jQuery(document).ready(function ($) {
-                
-	                    anno.reset();
-	                    var el = $('#bodyMap').get(0);
-	                    if (el) {
-	                        anno.makeAnnotatable(el);
-	                    }
-	                    var $el = $(el);
-	                    <apex:repeat value="{!annotations}" var="annotation">
-	                    anno.addAnnotation({
-	                        Id: "{!annotation.Id}",
-	                        src: $("#bodyMap").prop("src"),
-	                        text: "{!JSENCODE(annotation.Annotation_Text__c)}",
-	                        shapes: [{
-	                            type: "{!JSENCODE(annotation.Annotation_Shape__c)}",
-	                            geometry: {
-	                                x: {!annotation.Annotation_X__c},
-	                                y: {!annotation.Annotation_Y__c},
-	                                width: {!annotation.Annotation_Width__c},
-	                                height: {!annotation.Annotation_Height__c}
-	                            }
-	                        }]
-	                    });
-	                    </apex:repeat>
-	                    var createAnnotationElements = function (annotations) {
-	                        $('.annotation-number').remove();
-	                        $('table#annotations tr').remove();
-	                        $.each(annotations, function (index, annotation) {
-	                            var $divEl = $("<div class='annotation-number' style='pointer-events:none; position: absolute; text-align: center; left: " + annotation.shapes[0].geometry.x * 100 + "%; width: " + annotation.shapes[0].geometry.width * 100 + "%; top: " + annotation.shapes[0].geometry.y * 100 + "%; height: " + annotation.shapes[0].geometry.height * 100 + "%;'></div>");
-	                            $el.parent().append($divEl);
-	                            var $textEl = $("<span style='line-height: " + $divEl.height() + "px; color: red; font-size: 1.5em;'>" + (index + 1) + "</span>");
-	                            $divEl.append($textEl);
-	                            $("table#annotations tbody").append("<tr><td>" + (index + 1) + "</td><td>" + annotation.text + "</td></tr>");
-	                        });
-	                    }
-	                    createAnnotationElements(anno.getAnnotations());
-	                    anno.addHandler('onAnnotationCreated', function (annotation) {
-	                        createAnnotationElements(anno.getAnnotations());
-	                    });
-	                    anno.addHandler('onAnnotationUpdated', function (annotation) {
-	                        createAnnotationElements(anno.getAnnotations());
-	                    });
-	                    anno.addHandler('onAnnotationRemoved', function (annotation) {
-	                        createAnnotationElements(anno.getAnnotations());
-	                    });
-	                    
+                <script>
+                     jQuery(document).ready(function ($) {
+
+                        anno.reset();
+                        var el = $('#bodyMap').get(0);
+                        if (el) {
+                            anno.makeAnnotatable(el);
+                        }
+                        var $el = $(el);
+                        <apex:repeat value="{!annotations}" var="annotation">
+                        anno.addAnnotation({
+                            Id: "{!annotation.Id}",
+                            src: $("#bodyMap").prop("src"),
+                            text: "{!JSENCODE(annotation.Annotation_Text__c)}",
+                            shapes: [{
+                                type: "{!JSENCODE(annotation.Annotation_Shape__c)}",
+                                geometry: {
+                                    x: {!annotation.Annotation_X__c},
+                                    y: {!annotation.Annotation_Y__c},
+                                    width: {!annotation.Annotation_Width__c},
+                                    height: {!annotation.Annotation_Height__c}
+                                }
+                            }]
+                        });
+                        </apex:repeat>
+                        var createAnnotationElements = function (annotations) {
+                            $('.annotation-number').remove();
+                            $('table#annotations tr').remove();
+                            $.each(annotations, function (index, annotation) {
+                                var $divEl = $("<div class='annotation-number' style='pointer-events:none; position: absolute; text-align: center; left: " + annotation.shapes[0].geometry.x * 100 + "%; width: " + annotation.shapes[0].geometry.width * 100 + "%; top: " + annotation.shapes[0].geometry.y * 100 + "%; height: " + annotation.shapes[0].geometry.height * 100 + "%;'></div>");
+                                $el.parent().append($divEl);
+                                var $textEl = $("<span style='line-height: " + $divEl.height() + "px; color: red; font-size: 1.5em;'>" + (index + 1) + "</span>");
+                                $divEl.append($textEl);
+                                $("table#annotations tbody").append("<tr><td>" + (index + 1) + "</td><td>" + annotation.text + "</td></tr>");
+                            });
+                        }
+                        createAnnotationElements(anno.getAnnotations());
+                        anno.addHandler('onAnnotationCreated', function (annotation) {
+                            createAnnotationElements(anno.getAnnotations());
+                        });
+                        anno.addHandler('onAnnotationUpdated', function (annotation) {
+                            createAnnotationElements(anno.getAnnotations());
+                        });
+                        anno.addHandler('onAnnotationRemoved', function (annotation) {
+                            createAnnotationElements(anno.getAnnotations());
+                        });
+
                     });
-	                
-	                </script>
+
+                    </script>
                 <apex:pageBlock >
-                	<apex:pageBlockTable value="{!errorMap['skinBodyTab']}" var="d" columns="1" >
+                    <apex:pageBlockTable value="{!errorMap['skinBodyTab']}" var="d" columns="1" >
                         <apex:repeat value="{!d}" var="temp" >
                             <apex:column >
                                 <apex:outputText value="{!temp}" style="color: red"/>
                             </apex:column>
                         </apex:repeat>
                     </apex:pageBlockTable>
-					<apex:pageBlockSection columns="2" title="General Skin Condition" >
-						<apex:pageBlockSectionItem >
-								<apex:outputLabel value="Color" styleClass="labelCol"/>
-								<apex:outputPanel >
-									<div class="requiredInput">
-	                                        <div class="requiredBlock"></div>
-	                        		<apex:inputField value="{!Evaluation__c.Skin_Color__c}" label="Color" />
-	                        		</div>
-                        	</apex:outputPanel>
+                    <apex:pageBlockSection columns="2" title="General Skin Condition" >
+                        <apex:pageBlockSectionItem >
+                                <apex:outputLabel value="Color" styleClass="labelCol"/>
+                                <apex:outputPanel >
+                                    <div class="requiredInput">
+                                            <div class="requiredBlock"></div>
+                                    <apex:inputField value="{!Evaluation__c.Skin_Color__c}" label="Color" />
+                                    </div>
+                            </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem >
-								<apex:outputLabel value="Temperature" styleClass="labelCol"/>
-								<apex:outputPanel >
-									<div class="requiredInput">
-	                                        <div class="requiredBlock"></div>
-	                        		<apex:inputField value="{!Evaluation__c.Skin_Temperature__c}" label="Temperature" />
-	                        		</div>
-                        	</apex:outputPanel>
+                                <apex:outputLabel value="Temperature" styleClass="labelCol"/>
+                                <apex:outputPanel >
+                                    <div class="requiredInput">
+                                            <div class="requiredBlock"></div>
+                                    <apex:inputField value="{!Evaluation__c.Skin_Temperature__c}" label="Temperature" />
+                                    </div>
+                            </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem >
-								<apex:outputLabel value="Moisture" styleClass="labelCol"/>
-								<apex:outputPanel >
-									<div class="requiredInput">
-	                                        <div class="requiredBlock"></div>
-	                        		<apex:inputField value="{!Evaluation__c.Skin_Moisture__c}" label="Mositure" />
-	                        		</div>
-                        	</apex:outputPanel>
+                                <apex:outputLabel value="Moisture" styleClass="labelCol"/>
+                                <apex:outputPanel >
+                                    <div class="requiredInput">
+                                            <div class="requiredBlock"></div>
+                                    <apex:inputField value="{!Evaluation__c.Skin_Moisture__c}" label="Mositure" />
+                                    </div>
+                            </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem >
-								<apex:outputLabel value="Turgor" styleClass="labelCol"/>
-								<apex:outputPanel >
-									<div class="requiredInput">
-	                                        <div class="requiredBlock"></div>
-	                        		<apex:inputField value="{!Evaluation__c.Skin_Turgor__c}" label="Turgor" />
-	                        		</div>
-                        	</apex:outputPanel>
+                                <apex:outputLabel value="Turgor" styleClass="labelCol"/>
+                                <apex:outputPanel >
+                                    <div class="requiredInput">
+                                            <div class="requiredBlock"></div>
+                                    <apex:inputField value="{!Evaluation__c.Skin_Turgor__c}" label="Turgor" />
+                                    </div>
+                            </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Edema" styleClass="labelCol"/>
@@ -1604,19 +1612,19 @@
                         <apex:inputField value="{!Evaluation__c.Skin_Edema__c}" label="Edema" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.edemaLocation}&quot;,&quot;{!$Component.edemaPitting}&quot;,&quot;{!$Component.edemaLocationLabel}&quot;,&quot;{!$Component.edemaPittingLabel}&quot;]}" />
                         </div>
                         <apex:outputText styleClass="labelCol" value="Location" id="edemaLocationLabel"/>
-                        <apex:inputField value="{!Evaluation__c.Skin_Edema_Location__c}" label="Edema Location" id="edemaLocation" /> 
+                        <apex:inputField value="{!Evaluation__c.Skin_Edema_Location__c}" label="Edema Location" id="edemaLocation" />
                         <apex:outputText styleClass="labelCol" value="Pitting" id="edemaPittingLabel" />
                         <apex:inputField value="{!Evaluation__c.Skin_Edema_Pitting__c}" label="Pitting" id="edemaPitting" />
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem >
-								<apex:outputLabel value="Behavior" styleClass="labelCol"/>
-								<apex:outputPanel >
-									<div class="requiredInput">
-	                                        <div class="requiredBlock"></div>
-	                        		<apex:inputField value="{!Evaluation__c.Skin_Behavior__c}" label="Behavior" />
-	                        		</div>
-                        	</apex:outputPanel>
+                                <apex:outputLabel value="Behavior" styleClass="labelCol"/>
+                                <apex:outputPanel >
+                                    <div class="requiredInput">
+                                            <div class="requiredBlock"></div>
+                                    <apex:inputField value="{!Evaluation__c.Skin_Behavior__c}" label="Behavior" />
+                                    </div>
+                            </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Peripheral Capillary Refill Location<Br /><br /># of Seconds" escape="false" />
@@ -1629,105 +1637,105 @@
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                     </apex:pageBlockSection>
-                    
+
                     <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" />
-                    
+
                     <apex:pageBlockSection columns="1" >
-                    	<apex:pageBlockSectionItem >
-                    		<apex:outputLabel value="Skin Intact" styleClass="labelCol"/>
-                    		<apex:outputPanel >
-                    			<div class="requiredInput">
-                                	<div class="requiredBlock"></div>
-                    			<apex:inputField value="{!Evaluation__c.Skin_Intact_Picklist__c}"  id="skinIntact" onChange="disablePain(); return false;"/>
-                    			</div>
-                    		</apex:outputPanel>
-                    	</apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Skin Intact" styleClass="labelCol"/>
+                            <apex:outputPanel >
+                                <div class="requiredInput">
+                                    <div class="requiredBlock"></div>
+                                <apex:inputField value="{!Evaluation__c.Skin_Intact_Picklist__c}"  id="skinIntact" onChange="disablePain(); return false;"/>
+                                </div>
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
                     </apex:pageBlockSection>
-                    
+
                     <apex:outputPanel id="painSection" layout="block" >
-	                    <apex:pageBlockSection title="Body Map" columns="2" id="bodyMapSection">
-		                    <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
-		                        <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!baseUrl + URLFOR($Resource.WholeBodyNoGrid)}" id="bodyMap" />
-		                    </div>
-		                    <div style="margin-left: 420px; height: 298px; overflow: auto;">
-		                        <table id="annotations">
-		                            <tbody>
-		                            </tbody>
-		                        </table>
-		                    </div>
-		                    <apex:pageBlockSectionItem />
-		                    <apex:inputTextArea value="{!Evaluation__c.Body_Map_Comments__c}" label="Other Body Map Comments" cols="80" rows="7" />
-	             			<apex:pageBlockSectionItem />
-		                    <apex:pageBlockSectionItem >
-			                    <apex:outputPanel >
-				                    <apex:outputLabel value="Wound Vac"  id="WoundVacLabel" />
-				                    <br/>
-				                    <br/>
-				                    <apex:outputLabel value="Frequency" id="woundwacFrequencyLabel" />
-				                    <br/>
-				                    <br/>
-				                    <apex:outputLabel value="Duration" id="woundwacDurationLabel" />
-			                    </apex:outputPanel>
-			                    <apex:outputPanel >
-			                    	<div class="requiredInput">
-	                                        <div class="requiredBlock"></div>
-				                    <apex:inputField value="{!Evaluation__c.Wound_Wac_Picklist__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.woundVacFrequency}&quot;, &quot;{!$Component.woundVacDuration}&quot;, &quot;{!$Component.woundwacFrequencyLabel}&quot;, &quot;{!$Component.woundwacDurationLabel}&quot;]}" />
-				                    </div>
-				                    <div class="requiredInput">
-	                                        <div class="requiredBlock"></div>
-				                    <apex:inputField value="{!Evaluation__c.Wound_Vac_Frequency__c}" id="woundVacFrequency" />
-				                    </div>
-				                    <div class="requiredInput">
-	                                        <div class="requiredBlock"></div>
-				                    <apex:inputField value="{!Evaluation__c.Wound_Vac_Duration__c}" id="woundVacDuration" />
-				                    </div>
-			                    </apex:outputPanel>
-		                    </apex:pageBlockSectionItem>
-		
-		                    <apex:pageBlockSectionItem >
-		                    	<apex:outputPanel >
-				                    <apex:outputLabel value="Specialty Bed" />
-				                    <br/>
-				                    <br/>
-				                    <apex:outputLabel value="Type" id="specialtyBedTypeLabel" />
-			                    </apex:outputPanel>
-			                    <apex:outputPanel >
-				                    <div class="requiredInput">
-		                                        <div class="requiredBlock"></div>
-				                    <apex:inputField value="{!Evaluation__c.Speciality_Bed_Picklist__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.specialtyBedType}&quot;, &quot;{!$Component.specialtyBedTypeLabel}&quot;]}" />
-				                    </div>
-				                    <div class="requiredInput">
-		                                        <div class="requiredBlock"></div>
-				                    <apex:inputField value="{!Evaluation__c.Specialty_Bed_Type__c}" id="specialtyBedType" />
-				                    </div>
-			                    </apex:outputPanel>
-			                    </apex:pageBlockSectionItem>
-	                    </apex:pageBlockSection>
-	                    <apex:pageBlockSection columns="1" title="Pressure Ulcer Details" >
-	                    	 <apex:actionFunction name="showAddpUlcerDetail" action="{!showAddpUlcerDetail}" status="loadingpUlcerDetailStatus" rerender="pUlcerDetailDialogMainBlock" oncomplete="openModalDialog('{!$Component.pUlcerDetailDialog}', 'Add Pressure Ulcers Detail', '{!$Component.wholePage}');" />
-	                        <apex:actionFunction name="showEditpUlcerDetail" action="{!showEditpUlcerDetail}" status="loadingpUlcerDetailStatus" rerender="pUlcerDetailDialogMainBlock" oncomplete="openModalDialog('{!$Component.pUlcerDetailDialog}', 'Edit Pressure Ulcers Detail', '{!$Component.wholePage}');">
-	                            <apex:param name="currentVitalsDetailId" assignTo="{!currentpUlcerDetailId}" value="" />
-	                        </apex:actionFunction>
-	                    	<apex:outputPanel layout="none">
-	                            <apex:commandButton value="Add Pressure Ulcers Details" onclick="showAddpUlcerDetail(); return false;" />
-	                            <apex:actionStatus id="loadingpUlcerDetailStatus">
-	                                <apex:facet name="start">
-	                                    <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
-	                                </apex:facet>
-	                                <apex:facet name="stop" />
-	                            </apex:actionStatus>
-	                        </apex:outputPanel>
-	                        <apex:pageBlockTable value="{!pUlcers}" var="ulcer" id="pUlcersTable">
-	                            <apex:column headerValue="{!IF(pUlcers.size>0, 'Action', '')}" width="50px">
-	                                <apex:commandLink onclick="showEditpUlcerDetail('{!ulcer.Id}'); return false;" value="Edit" />
-	                            </apex:column>
-	                            <apex:column value="{!ulcer.Decubity_Stage__c}" />
-	                            <apex:column value="{!ulcer.Location__c}" />
-	                            <apex:column value="{!ulcer.Decubity_Measurement__c}" />
-	                            <apex:column value="{!ulcer.Date__c}" headerValue="Date Last Measured"/>
-	                            <apex:column value="{!ulcer.Treatment__c}" />
-	                        </apex:pageBlockTable>
-	                    </apex:pageBlockSection>
+                        <apex:pageBlockSection title="Body Map" columns="2" id="bodyMapSection">
+                            <div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
+                                <img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="{!baseUrl + URLFOR($Resource.WholeBodyNoGrid)}" id="bodyMap" />
+                            </div>
+                            <div style="margin-left: 420px; height: 298px; overflow: auto;">
+                                <table id="annotations">
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <apex:pageBlockSectionItem />
+                            <apex:inputTextArea value="{!Evaluation__c.Body_Map_Comments__c}" label="Other Body Map Comments" cols="80" rows="7" />
+                             <apex:pageBlockSectionItem />
+                            <apex:pageBlockSectionItem >
+                                <apex:outputPanel >
+                                    <apex:outputLabel value="Wound Vac"  id="WoundVacLabel" />
+                                    <br/>
+                                    <br/>
+                                    <apex:outputLabel value="Frequency" id="woundwacFrequencyLabel" />
+                                    <br/>
+                                    <br/>
+                                    <apex:outputLabel value="Duration" id="woundwacDurationLabel" />
+                                </apex:outputPanel>
+                                <apex:outputPanel >
+                                    <div class="requiredInput">
+                                            <div class="requiredBlock"></div>
+                                    <apex:inputField value="{!Evaluation__c.Wound_Wac_Picklist__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.woundVacFrequency}&quot;, &quot;{!$Component.woundVacDuration}&quot;, &quot;{!$Component.woundwacFrequencyLabel}&quot;, &quot;{!$Component.woundwacDurationLabel}&quot;]}" />
+                                    </div>
+                                    <div class="requiredInput">
+                                            <div class="requiredBlock"></div>
+                                    <apex:inputField value="{!Evaluation__c.Wound_Vac_Frequency__c}" id="woundVacFrequency" />
+                                    </div>
+                                    <div class="requiredInput">
+                                            <div class="requiredBlock"></div>
+                                    <apex:inputField value="{!Evaluation__c.Wound_Vac_Duration__c}" id="woundVacDuration" />
+                                    </div>
+                                </apex:outputPanel>
+                            </apex:pageBlockSectionItem>
+
+                            <apex:pageBlockSectionItem >
+                                <apex:outputPanel >
+                                    <apex:outputLabel value="Specialty Bed" />
+                                    <br/>
+                                    <br/>
+                                    <apex:outputLabel value="Type" id="specialtyBedTypeLabel" />
+                                </apex:outputPanel>
+                                <apex:outputPanel >
+                                    <div class="requiredInput">
+                                                <div class="requiredBlock"></div>
+                                    <apex:inputField value="{!Evaluation__c.Speciality_Bed_Picklist__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.specialtyBedType}&quot;, &quot;{!$Component.specialtyBedTypeLabel}&quot;]}" />
+                                    </div>
+                                    <div class="requiredInput">
+                                                <div class="requiredBlock"></div>
+                                    <apex:inputField value="{!Evaluation__c.Specialty_Bed_Type__c}" id="specialtyBedType" />
+                                    </div>
+                                </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                        </apex:pageBlockSection>
+                        <apex:pageBlockSection columns="1" title="Pressure Ulcer Details" >
+                             <apex:actionFunction name="showAddpUlcerDetail" action="{!showAddpUlcerDetail}" status="loadingpUlcerDetailStatus" rerender="pUlcerDetailDialogMainBlock" oncomplete="openModalDialog('{!$Component.pUlcerDetailDialog}', 'Add Pressure Ulcers Detail', '{!$Component.wholePage}');" />
+                            <apex:actionFunction name="showEditpUlcerDetail" action="{!showEditpUlcerDetail}" status="loadingpUlcerDetailStatus" rerender="pUlcerDetailDialogMainBlock" oncomplete="openModalDialog('{!$Component.pUlcerDetailDialog}', 'Edit Pressure Ulcers Detail', '{!$Component.wholePage}');">
+                                <apex:param name="currentVitalsDetailId" assignTo="{!currentpUlcerDetailId}" value="" />
+                            </apex:actionFunction>
+                            <apex:outputPanel layout="none">
+                                <apex:commandButton value="Add Pressure Ulcers Details" onclick="showAddpUlcerDetail(); return false;" />
+                                <apex:actionStatus id="loadingpUlcerDetailStatus">
+                                    <apex:facet name="start">
+                                        <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                                    </apex:facet>
+                                    <apex:facet name="stop" />
+                                </apex:actionStatus>
+                            </apex:outputPanel>
+                            <apex:pageBlockTable value="{!pUlcers}" var="ulcer" id="pUlcersTable">
+                                <apex:column headerValue="{!IF(pUlcers.size>0, 'Action', '')}" width="50px">
+                                    <apex:commandLink onclick="showEditpUlcerDetail('{!ulcer.Id}'); return false;" value="Edit" />
+                                </apex:column>
+                                <apex:column value="{!ulcer.Decubity_Stage__c}" />
+                                <apex:column value="{!ulcer.Location__c}" />
+                                <apex:column value="{!ulcer.Decubity_Measurement__c}" />
+                                <apex:column value="{!ulcer.Date__c}" headerValue="Date Last Measured"/>
+                                <apex:column value="{!ulcer.Treatment__c}" />
+                            </apex:pageBlockTable>
+                        </apex:pageBlockSection>
                     </apex:outputPanel>
                 </apex:pageBlock>
             </apex:tab>
@@ -2030,7 +2038,7 @@
                                 <apex:outputLabel for="copingDescribe" value="Describe" id="copingDescribeLabel" />
                             </apex:outputPanel>
                             <apex:outputPanel >
-                            	<div class="requiredInput">
+                                <div class="requiredInput">
                                     <div class="requiredBlock"></div>
                                 <apex:inputField value="{!Evaluation__c.Resident_Coping_Well__c}" id="residentCoping" onchange="hanldePsycho(); return false;" />
                                 </div>
@@ -2139,13 +2147,13 @@
             </apex:pageBlock>
         </apex:outputPanel>
         <apex:outputPanel id="pUlcerDetailDialog" style="display:none">
-        	<span class="ui-helper-hidden-accessible"><input type="text"/></span>
-        	<apex:pageBlock title="Add/Edit Pressure Ulcer Detail" id="pUlcerDetailDialogMainBlock">
-        		<apex:pageBlockButtons location="bottom" >
-        			<apex:actionFunction name="savepUlcerDetail" action="{!savepUlcerDetail}" rerender="pUlcersTable,pUlcerDetailDialogMainBlock,pUlcerDetailDialogErrors" status="savepUlcerDetailStatus" oncomplete="afterSave('{!$Component.pUlcerDetailDialog}', request.options.parameters.keepDialogOpen, showAddpUlcerDetail);">
+            <span class="ui-helper-hidden-accessible"><input type="text"/></span>
+            <apex:pageBlock title="Add/Edit Pressure Ulcer Detail" id="pUlcerDetailDialogMainBlock">
+                <apex:pageBlockButtons location="bottom" >
+                    <apex:actionFunction name="savepUlcerDetail" action="{!savepUlcerDetail}" rerender="pUlcersTable,pUlcerDetailDialogMainBlock,pUlcerDetailDialogErrors" status="savepUlcerDetailStatus" oncomplete="afterSave('{!$Component.pUlcerDetailDialog}', request.options.parameters.keepDialogOpen, showAddpUlcerDetail);">
                         <apex:param name="keepDialogOpen" value="" />
                     </apex:actionFunction>
-        			<apex:actionStatus id="savepUlcerDetailStatus">
+                    <apex:actionStatus id="savepUlcerDetailStatus">
                         <apex:facet name="stop">
                             <apex:outputPanel id="pUlcerDetailButtons">
                                 <apex:commandButton value="Save" onClick="savepUlcerDetail(false); return false;" />
@@ -2157,16 +2165,16 @@
                             <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
                         </apex:facet>
                     </apex:actionStatus>
-        		</apex:pageBlockButtons>
-        		<apex:pageMessages id="pUlcerDetailDialogErrors" />
-        		<apex:pageBlockSection columns="2" >
-        			<apex:inputField value="{!currentpUlcerDetail.Decubity_Stage__c}" />
-        			<apex:inputField value="{!currentpUlcerDetail.Location__c}" />
-        			<apex:inputField value="{!currentpUlcerDetail.Decubity_Measurement__c}" />
-        			<apex:inputField value="{!currentpUlcerDetail.Treatment__c}" />
-        			<apex:inputField value="{!currentpUlcerDetail.Date__c}" label="Date last measured"/>
-        		</apex:pageBlockSection>
-        	</apex:pageBlock>
+                </apex:pageBlockButtons>
+                <apex:pageMessages id="pUlcerDetailDialogErrors" />
+                <apex:pageBlockSection columns="2" >
+                    <apex:inputField value="{!currentpUlcerDetail.Decubity_Stage__c}" />
+                    <apex:inputField value="{!currentpUlcerDetail.Location__c}" />
+                    <apex:inputField value="{!currentpUlcerDetail.Decubity_Measurement__c}" />
+                    <apex:inputField value="{!currentpUlcerDetail.Treatment__c}" />
+                    <apex:inputField value="{!currentpUlcerDetail.Date__c}" label="Date last measured"/>
+                </apex:pageBlockSection>
+            </apex:pageBlock>
         </apex:outputPanel>
     </apex:form>
     <apex:actionStatus id="pageProcessing">
