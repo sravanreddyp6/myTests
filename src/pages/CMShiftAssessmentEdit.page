@@ -1853,42 +1853,50 @@
                             <apex:inputField value="{!Evaluation__c.Low_Bed__c}" />
                    </apex:pageBlockSection>
 
-                    <apex:pageBlockSection title="Pain" id="neuroPainSection" columns="1">
-                        <apex:outputPanel id="painSectionButtons">
-                            <apex:commandButton value="Add Entry" action="{!addPainResponse}" immediate="true" rerender="painResponsesSection" rendered="{!Evaluation__c.Pain_Present__c='Yes'}" />
-                        </apex:outputPanel>
-                        <apex:inputField value="{!Evaluation__c.Pain_Present__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.neuroMainBlock.painResponsesSection}&quot;]}">
-                            <apex:actionSupport event="onchange" rerender="{!$Component.neuroMainBlock.neuroPainSection.painSectionButtons}" />
-                        </apex:inputField>
-                    </apex:pageBlockSection>
-                    <apex:pageBlockSection id="painResponsesSection" columns="1">
-                        <apex:pageBlockSectionItem >
-                            <apex:outputText value="Specify Pain Level" />
-                            <apex:image url="{!URLFOR($Resource.Wongbakerfaces)}" height="110px" width="45%" />
-                        </apex:pageBlockSectionItem>
-                        <apex:repeat value="{!pains}" var="pain">
-                            <apex:inputhidden value="{!pain.Initial_Pain_Level__c}" id="initialPainLevel" />
-                            <apex:inputhidden value="{!pain.Follow_up_Pain_Level__c}" id="followUpPainLevel" />
+                    <apex:actionRegion>
+                        <apex:pageBlockSection title="Pain" id="neuroPainSection" columns="1">
+                            <apex:outputPanel id="painSectionButtons">
+                                <apex:commandButton value="Add Entry" status="addPainEntryStatus" action="{!addPainResponse}" rerender="painResponsesSection" rendered="{!Evaluation__c.Pain_Present__c='Yes'}" />
+                                <apex:actionStatus id="addPainEntryStatus">
+                                    <apex:facet name="start">
+                                        <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                                    </apex:facet>
+                                    <apex:facet name="stop" />
+                                </apex:actionStatus>
+                            </apex:outputPanel>
+                            <apex:inputField value="{!Evaluation__c.Pain_Present__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.neuroMainBlock.painResponsesSection}&quot;]}">
+                                <apex:actionSupport event="onchange" rerender="{!$Component.neuroMainBlock.neuroPainSection.painSectionButtons}" />
+                            </apex:inputField>
+                        </apex:pageBlockSection>
+                        <apex:pageBlockSection id="painResponsesSection" columns="1">
                             <apex:pageBlockSectionItem >
-                                <apex:outputLabel value="Pain Level" />
-                                <apex:outputPanel layout="none">
-                                    <c:Slider onChange="handleSliderChange('{!$Component.initialPainLevel}')" options="{!painSliderOptions}" initial="{!pain.Initial_Pain_Level__c}" morestyle="display: inline-block; width: 40%;" />
-                                    <apex:outputLabel value="Add Narrative Note" style="margin: auto 5px;" />
-                                    <apex:inputTextarea value="{!pain.Narrative_Note__c}" style="vertical-align: top; " />
-                                    <apex:outputLabel value="Time Observed" style="margin: auto 5px;" />
-                                    <apex:inputField value="{!pain.Time_Observed__c}" />
-                                </apex:outputPanel>
+                                <apex:outputText value="Specify Pain Level" />
+                                <apex:image url="{!URLFOR($Resource.Wongbakerfaces)}" height="110px" width="45%" />
                             </apex:pageBlockSectionItem>
-                            <apex:pageBlockSectionItem >
-                                <apex:outputLabel value="Follow-up Pain Level" />
-                                <apex:outputPanel layout="none">
-                                    <c:Slider onChange="handleSliderChange('{!$Component.followUpPainLevel}')" options="{!painSliderOptions}" initial="{!pain.Follow_up_Pain_Level__c}" morestyle="display: inline-block; width: 40%;" />
-                                    <apex:outputLabel value="Describe Effectiveness" style="margin: auto 5px;" />
-                                    <apex:inputTextarea value="{!pain.Follow_up_Effectiveness__c}" style="vertical-align: top; " />
-                                </apex:outputPanel>
-                            </apex:pageBlockSectionItem>
-                        </apex:repeat>
-                    </apex:pageBlockSection>
+                            <apex:repeat value="{!pains}" var="pain">
+                                <apex:inputhidden value="{!pain.Initial_Pain_Level__c}" id="initialPainLevel" />
+                                <apex:inputhidden value="{!pain.Follow_up_Pain_Level__c}" id="followUpPainLevel" />
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Pain Level" />
+                                    <apex:outputPanel layout="none">
+                                        <c:Slider onChange="handleSliderChange('{!$Component.initialPainLevel}')" options="{!painSliderOptions}" initial="{!pain.Initial_Pain_Level__c}" morestyle="display: inline-block; width: 40%;" />
+                                        <apex:outputLabel value="Add Narrative Note" style="margin: auto 5px;" />
+                                        <apex:inputTextarea value="{!pain.Narrative_Note__c}" style="vertical-align: top; " />
+                                        <apex:outputLabel value="Time Observed" style="margin: auto 5px;" />
+                                        <apex:inputField value="{!pain.Time_Observed__c}" />
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Follow-up Pain Level" />
+                                    <apex:outputPanel layout="none">
+                                        <c:Slider onChange="handleSliderChange('{!$Component.followUpPainLevel}')" options="{!painSliderOptions}" initial="{!pain.Follow_up_Pain_Level__c}" morestyle="display: inline-block; width: 40%;" />
+                                        <apex:outputLabel value="Describe Effectiveness" style="margin: auto 5px;" />
+                                        <apex:inputTextarea value="{!pain.Follow_up_Effectiveness__c}" style="vertical-align: top; " />
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                            </apex:repeat>
+                        </apex:pageBlockSection>
+                    </apex:actionRegion>
                 </apex:pageBlock>
             </apex:tab>
             <apex:tab label="Ortho" name="orthoTab" ontabenter="changeTab('orthoTab'); return false;" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
