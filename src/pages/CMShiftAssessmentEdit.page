@@ -1853,12 +1853,12 @@
                             <apex:inputField value="{!Evaluation__c.Low_Bed__c}" />
                    </apex:pageBlockSection>
 
-                    <apex:pageBlockSection title="Pain" id="painSection" columns="1">
+                    <apex:pageBlockSection title="Pain" id="neuroPainSection" columns="1">
                         <apex:outputPanel id="painSectionButtons">
                             <apex:commandButton value="Add Entry" action="{!addPainResponse}" immediate="true" rerender="painResponsesSection" rendered="{!Evaluation__c.Pain_Present__c='Yes'}" />
                         </apex:outputPanel>
                         <apex:inputField value="{!Evaluation__c.Pain_Present__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.neuroMainBlock.painResponsesSection}&quot;]}">
-                            <apex:actionSupport event="onchange" rerender="{!$Component.neuroMainBlock.painSection.painSectionButtons}" />
+                            <apex:actionSupport event="onchange" rerender="{!$Component.neuroMainBlock.neuroPainSection.painSectionButtons}" />
                         </apex:inputField>
                     </apex:pageBlockSection>
                     <apex:pageBlockSection id="painResponsesSection" columns="1">
