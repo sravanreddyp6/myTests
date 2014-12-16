@@ -89,7 +89,7 @@ public with sharing class SearchLogicOnPBSR {
             if (lastname!=null && lastname!='' && pbs.LastName == lastName) matchedItems +=1;
             if (firstname!=null && firstname!='' && pbs.FirstName == firstName) matchedItems +=1;
             if (dob!=null && pbs.Birthdate == dob) matchedItems +=1;
-            if (age!=null && age!=0 && pbs.Age__c == age) matchedItems +=1;
+            if (age!=null && pbs.Age__c == age) matchedItems +=1;
             if (gender!=null && gender!='' && pbs.Gender__c == gender) matchedItems +=1;
                         
             results.add(new ReferralSearchResults(pbs, matchedItems));  
@@ -181,13 +181,13 @@ public with sharing class SearchLogicOnPBSR {
         }
         criteria += ')';
         
-        if(dob!=null || (age!= null && age!=0) || gender!=null && gender!=''){
+        if(dob!=null || (age!= null ) || gender!=null && gender!=''){
             String extraCriteria = '';
             if(dob!=null){
                 extraCriteria += ' and ';
                 extraCriteria+=' ('+dobfield+' = :dob ) ';
             }
-            if(age!= null && age!=0){
+            if(age!= null){
                 extraCriteria += ' and ';
                 extraCriteria+=' ('+agefield+' = '+age+ ') ';
             }
