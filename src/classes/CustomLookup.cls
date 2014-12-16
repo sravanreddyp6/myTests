@@ -119,6 +119,39 @@ public class CustomLookup {
             return rfields;
         }
     }
+    
+    // 2014-12-06 - for EB-270 - need to return the fields in the order specified so use a list instead of map
+    public List<FieldWrapper> rfieldsOrdered {
+        set;
+        get{
+            if(rfieldsOrdered == null || rfieldsOrdered.isEmpty()){
+            List<String> tmp;
+            if(rfieldsOrdered ==  null){
+                rfieldsOrdered = new List<FieldWrapper>();
+                if(returnfields != null && returnfields != 'null' && returnfields != '' ){
+                    tmp = new List<String>(returnFields.remove(' ').split(','));
+                }else{
+                    tmp = new List<String>();
+                }
+                //tmp.remove('name');
+                //tmp.remove('id');
+                Map<String, Schema.SObjectField> fMap = gd.get(objectType).getDescribe().fields.getMap();
+                FieldWrapper fw;
+                for(String field: tmp){
+                    System.AssertEquals(fmap.keyset().contains(field),true);
+                    if(fmap.get(field).getDescribe().isAccessible() == true
+                    ){
+                        fw = new FieldWrapper();
+                        fw.name = fmap.get(field).getDescribe().Name;
+                        fw.label = fmap.get(field).getDescribe().Label;
+                        rfieldsOrdered.add(fw);
+                    }
+                }
+            }
+            }
+            return rfieldsOrdered;
+        }
+    }
     public String nameValue{get;set;}
     //public List<sObject> searchResult {get;set;}
     
@@ -148,16 +181,19 @@ public class CustomLookup {
         Id idTemp;
         Double doubleTemp;
 
+		// 2014-12-05 EB-273 - modify location search to only retrieve Active locations
         String operatinggroup = [select operating_group__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1].operating_group__c;
-        if (operatinggroup == 'NeuroRestorative') {
-            queryFilter += 'FacilityId__c = 20 and ';
-        } else if (operatinggroup == 'Care Meridian' || operatinggroup == 'CareMeridian'){
-			queryFilter += 'FacilityId__c = 13 and ';
-        }
-        else {
-            queryFilter += 'FacilityId__c Not In (20, 13) and ';
-        }
-
+		if (objectType == 'Service_Location__c') {
+	        if (operatinggroup == 'NeuroRestorative') {
+	            queryFilter += 'FacilityId__c = 20 and ';
+	        } else if (operatinggroup == 'Care Meridian' || operatinggroup == 'CareMeridian'){
+				queryFilter += 'FacilityId__c = 13 and ';
+	        }
+	        else {
+	            queryFilter += 'FacilityId__c Not In (20, 13) and ';
+	        }
+	        queryFilter += 'Status__c = \'Active\' and ';
+		}
         if(namefield.value!='' && namefield.value!=null && (namefield.value.length()>2 || (namefield.value.length() ==2 && !namefield.value.contains('*')))){
         	
             if(namefield.value.contains('*')){
