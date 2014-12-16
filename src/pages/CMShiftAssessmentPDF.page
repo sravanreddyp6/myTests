@@ -146,7 +146,7 @@
 	              	<td></td>
 	              </tr>
          	</table>
-         	<c:EvaluationResponseTablePDF pbsParentId="{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__c}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" isPdf="true"/>
+         	<c:EvaluationResponseTablePDF pbsParentId="{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__c}" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" isPdf="true" style="" />
          </apex:pageBlock>
          <hr/>
          <apex:pageBlock title="Diagnostics" >
@@ -281,14 +281,14 @@
          				<apex:outputLabel value="Trach Type" styleClass="label" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" />
                         <apex:outputText value="{! if (Evaluation__c.Trach_Type__c == 'Other' , Evaluation__c.Trach_Type_Other__c, Evaluation__c.Trach_Type__c) }" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}"/><br/>
                         <apex:outputLabel value="Cuffed" styleClass="label" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" />
-                        <apex:outputField value="{!Evaluation__c.Cuffed_picklist__c}" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" /><br/>
+                        <apex:outputField value="{!Evaluation__c.Cuffed_Picklist__c}" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" /><br/>
                         <apex:outputLabel value="Plugged" styleClass="label" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" />
-                        <apex:outputField value="{!Evaluation__c.Plugged_picklist__c}" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" />
+                        <apex:outputField value="{!Evaluation__c.Plugged_Picklist__c}" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" />
                         <br/>
          			</td>
          			<td>
-         				<apex:outputLabel  value="Trach Size" styleClass="label" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" />
-                        <apex:outputText  value="{! if (Evaluation__c.Trach_Size__c =='Other', Evaluation__c.Trach_Size_Other__c, Evaluation__c.Trach_Size__c) }" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" /><br/>
+         				<apex:outputLabel value="Trach Size" styleClass="label" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" />
+                        <apex:outputText value="{! if (Evaluation__c.Trach_Size__c =='Other', Evaluation__c.Trach_Size_Other__c, Evaluation__c.Trach_Size__c) }" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" /><br/>
                         <apex:outputLabel value="PMV" styleClass="label" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" />
                         <apex:outputField value="{!Evaluation__c.PMV_Picklist__c}" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" /><br/>
                         <apex:outputLabel value="Documentation Needed" styleClass="label" rendered="{!Evaluation__c.Trach_Picklist__c == 'Yes'}" />
@@ -320,7 +320,7 @@
          			</td>
          			<td >
          				<apex:outputLabel value="Intervention Needed" styleClass="label" rendered="{!Evaluation__c.O2_Picklist__c == 'Yes'}" />
-                        <apex:outputText  value="{!Evaluation__c.O2_Intervention_Needed__c}" rendered="{!Evaluation__c.O2_Picklist__c == 'Yes'}" /><br/>
+                        <apex:outputText value="{!Evaluation__c.O2_Intervention_Needed__c}" rendered="{!Evaluation__c.O2_Picklist__c == 'Yes'}" /><br/>
                         <apex:outputLabel value="Documentation Needed" styleClass="label" rendered="{!Evaluation__c.O2_Picklist__c == 'Yes'}" />
                         <apex:outputField value="{!Evaluation__c.O2_Documentation_Required__c}" rendered="{!Evaluation__c.O2_Picklist__c == 'Yes'}" /><br/>
                         <apex:outputLabel value="O2 Narrative Note" styleClass="label" rendered="{!Evaluation__c.O2_Picklist__c == 'Yes'}" />
@@ -363,7 +363,7 @@
          	</table>
          </apex:pageBlock>
          <apex:pageBlock title="GU/GI/Nutrition" >
-         	<table width="80%" border="1px;" >
+         	<table width="80%" >
          		<tr>
          			<td colspan="2" style="border:1px solid black" >
          				<apex:outputText value="Nutrition & Hydration" />
@@ -392,11 +392,103 @@
                         <apex:outputField value="{!Evaluation__c.Breath__c}"  /><br/>
                         <apex:outputLabel value="Saliva" styleClass="label" /> 
                         <apex:outputField value="{!Evaluation__c.Saliva__c}" /><br/>
+                        <apex:outputLabel value="Narrative Note" styleClass="label" />
+                        <apex:outputField value="{!Evaluation__c.Narrative_Note__c}" />
                         
                         </apex:variable>
                   	</td>
-                  </tr>     
+                </tr> 
+                <tr>
+                  	<td>
+                  		<apex:outputText value="PEDS" styleClass="label" /><br/>
+                  		<apex:outputLabel value="Teething" styleClass="label" />
+                  		<apex:outputField value="{!Evaluation__c.PEDS_Teething__c}" /><br/>
+                  		<apex:outputLabel value="History of Tonsilitis" styleClass="label" for="tonsils"/> 
+         				<apex:outputText  value="{! if (Evaluation__c.PEDS_History_of_Tonsils__c == 'Yes', 'Yes - ' + Evaluation__c.PEDS_Tonsil_History_Describe__c,Evaluation__c.PEDS_History_of_Tonsils__c) }" label="History of Tonsilitis" /><br/>
+         				<apex:outputLabel value="Pacifier" styleClass="label" for="pacifier"/> 
+         				<apex:outputText id="pacifier" value="{! if (Evaluation__c.PEDS_Pacifier__c == 'Yes', 'Yes - ' + Evaluation__c.PEDS_Pacifier_Type_Usage__c,Evaluation__c.PEDS_Pacifier__c) }" label="Pacifier Use" />	
+   
+                  	</td>
+                </tr>
          	</table>
+         	<table style="width:80%">
+				<tr>
+				<td colspan="2" style="border:1px solid black"><apex:outputLabel value="Elimination - Bowel" styleClass="label"/><Br />
+				</td>
+				</tr>
+				<tr>
+				<Td colspan="2">          <apex:outputText Label="Bowel Sounds" value=""/>
+				</Td>
+				</tr>
+				<tr>
+				<td style="vertical-align:top; width:50%">
+			          <apex:outputLabel value="RUQ" styleClass="label" for="ruq" />
+			          <apex:outputText id="ruq" value="{!If (CONTAINS(Evaluation__c.RUQ__c, 'Abnormal'), Evaluation__c.RUQ__c + ' - ' + Evaluation__c.RUQ_Describe__c,Evaluation__c.RUQ__c )}" />
+			    </td>
+			    <td style="vertical-align:top">
+			          <apex:outputLabel value="RLQ" styleClass="label" for="luq" />
+			          <apex:outputText id="rlq" value="{!If (CONTAINS(Evaluation__c.RLQ__c, 'Abnormal'), Evaluation__c.RLQ__c + ' - ' + Evaluation__c.RLQ_Describe__c,Evaluation__c.RLQ__c)}"  /><br />
+			    </td>
+			    </tr>
+			    <tr>
+			    <td>
+						<apex:outputLabel value="LUQ" styleClass="label" for="ruq" />
+			           <apex:outputText value="{!If (CONTAINS(Evaluation__c.LUQ__c, 'Abnormal'), Evaluation__c.LUQ__c + ' - ' + Evaluation__c.LUQ_Describe__c,Evaluation__c.LUQ__c)}" label="LUQ" /><br />
+			    </td>
+			    <td>
+			          <apex:outputLabel value="LLQ" styleClass="label" for="luq" />
+			           <apex:outputText value="{!If (CONTAINS(Evaluation__c.LLQ__c, 'Abnormal'), Evaluation__c.LLQ__c + ' - ' + Evaluation__c.LLQ_Describe__c,Evaluation__c.LLQ__c)}" label="LLQ" /><br />
+			    </td>
+			    </tr>
+			    <tr>
+    				<td colspan="2">
+    					<apex:outputLabel value="Abdomen" styleClass="label" /><apex:outputfield value="{!Evaluation__c.Abdomen__c}" /><Br />
+    					<apex:outputLabel value="Status" styleClass="label" />
+    					<apex:outputText value="{!if (CONTAINS(Evaluation__c.Elimination_Bowel_Status__c, 'Other'), Evaluation__c.Elimination_Bowel_Status__c + ' - ' + Evaluation__c.Elimination_Bowel_No_Appliance_Other__c, Evaluation__c.Elimination_Bowel_Status__c)}" /><br />
+    					<apex:dynamiccomponent componentValue="{!ctlMap['usual_elimination_frequeny__c']}" /><br/>
+    					<apex:dynamiccomponent componentValue="{!ctlMap['last_bm__c']}" /><br/>
+    					<apex:outputLabel value="Bowel Issues" styleClass="label" />
+    					<apex:outputText value="{!if(Evaluation__c.Bowel_Issues__c == 'Yes',Evaluation__c.Bowel_Issues__c + ' - ' + Evaluation__c.Bowel_Issue_Type__c, Evaluation__c.Bowel_Issues__c)}" /><br/>
+    					<apex:outputLabel value="Additional Information" styleClass="label" />
+    					<apex:outputField value="{!Evaluation__c.Bowel_Issues_Additional_Information__c}" /><br/>
+    					<apex:outputLabel value="Neurogenic Bowel" styleClass="label" />
+    					<apex:outputText value="{!If (CONTAINS(Evaluation__c.Incontinent_Neurogenic_Bowel__c, 'Yes'), Evaluation__c.Incontinent_Neurogenic_Bowel__c + ' - ' + Evaluation__c.Incontinent_Neuro_Bowel_Describe__c, Evaluation__c.Incontinent_Neurogenic_Bowel__c)}" /><br />
+    					<apex:dynamicComponent componentValue="{!ctlMap['perception_of_need_to_defecate__c']}" />
+          			</td>
+          		</tr>
+			 </table>
+			 <table width="80%" >
+			 	<tr>
+			 		<td colspan="2" style="border:1px solid black"><apex:outputLabel value="Elimination Bladder" styleClass="label"/><Br />
+			 		</td>
+			 	</tr>
+			 	<tr>
+			 		<td>
+			 			<apex:dynamicComponent componentValue="{!ctlMap['neurogenic_bladder__c']}" /><br/>
+			 			<apex:outputLabel Value="Urinary Issues" styleClass="label" />
+			 			<apex:outputField value="{!Evaluation__c.Urinary_Issues_Checkbox__c}" />
+			 			<apex:variable value="" var="d" rendered="{!Evaluation__c.Urinary_Issues_Checkbox__c == 'Yes'}" >
+			 				<apex:outputLabel value="Issue Type" styleClass="label" />
+			 				<apex:outputField value="{!Evaluation__c.Urinary_Issues__c}" /><br/>
+			 				<apex:dynamicComponent componentValue="{!ctlMap['urine_color__c']}" /><br/>
+			 				<apex:dynamicComponent componentValue="{!ctlMap['urine_clarity__c']}" /><br/>
+			 				<apex:dynamicComponent componentValue="{!ctlMap['urine_odor__c']}" />
+			 			</apex:variable>
+			 		</td>
+			 	</tr>
+			 </table>
+			 <table width="80%" >
+			 	<tr>
+			 		<td colspan="2" style="border:1px solid black"><apex:outputLabel value="Dialysis" styleClass="label"/><Br />
+			 		</td>
+			 	</tr>
+			 	<tr>
+			 		<td>
+			 			<apex:outputLabel value="Dialysis" styleClass="label" />
+			 			<apex:outputText value="{!if(Evaluation__c.Dialysis_Picklist__c == 'Yes', Evaluation__c.Dialysis_Picklist__c + ' - ' + Evaluation__c.Dialysis_Type__c, Evaluation__c.Dialysis_Picklist__c)}" />
+			 		</td>
+			 	</tr>
+			 </table>
          </apex:pageBlock>
          <apex:pageBlock title="Skin/Body" >
          	<table width="80%" border="1px;" >
@@ -426,7 +518,7 @@
 				    </td>
 			    </tr>
          	</table>
-         	<c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" isPdf="true" />
+         	<c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" isPdf="true" style=""/>
          	<table width="80%" >
          		<tr>
          			<td>
@@ -436,7 +528,7 @@
          		</tr>
          	</table>
          	
-         	<apex:variable var="b" value="" rendered="{!Evaluation__c.Skin_intact_picklist__c == 'No'}" >
+         	<apex:variable var="b" value="" rendered="{!Evaluation__c.Skin_Intact_Picklist__c == 'No'}" >
          	
          	<div style="page-break-before:always;"></div>
          	<div style="position: relative; float: left; margin-left: 80px; height: 298px; margin-top:130px;" >
@@ -513,7 +605,8 @@
 					</td>
 				</tr>
 			</table>
-         	<table >
+			<apex:variable value="" var="b" rendered="{!Evaluation__c.Rancho_Level__c != '(1) No Response'}" >
+         	<table style="width:80%;" >
          		<tr>
          			<td>
          				<apex:outputLabel value="Responds To" styleClass="label"/>
@@ -537,14 +630,64 @@
 				        <apex:outputText value="{!if (Evaluation__c.Unresponsive__c, 'Unresponsive;','')}" />
 				        </apex:outputPanel><br />
 				        <apex:dynamiccomponent componentvalue="{!ctlmap['mood__c']}" /><br />
-				        <apex:outputLabel value="Has Resident Expressed Desire to Hurt Him/Herself?" styleClass="label" />
-				        <apex:outputField value="{!Evaluation__c.Desire_to_hurt_themselves__c}"  /><br />
-				        <apex:outputLabel value="Does Resident Have a Plan to Harm Him/Herself?" styleClass="label" />
-				        <apex:outputField value="{!Evaluation__c.Plan_to_Harm_themselves__c}" /><Br />
-				        
+					        <apex:variable value="" var="c" rendered="{!CONTAINS(Evaluation__c.Mood__c,'Sad') || CONTAINS(Evaluation__c.Mood__c,'Flat')}" >
+					        <apex:outputLabel value="Has Resident Expressed Desire to Hurt Him/Herself?" styleClass="label" />
+					        <apex:outputField value="{!Evaluation__c.Desire_to_hurt_themselves__c}"   /><br />
+					        <apex:outputLabel value="Does Resident Have a Plan to Harm Him/Herself?" styleClass="label" />
+					        <apex:outputField value="{!Evaluation__c.Plan_to_Harm_themselves__c}"/>
+				        </apex:variable>
+         			</td>
+         		</tr>
+         		<tr>
+         			<td >
+         				<apex:outputText value="Communication" styleClass="label"/>
+         			</td>
+         		</tr>
+         		
+         		<tr>
+         			<td>
+         				<apex:outputLabel value="Able to Make Needs Known" styleClass="label" />
+        				<apex:outputfield value="{!Evaluation__c.Able_to_make_Needs_Known__c}" /><br />
+        				<apex:variable value="" var="d" rendered="{!Evaluation__c.Able_to_make_Needs_Known__c == 'No'}" >
+	        				<apex:outputLabel value="Expression" styleClass="label" />
+	        				<apex:outputField value="{!Evaluation__c.Expression__c}"  /> <br/>
+	        				<apex:outputLabel value="Other Expression" rendered="{!Evaluation__c.Expression__c == 'Non-Verbal'}" styleClass="label" />
+	        				<apex:outputField value="{!Evaluation__c.Expression_Other__c}"  /> 
+        				</apex:variable>
          			</td>
          		</tr>
          	</table>
+         	</apex:variable>
+         	
+         	<table width="80%" >
+         		<tr>
+         			<td colspan="2" style="border:1px solid black;">
+         				<apex:outputText value="Safety" styleClass="label" />
+         			</td>
+         		</tr>
+         		<tr>
+         			<td>
+         				<apex:dynamiccomponent componentvalue="{!ctlmap['safety_awareness__c']}" /><br />
+         				<apex:dynamiccomponent componentvalue="{!ctlmap['bed_alarm__c']}" /><br />
+         				<apex:dynamiccomponent componentvalue="{!ctlmap['one_to_one_sitter__c']}" /> <apex:outputText value="{!Evaluation__c.one_to_One_Sitter_of_Hours_per_day__c + ' hours per day'}" rendered="{!Evaluation__c.One_to_One_Sitter__c == true}" /><br/>
+         				<apex:dynamiccomponent componentvalue="{!ctlmap['low_bed__c']}" />
+         			</td>
+         		</tr>
+         	</table>
+         	<table width="80%" >
+         		<tr>
+         			<td colspan="2" style="border:1px solid black;">
+         				<apex:outputText value="Pain" styleClass="label" />
+         			</td>
+         		</tr>
+         		<tr>
+         			<td>
+         				<apex:outputLabel value="Pain Present" styleClass="label" />
+         				<apex:outputfield value="{!Evaluation__c.Pain_Present__c}" />
+         			</td>
+         		</tr>
+         	</table>
+         	<c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Pain" formId="{!$Component.wholePage}" uniqueId="Pain Levels" isPdf="true" rendered="{!Evaluation__c.Pain_present__c == 'Yes'}" style=""/>
          </apex:pageBlock>
          <apex:pageBlock title="Ortho" >
          	<table width="80%" >
@@ -579,7 +722,6 @@
          				<apex:outputField value="{!Evaluation__c.External_Devices_Type__c}" rendered="{!Evaluation__c.External_Device_Picklist__c == 'Yes'}" />
          			</td>
          		</tr>
-         	
          	</table>
          </apex:pageBlock>
          <apex:pageBlock title="Psycho/Social" >
