@@ -61,18 +61,16 @@
     </style>
     <script>
      function setFocusOnLoad() {}  // Overwrite VF function to focus on the 1st field
-       jQuery.noConflict();
+        var gblTab;
+        
+        jQuery.noConflict();
 
         jQuery(document).ready(function ($) {
-
-
-
+			
+			gblTab = ( '{!selectedTab}' == '')  ? 'demographicsTab' :  '{!selectedTab}';
             handleFeedingChange = function ( currTab ) {
-
-				
 				if ( currTab != 'nutritionTab' )
 					return;
-				
                 // get the value
                 var feedtypes = '';
                 $('input[id*=feedingtypes]').each(function (index, element) {
@@ -113,12 +111,14 @@
             };
 
             handleIntact = function( cb ) {
-
+				if ( gblTab != 'skinBodyTab') 
+					return;
+					
                 var el = $('#bodyMap').get(0).src;
                 
                 var checked = false;
                 if ( cb != null ) 
-                	$(cb).prop('checked');
+                	checked = $(cb).prop('checked');
                 else
                 	checked= ( {!Evaluation__c.Intact__c} == 1 );
                 	
@@ -161,9 +161,6 @@
                         bladdertypes += $(element).val() + ';';
                 });
 
-                $('input[id$=ifICP]').prop('disabled', true);
-                $('input[id$=ifICPQ]').prop('disabled', true);
-                $('input[id$=icpDescribe]').prop('disabled',true);
                 $('input[id$=indwelling]').prop('disabled',true);
 
                 if ( bladdertypes.indexOf( 'Indwelling') >= 0  ||
@@ -172,21 +169,7 @@
                 } else {
                     $('input[id$=indwelling]').val('');
                     $('input[id$=undateindwelling]').prop('checked', false);
-
                 }
-
-
-                if ( bladdertypes.indexOf('ICP') >= 0 ) {
-                    $('input[id$=ifICP]').prop('disabled', false);
-                    $('input[id$=ifICPQ]').prop('disabled', false);
-                    $('input[id$=icpDescribe]').prop('disabled', false);
-                } else {
-                    $('input[id$=ifICP]').val('');
-                    $('input[id$=ifICPQ]').val('');
-                    $('input[id$=icpDescribe]').val('');
-
-                }
-
             };
 
             handleUrineClarity = function() {
@@ -222,27 +205,28 @@
             }
 
             handleIncont  = function() {
-                var incont = $('input[id$=bladderIncont]').prop('checked');
-                if (incont) {
+            	// 2014-12 changed to dropdown
+                var cont = $('select[id$=bladderIncont]').val();
+                if (cont == 'Incontinent') {
                     // enable the set of checkboxes in bladderDetailCheck
                     $('input[id*=bladderDetailCheck]').each(function (index, element) {
                         $(element).prop('disabled', false);
                         });
-                    $('input[id$=ageAppropriate]').prop('disabled', false);
-
+                    $('select[id$=ageAppropriate]').prop('disabled', false);
                 } else {
                     // disable the set of checkboxes and uncheck them all
                     $('input[id*=bladderDetailCheck]').each(function (index, element) {
                         $(element).prop('disabled',true);
                         $(element).prop('checked', false);
                         });
+                    $('select[id$=ageAppropriate]').prop('disabled', true);
                 }
                 handleBladder();
             };
 
             handleIncontBowel  = function() {
-                var incont = $('input[id$=bowelIncont]').prop('checked');
-                if (incont) {
+                var incont = $('select[id$=bowelIncont]').val();
+                if (incont == 'Incontinent') {
                     // enable the set of checkboxes
                     $('input[id*=bowelAppliance]').each(function (index, element) {
                         $(element).prop('disabled', false);
@@ -350,22 +334,29 @@
                 }
             }
 
-            handleNutrition = function ( currTab ) {
-                handleFeedingChange( currTab);
-                handleIncont( currTab);
-                handleIncontBowel( currTab);
-                handleUrineClarity( currTab);
-                handleDialysis( currTab);
-                handleSoresAll( currTab);
+            handleNutrition = function ( ) {
+            
+            	
+            	setRTOptions ( 'bladderDetailCheck', 'bladderChoicesRT', true);
+            
+                handleFeedingChange( gblTab);
+                handleIncont( gblTab);
+                handleIncontBowel( gblTab);
+                handleUrineClarity( gblTab);
+                handleDialysis( gblTab);
+                handleSoresAll( gblTab);
             };
 
 			handleSkinBody = function() {
 				handleIntact( null );
 				}
 				
-            handleNeuro = function() {
+            handleNeuro = function( ) {
+            
+            	if (gblTab != 'neuroTab') 
+            		return;
+            		
             	disablePain();
-                handleMood();
                 handleVerbalExpression();
                 handleRancho();
                 enableFalls('{!Evaluation__c.Number_Falls__c}');
@@ -492,7 +483,7 @@
              handleRancho = function () {
 
 
-				if (  '{!selectedTab}' != 'Neuro') 
+				if (  '{!selectedTab}' != 'neuroTab') 
 					return;
 					
                 var ranchoScore = $('[id$=ranchoValue]').val();
@@ -514,12 +505,7 @@
              };
 
 
-             handleVerbalExpression = function() {
-				// only for neuro tab
-				
-				if (  '{!selectedTab}' != 'neuroTab') 
-					return;
-		
+             handleVerbalExpression = function( ) {
 				var expression = $('select[id*=verbalExpression]').val();
 				if ( expression == 'Non-Verbal') {
 					$('input[id*=expressionOther]').each(function (index, element) {
@@ -539,7 +525,7 @@
              handleMood = function() {
 				// only for psycho social tab
 				
-				if (  '{!selectedTab}' != 'psychosocialTab') 
+				if (  currTab != 'psychosocialTab') 
 					return;
 					
                 // if sad or flat, enable depression question
@@ -655,7 +641,7 @@
 
 
             setUpFields();
-            handleNutrition('{!selectedTab}');
+            handleNutrition();
             handleNeuro();
             handlePsychoSocial();
 
@@ -663,8 +649,44 @@
         });   //end "ready" function
 
 
+	function setRTOptions( targetfield, rtsource, multisel ) {
+		
+		// assumption is first field is collection of checkboxes, second is select list
+		// get the options from source field, hide if not in target
+		// if multiselect need to get both unselected and chosen lists
+		var optionValues = [];
+		if ( multisel ) {
+			jQuery('select[id$=' + rtsource + '_unselected]').children().children().each( function( ) {
+				optionValues.push(jQuery(this).text());
+			});
+			jQuery('select[id$=' + rtsource + '_selected]').children().children().each( function( ) {
+				optionValues.push(jQuery(this).text());
+			});
+		} else {
+			jQuery('select[id$=' + rtsource + ']').each( function( ) {
+				optionValues.push(jQuery(this).text());
+			});
+		
+		}
+		
+		jQuery('input[id*=' + targetfield + ']').each(function ( tindex, telement) {
+			bFound = false;
+			jQuery.each(optionValues, function (_, $opt) {
+            	if ( $opt == telement.value) {
+            		bFound = true;
+            	}
+            });
+            if ( !bFound) 
+            	jQuery(telement).parent().parent().hide();
+		});
+	
+	}
 
 
+	function setCurrentTab( currTab ) {
+		gblTab = currTab;
+	}
+	
      function getNextTab( currTab ) {
             var nextTab = currTab;
 
@@ -823,13 +845,14 @@
     <apex:outputText value="Nursing Assessment" />
     </div>
     <apex:form id="wholePage">
+    <apex:inputfield value="{!Evaluation__c.Elimination_Bladder_No_Continent_Details__c}" id="bladderChoicesRT" style="display:none"/>
     <apex:outputPanel rendered="false">
         <apex:inputhidden value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Id}"/>
         <apex:inputhidden value="{!Evaluation__c.Urinary_Issues__c}" />
         <apex:inputhidden value="{!Evaluation__c.Breathe_Sounds__c}"/>
         <apex:inputhidden value="{!Evaluation__c.Urine_Clarity__c}" />
-        <apex:inputhidden value="{!Evaluation__c.Elimination_Bladder_No_Continent_Details__c}" />
-        <apex:inputhidden value="{!Evaluation__c.Elimination_Bowel_No_Continent_Appliance__c}" />
+        
+        <apex:inputhidden value="{!Evaluation__c.Elimination_Bowel_No_Continent_Appliance__c}" id="bowelChoicesRT"/>
         <apex:inputhidden value="{!Evaluation__c.Nutrition_Route__c}" />
         <apex:inputhidden value="{!Evaluation__c.Tongue__c}" />
         <apex:inputhidden value="{!Evaluation__c.Gums__c}" />
@@ -881,7 +904,7 @@
         <apex:inputHidden value="{!Evaluation__c.Dressing_LE__c}" id="dressingLE" />
 
         <apex:pageMessages id="pageMessages" />
-        <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); removeSpacer(); scrollToTop(); handleNutrition('{!nextTab}'); handleNeuro();handlePsychoSocial();handleSkinBody()" reRender="pageMessages, wholeTabPanel, buttons">
+        <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setCurrentTab('{!nextTab}');setUpFields(); removeSpacer(); scrollToTop(); handleNutrition(); handleNeuro();handlePsychoSocial();handleSkinBody()" reRender="pageMessages, wholeTabPanel, buttons">
             <apex:param name="nextTab" assignTo="{!nextTab}" value="" />
         </apex:actionFunction>
 
@@ -1512,14 +1535,10 @@
 
                         <apex:inputField value="{!Evaluation__c.Last_BM__c}" />
                         <apex:inputField value="{!Evaluation__c.Usual_Elimination_Frequeny__c}" />
-                        <apex:inputField value="{!Evaluation__c.Elimination_Bowel_Continent__c}"
-                            label="Incontinent"
-                            html-data-rules="{&quot;1&quot;: &quot;{!$Component.bowelToiletTrain.bowelAgeAppropriate}&quot;}"
-                            id="bowelIncont"
-                            onclick="handleIncontBowel();"/>
+                        <apex:inputField value="{!Evaluation__c.Bowel_Continence__c}" id="bowelIncont" onclick="handleIncontBowel();"/>
                         <apex:outputText Value="" />
                         <apex:pageBlockSectionItem >
-                        <apex:outputLabel value="Appliance" />
+                        <apex:outputLabel value="Devices" />
                         <apex:outputPanel >
                         <apex:selectCheckboxes value="{!selectedBowel}" id="bowelAppliance" onchange="handleBowel();">
                                 <apex:selectOptions value="{!BowelValues}"/>
@@ -1552,38 +1571,21 @@
                         </apex:pageBlockSection>
 
                     <apex:pageBlockSection columns="2" title="Elimination - Bladder">
-                        <apex:inputField value="{!Evaluation__c.Elimination_Bladder_Continent__c}"
-                            label="Incontinent"
-                            html-data-rules="{&quot;1&quot;: &quot;{!$Component.toiletTrain.ageAppropriate}&quot;}"
-                            onclick="handleIncont();"
-                            id="bladderIncont"/>
-                            <apex:outputText value="" />
+                    	<apex:inputField value="{!Evaluation__c.Bladder_Continence__c}" onchange="handleIncont()" id="bladderIncont"/>
+                    	
+                        <apex:outputText value="" />
                         <apex:pageBlockSectionItem >
-                        <apex:outputLabel value="Details" />
+                        <apex:outputLabel value="Devices" />
                         <apex:outputPanel id="bladderDetails">
                                 <apex:selectCheckboxes value="{!selectedBladder}" id="bladderDetailCheck" layout="pageDirection" onchange="handleBladder()">
                                     <apex:selectOptions value="{!bladderValues}" />
                                 </apex:selectCheckboxes>
                                 </apex:outputPanel>
                         </apex:pageBlockSectionItem>
-                        <apex:pageBlockSectionItem >
-                        <apex:outputLabel value="<Br />Indwelling/Suprapubic: Type/Size<br /><br />Indwelling/Suprapubic: Date<br /><br />Indwelling/Suprapubic: Date Unknown<br /><br />ICP Q<br /><br />ICP Describe" escape="false" />
-                        <apex:outputPanel >
-                        <apex:inputField value="{!Evaluation__c.Indwelling_Suprapubic_type_size__c}" id="sizeindwelling" />
-                        <br />
-                        <apex:inputField value="{!Evaluation__c.Indwelling_Suprapubic_Date__c}" id="dateindwelling"  html-data-rules="{&quot;&quot;:&quot;{!$Component.undateindwelling}&quot;}" />
-                        <br />
-                        <apex:inputField value="{!Evaluation__c.Indwelling_Suprapubic_Date_Unknown__c}" id="undateindwelling" html-data-rules="{&quot;0&quot;: &quot;{!$Component.dateindwelling}&quot;}" />
-                        <Br />
-                        <apex:inputField value="{!Evaluation__c.If_ICP_Q__c}" id="ifICPQ" />
-                        <br />
-                        <apex:inputField value="{!Evaluation__c.ICP_Describe__c}" label="If ICP,Describe Program" id="icpDescribe" />
-                        </apex:outputPanel>
-                        </apex:pageBlockSectionItem>
-
+                        <apex:inputField value="{!Evaluation__c.Indwelling_Suprapubic_type_size__c}" label="Indwelling/Suprapubic: Type/Size" id="sizeindwelling" />
+                        
                         <apex:inputField value="{!Evaluation__c.Neurogenic_Bladder__c}"/>
-                        <apex:inputField value="{!Evaluation__c.Incontinent_Last_Void__c}" label="Last Void" />
-                        <apex:inputField value="{!Evaluation__c.Duration_of_Incontinence__c}" label="Duration of Incontinence" />
+                        <apex:inputField value="{!Evaluation__c.Incontinent_Last_Void__c}" id="lastvoid" label="Last Void" />
                         <apex:inputField value="{!Evaluation__c.Perception_of_Need_to_Void__c}" />
 
                         <apex:pageBlockSectionItem >
@@ -1861,7 +1863,7 @@
                         <apex:pageBlockSectionItem >
                         <apex:outputLabel value="Expression<br /><br />Other" escape="False" />
                         <apex:outputPanel >
-                        <apex:inputField value="{!Evaluation__c.Expression__c}" id="verbalExpression" onchange="handleVerbalExpression()" html-data-rules="{&quot;Non-Verbal&quot;: [&quot;{!$Component.expressionOther}&quot;]}"/>
+                        <apex:inputField value="{!Evaluation__c.Expression__c}" id="verbalExpression" onchange="handleVerbalExpression()" />
                          <apex:selectCheckboxes value="{!selectedVerbalExpression}" style="margin-left:-13px" id="expressionOther" >
                                 <apex:selectOptions value="{!verbalExpressionValues}" />
                             </apex:selectCheckboxes>

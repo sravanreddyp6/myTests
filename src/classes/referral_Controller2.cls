@@ -401,7 +401,8 @@ public with sharing class referral_Controller2 {
                        Fax, FirstName, Gender__c,
                        LastName, Ethnicity_Picklist__c,
                        Middle_Name__c, Phone, Primary_Language__c, SSN__c,
-                       MailingState, MailingStreet, OtherStreet, MailingPostalCode
+                       MailingState, MailingStreet, OtherStreet, MailingPostalCode,
+                       Level_of_Education__c
                 from Contact
                 where Id = :pBSId
                 limit 1];
@@ -542,8 +543,8 @@ public with sharing class referral_Controller2 {
         hasReq = false;
         }
      }
-     //end CTEAE-137   
-     
+     //end CTEAE-137
+
      //start EC-54
      if(referralRecordType == 'CareMeridian'){
      Boolean hasPrimaryLoc = false, hasPrimaryFund = false;
@@ -572,7 +573,7 @@ public with sharing class referral_Controller2 {
             hasPrimaryLoc = true;
             break;
           }
-        }  
+        }
         if(!hasPrimaryLoc){
           messages.Add('Primary Requested Location');
           hasReq = false;
@@ -586,8 +587,8 @@ public with sharing class referral_Controller2 {
         if(!hasPrimaryFund){
             messages.Add('Primary Funding Source');
             hasReq = false;
-          } 
-     }  
+          }
+     }
     //End EC-54
 
     // requirements to create a new PBS
