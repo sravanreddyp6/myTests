@@ -548,7 +548,9 @@
                 <apex:pageBlock >
                     <apex:pageblockSection Columns="1">
                         <apex:outputField value="{!Evaluation__c.Rancho_Level__c}" />
-                        <apex:pageBlockSectionItem rendered="{!Evaluation__c.Rancho_Level__c != '(1) No Response'}">
+                    </apex:pageBlockSection >
+                    <apex:pageBlockSection columns="1" rendered="{!Evaluation__c.Rancho_Level__c != '(1) No Response' && Evaluation__c.Rancho_level__c != null}" >
+                        <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Responds To" />
                             <apex:outputPanel >
                                 <apex:outputText value="{!If (Evaluation__c.Verbal_Stim__c, 'Verbal Stim;', '')}" />
@@ -574,7 +576,19 @@
                                 <apex:outputText value="{!if (Evaluation__c.Unresponsive__c, 'Unresponsive;','')}" />
                             </apex:outputPanel>
                         </apex:pageBlockSectionItem>
+                        <apex:outputField value="{!Evaluation__c.Mood__c}" label="Mood" />
+                        <apex:outputField value="{!Evaluation__c.Desire_to_hurt_themselves__c}" label="Has Resident Expressed Desire to Hurt Him/Herself?"  rendered="{!CONTAINS(Evaluation__c.Mood__c,'Sad') || CONTAINS(Evaluation__c.Mood__c,'flat') }"/>
+                        <apex:outputField value="{!Evaluation__c.Plan_to_Harm_themselves__c}" label="Does Resident Have a Plan to Harm Him/Herself?" rendered="{!Evaluation__c.Desire_to_hurt_themselves__c == 'Yes'}"/> 
+                        <apex:outputText value=""  label="Communication" />
+                        <apex:outputField value="{!Evaluation__c.Able_to_make_Needs_Known__c}" label="Ability to make Needs known" />
+                        <apex:outputText value="{!if (CONTAINS(Evaluation__c.Expression__c, 'Non-Verbal'), Evaluation__c.Expression__c + ' - ' + Evaluation__c.Expression_Other__c, Evaluation__c.Expression__c)}" label="Expression"  rendered="{!Evaluation__c.Able_to_make_Needs_Known__c == 'No'}"/> 
                     </apex:pageblockSection>
+                    <apex:pageBlockSection title="Safety" columns="1" >
+                    	<apex:outputField value="{!Evaluation__c.safety_awareness__c}" label="Safety Awareness" />
+                    	<apex:outputField value="{!Evaluation__c.bed_alarm__c}" label="Bed Alarm" />
+                    	 <apex:outputText value="{!If ( Evaluation__c.One_to_One_Sitter__c, Evaluation__c.one_to_One_Sitter_of_Hours_per_day__c + ' hours per day', '')}" label="One to One Sitter"/>
+                    	 <apex:outputField value="{!Evaluation__c.low_bed__c}" label="Low Bed" />
+                    </apex:pageBlockSection>
                     <apex:pageBlockSection title="Pain" id="painSection" columns="1">
                         <apex:outputField value="{!Evaluation__c.Pain_Present__c}" />
                     </apex:pageBlockSection>
