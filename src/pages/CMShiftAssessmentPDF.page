@@ -404,7 +404,7 @@
                   		<apex:outputLabel value="Teething" styleClass="label" />
                   		<apex:outputField value="{!Evaluation__c.PEDS_Teething__c}" /><br/>
                   		<apex:outputLabel value="History of Tonsilitis" styleClass="label" for="tonsils"/> 
-         				<apex:outputText  value="{! if (Evaluation__c.PEDS_History_of_Tonsils__c == 'Yes', 'Yes - ' + Evaluation__c.PEDS_Tonsil_History_Describe__c,Evaluation__c.PEDS_History_of_Tonsils__c) }" label="History of Tonsilitis" /><br/>
+         				<apex:outputText value="{! if (Evaluation__c.PEDS_History_of_Tonsils__c == 'Yes', 'Yes - ' + Evaluation__c.PEDS_Tonsil_History_Describe__c,Evaluation__c.PEDS_History_of_Tonsils__c) }" label="History of Tonsilitis" /><br/>
          				<apex:outputLabel value="Pacifier" styleClass="label" for="pacifier"/> 
          				<apex:outputText id="pacifier" value="{! if (Evaluation__c.PEDS_Pacifier__c == 'Yes', 'Yes - ' + Evaluation__c.PEDS_Pacifier_Type_Usage__c,Evaluation__c.PEDS_Pacifier__c) }" label="Pacifier Use" />	
    
@@ -687,7 +687,7 @@
          			</td>
          		</tr>
          	</table>
-         	<c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Pain" formId="{!$Component.wholePage}" uniqueId="Pain Levels" isPdf="true" rendered="{!Evaluation__c.Pain_present__c == 'Yes'}" style=""/>
+         	<c:EvaluationResponseTablePDF parentId="{!Evaluation__c.Id}" type="Pain" formId="{!$Component.wholePage}" uniqueId="Pain Levels" isPdf="true" rendered="{!Evaluation__c.Pain_Present__c == 'Yes'}" style=""/>
          </apex:pageBlock>
          <apex:pageBlock title="Ortho" >
          	<table width="80%" >

@@ -548,8 +548,8 @@
                 <apex:pageBlock >
                     <apex:pageblockSection Columns="1">
                         <apex:outputField value="{!Evaluation__c.Rancho_Level__c}" />
-                    </apex:pageBlockSection >
-                    <apex:pageBlockSection columns="1" rendered="{!Evaluation__c.Rancho_Level__c != '(1) No Response' && Evaluation__c.Rancho_level__c != null}" >
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection columns="1" rendered="{!Evaluation__c.Rancho_Level__c != '(1) No Response' && Evaluation__c.Rancho_Level__c != null}" >
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Responds To" />
                             <apex:outputPanel >
@@ -584,10 +584,10 @@
                         <apex:outputText value="{!if (CONTAINS(Evaluation__c.Expression__c, 'Non-Verbal'), Evaluation__c.Expression__c + ' - ' + Evaluation__c.Expression_Other__c, Evaluation__c.Expression__c)}" label="Expression"  rendered="{!Evaluation__c.Able_to_make_Needs_Known__c == 'No'}"/> 
                     </apex:pageblockSection>
                     <apex:pageBlockSection title="Safety" columns="1" >
-                    	<apex:outputField value="{!Evaluation__c.safety_awareness__c}" label="Safety Awareness" />
-                    	<apex:outputField value="{!Evaluation__c.bed_alarm__c}" label="Bed Alarm" />
+                    	<apex:outputField value="{!Evaluation__c.Safety_Awareness__c}" label="Safety Awareness" />
+                    	<apex:outputField value="{!Evaluation__c.Bed_Alarm__c}" label="Bed Alarm" />
                     	 <apex:outputText value="{!If ( Evaluation__c.One_to_One_Sitter__c, Evaluation__c.one_to_One_Sitter_of_Hours_per_day__c + ' hours per day', '')}" label="One to One Sitter"/>
-                    	 <apex:outputField value="{!Evaluation__c.low_bed__c}" label="Low Bed" />
+                    	 <apex:outputField value="{!Evaluation__c.Low_Bed__c}" label="Low Bed" />
                     </apex:pageBlockSection>
                     <apex:pageBlockSection title="Pain" id="painSection" columns="1">
                         <apex:outputField value="{!Evaluation__c.Pain_Present__c}" />
