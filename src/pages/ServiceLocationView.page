@@ -1,31 +1,41 @@
-<apex:page title="Service Location: {!service_location__c.Program__c}" standardController="Service_Location__c" standardStylesheets="false" sidebar="false" tabStyle="Persons_Being_Served_New__tab">
-<apex:stylesheet  value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:page title="Service Location: {!Service_Location__c.Program__c}" standardController="Service_Location__c" standardStylesheets="false" sidebar="false" tabStyle="Persons_Being_Served_New__tab">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<script src="../../soap/ajax/32.0/connection.js" type="text/javascript"></script>
 
+	<script>
+	function getPrefix() {
+		sforce.connection.sessionId = '{!$Api.Session_ID}';
+		var result = sforce.connection.describeSObjects(["Service_Location__c"]);
+		var clientPrefix = result[0].keyPrefix;
+		return clientPrefix;
+	}
+	</script>
     <apex:form >
     <apex:pageMessages id="msgs"/>
         <apex:pageBlock title="Service Location" id="detail" mode="detail">
         <div class="pbHeaderButton" id="buttons">
-					<apex:commandButton value="Edit" action="{!edit}" />
+					<apex:commandButton value="Edit" action="{!edit}" rendered="{! NOT(AND(service_location__c.status__c == 'Inactive', service_location__c.source_system__c == 'AVATAR'))}" />
             </div>
-            <apex:pageBlockSection  columns="2">
-                <apex:outputField value="{!service_location__c.Alias__c}" />
-                <apex:outputField label="Facility" value="{!service_location__c.FacilityID__c}" />
-                <apex:outputField label="Program Code" value="{!service_location__c.Programid__c}" />
-                <apex:outputField value="{!service_location__c.service_value__c}" />
-                <apex:outputField value="{!service_location__c.Program__c}" />
-                <apex:outputField value="{!service_location__c.setting__c}" />
-                <apex:outputField value="{!service_location__c.Program_rollup__c}" />
-                <apex:pageBlockSectionItem>
+            <a onclick="window.location.href='/' + getPrefix();" href="#">Return to List</a>
+            <apex:pageBlockSection columns="2">
+                <apex:outputField value="{!Service_Location__c.Alias__c}" />
+                <apex:outputField label="Facility" value="{!Service_Location__c.FacilityID__c}" />
+                <apex:outputField label="Program Code" value="{!Service_Location__c.ProgramID__c}" />
+                <apex:outputField value="{!Service_Location__c.Service_Value__c}" />
+                <apex:outputField value="{!Service_Location__c.Program__c}" />
+                <apex:outputField value="{!Service_Location__c.Setting__c}" />
+                <apex:outputField value="{!Service_Location__c.Program_Rollup__c}" />
+                <apex:pageBlockSectionItem >
                 <apex:outputLabel value="Address" />
-                <apex:outputPanel>
-                <c:AddressDisplay Street1="{!service_location__c.street__c}" city="{!service_location__c.city__c}"
-  					state="{!service_location__c.state__c}" zip="{!service_location__c.zip__c}" /><br />
-  				<apex:outputText value="{!service_location__c.phone__c}" />	
+                <apex:outputPanel >
+                <c:AddressDisplay Street1="{!Service_Location__c.Street__c}" city="{!Service_Location__c.City__c}"
+  					state="{!Service_Location__c.State__c}" zip="{!Service_Location__c.Zip__c}" /><br />
+  				<apex:outputText value="{!Service_Location__c.Phone__c}" />	
   				</apex:outputPanel>
   				</apex:pageBlockSectionItem>
-  				<apex:outputField value="{!service_location__c.tin__c}" />
-                <apex:outputField value="{!service_location__c.npi__c}" />
-                <apex:outputField value="{!service_location__c.status__c}" />
+  				<apex:outputField value="{!Service_Location__c.TIN__c}" />
+                <apex:outputField value="{!Service_Location__c.NPI__c}" />
+                <apex:outputField value="{!Service_Location__c.Status__c}" />
             </apex:pageBlockSection>
         </apex:pageBlock>
     </apex:form>
