@@ -6,6 +6,18 @@
 *******************************************************************************/
 
 public with sharing class REF_HomePageController {
+    SystemSettings__c OS = SystemSettings__c.getOrgDefaults();
+    
+    public boolean showNeuroFeatures{
+      get {
+        if (showNeuroFeatures == null) {
+          showNeuroFeatures = OS.Referral_Neuro_Features_Enabled__c;
+        }
+        return showNeuroFeatures;
+      }
+      set;
+    }
+    
     public String OperatingGroup {
         get{
             OperatingGroup=[select operating_group__c from tmn_user__c where salesforce_user_account__c=:UserInfo.getUserId() limit 1].operating_group__c;
@@ -159,15 +171,17 @@ public with sharing class REF_HomePageController {
             items.add('Weekly_Referrals');        
         }
         if(og == 'CareMeridian'){
-        	// EC-57 - added
-        	items.add('Referrals_with_Funding_and_Location');
+            // EC-57 - added
+            items.add('Referrals_with_Funding_and_Location');
         }
         if(og == 'NeuroRestorative'){
             items.add('Daily_Referrals');
-            items.add('Weekly_Referrals');                    
+            items.add('Weekly_Referrals');
+            if(showNeuroFeatures){
+              items.add('NR_AdmissionSteps');
+            }                    
         } 
         
-    
     
         return items;
     
