@@ -1515,5 +1515,25 @@ public void loadProgramList() {
         upsert sa;
         return true;
    }
+   
+   @RemoteAction
+   public static boolean finddupeEval(string shiftStart, string shiftEnd, Id saId) {
+   		system.debug('I am remoting');
+   		system.debug(shiftStart);
+   		DateTime st = Datetime.parse(shiftStart);
+   		DateTime en = Datetime.parse(shiftEnd);
+   		boolean dupefound = false;
+   		List<Evaluation__c> dupeEval = [SELECT Id, Name, Shift_Start_time__c, Shift_end_time__c FROM Evaluation__c WHERE ServiceAssignment__c = :saId AND (
+        					(Shift_Start_time__c >= :st and Shift_Start_time__c <= :en)
+        				or 	(Shift_end_time__c >= :st and Shift_end_time__c <= :en)
+        				or  ( Shift_Start_time__c <= :st and Shift_end_time__c >= :en )) AND RecordType.Name = 'CMShiftAssessment' LIMIT 1];
+        				
+   		system.debug(dupeEval);
+   		if(dupeEval.size() >0 ) {
+   			dupeFound = true;
+   		}
+   	
+   		return dupeFound;
+   }
 
 }

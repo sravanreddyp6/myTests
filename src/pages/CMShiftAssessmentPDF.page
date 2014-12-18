@@ -224,12 +224,14 @@
          		<tr>
          			<td>
          				<apex:dynamiccomponent componentValue="{!ctlMap['autonomic_dysreflexia__c']}" /> <br/>
-         				<apex:outputLabel Value="Were the following areas assessed" styleClass="label" />
-         				<em><apex:outputField value="{!Evaluation__c.Autonomic_Dysreflexia_Areas_Assessed__c}"/></em><br/>
-         				<apex:outputLabel value="Was the issue Resolved" styleClass="label"/>
-         				<apex:outputField value="{!Evaluation__c.Dysreflexia_issue_resolved__c}" /> <br/>
-         				<apex:outputLabel value="Describe" styleClass="label" />
-         				<apex:outputField value="{!Evaluation__c.Dysreflexia_Issue_Describe__c}" rendered="{!Evaluation__c.Dysreflexia_issue_resolved__c == 'No'}" />
+         				<apex:variable value="" var="e" rendered="{!Evaluation__c.Autonomic_Dysreflexia__c == 'Yes'}" >
+	         				<apex:outputLabel Value="Were the following areas assessed" styleClass="label" />
+	         				<em><apex:outputField value="{!Evaluation__c.Autonomic_Dysreflexia_Areas_Assessed__c}"/></em><br/>
+	         				<apex:outputLabel value="Was the issue Resolved" styleClass="label"/>
+	         				<apex:outputField value="{!Evaluation__c.Dysreflexia_issue_resolved__c}" /> <br/>
+	         				<apex:outputLabel value="Describe" styleClass="label" />
+	         				<apex:outputField value="{!Evaluation__c.Dysreflexia_Issue_Describe__c}" rendered="{!Evaluation__c.Dysreflexia_issue_resolved__c == 'No'}" />
+         				</apex:variable>
          			</td>
          		</tr>
          	</table>
@@ -491,7 +493,7 @@
 			 </table>
          </apex:pageBlock>
          <apex:pageBlock title="Skin/Body" >
-         	<table width="80%" border="1px;" >
+         	<table width="80%"  >
          		<tr>
          			<td colspan="2" style="border: 1px solid black;">
          				<apex:outputText value="General Skin Condition" />
@@ -583,7 +585,7 @@
 		    	</tr>
 		    </table>
 		    <apex:pageBlockSection columns="1" title="Pressure Ulcer Details" >
-			    <apex:pageBlockTable value="{!pUlcers}" var="ulcer" id="pUlcersTable" border="1" >
+			    <apex:pageBlockTable value="{!pUlcers}" var="ulcer" id="pUlcersTable" border="1" rendered="{!pUlcers.size>0}">
 	               <apex:column value="{!ulcer.Decubity_Stage__c}" />
 	               <apex:column value="{!ulcer.Location__c}" />
 	               <apex:column value="{!ulcer.Decubity_Measurement__c}" />

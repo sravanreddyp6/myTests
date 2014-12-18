@@ -13,14 +13,24 @@
 
 		j$ = jQuery.noConflict();
 
-		finalize = function() {
-			var c = confirm('Are you sure about finalizing?');
-			if(c==true) {
-				finalizeEval();
-			} else {
-				return null;
-			}
-		}
+        finalize = function() {
+            var c = confirm('Are you sure about finalizing?');
+            if(c==true) {
+                finalizeEval();
+            } else {
+                return null;
+            }
+        }
+        
+        disregard = function() {
+        	var d = confirm('Do you want to proceed disregarding this Assessment?');
+        	if(d==true) {
+                disregardEval();
+            } else {
+                return null;
+            }
+        
+        }
 
 	</script>
 
