@@ -694,7 +694,7 @@ END: Uncomment to have the element collapsed by default -->
 									<apex:actionSupport event="onchange" rerender="ProgAssocPanelView2" />
 									<apex:selectOptions value="{!phaseSelectOptions}" />
 								</apex:selectList>
-						   -->
+						-->
 							</apex:pageBlockSection>
 						</apex:facet>
 					</apex:actionStatus>
@@ -990,7 +990,7 @@ END: Uncomment to have the element collapsed by default -->
 				</apex:actionStatus>
 			</div>
 			<apex:pageBlockTable styleclass="pcBody-list" value="{!evaluations}" var="evs" rendered="{!evaluations.size>0}" id="evaluations">
-				<apex:column headerValue="Action"><a href="/apex/EvaluationEdit?id={!evs.Id}&tab=demographicsTab">Edit</a>
+				<apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!evs.Id}&tab=demographicsTab" rendered="{!!evs.Is_Signed__c}">Edit</apex:outputLink>
 				</apex:column>
 				<apex:column headerValue="Name">
 					<apex:outputLink value="/apex/EvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
@@ -1712,7 +1712,7 @@ END: Uncomment to have the element collapsed by default -->
 							j$('[id$=ProgramField]').val(result.Program__c);
 							j$('[id$=LocationField]').val(result.City__c);
 							j$('[id$=ServiceLineField]').val(sl);
-						  */
+						 */
 						j$('input[id$=currentProgramID]').val(result.ProgramID__c);
 						j$('input[id$=currentProgramID]').change();
 					}
