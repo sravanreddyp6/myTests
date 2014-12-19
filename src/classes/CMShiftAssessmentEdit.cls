@@ -413,12 +413,12 @@ public with sharing class CMShiftAssessmentEdit {
 		}
 			return checkDiag;
 	}
-	
+
 	public Boolean checkCardio() {
 		Boolean cardio = true;
 		List<String>cardioErrors = errorMap.get('cardioTab');
 		cardioErrors.clear();
-		
+
 		// Cardio Section
 		if(this.evaluation.Heart_Sounds__c == null) {
 			cardio = false;
@@ -465,79 +465,79 @@ public with sharing class CMShiftAssessmentEdit {
 			cardio = false;
 			cardioErrors.add('Please choose atleast one area that is assessed for Autonomic Dysreflexia');
 		}
-		
+
 		//Suctioning Section
 		if(this.evaluation.Suctioning_Picklist__c == null) {
 			cardio = false;
 			cardioErrors.add('Suctioning field is mandatory');
 		}
-		
+
 		//Trach Section
 		if(this.evaluation.Trach_Picklist__c == null) {
 			cardio= false;
 			cardioErrors.add('Trach field is mandatory');
 		}
-		
+
 		if(this.evaluation.Trach_Picklist__c == 'Yes') {
-			
+
 			if(this.evaluation.Trach_Type__c == null) {
 				cardio= false;
 				cardioErrors.add('Trach type is mandatory');
 			}
-			
+
 			if(this.evaluation.Trach_Type__c == 'Other' && this.evaluation.Trach_Type_Other__c == null) {
 				cardio= false;
 				cardioErrors.add('Please mention the other trach type');
 			}
-			
+
 			if(this.evaluation.Trach_Size__c == null) {
 				cardio= false;
 				cardioErrors.add('Trach size is mandatory');
 			}
-			
+
 			if(this.evaluation.Trach_Size__c == 'Other' && this.evaluation.Trach_Size_Other__c == null) {
 				cardio= false;
 				cardioErrors.add('Please mention the other trach size');
 			}
-			
+
 			if(this.evaluation.PMV_Picklist__c == null) {
 				cardio= false;
 				cardioErrors.add('PMV field is mandatory');
-			
+
 			}
 		}
-		
+
 		//O2 Section
 		if(this.evaluation.O2_Picklist__c == null ){
 			cardio = false;
 			cardioErrors.add('O2 field is mandatory');
 		}
-		
+
 		if(this.evaluation.O2_Picklist__c == 'Yes'){
 			if(this.evaluation.O2_Intervention_Needed__c == null) {
 				cardio = false;
 				cardioErrors.add('O2 Intervention needed field is mandatory');
-				
+
 			}
-			
+
 			if(this.evaluation.O2_Documentation_Required__c == null){
 				cardio= false;
 				cardioErrors.add('O2 Documentation required field is mandatory');
 			}
 		}
-		
+
 		//Ventilator Section
 		if(this.evaluation.Ventilator_Picklist__c == null) {
 			cardio = false;
 			cardioErrors.add('Ventilator field is mandatory');
 		}
-		
+
 		if(this.evaluation.Ventilator_Picklist__c == 'Yes'){
 			if(this.evaluation.Ventilator_Type__c == null){
 				cardio = false;
 				cardioErrors.add('Ventilator type is mandatory');
 			}
-			
+
 			if(this.evaluation.Ventilator_Type__c == 'Intermittent' && this.evaluation.If_Intermittent_Schedule__c == null) {
 				cardio = false;
 				cardioErrors.add('Ventilator schedule is mandatory when the type is intermittent');
@@ -699,7 +699,7 @@ public with sharing class CMShiftAssessmentEdit {
 		Boolean neuro = true;
 		List<string> neuroErrors = errorMap.get('neuroTab');
 		neuroErrors.clear();
-		
+
 		if(this.evaluation.Rancho_Level__c == null) {
 			neuro = false;
 			neuroErrors.add('Rancho level is Mandatory');
@@ -718,19 +718,19 @@ public with sharing class CMShiftAssessmentEdit {
 					neuro = false;
 					neuroErrors.add('Does Resident Have a Plan to Harm Him/Herself? is mandatory');
 				}
-				
+
 			}
-			
+
 			if( this.evaluation.Able_to_make_Needs_Known__c == null) {
 				neuro = false;
 				neuroErrors.add('Ability to make needs known field is mandatory');
 				}
-	
+
 			if(this.evaluation.Able_to_make_Needs_Known__c == 'No' && this.evaluation.Expression__c == null) {
 				neuro = false;
 				neuroErrors.add('Expression field is mandatory');
 			}
-	
+
 			if(this.evaluation.Expression__c == 'Non-Verbal' && this.evaluation.Expression_Other__c == '') {
 				neuro = false;
 				neuroErrors.add('Please choose other expression when expression is non-verbal');
@@ -867,6 +867,23 @@ public with sharing class CMShiftAssessmentEdit {
 			Follow_up_Pain_Level__c = 0,
 			Evaluation__c = this.evaluation.Id
 		));
+		return null;
+	}
+
+	public PageReference updatePainResponses() {
+		if (evaluation.Pain_Present__c == null || evaluation.Pain_Present__c == '' || evaluation.Pain_Present__c == 'No') {
+			List<Evaluation_Response__c> entriesToDelete = new List<Evaluation_Response__c>();
+			for (Evaluation_Response__c pain: pains) {
+				// We have to exclude some records because they can't be
+				// deleted (as they're not on the server yet). They'll be
+				// garbage collected afterwards anyway.
+				if (pain.Id != null) {
+					entriesToDelete.add(pain);
+				}
+			}
+			delete entriesToDelete;
+			pains = null;
+		}
 		return null;
 	}
 

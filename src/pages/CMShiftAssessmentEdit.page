@@ -1826,32 +1826,32 @@
 						</apex:pageBlockSection>
 					</apex:pageBlockSection>
 					<apex:pageBlockSection columns="1" title="Safety" >
-							<apex:pageBlockSectionItem >
-								<apex:outputLabel Value="Safety Awareness" />
-								<apex:outputPanel >
-									<div Class="requiredInput" >
-										<div Class="requiredBlock" ></div>
-									<apex:inputField value="{!Evaluation__c.Safety_Awareness__c}" />
-									</div>
-								</apex:outputPanel>
-							</apex:pageBlockSectionItem>
-							<apex:inputField value="{!Evaluation__c.Bed_Alarm__c}" />
-							<apex:pageBlockSectionItem >
-								<apex:outputPanel >
-									<apex:outputLabel value="One to One Sitter" />
-									<br/>
-									<br/>
-									<apex:outputLabel value="# of hours per day" id="hoursLabel"/>
-								</apex:outputPanel>
+						<apex:pageBlockSectionItem >
+							<apex:outputLabel Value="Safety Awareness" />
+							<apex:outputPanel >
+								<div Class="requiredInput" >
+									<div Class="requiredBlock" ></div>
+								<apex:inputField value="{!Evaluation__c.Safety_Awareness__c}" />
+								</div>
+							</apex:outputPanel>
+						</apex:pageBlockSectionItem>
+						<apex:inputField value="{!Evaluation__c.Bed_Alarm__c}" />
+						<apex:pageBlockSectionItem >
+							<apex:outputPanel >
+								<apex:outputLabel value="One to One Sitter" />
+								<br/>
+								<br/>
+								<apex:outputLabel value="# of hours per day" id="hoursLabel"/>
+							</apex:outputPanel>
 
-								<apex:outputPanel >
-									<apex:inputField value="{!Evaluation__c.One_to_One_Sitter__c}"  id="sitter" onchange="handleSitter(); return false;"/>
-									<br />
-									<apex:inputField value="{!Evaluation__c.one_to_One_Sitter_of_Hours_per_day__c}" id="onetooneHours" />
-								</apex:outputPanel>
-							</apex:pageBlockSectionItem>
-							<apex:inputField value="{!Evaluation__c.Low_Bed__c}" />
-				</apex:pageBlockSection>
+							<apex:outputPanel >
+								<apex:inputField value="{!Evaluation__c.One_to_One_Sitter__c}"  id="sitter" onchange="handleSitter(); return false;"/>
+								<br />
+								<apex:inputField value="{!Evaluation__c.one_to_One_Sitter_of_Hours_per_day__c}" id="onetooneHours" />
+							</apex:outputPanel>
+						</apex:pageBlockSectionItem>
+						<apex:inputField value="{!Evaluation__c.Low_Bed__c}" />
+					</apex:pageBlockSection>
 
 					<apex:actionRegion >
 						<apex:pageBlockSection title="Pain" id="neuroPainSection" columns="1">
@@ -1870,7 +1870,7 @@
 									<div class="requiredInput">
 										<div class="requiredBlock"></div>
 										<apex:inputField value="{!Evaluation__c.Pain_Present__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.neuroMainBlock.painResponsesSection}&quot;]}">
-											<apex:actionSupport event="onchange" rerender="{!$Component.neuroMainBlock.neuroPainSection.painSectionButtons}" />
+											<apex:actionSupport event="onchange" action="{!updatePainResponses}" rerender="{!$Component.neuroMainBlock.neuroPainSection.painSectionButtons}, {!$Component.neuroMainBlock.painResponsesSection}" oncomplete="setUpFields();" />
 										</apex:inputField>
 									</div>
 								</apex:outputpanel>
@@ -1900,8 +1900,8 @@
 									<apex:outputLabel value="Follow-up Pain Level" />
 									<apex:outputPanel layout="none">
 										<c:Slider onChange="handleSliderChange('{!$Component.followUpPainLevel}')" options="{!painSliderOptions}" initial="{!pain.Follow_up_Pain_Level__c}" morestyle="display: inline-block; width: 40%;" />
-										<apex:outputLabel value="Describe Effectiveness" style="margin: auto 5px;" /> 
-										<apex:image value="{!$Resource.Redline}" />	
+										<apex:outputLabel value="Describe Effectiveness" style="margin: auto 5px;" />
+										<apex:image value="{!$Resource.Redline}" />
 										<apex:inputTextarea value="{!pain.Follow_up_Effectiveness__c}" style="vertical-align: top; " />
 									</apex:outputPanel>
 								</apex:pageBlockSectionItem>
