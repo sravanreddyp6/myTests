@@ -98,12 +98,13 @@ public with sharing class referralResults_Controller {
         		
         	refResults = SearchLogicOnPBSR.search(referralNumber,personLastName, personFirstName, Date.valueOf(personDOB), age2, personGender);
             system.debug(refResults);
+            
            // return null;
         } catch(exception e) {
             ApexPages.addMessages(e);
             //return null;
         }
-        system.debug( 'This many results:' + refResults.size());
+        
         
     }
     
