@@ -31,6 +31,15 @@
         #fundingMessages .success {
             color: green;
         }
+        .warning{
+        	border: 1px solid;
+			margin: 10px 0px;
+			padding:15px 10px 15px 50px;
+			background-repeat: no-repeat;
+			background-position: 10px center;
+        	color: #9F6000;
+			background-color: #FEEFB3;
+        }
         .modalDialog {
             max-height: 500px;
             overflow: auto;
@@ -193,7 +202,7 @@
                                 console.log(result);
                                 if(result){
                                         dupe.push('There is already an existing Shift Assessment for the current timings. Do you still want to proceed?');
-                                        j$('#dupeFound').append('<li class="error">' + dupe + '</li>');
+                                        j$('#dupeFound').append('<li class="warning">' + dupe + '</li>');
                                         j$('[id$=evalProceed]').show();
                                         j$('[id$=enterNew]').show();
                                         j$('[id$=evalSave]').hide();
@@ -1003,7 +1012,7 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:inputField value="{!evaluation.Shift_Start_Time__c}" id="evalstartTime" />
                     <apex:inputField value="{!evaluation.Shift_End_Time__c}" id="evalendTime" />
                 </apex:pageBlockSection>
-                <div id="dupeFound"></div>
+                <div id="dupeFound" ></div>
                 <apex:pageBlockButtons location="bottom">
                     <apex:commandButton value="Save" onclick="validateEval();return false;" id="evalSave" />
                     <apex:commandbutton value="Proceed" onClick="evaluationSave(); return false;" id="evalProceed"/>
