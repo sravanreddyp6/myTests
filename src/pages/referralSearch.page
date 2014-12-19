@@ -28,7 +28,7 @@ var validateInput = function( ) {
 			errors += "<li>Please enter a valid date of birth.";
 		}
 		
-		if ( age.val() != '' && isNaN(parseFloat(age.val())) ) {
+		if ( age.val() != '' && !j$.isNumeric(age.val()))  {
 			errors += "<li>Please enter a valid age.";
 		}	
 		
