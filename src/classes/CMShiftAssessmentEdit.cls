@@ -176,7 +176,6 @@ public with sharing class CMShiftAssessmentEdit {
 		errorMap.put('orthoTab', new List<string>{''});
 		errorMap.put('psychoSocialTab', new List<string>{''});
 
-
 		currentVitalsDetail = new Evaluation_Response__c();
 		currentpUlcerDetail = new Evaluation_Response__c();
 
@@ -414,28 +413,13 @@ public with sharing class CMShiftAssessmentEdit {
 		}
 			return checkDiag;
 	}
-
-	public Boolean checkPsycho() {
-		Boolean checkPsych = true;
-		List<String>psychErrors = errorMap.get('psychoSocialTab');
-		psychErrors.clear();
-		if(this.evaluation.Resident_Coping_Well__c == null) {
-			checkPsych = false;
-			psychErrors.add('Resident copiwng well is mandatory');
-
-		}
-		if(this.evaluation.Resident_Coping_Well__c == 'No' && this.evaluation.Coping_Description__c == null) {
-			checkPsych = false;
-			psychErrors.add('Description is Mandatory is resident is not coping well');
-		}
-
-		return checkPsych;
-	}
-
+	
 	public Boolean checkCardio() {
 		Boolean cardio = true;
 		List<String>cardioErrors = errorMap.get('cardioTab');
 		cardioErrors.clear();
+		
+		// Cardio Section
 		if(this.evaluation.Heart_Sounds__c == null) {
 			cardio = false;
 			cardioErrors.add('Heart Rate is Mandatory');
@@ -481,7 +465,84 @@ public with sharing class CMShiftAssessmentEdit {
 			cardio = false;
 			cardioErrors.add('Please choose atleast one area that is assessed for Autonomic Dysreflexia');
 		}
-
+		
+		//Suctioning Section
+		if(this.evaluation.Suctioning_Picklist__c == null) {
+			cardio = false;
+			cardioErrors.add('Suctioning field is mandatory');
+		}
+		
+		//Trach Section
+		if(this.evaluation.Trach_Picklist__c == null) {
+			cardio= false;
+			cardioErrors.add('Trach field is mandatory');
+		}
+		
+		if(this.evaluation.Trach_Picklist__c == 'Yes') {
+			
+			if(this.evaluation.Trach_Type__c == null) {
+				cardio= false;
+				cardioErrors.add('Trach type is mandatory');
+			}
+			
+			if(this.evaluation.Trach_Type__c == 'Other' && this.evaluation.Trach_Type_Other__c == null) {
+				cardio= false;
+				cardioErrors.add('Please mention the other trach type');
+			}
+			
+			if(this.evaluation.Trach_Size__c == null) {
+				cardio= false;
+				cardioErrors.add('Trach size is mandatory');
+			}
+			
+			if(this.evaluation.Trach_Size__c == 'Other' && this.evaluation.Trach_Size_Other__c == null) {
+				cardio= false;
+				cardioErrors.add('Please mention the other trach size');
+			}
+			
+			if(this.evaluation.PMV_Picklist__c == null) {
+				cardio= false;
+				cardioErrors.add('PMV field is mandatory');
+			
+			}
+		}
+		
+		//O2 Section
+		if(this.evaluation.O2_Picklist__c == null ){
+			cardio = false;
+			cardioErrors.add('O2 field is mandatory');
+		}
+		
+		if(this.evaluation.O2_Picklist__c == 'Yes'){
+			if(this.evaluation.O2_Intervention_Needed__c == null) {
+				cardio = false;
+				cardioErrors.add('O2 Intervention needed field is mandatory');
+				
+			}
+			
+			if(this.evaluation.O2_Documentation_Required__c == null){
+				cardio= false;
+				cardioErrors.add('O2 Documentation required field is mandatory');
+			}
+		}
+		
+		//Ventilator Section
+		if(this.evaluation.Ventilator_Picklist__c == null) {
+			cardio = false;
+			cardioErrors.add('Ventilator field is mandatory');
+		}
+		
+		if(this.evaluation.Ventilator_Picklist__c == 'Yes'){
+			if(this.evaluation.Ventilator_Type__c == null){
+				cardio = false;
+				cardioErrors.add('Ventilator type is mandatory');
+			}
+			
+			if(this.evaluation.Ventilator_Type__c == 'Intermittent' && this.evaluation.If_Intermittent_Schedule__c == null) {
+				cardio = false;
+				cardioErrors.add('Ventilator schedule is mandatory when the type is intermittent');
+			}
+		}
 		return cardio;
 	}
 
@@ -638,12 +699,13 @@ public with sharing class CMShiftAssessmentEdit {
 		Boolean neuro = true;
 		List<string> neuroErrors = errorMap.get('neuroTab');
 		neuroErrors.clear();
+		
 		if(this.evaluation.Rancho_Level__c == null) {
 			neuro = false;
 			neuroErrors.add('Rancho level is Mandatory');
 		}
 
-		if(this.evaluation.Rancho_Level__c != null && this.evaluation.Rancho_Level__c != '(1)No Response') {
+		if(this.evaluation.Rancho_Level__c != null && this.evaluation.Rancho_Level__c != '(1) No Response') {
 
 			if(this.evaluation.Mood__c.Contains('Sad') || this.evaluation.Mood__c.Contains('Flat')) {
 
@@ -656,19 +718,20 @@ public with sharing class CMShiftAssessmentEdit {
 					neuro = false;
 					neuroErrors.add('Does Resident Have a Plan to Harm Him/Herself? is mandatory');
 				}
+				
 			}
-
-			if(this.evaluation.Able_to_make_Needs_Known__c == null) {
+			
+			if( this.evaluation.Able_to_make_Needs_Known__c == null) {
 				neuro = false;
-				neuroErrors.add('Ability to make needs known is mandatory');
-			}
-
+				neuroErrors.add('Ability to make needs known field is mandatory');
+				}
+	
 			if(this.evaluation.Able_to_make_Needs_Known__c == 'No' && this.evaluation.Expression__c == null) {
 				neuro = false;
 				neuroErrors.add('Expression field is mandatory');
 			}
-
-			if(this.evaluation.Able_to_make_Needs_Known__c == 'Non-Verbal' && this.evaluation.Expression_Other__c == '') {
+	
+			if(this.evaluation.Expression__c == 'Non-Verbal' && this.evaluation.Expression_Other__c == '') {
 				neuro = false;
 				neuroErrors.add('Please choose other expression when expression is non-verbal');
 			}
@@ -748,7 +811,22 @@ public with sharing class CMShiftAssessmentEdit {
 
 	}
 
+	public Boolean checkPsycho() {
+		Boolean checkPsych = true;
+		List<String>psychErrors = errorMap.get('psychoSocialTab');
+		psychErrors.clear();
+		if(this.evaluation.Resident_Coping_Well__c == null) {
+			checkPsych = false;
+			psychErrors.add('Resident coping well is mandatory');
 
+		}
+		if(this.evaluation.Resident_Coping_Well__c == 'No' && this.evaluation.Coping_Description__c == null) {
+			checkPsych = false;
+			psychErrors.add('Description is Mandatory when resident is not coping well');
+		}
+
+		return checkPsych;
+	}
 
 	public List<selectoption> getcopingValues(){
 		List<Selectoption> copingValue = Utility.getPicklistValues(evaluation, 'Resident_Demonstrating_Issues__c');
