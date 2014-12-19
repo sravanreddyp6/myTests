@@ -137,10 +137,10 @@
 						} else {
 							$target.val("").trigger("change");
 						}
-					} else if ($target.is("select")) {
+					} else if ($target.is("select, textarea")) {
 						$target.val("").trigger("change");
 					}
-					$target.find("input[type!=checkbox], select").prop("checked", false).val("").trigger("change");
+					$target.find("input[type!=checkbox], select, textarea").val("").trigger("change");
 					$target.find("input[type=checkbox]").prop("checked", false).trigger("change");
 					$target.trigger("change");
 				});
