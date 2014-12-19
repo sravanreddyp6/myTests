@@ -1,13 +1,6 @@
 <apex:page standardController="Service_Assignment__c" extensions="ServiceAssignmentExt" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab" showheader="true">
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:stylesheet value="{!$Resource.pbscardcss}" />
-    <apex:remoteObjects jsNamespace="rm">
-        <apex:remoteObjectModel name="Evaluation__c" jsShorthand="eval" fields="Name,Id">
-            <apex:remoteObjectField name="Shift_Start_Time__c" jsShorthand="startTime" />
-            <apex:remoteObjectField name="Shift_End_Time__c" jsShorthand="endTime" />
-            <apex:remoteObjectField name="Status__c" jsShorthand="status" />
-        </apex:remoteObjectModel>
-    </apex:remoteObjects>
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
@@ -160,14 +153,11 @@
 
 
         validateEval = function () {
-
-
             var evalErrors = [];
             var dupe = [];
             var startValue = j$('[id$=evalstartTime]').val();
             var st = new Date(startValue);
             var formatStart = moment(st).format();
-            
             var start = new Date(formatStart);
             var endValue = j$('[id$=evalendTime]').val();
             var en = new Date(endValue);
@@ -195,8 +185,7 @@
             
                         Visualforce.remoting.Manager.invokeAction(
                         '{!$RemoteAction.ServiceAssignmentExt.finddupeEval}', 
-                        startValue,endValue,'{!Service_Assignment__c.Id}',
-                        
+                        	startValue,endValue,'{!Service_Assignment__c.Id}',
                         function(result, event){
                             if (event.status) {
                                 console.log(result);
