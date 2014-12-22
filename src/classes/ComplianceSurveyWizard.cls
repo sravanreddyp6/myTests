@@ -21,7 +21,10 @@ public with sharing class ComplianceSurveyWizard {
 
     
     public ComplianceSurveyWizard(){
-        Boolean Submitted = [SELECT Id FROM Response__c WHERE Response__c.Survey__c != 'a0lU0000003YfSHIA0' AND TMN_User__r.Employee_Number__c =: getUserID()].size() >= 1; 
+    	/*
+    	 * Shaun Wood changed this so we don't have to update the ID every year.
+    	 */
+        Boolean Submitted = [SELECT Id FROM Response__c WHERE survey__r.id__c =: SurveyId AND TMN_User__r.Employee_Number__c =: getUserID()].size() >= 1; 
         //if(Submitted || ApexPages.currentPage().getCookies().get('submitted') != null){
         if(Submitted){
             QuestionID = 'Submitted';
