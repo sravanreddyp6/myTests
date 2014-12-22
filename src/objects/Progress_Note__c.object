@@ -19505,7 +19505,7 @@ errors.push(&apos;You must populate the &quot;Foster Parents&quot; field before 
 if(records[0].Topic_Behavior_Management__c==&apos;false&apos; &amp;&amp; records[0].Topic_Diagnostic_Psycho_education__c==&apos;false&apos; &amp;&amp; records[0].Topic_Family_Interactions__c==&apos;false&apos; &amp;&amp; records[0].Topic_Life_Book_Development__c==&apos;false&apos; &amp;&amp; records[0].Topic_Other__c==&apos;false&apos; &amp;&amp; records[0].Topic_Separation_Loss_and_Grief_Issues__c==&apos;false&apos; &amp;&amp; records[0].Topic_Shared_Parenting__c==&apos;false&apos; &amp;&amp; records[0].Topic_Successful_Adaptation__c==&apos;false&apos; &amp;&amp; records[0].Topic_TFP_Rules_of_the_Road__c==&apos;false&apos; &amp;&amp; records[0].Topic_Treatment_Goal_Review_PCP__c==&apos;false&apos; &amp;&amp; curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos;) {
 errors.push(&apos;You must select at least one &quot;Clinical Consultation / Skill Enhancement Topic&quot; before continuing.&apos;);
 }
-if(records[0].Topic_Other__c==true &amp;&amp; !records[0].Topic_If_Other__c ){
+if(records[0].Topic_Other__c==&apos;true&apos; &amp;&amp; !records[0].Topic_If_Other__c ){
 errors.push(&apos;If the &quot;Clinical Consultation / Skill Enhancement Topic&quot; option &quot;Other&quot; has been selected, then you must make an entry in the &quot;If Other&quot; field before continuing.&apos;);
 }
 if(!records[0].PCP_update_since_last_visit__c &amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {

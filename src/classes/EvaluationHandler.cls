@@ -2,9 +2,11 @@ public with sharing class EvaluationHandler {
     private boolean m_isExecuting = false;
     public List <Evaluation_Response__c> tobedelAnnos = new List<Evaluation_Response__c>();
     public List<Evaluation__c> annoEvals = new List<Evaluation__c>();
+	private ID rtNursing; 
 
     public EvaluationHandler(boolean isExecuting){
         m_isExecuting = isExecuting;
+        rtNursing = [ select id from recordtype where sobjecttype='Evaluation__c' and developername='NursesAssessment' LIMIT 1].ID;
     }
 
     public void OnBeforeInsert(Evaluation__c[] newObjects){
@@ -207,23 +209,8 @@ public with sharing class EvaluationHandler {
             'Autonomic_Dysreflexia__c' => new Map<String, String[]>{
                 'Yes' => new String[] {'Educated_Regarding_AD__c'}
             },
-
-            'elimination_bladder_no_continent_details__c' => new Map<String, String[]>{
-                'ICP' => new String[] {'if_icp_q__c','ICP_Describe__c'}
-            },
-
-            'elimination_bladder_continent__c' => new Map<String, String[]>{
-                '1' => new String[] {'elimination_bladder_no_continent_details__c','Incontinent_Age_Appropriate__c'}
-            },
-
-            'elimination_bowel_continent__c' => new Map<String, String[]>{
-                '1' => new String[] {'elimination_bowel_no_continent_appliance__c'}
-            },
-
-            'Elimination_Bowel_No_Continent_Appliance__c' => new Map<String, String[]>{
-                'Other' => new String[] {'Elimination_Bowel_No_Appliance_Other__c','Incontinent_Bowel_Age_Appropriate__c'}
-            },
-
+			
+			
             'Incontinent_Bowel_Age_Appropriate__c' => new Map<String, String[]>{
                 'Yes' => new String[] {'Incontinent_Bowel_Child_Training__c','Incontinent_Bowel_ChildTraining_Describe__c'}
             },
@@ -607,11 +594,30 @@ public with sharing class EvaluationHandler {
             'Representative_present_at_Admission__c' => new Map<string, string[]>{
                 'Yes' => new String[]{'Name_of_Representative_present__c'}
             }
+};
+			//2014-12-11 - change to apply to recordtype other than NursingAssessment
+			if ( obj.RecordTypeID != rtNursing ) {
+				
+				validationMap.put('elimination_bladder_no_continent_details__c', new Map<String, String[]>{
+                'ICP' => new String[] {'if_icp_q__c','ICP_Describe__c'}
+            });
 
+            	validationMap.put('elimination_bladder_continent__c', new Map<String, String[]>{
+                '1' => new String[] {'elimination_bladder_no_continent_details__c','Incontinent_Age_Appropriate__c'}
+            });
 
+            	validationMap.put('elimination_bowel_continent__c', new Map<String, String[]>{
+                '1' => new String[] {'elimination_bowel_no_continent_appliance__c'}
+            });
 
+            validationMap.put('Elimination_Bowel_No_Continent_Appliance__c', new Map<String, String[]>{
+                'Other' => new String[] {'Elimination_Bowel_No_Appliance_Other__c','Incontinent_Bowel_Age_Appropriate__c'}
+            });
+			}
 
-        };
+system.debug( 'RECORD TYPE: ' + obj.recordtypeID);
+	
+        
         for (String fieldName: validationMap.keySet()) {
             String fieldStringValue;
             if (obj.get(fieldName) == null) {
