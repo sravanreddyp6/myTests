@@ -7,43 +7,23 @@
         <field>TMN_User__c.Last_Name__c</field>
     </columns>
     <columns>
-        <field>TMN_User__c.Email__c</field>
+        <field>CUST_NAME</field>
     </columns>
     <columns>
         <field>TMN_User__c.Employee_Number__c</field>
     </columns>
     <columns>
-        <field>TMN_User__c.Job_Title__c</field>
+        <field>TMN_User__c.Compliance_Link__c</field>
     </columns>
     <columns>
-        <field>TMN_User__c.Manager_Name__c</field>
+        <field>TMN_User__c.Email__c</field>
     </columns>
-    <columns>
-        <field>TMN_User__c.Manager_Email__c</field>
-    </columns>
-    <columns>
-        <field>TMN_User__c.Operating_Group__c</field>
-    </columns>
-    <columns>
-        <field>TMN_User__c.Work_State__c</field>
-    </columns>
-    <crossFilters>
-        <criteriaItems>
-            <column>Survey__c</column>
-            <operator>equals</operator>
-            <value>2015 Compliance Survey</value>
-        </criteriaItems>
-        <operation>without</operation>
-        <primaryTableColumn>CUST_ID</primaryTableColumn>
-        <relatedTable>Response__c</relatedTable>
-        <relatedTableJoinColumn>TMN_User__c</relatedTableJoinColumn>
-    </crossFilters>
-    <description>Users who received a survey link but not have responded yet</description>
+    <description>Compliance Survey Links report based off of the TMN Users object</description>
     <filter>
         <criteriaItems>
-            <column>TMN_User__c.Email__c</column>
-            <operator>contains</operator>
-            <value>thementornetwork.com,caremeridian.com,neurorestorative.com</value>
+            <column>TMN_User__c.Job_Status__c</column>
+            <operator>equals</operator>
+            <value>Active</value>
         </criteriaItems>
         <criteriaItems>
             <column>TMN_User__c.Pay_Basis__c</column>
@@ -51,9 +31,9 @@
             <value>Salaried</value>
         </criteriaItems>
         <criteriaItems>
-            <column>TMN_User__c.Job_Status__c</column>
-            <operator>equals</operator>
-            <value>Active</value>
+            <column>TMN_User__c.Email__c</column>
+            <operator>contains</operator>
+            <value>thementornetwork.com,caremeridian.com,neurorestorative.com</value>
         </criteriaItems>
         <criteriaItems>
             <column>TMN_User__c.Employee_Number__c</column>
@@ -62,7 +42,7 @@
         </criteriaItems>
     </filter>
     <format>Tabular</format>
-    <name>TMN User without Survey Responses</name>
+    <name>Compliance Survey Links</name>
     <params>
         <name>co</name>
         <value>1</value>
