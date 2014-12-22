@@ -117,7 +117,8 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
             }       
       }
  
- 
+
+   @TestVisible 
    private List<Messaging.SingleEmailMessage> sendNotification(Assessment__c a, Date dueDate, Id admId, Integer qtr){
     
     try {
@@ -349,7 +350,7 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
             
    }
 
-
+   @TestVisible
    private List<Messaging.SingleEmailMessage> sendIncompleteNotification(Assessment__c a, Datetime creationDate, Id admId){
         
     try {

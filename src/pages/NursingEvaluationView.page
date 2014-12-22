@@ -139,7 +139,10 @@ hr {
                         <apex:outputField Value="{!Evaluation__c.Admit_Status__c}" />
                         <apex:outputField value="{!Evaluation__c.Transported_By__c}" />
                         <apex:outputField value="{!Evaluation__c.Accompanied_By__c}" />
-                        <apex:outputField value="{!Evaluation__c.Admit_Date_Time__c}" />
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel Value="Admit Date/Time" />
+                        	<c:MilitaryDatetime dateTimeVal="{!Evaluation__c.Admit_Date_Time__c}" />
+                        </apex:pageBlockSectionItem>
                         <apex:outPutField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.Name}" />
                         <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.BirthDate}" />
                         <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_being_served__r.Advanced_Directives__c}" />
