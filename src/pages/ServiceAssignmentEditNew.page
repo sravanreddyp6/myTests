@@ -165,6 +165,7 @@
             var end = new Date(formatEnd);
             
             j$('#evaluationMessages').html('');
+            
             if (startValue == '' || endValue == '') {
                 evalErrors.push('Shift Start time and end time cannot be blank');
             }
@@ -172,12 +173,6 @@
             if (start >= end) {
                 evalErrors.push('Shift End time Should be greater than Start time');
             }
-
-            if (evalErrors.length > 0) {
-
-                j$.each(evalErrors, function (index, error) {
-                    j$('#evaluationMessages').append('<li class="error">' + error + '</li>');
-                });
 
 			if (evalErrors.length > 0) {
 
@@ -1011,8 +1006,6 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:commandbutton value="Proceed" onClick="evaluationSave(); return false;" id="evalProceed"/>
 					<apex:commandButton value="Enter new time" onClick="clearDates(); j$('#dupeFound').html(''); return false;" id="enterNew"/>
 					<apex:commandButton value="Cancel" onclick="closeModalDialog('evaluationModal', 'span'); clearDates(); return false;" />
-
-
 					<apex:actionStatus id="saveevaluationStatus">
 						<apex:facet name="start">
 							<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
