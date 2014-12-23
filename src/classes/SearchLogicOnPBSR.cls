@@ -40,9 +40,9 @@ public with sharing class SearchLogicOnPBSR {
         }
         else {
         // otherwise do a name search
-        //if (String.IsBlank(lastname) || String.IsBlank(firstname)) {
-            searchStringPBR= SearchLogicOnPBSR.buildCriteria(lastname,firstname,dob, age,gender,false, true);
-            searchStringPBS= SearchLogicOnPBSR.buildCriteria(lastname,firstname,dob, age,gender,true, false);
+        
+            searchStringPBR= SearchLogicOnPBSR.buildCriteria(String.escapeSingleQuotes(lastname), String.escapeSingleQuotes(firstname),dob,age,gender,false, true);
+            searchStringPBS= SearchLogicOnPBSR.buildCriteria(String.escapeSingleQuotes(lastname), String.escapeSingleQuotes(firstname),dob, age,gender,true, false);
             system.debug( 'PBR: ' + searchSTringPBR);
             system.debug( 'PBS: ' + searchSTringPBS);
             List<Person_Being_Referred__c> pbrs2 = Database.query(searchStringPBR);
@@ -50,7 +50,6 @@ public with sharing class SearchLogicOnPBSR {
             
             pbrs.AddAll( pbrs2);
             pbsList.AddAll( pbss2);
-        //}
         
         }
         for(Person_Being_Referred__c pbr : pbrs)
