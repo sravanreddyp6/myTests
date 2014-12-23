@@ -1,4 +1,6 @@
 public with sharing class HomePageController{
+    SystemSettings__c OS = SystemSettings__c.getOrgDefaults();
+    
     public final String OperatingGroup = [select operating_group__c from user where id=:UserInfo.getUserId() limit 1].operating_group__c;
     public static Map<String,Schema.SObjectType> gSchema;
     public Map<String,String> sObjNamesMap{get;set;}
@@ -32,7 +34,17 @@ public with sharing class HomePageController{
     public boolean DocCreate{get;set;}
     public boolean DocView{get;set;}
     public boolean Refresh=false;
-
+    
+    public boolean showNeuroFeatures{
+      get {
+        if (showNeuroFeatures == null) {
+          showNeuroFeatures = OS.Referral_Neuro_Features_Enabled__c;
+        }
+        return showNeuroFeatures;
+      }
+      set;
+    }
+          
     //report folders
     public String RefId;
     public String ESDbillingId;
@@ -515,9 +527,10 @@ public with sharing class HomePageController{
         if(og == 'NeuroRestorative'){
             items.add('Daily_Referrals');
             items.add('Weekly_Referrals');
+            if(showNeuroFeatures){
+              items.add('NR_AdmissionSteps');
+            }
         }
-
-
 
         return items;
 

@@ -227,6 +227,7 @@
         <apex:inputhidden value="{!Evaluation__c.Indwelling_Suprapubic_Date_Unknown__c}" />
         <apex:inputhidden value="{!Evaluation__c.If_ICP_Q__c}" />
         <apex:inputhidden value="{!Evaluation__c.Neurogenic_Bladder__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Bladder_Continence__c}" />
         <apex:inputhidden value="{!Evaluation__c.Perception_of_Need_to_Void__c}" />
         <apex:inputhidden value="{!Evaluation__c.Urinary_Issues__c}" />
         <apex:inputhidden value="{!Evaluation__c.Urine_Color__c}" />
@@ -234,7 +235,7 @@
         <apex:inputhidden value="{!Evaluation__c.Urine_Clarity__c}" />
         <apex:inputhidden value="{!Evaluation__c.Urine_Clarity_Other__c}" />
         <apex:inputhidden value="{!Evaluation__c.Urine_Odor__c}" />
-        <apex:inputhidden value="{!Evaluation__c.Elimination_Bowel_Continent__c}" />
+        <apex:inputhidden value="{!Evaluation__c.Bowel_Continence__c}" />
         <apex:inputhidden value="{!Evaluation__c.Elimination_Bowel_No_Continent_Appliance__c}" />
         <apex:inputhidden value="{!Evaluation__c.Elimination_Bowel_No_Appliance_Other__c}" />
         <apex:inputhidden value="{!Evaluation__c.Incontinent_Neurogenic_Bowel__c}" />
@@ -531,7 +532,9 @@
               <tr><td>
                 <apex:dynamiccomponent componentValue="{!ctlmap['accompanied_by__c']}" />
               </td><td>
-                <apex:dynamiccomponent componentValue="{!ctlmap['admit_date_time__c']}" />
+                <apex:outputLabel id="Admit_DateTime" value="Admit Date/Time" styleClass="label"/>
+				<c:MilitaryDatetime dateTimeVal="{!Evaluation__c.Admit_Date_Time__c}" />
+<!--                 <apex:dynamiccomponent componentValue="{!ctlmap['admit_date_time__c']}" /> -->
               </td></tr>
               <tr><td>
                 <apex:outputLabel id="Name" value="Name" styleClass="label"/>
@@ -1039,13 +1042,13 @@
     </tr>
     <tr>
 	<td colspan="2">
-			<apex:outputLabel value="Incontinent" styleClass="label" />
-			<apex:outputField value="{!Evaluation__c.Elimination_Bowel_Continent__c}" label="Incontinent"/>
+			<apex:dynamiccomponent componentvalue="{!ctlmap['bowel_continence__c']}" />
+			
 	</td>
 	</tr>
 	<tr>
 	<td>
-		<apex:outputLabel value="Appliance" for="bowelapp" styleClass="label" />
+		<apex:outputLabel value="Devices" for="bowelapp" styleClass="label" />
         <apex:outputField id="bowelapp" value="{! Evaluation__c.Elimination_bowel_no_continent_appliance__c}" />
 	</td>
 	<td>
@@ -1084,21 +1087,15 @@
 	</tr>
 	<tr>
 	<td style="vertical-align:top" width="50%">
-	    <apex:dynamiccomponent componentvalue="{!ctlmap['elimination_bladder_continent__c']}" /><br/>
-		<apex:outputLabel value="Details" styleClass="label" />
-	    <apex:outputText value="{!Evaluation__c.Elimination_Bladder_No_Continent_Details__c}" label="Details" /><br/>
+	    <apex:dynamiccomponent componentvalue="{!ctlmap['bladder_continence__c']}" /><br/>
+		<apex:outputLabel value="Devices" styleClass="label" />
+	    <apex:outputText value="{!Evaluation__c.Elimination_Bladder_No_Continent_Details__c}" label="Devices" /><br/>
 	       
 </td>
 	<td style="vertical-align:top">
 			<Br />
 			 <apex:outputLabel value="If Indwelling/Suprapubic, Type/size" styleClass="label" />
 	        <apex:outputText value="{!Evaluation__c.Indwelling_Suprapubic_type_size__c}" label="If Indwelling/Suprapubic, Type/size" /><br/>
-	        <apex:outputLabel value="If Indwelling/Suprapubic, Date" styleClass="label" />
-	        <apex:outputText value="{!Evaluation__c.Indwelling_Suprapubic_Date__c}" label="If Indwelling/Suprapubic, Date"  /><br/>            
-            <apex:dynamiccomponent componentvalue="{!ctlmap['indwelling_suprapubic_date_unknown__c']}" /><br/>
-	        <apex:dynamiccomponent componentvalue="{!ctlmap['if_icp_q__c']}" /><br/>
-	        <apex:outputLabel value="If ICP,Describe Program" styleClass="label" />
-	        <apex:outputText value="{!Evaluation__c.ICP_Describe__c}" label="If ICP,Describe Program" /><br/>
 	        
      </td>
 </tr>	        
