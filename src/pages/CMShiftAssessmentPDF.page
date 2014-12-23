@@ -584,17 +584,17 @@
     				</td>
 		    	</tr>
 		    </table>
-		    <apex:pageBlockSection columns="1" title="Pressure Ulcer Details" >
-			    <apex:pageBlockTable value="{!pUlcers}" var="ulcer" id="pUlcersTable" border="1" rendered="{!pUlcers.size>0}">
-	               <apex:column value="{!ulcer.Decubity_Stage__c}" />
-	               <apex:column value="{!ulcer.Location__c}" />
-	               <apex:column value="{!ulcer.Decubity_Measurement__c}" />
-	               <apex:column value="{!ulcer.Date__c}" headerValue="Date Last Measured"/>
-	               <apex:column value="{!ulcer.Treatment__c}" />
-	           </apex:pageBlockTable>
+		    
+		    <apex:pageBlockSection columns="1" title="Pressure Ulcer Details"  >
+				    <apex:pageBlockTable value="{!pUlcers}" var="ulcer" id="pUlcersTable" border="1" rendered="{!pUlcers.size!=0}"  >
+		               <apex:column value="{!ulcer.Decubity_Stage__c}" />
+		               <apex:column value="{!ulcer.Location__c}" />
+		               <apex:column value="{!ulcer.Decubity_Measurement__c}" headerValue="Date Last Measured"/>
+		               <apex:column value="{!ulcer.Date__c}" />
+		               <apex:column value="{!ulcer.Treatment__c}" />
+		           </apex:pageBlockTable>
 	       </apex:pageBlockSection>
 		   </apex:variable>
-		   
          </apex:pageBlock>
          <apex:pageBlock title="Neurological" >
          	<table style="width:80%;">

@@ -371,27 +371,7 @@
 
 			};
 
-			disableAnno = function ( el, annotype ) {
-				// disable body map if intact is checked
-				anno.hideSelectionWidget( el );
-
-				$('.' + annotype + 'annotation-number').remove();
-				$('table#' + annotype + 'annotations tr').remove();
-				// because the remove handler is not called on the removeAll, remove each one individually
-				anno.getAnnotations(el).each( function( element) {
-					anno.removeAnnotation(element);
-					Visualforce.remoting.Manager.invokeAction(
-						'{!$RemoteAction.CMShiftAssessmentEdit.deleteAnnotation}',
-						element.Id,
-						function (result, event) {
-						if (!event.status) {
-							alert("Failed to delete annotation! Error: " + event.message);
-							anno.addAnnotation(element);
-						}
-					});
-
-				});
-			};
+			
 
 			var addOrModifyAnnotation = function (annotation, isNew) {
 				if (isNew) {
@@ -443,17 +423,32 @@
 			disablePain = function() {
 				var Intact = $('[id$=skinIntact]').val();
 				var el = $('#bodyMap').get(0);
-
+				console.log('Intact'+Intact);
 				if(Intact == 'No') {
+					console.log('I am No');
 					$('[id$=painSection]').removeClass("hidePain").addClass("showPain");
-
-				} else {
-					//disableAnno( el, 'bodyMap' );
+					
+				} 
+				if(Intact == 'Yes' || Intact == '') {
+					console.log('I am Yessss');
+					Visualforce.remoting.Manager.invokeAction(
+						'{!$RemoteAction.CMShiftAssessmentEdit.clearAnnotations}',
+						'{!Evaluation__c.Id}',
+						function (result, event) {
+							if(event.status){
+								$('.annotation-number').remove();
+								$('table#annotations tr').remove();
+								
+							}
+							if (!event.status) {
+								alert("Failed to delete annotations! Error: " + event.message);
+							}
+						}
+					);
+					
 					$('[id$=painSection]').removeClass("showPain").addClass("hidePain");
-				//	$('[id$=painSection]').find('select,input:text,textarea').val('');
-
+					//$('[id$=painSection]').find('select,input:text,textarea').val('');
 				}
-
 
 		};
 
@@ -751,6 +746,7 @@
 		<apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); handleDiagnosis(); handleCardio(); handleSkinBody(); handleNeuro(); handleOrtho(); hanldePsycho();" reRender="pageMessages, wholeTabPanel, buttons">
 			<apex:param name="nextTab" assignTo="{!nextTab}" value="" />
 		</apex:actionFunction>
+		<apex:actionFunction name="refreshannotationSection" reRender="painSection" oncomplete="anno.reset();"/>
 		<apex:tabPanel value="{!selectedTab}" id="wholeTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
 			<apex:tab label="Demographics" name="demographicsTab" ontabenter="changeTab('demographicsTab'); return false;" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
@@ -1480,7 +1476,6 @@
 			<apex:tab label="Skin/Body" name="skinBodyTab" ontabenter="changeTab('skinBodyTab'); return false;" styleClass="{!IF(Evaluation__c.Skin_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<script>
 					jQuery(document).ready(function ($) {
-
 						anno.reset();
 						var el = $('#bodyMap').get(0);
 						if (el) {
@@ -1524,7 +1519,7 @@
 						anno.addHandler('onAnnotationRemoved', function (annotation) {
 							createAnnotationElements(anno.getAnnotations());
 						});
-
+						
 					});
 
 					</script>
@@ -1615,12 +1610,14 @@
 							<apex:outputPanel >
 								<div class="requiredInput">
 									<div class="requiredBlock"></div>
-								<apex:inputField value="{!Evaluation__c.Skin_Intact_Picklist__c}"  id="skinIntact" onChange="disablePain(); return false;"/>
+								<apex:inputField value="{!Evaluation__c.Skin_Intact_Picklist__c}"  id="skinIntact" onChange="disablePain(); return false;" >
+									
+								</apex:inputField>
 								</div>
 							</apex:outputPanel>
 						</apex:pageBlockSectionItem>
 					</apex:pageBlockSection>
-
+				
 					<apex:outputPanel id="painSection" layout="block" >
 						<apex:pageBlockSection title="Body Map" columns="2" id="bodyMapSection">
 							<div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
@@ -1706,6 +1703,7 @@
 							</apex:pageBlockTable>
 						</apex:pageBlockSection>
 					</apex:outputPanel>
+					
 				</apex:pageBlock>
 			</apex:tab>
 			<apex:tab label="Neurological" name="neuroTab" ontabenter="changeTab('neuroTab');return false;" styleClass="{!IF(Evaluation__c.Neuro_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
@@ -2173,5 +2171,5 @@
 			</div>
 		</apex:facet>
 		<apex:facet name="stop" />
-	</apex:actionStatus>
+	</apex:actionStatus>					
 </apex:page>

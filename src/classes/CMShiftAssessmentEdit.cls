@@ -743,6 +743,12 @@ public with sharing class CMShiftAssessmentEdit {
 			neuroErrors.add('Safety awareness is mandatory');
 
 		}
+		
+		if(this.evaluation.Pain_Present__c == null){
+			neuro = false;
+			neuroErrors.add('Pain Present field is mandatory');
+			
+		}
 		return neuro;
 	}
 
@@ -917,5 +923,12 @@ public with sharing class CMShiftAssessmentEdit {
 		delete [
 			SELECT ID FROM Evaluation_Response__c WHERE ID=:annotationId
 		];
+	}
+	
+	@RemoteAction
+	public static void clearAnnotations(Id evalId) {
+		delete [SELECT Id FROM Evaluation_Response__c WHERE Evaluation__c =:evalId AND RecordType.Name = 'Annotation' 
+		];
+		
 	}
 }
