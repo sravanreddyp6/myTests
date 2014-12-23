@@ -32,6 +32,9 @@ private class REF_HomePageController_Test{
         system.assert(controller.referralPrefix == Referral__c.sObjectType.getDescribe().getKeyPrefix());
         system.assert(controller.GroupChatterId == '000000000000001');
 		system.assert(controller.GroupChatterLabel == 'Redwood News', 'Expecting GroupChatterLabel = Redwood; actually: ' + controller.GroupChatterLabel);
+        system.assert(controller.refReports2.size() == 0);
+        system.assert(controller.getrefVfReports().size() == 0);
+        system.assert(controller.getReportsToShow('Redwood').contains('Active_Referrals_With_Diagnosis'));
       }
       System.runAs(testUser2){
         PageReference pageRef = Page.ReferralHome;
@@ -39,6 +42,9 @@ private class REF_HomePageController_Test{
         REF_HomePageController controller = new REF_HomePageController();
 		system.assert(controller.GroupChatterLabel == 'CareMeridian News', 'Expecting GroupChatterLabel = CareMeridian; actually: ' + controller.GroupChatterLabel);
         system.assert(controller.GroupChatterId == '000000000000002');
+        system.assert(controller.refReports2.size() == 0);
+        system.assert(controller.getrefVfReports().size() == 0);
+        system.assert(controller.getReportsToShow('CareMeridian').contains('Referrals_with_Funding_and_Location'));
       }
         
       System.runAs(testUser3){
@@ -47,6 +53,9 @@ private class REF_HomePageController_Test{
         REF_HomePageController controller = new REF_HomePageController();
 		system.assert(controller.GroupChatterLabel == 'NeuroRestorative News', 'Expecting GroupChatterLabel = Neuro; actually: ' + controller.GroupChatterLabel);
         system.assert(controller.GroupChatterId == '000000000000003');
+        system.assert(controller.refReports2.size() == 0);
+        system.assert(controller.getrefVfReports().size() == 0);
+        system.assert(controller.getReportsToShow('NeuroRestorative').contains('Daily_Referrals'));
       }
       
       System.runAs(testUser4){
@@ -55,6 +64,9 @@ private class REF_HomePageController_Test{
         REF_HomePageController controller = new REF_HomePageController();
 		system.assert(controller.GroupChatterLabel == 'Cambridge News', 'Expecting GroupChatterLabel = Cambridge; actually: ' + controller.GroupChatterLabel);
         system.assert(controller.GroupChatterId == '000000000000004');
+        system.assert(controller.refReports2.size() == 0);
+        system.assert(controller.getrefVfReports().size() == 0);
+        system.assert(controller.getReportsToShow('Cambridge').contains('GA_Referrals_FIT_Program'));
       }
       Test.stopTest();
     }

@@ -19,9 +19,9 @@ public class referralResults_Controller_Test{
         ApexPages.currentPage().getParameters().put('age', '99');
         controller = new referralResults_Controller();
         controller.searchRefs();
-        system.assert(controller.refResults.size() == 1);
+        system.assert(controller.refResults.size() == 0);
         
-        ApexPages.currentPage().getParameters().put('pbrId', pbr.Id);
+        ApexPages.currentPage().getParameters().put('referralNumber', ref.name);
         controller = new referralResults_Controller();
         controller.searchRefs();
         system.debug( 'RESULT:' + Controller.refResults.size());

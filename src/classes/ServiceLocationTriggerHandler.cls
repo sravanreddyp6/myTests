@@ -6,21 +6,37 @@ public with sharing class ServiceLocationTriggerHandler {
         m_isExecuting = isExecuting;
     }
     
-    public void OnAfterInsert(Service_Location__c [] newObjects){
-        updateServiceCodeInfo( newObjects );
+    public void OnAfterInsert( Service_Location__c [] newObjects){
+        updateServiceCodeInfo( null, newObjects );
         
     }
-    public void OnAfterUpdate(Service_Location__c [] newObjects){
-        updateServiceCodeInfo( newObjects );
+    public void OnAfterUpdate( Service_Location__c[] oldObjects, Service_Location__c [] newObjects){
+        updateServiceCodeInfo( oldObjects, newObjects );
         
     }
     
-    private void updateServiceCodeInfo (Service_Location__c[] newObjects ) {
+    private void updateServiceCodeInfo (Service_Location__c[] oldObjects, Service_Location__c[] newObjects ) {
+		
+		Map<ID, Service_Location__c> oldSLMap = new Map<ID, Service_Location__c>();
+		
+		if ( oldObjects != null )
+			oldSLMap.putAll( oldObjects);
+			
+		Service_Location__c oldSL;
 		
 		Map<String, Service_Location__c> slMap = new Map<String, Service_Location__c>();
 		for ( Service_Location__c sl : newObjects ) {
 			
-			slMap.put( sl.ProgramID__c, sl);
+			oldSL = oldSLMap.get(sl.ID);
+			
+			// if an update, check for change to specific fields
+			if ( oldSL != null ) {
+				if ( oldSL.Program_Rollup__c != sl.Program_Rollup__c || oldSL.Program__c != sl.Program__c )
+					slMap.put( sl.ProgramID__c, sl);
+			} else {
+				// always put new locations in for update
+				slMap.put( sl.ProgramID__c, sl);
+			}
 		}
 		
 		
@@ -34,8 +50,8 @@ public with sharing class ServiceLocationTriggerHandler {
 			sc.Program_Value__c = slMap.get(sc.Program_code__c).Program__c;
 			
 		}
-		
-		update servcodes;
+		if (servcodes.size() > 0 )
+			update servcodes;
 		    	
     }
     
