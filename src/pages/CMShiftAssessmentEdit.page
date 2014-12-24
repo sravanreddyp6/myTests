@@ -74,6 +74,7 @@
 			display: block;
 		}
 	</style>
+	<c:PersonalRecord pbsId="{!Evaluation__c.ServiceAssignment__r.admission__r.Person_Being_Served__c}" servAssignId="{!Evaluation__c.ServiceAssignment__c}"  parentPage="shiftAssessment"/>
 	<script>
 		function setFocusOnLoad() {} // Overwrite VF function to focus on the 1st field
 		jQuery.noConflict();
@@ -724,7 +725,7 @@
 		}
 	</script>
 
-	<div id="breadcrumb" class="breadcrumb">
+	<div id="breadcrumb" class="breadcrumb" >
 		<a href="/">Home</a>&nbsp;>&nbsp;
 		<a href="/apex/PersonsBeingServedListView">Persons Being Served</a>&nbsp;>&nbsp;
 		<a href="/{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__c}">{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__r.Name}</a>&nbsp;>&nbsp;
@@ -750,7 +751,14 @@
 		<apex:tabPanel value="{!selectedTab}" id="wholeTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
 			<apex:tab label="Demographics" name="demographicsTab" ontabenter="changeTab('demographicsTab'); return false;" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
-					<apex:pageBlockSection Columns="2" Collapsible="false">
+					<apex:pageBlockSection columns="2" >
+						<apex:outputField value="{!Evaluation__c.Shift_Start_time__c}" />
+						<apex:outputField value="{!Evaluation__c.Shift_end_time__c}" />
+						<apex:outputField value="{!Evaluation__c.Status__c}" />
+					</apex:pageBlockSection>
+				</apex:pageBlock >
+				<apex:pageBlock >
+					<apex:pageBlockSection Columns="2" Collapsible="false"  >
 						<apex:outputField Value="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.Alias__c}" />
 						<apex:pageBlockSectionItem >
 							<apex:outputLabel Value="Address" />
@@ -772,17 +780,25 @@
 					<c:EvaluationResponseTable pbsParentId="{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__c}" addEnabled="true" editEnabled="true" type="Allergy" formId="{!$Component.wholePage}" uniqueId="allergy" />
 				</apex:pageBlock>
 			</apex:tab>
-
 			<apex:tab label="Diagnostics" name="diagnosticTab" ontabenter="changeTab('diagnosticTab'); return false;" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
-					<apex:pageBlockTable value="{!errorMap['diagnosticTab']}" var="d" columns="1" >
-						<apex:repeat value="{!d}" var="temp" >
-							<apex:column >
-								<apex:outputText value="{!temp}" style="color: red"/>
-							</apex:column>
-						</apex:repeat>
-					</apex:pageBlockTable>
-					<apex:pageBlockSection title="Vitals Detail" Columns="1">
+					<apex:pageBlockSection Columns="2" >
+						<apex:outputField value="{!Evaluation__c.Shift_Start_time__c}" />
+						<apex:outputField value="{!Evaluation__c.Shift_End_time__c}" />
+						<apex:outputField value="{!Evaluation__c.Status__c}" />
+					</apex:pageBlockSection>
+				</apex:pageBlock >
+				<apex:pageBlock >
+					<apex:pageBlockSection columns="2" collapsible="false" >
+						<apex:pageBlockTable value="{!errorMap['diagnosticTab']}" var="d" columns="1" >
+							<apex:repeat value="{!d}" var="temp" >
+								<apex:column >
+									<apex:outputText value="{!temp}" style="color: red"/>
+								</apex:column>
+							</apex:repeat>
+						</apex:pageBlockTable>
+					</apex:pageBlockSection >
+					<apex:pageBlockSection title="Vitals Detail" Columns="1" > 
 						<apex:actionFunction name="showAddVitalsDetail" action="{!showAddVitalsDetail}" status="loadingVitalsDetailStatus" rerender="vitalsDetailDialogMainBlock" oncomplete="openModalDialog('{!$Component.vitalsDetailDialog}', 'Add Vitals Detail', '{!$Component.wholePage}'); handleVitals();" />
 						<apex:actionFunction name="showEditVitalsDetail" action="{!showEditVitalsDetail}" status="loadingVitalsDetaiStatus" rerender="vitalsDetailDialogMainBlock" oncomplete="openModalDialog('{!$Component.vitalsDetailDialog}', 'Edit Vitals Detail', '{!$Component.wholePage}'); handleVitals();">
 							<apex:param name="currentVitalsDetailId" assignTo="{!currentVitalsDetailId}" value="" />
@@ -864,13 +880,22 @@
 			</apex:tab>
 			<apex:tab label="Cardiopulmonary" name="cardioTab" onTabenter="changeTab('cardioTab'); return false;" styleClass="{!IF(Evaluation__c.Cardio_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
-					<apex:pageBlockTable value="{!errorMap['cardioTab']}" var="d" columns="1" >
-						<apex:repeat value="{!d}" var="temp" >
-							<apex:column >
-								<apex:outputText value="{!temp}" style="color: red"/>
-							</apex:column>
-						</apex:repeat>
-					</apex:pageBlockTable>
+					<apex:pageBlockSection Columns="2" >
+						<apex:outputField value="{!Evaluation__c.Shift_Start_time__c}" />
+						<apex:outputField value="{!Evaluation__c.Shift_End_time__c}" />
+						<apex:outputField value="{!Evaluation__c.Status__c}" />
+					</apex:pageBlockSection>
+				</apex:pageBlock >
+				<apex:pageBlock >
+					<apex:pageBlockSection columns="2" collapsible="false">
+						<apex:pageBlockTable value="{!errorMap['cardioTab']}" var="d" columns="1" title="Error Messages">
+							<apex:repeat value="{!d}" var="temp" >
+								<apex:column >
+									<apex:outputText value="{!temp}" style="color: red"/>
+								</apex:column>
+							</apex:repeat>
+						</apex:pageBlockTable>
+					</apex:pageBlockSection>
 					<apex:pageBlockSection Columns="2" title="cardio">
 						<apex:pageBlockSectionItem >
 							<apex:outputPanel >
@@ -1066,7 +1091,6 @@
 									</div>
 								</apex:outputPanel>
 							</apex:pageBlockSectionItem>
-
 							<apex:inputField value="{!Evaluation__c.Cuffed_Picklist__c}" label="Cuffed" id="trachCuffed" />
 							<apex:pageBlockSectionItem >
 								<apex:outputLabel value="PMV" />
@@ -1088,7 +1112,6 @@
 							<apex:inputTextArea value="{!Evaluation__c.PMV_Documentation_Narrative_Note__c}" label="Add Narrative Note" id="pmvnarrativeNote" rows="4" cols="60" />
 						</apex:pageBlockSection>
 					</apex:pageBlockSection>
-
 					<apex:pageBlockSection columns="1" title="O2" >
 						<apex:pageBlockSectionItem >
 							<apex:outputLabel value="O2" />
@@ -1199,13 +1222,22 @@
 					});
 				</script>
 				<apex:pageBlock id="nutritionMainBlock">
-					<apex:pageBlockTable value="{!errorMap['nutritionTab']}" var="d" columns="1" >
-						<apex:repeat value="{!d}" var="temp" >
-							<apex:column >
-								<apex:outputText value="{!temp}" style="color: red"/>
-							</apex:column>
-						</apex:repeat>
-					</apex:pageBlockTable>
+					<apex:pageBlockSection Columns="2" >
+						<apex:outputField value="{!Evaluation__c.Shift_Start_time__c}" />
+						<apex:outputField value="{!Evaluation__c.Shift_End_time__c}" />
+						<apex:outputField value="{!Evaluation__c.Status__c}" />
+					</apex:pageBlockSection>
+				</apex:pageBlock >
+				<apex:pageBlock >
+					<apex:pageBlockSection columns="2" collapsible="false" >
+						<apex:pageBlockTable value="{!errorMap['nutritionTab']}" var="d" columns="1" >
+							<apex:repeat value="{!d}" var="temp" >
+								<apex:column >
+									<apex:outputText value="{!temp}" style="color: red"/>
+								</apex:column>
+							</apex:repeat>
+						</apex:pageBlockTable>
+					</apex:pageBlockSection>
 					<apex:pageBlockSection columns="1" title="Nutrition & Hydration" id="nutritionHydrationSection">
 						<apex:pageBlockSectionItem >
 							<apex:outputLabel value="Feeding Type" />
@@ -1524,13 +1556,22 @@
 
 					</script>
 				<apex:pageBlock >
-					<apex:pageBlockTable value="{!errorMap['skinBodyTab']}" var="d" columns="1" >
-						<apex:repeat value="{!d}" var="temp" >
-							<apex:column >
-								<apex:outputText value="{!temp}" style="color: red"/>
-							</apex:column>
-						</apex:repeat>
-					</apex:pageBlockTable>
+					<apex:pageBlockSection Columns="2" >
+						<apex:outputField value="{!Evaluation__c.Shift_Start_time__c}" />
+						<apex:outputField value="{!Evaluation__c.Shift_End_time__c}" />
+						<apex:outputField value="{!Evaluation__c.Status__c}" />
+					</apex:pageBlockSection>
+				</apex:pageBlock>
+				<apex:pageBlock >
+					<apex:pageBlocksection columns="2" collapsible="false" >
+						<apex:pageBlockTable value="{!errorMap['skinBodyTab']}" var="d" columns="1" >
+							<apex:repeat value="{!d}" var="temp" >
+								<apex:column >
+									<apex:outputText value="{!temp}" style="color: red"/>
+								</apex:column>
+							</apex:repeat>
+						</apex:pageBlockTable>
+					</apex:pageBlocksection>
 					<apex:pageBlockSection columns="2" title="General Skin Condition" >
 						<apex:pageBlockSectionItem >
 								<apex:outputLabel value="Color" styleClass="labelCol"/>
@@ -1601,9 +1642,7 @@
 						</apex:outputPanel>
 						</apex:pageBlockSectionItem>
 					</apex:pageBlockSection>
-
 					<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" />
-
 					<apex:pageBlockSection columns="1" >
 						<apex:pageBlockSectionItem >
 							<apex:outputLabel value="Skin Intact" styleClass="labelCol"/>
@@ -1617,7 +1656,6 @@
 							</apex:outputPanel>
 						</apex:pageBlockSectionItem>
 					</apex:pageBlockSection>
-				
 					<apex:outputPanel id="painSection" layout="block" >
 						<apex:pageBlockSection title="Body Map" columns="2" id="bodyMapSection">
 							<div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">
@@ -1703,18 +1741,26 @@
 							</apex:pageBlockTable>
 						</apex:pageBlockSection>
 					</apex:outputPanel>
-					
 				</apex:pageBlock>
 			</apex:tab>
 			<apex:tab label="Neurological" name="neuroTab" ontabenter="changeTab('neuroTab');return false;" styleClass="{!IF(Evaluation__c.Neuro_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock id="neuroMainBlock">
-					<apex:pageBlockTable value="{!errorMap['neuroTab']}" var="d" columns="1" >
-						<apex:repeat value="{!d}" var="temp" >
-							<apex:column >
-								<apex:outputText value="{!temp}" style="color: red"/>
-							</apex:column>
-						</apex:repeat>
-					</apex:pageBlockTable>
+					<apex:pageBlockSection Columns="2" >
+						<apex:outputField value="{!Evaluation__c.Shift_Start_time__c}" />
+						<apex:outputField value="{!Evaluation__c.Shift_End_time__c}" />
+						<apex:outputField value="{!Evaluation__c.Status__c}" />
+					</apex:pageBlockSection>
+				</apex:pageBlock >
+				<apex:pageBlock >
+					<apex:pageBlockSection columns="2" collapsible="false" >
+						<apex:pageBlockTable value="{!errorMap['neuroTab']}" var="d" columns="1" >
+							<apex:repeat value="{!d}" var="temp" >
+								<apex:column >
+									<apex:outputText value="{!temp}" style="color: red"/>
+								</apex:column>
+							</apex:repeat>
+						</apex:pageBlockTable>
+					</apex:pageBlockSection>
 					<apex:pageBlockSection columns="1" title="Cognitive" collapsible="True" >
 						<apex:pageBlockSectionItem >
 							<apex:outputLabel value="Rancho Level" />
@@ -1850,7 +1896,6 @@
 						</apex:pageBlockSectionItem>
 						<apex:inputField value="{!Evaluation__c.Low_Bed__c}" />
 					</apex:pageBlockSection>
-
 					<apex:actionRegion >
 						<apex:pageBlockSection title="Pain" id="neuroPainSection" columns="1">
 							<apex:outputPanel id="painSectionButtons">
@@ -1910,13 +1955,22 @@
 			</apex:tab>
 			<apex:tab label="Ortho" name="orthoTab" ontabenter="changeTab('orthoTab'); return false;" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
-					<apex:pageBlockTable value="{!errorMap['orthoTab']}" var="d" columns="1" >
-						<apex:repeat value="{!d}" var="temp" >
-							<apex:column >
-								<apex:outputText value="{!temp}" style="color: red"/>
-							</apex:column>
-						</apex:repeat>
-					</apex:pageBlockTable>
+					<apex:pageBlockSection Columns="2" >
+						<apex:outputField value="{!Evaluation__c.Shift_Start_time__c}" />
+						<apex:outputField value="{!Evaluation__c.Shift_End_time__c}" />
+						<apex:outputField value="{!Evaluation__c.Status__c}" />
+					</apex:pageBlockSection>
+				</apex:pageBlock >
+				<apex:pageBlock >
+					<apex:pageBlockSection columns="2" collapsible="false" >
+						<apex:pageBlockTable value="{!errorMap['orthoTab']}" var="d" columns="1" >
+							<apex:repeat value="{!d}" var="temp" >
+								<apex:column >
+									<apex:outputText value="{!temp}" style="color: red"/>
+								</apex:column>
+							</apex:repeat>
+						</apex:pageBlockTable>
+					</apex:pageBlockSection>
 					<apex:pageBlockSection columns="2">
 						<apex:pageBlockSectionItem >
 							<apex:outputPanel >
@@ -1956,7 +2010,6 @@
 								<br />
 								<apex:outputLabel for="tractionWeight" value="Weight" id="tractionWeightLabel" />
 							</apex:outputPanel>
-
 							<apex:outputPanel >
 								<div class="requiredInput">
 									<div class="requiredBlock"></div>
@@ -2001,20 +2054,27 @@
 								</div>
 							</apex:outputPanel>
 						</apex:pageBlockSectionItem>
-
 					</apex:pageBlockSection>
-
 				</apex:pageBlock>
 			</apex:tab>
 			<apex:tab label="Psycho/Social" name="psychoSocialTab" ontabenter="changeTab('psychoSocialTab'); return false;" styleClass="{!IF(Evaluation__c.Psycho_Social_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
-					<apex:pageBlockTable value="{!errorMap['psychoSocialTab']}" var="d" columns="1" >
-						<apex:repeat value="{!d}" var="temp" >
-							<apex:column >
-								<apex:outputText value="{!temp}" style="color: red"/>
-							</apex:column>
-						</apex:repeat>
-					</apex:pageBlockTable>
+					<apex:pageBlockSection Columns="2" >
+						<apex:outputField value="{!Evaluation__c.Shift_Start_time__c}" />
+						<apex:outputField value="{!Evaluation__c.Shift_End_time__c}" />
+						<apex:outputField value="{!Evaluation__c.Status__c}" />
+					</apex:pageBlockSection>
+				</apex:pageBlock >
+				<apex:pageBlock >
+					<apex:pageBlockSection columns="2" collapsible="false" >
+						<apex:pageBlockTable value="{!errorMap['psychoSocialTab']}" var="d" columns="1" >
+							<apex:repeat value="{!d}" var="temp" >
+								<apex:column >
+									<apex:outputText value="{!temp}" style="color: red"/>
+								</apex:column>
+							</apex:repeat>
+						</apex:pageBlockTable>
+					</apex:pageBlockSection>
 					<apex:pageBlockSection Columns="1">
 						<apex:pageBlockSectionItem >
 							<apex:outputPanel >
@@ -2034,16 +2094,13 @@
 								</div>
 							</apex:outputPanel>
 						</apex:pageBlockSectionItem>
-
 						<apex:inputField value="{!Evaluation__c.Does_Resident_appear_to_demonstrate__c}" label="Does Resident appear to<br/>demonstrate/note<br/>any of the following" />
-
 						<apex:pageBlockSectionItem >
 							<apex:outputText value="" />
 							<apex:selectCheckboxes value="{!selectedCoping}" layout="pageDirection" style="margin-left:-13px">
 								<apex:selectOptions value="{!copingValues}" />
 							</apex:selectCheckboxes>
 						</apex:pageBlockSectionItem>
-
 					</apex:pageBlockSection>
 				</apex:pageBlock>
 			</apex:tab>
@@ -2055,7 +2112,6 @@
 				<apex:commandButton value="Cancel" onClick="window.location='apex/CMShiftAssessmentView?id={!Evaluation__c.Id}&tab={!selectedTab}'; return false;" />
 			</apex:pageBlockButtons>
 		</apex:pageBlock>
-
 		<apex:outputPanel id="vitalsDetailDialog" style="display:none">
 			<span class="ui-helper-hidden-accessible"><input type="text"/></span>
 			<apex:pageBlock title="Add/Edit Vitals Detail" id="vitalsDetailDialogMainBlock">
