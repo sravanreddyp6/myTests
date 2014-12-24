@@ -1383,7 +1383,7 @@ public void loadProgramList() {
     if(pbsLastName == null) pbsLastName = '';
     if(pbsFirstinitial == null) pbsFirstinitial = '';
     evaluation = new Evaluation__c();
-    evaluation.Name = pbsFirstinitial+pbsLastName+'ShiftAsmt'+DateTime.Now().format('yyMMdd')+'-';
+    evaluation.Name = pbsFirstinitial+'.'+pbsLastName+'ShiftAsmt'+DateTime.Now().format('yyMMdd')+'-';
     evaluation.RecordTypeID = Utility.getEValuationRecordType('CMShiftAssessment');
     evaluation.ServiceAssignment__c = this.theServAssign.Id;
     evaluation.Status__c = 'Draft';
