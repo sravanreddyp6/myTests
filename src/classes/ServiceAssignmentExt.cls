@@ -365,7 +365,7 @@ public without sharing class ServiceAssignmentExt {
                 pageHeader = 'Service Assignment Detail';
                 newSA = false;
                 theServAssign = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
-                            End_Date__c, Episode__c, External_ID__c, Location_Region__c, Model__c, Outcomes__c, Person_Being_Served__c,Admission__r.Person_Being_Served__r.LastName, Phase__c, Phase_of_Treatment__c, Program__c,
+                            End_Date__c, Episode__c, External_ID__c, Location_Region__c, Model__c, Outcomes__c, Person_Being_Served__c,Admission__r.Person_Being_Served__r.LastName,Admission__r.Person_Being_Served__r.FirstName, Phase__c, Phase_of_Treatment__c, Program__c,
                             Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
                             Start_Date__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
                             Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c, Person_Being_Served__r.Name, Person_Being_Served__r.Age__c, Person_Being_Served__r.SSN__c, Person_Being_Served__r.Birthdate,
@@ -1377,11 +1377,13 @@ public void loadProgramList() {
     }
 
   public void showAddevaluation() {
-      evaluation = new Evaluation__c();
-      String pbsLastName = this.theServAssign.Admission__r.Person_Being_Served__r.LastName;
-    if(pbsLastName == null) pbsLastName = '';
     evaluation = new Evaluation__c();
-    evaluation.Name = pbsLastName+'ShiftAssessment'+DateTime.Now().format('MMddyy');
+    String pbsLastName = this.theServAssign.Admission__r.Person_Being_Served__r.LastName;
+    string pbsFirstinitial = this.theServAssign.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1);
+    if(pbsLastName == null) pbsLastName = '';
+    if(pbsFirstinitial == null) pbsFirstinitial = '';
+    evaluation = new Evaluation__c();
+    evaluation.Name = pbsFirstinitial+pbsLastName+'ShiftAsmt'+DateTime.Now().format('yyMMdd')+'-';
     evaluation.RecordTypeID = Utility.getEValuationRecordType('CMShiftAssessment');
     evaluation.ServiceAssignment__c = this.theServAssign.Id;
     evaluation.Status__c = 'Draft';
@@ -1393,6 +1395,7 @@ public void loadProgramList() {
   public pageReference saveEvaluation() {
 
       try{
+      	  evaluation.Name = this.evaluation.Name+evaluation.Shift_Start_time__c.format('h:mm a');
           insert evaluation;
           PageReference pg = new PageReference('/apex/CMShiftAssessmentEdit?id='+evaluation.Id);
           return pg;
@@ -1526,7 +1529,7 @@ public void loadProgramList() {
    		List<Evaluation__c> dupeEval = [SELECT Id, Name, Shift_Start_time__c, Shift_end_time__c FROM Evaluation__c WHERE ServiceAssignment__c = :saId AND (
         					(Shift_Start_time__c >= :st and Shift_Start_time__c <= :en)
         				or 	(Shift_end_time__c >= :st and Shift_end_time__c <= :en)
-        				or  ( Shift_Start_time__c <= :st and Shift_end_time__c >= :en )) AND RecordType.Name = 'CMShiftAssessment' LIMIT 1];
+        				or  ( Shift_Start_time__c <= :st and Shift_end_time__c >= :en )) AND RecordType.Name = 'CMShiftAssessment' AND Status__c !='Disregard' LIMIT 1];
         				
    		system.debug(dupeEval);
    		if(dupeEval.size() >0 ) {
