@@ -747,14 +747,19 @@
 		<apex:pageMessages id="pageMessages" />
 		<apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); handleDiagnosis(); handleCardio(); handleSkinBody(); handleNeuro(); handleOrtho(); hanldePsycho();" reRender="pageMessages, wholeTabPanel, buttons">
 			<apex:param name="nextTab" assignTo="{!nextTab}" value="" />
-		</apex:actionFunction>
-		<apex:actionFunction name="refreshannotationSection" reRender="painSection" oncomplete="anno.reset();"/>
+		</apex:actionFunction >
 		<apex:tabPanel value="{!selectedTab}" id="wholeTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
 			<apex:tab label="Demographics" name="demographicsTab" ontabenter="changeTab('demographicsTab'); return false;" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
 					<apex:pageBlockSection columns="2" >
-						<apex:outputField value="{!Evaluation__c.Shift_Start_Time__c}" />
-						<apex:outputField value="{!Evaluation__c.Shift_End_Time__c}" />
+						<apex:pageBlockSectionItem >
+							<apex:outputLabel Value="Shift Start Time" styleClass="labelCol" />
+							<c:MilitaryDatetime dateTimeVal="{!Evaluation__c.Shift_Start_Time__c}" />
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem >
+							<apex:outputLabel Value="Shift End Time" styleClass="labelCol" />
+							<c:MilitaryDatetime dateTimeVal="{!Evaluation__c.Shift_End_Time__c}" />
+						</apex:pageBlockSectionItem>
 						<apex:outputField value="{!Evaluation__c.Status__c}" />
 					</apex:pageBlockSection>
 				</apex:pageBlock>
@@ -784,8 +789,14 @@
 			<apex:tab label="Diagnostics" name="diagnosticTab" ontabenter="changeTab('diagnosticTab'); return false;" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
 					<apex:pageBlockSection Columns="2" >
-						<apex:outputField value="{!Evaluation__c.Shift_Start_Time__c}" />
-						<apex:outputField value="{!Evaluation__c.Shift_End_Time__c}" />
+						<apex:pageBlockSectionItem >
+							<apex:outputLabel Value="Shift Start Time" styleClass="labelCol" />
+							<c:MilitaryDatetime dateTimeVal="{!Evaluation__c.Shift_Start_Time__c}" />
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem >
+							<apex:outputLabel Value="Shift End Time" styleClass="labelCol" />
+							<c:MilitaryDatetime dateTimeVal="{!Evaluation__c.Shift_End_Time__c}" />
+						</apex:pageBlockSectionItem>
 						<apex:outputField value="{!Evaluation__c.Status__c}" />
 					</apex:pageBlockSection>
 				</apex:pageBlock>
@@ -882,8 +893,14 @@
 			<apex:tab label="Cardiopulmonary" name="cardioTab" onTabenter="changeTab('cardioTab'); return false;" styleClass="{!IF(Evaluation__c.Cardio_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
 					<apex:pageBlockSection Columns="2" >
-						<apex:outputField value="{!Evaluation__c.Shift_Start_Time__c}" />
-						<apex:outputField value="{!Evaluation__c.Shift_End_Time__c}" />
+						<apex:pageBlockSectionItem >
+							<apex:outputLabel Value="Shift Start Time" styleClass="labelCol" />
+							<c:MilitaryDatetime dateTimeVal="{!Evaluation__c.Shift_Start_Time__c}" />
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem >
+							<apex:outputLabel Value="Shift End Time" styleClass="labelCol" />
+							<c:MilitaryDatetime dateTimeVal="{!Evaluation__c.Shift_End_Time__c}" />
+						</apex:pageBlockSectionItem>
 						<apex:outputField value="{!Evaluation__c.Status__c}" />
 					</apex:pageBlockSection>
 				</apex:pageBlock>
@@ -1224,8 +1241,14 @@
 				</script>
 				<apex:pageBlock id="nutritionMainBlock">
 					<apex:pageBlockSection Columns="2" >
-						<apex:outputField value="{!Evaluation__c.Shift_Start_Time__c}" />
-						<apex:outputField value="{!Evaluation__c.Shift_End_Time__c}" />
+						<apex:pageBlockSectionItem >
+							<apex:outputLabel Value="Shift Start Time" styleClass="labelCol" />
+							<c:MilitaryDatetime dateTimeVal="{!Evaluation__c.Shift_Start_Time__c}" />
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem >
+							<apex:outputLabel Value="Shift End Time" styleClass="labelCol" />
+							<c:MilitaryDatetime dateTimeVal="{!Evaluation__c.Shift_End_Time__c}" />
+						</apex:pageBlockSectionItem>
 						<apex:outputField value="{!Evaluation__c.Status__c}" />
 					</apex:pageBlockSection>
 				</apex:pageBlock>
@@ -1558,8 +1581,14 @@
 					</script>
 				<apex:pageBlock >
 					<apex:pageBlockSection Columns="2" >
-						<apex:outputField value="{!Evaluation__c.Shift_Start_Time__c}" />
-						<apex:outputField value="{!Evaluation__c.Shift_End_Time__c}" />
+						<apex:pageBlockSectionItem >
+							<apex:outputLabel Value="Shift Start Time" styleClass="labelCol" />
+							<c:MilitaryDatetime dateTimeVal="{!Evaluation__c.Shift_Start_Time__c}" />
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem >
+							<apex:outputLabel Value="Shift End Time" styleClass="labelCol" />
+							<c:MilitaryDatetime dateTimeVal="{!Evaluation__c.Shift_End_Time__c}" />
+						</apex:pageBlockSectionItem>
 						<apex:outputField value="{!Evaluation__c.Status__c}" />
 					</apex:pageBlockSection>
 				</apex:pageBlock>
@@ -1747,8 +1776,14 @@
 			<apex:tab label="Neurological" name="neuroTab" ontabenter="changeTab('neuroTab');return false;" styleClass="{!IF(Evaluation__c.Neuro_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock id="neuroMainBlock">
 					<apex:pageBlockSection Columns="2" >
-						<apex:outputField value="{!Evaluation__c.Shift_Start_Time__c}" />
-						<apex:outputField value="{!Evaluation__c.Shift_End_Time__c}" />
+						<apex:pageBlockSectionItem >
+							<apex:outputLabel Value="Shift Start Time" styleClass="labelCol" />
+							<c:MilitaryDatetime dateTimeVal="{!Evaluation__c.Shift_Start_Time__c}" />
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem >
+							<apex:outputLabel Value="Shift End Time" styleClass="labelCol" />
+							<c:MilitaryDatetime dateTimeVal="{!Evaluation__c.Shift_End_Time__c}" />
+						</apex:pageBlockSectionItem>
 						<apex:outputField value="{!Evaluation__c.Status__c}" />
 					</apex:pageBlockSection>
 				</apex:pageBlock>
@@ -1957,8 +1992,14 @@
 			<apex:tab label="Ortho" name="orthoTab" ontabenter="changeTab('orthoTab'); return false;" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
 					<apex:pageBlockSection Columns="2" >
-						<apex:outputField value="{!Evaluation__c.Shift_Start_Time__c}" />
-						<apex:outputField value="{!Evaluation__c.Shift_End_Time__c}" />
+						<apex:pageBlockSectionItem >
+							<apex:outputLabel Value="Shift Start Time" styleClass="labelCol" />
+							<c:MilitaryDatetime dateTimeVal="{!Evaluation__c.Shift_Start_Time__c}" />
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem >
+							<apex:outputLabel Value="Shift End Time" styleClass="labelCol" />
+							<c:MilitaryDatetime dateTimeVal="{!Evaluation__c.Shift_End_Time__c}" />
+						</apex:pageBlockSectionItem>
 						<apex:outputField value="{!Evaluation__c.Status__c}" />
 					</apex:pageBlockSection>
 				</apex:pageBlock>
@@ -2061,8 +2102,14 @@
 			<apex:tab label="Psycho/Social" name="psychoSocialTab" ontabenter="changeTab('psychoSocialTab'); return false;" styleClass="{!IF(Evaluation__c.Psycho_Social_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
 					<apex:pageBlockSection Columns="2" >
-						<apex:outputField value="{!Evaluation__c.Shift_Start_Time__c}" />
-						<apex:outputField value="{!Evaluation__c.Shift_End_Time__c}" />
+						<apex:pageBlockSectionItem >
+							<apex:outputLabel Value="Shift Start Time" styleClass="labelCol" />
+							<c:MilitaryDatetime dateTimeVal="{!Evaluation__c.Shift_Start_Time__c}" />
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem >
+							<apex:outputLabel Value="Shift End Time" styleClass="labelCol" />
+							<c:MilitaryDatetime dateTimeVal="{!Evaluation__c.Shift_End_Time__c}" />
+						</apex:pageBlockSectionItem>
 						<apex:outputField value="{!Evaluation__c.Status__c}" />
 					</apex:pageBlockSection>
 				</apex:pageBlock>
