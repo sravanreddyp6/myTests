@@ -1051,8 +1051,12 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:column headerValue="Name">
 					<apex:outputLink value="/apex/EvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
 				</apex:column>
-				<apex:column value="{!evs.Shift_Start_Time__c}" headerValue="Start Time" />
-				<apex:column value="{!evs.Shift_End_Time__c}" headerValue="End Time" />
+				<apex:column  headerValue="Shift Start Time" >
+					<c:MilitaryDatetime dateTimeVal="{!evs.Shift_Start_Time__c}" />
+				</apex:column>
+				<apex:column  headerValue="Shift End Time" >
+					<c:MilitaryDatetime dateTimeVal="{!evs.Shift_End_Time__c}" />
+				</apex:column>
 				<apex:column value="{!evs.Status__c}" />
 				<!-- apex:column headerValue="Signed" value="{!evs.Is_Signed__c}" />
 				<apex:column headerValue="Signed By">
