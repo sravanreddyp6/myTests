@@ -1275,7 +1275,7 @@ public void loadProgramList() {
             if(evaluations == null) {
                 evaluations = [
                     SELECT ID, Name, LastModifiedDate, Is_Signed__c,
-                           Shift_Start_time__c, Shift_end_time__c, Status__c,
+                           Shift_Start_time__c, Shift_end_time__c, Status__c,Owner.Name,
                            (SELECT Id, CreatedDate, Owner.Name, Owner.Id
                               FROM Evaluation_Responses__r
                              WHERE RecordType.Name = 'E-Signature'
