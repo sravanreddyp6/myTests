@@ -5,7 +5,7 @@
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
     <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
-    <apex:includeScript value="{!URLFOR($Resource.momentJS)}" />
+    <!--  apex:includeScript value="{!URLFOR($Resource.momentJS)}" /-->
     <apex:variable value="{!$ObjectType.Action_Plan_Worksheet__c.accessible}" var="vfVarCanAccessWS" />
     <apex:variable value="{!$User.Operating_Group__c == 'Cambridge'}" var="vfVarIsCB" />
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
@@ -191,6 +191,8 @@
 								if(result){
 										dupe.push('There is already an existing Shift Assessment for the current timings. Do you still want to proceed?');
 										j$('#dupeFound').append('<li class="warning">' + dupe + '</li>');
+										j$('[id$=startdate]').prop('disabled', true);
+										j$('[id$=enddate]').prop('disabled', true);
 										j$('[id$=evalProceed]').show();
 										j$('[id$=enterNew]').show();
 										j$('[id$=evalSave]').hide();
@@ -214,6 +216,10 @@
 		clearDates = function() {
 			j$('[id$=evalstartTime]').val('');
 			j$('[id$=evalendTime]').val('');
+			j$('[id$=startdate]').prop('disabled', false);
+			j$('[id$=enddate]').prop('disabled', false);
+			j$('[id$=startdate]').val('');
+			j$('[id$=enddate]').val('');
 			j$('#evaluationMessages').html('');
 			j$('#dupeFound').html('');
 			j$('[id$=evalProceed]').hide();
@@ -994,11 +1000,24 @@ END: Uncomment to have the element collapsed by default -->
 
 		<!-- Admission and Shift Assessments Section -->
 		<apex:outputPanel id="evaluationModal" style="display:none">
+			<span class="ui-helper-hidden-accessible"><input type="text"/></span> 
 			<div id='evaluationMessages'></div>
 			<apex:pageBlock title="Add ShiftAssessment" rendered="{!vfVarIsCM}">
 				<apex:pageBlockSection columns="2" id="evaluationEntry">
-					<apex:inputField value="{!evaluation.Shift_Start_Time__c}" id="evalstartTime" />
-					<apex:inputField value="{!evaluation.Shift_End_Time__c}" id="evalendTime" />
+					<apex:pageBlockSectionItem >
+						<apex:outputPanel >
+							<apex:outputLabel Value="Shift Start Time" styleClass="labelCol"/>
+							<c:MilitaryDatetime edit="true" hiddenFieldId="evalstartTime" dateTimeVal="{!evaluation.Shift_Start_Time__c}" datetimepickerid="startdate"/>
+							<apex:inputhidden value="{!evaluation.Shift_Start_Time__c}" id="evalstartTime" />
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem >
+					<apex:outputpanel >
+							<apex:outputLabel Value="Shift End Time" styleClass="labelCol"/>
+							<c:MilitaryDatetime edit="true" hiddenFieldId="evalendTime" dateTimeVal="{!evaluation.Shift_End_Time__c}" datetimepickerid="enddate"/>
+							<apex:inputhidden value="{!evaluation.Shift_End_Time__c}" id="evalendTime" />
+						</apex:outputpanel>
+					</apex:pageBlockSectionItem>
 				</apex:pageBlockSection>
 				<div id="dupeFound" ></div>
 				<apex:pageBlockButtons location="bottom">
