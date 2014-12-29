@@ -74,7 +74,8 @@
 			display: block;
 		}
 	</style>
-	<c:PersonalRecord pbsId="{!Evaluation__c.ServiceAssignment__r.admission__r.Person_Being_Served__c}" servAssignId="{!Evaluation__c.ServiceAssignment__c}"  parentPage="shiftAssessment"/>
+	<c:PersonalRecord pbsId="{!Evaluation__c.ServiceAssignment__r.admission__r.Person_Being_Served__c}" servAssignId="{!Evaluation__c.ServiceAssignment__c}" evaluationId="{!Evaluation__c.Id}" admId="{!Evaluation__c.ServiceAssignment__r.Admission__c}" parentPage="ShiftAssessment"/>
+	<br/>
 	<script>
 		function setFocusOnLoad() {} // Overwrite VF function to focus on the 1st field
 		jQuery.noConflict();
@@ -725,14 +726,14 @@
 		}
 	</script>
 
-	<div id="breadcrumb" class="breadcrumb" >
+	<!--div id="breadcrumb" class="breadcrumb" >
 		<a href="/">Home</a>&nbsp;>&nbsp;
 		<a href="/apex/PersonsBeingServedListView">Persons Being Served</a>&nbsp;>&nbsp;
 		<a href="/{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__c}">{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__r.Name}</a>&nbsp;>&nbsp;
 		<a href="/{!Evaluation__c.ServiceAssignment__r.Admission__c}">Admission</a>&nbsp;>&nbsp;
 		<a href="/{!Evaluation__c.ServiceAssignment__c}">Service Assignment</a>&nbsp;>&nbsp;
 		<apex:outputText value="{!Evaluation__c.Name}" />
-	</div>
+	</div -->
 	<apex:form id="wholePage">
 		<apex:outputPanel rendered="false">
 			<apex:inputhidden value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__c}" />
@@ -752,11 +753,11 @@
 			<apex:tab label="Demographics" name="demographicsTab" ontabenter="changeTab('demographicsTab'); return false;" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
 					<apex:pageBlockSection columns="2" >
-						<apex:outputField value="{!Evaluation__c.Shift_Start_time__c}" />
-						<apex:outputField value="{!Evaluation__c.Shift_end_time__c}" />
+						<apex:outputField value="{!Evaluation__c.Shift_Start_Time__c}" />
+						<apex:outputField value="{!Evaluation__c.Shift_End_Time__c}" />
 						<apex:outputField value="{!Evaluation__c.Status__c}" />
 					</apex:pageBlockSection>
-				</apex:pageBlock >
+				</apex:pageBlock>
 				<apex:pageBlock >
 					<apex:pageBlockSection Columns="2" Collapsible="false"  >
 						<apex:outputField Value="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.Alias__c}" />
@@ -783,11 +784,11 @@
 			<apex:tab label="Diagnostics" name="diagnosticTab" ontabenter="changeTab('diagnosticTab'); return false;" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
 					<apex:pageBlockSection Columns="2" >
-						<apex:outputField value="{!Evaluation__c.Shift_Start_time__c}" />
-						<apex:outputField value="{!Evaluation__c.Shift_End_time__c}" />
+						<apex:outputField value="{!Evaluation__c.Shift_Start_Time__c}" />
+						<apex:outputField value="{!Evaluation__c.Shift_End_Time__c}" />
 						<apex:outputField value="{!Evaluation__c.Status__c}" />
 					</apex:pageBlockSection>
-				</apex:pageBlock >
+				</apex:pageBlock>
 				<apex:pageBlock >
 					<apex:pageBlockSection columns="2" collapsible="false" >
 						<apex:pageBlockTable value="{!errorMap['diagnosticTab']}" var="d" columns="1" >
@@ -797,7 +798,7 @@
 								</apex:column>
 							</apex:repeat>
 						</apex:pageBlockTable>
-					</apex:pageBlockSection >
+					</apex:pageBlockSection>
 					<apex:pageBlockSection title="Vitals Detail" Columns="1" > 
 						<apex:actionFunction name="showAddVitalsDetail" action="{!showAddVitalsDetail}" status="loadingVitalsDetailStatus" rerender="vitalsDetailDialogMainBlock" oncomplete="openModalDialog('{!$Component.vitalsDetailDialog}', 'Add Vitals Detail', '{!$Component.wholePage}'); handleVitals();" />
 						<apex:actionFunction name="showEditVitalsDetail" action="{!showEditVitalsDetail}" status="loadingVitalsDetaiStatus" rerender="vitalsDetailDialogMainBlock" oncomplete="openModalDialog('{!$Component.vitalsDetailDialog}', 'Edit Vitals Detail', '{!$Component.wholePage}'); handleVitals();">
@@ -881,11 +882,11 @@
 			<apex:tab label="Cardiopulmonary" name="cardioTab" onTabenter="changeTab('cardioTab'); return false;" styleClass="{!IF(Evaluation__c.Cardio_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
 					<apex:pageBlockSection Columns="2" >
-						<apex:outputField value="{!Evaluation__c.Shift_Start_time__c}" />
-						<apex:outputField value="{!Evaluation__c.Shift_End_time__c}" />
+						<apex:outputField value="{!Evaluation__c.Shift_Start_Time__c}" />
+						<apex:outputField value="{!Evaluation__c.Shift_End_Time__c}" />
 						<apex:outputField value="{!Evaluation__c.Status__c}" />
 					</apex:pageBlockSection>
-				</apex:pageBlock >
+				</apex:pageBlock>
 				<apex:pageBlock >
 					<apex:pageBlockSection columns="2" collapsible="false">
 						<apex:pageBlockTable value="{!errorMap['cardioTab']}" var="d" columns="1" title="Error Messages">
@@ -1223,11 +1224,11 @@
 				</script>
 				<apex:pageBlock id="nutritionMainBlock">
 					<apex:pageBlockSection Columns="2" >
-						<apex:outputField value="{!Evaluation__c.Shift_Start_time__c}" />
-						<apex:outputField value="{!Evaluation__c.Shift_End_time__c}" />
+						<apex:outputField value="{!Evaluation__c.Shift_Start_Time__c}" />
+						<apex:outputField value="{!Evaluation__c.Shift_End_Time__c}" />
 						<apex:outputField value="{!Evaluation__c.Status__c}" />
 					</apex:pageBlockSection>
-				</apex:pageBlock >
+				</apex:pageBlock>
 				<apex:pageBlock >
 					<apex:pageBlockSection columns="2" collapsible="false" >
 						<apex:pageBlockTable value="{!errorMap['nutritionTab']}" var="d" columns="1" >
@@ -1557,8 +1558,8 @@
 					</script>
 				<apex:pageBlock >
 					<apex:pageBlockSection Columns="2" >
-						<apex:outputField value="{!Evaluation__c.Shift_Start_time__c}" />
-						<apex:outputField value="{!Evaluation__c.Shift_End_time__c}" />
+						<apex:outputField value="{!Evaluation__c.Shift_Start_Time__c}" />
+						<apex:outputField value="{!Evaluation__c.Shift_End_Time__c}" />
 						<apex:outputField value="{!Evaluation__c.Status__c}" />
 					</apex:pageBlockSection>
 				</apex:pageBlock>
@@ -1746,11 +1747,11 @@
 			<apex:tab label="Neurological" name="neuroTab" ontabenter="changeTab('neuroTab');return false;" styleClass="{!IF(Evaluation__c.Neuro_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock id="neuroMainBlock">
 					<apex:pageBlockSection Columns="2" >
-						<apex:outputField value="{!Evaluation__c.Shift_Start_time__c}" />
-						<apex:outputField value="{!Evaluation__c.Shift_End_time__c}" />
+						<apex:outputField value="{!Evaluation__c.Shift_Start_Time__c}" />
+						<apex:outputField value="{!Evaluation__c.Shift_End_Time__c}" />
 						<apex:outputField value="{!Evaluation__c.Status__c}" />
 					</apex:pageBlockSection>
-				</apex:pageBlock >
+				</apex:pageBlock>
 				<apex:pageBlock >
 					<apex:pageBlockSection columns="2" collapsible="false" >
 						<apex:pageBlockTable value="{!errorMap['neuroTab']}" var="d" columns="1" >
@@ -1956,11 +1957,11 @@
 			<apex:tab label="Ortho" name="orthoTab" ontabenter="changeTab('orthoTab'); return false;" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
 					<apex:pageBlockSection Columns="2" >
-						<apex:outputField value="{!Evaluation__c.Shift_Start_time__c}" />
-						<apex:outputField value="{!Evaluation__c.Shift_End_time__c}" />
+						<apex:outputField value="{!Evaluation__c.Shift_Start_Time__c}" />
+						<apex:outputField value="{!Evaluation__c.Shift_End_Time__c}" />
 						<apex:outputField value="{!Evaluation__c.Status__c}" />
 					</apex:pageBlockSection>
-				</apex:pageBlock >
+				</apex:pageBlock>
 				<apex:pageBlock >
 					<apex:pageBlockSection columns="2" collapsible="false" >
 						<apex:pageBlockTable value="{!errorMap['orthoTab']}" var="d" columns="1" >
@@ -2060,11 +2061,11 @@
 			<apex:tab label="Psycho/Social" name="psychoSocialTab" ontabenter="changeTab('psychoSocialTab'); return false;" styleClass="{!IF(Evaluation__c.Psycho_Social_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
 					<apex:pageBlockSection Columns="2" >
-						<apex:outputField value="{!Evaluation__c.Shift_Start_time__c}" />
-						<apex:outputField value="{!Evaluation__c.Shift_End_time__c}" />
+						<apex:outputField value="{!Evaluation__c.Shift_Start_Time__c}" />
+						<apex:outputField value="{!Evaluation__c.Shift_End_Time__c}" />
 						<apex:outputField value="{!Evaluation__c.Status__c}" />
 					</apex:pageBlockSection>
-				</apex:pageBlock >
+				</apex:pageBlock>
 				<apex:pageBlock >
 					<apex:pageBlockSection columns="2" collapsible="false" >
 						<apex:pageBlockTable value="{!errorMap['psychoSocialTab']}" var="d" columns="1" >

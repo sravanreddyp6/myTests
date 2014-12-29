@@ -60,6 +60,7 @@ public with sharing class PersonalRecordController {
     public String planId { get; set; }
     public String servAssignClosure { get; set; }
     public PageReference breadcrumb { get; set; }
+    public String evalId {get; set; }
 
     public String opGrp { get {
                         TMN_User__c TU = [select Operating_Group__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1];
