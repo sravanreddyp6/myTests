@@ -308,6 +308,16 @@ public without sharing class ServiceAssignmentExt {
       set;
   }
 
+  public Evaluation__c evaluation {
+      get{
+         if (evaluation == null) {
+            evaluation = new Evaluation__c();
+        }
+        return evaluation;
+    }
+    set; }
+
+
 // END:  Parent level properties with get/set methods.
 
 
@@ -355,7 +365,7 @@ public without sharing class ServiceAssignmentExt {
                 pageHeader = 'Service Assignment Detail';
                 newSA = false;
                 theServAssign = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
-                            End_Date__c, Episode__c, External_ID__c, Location_Region__c, Model__c, Outcomes__c, Person_Being_Served__c,Admission__r.Person_Being_Served__r.LastName, Phase__c, Phase_of_Treatment__c, Program__c,
+                            End_Date__c, Episode__c, External_ID__c, Location_Region__c, Model__c, Outcomes__c, Person_Being_Served__c,Admission__r.Person_Being_Served__r.LastName,Admission__r.Person_Being_Served__r.FirstName, Phase__c, Phase_of_Treatment__c, Program__c,
                             Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
                             Start_Date__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
                             Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c, Person_Being_Served__r.Name, Person_Being_Served__r.Age__c, Person_Being_Served__r.SSN__c, Person_Being_Served__r.Birthdate,
@@ -1262,17 +1272,26 @@ public void loadProgramList() {
     //Added to show Nurses Assessments from Evaluation__c object
     public List<Evaluation__c> evaluations{
         get{
-
-            if(evaluations == null){
-
-                evaluations = [SELECT ID, Name, LastModifiedDate, Is_Signed__c FROM Evaluation__c WHERE ServiceAssignment__c = :theServAssign.Id];
+            if(evaluations == null) {
+                evaluations = [
+                    SELECT ID, Name, LastModifiedDate, Is_Signed__c,
+                           Shift_Start_time__c, Shift_end_time__c, Status__c,Owner.Name,
+                           (SELECT Id, CreatedDate, Owner.Name, Owner.Id
+                              FROM Evaluation_Responses__r
+                             WHERE RecordType.Name = 'E-Signature'
+                             ORDER BY CreatedDate DESC)
+                      FROM Evaluation__c
+                     WHERE ServiceAssignment__c = :theServAssign.Id
+                     ORDER By CreatedDate desc LIMIT 5
+                ];
             }
             return evaluations;
         }
-       set;
+        set;
    }
 
-   public PageReference addNurAssessment(){
+//Commented out by Sravan - 11/25/2014 as Users will not create Admission Assessment from Service Assignemnt page. It will carry over from Referral.
+ /*  public PageReference addNurAssessment(){
         String pbsLastName = theServAssign.Admission__r.Person_Being_Served__r.LastName;
         if(pbsLastName == null) pbsLastName = '';
         Evaluation__c nurseEval = new Evaluation__c();
@@ -1284,7 +1303,7 @@ public void loadProgramList() {
 
         return new PageReference ('/apex/NursingEvaluationView?id='+nurseEval.id);
 
-    }
+    } */
 
     public PageReference createFadAssess(){
         list<Assessment__c> oldAssess = new list<Assessment__c>();
@@ -1356,6 +1375,37 @@ public void loadProgramList() {
 
         return ref;
     }
+
+  public void showAddevaluation() {
+    evaluation = new Evaluation__c();
+    String pbsLastName = this.theServAssign.Admission__r.Person_Being_Served__r.LastName;
+    string pbsFirstinitial = this.theServAssign.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1);
+    if(pbsLastName == null) pbsLastName = '';
+    if(pbsFirstinitial == null) pbsFirstinitial = '';
+    evaluation = new Evaluation__c();
+    evaluation.Name = pbsFirstinitial+'.'+pbsLastName+'ShiftAsmt'+DateTime.Now().format('yyMMdd')+'-';
+    evaluation.RecordTypeID = Utility.getEValuationRecordType('CMShiftAssessment');
+    evaluation.ServiceAssignment__c = this.theServAssign.Id;
+    evaluation.Status__c = 'Draft';
+    evaluation.Details_Section_Completed__c = true;
+
+
+  }
+
+  public pageReference saveEvaluation() {
+
+      try{
+      	  evaluation.Name = this.evaluation.Name+evaluation.Shift_Start_time__c.format('h:mm a');
+          insert evaluation;
+          PageReference pg = new PageReference('/apex/CMShiftAssessmentEdit?id='+evaluation.Id);
+          return pg;
+      }
+      catch (Exception e) {
+          Apexpages.AddMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
+      }
+
+    return null;
+  }
 
   public void showAddFundingSource() {
     fundingSource = new Funding_Source__c();
@@ -1467,6 +1517,26 @@ public void loadProgramList() {
         sa.Service_Location__c = locID;
         upsert sa;
         return true;
+   }
+   
+   @RemoteAction
+   public static boolean finddupeEval(string shiftStart, string shiftEnd, Id saId) {
+   		system.debug('I am remoting');
+   		system.debug(shiftStart);
+   		DateTime st = Datetime.parse(shiftStart);
+   		DateTime en = Datetime.parse(shiftEnd);
+   		boolean dupefound = false;
+   		List<Evaluation__c> dupeEval = [SELECT Id, Name, Shift_Start_time__c, Shift_end_time__c FROM Evaluation__c WHERE ServiceAssignment__c = :saId AND (
+        					(Shift_Start_time__c >= :st and Shift_Start_time__c <= :en)
+        				or 	(Shift_end_time__c >= :st and Shift_end_time__c <= :en)
+        				or  ( Shift_Start_time__c <= :st and Shift_end_time__c >= :en )) AND RecordType.Name = 'CMShiftAssessment' AND Status__c !='Disregard' LIMIT 1];
+        				
+   		system.debug(dupeEval);
+   		if(dupeEval.size() >0 ) {
+   			dupeFound = true;
+   		}
+   	
+   		return dupeFound;
    }
 
 }

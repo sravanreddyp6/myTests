@@ -65,7 +65,7 @@
 <apex:actionRegion >
     
     <apex:pageBlockSection columns="1">
-    <apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
     <apex:outputPanel layout="none" id="buttonPanel">
        	<apex:commandButton value="Run" 
             action="{!runReport}" 
@@ -153,7 +153,7 @@
     
     <apex:repeat value="{!planObjMap[plan]}" var="obj">
     <apex:pageBlockSection title="{!obj.Description__c}" columns="1">
-    <apex:outputPanel>
+    <apex:outputPanel >
    <apex:repeat value="{!objWeekMap[obj.Id]}" var="day"> <!--  first day of reportable week -->
         
 		<table style="border:1px solid black;width:100%;padding:0px; border-collapse:collapse">
