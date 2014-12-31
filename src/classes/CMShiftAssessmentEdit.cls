@@ -4,8 +4,6 @@ public with sharing class CMShiftAssessmentEdit {
 	public String selectedTab { get; set; }
 	public String nextTab { get; set; }
 
-	public Boolean showResidenthurt{ get; set; }
-
 	// The following 2 properties are used to deal with situations where we
 	// want to use selectOptions for multi-checklist instead of the standard
 	// Salesforce widget.
@@ -182,8 +180,6 @@ public with sharing class CMShiftAssessmentEdit {
 		if (ApexPages.currentPage().getParameters().get('tab') != null) {
 			selectedTab = ApexPages.currentPage().getParameters().get('tab');
 		}
-
-		showResidenthurt = false;
 
 		copingValues = new List<selectOption>();
 		selectedCoping = new List<String>();
@@ -389,7 +385,9 @@ public with sharing class CMShiftAssessmentEdit {
 		this.evaluation.Skin_Section_Completed__c = checkSkinBody();
 		upsert this.pains;
 		update this.evaluation;
+		system.debug('whats in demo tab'+errorMap.get('demographicsTab'));
 		return new PageReference('/apex/CMShiftAssessmentView?id=' + evaluation.Id + '&tab=' + selectedTab);
+		
 	}
 
 	public Boolean checkDiagnosis() {
