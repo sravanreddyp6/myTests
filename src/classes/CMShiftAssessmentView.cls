@@ -133,6 +133,13 @@ public with sharing class CMShiftAssessmentView {
             selectedDysreflexia = this.evaluation.Autonomic_Dysreflexia_Areas_Assessed__c.split(';');
             
         ctlMap = CreateFieldControls( stdController.getRecord().getSObjectType().getDescribe().getName(), stdController );
+        
+         // Naming the PDF in case this controller is used for the PDF page
+         String file;
+        file = 'Test.pdf';
+        file = file.replaceAll('[|,||\\,||"||:|~|!|@|#|$|%|^|&|*|_|+|=|<|>|?|\\(|\\)|\\{|\\}|\\;|\\\'"]', ' ');
+        // Assigns the Shift Assessment Name to the PDF dynamically
+        Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename="'+file+'"');
     }
 
     public Evaluation_Response__c currentVitalsDetail {get; set; }

@@ -747,7 +747,7 @@
 		<apex:pageMessages id="pageMessages" />
 		<apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); handleDiagnosis(); handleCardio(); handleSkinBody(); handleNeuro(); handleOrtho(); hanldePsycho();" reRender="pageMessages, wholeTabPanel, buttons">
 			<apex:param name="nextTab" assignTo="{!nextTab}" value="" />
-		</apex:actionFunction >
+		</apex:actionFunction>
 		<apex:tabPanel value="{!selectedTab}" id="wholeTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
 			<apex:tab label="Demographics" name="demographicsTab" ontabenter="changeTab('demographicsTab'); return false;" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >

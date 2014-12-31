@@ -1034,7 +1034,7 @@ END: Uncomment to have the element collapsed by default -->
 				</apex:pageBlockButtons>
 			</apex:pageBlock>
 		</apex:outputPanel>
-		<apex:pageBlock title="Admission and Shift Assessments" rendered="{!showNurseAssessment && !editSA}">
+		<apex:pageBlock title="Admission and Shift Assessments" rendered="{!showNurseAssessment && !editSA && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}">
 			<div class="pbHeaderButton">
 				<!-- apex:CommandButton value="Admission and Shift Assessment" rendered="{!(evaluations == null || evaluations.size=0) && Service_Assignment__c.Status__c!='Inactive'}" action="{!addNurAssessment}"/ -->
 				<apex:commandButton value="Add Shift Assessment" rendered="{!vfVarIsCM}" onclick="showAddevaluation(); j$('[id$=evalProceed]').hide(); j$('[id$=enterNew]').hide();return false;" />
