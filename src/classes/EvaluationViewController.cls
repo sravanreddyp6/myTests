@@ -15,7 +15,11 @@ public with sharing class EvaluationViewController {
             returnURL = new PageReference('/apex/NeuroEvaluationView?id='+evaluation.id);
         } else if (evaluation.RecordTypeId == Utility.getEvaluationRecordType('CareMeridian')) {
             returnURL = new PageReference('/apex/CareMeridianEvaluationView?id='+evaluation.id);
+        } else if(evaluation.RecordTypeId == Utility.getEvaluationRecordType('CMShiftAssessment')) {
+        	returnURL = new PageReference('/apex/CMShiftAssessmentView?id='+evaluation.id);
+        	
         }
+        
         return returnURL;
     }
 }

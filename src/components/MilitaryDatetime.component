@@ -1,7 +1,8 @@
 <apex:component controller="MilitaryDatetimeController">
     <apex:attribute name="dateTimeVal" description="The Sobject datetime field value to display as military 24-clock format" required="true" type="dateTime" assignTo="{!dateTimeValue}"/>
     <apex:attribute name="edit" description="Indicate if the datetime is of type input" type="Boolean" default="false" />
-    <apex:attribute name="hiddenFieldId" description="The field id to which the value of dateTime field to return to" type="String" />  
+    <apex:attribute name="hiddenFieldId" description="The field id to which the value of dateTime field to return to" type="String" />
+    <apex:attribute name="datetimepickerid" type="string" description="The id of the input field used in the component. This is required to differentiate the fields when we use the component multiple times on a single page." default="datetimepicker" />
 
     <apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
@@ -11,7 +12,7 @@
     <script type="text/javascript">
         jQuery(function(){
           if ({!edit}){
-            jQuery('input[id$=datetimepicker]').datetimepicker(
+            jQuery('input[id$={!datetimepickerid}]').datetimepicker(
                                             { format:'m/d/Y H:i',
                                               closeOnDateSelect:true,
                                               onChangeDateTime:function(dp,$input){
@@ -28,6 +29,6 @@
     </apex:outputPanel>
     
     <apex:outputPanel rendered="{!edit}">   
-        <input id="datetimepicker" type="text" value="{!timeZoneValue}" />
+        <input id="{!datetimepickerid}" type="text" value="{!timeZoneValue}" />
     </apex:outputPanel>
 </apex:component>
