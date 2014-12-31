@@ -1,4 +1,4 @@
-public abstract class ActionSummaryBase {
+public abstract without sharing class ActionSummaryBase {
     protected ApexPages.StandardController controller;
     protected Action_Summary__c ActionSummary;
 

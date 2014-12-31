@@ -35,13 +35,19 @@ public string dontShowFields {
 		if (TMNUser == null || TMNUser.Operating_Group__c != 'Cambridge'){
 			dontshow.Add('Current_Medications__pc');
 		}
+        if ( (TMNUser.Operating_Group__c.indexOf('Care') < 0) && (TMNUser.Operating_Group__c.indexOf('Meridian') < 0) ) {
+            dontshow.Add('Advanced_Directives__pc');
+            dontshow.Add('Code_Status__pc');
+            dontshow.Add('Code_Status_Other__pc');
+        }
 		return ' ' + String.Join(dontshow, ',');
 	}
 }
 
 private TMN_User__c TMNUser_internal;
 private boolean TMNUser_set = false;
-private TMN_User__c TMNUser {
+//Using @TestVisible annotation will allow us to access the private members of the class in the test class - Sravan: 07/15/2014 1:03PM.
+@TestVisible private TMN_User__c TMNUser {
 	get {
 		if (!TMNUser_set) {
 			TMN_User__c[] users = [
@@ -78,14 +84,14 @@ public pageReference savePBS() {
 		this.personbeingserved.guardian1_name__pc = relParty.Name;
 		this.personbeingserved.guardian_phone_number__pc = relParty.Phone__c;
 		this.personbeingserved.guardian_1_e_mail__pc = relparty.email__c;
-	}
+	}  
 
 	// insert the new account record, and check for its validity
 	decimal age = math.FLOOR(this.personbeingserved.personbirthdate.daysBetween(system.today())/365.2425);
 	system.debug( 'age is: ' + string.valueOf(age));	
 	if ( (age < 18.0 ) && ( this.personbeingserved.guardian1_name__pc == '' || this.personbeingserved.guardian1_name__pc == null)) {
 		ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
-        'The person being served is younger than 18 years old.  Please enter the name of a guardian.' ));
+        'The person being served is younger than 18 years old. Please add Guardian\'s information in the last section at the bottom of this page.' ));
         return null;
 	} else 	{
 		try {
@@ -105,18 +111,27 @@ public pageReference savePBS() {
   		} catch (Exception e) {
   			
   			if ( e.getMessage().Contains('DUPLICATE_VALUE')) {
-			// look up the duplicate
-			Contact cDup = [select id, owner.name from Contact where firstname = :this.personBeingServed.firstName and 
-																	 lastname = :this.personBeingServed.lastName and
-																	 birthdate = :this.personBeingServed.PersonBirthDate limit 1];
-			
-				if (cDup != null) {
-					personbeingserved.AddError('This Person Being Served already exists, and is owned by ' + cDup.Owner.Name);
-				} else {
-	     		 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
-	        	'An error occurred saving this record. ' + e.getMessage()));
-				}
-  			} else {
+  				
+  				try {
+				// look up the duplicate
+				Contact cDup = [select id, owner.name from Contact where firstname = :this.personBeingServed.firstName and 
+																		 lastname = :this.personBeingServed.lastName and
+																		 birthdate = :this.personBeingServed.PersonBirthDate limit 1];
+				
+					if (cDup != null) {
+						personbeingserved.AddError('This Person Being Served already exists, and is owned by ' + cDup.Owner.Name);
+					} else {
+		     		 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+		        	'An error occurred saving this record. ' + e.getMessage()));
+					}
+  				} catch (Exception e2) {
+  					ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'You have attempted to create a Person Being Served that already exists in the database but is currently saved outside of your account Role. Contact the IT Service Desk (1-888-774-4872) for assistance with this issue.'));
+  				}
+  			} else if (e.getMessage().Contains('The Other ID and Other ID Description fields')) {
+  			     ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+	        	    'The Other ID and Other ID Description fields must be filled in for a person being served with a Mailing State of North Carolina.'));  			 
+  			}	 
+  			else {
   				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
         	'An error occurred saving this record. ' + e.getMessage()));
   				

@@ -7,6 +7,7 @@ public with sharing class EvaluationResponseTableControllerTest {
         insert evaluation;
         EvaluationResponseTableController controller = new EvaluationResponseTableController();
         controller.evaluationId = evaluation.Id;
+        Component.Apex.PageBlockSection section = controller.getDialog();
         controller.responseType = 'Allergy';
         controller.showAddResponse();
         System.assertEquals(null, controller.currentResponse.Id);
@@ -20,5 +21,11 @@ public with sharing class EvaluationResponseTableControllerTest {
         System.assertEquals(resp.Id, controller.currentResponse.Id);
         controller.currentResponse.Allergy_Details__c = 'Test Detail';
         controller.saveResponse();
+
+        Contact pbs = new Contact(LastName='Test');
+        insert pbs;
+        controller.pbsId = pbs.Id;
+        controller.showAddResponse();
+        System.assertEquals(null, controller.currentResponse.Id);
     }
 }

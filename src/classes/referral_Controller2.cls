@@ -5,7 +5,10 @@
  Description    : Extension Controller for Referrals
 *******************************************************************************/
 
+
 public with sharing class referral_Controller2 {
+
+  public class FundingSourceDecimalException extends Exception {}
 
   public String OperatingGroup{
       get{
@@ -33,6 +36,26 @@ public with sharing class referral_Controller2 {
   public String referralLocationName { get; set; }
   public Map<Id, Boolean> editableTasks { get; set; }
   public Boolean isCambridge { get; set; }
+  public Boolean isCareMeridian{get; set;}
+  public String relPartiesJSON {get {
+     List<RelatedParty> relPartiesData = new List<RelatedParty>();
+    if (relParties.size() > 0) {
+        for (Related_Party__c rp :relParties){
+            relPartiesData.add( new RelatedParty(rp.id, rp.Type__c) );
+        }
+    }
+    return JSON.serialize(relPartiesData);}
+  }
+
+  public class RelatedParty{
+     Id Id;
+     String TypeC;
+     RelatedParty(Id id, String typeC){
+         this.Id=id;
+         this.TypeC = typeC;
+     }
+  }
+
     public List<Attachment> Attachments{
         get{
 
@@ -52,11 +75,17 @@ public with sharing class referral_Controller2 {
               activity.Priority = 'Normal';
               activity.OwnerId = UserInfo.getUserId();
               activity.Status = 'Not Started';
+              activity.RecordTypeId = Utility.getRecordTypeForTask('Referral Tasks');
           }
           return activity;
       }
       private set; }
   public List<Task> activities { get; set; }
+  // For Neuro - the user Id to assign the admission steps (tasks) to
+  public Id userIdToAssignTasks { get; set; }
+  // We use a dummy task record in order to be able to use Salesforce's
+  // standard user chooser widget.
+  public Task dummyTask { get; set; }
   public Agency_Involved_With_Individual__c agency { get; set; }
   public List<Agency_Involved_With_Individual__c> agencies { get; set; }
   public Funding_Source__c fundingSource {
@@ -86,15 +115,42 @@ public with sharing class referral_Controller2 {
   private Id personBeingServedId {get; set;}
   public Id pBSId { get; set; }
   public boolean isEditor{get; set;}
-  public boolean canConvert{ get { 
-  	
-  		Set<string> RWStates = new Set<string>{'Minnesota', 'California', 'Indiana'};
-  		system.debug( 'Ref record type: ' + referralrecordtype );
-  		system.debug(' is cambridge:' + iscambridge);
-  		system.debug(' operatinggroup:' + operatinggroup);
-  		return ((operatinggroup == 'Cambridge' && isCambridge )|| (operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ));
-  	} set;}
-    
+  SystemSettings__c OS = SystemSettings__c.getOrgDefaults(); // Custom setting to control the visibility of convert button for CareMeridian group Sravan: 07/10/2014 1:42 PM.
+  public boolean canConvert{ get {
+
+        Set<string> RWStates = new Set<string>{'Minnesota', 'California', 'Indiana'};
+        system.debug( 'Ref record type: ' + referralrecordtype );
+        system.debug(' is cambridge:' + iscambridge);
+        system.debug(' operatinggroup:' + operatinggroup);
+        return ((operatinggroup == 'Cambridge' && isCambridge )|| (operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ) || (operatinggroup == 'CareMeridian' && isCareMeridian && OS.Referral_ConvertCMEnabled__c ) );
+    } set;}
+
+  public Boolean canUpdateReferral {
+    get {
+      return Schema.sObjectType.Referral__c.isUpdateable();
+    }
+  }
+  public Boolean canUpdateEvaluation {
+    get {
+      return Schema.sObjectType.Evaluation__c.isUpdateable();
+    }
+  }
+  public Boolean canCreateEvaluation {
+    get {
+      return Schema.sObjectType.Evaluation__c.isCreateable();
+    }
+  }
+
+  // NEVAL-32
+  public Boolean showNeuroFeatures {
+    get {
+      if (showNeuroFeatures == null) {
+        showNeuroFeatures = OS.Referral_Neuro_Features_Enabled__c;
+      }
+      return showNeuroFeatures;
+    }
+    set;
+  }
 
   public static final String REFERRAL_EDIT_URL = '/apex/referral';
   public static final String REFERRAL_CONVERT_URL = '/apex/referralConversion';
@@ -111,6 +167,7 @@ public with sharing class referral_Controller2 {
     this.activities = new List<Task>();
     this.editableTasks = new Map<Id, Boolean>();
     this.locations = new List<Referral_Location__c>();
+    this.dummyTask = new Task();
 
     system.debug( this.referralRecord);
 
@@ -145,9 +202,13 @@ public with sharing class referral_Controller2 {
 
     setIsEditor();
     isCambridge = false;
+    isCareMeridian = false;
     referralRecordType= (this.ReferralRecord.RecordTypeId != null)?Utility.getRecordTypeForReferral(Id.valueOf(this.ReferralRecord.RecordTypeId)):'';//(this.ReferralRecord.RecordType.Name!=null)?this.ReferralRecord.RecordType.Name:[select name from recordtype where id=:this.referralRecord.recordTypeId limit 1].name;
     if(referralRecordType.startsWith('Cambridge')) {
         isCambridge = true;
+    }
+    if(referralRecordType.startsWith('CareMeridian')){
+        isCareMeridian = true;
     }
   }
 
@@ -168,15 +229,17 @@ public with sharing class referral_Controller2 {
         if (pbrLastName == null) pbrLastName = '';
         Evaluation__c eval = new Evaluation__c(
             Referral__c = referralRecord.Id,
+            RecordtypeId = (ReferralRecordType=='CareMeridian' ? Utility.getEvaluationRecordType('CareMeridian') : Utility.getEvaluationRecordType('NeuroRestorative')),
             Name = pbrLastName + 'Eval' + DateTime.Now().format('MMddyy')
         );
         insert eval;
-        
+
         // ERC-93 - fill evaluated by field on Referral with current user
         TMN_User__c curruser = [ select id from tmn_user__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];
         referralRecord.evaluated_by_internal__c = curruser.id;
+        referralRecord.Has_Evaluation__c = true;
         update referralRecord;
-        
+
         return new PageReference('/' + eval.Id + '/e');
     }
 
@@ -209,7 +272,7 @@ public with sharing class referral_Controller2 {
         this.locations =
         [select Id, Name, Referral__c, location__c, street_1__c, street_2__c, city__c, zip_code__c, state__c, user_assigned__c, status__c,
             service_location_city__c,service_location_state__c,service_location_street__c,service_location_zip__c,service_location_program__c,
-            service_location_service_value__c, service_location_setting__c, service_location__c, LastModifiedDate
+            service_location_service_value__c, service_location_setting__c, service_location__c, rank__c, LastModifiedDate
          from Referral_Location__c
          where Referral__c = :this.referralRecord.Id
          limit 150];
@@ -241,6 +304,7 @@ public with sharing class referral_Controller2 {
                                 ActivityDate, Comments__c , Description
                          from Task
                          where WhatId = :this.referralRecord.Id
+                         order by number__c, createddate
                          limit 150];
         // We also have to make only users with correct permissions can see the
         // Edit button
@@ -306,7 +370,8 @@ public with sharing class referral_Controller2 {
                        Middle_Initial__c, Phone__c, Primary_Language__c, SSN__c,
                        State__c, Street_1__c, Street_2__c, Zip_Code__c,
                        Additional_Information_Comments__c, Sign_Language__c,
-                       Legal_Guardianship_Status__c, Non_Verbal__c, Full_Name__c
+                       Legal_Guardianship_Status__c, Non_Verbal__c, Full_Name__c,
+                       Level_of_Education__c
                 from Person_Being_Referred__c
                 where Id = :pBRId
                 limit 1];
@@ -336,7 +401,8 @@ public with sharing class referral_Controller2 {
                        Fax, FirstName, Gender__c,
                        LastName, Ethnicity_Picklist__c,
                        Middle_Name__c, Phone, Primary_Language__c, SSN__c,
-                       MailingState, MailingStreet, OtherStreet, MailingPostalCode
+                       MailingState, MailingStreet, OtherStreet, MailingPostalCode,
+                       Level_of_Education__c
                 from Contact
                 where Id = :pBSId
                 limit 1];
@@ -351,6 +417,7 @@ public with sharing class referral_Controller2 {
       activity.Priority = 'Normal';
       activity.OwnerId = UserInfo.getUserId();
       activity.Status = 'Not Started';
+      activity.RecordTypeId = Utility.getRecordTypeForTask('Referral Tasks');
   }
 
   public void saveActivity() {
@@ -359,6 +426,7 @@ public with sharing class referral_Controller2 {
     activity.Priority = 'Normal';
     activity.OwnerId = UserInfo.getUserId();
     activity.Status = 'Not Started';
+    activity.RecordTypeId = Utility.getRecordTypeForTask('Referral Tasks');
   }
 
   public void showAddAgency() {
@@ -373,6 +441,14 @@ public with sharing class referral_Controller2 {
   public void showAddFundingSource() {
     fundingSource = new Funding_Source__c();
     fundingSource.RecordTypeId = Utility.getFundingSourceRecordTypeFromReferral(this.ReferralRecord);
+
+    List<RecordType> cmrt = [ select id from recordtype where sobjecttype='Funding_Source__c' and developername = 'CareMeridian_FS'];
+    if (cmrt.size() > 0) {
+        ID CMID = cmrt[0].Id;
+        if ( fundingSource.RecordTypeId == CMID)
+            fundingSource.Authorization_type__c = 'Initial'; // set default value that is not being honored in late render on jquery dialog
+    }
+
     fundingSource.Referral__c = this.referralRecord.Id;
   }
 
@@ -395,7 +471,15 @@ public with sharing class referral_Controller2 {
     if (String.valueOf(this.fundingSource.Id) == '') {
         this.fundingSource.Id = null;
     }
-    upsert this.fundingSource;
+
+    try {
+        upsert this.fundingSource;
+    }
+    catch (Exception e) {
+         ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+        'Please enter zip code in the format: XXXXX or XXXXX-XXXX'));
+    }
+
     populateFundingSources();
     this.fundingSource = new Funding_Source__c();
     this.fundingSource.RecordTypeId = Utility.getFundingSourceRecordTypeFromReferral(this.ReferralRecord);
@@ -444,11 +528,68 @@ public with sharing class referral_Controller2 {
     } else
         return null;
     }
-   public boolean checkRequiredFields()
- {
+   public boolean checkRequiredFields(){
     List<String> messages = new List<String>{};
     boolean hasReq = false;
 
+    //start CTEAE-137
+    if(ReferralRecordType=='Cambridge North Carolina'){
+        if(referralRecord.Payer_Medical_Record_Number__c == null ){
+        messages.Add( 'Payer/Guarantor Medical Record Number' );
+        hasReq = false;
+        }
+        if(referralRecord.Payer_Medical_Record_Number_Description__c == null){
+        messages.Add( 'Payer/Guarantor Medical Number Description' );
+        hasReq = false;
+        }
+     }
+     //end CTEAE-137
+
+     //start EC-54
+     if(referralRecordType == 'CareMeridian'){
+     Boolean hasPrimaryLoc = false, hasPrimaryFund = false;
+        if(referralRecord.Current_Location__c == null){
+          messages.Add('Current Location');
+          hasReq = false;
+        }
+        if(referralRecord.Agency_Name__c == null){
+          messages.Add('Referral Source');
+          hasReq = false;
+        }
+        if(referralRecord.Evaluated_By_Internal__c == null){
+          messages.Add('Evaluated by');
+          hasReq = false;
+        }
+        if(fundingSources.size() == 0){
+          messages.Add('Primary Funding Source');
+          hasReq = false;
+        }
+        if(locations.size() == 0){
+          messages.Add('Primary Requested Location');
+          hasReq = false;
+        }
+        for(Referral_Location__c rl :locations){
+          if(rl.Rank__c == 'Primary'){
+            hasPrimaryLoc = true;
+            break;
+          }
+        }
+        if(!hasPrimaryLoc){
+          messages.Add('Primary Requested Location');
+          hasReq = false;
+        }
+        for(Funding_Source__c fs :fundingSources){
+          if(fs.Type_of_Coverage__c == 'Primary'){
+            hasPrimaryFund = true;
+            break;
+          }
+        }
+        if(!hasPrimaryFund){
+            messages.Add('Primary Funding Source');
+            hasReq = false;
+          }
+     }
+    //End EC-54
 
     // requirements to create a new PBS
     if ( (string.valueOf(this.referralRecord.Person_Being_Served__c) == '' )) {
@@ -467,7 +608,6 @@ public with sharing class referral_Controller2 {
         // dob and then if < 18 need a guardian
         if ( this.personBeingRefRecord.Date_of_Birth__c == null ) {
             messages.Add( 'Date of Birth' );
-            this.personBeingRefRecord.Date_of_Birth__c.AddError('Value required for conversion');
             hasReq = false;
         } else {
 
@@ -484,7 +624,7 @@ public with sharing class referral_Controller2 {
 
                 if ( !hasGuardian ) {
                     hasReq = false;
-                    messages.Add( 'Person Being Referred is under 18 and requires a related party of type Guardian');
+                    messages.Add( 'The person being referred is younger than 18 years old. Please add a person with the Type of Guardian to the Related Parties Section below.');
                 }
             }
 
@@ -498,6 +638,8 @@ public with sharing class referral_Controller2 {
     }
 
     System.Debug( ' anticipated service location = ' +this.referralRecord.Service_Location__c );
+    //Added the And condtion to bypass the conversion error for CareMerdian Flavor - Sravan 5/15/2014.
+    //EB214. Closing a referral with the reason 'admitted' mandates the admission location for all flavours. So be logic applies to all. - Neeraj 10/22/2014
     if ( String.IsBlank(this.referralRecord.Service_Location_Program__c) ) {
         messages.Add( 'Anticipated Service Location' );
         hasReq = false;
@@ -537,5 +679,40 @@ public with sharing class referral_Controller2 {
           this.personBeingServedRecord = getPBSRec();
           populateRelParties();
       }
+  }
+
+  public void addNeuroAdmissionSteps() {
+    if (dummyTask.OwnerId == null) {
+      dummyTask.OwnerId.addError('Field is required!');
+      return;
+    }
+    Map<String, Neuro_Admission_Steps__c> stepSubjects = Neuro_Admission_Steps__c.getAll();
+    System.debug('stepSubjects: ' + stepSubjects);
+    Set<String> nameSet = stepSubjects.keySet();
+    List<Integer> orderedNames = new List<Integer>();  // We use this list to sort the subjects by their names
+    for (String name: nameSet) {
+      orderedNames.add(Integer.valueOf(name));
+    }
+    orderedNames.sort();
+    System.debug('orderedNames: ' + orderedNames);
+    Id taskRecordType = Utility.getRecordTypeForTask('Referral Tasks');
+    for (Integer orderedName: orderedNames) {
+      // We do not batch insert the tasks here because it leads to inconsistent
+      // sorting order.
+      insert new Task(
+        Subject = stepSubjects.get(String.valueOf(orderedName)).Subject__c,
+        Priority = 'Normal',
+        Status = 'Not Started',
+        WhatId = referralRecord.Id,
+        OwnerId = dummyTask.OwnerId,
+        RecordTypeId = taskRecordType
+      );
+    }
+    populateActivities();
+    System.debug('this.activities: ' + this.activities);
+
+    // We also want to make sure that the user can't do this action more than once
+    referralRecord.Admission_Steps_Added__c = true;
+    update new Referral__c(Id=referralRecord.Id, Admission_Steps_Added__c=true);
   }
 }

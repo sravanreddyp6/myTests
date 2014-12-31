@@ -22,7 +22,9 @@ public static Id getAccountRecordType(){
             PersonMailingStateCode='NC',
             PersonEmail=EncodingUtil.convertToHex(crypto.generateAesKey(128)).substring(1,5).toUpperCase() + '_test@yahoo.com',
             PersonHomePhone='1234567',
-            PersonMobilePhone='12345678'
+            PersonMobilePhone='12345678',
+            Other_ID__pc = 'Other', 
+            Other_ID_Description__pc = 'Other Description' 
         );
         insert Accnt;
         List<Account> testAcct = [Select Id, PersonContactId, RecordTypeID From Account a WHERE a.Id = :Accnt.Id];
@@ -57,9 +59,12 @@ public static Id getAccountRecordType(){
     }
     
     public static Referral__c createReferral(String recordType, string Status, string ReferralName, string State, Person_Being_Referred__c pbr) {
+             Service_location__c SL = new Service_location__c(name = '123', UniqueID__c =String.valueOf(Math.abs(Math.random())), FacilityID__c =123,Alias__c ='123',ProgramID__c ='123',Program__c='123', service_value__c='CA-MNTR-SL-Rancho-IDD');
+         insert SL;
         Referral__c ref = new Referral__c(RecordTypeId=Utility.getRecordTypeForReferral(recordType),
                                           Referral_Status__c=Status,
                                           Referral_Name__c=ReferralName,
+                                          Service_location__c = SL.id,                                          
                                           Person_Being_Referred__c=pbr.Id);
         insert ref;    
         Referral__c testRef = [SELECT Id, Name, RecordTypeId, RecordType.Name, Street_1__c, Street_2__c, City__c, State__c, Zip_Code__c, Phone__c, Email_Address__c, 
@@ -87,25 +92,26 @@ public static Id getAccountRecordType(){
     }
     
     public static Referral_Location__c createReferralLocation(String name, String location, string Status, User userAssigned, Referral__c ref ) {
-    	
-    	String tmp = String.ValueOf(System.currentTimeMillis());
-    	
-    	Service_Location__c svcLoc = new Service_Location__c (
-        		Zip__c = '90021', 
-        		UniqueID__c = '1001' + tmp.Substring(tmp.length()-6, tmp.length()-1), 
-    			Street__c = '10 Main St.', 
-    			State__c = 'CA', 
-    			Setting__c = 'Residential',
-    			Service_Value__c = 'IDD', 
-    			Program__c = 'Redwood Res', 
-    			ProgramID__c = '1000', 
-    			Phone__c = '213-555-5555',
-				FacilityID__c = 10,
-				City__c = 'Bakersfield',
-				Alias__c = '10101' + tmp.Substring(tmp.length()-6, tmp.length()-1)
-	        );
-	   insert svcLoc;
-	   system.debug('NEW ALIAS = ' +  svcLoc.Id);      
+        
+        String tmp = String.ValueOf(System.currentTimeMillis());
+        
+        Service_Location__c svcLoc = new Service_Location__c (
+                Zip__c = '90021', 
+                UniqueID__c = '1001' + tmp.Substring(tmp.length()-6, tmp.length()-1), 
+                Street__c = '10 Main St.', 
+                State__c = 'CA', 
+                Setting__c = 'Residential',
+                Service_Value__c = 'CA-MNTR-SL-Rancho-IDD', 
+                Program__c = 'Redwood Res', 
+                ProgramID__c = '1000', 
+                Phone__c = '213-555-5555',
+                FacilityID__c = 10,
+                City__c = 'Bakersfield',
+                Alias__c = '10101' + tmp.Substring(tmp.length()-6, tmp.length()-1)
+                
+            );
+       insert svcLoc;
+       system.debug('NEW ALIAS = ' +  svcLoc.Id);      
        Referral_Location__c loc = new Referral_Location__c(Name=name, Location__c=location, Status__c=status,Referral__c=ref.ID, user_assigned__c=userAssigned.Id, Service_Location__c=svcLoc.Id);
         insert loc;
        Referral_Location__c testLoc = [Select Id, Name, Status__c, Location__c, Service_Location__c, user_assigned__c From Referral_Location__c a WHERE a.Id = :loc.Id];
@@ -151,7 +157,7 @@ public static Id getAccountRecordType(){
         Service_Location__c loc = new Service_Location__c(Alias__c = alias, UniqueID__c = alias, FacilityID__c=1,ProgramID__c=alias, Program__c=alias);
         insert loc;
         Service_Location__c testLoc = [SELECT Id, Name, CreatedDate, UniqueID__c, FacilityID__c, Alias__c, ProgramID__c, Program__c, Street__c, City__c, 
-                                       State__c, Zip__c, Phone__c, Service_Value__c, Setting__c from service_location__c];
+                                       State__c, Zip__c, Phone__c, Service_Value__c, Setting__c from service_location__c where id = :loc.Id];
         return testLoc;
     }
     

@@ -7,6 +7,14 @@ public with sharing class EvaluationResponseTableController {
             }
         }
     }
+    public Id pbsId { get;
+        set {
+            pbsId = value;
+            if (responseType != null) {
+                fetchResponsesFromPBS(pbsId, responseType);
+            }
+        }
+    }
     public String responseType {
         get;
         set {
@@ -17,10 +25,20 @@ public with sharing class EvaluationResponseTableController {
         }
     }
     public String[] columnsToFetch { get; set; }
+    public Map<String, String> columnsToHeadersMap { get; set; }
     public Boolean dialogShown { get; set; }
     public Boolean isEdit { get; set; }
 
     public Evaluation_Response__c[] responses { get; set; }
+    public Integer numberOfResponses {
+        get {
+            if (numberOfResponses == null) {
+                return 0;
+            }
+            return numberOfResponses;
+        }
+        set;
+    }
     public Evaluation_Response__c currentResponse { get; set; }
     public Id currentResponseId { get; set; }
 
@@ -34,6 +52,7 @@ public with sharing class EvaluationResponseTableController {
         currentResponse = new Evaluation_Response__c();
         currentResponse.RecordTypeId = Utility.getEvaluationResponseRecordType(responseType);
         currentResponse.Evaluation__c = evaluationId;
+        currentResponse.Person_Being_Served__c = pbsId;
         dialogShown = true;
         isEdit = false;
         return null;
@@ -58,12 +77,38 @@ public with sharing class EvaluationResponseTableController {
         }
     }
 
+    public Component.Apex.PageBlockSection getDialog() {
+        // We use a dynamic component here in order to assign dynamic ids to
+        // the form inputs (Visualforce doesn't let us do that using static
+        // components)
+        Component.Apex.PageBlockSection dialog = new Component.Apex.PageBlockSection(columns=2);
+        if (columnsToFetch == null) {
+            return dialog;
+        }
+        for (String column: columnsToFetch) {
+            Component.Apex.InputField dialogInput = new Component.Apex.Inputfield(id=column);
+            dialogInput.expressions.value = '{!currentResponse[\'' + column + '\']}';
+            dialog.childComponents.add(dialogInput);
+        }
+        return dialog;
+    }
+
     private void fetchResponses(Id evaluationId, String responseType) {
         String query = 'SELECT Id, ' + getNecessaryColumns(responseType) +
             ' FROM Evaluation_Response__c WHERE Evaluation__c = :evaluationId' +
             ' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) +
-            '\' ORDER BY CreatedDate';
+            '\' ORDER BY Date__c ASC NULLS LAST, CreatedDate';
         responses = Database.query(query);
+        numberOfResponses = responses.size();
+    }
+
+    private void fetchResponsesFromPBS(Id pbsId, String responseType) {
+        String query = 'SELECT Id, ' + getNecessaryColumns(responseType) +
+            ' FROM Evaluation_Response__c WHERE Person_Being_Served__c = :pbsId' +
+            ' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) +
+            '\' ORDER BY Date__c ASC NULLS LAST, CreatedDate';
+        responses = Database.query(query);
+        numberOfResponses = responses.size();
     }
 
     private String getNecessaryColumns(String recordType) {
@@ -78,8 +123,10 @@ public with sharing class EvaluationResponseTableController {
         }
         Schema.FieldSetMember[] columns = fieldSetToUse.getFields();
         columnsToFetch = new String[] {};
+        columnsToHeadersMap = new Map<String, String>();
         for (Schema.FieldSetMember column: columns) {
             columnsToFetch.add(column.getFieldPath());
+            columnsToHeadersMap.put(column.getFieldPath(), column.getLabel());
         }
         return String.join(columnsToFetch, ', ');
     }

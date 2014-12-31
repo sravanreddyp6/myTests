@@ -4,56 +4,97 @@ public with sharing class SearchLogicOnPBSR {
     public static List<ReferralSearchResults> search(String referralNumber,String lastname,String firstname,Date dob, Double age,String gender){
         system.debug('lastname:' + lastname + ';firstname:' +firstname+';dob:'+dob+';age:'+age+';gender:'+gender);
         List<ReferralSearchResults> results = new List<ReferralSearchResults>();
-        if((lastname== null || lastname=='') && (firstname==null || firstname=='') && 
-           (referralNumber==null || referralNumber=='')){
+        if( String.IsBlank(lastname) && String.IsBlank(firstname) && string.IsBlank(referralNumber)){
             throw new CustomException('Both last and first name cannot be null');
         }
-        String searchString = '';
+        String searchStringPBR = '';
+        string searchStringPBS = '';
+       
         List<Person_Being_Referred__c> pbrs = new List<Person_Being_Referred__c>();
-        if ((lastname!= null && lastname!='') || (firstname!=null && firstname!='')) {
-            searchString= SearchLogicOnPBSR.buildCriteria(lastname,firstname,dob, age,gender,false, true);           
-            pbrs = Database.query(searchString);
-        }
+        List<Contact> pbsList = new List<Contact>();
         
-        if(referralNumber!=null && referralNumber!=''){
-            Person_Being_Referred__c tmpPbr=[Select name,first_name__c,last_name__c,gender__c,date_of_birth__c,city__c,state__c,zip_code__c,street_1__c,street_2__c,age__c  
+        // go for referral number first - fastest hit
+        if( !String.IsBlank(referralNumber)){
+        	
+           List<Person_Being_Referred__c> tmpPbr=[Select name,first_name__c,last_name__c,gender__c,date_of_birth__c,city__c,(SELECT ID,Person_Being_Served__c FROM Referrals__r WHERE Person_Being_Served__c != null LIMIT 1),state__c,zip_code__c,street_1__c,street_2__c,age__c,Person_being_served__c  
                     From person_being_referred__c 
                         Where id in 
                             (select person_being_referred__c from referral__c where name=:referralNumber)
                     limit 1];
-            if(tmpPbr!=null){
-                pbrs.add(tmpPbr);
-            }
+                    
+        //Sravan- Added extra query and changed the logic to display PBS if searched with refrral number. If no PBS exists person being referred record will be displayed EC-28  09/11/2014 1:32 PM           
+            List <Contact> tmpCon = [SELECT name,firstname,lastname,gender__c,birthdate,mailingcity,mailingstatecode,mailingpostalcode,mailingstreet,otherstreet,age__c
+            		 FROM Contact
+            		 	WHERE ID IN(SELECT Person_Being_Served__c from referral__c WHERE name=:referralNumber)
+            		 limit 1];
+                  
+                  // will always be 1 record
+	             if(tmpCon.size()== 1){
+	                pbsList = tmpCon;
+	              }
+	            
+	            else{
+	            	pbrs = tmpPbr;	
+	            } 
+	             
         }
+        else {
+        // otherwise do a name search
         
+            searchStringPBR= SearchLogicOnPBSR.buildCriteria(String.escapeSingleQuotes(lastname), String.escapeSingleQuotes(firstname),dob,age,gender,false, true);
+            searchStringPBS= SearchLogicOnPBSR.buildCriteria(String.escapeSingleQuotes(lastname), String.escapeSingleQuotes(firstname),dob, age,gender,true, false);
+            system.debug( 'PBR: ' + searchSTringPBR);
+            system.debug( 'PBS: ' + searchSTringPBS);
+            List<Person_Being_Referred__c> pbrs2 = Database.query(searchStringPBR);
+            List<Contact> pbss2 =  Database.query(searchStringPBS);
+            
+            pbrs.AddAll( pbrs2);
+            pbsList.AddAll( pbss2);
+        
+        }
         for(Person_Being_Referred__c pbr : pbrs)
         {
+        	List<Referral__c> r = pbr.Referrals__r;
+        	system.debug('size'+r.size());
+        	if(pbr.Person_Being_Served__c == null){
+	            Integer matchedItems = 0;
+	            if (lastname!=null && lastname!='' && pbr.Last_Name__c == lastName) matchedItems +=1;
+	            if (firstname!=null && firstname!='' && pbr.First_Name__c == firstName) matchedItems +=1;
+	            if (dob!=null && pbr.Date_of_Birth__c == dob) matchedItems +=1;
+	            if (age!=null && pbr.Age__c == age) matchedItems +=1;
+	            if (gender!=null && gender!='' && pbr.Gender__c == gender) matchedItems +=1;
+	            
+	        
+	            results.add(new ReferralSearchResults(pbr, matchedItems));
+        	}
+        	
+        	if(pbr.Person_Being_Served__c!=null && r.size()>0){
+        		Integer matchedItems = 0;
+	            if (lastname!=null && lastname!='' && pbr.Last_Name__c == lastName) matchedItems +=1;
+	            if (firstname!=null && firstname!='' && pbr.First_Name__c == firstName) matchedItems +=1;
+	            if (dob!=null && pbr.Date_of_Birth__c == dob) matchedItems +=1;
+	            if (age!=null && pbr.Age__c == age) matchedItems +=1;
+	            if (gender!=null && gender!='' && pbr.Gender__c == gender) matchedItems +=1;
+	            
+	        
+	            results.add(new ReferralSearchResults(pbr, matchedItems));
+        		
+        	}
+        }
+        
+        for(Contact pbs : pbsList)
+        {
             Integer matchedItems = 0;
-            if (lastname!=null && lastname!='' && pbr.Last_Name__c == lastName) matchedItems +=1;
-            if (firstname!=null && firstname!='' && pbr.First_Name__c == firstName) matchedItems +=1;
-            if (dob!=null && pbr.Date_of_Birth__c == dob) matchedItems +=1;
-            if (age!=null && age!=0 && pbr.Age__c == age) matchedItems +=1;
-            if (gender!=null && gender!='' && pbr.Gender__c == gender) matchedItems +=1;
-            results.add(new ReferralSearchResults(pbr, matchedItems));  
+            if (lastname!=null && lastname!='' && pbs.LastName == lastName) matchedItems +=1;
+            if (firstname!=null && firstname!='' && pbs.FirstName == firstName) matchedItems +=1;
+            if (dob!=null && pbs.Birthdate == dob) matchedItems +=1;
+            if (age!=null && pbs.Age__c == age) matchedItems +=1;
+            if (gender!=null && gender!='' && pbs.Gender__c == gender) matchedItems +=1;
+                        
+            results.add(new ReferralSearchResults(pbs, matchedItems));  
         }
         
-        if ((lastname!= null && lastname!='') || (firstname!=null && firstname!='')) {
-            searchString= SearchLogicOnPBSR.buildCriteria(lastname,firstname,dob, age,gender,true, false);
-            
-            List<Contact> pbsList = Database.query(searchString);
-            for(Contact pbs : pbsList)
-            {
-                Integer matchedItems = 0;
-                if (lastname!=null && lastname!='' && pbs.LastName == lastName) matchedItems +=1;
-                if (firstname!=null && firstname!='' && pbs.FirstName == firstName) matchedItems +=1;
-                if (dob!=null && pbs.Birthdate == dob) matchedItems +=1;
-                if (age!=null && age!=0 && pbs.Age__c == age) matchedItems +=1;
-                if (gender!=null && gender!='' && pbs.Gender__c == gender) matchedItems +=1;
-                            
-                results.add(new ReferralSearchResults(pbs, matchedItems));  
-            }
-        }
-        
+        system.debug('final results:' + results);
         results.sort();
         return results;
         
@@ -72,10 +113,12 @@ public with sharing class SearchLogicOnPBSR {
         String zipfield='';
         String street1field='';
         String street2field='';
-        
-        
         String ssnfield='';
         String agefield='';
+        
+        string criteria='';
+        string pbsonpbr='';
+        string referralSearch ='';
         if(isContact){
             namefield='name';
             lastnamefield='lastname';
@@ -89,6 +132,7 @@ public with sharing class SearchLogicOnPBSR {
             street2field='otherstreet';
             agefield='age__c';
             sobjecttype='contact';
+            criteria='Select '+namefield+','+firstnamefield+','+lastnamefield+','+genderfield+','+dobfield+','+cityfield+','+statefield+','+zipfield+','+street1field+','+street2field+','+agefield+' From '+ sobjecttype+' where (';
         }
         if(isPBR){
             namefield='name';
@@ -103,9 +147,12 @@ public with sharing class SearchLogicOnPBSR {
             street2field='street_2__c';
             agefield='age__c';
             ssnfield='ssn__c';
+            pbsonpbr='Person_Being_Served__c';
             sobjecttype='person_being_referred__c';
+            referralSearch = '(SELECT ID,Person_Being_Served__c FROM Referrals__r WHERE Person_Being_Served__c = null LIMIT 1)';
+            criteria='Select '+namefield+','+firstnamefield+','+lastnamefield+','+genderfield+','+dobfield+','+cityfield+','+statefield+','+zipfield+','+street1field+','+street2field+','+agefield+','+referralSearch+','+pbsonpbr+' From '+ sobjecttype+' where (';
         }
-        String criteria='Select '+namefield+','+firstnamefield+','+lastnamefield+','+genderfield+','+dobfield+','+cityfield+','+statefield+','+zipfield+','+street1field+','+street2field+','+agefield+' From '+ sobjecttype+' where (';
+       // String criteria='Select '+namefield+','+firstnamefield+','+lastnamefield+','+genderfield+','+dobfield+','+cityfield+','+statefield+','+zipfield+','+street1field+','+street2field+','+agefield+' From '+ sobjecttype+' where (';
         string lNameSearch = '';
         string fNameSearch = '';
         if(lastname!=null && lastname!=''){
@@ -133,13 +180,13 @@ public with sharing class SearchLogicOnPBSR {
         }
         criteria += ')';
         
-        if(dob!=null || (age!= null && age!=0) || gender!=null && gender!=''){
+        if(dob!=null || (age!= null ) || gender!=null && gender!=''){
             String extraCriteria = '';
             if(dob!=null){
                 extraCriteria += ' and ';
                 extraCriteria+=' ('+dobfield+' = :dob ) ';
             }
-            if(age!= null && age!=0){
+            if(age!= null){
                 extraCriteria += ' and ';
                 extraCriteria+=' ('+agefield+' = '+age+ ') ';
             }

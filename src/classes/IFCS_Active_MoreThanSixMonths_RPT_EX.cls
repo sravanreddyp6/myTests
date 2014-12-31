@@ -21,7 +21,8 @@ public with sharing class IFCS_Active_MoreThanSixMonths_RPT_EX {
                         Program__c,
                         Admission__r.Effective_Date__c,
                         Start_Date__c,
-                        Location_Region__c
+                        Location_Region__c,
+                        Program_Detail__c
                         From Service_Assignment__c
                         Where 
                         Start_Date__c <= :SixMonth

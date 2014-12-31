@@ -31,21 +31,27 @@ public with sharing class referral_Controller_Helper{
     @RemoteAction
     public static Referral_Location__c loadReferralLocation(string locationId) {
         Referral_Location__c loc = [select Id, Name, Referral__c, service_location__c, service_location__r.Name, service_location__r.city__c, service_location__r.state__c, service_location__r.zip__c, location__c, street_1__c, street_2__c, city__c, zip_code__c, state__c, user_assigned__c,
-                                    user_assigned__r.Name, Status__c, service_location_city__c,service_location_state__c,service_location_street__c,service_location_zip__c, Service_Location_program__c
+                                    user_assigned__r.Name, Status__c, service_location_city__c,service_location_state__c,service_location_street__c,service_location_zip__c, Service_Location_program__c, Rank__c
                                     from Referral_Location__c where id= :locationId];
         return loc;
     }
     
     @RemoteAction
-    public static Referral_Location__c saveReferralLocation(string locID, string locUser, string locServiceLocation, string locStatus, string referralId) {
-      Referral_Location__c loc;                                        
-      if (String.isEmpty(locID)) {
-         loc = new Referral_Location__c(User_Assigned__c = locUser, Service_Location__c= locServiceLocation, Status__c=locStatus, Referral__c=referralId);
-      } else {
-         loc = new Referral_Location__c(User_Assigned__c = locUser, Service_Location__c= locServiceLocation, Status__c=locStatus, Referral__c=referralId, ID=locID);
+    public static Referral_Location__c saveReferralLocation(string locID, string locUser, string locServiceLocation, string locStatus, string locRank, string referralId) {
+      Referral_Location__c loc;     
+      if ( String.isEmpty(locUser)) {
+      	locUser  = null;
       }
-      System.debug('%%%%%%%%% Kossi string locServicelocation'+locServiceLocation);
-      System.debug('%%%%%%%%% Kossi saveReferralLocation'+loc);
+      if ( String.isEmpty(locRank)) {
+      	locRank  = null;
+      }                                   
+      if (String.isEmpty(locID)) {
+         loc = new Referral_Location__c(User_Assigned__c = locUser, Service_Location__c= locServiceLocation, Status__c=locStatus, Referral__c=referralId, Rank__c = locRank);
+      } else {
+         loc = new Referral_Location__c(User_Assigned__c = locUser, Service_Location__c= locServiceLocation, Status__c=locStatus, Referral__c=referralId, Rank__c = locRank, ID=locID);
+      }
+      System.debug('%%%%%%%%% string locServicelocation'+locServiceLocation);
+      System.debug('%%%%%%%%% saveReferralLocation'+loc);
       upsert loc;                                  
       return loc;
    }

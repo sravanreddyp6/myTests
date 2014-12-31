@@ -162,6 +162,41 @@
         <label>Funding Information</label>
     </fieldSets>
     <fieldSets>
+        <fullName>Funding_Information_NC</fullName>
+        <description>Person Being Served page for North Carolina users to make Other ID a required field.</description>
+        <displayedFields>
+            <field>Medicaid_ID__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Other_ID__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>true</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Avatar_ID__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Other_ID_Description__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Avatar_Source_System__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>UCI_ID__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <label>Funding_Information_NC</label>
+    </fieldSets>
+    <fieldSets>
         <fullName>PBS_Basic</fullName>
         <description>Used in Person being referred page</description>
         <displayedFields>
@@ -201,6 +236,11 @@
         </displayedFields>
         <displayedFields>
             <field>Race__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Level_of_Education__c</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>false</isRequired>
         </displayedFields>
@@ -341,9 +381,25 @@
         <type>Lookup</type>
     </fields>
     <fields>
+        <fullName>Advanced_Directives_Attached__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Advance Directives Attached</label>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Advanced_Directives__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Advance Directives</label>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>Age__c</fullName>
         <externalId>false</externalId>
-        <formula>FLOOR(VALUE(TEXT((today()- Birthdate) /365.25)))</formula>
+        <formula>FLOOR((TODAY()-Birthdate +1)/365.2425)</formula>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Age</label>
         <precision>18</precision>
@@ -406,6 +462,38 @@
         <trackHistory>false</trackHistory>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Code_Status_Other__c</fullName>
+        <externalId>false</externalId>
+        <label>Code Status Other</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Code_Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Code Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Full</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>DNR</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Contact_Name_from_Account__c</fullName>
@@ -636,6 +724,12 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
+                <fullName>Marines</fullName>
+                <controllingFieldValues>Active</controllingFieldValues>
+                <controllingFieldValues>Prior</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
                 <fullName>National Guard</fullName>
                 <controllingFieldValues>Active</controllingFieldValues>
                 <controllingFieldValues>Prior</controllingFieldValues>
@@ -831,6 +925,18 @@
         <type>Phone</type>
     </fields>
     <fields>
+        <fullName>Initials__c</fullName>
+        <description>Initials of PBS. Used for reporting reasons.</description>
+        <externalId>false</externalId>
+        <formula>LEFT(FirstName, 1) &amp; LEFT(LastName, 1)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Initials</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Last_Name_SoundEx_Key__c</fullName>
         <externalId>false</externalId>
         <label>Last Name SoundEx Key</label>
@@ -918,6 +1024,136 @@
             </picklistValues>
             <picklistValues>
                 <fullName>Parent</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Level_of_Education__c</fullName>
+        <externalId>false</externalId>
+        <label>Highest Level of Education</label>
+        <picklist>
+            <picklistValues>
+                <fullName>1 Year Preschool</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>2+ Years Preschool</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Kindergarten</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grade 1</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grade 2</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grade 3</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grade 4</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grade 5</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grade 6</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grade 7</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grade 8</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grade 9</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grade 10</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grade 11</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Grade 12</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>1 Year College</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>2 Years College</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>3 Years College</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>4+ Years College</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Graduate School</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>1 Year Vocational/Technical</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>2 Years Vocational/Technical</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Elementary School Special Education</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Middle School Special Education</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>High School Special Education</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>1 Year Special Education</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>2+ Years Special Education</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Post Secondary Transition Services</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>None</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Unknown</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -1032,6 +1268,15 @@
     <fields>
         <fullName>OwnerId</fullName>
         <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>PBS_Identifier__c</fullName>
+        <description>System assigned a unique 10-digit number to a Person Being Served upon creation.</description>
+        <displayFormat>{0000000000}</displayFormat>
+        <externalId>false</externalId>
+        <label>PBS_Identifier</label>
+        <trackHistory>false</trackHistory>
+        <type>AutoNumber</type>
     </fields>
     <fields>
         <fullName>Person_Being_Referred__c</fullName>

@@ -198,5 +198,24 @@ public class referrals_Controller_Test{
             System.assert([select name from referral__c where id=:controller.referralrecord.id].name.endsWith('2'));
 
         }
+
+        // Testing add referral tracking steps for Neuro
+        insert new Neuro_Admission_Steps__c[] {
+            new Neuro_Admission_Steps__c(Name='1', Subject__c='Subject 1'),
+            new Neuro_Admission_Steps__c(Name='2', Subject__c='Subject 2'),
+            new Neuro_Admission_Steps__c(Name='3', Subject__c='Subject 3')
+        };
+        Integer numberOfStepSubjects = Neuro_Admission_Steps__c.getAll().size();
+        Person_Being_Referred__c pbr = Referral_CreateTestData.createPersonBeingReferred(25, null);
+        Referral__c rf = Referral_CreateTestData.createReferral('Generic', 'New', 'Test123', pbr);
+        sc = new ApexPages.StandardController(rf);
+        Task[] tasks = [
+            SELECT Id FROM Task WHERE WhatId = :rf.Id
+        ];
+        Integer oldNumTask = tasks.size();
+        User u = [ SELECT ID FROM User ][0];
+        controller.dummyTask.OwnerId = u.Id;
+        controller.addNeuroAdmissionSteps();
+        System.assertEquals(oldNumTask + numberOfStepSubjects, controller.activities.size());
     }
 }

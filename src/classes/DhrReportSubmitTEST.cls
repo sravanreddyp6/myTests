@@ -82,8 +82,13 @@ private class DhrReportSubmitTEST {
         update myMtrr;
 
         DhrReportSubmit controller = new DhrReportSubmit();
-        controller.showhistory();
-        controller.clearhistory();
+        controller.showhistory();//added by Sravan to cover the showhistory method.
+        system.assertEquals(True,controller.showtable);
+        controller.clearhistory();// added by Sravan to cover clearhistory method.
+        system.assertEquals(False,controller.showtable);
+        string homeurl = URL.getSalesforceBaseUrl().toExternalForm();
+        system.assertEquals(controller.baseurl, homeUrl);
+        
         String nextPage = controller.SubmitDhr().getUrl();
         
         System.assertEquals('/apex/TmnContactListView', nextPage);

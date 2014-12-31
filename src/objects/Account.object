@@ -104,6 +104,11 @@
             <isFieldManaged>false</isFieldManaged>
             <isRequired>false</isRequired>
         </displayedFields>
+        <displayedFields>
+            <field>Advanced_Directives__pc</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
         <label>Additional Information</label>
     </fieldSets>
     <fieldSets>
@@ -176,6 +181,11 @@
         </displayedFields>
         <displayedFields>
             <field>Primary_Language__pc</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Level_of_Education__pc</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>false</isRequired>
         </displayedFields>
@@ -600,7 +610,7 @@
     </fields>
     <fields>
         <fullName>ParentId</fullName>
-        <type>Lookup</type>
+        <type>Hierarchy</type>
     </fields>
     <fields>
         <fullName>PersonLeadSource</fullName>
@@ -1044,9 +1054,16 @@
         <searchResultsAdditionalFields>CORE.USERS.ALIAS</searchResultsAdditionalFields>
     </searchLayouts>
     <validationRules>
+        <fullName>Other_ID_Filled_In_For_NC_PBS</fullName>
+        <active>true</active>
+        <description>Ensures that the Other ID field is filled in for persons being served with a Mailing State of North Carolina.</description>
+        <errorConditionFormula>AND(ISPICKVAL(PersonMailingStateCode , &apos;NC&apos;), OR(ISBLANK( Other_ID__pc ), ISBLANK( Other_ID_Description__pc) ), NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;)))</errorConditionFormula>
+        <errorMessage>The Other ID and Other ID Description fields must be filled in for a person being served with a Mailing State of North Carolina.</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>Req_Mailing_Address_State</fullName>
         <active>true</active>
-        <errorConditionFormula>AND( RecordTypeId = &apos;012U0000000Dbif&apos;, ISBLANK(PersonMailingState))</errorConditionFormula>
+        <errorConditionFormula>AND(  RecordType.DeveloperName =&apos;Person_Being_Served&apos;, ISBLANK(PersonMailingState))</errorConditionFormula>
         <errorDisplayField>PersonMailingState</errorDisplayField>
         <errorMessage>State is required.</errorMessage>
     </validationRules>
@@ -1059,7 +1076,7 @@
 Guardian1_Name__pc = &quot;&quot; ,
 NOT($User.Username=&quot;integration@thementornetwork.com.prod&quot;)
 )</errorConditionFormula>
-        <errorMessage>Person Being Served is less than 18 years old. Please ensure you have added a name to the Guardian1 field.</errorMessage>
+        <errorMessage>Person Being Served is less than 18 years old. Please ensure you have added a person with the type of Guardian in the Related Parties Section below.</errorMessage>
     </validationRules>
     <webLinks>
         <fullName>AltavistaNews</fullName>

@@ -2,9 +2,9 @@ public with sharing class PersonsBeingServedListController {
     private final String PBS_REC_TYPE_ID = [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
     private final String ASSESSMENT_ONLY_REC_TYPE_ID = [select Id from RecordType where (DeveloperName='Assessment_Only') and (SobjectType='Service_Assignment__c') Limit 1].Id;
 
-    private final String BASIC_QUERY = 'SELECT ID, FirstName, LastName, Owner.ID, Owner.Name, PersonContactId From Account WHERE RecordTypeID=:PBS_REC_TYPE_ID';
-	private string NEWQUERY;
 	private ID argID;
+	public boolean defaultToActive { get; set; }
+	private List<Account> accountlist = new List<Account>();
 	
     public String letterToStart { get; set; }
     public Admission__c[] admissions { get; set; }
@@ -20,6 +20,7 @@ public with sharing class PersonsBeingServedListController {
     transient public Map<String, Integer> accountIdToAdmissionSize { get; set; }
     transient public Map<String, List<Service_Assignment__c>> admissionIdToServiceAssignment { get; set; }
     transient public Map<String, Integer> admissionIdToServiceAssignmentSize { get; set; }
+    private string pfilterID;
     public boolean canCreateNew { get; set; }
     public boolean seeWorksheets { get {
         boolean isRedwood = false;
@@ -38,10 +39,14 @@ public with sharing class PersonsBeingServedListController {
     }
     public String filterId {
         get {
-            return con.getFilterId();
+        	system.debug('GETTING - FILTER ID IS: ' + pFilterId);
+            //return con.getFilterId();
+            return pfilterID;
         }
         set {
-            con.setFilterId(value);
+        	system.debug('SETTING - FILTER ID IS: ' + value );
+        	con.setFilterId(value);
+        	pfilterID = value;
             this.updateCon();
         }
     }
@@ -50,47 +55,89 @@ public with sharing class PersonsBeingServedListController {
             return con.getListViewOptions();
         }
     }
+    Map<ID, String> filtermap = new map<ID, String>();
     
     public ApexPages.StandardSetController con { get; set; }
     public PersonsBeingServedListController() {
-        System.debug('Inside constructor');
-        
-        NEWQUERY = BASIC_QUERY;
+    	
+        //System.debug('Inside constructor');
         
         // if an account ID is passed in on the url, change the basic query
         argID = ApexPages.CurrentPage().getParameters().get('id');
-        if ( argID != null) { 
-        	system.debug('***********argid'+argID);
-        	NEWQUERY  = 'SELECT ID, FirstName, LastName, Owner.ID, Owner.Name, PersonContactId From Account WHERE RecordTypeID=:PBS_REC_TYPE_ID and ID=:argID';
-        	//this.filterId = this.con.getFilterId();
-    	}
-
-		System.Debug( 'Incoming account id: ' + argID );
+        if ( argID != null) {
+        	// get just this 1 account 
+        	accountlist= [SELECT ID, FirstName, LastName, Owner.ID, Owner.Name, PersonContactId From Account WHERE RecordTypeID=:PBS_REC_TYPE_ID and ID=:argID];	
+			System.Debug( 'Incoming account id: ' + argID );
+			defaultToActive  = false;
+        	
+    	} else {
+    		// get the default view - recently viewed
+    		accountlist = [SELECT ID, FirstName, LastName, Owner.ID, Owner.Name, PersonContactId From Account WHERE RecordTypeID=:PBS_REC_TYPE_ID and lastvieweddate != null order by lastvieweddate desc LIMIT 200];
+    		defaultToActive  = true;
+        }
 		
         // We call this here simply to get the filterId of the View
-        this.con = new ApexPages.StandardSetController(Database.getQueryLocator(NEWQUERY));
+        this.con = new ApexPages.StandardSetController( accountlist );
+        
         String inputFilterId = ApexPages.CurrentPage().getParameters().get('filterId');
+        List<Account> filteredList;
+        for ( selectoption so : listviewoptions ) {
+        	filtermap.put( so.getValue(), so.getLabel());
+        }
+        
+        
         // Kick off updateCon here
-        String newThisWeekFilterId = '';
+        String recentlyViewedId = '';
+        
         // Set the default View
         for (SelectOption so: listviewoptions) {
             if (so.getLabel().indexOf('Recently Viewed')!=-1) {
-                newThisWeekFilterId = so.getValue();
+                recentlyViewedId = so.getValue();
             }
         }
+        
         if (inputFilterId != '' && inputFilterId != null) {
             System.debug('Setting filterId to inputFilterId ' + inputFilterId);
-            this.filterId = inputFilterId;
-        } else if (newThisWeekFilterId != '') {
-            System.debug('Setting filterId to our own default');
-            this.filterId = newThisWeekFilterId;
-        } else {  // theoretically this should not happen, unless the user deletes the New This Week view.
+            this.con.setFilterId( inputFilterId );
+            pfilterID = inputFilterId;
+            filteredList = getListFromFilter( this.filterId);
+        } else if (recentlyViewedId != '') {
+            System.debug('Setting filterId to recently viewed');
+            this.con.setfilterId (recentlyViewedId);
+            pfilterID = recentlyViewedId;
+            filteredList = getListFromFilter ( this.filterId);
+        } else {  // theoretically this should not happen
             System.debug('Setting filterId to controller\'s default');
-            this.filterId = this.con.getFilterId();
+            // leave the query at all
+            filteredList = this.con.getRecords();
         }
+        
+        system.debug( 'filtered size: ' + filteredList.size());
+        this.con = new ApexPages.StandardSetController( filteredList );
+        updateCon();
         getcanCreateNew();
     }
 
+
+	List<Account> getListFromFilter(ID fID) {
+		
+		string filterlabel = '';
+		List<Account> filteredAcct = new List<Account>();
+		
+		filterlabel = filterMap.get(fID);
+		system.debug('asking for: ' + filterlabel);
+		if ( filterlabel.indexOf('Recently Viewed') == 0)
+			filteredAcct = [SELECT ID, FirstName, LastName, Owner.ID, Owner.Name, PersonContactId From Account WHERE RecordTypeID=:PBS_REC_TYPE_ID and lastvieweddate != null order by lastvieweddate desc LIMIT 200];
+		else if ( filterlabel.indexOf( 'My') == 0 ) 
+			filteredAcct = [SELECT ID, FirstName, LastName, Owner.ID, Owner.Name, PersonContactId From Account WHERE RecordTypeID=:PBS_REC_TYPE_ID and ( createdbyid = :UserInfo.getUserId() or ownerid = :UserInfo.getUserId()) ];
+		else if ( filterlabel.indexOf('All') == 0 ) 
+			filteredAcct = [SELECT ID, FirstName, LastName, Owner.ID, Owner.Name, PersonContactId From Account WHERE RecordTypeID=:PBS_REC_TYPE_ID];
+		else if ( filterlabel.indexOf('New This Week') == 0) 
+			filteredAcct = [SELECT ID, FirstName, LastName, Owner.ID, Owner.Name, PersonContactId From Account WHERE RecordTypeID=:PBS_REC_TYPE_ID and createddate = THIS_WEEK];
+		
+		return filteredAcct;
+		
+	}
     public String getPBSRecTypeId() {
         return PBS_REC_TYPE_ID;
     }
@@ -117,28 +164,44 @@ public with sharing class PersonsBeingServedListController {
         admissionIdToServiceAssignmentSize = new Map<String, Integer>();
 
 
-        if (this.con!=null) {
-            oldFilterId = this.con.getFilterId();
-        }
+		List<Account> filteredList;
+		
+		if ( argID != null) {
+        	// get just this 1 account 
+        	filteredList = [SELECT ID, FirstName, LastName, Owner.ID, Owner.Name, PersonContactId From Account WHERE RecordTypeID=:PBS_REC_TYPE_ID and ID=:argID];	
+			System.Debug( 'Incoming account id: ' + argID );
+        	
+    	} else {
+	        system.debug('current filter is:' +  pFilterId );
+    	    if (this.con!=null) {
+            	//oldFilterId = this.con.getFilterId();
+            	oldFilterId = pfilterID;
+	        }
+    		filteredList = getListFromFilter( oldfilterId);
+    		
+    	}
+
+
         
-        this.con = new ApexPages.StandardSetController(Database.getQueryLocator(NEWQUERY));
-        // Make sure setPageSize is called BEFORE setFilterId, otherwise it
-        // won't work!
+    	this.con = new ApexPages.StandardSetController( filteredList );
+    	system.debug( 'num accts: ' + filteredList.size());	
+    	
+        // Make sure setPageSize is called BEFORE setFilterId, otherwise it won't work!
+        // 06/19/14 - filter does not affect list of accounts in setcontroller because it was constructed using list, not querylocator
+        // however, still need to call setfilterid to store the value of the filter
         if ( argID == null ) {
         
         	this.con.setPageSize(2000);
-        	if (oldFilterId!=null) {
-	            this.con.setFilterId(oldFilterId);
+        	if (filterId!=null) {
+	            this.con.setFilterId(oldfilterId);
         	}
         } else {
         	this.con.setPageSize(1);
         	this.con.setFilterId(null);
+        	pfilterID= '';
         }
         	
-	
-		
-        // We have to make sure that all the records are fetched, regardless of
-        // pagination
+	    // We have to make sure that all the records are fetched, regardless of pagination
         Account[] accts = new Account[] {};
         accts.addAll((Account[]) this.con.getRecords());
         while (this.con.getHasNext()) {
@@ -158,9 +221,9 @@ public with sharing class PersonsBeingServedListController {
         for (String ID: accountIds) {
             accountIdToJO.put(ID, new List<Action_Plan__c>());
             accountIdToJOSize.put(ID, 0);
-            accountIdToAdmission.put(ID, new List<Admission__c>());
+            accountIdToAdmission.put(ID, new List<Admission__c>());            
             accountIdToAdmissionSize.put(ID, 0);
-        }
+        }        
 
         // This is a many-to-many model, so in order to uniquely identify
         // 1 pair of records we'll concatenate their IDs together
@@ -180,7 +243,8 @@ public with sharing class PersonsBeingServedListController {
                     Service_Assignment__c,
                     Service_Assignment__r.Person_Being_Served__r.Account.OwnerID,
                     Service_Assignment__r.Admission__r.State__c,
-                    Service_Assignment__r.Admission__r.Status__c
+                    Service_Assignment__r.Admission__r.Status__c,
+                    Service_assignment__r.service_location__r.programid__c
                 FROM action_plan__c
                 WHERE Service_Assignment__r.Person_Being_Served__r.ID in :contactIds
                 and     status__c = 'Active Final'
@@ -205,11 +269,12 @@ public with sharing class PersonsBeingServedListController {
                 FROM Admission__c
                 WHERE Person_Being_Served__c IN :contactIds
             ]
-        ) {
+        ) {        	                 	               	        	     	             	         
             if (!admissionIdToServiceAssignmentSize.containsKey(admission.ID)) {
                 admissionIdToServiceAssignmentSize.put(admission.ID, 0);
                 admissionIdToServiceAssignment.put(admission.ID, new List<Service_Assignment__c>());
-            }
+            }            
+            
             admissionIdToServiceAssignment.put(admission.ID, new List<Service_Assignment__c>());
             if (admission.Service_Agreements__r.size()==0) {
                 accountIdToAdmission.get(admission.Person_Being_Served__r.Account.ID).add(admission);
@@ -221,7 +286,7 @@ public with sharing class PersonsBeingServedListController {
                 
                 // EB-116: do not show inactive assessment only
                 if ( (sa.RecordType.Id == ASSESSMENT_ONLY_REC_TYPE_ID) &&  (sa.Status__c != 'Active') )
-                    continue;
+                    continue;                   
                 
                 if (!saWithPlans.contains(sa.ID)) { // don't display duplicated stuff
                     if (index == 1) {
@@ -234,8 +299,11 @@ public with sharing class PersonsBeingServedListController {
                         admissionIdToServiceAssignmentSize.get(admission.ID) + 1);
                     index++;
                 }
-            }
-        }
+                 
+            }                                                       	
+                                                           
+        }                
+            
     }
     
     @RemoteAction

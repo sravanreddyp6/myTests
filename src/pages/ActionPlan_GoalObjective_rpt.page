@@ -121,7 +121,8 @@
         <td class="headRow">Written By</td>
         <td class="headRow">Action Plan</td>
         <td class="headRow" width="300px"><div class="txtcol">Goal</div></td>
-        <td class="headRow" width="300px"><div class="txtcol">Objective</div></td> 
+        <td class="headRow" width="300px"><div class="txtcol">Objective</div></td>
+        <td class="headRow" width="300px"><div class="txtcol">Narrative</div></td>  
     </tr>
 </thead>
 <apex:repeat value="{!note_plan_joins }" var="item">
@@ -133,6 +134,7 @@
         <td><apex:outputField value="{!item.Progress_Note__r.Action_Plan__c}"/></td>
         <td><div class="txtcol"><apex:outputField value="{!item.Goal__r.Description__c}"/></div></td>
         <td><div class="txtcol"><apex:outputField value="{!item.Objective__r.Description__c}"/></div></td>
+        <td><div class="txtcol"><apex:outputField value="{!item.Progress_Note__r.Narrative__c}"/></div></td>
 
     </tr>
 

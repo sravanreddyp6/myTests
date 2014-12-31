@@ -5,10 +5,10 @@ public class Assessment_RiskForm_Test{
 static testMethod void myUnitTest() {
     createData();
     
-	ApexPages.StandardController sc = new ApexPages.StandardController(assess);  
+    ApexPages.StandardController sc = new ApexPages.StandardController(assess);  
     
     Assessment_RiskForm contrl = new Assessment_RiskForm(sc);
-	PageReference pageRef = Page.Assessment_RiskForm;
+    PageReference pageRef = Page.Assessment_RiskForm;
     Test.setCurrentPage(pageRef);    
     
     contrl.getLevel_Required_ResidentialServices();
@@ -22,37 +22,7 @@ static testMethod void myUnitTest() {
     
     
     private static Action_Plan__c createData(){
-		String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
-        
-        Account Accnt = new Account(
-            RecordTypeID=RecTypeId,
-            FirstName= 'Test FName',
-            LastName='Test LName',
-            PersonMailingStreet='test@yahoo.com',
-            PersonMailingPostalCode='12345',
-            PersonMailingCity='SFO',
-            PersonMailingStateCode='NC',
-            PersonEmail='test@yahoo.com',
-            PersonHomePhone='1234567',
-            PersonMobilePhone='12345678'
-        );
-        insert Accnt; 
-        
-        Id aContactId = [select PersonContactId from account where id =:accnt.id].PersonContactId;
-        Id aAccountId = Accnt.Id;        
-		Admission__c Adm = new Admission__c(
-            Name = 'TEST ADM',
-            Person_Being_Served__c = aContactId,
-            Effective_Date__c = date.today(),
-            Network_Offering__c = 'ARY'
-        );
-        insert Adm;     
-        
-        Service_Assignment__c SA = new Service_Assignment__c(
-            admission__c = adm.id,
-        	Person_Being_Served__c = aContactId
-        );        
-        insert SA;
+        TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
         
         Assessment_Type__c testAssmtType = new Assessment_Type__c(
             Name = 'RISK'           

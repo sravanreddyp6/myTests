@@ -1,4 +1,7 @@
-<apex:page standardController="Project_Task__c" sidebar="false" >
+<apex:page standardController="Project_Task__c" sidebar="false" extensions="ProjectTaskVSPageLayout" action="{!checkForRD}" >
+<apex:outputPanel style="display: none;">
+{!Project_Task__c.Project__r.RecordType.DeveloperName}
+</apex:outputPanel>
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
