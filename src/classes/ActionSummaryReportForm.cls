@@ -1,4 +1,4 @@
-public class ActionSummaryReportForm extends ActionSummaryBase {
+public without sharing class ActionSummaryReportForm extends ActionSummaryBase {
     
     public boolean Editable { get { return (ActionSummary.Status__c != 'Final') && canEditSummary ;}}
     

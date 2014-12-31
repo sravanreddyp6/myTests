@@ -91,7 +91,7 @@ public with sharing class Assessment_RiskForm {
          public void setLevel_Required_ResidentialServices  (String[] Level_Required_ResidentialServices ) {
             this.Level_Required_ResidentialServices = Level_Required_ResidentialServices ;
         }          
-public PageReference testForCans() {
+/*public PageReference testForCans() {
     if(assessment.Assessment_Type__r.name == 'CANS'){
         PageReference ref =  new PageReference('/apex/AssessmentView?id='+this.assessment.id);
             
@@ -101,10 +101,15 @@ public PageReference testForCans() {
            PageReference ref =  new PageReference('/apex/Assessment_FAD_Form?id='+this.assessment.id);
            return ref;
        
-       }     
+       }
+       if (assessment.type__c == 'ISSA'){
+           PageReference ref =  new PageReference('/apex/Assessment_IssaForm?id='+this.assessment.id);
+           return ref;
+       
+       }      
             return null;
 
-}    
+} */   
     public List<SelectOption> getSOLevel_Required_ResidentialServices  () {
         List<SelectOption> options = new List<SelectOption>();
         //string item: Level_Required_DayServices options.add(new SelectOption(Level_Required_DayServices[item],'Current level of services required for health and safety supports'));

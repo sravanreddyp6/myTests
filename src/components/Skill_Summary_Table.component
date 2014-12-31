@@ -76,7 +76,7 @@
                 </tr>
                 <apex:variable var="temp" value="0" rendered="{!!isNull(CommentText)}">
                     <tr>
-                        <td colspan="10" class="objectivecomment"><span style="font-weight:bold;">Comment:&nbsp;</span>{!CommentText}</td>
+                        <td colspan="10" class="objectivecomment"><span style="font-weight:bold;">Comment: {!HTMLENCODE(' ')}</span>{!CommentText}</td>
                     </tr>
                 </apex:variable>
             </tbody>

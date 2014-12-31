@@ -40,7 +40,7 @@ public class SearchLogicOnPBSRTest{
         System.assert(searchResults.size() == 1);
         
         searchResults = SearchLogicOnPBSR.search('','','Doug',null,0,'Male');
-        System.assert(searchResults.size() == 1);
+        System.assert(searchResults.size() == 0);
         
         searchResults = SearchLogicOnPBSR.search('','','Doug',null,0,'Female');
         System.assert(searchResults.size() == 0);

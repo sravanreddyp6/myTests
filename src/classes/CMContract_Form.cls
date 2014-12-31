@@ -1,4 +1,4 @@
-public class CMContract_Form {
+public with sharing class CMContract_Form {
 
      class cSearchedServiceLocationResults {
          public Service_Location__c sl {get; set;}
@@ -20,7 +20,8 @@ public class CMContract_Form {
     public Integer OffsetSize = 0;
     private Integer QueryLimit = 25;
     public List<cSearchedServiceLocationResults> searchedServiceLocationResultsList {get; set;}
-    
+    public List<cSearchedServiceLocationResults> searchedServiceLocationResultsListAll {get; set;}
+        
     public id paramSvcLocId { get; set; }
     // The method to remove an item from the list
     public PageReference RemoveItem(){
@@ -57,9 +58,12 @@ public class CMContract_Form {
     }    
     
     public List<cSearchedServiceLocationResults> searchedServiceLocationResults{get;set;}
+    public List<cSearchedServiceLocationResults> searchedServiceLocationResultsAll{get;set;}
+        
     public List<cSearchedServiceLocationResults> selectedsLocs{get;set;}
     List<Contract_ServiceLocation_JO__c> Contractlocs { get; set; }
       public void processSelected() {
+          system.debug('selAllLocsParam--->'+selAllLocsParam);
           list<Contract_ServiceLocation_JO__c> locs=new list<Contract_ServiceLocation_JO__c>();
           Contract_ServiceLocation_JO__c location;
           id ContractId=ApexPages.CurrentPage().getparameters().get('id');    
@@ -74,14 +78,27 @@ public class CMContract_Form {
                   ServiceLocIds.add(conServiceLoc.service_location__c);
               }
               system.debug('loc-searchedServiceLocationResults--->'+searchedServiceLocationResults);
-              for(cSearchedServiceLocationResults cCon : searchedServiceLocationResults) {
-                  if(cCon.selected == true && !ServiceLocIds.contains(cCon.sl.id)) {
-                      selectedsLocs.add(cCon);
-                      location=new Contract_ServiceLocation_JO__c();
-                      location.Contract__c=ContractId;
-                      location.Service_Location__c=cCon.sl.id;
-                      locs.add(location);
+              if(!selAllLocsParam){
+                  for(cSearchedServiceLocationResults cCon : searchedServiceLocationResults) {
+                      if(cCon.selected == true && !ServiceLocIds.contains(cCon.sl.id)) {
+                          selectedsLocs.add(cCon);
+                          location=new Contract_ServiceLocation_JO__c();
+                          location.Contract__c=ContractId;
+                          location.Service_Location__c=cCon.sl.id;
+                          locs.add(location);
+                      }
                   }
+              }
+              else{
+                  for(cSearchedServiceLocationResults cCon : searchedServiceLocationResultsAll) {
+                      if(cCon.selected == true && !ServiceLocIds.contains(cCon.sl.id)) {
+                          selectedsLocs.add(cCon);
+                          location=new Contract_ServiceLocation_JO__c();
+                          location.Contract__c=ContractId;
+                          location.Service_Location__c=cCon.sl.id;
+                          locs.add(location);
+                      }
+                  }              
               }
               system.debug('selectedsLocs--->'+selectedsLocs);
               system.debug('locs--->'+locs);
@@ -104,10 +121,19 @@ public class CMContract_Form {
               insert locs;
               locations=locs;              */
               selectedsLocs = new List<cSearchedServiceLocationResults>();
-              for(cSearchedServiceLocationResults cCon : searchedServiceLocationResults) {
-                  if(cCon.selected == true) {
-                      selectedsLocs.add(cCon);
+              if(!selAllLocsParam){
+                  for(cSearchedServiceLocationResults cCon : searchedServiceLocationResults) {
+                      if(cCon.selected == true) {
+                          selectedsLocs.add(cCon);
+                      }
                   }
+              }
+              else{
+                  for(cSearchedServiceLocationResults cCon : searchedServiceLocationResultsAll) {
+                      if(cCon.selected == true) {
+                          selectedsLocs.add(cCon);
+                      }
+                  }              
               }
               system.debug('selectedsLocs--->'+selectedsLocs);
           }          
@@ -183,7 +209,7 @@ public class CMContract_Form {
         isSearchClicked=true;
         tmpResults=null;
         searchedServiceLocationResults=null;
-        String qs1='select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c from service_location__c where ';
+        String qs1='select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c, TIN__c, NPI__c FROM service_location__c where ';
         string qs = '';
     
         //if(!((nameFilter=='' || nameFilter==null)&&(cityFilter=='' || cityFilter==null)&&(stateFilter=='' || stateFilter==null))){
@@ -238,16 +264,22 @@ public class CMContract_Form {
             
             //return (tmpResults!=null) ? [select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c from service_location__c where id in :tmpResults order by name limit :QueryLimit offset :OffsetSize] : null;
             //system.debug('searchedServiceLocationResultsList--->'+searchedServiceLocationResultsList);
-            searchedServiceLocationResultsList=new List<cSearchedServiceLocationResults>();            
+            searchedServiceLocationResultsList=new List<cSearchedServiceLocationResults>();
+            searchedServiceLocationResultsListAll=new List<cSearchedServiceLocationResults>();                        
             if(tmpResults!=null){
-                for(service_location__c sloc : [select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c 
-                                                from service_location__c where id in :tmpResults order by name limit :QueryLimit offset :OffsetSize]) {
+                for(service_location__c sloc : [SELECT Name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c, TIN__c, NPI__c    
+                                                FROM service_location__c WHERE id in :tmpResults order by name limit :QueryLimit offset :OffsetSize]) {
                     searchedServiceLocationResultsList.add(new cSearchedServiceLocationResults(sloc));
-                    
+                }
+                
+                for(service_location__c sloc : [SELECT Name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c, TIN__c, NPI__c   
+                                                FROM service_location__c WHERE id in :tmpResults order by Name]) {
+                    searchedServiceLocationResultsListAll.add(new cSearchedServiceLocationResults(sloc));
                 }
             }
-            searchedServiceLocationResults=searchedServiceLocationResultsList;
             
+            searchedServiceLocationResults=searchedServiceLocationResultsList;
+            searchedServiceLocationResultsAll=searchedServiceLocationResultsListAll;
         /*}else{
             tmpResults=null;
             countTotalRecords=0;
@@ -291,7 +323,7 @@ public class CMContract_Form {
         {return cmRL;}
     */
     public CMContract_Form(ApexPages.StandardController controller) {
-
+       
         myContract = (CareMeridian_Contract__c)controller.getRecord();
         changeTypes = new List<SelectOption>();
         selectedTypes = new List<String>();      
@@ -345,15 +377,21 @@ public class CMContract_Form {
                    isNeuro=True;              
             
         } else {
-            rectype = [SELECT ID, RecordTypeID, RecordType.DeveloperName FROM CareMeridian_Contract__c WHERE id=:myContract.id];
+            string file;
+            rectype = [SELECT ID, Name, RecordTypeID, RecordType.DeveloperName FROM CareMeridian_Contract__c WHERE id=:myContract.id];
             
             system.debug(rectype.RecordType.DeveloperName);
             
             if (rectype.RecordType.DeveloperName =='NeuroRestorative_Contracts'){
                 isNeuro=True;
+                file = 'NR '+rectype.Name+'.pdf';
+                file = file.replaceAll('[|,||\\,||"||:|~|!|@|#|$|%|^|&|*|_|+|=|<|>|?|\\(|\\)|\\{|\\}|\\;|\\\'"]', ' ');
+               
+                // Assigns the Name of the contract to the NEURO PDF dynamically
+                 Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename='+file);
                 if(ApexPages.CurrentPage().getparameters().get('id')!=null){
                     locations=[SELECT ID, Service_Location__r.Name, Name, service_location__c,Service_Location_Service_Value__c, Service_Location__r.Setting__c, Service_Location_Program__c,Service_Location_Street__c,Service_Location_City__c,
-                                            Service_Location_State__c, Service_Location_Zip__c, LastModifiedDate FROM Contract_ServiceLocation_JO__c WHERE Contract__c=:ApexPages.CurrentPage().getparameters().get('id')];
+                                            Service_Location_State__c, Service_Location_Zip__c, LastModifiedDate, TIN__c, NPI__c FROM Contract_ServiceLocation_JO__c WHERE Contract__c=:ApexPages.CurrentPage().getparameters().get('id')];
                     system.debug('locations--->'+locations);
                 }
                 else
@@ -362,6 +400,10 @@ public class CMContract_Form {
 
            if (rectype.RecordType.DeveloperName =='CareMeridian_Contracts'){
                isNeuro=False;
+                file = 'CM '+rectype.Name+'.pdf';
+                file = file.replaceAll('[|,||\\,||"||:|~|!|@|#|$|%|^|&|*|_|+|=|<|>|?|\\(|\\)|\\{|\\}|\\;|\\\'"]', ' ');
+                //Assigns the name of the Contract to the CM COntract PDF Dynamically
+                Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename='+file);
            }
             isRev = true;   // want to enter type of change on every update other than brand new contract
            if ( !String.isBlank( myContract.Type_of_Change__c ))
@@ -406,14 +448,18 @@ public class CMContract_Form {
                     
                     if(ApexPages.currentPage().getParameters().get('RecordType') == null){
                     oldrectype = [SELECT ID, RecordTypeID, RecordType.DeveloperName FROM CareMeridian_Contract__c WHERE id=:oldId];
-                        if (oldrectype.RecordType.DeveloperName =='NeuroRestorative_Contracts')
+                        if (oldrectype.RecordType.DeveloperName =='NeuroRestorative_Contracts'){
                         isNeuro=True;
-                        if (oldrectype.RecordType.DeveloperName =='CareMeridian_Contracts')
+                        // Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename=NeuroRestorativeContracts.pdf');
+                             }
+                        if (oldrectype.RecordType.DeveloperName =='CareMeridian_Contracts'){
                         isNeuro=False;
+                       // Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename=CMContracts.pdf');
+                        }
                 }        
         
         }
-        
+        selAllLocsParam=false;
             
         //isShowAddLocation=false;                      
     }
@@ -613,6 +659,7 @@ public class CMContract_Form {
     
  }
  
+ 
   public boolean isSearchClicked{get;set;}
  public void showAddLocation() {
     location = new Contract_ServiceLocation_JO__c();
@@ -644,20 +691,31 @@ public class CMContract_Form {
       isHideSearchDialog=true;
       return null;
   }
-  
+  public boolean selAllLocsParam{get;set;}
   public pagereference selectAllLocations(){
-      system.debug('searchedServiceLocationResults--->'+searchedServiceLocationResults);
+      /*system.debug('searchedServiceLocationResults--->'+searchedServiceLocationResults);
       for(cSearchedServiceLocationResults cCon : searchedServiceLocationResults) {
           cCon.selected = true;
-      }        
+      } */
+      selAllLocsParam=true;
+      system.debug('searchedServiceLocationResultsAll.size()--->'+searchedServiceLocationResultsAll.size());
+      for(cSearchedServiceLocationResults cCon : searchedServiceLocationResultsAll) {
+          cCon.selected = true;
+      }  
+      system.debug('searchedServiceLocationResultsAll--->'+searchedServiceLocationResultsAll);           
       return null;
   }
   
   public pagereference unSelectAllLocations(){
-      system.debug('searchedServiceLocationResults--->'+searchedServiceLocationResults);
+      /*system.debug('searchedServiceLocationResults--->'+searchedServiceLocationResults);
       for(cSearchedServiceLocationResults cCon : searchedServiceLocationResults) {
           cCon.selected = false;
-      }        
+      }*/
+      system.debug('searchedServiceLocationResultsAll--->'+searchedServiceLocationResultsAll);
+      for(cSearchedServiceLocationResults cCon : searchedServiceLocationResultsAll) {
+          cCon.selected = false;
+      }             
+      selAllLocsParam=false;
       return null;
   }
   

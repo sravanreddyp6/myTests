@@ -735,11 +735,16 @@
             <translation><!-- Reseller --></translation>
         </picklistValues>
     </fields>
+    
     <recordTypes>
         <label><!-- Person Account --></label>
         <name>Person_Account</name>
     </recordTypes>
     <startsWith>Consonant</startsWith>
+    <validationRules>
+        <errorMessage><!-- The Other ID and Other ID Description fields must be filled in for a person being served with a Mailing State of North Carolina. --></errorMessage>
+        <name>Other_ID_Filled_In_For_NC_PBS</name>
+    </validationRules>
     <validationRules>
         <errorMessage><!-- State is required. --></errorMessage>
         <name>Req_Mailing_Address_State</name>

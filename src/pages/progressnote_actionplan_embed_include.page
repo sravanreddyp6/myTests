@@ -15,7 +15,7 @@
                         {!g.Description__c}
                     </apex:outputLabel>
                 </apex:outputPanel> 
-                    <apex:outputPanel layout="block" styleClass="obj" rendered="{!g.action_plan_objectives__r.size>0 && bHasObj }">
+                    <apex:outputPanel layout="block" styleClass="obj" rendered="{!g.action_plan_objectives__r.size>0 && bHasObj && MapItemInNote[g.id]}"> <!-- Added MapItemInNote[g.id] to hide objectives heading if a user does not check the checkbox for Goal. Sravan-10/22/2014 EB-210  -->
                         <b>Objectives</b>  
                     </apex:outputPanel>
                               
@@ -28,11 +28,11 @@
                             </apex:outputLabel>                            
                         </apex:outputPanel> 
                         
-                        <apex:outputPanel layout="block" styleClass="act">
+                        <apex:outputPanel layout="block" styleClass="act" rendered="{!Progress_Note__c.RecordType.DeveloperName!='NC_TFC' && Progress_Note__c.RecordType.DeveloperName!='NC_Wks_1_6_TFC'}">
                             <b>Actions</b> <br/>
                         </apex:outputPanel>
                               
-                            <apex:repeat value="{!mapActions[o.id]}" var="a">
+                            <apex:repeat value="{!mapActions[o.id]}" var="a" rendered="{!Progress_Note__c.RecordType.DeveloperName!='NC_TFC' && Progress_Note__c.RecordType.DeveloperName!='NC_Wks_1_6_TFC'}">
                                 <apex:outputPanel layout="block" styleClass="act">
                                     {!a.description__c}                                
                                 </apex:outputPanel>  

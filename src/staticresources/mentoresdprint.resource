@@ -69,5 +69,13 @@
         .branded-hr { 	display: block; height: 3px;
     					border: 0; border-top: 2px solid #339999;
    						margin: 1em 0; padding: 0; }
+   						
+   						
+ 		        /* checksheets */
+        .checksheetdate { background-color: #c5d3ef; width:100%; line-height:3em; font-weight:bold; padding-left:10px }
+        .prompts { background-color:#ccccff; }
+        .objective { background-color:#fc9; padding:10px; border-top:1px solid black; border-left: 1px solid black; border-right:1px solid black}
+        .daysofweek { background-color:#ccc; text-align:center }
+        .inputheaders { background-color: #ffc; font-size:10px;}				
 
         

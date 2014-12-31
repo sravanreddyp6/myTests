@@ -1,4 +1,7 @@
-public class DocumentAddExt {
+public without sharing class DocumentAddExt {
+	// SHAUN-50:  This code makes the assumption that it handles ONLY document filing for a Service Assignment. The "without sharing" declaration IS intended.
+	//  J. Gilliam, 10/17/14
+    
     public ServiceAssignment_Document_JO__c theServAssignDocJo { get; set; }
     public Id theServAssignId { get; set; }
     public final Service_Assignment__c theServAssign { get; private set; }

@@ -3,15 +3,16 @@ private class CMContract_Form_Test {
 
     static testMethod void myUnitTest() {
 
-		// start with blank contract
-    	ApexPages.StandardController scnew = new ApexPages.StandardController(new CareMeridian_Contract__c() );
+        // start with blank contract
+        ApexPages.StandardController scnew = new ApexPages.StandardController(new CareMeridian_Contract__c() );
         CMContract_Form mycontractnew = new CMContract_Form(scnew);
 
-		// now insert one                
-		Schema.DescribeSobjectResult conSchema = Schema.SobjectType.CareMeridian_Contract__c;
-		Map<String,Schema.RecordTypeInfo> contractRecordTypeInfo = conSchema.getRecordTypeInfosByName();
-		Id rtId = contractRecordTypeInfo.get('NeuroRestorative Contracts').getRecordTypeId();
-		
+        // now insert one                
+        Schema.DescribeSobjectResult conSchema = Schema.SobjectType.CareMeridian_Contract__c;
+        Map<String,Schema.RecordTypeInfo> contractRecordTypeInfo = conSchema.getRecordTypeInfosByName();
+        Id rtId = contractRecordTypeInfo.get('NeuroRestorative Contracts').getRecordTypeId();
+        Id cmId = contractRecordTypeInfo.get('CareMeridian Contracts').getRecordTypeId();
+                
         CareMeridian_Contract__c c = new CareMeridian_Contract__c ();
         c.name = 'test';
         c.Status__c = 'Active';
@@ -39,7 +40,7 @@ private class CMContract_Form_Test {
         
         mycontract.cancel();
         mycontract.myEdit();
-       		
+            
           mycontract.showAddLocation();
           mycontract.searchRes();
           
@@ -75,6 +76,15 @@ private class CMContract_Form_Test {
           mycontract.stateFilter = '*';
           mycontract.searchRes();
           
+          mycontract.cityFilter = 'Test City';
+          mycontract.stateFilter = '*';
+          mycontract.nameFilter = 'None';
+          mycontract.searchRes();
+          
+          mycontract.tin ='test';
+          mycontract.npi = '12345';
+          mycontract.addtinnpi();
+          
           system.AssertEquals(mycontract.tmpResults.size(),[SELECT Count() FROM service_location__c WHERE state__c like '%']);
                
         string tmp = String.ValueOf(system.currentTimeMillis());
@@ -86,7 +96,7 @@ private class CMContract_Form_Test {
           UniqueID__c = '10031' + tmp.Substring(tmp.length()-6, tmp.length()-1), 
           ProgramID__c = '10005', 
           Phone__c = '213-555-5555',
-       	  FacilityID__c = 20,
+          FacilityID__c = 20,
           City__c = 'Bakersfield', Alias__c ='10001'+tmp.Substring(tmp.length()-6,tmp.length()-1));
           
           insert svl;      
@@ -127,6 +137,9 @@ private class CMContract_Form_Test {
           mycontract.selectAllLocations();
           mycontract.unSelectAllLocations();
           mycontract.selectAllLocations();
+          myContract.Cancel();
+          mycontract.selectAllLocations();
+          myContract.RemoveItem2();
           mycontract.hideAddLocations();
           mycontract.save();
           mycontract.RemoveItem();
@@ -134,8 +147,8 @@ private class CMContract_Form_Test {
                          
         map<string, CMContract_Form.clsRateLevel> mrl = mycontract.getmapratelevel();
         for ( String rlkey : mrl.keyset() ) {
-        	mycontract.removeid = rlkey;
-        	mycontract.removeCRL();
+            mycontract.removeid = rlkey;
+            mycontract.removeCRL();
         }
                
         CareMeridian_Contract__c c2 = new CareMeridian_Contract__c ();
@@ -148,13 +161,13 @@ private class CMContract_Form_Test {
         Test.setCurrentPageReference(pageRef);
         ApexPages.currentPage().getParameters().put('oldid', c.id);
         CMContract_Form mycontract2 = new CMContract_Form(sc2);
-     	
+        
         List<SelectOption> listopts = mycontract2.getchangeTypes();
         System.assert( listopts.size() > 0);
 
-		System.Debug( 'OLD ID=' + mycontract2.oldID);
-		mycontract2.mycontract.name += '- revised';
-		mycontract2.selectedTypes = new List<string>{'Location','Rate'};
+        System.Debug( 'OLD ID=' + mycontract2.oldID);
+        mycontract2.mycontract.name += '- revised';
+        mycontract2.selectedTypes = new List<string>{'Location','Rate'};
         mycontract2.save();
         
         CareMeridian_Contract__c old = mycontract2.getOldContract();
@@ -165,6 +178,26 @@ private class CMContract_Form_Test {
         
         System.assertEquals(mycontract2.mycontract.Type_of_Change__c, 'Location;Rate');
         
+        CareMeridian_Contract__c third = new CareMeridian_Contract__c();
+        third.Name='Test';
+        third.Status__c = 'Active';
+        third.RecordTypeId = cmId;
+        third.Filing_Deadline__c = '30 Days';
+        third.Payment_Deadline__c = '30 Days';
+        third.Resubmission_Deadline__c = '30 Days';
+        insert third;
+        System.Debug('INSERTED: ' + third.Id);   
+        
+        ApexPages.StandardController sc3 = new ApexPages.StandardController(third);
+        
+        pageRef = Page.CMContract_Form;
+        Test.setCurrentPageReference(pageRef);
+        ApexPages.currentPage().getParameters().put('id', third.id);
+        CMContract_Form mycontract3 = new CMContract_Form(sc3);    
+        
+        System.AssertEquals(mycontract3.isNeuro, False);
+        mycontract3.myEdit();
+        mycontract3.save();
         
     }
     

@@ -10,10 +10,10 @@
         <field>Referral__c$Referral_Date__c</field>
     </columns>
     <columns>
-        <field>Referral__c$Primary_Requested_Location__c</field>
+        <field>Referral__c$State_for_Preferred_Service__c</field>
     </columns>
     <columns>
-        <field>Referral__c$Program_Admission_Location__c</field>
+        <field>Referral__c$Service_Location_Program__c</field>
     </columns>
     <columns>
         <field>Referral__c$Close_Reason__c</field>
@@ -40,7 +40,7 @@
         <field>Referral__c.Funding_Sources__r$Funding_Source__c</field>
     </columns>
     <columns>
-        <field>Referral__c.Funding_Sources__r$Payor__c</field>
+        <field>Referral__c.Funding_Sources__r$Payer_Name__c</field>
     </columns>
     <columns>
         <field>Referral__c.Funding_Sources__r$Comment__c</field>
@@ -52,23 +52,19 @@
         <field>Referral__c$Case_Manager_Phone__c</field>
     </columns>
     <columns>
+        <field>Referral__c$Services_Requested__c</field>
+    </columns>
+    <columns>
+        <field>Referral__c$Service_Line__c</field>
+    </columns>
+    <columns>
         <field>Referral__c$Assigned_Users__c</field>
     </columns>
     <filter>
         <criteriaItems>
-            <column>Referral__c$State__c</column>
-            <operator>equals</operator>
-            <value></value>
-        </criteriaItems>
-        <criteriaItems>
-            <column>Referral__c$Service_Location_Program__c</column>
-            <operator>equals</operator>
-            <value></value>
-        </criteriaItems>
-        <criteriaItems>
-            <column>Referral__c$Current_Location__c</column>
-            <operator>equals</operator>
-            <value></value>
+            <column>Referral__c$Close_Reason__c</column>
+            <operator>notEqual</operator>
+            <value>Error</value>
         </criteriaItems>
     </filter>
     <format>Matrix</format>
@@ -86,7 +82,7 @@
     <scope>organization</scope>
     <showDetails>true</showDetails>
     <timeFrameFilter>
-        <dateColumn>Referral__c$Referral_Date__c</dateColumn>
-        <interval>INTERVAL_CURRENT</interval>
+        <dateColumn>Referral__c$CreatedDate</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
     </timeFrameFilter>
 </Report>

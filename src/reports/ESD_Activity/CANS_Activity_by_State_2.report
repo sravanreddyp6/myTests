@@ -36,14 +36,19 @@
     <description>This report shows CANS Assessments created by state where TFC/Family Vistas is equal to Yes.</description>
     <filter>
         <criteriaItems>
-            <column>Contact.Episodes__r.Assessments__r$TFC_Family_Vistas__c</column>
-            <operator>equals</operator>
-            <value>Yes</value>
-        </criteriaItems>
-        <criteriaItems>
             <column>Contact.Episodes__r.Assessments__r$Disregard__c</column>
             <operator>equals</operator>
             <value>0</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Contact.Episodes__r.Assessments__r$Service_Line__c</column>
+            <operator>equals</operator>
+            <value>TFC Vistas</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Contact.Episodes__r.Assessments__r$Assessment_Type__c</column>
+            <operator>equals</operator>
+            <value>CANS</value>
         </criteriaItems>
     </filter>
     <format>Tabular</format>

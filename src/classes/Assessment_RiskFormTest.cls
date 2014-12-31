@@ -55,11 +55,11 @@ private class Assessment_RiskFormTest{
         controller.myEdit();
         boolean b ;
             b= controller.showConfirmationButton;
-        	b= controller.canEditRisk;
-        	b= controller.canFinalize;
-        	b= controller.dayServicesInFlavor;
-        	b= controller.staffingRatioInFlavor;
-        //	b= controller.
+            b= controller.canEditRisk;
+            b= controller.canFinalize;
+            b= controller.dayServicesInFlavor;
+            b= controller.staffingRatioInFlavor;
+        //  b= controller.
         controller.getdisplayLevel_Required_DayServices();
         controller.getdisplayLevel_Required_ResidentialServices();
         controller.getLevel_Required_DayServices();
@@ -106,7 +106,7 @@ private class Assessment_RiskFormTest{
         tmpLst.clear();
         tmpLst.add('Person accesses support as needed');          
         controller.setStaffing_Supervision_Needs(tmpLst);
-		
+        
         
         controller.getLevel_Required_DayServices();
         controller.getLevel_Required_ResidentialServices();
@@ -212,6 +212,7 @@ private class Assessment_RiskFormTest{
         }
           
         static Assessment__c createAssessment() {
+        /*
           String RecTypeId = [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
             Account Accnt = new Account(
                 RecordTypeID=RecTypeId,
@@ -234,13 +235,16 @@ private class Assessment_RiskFormTest{
                 Person_Being_Served__c=Accnt.PersonContactId
             );
             insert admission;
+            */
+            TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
+            
             Assessment_Type__c ast = createRiskData();
             //insert ast;
             Assessment__c ass = new Assessment__c(
                 Name='Test Assessment',
-                Admission__c=admission.ID,
+                Admission__c=myData.theAdm.ID,
                 Assessment_Type__c=ast.ID,
-                AccountPerson__c=Accnt.ID,
+                AccountPerson__c=myData.theAccount.ID,
                 TFC_Family_Vistas__c='Yes',
                 Interval__c='Intake'
             );

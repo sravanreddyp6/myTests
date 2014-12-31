@@ -1,8 +1,5 @@
-public class AssessmentControllerExtension {
-    // J. Gilliam, 12/10/12
-    // Important that this class does NOT use "with sharing" so that it executes as admin.
-    // Paul Perisic and I think the checkbox update might fail if "with sharing" is specified 
-    // since the user has read-only access to the Locked__c field.
+public with sharing class AssessmentControllerExtension {
+
    
     public String message {get;set;}
     public integer countOfAnswersExpected {get;set;}
@@ -13,9 +10,9 @@ public class AssessmentControllerExtension {
     
     public AssessmentControllerExtension(ApexPages.StandardController stdController) {
         this.assmt = (Assessment__c)stdController.getRecord();
-        List<Assessment_Question__c> countOfAnswersQuery = [SELECT Id FROM Assessment_Question__c WHERE Assessment_Type__c = :this.assmt.Assessment_Type__c];
-        countOfAnswersExpected = countOfAnswersQuery.size();
-        system.debug('countOfAnswersExpected: ' + countOfAnswersExpected);
+        //List<Assessment_Question__c> countOfAnswersQuery = [SELECT Id FROM Assessment_Question__c WHERE Assessment_Type__c = :this.assmt.Assessment_Type__c];
+        //countOfAnswersExpected = countOfAnswersQuery.size();
+        //system.debug('countOfAnswersExpected: ' + countOfAnswersExpected);
         unlockAllowed = IsUnlockAllowed(this.assmt);   
         disregardAllowed = isDisregardAllowed(this.assmt);        
     }  
@@ -75,7 +72,10 @@ public class AssessmentControllerExtension {
     }
     
     public Boolean IsUnlockAllowed(Assessment__c assmt){
-        
+        if(IsUnlockAllowed_SecondCheck()){
+            return true;
+        }
+
         Boolean unlockAllowed = false;
         
         ESD_DetermineParentRoles parentRoleIds = new ESD_DetermineParentRoles(assmt.OwnerId);
@@ -88,34 +88,65 @@ public class AssessmentControllerExtension {
         return unlockAllowed;
         
     }
+    public boolean IsUnlockAllowed_SecondCheck(){
+        boolean inScope = false;
+       List<PermissionSetAssignment> userperms = [ select id, permissionset.Name , assigneeid from PermissionSetAssignment where assigneeid = :UserInfo.getUserId()];
+         
+        for ( PermissionSetAssignment p : userperms ) {                        
+            // user can only update if in one of these three permission sets
+            system.debug('set = ' + p.PermissionSet.Name);
+            if ( p.PermissionSet.Name == 'ESD_Notes_Supervisor' ) {
+                inScope = true;
+            }        
+        
+        }
+        if(inScope){
+                if(!Test.isRunningTest()){
+                    User u = [SELECT UserRoleId FROM User WHERE Id = :assmt.OwnerId];
+                    
+                    if(u.UserRoleId  == UserInfo.getUserRoleId()){
+                        return true;
+                    }
+                }  
+                
+                if(UserInfo.getUserId() == assmt.OWNERID){
+                    return true;    
+                }  
+
+        }
+                
+    
+    
+        return false;
+    }
   
-  	// calculation of whether user is allowed to make this change
-	public Boolean isDisregardAllowed(Assessment__c assmt) {
-		
-		List<PermissionSetAssignment> userperms = [ select id, permissionset.name, assigneeid from PermissionSetAssignment where assigneeid = :UserInfo.getUserId()]; 
-		for ( PermissionSetAssignment p : userperms ) {
-			
-			// user can only update if in one of these three permission sets
-			if (
-				p.PermissionSet.Name.Contains('ESD_Notes_Supervisor') || 
-				p.PermissionSet.Name.Contains('ESD_Notes_Case_Handler')  ||
-				( p.PermissionSet.Name.Contains('ESD_Notes_Clinical_Data_User') && assmt.OwnerID == UserInfo.getUserId()) ||
-				( p.PermissionSet.Name.Contains('ESD_Assessments_Only') && assmt.OwnerID == UserInfo.getUserId()) ) {
-				System.Debug('User is allowed.');
-				return true;	
-				}
-		}
-		return false;
-	}
+    // calculation of whether user is allowed to make this change
+    public Boolean isDisregardAllowed(Assessment__c assmt) {
+        
+        List<PermissionSetAssignment> userperms = [ select id, permissionset.name, assigneeid from PermissionSetAssignment where assigneeid = :UserInfo.getUserId()]; 
+        for ( PermissionSetAssignment p : userperms ) {
+            
+            // user can only update if in one of these three permission sets
+            if (
+                p.PermissionSet.Name.Contains('ESD_Notes_Supervisor') || 
+                p.PermissionSet.Name.Contains('ESD_Notes_Case_Handler')  ||
+                ( p.PermissionSet.Name.Contains('ESD_Notes_Clinical_Data_User') && assmt.OwnerID == UserInfo.getUserId()) ||
+                ( p.PermissionSet.Name.Contains('ESD_Assessments_Only') && assmt.OwnerID == UserInfo.getUserId()) ) {
+                System.Debug('User is allowed.');
+                return true;    
+                }
+        }
+        return false;
+    }
       
     // updates the billable flag on the record then redirects to detail view of Progress Note
-	public PageReference setDisregard () {
-		
-			assmt.Disregard__c = true;
-			update assmt;
-			System.Debug('turned on disregard: ' + assmt);
-			return new PageReference('/' + assmt.Id);
-	}
+    public PageReference setDisregard () {
+        
+            assmt.Disregard__c = true;
+            update assmt;
+            System.Debug('turned on disregard: ' + assmt);
+            return new PageReference('/' + assmt.Id);
+    }
       
       
     

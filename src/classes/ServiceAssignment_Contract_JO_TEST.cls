@@ -1,6 +1,7 @@
 @isTest
 public with sharing class ServiceAssignment_Contract_JO_TEST {
     static testmethod void simpleTests() {
+    
         String ProfileId = [select ProfileId from User where (Profile.Name='System Administrator') LIMIT 1].ProfileId;
         User usr = new User(
             USERNAME='test@tmn.com.test',
@@ -21,6 +22,8 @@ public with sharing class ServiceAssignment_Contract_JO_TEST {
         insert usr;
         usr.Reset_Password__c = true;
         update usr;
+        
+        /*
         String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
         Account Accnt = new Account(
             RecordTypeID=RecTypeId,
@@ -56,6 +59,8 @@ public with sharing class ServiceAssignment_Contract_JO_TEST {
             Service_Line__c = 'Intensive In Home - FCT'
         );
         insert sa;
+*/
+TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
 
         TMN_Contract__c contract = new TMN_Contract__c(
             Name = 'Test Contract',
@@ -89,7 +94,7 @@ public with sharing class ServiceAssignment_Contract_JO_TEST {
         insert contract;
         ServiceAssignment_Contract_JO__c jo = new ServiceAssignment_Contract_JO__c(
             Contract__c = contract.Id,
-            Service_Assignment__c = sa.Id
+            Service_Assignment__c = myData.theSA.id
         );
         insert jo;
         update jo;

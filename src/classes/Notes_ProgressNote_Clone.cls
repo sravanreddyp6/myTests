@@ -1,4 +1,4 @@
-public class Notes_ProgressNote_Clone{
+public with sharing class Notes_ProgressNote_Clone{
     public Progress_Note__c thePN = new Progress_Note__c();
     public Progress_Note__c getthePN(){return thePN;}
 

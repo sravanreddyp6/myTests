@@ -23,8 +23,9 @@
 private class AssessmentSetupTEST {
 
     static testMethod void myUnitTest() {
+        TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData(); 
 
-        String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
+        /*String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
 
         Account Accnt = new Account(
             RecordTypeID=RecTypeId,
@@ -52,7 +53,9 @@ private class AssessmentSetupTEST {
             Network_Offering__c = 'ARY'
         );
         insert Adm;
-
+         */
+        
+            
         Assessment_Type__c[] testAssmtTypes = new Assessment_Type__c[] {
             new Assessment_Type__c(Name = 'CANS'),
             new Assessment_Type__c(Name = 'Risk')
@@ -76,9 +79,9 @@ private class AssessmentSetupTEST {
             Assessment_Date__c = date.today(),
             Name = 'TEST ASSMT',
             Assessment_Type__c = testAssmtTypes[0].Id,
-            AccountPerson__c = aAccountId,
+            AccountPerson__c = myData.theAccount.Id,
             TFC_Family_Vistas__c = 'No',
-            Admission__c = Adm.Id
+            Admission__c = myData.theAdm.ID
         );
         insert testAssmt;
 
@@ -88,9 +91,9 @@ private class AssessmentSetupTEST {
             Assessment_Date__c = date.today(),
             Name = 'TEST ASSMT2',
             Assessment_Type__c = testAssmtTypes[0].Id,
-            AccountPerson__c = aAccountId,
+            AccountPerson__c = myData.theAccount.Id,
             TFC_Family_Vistas__c = 'No',
-            Admission__c = Adm.Id
+            Admission__c = myData.theAdm.ID
         );
         insert testAssmt2;
 
@@ -99,9 +102,9 @@ private class AssessmentSetupTEST {
             Assessment_Date__c = date.today(),
             Name = 'TEST ASSMT3',
             Assessment_Type__c = testAssmtTypes[0].Id,
-            AccountPerson__c = aAccountId,
+            AccountPerson__c =  myData.theAccount.Id,
             TFC_Family_Vistas__c = 'No',
-            Admission__c = Adm.Id
+            Admission__c = myData.theAdm.ID
         );
         insert testAssmt3;
 
@@ -109,7 +112,7 @@ private class AssessmentSetupTEST {
             Previous__c = testAssmt3.Id,
             Assessment_Date__c = date.today(),
             Assessment_Type__c = testAssmtTypes[1].Id,
-            Admission__c = Adm.Id
+            Admission__c = myData.theAdm.ID
         );
         insert testAssmt4;
     }

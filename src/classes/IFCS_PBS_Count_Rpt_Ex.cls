@@ -1,25 +1,28 @@
 public with sharing class IFCS_PBS_Count_Rpt_Ex {
 
+/* @lastModified by Sravan 10/15/2014 for Shaun-46.
+   transient keyword is added to the collections in order reduce the view State
+*/
 
     public Date fStartDate{get{return fStartDate;} set;}
     public Date fEndDate{get{return fEndDate;} set;}
     
-    public List<Service_Assignment__c> Results = new List<Service_Assignment__c>();
-    public List<Service_Assignment__c> getResults(){return Results;}
+    transient public List<Service_Assignment__c> Results = new List<Service_Assignment__c>();
+  //public List<Service_Assignment__c> getResults(){return Results;} Not needed to get results as results are not displayed on the page.
  
-    public List<Service_Assignment__c> filteredResults = new List<Service_Assignment__c>();
-    public List<Service_Assignment__c> getfilteredResults (){return filteredResults ;}
+    transient public List<Service_Assignment__c> filteredResults {get; set;}
+  //public List<Service_Assignment__c> getfilteredResults (){return filteredResults ;}
         
     public IFCS_PBS_Count_Rpt_Ex () {
        // fStartDate = system.today();
        allCount = 0;
     } 
     
-    set<id> uniquePBS = new Set<id>();
-    public integer allCount{get; set;}
-    public Map<string, integer > ParsedData = new Map<string, integer >();
+    transient set<id> uniquePBS = new Set<id>();
+    transient public integer allCount{get; set;}
     
-    public Map<string, integer > getParsedData(){return ParsedData;}
+    transient public Map<string, integer > ParsedData {get; set; }
+  //public Map<string, integer > getParsedData(){return ParsedData;}
     
     public PageReference runReport(){
     if(fEndDate < fStartDate){
@@ -27,10 +30,14 @@ public with sharing class IFCS_PBS_Count_Rpt_Ex {
         ApexPages.addMessage(myMsg);            
         return null;
     }
-        ParsedData.clear();
-        results.clear();
-        uniquePBS.clear();
-        filteredResults.clear();
+       // ParsedData.clear();
+       // results.clear();
+       // uniquePBS.clear();
+       // filteredResults.clear();
+        uniquePBS = new Set<id>();
+        ParsedData = new Map<string, integer>();
+        results = new List<Service_Assignment__c>();
+        filteredResults = new List<Service_Assignment__c>();
         
         Results = [Select  id, 
                         Admission__r.State__c,
@@ -67,6 +74,5 @@ public with sharing class IFCS_PBS_Count_Rpt_Ex {
         fStartDate = null;
         fEndDate= null;
         return null;
-    }       
-
+    }
 }

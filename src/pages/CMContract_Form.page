@@ -131,10 +131,10 @@ border-bottom: 1px solid #cccccc !important;
 }
 select {
    width: 268px !important;
-   padding: 5px;
+   //padding: 5px;
 }
 input{
-    padding: 5px;
+   // padding: 5px;
 }
 .datePicker select{
     width: 100px !important;
@@ -155,6 +155,15 @@ input{
 </style>
 
 <script>
+function stopRKey(evt) { 
+  var evt = (evt) ? evt : ((event) ? event : null); 
+  var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null); 
+  if ((evt.keyCode == 13) && (node.type=="text"))  {return false;} 
+} 
+
+document.onkeypress = stopRKey; 
+
+
 j$ = jQuery.noConflict();
   
   
@@ -177,14 +186,10 @@ function hidedio(dio, dio2){
 </head>
 <apex:outputPanel id="frmwrapper">
 
-
+   <chatter:feedWithFollowers entityId="{!CareMeridian_Contract__c.id}" rendered="{! !editMode}"/>
+   
 <apex:form id="myFrm" >
-
-    <apex:actionRegion >
-        <apex:actionFunction name="showAddLocation" action="{!showAddLocation}" rerender="locations,locationEntry,msgs" oncomplete="openModalDialog('ReferralLocationModal', 'span', 'Add Location','referral-location'); " status="AddLocationStatus" />
-   </apex:actionRegion>
-    
-    
+   
  <apex:outputPanel rendered="{!editMode}" >
     <style>
     
@@ -195,7 +200,7 @@ function hidedio(dio, dio2){
     </style>
 
 </apex:outputPanel>   
-    <chatter:feedWithFollowers entityId="{!CareMeridian_Contract__c.id}" rendered="{! !editMode}"/>
+ 
 <apex:pageMessages ></apex:pageMessages>
         
 
@@ -210,13 +215,8 @@ function hidedio(dio, dio2){
                     <apex:commandButton onclick="window.open('/apex/CMContract_Form?oldid={!CareMeridian_Contract__c.id}', '_self'); return false;" value="Renew / Amend" reRender="nothing" rendered="{!!editMode  && !hasnextcontract}"/>
                     <apex:commandButton onclick="window.open('/apex/CMContract_Form?oldid={!CareMeridian_Contract__c.id}&isClone=1', '_self'); return false;" value="Clone" reRender="nothing" rendered="{!!editMode }"/>
                 </apex:outputPanel><!--javascript:showdio('dialog','dialog2'); -->
-                <apex:commandButton onclick="window.open('/apex/CMContract_FormPrint?Id={!CareMeridian_Contract__c.Id}', '_blank'); return false;" value="Print" rendered="{! !editMode}"/>
+                <apex:commandButton value="Print"  onclick="window.open('/apex/CMContract_FormPrint?Id={!CareMeridian_Contract__c.Id}', '_blank'); return false;" rendered="{! !editMode}"/>
             </apex:pageBlockButtons>
-
-            <!-- START -->
-           
-            
-            <!-- END -->
 
             
             <apex:pageBlockSection title="Information" columns="1" rendered="{!editMode}">
@@ -275,7 +275,9 @@ function hidedio(dio, dio2){
                 <apex:outputField value="{!CareMeridian_Contract__c.Service_Line__c}"/>  
             </apex:pageBlockSection>     
             
-            <!-- Code Placeholder for ADD LOCATION -->                  
+            <!-- Code Placeholder for ADD LOCATION -->  
+            <!--  START --->
+            <apex:actionRegion >                
             <apex:PageBlockSection columns="1" rendered="{!isNeuro}" >
                 <apex:outputPanel id="refreshServiceLocationPanel">
                     <apex:CommandButton value="Add Location"
@@ -346,9 +348,12 @@ function hidedio(dio, dio2){
                                         </apex:pageblockSection>
                                     
                                         <apex:pageblockSection title="Results..." columns="1" id="table">
-                                            <apex:pageblockTable value="{!searchedServiceLocationResults}" var="r">
+                                            <apex:pageblockTable value="{!IF(!selAllLocsParam,searchedServiceLocationResults,searchedServiceLocationResultsAll)}" var="r">
                                                 <apex:column >
                                                     <apex:inputCheckbox value="{!r.selected}"/>
+                                                </apex:column>
+                                                <apex:column headerValue="Alias">
+                                                    <apex:outputText >{!r.sl.Name}</apex:outputText>
                                                 </apex:column>
                                                 <apex:column headerValue="Program">
                                                     <apex:outputText >{!r.sl.Program__c}</apex:outputText>
@@ -362,17 +367,18 @@ function hidedio(dio, dio2){
                                                 <apex:column headerValue="Phone">
                                                     <apex:outputText >{!r.sl.Phone__c}</apex:outputText>
                                                 </apex:column>
-                                                <apex:column headerValue="Street">
-                                                    <apex:outputText >{!r.sl.Street__c}</apex:outputText>
+                                                <apex:column headerValue="Address">
+                                                    <c:AddressDisplay Street1="{!r.sl.Street__c}"
+                                                                        city="{!r.sl.City__c}"
+                                                                        State="{!r.sl.State__c}"
+                                                                        Zip="{!r.sl.Zip__c}"/>
+                                                   
                                                 </apex:column>
-                                                <apex:column headerValue="City">
-                                                    <apex:outputText >{!r.sl.City__c}</apex:outputText>
+                                                <apex:column headervalue="TIN">
+                                                    <apex:outputText >{!r.sl.TIN__c}</apex:outputText>
                                                 </apex:column>
-                                                <apex:column headerValue="State">
-                                                    <apex:outputText >{!r.sl.State__c}</apex:outputText>
-                                                </apex:column>
-                                                <apex:column headerValue="Zip">
-                                                    <apex:outputText >{!r.sl.Zip__c}</apex:outputText>
+                                                <apex:column headervalue="NPI">
+                                                    <apex:outputText >{!r.sl.NPI__c}</apex:outputText>
                                                 </apex:column>
                                             </apex:pageblockTable>                                                                                                
                                         </apex:pageblockSection>                                    
@@ -381,12 +387,16 @@ function hidedio(dio, dio2){
 
 
                             </apex:pageblockSection>
+                            
+                           
                         </apex:facet>
                     </apex:actionStatus>
-                </apex:outputPanel>                            
-                <apex:PageBlockTable value="{!locations}" var="location" id="refreshContractLocs">
+                     
+                </apex:outputPanel> 
+                                           
+                <apex:PageBlockTable value="{!locations}" var="location" id="refreshContractLocs" ColumnsWidth="2%,3%,10%,10%,20%,15%,10%,20%,10%">
                     <apex:column headerValue="Action" >
-                            <apex:commandLink value="Delete" action="{!RemoveItem}" reRender="refreshContractLocs" status="st">
+                            <apex:commandLink value="Del" action="{!RemoveItem}" reRender="refreshContractLocs" status="st">
                                 <apex:param value="{!location.Service_Location__r.id}" name="p1" assignTo="{!paramSvcLocId}"/>
                             </apex:commandLink>
                             <apex:actionstatus id="st">
@@ -398,17 +408,21 @@ function hidedio(dio, dio2){
                     <apex:Column Value="{!location.Service_Location__r.Name}"/>
                     <apex:Column Value="{!location.Service_Location_Service_Value__c}"/>
                     <apex:column value="{!location.Service_Location__r.Setting__c}"/>
-                    <apex:column value="{!location.Service_Location_Program__c}"/>
+                    <apex:column headerValue="Program"> 
+                        {!SUBSTITUTE(location.Service_Location_Program__c,'-',' - ')}
+                    </apex:column>
                     <apex:Column headerValue="Address">
                         <c:AddressDisplay Street1="{!location.Service_Location_Street__c}"
                                 City="{!location.Service_Location_City__c}"
                                 State="{!location.Service_Location_State__c}"
                                 Zip="{!location.Service_Location_Zip__c}"/>
                     </apex:Column>
-                    <apex:Column Value="{!location.LastModifiedDate}"/>
-                    
+                    <apex:Column Value="{!location.TIN__c}"/>
+                    <apex:column Value="{!location.NPI__c}"/>
+                    <apex:column Value="{!location.LastModifiedDate}"/> 
                 </apex:PageBlockTable> 
             </apex:PageblockSection>
+            
             
             <apex:PageblockSection id="refreshOnlyLocs" columns="1" title="Locations added need to be saved against the contract..." rendered="{!AND(isNeuro,editMode)}">
                 <apex:PageBlockTable value="{!selectedsLocs}" var="selLoc" >
@@ -432,9 +446,13 @@ function hidedio(dio, dio2){
                                 State="{!selLoc.sl.State__c}"
                                 Zip="{!selLoc.sl.Zip__c}"/>
                     </apex:Column>
+                    <apex:column value="{!selLoc.sl.TIN__c}"/>
+                    <apex:column value="{!selLoc.sl.NPI__c}"/>
                     
                 </apex:PageBlockTable> 
             </apex:PageblockSection>
+            </apex:actionRegion>
+                    <!-- END -->
             
             <apex:pageBlockSection title="Timeframe" columns="2" rendered="{!AND(editMode,!isNeuro)}" >
                 <apex:inputField value="{!CareMeridian_Contract__c.Start_Date__c}" /> 

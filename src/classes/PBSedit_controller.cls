@@ -20,7 +20,7 @@ public Boolean isUserLevel1or2 { get { return PBS_controller_helper.isUserLevel1
  
 private TMN_User__c TMNUser_internal;
 private boolean TMNUser_set = false;
-private TMN_User__c TMNUser {
+@TestVisible private TMN_User__c TMNUser {
 	get {
 		if (!TMNUser_set) {
 			TMN_User__c[] users = [
@@ -46,15 +46,44 @@ private TMN_User__c TMNUser {
   }
   
   public List<Related_Party__c> relParties { get; set; }
+  
+  public String relPartiesJSON {get {
+	List<RelatedParty> relPartiesData = new List<RelatedParty>();
+	if (relParties.size() > 0) {
+		for (Related_Party__c rp :relParties){
+			relPartiesData.add( new RelatedParty(rp.id, rp.Type__c) );
+		}
+	}	
+    return JSON.serialize(relPartiesData);}
+  }
+
+  public class RelatedParty{
+     Id Id;
+     String TypeC;
+     RelatedParty(Id id, String typeC){
+     	this.Id=id;
+     	this.TypeC = typeC;
+     }
+  }
+  
+
   public List<Agency_Involved_With_Individual__c> relAgencies { get; set; }
 
 
 // Filter some of the Additional Info Fields
 public string dontShowFields {
 	get {
+		system.debug('OpGroup:' + TMNUser.Operating_Group__c);
 		List<string> dontshow = new List<string>();
 		if (TMNUser == null || TMNUser.Operating_Group__c != 'Cambridge'){
 			dontshow.Add('Current_Medications__c');
+		}
+		
+		if ( (TMNUser.Operating_Group__c.indexOf('Care') < 0) && (TMNUser.Operating_Group__c.indexOf('Meridian') < 0) ) {
+            dontshow.Add('Advanced_Directives__c');
+            dontshow.Add('Code_Status__c');
+            dontshow.Add('Code_Status_Other__c');
+            dontshow.Add('Advanced_Directives_Attached__c');
 		}
 		return ' ' + String.Join(dontshow, ',');
 	}
@@ -204,6 +233,12 @@ public void showAddRelParty() {
 
         return theId;
     }
+
+	// START: CTEAE-39
+	public void showAddSibling() {
+		
+	}
+	// END: CTEAE-39
 
 public pageReference cancelPBSController(){
     

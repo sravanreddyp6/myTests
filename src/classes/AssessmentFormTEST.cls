@@ -23,7 +23,7 @@
 private class AssessmentFormTEST {
 
     static testMethod void myUnitTest() {
-        
+        /*
         String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
         
         Account Accnt = new Account(
@@ -78,6 +78,8 @@ private class AssessmentFormTEST {
             Network_Offering__c = 'ARY'
         );
         insert Adm2;
+        */
+        TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
         
         Assessment_Type__c testAssmtType = new Assessment_Type__c(
             Name = 'CANS'           
@@ -100,13 +102,13 @@ private class AssessmentFormTEST {
         insert testQuestion;
         
         Assessment__c testAssmt = new Assessment__c(
-            Admission__c = Adm.Id,
+            Admission__c = myData.theAdm.Id,
             Assessment_Date__c = date.newinstance(2012, 06, 17),
 //            OwnerID = testUser.Id,
             Interval__c = 'Intake',
             Name = 'TEST ASSMT',
             Assessment_Type__c = testAssmtTypeId[0].Id,
-            AccountPerson__c = aAccountId,
+            AccountPerson__c = myData.theAccount.Id,
             TFC_Family_Vistas__c = 'No'
         );
         insert testAssmt;

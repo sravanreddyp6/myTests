@@ -23,6 +23,7 @@
 private class ServiceAssignmentValidationTEST {
 
     static testMethod void myUnitTest() {
+    /*
         String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
 
         Account Accnt = new Account(
@@ -41,12 +42,12 @@ private class ServiceAssignmentValidationTEST {
 
         List<Account> testAcct = [Select Id, PersonContactId From Account a WHERE a.Id = :Accnt.Id];
         System.Debug('What is in testAcct: ' + testAcct);
-        Id aContactId = testAcct[0].PersonContactId;
+        Id myData.contactID = testAcct[0].PersonContactId;
         Id aAccountId = testAcct[0].Id;
 
         Admission__c Adm = new Admission__c(
             Name = 'TEST ADM',
-            Person_Being_Served__c = aContactId,
+            Person_Being_Served__c = myData.contactID,
             Effective_Date__c = date.newInstance(2013, 1, 1),
             Discharged_Date__c = date.newInstance(2013, 6, 30),
             Status__c = 'Discharged',
@@ -58,7 +59,7 @@ private class ServiceAssignmentValidationTEST {
         Service_Assignment__c ServAssign = new Service_Assignment__c(
             Name = 'TEST SERV ASSIGN',
             Admission__c = Adm.Id,
-            Person_Being_Served__c = aContactId,
+            Person_Being_Served__c = myData.contactID,
             Start_Date__c = date.newInstance(2013, 1, 1),
             End_Date__c = date.newInstance(2013, 1, 31),
             Status__c = 'Inactive'
@@ -67,58 +68,61 @@ private class ServiceAssignmentValidationTEST {
         Service_Assignment__c ServAssign2 = new Service_Assignment__c(
             Name = 'TEST SERV ASSIGN 2',
             Admission__c = Adm.Id,
-            Person_Being_Served__c = aContactId,
+            Person_Being_Served__c = myData.contactID,
             Start_Date__c = date.newInstance(2013, 6, 1),
             End_Date__c = date.newInstance(2013, 6, 30),
             Status__c = 'Inactive'
         );
+*/
+    TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
 
         Progress_Note__c ProgNote = new Progress_Note__c(
             Name = 'TEST PROGRESS NOTE',
-            Admission__c = Adm.Id,
-            Service_Assignment__c = ServAssign.Id,
-            Person_Being_Served__c = aContactId,
+            Admission__c = myData.theAdm.Id,
+            Service_Assignment__c = myData.theSA.Id,
+            Person_Being_Served__c = myData.contactID,
             Start_Time__c = datetime.newInstance(2013, 1, 1, 11, 30, 0),
             End_Time__c = datetime.newInstance(2013, 1, 1, 13, 30, 0)
         );
         Progress_Note__c ProgNote2 = new Progress_Note__c(
             Name = 'TEST PROGRESS NOTE 2',
-            Admission__c = Adm.Id,
-            Service_Assignment__c = ServAssign.Id,
-            Person_Being_Served__c = aContactId,
+            Admission__c = myData.theAdm.Id,
+            Service_Assignment__c = myData.theSA.Id,
+            Person_Being_Served__c = myData.contactID,
             Start_Time__c = datetime.newInstance(2013, 1, 3, 11, 30, 0),
             End_Time__c = datetime.newInstance(2013, 1, 3, 13, 30, 0)
         );
 
         Progress_Note__c ProgNote3 = new Progress_Note__c(
             Name = 'TEST PROGRESS NOTE 3',
-            Admission__c = Adm.Id,
-            Service_Assignment__c = ServAssign.Id,
-            Person_Being_Served__c = aContactId,
+            Admission__c = myData.theAdm.Id,
+            Service_Assignment__c = myData.theSA.Id,
+            Person_Being_Served__c = myData.contactID,
             Start_Time__c = datetime.newInstance(2013, 1, 30, 11, 30, 0),
             End_Time__c = datetime.newInstance(2013, 1, 30, 13, 30, 0)
         );
 
 
         test.startTest();
-        insert ServAssign;
-        ServAssign.End_Date__c = date.newInstance(2013,2,1);
-        upsert ServAssign;
-        insert ServAssign2;
+        //insert ServAssign;
+        myData.theSA.End_Date__c = date.newInstance(2013,2,1);
+        myData.theSA.status__c = 'Inactive';
+        upsert myData.theSA;
+        //insert ServAssign2;
         insert ProgNote;
         //insert ProgNote2;
         //insert ProgNote3;
 
         List<Service_Assignment__c> myListOfServAssigns = new List<Service_Assignment__c>();
-        myListOfServAssigns.add(ServAssign);
-        myListOfServAssigns.add(ServAssign2);
+        myListOfServAssigns.add(myData.theSA);
+        //myListOfServAssigns.add(ServAssign2);
 
         ServiceAssignmentValidation.checkProgressNoteEndDates(myListOfServAssigns);
 
-        delete ServAssign;
-        undelete ServAssign;
+        delete myData.theSA;
+        undelete myData.theSA;
 
-        ServAssign.End_Date__c = date.newInstance(2013, 1, 29);
+        myData.theSA.End_Date__c = date.newInstance(2013, 1, 29);
         test.stopTest();
 
         ServiceAssignmentValidation myObj = new ServiceAssignmentValidation(true);
@@ -126,7 +130,7 @@ private class ServiceAssignmentValidationTEST {
     }
 
     static testMethod void insertDocAndUpdateSa() {
-
+/*
         String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
 
         Account Accnt = new Account(
@@ -145,12 +149,12 @@ private class ServiceAssignmentValidationTEST {
 
         List<Account> testAcct = [Select Id, PersonContactId From Account a WHERE a.Id = :Accnt.Id];
         System.Debug('What is in testAcct: ' + testAcct);
-        Id aContactId = testAcct[0].PersonContactId;
+        Id myData.contactID = testAcct[0].PersonContactId;
         Id aAccountId = testAcct[0].Id;
 
         Admission__c Adm = new Admission__c(
             Name = 'TEST ADM',
-            Person_Being_Served__c = aContactId,
+            Person_Being_Served__c = myData.contactID,
             Effective_Date__c = date.newInstance(2013, 1, 1),
             Status__c = 'Active'
         );
@@ -158,17 +162,17 @@ private class ServiceAssignmentValidationTEST {
 
         Service_Assignment__c ServAssign = new Service_Assignment__c(
             Name = 'TEST SERV ASSIGN',
-            Admission__c = Adm.Id,
-            Person_Being_Served__c = aContactId,
+            Admission__c = myData.theAdmAdm.Id,
+            Person_Being_Served__c = myData.contactID,
             Start_Date__c = date.newInstance(2013, 1, 1),
             Projected_Treatment_End_Date__c = date.newInstance(2013, 1, 31),
             Status__c = 'Active',
             Program__c = 'IFCS'
         );
-
+*/
         test.startTest();
-        insert ServAssign;
-
+  //      insert ServAssign;
+TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
         Document__c caseDoc = new Document__c(
             Name = 'Case Document',
             Active__c = true,
@@ -201,7 +205,7 @@ private class ServiceAssignmentValidationTEST {
 
         ServiceAssignment_Document_JO__c mySadjo = new ServiceAssignment_Document_JO__c(
             Document__c = caseDoc.Id,
-            Service_Assignment__c = ServAssign.Id,
+            Service_Assignment__c = myData.theSA.Id,
             Filed_Date_Time__c = datetime.newInstance(2013,10,20,12,30,00),
             File_Status__c = 'Filed',
             Relative_Due_Date_Event__c = 'Client Tx Start',
@@ -213,7 +217,7 @@ private class ServiceAssignmentValidationTEST {
 
         ServiceAssignment_Document_JO__c mySadjo2 = new ServiceAssignment_Document_JO__c(
             Document__c = caseDoc2.Id,
-            Service_Assignment__c = ServAssign.Id,
+            Service_Assignment__c = myData.theSA.Id,
             Filed_Date_Time__c = datetime.newInstance(2013,10,20,12,30,00),
             File_Status__c = 'Filed',
             Relative_Due_Date_Event__c = 'Client Tx Start',
@@ -225,7 +229,7 @@ private class ServiceAssignmentValidationTEST {
 
         ServiceAssignment_Document_JO__c mySadjo3 = new ServiceAssignment_Document_JO__c(
             Document__c = caseDoc2.Id,
-            Service_Assignment__c = ServAssign.Id,
+            Service_Assignment__c = myData.theSA.Id,
             File_Status__c = 'Not Filed',
             Relative_Due_Date_Event__c = 'Client Tx Start',
             Relative_Due_Date_UOM__c = 'Day(s)',
@@ -233,10 +237,10 @@ private class ServiceAssignmentValidationTEST {
         );
         insert mySadjo3;
 
-        ServAssign.End_Date__c = null;
-        ServAssign.Projected_Treatment_End_Date__c = date.newInstance(2013,7,1);
+        myData.theSA.End_Date__c = null;
+        myData.theSA.Projected_Treatment_End_Date__c = date.newInstance(2013,7,1);
 
-        update ServAssign;
+        update myData.theSA;
 
         TMN_Contract__c myContract = new TMN_Contract__c(
             Name = 'Name',
@@ -246,7 +250,7 @@ private class ServiceAssignmentValidationTEST {
         insert myContract;
 
         ServiceAssignment_Contract_JO__c mySacjo = new ServiceAssignment_Contract_JO__c(
-            Service_Assignment__c = ServAssign.Id,
+            Service_Assignment__c = myData.theSA.Id,
             Contract__c = myContract.Id
         );
         insert mySacjo;
@@ -276,11 +280,11 @@ private class ServiceAssignmentValidationTEST {
         insert myProgramDocXref2;
 
         myContract.Status__c = 'Cancelled';
-        ServAssign.Projected_Treatment_End_Date__c = date.newInstance(2013,1,30);
+        myData.theSA.Projected_Treatment_End_Date__c = date.newInstance(2013,1,30);
         caseDoc2.Required_To_Date__c = date.newInstance(2013,1,2);
         update caseDoc2;
 
-        update ServAssign;
+        update myData.theSA;
 /*
         ServAssign.Program__c = 'Miami';
         delete myContractDocJo;

@@ -19,10 +19,10 @@
   {
    //selector = tagType + '[id$=' + dialogId.replace(/:/g,'\\:') + ']';
    selector = '#'+getDOMId(dialogId);
-   j$(selector).dialog({dialogClass: dClass,
+   j$(selector).first().dialog({dialogClass: dClass,
                         title:titleString,
                         modal:true,
-                        width:800, 
+                        width:900, 
                         closeOnEscape:false
                         })
                .parent()
@@ -57,7 +57,7 @@
   
   <apex:inputText style="display:none" value="{!parentId}" id="lookupElement_lkid" styleClass="{!uniqueId}LookupElement_lkid"/>
   
-  <apex:inputText value="{!parentName}" id="lookupElement" styleClass="{!uniqueId}LookupElement"/>
+  <apex:inputText value="{!parentName}" id="lookupElement" styleClass="{!uniqueId}LookupElement" html-readonly="readonly"/>
       <a onClick="j$('input[id$=nameFilter]').val(j$(getIdSelector('{!$Component.comp.lookupElement}')).val());
           openMD('{!$Component.comp.searchDialog}', 'span', 'Lookup','custom-lookup-dialog'); return false;">
                                     <img valign="bottom" src="/s.gif" alt="Custom Lookup" class="lookupIcon" 
@@ -91,10 +91,11 @@
                         <a href="#" onClick="j$(getIdSelector('{!$Component.comp.lookupElement}')).val('{!r[$ObjectType[objectType].Fields['name'].localName]}');
                                         j$(getIdSelector('{!$Component.comp.lookupElement_lkid}')).val('{!r[$ObjectType[objectType].Fields['id'].localName]}');
                                         closeMD('{!$Component.comp.searchDialog}', 'span');
+                                        j$(getIdSelector('{!$Component.comp.lookupElement_lkid}')).change();
                                         return false;"
                                         >{!r[$ObjectType[objectType].Fields['name'].localName]}</a>
                     </apex:column>
-                    <apex:repeat value="{!rfields}" var="f">
+                    <apex:repeat value="{!rfieldsOrdered}" var="f">
                         <apex:column headerValue="{!$ObjectType[objectType].Fields[f.Name].label}">
                             {!r[$ObjectType[objectType].Fields[f.Name].localName]}
                         </apex:column>

@@ -1,7 +1,9 @@
 <apex:page controller="REF_HomePageController"
            sidebar="false">
   <apex:stylesheet value="{!URLFOR($Resource.Unsemantic, 'stylesheets/unsemantic-grid-responsive.css')}" />
-  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+<!--  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />-->
+  <apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery-1.11.1.min.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery.tinysort.min.js')}" />
 
 
   <style type="text/css">
@@ -117,6 +119,12 @@
     function showHideList(id) {
       j$('#' + id).slideToggle();
     }
+      j$(document).ready(function() {
+          
+          j$('ul#referralReports>li').tsort();
+         
+          console.log('reports sorted');
+      });    
   </script>
                
   <apex:outputPanel layout="block" styleClass="grid-container">
@@ -137,12 +145,17 @@
             </li>
             <li><a class="heading" onclick="showHideList('referralReports');">Referral Reports</a>
               <ul id="referralReports">
-                <apex:repeat value="{!refReports}" var="refReport">
+                <apex:repeat value="{!refReports2 }" var="refReport">
                   <li>
-                    <apex:outputLink value="/{!refReport.ReportID__c}">
+                    <apex:outputLink value="/{!refReport.ID}">
                       {!refReport.Name}
                     </apex:outputLink>
                   </li>
+                </apex:repeat>
+                <apex:repeat value="{!refVfReports}" var="item">
+                    <li>
+                        <apex:outputLink value="/apex/{!item.link__c}">{!item.Name__c}</apex:outputLink>
+                    </li>
                 </apex:repeat>
               </ul>
             </li>
@@ -243,6 +256,11 @@
         }
         return false;
       });
+      
+      //
     });
   </script>
+  
+
+  
 </apex:page>

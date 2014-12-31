@@ -1,33 +1,21 @@
 @isTest
 public with sharing class GenericHistoryComponentControllerTest {
     static testmethod void simpleTests() {
-        String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
-        Account Accnt = new Account(
-            RecordTypeID=RecTypeId,
-            FirstName= 'Test FName',
-            LastName='Test LName',
-            PersonMailingStreet='test@yahoo.com',
-            PersonMailingPostalCode='12345',
-            PersonMailingCity='SFO',
-            PersonMailingStateCode='NC',
-            PersonEmail='test@yahoo.com',
-            PersonHomePhone='1234567',
-            PersonMobilePhone='12345678'
-        );
-        insert Accnt;
-        Accnt = [SELECT Id, PersonContactId FROM Account WHERE Id=:Accnt.Id];
-        Admission__c admission = new Admission__c(
-            Active__c = false,
-            Person_Being_Served__c = Accnt.PersonContactId,
-            Name = 'Test Admission'
-        );
-        insert admission;
-        admission.Active__c = true;
-        admission.Name = 'Test Admission Updated';
-        update admission;
+        
+        TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
+           
+        myData.theAdm.Active__c = true;
+        myData.theAdm.Name = 'Test Admission Updated';
+        myData.theAdm.State__c = 'OH';
+        update myData.theAdm;
+        
+        myData.theAdm.Name = 'Test Admission Updated';
+        myData.theAdm.State__c = 'IN';
+        update myData.theAdm;
+        
 
         GenericHistoryComponentController controller = new GenericHistoryComponentController();
-        controller.myObject = admission;
+        controller.myObject = myData.theAdm;
         controller.getObjectHistory();
         System.assertEquals('Admission Name', GenericHistoryComponentController.returnFieldLabel('name'));
         GenericHistoryComponentController.objectHistoryLine line =

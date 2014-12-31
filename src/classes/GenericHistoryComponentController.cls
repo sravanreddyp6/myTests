@@ -1,17 +1,17 @@
-public class GenericHistoryComponentController {
-    
+public with sharing class GenericHistoryComponentController {
+
     // External variables
     public SObject myObject {get; set;}
     public Integer recordLimit {get; set;}
     public static String objectLabel {get;}
-    
+
     // Internal Variables
-    public objectHistoryLine[] objectHistory; 
+    public objectHistoryLine[] objectHistory;
 
     public static final Map<String, Schema.SObjectType> mySObjectTypeMap = Schema.getGlobalDescribe();
     public static Map<String, Schema.SObjectField> myObjectFieldMap;
     public static List<Schema.PicklistEntry> historyFieldPicklistValues;
-    
+
     public List<objectHistoryLine> getObjectHistory(){
 
         Id myObjectId = String.valueOf(myObject.get('Id'));
@@ -19,7 +19,7 @@ public class GenericHistoryComponentController {
 
         myObjectFieldMap = objectDescription.fields.getMap();
         objectLabel = String.valueOf(objectDescription.getLabel());
-        
+
         //Get the name of thew history table
         String objectHistoryTableName = objectDescription.getName();
         //if we have a custom object we need to drop the 'c' off the end before adding 'History' to get the history tables name
@@ -27,18 +27,18 @@ public class GenericHistoryComponentController {
             objectHistoryTableName = objectHistoryTableName.substring(0, objectHistoryTableName.length()-1);
         }
         objectHistoryTableName = objectHistoryTableName + 'History';
-        
+
         Schema.DescribeFieldResult objectHistoryFieldField = mySObjectTypeMap.get(objectHistoryTableName).getDescribe().fields.getMap().get('Field').getDescribe();
         historyFieldPicklistValues = objectHistoryFieldField.getPickListValues();
-                    
+
         list<objectHistoryLine> objectHistory = new list<objectHistoryLine>();
-        
+
         String prevDate = '';
-        
+
         if (recordLimit== null){
             recordLimit = 100;
         }
-        
+
         list<sObject> historyList = Database.query( 'SELECT CreatedDate,'+
                                                     'CreatedById,'+
                                                     'Field,'+
@@ -48,10 +48,10 @@ public class GenericHistoryComponentController {
                                                     'WHERE ParentId =\'' + myObjectId + '\' ' +
                                                     'ORDER BY CreatedDate DESC '+
                                                     'LIMIT ' + String.valueOf(recordLimit));
-        
+
         for(Integer i = 0; i < historyList.size(); i++){
             sObject historyLine = historyList.get(i);
-            if ((historyLine.get('newValue') == null && historyLine.get('oldValue') == null) 
+            if ((historyLine.get('newValue') == null && historyLine.get('oldValue') == null)
                     || (historyLine.get('newValue') != null && !(string.valueOf(historyLine.get('newValue')).startsWith('005') || string.valueOf(historyLine.get('newValue')).startsWith('00G')))
                     || (historyLine.get('oldValue') != null && !(string.valueOf(historyLine.get('oldValue')).startsWith('005') || string.valueOf(historyLine.get('oldValue')).startsWith('00G')))){
                 objectHistoryLine tempHistory = new objectHistoryLine();
@@ -67,10 +67,10 @@ public class GenericHistoryComponentController {
                     tempHistory.userId = String.valueOf(historyLine.get('CreatedById'));
                 }
                 prevDate = String.valueOf(historyLine.get('CreatedDate'));
-                
+
                 // Get the field label
                 String fieldLabel = GenericHistoryComponentController.returnFieldLabel(String.valueOf(historyLine.get('Field')));
-                
+
                 // Set the Action value
                    if (String.valueOf(historyLine.get('Field')) == 'created') {    // on Creation
                        tempHistory.action = 'Created.';
@@ -92,7 +92,7 @@ public class GenericHistoryComponentController {
                               fromText = ' from ' + String.valueOf(historyLine.get('oldValue'));
                          }
                     }
-                    
+
                     String toText = '';
                     if (historyLine.get('oldValue') != null) {
                         try {
@@ -108,27 +108,27 @@ public class GenericHistoryComponentController {
                         tempHistory.action = 'Changed <b>' + fieldLabel;
                     }
                    }
-                   
+
                    // Add to the list
                    objectHistory.add(tempHistory);
             }
          }
-         
+
          List<Id> userIdList = new List<Id>();
          for (objectHistoryLine myHistory : objectHistory){
              userIdList.add(myHistory.userId);
          }
          Map<Id, User> userIdMap = new Map<ID, User>([SELECT Name FROM User WHERE Id IN : userIdList]);
-         
+
          for (objectHistoryLine myHistory : objectHistory){
              if (userIdMap.containsKey(myHistory.userId) & (myHistory.who != '') ){
                  myHistory.who = userIdMap.get(myHistory.who).Name;
              }
          }
-         
+
          return objectHistory;
-    }    
-    
+    }
+
     // Function to return Field Label of a object field given a Field API name
     public Static String returnFieldLabel(String fieldName){
 
@@ -149,13 +149,13 @@ public class GenericHistoryComponentController {
         }
         return '';
     }
-    
-    // Inner Class to store the detail of the object history lines    
+
+    // Inner Class to store the detail of the object history lines
     public class objectHistoryLine {
 
         public String theDate {get; set;}
         public String who {get; set;}
-        public Id userId {get; set;} 
+        public Id userId {get; set;}
         public String action {get; set;}
     }
 }

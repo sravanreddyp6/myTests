@@ -78,15 +78,14 @@ public ActionPlan_GoalObjective_rpt(ApexPages.StandardController controller) {
         FOR(ProgressNote_ActionPlanChildren_mjo__c item: [select progress_Note__c, progress_Note__r.name, Goal__r.Description__c, progress_Note__r.id,
                             Objective__r.Description__c, Progress_Note__r.Start_time__c,
                             Progress_Note__r.End_time__c, Progress_Note__r.CreatedByid, Progress_Note__r.Action_Plan__c, Note_End_Date__c, Progress_Note__r.Service_Assignment__c,
-                            Note_Start_Date__c
+                            Progress_Note__r.Narrative__c, Note_Start_Date__c
                                 from ProgressNote_ActionPlanChildren_mjo__c 
                                     where  
                                         (
                                             (Progress_Note__r.Start_time__c > :startDateTime OR Progress_Note__r.End_time__c > :startDateTime ) 
                                                 AND 
                                             (Progress_Note__r.Start_time__c < :endDateTime OR Progress_Note__r.End_time__c < :endDateTime)
-                                        ) 
-                                    
+                                        )                                     
                                             AND Progress_Note__r.Service_Assignment__c = :SA.id  
                                            and progress_note__r.Disregard_note__c = false	// RBO-266
                                         ORDER BY CreatedDate
@@ -98,6 +97,8 @@ public ActionPlan_GoalObjective_rpt(ApexPages.StandardController controller) {
         system.debug('end- '+item.Progress_Note__r.End_time__c);
         system.debug('Filter- '+startDate + ' | ' + endDate);
         system.debug('Name - '+item.progress_Note__r.name);
+        
+        system.debug('Narrative - '+item.Progress_Note__r.Narrative__c);
         note_plan_joins.add(item);
     }
         return null;

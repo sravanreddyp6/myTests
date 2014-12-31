@@ -40,11 +40,22 @@
         <field>Progress_Note__c.Blank4__c</field>
     </columns>
     <columns>
+        <field>Progress_Note__c.Staff_Name__c</field>
+    </columns>
+    <columns>
         <field>Progress_Note__c.Direct_vs_Indirect__c</field>
     </columns>
     <columns>
         <field>Progress_Note__c.Disregard_Note__c</field>
     </columns>
+    <description>#notes</description>
+    <filter>
+        <criteriaItems>
+            <column>Progress_Note__c.Status__c</column>
+            <operator>equals</operator>
+            <value>Final</value>
+        </criteriaItems>
+    </filter>
     <format>Tabular</format>
     <name>IN Billing Report</name>
     <params>

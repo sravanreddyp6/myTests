@@ -1,11 +1,13 @@
-public class DocumentController2 {
-
+public without sharing class DocumentController2 {
+	// SHAUN-50:  This code makes the assumption that it handles ONLY document filing for a Service Assignment. The "without sharing" declaration IS intended.
+	//  J. Gilliam, 10/17/14
+	
     public Document__c myDoc { get; set; }
     public List<TMN_Contract__c> contractsForThisDocumentsStates {get;set;}
     public List<Service_Code__c> servCodeList { get; set; }
     public List<SelectOption> programSelectOptions { get; set; }
-    public List<SelectOption> locationSelectOptions { get; set; }
-    public List<SelectOption> serviceLineSelectOptions { get; set; }
+//    public List<SelectOption> locationSelectOptions { get; set; }
+//    public List<SelectOption> serviceLineSelectOptions { get; set; }
     public List<SelectOption> stateSelectOptions { get; set; }
     public List<Contract_Document_JO__c> contractDocXrefs { get; set; }
     public List<ContractWrapper> contracts { get; set; }
@@ -17,8 +19,8 @@ public class DocumentController2 {
     public String pageHeader { get; set; }
     public String currentState { get; set; }
     public String currentProgram { get; set; }
-    public String currentLocation { get; set; }
-    public String currentServiceLine { get; set; }
+//    public String currentLocation { get; set; }
+//    public String currentServiceLine { get; set; }
     public String listState { get; set; }
     public Set<String> setOfPrograms { get; set; }
     public String docType { get; set; }
@@ -52,6 +54,7 @@ public class DocumentController2 {
             displayedContracts.add(new ContractWrapper(contractRecord,contractDocXrefs));
         }
         setOfPrograms = new Set<String>();
+        /*
         Set<String> setOfLocations = new Set<String>();
         locationSelectOptions = new List<SelectOption>();
         locationSelectOptions.add(new SelectOption('--None--','--None--'));
@@ -62,7 +65,11 @@ public class DocumentController2 {
             setOfPrograms.add(sc.Program__c);
             setOfLocations.add(sc.Location__c);
             setOfServiceLines.add(sc.Service_Line__c);
-        }
+        }*/
+        setofPrograms.add('IFCS');
+        setofPrograms.add('MENTOR');
+        setofPrograms.add('Family Vistas - IIH');
+        
         for (String prog : setOfPrograms) {
             List<String> allStates = new List<String>();
             List<String> listOfStatesForThisProgram = new List<String>();
@@ -81,13 +88,23 @@ public class DocumentController2 {
             for(String s : allStates) {
                 uniqueStates.add(s);
             }
-            for(String u : uniqueStates) {
+            List<String> uniqueStatesList = new List<String>();
+            uniqueStatesList.addAll(uniqueStates);
+            uniqueStatesList.sort();
+            for(String u : uniqueStatesList) {
                 stateSelectOptions.add(new SelectOption(u,u));
             }
+            /*
             for(String s : setOfStatesForThisProgram) {    
                 programs.add(new ProgramWrapper(prog,s,programDocXrefs));
                 displayedPrograms.add(new ProgramWrapper(prog,s,programDocXrefs));
-            }    
+            } 
+            */
+            // CTEAE-86- remove state/program association - all programs for all states
+            programs.add( new ProgramWrapper ( prog, '', programDocXrefs));
+            displayedPrograms.add(new ProgramWrapper(prog,'',programDocXrefs));
+            
+               
         }   
         
         programSelectOptions = new List<SelectOption>();
@@ -108,11 +125,12 @@ public class DocumentController2 {
         if(docType=='Fidelity Document') {
             for(Program_Document_Xref__c p : programDocXrefs) {
                     currentProgram = p.Program__c;
-                    currentLocation = p.Location__c;
-                    currentServiceLine = p.Service_Line__c;
+        //            currentLocation = p.Location__c;
+        //            currentServiceLine = p.Service_Line__c;
             }  
         }
-        
+
+/*        
         Set<String> locationsForThisProgram = new Set<String>();
         for(ProgramWrapper p : programs) {          
             for(Service_Code__c sc : servCodeList) {
@@ -137,11 +155,11 @@ public class DocumentController2 {
         for(String sL : serviceLinesForThisProgramLocationCombo) {
                 serviceLineSelectOptions.add(new SelectOption(sL,sL));
         }
-        
+  */      
         System.debug('CONSTRUCTOR END, currentState: ' + currentState);
         System.debug('CONSTRUCTOR END, currentProgram: ' + currentProgram);
-        System.debug('CONSTRUCTOR END, currentLocation: ' + currentLocation);
-        System.debug('CONSTRUCTOR END, currentServiceLine: ' + currentServiceLine);  
+       // System.debug('CONSTRUCTOR END, currentLocation: ' + currentLocation);
+       // System.debug('CONSTRUCTOR END, currentServiceLine: ' + currentServiceLine);  
     }
 
     private void addError(String msg) {
@@ -179,8 +197,8 @@ public class DocumentController2 {
         public Boolean programCheckedBeforeSave { get; set; }
         public Id programXrefId { get; set; }
         public String programState { get; set; }
-        public String programLocation { get; set; }
-        public String programServiceLine { get; set; }
+        //public String programLocation { get; set; }
+        //public String programServiceLine { get; set; }
         
         public ProgramWrapper(string p, String s, List<Program_Document_Xref__c> xrefList){
              this.programName = p;
@@ -191,8 +209,8 @@ public class DocumentController2 {
                 if(checkPdx.Program__c == programName){
                     this.selectedProgram = true;
                     this.programXrefId = checkPdx.Id;
-                    programLocation = checkPdx.Location__c;
-                    programServiceLine = checkPdx.Service_Line__c;
+          //          programLocation = checkPdx.Location__c;
+          //          programServiceLine = checkPdx.Service_Line__c;
                 }
             }               
                 
@@ -239,8 +257,8 @@ public class DocumentController2 {
             myDoc.Relative_Due_Date_Units__c = null;
             myDoc.Relative_Due_Date_UOM__c = null;
             myDoc.Relative_Due_Date_Event__c = null;
-            myDoc.Program__c = currentProgram;
-            myDoc.Service_Line__c = currentServiceLine;
+            //myDoc.Program__c = currentProgram;
+            //myDoc.Service_Line__c = currentServiceLine;
             myDoc.Auto_Include__c = true;
         }
 
@@ -296,9 +314,9 @@ public class DocumentController2 {
                 delete xrefProgramDocsForCaseDocsToDelete;
                 Program_Document_Xref__c newPdxXref = new Program_Document_Xref__c(
                     Document__c = myDoc.Id,
-                    Program__c = currentProgram,
-                    Location__c = currentLocation,
-                    Service_Line__c = currentServiceLine
+                    Program__c = currentProgram //,
+              //      Location__c = currentLocation,
+              //      Service_Line__c = currentServiceLine
                 );
                 newPdxXrefs.add(newPdxXref);            
             }
@@ -343,12 +361,13 @@ public class DocumentController2 {
         displayedPrograms.clear();
         programSelectOptions.add(new SelectOption('--None--','--None--'));
         for (ProgramWrapper p : programs){
-            if(p.programState==currentState) {
+        	// CTEAE-86 - make programs available to all states
+            //if(p.programState==currentState) {
                 programSelectOptions.add(new SelectOption(p.programName,p.programName));
                 displayedPrograms.add(p);
-            }
+            //}
         }
-        
+        System.Debug(displayedPrograms);
         displayedContracts.clear();
         for (ContractWrapper c : contracts){
             if(c.contractState==currentState) {
@@ -356,10 +375,10 @@ public class DocumentController2 {
             }
         }
                 
-        updateLocations();
-        updateServiceLines();       
+        //updateLocations();
+        //updateServiceLines();       
     }   
-    
+    /*
     public void updateLocations() {
         locationSelectOptions = new List<SelectOption>();
         locationSelectOptions.add(new SelectOption('--None--','--None--'));
@@ -392,7 +411,7 @@ public class DocumentController2 {
                 serviceLineSelectOptions.add(new SelectOption(sL,sL));
         }
     }   
-
+	*/
     public class docControllerException extends exception {}
 
 }

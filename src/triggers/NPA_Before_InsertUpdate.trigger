@@ -3,7 +3,9 @@ trigger NPA_Before_InsertUpdate on NPA_Audit__c (before insert, before update) {
     list<Npa_Audit__c > audits = new list<Npa_Audit__c >();
     
     audits = trigger.new;
-    NPA_ClearFields.CheckAndClear(audits);
+    NpaTrigger_Utilities.setDefaults(audits);
+    NpaTrigger_Utilities.setNullFields(audits);
+    //NPA_ClearFields.CheckAndClear(audits);
     
     for(Npa_Audit__c  local : audits){
     

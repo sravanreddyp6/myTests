@@ -19,6 +19,9 @@
         <field>Person_Being_Referred__c.Referrals__r$Hold_Reason__c</field>
     </columns>
     <columns>
+        <field>Person_Being_Referred__c.Referrals__r$Review_On__c</field>
+    </columns>
+    <columns>
         <field>Person_Being_Referred__c.Referrals__r$Referral_Name__c</field>
     </columns>
     <columns>
@@ -39,6 +42,13 @@
     <columns>
         <field>Person_Being_Referred__c.Referrals__r$Assigned_Users__c</field>
     </columns>
+    <filter>
+        <criteriaItems>
+            <column>Person_Being_Referred__c.Referrals__r$Referral_Status__c</column>
+            <operator>equals</operator>
+            <value>On Hold</value>
+        </criteriaItems>
+    </filter>
     <format>Tabular</format>
     <name>Referrals Requiring Action</name>
     <params>
@@ -49,7 +59,7 @@
     <scope>organization</scope>
     <showDetails>true</showDetails>
     <timeFrameFilter>
-        <dateColumn>Person_Being_Referred__c.Referrals__r$Hold_Date__c</dateColumn>
-        <interval>INTERVAL_PREV1</interval>
+        <dateColumn>Person_Being_Referred__c.Referrals__r$Review_On__c</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
     </timeFrameFilter>
 </Report>

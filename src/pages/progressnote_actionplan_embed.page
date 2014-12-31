@@ -100,12 +100,14 @@ function toggleByClass2(cls){
                             </apex:outputLabel>                            
                         </apex:outputPanel> 
                         
-                        <apex:outputPanel layout="block" styleClass="act i{!MapItemInNote[o.id]}" rendered="{!MapItemInNote[o.id]}">
+                        <!-- EB-210:  Hard-coded exclusion of displaying Actions in rendered attribute; needed quick fix for Oct. '14 deployment.  J. Gilliam, 10/16/14. -->
+                        <apex:outputPanel layout="block" styleClass="act i{!MapItemInNote[o.id]}" rendered="{!MapItemInNote[o.id] && Progress_Note__c.RecordType.DeveloperName!='NC_TFC' && Progress_Note__c.RecordType.DeveloperName!='NC_Wks_1_6_TFC'}">
                             <apex:outputPanel layout="block" styleClass="myheader"><b>Actions</b> <br/></apex:outputPanel>
                         </apex:outputPanel>
                               
                             <apex:repeat value="{!mapActions[o.id]}" var="a">
-                                <apex:outputPanel layout="block" styleClass="act i{!MapItemInNote[o.id]}" rendered="{!MapItemInNote[o.id]}">
+                            	 <!-- EB-210:  Hard-coded exclusion of displaying Actions in rendered attribute; needed quick fix for Oct. '14 deployment.  J. Gilliam, 10/16/14. -->
+                                <apex:outputPanel layout="block" styleClass="act i{!MapItemInNote[o.id]}" rendered="{!MapItemInNote[o.id] && Progress_Note__c.RecordType.DeveloperName!='NC_TFC' && Progress_Note__c.RecordType.DeveloperName!='NC_Wks_1_6_TFC'}">
                                    <apex:outputField value="{!a.description__c} "/>                                
                                 </apex:outputPanel>  
                             </apex:repeat>                            

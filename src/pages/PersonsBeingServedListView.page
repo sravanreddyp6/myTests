@@ -147,7 +147,7 @@ table#persons_table.dataTable {
         </div>
         <apex:form id="table_commands">
             <apex:commandButton value="Add New Person"
-                onclick="window.open('{!URLFOR($Action.Account.New)}', '_self'); return false;" rendered="{!canCreateNew}"/>
+                onclick="window.open('{!URLFOR($Action.Account.New)}', '_self'); return false;" rendered="{!canCreateNew && $User.Operating_Group__c != 'Care Meridian'}"/>
             <!-- This is a workaround - We can't just rerender the table, because all the map variables are transient and
             thus are not stored in the View state. -->
             <apex:commandButton value="Refresh" onclick="showLoadingModal()" oncomplete="refreshDataTable()" action="{!updateCon}"
@@ -162,13 +162,24 @@ table#persons_table.dataTable {
             </apex:selectList>
             <!-- <apex:outputLink value="/ui/list/FilterEditPage?ftype=a&retURL={!$CurrentPage.URL}">Create New View</apex:outputLink>-->
         </apex:form>
-        <apex:form onsubmit="return false;">
-            <div id="table_filter">
+        <apex:form rendered="{! (!defaultToActive)}" onsubmit="return false;">
+            <div id="table_filter1">
                 <b>Find a Person&nbsp;</b>
                 <input type="text" name="table_filter_box" id="table_filter_box" />
                 from <select id="table_status_filter_box">
                     <option value="">All</option>
+                    <option value="^Active$">Active</option>                    
+                    <option value="^((?!Active).*)$">Inactive</option>
+                </select>
+            </div>
+        </apex:form>
+        <apex:form rendered="{!defaultToActive}" onsubmit="return false;">
+            <div id="table_filter2">
+                <b>Find a Person&nbsp;</b>
+                <input type="text" name="table_filter_box" id="table_filter_box" />
+                from <select id="table_status_filter_box">
                     <option value="^Active$">Active</option>
+                    <option value="">All</option>                    
                     <option value="^((?!Active).*)$">Inactive</option>
                 </select>
             </div>
@@ -207,7 +218,7 @@ table#persons_table.dataTable {
                 <tbody>
                     <apex:repeat value="{!accountIds}" var="acct">
                         <apex:outputPanel layout="none"
-                            rendered="{!(accountIdToJOSize[acct]=0 && accountIdToAdmissionSize[acct]=0)}">
+                            rendered="{!(accountIdToJOSize[acct]=0 && accountIdToAdmissionSize[acct]=0) }"> 
                             <tr
                                 data-name="{!(accountIdMap[acct].LastName + ', ' +accountIdMap[acct].FirstName)}">
                                 <td><a href="/{!accountIdMap[acct].PersonContactId}"
@@ -255,6 +266,7 @@ table#persons_table.dataTable {
                                                 <apex:param value="{!admission.Person_Being_Served__r.ID}"
                                                     name="person" />
                                                 <apex:param value="{!admission.State__c}" name="State" />
+                                                <apex:param value="{!$CurrentPage.URL}" name="retURL" />
                                             </apex:outputLink></td>
                                         <td style="display:none;">{!admission.Status__c}</td>
                                     </tr>
@@ -323,13 +335,15 @@ table#persons_table.dataTable {
                                                 name="person" />
                                             <apex:param value="{!jo.Service_Assignment__r.Admission__r.State__c}"
                                                 name="State" />
+                                             <apex:param value="{!$CurrentPage.URL}" name="retURL" />
                                         </apex:outputLink>&nbsp;
+                                        <!-- EC-23 - special casing for CM Ludlow  -->
                                         <apex:outputLink styleClass="servicelink" value="/{!jo.Id}#worksheets"
-                                            rendered="{! jo.Status__c='Active Final' && seeWorksheets && jo.Service_Assignment__r.Admission__r.State__c != 'AZ'}">
+                                            rendered="{! jo.Status__c='Active Final' && seeWorksheets && ( jo.Service_Assignment__r.Admission__r.State__c != 'AZ' || jo.Service_Assignment__r.Service_location__r.programid__c == '114165002') }"> 
                                             View Current Worksheets
-                                            
                                         </apex:outputLink>
-                                        <apex:variable value="{!jo.Service_Assignment__r.Admission__r.State__c == 'MN' || jo.Service_Assignment__r.Admission__r.State__c == 'IN' || jo.Service_Assignment__r.Admission__r.State__c == 'CA'}" 
+                                        <!-- WVPN-18: Used seeWorksheets variable to distinguish between Redwood IN and Cambridge IN.  If Redwood, seeWorksheets is set to true as of the date of this note.  J. Gilliam, 04-21-14 -->
+                                        <apex:variable value="{!jo.Service_Assignment__r.Admission__r.State__c == 'MN' || (jo.Service_Assignment__r.Admission__r.State__c == 'IN' && seeWorksheets == true) || jo.Service_Assignment__r.Admission__r.State__c == 'CA' || jo.Service_Assignment__r.Service_location__r.programid__c == '114165002'}" 
                                                         var="HideNoteLink"/>                                                                                                             
                                         
                                         <apex:outputLink styleClass="servicelink" value="/{!jo.Service_Assignment__r.Id}#Notes"
@@ -346,24 +360,29 @@ table#persons_table.dataTable {
             </table>
         </apex:outputPanel>
     </apex:pageBlock>
-    <apex:outputPanel layout="block"
-        style="float: left; width: 49%; padding-right: 10px;" id="divReports" >
-        <apex:pageBlock rendered="{! $user.Operating_Group__c = 'Redwood'}" title="Shift Note Report">
+    
+<!-- Originally removed for Ticket EB-225 (Kate M and SJ fealt this can't be done at this time because of Training users in Redwood -->
+    <apex:outputPanel layout="block" style="float: left; width: 49%; padding-right: 10px;" id="divReports" >
+        <apex:pageBlock rendered="{! $user.Operating_Group__c = 'Redwood'}" title="Summary Reports">
             <apex:outputLink value="/apex/shiftnote_summary_rpt">Shift Note Summary Report</apex:outputLink>
-        
+        	<br /><br />
+        	<apex:outputLink value="/apex/skills_summary_rpt">Skills Summary Report</apex:outputLink>
         </apex:pageBlock>
         <apex:pageBlock rendered="{! $user.Operating_Group__c = 'Cambridge'}" >
-            <apex:outputLink value="/apex/IFCS_Active_MoreThanSixMonths_RPT">Active Persons Being Served Open Over 6 Months Report</apex:outputLink>
-            <br/>
-            <apex:outputLink value="/apex/IFCS_PBS_Count_Rpt">Count Persons Being Served in a Month Report</apex:outputLink>
+            <apex:outputLink value="/apex/IFCS_Active_MoreThanSixMonths_RPT">Active Persons Being Served Open Over 6 Months Report</apex:outputLink><br/>
+            <apex:outputLink value="/apex/IFCS_PBS_Count_Rpt">Count Persons Being Served in a Month Report</apex:outputLink><Br />
+            <apex:outputLink value="/apex/Documented_Actual_Staff_Hrs_Rpt">Documented Actual Staff Hours Report</apex:outputLink><Br />
+            <apex:outputLink value="/apex/Report_KidTraksExport">KidTraks Export</apex:outputLink>
         </apex:pageBlock>        
         <c:TMN_List_Reports filterFor="%#notes%" OpenInEdit="false"  removeSFHeader="true"  TitleColor="black" Title="Reports" />
     </apex:outputPanel>
-
+ 
     <apex:outputPanel layout="block" style="float: left; width: 49%; ">
-        <c:TMN_List_Docs filterFor="Notes" TitleColor="#097709"
-            Title="Help and Training" />
-    </apex:outputPanel>
+        <c:TMN_List_Docs filterFor="Notes" TitleColor="#097709" Title="Help and Training" />
+    </apex:outputPanel>    
+
+<!-- Originally removed for Ticket EB-225 (Kate M and SJ fealt this can't be done at this time because of Training users in Redwood -->
+
     <script type="text/javascript">
     $j = jQuery.noConflict();
     function checkUndefined(field) {
