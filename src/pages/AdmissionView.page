@@ -356,7 +356,7 @@ jQuery(document).ready(function(){
 	</apex:pageBlock>
         
         
-    <apex:pageBlock title="Admission Documents" rendered="{!isCM}"  id="associatedDocuments">
+    <apex:pageBlock title="Admission Documents" rendered="{!isCM && $Setup.SystemSettings__c.PB_AdmissionDocumentFeature__c}"  id="associatedDocuments">
         <apex:actionStatus id="AddEditDocStatus">
             <apex:facet name="start">
                 <span class="pbHeaderButton">
