@@ -7,7 +7,7 @@ trigger ServiceLocationTrigger on Service_Location__c (after insert, after updat
     }
     
     if( Trigger.isUpdate && Trigger.isAfter){
-        handler.OnAfterUpdate(Trigger.new);
+        handler.OnAfterUpdate(Trigger.old, Trigger.new);
     }
     
     

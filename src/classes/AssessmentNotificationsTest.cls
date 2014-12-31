@@ -102,4 +102,99 @@ private class AssessmentNotificationsTest {
 
         
     }
+    
+    
+    static testMethod void TestException() {
+        
+        TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
+        Assessment_Type__c testAssmtType = new Assessment_Type__c(
+            Name = 'CANS'           
+        );
+        insert testAssmtType;
+            
+        List<Assessment_Type__c> testAssmtTypeId = [SELECT Id FROM Assessment_Type__c WHERE Name = 'CANS' LIMIT 1];
+        
+        Assessment_Domain__c testDomain = new Assessment_Domain__c(
+            Name = 'TEST DOMAIN'
+        );
+        insert testDomain;
+        
+        Assessment_Question__c testQuestion = new Assessment_Question__c(
+            Question_Title__c = 'TEST QUESTION',
+            Question_Description__c = 'A TEST QUESTION',
+            Question_Domain__c = testDomain.Id
+        );
+        insert testQuestion;
+        
+        Assessment__c testAssmt = new Assessment__c(
+            Admission__c = myData.theAdm.Id,
+            Assessment_Date__c = date.newinstance(2012, 06, 17),
+            Interval__c = 'Intake',
+            Name = 'TEST ASSMT',
+            Assessment_Type__c = testAssmtTypeId[0].Id,
+            AccountPerson__c = myData.theAccount.Id,
+            TFC_Family_Vistas__c = 'No'
+        );
+        insert testAssmt;
+        
+        AssessmentNotifications aN = new AssessmentNotifications('SELECT Id, AccountPerson__c, AccountPerson__r.Id,  AccountPerson__r.PersonContactId, Admission__c, Admission__r.Name, Admission__r.Status__c, Assessment_Date__c,  CreatedDate, OwnerId, Interval__c, Quarter__c, Assessment_Type__c, Approval_Status__c,  Assessment_Type__r.Name, Admission__r.Person_Being_Served__r.Account.LastName, Admission__r.Person_Being_Served__r.Account.FirstName, Owner.LastName, Owner.FirstName, Owner.Email, Status__c FROM Assessment__c  ORDER BY Assessment_Date__c LIMIT 200');
+
+		try
+			{
+				aN.sendIncompleteNotification(testAssmt, date.newinstance(2012, 06, 17), myData.theAdm.Id);
+			}
+		catch(Exception e)
+			{	
+				system.debug('error msg :'+ e.getMessage());
+				Boolean expectedExceptionThrown =  e.getMessage().contains('null') ? true : false;
+				System.AssertEquals(expectedExceptionThrown, true);
+			}
+    }
+    
+    
+        static testMethod void TestException2() {
+        
+        TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
+                Assessment_Type__c testAssmtType = new Assessment_Type__c(
+            Name = 'CANS'           
+        );
+        insert testAssmtType;
+            
+        List<Assessment_Type__c> testAssmtTypeId = [SELECT Id FROM Assessment_Type__c WHERE Name = 'CANS' LIMIT 1];
+        
+        Assessment_Domain__c testDomain = new Assessment_Domain__c(
+            Name = 'TEST DOMAIN'
+        );
+        insert testDomain;
+        
+        Assessment_Question__c testQuestion = new Assessment_Question__c(
+            Question_Title__c = 'TEST QUESTION',
+            Question_Description__c = 'A TEST QUESTION',
+            Question_Domain__c = testDomain.Id
+        );
+        insert testQuestion;
+        
+        Assessment__c testAssmt = new Assessment__c(
+            Admission__c = myData.theAdm.Id,
+            Assessment_Date__c = date.newinstance(2012, 06, 17),
+            Interval__c = 'Intake',
+            Name = 'TEST ASSMT',
+            Assessment_Type__c = testAssmtTypeId[0].Id,
+            AccountPerson__c = myData.theAccount.Id,
+            TFC_Family_Vistas__c = 'No'
+        );
+        insert testAssmt;
+        
+        AssessmentNotifications aN = new AssessmentNotifications('SELECT Id, AccountPerson__c, AccountPerson__r.Id,  AccountPerson__r.PersonContactId, Admission__c, Admission__r.Name, Admission__r.Status__c, Assessment_Date__c,  CreatedDate, OwnerId, Interval__c, Quarter__c, Assessment_Type__c, Approval_Status__c,  Assessment_Type__r.Name, Admission__r.Person_Being_Served__r.Account.LastName, Admission__r.Person_Being_Served__r.Account.FirstName, Owner.LastName, Owner.FirstName, Owner.Email, Status__c FROM Assessment__c  ORDER BY Assessment_Date__c LIMIT 200');
+		try
+			{
+				aN.sendNotification(testAssmt, date.newinstance(2012, 06, 17), myData.theAdm.Id, 0);
+			}
+		catch(Exception e)
+			{	
+				system.debug('error msg :'+ e.getMessage());
+				Boolean expectedExceptionThrown =  e.getMessage().contains('null') ? true : false;
+				System.AssertEquals(expectedExceptionThrown, true);
+			}
+    }
 }

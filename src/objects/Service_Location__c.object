@@ -18,7 +18,9 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>Edit</actionName>
-        <type>Default</type>
+        <content>ServiceLocationEdit</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
     </actionOverrides>
     <actionOverrides>
         <actionName>Follow</actionName>
@@ -42,7 +44,9 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
-        <type>Default</type>
+        <content>ServiceLocationView</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
     </actionOverrides>
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
@@ -151,6 +155,17 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Source_System__c</fullName>
+        <description>system of record for data</description>
+        <externalId>false</externalId>
+        <label>Source System</label>
+        <length>100</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>State__c</fullName>
         <externalId>false</externalId>
         <label>State</label>
@@ -228,8 +243,12 @@
     <listViews>
         <fullName>All</fullName>
         <columns>NAME</columns>
-        <columns>TIN__c</columns>
-        <columns>NPI__c</columns>
+        <columns>ProgramID__c</columns>
+        <columns>Program__c</columns>
+        <columns>Setting__c</columns>
+        <columns>Service_Value__c</columns>
+        <columns>Street__c</columns>
+        <columns>City__c</columns>
         <columns>State__c</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>

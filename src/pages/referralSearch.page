@@ -2,6 +2,11 @@
 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 <script>
 j$ = jQuery.noConflict();
+
+j$(document).ready(function() {
+	formatDate();
+});
+
 var validateInput = function( ) {
 
 	var fname = j$('input[id$=fname]');
@@ -22,26 +27,40 @@ var validateInput = function( ) {
 		if ( dob.val() != '' && !Date.parse( dob.val())) {
 			errors += "<li>Please enter a valid date of birth.";
 		}
-		if ( age.val() != '' && !parseFloat(age.val()) ) {
+		
+		if ( age.val() != '' && !j$.isNumeric(age.val()))  {
 			errors += "<li>Please enter a valid age.";
 		}	
 		
 		if ( errors != '' ) {
 			j$('#searchErrors').html(errors);
 			return false;
+		} else {
+			return true;
 		}
 	}
-	return( searchRefs());
-	
-
-
+	return true;
 }
+	
+     function formatDate()
+     {
+     	var dob = j$('input[id$=dob]');
+     	var m, d, y;
+     	if (dob.val()) {
+               var args = (new Date(dob.val()).toISOString().split('T')[0]).split('-');
+               dob.val( args[1] + '/' + args[2] + '/' + args[0]);
+        }
+     }
+        
+
+
 </script>
   
-  <apex:form id="referralForm">
-    <apex:actionFunction name="searchRefs" action="{!searchRefs}" rerender="refResultsBlock" />
+  <apex:form id="referralForm">	
+    <apex:actionFunction name="searchRefs" action="{!searchRefs}" rerender="refResultsBlock, msgs" />
  
-    <apex:pageBlock mode="edit" >
+    <apex:pageBlock mode="edit"  >
+    <apex:pageMessages id="msgs" />
  	<div id="searchErrors" style="color:red;padding:10px"/>
       <apex:facet name="header">
         <table cellspacing="0" cellpadding="0" border="0">
@@ -67,14 +86,20 @@ var validateInput = function( ) {
          
         <apex:pageBlockSectionItem >
             <apex:outputLabel >Referral Number</apex:outputLabel>
-            <apex:inputText value="{!referralNumber}" id="rid" onblur="validateInput();"/>
+            <apex:inputText value="{!referralNumber}" id="rid" />
         </apex:pageBlockSectionItem>
-        <apex:inputText label="First Name" id="fname" value="{!personFirstName}" onblur="validateInput();"/>
-        <apex:inputText label="Last Name" id="lname" value="{!personLastName}" onblur="validateInput();"/>
-       <apex:inputText label="Date of Birth" id="dob" value="{!personDOB}" onblur="validateInput();"/>
-       <apex:inputText label="Age" id="age" value="{!personAge}" onblur="validateInput();"/>
-       <apex:inputText label="Gender" id="gender" value="{!personGender}" onblur="validateInput();"/>
-      
+        <apex:inputText label="First Name" id="fname" value="{!personFirstName}" />
+        <apex:inputText label="Last Name" id="lname" value="{!personLastName}" />
+        
+        <apex:inputText label="Date of Birth" id="dob" value="{!personDOB}" size="10" onfocus="DatePicker.pickDate(false, this, false);" onBlur="return formatDate();" />
+       	<apex:inputText label="Age" id="age" value="{!personAge}" />
+       	<apex:selectlist label="Gender" value="{!personGender}" id="gender" size="1">
+       		<apex:selectOptions value="{!genderList}" />
+     	</apex:selectlist>
+     	<apex:pageBlockSectionItem >
+     	<apex:outputLabel value="" />
+      	<apex:commandbutton action="{!searchRefs}" value="Search" onclick="return validateInput();" />
+      	</apex:pageBlockSectionItem>
       </apex:pageBlockSection>
       </apex:outputPanel>
 
@@ -106,16 +131,16 @@ var validateInput = function( ) {
             </apex:column>
             <apex:column headerValue="Type">{!r.Type}</apex:column>
             <apex:column headerValue="Action">
-              <apex:outputPanel rendered="{!IF(AND(referralId == null,r.type == 'Person Being Referred',r.pbsonPBR==null), 'true', 'false')}">
+              <apex:outputPanel rendered="{!IF(AND(referralId == null,r.type == 'Person Being Referred',r.pbsonPBR==null, canCreateReferral), 'true', 'false')}">
                  <a href="/apex/referral?pbrID={!r.Id}">New Referral</a>
               </apex:outputPanel>
-              <apex:outputPanel rendered="{!IF(AND(referralId == null,r.type == 'Person Being Served'), 'true', 'false')}">
+              <apex:outputPanel rendered="{!IF(AND(referralId == null,r.type == 'Person Being Served', canCreateReferral), 'true', 'false')}">
                  <a href="/apex/referral?pbsID={!r.Id}">New Referral</a>
               </apex:outputPanel>
-              <apex:outputPanel rendered="{!IF(AND(referralId != null,r.type == 'Person Being Referred', pbrId != r.ID), 'true', 'false')}">
+              <apex:outputPanel rendered="{!IF(AND(referralId != null,r.type == 'Person Being Referred', pbrId != r.ID, canUpdateReferral), 'true', 'false')}">
                  <a href="/apex/referral?pbrID={!r.Id}&Id={!referralId}">Link Referral</a>
               </apex:outputPanel>
-              <apex:outputPanel rendered="{!IF(AND(referralId != null,r.type == 'Person Being Served'), 'true', 'false')}">
+              <apex:outputPanel rendered="{!IF(AND(referralId != null,r.type == 'Person Being Served', canUpdateReferral), 'true', 'false')}">
                  <a href="/apex/referral?pbsID={!r.Id}&Id={!referralId}">Link Referral</a>
               </apex:outputPanel>
             </apex:column>
