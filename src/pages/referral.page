@@ -94,7 +94,6 @@
 		jQuery.noConflict();
 		jQuery(document).ready(function($) {
 			enableDiagEff();
-
 		});
 	</script>
 
@@ -182,9 +181,7 @@
 			}
 
 			//EC-54 November 2014 Release Make Rank Required for CM
-			if (j$('select[id$=locationEntry_Rank]').val() == '' && {
-					!referralRecordType == 'CareMeridian'
-				}) {
+			if (j$('select[id$=locationEntry_Rank]').val() == '' && {!referralRecordType == 'CareMeridian'}) {
 				errors += '<li>Rank is a required field.</li>';
 			}
 			//End EC-54
