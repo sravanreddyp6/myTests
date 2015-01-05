@@ -77,6 +77,7 @@ private class CMShiftAssessmentEditTest {
         system.assertEquals(false,controller.evaluation.Nutrition_Section_Completed__c);
         system.assertEquals(false,controller.evaluation.Skin_Section_Completed__c);
 		
+		//Diagnostics Tab
 		controller.evaluation.Requires_Isolation_Picklist__c = 'Yes';
 		controller.evaluation.DiagnosisIsolation_Type__c = null;
 		controller.evaluation.IV_Site_Issues__c = 'Yes';
@@ -89,16 +90,7 @@ private class CMShiftAssessmentEditTest {
 		system.assert(controller.evaluation.Diagnostics_Section_Completed__c);
 		system.assertEquals(0,controller.errorMap.get('diagnosticTab').size(),controller.errorMap.get('diagnosticTab'));
 		
-		controller.evaluation.Heart_Sounds__c = 'Irregular';
-		controller.evaluation.Heart_Intervention_Need_Picklist__c = null;
-		controller.evaluation.Peripheral_Pulses_Present__c = 'No';
-		controller.evaluation.Peripheral_Pulses_Describe__c = null;
-		controller.evaluation.Autonomic_Dysreflexia__c = 'Yes';
-		controller.evaluation.Dysreflexia_issue_resolved__c = null;
-		controller.evaluation.Dysreflexia_Issue_Describe__c = null;
-		controller.evaluation.Autonomic_Dysreflexia_Areas_Assessed__c = '';
-		controller.save();
-		system.assertNotEquals(0,controller.errorMap.get('cardioTab').size());
+		//Cardio Tab
 		controller.evaluation.Heart_Sounds__c = 'Regular';
 		controller.evaluation.Autonomic_Dysreflexia__c = 'No';
 		controller.evaluation.Peripheral_Pulses_Present__c = 'Yes';
@@ -109,6 +101,43 @@ private class CMShiftAssessmentEditTest {
 		controller.save();
 		system.assert(controller.evaluation.Cardio_Section_Completed__c);
 		system.assertEquals(0,controller.errorMap.get('cardioTab').size(),controller.errorMap.get('cardioTab'));
+		controller.evaluation.Heart_Sounds__c = 'Irregular';
+		controller.evaluation.Heart_Intervention_Need_Picklist__c = null;
+		controller.save();
+		controller.evaluation.Heart_Intervention_Need_Picklist__c = 'Yes';
+		controller.evaluation.Heart_Rate_Intervention_Describe__c = '';
+		controller.evaluation.Peripheral_Pulses_Present__c = 'No';
+		controller.evaluation.Peripheral_Pulses_Describe__c = null;
+		controller.evaluation.Autonomic_Dysreflexia__c = 'Yes';
+		controller.evaluation.Dysreflexia_issue_resolved__c = null;
+		controller.evaluation.Dysreflexia_Issue_Describe__c = null;
+		controller.evaluation.Autonomic_Dysreflexia_Areas_Assessed__c = '';
+		controller.save();
+		controller.evaluation.Dysreflexia_issue_resolved__c = 'No';
+		controller.evaluation.Dysreflexia_Issue_Describe__c = null;
+		controller.evaluation.Trach_Picklist__c = 'Yes';
+		controller.evaluation.Trach_Type__c = null;
+		controller.evaluation.Trach_Size__c = null;
+		controller.evaluation.PMV_Picklist__c = null;
+		controller.save();
+		controller.evaluation.Trach_Type__c = 'Other';
+		controller.evaluation.Trach_Type_Other__c = null;
+		controller.evaluation.Trach_Size__c = 'Other';
+		controller.evaluation.Trach_Size_Other__c = null;
+		controller.evaluation.O2_Picklist__c = 'Yes';
+		controller.evaluation.O2_Intervention_Needed__c = null;
+		controller.evaluation.O2_Documentation_Required__c = null;
+		controller.evaluation.Ventilator_Picklist__c = 'Yes';
+		controller.evaluation.Ventilator_Type__c = null;
+		controller.save();
+		controller.evaluation.Ventilator_Type__c = 'Intermittent';
+		controller.evaluation.If_Intermittent_Schedule__c = null;
+		controller.selectedDysreflexia = new List<string>{'Bladder Distended','Pain'};
+		controller.selectedSounds = new List<string>{'Clear','Rhonchi'};
+		controller.save();
+		system.assert(!controller.evaluation.Cardio_Section_Completed__c);
+		system.assertNotEquals(0,controller.errorMap.get('cardioTab').size());
+		
 		
 		//GU/GI Nutrition Tab
 		controller.selectedOptionsMap.put('nutrition_route__c',new List<string>{'Oral,PEG'});
@@ -118,6 +147,34 @@ private class CMShiftAssessmentEditTest {
 		controller.save();
 		system.assert(controller.evaluation.Nutrition_Section_Completed__c);
 		system.assertEquals(0,controller.errorMap.get('nutritionTab').size(),controller.errorMap.get('nutritionTab'));
+		controller.evaluation.Oral_Health_Check__c = 'Yes';
+		controller.evaluation.Issues_Noted__c = null;
+		controller.save();
+		controller.evaluation.Issues_Noted__c = 'Yes';
+		controller.evaluation.tongue__c = '';
+		controller.evaluation.Gums__c = '';
+		controller.evaluation.Cheeks__c = '';
+		controller.evaluation.Lips__c = '';
+		controller.evaluation.Saliva__c = '';
+		controller.evaluation.Narrative_Note__c = '';
+		controller.evaluation.PEDS_History_of_Tonsils__c = 'Yes';
+		controller.evaluation.PEDS_Tonsil_History_Describe__c = null;
+		controller.evaluation.RUQ__c = 'Yes';
+		controller.evaluation.RUQ_Describe__c = null;
+		controller.evaluation.LUQ__c = 'Yes';
+		controller.evaluation.LUQ_Describe__c = null;
+		controller.evaluation.RLQ__c = 'Yes';
+		controller.evaluation.RLQ_Describe__c = null;
+		controller.evaluation.LLQ__c = 'Yes';
+		controller.evaluation.LLQ_Describe__c = null;
+		controller.evaluation.Bowel_Issues__c = 'Yes';
+		controller.evaluation.bowel_issue_type__c = '';
+		controller.evaluation.Bowel_Issues_Additional_Information__c = null;
+		controller.evaluation.Dialysis_Picklist__c = 'Yes';
+		controller.evaluation.dialysis_type__c = '';
+		controller.save();
+		system.assert(!controller.evaluation.Nutrition_Section_Completed__c);
+		system.assertNotEquals(0,controller.errorMap.get('nutritionTab').size());
 		
 		//Skin/Body Tab
 		controller.evaluation.Skin_Color__c = 'test';
@@ -130,9 +187,79 @@ private class CMShiftAssessmentEditTest {
 		controller.save();
 		system.assert(controller.evaluation.Skin_Section_Completed__c);
 		system.assertEquals(0,controller.errorMap.get('skinBodyTab').size(),controller.errorMap.get('skinBodyTab'));
+		controller.evaluation.Skin_Edema__c = 'Yes';
+		controller.evaluation.Skin_Edema_Location__c = null;
+		controller.evaluation.Skin_Edema_Pitting__c = null;
+		controller.save();
+		system.assert(!controller.evaluation.Skin_Section_Completed__c);
+		system.assertNotEquals(0,controller.errorMap.get('skinBodyTab').size());
 		
+		//Neuro Tab
+		controller.evaluation.Rancho_Level__c = '(1) No Response';
+		controller.evaluation.Safety_Awareness__c = 'Intact';
+		controller.evaluation.Pain_Present__c = 'No';
+		controller.save();
+		system.assert(controller.evaluation.Neuro_Section_Completed__c);
+		system.assertEquals(0,controller.errorMap.get('neuroTab').size(),controller.errorMap.get('neuroTab'));
+		controller.evaluation.Rancho_Level__c = '(2) Generalized Response';
+		controller.selectedNeuroOrient = new List<string>{'Person','Situation'};
+		controller.selectedMoods = new List<string>{'Sad','Flat'};
+		controller.evaluation.Desire_to_hurt_themselves__c = null;
+		controller.save();
+		controller.evaluation.Desire_to_hurt_themselves__c = 'Yes';
+		controller.evaluation.Plan_to_Harm_themselves__c = null;
+		controller.evaluation.Able_to_make_Needs_Known__c = 'No';
+		controller.evaluation.Expression__c = null;
+		controller.save();
+		controller.evaluation.Expression__c = 'Non-Verbal';
+		controller.selectedVerbalExpression = new List<String>();
+		controller.save();
+		controller.selectedVerbalExpression = new List<string>{'Gesture','Sign Language'};
+		controller.evaluation.Pain_Present__c = 'Yes';
+		controller.addPainResponse();
+		controller.save();
+		controller.evaluation.Pain_Present__c = 'No';
+		controller.updatePainResponses();
+		controller.save();
+		system.assert(!controller.evaluation.Neuro_Section_Completed__c);
+		system.assertNotEquals(0,controller.errorMap.get('neuroTab').size());
 		
-				
+		//OrthoTab
+		controller.evaluation.Cast_Picklist__c = 'No';
+		controller.evaluation.External_Device_Picklist__c = 'No';
+		controller.evaluation.Traction_Picklist__c = 'No';
+		controller.save();
+		system.assert(controller.evaluation.Ortho_Section_Completed__c );
+		system.assertEquals(0,controller.errorMap.get('orthoTab').size(),controller.errorMap.get('orthoTab'));
+		controller.evaluation.Cast_Picklist__c = 'Yes';
+		controller.evaluation.Ortho_Cast_Location__c = null;
+		controller.save();
+		controller.evaluation.Ortho_Cast_Location__c = 'Other';
+		controller.evaluation.Cast_Location__c = null;
+		controller.evaluation.External_Device_Picklist__c = 'Yes';
+		controller.evaluation.External_Devices_Location__c = null;
+		controller.evaluation.External_Devices_Type__c = null;
+		controller.evaluation.Traction_Picklist__c = 'Yes';
+		controller.evaluation.Traction_Location__c = null;
+		controller.evaluation.Traction_Type__c = null;
+		controller.evaluation.Traction_Weight__c = null;
+		controller.save();
+		system.assert(!controller.evaluation.Ortho_Section_Completed__c );
+		system.assertnotEquals(0,controller.errorMap.get('orthoTab').size());
+		
+		//Psycho/Social Tab
+		controller.evaluation.Resident_Coping_Well__c = null;
+		controller.save();
+		controller.evaluation.Resident_Coping_Well__c = 'No';
+		controller.evaluation.Coping_Description__c = null;
+		controller.selectedCoping = new List<string>{'Grieving','Recent Life Changes'};
+		controller.save();
+		system.assert(!controller.evaluation.Psycho_Social_Section_Completed__c );
+		system.assertnotEquals(0,controller.errorMap.get('psychoSocialTab').size());
+		controller.evaluation.Resident_Coping_Well__c  = 'Yes';
+		controller.save();
+		system.assert(controller.evaluation.Psycho_Social_Section_Completed__c );
+		system.assertEquals(0,controller.errorMap.get('psychoSocialTab').size(),controller.errorMap.get('psychoSocialTab'));		
 	}
 
 }
