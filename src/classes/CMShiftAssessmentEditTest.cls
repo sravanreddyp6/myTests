@@ -5,12 +5,6 @@ private class CMShiftAssessmentEditTest {
 		TMN_Generic_Core_TestData testData = new TMN_Generic_Core_TestData();
 		Evaluation__c eval = new Evaluation__c ();
 		eval.ServiceAssignment__c = testData.theSA.Id;
-		eval.Resident_Demonstrating_Issues__c = '';
-		eval.Orientation__c = '';
-		eval.Mood__c = '';
-		eval.Breathe_Sounds__c = '';
-		eval.Autonomic_Dysreflexia_Areas_Assessed__c = '';
-		eval.Expression_Other__c ='';
 		eval.Details_Section_Completed__c = true;
 		insert eval;
 		
@@ -93,7 +87,7 @@ private class CMShiftAssessmentEditTest {
 		controller.evaluation.IV_Narrative_Note__c = 'test';
 		controller.save();
 		system.assert(controller.evaluation.Diagnostics_Section_Completed__c);
-		system.assertEquals(0,controller.errorMap.get('diagnosticTab').size());
+		system.assertEquals(0,controller.errorMap.get('diagnosticTab').size(),controller.errorMap.get('diagnosticTab'));
 		
 		controller.evaluation.Heart_Sounds__c = 'Irregular';
 		controller.evaluation.Heart_Intervention_Need_Picklist__c = null;
@@ -114,20 +108,31 @@ private class CMShiftAssessmentEditTest {
 		controller.evaluation.Ventilator_Picklist__c = 'No';
 		controller.save();
 		system.assert(controller.evaluation.Cardio_Section_Completed__c);
-		system.assertEquals(0,controller.errorMap.get('cardioTab').size());
+		system.assertEquals(0,controller.errorMap.get('cardioTab').size(),controller.errorMap.get('cardioTab'));
 		
 		//GU/GI Nutrition Tab
-		controller.evaluation.nutrition_route__c = 'Oral;PEG';
+		controller.selectedOptionsMap.put('nutrition_route__c',new List<string>{'Oral,PEG'});
+		controller.evaluation.Oral_Health_Check__c = 'No';
+		controller.evaluation.Bowel_Issues__c = 'No';
+		controller.evaluation.Dialysis_Picklist__c = 'No';
+		controller.save();
+		system.assert(controller.evaluation.Nutrition_Section_Completed__c);
+		system.assertEquals(0,controller.errorMap.get('nutritionTab').size(),controller.errorMap.get('nutritionTab'));
+		
+		//Skin/Body Tab
+		controller.evaluation.Skin_Color__c = 'test';
+		controller.evaluation.Skin_Temperature__c  = 'test';
+		controller.evaluation.Skin_Moisture__c  = 'test';
+		controller.evaluation.Skin_Turgor__c  = 'test';
+		controller.evaluation.Skin_Behavior__c  = 'test';
+		controller.evaluation.Skin_Edema__c = 'No';
+		controller.evaluation.Skin_Intact_Picklist__c = 'Yes';
+		controller.save();
+		system.assert(controller.evaluation.Skin_Section_Completed__c);
+		system.assertEquals(0,controller.errorMap.get('skinBodyTab').size(),controller.errorMap.get('skinBodyTab'));
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
+				
 	}
 
 }

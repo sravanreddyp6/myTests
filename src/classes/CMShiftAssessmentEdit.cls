@@ -643,6 +643,16 @@ public with sharing class CMShiftAssessmentEdit {
 			}
 
 		}
+		
+		if(this.evaluation.Dialysis_Picklist__c == null) {
+			nutrition = false;
+			nutritionErrors.add('Dialysis field is mandatory');
+		}
+		
+		if(this.evaluation.Dialysis_Picklist__c == 'Yes' && this.evaluation.dialysis_type__c == '') {
+			nutrition = false;
+			nutritionErrors.add('Dialysis type is mandatory');
+		}
 
 		return nutrition;
 	}
