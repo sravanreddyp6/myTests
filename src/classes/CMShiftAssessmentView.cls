@@ -134,12 +134,13 @@ public with sharing class CMShiftAssessmentView {
             
         ctlMap = CreateFieldControls( stdController.getRecord().getSObjectType().getDescribe().getName(), stdController );
         
-         // Naming the PDF in case this controller is used for the PDF page
-         String file;
-        file = 'Test.pdf';
+        // Naming the PDF in case this controller is used for the PDF page
+        String file;
+        file = this.evaluation.Name+'.pdf';
         file = file.replaceAll('[|,||\\,||"||:|~|!|@|#|$|%|^|&|*|_|+|=|<|>|?|\\(|\\)|\\{|\\}|\\;|\\\'"]', ' ');
-        // Assigns the Shift Assessment Name to the PDF dynamically
+        // Assigns the Shift Assessment Name to the PDF dynamically. Doesn't work with Chrome when Adboe Reader plugin is enabled. Sravan:01/05/2015 4:15 PM
         Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename="'+file+'"');
+    
     }
 
     public Evaluation_Response__c currentVitalsDetail {get; set; }
