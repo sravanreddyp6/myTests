@@ -5,7 +5,7 @@ public with sharing class EvaluationEditController{
 
     public EvaluationEditController(ApexPages.standardController stdController) {
         this.stdController = stdController;
-        stdController.addFields(new String[]{'OwnerId','Status__c'});
+        stdController.addFields(new String[]{'OwnerId','Owner.Name','Status__c'});
         evaluation = (Evaluation__c) stdController.getRecord();
         isShift = false;
     }
@@ -23,7 +23,7 @@ public with sharing class EvaluationEditController{
         	 returnURL = new PageReference('/apex/CMShiftAssessmentEdit?id='+evaluation.id);
         	} else if(evaluation.OwnerId != UserInfo.getUserId()){
         		isShift = true;
-        		ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Only Owner ('+UserInfo.getName()+') can Edit this Assessment'));
+        		ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Only Owner ('+evaluation.Owner.Name+') can Edit this Assessment'));
         		return null;
         	} else if(evaluation.Status__c != 'Draft'){
         		isShift = true;
