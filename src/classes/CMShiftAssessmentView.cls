@@ -149,6 +149,14 @@ public with sharing class CMShiftAssessmentView {
     public pageReference finalizeEval() {
         this.evaluation.Status__c = 'Final';
         update this.evaluation;
+        
+        //Close out the task created for this Assessment
+        List<Task> checkNotification = [SELECT ID, WhatId, Status FROM Task WHERE WhatId=:this.evaluation.Id AND Status != 'Completed' LIMIT 1];
+        if(checkNotification.size() > 0) {
+        	Task t = checkNotification[0];
+        	t.Status = 'Completed';
+        	update t;
+        }
         pageReference backtoView = new pageReference('/apex/CMShiftAssessmentView?id='+this.evaluation.Id);
         backtoview.setRedirect(true);
         return backtoView;
@@ -157,6 +165,13 @@ public with sharing class CMShiftAssessmentView {
     public pageReference disregardEval() {
         this.evaluation.status__c = 'Disregard';
         update this.evaluation;
+        //Close out the task created for this Assessment
+        List<Task> checkNotification = [SELECT ID, WhatId, Status FROM Task WHERE WhatId=:this.evaluation.Id AND Status != 'Completed' LIMIT 1];
+        if(checkNotification.size() > 0) {
+        	Task t = checkNotification[0];
+        	t.Status = 'Completed';
+        	update t;
+        }
         pageReference backtoView = new pageReference('/apex/CMShiftAssessmentView?id='+this.evaluation.Id);
         backtoview.setRedirect(true);
         return backtoView;

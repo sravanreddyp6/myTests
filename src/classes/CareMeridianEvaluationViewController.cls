@@ -59,7 +59,7 @@ public with sharing class CareMeridianEvaluationViewController {
         file = file.replaceAll('[|,||\\,||"||:|~|!|@|#|$|%|^|&|*|_|+|=|<|>|?|\\(|\\)|\\{|\\}|\\;|\\\'"]', ' ');
         // Assigns the person being referred Name to the PDF dynamically
         Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename='+file);
-        //Grab the Service Assignment details to populate the breadcrumb when user opens Evaluation from Sevrice Assignment Page. EC-41 Sravan:10/13/2014 1:15 PM.
+        //Grab the Service Assignment details to populate the breadcrumb when user opens Evaluation from Service Assignment Page. EC-41 Sravan:10/13/2014 1:15 PM.
         if(Apexpages.currentpage().getparameters().get('SA_Id') != null ){
             SA =[SELECT ID, Name, Admission__r.Name,Admission__c, Admission__r.Person_being_served__c, Admission__r.Person_being_served__r.Name FROM Service_Assignment__c WHERE Id =:ApexPages.currentPage().getParameters().get('SA_Id') ];
         }
