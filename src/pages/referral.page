@@ -186,6 +186,14 @@
 			}
 			//End EC-54
 
+			//NEVAL-65
+			if ({!referralRecordType == 'CareMeridian' || referralRecordType == 'NeuroRestorative'}) {
+				if (j$('[id$=hasNonClosedPrimaryLocation]').text() == 'true' && j$('select[id$=locationEntry_Rank]').val() == 'Primary' && ['New', 'Active', 'On Hold'].indexOf(j$('select[id$=locationEntry_Status]').val()) != -1) {
+					errors += '<li>Another non-closed primary already exists.</li>';
+				}
+			}
+			//End NEVAL-65
+
 			if (j$('select[id$=locationEntry_Status]').val() == '') {
 				errors += '<li>Status is a required field.</li>';
 			}
@@ -1132,7 +1140,7 @@
 		<apex:actionRegion >
 			<apex:outputPanel id="ReferralLocationModal" style="display:none">
 
-				<apex:actionFunction name="saveLocation" action="{!saveLocation}" status="myStatus" rerender="locations,locationEntry,msgs" />
+				<apex:actionFunction name="saveLocation" action="{!saveLocation}" status="myStatus" rerender="locations,locationEntry,msgs,hasNonClosedPrimaryLocation" />
 
 				<apex:pageBlock title="Add Location">
 					<apex:pageblockButtons location="bottom">
@@ -1161,7 +1169,7 @@
 						<apex:inputHidden id="locationEntry_ServiceLocation_lkid" value="{!searchedServiceLocationId}" />
 
 						<apex:inputField value="{!location.User_Assigned__c}" id="locationEntry_User" rendered="{! referralRecordType != 'CareMeridian'}" />
-						<apex:inputField value="{!location.Rank__c}" id="locationEntry_Rank" rendered="{! referralRecordType == 'CareMeridian'}" />
+						<apex:inputField value="{!location.Rank__c}" id="locationEntry_Rank" rendered="{! referralRecordType == 'CareMeridian' || referralRecordType == 'NeuroRestorative'}" />
 						<apex:inputField value="{!location.Status__c}" id="locationEntry_Status" />
 						<apex:inputHidden value="{!location.Service_Location__c}" id="locationServiceLocation" />
 					</apex:pageBlockSection>
@@ -1905,6 +1913,7 @@
 
 			</apex:pageBlockSection>
 
+			<apex:outputText value="{!hasNonClosedPrimaryLocation}" id="hasNonClosedPrimaryLocation" style="display: none; " />
 			<apex:pageBlockSection columns="1" title="{! if (ReferralRecordType == 'CareMeridian', 'Requested Locations', 'Locations Working Referral')}" id="locations">
 				<apex:pageBlockSectionItem >
 					<apex:outputPanel layout="none">
@@ -1926,7 +1935,7 @@
 						<c:AddressDisplay Street1="{!location.Service_Location_Street__c}" City="{!location.Service_Location_City__c}" State="{!location.Service_Location_State__c}" Zip="{!location.Service_Location_Zip__c}" />
 					</apex:column>
 					<apex:column value="{!location.User_Assigned__c}" rendered="{! ReferralRecordType != 'CareMeridian'}" />
-					<apex:column value="{!location.Rank__c}" rendered="{! ReferralRecordType == 'CareMeridian'}" />
+					<apex:column value="{!location.Rank__c}" rendered="{!ReferralRecordType == 'CareMeridian' || referralRecordType=='NeuroRestorative'}" />
 					<apex:column value="{!location.Status__c}" id="locationStatus" />
 					<apex:column value="{!location.LastModifiedDate}" />
 				</apex:pageBlockTable>

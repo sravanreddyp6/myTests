@@ -144,6 +144,14 @@
 				}
 			}
 
+			//NEVAL-65
+			if ({!referralRecordType == 'CareMeridian' || referralRecordType == 'NeuroRestorative'}) {
+				if (j$('[id$=nonClosedPrimaryLocationId]').text() != '' && j$('[id$=nonClosedPrimaryLocationId]').text() != j$('input[id$=locationEntry_Id]').val() && j$('select[id$=locationEntry_Rank]').val() == 'Primary' && ['New', 'Active', 'On Hold'].indexOf(j$('select[id$=locationEntry_Status]').val()) != -1) {
+					errors += '<li>Another non-closed primary already exists.</li>';
+				}
+			}
+			//End NEVAL-65
+
 			if (j$('select[id$=locationEntry_Status]').val() == '') {
 				errors += '<li>Status is a required field.</li>';
 			}
@@ -440,7 +448,7 @@
 		<apex:actionFunction name="showAddAgency" action="{!showAddAgency}" rerender="agencies,agencyEntry,msgs" />
 		<apex:actionFunction name="saveActivity" action="{!saveActivity}" rerender="activities,activityEntry,msgs" />
 		<apex:actionFunction name="showAddActivity" action="{!showAddActivity}" rerender="activities,activityEntry,msgs" oncomplete="openModalDialog('ActivityModal', 'span', 'Add Activity');" />
-		<apex:actionFunction name="saveLocation" action="{!saveLocation}" rerender="locations,referralLocationEntry,msgs" />
+		<apex:actionFunction name="saveLocation" action="{!saveLocation}" rerender="locations,referralLocationEntry,msgs,nonClosedPrimaryLocationId" />
 		<apex:actionFunction name="showAddLocation" action="{!showAddLocation}" rerender="locations,referralLocationEntry,msgs" oncomplete="openModalDialog('ReferralLocationModal', 'span', 'Add Location'); " status="AddLocationStatus" />
 
 		<apex:pageMessages id="msgs" />
@@ -1080,7 +1088,7 @@
 						<c:CustomLookup id="sl" formID="referralForm" uniqueId="searchLocation" type="Service_Location__c" parentId="{!location.Service_Location__c}" parentName="{!location.Service_Location__r.Name}" filters="name,city__c,state__c" return="programid__c,setting__c,program__c,service_value__c,street__c,city__c,state__c,zip__c,phone__c" />
 					</apex:pageBlockSectionItem>
 					<apex:inputField value="{!location.User_Assigned__c}" id="locationEntry_User" rendered="{!referralRecordType != 'CareMeridian'}" />
-					<apex:inputField value="{!location.Rank__c}" id="locationEntry_Rank" rendered="{!referralRecordType == 'CareMeridian'}" />
+					<apex:inputField value="{!location.Rank__c}" id="locationEntry_Rank" rendered="{!referralRecordType == 'CareMeridian' || referralRecordType == 'NeuroRestorative'}" />
 					<apex:inputField value="{!location.Status__c}" id="locationEntry_Status" />
 					<apex:inputHidden value="{!location.Id}" id="locationEntry_Id" />
 
@@ -1413,7 +1421,7 @@
 				</apex:pageBlockSectionItem>
 
 			</apex:pageBlockSection>
-
+			<apex:outputText value="{!nonClosedPrimaryLocationId}" id="nonClosedPrimaryLocationId" style="display: none; " />
 			<apex:pageBlockSection columns="1" title="{! if (ReferralRecordType == 'CareMeridian', 'Requested Locations', 'Locations Working Referral')}" id="locations" collapsible="false">
 				<apex:pageBlockSectionItem >
 					<apex:outputPanel layout="none">
@@ -1438,8 +1446,8 @@
 					<apex:column headerValue="Address">
 						<c:AddressDisplay Street1="{!location.Service_Location_Street__c}" City="{!location.Service_Location_City__c}" State="{!location.Service_Location_State__c}" Zip="{!location.Service_Location_Zip__c}" />
 					</apex:column>
-					<apex:column value="{!location.User_Assigned__c}" rendered="{! referralRecordType != 'CareMeridian'}" />
-					<apex:column value="{!location.Rank__c}" rendered="{! referralRecordType == 'CareMeridian'}" />
+					<apex:column value="{!location.User_Assigned__c}" rendered="{!referralRecordType != 'CareMeridian'}" />
+					<apex:column value="{!location.Rank__c}" rendered="{!referralRecordType == 'CareMeridian' || referralRecordType == 'NeuroRestorative'}" />
 					<apex:column value="{!location.Status__c}" />
 					<apex:column value="{!location.LastModifiedDate}" />
 				</apex:pageBlockTable>
