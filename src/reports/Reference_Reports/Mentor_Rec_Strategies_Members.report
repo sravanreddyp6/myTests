@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>CollaborationGroup$Name</field>
+    </columns>
+    <columns>
+        <field>CollaborationGroup.GroupMembers$Member</field>
+    </columns>
+    <columns>
+        <field>CollaborationGroup.GroupMembers$NotificationFrequency</field>
+    </columns>
+    <columns>
+        <field>CollaborationGroup.GroupMembers$CollaborationRole</field>
+    </columns>
+    <columns>
+        <field>CollaborationGroup.GroupMembers$IsActive</field>
+    </columns>
+    <filter>
+        <criteriaItems>
+            <column>CollaborationGroup$Name</column>
+            <operator>equals</operator>
+            <value>Mentor Recruitment Strategies</value>
+        </criteriaItems>
+    </filter>
+    <format>Tabular</format>
+    <name>Mentor Rec. Strategies Members</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>Chatter_Groups__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <sortColumn>CollaborationGroup.GroupMembers$Member</sortColumn>
+    <sortOrder>Asc</sortOrder>
+    <timeFrameFilter>
+        <dateColumn>CollaborationGroup$CreatedDate</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>
