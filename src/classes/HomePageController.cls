@@ -390,6 +390,9 @@ public with sharing class HomePageController{
 		};
 		if (sortColumn != '' && sortColumn != null && sortOrder != '' && sortOrder != null) {
 			orderStatement = ' order by ' + colNumToFieldMap.get(sortColumn) + ' ' + sortOrder;
+			if (sortOrder.toLowerCase() == 'asc') {  // Make sure null values are sorted differently for different sort order (by default, it's nulls first)
+				orderStatement += ' nulls last';
+			}
 		} else {
 			orderStatement = ' order by ActivityDate desc, Priority';
 		}
