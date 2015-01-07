@@ -21,10 +21,18 @@ public with sharing class TaskTriggerHandler {
         Schema.DescribeSObjectResult objectId = Evaluation__c.sObjectType.getDescribe();
 		String keyPrefix = objectId.getKeyPrefix();
 		system.debug('prefix'+keyPrefix);
+		
+		List<Id> updatedDocIds = new List<Id>();
+        List<Id> taskIds = new List<Id>();      
+
         for(Task t: updatedObjects){
         	if(string.ValueOf(t.WhatId).startswith(keyPrefix)){
         		evalIds.add(t.WhatId);
         	}
+        	else if (t.WhatId.getSObjectType().getDescribe().getName() == 'PB_AssociatedDoc__c' && t.status == 'Completed' && oldObjMap.get(t.id).status != 'Completed' ){
+                updatedDocIds.add(t.WhatId);
+                taskIds.add(t.Id);
+            }
         }
         
         Set<id> filteredIds = new set<id>();
@@ -36,6 +44,22 @@ public with sharing class TaskTriggerHandler {
         	if(filteredIds.contains(t.WhatId) && oldObjMap.get(t.id).Status != 'Completed' && t.Status == 'Completed'){
         		t.addError('This task cannot be upated as the Associated Shift Assessment is not finalized or Disregarded');
         	}
+        }
+        
+                // the update was made to the one of the associated Doc
+        if (updatedDocIds.size() > 0){
+            List<PB_AssociatedDoc__c> assocDocs = [Select id, Status__c 
+                                                   from PB_AssociatedDoc__c
+                                                  where Status__c != 'Received'
+                                                    And id =: updatedDocIds];
+                                                    
+            // at least one associated doc with the status of not Received.
+            if (assocDocs.size() > 0){
+                for (Id taskId : taskIds){
+                    newObjMap.get(taskId).addError('Task cannot be Completed untill the associated document status is not updated to Received.');
+                    break;
+                }
+            }
         }
         
     }
