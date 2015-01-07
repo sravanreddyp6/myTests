@@ -189,7 +189,7 @@
 			//NEVAL-65
 			if ({!referralRecordType == 'CareMeridian' || referralRecordType == 'NeuroRestorative'}) {
 				if (j$('[id$=hasNonClosedPrimaryLocation]').text() == 'true' && j$('select[id$=locationEntry_Rank]').val() == 'Primary' && ['New', 'Active', 'On Hold'].indexOf(j$('select[id$=locationEntry_Status]').val()) != -1) {
-					errors += '<li>Another non-closed primary already exists.</li>';
+					errors += '<li>Another New, Active, or On Hold primary location already exists.</li>';
 				}
 			}
 			//End NEVAL-65
