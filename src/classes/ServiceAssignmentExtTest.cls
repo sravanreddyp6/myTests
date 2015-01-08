@@ -186,8 +186,9 @@ private class ServiceAssignmentExtTest {
         controller.saveServiceCodeSelections();
         controller.loadProgramDocXrefs();
         
-        controller.addNurAssessment();
-        system.assertEquals(1,Controller.evaluations.size());
+        
+        //controller.addNurAssessment();
+        //system.assertEquals(1,Controller.evaluations.size());
         
         system.assert(!controller.showWorksheetBlocks);
         System.Assert( controller.canCreateWorksheet);
@@ -209,6 +210,19 @@ private class ServiceAssignmentExtTest {
         controller.SaveServAssign();
         
         
+    }
+    
+    public testmethod static void showShiftAssessment(){
+    	CreateObjects();
+    	ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
+        ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
+        controller.showAddevaluation();
+        controller.evaluation.Shift_Start_time__c = system.Now();
+        controller.evaluation.Shift_End_time__c = system.now().addminutes(30);
+        controller.saveEvaluation();
+        List<Evaluation__c> shiftAsmts = [SELECT Id, NAME FROM Evaluation__c WHERE ServiceAssignment__c =:ServAssign.Id AND RecordType.Name = 'CMShiftAssessment'];
+        system.assertEquals(1,shiftAsmts.size());
+ 
     }
     
     public testmethod static void showWorksheetBlocks(){
