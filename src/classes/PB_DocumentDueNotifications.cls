@@ -12,6 +12,7 @@ global class PB_DocumentDueNotifications implements Database.Batchable<sObject> 
     }
 
     global void execute(Database.BatchableContext BC, List<PB_AssociatedDoc__c> scope){
+        sendBatchStartEmail();
         
         Set<Id> admIdsFromScope = new Set<Id>();
         List<Id> assocIdsFromScope = new List<Id>();
@@ -67,7 +68,108 @@ global class PB_DocumentDueNotifications implements Database.Batchable<sObject> 
     }
    
     global void finish(Database.BatchableContext BC){
-       
-    }
+        Messaging.reserveSingleEmailCapacity(1);
+                Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+
+                List<String> userEmails = new List<String>();
+                userEmails.add('_TMN_Dev_Team@thementornetwork.com');
+                mail.setToAddresses(userEmails);
+                // Specify the address used when the recipients reply to the email.                 
+                mail.setReplyTo('notifications@thementornetwork.com');
+         
+                // Specify the name used as the display name.      
+                mail.setSenderDisplayName('ESD Batch Jobs');
+         
+                // Specify the subject line the your email.      
+                mail.setSubject('Admission Document Due Batch Confirmation');
+                         
+                // Set to True if you want to BCC yourself on the email.    
+                mail.setBccSender(false);
+                          
+                // Optionally append the salesforce.com email signature to the email. 
+                // The email address of the user executing the Apex Code will be used.             
+                mail.setUseSignature(false);
+                           
+                // Specify the text content of the email.                     
+                mail.setPlainTextBody(
+                'Hello!  The Admission Document Due Notifications (PB_DocumentDueNotifications.cls) batch job ran.'
+                + '/r/n/r/n'
+                + 'Datetime of Execution: ' + System.now()
+                + '/r/n'
+                + 'Thanks!'
+                + 'r/n'
+                + 'The MENTOR ESD Application'
+                );
+                
+                mail.setHtmlBody(
+                'Hello!  The Admission Document Due Notifications (PB_DocumentDueNotifications.cls) batch job ran.  '
+                + '<br /><br />'
+                + 'Datetime of Execution: ' + System.now()
+                + '<br /><br />'
+                + 'Thanks!'
+                + '<br />'
+                + 'The MENTOR ESD Application'
+                );
+                
+                mail.setSaveAsActivity(false);
+                
+                // Send the email you have created. 
+                    
+                Messaging.sendEmail(new Messaging.SingleEmailMessage[] { mail });
+   }
+   
+       private void sendBatchStartEmail(){
+                Messaging.reserveSingleEmailCapacity(1);
+                Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+        
+                List<User> userIDs = [SELECT Id FROM User WHERE Name = 'Neeraj Gupta'];
+                Id userID = userIds[0].Id;
+                
+                // Set receiver of email "target" to the User Id of the script author.
+                mail.setTargetObjectId(userID);
+                
+                // Specify the address used when the recipients reply to the email.                 
+                mail.setReplyTo('notifications@thementornetwork.com');
+         
+                // Specify the name used as the display name.      
+                mail.setSenderDisplayName('ESD Batch Jobs');
+         
+                // Specify the subject line the your email.      
+                mail.setSubject('Starting Admission Document Due Batch');
+                         
+                // Set to True if you want to BCC yourself on the email.    
+                mail.setBccSender(false);
+                          
+                // Optionally append the salesforce.com email signature to the email. 
+                // The email address of the user executing the Apex Code will be used.             
+                mail.setUseSignature(false);
+                           
+                // Specify the text content of the email.                     
+                mail.setPlainTextBody(
+                'Hello!  The Admission Document Due Notifications (PB_DocumentDueNotifications.cls) batch job starting....'
+                + '/r/n/r/n'
+                + 'Datetime of Execution: ' + System.now()
+                + '/r/n'
+                + 'Thanks!'
+                + 'r/n'
+                + 'The MENTOR ESD Application'
+                );
+                
+                mail.setHtmlBody(
+                'Hello!  The Admission Document Due Notifications (PB_DocumentDueNotifications.cls) batch job starting....'
+                + '<br /><br />'
+                + 'Datetime of Execution: ' + System.now()
+                + '<br /><br />'
+                + 'Thanks!'
+                + '<br />'
+                + 'The MENTOR ESD Application'
+                );
+                
+                mail.setSaveAsActivity(false);
+                
+                // Send the email you have created. 
+                    
+                Messaging.sendEmail(new Messaging.SingleEmailMessage[] { mail });
+   }
     
 }
