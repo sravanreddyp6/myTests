@@ -8,6 +8,7 @@
 	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}" />
 	<apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}" />
+	<apex:variable value="{!$CurrentPage.parameters.showErrors == '1'}" var="showErrors" />
 	<style>
 		[id$=skinBodyFooter] {
 			clear: both;
@@ -801,7 +802,7 @@
 					</apex:pageBlockSection>
 				</apex:pageBlock>
 				<apex:pageBlock >
-					<apex:pageBlockSection columns="2" collapsible="false" >
+					<apex:pageBlockSection columns="2" collapsible="false" rendered="{!showErrors}" >
 						<apex:pageBlockTable value="{!errorMap['diagnosticTab']}" var="d" columns="1" >
 							<apex:repeat value="{!d}" var="temp" >
 								<apex:column >
@@ -905,7 +906,7 @@
 					</apex:pageBlockSection>
 				</apex:pageBlock>
 				<apex:pageBlock >
-					<apex:pageBlockSection columns="2" collapsible="false">
+					<apex:pageBlockSection columns="2" collapsible="false" rendered="{!showErrors}" >
 						<apex:pageBlockTable value="{!errorMap['cardioTab']}" var="d" columns="1" title="Error Messages">
 							<apex:repeat value="{!d}" var="temp" >
 								<apex:column >
@@ -1253,7 +1254,7 @@
 					</apex:pageBlockSection>
 				</apex:pageBlock>
 				<apex:pageBlock >
-					<apex:pageBlockSection columns="2" collapsible="false" >
+					<apex:pageBlockSection columns="2" collapsible="false" rendered="{!showErrors}" >
 						<apex:pageBlockTable value="{!errorMap['nutritionTab']}" var="d" columns="1" >
 							<apex:repeat value="{!d}" var="temp" >
 								<apex:column >
@@ -1593,7 +1594,7 @@
 					</apex:pageBlockSection>
 				</apex:pageBlock>
 				<apex:pageBlock >
-					<apex:pageBlocksection columns="2" collapsible="false" >
+					<apex:pageBlocksection columns="2" collapsible="false" rendered="{!showErrors}" >
 						<apex:pageBlockTable value="{!errorMap['skinBodyTab']}" var="d" columns="1" >
 							<apex:repeat value="{!d}" var="temp" >
 								<apex:column >
@@ -1788,7 +1789,7 @@
 					</apex:pageBlockSection>
 				</apex:pageBlock>
 				<apex:pageBlock >
-					<apex:pageBlockSection columns="2" collapsible="false" >
+					<apex:pageBlockSection columns="2" collapsible="false" rendered="{!showErrors}" >
 						<apex:pageBlockTable value="{!errorMap['neuroTab']}" var="d" columns="1" >
 							<apex:repeat value="{!d}" var="temp" >
 								<apex:column >
@@ -2004,7 +2005,7 @@
 					</apex:pageBlockSection>
 				</apex:pageBlock>
 				<apex:pageBlock >
-					<apex:pageBlockSection columns="2" collapsible="false" >
+					<apex:pageBlockSection columns="2" collapsible="false" rendered="{!showErrors}" >
 						<apex:pageBlockTable value="{!errorMap['orthoTab']}" var="d" columns="1" >
 							<apex:repeat value="{!d}" var="temp" >
 								<apex:column >
@@ -2114,7 +2115,7 @@
 					</apex:pageBlockSection>
 				</apex:pageBlock>
 				<apex:pageBlock >
-					<apex:pageBlockSection columns="2" collapsible="false" >
+					<apex:pageBlockSection columns="2" collapsible="false" rendered="{!showErrors}" >
 						<apex:pageBlockTable value="{!errorMap['psychoSocialTab']}" var="d" columns="1" >
 							<apex:repeat value="{!d}" var="temp" >
 								<apex:column >

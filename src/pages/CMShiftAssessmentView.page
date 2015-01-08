@@ -17,13 +17,28 @@
 		j$ = jQuery.noConflict();
 
         finalize = function() {
-            var c = confirm('Are you sure about finalizing?');
-            if(c==true) {
-                finalizeEval();
-            } else {
-                return null;
-            }
+        
+           var allow = '{!Evaluation__c.Diagnostics_Section_Completed__c}' && '{!Evaluation__c.Psycho_Social_Section_Completed__c}' && '{!Evaluation__c.Cardio_Section_Completed__c}' && '{!Evaluation__c.Nutrition_Section_Completed__c}' && '{!Evaluation__c.Skin_Section_Completed__c}' && '{!Evaluation__c.Ortho_Section_Completed__c}' && '{!Evaluation__c.Neuro_Section_Completed__c}';
+            
+            if(allow=='false'){
+               var x = confirm('THis assessment cannot be finalized as there are errors. on Clicking OK You be redirected to edit mode that display the errors. Please correct them and then finalize');
+               if(x==true) {
+                   openWin('/apex/CMShiftAssessmentEdit?id={!Evaluation__c.Id}&showErrors=1');
+               } else{
+                   return null;
+               }
+                
+            } 
+            if(allow == 'true'){
+                var c = confirm('Are you sure about finalizing?');
+                if(c==true) {
+                    finalizeEval();
+                } else {
+                    return null;
+               }
+           }
         }
+        
         
         disregard = function() {
         	var d = confirm('Do you want to proceed disregarding this Assessment?');
@@ -818,8 +833,8 @@
 					</apex:pageBlockSection>
 				</apex:pageBlock>
 			</apex:tab>
-			<apex:commandButton value="Finalize" onClick="finalize(); return false;" style="position: absolute; margin-left: 680px; margin-top: 8px;" rendered="{!Evaluation__c.Status__c =='Draft' && Evaluation__c.Diagnostics_Section_Completed__c && Evaluation__c.Psycho_Social_Section_Completed__c && Evaluation__c.Cardio_Section_Completed__c && Evaluation__c.Nutrition_Section_Completed__c && Evaluation__c.Skin_Section_Completed__c && Evaluation__c.Ortho_Section_Completed__c && Evaluation__c.Neuro_Section_Completed__c}"  />
-			<apex:commandButton value="Disregard" style="position: absolute; margin-left: 730px; margin-top: 8px;" rendered="{!Evaluation__c.Status__c =='Draft' &&  Evaluation__c.OwnerId == $User.Id}" onClick="disregardEval(); return false;"/>
+			<apex:commandButton value="Finalize" onClick="finalize(); return false;" style="position: absolute; margin-left: 680px; margin-top: 8px;" rendered="{!Evaluation__c.Status__c =='Draft'}" />
+			<apex:commandButton value="Disregard" style="position: absolute; margin-left: 730px; margin-top: 8px;" rendered="{!Evaluation__c.Status__c =='Draft' &&  Evaluation__c.OwnerId == $User.Id}" onClick="disregard(); return false;"/>
 			<apex:commandButton value="E-Sign" style="position: absolute; margin-left: 792px; margin-top: 8px;" rendered="{!Evaluation__c.OwnerId == $User.Id && Evaluation__c.Status__c != 'Disregard' && !Evaluation__c.Is_Signed__c}" onClick="authenticate(); return false;" />
 			<apex:commandButton value="Print PDF" style="position: absolute; margin-left: 840px; margin-top: 8px;"  onclick="openWin('/apex/CMShiftAssessmentPDF?id={!Evaluation__c.Id}'); return false;" />
 		</apex:tabPanel>
