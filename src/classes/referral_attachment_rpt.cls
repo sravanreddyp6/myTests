@@ -31,7 +31,7 @@ public with sharing class referral_attachment_rpt {
     	
     	// for NEVAL-72, restrict to files starting with POC only
     	if (String.isBlank(nameMatch)) {
-    		nameMatch = 'POC%';
+    		nameMatch = 'PlanOfCare%';
     	} else if ( nameMatch == 'all') {	// leave this in for debugging the front-end - allows you to get all files
     		nameMatch = '%';
     	} else {
