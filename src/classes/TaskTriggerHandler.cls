@@ -26,7 +26,7 @@ public with sharing class TaskTriggerHandler {
         List<Id> taskIds = new List<Id>();      
 
         for(Task t: updatedObjects){
-        	if(string.ValueOf(t.WhatId).startswith(keyPrefix)){
+        	if(string.ValueOf(t.WhatId).startswith(keyPrefix) && t.status == 'Completed' && oldObjMap.get(t.id).status != 'Completed'){
         		evalIds.add(t.WhatId);
         	}
         	else if (t.WhatId.getSObjectType().getDescribe().getName() == 'PB_AssociatedDoc__c' && t.status == 'Completed' && oldObjMap.get(t.id).status != 'Completed' ){
@@ -35,13 +35,13 @@ public with sharing class TaskTriggerHandler {
             }
         }
         
-        Set<id> filteredIds = new set<id>();
-        for(Evaluation__c eval : [SELECT Id, Status__c FROM Evaluation__c WHERE Id IN:evalIds AND Status__c = 'Draft']) {
+        Set<id> filteredIds = new set<id>(); //Filter out the final or Disregard shift Assessments from the evalIds list that is obtained first.
+        for(Evaluation__c eval : [SELECT Id, Status__c FROM Evaluation__c WHERE Id IN:evalIds AND Status__c = 'Draft' AND Recordtype.Name = 'CMShiftAssessment']) {
         	filteredIds.add(eval.Id);
         }
         
         for(Task t: updatedObjects){
-        	if(filteredIds.contains(t.WhatId) && oldObjMap.get(t.id).Status != 'Completed' && t.Status == 'Completed'){
+        	if(filteredIds.contains(t.WhatId)){
         		t.addError('This task cannot be upated as the Associated Shift Assessment is not finalized or Disregarded');
         	}
         }
