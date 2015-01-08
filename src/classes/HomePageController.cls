@@ -401,19 +401,19 @@ public with sharing class HomePageController{
 			query+= orderStatement + ' limit 25';
 		}
 		else if (viewstsk=='Overdue'){
-			query+='and ActivityDate<TODAY order by ActivityDate desc, Priority limit 25';
+			query+='and ActivityDate<TODAY' + orderStatement + ' limit 25';
 		}else if (viewstsk=='Today'){
-			query+='and ActivityDate=TODAY order by ActivityDate desc, Priority limit 25';
+			query+='and ActivityDate=TODAY' + orderStatement + ' limit 25';
 		}else if (viewstsk=='Today+Overdue'){
-			query+='and ActivityDate<=TODAY order by ActivityDate desc, Priority limit 25';
+			query+='and ActivityDate<=TODAY' + orderStatement + ' limit 25';
 		}else if (viewstsk=='Tomorrow'){
-			query+='and ActivityDate=TOMORROW order by ActivityDate desc, Priority limit 25';
+			query+='and ActivityDate=TOMORROW' + orderStatement + ' limit 25';
 		}else if (viewstsk=='Next 7 Days'){
-			query+='and ActivityDate=NEXT_WEEK order by ActivityDate desc, Priority limit 25';
+			query+='and ActivityDate=NEXT_WEEK' + orderStatement + ' limit 25';
 		}else if (viewstsk=='Next 7 Days+Overdue'){
-			query+='and ActivityDate<=NEXT_WEEK order by ActivityDate desc, Priority limit 25';
+			query+='and ActivityDate<=NEXT_WEEK' + orderStatement + ' limit 25';
 		}else if (viewstsk=='This Month'){
-			query+='and ActivityDate=THIS_MONTH order by ActivityDate desc, Priority limit 25';
+			query+='and ActivityDate=THIS_MONTH' + orderStatement + ' limit 25';
 		}else {
 			query+= orderStatement + ' limit 25';
 		}
