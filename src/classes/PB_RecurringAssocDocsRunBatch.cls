@@ -8,8 +8,47 @@ public class PB_RecurringAssocDocsRunBatch implements schedulable {
                         'AND IsAdded__c = True ' + 
                         'AND Status__c = \'Received\' ' +
                         'AND Status_Date__c < TODAY ';
+                        
+        sendBatchStartEmail();
         Database.executeBatch(new PB_RecurringAssocDocs(query));
         
     }
+    
+    private void sendBatchStartEmail(){
+        Messaging.reserveSingleEmailCapacity(1);
+        Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+        
+        List<User> userIDs = [SELECT Id FROM User WHERE Name = 'Kate Salines-Johnston'];
+        Id userID = userIds[0].Id;
+        mail.setTargetObjectId(userID);
+        mail.setReplyTo('notifications@thementornetwork.com');
+        mail.setSenderDisplayName('ESD Batch Jobs');
+        mail.setSubject('Starting Recurring Admission Documents Batch');
+        mail.setBccSender(false);
+        mail.setUseSignature(false);
+                           
+        mail.setPlainTextBody(
+        'Hello!  The Recurring Admission Documents (PB_RecurringAssocDocsRunBatch.cls) batch job starting....'
+        + '/r/n/r/n'
+        + 'Datetime of Execution: ' + System.now()
+        + '/r/n'
+        + 'Thanks!'
+        + 'r/n'
+        + 'The MENTOR ESD Application'
+        );
+                
+        mail.setHtmlBody(
+        'Hello!  The Recurring Admission Documents (PB_RecurringAssocDocsRunBatch.cls) batch job starting....'
+        + '<br /><br />'
+        + 'Datetime of Execution: ' + System.now()
+        + '<br /><br />'
+        + 'Thanks!'
+        + '<br />'
+        + 'The MENTOR ESD Application'
+        );
+                
+        mail.setSaveAsActivity(false);
+        Messaging.sendEmail(new Messaging.SingleEmailMessage[] { mail });
+   }
 
 }
