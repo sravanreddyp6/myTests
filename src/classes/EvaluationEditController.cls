@@ -5,7 +5,9 @@ public with sharing class EvaluationEditController{
 
     public EvaluationEditController(ApexPages.standardController stdController) {
         this.stdController = stdController;
-        stdController.addFields(new String[]{'OwnerId','Owner.Name','Status__c'});
+        if(!test.isRunningTest()) {
+        	stdController.addFields(new String[]{'OwnerId','Owner.Name','Status__c'});
+        }
         evaluation = (Evaluation__c) stdController.getRecord();
         isShift = false;
     }

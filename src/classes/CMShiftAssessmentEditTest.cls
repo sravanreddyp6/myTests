@@ -1,13 +1,17 @@
 @isTest
 private class CMShiftAssessmentEditTest {
-	
-	private static testmethod void myTests() {
+	static Evaluation__c eval;
+	private static void createData() {
 		TMN_Generic_Core_TestData testData = new TMN_Generic_Core_TestData();
-		Evaluation__c eval = new Evaluation__c ();
+		eval = new Evaluation__c ();
 		eval.ServiceAssignment__c = testData.theSA.Id;
 		eval.Details_Section_Completed__c = true;
 		insert eval;
-		
+	
+	}
+	
+	private static testmethod void myTests() {
+		createData();
 		PageReference pg = Page.CMShiftAssessmentEdit;
 		Test.setCurrentPage(pg);
 		ApexPages.StandardController sc = new ApexPages.StandardController(eval);
@@ -77,7 +81,13 @@ private class CMShiftAssessmentEditTest {
         system.assertEquals(false,controller.evaluation.Nutrition_Section_Completed__c);
         system.assertEquals(false,controller.evaluation.Skin_Section_Completed__c);
 		
+	}
+	
+	private static testmethod void testDiagnostics() {
 		//Diagnostics Tab
+		createData();
+		ApexPages.StandardController sc = new ApexPages.StandardController(eval);
+		CMShiftAssessmentEdit controller = new CMShiftAssessmentEdit(sc);
 		controller.evaluation.Requires_Isolation_Picklist__c = 'Yes';
 		controller.evaluation.DiagnosisIsolation_Type__c = null;
 		controller.evaluation.IV_Site_Issues__c = 'Yes';
@@ -89,8 +99,14 @@ private class CMShiftAssessmentEditTest {
 		controller.save();
 		system.assert(controller.evaluation.Diagnostics_Section_Completed__c);
 		system.assertEquals(0,controller.errorMap.get('diagnosticTab').size(),controller.errorMap.get('diagnosticTab'));
-		
+	}
+	
+	private static testmethod void testCardio(){	
 		//Cardio Tab
+		createData();
+		ApexPages.StandardController sc = new ApexPages.StandardController(eval);
+		CMShiftAssessmentEdit controller = new CMShiftAssessmentEdit(sc);
+		
 		controller.evaluation.Heart_Sounds__c = 'Regular';
 		controller.evaluation.Autonomic_Dysreflexia__c = 'No';
 		controller.evaluation.Peripheral_Pulses_Present__c = 'Yes';
@@ -137,9 +153,14 @@ private class CMShiftAssessmentEditTest {
 		controller.save();
 		system.assert(!controller.evaluation.Cardio_Section_Completed__c);
 		system.assertNotEquals(0,controller.errorMap.get('cardioTab').size());
-		
-		
+	}
+	
+	private static testmethod void testGUGI(){
 		//GU/GI Nutrition Tab
+		createData();
+		ApexPages.StandardController sc = new ApexPages.StandardController(eval);
+		CMShiftAssessmentEdit controller = new CMShiftAssessmentEdit(sc);
+		
 		controller.selectedOptionsMap.put('nutrition_route__c',new List<string>{'Oral,PEG'});
 		controller.evaluation.Oral_Health_Check__c = 'No';
 		controller.evaluation.Bowel_Issues__c = 'No';
@@ -175,8 +196,14 @@ private class CMShiftAssessmentEditTest {
 		controller.save();
 		system.assert(!controller.evaluation.Nutrition_Section_Completed__c);
 		system.assertNotEquals(0,controller.errorMap.get('nutritionTab').size());
-		
+	}
+	
+	private static testmethod void testskinBody(){
 		//Skin/Body Tab
+		createData();
+		ApexPages.StandardController sc = new ApexPages.StandardController(eval);
+		CMShiftAssessmentEdit controller = new CMShiftAssessmentEdit(sc);
+		
 		controller.evaluation.Skin_Color__c = 'test';
 		controller.evaluation.Skin_Temperature__c  = 'test';
 		controller.evaluation.Skin_Moisture__c  = 'test';
@@ -193,8 +220,14 @@ private class CMShiftAssessmentEditTest {
 		controller.save();
 		system.assert(!controller.evaluation.Skin_Section_Completed__c);
 		system.assertNotEquals(0,controller.errorMap.get('skinBodyTab').size());
-		
+	}
+	
+	private static testmethod void testNeuro() {
 		//Neuro Tab
+		createData();
+		ApexPages.StandardController sc = new ApexPages.StandardController(eval);
+		CMShiftAssessmentEdit controller = new CMShiftAssessmentEdit(sc);
+		
 		controller.evaluation.Rancho_Level__c = '(1) No Response';
 		controller.evaluation.Safety_Awareness__c = 'Intact';
 		controller.evaluation.Pain_Present__c = 'No';
@@ -223,8 +256,14 @@ private class CMShiftAssessmentEditTest {
 		controller.save();
 		system.assert(!controller.evaluation.Neuro_Section_Completed__c);
 		system.assertNotEquals(0,controller.errorMap.get('neuroTab').size());
-		
+	}
+	
+	private static testmethod void testOrtho() {
 		//OrthoTab
+		createData();
+		ApexPages.StandardController sc = new ApexPages.StandardController(eval);
+		CMShiftAssessmentEdit controller = new CMShiftAssessmentEdit(sc);
+		
 		controller.evaluation.Cast_Picklist__c = 'No';
 		controller.evaluation.External_Device_Picklist__c = 'No';
 		controller.evaluation.Traction_Picklist__c = 'No';
@@ -246,8 +285,14 @@ private class CMShiftAssessmentEditTest {
 		controller.save();
 		system.assert(!controller.evaluation.Ortho_Section_Completed__c );
 		system.assertnotEquals(0,controller.errorMap.get('orthoTab').size());
-		
+	}
+	
+	private static testmethod void testpsycho() {	
 		//Psycho/Social Tab
+		createData();
+		ApexPages.StandardController sc = new ApexPages.StandardController(eval);
+		CMShiftAssessmentEdit controller = new CMShiftAssessmentEdit(sc);
+		
 		controller.evaluation.Resident_Coping_Well__c = null;
 		controller.save();
 		controller.evaluation.Resident_Coping_Well__c = 'No';
@@ -260,6 +305,6 @@ private class CMShiftAssessmentEditTest {
 		controller.save();
 		system.assert(controller.evaluation.Psycho_Social_Section_Completed__c );
 		system.assertEquals(0,controller.errorMap.get('psychoSocialTab').size(),controller.errorMap.get('psychoSocialTab'));		
-	}
+	} 
 
 }
