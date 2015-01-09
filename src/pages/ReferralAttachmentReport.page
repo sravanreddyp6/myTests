@@ -44,7 +44,7 @@
 
 
 <apex:pageBlock id="AttachmentRptPgBlk" title="Referral Attachment Report">
-<apex:actionregion>
+<apex:actionregion >
 	
 	<apex:pageBlockSection columns="1">
 	<apex:outputPanel >
@@ -69,20 +69,20 @@
 <apex:pageBlock id="dataTable" >     
     
     <apex:pageBlockTable id="mytbl" style="width:100%" value="{!filelist}" var="n">
-    	<apex:column>
+    	<apex:column >
     	<apex:facet name="header">File Name</apex:facet>
     	{!n.name}
     	</apex:column>
     	
-    	<apex:column>
+    	<apex:column >
     		<apex:facet name="header">Related To</apex:facet>
     	    <apex:outputlink value="/{!n.ParentId}" target="_blank">{!n.parent.name}</apex:outputlink>
     	</apex:column>
-	    <apex:column>
+	    <apex:column >
 	    <apex:facet name="header">Created By</apex:facet>
 	    {!n.CreatedBy.Name}
 	    </apex:column>
-	    <apex:column>
+	    <apex:column >
 	    <apex:facet name="header">Created Date</apex:facet>
 	    <apex:outputtext value=" {!n.createddate}" />
 	    </apex:column> 
