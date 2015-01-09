@@ -26,6 +26,7 @@ public with sharing class TaskTriggerHandler {
         List<Id> taskIds = new List<Id>();      
 
         for(Task t: updatedObjects){
+        	//Include those tasks that have status changed and WhatId as Evaluation__c.
         	if(string.ValueOf(t.WhatId).startswith(keyPrefix) && t.status == 'Completed' && oldObjMap.get(t.id).status != 'Completed'){
         		evalIds.add(t.WhatId);
         	}
