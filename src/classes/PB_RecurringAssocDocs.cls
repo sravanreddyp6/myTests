@@ -1,5 +1,5 @@
 global class PB_RecurringAssocDocs implements Database.Batchable<sObject> {
-   global final String query;
+    global final String query;
 
     global PB_RecurringAssocDocs(String q){
             query=q;
@@ -39,7 +39,7 @@ global class PB_RecurringAssocDocs implements Database.Batchable<sObject> {
     }
     
     global void finish(Database.BatchableContext BC){
-        Messaging.reserveSingleEmailCapacity(1);
+                Messaging.reserveSingleEmailCapacity(1);
                 Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
 
                 List<User> userIDs = [SELECT Id FROM User WHERE Name = 'Kate Salines-Johnston'];
@@ -73,8 +73,9 @@ global class PB_RecurringAssocDocs implements Database.Batchable<sObject> {
                 
                 mail.setSaveAsActivity(false);
                 Messaging.sendEmail(new Messaging.SingleEmailMessage[] { mail });
-   }
-   
+    }
+    
+    @TestVisible   
     private void sendErrorEmail(Exception e){
                 Messaging.reserveSingleEmailCapacity(1);
                 Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
@@ -110,5 +111,5 @@ global class PB_RecurringAssocDocs implements Database.Batchable<sObject> {
                 
                 mail.setSaveAsActivity(false);
                 Messaging.sendEmail(new Messaging.SingleEmailMessage[] { mail });
-   }
+    }
 }
