@@ -350,6 +350,10 @@ function highlightButtons ( btype, sfid, on )
 #clinical-catalog div:focus{
     outline: none;
 }
+
+.newObjClass {
+background-color: cornsilk;
+}
 </style>
 
 <!-- required for the controler to get the fields in scope-->
@@ -568,7 +572,7 @@ function highlightButtons ( btype, sfid, on )
                     <td>
                     
                         <apex:outputLabel styleClass="tmnHelpText" >What measurable achievements will demonstrate this Person Being Served's progress towards {!if(isCM,'overcoming','')} this {!GoalAlias}?<br /></apex:outputLabel>       
-                        <apex:outputPanel layout="block" id="theObj" style="padding-bottom:20px">
+                        <apex:outputPanel layout="block" id="theObj" style="padding-bottom:20px" styleClass="{!if(AND(Action_Plan__c.Status__c = 'Active Final', OR(planStuff[g].GoalObjs[o].theObj.Status__c == 'New', planStuff[g].GoalObjs[o].theObj.Status__c == 'Revised')),'newObjClass','')}">
                             <apex:inputField styleClass="txtarea" rendered="{!editMode}" value="{!planStuff[g].GoalObjs[o].theObj.Description__c}"/>  
                             <apex:outputField rendered="{! !editMode}" value="{!planStuff[g].GoalObjs[o].theObj.Description__c}"/> 
                             

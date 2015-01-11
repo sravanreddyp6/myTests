@@ -54,7 +54,7 @@ global class PB_DocumentDueNotifications implements Database.Batchable<sObject> 
 		                                ActivityDate = assocDoc.Due_Date__c) );
 	            }
 	            //if a task already exists and its already past due, change the subjet and description to overDue
-	            else if(existingTasksMap.containsKey(assocDoc.Id) && assocDoc.Due_Date__c == Date.today() ){
+	            else if(existingTasksMap.containsKey(assocDoc.Id) && assocDoc.Due_Date__c < Date.today() ){
 	            	Task t = existingTasksMap.get(assocDoc.Id);
 	            	t.subject = TASK_OVERDUE_SUBJECT;
 	            	t.Description = 'Document: '+ assocDoc.Document__r.Document_Name__c + ' for Admission: ' + admisson.Name + ' is overdue. ' + System.Url.getSalesforceBaseUrl().toExternalForm() + '/' + assocDoc.sObject_Id__c;
@@ -102,7 +102,8 @@ global class PB_DocumentDueNotifications implements Database.Batchable<sObject> 
                 Messaging.sendEmail(new Messaging.SingleEmailMessage[] { mail });
    }
    
-    private void sendErrorEmail(Exception e){
+   @TestVisible 
+   private void sendErrorEmail(Exception e){
                 Messaging.reserveSingleEmailCapacity(1);
                 Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
         
