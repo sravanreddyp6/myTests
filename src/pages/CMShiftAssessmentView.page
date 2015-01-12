@@ -40,7 +40,7 @@
                var x = confirm('This assessment cannot be finalized as there are errors in finalizing. On Clicking OK You will be redirected to edit mode that display the errors. Please correct them and then finalize');
                
                if(x==true) {
-                   openWin('/apex/CMShiftAssessmentEdit?id={!Evaluation__c.Id}&showErrors=1&tab='+errorTab);
+                   window.open('/apex/CMShiftAssessmentEdit?id={!Evaluation__c.Id}&showErrors=1&tab='+errorTab,'_self');
                }else{
                    return null;
                }
@@ -252,7 +252,9 @@
 						<apex:pageBlockSectionItem rendered="{!Evaluation__c.IV_Picklist__c == 'Yes'}">
 							<apex:outputLabel value="IV Type" />
 							<apex:outputPanel >
-								<apex:outputText styleClass="labelCol" value="PICC" />
+								<apex:outputText styleClass="labelCol" value="Peripheral" />
+								<apex:outputField value="{!Evaluation__c.PCA__c}" />
+								<apex:outputText styleClass="labelCol" value="PICC" style="margin-left:20px;" />
 								<apex:outputField value="{!Evaluation__c.PICC__c}" />
 								<apex:outputText styleClass="labelCol" value="Central" style="margin-left:20px;" />
 								<apex:outputField value="{!Evaluation__c.Central__c}" />
@@ -305,7 +307,7 @@
 							<apex:outputLabel for="periph" value="Peripheral Pulses" />
 							<apex:outputText id="periph" value="{!Evaluation__c.Peripheral_Pulses_Present__c & if(Evaluation__c.Peripheral_Pulses_Present__c == 'No', ' - ' & Evaluation__c.Peripheral_Pulses_Describe__c, '')}" />
 						</apex:pageBlockSectionItem>
-						<apex:outputField Value="{!Evaluation__c.Autonomic_Dysreflexia__c}" />
+						<apex:outputField Value="{!Evaluation__c.Autonomic_Dysreflexia__c}" label="Autonomic Dysreflexia Episode"/>
 						<apex:pageBlockSectionItem />
 						<apex:pageBlockSectionItem rendered="{!Evaluation__c.Autonomic_Dysreflexia__c == 'Yes'}">
 							<apex:outputLabel for="areasAssessed" value="Were the Following areas assessed?" />
