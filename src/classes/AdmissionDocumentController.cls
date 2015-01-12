@@ -54,7 +54,7 @@ public with sharing class AdmissionDocumentController {
     private List<PB_AssociatedDoc__c> getAllAssociatedDocs(){
     	List<PB_AssociatedDoc__c> allAssocDocs = [SELECT  id, DocPacket__r.id, Document__r.id, DocPacket__r.Packet_Name__c, Document__r.document_name__c, Document__r.Version__c, Document__r.Due__c, 
     	                                                  due_date__c, Document__r.Type__c, Document__r.Recurring_Interval__c, isAdded__c, sObject_id__c, sObject_Type__c, status__c, status_date__c,
-						       							  (SELECT isSigned__c, DocSignature__r.DocSigner__c, signed_date__c FROM AssocDocSignatures__r) 
+						       							  comments__c, (SELECT isSigned__c, DocSignature__r.DocSigner__c, signed_date__c FROM AssocDocSignatures__r) 
       												FROM  PB_AssociatedDoc__c WHERE sObject_id__c =: this.admission.id AND sObject_type__c = 'Admission' 
        												ORDER BY DocPacket__r.Packet_Name__c, Document__r.document_name__c];       						
        	return allAssocDocs;
