@@ -675,6 +675,51 @@
 
 				}
 			};
+			
+							
+				           	
+		 	calculateWeight = function(formField, type){
+		 
+			 		var lbs;
+		           	var oz;
+		           	var kg;			
+					
+		           if(type=='lbs'){
+		               var total=getlbsValue() + getOzValue();
+		               $('[id$=kg]').val(total);
+		           }
+		
+		           if(type=='oz'){
+		               var total=getlbsValue() + getOzValue();
+		               $('[id$=kg]').val(total);
+		           }
+		
+		           if(type=='kg'){
+		               kg=$('[id$=kg]').val();
+		               var kgtolbs = kg*2.2046;
+		               $('[id$=lbs]').val(kgtolbs);
+		               $('[id$=oz]').val('0.0');
+		           }
+				
+				}
+				
+		 	function getlbsValue(){
+	             lbs=$('[id$=lbs]').val();
+	             var lbtokgs = 0;
+	             if(lbs!=null && lbs!='')
+	                 lbtokgs = lbs*0.453592;
+	             return lbtokgs;
+	
+	        }
+		        
+        	function getOzValue(){
+	             oz=$('[id$=oz]').val();
+	             var oztokg=0;
+	             if(oz!=null && oz!='')
+	                 oztokg = oz*0.0283495;
+	             return oztokg;
+	
+	        }
 
 			setUpFields = function () {
 				// Apply rules to input fields
@@ -725,6 +770,7 @@
 
 			return nextTab;
 		}
+		
 	</script>
 
 	<!--div id="breadcrumb" class="breadcrumb" >
@@ -1241,7 +1287,8 @@
 						$("[id$=eliminationBowelStatus] input[value=Other]").data("visibility-row-rules", true);
 						setUpFields();
 					});
-				</script>
+			
+		</script>
 				<apex:pageBlock id="nutritionMainBlock">
 					<apex:pageBlockSection Columns="2" >
 						<apex:pageBlockSectionItem >
@@ -1454,6 +1501,29 @@
 								</apex:selectCheckboxes>
 							</apex:outputPanel>
 						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem />
+						
+						<apex:pageBlockSectionItem >
+							<apex:outputText Value="Weight" styleClass="labelCol" />
+							<apex:inputField value="{!Evaluation__c.Weight_picklist__c}" html-data-visibility-rules="{&quot;Yes&quot;: &quot;{!$Component.weightSection.weightSectionPanel}&quot;}"/>
+						</apex:pageBlockSectionItem>
+						
+						<apex:pageBlockSectionItem />
+						
+						<apex:pageBlockSectionItem id="weightSection">
+	                        <apex:outputText value="" />
+	                        <apex:outputPanel id="weightSectionPanel">
+	                            <apex:outputLabel value="Current Weight" style="font-weight: Bold; color: #4A4A56; font-size: 10px;"/>
+	                            <apex:inputField id="lbs" value="{!Evaluation__c.Weightlbs__c}" style="margin-left: 25px; width: 60px; !important;" onkeyup="return calculateWeight(this,'lbs');"/>
+	                            <apex:outputLabel for="lbs" style="font-weight:Bold; ">{!$ObjectType.Evaluation__c.Fields.Weightlbs__c.label}</apex:outputLabel>
+	                            <apex:inputField id="oz" value="{!Evaluation__c.Weightoz__c}" style="Margin-left: 25px; width:60px;" onkeyup="return calculateWeight(this,'oz');"/>
+	                            <apex:outputLabel for="oz" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Weightoz__c.label}</apex:outputLabel>
+	                            <pre/>
+	                            <apex:inputField id="kg" value="{!Evaluation__c.WeightKg__c}" style="margin-left: 145px; width: 60px;" onkeyup="return calculateWeight(this,'kg');"/>
+	                            <apex:outputLabel for="kg" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.WeightKg__c.label}</apex:outputLabel>
+                        	</apex:outputPanel>
+						</apex:pageBlockSectionItem>
+						
 						<apex:pageBlockSectionItem />
 
 						<apex:pageBlockSectionItem >
@@ -2307,5 +2377,5 @@
 			</div>
 		</apex:facet>
 		<apex:facet name="stop" />
-	</apex:actionStatus>					
+	</apex:actionStatus>				
 </apex:page>

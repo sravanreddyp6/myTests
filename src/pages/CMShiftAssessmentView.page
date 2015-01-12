@@ -456,6 +456,31 @@
 
 						<apex:outputField value="{!Evaluation__c.Abdomen__c}" />
 						<apex:pageBlockSectionItem />
+						
+						<apex:outputfield Value="{!Evaluation__c.Weight_picklist__c}" label="Weight" />
+						<apex:pageBlockSectionItem />
+						
+						<apex:pageBlockSectionItem rendered="{!Evaluation__c.Weight_picklist__c == 'Yes'}" >
+							<apex:outputLabel value="" />
+							<apex:outputPanel >
+	                            <apex:outputLabel value="Current Weight"
+	                                style="font-weight: Bold; color: #4A4A56; font-size: 10px;" />
+	                                &nbsp;&nbsp;&nbsp;
+	                                <apex:outputField id="lbs"
+	                                value="{!Evaluation__c.Weightlbs__c}" style="margin-left: 25px;" />
+	                            <apex:outputLabel for="lbs" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Weightlbs__c.label}</apex:outputLabel>
+	                            <span />
+	                            <apex:outputField id="oz" value="{!Evaluation__c.Weightoz__c}"
+	                                style="margin-left: 25px;" />
+	                            <apex:outputLabel for="in" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Weightoz__c.label}</apex:outputLabel>
+	                            <span />
+	                            <apex:outputText value=" (or) " />
+	                            <apex:outputField id="kg" value="{!Evaluation__c.WeightKg__c}"
+	                                style="margin-left: 25px;" />
+	                            <apex:outputLabel for="kg" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.WeightKg__c.label}</apex:outputLabel>
+	                        </apex:outputPanel>
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem />
 
 						<apex:outputField value="{!Evaluation__c.Elimination_Bowel_Status__c}" label="Status" />
 						<apex:pageBlockSectionItem />
