@@ -864,7 +864,9 @@
 							<apex:pageBlockSectionItem >
 								<apex:outputLabel value="IV Type" />
 								<apex:outputPanel >
-									<apex:outputText styleClass="labelCol" value="PICC" />
+									<apex:outputText styleClass="labelCol" value="Peripheral" />
+									<apex:inputField value="{!Evaluation__c.PCA__c}" />
+									<apex:outputText styleClass="labelCol" value="PICC" style="margin-left:20px;" />
 									<apex:inputField value="{!Evaluation__c.PICC__c}" />
 									<apex:outputText styleClass="labelCol" value="Central" style="margin-left:20px;" />
 									<apex:inputField value="{!Evaluation__c.Central__c}" />
@@ -915,7 +917,7 @@
 							</apex:repeat>
 						</apex:pageBlockTable>
 					</apex:pageBlockSection>
-					<apex:pageBlockSection Columns="2" title="cardio">
+					<apex:pageBlockSection Columns="2" title="Cardio">
 						<apex:pageBlockSectionItem >
 							<apex:outputPanel >
 								<apex:outputLabel for="heartRate" value="Heart Rate" />
@@ -960,7 +962,7 @@
 							</apex:outputPanel>
 						</apex:pageBlockSectionItem>
 						<apex:pageBlockSectionItem >
-							<apex:outputLabel value="Autonomic Dysreflexia" />
+							<apex:outputLabel value="Autonomic Dysreflexia Episode" />
 							<apex:outputPanel >
 								<div class="requiredInput">
 									<div class="requiredBlock"></div>
@@ -1278,7 +1280,7 @@
 								<div class="requiredInput">
 									<div class="requiredBlock"></div>
 									<apex:inputField value="{!Evaluation__c.Oral_Health_Check__c}"
-										html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.nutritionHydrationSection.issuesNotedItem.issuesNoted}&quot;, &quot;{!$Component.tongueSection.tongue}&quot;, &quot;{!$Component.gumsSection.gums}&quot;, &quot;{!$Component.cheeksSection.cheeks}&quot;, &quot;{!$Component.lipsSection.lips}&quot;, &quot;{!$Component.breathSection.breath}&quot;, &quot;{!$Component.salivaSection.saliva}&quot;, &quot;{!$Component.narrativeNote}&quot;]}"
+										html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.nutritionHydrationSection.issuesNotedItem.issuesNoted}&quot;, &quot;{!$Component.tongueSection.tongue}&quot;, &quot;{!$Component.gumsSection.gums}&quot;, &quot;{!$Component.cheeksSection.cheeks}&quot;, &quot;{!$Component.lipsSection.lips}&quot;, &quot;{!$Component.breathSection.breath}&quot;,&quot;{!$Component.teethSection.teethProblems}&quot;, &quot;{!$Component.salivaSection.saliva}&quot;, &quot;{!$Component.narrativeSection.narrativeNote}&quot;]}"
 										html-data-visibility-row-rules="true" />
 								</div>
 							</apex:outputPanel>
@@ -1332,6 +1334,15 @@
 								<apex:inputField id="lipsSores" value="{!Evaluation__c.Lips_Sores_Describe__c}" />
 							</apex:outputPanel>
 						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem id="teethSection">
+							<apex:outputText value="Teeth Problems" styleClass="labelCol" />
+							<apex:outputPanel >
+								<div class="requiredInput">
+									<div class="requiredBlock"></div>
+									<apex:inputField value="{!Evaluation__c.Teeth_Problems__c}" id="teethProblems"/>
+								</div>
+							</apex:outputPanel>
+						</apex:pageBlockSectionItem>
 						<apex:pageBlockSectionItem id="breathSection">
 							<apex:outputLabel value="Breath" />
 							<apex:outputPanel >
@@ -1348,7 +1359,15 @@
 								</apex:selectCheckboxes>
 							</apex:outputPanel>
 						</apex:pageBlockSectionItem>
-						<apex:inputField value="{!Evaluation__c.Narrative_Note__c}" id="narrativeNote" label="Add Narrative Note" />
+						<apex:pageBlockSectionItem id="narrativeSection" >
+							<apex:outputText value="Add Narrative Note" styleClass="labelCol" />
+							<apex:outputPanel >
+								<div class="requiredInput">
+									<div class="requiredBlock"> </div>
+									<apex:inputTextArea value="{!Evaluation__c.Narrative_Note__c}" id="narrativeNote" rows="4" cols="60"/>
+								</div>
+							</apex:outputPanel>
+						</apex:pageBlockSectionItem>
 						<apex:outputText value="PEDS" styleClass="labelCol" style="margin-left: 2cm;"/>
 						<apex:inputField value="{!Evaluation__c.PEDS_Teething__c}" label="Teething"/>
 						<apex:pageBlockSectionItem >
@@ -1357,9 +1376,11 @@
 								<apex:inputField value="{!Evaluation__c.PEDS_History_of_Tonsils__c}"  html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.tonsilitisHistoryLabel}&quot;, &quot;{!$Component.tonsilitisHistory}&quot;]}"/>
 								<br />
 								<apex:outputLabel value="Describe Tonsilitis History" style="margin-right: 10px; " id="tonsilitisHistoryLabel" />
-								<apex:outputPanel layout="block" styleClass="requiredInput" style="display: inline-block; ">
-									<apex:outputPanel layout="block" styleClass="requiredBlock" />
-									<apex:inputField value="{!Evaluation__c.PEDS_Tonsil_History_Describe__c}" id="tonsilitisHistory" />
+								<apex:outputPanel layout="block" style="display: inline-block; ">
+									<div class="requiredInput">
+										<div class="requiredBlock"></div>
+										<apex:inputField value="{!Evaluation__c.PEDS_Tonsil_History_Describe__c}" id="tonsilitisHistory" />
+									</div>
 								</apex:outputPanel>
 							</apex:outputPanel>
 						</apex:pageBlockSectionItem>
@@ -1369,9 +1390,11 @@
 								<apex:inputField value="{!Evaluation__c.PEDS_Pacifier__c}" label="Pacifier" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.pacifierUsage}&quot;, &quot;{!$Component.pacifierUsageLabel}&quot;]}"/>
 								<br />
 								<apex:outputLabel value="Type and Usage" style="margin-right: 10px; " id="pacifierUsageLabel" />
-								<apex:outputPanel layout="block" styleClass="requiredInput" style="display: inline-block; ">
-									<apex:outputPanel layout="block" styleClass="requiredBlock" />
-									<apex:inputField value="{!Evaluation__c.PEDS_Pacifier_Type_Usage__c}" label="if Yes, Type & usage" id="pacifierUsage" />
+								<apex:outputPanel layout="block" style="display: inline-block; ">
+									<div class="requiredInput">
+										<div class="requiredBlock"></div>
+										<apex:inputField value="{!Evaluation__c.PEDS_Pacifier_Type_Usage__c}" label="if Yes, Type & usage" id="pacifierUsage" />
+									</div>
 								</apex:outputPanel>
 							</apex:outputPanel>
 						</apex:pageBlockSectionItem>
@@ -1384,16 +1407,20 @@
 
 						<apex:pageBlockSectionItem id="ruqDescribe">
 							<apex:outputLabel value="Describe" id="label" />
-							<apex:outputPanel layout="block" styleClass="requiredInput" style="display: inline-block; ">
-								<apex:outputPanel layout="block" styleClass="requiredBlock" />
+							<apex:outputPanel layout="block" style="display: inline-block; ">
+								<div class="requiredInput">
+										<div class="requiredBlock"></div>
 								<apex:inputField value="{!Evaluation__c.RUQ_Describe__c}" id="field" />
+								</div>
 							</apex:outputPanel>
 						</apex:pageBlockSectionItem>
 						<apex:pageBlockSectionItem id="luqDescribe">
 							<apex:outputLabel value="Describe" id="label" />
-							<apex:outputPanel layout="block" styleClass="requiredInput" style="display: inline-block; ">
-								<apex:outputPanel layout="block" styleClass="requiredBlock" />
+							<apex:outputPanel layout="block" style="display: inline-block; ">
+								<div class="requiredInput">
+										<div class="requiredBlock"></div>
 								<apex:inputField value="{!Evaluation__c.LUQ_Describe__c}" id="field" />
+								</div>
 							</apex:outputPanel>
 						</apex:pageBlockSectionItem>
 
@@ -1402,16 +1429,20 @@
 
 						<apex:pageBlockSectionItem id="rlqDescribe">
 							<apex:outputLabel value="Describe" id="label" />
-							<apex:outputPanel layout="block" styleClass="requiredInput" style="display: inline-block; ">
-								<apex:outputPanel layout="block" styleClass="requiredBlock" />
+							<apex:outputPanel layout="block" style="display: inline-block; ">
+								<div class="requiredInput">
+										<div class="requiredBlock"></div>
 								<apex:inputField value="{!Evaluation__c.RLQ_Describe__c}" id="field" />
+								</div>
 							</apex:outputPanel>
 						</apex:pageBlockSectionItem>
 						<apex:pageBlockSectionItem id="llqDescribe">
 							<apex:outputLabel value="Describe" id="label" />
-							<apex:outputPanel layout="block" styleClass="requiredInput" style="display: inline-block; ">
-								<apex:outputPanel layout="block" styleClass="requiredBlock" />
+							<apex:outputPanel layout="block" style="display: inline-block; ">
+								<div class="requiredInput">
+										<div class="requiredBlock"></div>
 								<apex:inputField value="{!Evaluation__c.LLQ_Describe__c}" id="field" />
+								</div>
 							</apex:outputPanel>
 						</apex:pageBlockSectionItem>
 
