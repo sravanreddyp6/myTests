@@ -17,34 +17,56 @@
 		j$ = jQuery.noConflict();
 
         finalize = function() {
-        
+           
            var allow = '{!Evaluation__c.Diagnostics_Section_Completed__c}' && '{!Evaluation__c.Psycho_Social_Section_Completed__c}' && '{!Evaluation__c.Cardio_Section_Completed__c}' && '{!Evaluation__c.Nutrition_Section_Completed__c}' && '{!Evaluation__c.Skin_Section_Completed__c}' && '{!Evaluation__c.Ortho_Section_Completed__c}' && '{!Evaluation__c.Neuro_Section_Completed__c}';
-            
+           var errorTab ='demographicsTab';
+           	
+           	if({!!Evaluation__c.Diagnostics_Section_Completed__c})
+           		errorTab = 'diagnosticTab';
+           	else if({!!Evaluation__c.Cardio_Section_Completed__c})
+           		errorTab = 'cardioTab';
+           	else if({!!Evaluation__c.Nutrition_Section_Completed__c})
+           		errorTab = 'nutritionTab';
+           	else if({!!Evaluation__c.Skin_Section_Completed__c})
+           		errorTab = 'skinBodyTab';
+           	else if({!!Evaluation__c.Neuro_Section_Completed__c})
+           		errorTab = 'neuroTab';
+           	else if({!!Evaluation__c.Ortho_Section_Completed__c})
+           		errorTab = 'orthoTab';
+           	else if({!!Evaluation__c.Psycho_Social_Section_Completed__c})
+           		errorTab = 'psychoSocialTab';
+           
             if(allow=='false'){
-               var x = confirm('THis assessment cannot be finalized as there are errors. on Clicking OK You be redirected to edit mode that display the errors. Please correct them and then finalize');
+               var x = confirm('This assessment cannot be finalized as there are errors in finalizing. On Clicking OK You will be redirected to edit mode that display the errors. Please correct them and then finalize');
+               
                if(x==true) {
-                   openWin('/apex/CMShiftAssessmentEdit?id={!Evaluation__c.Id}&showErrors=1');
-               } else{
+                   openWin('/apex/CMShiftAssessmentEdit?id={!Evaluation__c.Id}&showErrors=1&tab='+errorTab);
+               }else{
                    return null;
                }
                 
             } 
             if(allow == 'true'){
+            
                 var c = confirm('Are you sure about finalizing?');
+                
                 if(c==true) {
                     finalizeEval();
-                } else {
+                }else {
                     return null;
                }
+          
            }
+       
         }
         
-        
         disregard = function() {
+        
         	var d = confirm('Do you want to proceed disregarding this Assessment?');
+        	
         	if(d==true) {
                 disregardEval();
-            } else {
+            }else {
                 return null;
             }
         

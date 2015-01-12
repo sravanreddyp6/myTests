@@ -180,7 +180,7 @@ public with sharing class CMShiftAssessmentEdit {
 		if (ApexPages.currentPage().getParameters().get('tab') != null) {
 			selectedTab = ApexPages.currentPage().getParameters().get('tab');
 		}
-
+		
 		copingValues = new List<selectOption>();
 		selectedCoping = new List<String>();
 		neuroOrientValues = new List<selectOption>();
@@ -212,6 +212,10 @@ public with sharing class CMShiftAssessmentEdit {
 
 		if(!String.isBlank(this.evaluation.Expression_Other__c))
 			selectedVerbalExpression = this.evaluation.Expression_Other__c.split(';');
+			
+		if(ApexPages.currentPage().getParameters().get('showErrors') == '1'){
+			checkErrors();
+		}
 	}
 
 	public void showAddVitalsDetail()  {
@@ -388,6 +392,16 @@ public with sharing class CMShiftAssessmentEdit {
 		system.debug('whats in demo tab'+errorMap.get('demographicsTab'));
 		return new PageReference('/apex/CMShiftAssessmentView?id=' + evaluation.Id + '&tab=' + selectedTab);
 		
+	}
+	
+	public void checkErrors(){
+		checkDiagnosis();
+		checkCardio();
+		checkOrtho();
+		checkNeuro();
+		checkPsycho();
+		checkNutrition();
+		checkSkinBody();
 	}
 
 	public Boolean checkDiagnosis() {
