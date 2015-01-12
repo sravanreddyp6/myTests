@@ -54,7 +54,7 @@ public pageReference upsertEley(){
     items = selectedKeys.split(',');        
 
     if ((CurEley.Type__c == 'Objective' || CurEley.Type__c == 'Action' ) && selectedKeys.length() == 0){
-    	ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,'You must associate this to atleast one component from the catalog.'));
+    	ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,'You must associate this to at least one component from the catalog.'));
     	return null;
     } 
 
