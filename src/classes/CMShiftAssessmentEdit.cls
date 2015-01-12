@@ -602,6 +602,16 @@ public with sharing class CMShiftAssessmentEdit {
 				nutrition = false;
 				nutritionErrors.add('Please Choose atleast one check box for Saliva');
 			}
+			
+			if(this.evaluation.Teeth_Problems__c == null){
+				nutrition = false;
+				nutritionErrors.add('Teeth Problems field is mandatory');
+			}
+			
+			if(this.evaluation.breath__c == ''){
+				nutrition = false;
+				nutritionErrors.add('Please choose atleast one checkbox for Breath');
+			}
 
 			if(this.evaluation.Narrative_Note__c == '') {
 				nutrition = false;
