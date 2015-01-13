@@ -11,10 +11,6 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
 	}
 
 	global void execute(Database.BatchableContext BC, List<sObject> scope){
-
-		List<sObject> scopeClone = scope.clone();
-
-
 		Assessment__c[] assmtsFromScope = (Assessment__c[])scope;
 
 		List<Id> admIdsFromScope = new List<Id>();
@@ -31,6 +27,26 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
 			WHERE Admission__c = :admIdsFromScope
 			ORDER BY Assessment_Date__c
 		];
+		// We need to make sure not to duplicate tasks that are associated with
+		// the same Admission. So the following map is used to determine which
+		// user has an open task associated with an admission already. If an
+		// exists with a non-empty value in this map, that means that there is
+		// an open task for that assessment.
+		Map<Id, Set<Id>> ownerToAccountMap = new Map<Id, Set<Id>>();
+		for (Assessment__c a: (Assessment__c[])scope) {
+			ownerToAccountMap.put(a.OwnerId, new Set<Id>());
+		}
+		List<Task> tasksForRecordOwner = [
+			SELECT Id, Subject, Status, WhatId, OwnerId
+			FROM Task
+			WHERE OwnerId IN :ownerToAccountMap.keySet()
+			  AND Subject = 'CANS Assessment Reminder'
+			  AND Status = 'In Progress'
+		];
+		for (Task task: tasksForRecordOwner) {
+			ownerToAccountMap.get(task.OwnerId).add(task.WhatId);
+		}
+		Set<Id> admissionsWithSentMail = new Set<Id>();
 
 		// START: Loop through all assessments passed into batch job.
 		for(Sobject s : scope){
@@ -47,12 +63,12 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
 			}
 
 			// Call the method that figures out what notifications to send for this assessment.
-			parseAdmission(a, assmtsFromSameAdmissionAsThis);
+			parseAdmission(a, assmtsFromSameAdmissionAsThis, admissionsWithSentMail, ownerToAccountMap);
 		}
 	}
 
 
-	private void parseAdmission(Assessment__c a, List<Assessment__c> assmtsForThisAdmission){
+	private void parseAdmission(Assessment__c a, List<Assessment__c> assmtsForThisAdmission, Set<Id> admissionsWithSentMail, Map<Id, Set<Id>> ownerToAccountMap){
 		Integer admissionsAssmtsMinusIntakeCounter = 0;
 		Date intakeAssmtDateForAdmission;
 		Integer daysSinceIntake = 0;
@@ -62,8 +78,12 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
 		Date cDT = date.today();
 		Date formattedCreatedDate = date.newinstance(a.CreatedDate.year(), a.CreatedDate.month(), a.CreatedDate.day());
 		Integer daysSinceCreation = formattedCreatedDate.daysBetween(cDT);
-		Boolean goForEmail = false;
 
+		if (admissionsWithSentMail.contains(a.Admission__c)) {
+			// Do not resend email, even though there might be more than 1
+			// assessments for 1 admission
+			return;
+		}
 
 		for(Assessment__c assmtsforAdm : assmtsForThisAdmission){
 
@@ -94,14 +114,11 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
 
 		if((dropThisAdmissionsAssmts == false) && (daysSinceLastFulfilledDueDate == 75 || daysSinceLastFulfilledDueDate == 85 || daysSinceLastFulfilledDueDate >= 90) && a.Admission__r.status__c == 'Active'){
 			System.Debug('WE NEED TO SEND AN EMAIL!');
-			goForEmail = true;
-
-			if(goForEmail==true){
-				Messaging.sendEmail(sendNotification(a, thisAdmissionsAssmtDueDates.get(assmtsExpectedThisAdmission), a.Admission__c, assmtsExpectedThisAdmission));
-			}
+			Messaging.sendEmail(sendNotification(a, thisAdmissionsAssmtDueDates.get(assmtsExpectedThisAdmission), a.Admission__c, assmtsExpectedThisAdmission, ownerToAccountMap));
+			admissionsWithSentMail.add(a.Admission__c);
 		}
 		else{
-			System.Debug('WE DO NOT NEED TO SEND AND EMAIL!');
+			System.Debug('WE DO NOT NEED TO SEND AN EMAIL!');
 		}
 
 		if(Test.isRunningTest()==true){
@@ -115,7 +132,7 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
 
 
 	@TestVisible
-	private List<Messaging.SingleEmailMessage> sendNotification(Assessment__c a, Date dueDate, Id admId, Integer qtr){
+	private List<Messaging.SingleEmailMessage> sendNotification(Assessment__c a, Date dueDate, Id admId, Integer qtr, Map<Id, Set<Id>> ownerToAccountMap){
 
 		try {
 			Datetime prettyDueDate = date.newinstance(dueDate.year(), dueDate.month(), dueDate.day());
@@ -219,9 +236,13 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
 			regularNoticeEmails.add(mail);
 
 			// Create a task reminder for the action.
-			Task t = new Task(Subject = a.Assessment_Type__r.Name + ' Assessment Reminder', Status = 'In Progress', Priority = 'Normal', OwnerId = a.OwnerId, Description = 'You have a person being served who appears to have a ' + a.Assessment_Type__r.Name + ' assessment due or coming due: ' + System.Url.getSalesforceBaseUrl().toExternalForm() + '/' + a.Admission__r.Id, WhoId = a.AccountPerson__r.PersonContactId, WhatId = a.AccountPerson__r.Id, ActivityDate = dueDate);
-			insert t;
-
+			if (!ownerToAccountMap.get(a.OwnerId).contains(a.AccountPerson__r.Id)) {
+				System.debug('WE NEED TO CREATE A NEW TASK');
+				Task t = new Task(Subject = a.Assessment_Type__r.Name + ' Assessment Reminder', Status = 'In Progress', Priority = 'Normal', OwnerId = a.OwnerId, Description = 'You have a person being served who appears to have a ' + a.Assessment_Type__r.Name + ' assessment due or coming due: ' + System.Url.getSalesforceBaseUrl().toExternalForm() + '/' + a.Admission__r.Id, WhoId = a.AccountPerson__r.PersonContactId, WhatId = a.AccountPerson__r.Id, ActivityDate = dueDate);
+				insert t;
+			} else {
+				System.debug('WE DO NOT NEED TO CREATE A NEW TASK');
+			}
 			return regularNoticeEmails;
 		}
 		catch(Exception e){
