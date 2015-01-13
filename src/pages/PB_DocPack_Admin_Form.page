@@ -205,6 +205,7 @@ renderTreeTableCols = function(data){
                         <apex:outputPanel layout="block" styleClass="miniFormHeader">Packet Details</apex:outputPanel>
                         <apex:inputField value="{!SelectedDocPacket.Packet_Name__c}" onchange="recordChange('Packet Name')"/>
                         <apex:inputField required="true" value="{!SelectedDocPacket.Status__c}" onchange="recordChange('Status')"/>
+                        <apex:inputField required="false" value="{!SelectedDocPacket.Default_Admission_Packet__c}" onchange="recordChange('Default Admission Packet')"/>
                         <apex:commandButton action="{!SavePack}"  style="width: 45%; float: right; margin-right: 5%; padding: 10px;"  id="PackSaveNode" value="Save Packet" status="myStatus" reRender="fullpage"/>
                     </apex:pageBlockSection>
                     <apex:pageBlockSection columns="1" rendered="{!SelectedItemOption == 'Document'}" >
