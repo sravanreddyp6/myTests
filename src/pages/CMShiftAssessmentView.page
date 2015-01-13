@@ -424,6 +424,9 @@
 				<apex:pageBlock id="nutritionMainBlock">
 					<apex:pageBlockSection columns="1" title="Nutrition & Hydration" id="nutritionHydrationSection">
 						<apex:outputField value="{!Evaluation__c.Nutrition_Route__c}" label="Feeding Type" />
+						
+						<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Fluid Intake" formId="{!$Component.wholePage}" uniqueId="fluidIntake" />
+						
 						<apex:outputField value="{!Evaluation__c.Oral_Health_Check__c}" />
 						<apex:outputField value="{!Evaluation__c.Issues_Noted__c}" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
 						<apex:outputField value="{!Evaluation__c.Tongue__c}" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
