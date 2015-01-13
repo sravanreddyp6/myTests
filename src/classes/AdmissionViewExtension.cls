@@ -95,7 +95,7 @@ public with sharing class AdmissionViewExtension {
         else {
 	        return [
 	           SELECT Name, Assessment_Date__c, Finalized_Date__c, Score__c,
-	                  Owner.FirstName, Owner.LastName, Owner.Name, Status__c
+	                  Owner.FirstName, Owner.LastName, Owner.Name, Status__c, disregard__c
 	           FROM Assessment__c
 	           WHERE Assessment_Type__r.Name=:name AND Admission__c=:admissionId Order By CreatedDate DESC 
 	        ];
