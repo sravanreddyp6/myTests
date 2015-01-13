@@ -231,7 +231,11 @@ public with sharing class CMShiftAssessmentView {
   public pageReference saveEvaluation() {
 
       try{
-      	  update evaluation;
+      	  update this.evaluation;
+      	  
+      	  PageReference pr = new PageReference('/apex/CMShiftAssessmentView?id='+this.evaluation.Id);
+      	  pr.setRedirect(true);
+      	  return pr;
       }
       catch (Exception e) {
           Apexpages.AddMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
