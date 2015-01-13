@@ -532,9 +532,10 @@ public with sharing class NursingEvaluationEditController {
                 this.evaluation.Urine_Clarity_Other__c ='';
                 }
                 
-        //for Bladder incont Multi-picklist         
+        //for Bladder incont Multi-picklist
+        clr = '';         
        	for(string c: selectedBladder)
-        clr = c+';';
+        clr += c+';';
                 if(clr!=''){
                         clr =clr.Substring(0,clr.length()-1);
                         this.evaluation.Elimination_Bladder_No_Continent_Details__c= clr;
@@ -543,9 +544,10 @@ public with sharing class NursingEvaluationEditController {
                 else
                 this.evaluation.Elimination_Bladder_No_Continent_Details__c ='';
                 
-       //for Bowel incont Multi-picklist         
+       //for Bowel incont Multi-picklist    
+       clr = '';     
         for(string c: selectedBowel)
-        clr = c+';';
+        clr += c+';';
                 if(clr!=''){
                         clr =clr.Substring(0,clr.length()-1);
                         this.evaluation.Elimination_Bowel_No_Continent_Appliance__c= clr;
