@@ -321,6 +321,31 @@
         <label>Decubity Detail</label>
     </fieldSets>
     <fieldSets>
+        <fullName>Fluid_Intake</fullName>
+        <description>Evaluation Response Component</description>
+        <displayedFields>
+            <field>Intake_Type__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Time_Given__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Formula__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Volume_MLs__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <label>Fluid Intake</label>
+    </fieldSets>
+    <fieldSets>
         <fullName>Fracture_Detail</fullName>
         <description>Evaluation Response Component</description>
         <displayedFields>
@@ -854,6 +879,16 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Formula__c</fullName>
+        <externalId>false</externalId>
+        <label>Formula</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Fracture_Type__c</fullName>
         <externalId>false</externalId>
         <label>Type</label>
@@ -960,6 +995,24 @@
         <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Intake_Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Intake Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>IV</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>K_plus__c</fullName>
@@ -1270,6 +1323,14 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Time_Given__c</fullName>
+        <externalId>false</externalId>
+        <label>Time Given</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
+    </fields>
+    <fields>
         <fullName>Time_Observed__c</fullName>
         <externalId>false</externalId>
         <label>Time Observed</label>
@@ -1281,6 +1342,16 @@
         <fullName>Treatment__c</fullName>
         <externalId>false</externalId>
         <label>Treatment</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Volume_MLs__c</fullName>
+        <externalId>false</externalId>
+        <label>Volume (MLs)</label>
         <length>255</length>
         <required>false</required>
         <trackTrending>false</trackTrending>
@@ -1417,6 +1488,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -1562,6 +1644,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -1699,6 +1792,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -1844,6 +1948,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -1981,6 +2096,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -2126,6 +2252,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -2263,6 +2400,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -2412,6 +2560,178 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>O2_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Position__c</picklist>
+            <values>
+                <fullName>Lying</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>N%2FA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sitting</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Standing</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Test_Type__c</picklist>
+            <values>
+                <fullName>Acintobacter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>C-diff</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MDR</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MRSA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>TB</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>VRE</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Wound_Type__c</picklist>
+            <values>
+                <fullName>Abrasion</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bruising</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Burn</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Open</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Surgical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Traumatic</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>X2_Negative_Cultures__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Fluid_Intake</fullName>
+        <active>true</active>
+        <description>This record type is used to facilitate multiple entries for Fluid intake in CMShiftAssessment Nutrition Tab</description>
+        <label>Fluid Intake</label>
+        <picklistValues>
+            <picklist>Allergy_Type__c</picklist>
+            <values>
+                <fullName>Drug</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Food</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Category__c</picklist>
+            <values>
+                <fullName>CT</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Doppler</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MRI</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>X-Ray</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>HR_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -2557,6 +2877,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -2698,6 +3029,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -2835,6 +3177,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -2985,6 +3338,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -3126,6 +3490,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -3275,6 +3650,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -3416,6 +3802,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -3565,6 +3962,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -3702,6 +4110,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -3847,6 +4266,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -3988,6 +4418,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -4125,6 +4566,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
