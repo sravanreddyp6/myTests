@@ -83,6 +83,83 @@
             }
         
         }
+        
+        
+        validateEval = function () {
+            var evalErrors = [];
+            var dupe = [];
+            var startValue = j$('[id$=evalstartTime]').val();
+            var st = new Date(startValue);
+            var formatStart = moment(st).format();
+            var start = new Date(formatStart);
+            var endValue = j$('[id$=evalendTime]').val();
+            var en = new Date(endValue);
+            var formatEnd = moment(en).format();
+            var end = new Date(formatEnd);
+
+            j$('#evaluationMessages').html('');
+
+            if (startValue == '' || endValue == '') {
+                evalErrors.push('Shift Start time and end time cannot be blank');
+            }
+
+            if (start >= end) {
+                evalErrors.push('Shift End time Should be greater than Start time');
+            }
+
+			if (evalErrors.length > 0) {
+
+				j$.each(evalErrors, function (index, error) {
+					j$('#evaluationMessages').append('<li class="error">' + error + '</li>');
+				});
+
+			} else {
+
+						Visualforce.remoting.Manager.invokeAction(
+						'{!$RemoteAction.CMShiftAssessmentView.finddupeEval}',
+							startValue,endValue,'{!Evaluation__c.ServiceAssignment__c}',
+						function(result, event){
+							if (event.status) {
+								console.log(result);
+								if(result){
+										dupe.push('There is already an existing Shift Assessment for the current timings. Do you still want to proceed?');
+										j$('#dupeFound').append('<li class="warning">' + dupe + '</li>');
+										j$('[id$=startdate]').prop('disabled', true);
+										j$('[id$=enddate]').prop('disabled', true);
+										j$('[id$=evalProceed]').show();
+										j$('[id$=enterNew]').show();
+										j$('[id$=evalSave]').hide();
+								} else{
+									evaluationSave();
+								}
+
+							} else if (event.type === 'exception') {
+								document.getElementById("dupeFound").innerHTML = event.message;
+							} else {
+								document.getElementById("dupeFound").innerHTML = event.message;
+							}
+						},
+						{escape: true}
+					);
+
+				}
+
+		}
+
+		clearDates = function() {
+			j$('[id$=evalstartTime]').val('');
+			j$('[id$=evalendTime]').val('');
+			j$('[id$=startdate]').prop('disabled', false);
+			j$('[id$=enddate]').prop('disabled', false);
+			j$('[id$=startdate]').val('');
+			j$('[id$=enddate]').val('');
+			j$('#evaluationMessages').html('');
+			j$('#dupeFound').html('');
+			j$('[id$=evalProceed]').hide();
+			j$('[id$=evalSave]').show();
+			j$('[id$=enterNew]').hide();
+
+		}
 
 	</script>
 
@@ -173,6 +250,8 @@
 			<apex:inputhidden value="{! Evaluation__c.Autonomic_Dysreflexia_Areas_Assessed__c}" />
 		</apex:outputpanel>
 		<apex:pageMessages id="pageMessages" />
+		<apex:actionFunction name="evaluationSave" action="{!saveEvaluation}" status="saveevaluationStatus" reRender="" />
+		<apex:actionFunction name="showAddevaluation" action="{!showAddevaluation}" status="AddevaluationStatus" oncomplete="openModalDialog('{!$Component.evaluationModal}','Edit Shift Time','{!$Component.wholePage}'); j$('#evaluationMessages').html('');" reRender="evaluations,msgs" />
 		<apex:actionfunction name="finalizeEval" action="{!finalizeEval}" status="pageProcessing" reRender="pageMessages" />
 		<apex:actionFunction name="disregardEval" action="{!disregardEval}" status="pageProcessing" reRender="pageMessages,btnDisregard" />
 		<apex:tabPanel id="wholeTabPanel" value="{!selectedTab}" styleClass="evaluationTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
@@ -906,6 +985,14 @@
 			<apex:commandButton value="Disregard" style="position: absolute; margin-left: 730px; margin-top: 8px;" rendered="{!Evaluation__c.Status__c =='Draft' &&  Evaluation__c.OwnerId == $User.Id}" onClick="disregard(); return false;"/>
 			<apex:commandButton value="E-Sign" style="position: absolute; margin-left: 792px; margin-top: 8px;" rendered="{!Evaluation__c.OwnerId == $User.Id && Evaluation__c.Status__c != 'Disregard' && !Evaluation__c.Is_Signed__c}" onClick="authenticate(); return false;" />
 			<apex:commandButton value="Print PDF" style="position: absolute; margin-left: 840px; margin-top: 8px;"  onclick="openWin('/apex/CMShiftAssessmentPDF?id={!Evaluation__c.Id}'); return false;" />
+			<apex:commandButton value="Edit Shift Time" style="position: absolute; margin-left: 900px; margin-top: 8px;" onclick="showAddevaluation(); j$('[id$=evalProceed]').hide(); j$('[id$=enterNew]').hide();return false;" >
+				<apex:actionStatus id="AddevaluationStatus">
+					<apex:facet name="start">
+						<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+					</apex:facet>
+					<apex:facet name="stop" />
+				</apex:actionStatus>
+			</apex:commandButton>
 		</apex:tabPanel>
 		<apex:pageBlock id="buttons">
 			<apex:pageBlockButtons location="bottom">
@@ -1017,6 +1104,47 @@
 				</apex:pageBlockSection>
 			</apex:pageBlock>
 		</apex:outputPanel>
+		
+		
+		<apex:outputPanel id="evaluationModal" style="display:none">
+			<span class="ui-helper-hidden-accessible"><input type="text"/></span>
+			<div id='evaluationMessages'></div>
+			<apex:pageBlock title="Edit Shift Time" >
+				<apex:pageBlockSection columns="2" id="evaluationEntry">
+					<apex:pageBlockSectionItem >
+						<apex:outputPanel >
+							<apex:outputLabel Value="Shift Start Time" styleClass="labelCol"/>
+							<c:MilitaryDatetime edit="true" hiddenFieldId="evalstartTime" dateTimeVal="{!evaluation.Shift_Start_Time__c}" datetimepickerid="startdate"/>
+							<apex:inputhidden value="{!evaluation.Shift_Start_Time__c}" id="evalstartTime" />
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem >
+					<apex:outputpanel >
+							<apex:outputLabel Value="Shift End Time" styleClass="labelCol"/>
+							<c:MilitaryDatetime edit="true" hiddenFieldId="evalendTime" dateTimeVal="{!evaluation.Shift_End_Time__c}" datetimepickerid="enddate"/>
+							<apex:inputhidden value="{!evaluation.Shift_End_Time__c}" id="evalendTime" />
+						</apex:outputpanel>
+					</apex:pageBlockSectionItem>
+				</apex:pageBlockSection>
+				<div id="dupeFound" ></div>
+				<apex:pageBlockButtons location="bottom">
+					<apex:commandButton value="Save" onclick="validateEval();return false;" id="evalSave" />
+					<apex:commandbutton value="Proceed" onClick="evaluationSave(); return false;" id="evalProceed"/>
+					<apex:commandButton value="Enter new time" onClick="clearDates(); j$('#dupeFound').html(''); return false;" id="enterNew"/>
+					<apex:commandButton value="Cancel" onclick="closeModalDialog('evaluationModal', 'span'); clearDates(); return false;" />
+					<apex:actionStatus id="saveevaluationStatus">
+						<apex:facet name="start">
+							<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+						</apex:facet>
+						<apex:facet name="stop" />
+					</apex:actionStatus>
+				</apex:pageBlockButtons>
+			</apex:pageBlock>
+		</apex:outputPanel>
+		
+		
+		
+		
 		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!Evaluation__c.Id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); window.location='/{!Evaluation__c}'; return false;" />
 	</apex:form>
 	<apex:actionStatus id="pageProcessing">

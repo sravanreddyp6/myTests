@@ -224,7 +224,22 @@ public with sharing class CMShiftAssessmentView {
         }
     }
     
+   public void showAddevaluation() {
     
+  }
+
+  public pageReference saveEvaluation() {
+
+      try{
+      	  update evaluation;
+      }
+      catch (Exception e) {
+          Apexpages.AddMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
+      }
+
+    return null;
+  }
+  
     public List<selectoption> getcopingValues(){
         List<Selectoption> copingValue = Utility.getPicklistValues(evaluation, 'Resident_Demonstrating_Issues__c');
         return copingValue;
@@ -290,6 +305,26 @@ public with sharing class CMShiftAssessmentView {
         }
         return cmap;
     }
+    
+   @RemoteAction
+   public static boolean finddupeEval(string shiftStart, string shiftEnd, Id saId) {
+   		system.debug('I am remoting');
+   		system.debug(shiftStart);
+   		DateTime st = Datetime.parse(shiftStart);
+   		DateTime en = Datetime.parse(shiftEnd);
+   		boolean dupefound = false;
+   		List<Evaluation__c> dupeEval = [SELECT Id, Name, Shift_Start_time__c, Shift_end_time__c FROM Evaluation__c WHERE ServiceAssignment__c = :saId AND (
+        					(Shift_Start_time__c >= :st and Shift_Start_time__c <= :en)
+        				or 	(Shift_end_time__c >= :st and Shift_end_time__c <= :en)
+        				or  ( Shift_Start_time__c <= :st and Shift_end_time__c >= :en )) AND RecordType.Name = 'CMShiftAssessment' AND Status__c !='Disregard' LIMIT 1];
+        				
+   		system.debug(dupeEval);
+   		if(dupeEval.size() >0 ) {
+   			dupeFound = true;
+   		}
+   	
+   		return dupeFound;
+   }
 
 
 }

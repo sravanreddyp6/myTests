@@ -216,10 +216,10 @@
 		clearDates = function() {
 			j$('[id$=evalstartTime]').val('');
 			j$('[id$=evalendTime]').val('');
-			j$('[id$=startdate]').prop('disabled', false);
-			j$('[id$=enddate]').prop('disabled', false);
-			j$('[id$=startdate]').val('');
-			j$('[id$=enddate]').val('');
+			j$('[id$=evalstartdate]').prop('disabled', false);
+			j$('[id$=evalenddate]').prop('disabled', false);
+			j$('[id$=evalstartdate]').val('');
+			j$('[id$=evalenddate]').val('');
 			j$('#evaluationMessages').html('');
 			j$('#dupeFound').html('');
 			j$('[id$=evalProceed]').hide();
@@ -1007,14 +1007,14 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:pageBlockSectionItem >
 						<apex:outputPanel >
 							<apex:outputLabel Value="Shift Start Time" styleClass="labelCol"/>
-							<c:MilitaryDatetime edit="true" hiddenFieldId="evalstartTime" dateTimeVal="{!evaluation.Shift_Start_Time__c}" datetimepickerid="startdate"/>
+							<c:MilitaryDatetime edit="true" hiddenFieldId="evalstartTime" dateTimeVal="{!evaluation.Shift_Start_Time__c}" datetimepickerid="evalstartdate"/>
 							<apex:inputhidden value="{!evaluation.Shift_Start_Time__c}" id="evalstartTime" />
 						</apex:outputPanel>
 					</apex:pageBlockSectionItem>
 					<apex:pageBlockSectionItem >
 					<apex:outputpanel >
 							<apex:outputLabel Value="Shift End Time" styleClass="labelCol"/>
-							<c:MilitaryDatetime edit="true" hiddenFieldId="evalendTime" dateTimeVal="{!evaluation.Shift_End_Time__c}" datetimepickerid="enddate"/>
+							<c:MilitaryDatetime edit="true" hiddenFieldId="evalendTime" dateTimeVal="{!evaluation.Shift_End_Time__c}" datetimepickerid="evalenddate"/>
 							<apex:inputhidden value="{!evaluation.Shift_End_Time__c}" id="evalendTime" />
 						</apex:outputpanel>
 					</apex:pageBlockSectionItem>
