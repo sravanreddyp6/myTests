@@ -25,6 +25,10 @@ public with sharing class CMShiftAssessmentEdit {
 	public List<string>selectedDysreflexia { get ; set; }
 	public List<selectOption>verbalExpressionValues;
 	public List<string>selectedVerbalExpression { get; set; }
+	public List<SelectOption>bowelValues ;
+    public List<string>selectedBowel {get; set;}
+	public List<SelectOption>bladderValues ;
+    public List<string>selectedBladder {get; set;}
 
 	public Evaluation_Response__c[] pains {
 		get {
@@ -193,6 +197,10 @@ public with sharing class CMShiftAssessmentEdit {
 		selectedDysreflexia = new List<String>();
 		verbalExpressionValues = new List<selectOption>();
 		selectedVerbalExpression = new List<String>();
+		bowelValues = new List<selectOption>();
+        selectedBowel = new List<String>();
+		bladderValues = new List<selectOption>();
+        selectedBladder = new List<String>();
 
 
 		if(!String.isBlank(this.evaluation.Resident_Demonstrating_Issues__c))
@@ -212,6 +220,12 @@ public with sharing class CMShiftAssessmentEdit {
 
 		if(!String.isBlank(this.evaluation.Expression_Other__c))
 			selectedVerbalExpression = this.evaluation.Expression_Other__c.split(';');
+			
+		 if(!String.isBlank(this.evaluation.Elimination_Bowel_No_Continent_Appliance__c))
+            selectedBowel = this.evaluation.Elimination_Bowel_No_Continent_Appliance__c.split(';');
+			
+		if(!String.isBlank(this.evaluation.Elimination_Bladder_No_Continent_Details__c))
+            selectedBladder = this.evaluation.Elimination_Bladder_No_Continent_Details__c.split(';');
 			
 		if(ApexPages.currentPage().getParameters().get('showErrors') == '1'){
 			checkErrors();
@@ -367,6 +381,31 @@ public with sharing class CMShiftAssessmentEdit {
 		}
 		else
 			this.evaluation.Expression_Other__c ='';
+		
+		//for Bowel incont Multi-picklist 
+		string blr ='';       
+        for(string c: selectedBowel)
+        	blr = c+';';
+            if(blr!=''){
+                blr =blr.Substring(0,blr.length()-1);
+                this.evaluation.Elimination_Bowel_No_Continent_Appliance__c= blr;
+                
+            }
+            else
+            this.evaluation.Elimination_Bowel_No_Continent_Appliance__c =''; 
+		
+		//for Bladder incont Multi-picklist
+		string clr = '';         
+       	for(string c: selectedBladder)
+	        clr = c+';';
+                if(clr!=''){
+                        clr =clr.Substring(0,clr.length()-1);
+                        this.evaluation.Elimination_Bladder_No_Continent_Details__c= clr;
+                        
+                }
+                else
+                this.evaluation.Elimination_Bladder_No_Continent_Details__c ='';
+                
 
 		// Saving the selected options for multi-checkbox fields
 		for (String field: selectOptionWidgetsMap.keySet()) {
@@ -648,6 +687,21 @@ public with sharing class CMShiftAssessmentEdit {
 			nutritionErrors.add('LLQ Description is Mandatory');
 
 		}
+		
+		if(this.evaluation.Weight_picklist__c == 'Yes' && this.evaluation.WeightKg__c == null) {
+			nutrition = false;
+			nutritionErrors.add('Please enter Weight information');
+		}
+		
+		if(this.evaluation.Bowel_Continence__c == null) {
+			nutrition = false;
+			nutritionErrors.add('Bowel Continence field is Mandatory');
+		}
+		
+		if(this.evaluation.Bowel_Continence__c = 'Incontinent' && this.evaluation.Elimination_Bowel_No_Continent_Appliance__c == ''){
+			nutrition = false;
+			nutritionErrors.add('Please choose atleast one device for Bowel Continence');
+		}
 
 		if(this.evaluation.Bowel_Issues__c == null) {
 			nutrition = false;
@@ -666,6 +720,44 @@ public with sharing class CMShiftAssessmentEdit {
 				nutritionErrors.add('Bowel issues additional information is Mandatory');
 			}
 
+		}
+		
+		if(this.evaluation.Bladder_Continence__c == null){
+			nutrition = false;
+			nutritionErrors.add('Bladder Continence field is mandatory');
+		}
+		
+		if(this.evaluation.Bladder_Continence__c == 'Incontinent' && this.evaluation.Elimination_Bladder_No_Continent_Details__c == '') {
+			nutrition = false;
+			nutritionErrors.add('Please choose atleast one device for Bladder Continence');
+		}
+		
+		if(this.evaluation.Urinary_Issues_Checkbox__c == null){
+			nutrition = false;
+			nutritionErrors.add('Urinary issues field is mandatory');	
+		}
+		
+		if(this.evaluation.Urinary_Issues_Checkbox__c == 'Yes') {
+			if(this.evaluation.urinary_issues__c) {
+				nutrition = false;
+				nutritionErrors.add('Urinary Issue type is mandatory');
+			}
+			
+			if(this.evaluation.Urine_Color__c == null ) {
+				nutrition = false;
+				nutritionErrors.add('Urine Color is mandatory');
+			}
+			
+			if(this.evaluation.urine_clarity__c == null ) {
+				nutrition = false;
+				nutritionErrors.add('Urinary Clarity is mandatory');
+			}
+			
+			if(this.evaluation.Urine_Odor__c == null ) {
+				nutrition = false;
+				nutritionErrors.add('Urinary odor is mandatory');
+			}
+			
 		}
 		
 		if(this.evaluation.Dialysis_Picklist__c == null) {
@@ -737,9 +829,9 @@ public with sharing class CMShiftAssessmentEdit {
 			neuroErrors.add('Rancho level is Mandatory');
 		}
 
-		if(this.evaluation.Rancho_Level__c != null && this.evaluation.Rancho_Level__c != '(1) No Response') {
+		if(this.evaluation.Rancho_Level__c != null && this.evaluation.Rancho_Level__c != '(1) No Response' ) {
 
-			if(this.evaluation.Mood__c.Contains('Sad') || this.evaluation.Mood__c.Contains('Flat')) {
+			if( this.evaluation.Mood__c != '' && (this.evaluation.Mood__c.Contains('Sad') || this.evaluation.Mood__c.Contains('Flat'))) {
 
 				if(this.evaluation.Desire_to_hurt_themselves__c == null) {
 					neuro = false;
@@ -897,6 +989,16 @@ public with sharing class CMShiftAssessmentEdit {
 		List<Selectoption> expressionValue = Utility.getPicklistValues(evaluation, 'Expression_Other__c');
 		return expressionValue;
 	}
+	
+   public List<selectoption> getbowelValues(){
+            List<Selectoption> bowelValue = Utility.getPicklistValues(evaluation, 'Elimination_Bowel_No_Continent_Appliance__c');
+            return bowelValue; 
+   }
+	
+   public List<selectoption> getbladderValues(){
+            List<Selectoption> bladderValue = Utility.getPicklistValues(evaluation, 'Elimination_Bladder_No_Continent_Details__c');
+            return bladderValue; 
+   }
 
 	public PageReference addPainResponse() {
 		pains.add(new Evaluation_Response__c(
