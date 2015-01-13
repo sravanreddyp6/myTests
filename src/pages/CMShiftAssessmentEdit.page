@@ -1312,7 +1312,7 @@
 					});
 			
 		</script>
-				<apex:pageBlock id="nutritionMainBlock">
+				<apex:pageBlock>
 					<apex:pageBlockSection Columns="2" >
 						<apex:pageBlockSectionItem >
 							<apex:outputLabel Value="Shift Start Time" styleClass="labelCol" />
@@ -1325,7 +1325,7 @@
 						<apex:outputField value="{!Evaluation__c.Status__c}" />
 					</apex:pageBlockSection>
 				</apex:pageBlock>
-				<apex:pageBlock >
+				<apex:pageBlock id="nutritionMainBlock">
 					<apex:pageBlockSection columns="2" collapsible="false" rendered="{!showErrors}" >
 						<apex:pageBlockTable value="{!errorMap['nutritionTab']}" var="d" columns="1" >
 							<apex:repeat value="{!d}" var="temp" >
@@ -1528,7 +1528,7 @@
 						
 						<apex:pageBlockSectionItem >
 							<apex:outputText Value="Weight" styleClass="labelCol" />
-							<apex:inputField value="{!Evaluation__c.Weight_picklist__c}" html-data-visibility-rules="{&quot;Yes&quot;: &quot;{!$Component.weightSection.weightSectionPanel}&quot;}"/>
+							<apex:inputField value="{!Evaluation__c.Weight_Picklist__c}" html-data-visibility-rules="{&quot;Yes&quot;: &quot;{!$Component.weightSection.weightSectionPanel}&quot;}"/>
 						</apex:pageBlockSectionItem>
 						
 						<apex:pageBlockSectionItem id="weightSection">
@@ -1941,7 +1941,7 @@
 				</apex:pageBlock>
 			</apex:tab>
 			<apex:tab label="Neurological" name="neuroTab" ontabenter="changeTab('neuroTab');return false;" styleClass="{!IF(Evaluation__c.Neuro_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
-				<apex:pageBlock id="neuroMainBlock">
+				<apex:pageBlock>
 					<apex:pageBlockSection Columns="2" >
 						<apex:pageBlockSectionItem >
 							<apex:outputLabel Value="Shift Start Time" styleClass="labelCol" />
@@ -1954,7 +1954,7 @@
 						<apex:outputField value="{!Evaluation__c.Status__c}" />
 					</apex:pageBlockSection>
 				</apex:pageBlock>
-				<apex:pageBlock >
+				<apex:pageBlock id="neuroMainBlock">
 					<apex:pageBlockSection columns="2" collapsible="false" rendered="{!showErrors}" >
 						<apex:pageBlockTable value="{!errorMap['neuroTab']}" var="d" columns="1" >
 							<apex:repeat value="{!d}" var="temp" >
