@@ -663,25 +663,25 @@ public with sharing class CMShiftAssessmentEdit {
 
 		}
 
-		if(this.evaluation.RUQ__c == 'Yes' && this.evaluation.RUQ_Describe__c == null) {
+		if(this.evaluation.RUQ__c == 'Abnormal' && this.evaluation.RUQ_Describe__c == null) {
 			nutrition = false;
 			nutritionErrors.add('RUQ Description is Mandatory');
 
 		}
 
-		if(this.evaluation.LUQ__c == 'Yes' && this.evaluation.LUQ_Describe__c == null) {
+		if(this.evaluation.LUQ__c == 'Abnormal' && this.evaluation.LUQ_Describe__c == null) {
 			nutrition = false;
 			nutritionErrors.add('LUQ Descritption is Mandatory');
 
 		}
 
-		if(this.evaluation.RLQ__c == 'Yes' && this.evaluation.RLQ_Describe__c == null) {
+		if(this.evaluation.RLQ__c == 'Abnormal' && this.evaluation.RLQ_Describe__c == null) {
 			nutrition = false;
 			nutritionErrors.add('RLQ Description is Mandatory');
 
 		}
 
-		if(this.evaluation.LLQ__c == 'Yes' && this.evaluation.LLQ_Describe__c == null) {
+		if(this.evaluation.LLQ__c == 'Abnormal' && this.evaluation.LLQ_Describe__c == null) {
 			nutrition = false;
 			nutritionErrors.add('LLQ Description is Mandatory');
 
@@ -697,7 +697,7 @@ public with sharing class CMShiftAssessmentEdit {
 			nutritionErrors.add('Bowel Continence field is Mandatory');
 		}
 		
-		if(this.evaluation.Bowel_Continence__c = 'Incontinent' && this.evaluation.Elimination_Bowel_No_Continent_Appliance__c == ''){
+		if(this.evaluation.Bowel_Continence__c == 'Incontinent' && this.evaluation.Elimination_Bowel_No_Continent_Appliance__c == ''){
 			nutrition = false;
 			nutritionErrors.add('Please choose atleast one device for Bowel Continence');
 		}
@@ -706,7 +706,7 @@ public with sharing class CMShiftAssessmentEdit {
 			nutrition = false;
 			nutritionErrors.add('Bowel issues field is Mandatory');
 		}
-
+		
 		if(this.evaluation.Bowel_Issues__c == 'Yes') {
 			if(this.evaluation.bowel_issue_type__c == '') {
 				nutrition = false;
@@ -737,7 +737,7 @@ public with sharing class CMShiftAssessmentEdit {
 		}
 		
 		if(this.evaluation.Urinary_Issues_Checkbox__c == 'Yes') {
-			if(this.evaluation.urinary_issues__c) {
+			if(this.evaluation.urinary_issues__c == '') {
 				nutrition = false;
 				nutritionErrors.add('Urinary Issue type is mandatory');
 			}

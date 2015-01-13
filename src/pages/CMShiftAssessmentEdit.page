@@ -1289,7 +1289,7 @@
 					});
 			
 		</script>
-				<apex:pageBlock>
+				<apex:pageBlock >
 					<apex:pageBlockSection Columns="2" >
 						<apex:pageBlockSectionItem >
 							<apex:outputLabel Value="Shift Start Time" styleClass="labelCol" />
@@ -1532,7 +1532,7 @@
 							</apex:outputPanel>
 						</apex:pageBlockSectionItem>
 						
-						<apex:pageBlockSectionItem/>
+						<apex:pageBlockSectionItem />
 						
                         <apex:pageBlockSectionItem id="bowelContinenceSection" >
                         <apex:outputLabel value="Devices" />
@@ -1540,7 +1540,7 @@
                         <apex:selectCheckboxes value="{!selectedBowel}" id="bowelAppliance" >
                                 <apex:selectOptions value="{!BowelValues}"/>
                             </apex:selectCheckboxes>
-                        </apex:outputPanel >
+                        </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:inputField value="{!Evaluation__c.Elimination_Bowel_No_Appliance_Other__c}" label="Specify Other" id="bowelApplianceOther" />
 						
@@ -1906,7 +1906,7 @@
 				</apex:pageBlock>
 			</apex:tab>
 			<apex:tab label="Neurological" name="neuroTab" ontabenter="changeTab('neuroTab');return false;" styleClass="{!IF(Evaluation__c.Neuro_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
-				<apex:pageBlock>
+				<apex:pageBlock >
 					<apex:pageBlockSection Columns="2" >
 						<apex:pageBlockSectionItem >
 							<apex:outputLabel Value="Shift Start Time" styleClass="labelCol" />
