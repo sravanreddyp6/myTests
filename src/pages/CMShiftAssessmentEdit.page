@@ -374,27 +374,6 @@
 
 			};
 			
-			handleBowelOther = function() {
-                // get the value
-                var bow = '';
-                $('input[id*=bowelAppliance]').each(function (index, element) {
-                    if ( $(element).prop('checked') == true )
-                        bow += $(element).val() + ';';
-                });
-
-                if ( bow.indexOf('Other') >= 0 ) {
-                    $('input[id$=bowelApplianceOther]').prop('disabled', false);
-                } else {
-                    $('input[id$=bowelApplianceOther]').val('');
-                    $('input[id$=bowelApplianceOther]').prop('disabled', true);
-                }
-            };
-			
-			handleGuGI = function() {
-				handleBowelOther();
-			}	
-			
-
 			var addOrModifyAnnotation = function (annotation, isNew) {
 				if (isNew) {
 					if (annotation.Id !== undefined) {
@@ -760,13 +739,11 @@
 			handleDiagnosis();
 			handleVitals();
 			handleCardio();
-			handleGuGI();
 			handleSkinBody();
 			handleNeuro();
 			handleOrtho();
 			hanldePsycho();
-
-
+			
 		}); //end "ready" function
 
 
@@ -814,7 +791,7 @@
 			<apex:inputhidden value="{!Evaluation__c.Elimination_Bowel_No_Continent_Appliance__c}" />
 		</apex:outputPanel>
 		<apex:pageMessages id="pageMessages" />
-		<apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); handleDiagnosis(); handleCardio(); handleGuGI(); handleSkinBody(); handleNeuro(); handleOrtho(); hanldePsycho();" reRender="pageMessages, wholeTabPanel, buttons">
+		<apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setUpFields(); handleDiagnosis(); handleCardio(); handleSkinBody(); handleNeuro(); handleOrtho(); hanldePsycho();" reRender="pageMessages, wholeTabPanel, buttons">
 			<apex:param name="nextTab" assignTo="{!nextTab}" value="" />
 		</apex:actionFunction>
 		<apex:tabPanel value="{!selectedTab}" id="wholeTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
@@ -1560,25 +1537,13 @@
                         <apex:pageBlockSectionItem id="bowelContinenceSection" >
                         <apex:outputLabel value="Devices" />
                         <apex:outputPanel id="bowelContinencePanel">
-                        <apex:selectCheckboxes value="{!selectedBowel}" id="bowelAppliance" onchange="handleBowelOther()">
+                        <apex:selectCheckboxes value="{!selectedBowel}" id="bowelAppliance" >
                                 <apex:selectOptions value="{!BowelValues}"/>
                             </apex:selectCheckboxes>
                         </apex:outputPanel >
                         </apex:pageBlockSectionItem>
                         <apex:inputField value="{!Evaluation__c.Elimination_Bowel_No_Appliance_Other__c}" label="Specify Other" id="bowelApplianceOther" />
-						<!--  apex:pageBlockSectionItem >
-							<apex:outputLabel value="Status" />
-							<apex:outputPanel >
-								<apex:selectCheckboxes value="{!selectedOptionsMap['elimination_bowel_status__c']}" id="eliminationBowelStatus">
-									<apex:selectOptions value="{!selectOptionWidgetsMap['elimination_bowel_status__c']}" />
-								</apex:selectCheckboxes>
-							</apex:outputPanel>
-						</apex:pageBlockSectionItem>
-						<apex:pageBlockSectionItem /-->
-
-						<!-- apex:inputField value="{!Evaluation__c.Elimination_Bowel_No_Appliance_Other__c}" label="Describe" id="eliminationBowelStatusOther" />
-						<apex:pageBlockSectionItem /-->
-
+						
 						<apex:inputField value="{!Evaluation__c.Usual_Elimination_Frequeny__c}" />
 						<apex:pageBlockSectionItem />
 
