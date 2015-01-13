@@ -386,25 +386,24 @@ public with sharing class CMShiftAssessmentEdit {
 		string blr ='';       
         for(string c: selectedBowel)
         	blr = c+';';
-            if(blr!=''){
-                blr =blr.Substring(0,blr.length()-1);
-                this.evaluation.Elimination_Bowel_No_Continent_Appliance__c= blr;
-                
-            }
-            else
-            this.evaluation.Elimination_Bowel_No_Continent_Appliance__c =''; 
+        if(blr!=''){
+            blr =blr.Substring(0,blr.length()-1);
+            this.evaluation.Elimination_Bowel_No_Continent_Appliance__c= blr;
+            
+        }
+        else
+        this.evaluation.Elimination_Bowel_No_Continent_Appliance__c =''; 
 		
 		//for Bladder incont Multi-picklist
 		string clr = '';         
        	for(string c: selectedBladder)
 	        clr = c+';';
-                if(clr!=''){
-                        clr =clr.Substring(0,clr.length()-1);
-                        this.evaluation.Elimination_Bladder_No_Continent_Details__c= clr;
-                        
-                }
-                else
-                this.evaluation.Elimination_Bladder_No_Continent_Details__c ='';
+        if(clr!=''){
+            clr =clr.Substring(0,clr.length()-1);
+            this.evaluation.Elimination_Bladder_No_Continent_Details__c= clr;      
+        }
+        else
+        this.evaluation.Elimination_Bladder_No_Continent_Details__c ='';
                 
 
 		// Saving the selected options for multi-checkbox fields
