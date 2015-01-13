@@ -342,7 +342,7 @@ public with sharing class CMShiftAssessmentEdit {
 			this.evaluation.Mood__c = mod;
 		}
 		else
-			this.evaluation.Mood__c ='';
+			this.evaluation.Mood__c = '';
 
 		//for breathe sounds multi-select
 		String strtypes = '';
@@ -829,10 +829,15 @@ public with sharing class CMShiftAssessmentEdit {
 		}
 
 		if(this.evaluation.Rancho_Level__c != null && this.evaluation.Rancho_Level__c != '(1) No Response' ) {
+			
+			if(this.evaluation.Mood__c == '') {
+				neuro = false;
+				neuroErrors.add('Please choose atleast one checkbox for Mood');
+			}
 
-			if( this.evaluation.Mood__c != '' && (this.evaluation.Mood__c.Contains('Sad') || this.evaluation.Mood__c.Contains('Flat'))) {
-
-				if(this.evaluation.Desire_to_hurt_themselves__c == null) {
+			if( this.evaluation.Mood__c != null) {
+				
+				if((this.evaluation.Mood__c.Contains('Sad') || this.evaluation.Mood__c.Contains('Flat')) && evaluation.Desire_to_hurt_themselves__c == null ) {
 					neuro = false;
 					neuroErrors.add('Has Resident Expressed Desire to Hurt Him/Herself? field is mandatory when mood is flat or sad');
 				}
