@@ -131,7 +131,7 @@ public with sharing class PB_DocPack_Admin_Form {
             
             if(itemPrefix == packetPrefix){
                 SelectedItemOption = 'Packet';
-                SelectedDocPacket = [select id, name, External_ID__c,  Packet_Name__c, Status__c from PB_DocPacket__c where id =:itemID];            
+                SelectedDocPacket = [select id, name, External_ID__c,  Packet_Name__c, Status__c, Default_Admission_Packet__c from PB_DocPacket__c where id =:itemID];            
             }
             else if(itemPrefix == joPrefix){
                 //the JS passes us the ID of the junction object, what we need is the ID of the acutal document 
@@ -187,7 +187,7 @@ public with sharing class PB_DocPack_Admin_Form {
     public void refreshDataTree(){
     
         dataTree = new TMN_Tree();
-        list<PB_DocPacket__c > allPackets = [select id, name, External_ID__c, Packet_Name__c, Status__c from PB_DocPacket__c];
+        list<PB_DocPacket__c > allPackets = [select id, name, External_ID__c, Packet_Name__c, Status__c, Default_Admission_Packet__c from PB_DocPacket__c];
         
         for(PB_DocPacket__c packet: allPackets){
             TMN_Tree.Node packetNode = new TMN_Tree.Node(packet.id, packet.Packet_Name__c);
