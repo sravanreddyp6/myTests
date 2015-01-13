@@ -1,0 +1,347 @@
+<apex:page standardController="Action_Summary__c" extensions="ActionSummaryReportForm" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab">
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+  <style>
+  .skillSummary {
+      padding-left:120px;
+      }
+  .skillSummary table {
+      border: 1px solid white;
+      border-collapse: collapse;
+      background-color: #99ccff;
+      padding: 4px;
+      }
+  .skillSummary .sstable tbody tr th {
+      border: 1px solid white;
+      padding: 4px;
+      }
+  .skillSummary .sstable tbody tr td {
+      border: 1px solid white;
+      padding: 4px;
+      background-color: #e6e6e6;
+      }
+  .skillSummary .sstable .objectivecomment{
+      background-color: #cce5ff;
+      }
+  .objectivecommentinput {
+      width:100%;
+      }
+  .headertype {
+      width:140px;
+      float:left;
+      }
+  .headerdescription {
+      float:left;
+      font-weight: normal;
+      }
+  .pbSubheader img {
+      float:left;
+      }
+  div[id$="planheader"] > .pbSubheader{
+      background-color:#c5d3ef !important;
+      padding:7px !important;
+      }
+  .data2Col > .details {
+      padding-left:120px;
+      }
+  .details .detail{
+      width:220px;
+      float:left;
+      } 
+  .OtherSummaryComments{
+      padding-left:120px;
+      }
+  .detail .fieldvalue {
+      font-weight: normal;
+      }
+  .detail .fieldtitle {
+      font-weight: bold;
+      }
+  .leftandtherest {
+      padding-left:300px;
+      }
+  .recommendationblock {
+      float: left;
+      padding: 4px;
+      padding-left: 120px;
+      position:relative;
+      width:180px;
+      right:300px;
+      margin-left: -100%;
+      }
+  .commentblock {
+      float: left;
+      padding: 4px;
+      width:100%;
+      position:relative;
+      }
+
+	.hbbg{
+	    position:fixed;
+	    width:100%;
+	    height:100%;
+	    top:0px;
+	    left:0px;
+	    background-color: gray;
+	    opacity: .6;
+	    z-index:1000;
+	}      
+	.popupform{
+	    position: fixed; 
+	    left:35%; 
+	    top:40%;
+	     /*background-color: white; border: 2px solid gray; padding: 7px;*/
+	    width: 343px;
+	    opacity: 1;
+	    z-index:1099;
+	
+	}      
+  </style>
+  
+  
+  <script>
+    var j$ = jQuery.noConflict();
+    
+	function printpage(radioObj) {
+	    if(radioObj.value == 'WORD'){
+	        return window.open('/apex/ActionSummaryReport_Print?Id={!Action_Summary__c.Id}', '_blank');
+	    }
+	
+	    if(radioObj.value == 'PDF'){
+	        return window.open('/apex/ActionSummaryReport_Print?Id={!Action_Summary__c.Id}&pdf=1', '_blank');
+	    }    
+	    return '';
+	}
+	    
+	function toggleById(id, ms){
+	    j$(document.getElementById(id)).toggle(ms);
+	};
+</script>
+  
+  <c:PersonalRecord pbsId="{!personId}" parentPage="ActionSummaryReport"
+     servAssignId="{!Action_Summary__c.Service_Assignment__c}" 
+     admId="{!Action_Summary__c.Service_Assignment__r.Admission__c}"/>
+  <br />
+  <apex:Form >
+  <apex:outputText value="{!Action_Summary__c.End_Date__c}" rendered="false"/>
+  <apex:outputText value="{!Action_Summary__c.Start_Date__c}" rendered="false"/>
+  <apex:outputText value="{!Action_Summary__c.Service_Assignment__r.Start_Date__c}" rendered="false"/>
+  <apex:pagemessages />
+  <apex:PageBlock title="Action Plan Summary" >
+  <div class="pbHeaderButton">
+          <apex:commandButton value="Save " action="{!SaveAll}" id="formSave" status="myStatus"  rendered="{!Action_Summary__c.Status__c != 'Final' && Editable }"/>
+          <apex:commandButton value="Finalize" action="{!Finalize}"  rendered="{!(Action_Summary__c.Status__c != 'Final') && canFinalize}"/>
+          
+		  <apex:commandButton value="Print" onClick="toggleById('printform'); return false;" />          
+  </div>
+  <apex:pageBlockSection title="Summary Details" columns="3">
+      <apex:outputField value="{!Action_Summary__c.Name}"/>
+
+      <apex:selectList value="{!Action_Summary__c.Start_Date__c}" size="1"  rendered="{!editable}">
+           <apex:selectOptions value="{!MonthsInServiceAssignment}"></apex:selectOptions>
+      </apex:selectList>
+      <apex:outputField value="{!Action_Summary__c.Start_Date__c}" rendered="{!(!editable)}"/>
+      
+      <apex:pageBlockSectionItem rendered="{!editable}">
+          Duration
+          <apex:selectList value="{!Duration}" size="1" title="Duration" >
+              <apex:selectOptions value="{!AllowedDurations}"></apex:selectOptions>
+          </apex:selectList>
+      </apex:pageBlockSectionItem>
+
+      <apex:pageBlockSectionItem rendered="{!(!editable)}">
+          Duration
+          <apex:outputText value="{0}month(s)">
+              <apex:param value="{!Duration}"/>
+          </apex:outputText>
+      </apex:pageBlockSectionItem>
+
+      <apex:outputField value="{!Action_Summary__c.Service_Assignment__c}"/>
+      <apex:outputText title="Monthly Unit(s)"></apex:outputText>
+      <apex:outputText title="Mothly time"></apex:outputText>
+      <apex:outputField value="{!Action_Summary__c.Service_Assignment__r.Admission__c}"/>
+      <apex:outputField value="{!Action_Summary__c.Service_Assignment__r.Status__c}"/>
+      <apex:outputField value="{!Action_Summary__c.Status__c}"/>
+  </apex:pageBlockSection>
+  
+  <apex:pageBlockSection title="Summary Comments">
+      <apex:selectRadio value="{!Action_Summary__c.Recommendation__c}"  layout="pageDirection" rendered="{!editable}">
+                    <apex:selectoptions value="{!RecommendationOptions}"></apex:selectoptions>
+  </apex:selectRadio>
+  <apex:outputField value="{!Action_Summary__c.Recommendation__c}" rendered="{!(!editable)}"/>
+  <apex:inputField styleclass="objectivecommentinput" value="{!Action_Summary__c.Comments__c}" rendered="{!editable}"/>
+  <apex:outputField value="{!Action_Summary__c.Comments__c}" rendered="{!(!editable)}"/>
+  </apex:pageBlockSection>
+  
+  <apex:repeat value="{!Plans}" var="plan">
+      <apex:pageBlockSection columns="1"  id="planheader">
+          <apex:facet name="header">
+              <div class="headertype">Plan Details</div>
+              <div class="headerdescription">
+                  <div class="details" layout="block">
+                      <div class="detail" layout="block">
+                          <span class="fieldtitle">Plan Name</span>
+                          <span class="fieldvalue">{!plan.ActionPlan.Name}</span>
+                      </div>
+                      <div class="detail" layout="block">
+                          <span class="fieldtitle">Status</span>
+                          <span class="fieldvalue">{!plan.ActionPlan.Status__c}</span>
+                      </div>
+                      <div class="detail" layout="block">
+                          <span class="fieldtitle">Effective Date</span>
+                          <span class="fieldvalue">{!plan.FormattedEffectiveDate}</span>
+                      </div>
+                      <div class="detail" layout="block">
+                          <span class="fieldtitle">Target Date</span>
+                          <span class="fieldvalue">{!plan.FormattedTargetDate}</span>
+                      </div>
+                  </div> 
+              </div>
+          </apex:facet>
+      <apex:repeat value="{!plan.ActionPlanGoals}" var="goal">
+          <apex:pageBlockSection columns="1">
+              <apex:facet name="header"><div class="headertype">Goal</div><div class="headerdescription">{!goal.ActionPlanGoal.Description__c}</div></apex:facet>
+              <apex:repeat value="{!goal.ActionPlanObjectives}" var="oresult">
+                  <apex:pageBlockSection columns="1">
+                    <apex:facet name="header"><div class="headertype">Objective</div><div class="headerdescription">{!oresult.Plan_Objective.Description__c}</div></apex:facet>
+                    <apex:outputPanel styleClass="details" layout="block">
+                        <apex:outputPanel styleClass="detail" layout="block">
+                            <apex:outputPanel styleClass="fieldtitle">Status&nbsp;</apex:outputPanel>
+                            <apex:outputPanel styleClass="fieldvalue">{!oresult.Plan_Objective.Status__c}</apex:outputPanel>
+                        </apex:outputPanel>
+                        <apex:outputPanel styleClass="detail" layout="block">
+                            <apex:outputPanel styleClass="fieldtitle">Effective Date&nbsp;</apex:outputPanel>
+                            <apex:outputPanel styleClass="fieldvalue"><apex:outputText value="{0, date, MM/dd/yyyy}"><apex:param value="{!oresult.Plan_Objective.Effective_Date__c}"/></apex:outputText></apex:outputPanel>
+                        </apex:outputPanel>
+                        <apex:outputPanel styleClass="detail" layout="block">
+                            <apex:outputPanel styleClass="fieldtitle">Target Date&nbsp;</apex:outputPanel>
+                            <apex:outputPanel styleClass="fieldvalue"><apex:outputText value="{0, date, MM/dd/yyyy}"><apex:param value="{!oresult.Plan_Objective.Target_End_Date__c}"/></apex:outputText></apex:outputPanel>
+                        </apex:outputPanel>
+                        <apex:outputPanel styleClass="detail" layout="block">
+                            <apex:outputPanel styleClass="fieldtitle">Type&nbsp;</apex:outputPanel>
+                            <apex:outputPanel styleClass="fieldvalue">{!oresult.Plan_Objective.Type__c}</apex:outputPanel>
+                        </apex:outputPanel>
+                    </apex:outputPanel> 
+                     <apex:outputPanel id="OtherSummaryComments" layout="block" rendered="{!oresult.OtherSummaryCommentsExist}">
+                         <apex:repeat value="{!oresult.OtherSummaryComments}" var="summmarycomment">
+                             <tr>
+                             <td>
+                                 <c:Skill_Summary_Table met_objective_count="{!summmarycomment.Met_Objective_Count__c}" 
+                                    not_met_objective_count="{!summmarycomment.Not_Met_Count__c}"
+                                    effective_date="{!summmarycomment.Action_summary__r.Start_Date__c}"
+                                    target_date="{!summmarycomment.Action_summary__r.End_Date__c}"
+                                    recommendation="{!summmarycomment.Recommendation__c}"
+                                    comment="{!summmarycomment.Comment__c}"
+                                    rendered="{!oresult.isSkill}"/>
+                                 <c:Skill_Summary_Table occurrences="{!summmarycomment.Occurrences__c}"
+                                    effective_date="{!summmarycomment.Action_summary__r.Start_Date__c}"
+                                    target_date="{!summmarycomment.Action_summary__r.End_Date__c}"
+                                    recommendation="{!summmarycomment.Recommendation__c}"
+                                    comment="{!summmarycomment.Comment__c}"
+                                    rendered="{!oresult.isOccurrenceBehavior}"/>
+                                 <c:Skill_Summary_Table effective_date="{!summmarycomment.Action_summary__r.Start_Date__c}"
+                                    target_date="{!summmarycomment.Action_summary__r.End_Date__c}"
+                                    recommendation="{!summmarycomment.Recommendation__c}"
+                                    comment="{!summmarycomment.Comment__c}"
+                                    rendered="{!oresult.isTimeBehavior}"/>
+                             </td>
+                             </tr>
+                         </apex:repeat>
+                     </apex:outputPanel>
+                     <apex:outputPanel rendered="{!oresult.isSkill}">
+                         <apex:outputPanel rendered="{!editable}">
+                             <c:Skill_Summary_Table met_objective_count="{!oresult.asSkillResult.MetCount}" 
+                                    not_met_objective_count="{!oresult.asSkillResult.NotMetCount}"
+                                    effective_date="{!Action_Summary__c.Start_Date__c}"
+                                    target_date="{!Action_Summary__c.End_Date__c}"/>
+                         </apex:outputPanel>
+                         <apex:outputPanel rendered="{!!editable}">
+                             <c:Skill_Summary_Table met_objective_count="{!oresult.Objective_Comment.Met_Objective_Count__c}" 
+                                    not_met_objective_count="{!oresult.Objective_Comment.Not_Met_Count__c}"
+                                    effective_date="{!Action_Summary__c.Start_Date__c}"
+                                    target_date="{!oresult.Plan_Objective.Target_End_Date__c}"/>
+                         </apex:outputPanel>
+                     </apex:outputPanel>
+                     <apex:outputPanel rendered="{!oresult.isOccurrenceBehavior}">
+                         <apex:outputPanel rendered="{!editable}">
+                             <c:Skill_Summary_Table occurrences="{!oresult.asBehaviorResult.Occurrences}"
+                                    effective_date="{!Action_Summary__c.Start_Date__c}"
+                                    target_date="{!Action_Summary__c.End_Date__c}"/>
+                         </apex:outputPanel>
+                         <apex:outputPanel rendered="{!!editable}">
+                             <c:Skill_Summary_Table occurrences="{!oresult.Objective_Comment.Occurrences__c}"
+                                    effective_date="{!Action_Summary__c.Start_Date__c}"
+                                    target_date="{!Action_Summary__c.End_Date__c}"/>
+                         </apex:outputPanel>
+                     </apex:outputPanel>
+                     <apex:outputPanel layout="block" styleClass="leftandtherest">
+                         <apex:outputPanel layout="block" styleClass="commentblock">
+                             <div class="fieldheader" style="font-weight:bold">Objective Comment</div> 
+                             <apex:inputField styleclass="objectivecommentinput" value="{!oresult.Objective_Comment.Comment__c}" rendered="{!editable}"/> 
+                             <apex:outputField value="{!oresult.Objective_Comment.Comment__c}" rendered="{!(!editable)}"/> 
+                         </apex:outputPanel>
+                         <apex:outputPanel layout="block" styleClass="recommendationblock">
+                             <div class="fieldheader" style="color:#cc6600;font-weight:bold;">Recommendation</div> 
+                             <apex:selectRadio value="{!oresult.Objective_Comment.Recommendation__c}"  layout="pageDirection" rendered="{!editable}">
+                                  <apex:selectoptions value="{!RecommendationOptions}"></apex:selectoptions>
+                             </apex:selectRadio>
+                         <apex:outputField value="{!oresult.Objective_Comment.Recommendation__c}" rendered="{!(!editable)}"/>
+                         </apex:outputPanel>
+                      </apex:outputPanel>
+                  </apex:pageBlockSection>
+              </apex:repeat>
+          </apex:pageBlockSection>
+      </apex:repeat>
+      </apex:pageBlockSection>
+  </apex:repeat>
+  <div align="Right">
+  <apex:commandButton value="Save " action="{!SaveAll}" id="formSave2" status="myStatus" rendered="{!Action_Summary__c.Status__c != 'Final'}"/>
+  <apex:commandButton value="Finalize" action="{!Finalize}"  rendered="{!(Action_Summary__c.Status__c != 'Final') && canFinalize}"/>
+  
+  <apex:commandButton value="Print" onClick="toggleById('printform'); return false;" />
+  
+	</div>
+  </apex:PageBlock>
+    </apex:Form>
+
+<c:SObjectNotesAndAttachments parentId="{!Action_Summary__c.id}" showAction="false" ></c:SObjectNotesAndAttachments>
+
+<div id="printform"  style="display: none;" >
+<div class="hbbg" > </div>
+<div id="p" class="popupform" >
+    <form name="radioExampleForm" method="get" action="" onsubmit="return false;">
+    <apex:pageBlock >
+        <apex:pageBlockButtons location="bottom">
+                <input type="button" class="btn" onclick="printpage(document.forms['radioExampleForm'].elements['type']);" value="Create"/>
+                <input type="button" class="btn" onclick="toggleById('printform', '500'); return false;" value="Cancel"/>          
+        </apex:pageBlockButtons>
+        <apex:pageBlockSection columns="1">
+            <apex:outputPanel >
+                Select the type of file you would like to create
+            </apex:outputPanel>
+            <apex:outputPanel >
+                <label for="number0"><input type="radio" value="PDF" name="type" id="number0" checked="checked"/> PDF</label>
+                <br/>
+                <label for="number1"><input type="radio" value="WORD" name="type" id="number1"/> Word Document</label> 
+            </apex:outputPanel>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    </form>
+</div>
+</div>	    
+
+    <style>
+    .relatedProcessHistory input{
+        display: none;
+    }
+    </style>
+    <apex:relatedList list="ProcessSteps" rendered="{!!editable}" />
+<script>
+// START: EC-12: Added jQuery to align the buttons in the Notes and Attachments component with the other buttons on the page. J. Gilliam, 11/5/14
+j$ = jQuery.noConflict();
+j$(document).ready(function(){
+	j$("[id*='NotesAndAttachmentsButtons']").addClass('pbSubHeadButton');
+});
+// END: EC-12: Added jQuery to align the buttons in the Notes and Attachments component with the other buttons on the page. J. Gilliam, 11/5/14
+</script>
+</apex:page>
