@@ -163,9 +163,9 @@
             var en = new Date(endValue);
             var formatEnd = moment(en).format();
             var end = new Date(formatEnd);
-            
+
             j$('#evaluationMessages').html('');
-            
+
             if (startValue == '' || endValue == '') {
                 evalErrors.push('Shift Start time and end time cannot be blank');
             }
@@ -1000,7 +1000,7 @@ END: Uncomment to have the element collapsed by default -->
 
 		<!-- Admission and Shift Assessments Section -->
 		<apex:outputPanel id="evaluationModal" style="display:none">
-			<span class="ui-helper-hidden-accessible"><input type="text"/></span> 
+			<span class="ui-helper-hidden-accessible"><input type="text"/></span>
 			<div id='evaluationMessages'></div>
 			<apex:pageBlock title="Add ShiftAssessment" rendered="{!vfVarIsCM}">
 				<apex:pageBlockSection columns="2" id="evaluationEntry">
@@ -1051,24 +1051,24 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:column headerValue="Name">
 					<apex:outputLink value="/apex/EvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
 				</apex:column>
-				<apex:column  headerValue="Shift Start Time" >
+				<apex:column headerValue="Shift Start Time" >
 					<c:MilitaryDatetime dateTimeVal="{!evs.Shift_Start_Time__c}" />
 				</apex:column>
-				<apex:column  headerValue="Shift End Time" >
+				<apex:column headerValue="Shift End Time" >
 					<c:MilitaryDatetime dateTimeVal="{!evs.Shift_End_Time__c}" />
 				</apex:column>
 				<apex:column value="{!evs.Status__c}" />
-				<!-- apex:column headerValue="Signed" value="{!evs.Is_Signed__c}" />
+				<apex:column headerValue="Signed" value="{!evs.Is_Signed__c}" />
 				<apex:column headerValue="Signed By">
 					 <apex:outputText rendered="{!evs.Evaluation_Responses__r.size!=0}" escape="false">
 						<a href="/{!evs.Evaluation_Responses__r[0].Owner.Id}">{!evs.Evaluation_Responses__r[0].Owner.Name}</a>
 					</apex:outputText>
-				</apex:column >
+				</apex:column>
 				<apex:column headerValue="Signed At">
 					<apex:outputText rendered="{!evs.Evaluation_Responses__r.size!=0}">
 						<apex:outputField value="{!evs.Evaluation_Responses__r[0].CreatedDate}" />
 					</apex:outputText>
-				</apex:column -->
+				</apex:column>
 				<apex:column value="{!evs.Owner.Name}" headerValue="Owner Name"/>
 				<apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
 			</apex:pageBlockTable>

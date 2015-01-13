@@ -385,6 +385,7 @@ jQuery(document).ready(function(){
 	                        <th>Due Date</th>
 	                        <th>Status</th>
 	                        <th>Recieved Date</th>
+	                        <th width="15%">Comments</th>
 	                    </tr>
 	                </thead>
 	                <tbody>
@@ -400,6 +401,7 @@ jQuery(document).ready(function(){
 	                                <td style="text-align:center;"><apex:outputField value="{!doc.Due_Date__c}" /></td>
 	                                <td style="text-align:center;">{!doc.Status__c}</td>
 	                                <td style="text-align:center;"><apex:outputField value="{!doc.Status_Date__c}" /></td>
+	                                <td>{!doc.Comments__c}</td>
 	                            </tr>
 	                    </apex:repeat>
 	                </tbody>
@@ -494,6 +496,10 @@ jQuery(document).ready(function(){
                         <td><apex:outputText value="Recieved Date" styleClass="labelCol"/></td>
                         <td><apex:inputField value="{!currrentAssocDoc.Status_Date__c}" id="currrentAssocDoc_Status_Date"/></td>
                     </tr>
+                    <tr>
+                        <td><apex:outputText value="Comments" styleClass="labelCol"/></td>
+                        <td><apex:inputField value="{!currrentAssocDoc.Comments__c}" id="currrentAssocDoc_Comments"/></td>
+                    </tr>
                 </table>    
             </apex:outputPanel>
             </apex:outputPanel>
@@ -538,6 +544,7 @@ jQuery(document).ready(function(){
                 </apex:column>
                 <apex:column value="{!item.Assessment_Date__c}" />
                 <apex:column value="{!item.Score__c}" />
+                <apex:column value="{!item.Disregard__c}" />
                 <apex:column headerValue="Owner">
                     <apex:outputLink value="/{!item.Owner.ID}">{!item.Owner.Name}</apex:outputLink>
                 </apex:column>
