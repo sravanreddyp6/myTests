@@ -227,6 +227,16 @@
 			border-bottom-width: 1px;
 			border-bottom-color: #E8E8E8
 		}
+		
+		.warning{
+			border: 1px solid;
+			margin: 10px 0px;
+			padding:15px 10px 15px 50px;
+			background-repeat: no-repeat;
+			background-position: 10px center;
+			color: #9F6000;
+			background-color: #FEEFB3;
+		}
 
 	</style>
 	<!-- div id="breadcrumb" class="breadcrumb">
@@ -251,7 +261,7 @@
 		</apex:outputpanel>
 		<apex:pageMessages id="pageMessages" />
 		<apex:actionFunction name="evaluationSave" action="{!saveEvaluation}" status="saveevaluationStatus" reRender="" />
-		<apex:actionFunction name="showAddevaluation" action="{!showAddevaluation}" status="AddevaluationStatus" oncomplete="openModalDialog('{!$Component.evaluationModal}','Edit Shift Time','{!$Component.wholePage}'); j$('#evaluationMessages').html('');" reRender="evaluations,msgs" />
+		<!-- apex:actionFunction name="showAddevaluation" action="{!showAddevaluation}" status="AddevaluationStatus" oncomplete="openModalDialog('{!$Component.evaluationModal}','Edit Shift Time','{!$Component.wholePage}'); j$('#evaluationMessages').html('');" reRender="evaluations,msgs" /-->
 		<apex:actionfunction name="finalizeEval" action="{!finalizeEval}" status="pageProcessing" reRender="pageMessages" />
 		<apex:actionFunction name="disregardEval" action="{!disregardEval}" status="pageProcessing" reRender="pageMessages,btnDisregard" />
 		<apex:tabPanel id="wholeTabPanel" value="{!selectedTab}" styleClass="evaluationTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
@@ -985,7 +995,7 @@
 			<apex:commandButton value="Disregard" style="position: absolute; margin-left: 730px; margin-top: 8px;" rendered="{!Evaluation__c.Status__c =='Draft' &&  Evaluation__c.OwnerId == $User.Id}" onClick="disregard(); return false;"/>
 			<apex:commandButton value="E-Sign" style="position: absolute; margin-left: 792px; margin-top: 8px;" rendered="{!Evaluation__c.OwnerId == $User.Id && Evaluation__c.Status__c != 'Disregard' && !Evaluation__c.Is_Signed__c}" onClick="authenticate(); return false;" />
 			<apex:commandButton value="Print PDF" style="position: absolute; margin-left: 840px; margin-top: 8px;"  onclick="openWin('/apex/CMShiftAssessmentPDF?id={!Evaluation__c.Id}'); return false;" />
-			<apex:commandButton value="Edit Shift Time" style="position: absolute; margin-left: 900px; margin-top: 8px;" onclick="showAddevaluation(); j$('[id$=evalProceed]').hide(); j$('[id$=enterNew]').hide();return false;" >
+			<apex:commandButton value="Edit Shift Time" style="position: absolute; margin-left: 900px; margin-top: 8px;" onclick="openModalDialog('{!$Component.evaluationModal}','Edit Shift Time','{!$Component.wholePage}'); j$('#evaluationMessages').html('');" reRender="evaluations,msgs" >
 				<apex:actionStatus id="AddevaluationStatus">
 					<apex:facet name="start">
 						<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
@@ -1131,7 +1141,7 @@
 					<apex:commandButton value="Save" onclick="validateEval();return false;" id="evalSave" />
 					<apex:commandbutton value="Proceed" onClick="evaluationSave(); return false;" id="evalProceed"/>
 					<apex:commandButton value="Enter new time" onClick="clearDates(); j$('#dupeFound').html(''); return false;" id="enterNew"/>
-					<apex:commandButton value="Cancel" onclick="closeModalDialog('evaluationModal', 'span'); clearDates(); return false;" />
+					<apex:commandButton value="Cancel" onclick="closeModalDialog('{!$Component.evaluationModal}'); return false;" />
 					<apex:actionStatus id="saveevaluationStatus">
 						<apex:facet name="start">
 							<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
@@ -1142,10 +1152,7 @@
 			</apex:pageBlock>
 		</apex:outputPanel>
 		
-		
-		
-		
-		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!Evaluation__c.Id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); window.location='/{!Evaluation__c}'; return false;" />
+	<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!Evaluation__c.Id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); window.location='/{!Evaluation__c}'; return false;" />
 	</apex:form>
 	<apex:actionStatus id="pageProcessing">
 		<apex:facet name="start">
