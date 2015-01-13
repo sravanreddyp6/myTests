@@ -1280,15 +1280,15 @@
 						$("[id$=lips] input[value=Sores]").data("visibility-rules", {
 							"1": ["{!$Component.nutritionMainBlock.nutritionHydrationSection.lipsSection.lipsSores}", "{!$Component.nutritionMainBlock.nutritionHydrationSection.lipsSection.lipsSoresLabel}"]
 						});
-						$("[id$=eliminationBowelStatus] input[value=Other]").data("visibility-rules", {
-							"1": ["{!$Component.nutritionMainBlock.eliminationBowelSection.eliminationBowelStatusOther}"]
+						$("[id$=bowelAppliance] input[value=Other]").data("visibility-rules", {
+							"1": ["{!$Component.nutritionMainBlock.eliminationBowelSection.bowelOtherItem.bowelApplianceOther}", "{!$Component.nutritionMainBlock.eliminationBowelSection.bowelOtherItem.bowelApplianceOtherLabel}"] 
 						});
 						$("[id$=eliminationBowelStatus] input[value=Other]").data("visibility-row-rules", true);
 						setUpFields();
 						
 					});
 			
-		</script>
+				</script>
 				<apex:pageBlock >
 					<apex:pageBlockSection Columns="2" >
 						<apex:pageBlockSectionItem >
@@ -1316,11 +1316,12 @@
 						<apex:pageBlockSectionItem >
 							<apex:outputLabel value="Feeding Type" />
 							<apex:outputPanel >
-								<apex:selectCheckboxes id="feedingType" value="{!selectedOptionsMap['nutrition_route__c']}">
+								<apex:selectCheckboxes id="feedingType" value="{!selectedOptionsMap['nutrition_route__c']}" >
 									<apex:selectOptions value="{!selectOptionWidgetsMap['nutrition_route__c']}" />
 								</apex:selectCheckboxes>
 							</apex:outputPanel>
 						</apex:pageBlockSectionItem>
+						 <c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Fluid Intake" formId="{!$Component.wholePage}" uniqueId="fluidIntake" />
 						<apex:pageBlockSectionItem >
 							<apex:outputLabel value="Oral Health Check" />
 							<apex:outputPanel >
@@ -1542,7 +1543,11 @@
                             </apex:selectCheckboxes>
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
-                        <apex:inputField value="{!Evaluation__c.Elimination_Bowel_No_Appliance_Other__c}" label="Specify Other" id="bowelApplianceOther" />
+                        
+                        <apex:pageBlockSectionItem id="bowelOtherItem">
+                        	<apex:outputLabel value="Specify Other" id="bowelApplianceOtherLabel" />
+                        	<apex:inputField value="{!Evaluation__c.Elimination_Bowel_No_Appliance_Other__c}" label="Specify Other" id="bowelApplianceOther" />
+                        </apex:pageBlockSectionItem>
 						
 						<apex:inputField value="{!Evaluation__c.Usual_Elimination_Frequeny__c}" />
 						<apex:pageBlockSectionItem />
