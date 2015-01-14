@@ -183,10 +183,11 @@ public with sharing class AdmissionDocumentController {
   
  	public void showAddEditAdmissionDoc(){
 		allDocsTree = new TMN_TreePktDocTable();
-		List<String> addedDocs = new List<string>();
+		// List<String> addedDocs = new List<string>();
 		map<string, TMN_TreePktDocTable.node> nodeKeyMap;
         List<PB_DocPacket__c> pkts = [SELECT  id, 
-                                            Packet_Name__c, 
+                                            Packet_Name__c,
+                                            Default_Admission_Packet__c, 
                                             (SELECT PB_DocPacket_Document_JO__c.id, DocPacket__r.id, Document__r.id, Document__r.document_name__c, Document__r.Recurring_Interval__c FROM DocPacketJOs__r ORDER BY DocPacket__r.ID, Document__r.ID),
                                             (SELECT DocPacket__r.id, Document__r.id, Due_Date__c, Effective_Date__c, Status__c, Status_Date__c
                                                FROM AssociatedDocuments__r WHERE sObject_id__c =: this.admission.id AND sObject_type__c = 'Admission' AND IsAdded__c = true)
@@ -195,6 +196,7 @@ public with sharing class AdmissionDocumentController {
 		for (PB_DocPacket__c pkt : pkts) {
 			TMN_TreePktDocTable.node pckt_node= new TMN_TreePktDocTable.node(pkt.id, pkt.Packet_Name__c);
 			pckt_node.folder = true;
+			pckt_node.unselectable = pkt.Default_Admission_Packet__c;
 			allDocsTree.root.children.add(pckt_node);			
 			for (PB_DocPacket_Document_JO__c doc :  pkt.DocPacketJOs__r){
 				TMN_TreePktDocTable.node doc_node = new TMN_TreePktDocTable.node(doc.id, doc.Document__r.document_name__c);   // each doc has the key of junction object ID.
@@ -208,17 +210,19 @@ public with sharing class AdmissionDocumentController {
         	for (PB_AssociatedDoc__c assoc : pkt.AssociatedDocuments__r){               
                 for (PB_DocPacket_Document_JO__c jo :  pkt.DocPacketJOs__r){
                     if (assoc.DocPacket__r.id == jo.DocPacket__r.id && assoc.Document__r.id == jo.Document__r.id){
-                        addedDocs.add(jo.id);
+        //                addedDocs.add(jo.id);
                         TMN_TreePktDocTable.node node = nodeKeyMap.get(jo.id);
                         node.dueDate = assoc.Due_Date__c;
                         node.assocStatus = assoc.Status__c;
                         node.statusDate = assoc.Status_Date__c;
+                        node.unselectable = pkt.Default_Admission_Packet__c;
+                        node.Selected = true;
                         break;
                     }
                 }
             }
         }
-		allDocsTree.inputSelectedKeys(addedDocs, true);
+		//allDocsTree.inputSelectedKeys(addedDocs, true);
 		selectedKeys = allDocsTree.GetSelectedNodeStr;
 	}
 		
