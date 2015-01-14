@@ -26,7 +26,8 @@ global class PB_DocumentDueNotifications implements Database.Batchable<sObject> 
 	                                                                    Person_Being_Served__r.Account.LastName, Person_Being_Served__r.Account.FirstName,
 	                                                                    Person_Being_Served__r.OwnerId
 	                                                               From Admission__c
-	                                                              Where Id =: admIdsFromScope] // the admission Ids of the associated docs
+	                                                              Where Id =: admIdsFromScope // the admission Ids of the associated docs
+	                                                                And status__c = 'Active'] 
 	                                                              );
 	                                                              
 	        // the existing tasks that are not closed. look into these before creating a new one.                                                             
@@ -43,7 +44,7 @@ global class PB_DocumentDueNotifications implements Database.Batchable<sObject> 
 	        for(PB_AssociatedDoc__c assocDoc : scope){
 	        	Admission__c admisson = adm.get(assocDoc.sObject_Id__c);
 	            // create a new if a task not already exists, 
-	            if(! existingTasksMap.containsKey(assocDoc.Id)){
+	            if(! existingTasksMap.containsKey(assocDoc.Id) && admisson != null){
 		            newtasks.add(new Task( Subject = TASK_SUBJECT, 
 		                                Status = 'In Progress', 
 		                                Priority = 'Normal', 
@@ -54,7 +55,7 @@ global class PB_DocumentDueNotifications implements Database.Batchable<sObject> 
 		                                ActivityDate = assocDoc.Due_Date__c) );
 	            }
 	            //if a task already exists and its already past due, change the subjet and description to overDue
-	            else if(existingTasksMap.containsKey(assocDoc.Id) && assocDoc.Due_Date__c < Date.today() ){
+	            else if(existingTasksMap.containsKey(assocDoc.Id) && assocDoc.Due_Date__c < Date.today() && admisson != null){
 	            	Task t = existingTasksMap.get(assocDoc.Id);
 	            	t.subject = TASK_OVERDUE_SUBJECT;
 	            	t.Description = 'Document: '+ assocDoc.Document__r.Document_Name__c + ' for Admission: ' + admisson.Name + ' is overdue. ' + System.Url.getSalesforceBaseUrl().toExternalForm() + '/' + assocDoc.sObject_Id__c;
