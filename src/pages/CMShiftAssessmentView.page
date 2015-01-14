@@ -50,7 +50,7 @@
            	}
            
             if(allow == false){
-               var x = confirm('This assessment cannot be finalized as there are errors in finalizing. On Clicking OK You will be redirected to edit mode that display the errors. Please correct them and then finalize');
+               var x = confirm('This assessment is missing required fields that must be completed in order to Finalize. Review and complete the missing fields before Finalizing the record');
                
                if(x==true) {
                    window.open('/apex/CMShiftAssessmentEdit?id={!Evaluation__c.Id}&showErrors=1&tab='+errorTab,'_self');
