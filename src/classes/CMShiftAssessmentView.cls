@@ -224,10 +224,6 @@ public with sharing class CMShiftAssessmentView {
         }
     }
     
-   public void showAddevaluation() {
-    
-  }
-
   public pageReference saveEvaluation() {
 
       try{
@@ -244,10 +240,10 @@ public with sharing class CMShiftAssessmentView {
     return null;
   }
   
-    public List<selectoption> getcopingValues(){
-        List<Selectoption> copingValue = Utility.getPicklistValues(evaluation, 'Resident_Demonstrating_Issues__c');
-        return copingValue;
-    }
+ public List<selectoption> getcopingValues(){
+    List<Selectoption> copingValue = Utility.getPicklistValues(evaluation, 'Resident_Demonstrating_Issues__c');
+    return copingValue;
+	}
 
     public List<selectoption> getneuroOrientValues(){
         List<Selectoption> orientValue = Utility.getPicklistValues(evaluation, 'Orientation__c');
@@ -311,18 +307,19 @@ public with sharing class CMShiftAssessmentView {
     }
     
    @RemoteAction
-   public static boolean finddupeEval(string shiftStart, string shiftEnd, Id saId) {
+   public static boolean finddupeEval(string shiftStart, string shiftEnd, Id saId, Id currentEvalId) {
    		system.debug('I am remoting');
    		system.debug(shiftStart);
+   		system.debug('CurrentEvalID   '+currentEvalId);
    		DateTime st = Datetime.parse(shiftStart);
    		DateTime en = Datetime.parse(shiftEnd);
    		boolean dupefound = false;
    		List<Evaluation__c> dupeEval = [SELECT Id, Name, Shift_Start_time__c, Shift_end_time__c FROM Evaluation__c WHERE ServiceAssignment__c = :saId AND (
         					(Shift_Start_time__c >= :st and Shift_Start_time__c <= :en)
         				or 	(Shift_end_time__c >= :st and Shift_end_time__c <= :en)
-        				or  ( Shift_Start_time__c <= :st and Shift_end_time__c >= :en )) AND RecordType.Name = 'CMShiftAssessment' AND Status__c !='Disregard' LIMIT 1];
+        				or  ( Shift_Start_time__c <= :st and Shift_end_time__c >= :en )) AND RecordType.Name = 'CMShiftAssessment' AND Status__c !='Disregard' AND Id != :currentEvalId LIMIT 1];
         				
-   		system.debug(dupeEval);
+   		system.debug('dupe++++'+dupeEval);
    		if(dupeEval.size() >0 ) {
    			dupeFound = true;
    		}

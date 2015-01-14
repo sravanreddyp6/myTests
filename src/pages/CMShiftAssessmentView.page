@@ -116,15 +116,15 @@
 
 						Visualforce.remoting.Manager.invokeAction(
 						'{!$RemoteAction.CMShiftAssessmentView.finddupeEval}',
-							startValue,endValue,'{!Evaluation__c.ServiceAssignment__c}',
+							startValue,endValue,'{!Evaluation__c.ServiceAssignment__c}','{!Evaluation__c.Id}',
 						function(result, event){
 							if (event.status) {
 								console.log(result);
 								if(result){
 										dupe.push('There is already an existing Shift Assessment for the current timings. Do you still want to proceed?');
 										j$('#dupeFound').append('<li class="warning">' + dupe + '</li>');
-										j$('[id$=startdate]').prop('disabled', true);
-										j$('[id$=enddate]').prop('disabled', true);
+										j$('[id$=evalstartdate]').prop('disabled', true);
+										j$('[id$=evalenddate]').prop('disabled', true);
 										j$('[id$=evalProceed]').show();
 										j$('[id$=enterNew]').show();
 										j$('[id$=evalSave]').hide();
@@ -146,19 +146,14 @@
 		}
 
 		clearDates = function() {
-			j$('[id$=evalstartTime]').val('');
-			j$('[id$=evalendTime]').val('');
-			j$('[id$=startdate]').prop('disabled', false);
-			j$('[id$=enddate]').prop('disabled', false);
-			j$('[id$=startdate]').val('');
-			j$('[id$=enddate]').val('');
-			j$('#evaluationMessages').html('');
-			j$('#dupeFound').html('');
 			j$('[id$=evalProceed]').hide();
+			j$('[id$=evalstartdate]').prop('disabled', false);
+			j$('[id$=evalenddate]').prop('disabled', false);
 			j$('[id$=evalSave]').show();
 			j$('[id$=enterNew]').hide();
 
 		}
+		
 
 	</script>
 
@@ -236,6 +231,10 @@
 			color: #9F6000;
 			background-color: #FEEFB3;
 		}
+		
+		#evaluationMessages .error {
+			color: red;
+		}
 
 	</style>
 	<!-- div id="breadcrumb" class="breadcrumb">
@@ -260,7 +259,6 @@
 		</apex:outputpanel>
 		<apex:pageMessages id="pageMessages" />
 		<apex:actionFunction name="evaluationSave" action="{!saveEvaluation}" status="saveevaluationStatus" reRender="" />
-		<!-- apex:actionFunction name="showAddevaluation" action="{!showAddevaluation}" status="AddevaluationStatus" oncomplete="openModalDialog('{!$Component.evaluationModal}','Edit Shift Time','{!$Component.wholePage}'); j$('#evaluationMessages').html('');" reRender="evaluations,msgs" /-->
 		<apex:actionfunction name="finalizeEval" action="{!finalizeEval}" status="pageProcessing" reRender="pageMessages" />
 		<apex:actionFunction name="disregardEval" action="{!disregardEval}" status="pageProcessing" reRender="pageMessages,btnDisregard" />
 		<apex:tabPanel id="wholeTabPanel" value="{!selectedTab}" styleClass="evaluationTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
@@ -994,7 +992,7 @@
 			<apex:commandButton value="Disregard" style="position: absolute; margin-left: 730px; margin-top: 8px;" rendered="{!Evaluation__c.Status__c =='Draft' &&  Evaluation__c.OwnerId == $User.Id}" onClick="disregard(); return false;"/>
 			<apex:commandButton value="E-Sign" style="position: absolute; margin-left: 792px; margin-top: 8px;" rendered="{!Evaluation__c.OwnerId == $User.Id && Evaluation__c.Status__c != 'Disregard' && !Evaluation__c.Is_Signed__c}" onClick="authenticate(); return false;" />
 			<apex:commandButton value="Print PDF" style="position: absolute; margin-left: 840px; margin-top: 8px;"  onclick="openWin('/apex/CMShiftAssessmentPDF?id={!Evaluation__c.Id}'); return false;" />
-			<apex:commandButton value="Edit Shift Time" style="position: absolute; margin-left: 900px; margin-top: 8px;" onclick="openModalDialog('{!$Component.evaluationModal}','Edit Shift Time','{!$Component.wholePage}'); j$('#evaluationMessages').html('');" reRender="evaluations,msgs" >
+			<apex:commandButton value="Edit Shift Time" style="position: absolute; margin-left: 900px; margin-top: 8px;" onclick="openModalDialog('{!$Component.evaluationModal}','Edit Shift Time','{!$Component.wholePage}'); j$('#evaluationMessages').html(''); clearDates();" reRender="evaluations,msgs"  rendered="{!Evaluation__c.Status__c = 'Draft'}" >
 				<apex:actionStatus id="AddevaluationStatus">
 					<apex:facet name="start">
 						<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
@@ -1123,14 +1121,14 @@
 					<apex:pageBlockSectionItem >
 						<apex:outputPanel >
 							<apex:outputLabel Value="Shift Start Time" styleClass="labelCol"/>
-							<c:MilitaryDatetime edit="true" hiddenFieldId="evalstartTime" dateTimeVal="{!evaluation.Shift_Start_Time__c}" datetimepickerid="startdate"/>
+							<c:MilitaryDatetime edit="true" hiddenFieldId="evalstartTime" dateTimeVal="{!evaluation.Shift_Start_Time__c}" datetimepickerid="evalstartdate"/>
 							<apex:inputhidden value="{!evaluation.Shift_Start_Time__c}" id="evalstartTime" />
 						</apex:outputPanel>
 					</apex:pageBlockSectionItem>
 					<apex:pageBlockSectionItem >
 					<apex:outputpanel >
 							<apex:outputLabel Value="Shift End Time" styleClass="labelCol"/>
-							<c:MilitaryDatetime edit="true" hiddenFieldId="evalendTime" dateTimeVal="{!evaluation.Shift_End_Time__c}" datetimepickerid="enddate"/>
+							<c:MilitaryDatetime edit="true" hiddenFieldId="evalendTime" dateTimeVal="{!evaluation.Shift_End_Time__c}" datetimepickerid="evalenddate"/>
 							<apex:inputhidden value="{!evaluation.Shift_End_Time__c}" id="evalendTime" />
 						</apex:outputpanel>
 					</apex:pageBlockSectionItem>
@@ -1139,8 +1137,8 @@
 				<apex:pageBlockButtons location="bottom">
 					<apex:commandButton value="Save" onclick="validateEval();return false;" id="evalSave" />
 					<apex:commandbutton value="Proceed" onClick="evaluationSave(); return false;" id="evalProceed"/>
-					<apex:commandButton value="Enter new time" onClick="clearDates(); j$('#dupeFound').html(''); return false;" id="enterNew"/>
-					<apex:commandButton value="Cancel" onclick="closeModalDialog('{!$Component.evaluationModal}'); return false;" />
+					<apex:commandButton value="Enter New Time" onClick="clearDates(); j$('#dupeFound').html(''); return false;" id="enterNew"/>
+					<apex:commandButton value="Cancel" onclick="window.location='/apex/CMShiftAssessmentView?id={!Evaluation.Id}&tab={!selectedTab}'; return false;" />
 					<apex:actionStatus id="saveevaluationStatus">
 						<apex:facet name="start">
 							<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
