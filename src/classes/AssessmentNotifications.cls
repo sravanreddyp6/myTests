@@ -193,9 +193,7 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
 				+ a.AccountPerson__c
 				+ ' for the admission '
 				+ a.Admission__r.Id
-				+ '. It seems to be for Quarter '
-				+ qtr
-				+ ' due on '
+				+ '. It seems the next Assessment is due on '
 				+ newPrettyDueDate
 				+ '. /r/n/r/nPlease go to '
 				+ System.Url.getSalesforceBaseUrl().toExternalForm()
@@ -212,9 +210,7 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
 				+ a.AccountPerson__c
 				+ ' for the admission '
 				+ a.Admission__r.Id
-				+ '. It seems to be for Quarter '
-				+ qtr
-				+ ' due on '
+				+ '. It seems the next Assessment is due on '
 				+ newPrettyDueDate
 				+ '. <br /><br />Please go to <a href="'
 				+ System.Url.getSalesforceBaseUrl().toExternalForm()
