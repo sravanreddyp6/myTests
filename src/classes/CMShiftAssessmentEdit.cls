@@ -384,10 +384,11 @@ public with sharing class CMShiftAssessmentEdit {
 		
 		//for Bowel incont Multi-picklist 
 		string blr ='';       
-        for(string c: selectedBowel)
-        	blr = c+';';
+        for(string c: selectedBowel){
+        	blr += c+';';
+        }	
         if(blr!=''){
-            blr =blr.Substring(0,blr.length()-1);
+            blr = blr.Substring(0,blr.length()-1);
             this.evaluation.Elimination_Bowel_No_Continent_Appliance__c= blr;
             
         }
@@ -396,10 +397,11 @@ public with sharing class CMShiftAssessmentEdit {
 		
 		//for Bladder incont Multi-picklist
 		string clr = '';         
-       	for(string c: selectedBladder)
-	        clr = c+';';
+       	for(string c: selectedBladder){
+       		clr += c+';';	
+       	}     
         if(clr!=''){
-            clr =clr.Substring(0,clr.length()-1);
+            clr = clr.Substring(0,clr.length()-1);
             this.evaluation.Elimination_Bladder_No_Continent_Details__c= clr;      
         }
         else
