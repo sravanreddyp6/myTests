@@ -18,7 +18,7 @@ public with sharing class Assessment_CANSdetail_Ex {
     	// if interval is quarterly and it's a new assessment, default to next quarter
     	if ( assess.interval__c == 'Quarterly' && assess.id == null ) {
 	    	// get list of other quarterlies for this Admission
-	    	List <Assessment__c> otherQ = [select id, quarter__c from assessment__c where admission__c= :assess.Admission__c and Interval__c = 'Quarterly' and disregard__c = false order by quarter__c];
+	    	List <Assessment__c> otherQ = [select id, quarter__c from assessment__c where admission__c= :assess.Admission__c and Interval__c = 'Quarterly' and disregard__c = false order by quarter__c desc];
 	    	decimal lastQ = 0;
 	    	
 	    	if ( otherQ.size() > 0 ) 
