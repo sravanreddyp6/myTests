@@ -324,11 +324,11 @@ public with sharing class AssessmentSetup {
                         // for the Quarter__c field.  If other validation
                         // has held up, there should not be.
                         if( aprev.Quarter__c == NULL ){
-                            a.addError('A quarterly assessment for this admission seems to lack a quarter number value.  This scenario should not be possible.  Please contact your system administrator and reference this error code: \'Apex Class: AssessmentSetup.cls, Line 227\'');
+                            a.addError('A quarterly assessment for this admission seems to lack an assessment number value.  This scenario should not be possible.  Please contact your system administrator and reference this error code: \'Apex Class: AssessmentSetup.cls, Line 327\'');
                         }
                         
                         if ( aprev.Quarter__c <= 0 ){
-                            a.addError('A quarterly assessment for this admission seems to have a quarter number value that equals zero or is negative.  This scenario should not be possible.  Please contact your system administrator and reference this error code: \'Apex Class: AssessmentSetup.cls, Line 230\'');
+                            a.addError('A quarterly assessment for this admission seems to have an assessment number value that equals zero or is negative.  This scenario should not be possible.  Please contact your system administrator and reference this error code: \'Apex Class: AssessmentSetup.cls, Line 331\'');
                         }
                         
                         // The previous assessments in aprev are ordered by 
@@ -382,7 +382,7 @@ public with sharing class AssessmentSetup {
                         System.Debug('Value of qrtrNumAllowed at Line 283: ' + qrtrNumAllowed);             
                 // If qtrNumAllowed equals false after all that, prevent insert.
                 if(qrtrNumAllowed == false){
-                    a.addError('The quarter you have indicated, ' + a.Quarter__c + ', does not seem to be the next expected quarterly assessment for this admission.  Please check the numbering of the quarterly assessments under this admission and try again.  If one or more quarterly assessments have been missed, you may need to enter and save a blank assessment for the previous quarter(s) to proceed.  If you need assistance, please contact your system administrator.');
+                    a.addError('The Assessment Number you have indicated, ' + a.Quarter__c + ', does not seem to be the next expected quarterly assessment for this admission.  Please check the numbering of the quarterly assessments under this admission and try again.  If one or more quarterly assessments have been missed, you may need to enter and save a blank assessment for the previous quarter(s) to proceed.  If you need assistance, please contact your system administrator.');
                 }   
             
             }
