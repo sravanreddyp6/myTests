@@ -57,7 +57,7 @@ public with sharing class TaskTriggerHandler {
             // at least one associated doc with the status of not Received.
             if (assocDocs.size() > 0){
                 for (Id taskId : taskIds){
-                    newObjMap.get(taskId).addError('Task cannot be Completed untill the associated document status is not updated to Received.');
+                    newObjMap.get(taskId).addError('Task can not be completed until the associated document status is updated to Received.');
                     break;
                 }
             }

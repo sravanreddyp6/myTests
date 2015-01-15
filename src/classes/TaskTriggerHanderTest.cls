@@ -25,7 +25,7 @@ private class TaskTriggerHanderTest {
 	    	update task;
     	} catch (Exception e){
     		System.assertequals('System.DmlException', e.getTypeName());
-    		System.assertequals(e.getMessage().contains('Task cannot be Completed untill the associated document status is not updated to Received.'),true);
+    		System.assertequals(e.getMessage().contains('Task can not be completed until the associated document status is updated to Received.'),true);
     	}
     }
     

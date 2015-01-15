@@ -29,4 +29,17 @@ public with sharing class Assessment_CANS_Cluster_Defs {
 		68 //Sexual Aggression
 
 	};	
+	
+	public static final list<integer> Education = new list<integer>{
+		44, //School Behavior (44)
+		45, //School Achievement (45)
+		46, //School Attendance (46)
+		33, //Problem Solving-Resilience (33)
+		71, //Problem Solving-Judgment (71)
+		52, //Decision Making-Attention/Concentration (52)
+		53, //Decision Making-Impulsivity (53)
+		95 //Educational Attainment (95)       
+		
+	};
+	
 }
