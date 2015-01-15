@@ -8,6 +8,7 @@ public with sharing class Report_CANS_DDatIntake {
     public List<String> CANSStates {get; set;}
     public transient Map<String, StateRowData> srd {get;set;}
     public boolean showData { get; set;}
+    public boolean totalExists { get; set;}
     
     public Report_CANS_DDatIntake() {
         
@@ -31,6 +32,7 @@ public with sharing class Report_CANS_DDatIntake {
  
  	            
 		}
+		totalExists = false;
 		showData = false;
             
     }
@@ -82,6 +84,7 @@ public with sharing class Report_CANS_DDatIntake {
          
         Integer pbscount = 0;
         String pbstate = '';
+        integer totalPBS = 0, totalQual = 0;
 
 		System.Debug('before:' + srd);
 		// count of all PBS with intake by state in time period 
@@ -105,6 +108,7 @@ public with sharing class Report_CANS_DDatIntake {
             
             StateRowData stdata = srd.get(pbstate);
             stdata.PBSCount = pbscount;
+            totalPBS += pbscount;
         }
 
         system.debug('in between:' + srd);
@@ -134,18 +138,33 @@ public with sharing class Report_CANS_DDatIntake {
             
             StateRowData stdata = srd.get(pbstate);
             stdata.QualifyingCount = pbscount;
+            totalQual += pbscount;
         }
         
         showData = true;
-        System.Debug( 'Final Result: ' + srd );      
+        
+        // add total row
+        StateRowData stdata; 
+        if ( !totalExists ) {
+        	CANSStates.Add('TOTAL');
+        	stdata = new StateRowData('TOTAL');
+        	totalExists = true;
+        } else {
+        	stdata = srd.get('TOTAL');
+        }
+        
+        stData.pbsCount = totalPBS;
+        stData.QualifyingCount = totalQual;
+        srd.put('TOTAL', stdata);   
+        System.Debug( 'Final Result: ' + srd );   
     }
     
     
 
     public class StateRowData{
         public string strState;
-        public Integer PBSCount {get; set{ PBSCount = value; calcPct();}}
-        public Integer QualifyingCount{get;set{ QualifyingCount = value; calcPct();}}
+        public Integer PBSCount {get; set { pbscount = value; calcPct();}}
+        public Integer QualifyingCount{get;set { qualifyingcount = value; calcPct();}}
         public Double PercentDD { get; set;}
 
         public StateRowData(string var_State){
@@ -155,15 +174,17 @@ public with sharing class Report_CANS_DDatIntake {
 			PercentDD = 0.0;          
         }
         
-        public void calcPct() {
+        public double calcPct( ) {
         	
         	if ( PBSCount > 0 ) 
-        		PercentDD = QualifyingCount / PBSCount *100;
+        		PercentDD= ((Double)qualifyingCount / (Double)PBSCount ) *100;
         	else
-        		PercentDD = 0.0;
-        	
+        		PercentDD = 0;
+        		
+        	return PercentDD;
         }
-        
+        	
+        	
     }
 
 
