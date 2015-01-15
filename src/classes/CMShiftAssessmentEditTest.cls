@@ -165,6 +165,9 @@ private class CMShiftAssessmentEditTest {
 		controller.evaluation.Oral_Health_Check__c = 'No';
 		controller.evaluation.Bowel_Issues__c = 'No';
 		controller.evaluation.Dialysis_Picklist__c = 'No';
+		controller.evaluation.Bowel_Continence__c = 'Continent';
+		controller.evaluation.Bladder_Continence__c = 'Continent';
+		controller.evaluation.Urinary_Issues_Checkbox__c = 'No';
 		controller.save();
 		system.assert(controller.evaluation.Nutrition_Section_Completed__c);
 		system.assertEquals(0,controller.errorMap.get('nutritionTab').size(),controller.errorMap.get('nutritionTab'));

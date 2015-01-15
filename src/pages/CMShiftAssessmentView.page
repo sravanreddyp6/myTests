@@ -581,7 +581,7 @@
 	                            <apex:outputLabel for="kg" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.WeightKg__c.label}</apex:outputLabel>
 	                        </apex:outputPanel>
 						</apex:pageBlockSectionItem>
-						<apex:pageBlockSectionItem />
+						<apex:pageBlockSectionItem rendered="{!Evaluation__c.Weight_picklist__c == 'Yes'}" />
 
 						<apex:outputField value="{!Evaluation__c.Bowel_Continence__c}" />
 						<apex:pageBlockSectionItem />
@@ -611,7 +611,7 @@
 						<apex:pageBlockSectionItem />
 
 						<apex:outputField value="{!Evaluation__c.Incontinent_Neuro_Bowel_Describe__c}" label="If Yes, Describe Program" rendered="{!Evaluation__c.Incontinent_Neurogenic_Bowel__c='Yes'}" />
-						<apex:pageBlockSectionItem />
+						<apex:pageBlockSectionItem rendered="{!Evaluation__c.Incontinent_Neurogenic_Bowel__c='Yes'}"/>
 
 						<apex:outputField value="{!Evaluation__c.Perception_of_Need_to_Defecate__c}" />
 						<apex:pageBlockSectionItem />
