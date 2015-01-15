@@ -5,7 +5,7 @@
 <style>
 .c1{width: 10px}
 
-.c2{width: 900px;}
+.c2{width: 960px;}
 .tbHeader{display: none;}
 .abc{display: block;}
 .cba{display:none;}
@@ -37,34 +37,31 @@ function toggleDiv2(divId, divId2){
 </apex:outputPanel>
 
 <apex:sectionHeader title="Assessment"/>
+<p/>
+
 <apex:pageBlock >
 <apex:pageBlockSection columns="1">
-    <apex:outputField value="{!Assessment__c.AccountPerson__c}"/>
+    <apex:outputField label="Person #" value="{!Assessment__c.AccountPerson__r.PBS_Identifier__pc}"/>
     <apex:outputField value="{!Assessment__c.Assessment_Date__c}"/>
     <apex:outputField value="{!Assessment__c.Interval__c}"/>
     <apex:outputField value="{!Assessment__c.Quarter__c}"/>
 </apex:pageBlockSection>
 </apex:pageBlock>
+<br/>
+<h3>Overall Score: <apex:outputField value="{!Assessment__c.Score__c}"/></h3>  
 
 <apex:form style="" id="myFRM" >
     <apex:pageBlock mode="maindetail" >
     
     
         <apex:repeat value="{!ThisRecordsDomains}" var="thisDomain">
-            <apex:pageBlockSection columns="1" title="{!thisDomain.Title__c}" >
+            <apex:pageBlockSection columns="1" title="" >
+              <h3>{!thisDomain.Title__c} - ({!ROUND(thisDomain.Score__c,0)}) </h3>  
 
 
             <apex:panelGrid columns="2" columnClasses="c1, c2" rules="groups" >
                 
               <apex:panelGroup >
-                        <apex:outputPanel styleClass="{!thisDomain.id}w" onclick="javascript:toggleDiv('{!thisDomain.id}', '{!thisDomain.id}q');" style="text-decoration:underline; cursor: pointer; font-size: 10pt;"  ><b></b></apex:outputPanel>
-                        <apex:outputPanel styleClass="{!thisDomain.id}ww" style="display: none;text-decoration:underline; cursor: pointer; font-size: 10pt;" onclick="javascript:toggleDiv2('{!thisDomain.id}', '{!thisDomain.id}q');"  ><b>X</b></apex:outputPanel>
-             
-                    <apex:outputPanel layout="block" style="margin: 15px; padding-left: 15px; color: gray; display: none;" styleClass="{!thisDomain.id}">
-                        <apex:outputPanel style="color: gray;" >
-                            <apex:outputField value="{!MapDomains[thisDomain.Assessment_Domain__c].Description__c}" />
-                        </apex:outputPanel>
-                    </apex:outputPanel> 
                 </apex:panelGroup> 
                 <apex:panelGroup >
                 <apex:pageBlockSection columns="1" >
@@ -72,22 +69,17 @@ function toggleDiv2(divId, divId2){
                 <apex:pageBlockTable value="{!MapDomains[thisDomain.Assessment_Domain__c].Question__r}" var="thisQuestion" style="background-color:  ; " headerClass="tbHeader"  >
 
                
-                    <apex:column id="qTitle" style="border-color: #ededed; width: 275px; text-align: left; vertical-align: middle; padding-left: 5px; padding-top:7px; font-size: 11pt; color: black;" >
+                    <apex:column id="qTitle" style="border-color: #ededed; width: 375px; text-align: left; vertical-align: middle; padding-left: 0px; padding-top:0px; font-size: 11pt; color: black;" >
                         <apex:outputPanel layout="block"  >{!thisQuestion.Question_Title__c}</apex:outputPanel>
 
-                        <apex:outputPanel id="meee" layout="block" styleClass="{!thisQuestion.id}" style="display: none;padding-left: 7px;" ><br/>{!thisQuestion.Question_Description__c}</apex:outputPanel>
+                        <apex:outputPanel id="meee" layout="block" styleClass="{!thisQuestion.id}" style="display: none;padding-left: 7px;" >{!thisQuestion.Question_Description__c}</apex:outputPanel>
                     </apex:column>
                     
                   
                   
                     <apex:column id="qRating" style="border-color: #ededed; width: 65px; text-align: center; vertical-align: middle; color: black; font-size: 14pt; " >
                        <apex:outputPanel layout="block" id="answer" styleClass="{!thisQuestion.id}q" >
-                                    <apex:actionStatus id="myStatus" >
-                                        <apex:facet name="start">
-                                            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /></span>
-                                        </apex:facet>  
-                                        <apex:facet name="stop">  {!MapAnswers[thisQuestion.id].Rating__c}    </apex:facet>         
-                                    </apex:actionStatus>                    
+  {!MapAnswers[thisQuestion.id].Rating__c}                   
                        </apex:outputPanel>
                     </apex:column>  
                     
@@ -101,25 +93,13 @@ function toggleDiv2(divId, divId2){
                     <apex:column id="qOptions" style="border-color: #ededed; " >
                     <apex:outputPanel id="options" layout="block" >
 
-                     
-                                                   
-          
-                                                
-                                        <apex:repeat value="{!MapQuestions[thisQuestion.id].Assessment_Question_Option__r}" var="thisOption"> 
-                                                  <div class="{!thisQuestion.id}" style="display: none; padding: 0px; border: 3px solid {!thisOption.Color__c}; border-top: none; border-bottom: none; margin: 0px;">
-                                                  <center>{!thisOption.Rating__c}</center><br/>
-                                                  {!thisOption.Rating_Description__c}
-                                                  </div>
-                                        </apex:repeat>
+
                                      
                              </apex:outputPanel>                        
                     </apex:column>
                     
                     
-                   <apex:column id="qHelp" style="vertical-align: top; padding:7px; " >
-                        <apex:outputPanel styleClass="{!thisQuestion.id}w" onclick="javascript:toggleDiv('{!thisQuestion.id}', '{!thisQuestion.id}q');" style="text-decoration:underline; cursor: pointer; font-size: 10pt;"  ><b></b></apex:outputPanel>
-                        <apex:outputPanel styleClass="{!thisQuestion.id}ww" style="display: none;text-decoration:underline; cursor: pointer; font-size: 10pt;" onclick="javascript:toggleDiv2('{!thisQuestion.id}', '{!thisQuestion.id}q');"  ><b>X</b></apex:outputPanel>
-                </apex:column>     
+    
                 
                 
                                     
@@ -129,17 +109,13 @@ function toggleDiv2(divId, divId2){
            </apex:panelGroup> 
          
           </apex:panelGrid> 
-          </apex:pageBlockSection> 
+          </apex:pageBlockSection>
+          
         </apex:repeat>
         
     </apex:pageBlock>
     
-<table  cellspacing="7" cellpadding="0"   >
-    <tr>
-    <td colspan="2">Overall Score</td>
-    <td><apex:outputField value="{!Assessment__c.Score__c}"/></td>      
-    </tr>
-    </table>
+
 
 
 
