@@ -1,0 +1,49 @@
+<apex:page standardController="Progress_Note__c" extensions="Notes_ProgressNote_Approval" >
+<!-- hide detail buttons -->
+<style>
+    #topButtonRow{display: none;}
+    #bottomButtonRow{display: none;}
+</style>
+
+<apex:form >
+
+<apex:pageMessage rendered="{!hasOverlap}" severity="warning" title="Overlapping Notes Detected" strength="3" detail="Before submitting this note, please consider these other Progress Notes listed below whose times overlap the start and end date of this note." />
+<apex:pageBlock rendered="{!hasOverlap}" title="Overlapping Progress Notes">
+<apex:pageBlockTable styleclass="pbBody-list"  value="{!pnOverlap}" var="item">
+			<apex:column >
+              <apex:outputLink value="/{!item.id}">{!item.name}</apex:outputLink>
+         	</apex:column>
+            <apex:column value="{!item.Owner.Name}"/>
+            <apex:column value="{!item.Start_Time__c}"/>
+            <apex:column value="{!item.End_Time__c}"/>
+            <apex:column value="{!item.Status__c}"/>
+        </apex:pageBlockTable>
+</apex:pageBlock>
+
+<apex:pageBlock id="block" >
+    <apex:pageBlockButtons >
+        <apex:commandButton value="Submit for Approval" action="{!myFinal}"  rendered="{!!thePN.No_Approval_Needed__c}"/>
+        <apex:commandButton value="Mark Final" action="{!myFinal}" rendered="{!thePN.No_Approval_Needed__c}"/>
+        <apex:commandButton value="Cancel" action="{!cancel}"/>
+    </apex:pageBlockButtons>
+    
+        <apex:pageBlockSection columns="1" >
+        <apex:pageMessages ></apex:pageMessages>
+            <apex:inputField value="{!thePN.No_Approval_Needed__c}">
+                <apex:actionSupport event="onclick" reRender="block"/>                
+            </apex:inputField>
+            <apex:outputPanel layout="block" style="font-size: 14px; font-weight: bold; color: #4A4A56; " rendered="{!!thePN.No_Approval_Needed__c}" >
+                <center>Once you submit this record for approval,
+                <br/> you might not be able to edit it or recall it from the approval process depending on your settings.</center>
+            </apex:outputPanel>
+        </apex:pageBlockSection>
+    </apex:pageBlock>   
+</apex:form>  
+<br/>   
+
+<apex:pageBlock mode="mainDetail" >
+    <apex:detail relatedList="false"/>
+</apex:pageBlock>
+    
+
+</apex:page>
