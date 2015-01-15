@@ -4,6 +4,7 @@ public with sharing class Report_CANS_ActionableByCluster {
         get{ 
             if(selectedCluster == 'WellBeing'){return Assessment_CANS_Cluster_Defs.WellBeing;}
             if(selectedCluster == 'Behavior_and_Risk'){return Assessment_CANS_Cluster_Defs.Behavior_and_Risk;}
+            if(selectedCluster == 'Education') {return Assessment_CANS_Cluster_Defs.Education;}
             return null;
         }
     }
@@ -124,8 +125,8 @@ public with sharing class Report_CANS_ActionableByCluster {
                                                          and assessment__r.disregard__c = false
                                                          and assessment__r.status__c = 'Locked'
                                                          and assessment__r.admission__r.state__c in :CANSStates  )
-                                            and admission__r.effective_date__c >= :startDate
-                                            and (admission__r.discharged_date__c = null or admission__r.discharged_date__c <= :endDate)
+                                            and assessment_date__c >= :startDate 
+                                            and assessment_date__c <= :endDate
                                             group by admission__r.state__c
                                             ];
 
@@ -152,8 +153,8 @@ public with sharing class Report_CANS_ActionableByCluster {
             	                                             and assessment__r.disregard__c = false
                 	                                         and assessment__r.status__c = 'Locked'
                                                          	 and assessment__r.admission__r.state__c in :CANSStates 
-                                            and assessment__r.admission__r.effective_date__c >= :startDate
-                                            and (assessment__r.admission__r.discharged_date__c = null or assessment__r.admission__r.discharged_date__c <= :endDate)
+                                            and assessment__r.assessment_date__c >= :startDate 
+                                            and assessment__r.assessment_date__c <= :endDate
                                             group by question__c, assessment__r.admission__r.state__c
                                             ];
                                         
