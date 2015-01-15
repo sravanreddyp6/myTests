@@ -8,6 +8,7 @@ public with sharing class Report_CANS_ActionableByCluster {
         }
     }
 
+	public transient Map<ID, Assessment_Question__c> QuestionsList{ get; set;}	// holds list of questions in scope - ID, name, number
     public date StartDate {get; set;}
     public date EndDate {get; set;}
     public List<SelectOption> optClusters{ get; set;}
@@ -15,7 +16,8 @@ public with sharing class Report_CANS_ActionableByCluster {
     public List<SelectOption> optInterval{get; set;} 
     public string selectedInterval{get; set;}
     public List<String> CANSStates {get; set;}
-    public Map<String, StateRowData> srd {get;set;}
+    public transient Map<String, StateRowData> srd {get;set;}
+    public boolean showData { get; set;}
     
     public Report_CANS_ActionableByCluster() {
         
@@ -28,12 +30,32 @@ public with sharing class Report_CANS_ActionableByCluster {
             optInterval.Add( new SelectOption('Intake', 'Intake'));
             optInterval.Add( new SelectOption('Discharge', 'Discharge'));
         
-            srd = new Map<String, StateRowData>();
+            QuestionsList = new Map<ID, Assessment_Question__c>();
+
             CANSStates = new List<String>();
+
+	         // get all states who have ever had a CANS intake 
+	        for ( AggregateResult ar : [select Admission__r.State__c
+	                                          from Assessment__c 
+	                                          where Interval__c = 'Intake' 
+	                                          and assessment_type__r.name = 'CANS'
+	                                          and disregard__c = false
+	                                          and status__c = 'Locked'
+	                                          group by Admission__r.state__c
+	                                         ]) {
+	            system.debug(ar);
+	            
+	            string st = (String)ar.get('State__c');
+	            CANSStates.Add( st );
+ 
+ 	            
+		}
+		showData = false;
+            
     }
 
     public PageReference runReport(){
-        
+        showData = false;
         boolean inputErr = false;
         ApexPages.getMessages().clear();
        
@@ -55,7 +77,27 @@ public with sharing class Report_CANS_ActionableByCluster {
                     'Please select the cluster for this report');
                     ApexPages.addMessage(myMsg);
                     inputErr = true;
+       } else {
+       	    // get the list of questions for front-end display of text
+         	QuestionsList = new Map<ID, Assessment_Question__c>([select id, question_number__c, question_title__c from assessment_question__c where question_number__c in :QuestionsinScope and Question_Domain__r.Assessment_Type__r.Name = 'CANS']); 
+       	
+       	// build out the question matrix
+       		StateRowData newstate;
+       		srd = new Map<String, StateRowData>();
+       		for ( String st : CANSStates ) {
+ 
+ 		        newstate = new StateRowData( st );
+            	
+	            newstate.byQuestionCount = new Map<Integer, Integer>();
+	            for ( Integer i: QuestionsInScope) {
+	            	newstate.byQuestionCount.put( i, 0);
+	            }
+	            srd.put( st, newstate );
+ 
+	          
+       		}  	
        }
+
        
        if ( !inputErr ) 
             buildRpt();
@@ -65,24 +107,9 @@ public with sharing class Report_CANS_ActionableByCluster {
     }
 
     public void buildRpt(){
-                
-         // get all states who have ever had a CANS intake 
-        for ( AggregateResult ar : [select Admission__r.State__c
-                                          from Assessment__c 
-                                          where Interval__c = 'Intake' 
-                                          and assessment_type__r.name = 'CANS'
-                                          and disregard__c = false
-                                          and status__c = 'Locked'
-                                          group by Admission__r.state__c
-                                         ]) {
-            system.debug(ar);
-            
-            string st = (String)ar.get('State__c');
-            CANSStates.Add( st );
-            StateRowData newstate = new StateRowData( st );
-            srd.put( st, newstate );
-            
-        }
+         
+        Integer pbscount = 0;
+        String pbstate = '';
         
         // count of qualifying 'actionable' = number of PBS with intake or discharge scoring 2 or 3 for any question in the cluster
         list<AggregateResult> QualifyingCountByState = [ 
@@ -104,14 +131,47 @@ public with sharing class Report_CANS_ActionableByCluster {
 
         for ( AggregateResult ar : QualifyingCountByState ) {
             
-            Integer pbscount = (Integer)ar.get('expr0');
-            String pbstate = (String)ar.get('state__c');
+            pbscount = (Integer)ar.get('expr0');
+            pbstate = (String)ar.get('state__c');
             
             StateRowData stdata = srd.get(pbstate);
             stdata.PBSCount = pbscount;
             stdata.QualifyingCount = pbscount;
         }
-                
+        
+        // count of qualifying 'actionable' = number of PBS with intake or discharge scoring 2 or 3 for any question in the cluster
+        list<AggregateResult> QualifyingCountByQuestion = [ select count(score__c), 
+        														   question__c, 
+        														   assessment__r.admission__r.state__c 
+        													from assessment_response__c 
+        													where 
+        													score__c in (2, 6) 
+	                                                         and question__r.question_number__c in :QuestionsInScope
+    	                                                     and assessment__r.Interval__c = :selectedInterval
+        	                                                 and assessment__r.assessment_type__r.name = 'CANS'
+            	                                             and assessment__r.disregard__c = false
+                	                                         and assessment__r.status__c = 'Locked'
+                                                         	 and assessment__r.admission__r.state__c in :CANSStates 
+                                            and assessment__r.admission__r.effective_date__c >= :startDate
+                                            and (assessment__r.admission__r.discharged_date__c = null or assessment__r.admission__r.discharged_date__c <= :endDate)
+                                            group by question__c, assessment__r.admission__r.state__c
+                                            ];
+                                        
+       Assessment_Question__c currQ;                                    
+       for ( AggregateResult ar : QualifyingCountByQuestion ) {
+            
+            pbscount = (Integer)ar.get('expr0');
+            pbstate = (String)ar.get('state__c');
+            
+            StateRowData stdata = srd.get(pbstate);
+ 			currQ = QuestionsList.get((ID)ar.get('question__c'));
+ 			system.debug('Current Question: ' + currQ + ', state=' + pbstate + ', pbscount=' + pbscount);
+ 			if ( currQ != null )
+            	stdata.byQuestionCount.put((Integer)currQ.Question_number__c, pbscount);
+            
+        }   
+        showData = true;
+        System.Debug( 'Final Result: ' + srd );      
     }
     
     
@@ -120,15 +180,13 @@ public with sharing class Report_CANS_ActionableByCluster {
         public string strState;
         public Integer PBSCount {get;set;}
         public Integer QualifyingCount{get;set;}
-        public Map<String, Integer> byQuestionCount;
-
+        public Map<Integer, Integer> byQuestionCount {get;set;}
 
         public StateRowData(string var_State){
             strState = var_State;
             PBSCount = 0;
             QualifyingCount = 0; 
-            byQuestionCount = new Map<String, Integer>();
-            
+			          
         }
     }
 
