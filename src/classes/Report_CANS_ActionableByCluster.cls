@@ -25,6 +25,7 @@ public with sharing class Report_CANS_ActionableByCluster {
             optClusters =  new List<SelectOption>();
             optClusters.Add( new SelectOption('','--None--'));
             optClusters.Add( new SelectOption('Behavior_and_Risk','Behavior and Risk'));
+            optClusters.Add( new SelectOption('Education','Education'));
             optClusters.Add( new SelectOption('WellBeing','Well Being'));
 
             optInterval = new List<SelectOption>();
