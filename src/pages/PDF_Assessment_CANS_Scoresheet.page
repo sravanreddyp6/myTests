@@ -106,18 +106,7 @@ function toggleDiv2(divId, divId2){
           
                                                 
                                         <apex:repeat value="{!MapQuestions[thisQuestion.id].Assessment_Question_Option__r}" var="thisOption"> 
-                                                    <apex:commandButton action="{!myUpsert}" value="{!thisOption.Rating__c} "  status="myStatus" reRender="options, mymess, answer, answer2, meee"
-                                                        disabled="{!IF(MapAnswers[thisQuestion.id].Rating__c = thisOption.Rating__c, 'True', 'False')}"   
-                                                          style="height: 35px; Width: 35px; color: gray; {!IF(MapAnswers[thisQuestion.id].Rating__c = thisOption.Rating__c, 'background: none;  border-radius: 0px; border: none; border-top:0px solid '+thisOption.Color__c+';', ';font-style: italic;')}"
-                                                          styleClass="{!thisQuestion.id}q"                                                     
-                                                          title="{!thisOption.Rating_Description__c}">
-                                                          
-                                                                <apex:param assignTo="{!QuestionID}" value="{!thisQuestion.id}" name="QuestionID" /> 
-                                                                <apex:param assignTo="{!DomainResultID}" value="{!thisDomain.id}" name="DomainResultID" /> 
-                                                                <apex:param assignTo="{!MyRating }" value="{!thisOption.Rating__c}" name="MyRating " /> 
-                                                                <apex:param assignTo="{!MyColor}" value="{!thisOption.Color__c}" name="MyColor " />                                                           
-                                                    </apex:commandButton>
-                                                  <div class="{!thisQuestion.id}" style="display: none; padding: 7px; border: 3px solid {!thisOption.Color__c}; border-top: none; border-bottom: none; margin: 7px;">
+                                                  <div class="{!thisQuestion.id}" style="display: none; padding: 0px; border: 3px solid {!thisOption.Color__c}; border-top: none; border-bottom: none; margin: 0px;">
                                                   <center>{!thisOption.Rating__c}</center><br/>
                                                   {!thisOption.Rating_Description__c}
                                                   </div>
