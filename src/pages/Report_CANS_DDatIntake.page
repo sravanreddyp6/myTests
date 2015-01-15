@@ -1,12 +1,9 @@
 <apex:page controller="Report_CANS_DDatIntake" sidebar="false"
 	docType="html-5.0" readOnly="true">
-	<apex:stylesheet
-		value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 	<apex:includeScript value="{!$Resource.jquery}" />
-	<apex:includeScript
-		value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
-	<apex:includeScript
-		value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
 	<script>
     function setFocusOnLoad() {}
 </script>
@@ -57,19 +54,19 @@
 	width: 300px !important;
 }
 </style>
-	<apex:form>
+	<apex:form >
 
 
 		<apex:pageMessages id="messages"></apex:pageMessages>
 
 		<apex:pageBlock id="CANSReportBlock"
 			title="CANS Developmental Disability Identified at Intake">
-			<apex:actionregion>
+			<apex:actionregion >
 
 				<apex:pageBlockSection columns="1">
 
 
-					<apex:outputPanel>
+					<apex:outputPanel >
 						<apex:outputLabel styleclass="labelCol" value="Start Date"
 							for="start_date" />
 						<apex:input type="auto" id="start_date" size="10"
@@ -80,7 +77,7 @@
 							styleClass="datepicker" value="{! EndDate}" />
 					</apex:outputPanel>
 
-					<apex:pageBLockSectionItem>
+					<apex:pageBLockSectionItem >
 						<apex:outputPanel layout="none" id="buttonPanel">
 							<apex:commandButton value="Run" action="{!runReport}"
 								reRender="dataTable, tbl_maker, messages, buttonPanel"
@@ -101,15 +98,15 @@
         {!s}
         </apex:column>
 
-			<apex:column>
+			<apex:column >
 				<apex:facet name="header">Persons Being Served with Intake</apex:facet>
             {!srd[s].PBSCount}
         </apex:column>
-			<apex:column>
+			<apex:column >
 				<apex:facet name="header">Persons Being Served with Developmental Disability at Intake</apex:facet>
             {!srd[s].QualifyingCount}
         </apex:column>
-			<apex:column>
+			<apex:column >
 				<apex:facet name="header">Percent with Developmental Disability at Intake</apex:facet>
 				<apex:outputText value="{0,number,0.00}%">
 					<apex:param value="{!srd[s].PercentDD}" />

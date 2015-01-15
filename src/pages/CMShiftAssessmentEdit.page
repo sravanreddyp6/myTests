@@ -2065,16 +2065,13 @@
 									<apex:outputLabel for="unresp2" value="Unresponsive" />
 								</apex:outputPanel>
 							</apex:pageBlockSectionItem>
-					
-								
 							<apex:pageBlockSection columns="1" >
 								<apex:pageBlockSectionItem >
 									<apex:outputLabel value="Mood" />
 									<apex:selectCheckboxes value="{!selectedMoods}"  style="margin-left:-13px" id="moodlist" onchange="handleMood(); return false;" >
 										<apex:selectOptions value="{!moodValues}" />
 									</apex:selectCheckboxes>
-								</apex:pageBlockSectionItem>
-										
+								</apex:pageBlockSectionItem>	
 								<apex:pageBlockSectionItem >
 									<apex:outputPanel id="labelPanel">
 										<apex:outputLabel value="Has Resident Expressed Desire to Hurt Him/Herself?" id="sadflatHurtLabel" />
@@ -2093,9 +2090,7 @@
 										</div>
 									</apex:outputPanel>
 								</apex:pageBlockSectionItem>
-							
 							</apex:pageBlockSection>
-								
 							<apex:pageBlockSectionItem >
 								<apex:outputText value="Communication" styleClass="labelCol" />
 								<apex:outputText value="" />
@@ -2125,7 +2120,6 @@
 									</apex:selectCheckboxes>
 								</apex:outputPanel>
 							</apex:pageBlockSectionItem>
-						
 					</apex:pageBlockSection>
 					<apex:pageBlockSection columns="1" title="Safety" >
 						<apex:pageBlockSectionItem >
@@ -2145,7 +2139,6 @@
 								<br/>
 								<apex:outputLabel value="# of hours per day" id="hoursLabel"/>
 							</apex:outputPanel>
-
 							<apex:outputPanel >
 								<apex:inputField value="{!Evaluation__c.One_to_One_Sitter__c}"  id="sitter" onchange="handleSitter(); return false;"/>
 								<br />

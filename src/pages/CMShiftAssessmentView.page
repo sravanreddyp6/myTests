@@ -808,8 +808,9 @@
 				</apex:pageBlock>
 				<apex:pageBlock >
 					<apex:pageblockSection Columns="1">
-						<apex:outputField value="{!Evaluation__c.Rancho_Level__c}" />
-					</apex:pageBlockSection>
+						<apex:outputField value="{!Evaluation__c.Cognition_Intact__c}" />
+						<apex:outputField value="{!Evaluation__c.Rancho_Level__c}" rendered="{!Evaluation__c.Cognition_Intact__c == 'No'}" />
+						<apex:outputField value="{!Evaluation__c.Level_of_Conciousness__c}" rendered="{!Evaluation__c.Cognition_Intact__c == 'No'}" />
 					<apex:pageBlockSection columns="1" rendered="{!Evaluation__c.Rancho_Level__c != '(1) No Response' && Evaluation__c.Rancho_Level__c != null}" >
 						<apex:pageBlockSectionItem >
 							<apex:outputLabel value="Responds To" />
@@ -821,11 +822,21 @@
 								<apex:outputText value="{!If (Evaluation__c.Visual__c, 'Visual Stim;', '')}" />
 							</apex:outputPanel>
 						</apex:pageBlockSectionItem>
-
-						<apex:outputField value="{!Evaluation__c.Level_of_Conciousness__c}" />
 						<apex:outputField value="{!Evaluation__c.Orientation__c}" label="Orientation" />
-
 						<apex:pageBlockSectionItem >
+							<apex:outputLabel value="Behavior" />
+							<apex:outputPanel >
+								<apex:outputText value="{!if (Evaluation__c.Cooperative__c, 'Cooperative;','')}" />
+								<apex:outputText value="{!if (Evaluation__c.Impulsive__c, 'Impulsive;','')}" />
+								<apex:outputText value="{!if (Evaluation__c.Inappropriate__c, 'Inappropriate;','')}" />
+								<apex:outputText value="{!if (Evaluation__c.Agitated__c, 'Agitated;','')}" />
+								<apex:outputText value="{!if (Evaluation__c.Combative__c, 'Combative;','')}" />
+								<apex:outputText value="{!if (Evaluation__c.Confused__c, 'Confused;','')}" />
+								<apex:outputText value="{!if (Evaluation__c.Unresponsive__c, 'Unresponsive;','')}" />
+							</apex:outputPanel>
+						</apex:pageBlockSectionItem>
+						</apex:pageblockSection>
+						<apex:pageBlockSectionItem rendered="{!Evaluation__c.Cognition_Intact__c == 'Yes'}">
 							<apex:outputLabel value="Behavior" />
 							<apex:outputPanel >
 								<apex:outputText value="{!if (Evaluation__c.Cooperative__c, 'Cooperative;','')}" />
@@ -843,7 +854,7 @@
 						<apex:outputText value=""  label="Communication" />
 						<apex:outputField value="{!Evaluation__c.Able_to_make_Needs_Known__c}" label="Ability to make Needs known" />
 						<apex:outputText value="{!if (CONTAINS(Evaluation__c.Expression__c, 'Non-Verbal'), Evaluation__c.Expression__c + ' - ' + Evaluation__c.Expression_Other__c, Evaluation__c.Expression__c)}" label="Expression"  rendered="{!Evaluation__c.Able_to_make_Needs_Known__c == 'No'}"/>
-					</apex:pageblockSection>
+					</apex:pageBlockSection >
 					<apex:pageBlockSection title="Safety" columns="1" >
 						<apex:outputField value="{!Evaluation__c.Safety_Awareness__c}" label="Safety Awareness" />
 						<apex:outputField value="{!Evaluation__c.Bed_Alarm__c}" label="Bed Alarm" />
@@ -881,7 +892,6 @@
 					</apex:pageBlockSection>
 				</apex:pageBlock>
 			</apex:tab>
-
 			<apex:tab label="Ortho" name="orthoTab" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
 					<apex:pageBlockSection columns="2" >
@@ -950,7 +960,6 @@
 					</apex:pageBlockSection>
 				</apex:pageBlock>
 			</apex:tab>
-
 			<apex:tab label="Psycho/Social" name="psychoSocialTab" styleClass="{!IF(Evaluation__c.Psycho_Social_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
 					<apex:pageBlockSection columns="2" >
@@ -1111,8 +1120,6 @@
 				</apex:pageBlockSection>
 			</apex:pageBlock>
 		</apex:outputPanel>
-		
-		
 		<apex:outputPanel id="evaluationModal" style="display:none">
 			<span class="ui-helper-hidden-accessible"><input type="text"/></span>
 			<div id='evaluationMessages'></div>
@@ -1148,7 +1155,6 @@
 				</apex:pageBlockButtons>
 			</apex:pageBlock>
 		</apex:outputPanel>
-		
 	<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!Evaluation__c.Id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); window.location='/{!Evaluation__c}'; return false;" />
 	</apex:form>
 	<apex:actionStatus id="pageProcessing">
