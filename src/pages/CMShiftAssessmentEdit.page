@@ -466,15 +466,8 @@
 					$('[id$=ranchoValue]').show();
 					$('[id$=conciousLevelLabel]').show();
 					$('[id$=conciousLevel]').show();
-					$('[id$=behavior2Label]').hide();
-					$('[id$=behavior2Panel]').hide();
-					console.log($('[id$=coop2]').val());
-					console.log($('[id$=coop]').val());
-					
-				} 
-			  if(cogIntact == 'Yes'){
-					$('[id$=behavior2Panel]').show();
-					$('[id$=behavior2Label]').show();
+	
+				}else{
 					$('[id$=ranchoValueLabel]').hide();
 					$('[id$=ranchoValue]').hide();
 					$('[id$=conciousLevelLabel]').hide();
@@ -483,39 +476,41 @@
 					$('[id$=conciousLevel]').val('');
 				
 				}
-				if(cogIntact == '') {
-					$('[id$=ranchoValueLabel]').hide();
-					$('[id$=ranchoValue]').hide();
-					$('[id$=conciousLevelLabel]').hide();
-					$('[id$=conciousLevel]').hide();
-					$('[id$=ranchoValue]').val('');
-					$('[id$=conciousLevel]').val('');
-					$('[id$=behavior2Panel]').hide();
-					$('[id$=behavior2Label]').hide();
-					$('[id$=behavior2Panel]').find('input:checkbox').prop('checked', false);	
-					
-				}
-			
-			
+				
 			};
-
+			
 			handleRancho = function () {
-
 				var ranchoScore = $('[id$=ranchoValue]').val();
 
 				if (ranchoScore && ranchoScore.indexOf('1') < 0 && ranchoScore != '') {
 					$('[id$=ranchoDetails]').show();
 					$('[id$=ranchoDetails]').show();
 					
-
 				} else {
 					$('[id$=ranchoDetails]').hide();
 					$('[id$=ranchoDetails]').hide();
 					$('[id$=ranchoDetails]').find('select,input:text,textarea').val('');
-					$('[id$=ranchoDetails]').find('input:checkbox').prop('checked', false);
+					$('[id$=ranchoDetails]').find('input:checkbox').prop('checked', false);	
 
 				}
 
+			};
+			
+			handleBehavior = function() {
+				var cog = $('[id$=cognitionIntact]').val();
+				var rancho = $('[id$=ranchoValue]').val();
+				
+				if(cog == 'Yes' || (rancho && rancho.indexOf('1') < 0 && rancho != '')) {
+					$('[id$=behavior2Panel]').show();
+					$('[id$=behavior2Label]').show();
+				
+				} else {
+					$('[id$=behavior2Panel]').hide();
+					$('[id$=behavior2Label]').hide();
+					$('[id$=behavior2Panel]').find('input:checkbox').prop('checked', false);	
+				
+				}				
+			
 			};
 
 			handleExpression = function () {
@@ -628,6 +623,7 @@
 			handleNeuro = function () {
 				handleCognition();
 				handleRancho();
+				handleBehavior();
 				handleExpression();
 				handleSitter();
 				handleMood();
@@ -1993,11 +1989,11 @@
 								<apex:outputPanel >
 									<div class="requiredInput">
 										<div class="requiredBlock"></div>
-									<apex:inputField value="{!Evaluation__c.Cognition_Intact__c}" id="cognitionIntact" onchange="handleCognition(); handleRancho(); return false;" />
+									<apex:inputField value="{!Evaluation__c.Cognition_Intact__c}" id="cognitionIntact" onchange="handleCognition(); handleRancho(); handleBehavior(); return false;" />
 									</div>
 									<div class="requiredInput">
 										<div class="requiredBlock"></div>
-									<apex:inputField value="{!Evaluation__c.Rancho_Level__c}" id="ranchoValue" onchange="handleRancho(); return false;" />
+									<apex:inputField value="{!Evaluation__c.Rancho_Level__c}" id="ranchoValue" onchange="handleRancho(); handleBehavior(); return false;" />
 									</div>
 									<div class="requiredInput">
 										<div class="requiredBlock"></div>
@@ -2027,7 +2023,7 @@
 										<apex:selectOptions value="{!neuroOrientValues}" />
 									</apex:selectCheckboxes>
 								</apex:pageBlockSectionItem>
-								<apex:pageBlockSectionItem >
+								<!-- apex:pageBlockSectionItem >
 									<apex:outputLabel value="Behavior" />
 									<apex:outputPanel >
 										<apex:inputField id="coop" value="{!Evaluation__c.Cooperative__c}" />
@@ -2045,25 +2041,25 @@
 										<apex:inputField id="unresp" value="{!Evaluation__c.Unresponsive__c}" />
 										<apex:outputLabel for="unresp" value="Unresponsive" />
 									</apex:outputPanel>
-								</apex:pageBlockSectionItem>
+								</apex:pageBlockSectionItem-->
 							</apex:pageBlockSection>
 							<apex:pageBlockSectionItem >
 								<apex:outputLabel value="Behavior" id="behavior2Label"/>
 								<apex:outputPanel id="behavior2Panel">
-									<apex:inputField id="coop2" value="{!Evaluation__c.Cooperative__c}" />
-									<apex:outputLabel for="coop2" value="Cooperative" />&nbsp;
-									<apex:inputField id="impulsive2" value="{!Evaluation__c.Impulsive__c}" />
-									<apex:outputLabel for="impulsive2" value="Impulsive" />&nbsp;
-									<apex:inputField id="inapp2" value="{!Evaluation__c.Inappropriate__c}" />
-									<apex:outputLabel for="inapp2" value="Inappropriate" />&nbsp;
-									<apex:inputField id="agitated2" value="{!Evaluation__c.Agitated__c}" />
-									<apex:outputLabel for="agitated2" value="Agitated" />&nbsp;
-									<apex:inputField id="combat2" value="{!Evaluation__c.Combative__c}" />
-									<apex:outputLabel for="combat2" value="Combative" />&nbsp;
-									<apex:inputField id="confused2" value="{!Evaluation__c.Confused__c}" />
-									<apex:outputLabel for="confused2" value="Confused" />&nbsp;
-									<apex:inputField id="unresp2" value="{!Evaluation__c.Unresponsive__c}" />
-									<apex:outputLabel for="unresp2" value="Unresponsive" />
+									<apex:inputField id="coop" value="{!Evaluation__c.Cooperative__c}" />
+									<apex:outputLabel for="coop" value="Cooperative" />&nbsp;
+									<apex:inputField id="impulsive" value="{!Evaluation__c.Impulsive__c}" />
+									<apex:outputLabel for="impulsive" value="Impulsive" />&nbsp;
+									<apex:inputField id="inapp" value="{!Evaluation__c.Inappropriate__c}" />
+									<apex:outputLabel for="inapp" value="Inappropriate" />&nbsp;
+									<apex:inputField id="agitated" value="{!Evaluation__c.Agitated__c}" />
+									<apex:outputLabel for="agitated" value="Agitated" />&nbsp;
+									<apex:inputField id="combat" value="{!Evaluation__c.Combative__c}" />
+									<apex:outputLabel for="combat" value="Combative" />&nbsp;
+									<apex:inputField id="confused" value="{!Evaluation__c.Confused__c}" />
+									<apex:outputLabel for="confused" value="Confused" />&nbsp;
+									<apex:inputField id="unresp" value="{!Evaluation__c.Unresponsive__c}" />
+									<apex:outputLabel for="unresp" value="Unresponsive" />
 								</apex:outputPanel>
 							</apex:pageBlockSectionItem>
 							<apex:pageBlockSection columns="1" >
