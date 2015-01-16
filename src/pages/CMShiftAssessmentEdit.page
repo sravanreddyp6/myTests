@@ -468,10 +468,11 @@
 					$('[id$=conciousLevel]').show();
 					$('[id$=behavior2Label]').hide();
 					$('[id$=behavior2Panel]').hide();
-					$('[id$=behavior2Panel]').find('input:checkbox').prop('checked', false);
+					console.log($('[id$=coop2]').val());
+					console.log($('[id$=coop]').val());
 					
 				} 
-				else if(cogIntact == 'Yes'){
+			  if(cogIntact == 'Yes'){
 					$('[id$=behavior2Panel]').show();
 					$('[id$=behavior2Label]').show();
 					$('[id$=ranchoValueLabel]').hide();
@@ -482,7 +483,7 @@
 					$('[id$=conciousLevel]').val('');
 				
 				}
-				else {
+				if(cogIntact == '') {
 					$('[id$=ranchoValueLabel]').hide();
 					$('[id$=ranchoValue]').hide();
 					$('[id$=conciousLevelLabel]').hide();
