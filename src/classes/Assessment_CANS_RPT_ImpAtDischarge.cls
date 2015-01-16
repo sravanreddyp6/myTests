@@ -11,6 +11,8 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
             return null;
         }
     }
+    public list<string> selectedServiceLines {get;set;}
+    public list<SelectOption> serviceLines {get; set;}
 //return Assessment_CANS_Cluster_Defs.WellBeing;
     public date StartDate {get; set;}
     public date EndDate {get; set;}
@@ -21,6 +23,16 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
 
     public Assessment_CANS_RPT_ImpAtDischarge() {
         //runRpt();
+        selectedServiceLines = new list<string>();
+        serviceLines = new list<SelectOption>();
+		Schema.DescribeFieldResult fieldResult = Assessment__c.Service_Line__c.getDescribe();
+		List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
+		        
+		for( Schema.PicklistEntry f : ple){
+		      serviceLines.add(new SelectOption(f.getLabel(), f.getValue()));
+		      selectedServiceLines.add(f.getValue());
+	   }               
+
     }
 
     public PageReference runRpt(){
@@ -51,6 +63,8 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
                                                     where Interval__c = 'Intake' 
                                                         AND Admission__r.Status__c = 'Discharged'
                                                         AND assessment_type__r.name = 'CANS'
+                                                        and disregard__c = false
+                                                        AND Service_Line__c in :selectedServiceLines
                                                         AND Admission__r.Discharged_Date__c >= :StartDate
                                                         AND Admission__r.Discharged_Date__c <= :EndDate
 
@@ -68,6 +82,8 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
                                                 from Assessment__c 
                                                 where Interval__c = 'Discharge' 
                                                     AND assessment_type__r.name = 'CANS'
+                                                    and disregard__c = false
+                                                    AND Service_Line__c in :selectedServiceLines
                                                     AND Assessment_Date__c >= :StartDate 
                                                     AND Assessment_Date__c <= :EndDate
 
@@ -84,7 +100,10 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
         list<AggregateResult> intakeAssessScore = [select sum(score__c) score, Assessment__r.AccountPerson__r.Id 
                                                             from Assessment_Response__c 
                                                                 Where Assessment__r.AccountPerson__r.Id IN : disChargeAssessPBSes 
-                                                                    AND Assessment__r.Interval__c = 'Intake'
+                                                                    AND Assessment__r.Interval__c = 'Quarterly' 
+                                                                    AND Assessment__r.Quarter__c = 1 
+                                                                    AND Assessment__r.Service_Line__c in :selectedServiceLines
+                                                                    and Assessment__r.disregard__c = false
                                                                     AND Question__r.Question_Number__c IN :QuestionsInScope
                                                                     AND Assessment__r.assessment_type__r.name = 'CANS'
 
@@ -94,6 +113,8 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
                                                             from Assessment_Response__c 
                                                                 Where Assessment__r.AccountPerson__r.Id IN : disChargeAssessPBSes 
                                                                     AND Assessment__r.Interval__c = 'Discharge'
+                                                                    AND Assessment__r.Service_Line__c in :selectedServiceLines
+                                                                    and Assessment__r.disregard__c = false
                                                                     AND Question__r.Question_Number__c IN :QuestionsInScope
                                                                     AND Assessment__r.assessment_type__r.name = 'CANS'
 
