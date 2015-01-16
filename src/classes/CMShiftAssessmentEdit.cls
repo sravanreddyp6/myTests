@@ -824,48 +824,80 @@ public with sharing class CMShiftAssessmentEdit {
 		Boolean neuro = true;
 		List<string> neuroErrors = errorMap.get('neuroTab');
 		neuroErrors.clear();
-
-		if(this.evaluation.Rancho_Level__c == null) {
+		
+		if(this.evaluation.Cognition_Intact__c == null) {
 			neuro = false;
-			neuroErrors.add('Rancho level is Mandatory');
+			neuroErrors.add('Cognition Intact field is Mandatory');
+			
+		}
+		
+		if(this.evaluation.Cognition_Intact__c == 'No') {
+			
+			if(this.evaluation.Rancho_Level__c == null) {
+				neuro = false;
+				neuroErrors.add('Rancho level is Mandatory');
+			}
+			
+			if(this.evaluation.Level_of_Conciousness__c == null){
+				neuro = false;
+				neuroErrors.add('Level of Conciousness is Mandatory');
+			}
+			
+		}
+		
+		if((this.evaluation.Cognition_Intact__c == 'Yes' || (this.evaluation.Rancho_Level__c != null && this.evaluation.Rancho_Level__c != '(1) No Response'))&& !(this.evaluation.Cooperative__c || this.evaluation.Impulsive__c || this.evaluation.Inappropriate__c || this.evaluation.Agitated__c || this.evaluation.Combative__c || this.evaluation.Confused__c || this.evaluation.Unresponsive__c)){
+				neuro = false;
+				neuroErrors.add('Please atleast one checkbox for Behavior');
 		}
 
 		if(this.evaluation.Rancho_Level__c != null && this.evaluation.Rancho_Level__c != '(1) No Response' ) {
 			
-			if(this.evaluation.Mood__c == '') {
+			if(this.evaluation.Orientation__c == '') {
 				neuro = false;
-				neuroErrors.add('Please choose atleast one checkbox for Mood');
-			}
-
-			if( this.evaluation.Mood__c != null) {
+				neuroErrors.add('Please atleast one checkbox for Orientation');
 				
-				if((this.evaluation.Mood__c.Contains('Sad') || this.evaluation.Mood__c.Contains('Flat')) && evaluation.Desire_to_hurt_themselves__c == null ) {
-					neuro = false;
-					neuroErrors.add('Has Resident Expressed Desire to Hurt Him/Herself? field is mandatory when mood is flat or sad');
-				}
+			}
+			
+			if(!(this.evaluation.Verbal_Stim__c || this.evaluation.Auditory_Stim__c || this.evaluation.Tactile_Stim__c || this.evaluation.Responds_To_Pain__c || this.evaluation.Visual__c)) {
+				neuro = false;
+				neuroErrors.add('Please atleast one checkbox for Responds to');
+				
+			}
+			
+		}
+			
+		if(this.evaluation.Mood__c == '') {
+			neuro = false;
+			neuroErrors.add('Please choose atleast one checkbox for Mood');
+		}
 
-				if(this.evaluation.Desire_to_hurt_themselves__c =='Yes' && this.evaluation.Plan_to_Harm_themselves__c == null) {
-					neuro = false;
-					neuroErrors.add('Does Resident Have a Plan to Harm Him/Herself? is mandatory');
-				}
-
+		if( this.evaluation.Mood__c != null) {
+				
+			if((this.evaluation.Mood__c.Contains('Sad') || this.evaluation.Mood__c.Contains('Flat')) && evaluation.Desire_to_hurt_themselves__c == null ) {
+				neuro = false;
+				neuroErrors.add('Has Resident Expressed Desire to Hurt Him/Herself? field is mandatory when mood is flat or sad');
 			}
 
-			if( this.evaluation.Able_to_make_Needs_Known__c == null) {
+			if(this.evaluation.Desire_to_hurt_themselves__c =='Yes' && this.evaluation.Plan_to_Harm_themselves__c == null) {
 				neuro = false;
-				neuroErrors.add('Ability to make needs known field is mandatory');
-				}
-
-			if(this.evaluation.Able_to_make_Needs_Known__c == 'No' && this.evaluation.Expression__c == null) {
-				neuro = false;
-				neuroErrors.add('Expression field is mandatory');
+				neuroErrors.add('Does Resident Have a Plan to Harm Him/Herself? is mandatory');
 			}
 
-			if(this.evaluation.Expression__c == 'Non-Verbal' && this.evaluation.Expression_Other__c == '') {
-				neuro = false;
-				neuroErrors.add('Please choose other expression when expression is non-verbal');
-			}
+		}
 
+		if( this.evaluation.Able_to_make_Needs_Known__c == null) {
+			neuro = false;
+			neuroErrors.add('Ability to make needs known field is mandatory');
+		}
+
+		if(this.evaluation.Able_to_make_Needs_Known__c == 'No' && this.evaluation.Expression__c == null) {
+			neuro = false;
+			neuroErrors.add('Expression field is mandatory');
+		}
+
+		if(this.evaluation.Expression__c == 'Non-Verbal' && this.evaluation.Expression_Other__c == '') {
+			neuro = false;
+			neuroErrors.add('Please choose other expression when expression is non-verbal');
 		}
 
 		if(this.evaluation.Safety_Awareness__c == null){
