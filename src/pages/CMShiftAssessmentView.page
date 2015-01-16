@@ -531,8 +531,8 @@
 							<apex:outputText value="" />
 						</apex:pageBlockSectionItem>
 						<apex:outputField value="{!Evaluation__c.PEDS_Teething__c}" label="Teething"/>
-						<apex:outputField value="{!Evaluation__c.PEDS_History_of_Tonsils__c}" label="History of Tonsilitis" />
-						<apex:outputField value="{!Evaluation__c.PEDS_Tonsil_History_Describe__c}" label="If Yes, Describe Tonsilitis History" rendered="{!Evaluation__c.PEDS_History_of_Tonsils__c='Yes'}" />
+						<apex:outputField value="{!Evaluation__c.PEDS_History_of_Tonsils__c}" label="History of Tonsillitis" />
+						<apex:outputField value="{!Evaluation__c.PEDS_Tonsil_History_Describe__c}" label="If Yes, Describe Tonsillitis History" rendered="{!Evaluation__c.PEDS_History_of_Tonsils__c='Yes'}" />
 						<apex:outputField value="{!Evaluation__c.PEDS_Pacifier__c}" label="Pacifier" />
 						<apex:outputField value="{!Evaluation__c.PEDS_Pacifier_Type_Usage__c}" label="if Yes, Type & usage" rendered="{!Evaluation__c.PEDS_Pacifier__c='Yes'}" />
 					</apex:pageBlockSection>
@@ -851,7 +851,7 @@
 						<apex:outputField value="{!Evaluation__c.Mood__c}" label="Mood" />
 						<apex:outputField value="{!Evaluation__c.Desire_to_hurt_themselves__c}" label="Has Resident Expressed Desire to Hurt Him/Herself?"  rendered="{!CONTAINS(Evaluation__c.Mood__c,'Sad') || CONTAINS(Evaluation__c.Mood__c,'flat') }"/>
 						<apex:outputField value="{!Evaluation__c.Plan_to_Harm_themselves__c}" label="Does Resident Have a Plan to Harm Him/Herself?" rendered="{!Evaluation__c.Desire_to_hurt_themselves__c == 'Yes'}"/>
-						<apex:outputText value=""  label="Communication" />
+						<apex:outputText value=""  label="COMMUNICATION" />
 						<apex:outputField value="{!Evaluation__c.Able_to_make_Needs_Known__c}" label="Ability to make Needs known" />
 						<apex:outputText value="{!if (CONTAINS(Evaluation__c.Expression__c, 'Non-Verbal'), Evaluation__c.Expression__c + ' - ' + Evaluation__c.Expression_Other__c, Evaluation__c.Expression__c)}" label="Expression"  rendered="{!Evaluation__c.Able_to_make_Needs_Known__c == 'No'}"/>
 					</apex:pageBlockSection >
@@ -947,6 +947,7 @@
 						<apex:pageBlockSectionItem >
 							<apex:outputLabel value="{! if ( Evaluation__c.External_Device_Picklist__c == 'Yes', 'External Devices<br /><br />Location<br /><br />Type<br />', 'External Devices')}" escape="false" />
 							<apex:outputPanel rendered="{!Evaluation__c.External_Device_Picklist__c == 'Yes'}">
+								<apex:outputText value="Yes" />
 								<br />
 								<br />
 								<apex:outputText id="edloc" value="{!Evaluation__c.External_Devices_Location__c}" />
