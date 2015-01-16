@@ -9,11 +9,15 @@ public with sharing class Report_CANS_DDatIntake {
     public transient Map<String, StateRowData> srd {get;set;}
     public boolean showData { get; set;}
     public boolean totalExists { get; set;}
-    
+    public transient Map<String, String> asmtsByState {get;set;} 
+    public string asmtStates{ get; set;}
+    public List<string> selectedSL { get; set; }
+    public List<SelectOption> optSL { get; set; }
+                                           
     public Report_CANS_DDatIntake() {
         
             QuestionsList = new Map<ID, Assessment_Question__c>();
-
+			
             CANSStates = new List<String>();
 
 	         // get all states who have ever had a CANS intake 
@@ -34,6 +38,24 @@ public with sharing class Report_CANS_DDatIntake {
 		}
 		totalExists = false;
 		showData = false;
+		
+		optSL = new List<SelectOption>();
+
+		  // Get the object type of the SObject.
+		  Schema.sObjectType objType = Assessment__c.getSObjectType(); 
+		  // Describe the SObject using its object type.
+		  Schema.DescribeSObjectResult objDescribe = objType.getDescribe();       
+		  // Get a map of fields for the SObject
+		  map<String, Schema.SObjectField> fieldMap = objDescribe.fields.getMap(); 
+		  // Get the list of picklist values for this field.
+		  list<Schema.PicklistEntry> values = fieldMap.get('Service_Line__c').getDescribe().getPickListValues();
+		  // Add these values to the selectoption list.
+		  for (Schema.PicklistEntry a : values)
+		  { 
+		     optSL.add(new SelectOption(a.getLabel(), a.getValue())); 
+		  }
+		  
+		  selectedSL = new List<String>();
             
     }
 
@@ -57,7 +79,7 @@ public with sharing class Report_CANS_DDatIntake {
        
        // get the list of questions for front-end display of text
        QuestionsList = new Map<ID, Assessment_Question__c>([select id, question_number__c, question_title__c from assessment_question__c where question_number__c in :QuestionsinScope and Question_Domain__r.Assessment_Type__r.Name = 'CANS']); 
-       	
+       	asmtsByState = new Map<String, String>();
        	// build out the question matrix
        		StateRowData newstate;
        		srd = new Map<String, StateRowData>();
@@ -87,15 +109,17 @@ public with sharing class Report_CANS_DDatIntake {
         integer totalPBS = 0, totalQual = 0;
 
 		System.Debug('before:' + srd);
-		// count of all PBS with intake by state in time period 
+		// count of all PBS with 1st quarterly by state in time period 
         list<AggregateResult> CountByState = [ 
                                             select count(accountperson__c), admission__r.state__c 
                                             from assessment__c 
                                             where 
-                                            Interval__c = 'Intake'
+                                            Interval__c = 'Quarterly'
+                                            and quarter__c = 1
                                             and assessment_type__r.name = 'CANS'
                                             and disregard__c = false
                                             and status__c = 'Locked'
+                                            and service_line__c in :selectedSL
                                             and assessment_date__c >= :startDate 
                                             and assessment_date__c <= :endDate
                                             group by admission__r.state__c
@@ -121,10 +145,12 @@ public with sharing class Report_CANS_DDatIntake {
                                                          from assessment_response__c 
                                                          where score__c > 0
                                                          and question__r.question_number__c in :QuestionsInScope
-                                                         and assessment__r.Interval__c = 'Intake'
+                                                         and assessment__r.Interval__c = 'Quarterly'
+                                                         and assessment__r.Quarter__c = 1
                                                          and assessment__r.assessment_type__r.name = 'CANS'
                                                          and assessment__r.disregard__c = false
                                                          and assessment__r.status__c = 'Locked'
+                                                         and assessment__r.service_line__c in :selectedSL
                                                          and assessment__r.admission__r.state__c in :CANSStates  )
                                             and assessment_date__c >= :startDate 
                                             and assessment_date__c <= :endDate
@@ -157,10 +183,57 @@ public with sharing class Report_CANS_DDatIntake {
         stData.QualifyingCount = totalQual;
         srd.put('TOTAL', stdata);   
         System.Debug( 'Final Result: ' + srd );   
+        
+        // get the drilldown data
+        List<Assessment_Response__c> asmtresp = [select assessment__r.name, assessment__c, score__c, assessment__r.assessment_date__c, assessment__r.admission__r.state__c 
+                                                         from assessment_response__c 
+                                                         where 
+                                                         question__r.question_number__c in :QuestionsInScope
+                                                         and score__c > 0
+                                                         and assessment__r.Interval__c = 'Quarterly'
+                                                         and assessment__r.quarter__c = 1
+                                                         and assessment__r.assessment_type__r.name = 'CANS'
+                                                         and assessment__r.disregard__c = false
+                                                         and assessment__r.status__c = 'Locked'
+                                                         and assessment__r.admission__r.state__c in :CANSStates
+                                                         and assessment__r.service_line__c in :selectedSL
+                                            			 and assessment__r.assessment_date__c >= :startDate 
+                                            			 and assessment__r.assessment_date__c <= :endDate
+                                            			 order by assessment__r.admission__r.state__c];
+                                            			 
+        
+        // group the assessment responses by state, and put into a list for the front end                                   
+        List<Assessment_Response__c> listbyState = new List<Assessment_Response__c>();
+        String currst = '', st = '';                                    			 
+        for (Assessment_Response__c a : asmtresp ) {
+        	
+        	// get this response's state
+        	st = a.assessment__r.admission__r.state__c;
+        	if ( st != currst ) {
+        		system.debug( 'asmt state is: ' + st + ', currst is: ' + currst + ', listbystate: ' + listByState);
+        		// if we're moving on to next state, serialize the list, put it into the map for front end, and re-init
+        		if ( !String.IsEmpty(currst))
+        			asmtsByState.put( currst, JSON.serialize(listbyState) );
+        			
+        		currst = st;
+        		listbyState = new List<Assessment_Response__c>();
+        		
+        	} 
+        	listbyState.Add(a); // add this response to the list for the state
+        }
+        // do the last state
+        if ( !String.IsEmpty(currst)) {
+        	system.debug( 'asmt state is: ' + st + ', currst is: ' + currst + ', listbystate: ' + listByState);
+        	asmtsByState.put( currst, JSON.serialize(listbyState) );
+        		
+        }
+        
+        for (String k: asmtsByState.keyset())
+        	asmtStates +=(asmtStates==''?'':',')+k;
+        	 
+        System.debug( asmtsByState);
     }
     
-    
-
     public class StateRowData{
         public string strState;
         public Integer PBSCount {get; set { pbscount = value; calcPct();}}

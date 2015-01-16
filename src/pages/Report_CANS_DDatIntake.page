@@ -60,7 +60,7 @@
 		<apex:pageMessages id="messages"></apex:pageMessages>
 
 		<apex:pageBlock id="CANSReportBlock"
-			title="CANS Developmental Disability Identified at Intake">
+			title="CANS Developmental Disability Identified at 1st Quarterly Assessment">
 			<apex:actionregion >
 
 				<apex:pageBlockSection columns="1">
@@ -75,6 +75,13 @@
 							for="end_date" />
 						<apex:input type="auto" id="end_date" size="10" label="End Date"
 							styleClass="datepicker" value="{! EndDate}" />
+					</apex:outputPanel>
+					 
+					<apex:outputPanel>
+					<apex:outputLabel styleClass="labelCol" value="Service Lines" />
+ 					<apex:selectCheckboxes value="{!selectedSL}" >
+					<apex:selectOptions value="{!optSL}" />
+					</apex:selectCheckboxes>
 					</apex:outputPanel>
 
 					<apex:pageBLockSectionItem >
@@ -95,26 +102,29 @@
 			value="{!CANSStates}" var="s" rendered="{!showData}">
 			<apex:column headerclass="colCtr" styleClass="colCtr">
 				<apex:facet name="header">State</apex:facet>
-        {!s}
+        		{!s}
         </apex:column>
 
 			<apex:column >
-				<apex:facet name="header">Persons Being Served with Intake</apex:facet>
+				<apex:facet name="header">Persons Being Served with 1st Quarterly</apex:facet>
             {!srd[s].PBSCount}
         </apex:column>
 			<apex:column >
-				<apex:facet name="header">Persons Being Served with Developmental Disability at Intake</apex:facet>
+				<apex:facet name="header">Persons Being Served with Developmental Disability at 1st Quarterly</apex:facet>
             {!srd[s].QualifyingCount}
         </apex:column>
 			<apex:column >
-				<apex:facet name="header">Percent with Developmental Disability at Intake</apex:facet>
+				<apex:facet name="header">Percent with Developmental Disability at 1st Quarterly</apex:facet>
 				<apex:outputText value="{0,number,0.00}%">
 					<apex:param value="{!srd[s].PercentDD}" />
 				</apex:outputText>
 			</apex:column>
+			<apex:column headervalue="detail">
+			{! if (CONTAINS(asmtStates, s), asmtsByState[s],'' ) }
+			</apex:column>
 		</apex:pageBlockTable>
 	</apex:pageBlock>
-
+	
 
 	<apex:actionStatus id="myStatus">
 		<apex:facet name="start">
@@ -132,6 +142,39 @@
 	<apex:outputPanel id="tbl_maker">
 		<script>
 j$ = jQuery.noConflict();
+
+//the list of assessments.. these are displayed as child rows 
+var assmtbyState = {!asmtsByState};
+ 
+function format ( d, docRecs ) {
+    var htmlRecurrences;
+    htmlRecurrences =      '<div class="slider">'+
+        '<table cellspacing="0" border="1px" width="70%">'+
+            '<thead>'+
+                '<tr>'+
+                    '<th>Assessment</th>'+
+                    '<th>Person Being Served</th>'+
+                    '<th>Assessment Date</th>'+
+                    '<th>Developmental/Intellectual Score</th>'+
+                '</tr>'+
+            '</thead>'+
+            '<tbody>';
+
+    $.each(docRecs, function( index, docRec ) {
+		htmlRecurrences +='<tr>'+
+		                    '<td>'+a[3]+'</td>'+
+		                    '<td>'+asmt.Assessment__r.PersonAccount__c.name+'</td>'+
+		                    '<td>'+asmt.Assessment__r.Assessment_Date__c+'</td>'+
+		                    '<td>'+asmt.Score__c+'</td>'+
+		                '</tr>';
+    });
+                
+    htmlRecurrences += '</tbody>'+
+				        '</table>'+
+				    '</div>';    
+    return htmlRecurrences;
+}
+
 
 </script>
 	</apex:outputPanel>
