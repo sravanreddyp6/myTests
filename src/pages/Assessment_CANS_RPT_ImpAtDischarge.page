@@ -12,13 +12,18 @@
 #ui-datepicker-div {margin-top: 20px !important;}
 </style>
 <apex:form >
+<h1 style="font-size: 25px; padding: 3px;">Children with Improved CANS at Discharge</h1>
 <apex:pageBlock >
     <apex:pageBlockSection columns="1">
-        <apex:selectList Value="{!SelectedCluster}" size="1" label="Cluster">
+        <apex:selectList required="true" Value="{!SelectedCluster}" size="1" label="Cluster">
+        	<apex:selectOption itemLabel="--NONE--" itemValue=""></apex:selectOption>
             <apex:selectOption itemLabel="Behavior & Risk" itemValue="Behavior & Risk"></apex:selectOption>
             <apex:selectOption itemLabel="Education" itemValue="Education"></apex:selectOption>
             <apex:selectOption itemLabel="Well-Being" itemValue="Well-Being" ></apex:selectOption>
         </apex:selectList>
+        <apex:selectCheckboxes required="true" value="{!selectedServiceLines}" label="Service Lines">
+        	<apex:selectOptions value="{!serviceLines}"></apex:selectOptions>
+        </apex:selectCheckboxes>
         <apex:inputText id="startDate" label="Start Date" value="{!startDate}"/>
         <apex:inputText id="endDate" label="End Date" value="{!endDate}"/>
         <apex:commandButton value="Run!" action="{!runRpt}" reRender="DATA_SET" status="myStatus">
@@ -28,7 +33,7 @@
 </apex:pageBlock>   
 </apex:form>
 <apex:outputPanel id="DATA_SET">
-
+<apex:pageMessages />
 <br/>
 <table id="State_Data" class="display" cellspacing="0" width="100%">
         <thead>
@@ -77,7 +82,7 @@ console.log('started');
     $('#State_Data').dataTable( {
         "aaData": {!jsonStateData},
         "bPaginate": false, 
-        "bFilter": false,
+        "bFilter": false,     
         "columns": [
             { "data": "State"},
             { "data": "NumberPBSDisCharge"},
@@ -85,7 +90,18 @@ console.log('started');
             { "data": "NumberPBSWithImprovement"},
             { "data": "PercentPBSWithImprovement"}
 
-        ]
+        ],
+            dom: 'T<"clear">lfrtip',        
+            "tableTools": {
+               "aButtons": [ "xls", 
+                   {
+                    "sExtends": "pdf",
+                    "sPdfOrientation": "landscape",
+                    "sTitle": "Children with Improved CANS at Discharge"
+                    }              
+                ],         
+               "sSwfPath": "{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/swf/copy_csv_xls_pdf.swf')}"  
+               }       
     } );    
 } );
 
