@@ -1,0 +1,98 @@
+<apex:page controller="skills_summary_rpt" sidebar="false" docType="html-5.0" action="{!runReport}" renderas="pdf"  applyHTMLTag="False" showHeader="false" >
+<apex:stylesheet value="{!$Resource.mentoresdprint}" />
+<apex:includeScript value="{!$Resource.jquery}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+    <apex:includeScript value="https://raw.github.com/awbush/jquery-fastLiveFilter/master/jquery.fastLiveFilter.js" />
+<head>
+<style>
+@page {
+size:landscape;
+}
+</style> 
+</head>
+<apex:form >
+<apex:outputPanel layout="block" style="float: left; width: 700px; padding: 15px;" id="dataTable"> 
+<h1>Skills Summary Report</h1>
+Start Date:&nbsp; <apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+    <apex:param value="{!StartDate}" /> 
+</apex:outputText>&nbsp;
+End Date:&nbsp; <apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+    <apex:param value="{!EndDate}" /> 
+</apex:outputText><br />
+Run Date:&nbsp;	<apex:outputText value="{!pdfRunDateTimeString}" /><br />
+Run By:  {!$User.myFullName__c}<br />
+<br />
+<hr />
+<apex:pageBlock >
+<apex:repeat value="{!selectedPBS}" var="person">
+<apex:pageBlockSection title="{!pbsPeople[person].Lastname + ', ' + pbsPeople[person].firstname }" columns="1" rendered="{! numContacts > 0}">
+
+ <apex:repeat value="{!pbsPlanMap[person]}" var="plan">
+ 	<apex:pageBlockSection title="{! plan.name + ' - ' + plan.status__c }" columns="1" rendered="{!CONTAINS( strplanobjlist, plan.id)}">   
+    
+    <apex:repeat value="{!planObjMap[plan]}" var="obj">
+    <apex:pageBlockSection title="{!obj.Description__c}" columns="1">
+    <apex:outputPanel >
+	<apex:repeat value="{!objWeekMap[obj.Id]}" var="day"> <!--  first day of reportable week -->
+        
+		<table style="border:1px solid black;width:100%;padding:0px; border-collapse:collapse">
+      	<tr style="border-bottom:1px solid black">
+      	 
+		      <td colspan="4" class="daysofweek" ><apex:outputText value="{0, date, MMM dd - E}"><apex:param value="{!day.intdate}" /></apex:outputText></td>
+		      <td colspan="4" class="daysofweek" ><apex:outputText value="{0, date, MMM dd - E}"><apex:param value="{!day.intdate +1}" /></apex:outputText></td>
+		      <td colspan="4" class="daysofweek" ><apex:outputText value="{0, date, MMM dd - E}"><apex:param value="{!day.intdate +2}" /></apex:outputText></td>
+		      <td colspan="4" class="daysofweek" ><apex:outputText value="{0, date, MMM dd - E}"><apex:param value="{!day.intdate +3}" /></apex:outputText></td>
+		      <td colspan="4" class="daysofweek" ><apex:outputText value="{0, date, MMM dd - E}"><apex:param value="{!day.intdate +4}" /></apex:outputText></td>
+		      <td colspan="4" class="daysofweek" ><apex:outputText value="{0, date, MMM dd - E}"><apex:param value="{!day.intdate +5}" /></apex:outputText></td>
+		      <td colspan="4" class="daysofweek" ><apex:outputText value="{0, date, MMM dd - E}"><apex:param value="{!day.intdate +6}" /></apex:outputText></td>
+		</tr>
+      <tr>
+          	  <td class="inputheaders">Attempts</td><td class="inputheaders">Prompt/<br/>Status</td><td class="inputheaders">Met Obj.</td><td class="inputheaders lastfieldofday">Initials</td>
+          	  <td class="inputheaders">Attempts</td><td class="inputheaders">Prompt/<br/>Status</td><td class="inputheaders">Met Obj.</td><td class="inputheaders lastfieldofday">Initials</td>
+          	  <td class="inputheaders">Attempts</td><td class="inputheaders">Prompt/<br/>Status</td><td class="inputheaders">Met Obj.</td><td class="inputheaders lastfieldofday">Initials</td>
+          	  <td class="inputheaders">Attempts</td><td class="inputheaders">Prompt/<br/>Status</td><td class="inputheaders">Met Obj.</td><td class="inputheaders lastfieldofday">Initials</td>
+          	  <td class="inputheaders">Attempts</td><td class="inputheaders">Prompt/<br/>Status</td><td class="inputheaders">Met Obj.</td><td class="inputheaders lastfieldofday">Initials</td>
+          	  <td class="inputheaders">Attempts</td><td class="inputheaders">Prompt/<br/>Status</td><td class="inputheaders">Met Obj.</td><td class="inputheaders lastfieldofday">Initials</td>
+          	  <td class="inputheaders">Attempts</td><td class="inputheaders">Prompt/<br/>Status</td><td class="inputheaders">Met Obj.</td><td class="inputheaders lastfieldofday">Initials</td>
+      </tr>
+      <tr>
+      			
+		      <apex:repeat value="{!dayCounter}" var="dayInc">
+                  <apex:variable value="{!0}" var="display" />      
+                  <apex:repeat value="{!obj.Action_Skill_Results__r}" var="res">
+                      <apex:outputPanel layout="none" rendered="{!res.Day__c == day.intdate+dayInc}">
+                        <td style="text-align:center" class="attemptoutput">{!res.Attempts__c}</td>
+                        <td style="text-align:center;display:{!IF(res.Day__c == day.intdate+dayInc,'','none')}" class="statusoutput">{!res.Status__c}</td>
+                        <td style="text-align:center;display:{!IF(res.Day__c == day.intdate+dayInc,'','none')}" class="metobjectiveoutput">{!res.Met_Objective__c}</td>
+                        <td style="text-align:center;display:{!IF(res.Day__c == day.intdate+dayInc,'','none')}" class="lastfieldofday initialsoutput">{!res.Initials__c}</td>
+                        </apex:outputPanel>
+                        <apex:variable value="{!IF(OR(display==1, AND(display==0, res.day__c == day.intdate+dayInc)), 1, 0)}" var="display" />
+                  </apex:repeat>
+                      <apex:outputPanel layout="none" rendered="{!display==0}">
+                        <td style="text-align:center">&nbsp;</td>
+                        <td style="text-align:center">&nbsp;</td>
+                        <td style="text-align:center">&nbsp;</td>
+                        <td style="text-align:center" class="lastfieldofday">&nbsp;</td>
+                        </apex:outputPanel>
+                        
+                </apex:repeat>        
+      </tr> 
+	  </table>
+	  <br /><br />
+	      </apex:repeat>
+	      </apex:outputPanel>
+	      
+	</apex:pageBlockSection>
+	  </apex:repeat>
+      </apex:pageBlockSection>
+      </apex:repeat>
+      
+</apex:pageBlockSection>
+</apex:repeat>
+</apex:pageBlock>
+</apex:outputPanel>
+
+</apex:form>
+
+</apex:page>
