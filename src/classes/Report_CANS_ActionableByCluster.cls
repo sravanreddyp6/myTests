@@ -19,6 +19,10 @@ public with sharing class Report_CANS_ActionableByCluster {
     public List<String> CANSStates {get; set;}
     public transient Map<String, StateRowData> srd {get;set;}
     public boolean showData { get; set;}
+    public List<string> selectedSL { get; set; }
+    public List<SelectOption> optSL { get; set; }
+    public boolean totalExists { get; set;}
+    
     
     public Report_CANS_ActionableByCluster() {
         
@@ -52,6 +56,26 @@ public with sharing class Report_CANS_ActionableByCluster {
  
  	            
 		}
+		optSL = new List<SelectOption>();
+		selectedSL = new List<String>();
+		
+		  // Get the object type of the SObject.
+		  Schema.sObjectType objType = Assessment__c.getSObjectType(); 
+		  // Describe the SObject using its object type.
+		  Schema.DescribeSObjectResult objDescribe = objType.getDescribe();       
+		  // Get a map of fields for the SObject
+		  map<String, Schema.SObjectField> fieldMap = objDescribe.fields.getMap(); 
+		  // Get the list of picklist values for this field.
+		  list<Schema.PicklistEntry> values = fieldMap.get('Service_Line__c').getDescribe().getPickListValues();
+		  // Add these values to the selectoption list.
+		  for (Schema.PicklistEntry a : values)
+		  { 
+		     optSL.add(new SelectOption(a.getLabel(), a.getValue())); 
+		     selectedSL.add(a.getValue());
+		  }
+		  
+		  
+		 totalExists = false; 
 		showData = false;
             
     }
@@ -128,9 +152,11 @@ public with sharing class Report_CANS_ActionableByCluster {
                                                          and assessment__r.admission__r.state__c in :CANSStates  )
                                             and assessment_date__c >= :startDate 
                                             and assessment_date__c <= :endDate
+                                            and service_line__c in :selectedSL
                                             group by admission__r.state__c
                                             ];
 
+		integer totalPBS = 0, totalQual = 0;
         for ( AggregateResult ar : QualifyingCountByState ) {
             
             pbscount = (Integer)ar.get('expr0');
@@ -139,8 +165,32 @@ public with sharing class Report_CANS_ActionableByCluster {
             StateRowData stdata = srd.get(pbstate);
             stdata.PBSCount = pbscount;
             stdata.QualifyingCount = pbscount;
+            totalPBS += pbscount;
+            totalQual += pbscount;
+            
         }
+
+
+        // add total row
+        StateRowData totdata; 
         
+        if ( !totalExists ) {
+        	CANSStates.Add('TOTAL');
+        	totdata = new StateRowData('TOTAL');
+        	totdata.byQuestionCount = new Map<Integer, Integer>();
+	            for ( Integer i: QuestionsInScope) {
+	            	totdata.byQuestionCount.put( i, 0);
+	            }
+        	srd.put('TOTAL', totdata);
+        	totalExists = true;
+        } else {
+        	totdata = srd.get('TOTAL');
+        }
+
+		totdata.pbsCount = totalPBS;
+		totdata.QualifyingCount = totalQual;
+		
+		        
         // count of qualifying 'actionable' = number of PBS with intake or discharge scoring 2 or 3 for any question in the cluster
         list<AggregateResult> QualifyingCountByQuestion = [ select count(score__c), 
         														   question__c, 
@@ -156,10 +206,12 @@ public with sharing class Report_CANS_ActionableByCluster {
                                                          	 and assessment__r.admission__r.state__c in :CANSStates 
                                             and assessment__r.assessment_date__c >= :startDate 
                                             and assessment__r.assessment_date__c <= :endDate
+                                            and assessment__r.service_line__c in :selectedSL
                                             group by question__c, assessment__r.admission__r.state__c
                                             ];
                                         
-       Assessment_Question__c currQ;                                    
+       Assessment_Question__c currQ;
+       integer currcount;
        for ( AggregateResult ar : QualifyingCountByQuestion ) {
             
             pbscount = (Integer)ar.get('expr0');
@@ -168,11 +220,14 @@ public with sharing class Report_CANS_ActionableByCluster {
             StateRowData stdata = srd.get(pbstate);
  			currQ = QuestionsList.get((ID)ar.get('question__c'));
  			system.debug('Current Question: ' + currQ + ', state=' + pbstate + ', pbscount=' + pbscount);
- 			if ( currQ != null )
+ 			if ( currQ != null ) { 
             	stdata.byQuestionCount.put((Integer)currQ.Question_number__c, pbscount);
-            
+				currcount = totdata.byQuestionCount.get((integer)currQ.Question_number__c);
+            	totdata.byQuestionCount.put((integer)currQ.Question_number__c, currcount + pbscount );
+ 			}
         }   
-        showData = true;
+        
+		showData = true;
         System.Debug( 'Final Result: ' + srd );      
     }
     

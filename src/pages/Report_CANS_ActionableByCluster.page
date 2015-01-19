@@ -3,6 +3,8 @@
 <apex:includeScript value="{!$Resource.jquery}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}"/>  
+ 
 <script>
     function setFocusOnLoad() {}
 </script>
@@ -61,7 +63,12 @@
            <apex:selectOptions value="{!optInterval}" />
           </apex:selectList>
     </apex:outputPanel> 
-
+					<apex:outputPanel>
+					<apex:outputLabel styleClass="labelCol" value="Service Lines" />
+ 					<apex:selectCheckboxes value="{!selectedSL}" >
+					<apex:selectOptions value="{!optSL}" />
+					</apex:selectCheckboxes>
+					</apex:outputPanel>
 <apex:pageBLockSectionItem >
     <apex:outputPanel layout="none" id="buttonPanel">
         <apex:commandButton value="Run" 
@@ -84,12 +91,12 @@
         {!s}
         </apex:column>
         
-        <apex:column >
+        <apex:column style="text-align:right">
             <apex:facet name="header">Persons Being Served With Actionable Items</apex:facet>
             {!srd[s].QualifyingCount}
         </apex:column>
         <apex:repeat var="q" value="{!QuestionsList}">
-            <apex:column headerValue="{!QuestionsList[q].Question_Title__c}">
+            <apex:column style="text-align:right" headerValue="{!QuestionsList[q].Question_Title__c}">
                 <apex:outputText value="{!srd[s].byQuestionCount[QuestionsList[q].Question_Number__c]}" />
             </apex:column>
         </apex:repeat>
