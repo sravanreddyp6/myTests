@@ -10,7 +10,7 @@ public with sharing class Report_CANS_DDatIntake {
     public boolean showData { get; set;}
     public boolean totalExists { get; set;}
     public transient Map<String, String> asmtsByState {get;set;} 
-    public string asmtStates{ get; set;}
+    public transient string asmtStates{ get; set;}
     public List<string> selectedSL { get; set; }
     public List<SelectOption> optSL { get; set; }
                                            
@@ -40,7 +40,8 @@ public with sharing class Report_CANS_DDatIntake {
 		showData = false;
 		
 		optSL = new List<SelectOption>();
-
+		selectedSL = new List<String>();
+		
 		  // Get the object type of the SObject.
 		  Schema.sObjectType objType = Assessment__c.getSObjectType(); 
 		  // Describe the SObject using its object type.
@@ -53,9 +54,10 @@ public with sharing class Report_CANS_DDatIntake {
 		  for (Schema.PicklistEntry a : values)
 		  { 
 		     optSL.add(new SelectOption(a.getLabel(), a.getValue())); 
+		     selectedSL.add(a.getValue());
 		  }
 		  
-		  selectedSL = new List<String>();
+		  
             
     }
 
