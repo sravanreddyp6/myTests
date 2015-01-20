@@ -1282,7 +1282,7 @@ public void loadProgramList() {
                              ORDER BY CreatedDate DESC)
                       FROM Evaluation__c
                      WHERE ServiceAssignment__c = :theServAssign.Id
-                     ORDER By CreatedDate desc LIMIT 5
+                     ORDER BY Shift_Start_Time__c DESC NULLS LAST LIMIT 5
                 ];
             }
             return evaluations;
