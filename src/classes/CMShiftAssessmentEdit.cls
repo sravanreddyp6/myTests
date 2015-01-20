@@ -226,7 +226,7 @@ public with sharing class CMShiftAssessmentEdit {
 			
 		if(!String.isBlank(this.evaluation.Elimination_Bladder_No_Continent_Details__c))
             selectedBladder = this.evaluation.Elimination_Bladder_No_Continent_Details__c.split(';');
-			
+            	
 		if(ApexPages.currentPage().getParameters().get('showErrors') == '1'){
 			checkErrors();
 		}
@@ -602,7 +602,8 @@ public with sharing class CMShiftAssessmentEdit {
 		Boolean nutrition = true;
 		List<string> nutritionErrors = errorMap.get('nutritionTab');
 		nutritionErrors.clear();
-		if(this.evaluation.nutrition_route__c == ''){
+		
+		if(this.evaluation.nutrition_route__c == null){
 			nutrition = false;
 			nutritionErrors.add('Please Choose atleast one Feeding type');
 		}
