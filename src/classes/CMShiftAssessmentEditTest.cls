@@ -29,6 +29,8 @@ private class CMShiftAssessmentEditTest {
 		controller.getbreatheSounds();
 		controller.getDysreflexiaValues();
 		controller.getverbalExpressionValues();
+		controller.getbowelValues();
+		controller.getbladderValues();
 		controller.showAddVitalsDetail();
 		
 		system.assertEquals(null,controller.currentVitalsDetail.Id);
@@ -183,17 +185,22 @@ private class CMShiftAssessmentEditTest {
 		controller.evaluation.Narrative_Note__c = '';
 		controller.evaluation.PEDS_History_of_Tonsils__c = 'Yes';
 		controller.evaluation.PEDS_Tonsil_History_Describe__c = null;
-		controller.evaluation.RUQ__c = 'Yes';
+		controller.evaluation.RUQ__c = 'Abnormal';
 		controller.evaluation.RUQ_Describe__c = null;
-		controller.evaluation.LUQ__c = 'Yes';
+		controller.evaluation.LUQ__c = 'Abnormal';
 		controller.evaluation.LUQ_Describe__c = null;
-		controller.evaluation.RLQ__c = 'Yes';
+		controller.evaluation.RLQ__c = 'Abnormal';
 		controller.evaluation.RLQ_Describe__c = null;
-		controller.evaluation.LLQ__c = 'Yes';
+		controller.evaluation.LLQ__c = 'Abnormal';
 		controller.evaluation.LLQ_Describe__c = null;
+		controller.evaluation.Bowel_Continence__c = 'Incontinent';
+		controller.evaluation.Elimination_Bowel_No_Continent_Appliance__c = '';
 		controller.evaluation.Bowel_Issues__c = 'Yes';
 		controller.evaluation.bowel_issue_type__c = '';
 		controller.evaluation.Bowel_Issues_Additional_Information__c = null;
+		controller.evaluation.Bladder_Continence__c = 'Incontinent';
+		controller.evaluation.Elimination_Bladder_No_Continent_Details__c = '';
+		controller.evaluation.Urinary_Issues_Checkbox__c = 'Yes';
 		controller.evaluation.Dialysis_Picklist__c = 'Yes';
 		controller.evaluation.dialysis_type__c = '';
 		controller.save();
@@ -230,13 +237,19 @@ private class CMShiftAssessmentEditTest {
 		createData();
 		ApexPages.StandardController sc = new ApexPages.StandardController(eval);
 		CMShiftAssessmentEdit controller = new CMShiftAssessmentEdit(sc);
-		
-		controller.evaluation.Rancho_Level__c = '(1) No Response';
+		controller.evaluation.Cognition_Intact__c = 'Yes';
+		controller.evaluation.Cooperative__c = true; //Behavior checkbox is mandatory
+		controller.selectedMoods = new List<string>{'Angry','Anxious'};
+		controller.evaluation.Able_to_make_Needs_Known__c = 'Yes';
+		//controller.evaluation.Rancho_Level__c = '(1) No Response';
 		controller.evaluation.Safety_Awareness__c = 'Intact';
 		controller.evaluation.Pain_Present__c = 'No';
 		controller.save();
 		system.assert(controller.evaluation.Neuro_Section_Completed__c);
 		system.assertEquals(0,controller.errorMap.get('neuroTab').size(),controller.errorMap.get('neuroTab'));
+		
+		controller.evaluation.cognition_Intact__c = 'No';
+		controller.save();
 		controller.evaluation.Rancho_Level__c = '(2) Generalized Response';
 		controller.selectedNeuroOrient = new List<string>{'Person','Situation'};
 		controller.selectedMoods = new List<string>{'Sad','Flat'};
