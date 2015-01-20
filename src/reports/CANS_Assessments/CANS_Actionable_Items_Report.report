@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>Assessment_Response__c$Assessment__c.Admission__c.Person_Being_Served__c.Name</field>
+    </columns>
+    <columns>
+        <field>Assessment_Response__c$Assessment__c.Name</field>
+    </columns>
+    <columns>
+        <field>Assessment_Response__c$Assessment__c.Assessment_Date__c</field>
+    </columns>
+    <columns>
+        <field>Assessment_Response__c$Assessment__c.Owner</field>
+    </columns>
+    <columns>
+        <field>Assessment_Response__c$Question__c.Question_Title__c</field>
+    </columns>
+    <columns>
+        <field>Assessment_Response__c$Rating__c</field>
+    </columns>
+    <filter>
+        <booleanFilter>1 OR 2</booleanFilter>
+        <criteriaItems>
+            <column>Assessment_Response__c$Rating__c</column>
+            <operator>equals</operator>
+            <value>2</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Assessment_Response__c$Rating__c</column>
+            <operator>equals</operator>
+            <value>3</value>
+        </criteriaItems>
+    </filter>
+    <format>Tabular</format>
+    <name>CANS Actionable Items Report</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>Assessment_Response__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <timeFrameFilter>
+        <dateColumn>Assessment_Response__c$CreatedDate</dateColumn>
+        <interval>INTERVAL_CURRENT</interval>
+    </timeFrameFilter>
+</Report>
