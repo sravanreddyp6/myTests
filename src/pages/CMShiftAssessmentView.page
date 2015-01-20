@@ -251,6 +251,11 @@
 
 		<apex:outputpanel rendered="false">
 			<apex:inputhidden value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__c}" />
+			<apex:inputhidden value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.LastName}" />
+			<apex:inputhidden value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.FirstName}" />
+			<apex:inputhidden value="{!Evaluation__c.Owner}" />
+			<apex:inputhidden value="{!Evaluation__c.Owner.LastName}" />
+			<apex:inputhidden value="{!Evaluation__c.Owner.FirstName}" />
 			<apex:inputhidden value="{!Evaluation__c.Resident_Demonstrating_Issues__c}" />
 			<apex:inputhidden value="{!Evaluation__c.Orientation__c}" />
 			<apex:inputhidden value="{!Evaluation__c.Mood__c}" />
@@ -258,7 +263,7 @@
 			<apex:inputhidden value="{! Evaluation__c.Autonomic_Dysreflexia_Areas_Assessed__c}" />
 		</apex:outputpanel>
 		<apex:pageMessages id="pageMessages" />
-		<apex:actionFunction name="evaluationSave" action="{!saveEvaluation}" status="saveevaluationStatus" reRender="" />
+		<apex:actionFunction name="evaluationSave" action="{!updateshiftTime}" status="saveevaluationStatus" reRender="" />
 		<apex:actionfunction name="finalizeEval" action="{!finalizeEval}" status="pageProcessing" reRender="pageMessages" />
 		<apex:actionFunction name="disregardEval" action="{!disregardEval}" status="pageProcessing" reRender="pageMessages,btnDisregard" />
 		<apex:tabPanel id="wholeTabPanel" value="{!selectedTab}" styleClass="evaluationTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">

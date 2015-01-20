@@ -603,7 +603,7 @@ public with sharing class CMShiftAssessmentEdit {
 		List<string> nutritionErrors = errorMap.get('nutritionTab');
 		nutritionErrors.clear();
 		
-		if(this.evaluation.nutrition_route__c == null){
+		if(this.evaluation.nutrition_route__c == null || this.evaluation.nutrition_route__c == ''){
 			nutrition = false;
 			nutritionErrors.add('Please Choose atleast one Feeding type');
 		}
