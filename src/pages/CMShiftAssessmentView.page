@@ -58,9 +58,13 @@
                    return null;
                }
                 
-            } 
-            if(allow == true){
-            
+            }
+            if(allow == true && {!!Evaluation__c.Is_Signed__c}) {
+            	alert('Please E-sign before finalizing');
+            	
+            }
+             
+            if(allow == true && {!Evaluation__c.Is_Signed__c}){
                 var c = confirm('Are you sure about finalizing?');
                 if(c==true) {
                     finalizeEval();
@@ -1005,9 +1009,8 @@
 			</apex:tab>
 			<apex:commandButton value="Finalize" onClick="finalize(); return false;" style="position: absolute; margin-left: 680px; margin-top: 8px;" rendered="{!Evaluation__c.Status__c =='Draft'}" />
 			<apex:commandButton value="Disregard" style="position: absolute; margin-left: 730px; margin-top: 8px;" rendered="{!Evaluation__c.Status__c =='Draft' &&  Evaluation__c.OwnerId == $User.Id}" onClick="disregard(); return false;"/>
-			<apex:commandButton value="E-Sign" style="position: absolute; margin-left: 792px; margin-top: 8px;" rendered="{!Evaluation__c.OwnerId == $User.Id && Evaluation__c.Status__c != 'Disregard' && !Evaluation__c.Is_Signed__c}" onClick="authenticate(); return false;" />
-			<apex:commandButton value="Print PDF" style="position: absolute; margin-left: 840px; margin-top: 8px;"  onclick="openWin('/apex/CMShiftAssessmentPDF?id={!Evaluation__c.Id}'); return false;" />
-			<apex:commandButton value="Edit Shift Time" style="position: absolute; margin-left: 900px; margin-top: 8px;" onclick="openModalDialog('{!$Component.evaluationModal}','Edit Shift Time','{!$Component.wholePage}'); j$('#evaluationMessages').html(''); clearDates();" reRender="evaluations,msgs"  rendered="{!Evaluation__c.Status__c = 'Draft'}" >
+			<apex:commandButton value="Print PDF" style="position: absolute; margin-left: 792px; margin-top: 8px;"  onclick="openWin('/apex/CMShiftAssessmentPDF?id={!Evaluation__c.Id}'); return false;" />
+			<apex:commandButton value="Edit Shift Time" style="position: absolute; margin-left: 853px; margin-top: 8px;" onclick="openModalDialog('{!$Component.evaluationModal}','Edit Shift Time','{!$Component.wholePage}'); j$('#evaluationMessages').html(''); clearDates();" reRender="evaluations,msgs"  rendered="{!Evaluation__c.Status__c = 'Draft' && !Evaluation__c.Is_Signed__c}" >
 				<apex:actionStatus id="AddevaluationStatus">
 					<apex:facet name="start">
 						<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
@@ -1015,6 +1018,8 @@
 					<apex:facet name="stop" />
 				</apex:actionStatus>
 			</apex:commandButton>
+			<apex:commandButton value="E-Sign" style="position: absolute; margin-left: 942px; margin-top: 8px;" rendered="{!Evaluation__c.OwnerId == $User.Id && Evaluation__c.Status__c == 'Draft' && !Evaluation__c.Is_Signed__c && Evaluation__c.Diagnostics_Section_Completed__c && Evaluation__c.Cardio_Section_Completed__c && Evaluation__c.Ortho_Section_Completed__c && Evaluation__c.Neuro_Section_Completed__c && Evaluation__c.Psycho_Social_Section_Completed__c 
+				&& Evaluation__c.Nutrition_Section_Completed__c && Evaluation__c.Skin_Section_Completed__c }" onClick="authenticate(); return false;" />
 		</apex:tabPanel>
 		<apex:pageBlock id="buttons">
 			<apex:pageBlockButtons location="bottom">
