@@ -185,7 +185,7 @@ private class ServiceAssignmentExtTest {
         controller.theServAssign = ServAssign;
         controller.saveServiceCodeSelections();
         controller.loadProgramDocXrefs();
-        
+        controller.setEffectiveDate();
         
         //controller.addNurAssessment();
         //system.assertEquals(1,Controller.evaluations.size());
@@ -207,6 +207,7 @@ private class ServiceAssignmentExtTest {
         ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
         
         ServAssign.Program__c = 'test program';
+        
         controller.SaveServAssign();
         
         
@@ -236,7 +237,9 @@ private class ServiceAssignmentExtTest {
             
             List<Action_Plan__c> plans = controller.getplans();
             system.assertequals(testplan.id, plans[0].id, 'expected plan not found');
-            
+            plans = controller.getActivePlan();
+            system.assertequals(testplan.id, plans[0].id, 'expected plan not found');
+                        
             system.assert(controller.showWorksheetBlocks);
             
             List<ServiceAssignmentExt.myDate> skilldates = controller.getuncheckedWeeks();
@@ -287,10 +290,47 @@ private class ServiceAssignmentExtTest {
             controller.diag.Effective_Date__c = date.newInstance(2013, 1, 2);
             controller.saveDiagnosis();
             controller.createDiagnoses();
+            controller.refreshDiagnoses();
             Diagnosis__c diag = [select Effective_Date__c from Diagnosis__c where id = :controller.diagnoses[0].Id];
             
-            system.assertEquals(date.newInstance(2013, 1, 2), diag.Effective_Date__c, 'EffectiveDate not updated');
+            system.assertEquals(date.newInstance(2013, 1, 2), diag.Effective_Date__c, 'EffectiveDate not updated');            
         }
+    }
+    
+    public testmethod static void remoteActionLoadDiagnosis(){
+            system.assertEquals(true, ServiceAssignmentExt.saveSingleDiagnosis('',datetime.now().getTime(), 'Axis_I','', '', '', '', '', '', '', '', null));
+            system.assertEquals('Axis_I', ServiceAssignmentExt.loadDiagnosis([select Id from Diagnosis__c].id).Axis_I__c);
+            system.assertEquals(true, ServiceAssignmentExt.saveSingleDiagnosis([select Id from Diagnosis__c].id,datetime.now().getTime(), 'Axis_I','', '', '', '', '', '', '', '', null));
+    }
+    
+    public testmethod static void remoteActionLoadSaveServiceLocation(){
+    	       CreateObjects();
+            string tmp = String.ValueOf(system.currentTimeMillis());
+            Service_Location__c svl = new Service_Location__c(Street__c = '10 Main St.', 
+            State__c = 'CA', 
+            Setting__c = 'Residential',
+            Service_Value__c = 'IDD', 
+            Program__c = 'Redwood Res',
+            UniqueID__c = '10031' + tmp.Substring(tmp.length()-6, tmp.length()-1), 
+	        ProgramID__c = '10005', 
+	        Phone__c = '213-555-5555',
+	        FacilityID__c = 20,
+	        City__c = 'Bakersfield', Alias__c ='10001'+tmp.Substring(tmp.length()-6,tmp.length()-1));
+	        insert svl;
+	        
+	        Service_Assignment__c sa = new Service_Assignment__c(
+            Name = 'TEST SERV ASSIGN',
+            Admission__c = Adm.Id,
+     //       Person_Being_Served__c = aContactId,
+            Start_Date__c = date.newInstance(2013, 1, 1),
+            Status__c = 'Active',
+            Program__c = 'IFCS',
+            Service_Line__c = 'Intensive In Home - FCT'
+	        );
+	        insert sa;
+	        system.assertEquals('CA' , ServiceAssignmentExt.loadServiceLocation(svl.id).State__c);
+            system.assertEquals(true, ServiceAssignmentExt.saveServiceLocation(sa.id, svl.id));
+          
     }
     
 	public testmethod static void showFundingSources(){
@@ -359,6 +399,20 @@ private class ServiceAssignmentExtTest {
             State__c = 'NC'
         );
         insert Adm;
+        
+        string tmp = String.ValueOf(system.currentTimeMillis());
+        Service_Location__c svl = new Service_Location__c(Street__c = '10 Main St.', 
+          State__c = 'CA', 
+          Setting__c = 'Residential',
+          Service_Value__c = 'IDD', 
+          Program__c = 'Redwood Res',
+          UniqueID__c = '10031' + tmp.Substring(tmp.length()-6, tmp.length()-1), 
+          ProgramID__c = '10005', 
+          Phone__c = '213-555-5555',
+          FacilityID__c = 20,
+          City__c = 'Bakersfield', Alias__c ='10001'+tmp.Substring(tmp.length()-6,tmp.length()-1));
+          
+          insert svl;
 
        
         ServAssign = new Service_Assignment__c(
@@ -368,7 +422,8 @@ private class ServiceAssignmentExtTest {
             Start_Date__c = date.newInstance(2013, 1, 1),
             Status__c = 'Active',
             Program__c = 'IFCS',
-            Service_Line__c = 'Intensive In Home - FCT'
+            Service_Line__c = 'Intensive In Home - FCT',
+            Service_Location__c = svl.id
         );
         insert ServAssign;
         
