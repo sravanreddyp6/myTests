@@ -36,10 +36,10 @@ private class TaskTriggerHanderTest {
         Task t = new Task();
         t.OwnerId = UserInfo.getUserId();
         t.WhatId = eval.id;
-        t.subject = 'Shift Assessment Status Reminder';
+        t.subject = 'Nurses Shift Documentation Status Reminder';
         t.Status = 'In Progress';
         t.Priority = 'Normal';
-        t.Description = 'Shift Assessment '+eval.Name+' is waiting to be finalized.'+ System.Url.getSalesforceBaseUrl().toExternalForm() + '/' + eval.Id;
+        t.Description = 'Nurses Shift Documentation '+eval.Name+' is waiting to be finalized.'+ System.Url.getSalesforceBaseUrl().toExternalForm() + '/' + eval.Id;
         t.WhoId = person.id;
         t.ActivityDate = eval.Shift_End_Time__c.date();
         insert t;

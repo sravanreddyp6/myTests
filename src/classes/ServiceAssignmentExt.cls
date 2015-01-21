@@ -1401,7 +1401,7 @@ public void loadProgramList() {
           return pg;
       }
       catch (DMLException e) {
-          throw new MyException('Shift Assessment could not be created',e); 
+          throw new MyException('Nurses Shift Document could not be created',e); 
           //Apexpages.AddMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
       }
 

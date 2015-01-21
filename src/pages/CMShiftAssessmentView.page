@@ -7,7 +7,7 @@
 	<apex:includeScript value="{!$Resource.AnotoJS}" />
 	<apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}" />
 	
-	<c:PersonalRecord pbsId="{!Evaluation__c.ServiceAssignment__r.admission__r.Person_Being_Served__c}" servAssignId="{!Evaluation__c.ServiceAssignment__c}" evaluationId="{!Evaluation__c.Id}" admId="{!Evaluation__c.ServiceAssignment__r.Admission__c}" parentPage="ShiftAssessment"/>
+	<c:PersonalRecord pbsId="{!Evaluation__c.ServiceAssignment__r.admission__r.Person_Being_Served__c}" servAssignId="{!Evaluation__c.ServiceAssignment__c}" evaluationId="{!Evaluation__c.Id}" admId="{!Evaluation__c.ServiceAssignment__r.Admission__c}" parentPage="NursesShiftDocument"/>
 	<br />
 	<script>
 		function openWin(url) {
@@ -125,7 +125,7 @@
 							if (event.status) {
 								console.log(result);
 								if(result){
-										dupe.push('There is already an existing Shift Assessment for the current timings. Do you still want to proceed?');
+										dupe.push('There is already an existing  Nurses Shift Documentation for the current timings. Do you still want to proceed?');
 										j$('#dupeFound').append('<li class="warning">' + dupe + '</li>');
 										j$('[id$=evalstartdate]').prop('disabled', true);
 										j$('[id$=evalenddate]').prop('disabled', true);

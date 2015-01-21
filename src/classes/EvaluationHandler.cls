@@ -30,6 +30,10 @@ public with sharing class EvaluationHandler {
 			if(eUpdated.RecordTypeId != recTypeId){
 				validateFields(eUpdated);
 			}
+			
+			system.debug('Issigned>>>> '+ eUpdated.Is_Signed__c);
+			system.debug('isbeing signed>>>>>>>>>>'+ eUpdated.Is_Being_Signed__c);
+			
 			if(eUpdated.Is_Being_Signed__c==true) {
 				eUpdated.Is_Signed__c = true;
 			}
@@ -37,6 +41,10 @@ public with sharing class EvaluationHandler {
 				eUpdated.Is_Signed__c = false;
 			}
 			eUpdated.Is_Being_Signed__c = false;
+			
+			system.debug('Issigned22222>>>> '+ eUpdated.Is_Signed__c);
+			system.debug('isbeing signed2222>>>>>>>>>>'+ eUpdated.Is_Being_Signed__c);
+			
 		}
 		//Logic to Delete Annotations on NeuroTab when Pain Present field's value is set to 'No' or 'None'.
 		   for(Evaluation__c anno : updatedObjects){
