@@ -88,10 +88,10 @@
 <br />    <apex:chart height="400" width="700" data="{!pbsCANS}" rendered="{!showData}" legend="false">
     <apex:axis type="Numeric" position="left" fields="Score"
         title="Score" minimum="0"/>
-    <apex:axis type="Category" position="bottom" fields="Interval_Qtr"
+    <apex:axis type="Category" position="bottom" fields="GraphName"
         title=""/>
     <apex:barSeries title="Assessments" orientation="vertical" axis="left"
-        xField="Interval_Qtr" yField="Score">
+        xField="GraphName" yField="Score">
     </apex:barSeries>
     </apex:chart>
 </apex:pageBlock>       
