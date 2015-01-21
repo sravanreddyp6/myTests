@@ -227,13 +227,11 @@ public with sharing class CMShiftAssessmentView {
   public pageReference updateshiftTime() {
 
       try{
-      	  system.debug('Namename1>>> '+this.evaluation.Name);
       	  String pbsLastName = this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__r.LastName != null ? this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__r.LastName : '' ;
     	  string pbsFirstinitial = this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__r.FirstName != null ? this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__r.FirstName.Substring(0,1) : '';
     	  string ownerfirstInitial = this.evaluation.Owner.FirstName != null ? this.evaluation.Owner.FirstName.Substring(0,1) : ''; 
-    	  system.debug('Namename2>>>>>>>>' +this.evaluation.Name);
     	  this.evaluation.Name = pbsFirstinitial+'. '+pbsLastName+' - '+evaluation.Shift_Start_time__c.format('MM/dd/yyyy hh:mm a')+' - NSD - '+ownerfirstInitial+'. '+this.evaluation.Owner.LastName;
-      	  system.debug('Namename3>>>>>>>>' +this.evaluation.Name);
+      	 
       	  update this.evaluation;
       	  
       	  PageReference pr = new PageReference('/apex/CMShiftAssessmentView?id='+this.evaluation.Id);
