@@ -96,9 +96,10 @@ table.dataTable tbody td.no-padding {
 					 
 					<apex:outputPanel>
 					<apex:outputLabel styleClass="labelCol" value="Service Lines" />
- 					<apex:selectCheckboxes value="{!selectedSL}" >
+ 					<apex:selectCheckboxes value="{!selectedSL}" id="serviceLine" >
 					<apex:selectOptions value="{!optSL}" />
 					</apex:selectCheckboxes>
+					<a href="#" onclick="selectSL(1)">Select All</a> | <a href="#" onclick="selectSL(0)">Deselect All</a>
 					</apex:outputPanel>
 
 					<apex:pageBLockSectionItem >
@@ -161,6 +162,23 @@ table.dataTable tbody td.no-padding {
 	
 	<script>
 j$ = jQuery.noConflict();
+
+function selectSL(  onoff ) {
+	if ( onoff == 0 ) {
+		// turn them all off
+		j$('input[id*=serviceLine]').each(function (index, element) {
+                        j$(element).prop('checked', false);
+                        });
+                        
+		}
+	else {
+		// turn them all on
+		j$('input[id*=serviceLine]').each(function (index, element) {
+                        j$(element).prop('checked', true);
+                        });
+		}
+
+}
 
 /* Formatting function for row details - modify as you need */
 function format ( d ) {
