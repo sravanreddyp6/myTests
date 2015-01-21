@@ -1,0 +1,124 @@
+<apex:page controller="Report_CANS_ActionableByCluster" sidebar="false" docType="html-5.0" readOnly="true" >
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!$Resource.jquery}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}"/>  
+ 
+<script>
+    function setFocusOnLoad() {}
+</script>
+<style>
+    .left_col{ text-align: left; font-weight: bold; color: #4a4a56 !important; padding: 5px; vertical-align: top; width: 150px;}
+.thinking{
+    opacity:0.8;
+    background-color:#ccc;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}
+
+.thinkingwheel{
+    position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+}   
+.mytbl{
+    width: 100%;
+}  
+.dataTables_wrapper{
+    margin-top: -52px;
+    margin-left: -19px;
+
+}
+.pbTitle{
+    width: 300px !important;
+}
+</style>
+<apex:form >
+    
+    
+<apex:pageMessages id="messages" ></apex:pageMessages>
+
+<apex:pageBlock id="CANSReportBlock" title="CANS Actionable by Cluster">
+<apex:actionregion >
+    
+    <apex:pageBlockSection columns="1">
+    
+    
+    <apex:outputPanel >
+       <apex:outputLabel styleclass="labelCol" value="Start Date" for="start_date" /> <apex:input type="auto" id="start_date" size="10"  label="Start Date" styleClass="datepicker" value="{! StartDate}" />
+       <apex:outputLabel styleclass="labelCol" value="End Date" for="end_date" /> <apex:input type="auto" id="end_date" size="10"  label="End Date" styleClass="datepicker" value="{! EndDate}" />
+    </apex:outputPanel>
+    <apex:outputPanel >
+        <apex:outputLabel styleClass="labelCol" value="Cluster" />
+           <apex:selectList size="1" value="{!selectedCluster}" >
+           <apex:selectOptions value="{!optClusters}" />
+       </apex:selectList>
+    </apex:outputPanel> 
+    <apex:outputPanel >
+        <apex:outputLabel styleClass="labelCol" value="Interval" />
+           <apex:selectList size="1" value="{!selectedInterval}" >
+           <apex:selectOptions value="{!optInterval}" />
+          </apex:selectList>
+    </apex:outputPanel> 
+					<apex:outputPanel>
+					<apex:outputLabel styleClass="labelCol" value="Service Lines" />
+ 					<apex:selectCheckboxes value="{!selectedSL}" >
+					<apex:selectOptions value="{!optSL}" />
+					</apex:selectCheckboxes>
+					</apex:outputPanel>
+<apex:pageBLockSectionItem >
+    <apex:outputPanel layout="none" id="buttonPanel">
+        <apex:commandButton value="Run" 
+            action="{!runReport}" 
+            reRender="dataTable, tbl_maker, messages, buttonPanel" 
+            status="myStatus"
+            />
+    </apex:outputPanel>
+       </apex:pageBLockSectionItem>
+       </apex:pageBlockSection> 
+</apex:actionregion>
+</apex:pageBlock>
+</apex:form>
+
+<apex:pageBlock id="dataTable" >     
+    
+    <apex:pageBlockTable id="mytbl" style="width:100%" value="{!CANSStates}" var="s" rendered="{!showData}">
+        <apex:column >
+        <apex:facet name="header">State</apex:facet>
+        {!s}
+        </apex:column>
+        
+        <apex:column style="text-align:right">
+            <apex:facet name="header">Persons Being Served With Actionable Items</apex:facet>
+            {!srd[s].QualifyingCount}
+        </apex:column>
+        <apex:repeat var="q" value="{!QuestionsList}">
+            <apex:column style="text-align:right" headerValue="{!QuestionsList[q].Question_Title__c}">
+                <apex:outputText value="{!srd[s].byQuestionCount[QuestionsList[q].Question_Number__c]}" />
+            </apex:column>
+        </apex:repeat>
+       </apex:pageBlockTable>
+</apex:pageBlock>     
+
+
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <div  class="thinking">
+            <div class="thinkingwheel">    
+                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+            </div>
+        </div>   
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus>
+
+<apex:outputPanel id="tbl_maker">
+<script>
+j$ = jQuery.noConflict();
+
+</script>
+</apex:outputPanel>
+</apex:page>
