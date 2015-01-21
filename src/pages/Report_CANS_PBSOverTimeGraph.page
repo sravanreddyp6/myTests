@@ -63,7 +63,7 @@
     <apex:outputPanel layout="none" id="buttonPanel">
         <apex:commandButton value="Run" 
             action="{!runReport}" 
-            reRender="dataTable, tbl_maker, messages, buttonPanel" 
+            reRender="dataTable, messages, buttonPanel" 
             status="myStatus"
             />
     </apex:outputPanel>
@@ -75,14 +75,26 @@
 
 <apex:pageBlock id="dataTable" >     
     
-    <apex:pageBlockTable id="mytbl" style="width:100%" value="{!pbsCANS}" var="s" rendered="{!showData}">
+    <apex:pageBlockTable id="mytbl" style="width:100%" value="{!pbsCANS}" var="s" rendered="false">
         <apex:column headerValue="Assessment Name" value="{!s.assessment_name}" />
-        <apex:column headerValue="Assessment Date" value="{!s.assessment_date}" />
+        <apex:column headerValue="Assessment Date" value=" {!s.assessment_date}" />
+        <apex:column headerValue="Interval" value="{!s.interval}" />
+        <apex:column headerValue="Quarter" value="{!s.quarter}" />
         <apex:column headerValue="Score" value="{!s.score}" />
        </apex:pageBlockTable>
-</apex:pageBlock>     
-
-
+       
+       
+    <div style="width:700px;text-align:center"><b>{!selectedPerson}</b></div>
+<br />    <apex:chart height="400" width="700" data="{!pbsCANS}" rendered="{!showData}" legend="false">
+    <apex:axis type="Numeric" position="left" fields="Score"
+        title="Score" minimum="0"/>
+    <apex:axis type="Category" position="bottom" fields="Interval_Qtr"
+        title=""/>
+    <apex:barSeries title="Assessments" orientation="vertical" axis="left"
+        xField="Interval_Qtr" yField="Score">
+    </apex:barSeries>
+    </apex:chart>
+</apex:pageBlock>       
 <apex:actionStatus id="myStatus" >
     <apex:facet name="start">
         <div  class="thinking">
@@ -94,10 +106,4 @@
     <apex:facet name="stop"> </apex:facet>         
 </apex:actionStatus>
 
-<apex:outputPanel id="tbl_maker">
-<script>
-j$ = jQuery.noConflict();
-
-</script>
-</apex:outputPanel>
 </apex:page>
