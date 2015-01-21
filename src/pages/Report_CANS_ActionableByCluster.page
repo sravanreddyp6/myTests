@@ -62,14 +62,20 @@
            <apex:selectList size="1" value="{!selectedInterval}" >
            <apex:selectOptions value="{!optInterval}" />
           </apex:selectList>
-    </apex:outputPanel> 
-					<apex:outputPanel>
-					<apex:outputLabel styleClass="labelCol" value="Service Lines" />
- 					<apex:selectCheckboxes value="{!selectedSL}" id="serviceLine" >
-					<apex:selectOptions value="{!optSL}" />
-					</apex:selectCheckboxes>
-					<a href="#" onclick="selectSL(1)">Select All</a> | <a href="#" onclick="selectSL(0)">Deselect All</a>
-					</apex:outputPanel>
+    </apex:outputPanel>
+	<apex:outputPanel >
+        <apex:outputLabel styleClass="labelCol" value="DD Status" />
+           <apex:selectList size="1" value="{!selectedDD}" >
+           <apex:selectOptions value="{!optDD}" />
+          </apex:selectList>
+    </apex:outputPanel>
+	<apex:outputPanel>
+	<apex:outputLabel styleClass="labelCol" value="Service Lines" />
+		<apex:selectCheckboxes value="{!selectedSL}" id="serviceLine" >
+	<apex:selectOptions value="{!optSL}" />
+	</apex:selectCheckboxes>
+	<a href="#" onclick="selectSL(1)">Select All</a> | <a href="#" onclick="selectSL(0)">Deselect All</a>
+	</apex:outputPanel>
 <apex:pageBLockSectionItem >
     <apex:outputPanel layout="none" id="buttonPanel">
         <apex:commandButton value="Run" 
