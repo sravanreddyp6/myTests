@@ -11,12 +11,37 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
             return null;
         }
     }
+    set<id> PBSbyDD_Status {
+    	get{
+    		set<id> returnInfo = new set<id>();
+
+    		if(selectedDD_Status == 'ONLY_DD'){
+    			for(Assessment_Response__c item: [select id, Assessment__r.AccountPerson__r.Id from Assessment_Response__c Where Question__r.Question_Number__c = 37 AND Assessment__r.disregard__c = false AND Score__c > 0 ]){
+    				returnInfo.add(item.Assessment__r.AccountPerson__r.Id);
+    			}
+    		}
+    		else if(selectedDD_Status == 'No_DD'){
+    			for(Assessment_Response__c item: [select id, Assessment__r.AccountPerson__r.Id from Assessment_Response__c Where Question__r.Question_Number__c = 37 AND Assessment__r.disregard__c = false AND Score__c = 0 ]){
+    				returnInfo.add(item.Assessment__r.AccountPerson__r.Id);
+    			}
+    		}
+
+    		else{
+    			for(Assessment__c item: [select id, AccountPerson__r.Id from Assessment__c Where disregard__c = false ]){
+    				returnInfo.add(item.AccountPerson__r.Id);
+    			}
+    		}
+
+    		return returnInfo;
+    	}
+    }
     public list<string> selectedServiceLines {get;set;}
     public list<SelectOption> serviceLines {get; set;}
 //return Assessment_CANS_Cluster_Defs.WellBeing;
     public date StartDate {get; set;}
     public date EndDate {get; set;}
     public string selectedCluster{get; set;}
+    public string selectedDD_Status{get; set;}
     public string jsonPersonRowData{get; set;}
     public string jsonStateData{get; set;}
     public integer PBScount {get; set;}
@@ -44,26 +69,27 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
     }
 
     public void buildRpt(){
-        // this list should be order ASC by admission effective date so that when the items are put in the map the most recent one is put last (it will override any preivous entires)
+    	// this determines the states we will work with 
         list<AggregateResult> statesWithIntakeAssess = [select Admission__r.State__c
                                         from Assessment__c 
                                         where Interval__c = 'Intake' 
                                         and assessment_type__r.name = 'CANS'
                                         and disregard__c = false
                                         group by Admission__r.state__c];
-        
+        //for each state we will make an item in the master map 
         map<string, StateRowData> mapStateRowData = new map<string, StateRowData>();
         for(AggregateResult item : statesWithIntakeAssess){
             string state =  string.valueof(item.get('state__c'));
             mapStateRowData.put(state, new StateRowData(state));
         }
         //this is for column Number of PBS Discharged per state
-        list<AggregateResult> intakeAssess = [select Admission__r.state__c, count(name) myCount
+        list<AggregateResult> intakeAssess = [select Admission__r.state__c, count(name) assesCount
                                                 from Assessment__c 
                                                     where Interval__c = 'Intake' 
                                                         AND Admission__r.Status__c = 'Discharged'
                                                         AND assessment_type__r.name = 'CANS'
                                                         and disregard__c = false
+                                                        AND AccountPerson__r.id IN :PBSbyDD_Status
                                                         AND Service_Line__c in :selectedServiceLines
                                                         AND Admission__r.Discharged_Date__c >= :StartDate
                                                         AND Admission__r.Discharged_Date__c <= :EndDate
@@ -74,7 +100,7 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
 
         for(AggregateResult item : intakeAssess){
             string state =  string.valueof(item.get('state__c'));
-            mapStateRowData.get(state).NumberPBSDisCharge = integer.valueof(item.get('myCount'));
+            mapStateRowData.get(state).NumberPBSDisCharge = integer.valueof(item.get('assesCount'));
         }
 
 
@@ -83,6 +109,7 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
                                                 where Interval__c = 'Discharge' 
                                                     AND assessment_type__r.name = 'CANS'
                                                     and disregard__c = false
+                                                    AND AccountPerson__r.id IN :PBSbyDD_Status
                                                     AND Service_Line__c in :selectedServiceLines
                                                     AND Assessment_Date__c >= :StartDate 
                                                     AND Assessment_Date__c <= :EndDate
@@ -134,13 +161,45 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
             if(item.disChargeScore > item.IntakeScore){mapStateRowData.get(item.state).NumberPBSWithImprovement += 1;}
         }
 
+/*
+        StateRowData aqrow = new StateRowData('AQ');
+            aqrow.NumberPBSDisCharge = 10;
+            aqrow.NumberPBSDisChargeWithCANS = 3;
+            aqrow.NumberPBSWithImprovement = 1;
+
+            mapStateRowData.put('AQ', aqrow);
+        StateRowData zxrow = new StateRowData('ZX');
+            zxrow.NumberPBSDisCharge = 10;
+            zxrow.NumberPBSDisChargeWithCANS = 3;
+            zxrow.NumberPBSWithImprovement = 2;
+
+            mapStateRowData.put('ZX', zxrow);            
+
+*/
+        StateRowData TotalRow = new StateRowData('Total');
+        TotalRow.sortKey = 'zz';
+        
         for(StateRowData item : mapStateRowData.values()){
             if(item.NumberPBSDisChargeWithCANS != 0){
-                item.PercentPBSWithImprovement = (decimal.valueof(item.NumberPBSWithImprovement) / decimal.valueof(item.NumberPBSDisChargeWithCANS)).setScale(4);
+                item.PercentPBSWithImprovement = (decimal.valueof(item.NumberPBSWithImprovement) / decimal.valueof(item.NumberPBSDisChargeWithCANS)).setScale(2);
                 item.PercentPBSWithImprovement = item.PercentPBSWithImprovement * 100;
                 item.PrettyPercentPBSWithImp = string.valueof(item.PercentPBSWithImprovement) + '%';
             }
-        }   
+            else{item.PrettyPercentPBSWithImp = '0%';}
+
+            TotalRow.NumberPBSDisCharge += item.NumberPBSDisCharge;
+            TotalRow.NumberPBSDisChargeWithCANS += item.NumberPBSDisChargeWithCANS;
+            TotalRow.NumberPBSWithImprovement += item.NumberPBSWithImprovement;
+            
+
+        }
+    	if(TotalRow.NumberPBSDisChargeWithCANS != 0){ 
+        TotalRow.PercentPBSWithImprovement = (decimal.valueof(TotalRow.NumberPBSWithImprovement) / decimal.valueof(TotalRow.NumberPBSDisChargeWithCANS)).setScale(2);
+        TotalRow.PercentPBSWithImprovement = TotalRow.PercentPBSWithImprovement * 100;
+        TotalRow.PrettyPercentPBSWithImp = string.valueof(TotalRow.PercentPBSWithImprovement) + '%';
+    	}
+		mapStateRowData.put('total', TotalRow);
+
         jsonStateData = JSON.serializePretty(mapStateRowData.values());
         jsonPersonRowData = JSON.serializePretty(mapPersonRowData.values());
 
@@ -166,6 +225,7 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
 
     public class StateRowData{
         public string State;
+        public string sortKey;
         public integer NumberPBSDisCharge;
         public integer NumberPBSDisChargeWithCANS;
         public integer NumberPBSWithImprovement;
@@ -175,6 +235,7 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
 
         public StateRowData(string var_State){
             state = var_State;
+            sortKey = var_State;
             NumberPBSDisCharge = 0;
             NumberPBSDisChargeWithCANS = 0;
             NumberPBSWithImprovement = 0;

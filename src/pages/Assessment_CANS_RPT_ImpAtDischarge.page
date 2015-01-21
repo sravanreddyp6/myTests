@@ -21,14 +21,22 @@
             <apex:selectOption itemLabel="Education" itemValue="Education"></apex:selectOption>
             <apex:selectOption itemLabel="Well-Being" itemValue="Well-Being" ></apex:selectOption>
         </apex:selectList>
+        <apex:selectList required="true" Value="{!selectedDD_Status}" size="1" label="DD Status">
+        	<apex:selectOption itemLabel="--NONE--" itemValue=""></apex:selectOption>
+            <apex:selectOption itemLabel="All PBS" itemValue="All"></apex:selectOption>
+            <apex:selectOption itemLabel="Only PBS with DD" itemValue="ONLY_DD"></apex:selectOption>
+            <apex:selectOption itemLabel="Only PBS without DD" itemValue="No_DD" ></apex:selectOption>
+        </apex:selectList>        
         <apex:selectCheckboxes required="true" value="{!selectedServiceLines}" label="Service Lines">
         	<apex:selectOptions value="{!serviceLines}"></apex:selectOptions>
         </apex:selectCheckboxes>
         <apex:inputText id="startDate" label="Start Date" value="{!startDate}"/>
         <apex:inputText id="endDate" label="End Date" value="{!endDate}"/>
-        <apex:commandButton value="Run!" action="{!runRpt}" reRender="DATA_SET" status="myStatus">
+        <apex:pageBlockSectionItem >
+        	<apex:outputLabel ></apex:outputLabel>
+        	<apex:commandButton value="Run!" action="{!runRpt}" reRender="DATA_SET" status="myStatus"></apex:commandButton>
+        </apex:pageBlockSectionItem>
         
-        </apex:commandButton>
     </apex:pageBlockSection>
 </apex:pageBlock>   
 </apex:form>
@@ -38,6 +46,7 @@
 <table id="State_Data" class="display" cellspacing="0" width="100%">
         <thead>
             <tr>
+            	<th></th>
                 <th>State</th>
                 <th># PBS Discharged</th>
                 <th># PBS with Discharge CANS</th>
@@ -81,19 +90,36 @@ console.log('started');
 */
     $('#State_Data').dataTable( {
         "aaData": {!jsonStateData},
-        "bPaginate": false, 
-        "bFilter": false,     
+        "bPaginate": false,
+        
+        "order": [[ 0, "asc" ]],
+        /*"ordering": false, */
+        "bFilter": false, 
+        "bInfo" : false,
+		"columnDefs": [
+            {
+                "targets": [ 0 ],
+                "visible": false,
+                "searchable": false
+            },
+            {
+            	"targets": [ 1,2,3,4, 5 ],
+            	"orderable": false
+            }
+        ],            
         "columns": [
+        	{ "data": "sortKey"},
             { "data": "State"},
             { "data": "NumberPBSDisCharge"},
             { "data": "NumberPBSDisChargeWithCANS"},
             { "data": "NumberPBSWithImprovement"},
-            { "data": "PercentPBSWithImprovement"}
+            { "data": "PrettyPercentPBSWithImp"}
 
         ],
             dom: 'T<"clear">lfrtip',        
             "tableTools": {
-               "aButtons": [ "xls", 
+               "aButtons": [ 
+                   {"sExtends": "xls", "sTitle": "Children with Improved CANS at Discharge"},
                    {
                     "sExtends": "pdf",
                     "sPdfOrientation": "landscape",
