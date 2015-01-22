@@ -1,0 +1,49 @@
+<apex:page controller="Report_CANS_ActionableItems">
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}" />
+
+	<script>
+		function setFocusOnLoad() {}
+		jQuery.noConflict();
+		jQuery(document).ready(function($) {
+			$(document.getElementById('{!$Component.mainBlock.assessments}')).dataTable({
+				columnDefs: [
+					{ type: 'datetime-us-flex', targets: 3 }
+				]
+			});
+		});
+	</script>
+	<apex:form>
+		<apex:pageBlock id="mainBlock" title="CANS Actionable Items">
+			<apex:pageBlockSection columns="1">
+				<apex:pageBlockSectionItem>
+					<apex:outputLabel value="Score" />
+					<apex:selectList value="{!scoreChosen}" size="1">
+						<apex:selectOptions value="{!scoreOptions}" />
+					</apex:selectList>
+				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+			<apex:pageBlockButtons location="bottom">
+				<apex:commandButton value="Run" rerender="responsesBlock" />
+			</apex:pageBlockButtons>
+		</apex:pageBlock>
+		<apex:pageBlock id="responsesBlock">
+			<apex:pageBlockTable value="{!responses}" var="response" rendered="{!scoreChosen != ''}">
+				<apex:column headerValue="Person Being Served">
+					<a href="/{!response.Assessment__r.Admission__r.Person_Being_Served__r.Id}">{!response.Assessment__r.Admission__r.Person_Being_Served__r.Name}</a>
+				</apex:column>
+				<apex:column headerValue="Assessment Name">
+					<a href="/{!response.Assessment__r.Id}">{!response.Assessment__r.Name}</a>
+				</apex:column>
+				<apex:column value="{!response.Assessment__r.Assessment_Date__c}" headerValue="Assessment Date" />
+				<apex:column headerValue="Owner">
+					<a href="/{!response.Assessment__r.Owner.Id}">{!response.Assessment__r.Owner.Name}</a>
+				</apex:column>
+				<apex:column value="{!response.Question__r.Question_Title__c}" headerValue="Question Title" />
+				<apex:column value="{!response.Rating__c}" headerValue="Score" />
+			</apex:pageBlockTable>
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>
