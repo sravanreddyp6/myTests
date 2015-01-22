@@ -11,6 +11,7 @@ public with sharing class Report_Assessment_CANS_PBS_OverTime {
 
 	public string selectedCluster{get; set;}
 	public string selectedPBS{get; set;}
+	public List<SelectOption> optPBS{ get; set;}
 	public list<integer> QuestionsNumbersInScope {
         get{ 
             if(selectedCluster == 'Well-Being'){return Assessment_CANS_Cluster_Defs.WellBeing;}
@@ -38,6 +39,14 @@ public with sharing class Report_Assessment_CANS_PBS_OverTime {
     	}
     }
 	public Report_Assessment_CANS_PBS_OverTime() {
+        optPBS = new List<SelectOption>();
+        optPBS.Add( new SelectOption('','--None--'));
+        // get the list of people i can see who have final, non-diregarded cans
+        List<AggregateResult> arCANSList = [select count(id), accountperson__c, accountperson__r.name, accountperson__r.lastname from assessment__c where assessment_type__r.name = 'CANS' and  disregard__c = false and status__c = 'Locked' group by accountperson__c, accountperson__r.name, accountperson__r.lastname  order by accountperson__r.lastname];
+                
+        for ( AggregateResult ar : arCANSList ) {
+            optPBS.Add( new SelectOption((String)ar.get('accountperson__c'), (String)ar.get('name')));
+        }		
 
 		selectedCluster = 'All';
 
