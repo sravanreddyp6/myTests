@@ -242,7 +242,7 @@ public with sharing class CMShiftAssessmentEdit {
 	public void showEditVitalsDetail() {
 		this.currentVitalsDetail = [
 			SELECT ID, Name, Date__c, Temperature__c, R__c, O2_Saturation__c, Blood_Pressure__c,
-				Heart_Rate__c
+                   Heart_Rate__c, HR_Intervention_Needed__c, HR_Narrative_Note__c, O2_Intervention_Needed__c, O2_Narrative_Note__c
 			FROM Evaluation_Response__c WHERE ID=:currentVitalsDetailId
 		];
 	}
