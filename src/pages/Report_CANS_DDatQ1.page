@@ -77,7 +77,7 @@ table.dataTable tbody td.no-padding {
 		<apex:pageMessages id="messages"></apex:pageMessages>
 
 		<apex:pageBlock id="CANSReportBlock"
-			title="CANS Developmental Disability Identified at 1st Quarterly Assessment">
+			title="CANS with Developmental Disability Identified at 1st Quarterly Assessment">
 			<apex:actionregion >
 
 				<apex:pageBlockSection columns="1">
@@ -94,7 +94,7 @@ table.dataTable tbody td.no-padding {
 							styleClass="datepicker" value="{! EndDate}" />
 					</apex:outputPanel>
 					 
-					<apex:outputPanel>
+					<apex:outputPanel >
 					<apex:outputLabel styleClass="labelCol" value="Service Lines" />
  					<apex:selectCheckboxes value="{!selectedSL}" id="serviceLine" >
 					<apex:selectOptions value="{!optSL}" />
@@ -115,6 +115,10 @@ table.dataTable tbody td.no-padding {
 	</apex:form>
 
 	<apex:pageBlock id="dataTable">
+	<apex:pageBlockButtons id="exportbtn"> 
+            <div style="float: right"><input class="btn" type="button" onclick="tableToExcel('stateRows', 'CANS DD at 1st Quarterly')" value="Export to Excel" rendered="{!showData}" /></div>
+        </apex:pageBlockButtons>
+        
 <apex:outputPanel rendered="{!showData}">
 <table id="stateRows" cellspacing="0" class="hover" width="100%">
 	                <thead>
@@ -251,6 +255,30 @@ j$(document).ready(function() {
 
 	initializeStateTable();
     });
+    
+    var tableToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+  return function(table, name) {
+  	//table2=j$('[id$=' + table+']');
+  	table2=table;
+  	
+    if (!table2.nodeType) table2 = document.getElementById(table2)
+    
+    // When the stripped button is clicked, clone the existing source
+	var clonedTable = j$(table2).clone();
+
+	// Strip your empty characters from the cloned table (hidden didn't seem to work since the cloned table isn't visible)
+	clonedTable.find('[style*="display:none"]').remove();
+
+    var ctx = {worksheet: name || 'Worksheet', table: clonedTable[0].innerHTML}
+    window.location.href = uri + base64(format(template, ctx))
+    }
+  })();
+    
+    
 
 </script>
 	</apex:outputPanel>
