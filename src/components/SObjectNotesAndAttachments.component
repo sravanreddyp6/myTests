@@ -1,0 +1,43 @@
+<apex:component controller="SObjectNotesAndAttachmentsController" allowDML="true">
+    <apex:attribute name="parentId" assignTo="{!parent}" type="ID" description="The ID of the parent SObject" />
+    <apex:attribute name="showAction" type="Boolean" default="true" description="Whether to show the Action column or not" />
+    <apex:attribute name="showType" type="Boolean" default="true" description="Whether to show the Type column or not" />
+    <apex:attribute name="retURL" type="string" description="Specify a return url, usefull if this comp is renendered"/>
+    <apex:variable value="{!if(retURL != null, retURL ,$CurrentPage.URL)}" var="theRetUrl"/>
+    <apex:form id="wholeForm">
+        <apex:pageBlock title="Attachments">
+            <apex:pageBlockButtons id="NotesAndAttachmentsButtons" location="top">
+               <!-- <apex:commandButton value="New Note" onclick="window.location='/002/e?parent_id={!LEFT(parentId, 15)}&retURL={!$CurrentPage.URL}'; return false;" />-->
+                <apex:commandButton value="Attach File" onclick="window.location='/p/attach/NoteAttach?pid={!LEFT(parentId, 15)}&retURL={!theRetUrl}';return false;" />
+                <apex:commandButton rendered="{!entries.size>0}" onclick="window.location='/ui/content/ViewAllNotesPage?id={!LEFT(parentID, 15)}&retURL={!theRetUrl}'; return false;" value="View All" />
+            </apex:pageBlockButtons>
+            <apex:outputText rendered="{!entries.size=0}" value="No records to display" />
+            <apex:pageBlockTable style="width: 100%;" id="NotesAndAttachments" value="{!entries}" var="entry" styleClass="list" rendered="{!entries.size>0}">
+                <apex:column style="padding-right: 9px;" headerValue="Action" styleClass="actionColumn" rendered="{!showAction}">
+                    <apex:outputLink value="/{!entry.Id}/e?retURL={!$CurrentPage.URL}" styleClass="actionLink">Edit</apex:outputLink>
+                    <span>| </span>
+                    <apex:outputPanel layout="none" rendered="{!!entry.isNote}">
+                        <apex:outputLink value="/servlet/servlet.FileDownload?file={!entry.ID}" styleClass="actionLink">View</apex:outputLink>
+                        <span>| </span>
+                    </apex:outputPanel>
+                    <apex:commandLink styleClass="actionLink" action="{!del}" onclick="if (!confirm('Are you sure?')) return false;" value="Del" rerender="wholeForm">
+                        <apex:param name="deleteLink" value="{!entry.ID}" assignTo="{!toDelete}" />
+                    </apex:commandLink>
+                </apex:column>
+                <apex:column style="padding-right: 9px;" headerValue="Type"  rendered="{!showType}">
+                    <apex:outputText rendered="{!entry.isNote}" value="Note" />
+                    <apex:outputText rendered="{!!entry.isNote}" value="Attachment" />
+                </apex:column>
+                <apex:column style="padding-right: 9px;" headerValue="Title">
+                    <apex:outputLink value="/{!entry.Id}">{!entry.Title}</apex:outputLink>
+                </apex:column>
+                <apex:column style="padding-right: 9px;" headerValue="Last Modified">
+                    <apex:outputText value="{!entry.LastModifiedDate}" />
+                </apex:column>
+                <apex:column style="padding-right: 9px;" headerValue="Created By">
+                    <apex:outputLink value="/{!entry.OwnerId}">{!entry.OwnerName}</apex:outputLink>
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:component>
