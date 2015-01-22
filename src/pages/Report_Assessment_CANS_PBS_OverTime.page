@@ -1,4 +1,4 @@
-<apex:page showHeader="true" sidebar="false" controller="Report_Assessment_CANS_PBS_OverTime">
+<apex:page showHeader="true" sidebar="false" controller="Report_Assessment_CANS_PBS_OverTime" docType="html-5.0" readOnly="true">
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery-ui.min.js')}" />
@@ -38,26 +38,14 @@ console.log('started');
             <apex:selectOption itemLabel="Education" itemValue="Education"></apex:selectOption>
             <apex:selectOption itemLabel="Well-Being" itemValue="Well-Being" ></apex:selectOption>
         </apex:selectList>
-        <apex:pageBlockSectionItem rendered="false">
-            <apex:outputLabel >Find a PBS and press Run!</apex:outputLabel>
-            <apex:outputPanel layout="block" style="width: 400px;">
-                <table id="PBS_TBL" >
-                    <thead><tr><th>Name</th><th>Action</th></tr></thead>
-                    <apex:repeat value="{!PBSes}" var="PBS">
-                        <tr><td>{!PBS.AccountPerson__r.name}</td><td>
-                        <apex:commandButton value="Run!" action="{!runRpt}" reRender="DATA_SET" status="myStatus">
-                            <apex:param assignTo="{!selectedPBS}" value="{!PBS.AccountPerson__c}" name="selectedPBS"  />    
-                        </apex:commandButton></td></tr>
-                    </apex:repeat>
-                </table>
-                
-            </apex:outputPanel>
-            
-        </apex:pageBlockSectionItem>
        <apex:selectList required="true" size="1" label="Person Being Served" value="{!selectedPBS}" >
            <apex:selectOptions value="{!optPBS}" />
-        </apex:selectList>        
-        <apex:commandButton value="Run!" action="{!runRpt}" reRender="DATA_SET" status="myStatus"/>
+        </apex:selectList> 
+
+        <apex:pageBlockSectionItem >       
+            <apex:outputLabel ></apex:outputLabel>
+            <apex:commandButton value="Run!" action="{!runRpt}" reRender="DATA_SET" status="myStatus"/>
+        </apex:pageBlockSectionItem>
     </apex:pageBlockSection>
 </apex:pageBlock>   
 </apex:form>
@@ -71,7 +59,7 @@ console.log('started');
         <th>Interval</th>
         <th>Domain</th>
         <apex:repeat value="{!Columns}" var="col">
-            <th>{!col}</th>
+            <th><apex:outputLink value="/{!mapColumnAssess[col].id}" target="_blank"> {!col}</apex:outputLink></th>
         </apex:repeat>
     </tr>
 </thead>

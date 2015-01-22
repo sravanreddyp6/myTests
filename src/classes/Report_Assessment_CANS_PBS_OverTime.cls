@@ -27,17 +27,6 @@ public with sharing class Report_Assessment_CANS_PBS_OverTime {
             return null;
         }
     }
-    public list<Assessment__c> PBSes{
-    	get{
-
-
-    		return [select id, name, AccountPerson__c, AccountPerson__r.name from Assessment__c 
-    									where Assessment_Type__r.Name = 'CANS'
-    									AND status__c = 'Locked'
-										AND Disregard__c = false
-										AND Interval__c = 'Intake'];
-    	}
-    }
 	public Report_Assessment_CANS_PBS_OverTime() {
         optPBS = new List<SelectOption>();
         optPBS.Add( new SelectOption('','--None--'));
