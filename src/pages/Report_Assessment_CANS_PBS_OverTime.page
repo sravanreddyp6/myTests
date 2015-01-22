@@ -9,11 +9,11 @@
 <apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}"/>
 <apex:stylesheet value="{!URLFOR($Resource.jquery, '/development-bundle/themes/custom-green/jquery-ui.min.css')}"/>
 <style type="text/css">
-	.rowScore0{ background-color: white;}
-	.rowScore1{ background-color: rgba(255, 255, 0, 0.65);}
-	.rowScore2{ background-color: rgba(255, 165, 0, 0.65);}
-	.rowScore3{ background-color: rgba(255, 0, 0, 0.65);}
-	.groupHeader{background-color: rgb(229, 229, 229); font-weight: bold;}
+    .rowScore0{ background-color: white;}
+    .rowScore1{ background-color: rgba(255, 255, 0, 0.65);}
+    .rowScore2{ background-color: rgba(255, 165, 0, 0.65);}
+    .rowScore3{ background-color: rgba(255, 0, 0, 0.65);}
+    .groupHeader{background-color: rgb(229, 229, 229); font-weight: bold;}
 </style>
 <script>
 $(document).ready(function() {
@@ -33,63 +33,67 @@ console.log('started');
 <apex:pageBlock >
     <apex:pageBlockSection columns="1">
         <apex:selectList required="true" Value="{!SelectedCluster}" size="1" label="Select Cluster">
-        	<apex:selectOption itemLabel="All" itemValue="All"></apex:selectOption>
+            <apex:selectOption itemLabel="All" itemValue="All"></apex:selectOption>
             <apex:selectOption itemLabel="Behavior & Risk" itemValue="Behavior & Risk"></apex:selectOption>
             <apex:selectOption itemLabel="Education" itemValue="Education"></apex:selectOption>
             <apex:selectOption itemLabel="Well-Being" itemValue="Well-Being" ></apex:selectOption>
         </apex:selectList>
-        <apex:pageBlockSectionItem >
-        	<apex:outputLabel >Find a PBS and press Run!</apex:outputLabel>
-        	<apex:outputPanel layout="block" style="width: 400px;">
-        		<table id="PBS_TBL" >
-        			<thead><tr><th>Name</th><th>Action</th></tr></thead>
-        			<apex:repeat value="{!PBSes}" var="PBS">
-        				<tr><td>{!PBS.AccountPerson__r.name}</td><td>
-        				<apex:commandButton value="Run!" action="{!runRpt}" reRender="DATA_SET" status="myStatus">
-        					<apex:param assignTo="{!selectedPBS}" value="{!PBS.AccountPerson__c}" name="selectedPBS"  /> 	
-        				</apex:commandButton></td></tr>
-        			</apex:repeat>
-    			</table>
-    			
-        	</apex:outputPanel>
-        	
+        <apex:pageBlockSectionItem rendered="false">
+            <apex:outputLabel >Find a PBS and press Run!</apex:outputLabel>
+            <apex:outputPanel layout="block" style="width: 400px;">
+                <table id="PBS_TBL" >
+                    <thead><tr><th>Name</th><th>Action</th></tr></thead>
+                    <apex:repeat value="{!PBSes}" var="PBS">
+                        <tr><td>{!PBS.AccountPerson__r.name}</td><td>
+                        <apex:commandButton value="Run!" action="{!runRpt}" reRender="DATA_SET" status="myStatus">
+                            <apex:param assignTo="{!selectedPBS}" value="{!PBS.AccountPerson__c}" name="selectedPBS"  />    
+                        </apex:commandButton></td></tr>
+                    </apex:repeat>
+                </table>
+                
+            </apex:outputPanel>
+            
         </apex:pageBlockSectionItem>
-        
+       <apex:selectList required="true" size="1" label="Person Being Served" value="{!selectedPBS}" >
+           <apex:selectOptions value="{!optPBS}" />
+        </apex:selectList>        
+        <apex:commandButton value="Run!" action="{!runRpt}" reRender="DATA_SET" status="myStatus"/>
     </apex:pageBlockSection>
 </apex:pageBlock>   
 </apex:form>
 
 
 <apex:outputPanel id="DATA_SET">
+<apex:pageMessages />
 <table id="rptDataTbl">
 <thead>
-	<tr>
-		<th>Interval</th>
-		<th>Domain</th>
-		<apex:repeat value="{!Columns}" var="col">
-			<th>{!col}</th>
-		</apex:repeat>
-	</tr>
+    <tr>
+        <th>Interval</th>
+        <th>Domain</th>
+        <apex:repeat value="{!Columns}" var="col">
+            <th>{!col}</th>
+        </apex:repeat>
+    </tr>
 </thead>
 <tbody>
-	<tr>
-		<td>Overall Score</td>
-		<td></td>
-		<apex:repeat value="{!Columns}" var="col">
-			<td >{!mapOverallScore[col]}</td>
-		</apex:repeat>			
-	</tr>
+    <tr>
+        <td>Overall Score</td>
+        <td></td>
+        <apex:repeat value="{!Columns}" var="col">
+            <td >{!mapOverallScore[col]}</td>
+        </apex:repeat>          
+    </tr>
 <apex:repeat value="{!QuestionsNumbersInScope}" var="row">
-	<tr>
-		<td>{!mapQuestions[row].Question_Title__c}</td>
-		<td>{!if(selectedCluster='All' , mapQuestions[row].Question_Domain__r.name, SelectedCluster)}</td>
-		<apex:repeat value="{!Columns}" var="col">
-			<td class="rowScore{!mapAnswers[TEXT(row)+col].rating__c}">{!mapAnswers[TEXT(row)+col].rating__c}</td>
-		</apex:repeat>	
-	</tr>
+    <tr>
+        <td>{!mapQuestions[row].Question_Title__c}</td>
+        <td>{!if(selectedCluster='All' , mapQuestions[row].Question_Domain__r.name, SelectedCluster)}</td>
+        <apex:repeat value="{!Columns}" var="col">
+            <td class="rowScore{!mapAnswers[TEXT(row)+col].rating__c}">{!mapAnswers[TEXT(row)+col].rating__c}</td>
+        </apex:repeat>  
+    </tr>
 </apex:repeat>
 </tbody>
-</table>	
+</table>    
 <script>
 $(document).ready(function() {
 console.log('started');
@@ -98,7 +102,7 @@ console.log('started');
         "ordering": false, 
         "bFilter": false, 
         "bInfo" : false,
-		"columnDefs": [
+        "columnDefs": [
             { "visible": false, "targets": 1 }
         ],
         "order": [[ 1, 'asc' ]],
