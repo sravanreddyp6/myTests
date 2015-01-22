@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <name>Service Assignment Change Notification</name>
+    <style>none</style>
+    <subject>Service Assignment Information Changed</subject>
+    <textOnly>This is an automatically generated message from our ESD system.
+
+Hello {!Admission__c.LastModifiedBy},
+
+You have changed information on a Service Assignment for {!Service_Assignment__c.Person_Being_Served__c} in ESD. Here is the link to the Service Assignment in Salesforce.com: {!Service_Assignment__c.Link}
+
+Please also edit the corresponding records in your Billing System.
+
+Thank you.</textOnly>
+    <type>custom</type>
+</EmailTemplate>
