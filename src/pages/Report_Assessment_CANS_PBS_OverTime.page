@@ -15,36 +15,22 @@
     .rowScore3{ background-color: rgba(255, 0, 0, 0.65);}
     .groupHeader{background-color: rgb(229, 229, 229); font-weight: bold;}
 </style>
-<script>
-$(document).ready(function() {
-console.log('started');
-    $('#PBS_TBL').dataTable( {
-        "bPaginate": true,
-        "ordering": false, 
-        "bFilter": true, 
-        "bInfo" : false, 
-        "bLengthChange": false  
-    } );    
-} );
-
-</script>
 <apex:form >
-<h1 style="font-size: 25px; padding: 3px;">CANS Over Time by Person Being Served (Table)</h1>
-<apex:pageBlock >
+<h1 style="font-size: 25px; padding: 9px; display: block;">CANS Over Time by Person Being Served (Table)</h1>
+<apex:pageBlock title="Filters" >
     <apex:pageBlockSection columns="1">
-        <apex:selectList required="true" Value="{!SelectedCluster}" size="1" label="Select Cluster">
+       <apex:selectList required="true" size="1" label="Person Being Served" value="{!selectedPBS}" >
+           <apex:selectOptions value="{!optPBS}" />
+        </apex:selectList>     
+        <apex:selectList required="true" Value="{!SelectedCluster}" size="1" label="CANS Assessment Data">
             <apex:selectOption itemLabel="All" itemValue="All"></apex:selectOption>
             <apex:selectOption itemLabel="Behavior & Risk" itemValue="Behavior & Risk"></apex:selectOption>
             <apex:selectOption itemLabel="Education" itemValue="Education"></apex:selectOption>
             <apex:selectOption itemLabel="Well-Being" itemValue="Well-Being" ></apex:selectOption>
         </apex:selectList>
-       <apex:selectList required="true" size="1" label="Person Being Served" value="{!selectedPBS}" >
-           <apex:selectOptions value="{!optPBS}" />
-        </apex:selectList> 
-
         <apex:pageBlockSectionItem >       
             <apex:outputLabel ></apex:outputLabel>
-            <apex:commandButton value="Run!" action="{!runRpt}" reRender="DATA_SET" status="myStatus"/>
+            <apex:commandButton value="Run" action="{!runRpt}" reRender="DATA_SET" status="myStatus"/>
         </apex:pageBlockSectionItem>
     </apex:pageBlockSection>
 </apex:pageBlock>   
@@ -53,6 +39,10 @@ console.log('started');
 
 <apex:outputPanel id="DATA_SET">
 <apex:pageMessages />
+<apex:pageBlock title="Results" rendered="{!selectedPBS != null}">
+<apex:pageBlockButtons >
+	<div style="float: right"><input class="btn" type="button" onclick="tableToExcel('rptDataTbl', 'CANS Over Time by Person Being Served (Table)')" value="Export to Excel" /></div>
+</apex:pageBlockButtons>
 <table id="rptDataTbl">
 <thead>
     <tr>
@@ -83,9 +73,11 @@ console.log('started');
 </tbody>
 </table>    
 <script>
-$(document).ready(function() {
+j$ = jQuery.noConflict();
+//$ = jQuery.noConflict();
+j$(document).ready(function() {
 console.log('started');
-    $('#rptDataTbl').dataTable( {
+    j$('#rptDataTbl').dataTable( {
         "bPaginate": false,
         "ordering": false, 
         "bFilter": false, 
@@ -102,34 +94,38 @@ console.log('started');
  
             api.column(1, {page:'current'} ).data().each( function ( group, i ) {
                 if ( last !== group ) {
-                    $(rows).eq( i ).before(
+                    j$(rows).eq( i ).before(
                         '<tr class="group groupHeader"><td class="groupHeader" colspan="99">'+group+'</td></tr>'
                     );
  
                     last = group;
                 }
             } );
-        },        
-            dom: 'T<"clear">lfrtip',        
-            "tableTools": {
-               "aButtons": [ 
-                   {"sExtends": "xls", "sTitle": "Children with Improved CANS at Discharge"},
-                   {
-                    "sExtends": "pdf",
-                    "sPdfOrientation": "landscape",
-                    "sTitle": "Children with Improved CANS at Discharge"
-                    }              
-                ],         
-               "sSwfPath": "{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/swf/copy_csv_xls_pdf.swf')}"  
-               }       
+        }      
     } );    
 } );
 
 </script>
+</apex:pageBlock>
 </apex:outputPanel>
 
 
 
+
+<script>
+
+var tableToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+  return function(table, name) {
+    table2=j$('[id$=' + table+']');
+    var ctx = {worksheet: name || 'Worksheet', table: table2[0].innerHTML}
+    window.location.href = uri + base64(format(template, ctx))
+    }
+  })();
+</script>
 
 <apex:actionStatus id="myStatus" >
     <apex:facet name="start">
