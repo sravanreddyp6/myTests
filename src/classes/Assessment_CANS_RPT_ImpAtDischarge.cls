@@ -16,12 +16,24 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
     		set<id> returnInfo = new set<id>();
 
     		if(selectedDD_Status == 'ONLY_DD'){
-    			for(Assessment_Response__c item: [select id, Assessment__r.AccountPerson__r.Id from Assessment_Response__c Where Question__r.Question_Number__c = 37 AND Assessment__r.disregard__c = false AND Score__c > 0 ]){
+    			for(Assessment_Response__c item: [select id, Assessment__r.AccountPerson__r.Id 
+    													from Assessment_Response__c 
+    													Where Question__r.Question_Number__c = 37 
+    													AND Assessment__r.disregard__c = false 
+    													AND Score__c > 0 
+    													AND Assessment__r.Interval__c = 'Quarterly' 
+                                                        AND Assessment__r.Quarter__c = 1 ]){
     				returnInfo.add(item.Assessment__r.AccountPerson__r.Id);
     			}
     		}
     		else if(selectedDD_Status == 'No_DD'){
-    			for(Assessment_Response__c item: [select id, Assessment__r.AccountPerson__r.Id from Assessment_Response__c Where Question__r.Question_Number__c = 37 AND Assessment__r.disregard__c = false AND Score__c = 0 ]){
+    			for(Assessment_Response__c item: [select id, Assessment__r.AccountPerson__r.Id 
+    												from Assessment_Response__c 
+    													Where Question__r.Question_Number__c = 37 
+    													AND Assessment__r.disregard__c = false 
+    													AND Score__c = 0 
+    													AND Assessment__r.Interval__c = 'Quarterly' 
+                                                        AND Assessment__r.Quarter__c = 1]){
     				returnInfo.add(item.Assessment__r.AccountPerson__r.Id);
     			}
     		}
