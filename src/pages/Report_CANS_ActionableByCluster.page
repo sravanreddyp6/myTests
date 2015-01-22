@@ -153,7 +153,6 @@ var tableToExcel = (function() {
     , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
   return function(table, name) {
   	table2=j$('[id$=' + table+']');
-    if (!table2.nodeType) table2 = document.getElementById(table2)
     var ctx = {worksheet: name || 'Worksheet', table: table2[0].innerHTML}
     window.location.href = uri + base64(format(template, ctx))
     }

@@ -116,7 +116,7 @@ table.dataTable tbody td.no-padding {
 
 	<apex:pageBlock id="dataTable">
 	<apex:pageBlockButtons id="exportbtn"> 
-            <div style="float: right"><input class="btn" type="button" onclick="debugger;tableToExcel('stateRows', 'CANS DD at 1st Quarterly')" value="Export to Excel" rendered="{!showData}" /></div>
+            <div style="float: right"><input class="btn" type="button" onclick="tableToExcel('stateRows', 'CANS DD at 1st Quarterly')" value="Export to Excel" rendered="{!showData}" /></div>
         </apex:pageBlockButtons>
         
 <apex:outputPanel rendered="{!showData}">
@@ -266,7 +266,7 @@ j$(document).ready(function() {
   	table2=table;
   	
     if (!table2.nodeType) table2 = document.getElementById(table2)
-    debugger;
+    
     // When the stripped button is clicked, clone the existing source
 	var clonedTable = j$(table2).clone();
 
