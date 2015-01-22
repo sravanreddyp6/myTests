@@ -50,7 +50,7 @@ private class TaskTriggerHanderTest {
             update t;
         } catch (Exception e){
             System.assertequals('System.DmlException', e.getTypeName());
-            System.assertequals(e.getMessage().contains('This task cannot be upated as the Associated Shift Assessment is not finalized or Disregarded'),true);
+            System.assertequals(e.getMessage().contains('This task cannot be upated as the Associated Nurses Shift Documentation is not finalized or Disregarded'),true);
         }
     }    
     
