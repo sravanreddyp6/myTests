@@ -667,41 +667,48 @@
 				</tr>
 				<tr>
 					<td>
-						<apex:dynamiccomponent componentvalue="{!ctlmap['rancho_level__c']}" />
+						<apex:dynamiccomponent componentvalue="{!ctlmap['cognition_intact__c']}" />
+						<apex:variable value="" var="xx" rendered="{!Evaluation__c.cognition_intact__c == 'No'}" >
+							<br/>
+							<apex:dynamiccomponent componentvalue="{!ctlmap['rancho_level__c']}" /><br/>
+							<apex:dynamiccomponent componentvalue="{!ctlmap['level_of_conciousness__c']}" />
+						</apex:variable>
 					</td>
 				</tr>
 			</table>
-			<apex:variable value="" var="b" rendered="{!Evaluation__c.Rancho_Level__c != '(1) No Response'}" >
          	<table style="width:80%;" >
          		<tr>
          			<td>
-         				<apex:outputLabel value="Responds To" styleClass="label"/>
-				        <apex:outputPanel >
-				        <apex:outputText value="{!If (Evaluation__c.Verbal_Stim__c, 'Verbal Stim;', '')}" />
-				        <apex:outputText value="{!If (Evaluation__c.Auditory_Stim__c, 'Auditory Stim;', '')}" />
-				        <apex:outputText value="{!If (Evaluation__c.Tactile_Stim__c, 'Tactile Stim;', '')}" />
-				        <apex:outputText value="{!If (Evaluation__c.Responds_To_Pain__c, 'Pain;', '')}" />
-				        <apex:outputText value="{!If (Evaluation__c.Visual__c, 'Visual Stim;', '')}" />
-				        </apex:outputPanel><br />
-				        <apex:dynamiccomponent componentvalue="{!ctlmap['level_of_conciousness__c']}" /><Br />
-	    				<apex:dynamiccomponent componentvalue="{!ctlmap['orientation__c']}" /><br />
-	    				<apex:outputLabel value="Behavior" styleclass="label"/>
-				        <apex:outputPanel >
-				        <apex:outputText value="{!if (Evaluation__c.Cooperative__c, 'Cooperative;','')}" />
-				        <apex:outputText value="{!if (Evaluation__c.Impulsive__c, 'Impulsive;','')}" />
-				        <apex:outputText value="{!if (Evaluation__c.Inappropriate__c, 'Inappropriate;','')}" />
-				        <apex:outputText value="{!if (Evaluation__c.Agitated__c, 'Agitated;','')}" />
-				        <apex:outputText value="{!if (Evaluation__c.Combative__c, 'Combative;','')}" />
-				        <apex:outputText value="{!if (Evaluation__c.Confused__c, 'Confused;','')}" />
-				        <apex:outputText value="{!if (Evaluation__c.Unresponsive__c, 'Unresponsive;','')}" />
-				        </apex:outputPanel><br />
+         				<apex:variable value="" var="xxx" rendered="{!Evaluation__c.rancho_level__c != null && Evaluation__c.rancho_level__c != '(1) No Response'}" >
+	         				<apex:outputLabel value="Responds To" styleClass="label"/>
+					        <apex:outputPanel >
+					        <apex:outputText value="{!If (Evaluation__c.Verbal_Stim__c, 'Verbal Stim;', '')}" />
+					        <apex:outputText value="{!If (Evaluation__c.Auditory_Stim__c, 'Auditory Stim;', '')}" />
+					        <apex:outputText value="{!If (Evaluation__c.Tactile_Stim__c, 'Tactile Stim;', '')}" />
+					        <apex:outputText value="{!If (Evaluation__c.Responds_To_Pain__c, 'Pain;', '')}" />
+					        <apex:outputText value="{!If (Evaluation__c.Visual__c, 'Visual Stim;', '')}" />
+					        </apex:outputPanel><br />
+		    				<apex:dynamiccomponent componentvalue="{!ctlmap['orientation__c']}" /><br />
+	    				</apex:variable>
+	    				<apex:variable var="xxy" value="" rendered="{!Evaluation__c.rancho_level__c != null && Evaluation__c.rancho_level__c != '(1) No Response' || Evaluation__c.cognition_intact__c == 'Yes'}" >
+		    				<apex:outputLabel value="Behavior" styleclass="label"/>
+					        <apex:outputPanel >
+					        <apex:outputText value="{!if (Evaluation__c.Cooperative__c, 'Cooperative;','')}" />
+					        <apex:outputText value="{!if (Evaluation__c.Impulsive__c, 'Impulsive;','')}" />
+					        <apex:outputText value="{!if (Evaluation__c.Inappropriate__c, 'Inappropriate;','')}" />
+					        <apex:outputText value="{!if (Evaluation__c.Agitated__c, 'Agitated;','')}" />
+					        <apex:outputText value="{!if (Evaluation__c.Combative__c, 'Combative;','')}" />
+					        <apex:outputText value="{!if (Evaluation__c.Confused__c, 'Confused;','')}" />
+					        <apex:outputText value="{!if (Evaluation__c.Unresponsive__c, 'Unresponsive;','')}" />
+					        </apex:outputPanel><br />
+				        </apex:variable>
 				        <apex:dynamiccomponent componentvalue="{!ctlmap['mood__c']}" /><br />
-					        <apex:variable value="" var="c" rendered="{!CONTAINS(Evaluation__c.Mood__c,'Sad') || CONTAINS(Evaluation__c.Mood__c,'Flat')}" >
+				        <apex:variable value="" var="c" rendered="{!CONTAINS(Evaluation__c.Mood__c,'Sad') || CONTAINS(Evaluation__c.Mood__c,'Flat')}" >
 					        <apex:outputLabel value="Has Resident Expressed Desire to Hurt Him/Herself?" styleClass="label" />
 					        <apex:outputField value="{!Evaluation__c.Desire_to_hurt_themselves__c}"   /><br />
 					        <apex:outputLabel value="Does Resident Have a Plan to Harm Him/Herself?" styleClass="label" />
 					        <apex:outputField value="{!Evaluation__c.Plan_to_Harm_themselves__c}"/>
-				        </apex:variable>
+				       </apex:variable>
          			</td>
          		</tr>
          		<tr>
@@ -709,7 +716,6 @@
          				<apex:outputText value="Communication" styleClass="label"/>
          			</td>
          		</tr>
-         		
          		<tr>
          			<td>
          				<apex:outputLabel value="Able to Make Needs Known" styleClass="label" />
@@ -718,13 +724,11 @@
 	        				<apex:outputLabel value="Expression" styleClass="label" />
 	        				<apex:outputField value="{!Evaluation__c.Expression__c}"  /> <br/>
 	        				<apex:outputLabel value="Other Expression" rendered="{!Evaluation__c.Expression__c == 'Non-Verbal'}" styleClass="label" />
-	        				<apex:outputField value="{!Evaluation__c.Expression_Other__c}"  /> 
-        				</apex:variable>
+	        				<apex:outputField value="{!Evaluation__c.Expression_Other__c}"  />
+	        			</apex:variable>
          			</td>
          		</tr>
          	</table>
-         	</apex:variable>
-         	
          	<table width="80%" >
          		<tr>
          			<td colspan="2" style="border:1px solid black;">
@@ -807,9 +811,15 @@
          				<em><apex:outputField value="{!Evaluation__c.Resident_Demonstrating_Issues__c}" rendered="{!Evaluation__c.Does_Resident_appear_to_demonstrate__c == 'Yes'}" /></em>
          			</td>
          		</tr>
-         		
-         	
-         	
+         	</table>
+         </apex:pageBlock>
+         <apex:pageBlock title="E-Sign"  rendered="{!Evaluation__c.Is_Signed__c}" >
+         	<table width="100%" >
+         		<tr>
+         			<td><apex:outputLabel value="Is Signed" styleClass="label"/> <apex:outputField value="{!Evaluation__c.Is_Signed__c}"/></td><br/>
+         			<td><apex:outputLabel value="Signed By" styleClass="label" /> <apex:outputText value="{!signatures[0].Owner.Name}" /></td><br/>
+         			<td><apex:outputLabel value="Signed Time" styleClass="label" /> <apex:outputField value="{!signatures[0].CreatedDate}" /></td>
+         		</tr>
          	</table>
          </apex:pageBlock>
     </apex:form>
