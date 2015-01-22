@@ -15,7 +15,7 @@ public with sharing class CMShiftAssessmentListViewController {
                              WHERE RecordType.Name = 'E-Signature'
                              ORDER BY CreatedDate DESC)
                       FROM Evaluation__c
-                     WHERE ServiceAssignment__c = :saId ORDER BY Shift_Start_Time__c DESC NULLS LAST];
+                     WHERE ServiceAssignment__c = :saId order BY Shift_Start_Time__c desc NULLS LAST];
 			
 		}
 			
