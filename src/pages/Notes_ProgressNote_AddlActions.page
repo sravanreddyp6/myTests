@@ -1,0 +1,20 @@
+<apex:page standardcontroller="Progress_Note__c" Extensions="Notes_ProgressNote_AddlActions" >
+    <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+
+<script type="text/javascript">
+	// if the user has permissions, execute the action when the page has loaded
+    $j = jQuery.noConflict();
+	$j( document ).ready(function() {
+		if ({!canDisregard} == true)
+			disregardNote();
+		 	});
+</script>
+<apex:form >
+<Br />
+<apex:pageMessages />
+<apex:outputText rendered="{!!canDisregard}" value="You do not have the correct permissions to disregard a note. " />
+<apex:outputLink rendered="{!!canDisregard}" value="/{!thePN.Id}">Return to Progress Note.</apex:outputLink>
+<!-- <apex:commandButton id="disregard" action="{!updateLocked}" value="Update Locked Note" rendered="{!canDisregard}"/> -->
+<apex:actionFunction name="disregardNote" action="{!updateLocked}" />
+</apex:form> 
+</apex:page>
