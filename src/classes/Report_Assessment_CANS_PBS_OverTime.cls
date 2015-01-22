@@ -1,0 +1,132 @@
+public with sharing class Report_Assessment_CANS_PBS_OverTime {
+	public list<string> Columns {get; set;}
+	public map<string, Assessment__c> mapColumnAssess {get; set;}
+
+	public map<integer, Assessment_Question__c> mapQuestions {get; set;}
+	public list<string> Questions {get; set;}
+
+	public map<string, Assessment_Response__c> mapAnswers {get; set;}
+
+	public map<string, integer> mapOverallScore {get; set;}
+
+	public string selectedCluster{get; set;}
+	public string selectedPBS{get; set;}
+	public list<integer> QuestionsNumbersInScope {
+        get{ 
+            if(selectedCluster == 'Well-Being'){return Assessment_CANS_Cluster_Defs.WellBeing;}
+            else if(selectedCluster == 'Behavior & Risk'){return Assessment_CANS_Cluster_Defs.Behavior_AND_Risk;}
+            else if(selectedCluster == 'Education'){return Assessment_CANS_Cluster_Defs.Education;}
+            else {
+            	list<integer> allQ = new list<integer>();
+            	for(integer item = 1; item < 111; item++){
+            		allQ.add(item);
+            	}
+            	return allQ;
+            }
+            return null;
+        }
+    }
+    public list<Assessment__c> PBSes{
+    	get{
+
+
+    		return [select id, name, AccountPerson__c, AccountPerson__r.name from Assessment__c 
+    									where Assessment_Type__r.Name = 'CANS'
+    									AND status__c = 'Locked'
+										AND Disregard__c = false
+										AND Interval__c = 'Intake'];
+    	}
+    }
+	public Report_Assessment_CANS_PBS_OverTime() {
+
+		selectedCluster = 'All';
+
+		//runRPT();
+	}
+
+	public PageReference runRPT(){
+		id PBSID = selectedPBS;
+		//'001Z000000mRBtG';
+		Columns = new list<string>();
+		mapColumnAssess = new map<string, Assessment__c>();
+		mapQuestions = new map<integer, Assessment_Question__c>();
+		mapAnswers = new map<string, Assessment_Response__c>();
+		mapOverallScore = new map<string, integer>();		
+
+		//set question
+		for(Assessment_Question__c item : 
+			[select id, name, question_Number__c, Question_Title__c, Question_Domain__r.name 
+				from Assessment_Question__c 
+					where Question_Number__c in :QuestionsNumbersInScope 
+					and Question_Domain__r.Assessment_Type__r.Name = 'CANS']){
+			mapQuestions.put(integer.valueof(item.Question_Number__c), item);
+		}
+
+		//set columns
+		list<Assessment__c> BaselineAssessments = new list<Assessment__c>();
+		list<Assessment_Response__c> Responses = new list<Assessment_Response__c>();
+
+		BaselineAssessments = [select id, name, interval__c, quarter__c, status__c  
+									from Assessment__c 
+										Where AccountPerson__c = :PBSID 
+										AND Assessment_Type__r.Name = 'CANS' 
+										AND status__c = 'Locked'
+										AND Disregard__c = false];
+		Columns.add('Intake');
+		boolean hasDC = false;
+		for(Assessment__c item : BaselineAssessments){
+			if(item.Interval__c =='Quarterly'){
+					string title = item.Interval__c + string.valueof(item.Quarter__c);
+					Columns.add(title);
+					mapColumnAssess.put(title, item);
+				}
+			else if(item.Interval__c =='Discharge'){hasDC = true; mapColumnAssess.put('Discharge', item);}
+			else if(item.Interval__c =='Intake'){mapColumnAssess.put('Intake', item);}
+		}
+		if(hasDC){Columns.add('Discharge');}
+
+		for(string item : columns){
+			mapOverallScore.put(item, 0);
+		}
+
+		//set answers
+		for(Assessment_Response__c item : [select id, Question__r.Question_Number__c, rating__c, ScoreOld__c,
+											name, Assessment__r.interval__c, Assessment__r.quarter__c
+												From Assessment_Response__c
+												Where Assessment__r.id in : BaselineAssessments
+												AND Question__r.Question_Number__c in :QuestionsNumbersInScope]){
+			//todo
+			string key = string.valueof(item.Question__r.Question_Number__c + item.Assessment__r.interval__c);
+			string overallKey = item.Assessment__r.interval__c; 
+
+			if(item.Assessment__r.quarter__c >0){
+				key += string.valueof(item.Assessment__r.quarter__c);
+				overallKey += string.valueof(item.Assessment__r.quarter__c);
+			}
+			mapAnswers.put(key, item);
+
+			integer score = mapOverallScore.get(overallKey); 
+			score += integer.valueof(item.ScoreOld__c);
+			mapOverallScore.put(overallKey, score);
+		}
+
+		return null;
+	}
+
+	//public 
+	//
+	//dynamic Columns
+	//dynamic Questions
+	//Answers
+	//total
+	//grouping - domian or cluster
+
+	public class AssessQuestion{
+		public integer QuestionNumber;
+		
+
+		public AssessQuestion(){
+
+		}
+	}
+}
