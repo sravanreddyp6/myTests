@@ -1,11 +1,5 @@
 public with sharing class Report_CANS_ActionableItems {
-	public List<Assessment_Response__c> responses { get {
-		// Because dynamic SOQL does not bind dot-notationed variables, we have
-		// to explicitly set them here
-		Date startDate = dummyStartDateAssessment.Assessment_Date__c;
-		Date endDate = dummyEndDateAssessment.Assessment_Date__c;
-		return Database.query('SELECT Id, Name, Rating__c, Question__r.Question_Title__c, CreatedBy.Name, CreatedById, Assessment__r.Owner.Id, Assessment__r.Owner.Name, Assessment__r.Assessment_Date__c, Assessment__r.Id, Assessment__r.Name, Assessment__r.Admission__r.Person_Being_Served__r.Name, Assessment__r.Admission__r.Person_Being_Served__r.Id FROM Assessment_Response__c WHERE (' + scoreQuery + ') AND Assessment__r.Assessment_Date__c > :startDate AND Assessment__r.Assessment_Date__c < :endDate');
-	} set; }
+	public List<Assessment_Response__c> responses { get; set; }
 	// In order to use the datepicker using inputField
 	public Assessment__c dummyStartDateAssessment { get; set; }
 	public Assessment__c dummyEndDateAssessment { get; set; }
@@ -40,7 +34,13 @@ public with sharing class Report_CANS_ActionableItems {
 		}
 		if (errorFound) {
 			scoreChosen = '';
+			return;
 		}
+		// Because dynamic SOQL does not bind dot-notationed variables, we have
+		// to explicitly set them here
+		Date startDate = dummyStartDateAssessment.Assessment_Date__c;
+		Date endDate = dummyEndDateAssessment.Assessment_Date__c;
+		responses = Database.query('SELECT Id, Name, Rating__c, Question__r.Question_Title__c, CreatedBy.Name, CreatedById, Assessment__r.Owner.Id, Assessment__r.Owner.Name, Assessment__r.Assessment_Date__c, Assessment__r.Id, Assessment__r.Name, Assessment__r.Admission__r.Person_Being_Served__r.Name, Assessment__r.Admission__r.Person_Being_Served__r.Id FROM Assessment_Response__c WHERE (' + scoreQuery + ') AND Assessment__r.Assessment_Date__c > :startDate AND Assessment__r.Assessment_Date__c < :endDate');
 	}
 	public Report_CANS_ActionableItems() {
 		dummyStartDateAssessment = new Assessment__c();
