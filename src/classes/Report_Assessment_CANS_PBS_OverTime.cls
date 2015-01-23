@@ -64,24 +64,26 @@ public with sharing class Report_Assessment_CANS_PBS_OverTime {
 		list<Assessment__c> BaselineAssessments = new list<Assessment__c>();
 		list<Assessment_Response__c> Responses = new list<Assessment_Response__c>();
 
-		BaselineAssessments = [select id, name, interval__c, quarter__c, status__c  
+		BaselineAssessments = [select id, name, interval__c, quarter__c, status__c, assessment_date__c  
 									from Assessment__c 
 										Where AccountPerson__c = :PBSID 
 										AND Assessment_Type__r.Name = 'CANS' 
 										AND status__c = 'Locked'
-										AND Disregard__c = false];
-		Columns.add('Intake');
+										AND Disregard__c = false 
+										order by Admission__r.Effective_Date__c ASC, interval__c ASC, quarter__c ASC];
+		//Columns.add('Intake');
 		boolean hasDC = false;
 		for(Assessment__c item : BaselineAssessments){
+			string title = item.id + item.Interval__c; 
 			if(item.Interval__c =='Quarterly'){
-					string title = item.Interval__c + string.valueof(item.Quarter__c);
+					title += string.valueof(item.Quarter__c) ;
 					Columns.add(title);
 					mapColumnAssess.put(title, item);
 				}
-			else if(item.Interval__c =='Discharge'){hasDC = true; mapColumnAssess.put('Discharge', item);}
-			else if(item.Interval__c =='Intake'){mapColumnAssess.put('Intake', item);}
+			else if(item.Interval__c =='Discharge'){hasDC = true; mapColumnAssess.put(title, item); Columns.add(title);}
+			else if(item.Interval__c =='Intake' ){mapColumnAssess.put(title, item); Columns.add(title);}
 		}
-		if(hasDC){Columns.add('Discharge');}
+		//if(hasDC){Columns.add('Discharge');}
 
 		for(string item : columns){
 			mapOverallScore.put(item, 0);
@@ -89,13 +91,13 @@ public with sharing class Report_Assessment_CANS_PBS_OverTime {
 
 		//set answers
 		for(Assessment_Response__c item : [select id, Question__r.Question_Number__c, rating__c, ScoreOld__c,
-											name, Assessment__r.interval__c, Assessment__r.quarter__c
+											name, Assessment__r.interval__c, Assessment__r.quarter__c, Assessment__r.id
 												From Assessment_Response__c
 												Where Assessment__r.id in : BaselineAssessments
 												AND Question__r.Question_Number__c in :QuestionsNumbersInScope]){
 			//todo
-			string key = string.valueof(item.Question__r.Question_Number__c + item.Assessment__r.interval__c);
-			string overallKey = item.Assessment__r.interval__c; 
+			string key = string.valueof(item.Question__r.Question_Number__c) + item.assessment__r.id + item.Assessment__r.interval__c ;
+			string overallKey = item.Assessment__r.id + item.Assessment__r.interval__c; 
 
 			if(item.Assessment__r.quarter__c >0){
 				key += string.valueof(item.Assessment__r.quarter__c);

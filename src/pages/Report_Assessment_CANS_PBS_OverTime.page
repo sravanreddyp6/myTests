@@ -24,9 +24,9 @@
         </apex:selectList>     
         <apex:selectList required="true" Value="{!SelectedCluster}" size="1" label="CANS Assessment Data">
             <apex:selectOption itemLabel="All" itemValue="All"></apex:selectOption>
-            <apex:selectOption itemLabel="Behavior & Risk" itemValue="Behavior & Risk"></apex:selectOption>
-            <apex:selectOption itemLabel="Education" itemValue="Education"></apex:selectOption>
-            <apex:selectOption itemLabel="Well-Being" itemValue="Well-Being" ></apex:selectOption>
+            <apex:selectOption itemLabel="Behavior & Risk Cluster" itemValue="Behavior & Risk"></apex:selectOption>
+            <apex:selectOption itemLabel="Education Cluster" itemValue="Education"></apex:selectOption>
+            <apex:selectOption itemLabel="Well-Being Cluster" itemValue="Well-Being" ></apex:selectOption>
         </apex:selectList>
         <apex:pageBlockSectionItem >       
             <apex:outputLabel ></apex:outputLabel>
@@ -49,7 +49,17 @@
         <th>Interval</th>
         <th>Domain</th>
         <apex:repeat value="{!Columns}" var="col">
-            <th><apex:outputLink value="/{!mapColumnAssess[col].id}" target="_blank"> {!col}</apex:outputLink></th>
+            <th>
+            	<apex:outputLink value="/{!mapColumnAssess[col].id}" target="_blank"> 
+            		<apex:outputPanel rendered="{!mapColumnAssess[col].Interval__c != 'Quarterly'}">{!mapColumnAssess[col].Interval__c}</apex:outputPanel>
+            		<apex:outputPanel rendered="{!mapColumnAssess[col].Interval__c == 'Quarterly'}">Q&nbsp;{!mapColumnAssess[col].Quarter__c}</apex:outputPanel>
+            		 
+            		<br/>
+            		<apex:outputField value="{!mapColumnAssess[col].Assessment_Date__c}">
+            			
+            		</apex:outputField>
+            		</apex:outputLink>
+    		</th>
         </apex:repeat>
     </tr>
 </thead>
