@@ -2183,27 +2183,56 @@
 							<apex:repeat value="{!pains}" var="pain">
 								<apex:inputhidden value="{!pain.Initial_Pain_Level__c}" id="initialPainLevel" />
 								<apex:inputhidden value="{!pain.Follow_up_Pain_Level__c}" id="followUpPainLevel" />
-								<apex:pageBlockSectionItem >
-									<apex:outputLabel value="Pain Level" />
-									<apex:outputPanel layout="none">
-										<c:Slider onChange="handleSliderChange('{!$Component.initialPainLevel}')" options="{!painSliderOptions}" initial="{!pain.Initial_Pain_Level__c}" morestyle="display: inline-block; width: 40%;" />
-										<apex:outputLabel value="Add Narrative Note" style="margin: auto 5px;" />
-										<apex:image value="{!$Resource.Redline}" />
-										<apex:inputTextarea value="{!pain.Narrative_Note__c}" style="vertical-align: top; " />
-										<apex:outputLabel value="Time Observed" style="margin: auto 5px;" />
-										<apex:image value="{!$Resource.Redline}" />
-										<apex:inputField value="{!pain.Time_Observed__c}" />
-									</apex:outputPanel>
-								</apex:pageBlockSectionItem>
+								
+									<apex:pageBlockSectionItem >
+										<apex:outputLabel value="Pain Level" />
+										<apex:outputPanel layout="none">
+											<c:Slider onChange="handleSliderChange('{!$Component.initialPainLevel}')" options="{!painSliderOptions}" initial="{!pain.Initial_Pain_Level__c}" morestyle="display: inline-block; width: 40%;" />
+											<!--  apex:outputLabel value="Add Narrative Note" style="margin: auto 5px;" styleClass="labelCol" /-->
+											<!--  apex:inputTextarea value="{!pain.Narrative_Note__c}" style="vertical-align: top; " rows="4" cols="45" /-->
+											<!--  apex:outputLabel value="Time Observed" style="margin: auto 5px;" styleClass="labelCol" /-->
+											<!--  apex:inputField value="{!pain.Time_Observed__c}" /-->
+										</apex:outputPanel>
+									</apex:pageBlockSectionItem>
+									
+									<apex:pageBlockSectionItem >
+										<apex:outputLabel value="Add Narrative Note" styleClass="labelCol" />
+										<apex:outputPanel> 
+											<div class="requiredInput">
+												<div class="requiredBlock"></div>
+												<apex:inputTextarea value="{!pain.Narrative_Note__c}" style="vertical-align: top; " rows="3" cols="40" />
+											</div>
+										</apex:outputPanel>
+									</apex:pageBlockSectionItem>
+									<apex:pageBlockSectionItem >
+										<apex:outputLabel value="Time Observed" styleClass="labelCol" />
+										<apex:outputPanel >
+											<div class="requiredInput">
+												<div class="requiredBlock"></div>
+												<apex:inputField value="{!pain.Time_Observed__c}" />
+											</div>
+										</apex:outputPanel>
+									</apex:pageBlockSectionItem>
+								
 								<apex:pageBlockSectionItem >
 									<apex:outputLabel value="Follow-up Pain Level" />
 									<apex:outputPanel layout="none">
 										<c:Slider onChange="handleSliderChange('{!$Component.followUpPainLevel}')" options="{!painSliderOptions}" initial="{!pain.Follow_up_Pain_Level__c}" morestyle="display: inline-block; width: 40%;" />
-										<apex:outputLabel value="Describe Effectiveness" style="margin: auto 5px;" />
-										<apex:image value="{!$Resource.Redline}" />
-										<apex:inputTextarea value="{!pain.Follow_up_Effectiveness__c}" style="vertical-align: top; " />
+										<!--  apex:outputLabel value="Describe Effectiveness" style="margin: auto 5px;" styleClass="labelCol"/>
+										<apex:inputTextarea value="{!pain.Follow_up_Effectiveness__c}" style="vertical-align: top; " rows="4" cols="45"/-->
 									</apex:outputPanel>
 								</apex:pageBlockSectionItem>
+								
+								<apex:pageBlockSectionItem >
+									<apex:outputLabel value="Describe Effectiveness" />
+									<apex:outputPanel >
+										<div class="requiredInput">
+												<div class="requiredBlock"></div>
+												<apex:inputTextArea value="{!pain.Follow_up_Effectiveness__c}" rows="3" cols="40"/>
+											</div>
+									</apex:outputPanel>
+								</apex:pageBlockSectionItem>
+								
 							</apex:repeat>
 						</apex:pageBlockSection>
 					</apex:actionRegion>
