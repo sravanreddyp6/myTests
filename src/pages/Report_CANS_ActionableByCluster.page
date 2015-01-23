@@ -1,4 +1,4 @@
-<apex:page controller="Report_CANS_ActionableByCluster" sidebar="false" docType="html-5.0" readOnly="true" >
+<apex:page controller="Report_CANS_ActionableByCluster" sidebar="false" docType="html-5.0" readOnly="true" title="CANS Actionable Items by Cluster">
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:includeScript value="{!$Resource.jquery}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
@@ -35,40 +35,67 @@
 .pbTitle{
     width: 300px !important;
 }
+.header{
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px;
+}
 </style>
-<apex:form >
     
     
+
+<div class="header">CANS Actionable Items by Cluster</div>
 <apex:pageMessages id="messages" ></apex:pageMessages>
 
-<apex:pageBlock id="CANSReportBlock" title="CANS Actionable by Cluster">
-<apex:actionregion >
-    
-    <apex:pageBlockSection columns="1">
-    
-    
+<apex:form >
+
+<apex:pageBlock id="CANSReportBlock" title="Filters">
+
+    <apex:pageBlockButtons location="bottom" >
+        <apex:commandButton value="Run" 
+            action="{!runReport}" 
+            reRender="dataTable, tbl_maker, messages" 
+            status="myStatus"
+            />
+   </apex:pageBlockButtons>
+   <apex:pageBlockSection columns="1">
+    <apex:pageBlockSectionItem>
+    <apex:outputlabel value="" />
     <apex:outputPanel >
        <apex:outputLabel styleclass="labelCol" value="Start Date" for="start_date" /> <apex:input type="auto" id="start_date" size="10"  label="Start Date" styleClass="datepicker" value="{! StartDate}" />
        <apex:outputLabel styleclass="labelCol" value="End Date" for="end_date" /> <apex:input type="auto" id="end_date" size="10"  label="End Date" styleClass="datepicker" value="{! EndDate}" />
     </apex:outputPanel>
-    <apex:outputPanel >
+    </apex:pageBlockSectionItem>
+    
+    <apex:pageBlockSectionItem>
+    <apex:outputlabel value="" />
+    <apex:outputPanel>
         <apex:outputLabel styleClass="labelCol" value="Cluster" />
            <apex:selectList size="1" value="{!selectedCluster}" >
            <apex:selectOptions value="{!optClusters}" />
        </apex:selectList>
     </apex:outputPanel> 
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem>
+    <apex:outputlabel value="" />
     <apex:outputPanel >
         <apex:outputLabel styleClass="labelCol" value="Interval" />
            <apex:selectList size="1" value="{!selectedInterval}" >
            <apex:selectOptions value="{!optInterval}" />
           </apex:selectList>
     </apex:outputPanel>
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem>
+    <apex:outputlabel value="" />
 	<apex:outputPanel >
         <apex:outputLabel styleClass="labelCol" value="DD Status" />
            <apex:selectList size="1" value="{!selectedDD}" >
            <apex:selectOptions value="{!optDD}" />
           </apex:selectList>
     </apex:outputPanel>
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem>
+    <apex:outputlabel value="" />
 	<apex:outputPanel >
 	<apex:outputLabel styleClass="labelCol" value="Service Lines" />
 		<apex:selectCheckboxes value="{!selectedSL}" id="serviceLine" >
@@ -76,23 +103,16 @@
 	</apex:selectCheckboxes>
 	<a href="#" onclick="selectSL(1)">Select All</a> | <a href="#" onclick="selectSL(0)">Deselect All</a>
 	</apex:outputPanel>
-<apex:pageBLockSectionItem >
-    <apex:outputPanel layout="none" id="buttonPanel">
-        <apex:commandButton value="Run" 
-            action="{!runReport}" 
-            reRender="dataTable, tbl_maker, messages, buttonPanel" 
-            status="myStatus"
-            />
-    </apex:outputPanel>
-       </apex:pageBLockSectionItem>
+	</apex:pageBlockSectionItem>
        </apex:pageBlockSection> 
-</apex:actionregion>
+	
+
 </apex:pageBlock>
 </apex:form>
 
-<apex:pageBlock id="dataTable" >     
+<apex:pageBlock id="dataTable" title="Results">     
 	 <apex:pageBlockButtons > 
-            <div style="float: right"><input class="btn" type="button" onclick="tableToExcel('mytbl', 'CANS Actionable By Cluster')" value="Export to Excel" rendered="{!showData}" /></div>
+            <div style="float: right"><input class="btn" type="button" onclick="tableToExcel('mytbl', 'CANS Actionable Items By Cluster')" value="Export to Excel" rendered="{!showData}" /></div>
         </apex:pageBlockButtons>
     
     <apex:pageBlockTable id="mytbl" style="width:100%" value="{!CANSStates}" var="s" rendered="{!showData}">
