@@ -68,32 +68,40 @@ td.details-control {
 table.dataTable tbody td.no-padding {
     padding: 0;
 }
-
+.header{
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px;
+}
 </style>
+
+<div class="header">CANS with Developmental Disability Identified at 1st Quarterly Assessment</div>
 
 	<apex:form >
 
 
 		<apex:pageMessages id="messages"></apex:pageMessages>
 
-		<apex:pageBlock id="CANSReportBlock"
-			title="CANS with Developmental Disability Identified at 1st Quarterly Assessment">
-			<apex:actionregion >
-
+		<apex:pageBlock id="CANSReportBlock" title="Filters">
+				<apex:pageBlockButtons location="bottom">
+				<apex:commandButton value="Run" action="{!runReport}"
+								reRender="dataTable, tbl_maker, messages, buttonPanel"
+								status="myStatus" />
+				</apex:pageBlockButtons>
+								
 				<apex:pageBlockSection columns="1">
-
-
+				<apex:pageBlockSectionItem>
+				<apex:outputLabel value="" />
 					<apex:outputPanel >
-						<apex:outputLabel styleclass="labelCol" value="Start Date"
-							for="start_date" />
-						<apex:input type="auto" id="start_date" size="10"
-							label="Start Date" styleClass="datepicker" value="{! StartDate}" />
-						<apex:outputLabel styleclass="labelCol" value="End Date"
-							for="end_date" />
-						<apex:input type="auto" id="end_date" size="10" label="End Date"
-							styleClass="datepicker" value="{! EndDate}" />
+						<apex:outputLabel styleclass="labelCol" value="Start Date" for="start_date" />
+						<apex:input type="auto" id="start_date" size="10" label="Start Date" styleClass="datepicker" value="{! StartDate}" />
+						<apex:outputLabel styleclass="labelCol" value="End Date" for="end_date" />
+						<apex:input type="auto" id="end_date" size="10" label="End Date" styleClass="datepicker" value="{! EndDate}" />
 					</apex:outputPanel>
-					 
+					</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem>
+				<apex:outputLabel value="" />
+									 
 					<apex:outputPanel >
 					<apex:outputLabel styleClass="labelCol" value="Service Lines" />
  					<apex:selectCheckboxes value="{!selectedSL}" id="serviceLine" >
@@ -101,20 +109,15 @@ table.dataTable tbody td.no-padding {
 					</apex:selectCheckboxes>
 					<a href="#" onclick="selectSL(1)">Select All</a> | <a href="#" onclick="selectSL(0)">Deselect All</a>
 					</apex:outputPanel>
-
-					<apex:pageBLockSectionItem >
-						<apex:outputPanel layout="none" id="buttonPanel">
-							<apex:commandButton value="Run" action="{!runReport}"
-								reRender="dataTable, tbl_maker, messages, buttonPanel"
-								status="myStatus" />
-						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem>
+				<apex:outputLabel value="" />
 					</apex:pageBLockSectionItem>
 				</apex:pageBlockSection>
-			</apex:actionregion>
 		</apex:pageBlock>
 	</apex:form>
 
-	<apex:pageBlock id="dataTable">
+	<apex:pageBlock id="dataTable" title="Results">
 	<apex:pageBlockButtons id="exportbtn"> 
             <div style="float: right"><input class="btn" type="button" onclick="tableToExcel('stateRows', 'CANS DD at 1st Quarterly')" value="Export to Excel" rendered="{!showData}" /></div>
         </apex:pageBlockButtons>
