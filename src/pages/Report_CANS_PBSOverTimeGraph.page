@@ -1,4 +1,4 @@
-<apex:page controller="Report_CANS_PBSOverTimeGraph" sidebar="false" docType="html-5.0" readOnly="true" >
+<apex:page controller="Report_CANS_PBSOverTimeGraph" sidebar="false" docType="html-5.0" readOnly="true" title="CANS Over Time by Person Being Served (Graph)">
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:includeScript value="{!$Resource.jquery}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
@@ -35,45 +35,53 @@
 .pbTitle{
     width: 300px !important;
 }
+.header{
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px;
+}
 </style>
 <apex:form >
     
-    
+<div class="header">CANS Over Time by Person Being Served (Graph)</div>    
 <apex:pageMessages id="messages" ></apex:pageMessages>
 
-<apex:pageBlock id="CANSReportBlock" title="CANS Over Time by Person Being Served">
-<apex:actionregion >
-    
+<apex:pageBlock id="CANSReportBlock" title="Filters">
+<apex:pageblockbuttons location="bottom">
+    <apex:commandButton value="Run" 
+            action="{!runReport}" 
+            reRender="dataTable, messages" 
+            status="myStatus"
+            />
+	</apex:pageblockbuttons>
+	
     <apex:pageBlockSection columns="1">
-    
+	<apex:pageBlockSectionItem >
+	<apex:outputlabel value="" />    
     <apex:outputPanel >
         <apex:outputLabel styleClass="labelCol" value="Person Being Served" />
            <apex:selectList size="1" value="{!selectedPBS}" >
            <apex:selectOptions value="{!optPBS}" />
        </apex:selectList>
     </apex:outputPanel> 
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+	<apex:outputlabel value="" />    
     
     <apex:outputPanel >
-        <apex:outputLabel styleClass="labelCol" value="Cluster" />
+        <apex:outputLabel styleClass="labelCol" value="CANS Assessment Data" />
            <apex:selectList size="1" value="{!selectedCluster}" >
            <apex:selectOptions value="{!optClusters}" />
        </apex:selectList>
     </apex:outputPanel> 
-<apex:pageBLockSectionItem >
-    <apex:outputPanel layout="none" id="buttonPanel">
-        <apex:commandButton value="Run" 
-            action="{!runReport}" 
-            reRender="dataTable, messages, buttonPanel" 
-            status="myStatus"
-            />
-    </apex:outputPanel>
-       </apex:pageBLockSectionItem>
+</apex:pageBlockSectionItem>
+    
        </apex:pageBlockSection> 
-</apex:actionregion>
+
 </apex:pageBlock>
 </apex:form>
 
-<apex:pageBlock id="dataTable" >     
+<apex:pageBlock id="dataTable" title="Results">     
     
     <apex:pageBlockTable id="mytbl" style="width:100%" value="{!pbsCANS}" var="s" rendered="false">
         <apex:column headerValue="Assessment Name" value="{!s.assessment_name}" />
