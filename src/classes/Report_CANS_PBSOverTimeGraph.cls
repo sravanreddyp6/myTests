@@ -23,9 +23,9 @@ public with sharing class Report_CANS_PBSOverTimeGraph {
         
         optClusters =  new List<SelectOption>();
         optClusters.Add( new SelectOption('','All'));
-        optClusters.Add( new SelectOption('Behavior_and_Risk','Behavior and Risk'));
-        optClusters.Add( new SelectOption('Education','Education'));
-        optClusters.Add( new SelectOption('WellBeing','Well Being'));
+        optClusters.Add( new SelectOption('Behavior_and_Risk','Behavior & Risk Cluster'));
+        optClusters.Add( new SelectOption('Education','Education Cluster'));
+        optClusters.Add( new SelectOption('WellBeing','Well-Being Cluster'));
     
             
         QuestionsList = new Map<ID, Assessment_Question__c>();
