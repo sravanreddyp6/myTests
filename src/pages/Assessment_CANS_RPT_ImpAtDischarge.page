@@ -31,11 +31,16 @@ function selectSL(  onoff ) {
 }	
 </script>
 <apex:form >
-<h1 style="font-size: 25px; padding: 9px; display: block;">Children with Improved CANS at Discharge</h1>
+<h1 style="font-size: 25px; padding: 9px; display: block;">Children with Improved CANS at Discharge by Cluster</h1>
 <apex:pageBlock title="Filters">
     <apex:pageBlockSection columns="1">
-        <apex:input type="auto"  id="startDate" label="Start Date" value="{!startDate}"/>
-        <apex:input type="auto"  id="endDate" label="End Date" value="{!endDate}"/>    
+    <apex:pageBlockSectionItem >
+    <apex:outputLabel styleclass="labelCol" value="Start Date" for="start_date" />
+    <apex:outputPanel >
+        <apex:input type="auto" id="start_date" size="10"  label="Start Date" styleClass="datepicker" value="{! StartDate}" />
+       <apex:outputLabel styleclass="labelCol" value="End Date" for="end_date" /> <apex:input type="auto" id="end_date" size="10"  label="End Date" styleClass="datepicker" value="{! EndDate}" />
+    </apex:outputPanel>
+    </apex:pageBlockSectionItem>  
         <apex:selectList required="true" Value="{!SelectedCluster}" size="1" label="Cluster">
         	<apex:selectOption itemLabel="--None--" itemValue=""></apex:selectOption>
             <apex:selectOption itemLabel="Behavior & Risk" itemValue="Behavior & Risk"></apex:selectOption>
