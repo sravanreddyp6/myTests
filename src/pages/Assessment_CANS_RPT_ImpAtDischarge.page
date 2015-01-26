@@ -12,7 +12,7 @@
 #ui-datepicker-div {margin-top: 20px !important;}
 </style>
 <script>
-	j$ = jQuery.noConflict();
+    j$ = jQuery.noConflict();
 function selectSL(  onoff ) {
        if ( onoff == 0 ) {
               // turn them all off
@@ -28,7 +28,7 @@ function selectSL(  onoff ) {
                         });
               }
  
-}	
+}   
 </script>
 <apex:form >
 <h1 style="font-size: 25px; padding: 9px; display: block;">Children with Improved CANS at Discharge by Cluster</h1>
@@ -42,13 +42,13 @@ function selectSL(  onoff ) {
     </apex:outputPanel>
     </apex:pageBlockSectionItem>  
         <apex:selectList required="true" Value="{!SelectedCluster}" size="1" label="Cluster">
-        	<apex:selectOption itemLabel="--None--" itemValue=""></apex:selectOption>
+            <apex:selectOption itemLabel="--None--" itemValue=""></apex:selectOption>
             <apex:selectOption itemLabel="Behavior & Risk" itemValue="Behavior & Risk"></apex:selectOption>
             <apex:selectOption itemLabel="Education" itemValue="Education"></apex:selectOption>
             <apex:selectOption itemLabel="Well-Being" itemValue="Well-Being" ></apex:selectOption>
         </apex:selectList>
         <apex:selectList required="true" Value="{!selectedDD_Status}" size="1" label="DD Status">
-        	<apex:selectOption itemLabel="--None--" itemValue=""></apex:selectOption>
+            <apex:selectOption itemLabel="--None--" itemValue=""></apex:selectOption>
             <apex:selectOption itemLabel="All PBS" itemValue="All"></apex:selectOption>
             <apex:selectOption itemLabel="Only PBS with DD" itemValue="ONLY_DD"></apex:selectOption>
             <apex:selectOption itemLabel="Only PBS without DD" itemValue="No_DD" ></apex:selectOption>
@@ -57,14 +57,14 @@ function selectSL(  onoff ) {
         <apex:outputLabel >Service Lines</apex:outputLabel>
         <apex:outputPanel >   
         <apex:selectCheckboxes required="true" value="{!selectedServiceLines}" id="serviceLine">
-        	<apex:selectOptions value="{!serviceLines}"></apex:selectOptions>
+            <apex:selectOptions value="{!serviceLines}"></apex:selectOptions>
         </apex:selectCheckboxes>
         <a href="#" onclick="selectSL(1)">Select All</a> | <a href="#" onclick="selectSL(0)">Deselect All</a>
         </apex:outputPanel>
         </apex:pageBlockSectionItem>
         <apex:pageBlockSectionItem >
-        	<apex:outputLabel ></apex:outputLabel>
-        	<apex:commandButton value="Run" action="{!runRpt}" reRender="DATA_SET" status="myStatus"></apex:commandButton>
+            <apex:outputLabel ></apex:outputLabel>
+            <apex:commandButton value="Run" action="{!runRpt}" reRender="DATA_SET" status="myStatus"></apex:commandButton>
         </apex:pageBlockSectionItem>
         
     </apex:pageBlockSection>
@@ -74,15 +74,15 @@ function selectSL(  onoff ) {
 <apex:pageMessages />
 <apex:pageBlock title="Results" rendered="{!jsonStateData != null}">
 <apex:pageBlockButtons >
-		<div style="float: right">
-			<input class="btn" type="button" onclick="tableToExcel('State_Data', 'Children with Improved CANS at Discharge')" value="Export to Excel" />
-		</div>
+        <div style="float: right">
+            <input class="btn" type="button" onclick="tableToExcel('State_Data', 'Children with Improved CANS at Discharge')" value="Export to Excel" />
+        </div>
 </apex:pageBlockButtons>
 <br/>
 <table id="State_Data" class="display" cellspacing="0" width="100%">
         <thead>
             <tr>
-            	<th></th>
+                <th></th>
                 <th>State</th>
                 <th># PBS Discharged</th>
                 <th># PBS with Discharge CANS</th>
@@ -134,19 +134,19 @@ console.log('started');
         /*"ordering": false, */
         "bFilter": false, 
         "bInfo" : false,
-		"columnDefs": [
+        "columnDefs": [
             {
                 "targets": [ 0 ],
                 "visible": false,
                 "searchable": false
             },
             {
-            	"targets": [ 1,2,3,4, 5 ],
-            	"orderable": false
+                "targets": [ 1,2,3,4, 5 ],
+                "orderable": false
             }
         ],            
         "columns": [
-        	{ "data": "sortKey"},
+            { "data": "sortKey"},
             { "data": "State"},
             { "data": "NumberPBSDisCharge"},
             { "data": "NumberPBSDisChargeWithCANS"},
@@ -158,6 +158,7 @@ console.log('started');
 } );
 
 </script>
+<i>Report compares the 1st Quarterly CANS and the Discharge CANS Assessments to determine improvement.</i>
 </apex:pageBlock>
 </apex:outputPanel>
 <script>
