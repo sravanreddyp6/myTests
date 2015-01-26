@@ -141,7 +141,8 @@ public with sharing class Report_CANS_ActionableByCluster {
 
     public void buildRpt(){
          
-        Integer pbscount = 0;
+        Integer pbscount = 0, uniquePBS = 0;
+        
         String pbstate = '';
         
         List<ID> DDPBS = new LIst<ID>();
@@ -156,7 +157,7 @@ public with sharing class Report_CANS_ActionableByCluster {
 				DDPBS.Add( (ID) ar.assessment__r.accountperson__c);
         }	                                                  
                                                   
-        String strQuery = 'select count(accountperson__c), admission__r.state__c from assessment__c where id in (select assessment__c ' + 
+        String strQuery = 'select count_distinct(accountperson__c), distinct(accountperson__c), admission__r.state__c from assessment__c where id in (select assessment__c ' + 
                                                          ' from assessment_response__c' + 
                                                          ' where score__c in (2, 6)' +
                                                          ' and question__r.question_number__c in :questionsInScope' ;
@@ -186,16 +187,17 @@ public with sharing class Report_CANS_ActionableByCluster {
         // count of qualifying 'actionable' = number of PBS with intake or discharge scoring 2 or 3 for any question in the cluster
         list<AggregateResult> QualifyingCountByState = database.query(strQuery);
 
-		integer totalPBS = 0, totalQual = 0;
+		integer totalPBS = 0, totalQual = 0; 
         for ( AggregateResult ar : QualifyingCountByState ) {
             
-            pbscount = (Integer)ar.get('expr0');
+            uniquePBS = (Integer)ar.get('expr0');
+            pbscount = (Integer)ar.get('expr1');
             pbstate = (String)ar.get('state__c');
             
             StateRowData stdata = srd.get(pbstate);
-            stdata.PBSCount = pbscount;
+            stdata.PBSCount = uniquePBS;
             stdata.QualifyingCount = pbscount;
-            totalPBS += pbscount;
+            totalPBS += uniquePBS;
             totalQual += pbscount;
             
         }
@@ -282,7 +284,7 @@ public with sharing class Report_CANS_ActionableByCluster {
             strState = var_State;
             PBSCount = 0;
             QualifyingCount = 0; 
-			          
+			     
         }
     }
    
