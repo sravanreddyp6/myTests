@@ -255,7 +255,7 @@ public with sharing class Report_CANS_DDatIntake {
         public double calcPct( ) {
         	
         	if ( PBSCount > 0 ) 
-        		PercentDD= ((Double)qualifyingCount / (Double)PBSCount ) *100;
+        		PercentDD= ((Double)qualifyingCount / (Double)PBSCount ); // will be formatted at % by page
         	else
         		PercentDD = 0;
         		
