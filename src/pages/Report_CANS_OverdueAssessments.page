@@ -64,6 +64,9 @@
 				]
 			});
 		});
+		window.tableToExcel = function () {
+			window.open("/apex/Report_CANS_OverdueAssessmentsExcel", "_blank");
+		};
 	</script>
 	<style>
 		.pbTitle {
@@ -71,6 +74,11 @@
 		}
 	</style>
 	<apex:pageBlock id="mainBlock" title="Overdue CANS Assessment">
+		<apex:pageBlockButtons location="top">
+			<apex:form>
+				<apex:commandButton onclick="tableToExcel(); return false;" value="Export To Excel" />
+			</apex:form>
+		</apex:pageBlockButtons>
 		<apex:outputPanel id="assessmentTablePanel">
 			<table id="assessmentTable">
 				<thead>
