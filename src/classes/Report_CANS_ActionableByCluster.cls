@@ -157,7 +157,7 @@ public with sharing class Report_CANS_ActionableByCluster {
 				DDPBS.Add( (ID) ar.assessment__r.accountperson__c);
         }	                                                  
                                                   
-        String strQuery = 'select count_distinct(accountperson__c), distinct(accountperson__c), admission__r.state__c from assessment__c where id in (select assessment__c ' + 
+        String strQuery = 'select count_distinct(accountperson__c), count(accountperson__c), admission__r.state__c from assessment__c where id in (select assessment__c ' + 
                                                          ' from assessment_response__c' + 
                                                          ' where score__c in (2, 6)' +
                                                          ' and question__r.question_number__c in :questionsInScope' ;
