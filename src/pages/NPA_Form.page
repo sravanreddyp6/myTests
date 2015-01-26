@@ -2035,7 +2035,7 @@ Host Home 13
                 <apex:commandButton style="{!btnStyle2}" value="Share This Record" action="/p/share/CustomObjectSharingDetail?parentId={!theAudit.Id}" rendered="{!$ObjectType.NPA_Audit__c.Fields.Locked__c.updateable}" /> 
                 <apex:commandButton style="{!btnStyle2}" value="Change Owner" action="/{!theAudit.Id}/a?retURL={!theAudit.Id}" rendered="{!$ObjectType.NPA_Audit__c.Fields.Locked__c.updateable}"/>
                 <apex:commandButton style="{!btnStyle2}" value="Delete" action="{!Delete}" onclick="return confirm('Are you sure?')"/>
-                <apex:commandButton style="{!btnStyle2}" value="Unlock" action="{!Unlock}" onclick="return confirm('Are you sure?')"/>
+                <apex:commandButton style="{!btnStyle2}" value="Unlock" action="{!Unlock}" rendered="{!$ObjectType.NPA_Audit__c.Fields.Locked__c.updateable}" onclick="return confirm('Are you sure?')"/>
                 
             </apex:pageblockSection>
         
