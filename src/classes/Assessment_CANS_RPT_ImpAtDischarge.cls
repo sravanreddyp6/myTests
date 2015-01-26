@@ -12,40 +12,40 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
         }
     }
     set<id> PBSbyDD_Status {
-    	get{
-    		set<id> returnInfo = new set<id>();
+        get{
+            set<id> returnInfo = new set<id>();
 
-    		if(selectedDD_Status == 'ONLY_DD'){
-    			for(Assessment_Response__c item: [select id, Assessment__r.AccountPerson__r.Id 
-    													from Assessment_Response__c 
-    													Where Question__r.Question_Number__c = 37 
-    													AND Assessment__r.disregard__c = false 
-    													AND Score__c > 0 
-    													AND Assessment__r.Interval__c = 'Quarterly' 
+            if(selectedDD_Status == 'ONLY_DD'){
+                for(Assessment_Response__c item: [select id, Assessment__r.AccountPerson__r.Id 
+                                                        from Assessment_Response__c 
+                                                        Where Question__r.Question_Number__c = 37 
+                                                        AND Assessment__r.disregard__c = false 
+                                                        AND Score__c > 0 
+                                                        AND Assessment__r.Interval__c = 'Quarterly' 
                                                         AND Assessment__r.Quarter__c = 1 ]){
-    				returnInfo.add(item.Assessment__r.AccountPerson__r.Id);
-    			}
-    		}
-    		else if(selectedDD_Status == 'No_DD'){
-    			for(Assessment_Response__c item: [select id, Assessment__r.AccountPerson__r.Id 
-    												from Assessment_Response__c 
-    													Where Question__r.Question_Number__c = 37 
-    													AND Assessment__r.disregard__c = false 
-    													AND Score__c = 0 
-    													AND Assessment__r.Interval__c = 'Quarterly' 
+                    returnInfo.add(item.Assessment__r.AccountPerson__r.Id);
+                }
+            }
+            else if(selectedDD_Status == 'No_DD'){
+                for(Assessment_Response__c item: [select id, Assessment__r.AccountPerson__r.Id 
+                                                    from Assessment_Response__c 
+                                                        Where Question__r.Question_Number__c = 37 
+                                                        AND Assessment__r.disregard__c = false 
+                                                        AND Score__c = 0 
+                                                        AND Assessment__r.Interval__c = 'Quarterly' 
                                                         AND Assessment__r.Quarter__c = 1]){
-    				returnInfo.add(item.Assessment__r.AccountPerson__r.Id);
-    			}
-    		}
+                    returnInfo.add(item.Assessment__r.AccountPerson__r.Id);
+                }
+            }
 
-    		else{
-    			for(Assessment__c item: [select id, AccountPerson__r.Id from Assessment__c Where disregard__c = false ]){
-    				returnInfo.add(item.AccountPerson__r.Id);
-    			}
-    		}
+            else{
+                for(Assessment__c item: [select id, AccountPerson__r.Id from Assessment__c Where disregard__c = false ]){
+                    returnInfo.add(item.AccountPerson__r.Id);
+                }
+            }
 
-    		return returnInfo;
-    	}
+            return returnInfo;
+        }
     }
     public list<string> selectedServiceLines {get;set;}
     public list<SelectOption> serviceLines {get; set;}
@@ -62,13 +62,13 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
         //runRpt();
         selectedServiceLines = new list<string>();
         serviceLines = new list<SelectOption>();
-		Schema.DescribeFieldResult fieldResult = Assessment__c.Service_Line__c.getDescribe();
-		List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
-		        
-		for( Schema.PicklistEntry f : ple){
-		      serviceLines.add(new SelectOption(f.getLabel(), f.getValue()));
-		      selectedServiceLines.add(f.getValue());
-	   }               
+        Schema.DescribeFieldResult fieldResult = Assessment__c.Service_Line__c.getDescribe();
+        List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
+                
+        for( Schema.PicklistEntry f : ple){
+              serviceLines.add(new SelectOption(f.getLabel(), f.getValue()));
+              selectedServiceLines.add(f.getValue());
+       }               
 
     }
 
@@ -81,7 +81,7 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
     }
 
     public void buildRpt(){
-    	// this determines the states we will work with 
+        // this determines the states we will work with 
         list<AggregateResult> statesWithIntakeAssess = [select Admission__r.State__c
                                         from Assessment__c 
                                         where Interval__c = 'Intake' 
@@ -170,24 +170,9 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
         }
 
         for(PersonRowData item : mapPersonRowData.values()) {
-            if(item.disChargeScore > item.IntakeScore){mapStateRowData.get(item.state).NumberPBSWithImprovement += 1;}
+            if(item.disChargeScore < item.IntakeScore){mapStateRowData.get(item.state).NumberPBSWithImprovement += 1;}
         }
 
-/*
-        StateRowData aqrow = new StateRowData('AQ');
-            aqrow.NumberPBSDisCharge = 10;
-            aqrow.NumberPBSDisChargeWithCANS = 3;
-            aqrow.NumberPBSWithImprovement = 1;
-
-            mapStateRowData.put('AQ', aqrow);
-        StateRowData zxrow = new StateRowData('ZX');
-            zxrow.NumberPBSDisCharge = 10;
-            zxrow.NumberPBSDisChargeWithCANS = 3;
-            zxrow.NumberPBSWithImprovement = 2;
-
-            mapStateRowData.put('ZX', zxrow);            
-
-*/
         StateRowData TotalRow = new StateRowData('Total');
         TotalRow.sortKey = 'zz';
         
@@ -197,7 +182,7 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
                 item.PercentPBSWithImprovement = item.PercentPBSWithImprovement * 100;
                 item.PrettyPercentPBSWithImp = string.valueof(item.PercentPBSWithImprovement) + '%';
             }
-            else{item.PrettyPercentPBSWithImp = '0%';}
+            
 
             TotalRow.NumberPBSDisCharge += item.NumberPBSDisCharge;
             TotalRow.NumberPBSDisChargeWithCANS += item.NumberPBSDisChargeWithCANS;
@@ -205,12 +190,12 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
             
 
         }
-    	if(TotalRow.NumberPBSDisChargeWithCANS != 0){ 
-        TotalRow.PercentPBSWithImprovement = (decimal.valueof(TotalRow.NumberPBSWithImprovement) / decimal.valueof(TotalRow.NumberPBSDisChargeWithCANS)).setScale(2);
-        TotalRow.PercentPBSWithImprovement = TotalRow.PercentPBSWithImprovement * 100;
-        TotalRow.PrettyPercentPBSWithImp = string.valueof(TotalRow.PercentPBSWithImprovement) + '%';
-    	}
-		mapStateRowData.put('total', TotalRow);
+        if(TotalRow.NumberPBSDisChargeWithCANS != 0){ 
+            TotalRow.PercentPBSWithImprovement = (decimal.valueof(TotalRow.NumberPBSWithImprovement) / decimal.valueof(TotalRow.NumberPBSDisChargeWithCANS)).setScale(2);
+            TotalRow.PercentPBSWithImprovement = TotalRow.PercentPBSWithImprovement * 100;
+            TotalRow.PrettyPercentPBSWithImp = string.valueof(TotalRow.PercentPBSWithImprovement) + '%';
+        }
+        mapStateRowData.put('total', TotalRow);
 
         jsonStateData = JSON.serializePretty(mapStateRowData.values());
         jsonPersonRowData = JSON.serializePretty(mapPersonRowData.values());
@@ -251,7 +236,8 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
             NumberPBSDisCharge = 0;
             NumberPBSDisChargeWithCANS = 0;
             NumberPBSWithImprovement = 0;
-            PercentPBSWithImprovement = 0;
+            PercentPBSWithImprovement = 0.00;
+            PrettyPercentPBSWithImp = '0.00%';
         }
     }
 
