@@ -131,7 +131,7 @@ table.dataTable tbody td.no-padding {
 	                        <th style="text-align:right">Persons Being Served with 1st Quarterly</th>
 	                        <th style="text-align:right">Persons Being Served with Developmental Disability at 1st Quarterly</th>
                             <th style="text-align:right">Percent with Developmental Disability at 1st Quarterly</th>
-	                        <th style="display:none">Details</th>
+	                        <th style="display:none"></th>
 	                    </tr>
 	                </thead>
 	                <tbody>
@@ -141,7 +141,7 @@ table.dataTable tbody td.no-padding {
 	                                <td>{!s}</td>
 	                                <td style="text-align:right">{!srd[s].PBSCount}</td>
 	                                <td style="text-align:right">{!srd[s].QualifyingCount}</td>
-	                                <td style="text-align:right"><apex:outputtext value="{0,Number, #0.00}"><apex:param value="{!srd[s].PercentDD}" /></apex:outputtext></td>
+	                                <td style="text-align:right"><apex:outputtext value="{0,Number, #0.00%}"><apex:param value="{!srd[s].PercentDD}" /></apex:outputtext></td>
 	                                <td style="display:none">{! if (CONTAINS(asmtStates, s), asmtsByState[s],'' ) }</td>
 	                            </tr>
 	                    </apex:repeat>
@@ -226,7 +226,7 @@ j$(document).ready(function() {
 	initializeStateTable = function(){
     var table = j$('#stateRows').DataTable({
                     "scrollCollapse":   true,
-                    "order"         :   [[1, 'asc']],
+                    "ordering"      :   false,
                     "paging"        :   false,
                     "searching"		: 	false,
                     "columnDefs"    :   [{
