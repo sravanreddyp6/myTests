@@ -123,6 +123,10 @@
         
         <apex:column style="text-align:right">
             <apex:facet name="header">Persons Being Served With Actionable Items</apex:facet>
+            {!srd[s].PBSCount}
+        </apex:column>
+        <apex:column style="text-align:right">
+            <apex:facet name="header">Assessments With Actionable Items</apex:facet>
             {!srd[s].QualifyingCount}
         </apex:column>
         <apex:repeat var="q" value="{!QuestionsList}">
