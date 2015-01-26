@@ -1,4 +1,4 @@
-<apex:page controller="Report_CANS_ActionableItems">
+<apex:page controller="Report_CANS_ActionableItems" docType="html-5.0">
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
@@ -58,8 +58,8 @@
 			}
 		});
 		jQuery(document).ready(function($) {
-			window.setUpTable = function () {
-				$(document.getElementById('{!$Component.mainForm.responsesBlock.responses}')).dataTable({
+			window.setUpTable = function() {
+				window.responsesTable = $(document.getElementById('{!$Component.mainForm.responsesBlock.responses}')).dataTable({
 					columnDefs: [{
 						type: 'datetime-us-flex',
 						targets: 2
@@ -96,27 +96,30 @@
 	<apex:form id="mainForm">
 		<apex:pageBlock id="mainBlock" title="CANS Actionable Items">
 			<apex:pageBlockSection columns="2">
-				<apex:pageBlockSectionItem >
+				<apex:pageBlockSectionItem>
+					<apex:outputLabel value="Start Date" />
+					<apex:input type="auto" styleClass="datepicker" value="{!startDate}" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem>
+					<apex:outputLabel value="End Date" />
+					<apex:input type="auto" styleClass="datepicker" value="{!endDate}" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem>
 					<apex:outputLabel value="Score" />
 					<apex:selectList value="{!scoreChosen}" size="1" required="true">
 						<apex:selectOptions value="{!scoreOptions}" />
 					</apex:selectList>
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem />
-				<apex:pageBlockSectionItem >
-					<apex:outputLabel value="Start Date" />
-					<apex:inputField value="{!dummyStartDateAssessment.Assessment_Date__c}" />
-				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem >
-					<apex:outputLabel value="End Date" />
-					<apex:inputField value="{!dummyEndDateAssessment.Assessment_Date__c}" />
-				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
 			<apex:pageBlockButtons location="bottom">
 				<apex:commandButton value="Run" action="{!runReport}" rerender="pageMessages, responsesBlock" status="pageProcessingStatus" oncomplete="setUpTable();" />
 			</apex:pageBlockButtons>
 		</apex:pageBlock>
 		<apex:pageBlock id="responsesBlock">
+			<apex:pageBlockButtons location="top">
+				<apex:commandButton onclick="tableToExcel(); return false;" value="Export To Excel" rendered="{!scoreChosen != ''}" />
+			</apex:pageBlockButtons>
 			<apex:pageBlockTable value="{!responses}" var="response" id="responses" rendered="{!scoreChosen != ''}">
 				<apex:column headerValue="Person Being Served">
 					<a href="/{!response.Assessment__r.Admission__r.Person_Being_Served__r.Id}">{!response.Assessment__r.Admission__r.Person_Being_Served__r.Name}</a>
@@ -131,6 +134,11 @@
 				<apex:column value="{!response.Question__r.Question_Title__c}" headerValue="Question Title" />
 				<apex:column value="{!response.Rating__c}" headerValue="Score" />
 			</apex:pageBlockTable>
+			<script>
+				window.tableToExcel = function () {
+					window.open("/apex/Report_CANS_ActionableItemsExcel?startDate={!URLENCODE(TEXT(startDate))}&endDate={!URLENCODE(TEXT(endDate))}&scoreChosen={!URLENCODE(scoreChosen)}", "_blank");
+				};
+			</script>
 		</apex:pageBlock>
 	</apex:form>
 	<apex:actionStatus id="pageProcessingStatus">

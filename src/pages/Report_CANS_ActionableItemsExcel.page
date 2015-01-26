@@ -1,0 +1,16 @@
+<apex:page controller="Report_CANS_ActionableItems" contentType="application/vnd.ms-excel#cans-actionable-{!today()}.xls">
+	<apex:dataTable value="{!responses}" var="response" id="responses">
+		<apex:column headerValue="Person Being Served">
+			<a href="/{!response.Assessment__r.Admission__r.Person_Being_Served__r.Id}">{!response.Assessment__r.Admission__r.Person_Being_Served__r.Name}</a>
+		</apex:column>
+		<apex:column headerValue="Assessment Name">
+			<a href="/{!response.Assessment__r.Id}">{!response.Assessment__r.Name}</a>
+		</apex:column>
+		<apex:column value="{!response.Assessment__r.Assessment_Date__c}" headerValue="Assessment Date" />
+		<apex:column headerValue="Owner">
+			<a href="/{!response.Assessment__r.Owner.Id}">{!response.Assessment__r.Owner.Name}</a>
+		</apex:column>
+		<apex:column value="{!response.Question__r.Question_Title__c}" headerValue="Question Title" />
+		<apex:column value="{!response.Rating__c}" headerValue="Score" />
+	</apex:dataTable>
+</apex:page>
