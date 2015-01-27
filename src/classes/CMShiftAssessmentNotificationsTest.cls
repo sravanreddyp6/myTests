@@ -1,5 +1,5 @@
 @isTest
-public with sharing class CMShiftAssessmentNotificationsTest {
+private class CMShiftAssessmentNotificationsTest {
 	static testmethod void myTest(){
 		
 	}
