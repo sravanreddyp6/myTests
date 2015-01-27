@@ -1395,7 +1395,7 @@ public void loadProgramList() {
       try{
       	  string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : ''; 
       	   
-      	  evaluation.Name = this.evaluation.Name+' - '+evaluation.Shift_Start_time__c.format('MM/dd/yyyy hh:mm a')+' - NSD - '+ownerfirstInitial+'. '+userinfo.getLastName();
+      	  evaluation.Name = this.evaluation.Name+' - '+evaluation.Shift_Start_time__c.format('MM/dd/yyyy HH:mm', UserInfo.getTimeZone().toString())+' - NSD - '+ownerfirstInitial+'. '+userinfo.getLastName();
           insert evaluation;
           PageReference pg = new PageReference('/apex/CMShiftAssessmentEdit?id='+evaluation.Id);
           return pg;
