@@ -241,7 +241,7 @@ public with sharing class CMShiftAssessmentView {
       	  String pbsLastName = this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__r.LastName != null ? this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__r.LastName : '' ;
     	  string pbsFirstinitial = this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__r.FirstName != null ? this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__r.FirstName.Substring(0,1) : '';
     	  string ownerfirstInitial = this.evaluation.Owner.FirstName != null ? this.evaluation.Owner.FirstName.Substring(0,1) : ''; 
-    	  this.evaluation.Name = pbsFirstinitial+'. '+pbsLastName+' - '+evaluation.Shift_Start_time__c.format('MM/dd/yyyy hh:mm a')+' - NSD - '+ownerfirstInitial+'. '+this.evaluation.Owner.LastName;
+    	  this.evaluation.Name = pbsFirstinitial+'. '+pbsLastName+' - '+evaluation.Shift_Start_time__c.format('MM/dd/yyyy HH:mm', UserInfo.getTimeZone().toString())+' - NSD - '+ownerfirstInitial+'. '+this.evaluation.Owner.LastName;
       	 
       	  update this.evaluation;
       	  
