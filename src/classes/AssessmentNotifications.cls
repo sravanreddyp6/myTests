@@ -1,6 +1,9 @@
 global class AssessmentNotifications implements Database.Batchable<sObject> {
 	// CHANGES FOR MINOR RELEASE 3/8/13.
 	global final String Query;
+	global final Id CANSInactiveUserErrorRecordType = [
+			Select id from RecordType where sObjectType = 'Error__c' and developerName ='CANS_Inactive_User'
+		].id;
 
 	global AssessmentNotifications(String q){
 		Query=q;
@@ -22,7 +25,8 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
 			SELECT Id, Admission__c, Admission__r.Name, Assessment_Date__c, Admission__r.status__c,
 			       OwnerId, Interval__c, Quarter__c, Assessment_Type__c, Assessment_Type__r.Name,
 			       Admission__r.Person_Being_Served__r.Account.LastName, Admission__r.Person_Being_Served__r.Account.FirstName,
-			       Owner.LastName, Owner.FirstName, Owner.Email
+			       Owner.LastName, Owner.FirstName, Owner.Email, Owner.IsActive,
+			       Owner.Name
 			FROM Assessment__c
 			WHERE Admission__c = :admIdsFromScope
 			ORDER BY Assessment_Date__c
@@ -47,6 +51,7 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
 			ownerToAccountMap.get(task.OwnerId).add(task.WhatId);
 		}
 		Set<Id> admissionsWithSentMail = new Set<Id>();
+		List<Error__c> inactiveUserErrors = new List<Error__c>();
 
 		// START: Loop through all assessments passed into batch job.
 		for(Sobject s : scope){
@@ -63,12 +68,13 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
 			}
 
 			// Call the method that figures out what notifications to send for this assessment.
-			parseAdmission(a, assmtsFromSameAdmissionAsThis, admissionsWithSentMail, ownerToAccountMap);
+			parseAdmission(a, assmtsFromSameAdmissionAsThis, admissionsWithSentMail, ownerToAccountMap, inactiveUserErrors);
 		}
+		insert inactiveUserErrors;
 	}
 
 
-	private void parseAdmission(Assessment__c a, List<Assessment__c> assmtsForThisAdmission, Set<Id> admissionsWithSentMail, Map<Id, Set<Id>> ownerToAccountMap){
+	private void parseAdmission(Assessment__c a, List<Assessment__c> assmtsForThisAdmission, Set<Id> admissionsWithSentMail, Map<Id, Set<Id>> ownerToAccountMap, List<Error__c> inactiveUserErrors){
 		Integer admissionsAssmtsMinusIntakeCounter = 0;
 		Date intakeAssmtDateForAdmission;
 		Integer daysSinceIntake = 0;
@@ -82,6 +88,19 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
 		if (admissionsWithSentMail.contains(a.Admission__c)) {
 			// Do not resend email, even though there might be more than 1
 			// assessments for 1 admission
+			return;
+		}
+
+		if (!a.Owner.IsActive) {
+			// HCANS-8 Do not send mail to inactive users, instead we keep a
+			// record for these users so that we can send a report out to
+			// necessary parties
+			System.debug('Record Owner ' + a.Owner.Name + ' is inactive. Adding Error record!');
+			inactiveUserErrors.add(new Error__c(
+				RecordTypeId = CANSInactiveUserErrorRecordType,
+				Record_Id__c = a.OwnerId,
+				Description__c = 'Emails are not sent to inactive users'
+			));
 			return;
 		}
 
