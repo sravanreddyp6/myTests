@@ -1,4 +1,4 @@
-public with sharing class Assessment_CANSdetail_Ex {
+public without sharing class Assessment_CANSdetail_Ex {	//keep this without sharing so the quarterly numbering sees all assessments regardless of ownership
     assessment__c assess = new assessment__c();
     
     public Assessment_CANSdetail_Ex(ApexPages.StandardController controller) {
