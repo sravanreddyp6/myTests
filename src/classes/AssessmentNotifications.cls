@@ -2,8 +2,8 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
 	// CHANGES FOR MINOR RELEASE 3/8/13.
 	global final String Query;
 	global final Id CANSInactiveUserErrorRecordType = [
-			Select id from RecordType where sObjectType = 'Error__c' and developerName ='CANS_Inactive_User'
-		].id;
+		Select id from RecordType where sObjectType = 'Error__c' and developerName ='CANS_Inactive_User'
+	].id;
 
 	global AssessmentNotifications(String q){
 		Query=q;
