@@ -14,17 +14,17 @@ public with sharing class CANSInactiveUserNotifications {
 			return;
 		}
 		User[] inactiveUsers = [SELECT Id, Name FROM User WHERE Id IN :inactiveUserIds];
-		Set<Id> recepientIds = new Set<Id>();
-		for (CANS_Inactive_User_Report_Recipients__c recepient: [SELECT Name, User_Id__c FROM CANS_Inactive_User_Report_Recipients__c]) {
-			recepientIds.add((Id) recepient.User_Id__c);
+		Set<Id> recipientIds = new Set<Id>();
+		for (CANS_Inactive_User_Report_Recipients__c recipient: [SELECT Name, User_Id__c FROM CANS_Inactive_User_Report_Recipients__c]) {
+			recipientIds.add((Id) recipient.User_Id__c);
 		}
-		List<String> recepientEmails = new List<String>();
-		for (User recepient: [SELECT Id, Email FROM User WHERE Id IN :recepientIds]) {
-			recepientEmails.add(recepient.Email);
+		List<String> recipientEmails = new List<String>();
+		for (User recipient: [SELECT Id, Email FROM User WHERE Id IN :recipientIds]) {
+			recipientEmails.add(recipient.Email);
 		}
 		Messaging.reserveSingleEmailCapacity(1);
 		Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-		mail.setBccAddresses(recepientEmails);
+		mail.setBccAddresses(recipientEmails);
 		mail.setReplyTo('notifications@thementornetwork.com');
 		mail.setSenderDisplayName('MENTOR Assessment Notification');
 		mail.setSubject('Inactive Users Notification from the MENTOR Salesforce Assessment App');
