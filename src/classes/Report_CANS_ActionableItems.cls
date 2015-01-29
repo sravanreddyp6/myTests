@@ -46,7 +46,7 @@ public with sharing class Report_CANS_ActionableItems {
 			scoreChosen = '';
 			return;
 		}
-		responses = Database.query('SELECT Id, Name, Rating__c, Question__r.Question_Title__c, CreatedBy.Name, CreatedById, Assessment__r.Owner.Id, Assessment__r.Owner.Name, Assessment__r.Assessment_Date__c, Assessment__r.Id, Assessment__r.Name, Assessment__r.Admission__r.Person_Being_Served__r.Name, Assessment__r.Admission__r.Person_Being_Served__r.Id FROM Assessment_Response__c WHERE (' + scoreQuery + ') AND Assessment__r.Assessment_Date__c > :startDate AND Assessment__r.Assessment_Date__c < :endDate');
+		responses = Database.query('SELECT Id, Name, Rating__c, Question__r.Question_Title__c, CreatedBy.Name, CreatedById, Assessment__r.Owner.Id, Assessment__r.Owner.Name, Assessment__r.Assessment_Date__c, Assessment__r.Id, Assessment__r.Name, Assessment__r.Admission__r.Person_Being_Served__r.Name, Assessment__r.Admission__r.Person_Being_Served__r.Id FROM Assessment_Response__c WHERE (' + scoreQuery + ') AND Assessment__r.Assessment_Date__c > :startDate AND Assessment__r.Assessment_Date__c < :endDate AND Assessment__r.Disregard__c = false AND Assessment__r.Status__c = \'Locked\'');
 	}
 
 	public Report_CANS_ActionableItems() {
