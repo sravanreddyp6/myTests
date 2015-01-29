@@ -14,13 +14,13 @@
 				<apex:repeat value="{!partial_list}" var="assessment">
 					<tr class="dataRow">
 						<td class="dataCell">
-							<a href="/{!assessment.Admission__r.Person_Being_Served__r.Id}">{!assessment.Admission__r.Person_Being_Served__r.Name}</a>
+							<a href="{!baseUrl}/{!assessment.Admission__r.Person_Being_Served__r.Id}">{!assessment.Admission__r.Person_Being_Served__r.Name}</a>
 						</td>
 						<td class="dataCell">
-							<a href="/{!assessment.Admission__r.Person_Being_Served__r.Owner.Id}">{!assessment.Admission__r.Person_Being_Served__r.Owner.Name}</a>
+							<a href="{!baseUrl}/{!assessment.Admission__r.Person_Being_Served__r.Owner.Id}">{!assessment.Admission__r.Person_Being_Served__r.Owner.Name}</a>
 						</td>
 						<td class="dataCell">
-							<a href="/{!assessment.Id}">{!assessment.Name}</a>
+							<a href="{!baseUrl}/{!assessment.Id}">{!assessment.Name}</a>
 						</td>
 						<td class="dataCell">
 							<apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
@@ -28,7 +28,7 @@
 							</apex:outputText>
 						</td>
 						<td class="dataCell">
-							<a href="/{!assessment.Owner.Id}">{!assessment.Owner.Name}</a>
+							<a href="{!baseUrl}/{!assessment.Owner.Id}">{!assessment.Owner.Name}</a>
 						</td>
 					</tr>
 				</apex:repeat>
