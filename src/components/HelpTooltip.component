@@ -1,0 +1,36 @@
+<apex:component >
+    <apex:attribute name="helpText" description="The help text to display" type="string" required="true" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.css')}" />
+    <style>
+        [id*=helpIcon]:hover {
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        jQuery.noConflict();
+        jQuery(document).ready(function($) {
+            $(document.getElementById('{!$Component.helpIcon}')).qtip({
+                show: {
+                    delay: 500
+                },
+                hide: {
+                    fixed: true,
+                    delay: 500
+                },
+                content: {
+                    text: "{!SUBSTITUTE(JSENCODE(helpText), '\\n','<br /><br />')}"
+                },
+                position: {
+                    my: 'top left',
+                    at: 'bottom center',
+                    adjust: {
+                       y: 15 // because site-wide CSS applies a 15px border-top for <body>
+                    }
+                }
+            });
+        });
+    </script>
+    <apex:image url="{!URLFOR($Resource.questionmark)}" id="helpIcon" style="position:relative;top:3px;"/>
+</apex:component>
