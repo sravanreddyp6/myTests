@@ -93,12 +93,12 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
 
 		if (!a.Owner.IsActive) {
 			// HCANS-8 Do not send mail to inactive users, instead we keep a
-			// record for these users so that we can send a report out to
+			// record for these assessments so that we can send a report out to
 			// necessary parties
 			System.debug('Record Owner ' + a.Owner.Name + ' is inactive. Adding Error record!');
 			inactiveUserErrors.add(new Error__c(
 				RecordTypeId = CANSInactiveUserErrorRecordType,
-				Record_Id__c = a.OwnerId,
+				Record_Id__c = a.Id,
 				Description__c = 'Emails are not sent to inactive users'
 			));
 			return;
