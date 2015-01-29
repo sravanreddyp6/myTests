@@ -72,15 +72,27 @@
 		.pbTitle {
 			width: 300px !important;
 		}
+		.header{
+			font-size: 20px;
+			font-weight: bold;
+			padding: 12px;
+		}
+		tr.dataRow {
+			background-color:white;
+		}
+		tr.dataRow:hover {
+			background-color: #e3f3ff;
+		};
 	</style>
-	<apex:pageBlock id="mainBlock" title="Overdue CANS Assessment">
-		<apex:pageBlockButtons location="top">
+	<div class="header">CANS Overdue Assessments</div>
+	<apex:pageBlock id="mainBlock" title="Results">
+		<apex:pageBlockButtons location="both">
 			<apex:form>
-				<apex:commandButton onclick="tableToExcel(); return false;" value="Export To Excel" />
+				<apex:commandButton onclick="tableToExcel(); return false;" value="Export To Excel" style="float: right; " />
 			</apex:form>
 		</apex:pageBlockButtons>
 		<apex:outputPanel id="assessmentTablePanel">
-			<table id="assessmentTable">
+			<table id="assessmentTable" class="list">
 				<thead>
 					<tr class="headerRow">
 						<th>Person Being Served</th>
