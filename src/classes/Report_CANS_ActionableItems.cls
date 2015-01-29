@@ -1,5 +1,10 @@
 public with sharing class Report_CANS_ActionableItems {
 	public List<Assessment_Response__c> responses { get; set; }
+	public String baseUrl {
+		get {
+			return System.URL.getSalesforceBaseUrl().toExternalForm();
+		}
+	}
 
 	public Date startDate { get; set; }
 	public Date endDate { get; set; }

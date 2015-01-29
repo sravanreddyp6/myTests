@@ -1,5 +1,10 @@
 public with sharing class Report_CANS_OverdueAssessments {
 	public transient List<List<Assessment__c>> listWrapper { get; set; }
+	public String baseUrl {
+		get {
+			return System.URL.getSalesforceBaseUrl().toExternalForm();
+		}
+	}
 
 	public Report_CANS_OverdueAssessments() {
 		List<Id> assessmentIds = new List<Id>();
