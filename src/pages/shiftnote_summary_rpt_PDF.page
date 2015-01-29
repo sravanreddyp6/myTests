@@ -1,0 +1,116 @@
+<apex:page controller="shiftnote_summary_rpt" sidebar="false" docType="html-5.0" readOnly="true" action="{!runReport}" renderas="pdf" >
+<apex:stylesheet value="{!$Resource.mentoresdprint}" />
+<apex:includeScript value="{!$Resource.jquery}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+    <apex:includeScript value="https://raw.github.com/awbush/jquery-fastLiveFilter/master/jquery.fastLiveFilter.js" />
+ 
+<apex:form >
+<apex:outputPanel layout="block" style="float: left; width: 700px; padding: 15px;" id="dataTable"> 
+<h1>Shift Note Summary Report</h1>
+Start Date:&nbsp; 
+<apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+    <apex:param value="{!StartDate}" /> 
+</apex:outputText><br />
+End Date:&nbsp;
+<apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+    <apex:param value="{!EndDate}" /> 
+</apex:outputText><br />
+Run Date:&nbsp;	 
+<apex:outputText value="{!pdfRunDateTimeString}" /><br />
+Run By:  {!$User.myFullName__c}<br />
+<br /><br />
+<hr />
+    <apex:repeat value="{!notes}" var="n">   
+    <apex:pageBlock >
+    <table id="mytbl" class="mytbl">     
+        <tr>
+             <td class="left_col">
+                 Person Being Served:
+             </td>
+             <td>
+                 <apex:outputField value="{!n.Person_Being_Served__c}"/> 
+             </td>
+         </tr>
+         <tr>
+             <td class="left_col">
+                 Note: 
+             </td>
+             <td>
+             <a href="/{!n.id}">{!n.name}</a>                 
+             </td>             
+         </tr>
+         <tr>
+             <td class="left_col">
+                 Start Date/Time:
+             </td>
+             <td>
+	             <apex:outputField value="{!n.Start_Time__c}"/>
+             </td>
+         </tr>  
+         <tr>
+             <td class="left_col">
+                 End Date/Time:
+             </td>
+             <td>
+	             <apex:outputField value="{!n.End_Time__c}"/>
+             </td>
+         </tr>  
+          
+          
+         <tr>
+             <td class="left_col">
+                 Written By:
+             </td>
+             <td>
+	             <apex:outputField value="{!n.CreatedById}"/>
+             </td>
+         </tr> 
+       
+         
+         <tr>
+             <td class="left_col" >
+                     Narrative:
+             </td>
+             <td>
+				<div>
+					{!n.Narrative__c}
+				</div>
+             </td>
+         </tr> 
+         
+         
+         <tr>
+             <td class="left_col">
+                Healthcare/Medical Note :
+             </td>         
+             <td  >
+                 <apex:outputField value="{!n.Healthcare_Medical_Note__c}"/> 
+             </td>
+         </tr> 
+
+         <tr>
+             <td class="left_col">
+                Goals/Objectives :
+             </td>         
+             <td  >
+                 <apex:repeat value="{!Note_Goals[n.id]}" var="g">
+                 	{!g.Goal__r.Description__c}
+                     <br/>
+                         <apex:repeat value="{!Note_Objs[n.id + g.Goal__c]}" var="o">
+                             &nbsp;&nbsp;
+                             {!o.Objective__r.Description__c}
+                             <br/>
+                         </apex:repeat>
+                 </apex:repeat>
+             </td>
+         </tr> 
+      </table>              
+     </apex:pageBlock>
+     <hr />                                
+     </apex:repeat> 
+
+</apex:outputPanel>
+</apex:form>
+
+</apex:page>
