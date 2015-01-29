@@ -10,7 +10,7 @@ public with sharing class Report_CANS_OverdueAssessments {
 		List<Id> assessmentIds = new List<Id>();
 		// The following data set can be very large, so we iterate it in the
 		// way that Salesforce recommended
-		for (Admission__c[] admissions: [ SELECT Id, (SELECT Id, Interval__c FROM Assessments__r WHERE Assessment_Type__r.Name = 'CANS' AND Past_Due_Date__c = true ORDER BY Assessment_Date__c DESC LIMIT 1) FROM Admission__c ]) {
+		for (Admission__c[] admissions: [ SELECT Id, (SELECT Id, Interval__c FROM Assessments__r WHERE Assessment_Type__r.Name = 'CANS' AND Past_Due_Date__c = true AND Disregard__c = false ORDER BY Assessment_Date__c DESC LIMIT 1) FROM Admission__c ]) {
 			for (Admission__c admission: admissions) {
 				if (admission.Assessments__r != null && admission.Assessments__r.size() > 0 && admission.Assessments__r[0].Interval__c != 'Discharge') {
 					assessmentIds.add(admission.Assessments__r[0].Id);
