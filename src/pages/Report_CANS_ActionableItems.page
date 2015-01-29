@@ -91,10 +91,16 @@
 			border: 2px solid gray;
 			padding: 2px;
 		}
+		.header{
+			font-size: 20px;
+			font-weight: bold;
+			padding: 12px;
+		}
 	</style>
+	<div class="header">CANS Actionable Items</div>
 	<apex:pageMessages id="pageMessages" />
 	<apex:form id="mainForm">
-		<apex:pageBlock id="mainBlock" title="CANS Actionable Items">
+		<apex:pageBlock id="mainBlock" title="Filters">
 			<apex:pageBlockSection columns="2">
 				<apex:pageBlockSectionItem>
 					<apex:outputLabel value="Start Date" />
@@ -116,9 +122,9 @@
 				<apex:commandButton value="Run" action="{!runReport}" rerender="pageMessages, responsesBlock" status="pageProcessingStatus" oncomplete="setUpTable();" />
 			</apex:pageBlockButtons>
 		</apex:pageBlock>
-		<apex:pageBlock id="responsesBlock">
-			<apex:pageBlockButtons location="top">
-				<apex:commandButton onclick="tableToExcel(); return false;" value="Export To Excel" rendered="{!scoreChosen != ''}" />
+		<apex:pageBlock id="responsesBlock" title="Results">
+			<apex:pageBlockButtons location="both">
+				<apex:commandButton onclick="tableToExcel(); return false;" value="Export To Excel" rendered="{!scoreChosen != ''}" style="float: right;" />
 			</apex:pageBlockButtons>
 			<apex:pageBlockTable value="{!responses}" var="response" id="responses" rendered="{!scoreChosen != ''}">
 				<apex:column headerValue="Person Being Served">
