@@ -116,7 +116,7 @@
 					</apex:column>
 					<apex:column >
 						<apex:facet name="header">
-							<apex:commandLink value="Name" action="{!toggleSort}"  reRender="evaluationsT,debug,errors" >
+							<apex:commandLink value="Name" action="{!toggleSort}"  reRender="evaluationsT,errors" >
 								<apex:param name="sortField" value="Name" assignTo="{!sortField}"/>
 							</apex:commandLink>
 						</apex:facet>
@@ -124,7 +124,7 @@
 					</apex:column>
 					<apex:column >
 						<apex:facet name="header" >
-							<apex:commandLink Value="Shift Start Time" action="{!toggleSort}"  reRender="evaluationsT,debug,errors" >
+							<apex:commandLink Value="Shift Start Time" action="{!toggleSort}"  reRender="evaluationsT,errors" >
 								<apex:param name="sortField" value="Shift_Start_Time__c" assignTo="{!sortField}" />
 							</apex:commandLink>
 						</apex:facet>
@@ -132,7 +132,7 @@
 					</apex:column>
 					<apex:column >
 						<apex:facet name="header" >
-							<apex:commandLink Value="Shift End Time" action="{!toggleSort}" reRender="evaluationsT,debug,errors" >
+							<apex:commandLink Value="Shift End Time" action="{!toggleSort}" reRender="evaluationsT,errors" >
 								<apex:param name="sortField" value="Shift_End_Time__c" assignTo="{!sortField}" />
 							</apex:commandLink>
 						</apex:facet>
@@ -140,7 +140,7 @@
 					</apex:column>
 					<apex:column>
 						<apex:facet name="header" >
-							<apex:commandLink Value="Status" action="{!toggleSort}" reRender="evaluationsT,debug,errors" >
+							<apex:commandLink Value="Status" action="{!toggleSort}" reRender="evaluationsT,errors" >
 								<apex:param name="sortField" value="Status__c" assignTo="{!sortField}" />
 							</apex:commandLink>
 						</apex:facet>
@@ -148,7 +148,7 @@
 					</apex:column>
 					<apex:column>
 						<apex:facet name="header" >
-							<apex:commandLink Value="Signed" action="{!toggleSort}" reRender="evaluationsT,debug,errors" >
+							<apex:commandLink Value="Signed" action="{!toggleSort}" reRender="evaluationsT,errors" >
 								<apex:param name="sortField" value="Is_Signed__c" assignTo="{!sortField}" />
 							</apex:commandLink>
 						</apex:facet>
@@ -167,7 +167,7 @@
 					</apex:column>
 					<apex:column>
 						<apex:facet name="header" >
-							<apex:commandLink Value="Owner Name" action="{!toggleSort}" reRender="evaluationsT,debug,errors" >
+							<apex:commandLink Value="Owner Name" action="{!toggleSort}" reRender="evaluationsT,errors" >
 								<apex:param name="sortField" value="Owner.Name" assignTo="{!sortField}" />
 							</apex:commandLink>
 						</apex:facet>
@@ -175,7 +175,7 @@
 					</apex:column>
 					<apex:column>
 						<apex:facet name="header" >
-							<apex:commandLink Value="Last Modified" action="{!toggleSort}" reRender="evaluationsT,debug,errors" >
+							<apex:commandLink Value="Last Modified" action="{!toggleSort}" reRender="evaluationsT,errors" >
 								<apex:param name="sortField" value="LastModifiedDate" assignTo="{!sortField}" />
 							</apex:commandLink>
 						</apex:facet>
@@ -183,9 +183,6 @@
 					</apex:column>
 				</apex:pageBlockTable>
 			</apex:pageBlockSection>
-			<apex:pageBlock title="Debug - SOQL" id="debug">
-		      <apex:outputText value="{!debugSoql}" />           
-		  </apex:pageBlock>
 		</apex:pageBlock>
 	</apex:form>
 </apex:page>
