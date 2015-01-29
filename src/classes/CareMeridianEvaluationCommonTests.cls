@@ -55,7 +55,7 @@ public with sharing class CareMeridianEvaluationCommonTests {
         Test.stopTest();
     }
 
-    private class MockHttpResponse implements HttpCalloutMock {
+    @TestVisible private class MockHttpResponse implements HttpCalloutMock {
         public HTTPResponse respond(HTTPRequest req) {
             HttpResponse res = new HttpResponse();
             res.setBody('http://test.com/test.pdf');
