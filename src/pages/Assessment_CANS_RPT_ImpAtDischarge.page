@@ -1,0 +1,219 @@
+<apex:page showHeader="true" sidebar="false" controller="Assessment_CANS_RPT_ImpAtDischarge" docType="html-5.0" readOnly="true">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery-ui.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/js/dataTables.tableTools.js')}" />
+
+<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/css/dataTables.tableTools.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/development-bundle/themes/custom-green/jquery-ui.min.css')}"/>
+<style>
+#ui-datepicker-div {margin-top: 20px !important;}
+</style>
+<script>
+    j$ = jQuery.noConflict();
+function selectSL(  onoff ) {
+       if ( onoff == 0 ) {
+              // turn them all off
+              j$('input[id*=serviceLine]').each(function (index, element) {
+                        j$(element).prop('checked', false);
+                        });
+                       
+              }
+       else {
+              // turn them all on
+              j$('input[id*=serviceLine]').each(function (index, element) {
+                        j$(element).prop('checked', true);
+                        });
+              }
+ 
+}   
+</script>
+<apex:form >
+<h1 style="font-size: 25px; padding: 9px; display: block;">Children with Improved CANS at Discharge by Cluster</h1>
+<apex:pageBlock title="Filters">
+    <apex:pageBlockSection columns="1">
+    <apex:pageBlockSectionItem >
+    <apex:outputLabel styleclass="labelCol" value="Start Date" for="start_date" />
+    <apex:outputPanel >
+        <apex:input type="auto" id="start_date" size="10"  label="Start Date" styleClass="datepicker" value="{! StartDate}" />
+       <apex:outputLabel styleclass="labelCol" value="End Date" for="end_date" /> <apex:input type="auto" id="end_date" size="10"  label="End Date" styleClass="datepicker" value="{! EndDate}" />
+    </apex:outputPanel>
+    </apex:pageBlockSectionItem>  
+        <apex:selectList required="true" Value="{!SelectedCluster}" size="1" label="Cluster">
+            <apex:selectOption itemLabel="--None--" itemValue=""></apex:selectOption>
+            <apex:selectOption itemLabel="Behavior & Risk" itemValue="Behavior & Risk"></apex:selectOption>
+            <apex:selectOption itemLabel="Education" itemValue="Education"></apex:selectOption>
+            <apex:selectOption itemLabel="Well-Being" itemValue="Well-Being" ></apex:selectOption>
+        </apex:selectList>
+        <apex:selectList required="true" Value="{!selectedDD_Status}" size="1" label="DD Status">
+            <apex:selectOption itemLabel="--None--" itemValue=""></apex:selectOption>
+            <apex:selectOption itemLabel="All PBS" itemValue="All"></apex:selectOption>
+            <apex:selectOption itemLabel="Only PBS with DD" itemValue="ONLY_DD"></apex:selectOption>
+            <apex:selectOption itemLabel="Only PBS without DD" itemValue="No_DD" ></apex:selectOption>
+        </apex:selectList>    
+        <apex:pageBlockSectionItem > 
+        <apex:outputLabel >Service Lines</apex:outputLabel>
+        <apex:outputPanel >   
+        <apex:selectCheckboxes required="true" value="{!selectedServiceLines}" id="serviceLine">
+            <apex:selectOptions value="{!serviceLines}"></apex:selectOptions>
+        </apex:selectCheckboxes>
+        <a href="#" onclick="selectSL(1)">Select All</a> | <a href="#" onclick="selectSL(0)">Deselect All</a>
+        </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel ></apex:outputLabel>
+            <apex:commandButton value="Run" action="{!runRpt}" reRender="DATA_SET" status="myStatus"></apex:commandButton>
+        </apex:pageBlockSectionItem>
+        
+    </apex:pageBlockSection>
+</apex:pageBlock>   
+</apex:form>
+<apex:outputPanel id="DATA_SET">
+<apex:pageMessages />
+<apex:pageBlock title="Results" rendered="{!jsonStateData != null}">
+<apex:pageBlockButtons >
+        <div style="float: right">
+            <input class="btn" type="button" onclick="tableToExcel('State_Data', 'Children with Improved CANS at Discharge')" value="Export to Excel" />
+        </div>
+</apex:pageBlockButtons>
+<br/>
+<table id="State_Data" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th></th>
+                <th>State</th>
+                <th># PBS Discharged</th>
+                <th># PBS with Discharge CANS</th>
+                <th># PBS with Improvement in {!SelectedCluster} Cluster</th>
+                <th>% PBS with Improvement in {!SelectedCluster} Cluster</th>
+            </tr>
+        </thead>
+ 
+</table> 
+
+<p/>
+<p/>
+<table id="example" class="display" style="display: none;" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>PBS</th>
+                <th>State</th>
+                <th>IntakeScore</th>
+                <th>disChargeScore</th>
+            </tr>
+        </thead>
+ 
+</table>
+
+
+<script>
+
+
+j$(document).ready(function() {
+console.log('started');
+  /* 
+    $('#example').dataTable( {
+        "aaData": {!jsonPersonRowData},
+        "bPaginate": false, 
+        "bFilter": false,
+        "columns": [
+            { "data": "PBS" },
+            { "data": "State" },
+            { "data": "IntakeScore" },
+            { "data": "disChargeScore" }
+        ]
+    } );
+*/
+    j$('#State_Data').dataTable( {
+        "aaData": {!jsonStateData},
+        "bPaginate": false,
+        
+        "order": [[ 0, "asc" ]],
+        /*"ordering": false, */
+        "bFilter": false, 
+        "bInfo" : false,
+        "columnDefs": [
+            {
+                "targets": [ 0 ],
+                "visible": false,
+                "searchable": false
+            },
+            {
+                "targets": [ 1,2,3,4, 5 ],
+                "orderable": false
+            }
+        ],            
+        "columns": [
+            { "data": "sortKey"},
+            { "data": "State"},
+            { "data": "NumberPBSDisCharge"},
+            { "data": "NumberPBSDisChargeWithCANS"},
+            { "data": "NumberPBSWithImprovement"},
+            { "data": "PrettyPercentPBSWithImp"}
+
+        ]      
+    } );    
+} );
+
+</script>
+<i>Report compares the 1st Quarterly CANS and the Discharge CANS Assessments to determine improvement.</i>
+</apex:pageBlock>
+</apex:outputPanel>
+<script>
+//var j$ = jQuery.noConflict();
+function bindDates(){
+    j$("[id*=endDate]").datepicker({
+        changeMonth: true,
+        changeYear: true,
+    });
+    
+    j$("[id*=startDate]").datepicker({
+        changeMonth: true,
+        changeYear: true,
+    
+         
+    }); 
+
+    
+
+}
+function commonReady(){    
+  //  bindDates(); 
+}
+j$( document ).ready(function() { 
+    
+    commonReady();
+    
+});
+var tableToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+  return function(table, name) {
+    table2=j$('[id$=' + table+']');
+    var ctx = {worksheet: name || 'Worksheet', table: table2[0].innerHTML}
+    window.location.href = uri + base64(format(template, ctx))
+    }
+  })();
+
+
+</script>
+
+
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <style>
+            .fogBG{opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;}
+            .thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;}
+        </style>
+        <div class="fogBG"/>
+        <div class="thinkingwheel">    
+            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+        </div> 
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus>
+</apex:page>
