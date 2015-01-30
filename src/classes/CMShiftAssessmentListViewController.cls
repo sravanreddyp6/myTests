@@ -9,15 +9,10 @@ public with sharing class CMShiftAssessmentListViewController {
 	}
 	
 	public String sortField {
-    get  { if (sortField == null) {sortField = 'Shift_Start_time__c'; } return sortField;  }
-    set;
+	    get  { if (sortField == null) {sortField = 'Shift_Start_time__c'; } return sortField;  }
+	    set;
    }
-  
-   public String debugSoql  {
-    get { return soql + ' order by ' + sortField + ' ' + sortDir; }
-    set;
-   }
-  
+   
    public Id saId {get; private set;}
    public Service_Assignment__c SA {get; private set;}
    public String sortColumn { get; set; }
@@ -42,7 +37,7 @@ public with sharing class CMShiftAssessmentListViewController {
     try {
       evaluations = Database.query(soql + ' order by ' + sortField + ' ' + sortDir);
     } catch (Exception e) {
-      ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Ooops!'));
+      ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'There is an Error is retrieving the Nurses Shift Documentaion Records'));
     }
 
   }

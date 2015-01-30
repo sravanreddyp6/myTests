@@ -5,108 +5,7 @@
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 	
 	<c:PersonalRecord pbsId="{!SA.admission__r.Person_Being_Served__c}" servAssignId="{!SA.Id}" admId="{!SA.Admission__c}" parentPage="ShiftAssessmentListView" />
-	<style type="text/css" >
-		.dataTable {
-			width: 100% !important;
-		}
-		.dataTables_filter {
-			float: right;
-			!important;
-		}
-		.dataTables_length {
-			width: 150px;
-			float: left;
-			!important;
-		}
-		.dataTables_info {
-			float: left;
-			width: 250px;
-			!important;
-		}
-		.dataTables_paginate {
-			float: right;
-			!important;
-		}
-		.sorting {
-			background: #7AC143 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_both.png') }') no-repeat center right !important;
-			padding-right: 20px !important;
-		}
-		.sorting_asc {
-			background: #7AC143 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_asc.png') }') no-repeat center right !important;
-			padding-right: 20px !important;
-		}
-		.sorting_desc {
-			background: #7AC143 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_desc.png') }') no-repeat center right !important;
-			padding-right: 20px !important;
-		}
-		.sorting_asc_disabled {
-			background: #7AC143 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_asc_disabled.png') }') no-repeat center right !important;
-			padding-right: 20px !important;
-		}
-		.sorting_desc_disabled {
-			background: #7AC143 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_desc_disabled.png') }') no-repeat center right !important;
-			padding-right: 20px !important;
-		}
-		.sorting_disabled {
-			background: #7AC143 !important;
-		}
-		.paginate_button {
-			margin-left: 5px;
-			border-radius: 12%;
-			width: 10px;
-			height: 8px;
-			padding: 0.5px;
-			background: #F8F8F8;
-			border: 1px solid #666;
-			color: #666;
-			text-align: center;
-			font: 10px Time New Roman, sans-serif;
-			cursor: pointer;
-		}
-		.paginate_active {
-			margin-left: 5px;
-			border-radius: 12%;
-			width: 10px;
-			height: 8px;
-			padding: 0.5px;
-			background: #7AC143;
-			border: 1px solid #666;
-			color: #666;
-			text-align: center;
-			font: 10px Times New Roman, sans-serif;
-			cursor: pointer;
-		}
-		table.dataTable tr.odd {
-			background-color: white;
-		}
-		table.dataTable tr.even {
-			background-color: white;
-		}
-		table.dataTable tr.odd td.sorting_1 {
-			background-color: white;
-		}
-		table.dataTable tr.odd td.sorting_2 {
-			background-color: white;
-		}
-		table.dataTable tr.odd td.sorting_3 {
-			background-color: white;
-		}
-		table.dataTable tr.even td.sorting_1 {
-			background-color: white;
-		}
-		table.dataTable tr.even td.sorting_2 {
-			background-color: white;
-		}
-		table.dataTable tr.even td.sorting_3 {
-			background-color: white;
-		}
-		.dataTables_length,
-		.dataTables_filter,
-		.dataTables_info,
-		.dataTables_paginate {
-			padding: 3px;
-		}
-	</style>
+
 	<apex:form >
 		<apex:pageMessages id="errors" />
 		<apex:pageBlock id="theBlock">
@@ -138,7 +37,7 @@
 						</apex:facet>
 						<c:MilitaryDatetime dateTimeVal="{!evs.Shift_End_Time__c}" />
 					</apex:column>
-					<apex:column>
+					<apex:column >
 						<apex:facet name="header" >
 							<apex:commandLink Value="Status" action="{!toggleSort}" reRender="evaluationsT,errors" >
 								<apex:param name="sortField" value="Status__c" assignTo="{!sortField}" />
@@ -146,7 +45,7 @@
 						</apex:facet>
 						<apex:outputText value="{!evs.Status__c}" />
 					</apex:column>
-					<apex:column>
+					<apex:column >
 						<apex:facet name="header" >
 							<apex:commandLink Value="Signed" action="{!toggleSort}" reRender="evaluationsT,errors" >
 								<apex:param name="sortField" value="Is_Signed__c" assignTo="{!sortField}" />
@@ -165,7 +64,7 @@
 							<apex:outputField value="{!evs.Evaluation_Responses__r[0].CreatedDate}" />
 						</apex:outputText>
 					</apex:column>
-					<apex:column>
+					<apex:column >
 						<apex:facet name="header" >
 							<apex:commandLink Value="Owner Name" action="{!toggleSort}" reRender="evaluationsT,errors" >
 								<apex:param name="sortField" value="Owner.Name" assignTo="{!sortField}" />
@@ -173,7 +72,7 @@
 						</apex:facet>
 						<apex:outputText value="{!evs.Owner.Name}" />
 					</apex:column>
-					<apex:column>
+					<apex:column >
 						<apex:facet name="header" >
 							<apex:commandLink Value="Last Modified" action="{!toggleSort}" reRender="evaluationsT,errors" >
 								<apex:param name="sortField" value="LastModifiedDate" assignTo="{!sortField}" />
