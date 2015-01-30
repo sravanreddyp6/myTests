@@ -59,7 +59,7 @@
 		});
 		jQuery(document).ready(function($) {
 			window.setUpTable = function() {
-				window.responsesTable = $(document.getElementById('{!$Component.mainForm.responsesBlock.responses}')).dataTable({
+				window.responsesTable = $("#responses").dataTable({
 					columnDefs: [{
 						type: 'datetime-us-flex',
 						targets: 2
@@ -96,6 +96,12 @@
 			font-weight: bold;
 			padding: 12px;
 		}
+		tr.dataRow {
+			background-color:white;
+		}
+		tr.dataRow:hover {
+			background-color: #e3f3ff;
+		};
 	</style>
 	<div class="header">CANS Actionable Items</div>
 	<apex:pageMessages id="pageMessages" />
@@ -126,20 +132,46 @@
 			<apex:pageBlockButtons location="both">
 				<apex:commandButton onclick="tableToExcel(); return false;" value="Export To Excel" rendered="{!scoreChosen != ''}" style="float: right;" />
 			</apex:pageBlockButtons>
-			<apex:pageBlockTable value="{!responses}" var="response" id="responses" rendered="{!scoreChosen != ''}">
-				<apex:column headerValue="Person Being Served">
-					<a href="/{!response.Assessment__r.Admission__r.Person_Being_Served__r.Id}">{!response.Assessment__r.Admission__r.Person_Being_Served__r.Name}</a>
-				</apex:column>
-				<apex:column headerValue="Assessment Name">
-					<a href="/{!response.Assessment__r.Id}">{!response.Assessment__r.Name}</a>
-				</apex:column>
-				<apex:column value="{!response.Assessment__r.Assessment_Date__c}" headerValue="Assessment Date" />
-				<apex:column headerValue="Owner">
-					<a href="/{!response.Assessment__r.Owner.Id}">{!response.Assessment__r.Owner.Name}</a>
-				</apex:column>
-				<apex:column value="{!response.Question__r.Question_Title__c}" headerValue="Question Title" />
-				<apex:column value="{!response.Rating__c}" headerValue="Score" />
-			</apex:pageBlockTable>
+			<table id="responses" class="list">
+				<thead>
+					<tr class="headerRow">
+						<th>Person Being Served</th>
+						<th>Assessment Name</th>
+						<th>Assessment Date</th>
+						<th>Owner</th>
+						<th>Question Title</th>
+						<th>Score</th>
+					</tr>
+				</thead>
+				<tbody>
+					<apex:repeat value="{!listWrapper}" var="partial_list" id="listWrapper">
+						<apex:repeat value="{!partial_list}" var="response">
+							<tr class="dataRow">
+								<td class="dataCell">
+									<a href="/{!response.Assessment__r.Admission__r.Person_Being_Served__r.Id}">{!response.Assessment__r.Admission__r.Person_Being_Served__r.Name}</a>
+								</td>
+								<td class="dataCell">
+									<a href="/{!response.Assessment__r.Id}">{!response.Assessment__r.Name}</a>
+								</td>
+								<td class="dataCell">
+									<apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+										<apex:param value="{!response.Assessment__r.Assessment_Date__c}" />
+									</apex:outputText>
+								</td>
+								<td class="dataCell">
+									<a href="/{!response.Assessment__r.Owner.Id}">{!response.Assessment__r.Owner.Name}</a>
+								</td>
+								<td class="dataCell">
+									{!response.Question__r.Question_Title__c}
+								</td>
+								<td class="dataCell">
+									{!response.Rating__c}
+								</td>
+							</tr>
+						</apex:repeat>
+					</apex:repeat>
+				</tbody>
+			</table>
 			<script>
 				window.tableToExcel = function () {
 					window.open("/apex/Report_CANS_ActionableItemsExcel?startDate={!URLENCODE(TEXT(startDate))}&endDate={!URLENCODE(TEXT(endDate))}&scoreChosen={!URLENCODE(scoreChosen)}", "_blank");
