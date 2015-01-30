@@ -43,7 +43,7 @@ public with sharing class TaskTriggerHandler {
         
         for(Task t: updatedObjects){
         	if(filteredIds.contains(t.WhatId)){
-        		t.addError('This task cannot be upated as the Associated Shift Assessment is not finalized or Disregarded');
+        		t.addError('This task cannot be upated as the Associated Nurses Shift Documentation is not finalized or Disregarded');
         	}
         }
         

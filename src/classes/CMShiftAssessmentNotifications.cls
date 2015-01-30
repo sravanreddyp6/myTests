@@ -27,10 +27,10 @@ global class CMShiftAssessmentNotifications implements Database.Batchable<sObjec
 				Task t = new Task();
 				t.OwnerId = eval.ownerId;
 				t.WhatId = eval.id;
-				t.subject = 'Shift Assessment Status Reminder';
+				t.subject = ' Nurses Shift Documentation Status Reminder';
 				t.Status = 'In Progress';
 				t.Priority = 'Normal';
-				t.Description = 'Shift Assessment '+eval.Name+' is waiting to be finalized.'+ System.Url.getSalesforceBaseUrl().toExternalForm() + '/' + eval.Id;
+				t.Description = ' Nurses Shift Documentation '+eval.Name+' is waiting to be finalized.'+ System.Url.getSalesforceBaseUrl().toExternalForm() + '/' + eval.Id;
 				t.WhoId = eval.ServiceAssignment__r.Admission__r.Person_being_served__c;
 				t.ActivityDate = eval.Shift_End_Time__c.date();
 				taskstoCreate.add(t);

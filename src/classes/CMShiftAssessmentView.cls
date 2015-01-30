@@ -224,17 +224,22 @@ public with sharing class CMShiftAssessmentView {
         }
     }
     
-  public pageReference saveEvaluation() {
+  public pageReference updateshiftTime() {
 
       try{
+      	  String pbsLastName = this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__r.LastName != null ? this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__r.LastName : '' ;
+    	  string pbsFirstinitial = this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__r.FirstName != null ? this.evaluation.ServiceAssignment__r.Admission__r.Person_Being_Served__r.FirstName.Substring(0,1) : '';
+    	  string ownerfirstInitial = this.evaluation.Owner.FirstName != null ? this.evaluation.Owner.FirstName.Substring(0,1) : ''; 
+    	  this.evaluation.Name = pbsFirstinitial+'. '+pbsLastName+' - '+evaluation.Shift_Start_time__c.format('MM/dd/yyyy hh:mm a')+' - NSD - '+ownerfirstInitial+'. '+this.evaluation.Owner.LastName;
+      	 
       	  update this.evaluation;
       	  
       	  PageReference pr = new PageReference('/apex/CMShiftAssessmentView?id='+this.evaluation.Id);
       	  pr.setRedirect(true);
       	  return pr;
       }
-      catch (Exception e) {
-          Apexpages.AddMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
+      catch (DMLException e) {
+         throw new MyException('Shift time Cannot be updated',e); 
       }
 
     return null;
@@ -305,6 +310,8 @@ public with sharing class CMShiftAssessmentView {
         }
         return cmap;
     }
+    
+    public class MyException extends Exception {}
     
    @RemoteAction
    public static boolean finddupeEval(string shiftStart, string shiftEnd, Id saId, Id currentEvalId) {

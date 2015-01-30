@@ -1282,7 +1282,7 @@ public void loadProgramList() {
                              ORDER BY CreatedDate DESC)
                       FROM Evaluation__c
                      WHERE ServiceAssignment__c = :theServAssign.Id
-                     ORDER By CreatedDate desc LIMIT 5
+                     ORDER BY Shift_Start_Time__c DESC NULLS LAST LIMIT 5
                 ];
             }
             return evaluations;
@@ -1401,7 +1401,7 @@ public void loadProgramList() {
           return pg;
       }
       catch (DMLException e) {
-          throw new MyException('Shift Assessment could not be created',e); 
+          throw new MyException('Nurses Shift Document could not be created',e); 
           //Apexpages.AddMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
       }
 

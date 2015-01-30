@@ -75,7 +75,7 @@
 			display: block;
 		}
 	</style>
-	<c:PersonalRecord pbsId="{!Evaluation__c.ServiceAssignment__r.admission__r.Person_Being_Served__c}" servAssignId="{!Evaluation__c.ServiceAssignment__c}" evaluationId="{!Evaluation__c.Id}" admId="{!Evaluation__c.ServiceAssignment__r.Admission__c}" parentPage="ShiftAssessment"/>
+	<c:PersonalRecord pbsId="{!Evaluation__c.ServiceAssignment__r.admission__r.Person_Being_Served__c}" servAssignId="{!Evaluation__c.ServiceAssignment__c}" evaluationId="{!Evaluation__c.Id}" admId="{!Evaluation__c.ServiceAssignment__r.Admission__c}" parentPage="NursesShiftDocument"/>
 	<br/>
 	<script>
 		function setFocusOnLoad() {} // Overwrite VF function to focus on the 1st field
@@ -2367,7 +2367,7 @@
 		</apex:tabPanel>
 		<apex:pageBlock id="buttons">
 			<apex:pageBlockButtons location="bottom">
-				<apex:commandButton Value="Save & Continue" onClick="changeTab(getNextTab('{!selectedTab}')); return false;" rendered="{!selectedTab != 'dischargePlanTab'}" />
+				<apex:commandButton Value="Save & Continue" onClick="changeTab(getNextTab('{!selectedTab}')); return false;" rendered="{!selectedTab != 'psychoSocialTab'}" />
 				<apex:commandButton value="Save" action="{!save}" />
 				<apex:commandButton value="Cancel" onClick="window.location='apex/CMShiftAssessmentView?id={!Evaluation__c.Id}&tab={!selectedTab}'; return false;" />
 			</apex:pageBlockButtons>

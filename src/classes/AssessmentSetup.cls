@@ -1,4 +1,4 @@
-public with sharing class AssessmentSetup {
+public without sharing class AssessmentSetup {
 
     // Method to find and insert domains and Assessment_Response__c
     // placeholder rows for this assessment

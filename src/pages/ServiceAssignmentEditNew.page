@@ -189,7 +189,7 @@
 							if (event.status) {
 								console.log(result);
 								if(result){
-										dupe.push('There is already an existing Shift Assessment for the current timings. Do you still want to proceed?');
+										dupe.push('There is already an existing Nurses Shift Documentation for the current timings. Do you still want to proceed?');
 										j$('#dupeFound').append('<li class="warning">' + dupe + '</li>');
 										j$('[id$=evalstartdate]').prop('disabled', true);
 										j$('[id$=evalenddate]').prop('disabled', true);
@@ -232,7 +232,7 @@
 	<br />
 	<apex:form id="myFRM">
 		<apex:actionFunction name="evaluationSave" action="{!saveEvaluation}" status="saveevaluationStatus" reRender="" />
-		<apex:actionFunction name="showAddevaluation" action="{!showAddevaluation}" status="AddevaluationStatus" oncomplete="openModalDialog('evaluationModal','span','Add Shift Assessment',null,1000); j$('#evaluationMessages').html('');" reRender="evaluations,msgs" />
+		<apex:actionFunction name="showAddevaluation" action="{!showAddevaluation}" status="AddevaluationStatus" oncomplete="openModalDialog('evaluationModal','span','Add Nurses Shift Documentation',null,1000); j$('#evaluationMessages').html('');" reRender="evaluations,msgs" />
 		<apex:actionFunction name="saveFundingSource" action="{!saveFundingSource}" status="saveFundingSourceStatus" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialog('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
 		<apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" action="{!showAddFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
 		<apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000); fundingSourceAllowedEdit();" rerender="fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs">
@@ -1002,7 +1002,7 @@ END: Uncomment to have the element collapsed by default -->
 		<apex:outputPanel id="evaluationModal" style="display:none">
 			<span class="ui-helper-hidden-accessible"><input type="text"/></span>
 			<div id='evaluationMessages'></div>
-			<apex:pageBlock title="Add ShiftAssessment" rendered="{!vfVarIsCM}">
+			<apex:pageBlock title="Add Nurses Shift Documentation" rendered="{!vfVarIsCM}">
 				<apex:pageBlockSection columns="2" id="evaluationEntry">
 					<apex:pageBlockSectionItem >
 						<apex:outputPanel >
@@ -1035,10 +1035,10 @@ END: Uncomment to have the element collapsed by default -->
 			</apex:pageBlock>
 		</apex:outputPanel>
 		<a name="ShiftAssessments" id="ShiftAssessments"></a>
-		<apex:pageBlock title="Admission and Shift Assessments" rendered="{!showNurseAssessment && !editSA && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}">
+		<apex:pageBlock title="Resident Assessment and Nurses Shift Documentation" rendered="{!showNurseAssessment && !editSA && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}">
 			<div class="pbHeaderButton">
 				<!-- apex:CommandButton value="Admission and Shift Assessment" rendered="{!(evaluations == null || evaluations.size=0) && Service_Assignment__c.Status__c!='Inactive'}" action="{!addNurAssessment}"/ -->
-				<apex:commandButton value="Add Shift Assessment" rendered="{!vfVarIsCM}" onclick="showAddevaluation(); j$('[id$=evalProceed]').hide(); j$('[id$=enterNew]').hide();return false;" />
+				<apex:commandButton value="Add Nurses Shift Documentation" rendered="{!vfVarIsCM}" onclick="showAddevaluation(); j$('[id$=evalProceed]').hide(); j$('[id$=enterNew]').hide();return false;" />
 				<apex:actionStatus id="AddevaluationStatus">
 					<apex:facet name="start">
 						<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />

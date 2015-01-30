@@ -4,6 +4,7 @@
 	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 	
+	<c:PersonalRecord pbsId="{!SA.admission__r.Person_Being_Served__c}" servAssignId="{!SA.Id}" admId="{!SA.Admission__c}" parentPage="ShiftAssessmentListView" />
 	<style type="text/css" >
 		.dataTable {
 			width: 100% !important;
@@ -107,10 +108,8 @@
 		}
 	</style>
 	
-	<apex:SectionHeader title="View All Shift Assessments" />
-	<apex:outputLink value="/apex/ServiceAssignmentEditNew?id={!saId}#ShiftAssessments" styleClass="servicelink" >Back to Service Assignment </apex:outputLink>
+	<!-- apex:SectionHeader title="View All Shift Assessments" /-->
 	<apex:form >
-		
 		<apex:pageBlock >
 			<apex:pageBlockSection columns="1" >
 				<apex:pageBlockTable styleclass="pcBody-list" value="{!Evaluations}" var="evs" rendered="{!Evaluations.size>0}" id="evaluations" styleClass="dataTable">

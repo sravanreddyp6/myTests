@@ -21,8 +21,9 @@ public with sharing class Report_CANS_ActionableByCluster {
     public boolean showData { get; set;}
     public List<string> selectedSL { get; set; }
     public List<SelectOption> optSL { get; set; }
+	public String selectedDD { get; set; }
+    public List<SelectOption> optDD { get; set; }
     public boolean totalExists { get; set;}
-    
     
     public Report_CANS_ActionableByCluster() {
         
@@ -34,8 +35,14 @@ public with sharing class Report_CANS_ActionableByCluster {
 
             optInterval = new List<SelectOption>();
             optInterval.Add( new SelectOption('Intake', 'Intake'));
+            optInterval.Add( new SelectOption('Q1', '1st Quarter'));
             optInterval.Add( new SelectOption('Discharge', 'Discharge'));
         
+            optDD = new List<SelectOption>();
+            optDD.Add( new SelectOption('All', 'All PBS'));
+            optDD.Add( new SelectOption('With', 'Only PBS with DD'));
+            optDD.Add( new SelectOption('Without', 'Only PBS without DD'));
+        	
             QuestionsList = new Map<ID, Assessment_Question__c>();
 
             CANSStates = new List<String>();
@@ -137,24 +144,48 @@ public with sharing class Report_CANS_ActionableByCluster {
         Integer pbscount = 0;
         String pbstate = '';
         
+        List<Assessment_Response__c> DDPeople = [select assessment__r.accountperson__c from assessment_response__c  
+									where score__c > 0 
+									and question__r.question_number__c = 37 
+									and assessment__r.interval__c = 'Intake'  
+									and assessment__r.disregard__c = false 
+                                    and assessment__r.status__c = 'Locked'  
+                                    and assessment__r.admission__r.state__c in :CANSStates];
+		
+		List<ID> DDPBS = new LIst<ID>();
+		for (Assessment_Response__c ar: DDPeople ) 
+			DDPBS.Add( (ID) ar.assessment__r.accountperson__c);
+			                                                  
+                                                  
+        String strQuery = 'select count(accountperson__c), admission__r.state__c from assessment__c where id in (select assessment__c ' + 
+                                                         ' from assessment_response__c' + 
+                                                         ' where score__c in (2, 6)' +
+                                                         ' and question__r.question_number__c in :questionsInScope' ;
+		if (selectedInterval == 'Q1')
+			strQuery += ' and assessment__r.Interval__c = \'Quarterly\' and assessment__r.Quarter__c = 1';
+		else
+			strQuery += ' and assessment__r.Interval__c = :selectedInterval' ;
+		
+		strQuery += ' and assessment__r.assessment_type__r.name = \'CANS\'' + 
+                                                         ' and assessment__r.disregard__c = false' + 
+                                                         ' and assessment__r.status__c = \'Locked\'' + 
+                                                         ' and assessment__r.admission__r.state__c in :CANSStates)' + 
+                                                         ' and assessment_date__c >= :startDate' + 
+                                            			 ' and assessment_date__c <= :endDate' +
+                                            			 ' and service_line__c in :selectedSL';
+                                            			 
+		if ( selectedDD == 'With')
+			strQuery += ' and accountperson__c in :DDPBS';
+			
+		if ( selectedDD == 'Without')
+			strQuery += ' and accountperson__c not in :DDPBS';
+			
+		strQuery += ' group by admission__r.state__c';
+		                                            			 
+        system.debug('QUERY:' + strQuery );
+                                      
         // count of qualifying 'actionable' = number of PBS with intake or discharge scoring 2 or 3 for any question in the cluster
-        list<AggregateResult> QualifyingCountByState = [ 
-                                            select count(accountperson__c), admission__r.state__c 
-                                            from assessment__c 
-                                            where id in (select assessment__c 
-                                                         from assessment_response__c 
-                                                         where score__c in (2, 6)
-                                                         and question__r.question_number__c in :QuestionsInScope
-                                                         and assessment__r.Interval__c = :selectedInterval
-                                                         and assessment__r.assessment_type__r.name = 'CANS'
-                                                         and assessment__r.disregard__c = false
-                                                         and assessment__r.status__c = 'Locked'
-                                                         and assessment__r.admission__r.state__c in :CANSStates  )
-                                            and assessment_date__c >= :startDate 
-                                            and assessment_date__c <= :endDate
-                                            and service_line__c in :selectedSL
-                                            group by admission__r.state__c
-                                            ];
+        list<AggregateResult> QualifyingCountByState = database.query(strQuery);
 
 		integer totalPBS = 0, totalQual = 0;
         for ( AggregateResult ar : QualifyingCountByState ) {
@@ -192,7 +223,7 @@ public with sharing class Report_CANS_ActionableByCluster {
 		
 		        
         // count of qualifying 'actionable' = number of PBS with intake or discharge scoring 2 or 3 for any question in the cluster
-        list<AggregateResult> QualifyingCountByQuestion = [ select count(score__c), 
+       /* list<AggregateResult> QualifyingCountByQuestion = [ select count(score__c), 
         														   question__c, 
         														   assessment__r.admission__r.state__c 
         													from assessment_response__c 
@@ -209,6 +240,35 @@ public with sharing class Report_CANS_ActionableByCluster {
                                             and assessment__r.service_line__c in :selectedSL
                                             group by question__c, assessment__r.admission__r.state__c
                                             ];
+                                            
+           */                                 
+                                            
+       strQuery = 'select count(score__c), question__c, assessment__r.admission__r.state__c from assessment_response__c' + 
+        		' where score__c in (2, 6) and question__r.question_number__c in :QuestionsInScope' ;
+        		
+		if (selectedInterval == 'Q1')
+			strQuery += ' and assessment__r.Interval__c = \'Quarterly\' and assessment__r.Quarter__c = 1';
+		else
+			strQuery += ' and assessment__r.Interval__c = :selectedInterval' ;
+		
+		strQuery += ' and assessment__r.assessment_type__r.name = \'CANS\'' + 
+                                                         ' and assessment__r.disregard__c = false' + 
+                                                         ' and assessment__r.status__c = \'Locked\'' + 
+                                                         ' and assessment__r.admission__r.state__c in :CANSStates' + 
+                                                         ' and assessment__r.assessment_date__c >= :startDate' + 
+                                            			 ' and assessment__r.assessment_date__c <= :endDate' +
+                                            			 ' and assessment__r.service_line__c in :selectedSL';
+                                            			 
+		if ( selectedDD == 'With')
+			strQuery += ' and assessment__r.accountperson__c in :DDPBS';
+			
+		if ( selectedDD == 'Without')
+			strQuery += ' and assessment__r.accountperson__c not in :DDPBS';
+			
+		strQuery += ' group by question__c, assessment__r.admission__r.state__c';
+		                                            			 
+        system.debug('QUERY:' + strQuery );                                     
+       list<AggregateResult> QualifyingCountByQuestion = database.query( strQuery);
                                         
        Assessment_Question__c currQ;
        integer currcount;
@@ -246,6 +306,5 @@ public with sharing class Report_CANS_ActionableByCluster {
 			          
         }
     }
-
-
+   
 }
