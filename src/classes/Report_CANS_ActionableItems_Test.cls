@@ -7,6 +7,6 @@ public with sharing class Report_CANS_ActionableItems_Test {
 		controller.startDate = Date.Today();
 		controller.endDate = Date.Today().addDays(1);
 		controller.runReport();
-		System.assertEquals(0, controller.responses.size());
+		System.assertEquals(0, controller.listWrapper.size());
 	}
 }
