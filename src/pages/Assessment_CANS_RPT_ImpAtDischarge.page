@@ -1,0 +1,177 @@
+<apex:page showHeader="true" sidebar="false" controller="Assessment_CANS_RPT_ImpAtDischarge">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery-ui.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/js/dataTables.tableTools.js')}" />
+
+<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/css/dataTables.tableTools.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/development-bundle/themes/custom-green/jquery-ui.min.css')}"/>
+<style>
+#ui-datepicker-div {margin-top: 20px !important;}
+</style>
+<apex:form >
+<h1 style="font-size: 25px; padding: 3px;">Children with Improved CANS at Discharge</h1>
+<apex:pageBlock >
+    <apex:pageBlockSection columns="1">
+        <apex:selectList required="true" Value="{!SelectedCluster}" size="1" label="Cluster">
+        	<apex:selectOption itemLabel="--NONE--" itemValue=""></apex:selectOption>
+            <apex:selectOption itemLabel="Behavior & Risk" itemValue="Behavior & Risk"></apex:selectOption>
+            <apex:selectOption itemLabel="Education" itemValue="Education"></apex:selectOption>
+            <apex:selectOption itemLabel="Well-Being" itemValue="Well-Being" ></apex:selectOption>
+        </apex:selectList>
+        <apex:selectList required="true" Value="{!selectedDD_Status}" size="1" label="DD Status">
+        	<apex:selectOption itemLabel="--NONE--" itemValue=""></apex:selectOption>
+            <apex:selectOption itemLabel="All PBS" itemValue="All"></apex:selectOption>
+            <apex:selectOption itemLabel="Only PBS with DD" itemValue="ONLY_DD"></apex:selectOption>
+            <apex:selectOption itemLabel="Only PBS without DD" itemValue="No_DD" ></apex:selectOption>
+        </apex:selectList>        
+        <apex:selectCheckboxes required="true" value="{!selectedServiceLines}" label="Service Lines">
+        	<apex:selectOptions value="{!serviceLines}"></apex:selectOptions>
+        </apex:selectCheckboxes>
+        <apex:inputText id="startDate" label="Start Date" value="{!startDate}"/>
+        <apex:inputText id="endDate" label="End Date" value="{!endDate}"/>
+        <apex:pageBlockSectionItem >
+        	<apex:outputLabel ></apex:outputLabel>
+        	<apex:commandButton value="Run!" action="{!runRpt}" reRender="DATA_SET" status="myStatus"></apex:commandButton>
+        </apex:pageBlockSectionItem>
+        
+    </apex:pageBlockSection>
+</apex:pageBlock>   
+</apex:form>
+<apex:outputPanel id="DATA_SET">
+<apex:pageMessages />
+<br/>
+<table id="State_Data" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+            	<th></th>
+                <th>State</th>
+                <th># PBS Discharged</th>
+                <th># PBS with Discharge CANS</th>
+                <th># PBS with Improvement in {!SelectedCluster} Cluster</th>
+                <th>% PBS with Improvement in {!SelectedCluster} Cluster</th>
+            </tr>
+        </thead>
+ 
+</table> 
+
+<p/>
+<p/>
+<table id="example" class="display" style="display: none;" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>PBS</th>
+                <th>State</th>
+                <th>IntakeScore</th>
+                <th>disChargeScore</th>
+            </tr>
+        </thead>
+ 
+</table>
+
+
+<script>
+$(document).ready(function() {
+console.log('started');
+  /* 
+    $('#example').dataTable( {
+        "aaData": {!jsonPersonRowData},
+        "bPaginate": false, 
+        "bFilter": false,
+        "columns": [
+            { "data": "PBS" },
+            { "data": "State" },
+            { "data": "IntakeScore" },
+            { "data": "disChargeScore" }
+        ]
+    } );
+*/
+    $('#State_Data').dataTable( {
+        "aaData": {!jsonStateData},
+        "bPaginate": false,
+        
+        "order": [[ 0, "asc" ]],
+        /*"ordering": false, */
+        "bFilter": false, 
+        "bInfo" : false,
+		"columnDefs": [
+            {
+                "targets": [ 0 ],
+                "visible": false,
+                "searchable": false
+            },
+            {
+            	"targets": [ 1,2,3,4, 5 ],
+            	"orderable": false
+            }
+        ],            
+        "columns": [
+        	{ "data": "sortKey"},
+            { "data": "State"},
+            { "data": "NumberPBSDisCharge"},
+            { "data": "NumberPBSDisChargeWithCANS"},
+            { "data": "NumberPBSWithImprovement"},
+            { "data": "PrettyPercentPBSWithImp"}
+
+        ],
+            dom: 'T<"clear">lfrtip',        
+            "tableTools": {
+               "aButtons": [ 
+                   {"sExtends": "xls", "sTitle": "Children with Improved CANS at Discharge"},
+                   {
+                    "sExtends": "pdf",
+                    "sPdfOrientation": "landscape",
+                    "sTitle": "Children with Improved CANS at Discharge"
+                    }              
+                ],         
+               "sSwfPath": "{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/swf/copy_csv_xls_pdf.swf')}"  
+               }       
+    } );    
+} );
+
+</script>
+<script>
+//var j$ = jQuery.noConflict();
+function bindDates(){
+    $("[id*=endDate]").datepicker({
+        changeMonth: true,
+        changeYear: true,
+    });
+    
+    $("[id*=startDate]").datepicker({
+        changeMonth: true,
+        changeYear: true,
+    
+         
+    }); 
+
+    
+
+}
+function commonReady(){    
+    bindDates(); 
+}
+$( document ).ready(function() { 
+    
+    commonReady();
+    
+});
+</script>
+</apex:outputPanel>
+
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <style>
+            .fogBG{opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;}
+            .thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;}
+        </style>
+        <div class="fogBG"/>
+        <div class="thinkingwheel">    
+            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+        </div> 
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus>
+</apex:page>
